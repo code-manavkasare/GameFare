@@ -3,12 +3,14 @@ import {
     View, 
     Text,
     TouchableOpacity,
-    StyleSheet
+    StyleSheet,
+    Dimensions
 } from 'react-native';
 
-// import {getDatabase} from '../database/firebase'
-
 import firebase from 'react-native-firebase'
+import HeaderHome from './elementsHome/HeaderHome'
+import ListEvents from './elementsHome/ListEvent'
+const { height, width } = Dimensions.get('screen')
 
 export default class HomeScreen extends React.Component {
     async componentDidMount() {
@@ -20,16 +22,15 @@ export default class HomeScreen extends React.Component {
         console.log(variables)
         firebase.messaging().subscribeToTopic('allUsers');
     }
-    async click() {
-        this.props.navigation.navigate('Loading',{message:'the message is here sdfsdfsd'})
+    navigate(val,data) {
+        this.props.navigation.navigate(val,data)
     }
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-        <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={() => this.click()}>
-            <Text style={{color:'white',fontSize:15}}>Click me</Text>
-        </TouchableOpacity>
+      <View style={{ height:height}}>
+        <HeaderHome navigate={this.navigate.bind(this)}/>
+
+        <ListEvents navigate={this.navigate.bind(this)}/>
       </View>
     );
   }
@@ -40,6 +41,6 @@ const styles = StyleSheet.create({
         height:40,width:120,
         backgroundColor:'blue',
         alignItems: 'center',
-    justifyContent: 'center',
+        justifyContent: 'center',
     }
-  });
+});

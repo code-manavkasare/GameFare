@@ -1,24 +1,33 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import HomeScreen from '../app/HomePage'
-import LoadingScreen from '../app/LoadingScreen'
+import HomePage from '../app/HomePage'
+import ProfilePage from '../app/ProfilePage'
+import EventPage from '../app/EventPage'
+import CreateEvent from '../app/CreateEvent'
 
 const AppNavigator = createStackNavigator(
     {
         Home: {
-            screen:HomeScreen,
+            screen:HomePage,
             headerBackTitleVisible:true,
             navigationOptions: ({ navigation }) => ({
                 title: 'Home',
                 // headerBackTitle: null,
             }),
         },
-        Loading:LoadingScreen,
+        Profile: {
+            screen:ProfilePage,
+        },
+        Event: {
+            screen:EventPage,
+        },
+        CreateEvent:CreateEvent,
     },
     {
         initialRouteName:'Home',
-        // headerMode: 'none',
+        headerMode: 'none',
         mode: 'card',
+        cardOverlayEnabled:true
     }
   );
   

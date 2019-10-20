@@ -19,10 +19,10 @@ export default class LoadingScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:'white' }}>
-        <Text>LoadingScreen Screen</Text>
+        <Text>profile page</Text>
         <Text>{this.props.navigation.getParam('message')}</Text>
         <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={() => this.click()}>
-            <Text style={{color:'white',fontSize:15}}>Click me</Text>
+            <Text style={{color:'white',fontSize:15}}>Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
         style={styles.button}
