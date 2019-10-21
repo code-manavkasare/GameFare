@@ -21,6 +21,7 @@ import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/ListEvents'
 import CardEvent from './CardEvent'
 import ScrollView from '../../layout/scrollViews/ScrollView'
+import Button from '../../layout/buttons/Button'
 
 
 export default class ListEvents extends React.Component {
@@ -39,30 +40,27 @@ export default class ListEvents extends React.Component {
   homePageComponent () {
     return (
       <View style={{margingTop:20}}>
+        <Text style={styleApp.title}>Coucou</Text>
+        <Text style={[styleApp.title,{marginBottom:10}]}>Coucou</Text>
         {/* <RowTitle text={this.props.globalVariables.instaviceVariables.tabs.home.title}/>
 
         <RowTitle text={this.props.globalVariables.instaviceVariables.tabs.home.subtitle} styleTitle={{fontSize:15,fontFamily:Fonts.MarkOT,marginTop:10,marginBottom:20,}}/> */}
-        {/* { 
+        { 
           this.state.loader?
           <PlaceHolder />
           :
           <FadeInView duration={350}>
             {this.state.events.map((event,i) => (
-              
-            ))}
-          </FadeInView>
-        } */}
-        <FadeInView duration={350}>
-            {this.state.events.map((event,i) => (
               <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} item={event}/>
             ))}
           </FadeInView>
-        <View style={{height:1,backgroundColor:'#eaeaea',marginLeft:-20,width:width,}}/>
+        }
+
+      <View style={{height:1,backgroundColor:'#eaeaea',marginLeft:-20,width:width,}}/>
           <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:1,borderColor:'#eaeaea'}}>
             <Text style={styles.text}>Want to organize an event? Pick your sport and join the GameFare community now!</Text>
-            {/* <ButtonFooterBooking click={() => this.props.newEvent()} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}}/> */}
+            <Button click={() => this.props.navigate('CreateEvent1',{})} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
         </View>
-
       </View>
     )
   }
@@ -73,14 +71,16 @@ export default class ListEvents extends React.Component {
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.homePageComponent.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHomeSearch}
+          marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
     );
   }
 }
 
 const styles = StyleSheet.create({
-
+  text:{
+    fontFamily:'OpenSans-SemiBold'
+  }
 });

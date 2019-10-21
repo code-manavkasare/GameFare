@@ -49,9 +49,15 @@ target 'gamefare' do
   pod ‘Firebase/Messaging’ 
   pod 'Firebase/Database'
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
  
 
+
+  pod 'react-native-statusbar', :path => '../node_modules/@react-native-community/status-bar'
+
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
   target 'gamefareTests' do
     inherit! :search_paths

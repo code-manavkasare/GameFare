@@ -287,6 +287,8 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
+  - react-native-statusbar (1.0.3):
+    - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
   - React-RCTAnimation (0.61.2):
@@ -322,6 +324,8 @@ PODS:
     - React-cxxreact (= 0.61.2)
     - React-jsi (= 0.61.2)
     - ReactCommon/jscallinvoker (= 0.61.2)
+  - RNCAsyncStorage (1.6.2):
+    - React
   - RNDeviceInfo (4.0.1):
     - React
   - RNFirebase (5.5.6):
@@ -340,6 +344,8 @@ PODS:
   - RNReanimated (1.3.0):
     - React
   - RNScreens (1.0.0-alpha.23):
+    - React
+  - RNVectorIcons (6.6.0):
     - React
   - Stripe (17.0.2)
   - Yoga (1.14.0)
@@ -371,6 +377,7 @@ DEPENDENCIES:
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
+  - react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -382,12 +389,14 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Stripe
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -428,6 +437,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-fcm
   react-native-splash-screen:
     :path: ../node_modules/react-native-splash-screen
+  react-native-statusbar:
+    :path: ../node_modules/@react-native-community/status-bar
   React-RCTActionSheet:
     :path: ../node_modules/react-native/Libraries/ActionSheetIOS
   React-RCTAnimation:
@@ -448,6 +459,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/Libraries/Vibration
   ReactCommon:
     :path: ../node_modules/react-native/ReactCommon
+  RNCAsyncStorage:
+    :path: ../node_modules/@react-native-community/async-storage
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
   RNFirebase:
@@ -460,6 +473,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-reanimated
   RNScreens:
     :path: ../node_modules/react-native-screens
+  RNVectorIcons:
+    :path: ../node_modules/react-native-vector-icons
   Yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
@@ -504,6 +519,7 @@ SPEC CHECKSUMS:
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
+  react-native-statusbar: e5562dc498ae684a62fe96f35aaaf2051a51115a
   React-RCTActionSheet: 49433f6e3659ba5d3ee650e44b9c18743ef9a7fc
   React-RCTAnimation: 12f86a4e3542032329366b03bca2cc254a7c64a9
   React-RCTBlob: ba90a4144ad478a022b79a4e8a1f150548d39425
@@ -514,15 +530,17 @@ SPEC CHECKSUMS:
   React-RCTText: 3f24042210886ee8c02613758013010be04b291e
   React-RCTVibration: d55e1365be416980217914fe009e9d55dec02e03
   ReactCommon: eb96b70a2a5bed775e919151fd77699fed52944c
+  RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
   RNDeviceInfo: 5b5b42b12587207b6bd686441ac42d19d8e07933
   RNFirebase: ca408d6bee0ca9383bd0cfe84f40b01370b8ad4d
   RNGestureHandler: 311e3b1cef021a7c9ef31e97e7dc31970cc6288d
   RNPermissions: 09451e563764b938c2bbc945ca430f758044f0dd
   RNReanimated: 9f7976535c5cde50189acd84751871f5414190b9
   RNScreens: 354046589421edc3d83d5c6212475bf1fb9a731d
+  RNVectorIcons: 66af4d5c8ff4f584c7b7cd9c4b0780920f27fce2
   Stripe: 6c9ab10f087ca76c3cd7311462e383434921bdf8
   Yoga: 6af72bedeaea291a3a3717772d6d41836f23a1b9
 
-PODFILE CHECKSUM: 35351d943daa1f1c645a980a052bc220879134da
+PODFILE CHECKSUM: 971a48c234aacb078fe5b24ca2b5b30cf1dc572e
 
 COCOAPODS: 1.4.0

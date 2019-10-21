@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import AppNavigator from './src/components/navigation/AppNavigator'
+import AppSwitchNavigator from './src/components/navigation/AppNavigator'
 
 import { createAppContainer } from 'react-navigation';
 import SplashScreen from 'react-native-splash-screen';
 import branch, { BranchEvent } from 'react-native-branch'
+// import StatusBar from '@react-native-community/status-bar';
 
-const AppContainer = createAppContainer(AppNavigator)
+const AppContainer = createAppContainer(AppSwitchNavigator)
 
 export default class App extends Component {
   state={items:[]}

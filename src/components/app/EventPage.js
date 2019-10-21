@@ -21,7 +21,7 @@ export default class EventPage extends React.Component {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:'white' }}>
         <Text>Event page</Text>
         <Text>{this.props.navigation.getParam('eventID')}</Text>
-        <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={() => this.click()}>
+        <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={() => this.props.navigation.goBack()}>
             <Text style={{color:'white',fontSize:15}}>back</Text>
         </TouchableOpacity>
 

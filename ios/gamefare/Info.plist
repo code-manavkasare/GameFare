@@ -102,31 +102,32 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>CircularStd-Bold.otf</string>
-		<string>CircularStd-Black.otf</string>
-		<string>CircularStd-Medium.otf</string>
-		<string>CircularStd-Book.otf</string>
-		<string>AvenirNextLTPro-Bold.otf</string>
-		<string>AvenirNextLTPro-Heavy.otf</string>
-		<string>AvenirNextLTPro-MediumCn.otf</string>
-		<string>AvenirNextLTPro-Regular.otf</string>
-		<string>AvenirNextLTPro-Demi</string>
-		<string>MarkOT-Medium.otf</string>
-		<string>MarkOT-Bold.otf</string>
-		<string>FontAwesome.ttf</string>
-		<string>MarkOT-Black.otf</string>
-		<string>SF-Pro-Display-BlackItalic.otf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>MarkOT.otf</string>
+		<string>OpenSans-Bold.ttf</string>
+		<string>OpenSans-Regular.ttf</string>
+		<string>OpenSans-SemiBold.ttf</string>
+		<string>OpenSans-Light.ttf</string>
+		<string>OpenSans-ExtraBold.ttf</string>
+		<string>OpenSans-BoldItalic.ttf</string>
+		<string>OpenSans-ExtraBoldItalic.ttf</string>
+		<string>OpenSans-Italic.ttf</string>
+		<string>OpenSans-LightItalic.ttf</string>
+		<string>OpenSans-SemiBoldItalic.ttf</string>
+		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
 		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
+		<string>Fontisto.ttf</string>
 		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>MaterialIcons.ttf</string>
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>AvenirNextLTPro-Demi.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -134,6 +135,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarHidden</key>
+	<false/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>

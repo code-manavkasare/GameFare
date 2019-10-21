@@ -24,11 +24,11 @@ export default styles = StyleSheet.create({
       height:1,width:'100%',
       marginTop:20,marginBottom:10,
       backgroundColor:'#eaeaea'
-    }, 
+    },
     title:{
+      fontSize:24,
+      fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
-      fontSize:17,
-      //fontFamily: Fonts.MarkOTMedium,
     },
     buttonRound:{
       width:65,height:65,

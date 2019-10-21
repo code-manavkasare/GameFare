@@ -44,7 +44,7 @@ export default class CardEvent extends React.Component {
             <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
           </View>
           <Text style={styles.title}>{this.props.item.info.name}</Text>
-          <Row style={{marginTop:15,marginBottom:25}}>
+          <Row style={{marginTop:15,marginBottom:15}}>
             <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
               <Row style={{marginBottom:5}}>
                 <Col size={10} style={styles.center2}>
@@ -121,33 +121,22 @@ const styles = StyleSheet.create({
   textSport:{
     color:colors.greenStrong,
     fontSize:13,
-    // fontFamily: Fonts.MarkOTMedium,
-  },
-  privateIcon:{
-    position:'absolute',
-    top:7,
-    left:4,
+    fontFamily: 'OpenSans-SemiBold',
   },
   textPrice:{
     color:colors.primary,
     fontSize:18,
-    // fontFamily: Fonts.MarkOTMedium,
-  },
-  imgBackground:{
-    width:'100%',height:50,
-    borderBottomWidth: 0,
-    borderRadius:3,
-    borderColor:'#D7D4E6',
+    fontFamily: 'OpenSans-Bold',
   },
   title:{
     color:colors.title,
-    fontSize:18,
-    // fontFamily: Fonts.MarkOTMedium,
+    fontSize:17,
+    fontFamily: 'OpenSans-SemiBold',
   },
   subtitle:{
     color:colors.title,
-    fontSize:15,
-    // fontFamily: Fonts.MarkOT,
+    fontSize:14,
+    fontFamily: 'OpenSans-Regular',
   },
 });
 

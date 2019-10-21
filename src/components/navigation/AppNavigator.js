@@ -5,6 +5,9 @@ import ProfilePage from '../app/ProfilePage'
 import EventPage from '../app/EventPage'
 import CreateEvent from '../app/CreateEvent'
 
+import CreateEvent1 from '../app/elementsEventCreate/Page1'
+import CreateEvent2 from '../app/elementsEventCreate/Page2'
+
 const AppNavigator = createStackNavigator(
     {
         Home: {
@@ -15,13 +18,10 @@ const AppNavigator = createStackNavigator(
                 // headerBackTitle: null,
             }),
         },
-        Profile: {
-            screen:ProfilePage,
-        },
-        Event: {
-            screen:EventPage,
-        },
-        CreateEvent:CreateEvent,
+        Profile: ProfilePage,
+        Event: EventPage,
+        CreateEvent1:CreateEvent1,
+        CreateEvent2:CreateEvent2,
     },
     {
         initialRouteName:'Home',

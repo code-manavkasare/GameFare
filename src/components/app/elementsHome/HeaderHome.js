@@ -64,7 +64,7 @@ export default class HeaderHome extends React.Component {
           </Col>
           
 
-          <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigate('CreateEvent',{})} >
+          <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigate('CreateEvent1',{})} >
             <Image source={require('../../../img/icons/plusWhite.png')} style={{height:20,width:20,}} />
           </Col>
 
@@ -79,7 +79,7 @@ export default class HeaderHome extends React.Component {
 
 const styles = StyleSheet.create({
     searchBarComponent:{
-        position:'absolute',
+        // position:'absolute',
         width:width,
         backgroundColor:colors.primary,
         borderBottomWidth:0,
@@ -87,5 +87,10 @@ const styles = StyleSheet.create({
         paddingTop:sizes.marginTopApp,
         height:sizes.heightHeaderHomeSearch,
         top:0,
-      },
+    },
+    input:{
+      fontFamily: 'OpenSans-SemiBold',
+
+    }
 });
+

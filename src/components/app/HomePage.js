@@ -10,6 +10,7 @@ import {
 import firebase from 'react-native-firebase'
 import HeaderHome from './elementsHome/HeaderHome'
 import ListEvents from './elementsHome/ListEvent'
+import styleApp from '../style/style'
 const { height, width } = Dimensions.get('screen')
 
 export default class HomeScreen extends React.Component {
@@ -31,6 +32,8 @@ export default class HomeScreen extends React.Component {
         <HeaderHome navigate={this.navigate.bind(this)}/>
 
         <ListEvents navigate={this.navigate.bind(this)}/>
+
+        
       </View>
     );
   }

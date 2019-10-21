@@ -25,7 +25,7 @@ export default class PlaceHolder extends PureComponent {
 
           <View style={{height:1,backgroundColor:'#eaeaea',marginTop:0,marginBottom:5}}/>
 
-          {/* <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10}} />
+          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10,marginLeft:20}} />
           <Row style={{height:135,marginTop:0,}}>
             <Col size={80} style={[styles.center2,{paddingLeft:15}]}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:15,borderRadius:7,marginTop:10,width:'50%'}} />
@@ -39,7 +39,7 @@ export default class PlaceHolder extends PureComponent {
 
           <View style={{height:1,backgroundColor:'#eaeaea',marginTop:10,marginBottom:5}}/>
 
-          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10}} />
+          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10,marginLeft:20}} />
           <Row style={{height:135,marginTop:0,}}>
             <Col size={80} style={[styles.center2,{paddingLeft:15}]}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:15,borderRadius:7,marginTop:10,width:'50%'}} />
@@ -53,7 +53,7 @@ export default class PlaceHolder extends PureComponent {
 
           <View style={{height:1,backgroundColor:'#eaeaea',marginTop:10,marginBottom:5}}/>
 
-          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10}} />
+          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10,marginLeft:20}} />
           <Row style={{height:135,marginTop:0,}}>
             <Col size={80} style={[styles.center2,{paddingLeft:15}]}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:15,borderRadius:7,marginTop:10,width:'50%'}} />
@@ -63,7 +63,7 @@ export default class PlaceHolder extends PureComponent {
             <Col size={20} style={styles.center}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:15,borderRadius:7,width:'40%'}} />
             </Col>
-          </Row> */}
+          </Row>
 
         </View>
 
@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     // zIndex:40,
     // top:0,
     //paddingTop:10,
+    marginLeft:-20,
+    width:width
   },
   center:{
     alignItems: 'center',
