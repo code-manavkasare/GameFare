@@ -44,7 +44,7 @@ export default class CardEvent extends React.Component {
             <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
           </View>
           <Text style={styles.title}>{this.props.item.info.name}</Text>
-          <Row style={{marginTop:15,marginBottom:15}}>
+          <Row style={{marginTop:5,marginBottom:15}}>
             <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
               <Row style={{marginBottom:5}}>
                 <Col size={10} style={styles.center2}>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   title:{
     color:colors.title,
     fontSize:17,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-Bold',
   },
   subtitle:{
     color:colors.title,

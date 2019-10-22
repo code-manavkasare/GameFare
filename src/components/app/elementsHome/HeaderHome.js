@@ -9,6 +9,7 @@ import {
     Image,
     TextInput,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import firebase from 'react-native-firebase'
 const { height, width } = Dimensions.get('screen')
@@ -18,12 +19,16 @@ import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
 
 
-export default class HeaderHome extends React.Component {
+class HeaderHome extends React.Component {
   state={
     inputFocus:false
   }
   openProfile() {
+      if (this.props.userConnected) {
         this.props.navigate('Profile',{message:'the message is here sdfsdfsd'})
+      } else {
+        this.props.navigate('SignIn',{message:'the message is here sdfsdfsd'})
+      } 
     }
   render() {
     return (
@@ -93,4 +98,13 @@ const styles = StyleSheet.create({
 
     }
 });
+
+
+const  mapStateToProps = state => {
+  return {
+    userConnected:state.user.userConnected
+  };
+};
+
+export default connect(mapStateToProps,{})(HeaderHome);
 

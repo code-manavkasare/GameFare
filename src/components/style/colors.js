@@ -14,5 +14,6 @@ export default colors = {
     placeHolder2:'#f6f6f6',
     green:'#89DB87',
     greenStrong:'#69AD89',
-    greenLight:'#DEF0E6'
+    greenLight:'#DEF0E6',
+    off:'#eaeaea'
 }

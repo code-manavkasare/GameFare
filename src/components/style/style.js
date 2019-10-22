@@ -27,6 +27,11 @@ export default styles = StyleSheet.create({
     },
     title:{
       fontSize:24,
+      fontFamily: 'OpenSans-Bold',
+      color:colors.title,
+    },
+    subtitle:{
+      fontSize:14,
       fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },

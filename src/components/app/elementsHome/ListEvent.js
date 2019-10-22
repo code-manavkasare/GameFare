@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 
 import firebase from 'react-native-firebase'
+import {connect} from 'react-redux';
+
 const { height, width } = Dimensions.get('screen')
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
@@ -24,7 +26,7 @@ import ScrollView from '../../layout/scrollViews/ScrollView'
 import Button from '../../layout/buttons/Button'
 
 
-export default class ListEvents extends React.Component {
+class ListEvents extends React.Component {
   state={
     events:[],
     loader:true
@@ -35,16 +37,15 @@ export default class ListEvents extends React.Component {
     })
     console.log('eventswdsflfgjlkdfjglkd')
     console.log(events)
+    console.log(this.props.globaleVariables)
     this.setState({loader:false,events:events.hits})
   }
   homePageComponent () {
     return (
       <View style={{margingTop:20}}>
-        <Text style={styleApp.title}>Coucou</Text>
-        <Text style={[styleApp.title,{marginBottom:10}]}>Coucou</Text>
-        {/* <RowTitle text={this.props.globalVariables.instaviceVariables.tabs.home.title}/>
+        <Text style={[styleApp.title,{marginBottom:10}]}>{this.props.globaleVariables.tabs.home.title}</Text>
+        <Text style={[styleApp.subtitle,{marginBottom:20}]}>{this.props.globaleVariables.tabs.home.subtitle}</Text>
 
-        <RowTitle text={this.props.globalVariables.instaviceVariables.tabs.home.subtitle} styleTitle={{fontSize:15,fontFamily:Fonts.MarkOT,marginTop:10,marginBottom:20,}}/> */}
         { 
           this.state.loader?
           <PlaceHolder />
@@ -84,3 +85,11 @@ const styles = StyleSheet.create({
     fontFamily:'OpenSans-SemiBold'
   }
 });
+
+const  mapStateToProps = state => {
+  return {
+    globaleVariables:state.globaleVariables
+  };
+};
+
+export default connect(mapStateToProps,{})(ListEvents);

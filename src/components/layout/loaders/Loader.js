@@ -7,6 +7,7 @@ import {
   Easing,
   TouchableOpacity
 } from 'react-native';
+import {native} from '../../animations/animations'
 
 export default class Loader extends Component {
     constructor(props) {
@@ -22,8 +23,9 @@ export default class Loader extends Component {
     annimate () {
         Animated.timing(this.animatedSpin, {
             toValue: 1,
-            duration: 18000,
-            easing: Easing.linear
+            duration: 17000,
+            easing: Easing.linear,
+            useNativeDriver: true,
         }).start()
     }
     spinner(color,spin) {

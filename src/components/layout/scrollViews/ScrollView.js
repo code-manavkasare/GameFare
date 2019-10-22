@@ -26,7 +26,8 @@ export default class ScrollViewPage extends PureComponent {
       }
       styleScrollView() {
         return {
-          marginTop:this.props.marginTop
+          marginTop:this.props.marginTop,
+          
         }
       }
       styleInsideView() {

@@ -1,14 +1,17 @@
 import {
+    SET_VARIABLES
 } from '../actions/types';
 
 const initialState = {
-
+    tabs:{
+        home:{}
+    }
 }
 
 const globaleVariablesReducer =  (state=initialState,action) => {
     switch (action.type){
-        // case OPEN_REVIEW:
-        //     return {...state,showReview:action.showReview,infoReview:action.infoReview};
+        case SET_VARIABLES:
+            return action.value;
         default:
             return state;
     }
