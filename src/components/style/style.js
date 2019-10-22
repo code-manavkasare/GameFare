@@ -51,7 +51,7 @@ export default styles = StyleSheet.create({
     headerBooking:{
       position:'absolute',
       top:0,
-      height:50+sizes.marginTopHeader,
+      height:sizes.heightHeaderHome,
       paddingTop:sizes.marginTopHeader-5,
 
       borderBottomWidth:1,

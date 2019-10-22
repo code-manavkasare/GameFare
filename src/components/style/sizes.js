@@ -3,7 +3,8 @@ import {
   Dimensions,
 } from 'react-native';
 var  { height, width } = Dimensions.get('screen')
-
+console.log('height!!!!!')
+console.log(height)
 var marginTopHeader = 7
 var heightPicture = 280
 var heightFooterBooking =155
@@ -35,13 +36,13 @@ if (Platform.OS == 'ios'){
 
         marginBottomAlert = 50
     } else if (height == 896){
-        marginTopHeader = 37
+        marginTopHeader = 48
         heightPicture=280
         heightHeaderHome = 100
         heightFooterBooking =100
         heightFooter = 91
         marginTopApp = 35
-        heightHeaderHomeSearch = 130
+        heightHeaderHomeSearch = 100
 
         marginBottomAlert = 50
     } else if (height == 667){
