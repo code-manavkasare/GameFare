@@ -19,6 +19,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.61.2)
   - Firebase (6.10.0):
     - Firebase/Core (= 6.10.0)
+  - Firebase/Auth (6.10.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 6.3.0)
   - Firebase/Core (6.10.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (= 6.1.3)
@@ -40,6 +43,12 @@ PODS:
     - GoogleUtilities/NSData+zlib (~> 6.0)
     - nanopb (~> 0.3.901)
   - FirebaseAnalyticsInterop (1.4.0)
+  - FirebaseAuth (6.3.0):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 6.2)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.2)
+    - GoogleUtilities/Environment (~> 6.2)
+    - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseAuthInterop (1.0.0)
   - FirebaseCore (6.3.1):
     - FirebaseCoreDiagnostics (~> 1.0)
@@ -108,8 +117,18 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (6.3.1):
     - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (1.2.2)
   - leveldb-library (1.22)
-  - Mixpanel (3.5.0)
+  - libwebp (1.0.3):
+    - libwebp/demux (= 1.0.3)
+    - libwebp/mux (= 1.0.3)
+    - libwebp/webp (= 1.0.3)
+  - libwebp/demux (1.0.3):
+    - libwebp/webp
+  - libwebp/mux (1.0.3):
+    - libwebp/demux
+  - libwebp/webp (1.0.3)
+  - Mixpanel (3.4.9)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
@@ -285,6 +304,9 @@ PODS:
   - react-native-fcm (16.2.4):
     - Firebase/Messaging
     - React
+  - react-native-mixpanel (0.0.6):
+    - Mixpanel (~> 3.4.5)
+    - React
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-statusbar (1.0.3):
@@ -328,6 +350,10 @@ PODS:
     - React
   - RNDeviceInfo (4.0.1):
     - React
+  - RNFastImage (7.0.2):
+    - React
+    - SDWebImage (~> 5.0)
+    - SDWebImageWebPCoder (~> 0.2.3)
   - RNFirebase (5.5.6):
     - Firebase/Core
     - React
@@ -339,6 +365,8 @@ PODS:
     - React
   - RNGestureHandler (1.4.1):
     - React
+  - RNInAppBrowser (3.1.0):
+    - React
   - RNPermissions (2.0.2):
     - React
   - RNReanimated (1.3.0):
@@ -347,6 +375,12 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
+  - SDWebImage (5.2.3):
+    - SDWebImage/Core (= 5.2.3)
+  - SDWebImage/Core (5.2.3)
+  - SDWebImageWebPCoder (0.2.5):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.0)
   - Stripe (17.0.2)
   - Yoga (1.14.0)
 
@@ -358,11 +392,11 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
   - Firebase
+  - Firebase/Auth
   - Firebase/Database
   - Firebase/Messaging
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - Mixpanel
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -376,6 +410,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
+  - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -391,8 +426,10 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -435,6 +472,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-branch
   react-native-fcm:
     :path: ../node_modules/react-native-fcm
+  react-native-mixpanel:
+    :path: ../node_modules/react-native-mixpanel
   react-native-splash-screen:
     :path: ../node_modules/react-native-splash-screen
   react-native-statusbar:
@@ -463,10 +502,14 @@ EXTERNAL SOURCES:
     :path: ../node_modules/@react-native-community/async-storage
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
+  RNFastImage:
+    :path: ../node_modules/react-native-fast-image
   RNFirebase:
     :path: ../node_modules/react-native-firebase/ios
   RNGestureHandler:
     :path: ../node_modules/react-native-gesture-handler
+  RNInAppBrowser:
+    :path: ../node_modules/react-native-inappbrowser-reborn
   RNPermissions:
     :path: ../node_modules/react-native-permissions
   RNReanimated:
@@ -490,6 +533,7 @@ SPEC CHECKSUMS:
   Firebase: 5e6b7b12bf9adb90986688edc06b156c37e109cd
   FirebaseAnalytics: 0e3ecff2c5d86070f7d4325e21f1edabfbd558dc
   FirebaseAnalyticsInterop: d48b6ab67bcf016a05e55b71fc39c61c0cb6b7f3
+  FirebaseAuth: c66e990f79d1d3429165391f6cd70ace6143c25e
   FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc
   FirebaseCore: 064c2dd92a8ca5974bbdcb080df9921e46bd34cd
   FirebaseCoreDiagnostics: af29e43048607588c050889d19204f4d7b758c9f
@@ -503,8 +547,10 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 166f9b9f82cbf60a204e8fe2daa9db3e3ec1fb15
   GoogleDataTransportCCTSupport: f6ab1962e9dc05ab1fb938b795e5b310209edeec
   GoogleUtilities: f895fde57977df4e0233edda0dbeac490e3703b6
+  GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
-  Mixpanel: 399997670f5452de026449f9e9ecd52eccbb9ff7
+  libwebp: 057912d6d0abfb6357d8bb05c0ea470301f5d61e
+  Mixpanel: 5aca6e506b34650b96dc759a208513d86650fac7
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: a4dc852ad69c027ca2166ed287b856697814375b
   RCTRequired: 81db8debffc2eb932841fa02dcf5a2e911af74c1
@@ -518,6 +564,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 044105eea064aec81adc5e4d777a8f6589e7d094
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
+  react-native-mixpanel: 794ab824eabb78cc90dc7f39c218be5ebd47023b
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
   react-native-statusbar: e5562dc498ae684a62fe96f35aaaf2051a51115a
   React-RCTActionSheet: 49433f6e3659ba5d3ee650e44b9c18743ef9a7fc
@@ -532,15 +579,19 @@ SPEC CHECKSUMS:
   ReactCommon: eb96b70a2a5bed775e919151fd77699fed52944c
   RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
   RNDeviceInfo: 5b5b42b12587207b6bd686441ac42d19d8e07933
+  RNFastImage: b9535ebddb6105f5d244b023d79676979cb14034
   RNFirebase: ca408d6bee0ca9383bd0cfe84f40b01370b8ad4d
   RNGestureHandler: 311e3b1cef021a7c9ef31e97e7dc31970cc6288d
+  RNInAppBrowser: 13e6fe396c274632dbbcc9f963edbf82f5dc24b3
   RNPermissions: 09451e563764b938c2bbc945ca430f758044f0dd
   RNReanimated: 9f7976535c5cde50189acd84751871f5414190b9
   RNScreens: 354046589421edc3d83d5c6212475bf1fb9a731d
   RNVectorIcons: 66af4d5c8ff4f584c7b7cd9c4b0780920f27fce2
+  SDWebImage: 46a7f73228f84ce80990c786e4372cf4db5875ce
+  SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987
   Stripe: 6c9ab10f087ca76c3cd7311462e383434921bdf8
   Yoga: 6af72bedeaea291a3a3717772d6d41836f23a1b9
 
-PODFILE CHECKSUM: 971a48c234aacb078fe5b24ca2b5b30cf1dc572e
+PODFILE CHECKSUM: 11879668295af532e1cdd8358b2c03f3b8dd3ea3
 
 COCOAPODS: 1.4.0

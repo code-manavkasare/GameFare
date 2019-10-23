@@ -6,6 +6,7 @@ import EventPage from '../app/EventPage'
 
 import Phone from '../login/Phone'
 import Verify from '../login/Verify'
+import Complete from '../login/Complete'
 import ListCountry from '../login/elementsFlags/ListCountry'
 
 import CreateEvent1 from '../app/elementsEventCreate/Page1'
@@ -21,7 +22,6 @@ const AppNavigator = createStackNavigator(
             headerBackTitleVisible:true,
             navigationOptions: ({ navigation }) => ({
                 title: 'Home',
-                // headerBackTitle: null,
             }),
         },
         Profile: ProfilePage,
@@ -43,8 +43,13 @@ const LoginNavigator = createStackNavigator(
         Verify:{
             screen:Verify,
             navigationOptions: ({ navigation }) => ({
-                title: 'Home',
                 gesturesEnabled: true,
+            }),
+        },
+        Complete:{
+            screen:Complete,
+            navigationOptions: ({ navigation }) => ({
+                gesturesEnabled: false,
             }),
         }
     },
@@ -61,18 +66,7 @@ const RootStack = createStackNavigator(
         MainApp:AppNavigator,
         SignIn:LoginNavigator,
         ListCountry:ListCountry,
-        Alert:{
-            screen:Alert,
-            navigationOptions: {
-                style: { backgroundColor: 'red' }, //Does not work, red is just to ilustrate, should be transparent,
-                cardStyle: { //Does not work,
-                    backgroundColor: 'transparent',
-                },
-                bodyStyle: { //Does not work,
-                    backgroundColor: 'blue',
-                },
-            }
-        }
+        Alert:Alert
     },
     {
         initialRouteName:'MainApp',

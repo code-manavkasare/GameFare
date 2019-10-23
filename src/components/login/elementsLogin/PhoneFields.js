@@ -73,11 +73,8 @@ class PhoneFields extends Component {
       console.log(phoneNumber)
       
       if (promiseAxios.data.response != false) { 
+        await this.setState({loader:false})
         await this.props.navigate('Verify',{data:{...promiseAxios.data,phoneNumber:phone,country:this.props.country}})
-        var that = this
-        setTimeout(function(){
-          that.setState({loader:false})
-        }, 350);
       } else {
         this.setState({error:true,loader:false})
       }

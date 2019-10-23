@@ -4,37 +4,230 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    Dimensions,
+    Dimensions,TextInput,
     Animated
 } from 'react-native';
+import {connect} from 'react-redux';
 
 const { height, width } = Dimensions.get('screen')
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import sizes from '../../style/sizes'
+import styleApp from '../../style/style'
 import StatusBar from '@react-native-community/status-bar';
-// import Animated from 'react-native-reanimated';
+import ExpandableCard from '../../layout/cards/ExpandableCard'
+import Switch from '../../layout/switch/Switch'
+import { Col, Row, Grid } from "react-native-easy-grid";
+import FontIcon from 'react-native-vector-icons/FontAwesome';
 
-export default class LoadingScreen extends Component {
+class Page1 extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      private:false,
+      joiningFee:'',
+      free:false,
+      randomLocation:false,
+      location:{address:'',},
+      area:'',       
+      startDate:'',
+      endDate:'',
+      rules:'',
+      name:'',
+      sportsFilter:{
+        text:"Sports",
+        value:'sports',
+        type:'sports',
+        expendable:true,
+        alwaysExpanded:true,
+        value:Object.values(this.props.sports)[0],
+        valueSelected:Object.values(this.props.sports)[0].value,
+        listExpend:Object.values(this.props.sports)
+      },
+      showDate:false
     };
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
+    this.translateXAddress = new Animated.Value(0)
+    this.translateXArea = new Animated.Value(-width)
+  }
+  componentDidMount() {
+    console.log('page 1 mount')
+    console.log(this.props.sports)
+    console.log(this.state.sportsFilter)
   }
   close() {
       StatusBar.setBarStyle('light-content',true)
       this.props.navigation.goBack()
   }
+  switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
+    return (
+      <Switch 
+        textOn={textOn}
+        textOff={textOff}
+        translateXTo={width/2-20}
+        height={50}
+        translateXComponent0={translateXComponent0}
+        translateXComponent1={translateXComponent1}
+        state={this.state[state]}
+        setState={(val) => this.setState({[state]:val})}
+      />
+    )
+  }
+  sports() {
+    return (
+      <ExpandableCard 
+            option = {this.state.sportsFilter} 
+            tickFilter={(value) => {
+            var sportsFilter = this.state.sportsFilter
+            sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
+            sportsFilter.valueSelected = value
+            this.setState({sportsFilter:sportsFilter})
+        }}
+      />
+    )
+  }
+  tournamentName () {
+    return(
+      <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
+      <Row >
+        <Col size={15} style={styleApp.center}>
+            {/* <Image
+              style={{width:20,height:20}}
+              source={require('../../../../img/cards/nameEvent.png')}
+            />  */}
+        </Col>
+        <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
+          <TextInput
+            style={styleApp.input}
+            placeholder="Pick a name"
+            returnKeyType={'done'}
+            ref={(input) => { this.nameInput = input }}
+            underlineColorAndroid='rgba(0,0,0,0)'
+            autoCorrect={true}
+            onChangeText={text => this.setState({name:text})}
+            value={this.state.name}
+          />
+        </Col>
+      </Row>
+      </TouchableOpacity>
+    )
+  }
+  styleCondition(condition,basicStyle,addStyle1,addStyle0) {
+    if (condition) return {...basicStyle,...addStyle1}
+    return {...basicStyle,...addStyle0}
+  }
+  styleTickFreeInput(free) {
+    if (free) return {
+      ...styleApp.input,
+      color:colors.title,
+      // fontFamily:Fonts.MarkOTMedium,
+    }
+    return {...styles.text,color:'#C7C7CC'}
+  }
+  styleTickFree(free) {
+    if (free) return styles.tickBox
+    return styles.tickBoxOff
+  }
+  styleTickFreeText(free,color) {
+    if (free) return {
+      ...styleApp.input,
+      color:color,
+      fontFamily:Fonts.MarkOTMedium,
+      // textDecorationLine: 'underline',
+
+    }
+    return {...styles.text,color:'#eaeaea'}
+  }
+  entreeFeeSection(state){
+    return(
+      <Row style={{height:55}}>
+        <Col size={60} style={styleApp.center2}>
+          <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} style={this.styleCondition(this.state[state],styleApp.inputForm,{borderColor:'#eaeaea'},{backgroundColor:'white',borderColor:'#eaeaea'})}>
+            <Row>
+              <Col style={styleApp.center} size={25}>
+              {/* <Image
+                style={{width:20,height:20}}
+                source={require('../../../../img/cards/coin.png')}
+              /> */}
+              </Col>
+              <Col style={[styleApp.center2,{paddingLeft:15}]} size={75}>
+                <TextInput
+                  style={this.styleTickFreeInput(!this.state.free)}
+                  placeholder="Entry fee"
+                  returnKeyType={'done'}
+                  //editable={!this.state.free}
+                  keyboardType={'phone-pad'}
+                  ref={(input) => { this.entreeFeeInputRef = input }}
+                  underlineColorAndroid='rgba(0,0,0,0)'
+                  autoCorrect={true}
+                  onChangeText={text => {
+                    if (text.length == 0 && this.state.joiningFee.length != 0) {
+                      this.setState({joiningFee:text,free:true})
+                    }
+                    else if (Number(text) == 0 ) {
+                      this.setState({joiningFee:text,free:true})
+                    } else {
+                      if (Number(text).toString() == 'NaN'){
+                        return this.setState({free:false,joiningFee:text.replace(text[text.length-1],'')})
+                      }
+                      return this.setState({joiningFee:text,free:false})
+                    }
+                    
+                  }}
+                  value={this.state.joiningFee}
+                />
+              </Col>
+            </Row>
+          </TouchableOpacity>
+        </Col>
+        <Col size={40} style={styleApp.center3} activeOpacity={0.7} onPress={() => {
+          if (!this.state.free) {
+            this.entreeFeeInputRef.blur()
+          }
+          this.setState({free:!this.state.free,joiningFee:!this.state.free?'0':''})
+        }}>
+          <Row style={[styleApp.cardSelect,{borderWidth:0,shadowOpacity:0}]}>
+            <Col style={styleApp.center} >
+              
+              <View style={this.styleTickFree(this.state.free)}>
+                {
+                this.state.free?
+                <FontIcon name="check" color="white" size={15} />
+                :
+                <FontIcon name="check" color="#eaeaea" size={15} />
+                }
+              </View>
+              
+            </Col>
+            <Col style={styleApp.center2} >
+              <Text style={this.styleTickFreeText(this.state.free,colors.primary)}>Free</Text>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      
+    )
+  }
   page1() {
       return (
-          <View style={{height:2*height}}>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('CreateEvent2')}>
-                  <Text>Next</Text>
-              </TouchableOpacity>
-          </View>
+        <View>
+          {this.switch('Public','Private','private')}
+          <View  style={{height:10}}/>
+          {this.sports()}
+
+          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Event name</Text>
+          {this.tournamentName()}
+
+          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Entre fee</Text>
+          {this.entreeFeeSection('free')}
+
+
+          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Location</Text>
+
+
+        </View>
       )
   }
   render() {
@@ -65,19 +258,20 @@ export default class LoadingScreen extends Component {
           click={() => this.props.navigation.navigate('CreateEvent2')}
          />
 
-
-        
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-    button:{
-        height:40,width:120,
-        backgroundColor:'blue',
-        alignItems: 'center',
-    justifyContent: 'center',
-    marginTop:10
-    }
-  });
+
+});
+
+const  mapStateToProps = state => {
+  return {
+    sports:state.globaleVariables.sports.list,
+  };
+};
+
+export default connect(mapStateToProps,{})(Page1);
+

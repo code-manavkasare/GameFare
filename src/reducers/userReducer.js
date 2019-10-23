@@ -5,7 +5,12 @@ import {
 
 const initialState = {
     userConnected: false,
-    infoUser:{},
+    infoUser:{
+        userInfo:{}
+    },
+    userID:'',
+    phoneNumber: '',
+    userIDSaved:'',
     country:{
         "name": "United States",
         "dial_code": "+1",
@@ -17,7 +22,7 @@ const initialState = {
 const userReducer =  (state=initialState,action) => {
     switch (action.type){
         case SET_USER_INFO:
-            return {...state,userConnected:action.userInfo.userConnected,infoUser:action.userInfo.infoUser}
+            return {...state,...action.userInfo}
         case RESET_USER_INFO:
             return initialState;
         default:

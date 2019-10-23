@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{Component} from 'react';
 import { 
     View, 
     Text,
@@ -17,11 +17,15 @@ import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
+import FontIcon from 'react-native-vector-icons/FontAwesome';
 
 
-class HeaderHome extends React.Component {
-  state={
-    inputFocus:false
+class HeaderHome extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      textInput:''
+    };
   }
   openProfile() {
       if (this.props.userConnected) {
@@ -29,6 +33,23 @@ class HeaderHome extends React.Component {
       } else {
         this.props.navigate('SignIn',{message:'the message is here sdfsdfsd'})
       } 
+    }
+    openSearch (val) {
+      if (val) {
+        this.searchBarRef.focus()
+      } else {
+        this.searchBarRef.blur()
+      }
+    }
+    changeText (text) {
+      this.setState({textInput:text})
+    }
+    buttonReset() {
+      if (this.state.textInput != '') return <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => this.changeText('')}>
+        <FontIcon name='times-circle' color={'white'} size={12} />
+      </Col>
+      return <Col size={15}></Col>
+
     }
   render() {
     return (
@@ -63,7 +84,7 @@ class HeaderHome extends React.Component {
                     value={this.state.textInput}
                   />
                 </Col>
-                {/* {this.buttonReset()} */}
+                {this.buttonReset()}
               </Row>
             </TouchableOpacity>
           </Col>
@@ -95,7 +116,7 @@ const styles = StyleSheet.create({
     },
     input:{
       fontFamily: 'OpenSans-SemiBold',
-
+      color:'white',
     }
 });
 

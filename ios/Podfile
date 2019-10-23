@@ -38,7 +38,6 @@ target 'gamefare' do
   
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
-  pod 'Mixpanel'
 
   pod 'Fabric'
   pod 'Crashlytics'
@@ -48,6 +47,7 @@ target 'gamefare' do
   pod 'Stripe'
   pod ‘Firebase/Messaging’ 
   pod 'Firebase/Database'
+  pod 'Firebase/Auth'
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'

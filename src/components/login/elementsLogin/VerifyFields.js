@@ -16,7 +16,6 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import firebase from 'react-native-firebase'
 import axios from 'axios'
 import {connect} from 'react-redux';
-import { withNavigation } from 'react-navigation';
 
 import {userAction} from '../../../actions/userActions'
 const { height, width } = Dimensions.get('screen')
@@ -30,24 +29,21 @@ class VerifyFields extends Component {
       step:'sending'
     };
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.verifPhone = this.verifPhone.bind(this)
+    // this.verifPhone = this.verifPhone.bind(this)
     this.sendSMS = this.sendSMS.bind(this)
   }
   field = createRef();
   containerProps = { style: styles.inputWrapStyle };
   colors = ['#ff595f', '#e42959'];
   componentDidMount() {
-    console.log('ribaaa')
-    console.log(this.props.user)
-    this.props.userAction('signIn')
-    console.log(this.props.params)
+    console.log('verify field mount')
+    // console.log(this.props.user)
     this.sendSMS()
   }
   async sendSMS () {
+    console.log('sens sms')
     this.setState({loader:true,step:'sending'})
     var phoneNumber = this.props.params.phoneNumber
-    console.log('le phone nymberrr')
-    console.log(phoneNumber)
     phoneNumber = phoneNumber.replace('-','')
     phoneNumber = phoneNumber.replace('(','')
     phoneNumber = phoneNumber.replace(')','')
@@ -84,7 +80,7 @@ class VerifyFields extends Component {
     this.setState({step:'verifying',loader:true})
     var url = 'https://us-central1-getplayd.cloudfunctions.net/verifyPhone'
     var phoneNumber = this.props.params.phoneNumber
-    console.log('le phone nymberrr')
+    console.log('le phone nymberrr oupaaaaaaaaaaaaaaaaaa')
     console.log(phoneNumber)
     phoneNumber = phoneNumber.replace('-','')
     phoneNumber = phoneNumber.replace('(','')
@@ -111,13 +107,15 @@ class VerifyFields extends Component {
       await this.props.userAction('signIn',{
         userID:this.props.params.userID,
         firebaseSignInToken: this.props.params.firebaseSignInToken, 
+        phoneNumber:phoneNumber,
+        countryCode:this.props.params.country.dial_code.replace('+','')
       })
       console.log('this.props.profileCompleted')
       console.log(profileCompleted)
       if (profileCompleted) {
         this.props.navigate('Home')
       } else {
-        this.props.navigate('CompleteProfile',{userID:this.props.params.userID})
+        this.props.navigate('Complete',{data:{userID:this.props.params.userID}})
       }
     }
   }

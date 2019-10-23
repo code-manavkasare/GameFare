@@ -1,21 +1,15 @@
-import React, {Component,createRef} from 'react';
+import React, {Component} from 'react';
 import { 
-    View, 
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    Platform,
+    View,
     Dimensions
 } from 'react-native';
 import Header from '../layout/headers/HeaderButton'
 import ScrollView from '../layout/scrollViews/ScrollView'
 import sizes from '../style/sizes'
-import VerifyFields from './elementsLogin/VerifyFields'
-import {connect} from 'react-redux';
-
+import CompleteFields from './elementsLogin/CompleteFields'
 const { height, width } = Dimensions.get('screen')
 
-export default class Verify extends Component {
+export default class Complete extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +30,7 @@ export default class Verify extends Component {
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => <VerifyFields navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
+          contentScrollView={() => <CompleteFields navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={0}
@@ -46,8 +40,3 @@ export default class Verify extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-
-});
-
