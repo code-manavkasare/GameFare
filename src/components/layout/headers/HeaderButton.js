@@ -13,7 +13,7 @@ import {Grid,Row,Col} from 'react-native-easy-grid';
 
 
 import styleApp from '../../style/style'
-// import LoaderGreen from '../../layout/loaders/LoaderGreen'
+import Loader from '../loaders/Loader'
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 const { height, width } = Dimensions.get('screen')
@@ -41,7 +41,11 @@ export default class HeaderButton extends Component {
             <Text style={styles.text}>{this.props.title}</Text>
           </Col>      
           <Col size={15} style={[styles.center2,{alignItems: 'flex-end',paddingRight:20,}]}>
-
+            {
+              this.props.loader?
+              <Loader size={20} color='primary'/>
+              :null
+            }
           </Col>  
         </Row>
       </Animated.View>

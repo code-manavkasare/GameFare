@@ -304,6 +304,10 @@ PODS:
   - react-native-fcm (16.2.4):
     - Firebase/Messaging
     - React
+  - react-native-geocoder (0.5.0):
+    - React
+  - react-native-geolocation (2.0.2):
+    - React
   - react-native-mixpanel (0.0.6):
     - Mixpanel (~> 3.4.5)
     - React
@@ -410,6 +414,8 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
+  - react-native-geocoder (from `../node_modules/react-native-geocoder`)
+  - react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)
@@ -472,6 +478,10 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-branch
   react-native-fcm:
     :path: ../node_modules/react-native-fcm
+  react-native-geocoder:
+    :path: ../node_modules/react-native-geocoder
+  react-native-geolocation:
+    :path: ../node_modules/@react-native-community/geolocation
   react-native-mixpanel:
     :path: ../node_modules/react-native-mixpanel
   react-native-splash-screen:
@@ -564,6 +574,8 @@ SPEC CHECKSUMS:
   React-jsinspector: 044105eea064aec81adc5e4d777a8f6589e7d094
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
+  react-native-geocoder: 33b16a5929aa868fef37acb4f7ee10a428cd5fff
+  react-native-geolocation: 8710b1bae31e734191273344d52141151b94bb3f
   react-native-mixpanel: 794ab824eabb78cc90dc7f39c218be5ebd47023b
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
   react-native-statusbar: e5562dc498ae684a62fe96f35aaaf2051a51115a

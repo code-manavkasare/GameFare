@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{Component} from 'react';
 import { 
     View, 
     Text,
@@ -12,10 +12,16 @@ import Header from '../../layout/headers/HeaderButton'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import sizes from '../../style/sizes'
 
-export default class LoadingScreen extends React.Component {
-  state={check:false}
-  static getDerivedStateFromProps(props, state) {
-    return state
+export default class LoadingScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      
+    };
+  }
+  componentDidMount() {
+    console.log('le mount step 2')
+    console.log(this.props.navigation.getParam('data'))
   }
   click() {
       console.log('clck loading')
@@ -35,7 +41,7 @@ export default class LoadingScreen extends React.Component {
       <View style={{backgroundColor:'white',height:height }}>
         <Header
         onRef={ref => (this.headerRef = ref)}
-        title={'title'}
+        title={'Advanced settings'}
         icon={'angle-left'}
         close={() => this.props.navigation.goBack()}
         />
