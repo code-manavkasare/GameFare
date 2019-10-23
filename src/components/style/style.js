@@ -35,6 +35,11 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-Regular',
       color:colors.title,
     },
+    inputOff:{
+      color:'#C7C7CC',
+      fontSize:15,
+      fontFamily: 'OpenSans-Regular'
+    },
     subtitle:{
       fontSize:14,
       fontFamily: 'OpenSans-SemiBold',
@@ -52,6 +57,10 @@ export default styles = StyleSheet.create({
       bottom:40,
       right:25,
       zIndex:60,
+      shadowColor: '#46474B',
+      shadowOffset: { width: 0, height: 0 },
+      shadowRadius: 20,
+      shadowOpacity: 0.05,
     },
     headerBooking:{
       position:'absolute',

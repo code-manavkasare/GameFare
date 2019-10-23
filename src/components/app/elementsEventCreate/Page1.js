@@ -20,6 +20,9 @@ import ExpandableCard from '../../layout/cards/ExpandableCard'
 import Switch from '../../layout/switch/Switch'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
+import Icon from '../../layout/icons/icons'
+import DateEvent from './DateEvent'
+import {date} from '../../layout/date/date'
 
 class Page1 extends Component {
   constructor(props) {
@@ -49,8 +52,6 @@ class Page1 extends Component {
     };
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
-    this.translateXAddress = new Animated.Value(0)
-    this.translateXArea = new Animated.Value(-width)
   }
   componentDidMount() {
     console.log('page 1 mount')
@@ -93,15 +94,12 @@ class Page1 extends Component {
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
       <Row >
         <Col size={15} style={styleApp.center}>
-            {/* <Image
-              style={{width:20,height:20}}
-              source={require('../../../../img/cards/nameEvent.png')}
-            />  */}
+          <Icon name='tag' size={18} color={colors.title} />
         </Col>
         <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
           <TextInput
             style={styleApp.input}
-            placeholder="Pick a name"
+            placeholder="Event name"
             returnKeyType={'done'}
             ref={(input) => { this.nameInput = input }}
             underlineColorAndroid='rgba(0,0,0,0)'
@@ -134,7 +132,7 @@ class Page1 extends Component {
     if (free) return {
       ...styleApp.input,
       color:color,
-      fontFamily:Fonts.MarkOTMedium,
+      fontFamily:'OpenSans-SemiBold',
       // textDecorationLine: 'underline',
 
     }
@@ -147,10 +145,7 @@ class Page1 extends Component {
           <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} style={this.styleCondition(this.state[state],styleApp.inputForm,{borderColor:'#eaeaea'},{backgroundColor:'white',borderColor:'#eaeaea'})}>
             <Row>
               <Col style={styleApp.center} size={25}>
-              {/* <Image
-                style={{width:20,height:20}}
-                source={require('../../../../img/cards/coin.png')}
-              /> */}
+                <Icon name='dollar' size={18} color={colors.title} />
               </Col>
               <Col style={[styleApp.center2,{paddingLeft:15}]} size={75}>
                 <TextInput
@@ -194,7 +189,7 @@ class Page1 extends Component {
               <View style={this.styleTickFree(this.state.free)}>
                 {
                 this.state.free?
-                <FontIcon name="check" color="white" size={15} />
+                <FontIcon name="check" color={colors.primary} size={15} />
                 :
                 <FontIcon name="check" color="#eaeaea" size={15} />
                 }
@@ -210,6 +205,60 @@ class Page1 extends Component {
       
     )
   }
+  address() {
+    return (
+      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,onGoBack: (data) => this.setLocation(data)})}>
+        <Row>
+          <Col style={styleApp.center} size={15}>
+            <Icon name='location' size={18} color={colors.title} />
+          </Col>
+          <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
+            <Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Event address':this.state.location.address}</Text>
+          </Col>
+        </Row>
+      </TouchableOpacity>
+    )
+  }
+  async setLocation(data) {
+    await this.setState({location:data})
+    this.props.navigation.navigate('CreateEvent1')
+  }
+  async setDate (data) {
+    console.log('setDate')
+    console.log(data)
+    await this.setState({endDate:data.endDate,startDate:data.endDate})
+    this.props.navigation.navigate('CreateEvent1')
+  }
+  dateTime(start,end) {
+    return <DateEvent 
+    start={start}
+    end={end}
+    />
+  }
+  heightDateTimeCard() {
+    if (this.state.startDate == '') return 50
+    else if (date(this.state.startDate,'ddd, MMM D') == date(this.state.endDate,'ddd, MMM D')) return 65
+    return 100
+  }
+  date() {
+    return (
+      <TouchableOpacity style={[styleApp.inputForm,{height:this.heightDateTimeCard()}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,onGoBack: (data) => this.setDate(data)})}>
+      <Row>
+        <Col style={styleApp.center} size={15}>
+          <Icon name='calendar' size={18} color={colors.title} />
+        </Col>
+        <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
+          {
+            this.state.startDate == ''?
+            <Text style={styleApp.inputOff}>Date and time</Text>
+            :
+            this.dateTime(this.state.startDate,this.state.endDate)
+          }
+        </Col>
+      </Row>
+    </TouchableOpacity>
+    )
+  }
   page1() {
       return (
         <View>
@@ -217,7 +266,7 @@ class Page1 extends Component {
           <View  style={{height:10}}/>
           {this.sports()}
 
-          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Event name</Text>
+          {/* <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Event name</Text> */}
           {this.tournamentName()}
 
           <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Entre fee</Text>
@@ -225,10 +274,17 @@ class Page1 extends Component {
 
 
           <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Location</Text>
+          {this.address()}
 
+          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Date & Time</Text>
+          {this.date()}
 
         </View>
       )
+  }
+  conditionOn () {
+    if (this.state.name == '' || this.state.joiningFee == '' || (this.state.area == '' && this.state.randomLocation == true) || (this.state.location.address == '' && this.state.randomLocation == false) || this.state.startDate == '') return false
+    return true
   }
   render() {
     return (
@@ -251,11 +307,11 @@ class Page1 extends Component {
 
         <ButtonRound
           icon={'next'} 
-          enabled={true} 
+          enabled={this.conditionOn()} 
           loader={false} 
           translateYFooter={this.translateYFooter}
           translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('CreateEvent2')}
+          click={() => this.props.navigation.navigate('CreateEvent2',{data:this.state})}
          />
 
       </View>

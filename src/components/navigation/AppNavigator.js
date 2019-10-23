@@ -12,7 +12,11 @@ import ListCountry from '../login/elementsFlags/ListCountry'
 import CreateEvent1 from '../app/elementsEventCreate/Page1'
 import CreateEvent2 from '../app/elementsEventCreate/Page2'
 
+import LocationSelector from '../app/elementsEventCreate/LocationSelector'
+import DateSelector from '../app/elementsEventCreate/DateSelector'
+
 import Alert from '../layout/alerts/Alert'
+
 
 
 const AppNavigator = createStackNavigator(
@@ -36,6 +40,7 @@ const AppNavigator = createStackNavigator(
         cardOverlayEnabled:true
     }
 );
+
 
 const LoginNavigator = createStackNavigator(
     {
@@ -66,7 +71,9 @@ const RootStack = createStackNavigator(
         MainApp:AppNavigator,
         SignIn:LoginNavigator,
         ListCountry:ListCountry,
-        Alert:Alert
+        Alert:Alert,
+        Location:LocationSelector,
+        Date:DateSelector
     },
     {
         initialRouteName:'MainApp',

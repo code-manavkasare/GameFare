@@ -39,7 +39,7 @@ if (Platform.OS == 'ios'){
         marginTopHeader = 48
         heightPicture=280
         heightHeaderHome = 100
-        heightFooterBooking =100
+        heightFooterBooking =110
         heightFooter = 91
         marginTopApp = 35
         heightHeaderHomeSearch = 100
