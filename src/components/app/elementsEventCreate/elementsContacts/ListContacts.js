@@ -11,7 +11,7 @@ import {
   View
 } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
-import FontIcon from 'react-native-vector-icons/FontAwesome';
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import Permissions from 'react-native-permissions'
 import AndroidOpenSettings from 'react-native-android-open-settings'
 import Contacts from 'react-native-contacts';
@@ -22,6 +22,7 @@ import AllIcons from '../../../layout/icons/AllIcons'
 
 import sizes from '../../../style/sizes';
 import ScrollView from '../../../layout/scrollViews/ScrollView'
+import Button from '../../../layout/buttons/Button'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -85,7 +86,7 @@ export default class ContactsComponent extends Component {
           <Row>
             <Col size={15} style={styles.center}>
               {
-              Object.values(this.state.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length == 0?
+              Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length == 0?
               <AllIcons name="check" type="font" color={colors.off} size={16} />
               :
               <AllIcons name="check" type="font" color={colors.green} size={16} />
@@ -126,17 +127,12 @@ export default class ContactsComponent extends Component {
       )
     }
     getLetterDisplay (letter) {
-      console.log('letter')
-      console.log(letter)
       if (letter != this.state.alphabeth[this.counter]) {
         var counter = Object.keys(this.state.alphabeth).find(key => this.state.alphabeth[key] === letter)
-        console.log(counter)
         this.counter = counter
-        console.log('laaaaaaaaasdfsdfdfd')
-        console.log(this.state.alphabeth[this.counter])
         return <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:1,borderColor:'#eaeaea'}}>
           <Col style={styles.center} size={15}>
-            <Text style={[styles.text,{fontSize:12}]}>{this.state.alphabeth[this.counter]}</Text>
+            <Text style={[styles.text,{fontSize:12,fontFamily:'OpenSans-SemiBold'}]}>{this.state.alphabeth[this.counter]}</Text>
           </Col>
           <Col size={85}></Col>
         </Row>
@@ -146,7 +142,7 @@ export default class ContactsComponent extends Component {
     listContacts() {    
       this.counter = 0
       return (this.state.contacts.map((contact,i) => (
-        <View>
+        <View key={i}>
         {this.getLetterDisplay(contact.givenName[0])}
         {this.rowContact(contact,i)}
         </View>
@@ -159,13 +155,13 @@ export default class ContactsComponent extends Component {
       return this.setState({contacts:this.state.allContacts.filter(contact => contact.givenName.toLowerCase().search(search.toLowerCase()) != -1 || contact.familyName.toLowerCase().search(search.toLowerCase()) != -1),search:search})
     }
     viewNotAuthorized() {
-      return <View style={[styles.center,{marginTop:20}]}>
+      return <View style={[styles.center,{marginTop:20,width:width-40,marginLeft:20}]}>
       <Image source={require('../../../../img/animals/bird.png')} style={{height:70,width:70,marginBottom:20}} />
-      <Text style={styles.text}>We need to access your contacts. Please go to your settings and turn the contacts authorisation.</Text>
+      <Text style={[styles.text,{fontFamily:'OpenSans-SemiBold'}]}>We need to access your contacts. Please go to your settings and turn the contacts authorisation.</Text>
 
-      {/* <ButtonFooterBooking click={this.goToSettings.bind(this)} text={'Settings'} styleText={{color:colors.primary,fontSize:14}} styleButton={{height:35,backgroundColor:'white',marginBottom:10,marginTop:20}} onPressColor='white'/>
+      <Button click={this.goToSettings.bind(this)} text={'Settings'} styleText={{color:colors.primary,fontSize:14}} styleButton={{height:35,backgroundColor:'white',marginBottom:10,marginTop:20}} onPressColor='white'/>
 
-      <ButtonFooterBooking click={() =>this.loadContacts()} text={'Load contacts'} styleText={{color:colors.primary,fontSize:14}} styleButton={{height:35,backgroundColor:'white',marginBottom:15}} onPressColor='white'/> */}
+      <Button click={() =>this.loadContacts()} text={'Load contacts'} styleText={{color:colors.primary,fontSize:14}} styleButton={{height:35,backgroundColor:'white',marginBottom:15}} onPressColor='white'/>
 
     </View>
     }

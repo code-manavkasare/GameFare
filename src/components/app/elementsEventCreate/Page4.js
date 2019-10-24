@@ -18,6 +18,8 @@ import Contacts from './elementsContacts/Contacts'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
+import branch from 'react-native-branch'
+import SendSMS from 'react-native-sms'
 
 class Page4 extends Component {
   constructor(props) {
@@ -39,6 +41,51 @@ class Page4 extends Component {
         </View>
       )
   }
+
+  async submit() {
+    var contacts = this.contactRef.getContactSelected()
+    var that = this
+    if (contacts.length == 0) {
+      return this.props.navigation.navigate('ListEvents',{})
+    }
+    var infoEvent = this.props.navigation.getParam('data')
+    let branchUniversalObject = await branch.createBranchUniversalObject('canonicalIdentifier', {
+      // contentTitle: description,
+      contentDescription: 'Join my event ' + infoEvent.info.name,
+      title: infoEvent.info.name,
+      contentMetadata: {
+        customMetadata: {
+          'eventID': infoEvent.eventID,
+          'action':'openEventPage',
+          '$uri_redirect_mode': '1',
+          '$og_image_url':'https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
+        }
+      }
+    })
+
+    let linkProperties = { feature: 'share', channel: 'GameFare' }
+    let controlParams = { $desktop_url: 'http://getgamefare.com', $ios_url: 'http://getgamefare.com' }
+
+    let {url} = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
+
+    var phoneNumbers = Object.values(contacts).map(contact => contact.phoneNumbers[0].number)
+    console.log(url)
+    console.log(phoneNumbers)
+    console.log('phoneNumbers')
+    SendSMS.send({
+      body: 'Join my event by following the link! ' + url,
+      recipients: phoneNumbers,
+      successTypes: ['sent', 'queued'],
+      allowAndroidSendWithoutReadPermission: true
+      }, (completed, cancelled, error) => {
+        console.log('SMS Callback: completed: ' + completed + ' cancelled: ' + cancelled + 'error: ' + error);
+
+        that.setState({loader:false})
+        return that.props.navigation.navigate('ListEvents',{})
+  
+      });
+
+  }
   
   render() {
     return (
@@ -46,8 +93,9 @@ class Page4 extends Component {
         <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Invite your friends'}
-        icon={'angle-left'}
-        close={() => this.props.navigation.goBack()}
+        icon={''}
+
+        close={() => console.log('')}
         />
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
@@ -65,7 +113,7 @@ class Page4 extends Component {
           loader={false} 
           translateYFooter={this.translateYFooter}
           translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('Events',{})}
+          click={() => this.submit()}
          />
 
       </View>

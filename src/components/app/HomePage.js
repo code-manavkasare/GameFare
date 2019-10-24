@@ -9,8 +9,11 @@ import {
 
 import firebase from 'react-native-firebase'
 import HeaderHome from './elementsHome/HeaderHome'
+import FooterHome from './elementsHome/FooterHome'
 import ListEvents from './elementsHome/ListEvent'
 import styleApp from '../style/style'
+import colors from '../style/colors'
+import ButtonRound from '../layout/buttons/ButtonRound'
 const { height, width } = Dimensions.get('screen')
 import StatusBar from '@react-native-community/status-bar';
 
@@ -31,7 +34,7 @@ export default class HomeScreen extends React.Component {
 
         <ListEvents navigate={this.navigate.bind(this)}/>
 
-        
+        <FooterHome navigate={(val) => this.props.navigation.navigate(val)} />
       </View>
     );
   }

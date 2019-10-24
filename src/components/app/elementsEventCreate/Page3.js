@@ -94,7 +94,7 @@ class Page3 extends Component {
     console.log(data)
       return (
           <View style={{marginTop:0}}>
-            {this.rowIcon('tag',this.title(data.step1.name),'moon')}
+            {this.rowIcon('hashtag',this.title(data.step1.name),'font')}
             
 
             {this.sport(data.sport)}
@@ -140,9 +140,9 @@ class Page3 extends Component {
       "info": {
         "commission": 0,       
         "displayInApp": true,    
-        "sport": data.step1.sport,
+        "sport": data.sport.value,
         "public": !data.step1.private,
-        "maxAttendance": 4,
+        "maxAttendance": advancedSettings.players,
         "name": data.step1.name,
         "organizer": this.props.userID,
         "reward": 0.5,        
@@ -163,12 +163,12 @@ class Page3 extends Component {
     }
     console.log('event')
     console.log(event)
-    // var pushEvent = await firebase.database().ref('events').push(event)
-    // event.eventID = pushEvent.key
-    // await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
-    // await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(event)
+    var pushEvent = await firebase.database().ref('events').push(event)
+    event.eventID = pushEvent.key
+    await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
+    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(event)
     this.setState({loader:false})
-    this.props.navigation.navigate('CreateEvent4',{data:this.props.navigation.getParam('data')})
+    this.props.navigation.navigate('CreateEvent4',{data:event})
   }
   render() {
     return (

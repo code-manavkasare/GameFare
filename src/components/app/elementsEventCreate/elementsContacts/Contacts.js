@@ -13,7 +13,7 @@ import {
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Permissions from 'react-native-permissions'
 import AndroidOpenSettings from 'react-native-android-open-settings'
-import FontIcon from 'react-native-vector-icons/FontAwesome';
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
 
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors'
@@ -81,11 +81,11 @@ export default class ContactsComponent extends Component {
       return (
         <View key={key} style={{height:35 ,width:this.widthCard(contact.givenName + ' ' + contact.familyName)}}>
           <Row style={styles.cardContactSelected}>
-            <Col size={80} style={styles.center}>
-              <Text style={[styles.text,{color:'white',fontSize:12}]}>{contact.givenName} {contact.familyName}</Text>
+            <Col size={75} style={styles.center}>
+              <Text style={[styles.text,{color:'white',fontSize:11}]}>{contact.givenName} {contact.familyName}</Text>
             </Col>
-            <Col size={20} style={styles.center} activeOpacity={0.7} onPress={() => {this.deleteContact(contact)}}>
-              <FontIcon style={{marginTop:0,marginRight:5}} name='times-circle' color='white' size={14}/>
+            <Col size={25} style={styles.center} activeOpacity={0.7} onPress={() => {this.deleteContact(contact)}}>
+              <FontIcon style={{marginTop:0,marginRight:5}} name='times-circle' color='white' size={13}/>
             </Col>
           </Row>
         </View>
@@ -112,6 +112,7 @@ export default class ContactsComponent extends Component {
     listContacts() {    
       return <ListContacts 
       onRef={ref => (this.listContactRef = ref)} 
+      contactsSelected={this.state.contactsSelected}
       selectContact={this.selectContact.bind(this)}
       deleteContact={this.deleteContact.bind(this)}
       setFreeContact={this.setFreeContact.bind(this)}
@@ -189,7 +190,7 @@ export default class ContactsComponent extends Component {
           <View style={{width:width,marginLeft:-20}}>
             <Row style={{borderBottomWidth:1,borderColor:'#eaeaea'}}>
               <Col size={15} style={styles.center}>
-                <AllIcons name="user" type="font" color={colors.off} size={16} />
+                <AllIcons name="user-alt" type="font" color={colors.primary} size={16} />
               </Col>
               <Col size={70} style={[styles.center2,{paddingLeft:15}]}>
                 <Row style={{height:40}}>
@@ -266,7 +267,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   rowContactSelected:{
-    width:'100%',flexDirection: 'row', 
+    width:width,flexDirection: 'row', 
+    marginLeft:-20,
+    borderBottomWidth:1,
+    borderColor:colors.off,
     flexWrap: 'wrap',
     backgroundColor:'white',
   },

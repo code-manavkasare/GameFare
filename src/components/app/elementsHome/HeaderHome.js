@@ -92,11 +92,11 @@ class HeaderHome extends Component {
           
 
           <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigate('CreateEvent1',{})} >
-            <Image source={require('../../../img/icons/plusWhite.png')} style={{height:20,width:20,}} />
+            <AllIcons name="plus" color='white' size={24} type='font' />
           </Col>
 
           <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.openProfile()}>
-            <Image source={require('../../../img/icons/userWhite.png')} style={{height:23,width:23,}} />
+            <AllIcons name="user-circle" color='white' size={27} type='font' />
           </Col>
         </Row>
       </View>

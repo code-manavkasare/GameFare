@@ -91,7 +91,7 @@ class ProfilePage extends Component {
           readerMode: false,
           animated: true,
           modalPresentationStyle: 'overFullScreen',
-          modalTransitionStyle: 'flipHorizontal',
+          modalTransitionStyle: 'coverVertical',
           modalEnabled: true,
           // Android Properties
           showTitle: true,

@@ -68,7 +68,7 @@ export default class CardEvent extends React.Component {
 
               <Row>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="user" size={15} color={colors.title} type='font' />
+                  <AllIcons name="user-plus" size={15} color={colors.title} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.info.maxAttendance} people</Text>

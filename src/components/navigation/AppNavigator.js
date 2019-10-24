@@ -17,6 +17,8 @@ import CreateEvent4 from '../app/elementsEventCreate/Page4'
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
 
+import ListEvents from '../app/elementsUser/ListEvents'
+
 import Alert from '../layout/alerts/Alert'
 
 
@@ -35,7 +37,13 @@ const AppNavigator = createStackNavigator(
         CreateEvent1:CreateEvent1,
         CreateEvent2:CreateEvent2,
         CreateEvent3:CreateEvent3,
-        CreateEvent4:CreateEvent4
+        CreateEvent4:{
+            screen:CreateEvent4,
+            navigationOptions: ({ navigation }) => ({
+                gesturesEnabled: false,
+            }),
+        },
+        ListEvents:ListEvents,
     },
     {
         initialRouteName:'Home',

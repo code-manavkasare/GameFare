@@ -95,7 +95,7 @@ class Page1 extends Component {
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
       <Row >
         <Col size={15} style={styleApp.center}>
-          <AllIcons name='tag' size={18} color={colors.title} type='font' />
+          <AllIcons name='hashtag' size={18} color={colors.title} type='font' />
         </Col>
         <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
           <TextInput
@@ -262,7 +262,7 @@ class Page1 extends Component {
   }
   page1() {
       return (
-        <View>
+        <View style={{marginTop:-15}}>
           {this.switch('Public','Private','private')}
           <View  style={{height:10}}/>
           {this.sports()}

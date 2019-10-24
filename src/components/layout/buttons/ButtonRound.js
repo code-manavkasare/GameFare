@@ -68,7 +68,9 @@ export default class ButtonRound extends Component {
              :this.props.icon=='invite'?
              <FontIcon name='send' size={20} color={this.colorIcon()} />
              :this.props.icon=='sign'?
-             <Image source={require('../../../img/icons/userWhite.png')} style={{height:20,width:20,}} />
+             <FontIcon name='user-circle' size={25} color={'white'} />
+             :this.props.icon=='event'?
+             <FontIcon name='calendar-alt' size={25} color={'white'} />
              :this.props.icon=='create'?
              <FontIcon name='arrow-right' size={20} color={this.colorIcon()} />
              :null
