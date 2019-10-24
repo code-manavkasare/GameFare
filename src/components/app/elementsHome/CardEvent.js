@@ -17,6 +17,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 // import {Fonts} from '../../../../utils/Font'
 import colors from '../../style/colors'
 import Icon from '../../layout/icons/icons'
+import AllIcons from '../../layout/icons/AllIcons'
 import styleApp from '../../style/style'
 
 var  { height, width } = Dimensions.get('screen')
@@ -49,7 +50,7 @@ export default class CardEvent extends React.Component {
             <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
               <Row style={{marginBottom:5}}>
                 <Col size={10} style={styles.center2}>
-                  <Icon name="location" size={15} color={colors.title} />
+                  <AllIcons name="map-marker-alt" size={15} color={colors.title} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.location.area}</Text>
@@ -58,7 +59,7 @@ export default class CardEvent extends React.Component {
 
               <Row style={{paddingBottom:5}}>
                 <Col size={10} style={styles.center2}>
-                  <Icon name="calendar" size={14} color={colors.title} />
+                  <AllIcons name="calendar-alt" size={15} color={colors.title} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')}</Text>
@@ -67,7 +68,7 @@ export default class CardEvent extends React.Component {
 
               <Row>
                 <Col size={10} style={styles.center2}>
-                  <Icon name="people" size={15} color={colors.title} /> 
+                  <AllIcons name="user-plus" size={15} color={colors.title} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.info.maxAttendance} people</Text>

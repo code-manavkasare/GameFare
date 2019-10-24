@@ -36,7 +36,7 @@ export default class Verify extends Component {
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => <VerifyFields navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
+          contentScrollView={() => <VerifyFields pageFrom={this.props.navigation.getParam('pageFrom')} navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={0}

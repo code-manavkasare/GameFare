@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
-import FontIcon from 'react-native-vector-icons/FontAwesome';
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
@@ -20,6 +20,7 @@ import FastImage from 'react-native-fast-image';
 
 const { height, width } = Dimensions.get('screen')
 import Icon from '../icons/icons'
+import AllIcons from '../icons/AllIcons'
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 
 export default class ExpandableCard extends Component {
@@ -45,8 +46,6 @@ export default class ExpandableCard extends Component {
         return 0
       }
     componentWillMount(){
-      console.log('looool')
-      console.log(this.props.option)
     }
     valueOption(option) {
       if (option.value == this.props.providersPreference.type) return <Text style={[styles.title,{color:colors.title}]}>{this.props.providersPreference.text}</Text> 
@@ -156,14 +155,7 @@ export default class ExpandableCard extends Component {
           <Col size={15} style={styles.center}>
             {
               this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon!=undefined?
-              // <FastImage
-              //     resizeMode={"cover"}
-              //     style={{width:20,height:20}}
-              //     source={{
-              //         uri: this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon,
-              //     }}
-              //   /> 
-              <Icon name={'tennis'} color={colors.title} size={17} />
+              <AllIcons type={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].typeIcon} name={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon} color={colors.title} size={17} />
               :
               <FontIcon name="check" color={colors.title} size={17} />
             }
@@ -181,7 +173,7 @@ export default class ExpandableCard extends Component {
           <Col size={15} style={styleApp.center}>
           {
           this.props.option.expendable == true?
-          <AnimatedIcon name='angle-down' color={colors.subtitle} style={{transform: [{rotate: spin}]}} size={18} />
+          <AnimatedIcon name='angle-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={16} />
           :
           <FontIcon name='check' color={this.colorCheck(this.props.option,true,'#eaeaea')} size={15} />
           }
@@ -204,7 +196,7 @@ export default class ExpandableCard extends Component {
               <Col size={15} style={styles.center}>
                 {
                   option.icon != undefined?
-                  <Icon name={option.icon} color={colors.title} size={17} />
+                  <AllIcons type={option.typeIcon} name={option.icon} color={colors.title} size={17} />
                   :
                   <FontIcon name="check" color={'#eaeaea'} size={20} />
                   }
@@ -213,9 +205,9 @@ export default class ExpandableCard extends Component {
               <Col size={70} style={[styles.center2,{paddingLeft:15}]}>
                 {
                   option.locked!=true?
-                  <Text style={styles.title}>{option.text}</Text> 
+                  <Text style={styleApp.inputOff}>{option.text}</Text> 
                   :
-                  <Text style={[styles.title,{color:colors.title}]}>{option.text}</Text> 
+                  <Text style={[styleApp.inputOff,{color:colors.title}]}>{option.text}</Text> 
                 }
               
               </Col>
@@ -291,11 +283,11 @@ const styles = StyleSheet.create({
   title:{
     color:'#C7C7CC',
     fontSize:15,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-Regular',
   },
   title2:{
-    fontSize:16,
-    fontFamily: 'OpenSans-SemiBold',
+    fontSize:15,
+    fontFamily: 'OpenSans-Regular',
   },
 });
 

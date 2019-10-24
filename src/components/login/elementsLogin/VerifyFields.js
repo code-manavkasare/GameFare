@@ -113,9 +113,9 @@ class VerifyFields extends Component {
       console.log('this.props.profileCompleted')
       console.log(profileCompleted)
       if (profileCompleted) {
-        this.props.navigate('Home')
+        this.props.navigate(this.props.pageFrom)
       } else {
-        this.props.navigate('Complete',{data:{userID:this.props.params.userID}})
+        this.props.navigate('Complete',{data:{userID:this.props.params.userID},pageFrom:this.props.pageFrom})
       }
     }
   }

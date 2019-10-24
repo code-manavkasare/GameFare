@@ -40,7 +40,7 @@ export default class CompleteFields extends Component {
       })
       await firebase.database().ref('users/' + this.props.params.userID ).update({profileCompleted:true})
       await this.secondTextInput.blur()
-      NavigationService.navigate('Home')
+      NavigationService.navigate(this.props.pageFrom)
     }
   render() {
     return (      

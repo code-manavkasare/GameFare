@@ -8,21 +8,22 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
-
 const { height, width } = Dimensions.get('screen')
+import { Col, Row, Grid } from "react-native-easy-grid";
+import FontIcon from 'react-native-vector-icons/FontAwesome';
+import StatusBar from '@react-native-community/status-bar';
+
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import ScrollView from '../../layout/scrollViews/ScrollView'
-import sizes from '../../style/sizes'
-import styleApp from '../../style/style'
-import StatusBar from '@react-native-community/status-bar';
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import Switch from '../../layout/switch/Switch'
-import { Col, Row, Grid } from "react-native-easy-grid";
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import Icon from '../../layout/icons/icons'
+import AllIcons from '../../layout/icons/AllIcons'
 import DateEvent from './DateEvent'
 import {date} from '../../layout/date/date'
+
+import sizes from '../../style/sizes'
+import styleApp from '../../style/style'
 
 class Page1 extends Component {
   constructor(props) {
@@ -94,7 +95,7 @@ class Page1 extends Component {
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
       <Row >
         <Col size={15} style={styleApp.center}>
-          <Icon name='tag' size={18} color={colors.title} />
+          <AllIcons name='hashtag' size={18} color={colors.title} type='font' />
         </Col>
         <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
           <TextInput
@@ -145,7 +146,7 @@ class Page1 extends Component {
           <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} style={this.styleCondition(this.state[state],styleApp.inputForm,{borderColor:'#eaeaea'},{backgroundColor:'white',borderColor:'#eaeaea'})}>
             <Row>
               <Col style={styleApp.center} size={25}>
-                <Icon name='dollar' size={18} color={colors.title} />
+                <AllIcons name='dollar-sign' size={18} color={colors.title} type='font'/>
               </Col>
               <Col style={[styleApp.center2,{paddingLeft:15}]} size={75}>
                 <TextInput
@@ -210,7 +211,7 @@ class Page1 extends Component {
       <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,onGoBack: (data) => this.setLocation(data)})}>
         <Row>
           <Col style={styleApp.center} size={15}>
-            <Icon name='location' size={18} color={colors.title} />
+            <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
           </Col>
           <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
             <Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Event address':this.state.location.address}</Text>
@@ -245,7 +246,7 @@ class Page1 extends Component {
       <TouchableOpacity style={[styleApp.inputForm,{height:this.heightDateTimeCard()}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,onGoBack: (data) => this.setDate(data)})}>
       <Row>
         <Col style={styleApp.center} size={15}>
-          <Icon name='calendar' size={18} color={colors.title} />
+          <AllIcons name='calendar-alt' size={18} color={colors.title} type='font'/>
         </Col>
         <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
           {
@@ -261,7 +262,7 @@ class Page1 extends Component {
   }
   page1() {
       return (
-        <View>
+        <View style={{marginTop:-15}}>
           {this.switch('Public','Private','private')}
           <View  style={{height:10}}/>
           {this.sports()}
@@ -269,14 +270,14 @@ class Page1 extends Component {
           {/* <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Event name</Text> */}
           {this.tournamentName()}
 
-          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Entre fee</Text>
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entre fee</Text>
           {this.entreeFeeSection('free')}
 
 
-          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Location</Text>
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Location</Text>
           {this.address()}
 
-          <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Date & Time</Text>
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Date & Time</Text>
           {this.date()}
 
         </View>
@@ -311,7 +312,7 @@ class Page1 extends Component {
           loader={false} 
           translateYFooter={this.translateYFooter}
           translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('CreateEvent2',{data:this.state})}
+          click={() => this.props.navigation.navigate('CreateEvent2',{data:this.state,sport:Object.values(this.props.sports).filter(sport => sport.value == this.state.sportsFilter.valueSelected)[0]})}
          />
 
       </View>

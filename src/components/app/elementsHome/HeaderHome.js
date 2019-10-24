@@ -18,6 +18,7 @@ import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
+import AllIcons from '../../layout/icons/AllIcons'
 
 
 class HeaderHome extends Component {
@@ -31,7 +32,7 @@ class HeaderHome extends Component {
       if (this.props.userConnected) {
         this.props.navigate('Profile',{message:'the message is here sdfsdfsd'})
       } else {
-        this.props.navigate('SignIn',{message:'the message is here sdfsdfsd'})
+        this.props.navigate('SignIn',{pageFrom:'Home'})
       } 
     }
     openSearch (val) {
@@ -61,7 +62,7 @@ class HeaderHome extends Component {
               {
                 !this.state.inputFocus?
                 <Col size={25} style={styleApp.center}>
-                  <Image source={require('../../../img/icons/searchWhite.png')} style={{height:17,width:17,}} />
+                  <AllIcons name="search" color='white' size={16} type='font' />
                 </Col>
                 :
                 <Col size={25} style={styleApp.center} activeOpacity={0.7} activeOpacity={0.7} onPress={() => this.openSearch(false)}>
@@ -91,11 +92,11 @@ class HeaderHome extends Component {
           
 
           <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigate('CreateEvent1',{})} >
-            <Image source={require('../../../img/icons/plusWhite.png')} style={{height:20,width:20,}} />
+            <AllIcons name="plus" color='white' size={24} type='font' />
           </Col>
 
           <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.openProfile()}>
-            <Image source={require('../../../img/icons/userWhite.png')} style={{height:23,width:23,}} />
+            <AllIcons name="user-circle" color='white' size={27} type='font' />
           </Col>
         </Row>
       </View>

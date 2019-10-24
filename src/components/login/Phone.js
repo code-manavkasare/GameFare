@@ -22,7 +22,7 @@ export default class LoadingScreen extends React.Component {
     return (
     <View>
       <Text style={[styleApp.title,{marginBottom:20,fontSize:21}]}>We will text your the verification code.</Text>
-      <PhoneFields country={this.props.navigation.getParam('country') == undefined?{"name": "United States",
+      <PhoneFields pageFrom={this.props.navigation.getParam('pageFrom')} country={this.props.navigation.getParam('country') == undefined?{"name": "United States",
         "dial_code": "+1",
         "code": "US"}:this.props.navigation.getParam('country')} navigate={this.navigate.bind(this)}/>
     </View>
@@ -38,7 +38,7 @@ export default class LoadingScreen extends React.Component {
         onRef={ref => (this.headerRef = ref)}
         title={''}
         icon={'angle-down'}
-        close={() => this.props.navigation.navigate('Home')}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
         />
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
