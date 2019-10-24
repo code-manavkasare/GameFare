@@ -27,6 +27,7 @@ import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import Icon from '../../layout/icons/icons'
+import AllIcons from '../../layout/icons/AllIcons'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Header from '../../layout/headers/HeaderButton'
@@ -304,7 +305,7 @@ export default class Location extends Component {
         <Animated.View style={[styleApp.inputForm,{height:60,marginTop:sizes.heightHeaderHome+10,marginBottom:0,borderBottomWidth:1}]}>
           <Row style={{height:50}}>
               <Col size={15} style={styles.center}>
-                <Icon name="location" size={20} color={colors.title} />
+                <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
               </Col>
               <Col size={75} style={styles.center2}>
                 <TextInput 

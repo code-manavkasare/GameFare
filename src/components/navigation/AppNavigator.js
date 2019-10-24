@@ -11,6 +11,8 @@ import ListCountry from '../login/elementsFlags/ListCountry'
 
 import CreateEvent1 from '../app/elementsEventCreate/Page1'
 import CreateEvent2 from '../app/elementsEventCreate/Page2'
+import CreateEvent3 from '../app/elementsEventCreate/Page3'
+import CreateEvent4 from '../app/elementsEventCreate/Page4'
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
@@ -32,6 +34,8 @@ const AppNavigator = createStackNavigator(
         Event: EventPage,
         CreateEvent1:CreateEvent1,
         CreateEvent2:CreateEvent2,
+        CreateEvent3:CreateEvent3,
+        CreateEvent4:CreateEvent4
     },
     {
         initialRouteName:'Home',

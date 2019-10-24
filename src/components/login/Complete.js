@@ -30,7 +30,7 @@ export default class Complete extends Component {
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => <CompleteFields navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
+          contentScrollView={() => <CompleteFields pageFrom={this.props.navigation.getParam('pageFrom')} navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={0}

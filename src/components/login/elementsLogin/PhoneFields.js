@@ -74,7 +74,7 @@ class PhoneFields extends Component {
       
       if (promiseAxios.data.response != false) { 
         await this.setState({loader:false})
-        await this.props.navigate('Verify',{data:{...promiseAxios.data,phoneNumber:phone,country:this.props.country}})
+        await this.props.navigate('Verify',{data:{...promiseAxios.data,phoneNumber:phone,country:this.props.country},pageFrom:this.props.pageFrom})
       } else {
         this.setState({error:true,loader:false})
       }
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius:3,
     paddingHorizontal:8,
     fontSize:16,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: 'OpenSans-Regular',
     color:'#4A4A4A',
     alignItems: 'center',
     justifyContent: 'center',

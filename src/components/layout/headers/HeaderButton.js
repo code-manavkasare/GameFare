@@ -14,7 +14,7 @@ import {Grid,Row,Col} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style'
 import Loader from '../loaders/Loader'
-import FontIcon from 'react-native-vector-icons/FontAwesome';
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 const { height, width } = Dimensions.get('screen')
 
@@ -35,7 +35,7 @@ export default class HeaderButton extends Component {
       <Animated.View style={styleApp.headerBooking}>
         <Row style={{height:50,borderBottomWidth:0,borderColor:this.props.borderColor}}>
           <Col size={15} style={[styles.center2,{paddingLeft:10,}]} activeOpacity={0.4} onPress={() => this.close()} >
-            <FontIcon size={29} name={this.props.icon} color={'#092642'} />   
+            <FontIcon size={23} name={this.props.icon} color={'#092642'} />   
           </Col>
           <Col size={70} style={styles.center}>
             <Text style={styles.text}>{this.props.title}</Text>

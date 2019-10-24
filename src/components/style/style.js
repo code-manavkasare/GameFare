@@ -20,6 +20,9 @@ export default styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-end',
     },
+    center4:{
+      alignItems: 'center',
+    },
     divider:{
       height:1,width:'100%',
       marginTop:20,marginBottom:10,
@@ -28,6 +31,11 @@ export default styles = StyleSheet.create({
     title:{
       fontSize:24,
       fontFamily: 'OpenSans-Bold',
+      color:colors.title,
+    },
+    text:{
+      fontSize:15,
+      fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },
     input:{

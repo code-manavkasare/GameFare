@@ -301,6 +301,8 @@ PODS:
   - react-native-branch (3.1.1):
     - Branch (= 0.27.1)
     - React
+  - react-native-contacts (5.0.4):
+    - React
   - react-native-fcm (16.2.4):
     - Firebase/Messaging
     - React
@@ -413,6 +415,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-branch (from `../node_modules/react-native-branch`)
+  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
   - react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)
@@ -476,6 +479,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/jsinspector
   react-native-branch:
     :path: ../node_modules/react-native-branch
+  react-native-contacts:
+    :path: ../node_modules/react-native-contacts
   react-native-fcm:
     :path: ../node_modules/react-native-fcm
   react-native-geocoder:
@@ -573,6 +578,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 752f034d0f007d1141a1c52ba9ef3fd9668fbfa7
   React-jsinspector: 044105eea064aec81adc5e4d777a8f6589e7d094
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
+  react-native-contacts: 37359cc1f95ef1eab1c3bd541845a95a0b7b8ea6
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
   react-native-geocoder: 33b16a5929aa868fef37acb4f7ee10a428cd5fff
   react-native-geolocation: 8710b1bae31e734191273344d52141151b94bb3f
