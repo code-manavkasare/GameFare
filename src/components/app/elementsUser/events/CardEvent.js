@@ -15,13 +15,13 @@ import {
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 // import {Fonts} from '../../../../utils/Font'
-import colors from '../../style/colors'
-import Icon from '../../layout/icons/icons'
-import AllIcons from '../../layout/icons/AllIcons'
-import styleApp from '../../style/style'
+import colors from '../../../style/colors'
+import Icon from '../../../layout/icons/icons'
+import AllIcons from '../../../layout/icons/AllIcons'
+import styleApp from '../../../style/style'
 
 var  { height, width } = Dimensions.get('screen')
-import {date,time,timeZone} from '../../layout/date/date'
+import {date,time,timeZone} from '../../../layout/date/date'
 
 export default class CardEvent extends React.Component {
     async clickProduct () {

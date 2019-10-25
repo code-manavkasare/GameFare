@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import HomePage from '../app/HomePage'
 import ProfilePage from '../app/ProfilePage'
 import EventPage from '../app/EventPage'
+import Checkout from '../app/elementsJoining/Checkout'
 
 import Phone from '../login/Phone'
 import Verify from '../login/Verify'
@@ -17,7 +18,7 @@ import CreateEvent4 from '../app/elementsEventCreate/Page4'
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
 
-import ListEvents from '../app/elementsUser/ListEvents'
+import ListEvents from '../app/elementsUser/events/ListEvents'
 
 import Alert from '../layout/alerts/Alert'
 
@@ -44,6 +45,7 @@ const AppNavigator = createStackNavigator(
             }),
         },
         ListEvents:ListEvents,
+        Checkout:Checkout
     },
     {
         initialRouteName:'Home',

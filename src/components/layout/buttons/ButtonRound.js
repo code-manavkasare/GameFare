@@ -52,12 +52,11 @@ export default class ButtonRound extends Component {
   }
   render() {  
     return (
-      <Animated.View style={[this.styleButton(),{transform:[{translateY:this.props.translateYFooter},{translateX:this.props.translateXFooter}]}]}>
       <TouchableHighlight 
         activeOpacity={1} 
         disabled={this.props.loader}
         underlayColor={this.onPressColor()}
-        style={[styles.center,{width:'100%',height:'100%',borderRadius:32.5}]}
+        style={this.styleButton()}
         onPress={() => this.props.click()} 
       >
            {
@@ -66,9 +65,11 @@ export default class ButtonRound extends Component {
              :this.props.icon=='next'?
              <FontIcon name='arrow-right' size={22} color={this.colorIcon()} />
              :this.props.icon=='invite'?
-             <FontIcon name='send' size={20} color={this.colorIcon()} />
+             <FontIcon name='share' size={20} color={this.colorIcon()} />
              :this.props.icon=='sign'?
              <FontIcon name='user-circle' size={25} color={'white'} />
+             :this.props.icon=='check'?
+             <FontIcon name='check' size={25} color={'white'} />
              :this.props.icon=='event'?
              <FontIcon name='calendar-alt' size={25} color={'white'} />
              :this.props.icon=='create'?
@@ -76,7 +77,6 @@ export default class ButtonRound extends Component {
              :null
            }
       </TouchableHighlight> 
-      </Animated.View>
     );
   }
 }

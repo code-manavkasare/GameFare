@@ -60,7 +60,7 @@ class Page1 extends Component {
     console.log(this.state.sportsFilter)
   }
   close() {
-      StatusBar.setBarStyle('light-content',true)
+      // StatusBar.setBarStyle('light-content',true)
       this.props.navigation.goBack()
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -263,11 +263,8 @@ class Page1 extends Component {
   page1() {
       return (
         <View style={{marginTop:-15}}>
-          {this.switch('Public','Private','private')}
-          <View  style={{height:10}}/>
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Sport & Event name</Text>
           {this.sports()}
-
-          {/* <Text style={[styleApp.title,{fontSize:15,marginTop:20}]}>Event name</Text> */}
           {this.tournamentName()}
 
           <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entre fee</Text>
@@ -292,7 +289,7 @@ class Page1 extends Component {
       <View style={{backgroundColor:'white',height:height }}>
         <Header
         onRef={ref => (this.headerRef = ref)}
-        title={'Create your event'}
+        title={'Organize your event'}
         icon={'angle-left'}
         close={() => this.close()}
         />

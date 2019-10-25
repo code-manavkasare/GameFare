@@ -76,6 +76,8 @@ class Page3 extends Component {
   getTextField(field,step2) {
     if (field.field == 'expandable') {
       return step2[field.value].listExpend.filter(element => element.value == step2[field.value].valueSelected)[0].text
+    } else if (field.field == 'plus') {
+      return step2[field.value] + ' ' + field.value
     }
     return step2[field.value]
   }
@@ -99,8 +101,9 @@ class Page3 extends Component {
 
             {this.sport(data.sport)}
 
-            {this.rowIcon('calendar',this.dateTime(data),'moon')}
-            {this.rowIcon('location',this.title(data.step1.location.area),'moon')}
+            {this.rowIcon('calendar-alt',this.dateTime(data),'font')}
+            {this.rowIcon('map-marker-alt',this.title(data.step1.location.area),'font')}
+            {this.rowIcon('dollar-sign',this.title(Number(data.step1.joiningFee) == 0?'Free':data.step1.joiningFee),'font')}
 
             <View style={{height:1,marginTop:10,marginBottom:10,backgroundColor:'#eaeaea'}} />
 
@@ -110,6 +113,10 @@ class Page3 extends Component {
                 {this.rowIcon(this.getIconField(field,data.step2)[0],this.title(this.getTextField(field,data.step2)),this.getIconField(field,data.step2)[1])}
               </View>
             ))}
+
+            <View style={{height:1,marginTop:10,marginBottom:10,backgroundColor:'#eaeaea'}} />
+
+            <Text style={[styleApp.title,{fontSize:15}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge ${data.step1.joiningFee} your attendees once they join the event. You will receive your pay after the event once you checkout.</Text></Text>
 
 
           </View>
@@ -168,7 +175,7 @@ class Page3 extends Component {
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
     await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(event)
     this.setState({loader:false})
-    this.props.navigation.navigate('CreateEvent4',{data:event})
+    this.props.navigation.navigate('CreateEvent4',{data:event,pageFrom:'CreateEvent3'})
   }
   render() {
     return (

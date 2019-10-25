@@ -20,7 +20,7 @@ export default class Complete extends Component {
   }
   render() {
     return (
-      <View style={{ flex: 1,backgroundColor:'white',borderTopWidth:1,borderColor:'#eaeaea' }}>
+      <View style={{ flex: 1,backgroundColor:'white',borderTopWidth:0,borderColor:'#eaeaea' }}>
         <Header
         onRef={ref => (this.headerRef = ref)}
         title={''}

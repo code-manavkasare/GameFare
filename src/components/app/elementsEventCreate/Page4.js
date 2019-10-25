@@ -78,25 +78,36 @@ class Page4 extends Component {
       successTypes: ['sent', 'queued'],
       allowAndroidSendWithoutReadPermission: true
       }, (completed, cancelled, error) => {
+        if (cancelled || error) {
+          return true
+        }
         console.log('SMS Callback: completed: ' + completed + ' cancelled: ' + cancelled + 'error: ' + error);
-
-        that.setState({loader:false})
+        if (that.props.navigation.getParam('pageFrom') == 'event'){
+          return that.props.navigation.goBack()
+        }
         return that.props.navigation.navigate('ListEvents',{})
   
       });
 
   }
-  
+  iconBack() {
+    if (this.props.navigation.getParam('pageFrom') == 'event') return 'angle-left'
+    return ''
+  }
+  iconFooter() {
+    if (this.props.navigation.getParam('pageFrom') == 'event') return 'check'
+    return 'next'
+  }
   render() {
     return (
       <View style={{backgroundColor:'white',height:height }}>
         <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Invite your friends'}
-        icon={''}
-
-        close={() => console.log('')}
+        icon={this.iconBack()}
+        close={() => this.props.navigation.goBack()}
         />
+        
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
@@ -108,7 +119,7 @@ class Page4 extends Component {
         />
 
         <ButtonRound
-          icon={'next'} 
+          icon={this.iconFooter()} 
           enabled={true} 
           loader={false} 
           translateYFooter={this.translateYFooter}

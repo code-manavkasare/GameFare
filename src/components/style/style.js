@@ -76,8 +76,8 @@ export default styles = StyleSheet.create({
       height:sizes.heightHeaderHome,
       paddingTop:sizes.marginTopHeader-5,
 
-      borderBottomWidth:1,
-      backgroundColor:'white',
+      borderBottomWidth:0,
+      backgroundColor:colors.primary,
       zIndex:20,
       width:width,
       borderColor:'#EAEAEA',

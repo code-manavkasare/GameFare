@@ -6,7 +6,9 @@ import {
 const initialState = {
     userConnected: false,
     infoUser:{
-        userInfo:{}
+        userInfo:{
+            wallet:{},
+        }
     },
     userID:'',
     phoneNumber: '',

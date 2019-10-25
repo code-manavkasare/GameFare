@@ -82,9 +82,9 @@ export default class ContactsComponent extends Component {
         <View key={key} style={{height:35 ,width:this.widthCard(contact.givenName + ' ' + contact.familyName)}}>
           <Row style={styles.cardContactSelected}>
             <Col size={75} style={styles.center}>
-              <Text style={[styles.text,{color:'white',fontSize:11}]}>{contact.givenName} {contact.familyName}</Text>
+              <Text style={[styles.text,{color:'white',fontSize:11,fontFamily:'OpenSans-SemiBold'}]}>{contact.givenName} {contact.familyName}</Text>
             </Col>
-            <Col size={25} style={styles.center} activeOpacity={0.7} onPress={() => {this.deleteContact(contact)}}>
+            <Col size={30} style={styles.center} activeOpacity={0.7} onPress={() => {this.deleteContact(contact)}}>
               <FontIcon style={{marginTop:0,marginRight:5}} name='times-circle' color='white' size={13}/>
             </Col>
           </Row>
