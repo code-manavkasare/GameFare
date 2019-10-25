@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component {
         firebase.messaging().subscribeToTopic('allUsers');
     }
     navigate(val,data) {
-        StatusBar.setBarStyle('dark-content',true)
+        //statusBar.setBarStyle('dark-content',true)
         this.props.navigation.navigate(val,data)
     }
   render() {

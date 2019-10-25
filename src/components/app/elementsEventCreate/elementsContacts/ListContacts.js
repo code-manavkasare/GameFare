@@ -82,7 +82,7 @@ export default class ContactsComponent extends Component {
     }
     rowContact(contact,key) {
       return (
-        <TouchableOpacity key={key} style={{marginTop:0,borderBottomWidth:1,borderColor:'#eaeaea',height:55}}activeOpacity={0.7} onPress={() => this.props.selectContact(contact,Object.values(this.state.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)} >
+        <TouchableOpacity key={key} style={{marginTop:0,borderBottomWidth:1,borderColor:'#eaeaea',height:55}}activeOpacity={0.7} onPress={() => this.props.selectContact(contact,Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)} >
           <Row>
             <Col size={15} style={styles.center}>
               {
@@ -92,7 +92,7 @@ export default class ContactsComponent extends Component {
               <AllIcons name="check" type="font" color={colors.green} size={16} />
               }
             </Col>
-            <Col size={70} style={[styles.center2,{paddingLeft:15}]}>
+            <Col size={75} style={[styles.center2,{paddingLeft:15}]}>
               <Text style={[styles.text,{fontSize:14}]}>{contact.givenName} {contact.familyName}</Text>
               <Text style={[styles.text,{fontSize:12,color:colors.title,marginTop:4}]}>{contact.phoneNumbers[0].number} • {contact.phoneNumbers[0].label}</Text>
             </Col>
@@ -100,30 +100,13 @@ export default class ContactsComponent extends Component {
               
               {
                 this.state.freeContacts[contact.recordID] == true?
-                <AllIcons name="dollar-sign" type="font" color={colors.off} size={16} />
+                <AllIcons name="dollar-sign" type="font" color={colors.grey} size={15} />
                 :
-                <AllIcons name="dollar-sign" type="font" color={colors.title} size={16} />
+                <AllIcons name="dollar-sign" type="font" color={colors.title} size={15} />
               }
           </Col>
           </Row>
         </TouchableOpacity>
-      )
-    }
-    widthCard(val) {
-      return val.length*8 + 25
-    }
-    cardContactSelected(contact,key) {
-      return (
-        <View key={key} style={{height:35 ,width:this.widthCard(contact.givenName + ' ' + contact.familyName)}}>
-          <Row style={styles.cardContactSelected}>
-            <Col size={80} style={styles.center}>
-              <Text style={[styles.text,{color:'white',fontSize:12}]}>{contact.givenName} {contact.familyName}</Text>
-            </Col>
-            <Col size={20} style={styles.center} activeOpacity={0.7} onPress={() => {this.props.deleteContact(contact)}}>
-              <FontIcon style={{marginTop:0,marginRight:5}} name='times-circle' color='white' size={14}/>
-            </Col>
-          </Row>
-        </View>
       )
     }
     getLetterDisplay (letter) {
@@ -148,33 +131,25 @@ export default class ContactsComponent extends Component {
         </View>
       )))
     }
-    changeSearch(search) {
-      if (search.toLowerCase() == '') {
-        return this.setState({contacts:this.state.allContacts,search:search})
-      }
-      return this.setState({contacts:this.state.allContacts.filter(contact => contact.givenName.toLowerCase().search(search.toLowerCase()) != -1 || contact.familyName.toLowerCase().search(search.toLowerCase()) != -1),search:search})
-    }
     viewNotAuthorized() {
       return <View style={[styles.center,{marginTop:20,width:width-40,marginLeft:20}]}>
       <Image source={require('../../../../img/animals/bird.png')} style={{height:70,width:70,marginBottom:20}} />
       <Text style={[styles.text,{fontFamily:'OpenSans-SemiBold'}]}>We need to access your contacts. Please go to your settings and turn the contacts authorisation.</Text>
 
       <Button click={this.goToSettings.bind(this)} text={'Settings'} styleText={{color:colors.primary,fontSize:14}} styleButton={{height:35,backgroundColor:'white',marginBottom:10,marginTop:20}} onPressColor='white'/>
-
       <Button click={() =>this.loadContacts()} text={'Load contacts'} styleText={{color:colors.primary,fontSize:14}} styleButton={{height:35,backgroundColor:'white',marginBottom:15}} onPressColor='white'/>
 
     </View>
     }
     listContactsComponent() {
       if (!this.state.authorizedContact) return this.viewNotAuthorized()
-      return <View>{this.listContacts()}
-        <View style={{height:120}}/>
-      </View>
+      return this.listContacts()
     }
   render() {
     return (
       <View style={styles.content}>
        {this.listContactsComponent()}
+       <View style={{height:120}}/>
       </View>
     );
   }
@@ -182,7 +157,7 @@ export default class ContactsComponent extends Component {
 
 const styles = StyleSheet.create({
   content:{
-    height:height-sizes.marginTopApp-105-70,
+    // height:height-sizes.marginTopApp-105-70,
     width:width,
     marginLeft:-20
   },
@@ -194,11 +169,6 @@ const styles = StyleSheet.create({
     width:'100%',flexDirection: 'row', 
     flexWrap: 'wrap',
     backgroundColor:'white',
-  },
-  cardContactSelected:{
-    backgroundColor:'#89DB87',
-    margin:5,
-    borderRadius:5,
   },
   center2:{
     justifyContent: 'center',

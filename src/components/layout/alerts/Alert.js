@@ -44,7 +44,7 @@ export default class Alert extends Component {
   componentWillMount(){    
   }
   subtitle() {
-    return <Text style={[styleApp.title,{fontSize:14}]}>{this.props.navigation.getParam('title')}</Text>
+    return <Text style={[styleApp.title,{fontSize:18}]}>{this.props.navigation.getParam('title')}</Text>
   }
   title() {
     if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={styleApp.subtitle}>{this.props.navigation.getParam('subtitle')}</Text>

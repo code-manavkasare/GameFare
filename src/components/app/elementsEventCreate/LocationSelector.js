@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     position:'absolute',
     top:0,
-    borderTopWidth:1,
+    borderTopWidth:0,
     borderColor:colors.off,
     height:height,
     width:width,
