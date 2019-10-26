@@ -37,7 +37,7 @@ class Page4 extends Component {
   page4() {
       return (
         <View>
-          <Contacts onRef={ref => (this.contactRef = ref)}/>
+          <Contacts params={this.props.navigation.getParam('data')} onRef={ref => (this.contactRef = ref)}/>
         </View>
       )
   }
@@ -119,7 +119,7 @@ class Page4 extends Component {
         />
 
         <ButtonRound
-          icon={this.iconFooter()} 
+          icon={'send'} 
           enabled={true} 
           loader={false} 
           translateYFooter={this.translateYFooter}

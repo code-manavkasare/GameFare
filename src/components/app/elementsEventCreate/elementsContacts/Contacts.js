@@ -8,12 +8,14 @@ import {
   TextInput,
   Keyboard,
   Dimensions,
+  Clipboard,
   View
 } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Permissions from 'react-native-permissions'
 import AndroidOpenSettings from 'react-native-android-open-settings'
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import branch from 'react-native-branch'
 
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors'
@@ -28,6 +30,8 @@ export default class ContactsComponent extends Component {
         this.state = {
           contacts:[],
           showAddContact:false,
+          showShareIcons:true,
+          copied:false,
           contactsSelected:{},
           search:'',
           nameNewContact:'',
@@ -139,7 +143,7 @@ export default class ContactsComponent extends Component {
     
     searchBar () {
       return (
-        <Row style={[styleApp.inputForm,{marginTop:-15,marginBottom:0,marginLeft:-20,width:width}]}>
+        <Row style={[styleApp.inputForm,{marginTop:-20,marginBottom:0,marginLeft:-20,width:width}]}>
           <Col size={15} style={styles.center}>
             <AllIcons name="search" type="font" color={colors.primary} size={16} />
           </Col>
@@ -150,6 +154,8 @@ export default class ContactsComponent extends Component {
               returnKeyType={'done'}
               // keyboardType={this.props.keyboardType}
               blurOnSubmit={true}
+              onFocus={() => this.setState({showShareIcons:false})}
+              onBlur={() => this.setState({showShareIcons:true})}
               underlineColorAndroid='rgba(0,0,0,0)'
               autoCorrect={true}
               onChangeText={text => this.changeSearch(text)}
@@ -241,9 +247,91 @@ export default class ContactsComponent extends Component {
       }
       return null
     }
+    async copyEvent() {
+      var infoEvent = this.props.params
+      let branchUniversalObject = await branch.createBranchUniversalObject('canonicalIdentifier', {
+        // contentTitle: description,
+        contentDescription: 'Join my event ' + infoEvent.info.name,
+        title: infoEvent.info.name,
+        contentMetadata: {
+          customMetadata: {
+            'eventID': infoEvent.eventID,
+            'action':'openEventPage',
+            '$uri_redirect_mode': '1',
+            '$og_image_url':'https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
+          }
+        }
+      })
+
+      let linkProperties = { feature: 'share', channel: 'GameFare' }
+      let controlParams = { $desktop_url: 'http://getgamefare.com', $ios_url: 'http://getgamefare.com' }
+
+      let {url} = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
+      await Clipboard.setString(url)
+      console.log('url')
+      console.log(url)
+      this.setState({copied:true})
+      var that = this
+      setTimeout(function(){
+        that.setState({copied:false})
+      }, 900);   
+    }
+    shareEvent () {
+      var infoEvent = this.props.params
+      var description = 'Join my event ' + infoEvent.info.name
+      branch.createBranchUniversalObject('canonicalIdentifier', {
+        // contentTitle: description,
+        contentDescription: description,
+        title: infoEvent.info.name,
+        contentMetadata: {
+          customMetadata: {
+            'eventID': infoEvent.eventID,
+            'action':'openEventPage',
+            '$uri_redirect_mode': '1',
+            '$og_image_url':'https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
+          }
+        }
+      }).then( (branchUniversalObject) => {
+        let shareOptions = { messageHeader: description , messageBody: description}
+        let linkProperties = {
+          channel: 'facebook'
+        }
+        let controlParams = {
+          $desktop_url: 'https://getgamefare.com'
+        }
+        branchUniversalObject.showShareSheet(shareOptions, linkProperties, controlParams).then( (channel, completed, error) => {
+          console.log('share open')
+        })
+      })   
+    }
+    shareIcons() {
+      if (!this.state.showShareIcons) return null
+      return (
+        <Row style={{height:120,borderBottomWidth:1,borderColor:colors.off,marginLeft:-20,width:width,marginBottom:20}}>
+          <Col style={styleApp.center} activeOpacity={0.7} onPress={() => this.copyEvent()}>
+            <View style={[styleApp.center,styles.roundView]}>
+              {
+                this.state.copied?
+                <AllIcons name="check" type="font" color={colors.title} size={16} />
+                :
+                <AllIcons name="link" type="font" color={colors.title} size={16} />
+              }
+            </View>
+            <Text style={[styleApp.text,{marginTop:10}]}>Copy link</Text>
+          </Col>
+          <Col style={styleApp.center} activeOpacity={0.7} onPress={() => this.shareEvent()}>
+            <View style={[styleApp.center,styles.roundView]}>
+              <AllIcons name="share" type="moon" color={colors.title} size={16} />
+            </View>
+            <Text style={[styleApp.text,{marginTop:10}]}>Share</Text>
+          </Col>
+        </Row>
+      )
+    }
   render() {
     return (
         <View>
+          {this.shareIcons()}
           {this.searchBar()}
 
           {this.addContact()}
@@ -286,6 +374,12 @@ const styles = StyleSheet.create({
     color:colors.title,
     fontSize:16,
     fontFamily: 'OpenSans-Regular'
+  },
+  roundView:{
+    height:50,
+    width:50,
+    borderRadius:25,
+    backgroundColor:colors.off
   },
   text:{
     color:colors.title,

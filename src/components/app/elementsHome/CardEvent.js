@@ -50,7 +50,7 @@ export default class CardEvent extends React.Component {
             <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
               <Row style={{marginBottom:5}}>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="map-marker-alt" size={15} color={colors.title} type='font' />
+                  <AllIcons name="map-marker-alt" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.location.area}</Text>
@@ -59,7 +59,7 @@ export default class CardEvent extends React.Component {
 
               <Row style={{paddingBottom:5}}>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="calendar-alt" size={15} color={colors.title} type='font' />
+                  <AllIcons name="calendar-alt" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')}</Text>
@@ -68,7 +68,7 @@ export default class CardEvent extends React.Component {
 
               <Row>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="user-check" size={15} color={colors.title} type='font' />
+                  <AllIcons name="user-check" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.info.maxAttendance} people</Text>
@@ -133,12 +133,12 @@ const styles = StyleSheet.create({
   title:{
     color:colors.title,
     fontSize:17,
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-SemiBold',
   },
   subtitle:{
     color:colors.title,
     fontSize:13,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Light',
   },
 });
 

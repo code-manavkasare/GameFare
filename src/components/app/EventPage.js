@@ -20,6 +20,7 @@ import Header from '../layout/headers/HeaderButton'
 import AllIcons from '../layout/icons/AllIcons'
 import DateEvent from './elementsEventCreate/DateEvent'
 import ButtonRound from '../layout/buttons/ButtonRound'
+import Button from '../layout/buttons/Button'
 import Loader from '../layout/loaders/Loader'
 
 class EventPage extends Component {
@@ -47,7 +48,7 @@ class EventPage extends Component {
     return (
       <Row style={{marginTop:20}}>
         <Col size={10} style={styleApp.center2}>
-          <AllIcons name={icon} color={colors.title} size={20} type='font' />
+          <AllIcons name={icon} color={colors.grey} size={18} type='font' />
         </Col>
         <Col size={90} style={styleApp.center2}>
           {component}
@@ -56,7 +57,7 @@ class EventPage extends Component {
     )
   }
   title(text) {
-    return <Text style={[styleApp.title,{fontSize:16,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+    return <Text style={[styleApp.title,{fontSize:15,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
   }
   dateTime(start,end) {
     return <DateEvent 
@@ -130,8 +131,16 @@ class EventPage extends Component {
           :null
         }
 
+        <View style={[styleApp.divider,{marginBottom:20}]} />
+
       </View>
     )
+  }
+  clickIconRight () {
+    this.props.navigation.navigate('CreateEvent4',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
+  }
+  clickCancel() {
+    this.props.navigation.navigate('Alert',{title:'Do you want to unjoin this event?',textButton:'Unjoin',onGoBack:() => this.cancel()})
   }
   render() {
     return (
@@ -140,8 +149,9 @@ class EventPage extends Component {
         onRef={ref => (this.headerRef = ref)}
         title={this.props.navigation.getParam('data').info.name}
         icon={'angle-left'}
-        iconRight={this.props.navigation.getParam('pageFrom') != 'home'?'ban':undefined}
-        clickIconRight={() => this.props.navigation.navigate('Alert',{title:'Do you want to unjoin this event?',textButton:'Unjoin',onGoBack:() => this.cancel()})}
+        iconRight={'share'}
+        typeIconRight={'moon'}
+        clickIconRight={() => this.clickIconRight()}
         close={() => this.props.navigation.goBack()}
         />
         <ScrollView 
@@ -154,19 +164,19 @@ class EventPage extends Component {
         />
         {
           this.props.navigation.getParam('pageFrom') == 'home'?
-          <ButtonRound
+          <View style={styleApp.footerBooking}>
+          <Button
           icon={'next'} 
+          backgroundColor='green'
+          onPressColor={colors.greenClick}
+          styleButton={{marginLeft:20,width:width-40}}
           enabled={true} 
+          text='Join the event'
           loader={false} 
           click={() => this.props.navigation.navigate('Checkout',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
          />
-         :
-         <ButtonRound
-          icon={'invite'} 
-          enabled={true} 
-          loader={false} 
-          click={() => this.props.navigation.navigate('CreateEvent4',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
-         />
+         </View>
+         :null
         }
         
       </View>

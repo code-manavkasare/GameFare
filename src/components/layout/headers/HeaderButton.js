@@ -15,6 +15,7 @@ import {Grid,Row,Col} from 'react-native-easy-grid';
 import styleApp from '../../style/style'
 import Loader from '../loaders/Loader'
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import AllIcons from '../icons/AllIcons'
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 const { height, width } = Dimensions.get('screen')
 
@@ -54,7 +55,7 @@ export default class HeaderButton extends Component {
               this.props.loader?
               <Loader size={20} color='white'/>
               :this.props.iconRight !=undefined?
-              <FontIcon size={20} name={this.props.iconRight} color={'white'} /> 
+              <AllIcons size={20} name={this.props.iconRight} color={'white'} type={this.props.typeIconRight}/> 
               :null
             }
           </Col>  

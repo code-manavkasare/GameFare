@@ -27,7 +27,7 @@ export default class CardEvent extends React.Component {
     async clickProduct () {
       console.log('this.props.category')
       console.log(this.props.item)
-      this.props.navigate('Event',{eventID:this.props.item.objectID})
+      this.props.navigate('Event')
     }
     entreeFee(entreeFee) {
       if (entreeFee == 0) return 'Free'
@@ -42,15 +42,23 @@ export default class CardEvent extends React.Component {
           style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
           activeOpacity={1} 
         >
-          <View style={styles.viewSport}>
-            <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
-          </View>
-          <Text style={styles.title}>{this.props.item.info.name}</Text>
+          
+          <Row>
+            <Col size={80} style={styleApp.center2} >
+              <Text style={styles.title}>{this.props.item.info.name}</Text>
+            </Col>
+            <Col size={20} style={styleApp.center3} >
+              <View style={styles.viewSport}>
+                <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
+              </View>
+            </Col>
+          </Row>
+          
           <Row style={{marginTop:5,marginBottom:15}}>
             <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
               <Row style={{marginBottom:5}}>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="map-marker-alt" size={15} color={colors.title} type='font' />
+                  <AllIcons name="map-marker-alt" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.location.area}</Text>
@@ -59,7 +67,7 @@ export default class CardEvent extends React.Component {
 
               <Row style={{paddingBottom:5}}>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="calendar-alt" size={15} color={colors.title} type='font' />
+                  <AllIcons name="calendar-alt" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')}</Text>
@@ -68,7 +76,7 @@ export default class CardEvent extends React.Component {
 
               <Row>
                 <Col size={10} style={styles.center2}>
-                  <AllIcons name="user-check" size={15} color={colors.title} type='font' />
+                  <AllIcons name="user-check" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.info.maxAttendance} people</Text>
@@ -109,13 +117,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   viewSport:{
-    position:'absolute',
     backgroundColor:colors.greenLight,
     borderRadius:3,
     paddingLeft:10,
     paddingRight:10,
-    top:15,
-    right:0,
+    //top:15,
+    //right:0,
     height:25,
     alignItems: 'center',
     justifyContent: 'center',
@@ -138,7 +145,7 @@ const styles = StyleSheet.create({
   subtitle:{
     color:colors.title,
     fontSize:13,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Light',
   },
 });
 

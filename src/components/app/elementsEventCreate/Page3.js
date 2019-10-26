@@ -61,7 +61,7 @@ class Page3 extends Component {
     return (
       <Row style={{marginBottom:10,marginTop:10}}>
         <Col size={15} style={styleApp.center}>
-          <AllIcons name={icon} size={18} type={typeIcon} color={colors.title}/>
+          <AllIcons name={icon} size={18} type={typeIcon} color={colors.grey}/>
         </Col>
         
         <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
@@ -114,9 +114,9 @@ class Page3 extends Component {
               </View>
             ))}
 
-            <View style={{height:1,marginTop:10,marginBottom:10,backgroundColor:'#eaeaea'}} />
+            <View style={{height:1,marginTop:10,marginBottom:20,backgroundColor:'#eaeaea'}} />
 
-            <Text style={[styleApp.title,{fontSize:15}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge ${data.step1.joiningFee} your attendees once they join the event. You will receive your pay after the event once you checkout.</Text></Text>
+            <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge ${data.step1.joiningFee} your attendees once they join the event. You will receive your pay after the event once you checkout.</Text></Text>
 
 
           </View>

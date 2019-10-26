@@ -8,6 +8,8 @@ import branch, { BranchEvent } from 'react-native-branch'
 import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
+import indexEvents from './src/components/database/algolia'
+
 import axios from 'axios'
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions'
 import {userAction} from './src/actions/userActions'
@@ -55,11 +57,18 @@ class App extends Component {
       console.log('branch link opened !')
       console.log(params)
       if (params.action == 'openEventPage') {
-        NavigationService.navigate('Event',{eventID:params.eventID})
+        that.openEvent(params.eventID)
+        
       } else if (params.type == 'share') {
         ls.save('giftShare', params.value)
       }
     })
+  }
+  async openEvent(eventID) {
+    var data = await indexEvents.getObject(eventID)
+    console.log('riba data')
+    console.log(data)
+    NavigationService.navigate('Event',{data:data,pageFrom:'home'})
   }
   render() {
     return <AppContainer ref={navigatorRef => {

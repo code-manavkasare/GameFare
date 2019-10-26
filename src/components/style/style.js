@@ -50,7 +50,7 @@ export default styles = StyleSheet.create({
     },
     subtitle:{
       fontSize:14,
-      fontFamily: 'OpenSans-SemiBold',
+      fontFamily: 'OpenSans-Regular',
       color:colors.title,
     },
     buttonRound:{
@@ -60,7 +60,7 @@ export default styles = StyleSheet.create({
       justifyContent: 'center',
       borderWidth:1,
       borderColor:'#eaeaea',
-      backgroundColor:colors.primary,
+      backgroundColor:colors.green,
       position:'absolute',
       bottom:40,
       right:25,
@@ -87,13 +87,13 @@ export default styles = StyleSheet.create({
     footerBooking:{
       position:'absolute',
       bottom:0,
-      borderTopWidth:1,
+      borderTopWidth:0,
       height:sizes.heightFooterBooking,
       paddingTop:15,
       // paddingLeft:20,paddingRight:20,
       //borderTopWidth:1,
       zIndex:20,
-      backgroundColor:'white',
+      //backgroundColor:'white',
       width:width,
       borderColor:'#EAEAEA',
       //shadowColor: '#C1C1C1',

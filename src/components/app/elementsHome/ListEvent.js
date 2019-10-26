@@ -59,8 +59,9 @@ class ListEvents extends React.Component {
 
       <View style={{height:1,backgroundColor:'#eaeaea',marginLeft:-20,width:width,}}/>
           <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:1,borderColor:'#eaeaea'}}>
-            <Text style={[styles.text,{fontSize:20}]}>Want to organize an event? Pick your sport and join the GameFare community now!</Text>
-            <Button click={() => this.props.navigate('CreateEvent1',{})} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
+            <Text style={[styles.text,{fontSize:18,}]}>Want to organize an event?</Text>
+            <Text style={[styles.text,{fontSize:15,marginTop:10,fontFamily:'OpenSans-Regular'}]}>Pick your sport and join the GameFare community now!</Text>
+            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate('CreateEvent1',{})} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
         </View>
       </View>
     )
@@ -74,7 +75,7 @@ class ListEvents extends React.Component {
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
     );
   }
@@ -82,7 +83,8 @@ class ListEvents extends React.Component {
 
 const styles = StyleSheet.create({
   text:{
-    fontFamily:'OpenSans-SemiBold'
+    fontFamily:'OpenSans-SemiBold',
+    color:colors.title
   }
 });
 

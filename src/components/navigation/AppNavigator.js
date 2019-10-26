@@ -20,6 +20,12 @@ import DateSelector from '../app/elementsEventCreate/DateSelector'
 
 import ListEvents from '../app/elementsUser/events/ListEvents'
 
+import Payments from '../app/elementsUser/elementsPayment/Payments'
+import NewCard from '../app/elementsUser/elementsPayment/NewCard'
+import NewMethod from '../app/elementsUser/elementsPayment/NewMethod'
+import DetailCard from '../app/elementsUser/elementsPayment/DetailCard'
+import ApplePay from '../app/elementsUser/elementsPayment/ApplePay'
+
 import Alert from '../layout/alerts/Alert'
 
 
@@ -41,7 +47,7 @@ const AppNavigator = createStackNavigator(
         CreateEvent4:{
             screen:CreateEvent4,
             navigationOptions: ({ navigation }) => ({
-                gesturesEnabled: false,
+                gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
             }),
         },
         ListEvents:ListEvents,
@@ -51,7 +57,7 @@ const AppNavigator = createStackNavigator(
         initialRouteName:'Home',
         headerMode: 'none',
         mode: 'card',
-        cardOverlayEnabled:true
+        cardOverlayEnabled:false
     }
 );
 
@@ -76,7 +82,33 @@ const LoginNavigator = createStackNavigator(
         initialRouteName:'Phone',
         headerMode: 'none',
         mode: 'card',
-        cardOverlayEnabled:true
+        cardOverlayEnabled:false
+    }
+);
+
+const PaymentsNavigator = createStackNavigator(
+    {
+        Payments:Payments,
+        NewCard:NewCard,
+        ApplePay:ApplePay,
+        NewMethod:{
+            screen:NewMethod,
+            navigationOptions: ({ navigation }) => ({
+                gesturesEnabled: true,
+            }),
+        },
+        DetailCard:{
+            screen:DetailCard,
+            navigationOptions: ({ navigation }) => ({
+                gesturesEnabled: true,
+            }),
+        }
+    },
+    {
+        initialRouteName:'Payments',
+        headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false
     }
 );
 
@@ -87,7 +119,8 @@ const RootStack = createStackNavigator(
         ListCountry:ListCountry,
         Alert:Alert,
         Location:LocationSelector,
-        Date:DateSelector
+        Date:DateSelector,
+        Payments:PaymentsNavigator
     },
     {
         initialRouteName:'MainApp',
@@ -95,7 +128,7 @@ const RootStack = createStackNavigator(
         mode: 'modal',
         transparentCard: true,
         cardStyle: { opacity: 1,},
-        cardOverlayEnabled:true
+        cardOverlayEnabled:false
     }
 )
 

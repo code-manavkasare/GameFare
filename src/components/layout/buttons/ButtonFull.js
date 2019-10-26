@@ -30,9 +30,9 @@ export default class Button extends Component {
     return width-40
   }
   styleButton() {
-    if (!this.props.enable) return {...styles.buttonSubmit,backgroundColor:'white',}
-    else if (this.props.styleButton != undefined) return {...styles.buttonSubmit,...this.props.styleButton}
-    return styles.buttonSubmit
+    if (!this.props.enable) return {...styles.buttonSubmit,backgroundColor:'white',backgroundColor:colors[this.props.backgroundColor]}
+    else if (this.props.styleButton != undefined) return {...styles.buttonSubmit,...this.props.styleButton,backgroundColor:colors[this.props.backgroundColor]}
+    return {...styles.buttonSubmit,backgroundColor:colors[this.props.backgroundColor]}
   }
   onPressColor() {
     if (this.props.onPressColor != undefined) return this.props.onPressColor

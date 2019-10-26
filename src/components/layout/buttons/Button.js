@@ -30,12 +30,17 @@ export default class Button extends Component {
     return width-40
   }
   styleButton() {
-    if (this.props.styleButton != undefined) return {...styles.buttonSubmit,...this.props.styleButton}
-    return styles.buttonSubmit
+    if (this.props.disabled) return {...styles.buttonSubmit,backgroundColor:'white',...this.props.styleButton}
+    if (this.props.styleButton != undefined) return {...styles.buttonSubmit,...this.props.styleButton,backgroundColor:colors[this.props.backgroundColor]}
+    return {...styles.buttonSubmit,backgroundColor:colors[this.props.backgroundColor]}
   }
   onPressColor() {
     if (this.props.onPressColor != undefined) return this.props.onPressColor
     return colors.primary2
+  }
+  styleText() {
+    if (this.props.disabled) return {...styles.textButtonOn,...this.props.styleText,color:colors[this.props.backgroundColor]}
+    return styles.textButtonOn
   }
   render() {  
     return (
@@ -43,13 +48,14 @@ export default class Button extends Component {
         activeOpacity={1} 
         underlayColor={this.onPressColor()}
         style={this.styleButton()} 
+        disabled={this.props.disabled}
         onPress={() => this.props.click()} 
       >
           {
           this.props.loader?
           <Loader size={20} color='white'/>
           :
-          <Text style={[styles.textButtonOn,this.props.styleText]}>{this.props.text}</Text>
+          <Text style={this.styleText()}>{this.props.text}</Text>
           }   
       </TouchableHighlight> 
     );

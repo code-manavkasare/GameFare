@@ -17,6 +17,7 @@ export default class AllIcon extends Component {
       } else if (type == 'mat') {
         return <MatIcon name={icon} color={this.props.color} size={this.props.size} />
       }
+      return null
     } 
   render() {
     return this.icon(this.props.type,this.props.name)

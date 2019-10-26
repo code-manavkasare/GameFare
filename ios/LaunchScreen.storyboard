@@ -23,7 +23,7 @@
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="default"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.92794859409332275" green="0.42805677652359009" blue="0.33712241053581238" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" red="0.99344497919082642" green="0.27098530530929565" blue="0.22722005844116211" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                     </view>
                 </viewController>

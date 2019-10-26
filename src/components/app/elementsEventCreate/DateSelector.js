@@ -271,7 +271,7 @@ export default class Date extends Component {
 
         <View style={styleApp.footerBooking}>
           <View style={{marginLeft:20,width:width-40}}>
-            <Button text={'Submit'} click={() => this.submit()} />
+            <Button backgroundColor={'green'} onPressColor={colors.greenClick} text={'Submit'} click={() => this.submit()} />
           </View>
         </View>
       </View>

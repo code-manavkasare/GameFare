@@ -117,7 +117,7 @@ class PhoneFields extends Component {
       }
     }
     buttonSubmit() {
-      return <Button styleButton={{marginTop:15}} loader={this.state.loader} click={() => this.next(this.state.phoneNumber)} text="Sign in"/>
+      return <Button backgroundColor={'green'} onPressColor={colors.greenClick} styleButton={{marginTop:15}} loader={this.state.loader} click={() => this.next(this.state.phoneNumber)} text="Sign in"/>
     }
     inputPhone () {
       return (

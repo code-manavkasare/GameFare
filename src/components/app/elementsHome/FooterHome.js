@@ -24,7 +24,7 @@ class FooterHome extends Component {
     icon={'event'} 
     enabled={true} 
     styleButton={{backgroundColor:colors.green}}
-    onPressColor={colors.green}
+    onPressColor={colors.greenClick}
     loader={false} 
     translateYFooter={0}
     translateXFooter={0} 
@@ -38,20 +38,7 @@ class FooterHome extends Component {
 }
 
 const styles = StyleSheet.create({
-    searchBarComponent:{
-        // position:'absolute',
-        width:width,
-        backgroundColor:colors.primary,
-        borderBottomWidth:0,
-        borderColor:'#eaeaea',
-        paddingTop:sizes.marginTopApp,
-        height:sizes.heightHeaderHomeSearch,
-        top:0,
-    },
-    input:{
-      fontFamily: 'OpenSans-SemiBold',
-      color:'white',
-    }
+
 });
 
 

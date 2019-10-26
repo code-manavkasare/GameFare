@@ -68,6 +68,7 @@ class ProfilePage extends Component {
   clickButton(text,page,data,type,url) {
     console.log('type')
     console.log(type)
+
     if (type == 'url') {
       this.openLink(url)
     } else if (type == 'call') {
@@ -96,7 +97,7 @@ class ProfilePage extends Component {
           // Android Properties
           showTitle: true,
           toolbarColor: colors.primary,
-          secondaryToolbarColor: 'black',
+          secondaryToolbarColor: colors.primary,
           enableUrlBarHiding: true,
           enableDefaultShare: true,
           forceCloseOnRedirection: false,
@@ -139,7 +140,7 @@ class ProfilePage extends Component {
         {this.title('Account parameters')}
 
         {this.button('Personal information','Settings',{})}
-        {this.button('Payment','Payment',{})}
+        {this.button('Payment','Payments',{pageFrom:'Profile'})}
         {this.button('My wallet','Wallet',{})}
 
         {this.title('Assistance')}

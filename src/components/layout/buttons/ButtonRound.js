@@ -44,7 +44,7 @@ export default class ButtonRound extends Component {
   onPressColor() {
     if (!this.props.enabled) return 'white'
     else if (this.props.onPressColor != undefined) return this.props.onPressColor
-    return colors.primary2
+    return colors.green
   }
   colorIcon() {
     if (!this.props.enabled) return '#eaeaea'
@@ -66,12 +66,14 @@ export default class ButtonRound extends Component {
              <FontIcon name='arrow-right' size={22} color={this.colorIcon()} />
              :this.props.icon=='invite'?
              <FontIcon name='share' size={20} color={this.colorIcon()} />
+             :this.props.icon=='send'?
+             <FontIcon name='comments' size={20} color={this.colorIcon()} />
              :this.props.icon=='sign'?
              <FontIcon name='user-circle' size={25} color={'white'} />
              :this.props.icon=='check'?
              <FontIcon name='check' size={25} color={'white'} />
              :this.props.icon=='event'?
-             <FontIcon name='calendar-alt' size={25} color={'white'} />
+             <FontIcon name='calendar-alt' size={21} color={'white'} />
              :this.props.icon=='create'?
              <FontIcon name='arrow-right' size={20} color={this.colorIcon()} />
              :null

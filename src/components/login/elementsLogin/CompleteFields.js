@@ -91,11 +91,11 @@ export default class CompleteFields extends Component {
 
 
           <InputAccessoryView nativeID={'firstname'}>
-            <ButtonFull loader={this.state.loader} click={() => this.secondTextInput.focus()} enable={this.state.firstname != ''} text={'Next'} />
+            <ButtonFull backgroundColor={'green'} onPressColor={colors.greenClick} loader={this.state.loader} click={() => this.secondTextInput.focus()} enable={this.state.firstname != ''} text={'Next'} />
           </InputAccessoryView>
 
           <InputAccessoryView nativeID={'lastname'}>
-            <ButtonFull loader={this.state.loader} click={() => this.confirm()} enable={this.state.firstname != '' && this.state.lastname != ''} text={'Confirm'} />
+            <ButtonFull backgroundColor={'green'} onPressColor={colors.greenClick} loader={this.state.loader} click={() => this.confirm()} enable={this.state.firstname != '' && this.state.lastname != ''} text={'Confirm'} />
           </InputAccessoryView>
 
 

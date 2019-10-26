@@ -7,8 +7,8 @@ const initialState = {
     userConnected: false,
     infoUser:{
         userInfo:{
-            wallet:{},
-        }
+        },
+        wallet:{}
     },
     userID:'',
     phoneNumber: '',

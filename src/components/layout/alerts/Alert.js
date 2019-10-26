@@ -43,11 +43,11 @@ export default class Alert extends Component {
   }
   componentWillMount(){    
   }
-  subtitle() {
+  title() {
     return <Text style={[styleApp.title,{fontSize:18}]}>{this.props.navigation.getParam('title')}</Text>
   }
-  title() {
-    if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={styleApp.subtitle}>{this.props.navigation.getParam('subtitle')}</Text>
+  subtitle() {
+    if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.subtitle,{marginTop:20}]}>{this.props.navigation.getParam('subtitle')}</Text>
     return null
   }
   render() {  
@@ -65,7 +65,7 @@ export default class Alert extends Component {
          </Row>
 
           <View style={styles.viewButton}>
-            <Button text={this.props.navigation.getParam('textButton')} click={() => this.props.navigation.state.params.onGoBack('oupaaa')}/>
+            <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.props.navigation.state.params.onGoBack('oupaaa')}/>
           </View>
       </View>  
     );
