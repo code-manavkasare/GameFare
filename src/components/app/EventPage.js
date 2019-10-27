@@ -153,7 +153,19 @@ class EventPage extends React.Component {
             {this.title('No one has confirmed their attendance yet.')}
             </Col>
           </Row>
-          :null
+          :
+          <View style={{marginTop:10}}>
+          {Object.values(this.state.usersConfirmed).map((user,i) => (
+            <Row key={i} style={{height:40}}>
+              <Col size={15} style={styleApp.center2}>
+                <AllIcons name='user-alt' color={colors.grey} type='font' size={20}/>
+              </Col>
+              <Col size={85} style={styleApp.center2}>
+                <Text style={styleApp.text}>{user.captainInfo.name}</Text>
+              </Col>
+            </Row>
+          ))}
+          </View>
         }
 
         <View style={[styleApp.divider,{marginBottom:20}]} />
@@ -170,15 +182,7 @@ class EventPage extends React.Component {
   render() {
     return (
       <View style={{ flex:1,backgroundColor:'white' }}>
-        {/* <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={this.props.navigation.getParam('data').info.name}
-        icon={'angle-left'}
-        iconRight={'share'}
-        typeIconRight={'moon'}
-        clickIconRight={() => this.clickIconRight()}
-        close={() => this.props.navigation.goBack()}
-        /> */}
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.event.bind(this)}

@@ -15,10 +15,8 @@ import AllIcons from '../../../layout/icons/AllIcons'
 import Header from '../../../layout/headers/HeaderButton'
 import ScrollView from '../../../layout/scrollViews/ScrollView'
 
-import sizes from '../../../style/sizes'
-import styleApp from '../../../style/style'
 import colors from '../../../style/colors';
-import {cardIcon} from './iconCard'
+import { CardIOView, CardIOUtilities } from 'react-native-awesome-card-io';
 
 class ListEvent extends Component {
   constructor(props) {
@@ -30,7 +28,7 @@ class ListEvent extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'New method',
+      title: 'Scan',
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -48,42 +46,27 @@ class ListEvent extends Component {
     }
   };
   async componentDidMount() {
-
+    CardIOUtilities.preload();
   }
-  row(icon,text,page,data){
+  didScanCard = (card) => {
+    this.props.navigation.state.params.onGoBack(card)
+  }
+  scan() {
     return (
-      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.props.navigation.navigate(page,data)}>
-        <Row>
-          <Col size={15} style={styleApp.center2}>
-            {icon}
-          </Col>
-          <Col size={75} style={styleApp.center2}>
-            <Text style={styleApp.text}>{text}</Text>
-          </Col>
-          <Col size={10} style={styleApp.center}>
-            <AllIcons name='angle-right' color={colors.title} type="font" size={16}/>
-          </Col>
-        </Row>
-      </TouchableOpacity>
-    )
-  } 
-  payments() {
-    return (
-      <View style={{marginTop:0}}>
-        <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>New payment method</Text>
-
-        {this.row(cardIcon('default'),'Credit/Debit card','NewCard',{pageFrom:this.props.navigation.getParam('pageFrom')})}
-        {this.row(cardIcon('applePay'),'Apple Pay','ApplePay',{pageFrom:this.props.navigation.getParam('pageFrom')})}
-      </View>
+      <CardIOView
+          hideCardIOLogo={true}
+          didScanCard={this.didScanCard}
+          style={styles.scanView}
+          scanExpiry={true}
+        /> 
     )      
   }
   render() {
     return (
       <View style={{backgroundColor:'white',flex:1 }}>
-
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.payments.bind(this)}
+          contentScrollView={this.scan.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90+60}
@@ -96,14 +79,21 @@ class ListEvent extends Component {
 }
 
 const styles = StyleSheet.create({
-
+  scanView:{
+    width:width,
+    marginLeft:-20,
+    marginTop:15,
+    height:height-100,
+    // backgroundColor:'red'
+  },
 });
 
 const  mapStateToProps = state => {
   return {
     userID:state.user.userID,
     defaultCard:state.user.infoUser.wallet.defaultCard,
-    cards:state.user.infoUser.wallet.cards
+    cards:state.user.infoUser.wallet.cards,
+    tokenCusStripe:state.user.infoUser.wallet.tokenCusStripe
   };
 };
 

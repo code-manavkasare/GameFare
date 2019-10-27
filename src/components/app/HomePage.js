@@ -11,6 +11,7 @@ import {
 import firebase from 'react-native-firebase'
 import HeaderHome from './elementsHome/HeaderHome'
 import FooterHome from './elementsHome/FooterHome'
+import FooterHomeProfile from './elementsHome/FooterHomeProfile'
 import ListEvents from './elementsHome/ListEvent'
 import styleApp from '../style/style'
 import colors from '../style/colors'
@@ -54,7 +55,7 @@ export default class HomeScreen extends React.Component {
     }
     navigate(val,data) {
         //statusBar.setBarStyle('dark-content',true)
-        this.props.navigation.navigate(val,data)
+        this.props.navigation.push(val,data)
     }
   render() {
     return (
@@ -63,7 +64,8 @@ export default class HomeScreen extends React.Component {
 
         <ListEvents navigate={this.navigate.bind(this)}/>
 
-        <FooterHome navigate={(val) => this.props.navigation.navigate(val)} />
+        <FooterHome navigate={(val,data) => this.props.navigation.navigate(val,data)} />
+        <FooterHomeProfile navigate={(val,data) => this.props.navigation.navigate(val,data)} />
       </View>
     );
   }

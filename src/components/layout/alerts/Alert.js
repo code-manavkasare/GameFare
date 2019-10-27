@@ -37,7 +37,7 @@ export default class Alert extends Component {
     super(props);
     this.state = {
       step:1,
-      showLoginContent: false
+      loader: false
     };
     this.componentWillMount = this.componentWillMount.bind(this);
   }
@@ -49,6 +49,10 @@ export default class Alert extends Component {
   subtitle() {
     if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.subtitle,{marginTop:20}]}>{this.props.navigation.getParam('subtitle')}</Text>
     return null
+  }
+  click(){
+    this.setState({loader:true})
+    this.props.navigation.state.params.onGoBack()
   }
   render() {  
     return (
@@ -65,7 +69,7 @@ export default class Alert extends Component {
          </Row>
 
           <View style={styles.viewButton}>
-            <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.props.navigation.state.params.onGoBack('oupaaa')}/>
+            <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.click()} loader={this.state.loader}/>
           </View>
       </View>  
     );

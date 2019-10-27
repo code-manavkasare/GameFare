@@ -30,7 +30,7 @@ export default class Button extends Component {
     return width-40
   }
   styleButton() {
-    if (!this.props.enable) return {...styles.buttonSubmit,backgroundColor:'white',backgroundColor:colors[this.props.backgroundColor]}
+    if (!this.props.enable) return {...styles.buttonSubmit,backgroundColor:'white'}
     else if (this.props.styleButton != undefined) return {...styles.buttonSubmit,...this.props.styleButton,backgroundColor:colors[this.props.backgroundColor]}
     return {...styles.buttonSubmit,backgroundColor:colors[this.props.backgroundColor]}
   }
@@ -39,7 +39,7 @@ export default class Button extends Component {
     return colors.primary2
   }
   styleText () {
-    if (!this.props.enable) return {...styles.textButtonOn,color:colors.primary}
+    if (!this.props.enable) return {...styles.textButtonOn,color:colors[this.props.backgroundColor]}
     return styles.textButtonOn
   }
   render() {  

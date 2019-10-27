@@ -354,6 +354,8 @@ PODS:
     - React-cxxreact (= 0.61.2)
     - React-jsi (= 0.61.2)
     - ReactCommon/jscallinvoker (= 0.61.2)
+  - RNAwesomeCardIO (0.8.2):
+    - React
   - RNCAsyncStorage (1.6.2):
     - React
   - RNDeviceInfo (4.0.1):
@@ -389,7 +391,10 @@ PODS:
   - SDWebImageWebPCoder (0.2.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.0)
-  - Stripe (17.0.2)
+  - Stripe (14.0.0)
+  - tipsi-stripe (7.5.1):
+    - React
+    - Stripe (~> 14.0.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -436,6 +441,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
   - RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
@@ -447,6 +453,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Stripe
+  - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
@@ -518,6 +525,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/Libraries/Vibration
   ReactCommon:
     :path: ../node_modules/react-native/ReactCommon
+  RNAwesomeCardIO:
+    :path: ../node_modules/react-native-awesome-card-io
   RNCAsyncStorage:
     :path: ../node_modules/@react-native-community/async-storage
   RNDeviceInfo:
@@ -538,6 +547,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-screens
   RNVectorIcons:
     :path: ../node_modules/react-native-vector-icons
+  tipsi-stripe:
+    :path: ../node_modules/tipsi-stripe
   Yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
@@ -601,6 +612,7 @@ SPEC CHECKSUMS:
   React-RCTText: 3f24042210886ee8c02613758013010be04b291e
   React-RCTVibration: d55e1365be416980217914fe009e9d55dec02e03
   ReactCommon: eb96b70a2a5bed775e919151fd77699fed52944c
+  RNAwesomeCardIO: 3a48cf16f3de5296d424a00e48c7932e5c888340
   RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
   RNDeviceInfo: 5b5b42b12587207b6bd686441ac42d19d8e07933
   RNFastImage: b9535ebddb6105f5d244b023d79676979cb14034
@@ -613,7 +625,8 @@ SPEC CHECKSUMS:
   RNVectorIcons: 66af4d5c8ff4f584c7b7cd9c4b0780920f27fce2
   SDWebImage: 46a7f73228f84ce80990c786e4372cf4db5875ce
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987
-  Stripe: 6c9ab10f087ca76c3cd7311462e383434921bdf8
+  Stripe: db29ad197c74aca6fb981e4e8355cf7ebd0fca5a
+  tipsi-stripe: 237cab79699eb7d354bfc09238b3284e3b8dad84
   Yoga: 6af72bedeaea291a3a3717772d6d41836f23a1b9
 
 PODFILE CHECKSUM: 11879668295af532e1cdd8358b2c03f3b8dd3ea3

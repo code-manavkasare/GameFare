@@ -9,15 +9,29 @@ import Header from '../layout/headers/HeaderButton'
 import ScrollView from '../layout/scrollViews/ScrollView'
 import PhoneFields from './elementsLogin/PhoneFields'
 import sizes from '../style/sizes'
+import AllIcons from '../layout/icons/AllIcons'
 import styleApp from '../style/style'
 
 export default class LoadingScreen extends React.Component {
-  state={check:false}
-  static getDerivedStateFromProps(props, state) {
-    console.log('oupaaaaaaaaaa')
-    console.log(props)
-    return state
-  }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: '',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
+          <AllIcons name='angle-down' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   phone () {
     return (
     <View>
@@ -34,18 +48,11 @@ export default class LoadingScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor:'white',borderTopWidth:0,borderColor:'#eaeaea' }}>
-        <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={''}
-        icon={'angle-down'}
-        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        />
         <ScrollView 
-          // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.phone.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />

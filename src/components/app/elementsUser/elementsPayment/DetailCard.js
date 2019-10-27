@@ -19,6 +19,7 @@ import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard'
+import axios from 'axios'
 
 class ListEvent extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class ListEvent extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('data').brand,
+      title: navigation.getParam('data').brand == 'applePay'?'Apple Pay':navigation.getParam('data').brand ,
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -48,7 +49,8 @@ class ListEvent extends Component {
     }
   };
   async componentDidMount() {
-
+    console.log('lalalalalalaa')
+    console.log(this.props.navigation.getParam('data'))
   }
   rowCB(){
     return (
@@ -57,8 +59,17 @@ class ListEvent extends Component {
           <Col size={15} style={styleApp.center2}>
             {cardIcon(this.props.navigation.getParam('data').brand)}
           </Col>
-          <Col size={75} style={styleApp.center2}>
-            <Text style={styleApp.text}>{'•••• ' + this.props.navigation.getParam('data').last4}</Text>
+          <Col size={60} style={styleApp.center2}>
+            <Text style={styleApp.text}>{this.props.navigation.getParam('data').brand == 'applePay'?'Apple Pay':'•••• ' + this.props.navigation.getParam('data').last4 + '    ' + this.props.navigation.getParam('data').exp_month+'/'+ this.props.navigation.getParam('data').exp_year}</Text>
+          </Col>
+          <Col size={25} style={styleApp.center3}>
+            {
+            this.props.navigation.getParam('data').id == this.props.defaultCard.id?
+            <View style={styleApp.viewSport}>
+              <Text style={[styleApp.textSport,{fontSize:12}]}>Default</Text>
+            </View>
+            :null
+            }
           </Col>
         </Row>
       </TouchableOpacity>
@@ -81,14 +92,39 @@ class ListEvent extends Component {
       </TouchableOpacity>
     )
   }
-  action(data) {
+  async action(data) {
     if (data == 'delete') {
-      this.props.navigation.navigate('Alert',{title:'Do you want to delete this payment method?',subtitle:'•••• ' +this.props.navigation.getParam('data').last4,textButton:'Delete',onGoBack:() => this.confirmDelete()})
+      this.props.navigation.navigate('Alert',{title:'Do you want to delete this payment method?',subtitle:this.props.navigation.getParam('data').brand == 'applePay'?'Apple Pay':'•••• ' + this.props.navigation.getParam('data').last4 + '    ' + this.props.navigation.getParam('data').exp_month+'/'+ this.props.navigation.getParam('data').exp_year,textButton:'Delete',onGoBack:() => this.confirmDelete()})
+    } else {
+      if (this.props.navigation.getParam('data').id == this.props.defaultCard.id) {
+        return this.props.navigation.goBack()
+      } else {
+        await firebase.database().ref('users/' + this.props.userID + '/wallet/defaultCard/').update(this.props.navigation.getParam('data'))
+        return this.props.navigation.goBack()
+      }
     }
   }
-  confirmDelete() {
+  async confirmDelete() {
     // delete card
-    this.props.navigation.navigate('DetailCard')
+    this.setState({loader:true})
+    var url = 'https://us-central1-getplayd.cloudfunctions.net/deleteUserCreditCard'
+    const results = await axios.get(url, {
+      params: {
+        CardID: this.props.navigation.getParam('data').id,
+        userID: this.props.userID,
+        tokenStripeCus: this.props.tokenCusStripe,
+      }
+    })
+    if (results.data.response == true) {
+      if (this.props.navigation.getParam('data').id == this.props.defaultCard.id && Object.values(this.props.cards).length > 0) {
+        await firebase.database().ref('users/' + this.props.userID + '/wallet/defaultCard/').update(Object.values(this.props.cards)[0])
+      } else if (this.props.navigation.getParam('data').id == this.props.defaultCard.id) {
+        await firebase.database().ref('users/' + this.props.userID + '/wallet/defaultCard/').remove()
+      }
+      this.props.navigation.navigate('Payments')
+    } else {
+      this.props.navigation.navigate('Payments')
+    }
   }
   payments() {
     return (
@@ -127,7 +163,8 @@ const  mapStateToProps = state => {
   return {
     userID:state.user.userID,
     defaultCard:state.user.infoUser.wallet.defaultCard,
-    cards:state.user.infoUser.wallet.cards
+    cards:state.user.infoUser.wallet.cards,
+    tokenCusStripe:state.user.infoUser.wallet.tokenCusStripe
   };
 };
 

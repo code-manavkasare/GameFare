@@ -70,7 +70,7 @@ class ListEvent extends Component {
       return (
           <View style={{marginTop:0}}>
             {this.state.events.map((event,i) => (
-              <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,{data:event,pageFrom:'user'})} item={event}/>
+              <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.push(val,{data:event,pageFrom:'user'})} item={event}/>
             ))}
           <View style={{height:1,backgroundColor:colors.off,width:width,marginLeft:-20}} />
         </View>

@@ -16,6 +16,7 @@ import styleApp from '../../style/style'
 import LoaderWhite from '../loaders/Loader'
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
+import AllIcons from '../icons/AllIcons'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -34,6 +35,7 @@ export default class ButtonRound extends Component {
     this.props.click()
   }
   stylesButton() {
+    if (this.props.buttonRound2) return styleApp.buttonRound2
     if (this.props.styleButton != undefined) return {...styleApp.buttonRound,...this.props.styleButton}
     return styleApp.buttonRound
   }
@@ -69,11 +71,11 @@ export default class ButtonRound extends Component {
              :this.props.icon=='send'?
              <FontIcon name='comments' size={20} color={this.colorIcon()} />
              :this.props.icon=='sign'?
-             <FontIcon name='user-circle' size={25} color={'white'} />
+             <AllIcons name='user-alt' size={23} color={'white'} type='font'/>
              :this.props.icon=='check'?
              <FontIcon name='check' size={25} color={'white'} />
              :this.props.icon=='event'?
-             <FontIcon name='calendar-alt' size={21} color={'white'} />
+             <AllIcons name='calendar-day' size={23} color={'white'} type='font'/>
              :this.props.icon=='create'?
              <FontIcon name='arrow-right' size={20} color={this.colorIcon()} />
              :null

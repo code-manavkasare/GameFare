@@ -32,6 +32,7 @@ import Payments from '../app/elementsUser/elementsPayment/Payments'
 import NewCard from '../app/elementsUser/elementsPayment/NewCard'
 import NewMethod from '../app/elementsUser/elementsPayment/NewMethod'
 import DetailCard from '../app/elementsUser/elementsPayment/DetailCard'
+import Scan from '../app/elementsUser/elementsPayment/Scan'
 import ApplePay from '../app/elementsUser/elementsPayment/ApplePay'
 
 import Alert from '../layout/alerts/Alert'
@@ -62,22 +63,12 @@ const AppNavigator = createStackNavigator(
 const LoginNavigator = createStackNavigator(
     {
         Phone:Phone,
-        Verify:{
-            screen:Verify,
-            navigationOptions: ({ navigation }) => ({
-                gesturesEnabled: true,
-            }),
-        },
-        Complete:{
-            screen:Complete,
-            navigationOptions: ({ navigation }) => ({
-                gesturesEnabled: false,
-            }),
-        }
+        Verify:Verify,
+        Complete:Complete
     },
     {
         initialRouteName:'Phone',
-        headerMode: 'none',
+        // headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:true
     }
@@ -89,10 +80,23 @@ const PaymentsNavigator = createStackNavigator(
         NewCard:NewCard,
         ApplePay:ApplePay,
         NewMethod:NewMethod,
-        DetailCard:DetailCard
+        DetailCard:DetailCard,
+        Scan:Scan
     },
     {
         initialRouteName:'Payments',
+        // headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:true
+    }
+);
+
+const FlagsNavigator = createStackNavigator(
+    {
+        ListCountry:ListCountry
+    },
+    {
+        initialRouteName:'ListCountry',
         // headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:true
@@ -103,7 +107,7 @@ const RootStack = createStackNavigator(
     {
         MainApp:AppNavigator,
         SignIn:LoginNavigator,
-        ListCountry:ListCountry,
+        ListCountry:FlagsNavigator,
         Alert:Alert,
         Location:LocationSelector,
         Date:DateSelector,

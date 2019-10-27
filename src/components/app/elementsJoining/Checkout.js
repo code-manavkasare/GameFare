@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
+import { StackActions, NavigationActions } from 'react-navigation';
 
 import Header from '../../layout/headers/HeaderButton'
 import ScrollView from '../../layout/scrollViews/ScrollView'
@@ -23,9 +24,8 @@ import Button from '../../layout/buttons/Button'
 import AllIcons from '../../layout/icons/AllIcons'
 import DateEvent from '../elementsEventCreate/DateEvent'
 import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard'
-
-import InAppBrowser from 'react-native-inappbrowser-reborn'
-import Communications from 'react-native-communications';
+import axios from 'axios'
+import firebase from 'react-native-firebase'
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -107,7 +107,7 @@ class ProfilePage extends Component {
       </View>
     )
   }
-  profile() {
+  checkout() {
     return (
       <View>
         {this.sport()}
@@ -143,7 +143,7 @@ class ProfilePage extends Component {
           :null
         }
 
-        <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge $ your attendees once they join the event. You will receive your pay after the event once you checkout.</Text></Text>
+        <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>reminder.</Text></Text>
       </View>
     )
   }
@@ -151,8 +151,68 @@ class ProfilePage extends Component {
     if (Number(this.props.navigation.getParam('data').price.joiningFee)==0) return 'Confirm attendance'
     return 'Pay & Confirm attendance'
   }
+  async checkAttendingEvent (userID,eventID) {
+    var event = await firebase.database().ref('/usersEvents/' + userID + '/' + eventID).once('value')
+    event = event.val()
+    if (event == null) return true
+    return false
+  }
   async submit(data) {
     await this.setState({loader:true})
+    var check = await this.checkAttendingEvent(this.props.userID,data.eventID) 
+    if (!check) {
+      await this.setState({loader:false})
+      return this.props.navigation.navigate('Alert',{title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+    }
+    var now = (new Date()).toString()
+    var {message,response} = await this.payEntryFee(now,data)
+    
+    if (response == false) {
+      await this.setState({loader:false})
+      return this.props.navigation.navigate('Alert',{title:message,textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+    }
+    const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/usersConfirmed').push({
+      captainInfo:{
+        phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
+        userID:this.props.userID,
+        name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
+        picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
+      },
+      date:now,
+    })
+    await firebase.database().ref('events/' + data.eventID + '/usersConfirmed/' + pushNewTeam.key).update({
+      teamID:pushNewTeam.key
+    })
+    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update(this.props.navigation.getParam('data'))
+    // this.props.navigation.navigate('ListEvents')
+    // const resetAction = StackActions.reset({
+    //   index: 0,
+    //   actions: [NavigationActions.navigate({ routeName: 'MainApp' })],
+    // });
+
+    // this.props.navigation.dispatch(resetAction);
+    this.props.navigation.navigate('ListEvents');
+  }
+  async payEntryFee(now,data) {
+    if (Number(data.price.joiningFee) == 0) return {response:true,message:''}
+    try {
+      var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee'
+      const promiseAxios = await axios.get(url, {
+        params: {
+          cardID: this.props.defaultCard.id,
+          now:now,
+          userID: this.props.userID,
+          tokenCusStripe: this.props.tokenCusStripe,
+          currentUserWallet:Number(this.props.totalWallet),
+          amount:data.price.joiningFee,
+          eventID:data.eventID
+        }
+      })
+      if (promiseAxios.data.response == false) return {response:false,message:promiseAxios.data.message}
+      return {response:true,message:''}
+    }catch (err) {
+      return {response:false,message:err.toString()}
+    }
   }
   conditionOn () {
     if (this.props.defaultCard == undefined) return false
@@ -163,7 +223,7 @@ class ProfilePage extends Component {
       <View style={{ flex: 1,backgroundColor:'white' }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.profile()}
+          contentScrollView={() => this.checkout()}
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={sizes.heightFooterBooking+90}
@@ -222,8 +282,10 @@ const  mapStateToProps = state => {
   return {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
+    infoUser:state.user.infoUser.userInfo,
     totalWallet:state.user.infoUser.wallet.totalWallet,
-    defaultCard:state.user.infoUser.wallet.defaultCard
+    defaultCard:state.user.infoUser.wallet.defaultCard,
+    tokenCusStripe:state.user.infoUser.wallet.tokenCusStripe,
   };
 };
 

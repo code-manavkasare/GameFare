@@ -6,7 +6,8 @@ import {
   Image,
   Dimensions,
   View,
-  FlatList
+  FlatList,
+  TouchableOpacity
 } from 'react-native';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
@@ -17,6 +18,7 @@ import ScrollView from '../../layout/scrollViews/ScrollView'
 import colors from '../../style/colors'
 import Header from '../../layout/headers/HeaderButton'
 import sizes from '../../style/sizes'
+import AllIcons from '../../layout/icons/AllIcons'
 const ListCountry = require('./listCountry.json')
 
 export default class SelectCountry extends Component {
@@ -29,6 +31,25 @@ export default class SelectCountry extends Component {
       }
       componentDidMount(){
      }
+     static navigationOptions = ({ navigation }) => {
+      return {
+        title: '',
+        headerStyle: {
+            backgroundColor: colors.primary,
+            borderBottomWidth:0
+        },
+        headerTitleStyle: {
+            color:'white',
+            fontFamily:'OpenSans-Bold',
+            fontSize:14,
+        },
+        headerLeft: () => (
+          <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Phone')}>
+            <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+          </TouchableOpacity>
+        ),
+      }
+    };
     back() {
       this.props.close()
     }
@@ -36,13 +57,6 @@ export default class SelectCountry extends Component {
       this.props.navigation.navigate('Phone',{country:country})
     }
     conditionCheck (country) {
-      // if (this.props.signUp) {
-      //   if (this.props.country == country.code) return true
-      //   return false
-      // } else {
-      //   if (this.props.country.name == country.name) return true
-      //   return false
-      // }
       return false
     }
     cardCountry (country) {
@@ -77,7 +91,7 @@ export default class SelectCountry extends Component {
     }
     contryComponent() {
       return (
-        <View style={{marginTop:sizes.heightHeaderHome,marginLeft:20,width:width-40}}>
+        <View style={{marginLeft:20,width:width-40}}>
           <FlatList
             data={ListCountry.slice(0,this.state.slice)}
             keyExtractor={item => item.index}
@@ -97,22 +111,7 @@ export default class SelectCountry extends Component {
   render() {
     return (  
         <View style={styles.content}>
-        <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={''}
-        icon={'angle-down'}
-        close={() => this.props.navigation.navigate('Phone')}
-        />
         {this.contryComponent()}
-          {/* <ScrollView 
-          onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.contryComponent.bind(this)}
-          marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
-          offsetBottom={90+60}
-          showsVerticalScrollIndicator={true}
-        /> */}
-
         </View>
     );
   }
@@ -120,13 +119,9 @@ export default class SelectCountry extends Component {
 
 const styles = StyleSheet.create({
   content:{
-    height:height,
+    flex:1,
     width:width,
-    zIndex:70,
-    position:'absolute',
-    borderTopWidth:0,
     backgroundColor:'white',
-    borderColor:'#eaeaea'
   },
   title:{
     fontSize:20,

@@ -58,10 +58,19 @@ class ListEvent extends Component {
           <Col size={15} style={styleApp.center2}>
             {icon}
           </Col>
-          <Col size={75} style={styleApp.center2}>
+          <Col size={65} style={styleApp.center2}>
             <Text style={styleApp.text}>{text}</Text>
           </Col>
-          <Col size={10} style={styleApp.center}>
+          <Col size={10} style={styleApp.center3}>
+            { 
+              this.props.defaultCard.id == data.id?
+              <View style={styles.defaultView}>
+                <Text style={styles.textDefault}>D</Text>
+              </View>
+              :null
+            }
+          </Col>
+          <Col size={10} style={styleApp.center3}>
             <AllIcons name='angle-right' color={colors.title} type="font" size={16}/>
           </Col>
         </Row>
@@ -79,13 +88,13 @@ class ListEvent extends Component {
   listCard() {
     if (this.props.cards == undefined) return null
     return Object.values(this.props.cards).map((card,i) => (
-      this.row(cardIcon(card.brand),'•••• ' + card.last4,{...card,cardID:Object.keys(this.props.cards)[i]})
+      this.row(cardIcon(card.brand),card.brand == 'applePay'?'Apple Pay':'•••• ' + card.last4,card)
     ))
   }
   payments() {
     return (
       <View style={{marginTop:0}}>
-        <Text style={[styleApp.title,{marginBottom:20}]}>Payment methods</Text>
+        <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text>
 
         {this.listCard()}
 
@@ -95,18 +104,8 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',height:height }}>
-        {/* <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Payments'}
-        icon={'angle-down'}
-        iconRight={''}
-        typeIconRight='font'
-        clickIconRight={() => this.props.navigation.goBack()}
-        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        /> */}
+      <View style={{backgroundColor:'white',flex:1 }}>
         <ScrollView 
-          // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.payments.bind(this)}
           marginBottomScrollView={0}
@@ -114,14 +113,25 @@ class ListEvent extends Component {
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />
-
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-
+  defaultView:{
+    backgroundColor:colors.greenLight,
+    borderRadius:12.5,
+    height:25,
+    width:25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textDefault:{
+    color:colors.greenStrong,
+    fontSize:12,
+    fontFamily: 'OpenSans-Bold',
+  },
 });
 
 const  mapStateToProps = state => {

@@ -13,6 +13,7 @@ import ScrollView from '../layout/scrollViews/ScrollView'
 import sizes from '../style/sizes'
 import styleApp from '../style/style'
 import colors from '../style/colors'
+import AllIcons from '../layout/icons/AllIcons'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import {userAction} from '../../actions/userActions'
@@ -24,6 +25,25 @@ class ProfilePage extends Component {
   static getDerivedStateFromProps(props, state) {
     return state
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Profile',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
+          <AllIcons name='home' color={'white'} size={23} type='mat' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   title(text) {
     return (
       <Row style={{marginBottom:5,marginTop:20}}>
@@ -175,17 +195,11 @@ class ProfilePage extends Component {
   render() {
     return (
       <View style={{ flex: 1,backgroundColor:'white' }}>
-        <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Profile'}
-        icon={'angle-left'}
-        close={() => this.props.navigation.navigate('Home')}
-        />
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90}
           showsVerticalScrollIndicator={false}
         />
