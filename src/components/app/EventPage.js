@@ -4,7 +4,8 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    Button
 } from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase'
@@ -20,16 +21,40 @@ import Header from '../layout/headers/HeaderButton'
 import AllIcons from '../layout/icons/AllIcons'
 import DateEvent from './elementsEventCreate/DateEvent'
 import ButtonRound from '../layout/buttons/ButtonRound'
-import Button from '../layout/buttons/Button'
+import Button2 from '../layout/buttons/Button'
 import Loader from '../layout/loaders/Loader'
 
-class EventPage extends Component {
+class EventPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       usersConfirmed:true,
     };
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Organize your event',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerRight: () => (
+        <TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate('CreateEvent4',{pageFrom:'event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})}>
+        <AllIcons name='share' color={'white'} size={18} type='moon' />
+        </TouchableOpacity>
+      ),
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
+          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   async componentDidMount() {
     var usersConfirmed = await firebase.database().ref('events/' + this.props.navigation.getParam('data').objectID + '/usersConfirmed').once('value')
     usersConfirmed = usersConfirmed.val()
@@ -144,8 +169,8 @@ class EventPage extends Component {
   }
   render() {
     return (
-      <View style={{ height:height,backgroundColor:'white' }}>
-        <Header
+      <View style={{ flex:1,backgroundColor:'white' }}>
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={this.props.navigation.getParam('data').info.name}
         icon={'angle-left'}
@@ -153,19 +178,19 @@ class EventPage extends Component {
         typeIconRight={'moon'}
         clickIconRight={() => this.clickIconRight()}
         close={() => this.props.navigation.goBack()}
-        />
+        /> */}
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.event.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={190}
           showsVerticalScrollIndicator={true}
         />
         {
           this.props.navigation.getParam('pageFrom') == 'home'?
           <View style={styleApp.footerBooking}>
-          <Button
+          <Button2
           icon={'next'} 
           backgroundColor='green'
           onPressColor={colors.greenClick}

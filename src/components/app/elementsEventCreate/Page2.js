@@ -15,6 +15,7 @@ import ScrollView from '../../layout/scrollViews/ScrollView'
 import TextField from '../../layout/textField/TextField'
 import Switch from '../../layout/switch/Switch'
 import ButtonRound from '../../layout/buttons/ButtonRound'
+import AllIcons from '../../layout/icons/AllIcons'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import { Col, Row, Grid } from "react-native-easy-grid";
 
@@ -32,6 +33,25 @@ class Page2 extends Component {
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Advanced settings',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
+          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   async componentDidMount() {
     console.log('le mount step 2')
     console.log(this.props.navigation.getParam('data'))
@@ -93,26 +113,31 @@ class Page2 extends Component {
     )
   }
   
-  plusMinus(state,maxValue,increment,minValue) {
+  plusMinus(state,maxValue,increment,minValue,icon) {
     return(
-      <Row style={{height:50}}>
-        <Col style={styleApp.center} activeOpacity={0.7} onPress={() => {
+      <Row style={styleApp.inputForm}>
+        <Col size={15} style={styleApp.center}>
+          <AllIcons name={icon} color={colors.title} size={17} type='font' />
+        </Col>
+        <Col size={55} style={[styleApp.center2,{paddingLeft:15}]}>
+          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular'}]}>{this.state[state]} {state}</Text>
+        </Col>
+        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.state[state] != minValue) {
             this.setState({[state]:this.state[state]-increment})
           }
         }} >
-          <Text style={styleApp.text}>-</Text>
+          <AllIcons name={'minus'} color={colors.title} size={17} type='font' />
         </Col>
-        <Col style={[styleApp.center,{borderBottomWidth:1,borderColor:'#eaeaea'}]}>
-          <Text style={styleApp.text}>{this.state[state]}</Text>
-        </Col>
-        <Col style={styleApp.center} activeOpacity={0.7} onPress={() => {
+        
+        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.state[state] != maxValue) {
             this.setState({[state]:this.state[state]+increment})
           }
         }} >
-          <Text style={styleApp.text}>+</Text>
+          <AllIcons name={'plus'} color={colors.title} size={17} type='font' />
         </Col>
+        
       </Row>
     )
   }
@@ -143,7 +168,7 @@ class Page2 extends Component {
       }}
     />
     } else if (field.field == 'plus') {
-      return this.plusMinus(field.value,field.maxValue,field.increment,field.minValue) 
+      return this.plusMinus(field.value,field.maxValue,field.increment,field.minValue,field.icon) 
     } else if (field.field == 'text') {
       return this.textField(field.value,field.placeHolder,field.heightField,field.multiline,field.keyboardType,field.icon)
     }
@@ -174,21 +199,21 @@ class Page2 extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',height:height }}>
-        <Header
+      <View style={{backgroundColor:'white',flex:1, }}>
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Advanced settings'}
         icon={'angle-left'}
         close={() => this.props.navigation.goBack()}
-        />
+        /> */}
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page2.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
         <ButtonRound
           icon={'next'} 

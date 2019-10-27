@@ -35,6 +35,25 @@ class Page3 extends Component {
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Event summary',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
+          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   async componentDidMount() {
     console.log('page3 mount')
     console.log(this.props.navigation.getParam('data'))
@@ -179,21 +198,21 @@ class Page3 extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',height:height }}>
-        <Header
+      <View style={{backgroundColor:'white',flex:1 }}>
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Event summary'}
         icon={'angle-left'}
         close={() => this.props.navigation.goBack()}
-        />
+        /> */}
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.page2(this.props.navigation.getParam('data'))}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
         {
           this.props.userConnected?

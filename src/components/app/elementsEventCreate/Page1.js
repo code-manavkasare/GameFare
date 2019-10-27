@@ -54,6 +54,25 @@ class Page1 extends Component {
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Organize your event',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
+          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   componentDidMount() {
     console.log('page 1 mount')
     console.log(this.props.sports)
@@ -286,19 +305,19 @@ class Page1 extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',height:height }}>
-        <Header
+      <View style={{backgroundColor:'white',flex:1 }}>
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Organize your event'}
         icon={'angle-left'}
         close={() => this.close()}
-        />
+        /> */}
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page1.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />

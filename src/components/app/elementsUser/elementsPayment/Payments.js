@@ -28,8 +28,28 @@ class ListEvent extends Component {
       events:[]
     };
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Payments',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
+          <AllIcons name='angle-down' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   async componentDidMount() {
-
+    console.log('payments mount')
+    console.log(this.props.navigation.getParam())
   }
   row(icon,text,data){
     return (
@@ -76,7 +96,7 @@ class ListEvent extends Component {
   render() {
     return (
       <View style={{backgroundColor:'white',height:height }}>
-        <Header
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Payments'}
         icon={'angle-down'}
@@ -84,13 +104,13 @@ class ListEvent extends Component {
         typeIconRight='font'
         clickIconRight={() => this.props.navigation.goBack()}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        />
+        /> */}
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.payments.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />

@@ -34,6 +34,25 @@ class ProfilePage extends Component {
       loader:false,
     };
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Join ' +navigation.getParam('data').info.name,
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
+          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+        </TouchableOpacity>
+      ),
+    }
+  };
   componentDidMount() {
     console.log('checkout mount')
   }
@@ -142,17 +161,11 @@ class ProfilePage extends Component {
   render() {
     return (
       <View style={{ flex: 1,backgroundColor:'white' }}>
-        <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Join ' + this.props.navigation.getParam('data').info.name}
-        icon={'angle-left'}
-        close={() => this.props.navigation.navigate('Event')}
-        />
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={sizes.heightFooterBooking+90}
           showsVerticalScrollIndicator={false}
         />

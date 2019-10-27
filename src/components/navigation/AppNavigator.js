@@ -1,5 +1,13 @@
+import React, {Component} from 'react';
+import { 
+    Image
+} from 'react-native';
+
+
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import colors from '../style/colors'
+
 import HomePage from '../app/HomePage'
 import ProfilePage from '../app/ProfilePage'
 import EventPage from '../app/EventPage'
@@ -32,30 +40,19 @@ import Alert from '../layout/alerts/Alert'
 
 const AppNavigator = createStackNavigator(
     {
-        Home: {
-            screen:HomePage,
-            headerBackTitleVisible:true,
-            navigationOptions: ({ navigation }) => ({
-                title: 'Home',
-            }),
-        },
+        Home: HomePage,
         Profile: ProfilePage,
         Event: EventPage,
         CreateEvent1:CreateEvent1,
         CreateEvent2:CreateEvent2,
         CreateEvent3:CreateEvent3,
-        CreateEvent4:{
-            screen:CreateEvent4,
-            navigationOptions: ({ navigation }) => ({
-                gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
-            }),
-        },
+        CreateEvent4:CreateEvent4,
         ListEvents:ListEvents,
         Checkout:Checkout
     },
     {
         initialRouteName:'Home',
-        headerMode: 'none',
+        // headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false
     }
@@ -82,7 +79,7 @@ const LoginNavigator = createStackNavigator(
         initialRouteName:'Phone',
         headerMode: 'none',
         mode: 'card',
-        cardOverlayEnabled:false
+        cardOverlayEnabled:true
     }
 );
 
@@ -91,24 +88,14 @@ const PaymentsNavigator = createStackNavigator(
         Payments:Payments,
         NewCard:NewCard,
         ApplePay:ApplePay,
-        NewMethod:{
-            screen:NewMethod,
-            navigationOptions: ({ navigation }) => ({
-                gesturesEnabled: true,
-            }),
-        },
-        DetailCard:{
-            screen:DetailCard,
-            navigationOptions: ({ navigation }) => ({
-                gesturesEnabled: true,
-            }),
-        }
+        NewMethod:NewMethod,
+        DetailCard:DetailCard
     },
     {
         initialRouteName:'Payments',
-        headerMode: 'none',
+        // headerMode: 'none',
         mode: 'card',
-        cardOverlayEnabled:false
+        cardOverlayEnabled:true
     }
 );
 
@@ -128,7 +115,7 @@ const RootStack = createStackNavigator(
         mode: 'modal',
         transparentCard: true,
         cardStyle: { opacity: 1,},
-        cardOverlayEnabled:false
+        cardOverlayEnabled:true
     }
 )
 

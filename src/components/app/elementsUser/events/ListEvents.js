@@ -15,6 +15,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome';
 import PlaceHolder from '../../../placeHolders/ListEventsUser'
 import Header from '../../../layout/headers/HeaderButton'
 import ScrollView from '../../../layout/scrollViews/ScrollView'
+import AllIcons from '../../../layout/icons/AllIcons'
 import CardEvent from './CardEvent'
 
 import sizes from '../../../style/sizes'
@@ -29,6 +30,26 @@ class ListEvent extends Component {
       events:[]
     };
   }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Your events',
+      headerStyle: {
+          backgroundColor: colors.primary,
+          borderBottomWidth:0
+      },
+      headerTitleStyle: {
+          color:'white',
+          fontFamily:'OpenSans-Bold',
+          fontSize:14,
+      },
+      headerLeft: () => <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Home')}>
+      <AllIcons name='home' color={'white'} size={23} type='mat' />
+    </TouchableOpacity>,
+      headerRight: () => <TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate('CreateEvent1',{})}>
+      <AllIcons name='plus' color={'white'} size={23} type='font' />
+      </TouchableOpacity>,
+    }
+  };
   async componentDidMount() {
     var that = this
     firebase.database().ref('usersEvents/' + this.props.userID).on('value', function(snap) {
@@ -61,8 +82,8 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',height:height }}>
-        <Header
+      <View style={{backgroundColor:'white',flex:1 }}>
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Your events'}
         icon={'angle-left'}
@@ -70,13 +91,13 @@ class ListEvent extends Component {
         typeIconRight='font'
         clickIconRight={() => this.props.navigation.navigate('CreateEvent1',{})}
         close={() => this.close()}
-        />
+        /> */}
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.listEvent.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />
