@@ -52,6 +52,7 @@ class ListEvent extends Component {
     console.log(this.props.navigation.getParam())
   }
   row(icon,text,data){
+    console.log('cest ici meme')
     return (
       <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.openPage(data)}>
         <Row>
@@ -61,7 +62,9 @@ class ListEvent extends Component {
           <Col size={65} style={styleApp.center2}>
             <Text style={styleApp.text}>{text}</Text>
           </Col>
-          <Col size={10} style={styleApp.center3}>
+          {
+            data!= 'new'?
+            <Col size={10} style={styleApp.center3}>
             { 
               this.props.defaultCard.id == data.id?
               <View style={styles.defaultView}>
@@ -70,6 +73,10 @@ class ListEvent extends Component {
               :null
             }
           </Col>
+          :
+          <Col size={10} ></Col>
+          }
+          
           <Col size={10} style={styleApp.center3}>
             <AllIcons name='angle-right' color={colors.title} type="font" size={16}/>
           </Col>
@@ -86,10 +93,13 @@ class ListEvent extends Component {
     return this.props.navigation.navigate('DetailCard',{pageFrom:this.props.navigation.getParam('pageFrom'),data:data})
   }
   listCard() {
+    console.log('this.props.cards')
+    console.log(this.props.cards)
     if (this.props.cards == undefined) return null
     return Object.values(this.props.cards).map((card,i) => (
       this.row(cardIcon(card.brand),card.brand == 'applePay'?'Apple Pay':'•••• ' + card.last4,card)
     ))
+    
   }
   payments() {
     return (

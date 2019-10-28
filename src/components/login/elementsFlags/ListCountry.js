@@ -45,7 +45,7 @@ export default class SelectCountry extends Component {
         },
         headerLeft: () => (
           <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Phone')}>
-            <AllIcons name='angle-left' color={'white'} size={23} type='font' />
+            <AllIcons name='angle-down' color={'white'} size={23} type='font' />
           </TouchableOpacity>
         ),
       }

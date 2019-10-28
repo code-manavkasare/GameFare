@@ -27,6 +27,17 @@ import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard'
 import axios from 'axios'
 import firebase from 'react-native-firebase'
 
+import stripe from 'tipsi-stripe'
+stripe.setOptions({
+  publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
+  merchantId: 'merchant.gamefare',
+  androidPayMode: 'test',
+  requiredBillingAddressFields:['all']
+});
+var options ={
+  requiredBillingAddressFields:['postal_address']
+}
+
 class ProfilePage extends Component {
   constructor(props) {
     super(props);
@@ -121,29 +132,41 @@ class ProfilePage extends Component {
         {this.rowText('Entry fee',colors.title,'OpenSans-SemiBold',Number(this.props.navigation.getParam('data').price.joiningFee)==0?'Free':'$' +this.props.navigation.getParam('data').price.joiningFee)}
 
         {
-          this.props.userConnected?
-          this.rowText('Credits',colors.green,'OpenSans-SemiBold','$' +this.props.totalWallet)
+          this.props.userConnected && Number(this.props.navigation.getParam('data').price.joiningFee)!=0?
+          this.rowText('Credits',colors.green,'OpenSans-SemiBold','$' +Number(this.props.totalWallet).toFixed(2))
           :null
         }
 
         <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
 
         {
-          this.props.userConnected?
-          this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)))
+          Number(this.props.navigation.getParam('data').price.joiningFee)==0?
+          null
+          :this.props.userConnected?
+          <View>
+            {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2))}
+            <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
+          </View>
           :
-          this.rowText('Estimated charge',colors.title,'OpenSans-Bold','$' +Number(this.props.navigation.getParam('data').price.joiningFee))
+          <View>
+            {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Number(this.props.navigation.getParam('data').price.joiningFee))}
+            <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
+          </View>
         }
 
-        <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
+        
 
         {
-          this.props.userConnected?
+          this.props.userConnected && Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
           this.creditCard()
           :null
         }
-
-        <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>reminder.</Text></Text>
+        
+        {
+          Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
+          <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge the entry fee at the point of joining the event. No refunds unless your spot can be filled with an alternate player.</Text></Text>
+          :null
+        }
       </View>
     )
   }
@@ -165,12 +188,12 @@ class ProfilePage extends Component {
       return this.props.navigation.navigate('Alert',{title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
     }
     var now = (new Date()).toString()
-    var {message,response} = await this.payEntryFee(now,data)
+    var {message,response,defaultCard} = await this.payEntryFee(now,data)
     
     if (response == false) {
       await this.setState({loader:false})
       return this.props.navigation.navigate('Alert',{title:message,textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
-    }
+    } else if (response == 'cancel') return true
     const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/usersConfirmed').push({
       captainInfo:{
         phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
@@ -184,22 +207,53 @@ class ProfilePage extends Component {
       teamID:pushNewTeam.key
     })
     await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update(this.props.navigation.getParam('data'))
-    // this.props.navigation.navigate('ListEvents')
-    // const resetAction = StackActions.reset({
-    //   index: 0,
-    //   actions: [NavigationActions.navigate({ routeName: 'MainApp' })],
-    // });
-
-    // this.props.navigation.dispatch(resetAction);
     this.props.navigation.navigate('ListEvents');
   }
   async payEntryFee(now,data) {
-    if (Number(data.price.joiningFee) == 0) return {response:true,message:''}
+    if (Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) == 0) return {response:true,message:''}
+    var cardID = this.props.defaultCard.id
+    if (cardID == 'applePay') {
+      try {
+        this.setState({loader:false})
+        const items = [{
+          label: 'GameFare',
+          amount: Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2),
+        }]
+        const token = await stripe.paymentRequestWithApplePay(items,options)
+        var tokenCard = token.tokenId
+        
+        var url = 'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard'
+        const promiseAxios = await axios.get(url, {
+          params: {
+            tokenCard: tokenCard,
+            userID: this.props.userID,
+            tokenStripeCus: this.props.tokenCusStripe,
+            name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
+            email:this.props.infoUser.email == undefined?'':this.props.infoUser.email,
+            brand: this.props.defaultCard.brand
+          }
+        })
+        if (promiseAxios.data.response == false) {
+          stripe.cancelApplePayRequest()
+        } else {
+          cardID =  promiseAxios.data.cardID
+          await this.setState({loader:true})
+          await stripe.completeApplePayRequest()
+        }
+      } catch (err) {
+        console.log('error')
+        console.log(err)
+        // return  {response:false,message:err.toString()}
+        await this.setState({loader:false})
+        stripe.cancelApplePayRequest()
+        return  {response:'cancel'}
+      }
+    }
     try {
       var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee'
       const promiseAxios = await axios.get(url, {
         params: {
-          cardID: this.props.defaultCard.id,
+          cardID: cardID,
           now:now,
           userID: this.props.userID,
           tokenCusStripe: this.props.tokenCusStripe,
@@ -209,13 +263,13 @@ class ProfilePage extends Component {
         }
       })
       if (promiseAxios.data.response == false) return {response:false,message:promiseAxios.data.message}
-      return {response:true,message:''}
+      return {response:true,message:'',defaultCB:this.props.defaultCard}
     }catch (err) {
       return {response:false,message:err.toString()}
     }
   }
   conditionOn () {
-    if (this.props.defaultCard == undefined) return false
+    if (Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0 && this.props.defaultCard == undefined) return false
     return true
   }
   render() {

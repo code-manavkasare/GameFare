@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import { 
     View,
-    Dimensions
+    Dimensions,
+    TouchableOpacity
 } from 'react-native';
 import Header from '../layout/headers/HeaderButton'
 import ScrollView from '../layout/scrollViews/ScrollView'

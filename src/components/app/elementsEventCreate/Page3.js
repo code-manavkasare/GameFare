@@ -135,7 +135,7 @@ class Page3 extends Component {
 
             <View style={{height:1,marginTop:10,marginBottom:20,backgroundColor:'#eaeaea'}} />
 
-            <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge ${data.step1.joiningFee} your attendees once they join the event. You will receive your pay after the event once you checkout.</Text></Text>
+            <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
 
 
           </View>

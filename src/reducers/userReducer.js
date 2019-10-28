@@ -8,7 +8,8 @@ const initialState = {
     infoUser:{
         userInfo:{
         },
-        wallet:{}
+        wallet:{},
+        defaultCard:{},
     },
     userID:'',
     phoneNumber: '',

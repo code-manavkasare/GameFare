@@ -33,7 +33,7 @@ class EventPage extends React.Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Organize your event',
+      title: navigation.getParam('data').info.name,
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -45,7 +45,7 @@ class EventPage extends React.Component {
       },
       headerRight: () => (
         <TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate('CreateEvent4',{pageFrom:'event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})}>
-        <AllIcons name='share' color={'white'} size={18} type='moon' />
+          <AllIcons name='share' color={'white'} size={18} type='moon' />
         </TouchableOpacity>
       ),
       headerLeft: () => (
@@ -63,7 +63,9 @@ class EventPage extends React.Component {
     }
     console.log('usersConfirmed')
     console.log(usersConfirmed)
-    this.setState({usersConfirmed:usersConfirmed})
+    var infoOrganizer = await firebase.database().ref('users/' + this.props.navigation.getParam('data').info.organizer + '/userInfo').once('value')
+    infoOrganizer = infoOrganizer.val()
+    this.setState({usersConfirmed:usersConfirmed,infoOrganizer:infoOrganizer})
   }
   cancel() {
     console.log('cancel!!!!')
@@ -103,6 +105,29 @@ class EventPage extends React.Component {
     }
     return step2[field.value].charAt(0).toUpperCase() + step2[field.value].slice(1)
   }
+  rowOrganizer() {
+    if (this.state.usersConfirmed == true) return null
+    return <Row style={{height:40,marginTop:10}}>
+      <Col size={15} style={styleApp.center2}>
+        <AllIcons name='user-alt' color={colors.grey} type='font' size={20}/>
+      </Col>
+      <Col size={85} style={styleApp.center2}>
+        <Text style={styleApp.text}>{this.state.infoOrganizer.firstname} {this.state.infoOrganizer.lastname} (organizer)</Text>
+      </Col>
+    </Row>
+  }
+  openCondition() {
+    if (Object.values(this.state.usersConfirmed).length <= Number(this.props.navigation.getParam('data').info.maxAttendance)) return true
+    return false
+  }
+  openView() {
+    if (this.state.usersConfirmed == true) return <View style={{height:25,width:70}} />
+    console.log('this.openCondition()')
+    console.log(this.openCondition())
+    return <View style={this.openCondition()?styles.viewSport:{...styles.viewSport,backgroundColor:colors.primaryLight}}>
+    <Text style={this.openCondition()?styles.textSport:{...styles.textSport,color:'white'}}>{this.openCondition()?'Open':'Full'}</Text>
+  </View>
+  }
   event() {
     var sport = this.props.sports.filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0]
     console.log('sport')
@@ -114,15 +139,16 @@ class EventPage extends React.Component {
             <Text style={styleApp.title}>{this.props.navigation.getParam('data').info.name}</Text>
           </Col>
           <Col size={20} style={styleApp.center3}>
-          <View style={styles.viewSport}>
+          {this.openView()}
+          <View style={[styles.viewSport,{marginTop:5}]}>
             <Text style={styles.textSport}>{this.props.navigation.getParam('data').info.sport.charAt(0).toUpperCase() + this.props.navigation.getParam('data').info.sport.slice(1)}</Text>
           </View>
+          
           </Col>
         </Row>
         
         {this.rowIcon(this.dateTime(this.props.navigation.getParam('data').date.start,this.props.navigation.getParam('data').date.end),'calendar-alt')}
         {this.rowIcon(this.title(this.props.navigation.getParam('data').location.area),'map-marker-alt')}
-        {this.rowIcon(this.title(this.props.navigation.getParam('data').info.maxAttendance + ' people'),'user-check')}
         {this.rowIcon(this.title(Number(this.props.navigation.getParam('data').price.joiningFee) == 0?'Free entry':this.props.navigation.getParam('data').price.joiningFee + ' entry fee'),'dollar-sign')}
 
         <View style={[styleApp.divider,{marginBottom:20}]} />
@@ -139,6 +165,8 @@ class EventPage extends React.Component {
         <View style={[styleApp.divider,{marginBottom:20}]} />
 
         <Text style={styleApp.title}>Confirmed attendees</Text>
+        {this.rowOrganizer()}
+        
 
         {
           this.state.usersConfirmed == true?
@@ -148,13 +176,9 @@ class EventPage extends React.Component {
             </Col>
           </Row>
           :this.state.usersConfirmed.length == 0?
-          <Row style={{marginTop:20}}>
-            <Col style={styleApp.center2}>
-            {this.title('No one has confirmed their attendance yet.')}
-            </Col>
-          </Row>
+          null
           :
-          <View style={{marginTop:10}}>
+          <View style={{marginTop:0}}>
           {Object.values(this.state.usersConfirmed).map((user,i) => (
             <Row key={i} style={{height:40}}>
               <Col size={15} style={styleApp.center2}>
@@ -192,14 +216,18 @@ class EventPage extends React.Component {
           showsVerticalScrollIndicator={true}
         />
         {
-          this.props.navigation.getParam('pageFrom') == 'home'?
+          this.state.usersConfirmed == true?
+          null
+          :!this.openCondition()?
+          null
+          :this.props.navigation.getParam('pageFrom') == 'home'?
           <View style={styleApp.footerBooking}>
           <Button2
           icon={'next'} 
           backgroundColor='green'
           onPressColor={colors.greenClick}
           styleButton={{marginLeft:20,width:width-40}}
-          enabled={true} 
+          disabled={false} 
           text='Join the event'
           loader={false} 
           click={() => this.props.navigation.navigate('Checkout',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
@@ -220,6 +248,7 @@ const styles = StyleSheet.create({
     paddingLeft:10,
     paddingRight:10,
     height:25,
+    width:70,
     alignItems: 'center',
     justifyContent: 'center',
   },

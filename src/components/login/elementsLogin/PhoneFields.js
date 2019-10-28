@@ -91,9 +91,13 @@ class PhoneFields extends Component {
         newVal = newVal + ') '
         this.setState({phoneNumber:newVal})
       } else if (val.length == 5 && currentVal.length == 4) {
-        newVal = currentVal + ') ' +val[3]
+        newVal = currentVal + ') ' +val[4]
         this.setState({phoneNumber:newVal})
-      } else if ((val.length == 6 && currentVal.length == 7) || (val.length == 5 && currentVal.length == 6) ) {
+      } else if (val.length == 6 && currentVal.length == 7) {
+        newVal = newVal.replace(')','')
+        newVal = newVal.replace(' ','')
+        this.setState({phoneNumber:newVal})
+      } else if (val.length == 5 && currentVal.length == 6) {
         newVal = newVal.replace(')','')
         newVal = newVal.replace(' ','')
         this.setState({phoneNumber:newVal})

@@ -35,7 +35,7 @@ export default class LoadingScreen extends React.Component {
   phone () {
     return (
     <View>
-      <Text style={[styleApp.title,{marginBottom:20,fontSize:21}]}>We will text your the verification code.</Text>
+      <Text style={[styleApp.title,{marginBottom:20,fontSize:21}]}>We will text your verification code.</Text>
       <PhoneFields pageFrom={this.props.navigation.getParam('pageFrom')} country={this.props.navigation.getParam('country') == undefined?{"name": "United States",
         "dial_code": "+1",
         "code": "US"}:this.props.navigation.getParam('country')} navigate={this.navigate.bind(this)}/>

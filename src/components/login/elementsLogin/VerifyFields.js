@@ -96,9 +96,11 @@ class VerifyFields extends Component {
     })
     if (promiseAxios.data.response == false) {
       this.clearCode()
+      // this.field.focus()
       this.setState({
-        loader:'error',
-        verifCode:''
+        step:'error',
+        verifCode:'',
+        loader:false
       })
     } else {
       this.setState({step:'signIn'})
@@ -117,6 +119,13 @@ class VerifyFields extends Component {
       } else {
         this.props.navigate('Complete',{data:{userID:this.props.params.userID},pageFrom:this.props.pageFrom})
       }
+    }
+  }
+  clearCode() {
+    const { current } = this.field;
+    if (current) {
+      current.clear();
+      current.focus()
     }
   }
   loader() {

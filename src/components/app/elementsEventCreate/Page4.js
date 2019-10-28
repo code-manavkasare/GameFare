@@ -21,6 +21,7 @@ import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import branch from 'react-native-branch'
 import SendSMS from 'react-native-sms'
+import {date} from '../../layout/date/date'
 
 class Page4 extends Component {
   constructor(props) {
@@ -69,16 +70,20 @@ class Page4 extends Component {
       return this.props.navigation.navigate('ListEvents',{})
     }
     var infoEvent = this.props.navigation.getParam('data')
+    var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
+    console.log('event id!!!!')
+    console.log(infoEvent)
+    console.log(description)
     let branchUniversalObject = await branch.createBranchUniversalObject('canonicalIdentifier', {
       // contentTitle: description,
-      contentDescription: 'Join my event ' + infoEvent.info.name,
+      contentDescription: description,
       title: infoEvent.info.name,
       contentMetadata: {
         customMetadata: {
-          'eventID': infoEvent.eventID,
+          'eventID': infoEvent.objectID,
           'action':'openEventPage',
           '$uri_redirect_mode': '1',
-          '$og_image_url':'https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
+          '$og_image_url':'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
         }
       }
     })

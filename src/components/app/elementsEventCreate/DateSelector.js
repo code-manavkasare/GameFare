@@ -34,28 +34,28 @@ export default class Date extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          startTimeHour:'1',
-          startTimeMin:'00',
-          endTimeHour:'1',
-          endTimeMin:'00',
-          startPart:false,
-          endPart:false,
-          sameDay:true,
-          daySelectedStart: moment().format('YYYY-MM-DD'),
-          markedDatesStart:{
-            [moment().format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
-          },
-          daySelectedEnd: moment().format('YYYY-MM-DD'),
-          markedDatesEnd:{
-            [moment().format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
-          },
-          hourPicker:['1','2','3','4','5','6','7','8','9','10','11','12'],
-          minutePicker:['00','05','10','15','20','25','30','35','40','45','50','55'],
+          
         };
         this.componentWillMount = this.componentWillMount.bind(this);
       }
     componentWillMount(){
-      // this.props.onRef(this)
+      this.setState({startTimeHour:this.props.navigation.getParam('startDate') == ''?'1':moment(this.props.navigation.getParam('startDate')).format('h'),
+      startTimeMin:this.props.navigation.getParam('startDate') == ''?'00':moment(this.props.navigation.getParam('startDate')).format('mm'),
+      endTimeHour:this.props.navigation.getParam('endDate') == ''?'1':moment(this.props.navigation.getParam('endDate')).format('h'),
+      endTimeMin:this.props.navigation.getParam('endDate') == ''?'00':moment(this.props.navigation.getParam('endDate')).format('mm'),
+      startPart:this.props.navigation.getParam('startDate') == ''?false:moment(this.props.navigation.getParam('startDate')).format('a') == 'am'?false:true,
+      endPart:this.props.navigation.getParam('endDate') == ''?false:moment(this.props.navigation.getParam('endDate')).format('a') == 'am'?false:true,
+      sameDay:this.props.navigation.getParam('startDate') == ''?true:moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD') == moment(this.props.navigation.getParam('startDate')).format('YYYY-MM-DD')?true:false,
+      daySelectedStart: this.props.navigation.getParam('startDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD'),
+      markedDatesStart:{
+        [this.props.navigation.getParam('startDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
+      },
+      daySelectedEnd: this.props.navigation.getParam('endDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD'),
+      markedDatesEnd:{
+        [this.props.navigation.getParam('endDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
+      },
+      hourPicker:['1','2','3','4','5','6','7','8','9','10','11','12'],
+      minutePicker:['00','05','10','15','20','25','30','35','40','45','50','55'],})
     }
     selectDay(day,date,markedDates) {
       console.log(day)
@@ -236,8 +236,9 @@ export default class Date extends Component {
         endDate = moment(this.state.daySelectedStart + ' ' + this.state.endTimeHour + ':' + this.state.endTimeMin + ' ' + endPart,'YYYY-MM-DD h:mm a').toString()
       }
       endDate = endDate.split(' GMT')[0]
-
+      console.log('startDate')
       console.log(startDate)
+      console.log(endDate)
       this.props.navigation.state.params.onGoBack({
         startDate:startDate,
         endDate:endDate,

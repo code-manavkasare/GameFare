@@ -62,7 +62,7 @@ export default class CardEvent extends React.Component {
                   <AllIcons name="calendar-alt" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
-                  <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')}</Text>
+                  <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')} at {time(this.props.item.date.start,'h:mm a')}</Text>
                 </Col> 
               </Row>
 

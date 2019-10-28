@@ -246,10 +246,13 @@ class Page1 extends Component {
   async setDate (data) {
     console.log('setDate')
     console.log(data)
-    await this.setState({endDate:data.endDate,startDate:data.endDate})
+    await this.setState({endDate:data.endDate,startDate:data.startDate})
     this.props.navigation.navigate('CreateEvent1')
   }
   dateTime(start,end) {
+    console.log('dateTime !!')
+    console.log(start)
+    console.log(end)
     return <DateEvent 
     start={start}
     end={end}
@@ -286,7 +289,7 @@ class Page1 extends Component {
           {this.sports()}
           {this.tournamentName()}
 
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entre fee</Text>
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entree fee</Text>
           {this.entreeFeeSection('free')}
 
 

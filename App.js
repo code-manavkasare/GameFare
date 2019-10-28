@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import AppSwitchNavigator from './src/components/navigation/AppNavigator'
 import NavigationService from './NavigationService';
 
-import { createAppContainer , createStackNavigator} from 'react-navigation';
+import { createAppContainer , createStackNavigator,StackActions} from 'react-navigation';
 import SplashScreen from 'react-native-splash-screen';
 import branch, { BranchEvent } from 'react-native-branch'
 import StatusBar from '@react-native-community/status-bar';

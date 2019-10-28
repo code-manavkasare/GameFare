@@ -96,14 +96,15 @@ export default class ContactsComponent extends Component {
               <Text style={[styles.text,{fontSize:14}]}>{contact.givenName} {contact.familyName}</Text>
               <Text style={[styles.text,{fontSize:12,color:colors.title,marginTop:4}]}>{contact.phoneNumbers[0].number} • {contact.phoneNumbers[0].label}</Text>
             </Col>
-            <Col size={15} style={styles.center} activeOpacity={0.7} onPress={() => this.props.setFreeContact(contact.recordID)}>
-              
+            <Col size={15} style={styles.center} >
+{/*               
+  activeOpacity={0.7} onPress={() => this.props.setFreeContact(contact.recordID)}
               {
                 this.state.freeContacts[contact.recordID] == true?
                 <AllIcons name="dollar-sign" type="font" color={colors.grey} size={15} />
                 :
                 <AllIcons name="dollar-sign" type="font" color={colors.title} size={15} />
-              }
+              } */}
           </Col>
           </Row>
         </TouchableOpacity>

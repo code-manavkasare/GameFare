@@ -42,11 +42,11 @@ export default class HomeScreen extends React.Component {
         <AllIcons name='plus' color={'white'} size={21} type='font' />
         </TouchableOpacity>
       ),
-      headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('CreateEvent1')}>
-          <AllIcons name='search' color={'white'} size={21} type='font' />
-        </TouchableOpacity>
-      ),
+      // headerLeft: () => (
+      //   <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('CreateEvent1')}>
+      //     <AllIcons name='search' color={'white'} size={21} type='font' />
+      //   </TouchableOpacity>
+      // ),
     }
   };
     async componentDidMount() {
