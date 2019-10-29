@@ -98,7 +98,7 @@ class Page4 extends Component {
     console.log(phoneNumbers)
     console.log('phoneNumbers')
     SendSMS.send({
-      body: 'Join my event by following the link! ' + url,
+      body: description+ ' ' + url,
       recipients: phoneNumbers,
       successTypes: ['sent', 'queued'],
       allowAndroidSendWithoutReadPermission: true
