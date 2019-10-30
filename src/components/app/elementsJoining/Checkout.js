@@ -171,7 +171,7 @@ class ProfilePage extends Component {
     )
   }
   textButtonConfirm() {
-    if (Number(this.props.navigation.getParam('data').price.joiningFee)==0) return 'Confirm attendance'
+    if (Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) == 0) return 'Confirm attendance'
     return 'Pay & Confirm attendance'
   }
   async checkAttendingEvent (userID,eventID) {
@@ -210,14 +210,13 @@ class ProfilePage extends Component {
     this.props.navigation.navigate('ListEvents');
   }
   async payEntryFee(now,data) {
-    if (Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) == 0) return {response:true,message:''}
     var cardID = this.props.defaultCard.id
-    if (cardID == 'applePay') {
+    if (Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0 && cardID == 'applePay') {
       try {
         this.setState({loader:false})
         const items = [{
           label: 'GameFare',
-          amount: Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2),
+          amount: Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)).toFixed(2),
         }]
         const token = await stripe.paymentRequestWithApplePay(items,options)
         var tokenCard = token.tokenId
@@ -249,23 +248,25 @@ class ProfilePage extends Component {
         return  {response:'cancel'}
       }
     }
-    try {
-      var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee'
-      const promiseAxios = await axios.get(url, {
-        params: {
-          cardID: cardID,
-          now:now,
-          userID: this.props.userID,
-          tokenCusStripe: this.props.tokenCusStripe,
-          currentUserWallet:Number(this.props.totalWallet),
-          amount:data.price.joiningFee,
-          eventID:data.eventID
-        }
-      })
-      if (promiseAxios.data.response == false) return {response:false,message:promiseAxios.data.message}
-      return {response:true,message:'',defaultCB:this.props.defaultCard}
-    }catch (err) {
-      return {response:false,message:err.toString()}
+    if (Number(this.props.navigation.getParam('data').price.joiningFee) != 0) {
+      try {
+        var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee'
+        const promiseAxios = await axios.get(url, {
+          params: {
+            cardID: cardID,
+            now:now,
+            userID: this.props.userID,
+            tokenCusStripe: this.props.tokenCusStripe,
+            currentUserWallet:Number(this.props.totalWallet),
+            amount:data.price.joiningFee,
+            eventID:data.eventID
+          }
+        })
+        if (promiseAxios.data.response == false) return {response:false,message:promiseAxios.data.message}
+        return {response:true,message:'',defaultCB:this.props.defaultCard}
+      }catch (err) {
+        return {response:false,message:err.toString()}
+      }
     }
   }
   conditionOn () {
