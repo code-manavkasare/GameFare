@@ -9,13 +9,14 @@ import Header from '../layout/headers/HeaderButton'
 import ScrollView from '../layout/scrollViews/ScrollView'
 import PhoneFields from './elementsLogin/PhoneFields'
 import sizes from '../style/sizes'
+import BackButton from '../layout/buttons/BackButton'
 import AllIcons from '../layout/icons/AllIcons'
 import styleApp from '../style/style'
 
 export default class LoadingScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: '',
+      title: 'Sign in',
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -26,9 +27,7 @@ export default class LoadingScreen extends React.Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
-          <AllIcons name='angle-down' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))}/>
       ),
     }
   };

@@ -13,6 +13,7 @@ import sizes from '../style/sizes'
 import VerifyFields from './elementsLogin/VerifyFields'
 import {connect} from 'react-redux';
 import AllIcons from '../layout/icons/AllIcons'
+import BackButton from '../layout/buttons/BackButton'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -36,9 +37,7 @@ export default class Verify extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Phone')}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate('Phone')} />
       ),
     }
   };

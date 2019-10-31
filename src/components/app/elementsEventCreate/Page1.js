@@ -12,6 +12,7 @@ const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import StatusBar from '@react-native-community/status-bar';
+import BackButton from '../../layout/buttons/BackButton'
 
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
@@ -49,6 +50,16 @@ class Page1 extends Component {
         valueSelected:Object.values(this.props.sports)[0].value,
         listExpend:Object.values(this.props.sports)
       },
+      joiningFilter:{
+        text:"Joining",
+        value:'join',
+        type:'join',
+        expendable:true,
+        alwaysExpanded:true,
+        value:Object.values(this.props.sports[0].level.filter)[0],
+        valueSelected:Object.values(this.props.sports[0].level.filter)[0].value,
+        listExpend:Object.values(this.props.sports[0].level.filter)
+      },
       showDate:false
     };
     this.translateYFooter = new Animated.Value(0)
@@ -67,9 +78,7 @@ class Page1 extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -109,12 +118,25 @@ class Page1 extends Component {
       />
     )
   }
+  filter() {
+    return (
+      <ExpandableCard 
+            option = {this.state.joiningFilter} 
+            tickFilter={(value) => {
+            var joiningFilter = this.state.joiningFilter
+            joiningFilter.value = Object.values(this.props.sports.level.filter).filter(filter => filter.value == value)[0]
+            joiningFilter.valueSelected = value
+            this.setState({joiningFilter:joiningFilter})
+        }}
+      />
+    )
+  }
   tournamentName () {
     return(
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
       <Row >
         <Col size={15} style={styleApp.center}>
-          <AllIcons name='hashtag' size={18} color={colors.title} type='font' />
+          <AllIcons name='hashtag' size={16} color={colors.title} type='font' />
         </Col>
         <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
           <TextInput
@@ -285,11 +307,17 @@ class Page1 extends Component {
   page1() {
       return (
         <View style={{marginTop:-15}}>
+          
+
           <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Sport & Event name</Text>
           {this.sports()}
           {this.tournamentName()}
 
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entree fee</Text>
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Joining information</Text>
+          {this.switch('Public','Private','private')}
+          {this.filter()}
+
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entry fee</Text>
           {this.entreeFeeSection('free')}
 
 
@@ -309,14 +337,7 @@ class Page1 extends Component {
   render() {
     return (
       <View style={{backgroundColor:'white',flex:1 }}>
-        {/* <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Organize your event'}
-        icon={'angle-left'}
-        close={() => this.close()}
-        /> */}
         <ScrollView 
-          // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page1.bind(this)}
           marginBottomScrollView={0}

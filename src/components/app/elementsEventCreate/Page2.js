@@ -19,6 +19,7 @@ import AllIcons from '../../layout/icons/AllIcons'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import { Col, Row, Grid } from "react-native-easy-grid";
 
+import BackButton from '../../layout/buttons/BackButton'
 
 
 import styleApp from '../../style/style'
@@ -46,9 +47,7 @@ class Page2 extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };

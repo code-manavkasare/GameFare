@@ -19,6 +19,7 @@ import colors from '../../style/colors'
 import Header from '../../layout/headers/HeaderButton'
 import sizes from '../../style/sizes'
 import AllIcons from '../../layout/icons/AllIcons'
+import BackButton from '../../layout/buttons/BackButton'
 const ListCountry = require('./listCountry.json')
 
 export default class SelectCountry extends Component {
@@ -44,9 +45,7 @@ export default class SelectCountry extends Component {
             fontSize:14,
         },
         headerLeft: () => (
-          <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Phone')}>
-            <AllIcons name='angle-down' color={'white'} size={23} type='font' />
-          </TouchableOpacity>
+          <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('Phone')} />
         ),
       }
     };

@@ -266,7 +266,7 @@ export default class ContactsComponent extends Component {
       })
 
       let linkProperties = { feature: 'share', channel: 'GameFare' }
-      let controlParams = { $desktop_url: 'http://getgamefare.com', $ios_url: 'http://getgamefare.com' }
+      let controlParams = { $desktop_url: 'http://getgamefare.com'}
 
       let {url} = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
       await Clipboard.setString(url)

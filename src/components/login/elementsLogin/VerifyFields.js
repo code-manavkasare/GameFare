@@ -129,7 +129,7 @@ class VerifyFields extends Component {
     }
   }
   loader() {
-    if (this.state.loader) return <View style={[styles.center,{marginTop:10}]}><Loader color={'primary'} size={20}/></View>
+    if (this.state.loader) return <View style={[styles.center,{marginTop:10}]}><Loader color={'green'} size={20}/></View>
     return null
   }
   buttonResend () {
@@ -228,11 +228,11 @@ const styles = StyleSheet.create({
   },
   textOn:{
     fontSize:14,
-    color:colors.primary,
+    color:colors.green,
     fontFamily:'OpenSans-SemiBold'
   },
   inputNotEmpty: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.green,
   },
   input: {
     height: 55,

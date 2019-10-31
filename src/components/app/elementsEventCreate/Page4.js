@@ -16,6 +16,7 @@ import ButtonRound from '../../layout/buttons/ButtonRound'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Contacts from './elementsContacts/Contacts'
 import AllIcons from '../../layout/icons/AllIcons'
+import BackButton from '../../layout/buttons/BackButton'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
@@ -43,10 +44,8 @@ class Page4 extends Component {
           fontSize:14,
       },
       gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
-      headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3'?null:<TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-      <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-    </TouchableOpacity>,
-      headerRight: () => navigation.getParam('pageFrom') == 'event'?null:<TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate('ListEvents',{})}>
+      headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3'?null:<BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
+      headerRight: () => navigation.getParam('pageFrom') == 'Event'?null:<TouchableOpacity style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate('ListEvents',{})}>
       <Text style={[styleApp.text,{fontFamily:'OpenSans-SemiBold',color:'white',fontSize:13}]}>Skip</Text>
       </TouchableOpacity>,
     }
@@ -89,7 +88,7 @@ class Page4 extends Component {
     })
 
     let linkProperties = { feature: 'share', channel: 'GameFare' }
-    let controlParams = { $desktop_url: 'http://getgamefare.com', $ios_url: 'http://getgamefare.com' }
+    let controlParams = { $desktop_url: 'http://getgamefare.com' }
 
     let {url} = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
 

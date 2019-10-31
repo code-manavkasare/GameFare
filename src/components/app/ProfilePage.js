@@ -4,7 +4,8 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    Linking
+    Linking,
+    Image
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -16,6 +17,7 @@ import colors from '../style/colors'
 import AllIcons from '../layout/icons/AllIcons'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
+import Button from '../layout/buttons/Button'
 import {userAction} from '../../actions/userActions'
 import InAppBrowser from 'react-native-inappbrowser-reborn'
 import Communications from 'react-native-communications';
@@ -37,11 +39,7 @@ class ProfilePage extends Component {
           fontFamily:'OpenSans-Bold',
           fontSize:14,
       },
-      headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='home' color={'white'} size={23} type='mat' />
-        </TouchableOpacity>
-      ),
+      // headerLeft: () => <BackButton name='home' size={20} type='mat' click={() => navigation.navigate('Home')} />,
     }
   };
   title(text) {
@@ -192,16 +190,49 @@ class ProfilePage extends Component {
     await this.props.userAction('logout',{userID:this.props.userID})
     this.props.navigation.navigate('Home')
   }
+  rowCheck (text) {
+    return (
+      <Row style={{height:30}}>
+        <Col size={10} style={styleApp.center2}>
+          <AllIcons name='check' type='mat' size={17} color={colors.grey} />
+        </Col>
+        <Col size={90}  style={styleApp.center2}>
+          <Text style={[styleApp.text,{fontSize:14}]}>{text}</Text>
+        </Col>
+      </Row>
+    )
+  }
+  profileLogout() {
+    return (
+      <View style={[{flex:1,marginTop:20}]}>
+        <Row>
+          <Col style={styleApp.center}>
+            <Image source={require('../../img/images/rocket.png')} style={{width:100,height:100,marginBottom:30}} />
+          </Col>
+        </Row>
+        <Text style={[styleApp.title,{fontSize:19,marginBottom:15}]}>Join the GameFare community now!</Text>
+
+        {this.rowCheck('Organize your sport events')}
+        {this.rowCheck('Join sessions')}
+        {this.rowCheck('Find your favourite coach')}
+        {this.rowCheck('Rate your oponents')}
+        {this.rowCheck('Create your community')}
+
+        <View style={{height:20}} />
+        <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'Profile'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+      </View>
+    )
+  }
   render() {
     return (
-      <View style={{ flex: 1,backgroundColor:'white' }}>
+      <View style={{ height:'100%',backgroundColor:'white' }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.profile()}
+          contentScrollView={() => this.props.userConnected?this.profile():this.profileLogout()}
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
       </View>
     );
@@ -219,7 +250,8 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     userID:state.user.userID,
-    infoUser:state.user.infoUser.userInfo
+    infoUser:state.user.infoUser.userInfo,
+    userConnected:state.user.userConnected,
   };
 };
 

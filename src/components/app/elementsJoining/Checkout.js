@@ -12,6 +12,7 @@ const { height, width } = Dimensions.get('screen')
 import { StackActions, NavigationActions } from 'react-navigation';
 
 import Header from '../../layout/headers/HeaderButton'
+import BackButton from '../../layout/buttons/BackButton'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
@@ -58,9 +59,7 @@ class ProfilePage extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
@@ -188,7 +187,7 @@ class ProfilePage extends Component {
       return this.props.navigation.navigate('Alert',{title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
     }
     var now = (new Date()).toString()
-    var {message,response,defaultCard} = await this.payEntryFee(now,data)
+    var {message,response} = await this.payEntryFee(now,data)
     
     if (response == false) {
       await this.setState({loader:false})
@@ -262,12 +261,14 @@ class ProfilePage extends Component {
             eventID:data.eventID
           }
         })
+
         if (promiseAxios.data.response == false) return {response:false,message:promiseAxios.data.message}
-        return {response:true,message:'',defaultCB:this.props.defaultCard}
+        return {response:true,message:''}
       }catch (err) {
         return {response:false,message:err.toString()}
       }
     }
+    return {response:true,message:''}
   }
   conditionOn () {
     if (Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0 && this.props.defaultCard == undefined) return false

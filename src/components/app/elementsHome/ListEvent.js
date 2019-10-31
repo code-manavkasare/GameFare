@@ -52,7 +52,7 @@ class ListEvents extends React.Component {
           :
           <FadeInView duration={350}>
             {this.state.events.map((event,i) => (
-              <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,{data:event,pageFrom:'home'})} item={event}/>
+              <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,{data:event,pageFrom:'Home'})} item={event}/>
             ))}
           </FadeInView>
         }
@@ -61,7 +61,7 @@ class ListEvents extends React.Component {
           <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:1,borderColor:'#eaeaea'}}>
             <Text style={[styles.text,{fontSize:18,}]}>Want to organize an event?</Text>
             <Text style={[styles.text,{fontSize:15,marginTop:10,fontFamily:'OpenSans-Regular'}]}>Pick your sport and join the GameFare community now!</Text>
-            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate('CreateEvent1',{})} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
+            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate('CreateEvent1',{'pageFrom':'Home'})} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
         </View>
       </View>
     )

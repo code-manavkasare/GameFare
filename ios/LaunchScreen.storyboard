@@ -16,11 +16,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splashImage.png" adjustsImageSizeForAccessibilityContentSizeCategory="YES" id="TWg-9T-IwO">
-                                <rect key="frame" x="41" y="312" width="292" height="190"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" preservesSuperviewLayoutMargins="YES" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="5ES-qX-bgm">
+                                <rect key="frame" x="129" y="301" width="117" height="211"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <viewLayoutGuide key="safeArea" id="dFy-MN-KKc"/>
-                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="default"/>
+                                <viewLayoutGuide key="safeArea" id="XwV-mQ-PbO"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.99344497919082642" green="0.27098530530929565" blue="0.22722005844116211" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -29,10 +28,10 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="52" y="373.89162561576359"/>
+            <point key="canvasLocation" x="50.724637681159422" y="373.66071428571428"/>
         </scene>
     </scenes>
     <resources>
-        <image name="splashImage.png" width="813" height="825"/>
+        <image name="logo.png" width="523" height="523"/>
     </resources>
 </document>

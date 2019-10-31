@@ -19,6 +19,7 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
+import BackButton from '../../layout/buttons/BackButton'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Header from '../../layout/headers/HeaderButton'
@@ -38,6 +39,23 @@ export default class Date extends Component {
         };
         this.componentWillMount = this.componentWillMount.bind(this);
       }
+      static navigationOptions = ({ navigation }) => {
+        return {
+          title: 'Date & Time',
+          headerStyle: {
+              backgroundColor: colors.primary,
+              borderBottomWidth:0
+          },
+          headerTitleStyle: {
+              color:'white',
+              fontFamily:'OpenSans-Bold',
+              fontSize:14,
+          },
+          headerLeft: () => (
+            <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent1')} />
+          ),
+        }
+      };
     componentWillMount(){
       this.setState({startTimeHour:this.props.navigation.getParam('startDate') == ''?'1':moment(this.props.navigation.getParam('startDate')).format('h'),
       startTimeMin:this.props.navigation.getParam('startDate') == ''?'00':moment(this.props.navigation.getParam('startDate')).format('mm'),
@@ -258,14 +276,14 @@ export default class Date extends Component {
     console.log('render location')
     return (
       <View style={styles.content}>
-          {this.header()}
+          {/* {this.header()} */}
 
         <ScrollView 
           style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.dateFields.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={0}
           offsetBottom={sizes.heightFooterBooking+70}
           showsVerticalScrollIndicator={false}
         />
@@ -283,9 +301,9 @@ export default class Date extends Component {
 const styles = StyleSheet.create({
   content:{
     backgroundColor:'white',
-    position:'absolute',
+    // position:'absolute',
     top:0,
-    height:height,
+    flex:1,
     borderTopWidth:0,
     borderColor:colors.off,
     width:width,

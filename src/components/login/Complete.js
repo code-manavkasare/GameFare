@@ -10,6 +10,7 @@ import sizes from '../style/sizes'
 import CompleteFields from './elementsLogin/CompleteFields'
 const { height, width } = Dimensions.get('screen')
 import AllIcons from '../layout/icons/AllIcons'
+import BackButton from '../layout/buttons/BackButton'
 
 export default class Complete extends Component {
   constructor(props) {
@@ -32,9 +33,7 @@ export default class Complete extends Component {
       },
       gesturesEnabled:false,
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Phone')}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate('Phone')} />
       ),
     }
   };

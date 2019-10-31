@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     Dimensions,TextInput,
-    Animated
+    Animated,
+    Image
 } from 'react-native';
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
@@ -16,6 +17,8 @@ import PlaceHolder from '../../../placeHolders/ListEventsUser'
 import Header from '../../../layout/headers/HeaderButton'
 import ScrollView from '../../../layout/scrollViews/ScrollView'
 import AllIcons from '../../../layout/icons/AllIcons'
+import BackButton from '../../../layout/buttons/BackButton'
+import Button from '../../../layout/buttons/Button'
 import CardEvent from './CardEvent'
 
 import sizes from '../../../style/sizes'
@@ -42,17 +45,23 @@ class ListEvent extends Component {
           fontFamily:'OpenSans-Bold',
           fontSize:14,
       },
-      headerLeft: () => <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('Home')}>
-      <AllIcons name='home' color={'white'} size={23} type='mat' />
-    </TouchableOpacity>,
-      headerRight: () => <TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate('CreateEvent1',{})}>
-      <AllIcons name='plus' color={'white'} size={23} type='font' />
-      </TouchableOpacity>,
+      // headerLeft: () => <BackButton name='home' type='mat' size={20} click={() => navigation.navigate('Home')} />,
+      headerRight: () => <BackButton name='add' type='mat' click={() => navigation.navigate('CreateEvent1',{'pageFrom':'ListEvents'})}/>,
     }
   };
   async componentDidMount() {
+    if (this.props.userConnected) this.loadEvents(this.props.userID)
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userConnected == true && this.props.userConnected == false) {
+      console.log('list events now connected')
+      this.loadEvents(nextProps.userID)
+    }
+  }
+  loadEvents(userID) {
     var that = this
-    firebase.database().ref('usersEvents/' + this.props.userID).on('value', function(snap) {
+
+    firebase.database().ref('usersEvents/' + userID).on('value', function(snap) {
       console.log('on charge les match !!!!!!!')
       var events = snap.val()
       if (events == null) {
@@ -61,7 +70,7 @@ class ListEvent extends Component {
         events = Object.values(events)
       }
       console.log(events)
-      console.log(that.props.userID)
+      console.log(userID)
       that.setState({events:events,initialLoader:false})
     })
   }
@@ -80,25 +89,50 @@ class ListEvent extends Component {
     await firebase.database().ref('usersEvents/' + this.props.userID).off()
     this.props.navigation.navigate('Home')
   }
+  rowCheck (text) {
+    return (
+      <Row style={{height:30}}>
+        <Col size={10} style={styleApp.center2}>
+          <AllIcons name='check' type='mat' size={17} color={colors.grey} />
+        </Col>
+        <Col size={90}  style={styleApp.center2}>
+          <Text style={[styleApp.text,{fontSize:14}]}>{text}</Text>
+        </Col>
+      </Row>
+    )
+  }
+  eventsLogout() {
+    return (
+      <View style={[{flex:1,marginTop:20}]}>
+        <Row>
+          <Col style={styleApp.center}>
+            <Image source={require('../../../../img/images/inauguration.png')} style={{width:100,height:100,marginBottom:30}} />
+          </Col>
+        </Row>
+        <Text style={[styleApp.title,{fontSize:19,marginBottom:15}]}>Join the GameFare community now!</Text>
+
+        {this.rowCheck('Organize your sport events')}
+        {this.rowCheck('Join sessions')}
+        {this.rowCheck('Find your favourite coach')}
+        {this.rowCheck('Rate your oponents')}
+        {this.rowCheck('Create your community')}
+
+        <View style={{height:20}} />
+        <Button text='Organize your event' click={() => this.props.navigation.navigate('CreateEvent1',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
+        <View style={{height:10}} />
+        <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+      </View>
+    )
+  }
   render() {
     return (
       <View style={{backgroundColor:'white',flex:1 }}>
-        {/* <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Your events'}
-        icon={'angle-left'}
-        iconRight={'plus'}
-        typeIconRight='font'
-        clickIconRight={() => this.props.navigation.navigate('CreateEvent1',{})}
-        close={() => this.close()}
-        /> */}
         <ScrollView 
-          // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.listEvent.bind(this)}
+          contentScrollView={() => this.props.userConnected?this.listEvent():this.eventsLogout()}
           marginBottomScrollView={0}
           marginTop={0}
-          offsetBottom={90+60}
+          offsetBottom={20}
           showsVerticalScrollIndicator={true}
         />
 
@@ -113,7 +147,8 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    userID:state.user.userID
+    userID:state.user.userID,
+    userConnected:state.user.userConnected
   };
 };
 

@@ -21,12 +21,14 @@ import Geocoder from 'react-native-geocoder';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import momentTZ from 'moment-timezone';
 import moment from 'moment'
+import BackButton from '../../layout/buttons/BackButton'
 
 
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import Icon from '../../layout/icons/icons'
+import Loader from '../../layout/loaders/Loader'
 import AllIcons from '../../layout/icons/AllIcons'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
@@ -63,6 +65,30 @@ export default class Location extends Component {
         };
         this.componentDidMount = this.componentDidMount.bind(this);
       }
+      static navigationOptions = ({ navigation }) => {
+        return {
+          title: 'Location',
+          headerStyle: {
+              backgroundColor: colors.primary,
+              borderBottomWidth:0
+          },
+          headerTitleStyle: {
+              color:'white',
+              fontFamily:'OpenSans-Bold',
+              fontSize:14,
+          },
+          headerLeft: () => (
+            <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent1')} />
+          ),
+          headerRight: () => (
+            navigation.getParam('loader') == true?
+            <View style={{paddingRight:15}} >
+              <Loader color='white' size={16} />
+            </View>
+            :null
+          ),
+        }
+      };
     componentDidMount(){
       console.log('locatiin mount')
       // this.props.onRef(this)
@@ -139,17 +165,17 @@ export default class Location extends Component {
           that.currentLocation()
         } else {
           console.log('Camera permission denied');
-          that.setState({loader:false})
+          that.props.navigation.setParams({ loader: false })
         }
       } catch (err) {
         console.log('errrro')
         console.log(err);
-        that.setState({loader:false})
+        that.props.navigation.setParams({ loader: false })
       }
     }
     async onclickLocation (address) {
       Keyboard.dismiss()
-      this.setState({loader:true})
+      this.props.navigation.setParams({ loader: true })
       console.log('on click sur locations')
       console.log(address)
       try{
@@ -202,6 +228,7 @@ export default class Location extends Component {
         }
 
         if (zipCode == 0) {
+          this.props.navigation.setParams({ loader: false })
           this.setState({
             loader:false,
             showAlert:true,
@@ -231,7 +258,7 @@ export default class Location extends Component {
           console.log(addressOff)
           console.log(region)
           console.log(jsonTimeZone)
-          this.setState({loader:false})
+          this.props.navigation.setParams({ loader: false })
           await Keyboard.dismiss()
           this.props.navigation.state.params.onGoBack({
             address:addressOff,
@@ -245,6 +272,7 @@ export default class Location extends Component {
       } catch (err) {
         console.log('errrrrrr')
         console.log(err)
+        this.props.navigation.setParams({ loader: false })
         this.setState({loader:false,showAlert:true,message:'An error has occured. Please try again.'})
       }
     }
@@ -264,13 +292,13 @@ export default class Location extends Component {
             }).catch(err => {
               console.log('erro location')
               console.log(err)
-              this.setState({loader:false})
+              this.props.navigation.setParams({ loader: false })
             })
         },
         error => {
           console.log('error location 2')
           console.log(error)
-          this.setState({loader:false})
+          this.props.navigation.setParams({ loader: false })
         },
         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
       )
@@ -302,7 +330,7 @@ export default class Location extends Component {
     }
     buttonSearchAddress () {
       return (
-        <Animated.View style={[styleApp.inputForm,{height:60,marginTop:sizes.heightHeaderHome+10,marginBottom:0,borderBottomWidth:1}]}>
+        <Animated.View style={[styleApp.inputForm,{height:60,marginTop:10,marginBottom:0,borderBottomWidth:1}]}>
           <Row style={{height:50}}>
               <Col size={15} style={styles.center}>
                 <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
@@ -386,13 +414,13 @@ export default class Location extends Component {
   render() {
     return (
       <View style={styles.content}>
-        <Header
+        {/* <Header
         onRef={ref => (this.headerRef = ref)}
         title={'Location'}
         icon={'angle-down'}
         loader={this.state.loader}
         close={() => this.props.navigation.goBack()}
-        />
+        /> */}
 
         {this.buttonSearchAddress()}
 

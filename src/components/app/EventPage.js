@@ -20,6 +20,7 @@ import ScrollView from '../layout/scrollViews/ScrollView'
 import Header from '../layout/headers/HeaderButton'
 import AllIcons from '../layout/icons/AllIcons'
 import DateEvent from './elementsEventCreate/DateEvent'
+import BackButton from '../layout/buttons/BackButton'
 import ButtonRound from '../layout/buttons/ButtonRound'
 import Button2 from '../layout/buttons/Button'
 import Loader from '../layout/loaders/Loader'
@@ -44,14 +45,10 @@ class EventPage extends React.Component {
           fontSize:14,
       },
       headerRight: () => (
-        <TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate('CreateEvent4',{pageFrom:'event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})}>
-          <AllIcons name='share' color={'white'} size={18} type='moon' />
-        </TouchableOpacity>
+        <BackButton name='share' type='moon' size={18} click={() => navigation.navigate('CreateEvent4',{pageFrom:'Event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})} />
       ),
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -172,7 +169,7 @@ class EventPage extends React.Component {
           this.state.usersConfirmed == true?
           <Row style={{marginTop:20}}>
             <Col style={styleApp.center}>
-            <Loader size={20} color='primary' />
+            <Loader size={20} color='green' />
             </Col>
           </Row>
           :this.state.usersConfirmed.length == 0?
@@ -198,7 +195,7 @@ class EventPage extends React.Component {
     )
   }
   clickIconRight () {
-    this.props.navigation.navigate('CreateEvent4',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
+    this.props.navigation.navigate('CreateEvent4',{pageFrom:'Event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
   }
   clickCancel() {
     this.props.navigation.navigate('Alert',{title:'Do you want to unjoin this event?',textButton:'Unjoin',onGoBack:() => this.cancel()})
@@ -220,7 +217,7 @@ class EventPage extends React.Component {
           null
           :!this.openCondition()?
           null
-          :this.props.navigation.getParam('pageFrom') == 'home'?
+          :this.props.navigation.getParam('pageFrom') == 'Home'?
           <View style={styleApp.footerBooking}>
           <Button2
           icon={'next'} 

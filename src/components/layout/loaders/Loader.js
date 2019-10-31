@@ -33,6 +33,8 @@ export default class Loader extends Component {
         return <Animated.Image style={[{width:this.props.size,height:this.props.size}, {transform: [{rotate: spin}]}]} source={require('../../../img/spinners/spinnerWhite.png')} />
       } else if (color == 'primary') {
         return <Animated.Image style={[{width:this.props.size,height:this.props.size}, {transform: [{rotate: spin}]}]} source={require('../../../img/spinners/spinnerPrimary.png')} />
+      }  else if (color == 'green') {
+        return <Animated.Image style={[{width:this.props.size,height:this.props.size}, {transform: [{rotate: spin}]}]} source={require('../../../img/spinners/spinnerGreen.png')} />
       }
     } 
   render() {

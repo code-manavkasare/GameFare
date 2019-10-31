@@ -20,6 +20,8 @@ import AllIcons from '../layout/icons/AllIcons'
 const { height, width } = Dimensions.get('screen')
 import StatusBar from '@react-native-community/status-bar';
 
+import BackButton from '../layout/buttons/BackButton'
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -38,15 +40,8 @@ export default class HomeScreen extends React.Component {
           style={{ width: 30, height: 30,marginTop:-10 }}
         />,
       headerRight: () => (
-        <TouchableOpacity style={{paddingRight:15}} onPress={() =>  navigation.navigate('CreateEvent1')}>
-        <AllIcons name='plus' color={'white'} size={21} type='font' />
-        </TouchableOpacity>
+        <BackButton name="add" type='mat' click={() =>  navigation.navigate('CreateEvent1',{'pageFrom':'Home'})}/>
       ),
-      // headerLeft: () => (
-      //   <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate('CreateEvent1')}>
-      //     <AllIcons name='search' color={'white'} size={21} type='font' />
-      //   </TouchableOpacity>
-      // ),
     }
   };
     async componentDidMount() {
@@ -60,12 +55,7 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={{ flex:1}}>
-        {/* <HeaderHome navigate={this.navigate.bind(this)}/> */}
-
         <ListEvents navigate={this.navigate.bind(this)}/>
-
-        <FooterHome navigate={(val,data) => this.props.navigation.navigate(val,data)} />
-        <FooterHomeProfile navigate={(val,data) => this.props.navigation.navigate(val,data)} />
       </View>
     );
   }
