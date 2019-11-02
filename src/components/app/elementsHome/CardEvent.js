@@ -24,11 +24,6 @@ var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../layout/date/date'
 
 export default class CardEvent extends React.Component {
-    async clickProduct () {
-      console.log('this.props.category')
-      console.log(this.props.item)
-      this.props.navigate('Event',{eventID:this.props.item.objectID})
-    }
     entreeFee(entreeFee) {
       if (entreeFee == 0) return 'Free'
       return '$' + entreeFee 
@@ -38,16 +33,35 @@ export default class CardEvent extends React.Component {
       <Animated.View style={[styles.cardList]}>
         
         <TouchableOpacity 
-          onPress={() => {this.clickProduct()}} 
+          onPress={() => {this.props.openEvent()}} 
           style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
-          activeOpacity={1} 
+          activeOpacity={0.7} 
         >
-          <View style={styles.viewSport}>
-            <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
-          </View>
-          <Text style={styles.title}>{this.props.item.info.name}</Text>
+          
+          
+          <Row>
+            <Col size={75} style={styleApp.center2}>
+              <Text style={styles.title}>{this.props.item.info.name}</Text>
+            </Col>
+            <Col size={5} style={styleApp.center}>
+              {
+              !this.props.item.info.public?
+              <AllIcons name='lock' color={colors.blue} size={17} type='mat' />
+              :null
+              }
+            </Col>
+            <Col size={20} style={styleApp.center3}>
+              <View style={styles.viewSport}>
+                <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
+              </View>
+            </Col>
+
+          </Row>
+
           <Row style={{marginTop:5,marginBottom:15}}>
             <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
+              {
+              this.props.item.info.public?
               <Row style={{marginBottom:5}}>
                 <Col size={10} style={styles.center2}>
                   <AllIcons name="map-marker-alt" size={15} color={colors.grey} type='font' />
@@ -56,6 +70,8 @@ export default class CardEvent extends React.Component {
                   <Text style={styles.subtitle}>{this.props.item.location.area}</Text>
                 </Col> 
               </Row>
+              :null
+              }
 
               <Row style={{paddingBottom:5}}>
                 <Col size={10} style={styles.center2}>
@@ -109,12 +125,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   viewSport:{
-    position:'absolute',
+    //position:'absolute',
     backgroundColor:colors.greenLight,
     borderRadius:3,
     paddingLeft:10,
     paddingRight:10,
-    top:15,
+    //top:15,
     right:0,
     height:25,
     alignItems: 'center',

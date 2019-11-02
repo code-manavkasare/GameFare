@@ -82,9 +82,13 @@ const styles = StyleSheet.create({
     position:'absolute',
     flex:1,
     backgroundColor:'white',
-    borderTopWidth:1,
-    borderColor:colors.off,
-    width:width
+    borderTopWidth:0.3,
+    borderColor:colors.grey,
+    width:width,
+    shadowColor: '#46474B',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 55,
+    shadowOpacity: 0.5,
   },
   buttonClose:{
     position:'absolute',

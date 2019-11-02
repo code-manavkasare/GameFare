@@ -67,7 +67,7 @@ class Page1 extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Organize your event',
+      title: 'Organize an event',
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -88,7 +88,6 @@ class Page1 extends Component {
     console.log(this.state.sportsFilter)
   }
   close() {
-      // StatusBar.setBarStyle('light-content',true)
       this.props.navigation.goBack()
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -108,12 +107,26 @@ class Page1 extends Component {
   sports() {
     return (
       <ExpandableCard 
-            option = {this.state.sportsFilter} 
-            tickFilter={(value) => {
-            var sportsFilter = this.state.sportsFilter
-            sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
-            sportsFilter.valueSelected = value
-            this.setState({sportsFilter:sportsFilter})
+          option = {this.state.sportsFilter} 
+          tickFilter={(value) => {
+          var sportsFilter = this.state.sportsFilter
+          sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
+          sportsFilter.valueSelected = value
+          console.log('le sport')
+          console.log(value)
+          this.setState({
+            sportsFilter:sportsFilter,
+            joiningFilter:{
+              text:"Joining",
+              value:'join',
+              type:'join',
+              expendable:true,
+              alwaysExpanded:true,
+              value:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.filter)[0],
+              valueSelected:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.filter)[0].value,
+              listExpend:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.filter)
+            }
+          })
         }}
       />
     )
@@ -121,12 +134,12 @@ class Page1 extends Component {
   filter() {
     return (
       <ExpandableCard 
-            option = {this.state.joiningFilter} 
-            tickFilter={(value) => {
-            var joiningFilter = this.state.joiningFilter
-            joiningFilter.value = Object.values(this.props.sports.level.filter).filter(filter => filter.value == value)[0]
-            joiningFilter.valueSelected = value
-            this.setState({joiningFilter:joiningFilter})
+          option = {this.state.joiningFilter} 
+          tickFilter={(value) => {
+          var joiningFilter = this.state.joiningFilter
+          joiningFilter.value = Object.values(this.props.sports[0].level.filter).filter(filter => filter.value == value)[0]
+          joiningFilter.valueSelected = value
+          this.setState({joiningFilter:joiningFilter})
         }}
       />
     )

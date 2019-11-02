@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Dimensions,TextInput,
     Animated,
+    ScrollView,
     Image
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -15,11 +16,15 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import PlaceHolder from '../../../placeHolders/ListEventsUser'
 import Header from '../../../layout/headers/HeaderButton'
-import ScrollView from '../../../layout/scrollViews/ScrollView'
+// import ScrollView from '../../../layout/scrollViews/ScrollView'
+import Switch from '../../../layout/switch/Switch'
+
 import AllIcons from '../../../layout/icons/AllIcons'
 import BackButton from '../../../layout/buttons/BackButton'
 import Button from '../../../layout/buttons/Button'
 import CardEvent from './CardEvent'
+import Swiper from 'react-native-swiper'
+
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
@@ -30,12 +35,15 @@ class ListEvent extends Component {
     super(props);
     this.state = {
       initialLoader:true,
-      events:[]
+      events:[],
+      organizer:false,
+      index:0
     };
+    this.events = this.events.bind(this)
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Your events',
+      title: 'My events',
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -67,23 +75,103 @@ class ListEvent extends Component {
       if (events == null) {
         events = []
       } else {
-        events = Object.values(events)
+        //events = Object.values(events)
+        events = Object.values(events).map((event,i) => {
+          var event = event
+          event.objectID = Object.keys(events)[i]
+          return event
+        });
       }
       console.log(events)
       console.log(userID)
       that.setState({events:events,initialLoader:false})
     })
   }
-  listEvent() {
-      if (this.state.initialLoader) return <PlaceHolder />
-      return (
-          <View style={{marginTop:0}}>
-            {this.state.events.map((event,i) => (
-              <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.push(val,{data:event,pageFrom:'user'})} item={event}/>
-            ))}
-          <View style={{height:1,backgroundColor:colors.off,width:width,marginLeft:-20}} />
+  events () {
+    return (
+      <View style={{flex:1}}>
+        <Switch 
+          textOn={'Joined'}
+          textOff={'Organized'}
+          translateXTo={width/2}
+          height={50}
+          // color={colors.primary}
+          state={this.state['organizer']}
+          setState={(val) => {
+            console.log('val')
+            console.log(val)
+            this.setState({['organizer']:val,index:!!val})
+          }}
+        />
+        <Swiper activeDotStyle={{opacity:1}} dotStyle={{opacity:1}}dotColor={colors.grey} showsPagination={true} activeDotColor={colors.green} loop={false} index={this.state.index} showsButtons={false} onIndexChanged={(index) => {
+          console.log('index cganged')
+          console.log(index)
+          return this.setState({organizer:!!index,index:index})
+           }}>
+        <View style={{borderTopWidth:1,borderColor:colors.off}}>
+          {this.listEvent('join')}
         </View>
+        <View style={{borderTopWidth:1,borderColor:colors.off}}>
+          {this.listEvent('organize')}
+        </View>
+      </Swiper>
+      </View>
+    )
+  }
+  listEvent(val) {
+      if (this.state.initialLoader) return <PlaceHolder />
+      if ((val  == 'join' && this.state.events.filter(event => event.info.organizer !== this.props.userID).length == 0) || (val  == 'organize' && this.state.events.filter(event => event.info.organizer === this.props.userID).length == 0)) return this.noAppt(val)
+      if (val == 'join') {
+        return (
+          <ScrollView style={{height:'100%'}}>
+              {this.state.events.filter(event => event.info.organizer !== this.props.userID).map((event,i) => (
+                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.push(val,{data:event,pageFrom:'ListEvents'})} item={event}/>
+              ))}
+            <View style={{height:30}} />
+          </ScrollView>
+        )
+      }
+      return (
+        <ScrollView style={{height:'100%'}}>
+            {this.state.events.filter(event => event.info.organizer === this.props.userID).map((event,i) => (
+              <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.push(val,{data:event,pageFrom:'ListEvents'})} item={event}/>
+            ))}
+        </ScrollView>
       )
+  }
+  noAppt (val) {
+    return (
+      <View style={[{height:'100%',marginTop:70,marginLeft:20,width:width-40}]}>
+        <View style={styleApp.center}>
+        <Row style={{height:100}}>
+          <Col style={styleApp.center}>
+          {
+            val == 'join'?
+            <Image source={require('../../../../img/images/medal.png')} style={{width:100,height:100,marginBottom:0}} />
+            :
+            <Image source={require('../../../../img/images/desk.png')} style={{width:100,height:100,marginBottom:0}} />
+          }       
+          </Col>
+        </Row>
+        {
+          val == 'join'?
+          <Text style={[styleApp.text,{fontSize:15,marginBottom:20,marginTop:20}]}>You haven't joined any session yet.</Text>
+          :
+          <Text style={[styleApp.text,{fontSize:15,marginBottom:20,marginTop:20}]}>You haven't organized any event yet.</Text>
+        }
+        
+        <View style={{height:10}} />
+        {
+          val == 'join'?
+          <Button text='Join session' click={() => this.props.navigation.navigate('Home',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
+          :
+          <Button text='Organize an event' click={() => this.props.navigation.navigate('CreateEvent1',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
+        }
+        
+        
+        </View>
+      </View>
+    )
   }
   async close () {
     await firebase.database().ref('usersEvents/' + this.props.userID).off()
@@ -103,10 +191,11 @@ class ListEvent extends Component {
   }
   eventsLogout() {
     return (
-      <View style={[{flex:1,marginTop:20}]}>
+      <ScrollView>
+      <View style={[{flex:1,marginTop:30,width:width-40,marginLeft:20}]}>
         <Row>
           <Col style={styleApp.center}>
-            <Image source={require('../../../../img/images/inauguration.png')} style={{width:100,height:100,marginBottom:30}} />
+            <Image source={require('../../../../img/images/inauguration.png')} style={{width:85,height:85,marginBottom:30}} />
           </Col>
         </Row>
         <Text style={[styleApp.title,{fontSize:19,marginBottom:15}]}>Join the GameFare community now!</Text>
@@ -122,19 +211,13 @@ class ListEvent extends Component {
         <View style={{height:10}} />
         <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
       </View>
+      </ScrollView>
     )
   }
   render() {
     return (
       <View style={{backgroundColor:'white',flex:1 }}>
-        <ScrollView 
-          onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.props.userConnected?this.listEvent():this.eventsLogout()}
-          marginBottomScrollView={0}
-          marginTop={0}
-          offsetBottom={20}
-          showsVerticalScrollIndicator={true}
-        />
+        {this.props.userConnected?this.events():this.eventsLogout()}
 
       </View>
     );

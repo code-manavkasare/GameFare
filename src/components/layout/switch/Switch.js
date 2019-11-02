@@ -78,33 +78,40 @@ export default class Switch extends Component {
       }
       
     }
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.state != this.props.state) this.changeValue(nextProps.state)
+    }
+    styleButton(){
+      if (this.props.color != undefined) return {...styles.button,backgroundColor:colors.primary}
+      return styles.button
+    }
   render() {
     var colorText1 = this.state.colorAnim1.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#C7C7CC', colors.primary],
+      outputRange: [this.props.color != undefined?colors.off:'#C7C7CC', this.props.color != undefined?'white':colors.primary],
       extrapolate: 'clamp'
     });
     var colorText0 = this.state.colorAnim0.interpolate({
       inputRange: [0, 1],
-      outputRange: ['#C7C7CC', colors.primary],
+      outputRange: [this.props.color != undefined?colors.off:'#C7C7CC', this.props.color != undefined?'white':colors.primary],
       extrapolate: 'clamp'
     });
     return (
       <View style={{height:this.props.height}}>
       <Row >
       <Col style={styles.center} >
-        <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={() => this.changeValue(false)}>
+        <TouchableOpacity style={this.styleButton()} activeOpacity={0.7} onPress={() => this.changeValue(false)}>
           <Animated.Text style={[styles.text,{color:colorText0}]}>{this.props.textOn}</Animated.Text>
         </TouchableOpacity>
       </Col>
         <Col style={styleApp.center}>
-          <TouchableOpacity style={styles.button} activeOpacity={0.7} onPress={() => this.changeValue(true)}>
+          <TouchableOpacity style={this.styleButton()} activeOpacity={0.7} onPress={() => this.changeValue(true)}>
             <Animated.Text style={[styles.text,{color:colorText1}]}>{this.props.textOff}</Animated.Text>
           </TouchableOpacity>
         </Col>
       </Row>
 
-      <Animated.View style={[{height:1.2,position:'absolute',bottom:0,width:'50%',backgroundColor:colors.primary,borderRadius:0.5,},{transform:[{translateX:this.translateXBorder}]}]}/>
+      <Animated.View style={[{height:1.2,position:'absolute',bottom:0,width:'50%',backgroundColor:this.props.color != undefined?'white':colors.primary,borderRadius:0.5,},{transform:[{translateX:this.translateXBorder}]}]}/>
 
       </View>
 
@@ -130,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height:50,
     width:'100%',
-    borderRadius:4,
+    // borderRadius:4,
     borderColor:colors.primary,
     backgroundColor:'white',
     borderWidth:0,

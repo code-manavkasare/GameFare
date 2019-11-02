@@ -74,10 +74,10 @@ class ProfilePage extends Component {
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.clickButton(text,page,data,type,url)} style={styles.button}>
       <Row>
         <Col size={90} style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:13}]}>{text}</Text>
+          <Text style={[styleApp.title,{fontSize:13,fontFamily:'OpenSans-SemiBold'}]}>{text}</Text>
         </Col>
         <Col size={10} style={styleApp.center3}>
-          <FontIcon size={20} name={'angle-right'} color={colors.title} /> 
+          <FontIcon size={16} name={'angle-right'} color={colors.title} /> 
         </Col>
       </Row>
       </TouchableOpacity>
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   button:{
     height:50,
     borderColor:colors.off,
-    borderBottomWidth:1,
+    borderBottomWidth:0,
   },
 });
 

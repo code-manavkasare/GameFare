@@ -208,8 +208,13 @@ class ProfilePage extends Component {
     await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update(this.props.navigation.getParam('data'))
     this.props.navigation.navigate('ListEvents');
   }
-  async payEntryFee(now,data) {
-    var cardID = this.props.defaultCard.id
+  async payEntryFee(now,data) {  
+    var cardID = ''
+    console.log('Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0')
+    console.log(Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0)
+    if (Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0) {
+      cardID = this.props.defaultCard.id
+    }
     if (Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0 && cardID == 'applePay') {
       try {
         this.setState({loader:false})

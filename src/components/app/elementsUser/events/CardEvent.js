@@ -40,12 +40,23 @@ export default class CardEvent extends React.Component {
         <TouchableOpacity 
           onPress={() => {this.clickProduct()}} 
           style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
-          activeOpacity={1} 
+          activeOpacity={0.7} 
         >
           
           <Row>
-            <Col size={80} style={styleApp.center2} >
+            <Col size={70} style={styleApp.center2} >
               <Text style={styles.title}>{this.props.item.info.name}</Text>
+            </Col>
+            <Col size={10} style={styleApp.center3} >
+              {
+              this.props.item.info.organizer != this.props.userID && (this.props.item.status == 'confirmed' || !this.props.item.info.public)?
+              <AllIcons name='check' type='mat' color={colors.green} size={20} />
+              :this.props.item.info.organizer != this.props.userID && this.props.item.status == 'rejected'?
+              <AllIcons name='times' type='mat' color={colors.primary} size={20} />
+              :this.props.item.info.organizer != this.props.userID?
+              <AllIcons name='pause' type='mat' color={colors.secondary} size={20} />
+              :null
+              }
             </Col>
             <Col size={20} style={styleApp.center3} >
               <View style={styles.viewSport}>
@@ -101,10 +112,10 @@ const styles = StyleSheet.create({
     marginTop:0,
     //width: '48%',
     width:width,
-    marginLeft:-20,
+    // marginLeft:-20,
     // aspectRatio: 1,
     backgroundColor:'white',  
-    borderTopWidth: 1,
+    borderBottomWidth: 1,
     //transform:[{scaleX:1,scaleY:1}],
     borderColor:'#eaeaea',
   },

@@ -14,6 +14,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import AllIcons from '../../../layout/icons/AllIcons'
 import Header from '../../../layout/headers/HeaderButton'
 import ScrollView from '../../../layout/scrollViews/ScrollView'
+import BackButton from '../../../layout/buttons/BackButton'
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
@@ -42,9 +43,7 @@ class ListEvent extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
@@ -64,7 +63,8 @@ class ListEvent extends Component {
           </Col>
           <Col size={25} style={styleApp.center3}>
             {
-            this.props.navigation.getParam('data').id == this.props.defaultCard.id?
+            this.props.defaultCard == undefined?null
+            :this.props.navigation.getParam('data').id == this.props.defaultCard.id?
             <View style={styleApp.viewSport}>
               <Text style={[styleApp.textSport,{fontSize:12}]}>Default</Text>
             </View>
@@ -107,6 +107,7 @@ class ListEvent extends Component {
   async confirmDelete() {
     // delete card
     this.setState({loader:true})
+    console.log(this.props.navigation.getParam('data').id)
     var url = 'https://us-central1-getplayd.cloudfunctions.net/deleteUserCreditCard'
     const results = await axios.get(url, {
       params: {
@@ -116,7 +117,14 @@ class ListEvent extends Component {
       }
     })
     if (results.data.response == true) {
-      if (this.props.navigation.getParam('data').id == this.props.defaultCard.id && Object.values(this.props.cards).length > 0) {
+      console.log('lllllllll')
+      console.log(this.props.cards)
+      console.log(Object.values(this.props.cards)[0])
+      console.log(this.props.defaultCard.id)
+      console.log(this.props.navigation.getParam('data').id)
+      if (this.props.cards == undefined) {
+        await firebase.database().ref('users/' + this.props.userID + '/wallet/defaultCard/').remove()
+      } else if (this.props.navigation.getParam('data').id == this.props.defaultCard.id && Object.values(this.props.cards).length > 0) {
         await firebase.database().ref('users/' + this.props.userID + '/wallet/defaultCard/').update(Object.values(this.props.cards)[0])
       } else if (this.props.navigation.getParam('data').id == this.props.defaultCard.id) {
         await firebase.database().ref('users/' + this.props.userID + '/wallet/defaultCard/').remove()

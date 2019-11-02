@@ -25,20 +25,28 @@ import CardEvent from './CardEvent'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Button from '../../layout/buttons/Button'
 
-
 class ListEvents extends React.Component {
   state={
     events:[],
     loader:true
   }
   async componentDidMount() {
+    this.loadEvent()
+  }
+  async loadEvent() {
     var events = await indexEvents.search({
       query: ''
     })
-    console.log('eventswdsflfgjlkdfjglkd')
-    console.log(events)
-    console.log(this.props.globaleVariables)
-    this.setState({loader:false,events:events.hits})
+    console.log('events.hits')
+    console.log(events.hits)
+    await this.setState({loader:false,events:events.hits})
+    return true
+  }
+  openEvent(event) {
+    if (!event.info.public) {
+      return this.props.navigate('Alert',{title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',onGoBack:() => this.props.navigate1('Home',{})})
+    }
+    return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
   homePageComponent () {
     return (
@@ -52,7 +60,7 @@ class ListEvents extends React.Component {
           :
           <FadeInView duration={350}>
             {this.state.events.map((event,i) => (
-              <CardEvent key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,{data:event,pageFrom:'Home'})} item={event}/>
+              <CardEvent key={i} homePage={true} marginTop={25} openEvent={() => this.openEvent(event)} item={event}/>
             ))}
           </FadeInView>
         }
@@ -61,7 +69,7 @@ class ListEvents extends React.Component {
           <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:1,borderColor:'#eaeaea'}}>
             <Text style={[styles.text,{fontSize:18,}]}>Want to organize an event?</Text>
             <Text style={[styles.text,{fontSize:15,marginTop:10,fontFamily:'OpenSans-Regular'}]}>Pick your sport and join the GameFare community now!</Text>
-            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate('CreateEvent1',{'pageFrom':'Home'})} text={'Organize your event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
+            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate('CreateEvent1',{'pageFrom':'Home'})} text={'Organize an event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
         </View>
       </View>
     )
@@ -71,10 +79,12 @@ class ListEvents extends React.Component {
         <ScrollView 
           style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
+          refreshControl={true}
+          refresh={() => this.loadEvent()}
           contentScrollView={this.homePageComponent.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
-          offsetBottom={90+60}
+          offsetBottom={60}
           showsVerticalScrollIndicator={false}
         />
     );

@@ -57,6 +57,7 @@ class App extends Component {
       console.log('branch link opened !')
       console.log(params)
       if (params.action == 'openEventPage') {
+        
         that.openEvent(params.eventID)
         
       } else if (params.type == 'share') {
@@ -68,7 +69,7 @@ class App extends Component {
     var data = await indexEvents.getObject(eventID)
     console.log('riba data')
     console.log(data)
-    NavigationService.navigate('Event',{data:data,pageFrom:'home'})
+    NavigationService.navigate('Event',{data:data,pageFrom:'Home'})
   }
   render() {
     return <AppContainer ref={navigatorRef => {

@@ -8,6 +8,7 @@ import {
   Animated,
   Easing,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -18,6 +19,9 @@ const { height, width } = Dimensions.get('screen')
 export default class ScrollViewPage extends PureComponent {
     constructor(props) {
         super(props);
+        this.state={
+          refreshing:false
+        }
         this.componentDidMount = this.componentDidMount.bind(this)
       }
       
@@ -34,6 +38,21 @@ export default class ScrollViewPage extends PureComponent {
         if (this.props.fullWidth) return {paddingTop:0}
         return {marginLeft:20,width:width-40,paddingTop:20}
       }
+      async refresh() {
+        this.setState({refreshing:true})
+        await this.props.refresh()
+        this.setState({refreshing:false})
+      }
+      refreshControl(){
+        if (this.props.refreshControl) {
+          return (
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={()=>this.refresh()} />
+          )
+        }
+        return null
+      }
   render() {
 
     return ( 
@@ -43,7 +62,7 @@ export default class ScrollViewPage extends PureComponent {
           extraScrollHeight={30}
           keyboardOpeningTime={120} 
           enableResetScrollToCoords={false}
-
+          refreshControl={this.refreshControl()}
           keyboardShouldPersistTaps={'always'}
           keyboardDismissMode = {'none'}
 

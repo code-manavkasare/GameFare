@@ -49,13 +49,12 @@ export default class HomeScreen extends React.Component {
         firebase.messaging().subscribeToTopic('allUsers');
     }
     navigate(val,data) {
-        //statusBar.setBarStyle('dark-content',true)
-        this.props.navigation.push(val,data)
+      this.props.navigation.push(val,data)
     }
   render() {
     return (
       <View style={{ flex:1}}>
-        <ListEvents navigate={this.navigate.bind(this)}/>
+        <ListEvents navigate={this.navigate.bind(this)} navigate1={(val,data) => this.props.navigation.navigate(val,data)}/>
       </View>
     );
   }

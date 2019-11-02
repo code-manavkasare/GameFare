@@ -14,6 +14,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import AllIcons from '../../../layout/icons/AllIcons'
 import Header from '../../../layout/headers/HeaderButton'
 import ScrollView from '../../../layout/scrollViews/ScrollView'
+import BackButton from '../../../layout/buttons/BackButton'
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
@@ -49,12 +50,10 @@ class ListEvent extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.goBack()}>
-          <AllIcons name='angle-left' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
       headerRight: () => (
-        <TouchableOpacity style={{paddingRight:15}} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
+        <TouchableOpacity style={[styleApp.center,{paddingRight:15}]} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
           <Text style={[styleApp.text,{color:'white'}]}>Close</Text>
         </TouchableOpacity>
       ),

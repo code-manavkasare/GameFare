@@ -18,6 +18,7 @@ import ScrollView from '../../../layout/scrollViews/ScrollView'
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors';
+import BackButton from '../../../layout/buttons/BackButton'
 import {cardIcon} from './iconCard'
 
 class ListEvent extends Component {
@@ -41,9 +42,7 @@ class ListEvent extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <TouchableOpacity style={{paddingLeft:15}} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
-          <AllIcons name='angle-down' color={'white'} size={23} type='font' />
-        </TouchableOpacity>
+        <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -53,6 +52,8 @@ class ListEvent extends Component {
   }
   row(icon,text,data){
     console.log('cest ici meme')
+    console.log(data)
+    console.log(this.props.defaultCard)
     return (
       <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.openPage(data)}>
         <Row>
@@ -66,7 +67,8 @@ class ListEvent extends Component {
             data!= 'new'?
             <Col size={10} style={styleApp.center3}>
             { 
-              this.props.defaultCard.id == data.id?
+              this.props.defaultCard == undefined?null
+              :this.props.defaultCard.id == data.id?
               <View style={styles.defaultView}>
                 <Text style={styles.textDefault}>D</Text>
               </View>

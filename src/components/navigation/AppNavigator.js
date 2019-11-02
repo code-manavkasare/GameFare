@@ -42,6 +42,7 @@ import ApplePay from '../app/elementsUser/elementsPayment/ApplePay'
 
 import Alert from '../layout/alerts/Alert'
 
+
 const CreateEventNavigator = createStackNavigator(
     {
         CreateEvent1:CreateEvent1,
@@ -57,17 +58,7 @@ const CreateEventNavigator = createStackNavigator(
     }
 );
 
-const HomePagetNavigator = createStackNavigator(
-    {
-        Home:HomePage,
-    },
-    {
-        initialRouteName:'Home',
-        // headerMode: 'none',
-        mode: 'card',
-        cardOverlayEnabled:false
-    }
-);
+
 
 const JoinNavigator = createStackNavigator(
     {
@@ -82,21 +73,13 @@ const JoinNavigator = createStackNavigator(
     }
 );
 
-const HomeNavigator = createStackNavigator(
+const HomePageNavigator = createStackNavigator(
     {
-        Home: HomePagetNavigator,
-        CreateEvent1:CreateEventNavigator,
-        Event:JoinNavigator
-        // CreateEvent1:CreateEvent1,
-        // CreateEvent2:CreateEvent2,
-        // CreateEvent3:CreateEvent3,
-        // CreateEvent4:CreateEvent4,
-        // Event: EventPage,
-        // Checkout:Checkout
+        Home:HomePage,
     },
     {
         initialRouteName:'Home',
-        headerMode: 'none',
+        // headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false
     }
@@ -117,8 +100,7 @@ const ListEventPageNavigator = createStackNavigator(
 const EventsNavigator = createStackNavigator(
     {
         ListEvents: ListEventPageNavigator,
-        CreateEvent1:CreateEventNavigator
-        // CreateEvent1:CreateEvent1,
+        // CreateEvent1:CreateEventNavigator
         // CreateEvent2:CreateEvent2,
         // CreateEvent3:CreateEvent3,
         // CreateEvent4:CreateEvent4,
@@ -185,41 +167,14 @@ const FlagsNavigator = createStackNavigator(
     {
         initialRouteName:'ListCountry',
         // headerMode: 'none',
-        mode: 'card',
+        mode: 'modal',
         cardOverlayEnabled:true
     }
 );
-
-const DateNavigator = createStackNavigator(
-    {
-        Date:DateSelector,
-        Location:LocationSelector
-    },
-    {
-        initialRouteName:'Date',
-        // headerMode: 'none',
-        mode: 'card',
-        cardOverlayEnabled:true
-    }
-);
-
-const LocationNavigator = createStackNavigator(
-    {
-        Location:LocationSelector
-    },
-    {
-        initialRouteName:'Location',
-        // headerMode: 'none',
-        mode: 'card',
-        cardOverlayEnabled:true
-    }
-);
-
-
 
 const MainApp = createBottomTabNavigator(
     {
-        Home: HomeNavigator,
+        Home: HomePageNavigator,
         ListEvents:EventsNavigator,
         Profile: ProfileNavigator,
     },
@@ -246,27 +201,66 @@ const MainApp = createBottomTabNavigator(
       },
     },
     {
-        initialRouteName:'Location',
+        initialRouteName:'Home',
         // headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:true
     }
   );
 
-  const RootStack = createStackNavigator(
+  const MainStack = createStackNavigator(
     {
         MainApp:MainApp,
-        SignIn:LoginNavigator,
-        ListCountry:FlagsNavigator,
-        Alert:Alert,
-        Location:LocationNavigator,
-        Date:DateNavigator,
-        Payments:PaymentsNavigator,
+        Event:JoinNavigator,
+        CreateEvent1:CreateEventNavigator
     },
     {
         initialRouteName:'MainApp',
         headerMode: 'none',
         mode: 'card',
+        cardOverlayEnabled:true
+    }
+)
+
+const LocationNavigator = createStackNavigator(
+    {
+        Location: LocationSelector,
+    },
+    {
+        initialRouteName:'Location',
+        // headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false
+    }
+);
+const DateNavigator = createStackNavigator(
+    {
+        Date: DateSelector,
+    },
+    {
+        initialRouteName:'Date',
+        // headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false
+    }
+);
+
+
+
+  const RootStack = createStackNavigator(
+    {
+        MainApp:MainStack,
+        SignIn:LoginNavigator,
+        ListCountry:FlagsNavigator,
+        Alert:{screen:Alert,gesturesEnabled:false},
+        Payments:PaymentsNavigator,
+        Date:DateNavigator,
+        Location:LocationNavigator
+    },
+    {
+        initialRouteName:'MainApp',
+        headerMode: 'none',
+        mode: 'modal',
         transparentCard: true,
         cardStyle: { opacity: 1,},
         cardOverlayEnabled:true

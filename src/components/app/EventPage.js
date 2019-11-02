@@ -177,13 +177,50 @@ class EventPage extends React.Component {
           :
           <View style={{marginTop:0}}>
           {Object.values(this.state.usersConfirmed).map((user,i) => (
-            <Row key={i} style={{height:40}}>
+            <Row key={i} style={{paddingTop:10,paddingBottom:10}}>
               <Col size={15} style={styleApp.center2}>
                 <AllIcons name='user-alt' color={colors.grey} type='font' size={20}/>
               </Col>
-              <Col size={85} style={styleApp.center2}>
+              <Col size={65} style={styleApp.center2}>
                 <Text style={styleApp.text}>{user.captainInfo.name}</Text>
               </Col>
+              {
+              this.conditionAdmin() && user.status != 'confirmed'?
+              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Reject',title:'Do you want to reject this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.rejectAttendance(user)})}>
+                <AllIcons name='times-circle' type='font' color={colors.primary} size={20} />
+              </Col>
+              :null
+              }
+              {
+              this.conditionAdmin() && user.status != 'confirmed'?
+              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Confirm',title:'Do you want to confirm this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.confirmAttendance(user)})}>
+               <AllIcons name='check-circle' type='font' color={colors.green} size={20} />
+              </Col>
+              :this.conditionAdmin() && user.status == 'confirmed'?
+              <Col size={20} style={styleApp.center3} >
+               <AllIcons name='check' type='font' color={colors.green} size={20} />
+              </Col>
+              :this.conditionAdmin() && user.status == 'rejected'?
+              <Col size={20} style={styleApp.center3} >
+               <AllIcons name='times' type='font' color={colors.primary} size={20} />
+              </Col>
+              :null
+              }
+              {
+              !this.conditionAdmin() && (user.status == 'confirmed' || !this.props.navigation.getParam('data').info.public)?
+              <Col size={20} style={styleApp.center3}>
+               <AllIcons name='check' type='mat' color={colors.green} size={20} />
+              </Col>
+              :!this.conditionAdmin() && user.status == 'rejected'?
+              <Col size={20} style={styleApp.center3}>
+               <AllIcons name='times' type='font' color={colors.primary} size={20} />
+              </Col>
+              :!this.conditionAdmin()?
+              <Col size={20} style={styleApp.center3}>
+               <AllIcons name='pause' type='mat' color={colors.secondary} size={20} />
+              </Col>
+              :null
+              }
             </Row>
           ))}
           </View>
@@ -194,16 +231,51 @@ class EventPage extends React.Component {
       </View>
     )
   }
+  async confirmAttendance(user) {
+    console.log('confirm attendance')
+    console.log(user)
+    console.log(this.props.navigation.getParam('data'))
+    var infoEvent = this.props.navigation.getParam('data')
+    await firebase.database().ref('events/' + infoEvent.objectID + '/usersConfirmed/' + user.teamID).update({status:'confirmed'})
+    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + infoEvent.objectID).update({status:'confirmed'})
+    await this.setState({usersConfirmed:{
+      ...this.state.usersConfirmed,
+      [user.teamID]:{
+        ...this.state.usersConfirmed[user.teamID],
+        status:'confirmed'
+      }
+    }})
+    return this.props.navigation.navigate('Event')
+  }
+  async rejectAttendance(user) {
+    console.log('confirm attendance')
+    console.log(user)
+    console.log(this.props.navigation.getParam('data'))
+    var infoEvent = this.props.navigation.getParam('data')
+    await firebase.database().ref('events/' + infoEvent.objectID + '/usersConfirmed/' + user.teamID).update({status:'rejected'})
+    await firebase.database().ref('usersEvents/' + infoEvent.captainInfo.userID + '/' + infoEvent.objectID).update({status:'rejected'})
+    await this.setState({usersConfirmed:{
+      ...this.state.usersConfirmed,
+      [user.teamID]:{
+        ...this.state.usersConfirmed[user.teamID],
+        status:'confirmed'
+      }
+    }})
+    return this.props.navigation.navigate('Event')
+  }
   clickIconRight () {
     this.props.navigation.navigate('CreateEvent4',{pageFrom:'Event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
   }
   clickCancel() {
     this.props.navigation.navigate('Alert',{title:'Do you want to unjoin this event?',textButton:'Unjoin',onGoBack:() => this.cancel()})
   }
+  conditionAdmin() {
+    if (this.props.navigation.getParam('pageFrom') != 'Home' && this.props.navigation.getParam('data').info.organizer == this.props.userID && this.props.navigation.getParam('data').info.public) return true
+    return false
+  }
   render() {
     return (
       <View style={{ flex:1,backgroundColor:'white' }}>
-
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.event.bind(this)}

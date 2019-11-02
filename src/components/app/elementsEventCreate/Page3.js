@@ -109,6 +109,12 @@ class Page3 extends Component {
     }
     return [icon,typeIcon]
   }
+  privateText(data) {
+    var privateData = 'Public'
+    if (data.step1.private) privateData = 'Private'
+    data.step1.joiningFilter.valueSelected
+    return privateData + ' • ' + Object.values(data.step1.joiningFilter.listExpend).filter(element => element.value == data.step1.joiningFilter.valueSelected)[0].text
+  }
   page2(data) {
     console.log('data')
     console.log(data)
@@ -119,11 +125,18 @@ class Page3 extends Component {
 
             {this.sport(data.sport)}
 
+            <View style={{height:10}} />
+
+            {this.rowIcon('key',this.title(this.privateText(data)),'font')}
+            <View style={{height:1,marginTop:10,marginBottom:10,backgroundColor:'#eaeaea'}} />
+
             {this.rowIcon('calendar-alt',this.dateTime(data),'font')}
             {this.rowIcon('map-marker-alt',this.title(data.step1.location.area),'font')}
             {this.rowIcon('dollar-sign',this.title(Number(data.step1.joiningFee) == 0?'Free':data.step1.joiningFee),'font')}
 
             <View style={{height:1,marginTop:10,marginBottom:10,backgroundColor:'#eaeaea'}} />
+
+            
 
             {
             Object.values(data.sport.fields).filter(field => field != null).map((field,i) => (
@@ -170,7 +183,8 @@ class Page3 extends Component {
         "maxAttendance": advancedSettings.players,
         "name": data.step1.name,
         "organizer": this.props.userID,
-        "reward": 0.5,        
+        "reward": 0.5,
+        'joiningFilter':data.step1.joiningFilter.valueSelected 
       },
       "advancedSettings":advancedSettings,
       "location": {
