@@ -40,7 +40,7 @@ export default class HomeScreen extends React.Component {
           style={{ width: 30, height: 30,marginTop:-10 }}
         />,
       headerRight: () => (
-        <BackButton name="add" type='mat' click={() =>  navigation.navigate('CreateEvent1',{'pageFrom':'Home'})}/>
+        <BackButton name="add" type='mat' click={() =>  navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}/>
       ),
     }
   };

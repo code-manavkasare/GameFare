@@ -45,7 +45,7 @@ class EventPage extends React.Component {
           fontSize:14,
       },
       headerRight: () => (
-        <BackButton name='share' type='moon' size={18} click={() => navigation.navigate('CreateEvent4',{pageFrom:'Event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})} />
+        <BackButton name='share' type='moon' size={18} click={() => navigation.navigate('Contacts',{pageFrom:'Event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})} />
       ),
       headerLeft: () => (
         <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
@@ -53,6 +53,10 @@ class EventPage extends React.Component {
     }
   };
   async componentDidMount() {
+    this.loadEvent()
+  }
+  async loadEvent() {
+    await this.setState({usersConfirmed:true})
     var usersConfirmed = await firebase.database().ref('events/' + this.props.navigation.getParam('data').objectID + '/usersConfirmed').once('value')
     usersConfirmed = usersConfirmed.val()
     if (usersConfirmed == null) {
@@ -104,14 +108,34 @@ class EventPage extends React.Component {
   }
   rowOrganizer() {
     if (this.state.usersConfirmed == true) return null
-    return <Row style={{height:40,marginTop:10}}>
-      <Col size={15} style={styleApp.center2}>
-        <AllIcons name='user-alt' color={colors.grey} type='font' size={20}/>
+    return (
+    <TouchableOpacity style={[styleApp.cardSelect,{paddingTop:10,paddingBottom:10,flex:1,marginTop:20}]} >
+    <Row>
+      <Col size={15} style={styleApp.center}>
+        <AllIcons name='user-circle' color={colors.grey} type='font' size={20}/>
       </Col>
-      <Col size={85} style={styleApp.center2}>
-        <Text style={styleApp.text}>{this.state.infoOrganizer.firstname} {this.state.infoOrganizer.lastname} (organizer)</Text>
+      <Col size={50} style={styleApp.center2}>
+        <Text style={styleApp.text}>{this.state.infoOrganizer.firstname} {this.state.infoOrganizer.lastname}</Text>
+      </Col>
+      <Col size={15} style={styleApp.center3} onPress={() => this.alertCoach(this.props.navigation.getParam('data').info.player != true,this.state.infoOrganizer.firstname + ' ' + this.state.infoOrganizer.lastname)}>
+        {
+          this.props.navigation.getParam('data').info.player == true?
+          <View style={[styleApp.roundView,{backgroundColor:colors.secondary}]}>
+            <Text style={[styleApp.text,{color:'white',fontSize:10}]}>P</Text>
+          </View>
+          :
+          <View style={[styleApp.roundView,{backgroundColor:colors.green}]}>
+            <Text style={[styleApp.text,{color:'white',fontSize:10}]}>C</Text>
+          </View>
+        }
+        
+      </Col>
+      <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Close',close:true,onGoBack:() => this.props.navigation.navigate('Event'),title:this.state.infoOrganizer.firstname + ' ' + this.state.infoOrganizer.lastname + ' is the organizer of the event.'})}>
+        <AllIcons name='bullhorn' color={colors.blue} type='font' size={16}/>
       </Col>
     </Row>
+    </TouchableOpacity>
+    )
   }
   openCondition() {
     if (Object.values(this.state.usersConfirmed).length <= Number(this.props.navigation.getParam('data').info.maxAttendance)) return true
@@ -124,6 +148,86 @@ class EventPage extends React.Component {
     return <View style={this.openCondition()?styles.viewSport:{...styles.viewSport,backgroundColor:colors.primaryLight}}>
     <Text style={this.openCondition()?styles.textSport:{...styles.textSport,color:'white'}}>{this.openCondition()?'Open':'Full'}</Text>
   </View>
+  }
+  openProfile(user) {
+    var coach = 'Joined the event as a player'
+    if (user.coach) {
+      coach = 'Joined the event as a coach'
+    }
+    var level = ''
+    if (user.captainInfo.level == '' || user.captainInfo.level == undefined) {
+      level = "Unclassified yet"
+    } else {
+      level = Object.values(this.props.sports).filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0].level.list[user.captainInfo.level].text
+    }
+    this.props.navigation.navigate('Alert',{textButton:'Close',title:user.captainInfo.name,subtitle:'- Level • '+ level +'\n- '+coach,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
+  }
+  alertCoach(coach,name) {
+    console.log(name)
+    var text = coach?'coach.':'player.'
+    var title = name + ' joined the event as a ' + text
+    console.log('title')
+    console.log(title)
+    this.props.navigation.navigate('Alert',{textButton:'Close',title:title,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
+  }
+  rowUser(user,i) {
+    return (
+      <TouchableOpacity key={i} style={[styleApp.cardSelectFlex,{paddingTop:10,paddingBottom:10,flex:1,marginTop:10,minHeight:50}]} activeOpacity={0.7} onPress={() => this.openProfile(user)}>
+        <Row>
+          <Col size={15} style={styleApp.center}>
+            <AllIcons name='user-circle' color={colors.grey} type='font' size={20}/>
+          </Col>
+          <Col size={50} style={styleApp.center2}>
+            <Text style={styleApp.text}>{user.captainInfo.name}</Text>
+          </Col>
+          <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach(user.coach == true,user.captainInfo.name)}>
+          {
+          user.coach == true?
+          <View style={[styleApp.roundView,{backgroundColor:colors.green}]}>
+            <Text style={[styleApp.text,{color:'white',fontSize:10}]}>C</Text>
+          </View>
+          :
+          <View style={[styleApp.roundView,{backgroundColor:colors.secondary}]}>
+            <Text style={[styleApp.text,{color:'white',fontSize:10}]}>P</Text>
+          </View>
+        }
+          </Col>
+
+          {
+          (user.status == 'confirmed' || !this.props.navigation.getParam('data').info.public)?
+          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:'This user is confirmed for the event.',subtitle:user.captainInfo.name,close:true,onGoBack:() => this.props.navigation.navigate('Event')})}>
+            <AllIcons name='check' type='mat' color={colors.green} size={20} />
+          </Col>
+          :user.status == 'rejected'?
+          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:'This user has been rejected by the organizer.',subtitle:user.captainInfo.name,close:true,onGoBack:() => this.props.navigation.navigate('Event')})}>
+            <AllIcons name='close' type='mat' color={colors.primary} size={20} />
+          </Col>
+          :
+          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:"This user is waiting for the organizer's aproval.",subtitle:user.captainInfo.name,close:true,onGoBack:() => this.props.navigation.navigate('Event')})}>
+            <AllIcons name='clock' type='font' color={colors.secondary} size={20} />
+          </Col>
+          }
+      </Row>
+
+
+        {
+          this.conditionAdmin() && user.status != 'confirmed' && user.status != 'rejected'?
+          <Row style={{height:40,marginTop:15}}>
+            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Reject',title:'Do you want to reject this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.rejectAttendance(user)})}>
+              <View style={[styleApp.center,{backgroundColor:colors.primary,height:40,borderRadius:4}]}>
+                <Text style={[styleApp.text,{color:'white'}]}>Reject</Text>
+              </View>
+            </Col>
+            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Confirm',title:'Do you want to confirm this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.confirmAttendance(user)})}>
+              <View style={[styleApp.center,{backgroundColor:colors.green,height:40,borderRadius:4}]}>
+                <Text style={[styleApp.text,{color:'white'}]}>Confirm</Text>
+              </View>
+            </Col>
+          </Row>
+          :null
+        }
+      </TouchableOpacity>
+    )
   }
   event() {
     var sport = this.props.sports.filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0]
@@ -150,7 +254,7 @@ class EventPage extends React.Component {
 
         <View style={[styleApp.divider,{marginBottom:20}]} />
 
-        <Text style={styleApp.title}>Event settings</Text>
+        <Text style={[styleApp.title,{fontSize:19}]}>Event settings</Text>
         
         {
             Object.values(sport.fields).filter(field => field != null).map((field,i) => (
@@ -161,7 +265,7 @@ class EventPage extends React.Component {
 
         <View style={[styleApp.divider,{marginBottom:20}]} />
 
-        <Text style={styleApp.title}>Confirmed attendees</Text>
+        <Text style={[styleApp.title,{fontSize:19}]}>Attendees</Text>
         {this.rowOrganizer()}
         
 
@@ -177,51 +281,7 @@ class EventPage extends React.Component {
           :
           <View style={{marginTop:0}}>
           {Object.values(this.state.usersConfirmed).map((user,i) => (
-            <Row key={i} style={{paddingTop:10,paddingBottom:10}}>
-              <Col size={15} style={styleApp.center2}>
-                <AllIcons name='user-alt' color={colors.grey} type='font' size={20}/>
-              </Col>
-              <Col size={65} style={styleApp.center2}>
-                <Text style={styleApp.text}>{user.captainInfo.name}</Text>
-              </Col>
-              {
-              this.conditionAdmin() && user.status != 'confirmed'?
-              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Reject',title:'Do you want to reject this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.rejectAttendance(user)})}>
-                <AllIcons name='times-circle' type='font' color={colors.primary} size={20} />
-              </Col>
-              :null
-              }
-              {
-              this.conditionAdmin() && user.status != 'confirmed'?
-              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Confirm',title:'Do you want to confirm this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.confirmAttendance(user)})}>
-               <AllIcons name='check-circle' type='font' color={colors.green} size={20} />
-              </Col>
-              :this.conditionAdmin() && user.status == 'confirmed'?
-              <Col size={20} style={styleApp.center3} >
-               <AllIcons name='check' type='font' color={colors.green} size={20} />
-              </Col>
-              :this.conditionAdmin() && user.status == 'rejected'?
-              <Col size={20} style={styleApp.center3} >
-               <AllIcons name='times' type='font' color={colors.primary} size={20} />
-              </Col>
-              :null
-              }
-              {
-              !this.conditionAdmin() && (user.status == 'confirmed' || !this.props.navigation.getParam('data').info.public)?
-              <Col size={20} style={styleApp.center3}>
-               <AllIcons name='check' type='mat' color={colors.green} size={20} />
-              </Col>
-              :!this.conditionAdmin() && user.status == 'rejected'?
-              <Col size={20} style={styleApp.center3}>
-               <AllIcons name='times' type='font' color={colors.primary} size={20} />
-              </Col>
-              :!this.conditionAdmin()?
-              <Col size={20} style={styleApp.center3}>
-               <AllIcons name='pause' type='mat' color={colors.secondary} size={20} />
-              </Col>
-              :null
-              }
-            </Row>
+            this.rowUser(user,i)
           ))}
           </View>
         }
@@ -245,6 +305,13 @@ class EventPage extends React.Component {
         status:'confirmed'
       }
     }})
+    if (infoEvent.info.levelFilter != undefined) {
+      var newLevel = infoEvent.info.levelFilter
+      if (infoEvent.info.levelOption == 'max') {
+        newLevel = 1
+      }
+      await firebase.database().ref('users/' + user.captainInfo.userID + '/level/').update({[infoEvent.info.sport]:newLevel})
+    }
     return this.props.navigation.navigate('Event')
   }
   async rejectAttendance(user) {
@@ -253,25 +320,31 @@ class EventPage extends React.Component {
     console.log(this.props.navigation.getParam('data'))
     var infoEvent = this.props.navigation.getParam('data')
     await firebase.database().ref('events/' + infoEvent.objectID + '/usersConfirmed/' + user.teamID).update({status:'rejected'})
-    await firebase.database().ref('usersEvents/' + infoEvent.captainInfo.userID + '/' + infoEvent.objectID).update({status:'rejected'})
+    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + infoEvent.objectID).update({status:'rejected'})
     await this.setState({usersConfirmed:{
       ...this.state.usersConfirmed,
       [user.teamID]:{
         ...this.state.usersConfirmed[user.teamID],
-        status:'confirmed'
+        status:'rejected'
       }
     }})
     return this.props.navigation.navigate('Event')
   }
-  clickIconRight () {
-    this.props.navigation.navigate('CreateEvent4',{pageFrom:'Event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
-  }
-  clickCancel() {
-    this.props.navigation.navigate('Alert',{title:'Do you want to unjoin this event?',textButton:'Unjoin',onGoBack:() => this.cancel()})
-  }
   conditionAdmin() {
     if (this.props.navigation.getParam('pageFrom') != 'Home' && this.props.navigation.getParam('data').info.organizer == this.props.userID && this.props.navigation.getParam('data').info.public) return true
     return false
+  }
+  next() {
+    if (this.props.infoUser.coach == true && this.props.infoUser.coachVerified == true && this.props.navigation.getParam('data').info.player == true) {
+      return this.props.navigation.navigate('Coach',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
+    }
+    return this.props.navigation.navigate('Checkout',{
+      pageFrom:'event',
+      data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID},
+      coach:{
+        player:false,
+      }
+    })
   }
   render() {
     return (
@@ -281,8 +354,10 @@ class EventPage extends React.Component {
           contentScrollView={this.event.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
-          offsetBottom={190}
-          showsVerticalScrollIndicator={true}
+          refreshControl={true}
+          refresh={this.loadEvent.bind(this)}
+          offsetBottom={sizes.heightFooterBooking+20}
+          showsVerticalScrollIndicator={false}
         />
         {
           this.state.usersConfirmed == true?
@@ -299,7 +374,7 @@ class EventPage extends React.Component {
           disabled={false} 
           text='Join the event'
           loader={false} 
-          click={() => this.props.navigation.navigate('Checkout',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
+          click={() => this.next()}
          />
          </View>
          :null
@@ -332,7 +407,8 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
-    userID:state.user.userID
+    userID:state.user.userID,
+    infoUser:state.user.infoUser.userInfo
   };
 };
 

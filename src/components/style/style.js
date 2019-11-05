@@ -101,6 +101,12 @@ export default styles = StyleSheet.create({
       //paddingLeft:0,
       alignItems: 'center',
     },
+    roundView:{
+      width:20,height:20,
+      borderRadius:10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     footerBooking:{
       position:'absolute',
       bottom:0,

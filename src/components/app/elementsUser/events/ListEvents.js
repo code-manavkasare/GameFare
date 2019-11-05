@@ -54,7 +54,7 @@ class ListEvent extends Component {
           fontSize:14,
       },
       // headerLeft: () => <BackButton name='home' type='mat' size={20} click={() => navigation.navigate('Home')} />,
-      headerRight: () => <BackButton name='add' type='mat' click={() => navigation.navigate('CreateEvent1',{'pageFrom':'ListEvents'})}/>,
+      headerRight: () => <BackButton name='add' type='mat' click={() => navigation.navigate('CreateEvent0',{'pageFrom':'ListEvents'})}/>,
     }
   };
   async componentDidMount() {
@@ -68,7 +68,6 @@ class ListEvent extends Component {
   }
   loadEvents(userID) {
     var that = this
-
     firebase.database().ref('usersEvents/' + userID).on('value', function(snap) {
       console.log('on charge les match !!!!!!!')
       var events = snap.val()
@@ -84,7 +83,7 @@ class ListEvent extends Component {
       }
       console.log(events)
       console.log(userID)
-      that.setState({events:events,initialLoader:false})
+      that.setState({events:events,initialLoader:false,index:0,organizer:false})
     })
   }
   events () {
@@ -108,7 +107,7 @@ class ListEvent extends Component {
           console.log(index)
           return this.setState({organizer:!!index,index:index})
            }}>
-        <View style={{borderTopWidth:1,borderColor:colors.off}}>
+        <View style={{borderTopWidth:1,borderColor:colors.off,borderRightWidth:1}}>
           {this.listEvent('join')}
         </View>
         <View style={{borderTopWidth:1,borderColor:colors.off}}>
@@ -125,17 +124,18 @@ class ListEvent extends Component {
         return (
           <ScrollView style={{height:'100%'}}>
               {this.state.events.filter(event => event.info.organizer !== this.props.userID).map((event,i) => (
-                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.push(val,{data:event,pageFrom:'ListEvents'})} item={event}/>
+                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={() => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents'})} item={event}/>
               ))}
-            <View style={{height:30}} />
+            <View style={{height:80}} />
           </ScrollView>
         )
       }
       return (
         <ScrollView style={{height:'100%'}}>
             {this.state.events.filter(event => event.info.organizer === this.props.userID).map((event,i) => (
-              <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.push(val,{data:event,pageFrom:'ListEvents'})} item={event}/>
+              <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={() => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents'})} item={event}/>
             ))}
+            <View style={{height:80}} />
         </ScrollView>
       )
   }
@@ -165,7 +165,7 @@ class ListEvent extends Component {
           val == 'join'?
           <Button text='Join session' click={() => this.props.navigation.navigate('Home',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
           :
-          <Button text='Organize an event' click={() => this.props.navigation.navigate('CreateEvent1',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
+          <Button text='Organize an event' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
         }
         
         
@@ -202,12 +202,12 @@ class ListEvent extends Component {
 
         {this.rowCheck('Organize your sport events')}
         {this.rowCheck('Join sessions')}
-        {this.rowCheck('Find your favourite coach')}
-        {this.rowCheck('Rate your oponents')}
+        {this.rowCheck('Find your favorite coach')}
+        {this.rowCheck('Rate your opponents')}
         {this.rowCheck('Create your community')}
 
         <View style={{height:20}} />
-        <Button text='Organize your event' click={() => this.props.navigation.navigate('CreateEvent1',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
+        <Button text='Organize your event' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
         <View style={{height:10}} />
         <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
       </View>
@@ -216,7 +216,7 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={{backgroundColor:colors.off2,flex:1 }}>
         {this.props.userConnected?this.events():this.eventsLogout()}
 
       </View>

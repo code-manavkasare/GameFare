@@ -40,6 +40,7 @@ export default class Button extends Component {
   }
   styleText() {
     if (this.props.disabled) return {...styles.textButtonOn,...this.props.styleText,color:colors[this.props.backgroundColor]}
+    if (this.props.textButton != undefined) return {...styles.textButtonOn,...this.props.textButton}
     return styles.textButtonOn
   }
   render() {  

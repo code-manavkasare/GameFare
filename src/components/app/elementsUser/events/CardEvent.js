@@ -19,6 +19,7 @@ import colors from '../../../style/colors'
 import Icon from '../../../layout/icons/icons'
 import AllIcons from '../../../layout/icons/AllIcons'
 import styleApp from '../../../style/style'
+import NavigationService from '../../../../../NavigationService'
 
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../../layout/date/date'
@@ -27,11 +28,39 @@ export default class CardEvent extends React.Component {
     async clickProduct () {
       console.log('this.props.category')
       console.log(this.props.item)
-      this.props.navigate('Event')
+      this.props.clickEvent()
     }
     entreeFee(entreeFee) {
       if (entreeFee == 0) return 'Free'
       return '$' + entreeFee 
+    }
+    coach() {
+      
+      if (this.props.item.info.player == false || (this.props.item.info.organizer == this.props.userID && this.props.item.info.player == undefined )) return true
+      return false
+    }
+    alertCoach() {
+      var alert = ''
+      if (this.coach() && this.props.item.info.organizer == this.props.userID) {
+        alert = 'You created this event as a coach'
+      }
+      else if (this.coach()){
+        alert = 'You attended this event as a coach'
+      } else if (!this.coach() && this.props.item.info.organizer == this.props.userID) {
+        alert = 'You created this event as a player'
+      }
+      else if (!this.coach()){
+        alert = 'You attended this event as a player'
+      }
+      this.props.navigate('Alert',{title:alert,close:true,textButton:'Got it!',onGoBack:() => this.closeAlert()})
+    }
+    closeAlert() {
+      console.log('close alert!')
+      this.props.navigate('ListEvents',{})
+    }
+    sizeCol () {
+      if (this.props.item.info.organizer != this.props.userID) return 60
+      return 70
     }
   render() {
     return (
@@ -44,17 +73,29 @@ export default class CardEvent extends React.Component {
         >
           
           <Row>
-            <Col size={70} style={styleApp.center2} >
+            <Col size={this.sizeCol()} style={styleApp.center2} >
               <Text style={styles.title}>{this.props.item.info.name}</Text>
+            </Col>
+            <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach()}>
+              {
+                this.coach()?
+                <View style={[styleApp.roundView,{backgroundColor:colors.green}]}>
+                  <Text style={[styleApp.text,{color:'white',fontSize:10}]}>C</Text>
+                </View>
+                :
+                <View style={[styleApp.roundView,{backgroundColor:colors.secondary}]}>
+                  <Text style={[styleApp.text,{color:'white',fontSize:10}]}>P</Text>
+                </View>
+              }
             </Col>
             <Col size={10} style={styleApp.center3} >
               {
               this.props.item.info.organizer != this.props.userID && (this.props.item.status == 'confirmed' || !this.props.item.info.public)?
               <AllIcons name='check' type='mat' color={colors.green} size={20} />
               :this.props.item.info.organizer != this.props.userID && this.props.item.status == 'rejected'?
-              <AllIcons name='times' type='mat' color={colors.primary} size={20} />
+              <AllIcons name='close' type='mat' color={colors.primary} size={20} />
               :this.props.item.info.organizer != this.props.userID?
-              <AllIcons name='pause' type='mat' color={colors.secondary} size={20} />
+              <AllIcons name='clock' type='font' color={colors.secondary} size={20} />
               :null
               }
             </Col>

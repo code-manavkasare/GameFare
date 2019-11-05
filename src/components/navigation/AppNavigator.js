@@ -15,18 +15,23 @@ import AllIcons from '../layout/icons/AllIcons'
 
 import HomePage from '../app/HomePage'
 import ProfilePage from '../app/ProfilePage'
+import Wallet from '../app/elementsUser/elementsProfile/Wallet'
+import Settings from '../app/elementsUser/elementsProfile/Settings'
 import EventPage from '../app/EventPage'
 import Checkout from '../app/elementsJoining/Checkout'
+import Coach from '../app/elementsJoining/Coach'
 
 import Phone from '../login/Phone'
 import Verify from '../login/Verify'
 import Complete from '../login/Complete'
 import ListCountry from '../login/elementsFlags/ListCountry'
 
+import CreateEvent0 from '../app/elementsEventCreate/Page0'
 import CreateEvent1 from '../app/elementsEventCreate/Page1'
 import CreateEvent2 from '../app/elementsEventCreate/Page2'
 import CreateEvent3 from '../app/elementsEventCreate/Page3'
-import CreateEvent4 from '../app/elementsEventCreate/Page4'
+import Contacts from '../app/elementsEventCreate/elementsContacts/Contacts'
+import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact'
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
@@ -45,13 +50,26 @@ import Alert from '../layout/alerts/Alert'
 
 const CreateEventNavigator = createStackNavigator(
     {
+        CreateEvent0:CreateEvent0,
         CreateEvent1:CreateEvent1,
         CreateEvent2:CreateEvent2,
         CreateEvent3:CreateEvent3,
-        CreateEvent4:CreateEvent4,
     },
     {
-        initialRouteName:'CreateEvent1',
+        initialRouteName:'CreateEvent0',
+       //  headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false
+    }
+);
+
+const ContactNavigator = createStackNavigator(
+    {
+        Contacts:Contacts,
+        NewContact:NewContact
+    },
+    {
+        initialRouteName:'Contacts',
        //  headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false
@@ -59,11 +77,11 @@ const CreateEventNavigator = createStackNavigator(
 );
 
 
-
 const JoinNavigator = createStackNavigator(
     {
         Event: EventPage,
-        Checkout:Checkout
+        Checkout:Checkout,
+        Coach:Coach,
     },
     {
         initialRouteName:'Event',
@@ -100,12 +118,6 @@ const ListEventPageNavigator = createStackNavigator(
 const EventsNavigator = createStackNavigator(
     {
         ListEvents: ListEventPageNavigator,
-        // CreateEvent1:CreateEventNavigator
-        // CreateEvent2:CreateEvent2,
-        // CreateEvent3:CreateEvent3,
-        // CreateEvent4:CreateEvent4,
-        // Event: EventPage,
-        // Checkout:Checkout
     },
     {
         initialRouteName:'ListEvents',
@@ -120,6 +132,8 @@ const EventsNavigator = createStackNavigator(
 const ProfileNavigator = createStackNavigator(
     {
         Profile: ProfilePage,
+        Wallet:Wallet,
+        Settings:Settings
     },
     {
         initialRouteName:'Profile',
@@ -181,8 +195,6 @@ const MainApp = createBottomTabNavigator(
     {
       defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon:({ focused, tintColor }) => { 
-            console.log('lalalalalallskdfjkdsfs')
-            console.log(navigation)
             const { routeName } = navigation.state
             if (routeName == 'Home') return <AllIcons name='search' type='mat' color={focused?colors.primary:colors.title} size={20} />
             if (routeName == 'ListEvents') return <AllIcons name='calendar' type='font' color={focused?colors.primary:colors.title} size={14} />
@@ -255,7 +267,8 @@ const DateNavigator = createStackNavigator(
         Alert:{screen:Alert,gesturesEnabled:false},
         Payments:PaymentsNavigator,
         Date:DateNavigator,
-        Location:LocationNavigator
+        Location:LocationNavigator,
+        ContactNavigator:ContactNavigator
     },
     {
         initialRouteName:'MainApp',

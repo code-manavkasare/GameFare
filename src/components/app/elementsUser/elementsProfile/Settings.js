@@ -19,7 +19,6 @@ import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors';
 import BackButton from '../../../layout/buttons/BackButton'
-import {cardIcon} from './iconCard'
 
 class ListEvent extends Component {
   constructor(props) {
@@ -31,7 +30,7 @@ class ListEvent extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Payments',
+      title: 'Personal information',
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -42,7 +41,7 @@ class ListEvent extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <BackButton name='close' size={19} type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -50,67 +49,11 @@ class ListEvent extends Component {
     console.log('payments mount')
     console.log(this.props.navigation.getParam())
   }
-  row(icon,text,data){
-    console.log('cest ici meme')
-    console.log(data)
-    console.log(this.props.defaultCard)
-    return (
-      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.openPage(data)}>
-        <Row>
-          <Col size={15} style={styleApp.center2}>
-            {icon}
-          </Col>
-          <Col size={65} style={styleApp.center2}>
-            <Text style={styleApp.text}>{text}</Text>
-          </Col>
-          {
-            data!= 'new'?
-            <Col size={10} style={styleApp.center3}>
-            { 
-              this.props.defaultCard == undefined?null
-              :this.props.defaultCard.id == data.id?
-              <View style={styles.defaultView}>
-                <Text style={styles.textDefault}>D</Text>
-              </View>
-              :null
-            }
-          </Col>
-          :
-          <Col size={10} ></Col>
-          }
-          
-          <Col size={10} style={styleApp.center3}>
-            <AllIcons name='angle-right' color={colors.title} type="font" size={16}/>
-          </Col>
-        </Row>
-      </TouchableOpacity>
-    )
-  } 
-  openPage(data) {
-    console.log('openpage')
-    console.log(data)
-    if (data == 'new') {
-      return this.props.navigation.navigate('NewMethod',{pageFrom:this.props.navigation.getParam('pageFrom')})
-    }
-    return this.props.navigation.navigate('DetailCard',{pageFrom:this.props.navigation.getParam('pageFrom'),data:data})
-  }
-  listCard() {
-    console.log('this.props.cards')
-    console.log(this.props.cards)
-    if (this.props.cards == undefined) return null
-    return Object.values(this.props.cards).map((card,i) => (
-      this.row(cardIcon(card.brand),card.brand == 'applePay'?'Apple Pay':'•••• ' + card.last4,card)
-    ))
-    
-  }
-  payments() {
+  settings() {
     return (
       <View style={{marginTop:0}}>
-        <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text>
+        {/* <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text> */}
 
-        {this.listCard()}
-
-        {this.row(cardIcon('default'),'New payment method','new')}
       </View>
     )      
   }
@@ -119,7 +62,7 @@ class ListEvent extends Component {
       <View style={{backgroundColor:'white',flex:1 }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.payments.bind(this)}
+          contentScrollView={this.settings.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90+60}

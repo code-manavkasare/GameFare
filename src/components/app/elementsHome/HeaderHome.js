@@ -91,7 +91,7 @@ class HeaderHome extends Component {
           </Col>
           
 
-          <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigate('CreateEvent1',{})} >
+          <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.props.navigate('CreateEvent0',{})} >
             <AllIcons name="plus" color='white' size={24} type='font' />
           </Col>
 

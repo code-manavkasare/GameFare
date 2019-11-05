@@ -8,6 +8,9 @@ import {
   TextInput,
   Keyboard,
   Dimensions,
+  FlatList,
+  ScrollView,
+  Animated,
   View
 } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
@@ -19,9 +22,10 @@ import Contacts from 'react-native-contacts';
 import colors from '../../../style/colors'
 import styleApp from '../../../style/style'
 import AllIcons from '../../../layout/icons/AllIcons'
+import Loader from '../../../layout/loaders/Loader'
 
 import sizes from '../../../style/sizes';
-import ScrollView from '../../../layout/scrollViews/ScrollView'
+// import ScrollView from '../../../layout/scrollViews/ScrollView'
 import Button from '../../../layout/buttons/Button'
 
 const { height, width } = Dimensions.get('screen')
@@ -40,9 +44,12 @@ export default class ContactsComponent extends Component {
           freeContacts:{},
           alphabeth:['','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
           authorizedContact:true,
+          stickyHeader:[],
+          initialLoader:true,
         };
         this.counter=0
         this.componentWillMount = this.componentWillMount.bind(this);
+        this.scrollViewY = 0
       }
     componentWillMount(){
       this.props.onRef(this)
@@ -63,74 +70,100 @@ export default class ContactsComponent extends Component {
         AndroidOpenSettings.appDetailsSettings()
       }
     }
-    loadContacts() {
+    async loadContacts() {
       var that = this
       Contacts.getAll((err, contacts) => {
         if (err) {
-          return that.setState({contacts:[],authorizedContact:false})
+          return that.setState({contacts:[],authorizedContact:false,initialLoader:false})
         }
-        console.log('contactsss')
-        console.log(contacts)
         var Contacts = contacts.filter(contact => contact.phoneNumbers.length != 0)
         var Contacts = Contacts.sort(function(a, b) {
           var textA = a.givenName.toUpperCase();
           var textB = b.givenName.toUpperCase();
           return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
-        return that.setState({contacts:Contacts,authorizedContact:true,allContacts:Contacts})
+        Contacts = Contacts.map((contact,i) => {
+          contact.color = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)
+          contact.index = i
+          console.log(i)
+          if (i == 0) {
+            contact.header = contact.givenName[0]
+          } else if (Contacts[i-1].givenName[0] != Contacts[i].givenName[0]) {
+            contact.header = contact.givenName[0]
+          }
+          return contact
+        })
+        console.log('contacts')
+        console.log(Contacts)
+        return that.setState({contacts:Contacts,authorizedContact:true,allContacts:Contacts,initialLoader:false})
       })
     }
     rowContact(contact,key) {
+      var initial = contact.givenName[0] + contact.familyName[0]
+      if (contact.familyName == '') {
+        initial = contact.givenName[0]
+      }
       return (
         <TouchableOpacity key={key} style={{marginTop:0,borderBottomWidth:1,borderColor:'#eaeaea',height:55}}activeOpacity={0.7} onPress={() => this.props.selectContact(contact,Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)} >
           <Row>
             <Col size={15} style={styles.center}>
-              {
-              Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length == 0?
-              <AllIcons name="check" type="font" color={colors.off} size={16} />
-              :
-              <AllIcons name="check" type="font" color={colors.green} size={16} />
-              }
+              <View style={[styleApp.center,{height:30,width:30,backgroundColor:contact.color,borderRadius:15,borderWidth:1,borderColor:colors.off}]}>
+                <Text style={[styleApp.subtitle,{color:'white',fontSize:11,fontFamily:'OpenSans-SemiBold'}]}>{initial}</Text>    
+                {
+                  Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0?
+                  <View style={styles.viewTick}>
+                    <AllIcons name="check" type="font" color={'white'} size={9} />
+                  </View>
+                  :null
+                  }
+              </View>
+              
             </Col>
-            <Col size={75} style={[styles.center2,{paddingLeft:15}]}>
+            <Col size={85} style={[styles.center2,{paddingLeft:15}]}>
               <Text style={[styles.text,{fontSize:14}]}>{contact.givenName} {contact.familyName}</Text>
               <Text style={[styles.text,{fontSize:12,color:colors.title,marginTop:4}]}>{contact.phoneNumbers[0].number} • {contact.phoneNumbers[0].label}</Text>
             </Col>
-            <Col size={15} style={styles.center} >
-{/*               
-  activeOpacity={0.7} onPress={() => this.props.setFreeContact(contact.recordID)}
-              {
-                this.state.freeContacts[contact.recordID] == true?
-                <AllIcons name="dollar-sign" type="font" color={colors.grey} size={15} />
-                :
-                <AllIcons name="dollar-sign" type="font" color={colors.title} size={15} />
-              } */}
-          </Col>
           </Row>
         </TouchableOpacity>
       )
     }
-    getLetterDisplay (letter) {
-      if (letter != this.state.alphabeth[this.counter]) {
-        var counter = Object.keys(this.state.alphabeth).find(key => this.state.alphabeth[key] === letter)
-        this.counter = counter
-        return <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:1,borderColor:'#eaeaea'}}>
-          <Col style={styles.center} size={15}>
-            <Text style={[styles.text,{fontSize:12,fontFamily:'OpenSans-SemiBold'}]}>{this.state.alphabeth[this.counter]}</Text>
-          </Col>
-          <Col size={85}></Col>
-        </Row>
-      }
-      return null
+    headerLetter (letter) {
+      return (
+      <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:1,borderColor:'#eaeaea'}}>
+        <Col style={styles.center} size={15}>
+          <Text style={[styles.text,{fontSize:12,fontFamily:'OpenSans-SemiBold'}]}>{letter}</Text>
+        </Col>
+        <Col size={85}></Col>
+      </Row>
+      )
     }
-    listContacts() {    
-      this.counter = 0
-      return (this.state.contacts.map((contact,i) => (
+    contact(contact,i) {
+      return (
         <View key={i}>
-        {this.getLetterDisplay(contact.givenName[0])}
-        {this.rowContact(contact,i)}
+          {contact.header != undefined?this.headerLetter(contact.header):null}
+          {this.rowContact(contact,i)}
         </View>
-      )))
+      )
+    }
+    
+    handleScroll(event) {
+      // this.setAnimation((event.nativeEvent.contentOffset.y > 64));
+      // this.setState({ isNavBarHidden: !this.state.isNavBarHidden });
+      // console.log(event.nativeEvent.contentOffset.y)
+      // if (event.nativeEvent.contentOffset.y > this.scrollViewY) {
+      //   this.props.openShareEvent(true)
+      // } else {
+      //   this.props.openShareEvent(false)
+      // }
+      // return this.scrollViewY = event.nativeEvent.contentOffset.y
+    }
+    listContacts() {  
+      return <ScrollView keyboardShouldPersistTaps={true} onScroll={this.handleScroll.bind(this)} style={{height:'100%',marginBottom:sizes.heightFooterBooking}} stickyHeaderIndices={this.state.stickyHeader} >
+        {this.state.contacts.map((contact,i) => (
+          this.contact(contact,i)
+        ))}
+        <View style={{height:70}} />
+      </ScrollView>
     }
     viewNotAuthorized() {
       return <View style={[styles.center,{marginTop:20,width:width-40,marginLeft:20}]}>
@@ -143,16 +176,16 @@ export default class ContactsComponent extends Component {
     </View>
     }
     listContactsComponent() {
+      if (this.state.initialLoader) return (
+        <View style={[styleApp.center,{marginTop:130}]}>
+          <Loader color='primary' size={20} />
+        </View>
+      )
       if (!this.state.authorizedContact) return this.viewNotAuthorized()
       return this.listContacts()
     }
   render() {
-    return (
-      <View style={styles.content}>
-       {this.listContactsComponent()}
-       <View style={{height:120}}/>
-      </View>
-    );
+    return (this.listContactsComponent() );
   }
 }
 
@@ -160,7 +193,9 @@ const styles = StyleSheet.create({
   content:{
     // height:height-sizes.marginTopApp-105-70,
     width:width,
-    marginLeft:-20
+    height:'100%',
+    // paddingBottom:100,
+    marginLeft:0
   },
   center:{
     alignItems: 'center',
@@ -184,5 +219,11 @@ const styles = StyleSheet.create({
     fontSize:15,
     fontFamily: 'OpenSans-Regular'
   },
+  viewTick:{
+    position:'absolute',bottom:-7,right:-7,backgroundColor:colors.green,height:18,width:18,borderRadius:9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth:0.6,borderColor:colors.off
+  }
 });
 

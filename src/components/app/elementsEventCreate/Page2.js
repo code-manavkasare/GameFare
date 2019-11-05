@@ -220,7 +220,7 @@ class Page2 extends Component {
           loader={false} 
           translateYFooter={this.translateYFooter}
           translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('CreateEvent3',{data:{step1:this.props.navigation.getParam('data'),step2:this.state,sport:this.props.navigation.getParam('sport')}})}
+          click={() => this.props.navigation.navigate('CreateEvent3',{data:{step0:this.props.navigation.getParam('step0'),step1:this.props.navigation.getParam('data'),step2:this.state,sport:this.props.navigation.getParam('sport')}})}
          />
       </View>
     );

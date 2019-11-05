@@ -17,6 +17,7 @@ export default colors = {
     greenStrong:'#32C759',
     greenLight:'#DEF0E6',
     off:'#eaeaea',
+    off2:'#FAFAFA',
     grey:'#D8D8D8',
     blue:'#5AC8FA',
     blueLight:'#6CCCF6',

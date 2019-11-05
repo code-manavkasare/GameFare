@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     Linking,
-    Image
+    Image,
+    Dimensions
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -21,6 +22,7 @@ import Button from '../layout/buttons/Button'
 import {userAction} from '../../actions/userActions'
 import InAppBrowser from 'react-native-inappbrowser-reborn'
 import Communications from 'react-native-communications';
+const { height, width } = Dimensions.get('screen')
 
 class ProfilePage extends Component {
   state={check:false}
@@ -44,9 +46,9 @@ class ProfilePage extends Component {
   };
   title(text) {
     return (
-      <Row style={{marginBottom:5,marginTop:20}}>
+      <Row style={{marginBottom:5,marginTop:20,marginBottom:10}}>
         <Col style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:11,color:colors.grey}]}>{text}</Text>
+          <Text style={[styleApp.title,{fontSize:13,color:colors.title,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
         </Col>
       </Row>
     )
@@ -55,7 +57,7 @@ class ProfilePage extends Component {
     return (
       <Row style={{marginBottom:5}}>
         <Col style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:19}]}>{text}</Text>
+          <Text style={[styleApp.title,{fontSize:19,fontFamily:'OpenSans-SemiBold'}]}>{text}</Text>
         </Col>
       </Row>
     )
@@ -72,12 +74,12 @@ class ProfilePage extends Component {
   button(text,page,data,type,url) {
     return (
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.clickButton(text,page,data,type,url)} style={styles.button}>
-      <Row>
+      <Row style={{marginLeft:20,width:width-40}}>
         <Col size={90} style={styleApp.center2}>
           <Text style={[styleApp.title,{fontSize:13,fontFamily:'OpenSans-SemiBold'}]}>{text}</Text>
         </Col>
         <Col size={10} style={styleApp.center3}>
-          <FontIcon size={16} name={'angle-right'} color={colors.title} /> 
+          <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
         </Col>
       </Row>
       </TouchableOpacity>
@@ -150,33 +152,38 @@ class ProfilePage extends Component {
   profile() {
     return (
       <View>
-        {this.bigtitle(this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname)}
+        {this.bigtitle('Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname)}
         {this.subtitle(this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber)}
 
         <View style={{height:10}} />
 
         {this.title('Account parameters')}
-
-        {this.button('Personal information','Settings',{})}
+        
+        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        {this.button('Personal information','Settings',{pageFrom:'Profile'})}
         {this.button('Payment','Payments',{pageFrom:'Profile'})}
-        {this.button('My wallet','Wallet',{})}
+        {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
 
         {this.title('Assistance')}
 
+        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
         {this.button('Email','Alert',{},'email')}
         {this.button('Call','Alert',{},'call')}
 
         {this.title('Social media')}
 
+        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
         {this.button('Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
 
         {this.title('Legal')}
 
+        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
         {this.button('Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
         {this.button('Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
 
         {this.title('')}
-        {this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
+        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        {this.button('Logout','Alert',{close:true,textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
 
 
 
@@ -214,8 +221,8 @@ class ProfilePage extends Component {
 
         {this.rowCheck('Organize your sport events')}
         {this.rowCheck('Join sessions')}
-        {this.rowCheck('Find your favourite coach')}
-        {this.rowCheck('Rate your oponents')}
+        {this.rowCheck('Find your favorite coach')}
+        {this.rowCheck('Rate your opponents')}
         {this.rowCheck('Create your community')}
 
         <View style={{height:20}} />
@@ -225,7 +232,7 @@ class ProfilePage extends Component {
   }
   render() {
     return (
-      <View style={{ height:'100%',backgroundColor:'white' }}>
+      <View style={{ height:'100%',backgroundColor:colors.off2 }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.props.userConnected?this.profile():this.profileLogout()}
@@ -242,8 +249,11 @@ class ProfilePage extends Component {
 const styles = StyleSheet.create({
   button:{
     height:50,
+    marginLeft:-20,
+    width:width,
     borderColor:colors.off,
-    borderBottomWidth:0,
+    backgroundColor:'white',
+    borderBottomWidth:1,
   },
 });
 

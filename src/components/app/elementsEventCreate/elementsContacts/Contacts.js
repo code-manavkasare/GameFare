@@ -9,20 +9,26 @@ import {
   Keyboard,
   Dimensions,
   Clipboard,
-  View
+  View,
+  ScrollView,
+  Animated
 } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Permissions from 'react-native-permissions'
 import AndroidOpenSettings from 'react-native-android-open-settings'
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import branch from 'react-native-branch'
+import SendSMS from 'react-native-sms'
 
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors'
 import {date} from '../../../layout/date/date'
 import AllIcons from '../../../layout/icons/AllIcons'
+import BackButton from '../../../layout/buttons/BackButton'
 
 import ListContacts from './ListContacts'
+import {timing} from '../../../animations/animations'
+import FooterContact from './FooterContact';
 const { height, width } = Dimensions.get('screen')
 
 export default class ContactsComponent extends Component {
@@ -35,17 +41,33 @@ export default class ContactsComponent extends Component {
           copied:false,
           contactsSelected:{},
           search:'',
-          nameNewContact:'',
-          phoneNewContact:'',
-          freeContacts:{},
           alphabeth:['','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
         };
         this.counter=0
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.translateYShare = new Animated.Value(0)
       }
       componentDidMount(){
-      this.props.onRef(this)
     } 
+    static navigationOptions = ({ navigation }) => {
+      return {
+        title: 'Invite your friends',
+        headerStyle: {
+            backgroundColor: colors.primary,
+            borderBottomWidth:0
+        },
+        headerTitleStyle: {
+            color:'white',
+            fontFamily:'OpenSans-Bold',
+            fontSize:14,
+        },
+        gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
+        headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3'?null:<BackButton name='close' type='mat' size={19} click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
+        headerRight: () => navigation.getParam('pageFrom') == 'Event'?null:<TouchableOpacity style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate('ListEvents',{})}>
+        <Text style={[styleApp.text,{fontFamily:'OpenSans-SemiBold',color:'white',fontSize:13}]}>Skip</Text>
+        </TouchableOpacity>,
+      }
+    };
     getContactSelected () {
       return this.state.contactsSelected
     }
@@ -59,8 +81,9 @@ export default class ContactsComponent extends Component {
       }
     }
     selectContact(contact,val) {
-      console.log('laaaaa')
+      console.log('add contact')
       console.log(val)
+      console.log(contact)
       if (val == false) {
         this.setState({nameNewContact:'',phoneNewContact:'',showAddContact:false,contactsSelected:{...this.state.contactsSelected,[contact.recordID]:contact}})
       } else {
@@ -96,27 +119,11 @@ export default class ContactsComponent extends Component {
         </View>
       )
     }
-    getLetterDisplay (letter) {
-      console.log('letter')
-      console.log(letter)
-      if (letter != this.state.alphabeth[this.counter]) {
-        var counter = Object.keys(this.state.alphabeth).find(key => this.state.alphabeth[key] === letter)
-        console.log(counter)
-        this.counter = counter
-        console.log('laaaaaaaaasdfsdfdfd')
-        console.log(this.state.alphabeth[this.counter])
-        return <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:1,borderColor:'#eaeaea'}}>
-          <Col style={styles.center} size={15}>
-            <Text style={[styles.text,{fontSize:12}]}>{this.state.alphabeth[this.counter]}</Text>
-          </Col>
-          <Col size={85}></Col>
-        </Row>
-      }
-      return null
-    }
     listContacts() {    
       return <ListContacts 
+      openShareEvent={this.openShareEvent.bind(this)}
       onRef={ref => (this.listContactRef = ref)} 
+      translateYShare={this.translateYShare}
       contactsSelected={this.state.contactsSelected}
       selectContact={this.selectContact.bind(this)}
       deleteContact={this.deleteContact.bind(this)}
@@ -144,7 +151,8 @@ export default class ContactsComponent extends Component {
     
     searchBar () {
       return (
-        <Row style={[styleApp.inputForm,{marginTop:-20,marginBottom:0,marginLeft:-20,width:width}]}>
+        <Animated.View style={{transform:[{translateY:this.translateYShare}]}}>
+        <Row style={[styleApp.inputForm,{marginTop:0,marginBottom:0,marginLeft:0,width:width}]}>
           <Col size={15} style={styles.center}>
             <AllIcons name="search" type="font" color={colors.primary} size={16} />
           </Col>
@@ -171,25 +179,26 @@ export default class ContactsComponent extends Component {
             :
             <Col size={15}></Col>
           }
-          <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.setState({showAddContact:!this.state.showAddContact})}>
-              <FontIcon name={!this.state.showAddContact?'plus':'minus'} color={colors.primary} size={14} />
+          <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.props.navigation.navigate('NewContact',{onGoBack:(data) => this.addNewContact(data)})}>
+              <FontIcon name={'user-plus'} color={colors.primary} size={14} />
           </Col>
         </Row>
+        </Animated.View>
       )
     }
-    addNewContact (name,phone) {
-      var id = Math.random().toString(36).substring(7)
+    addNewContact (data) {
       Keyboard.dismiss()
-      console.log('id')
-      console.log(id)
-      
-      
+      console.log('new contact')
+      console.log(data)
+      var id = Math.random().toString(36).substring(7)
       this.selectContact({
-        givenName:name,
+        color:'#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6),
+        givenName:data.name.split(' ')[0],
         recordID:id,
-        familyName:'',
-        phoneNumbers:[{label:'mobile',number:phone}]
+        familyName:data.name.split(' ')[1]==undefined?'':data.name.split(' ')[1],
+        phoneNumbers:[{label:'mobile',number:data.phoneNumber}]
       },false)
+      this.props.navigation.navigate('Contacts')
     }
     addContact() {
       if (this.state.showAddContact) {
@@ -248,40 +257,10 @@ export default class ContactsComponent extends Component {
       }
       return null
     }
-    async copyEvent() {
-      var infoEvent = this.props.params
+    shareEvent () {
+      var infoEvent = this.props.navigation.getParam('data')
       console.log('infoEvent')
       console.log(infoEvent)
-      var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
-      let branchUniversalObject = await branch.createBranchUniversalObject('canonicalIdentifier', {
-        // contentTitle: description,
-        contentDescription: description,
-        title: infoEvent.info.name,
-        contentMetadata: {
-          customMetadata: {
-            'eventID': infoEvent.objectID,
-            'action':'openEventPage',
-            '$uri_redirect_mode': '1',
-            '$og_image_url':'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
-          }
-        }
-      })
-
-      let linkProperties = { feature: 'share', channel: 'GameFare' }
-      let controlParams = { $desktop_url: 'http://getgamefare.com'}
-
-      let {url} = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
-      await Clipboard.setString(url)
-      console.log('url')
-      console.log(url)
-      this.setState({copied:true})
-      var that = this
-      setTimeout(function(){
-        that.setState({copied:false})
-      }, 900);   
-    }
-    shareEvent () {
-      var infoEvent = this.props.params
       var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
       branch.createBranchUniversalObject('canonicalIdentifier', {
         // contentTitle: description,
@@ -308,41 +287,91 @@ export default class ContactsComponent extends Component {
         })
       })   
     }
-    shareIcons() {
-      if (!this.state.showShareIcons) return null
+    openShareEvent(val) {
+      if (val == true) {
+        return Animated.timing(this.translateYShare,timing(-55,400)).start()
+      }
+      return Animated.timing(this.translateYShare,timing(0,400)).start()
+    }
+    rowShare() {
       return (
-        <Row style={{height:120,borderBottomWidth:1,borderColor:colors.off,marginLeft:-20,width:width,marginBottom:20}}>
-          <Col style={styleApp.center} activeOpacity={0.7} onPress={() => this.copyEvent()}>
-            <View style={[styleApp.center,styles.roundView]}>
-              {
-                this.state.copied?
-                <AllIcons name="check" type="font" color={colors.title} size={16} />
-                :
-                <AllIcons name="link" type="font" color={colors.title} size={16} />
-              }
-            </View>
-            <Text style={[styleApp.text,{marginTop:10}]}>Copy link</Text>
-          </Col>
-          <Col style={styleApp.center} activeOpacity={0.7} onPress={() => this.shareEvent()}>
-            <View style={[styleApp.center,styles.roundView]}>
-              <AllIcons name="share" type="moon" color={colors.title} size={16} />
-            </View>
-            <Text style={[styleApp.text,{marginTop:10}]}>Share</Text>
-          </Col>
-        </Row>
+        <Animated.View style={{height:55,borderBottomWidth:1,borderColor:colors.off,transform:[{translateY:this.translateYShare}]}}>
+          <Row activeOpacity={0.7} onPress={() => this.shareEvent()}>
+            <Col size={15} style={styleApp.center}>
+              <View style={[styleApp.center,{height:30,width:30,borderRadius:15,backgroundColor:colors.blue}]}>
+                <AllIcons name='share' type='moon' color={'white'} size={13} />
+              </View>
+            </Col>
+            <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
+              <Text style={[styleApp.text,{fontSize:14}]}>Share on Facebook, Messenger...</Text>
+            </Col>
+          </Row>
+        </Animated.View>
       )
+    }
+    async sendSMS() {
+      var contacts = this.state.contactsSelected
+      var that = this
+      if (contacts.length == 0) {
+        return this.props.navigation.navigate('ListEvents',{})
+      }
+      var infoEvent = this.props.navigation.getParam('data')
+      var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
+      console.log('event id!!!!')
+      console.log(infoEvent)
+      console.log(description)
+      let branchUniversalObject = await branch.createBranchUniversalObject('canonicalIdentifier', {
+        // contentTitle: description,
+        contentDescription: description,
+        title: infoEvent.info.name,
+        contentMetadata: {
+          customMetadata: {
+            'eventID': infoEvent.objectID,
+            'action':'openEventPage',
+            '$uri_redirect_mode': '1',
+            '$og_image_url':'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+          }
+        }
+      })
+
+      let linkProperties = { feature: 'share', channel: 'GameFare' }
+      let controlParams = { $desktop_url: 'http://getgamefare.com' }
+
+      let {url} = await branchUniversalObject.generateShortUrl(linkProperties, controlParams)
+
+      var phoneNumbers = Object.values(contacts).map(contact => contact.phoneNumbers[0].number)
+      console.log(url)
+      console.log(phoneNumbers)
+      console.log('phoneNumbers')
+      SendSMS.send({
+        body: description+ ' ' + url,
+        recipients: phoneNumbers,
+        successTypes: ['sent', 'queued'],
+        allowAndroidSendWithoutReadPermission: true
+        }, (completed, cancelled, error) => {
+          if (cancelled || error) {
+            return true
+          }
+          console.log('SMS Callback: completed: ' + completed + ' cancelled: ' + cancelled + 'error: ' + error);
+          if (that.props.navigation.getParam('pageFrom') == 'event'){
+            return that.props.navigation.goBack()
+          }
+          return that.props.navigation.navigate('ListEvents',{})
+    
+        });
     }
   render() {
     return (
-        <View>
-          {this.shareIcons()}
+        <View style={{height:height-85}}>
+
+          {this.rowShare()}
           {this.searchBar()}
 
-          {this.addContact()}
-
-          {this.listContactsSelected()}
 
           {this.listContacts()}
+
+          <FooterContact sendSMS={this.sendSMS.bind(this)} deleteContact={this.deleteContact.bind(this)} contactsSelected={this.state.contactsSelected} />
+
         </View>
     );
   }

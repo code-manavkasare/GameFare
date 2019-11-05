@@ -65,6 +65,7 @@ class ProfilePage extends Component {
   };
   componentDidMount() {
     console.log('checkout mount')
+    console.log(this.status(this.props.navigation.getParam('data')))
   }
   dateTime(start,end) {
     return <DateEvent 
@@ -179,34 +180,71 @@ class ProfilePage extends Component {
     if (event == null) return true
     return false
   }
+  coach() {
+    if (this.props.navigation.getParam('coach') == undefined) {
+      return false
+    }
+    return !this.props.navigation.getParam('coach').player
+  }
   async submit(data) {
     await this.setState({loader:true})
     var check = await this.checkAttendingEvent(this.props.userID,data.eventID) 
     if (!check) {
       await this.setState({loader:false})
-      return this.props.navigation.navigate('Alert',{title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+      if (data.info.organizer == this.props.userID) {
+        return this.props.navigation.navigate('Alert',{close:true,title:'You are the organizer of this event.',subtitle:'You cannot attend your own event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+      }
+      return this.props.navigation.navigate('Alert',{close:true,title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+      
     }
     var now = (new Date()).toString()
     var {message,response} = await this.payEntryFee(now,data)
     
     if (response == false) {
       await this.setState({loader:false})
-      return this.props.navigation.navigate('Alert',{title:message,textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+      return this.props.navigation.navigate('Alert',{close:true,title:message,textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
     } else if (response == 'cancel') return true
+
+    if (!data.info.public && this.coach()) {
+      var newLevel = data.info.levelFilter
+      if (data.info.levelOption == 'max' || newLevel == 0) {
+        newLevel = 1
+      }
+      await firebase.database().ref('users/' + this.props.userID + '/level/').update({
+        [data.info.sport]:newLevel
+      })
+    }
     const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/usersConfirmed').push({
       captainInfo:{
         phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
         userID:this.props.userID,
         name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
+        level:this.props.level == undefined?'':this.props.level[data.info.sport] == undefined?'':this.props.level[data.info.sport],
         picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
       },
+      coach:this.coach(),
+      status:this.status(data),
       date:now,
     })
     await firebase.database().ref('events/' + data.eventID + '/usersConfirmed/' + pushNewTeam.key).update({
       teamID:pushNewTeam.key
     })
-    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update(this.props.navigation.getParam('data'))
+    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update({...this.props.navigation.getParam('data'),status:this.status(data),coach:this.coach()})
     this.props.navigation.navigate('ListEvents');
+  }
+  status(data) {
+    if (this.coach()) return 'pending'
+    if (!data.info.public) return 'confirmed'
+    if (data.info.levelFilter == undefined) return 'confirmed'
+    if (this.props.level == undefined) return 'pending'
+    if (this.props.level[data.info.sport] == undefined) return 'pending'
+    var levelOption = data.info.levelOption
+    var levelFilter = data.info.levelFilter
+    var userLevel = this.props.level[data.info.sport]
+    if (levelOption == 'equal' && userLevel == levelFilter) return 'confirmed'
+    else if (levelOption == 'min' && userLevel >= levelFilter) return 'confirmed'
+    else if (levelOption == 'max' && userLevel <= levelFilter) return 'confirmed'
+    return 'pending'
   }
   async payEntryFee(now,data) {  
     var cardID = ''
@@ -344,6 +382,7 @@ const  mapStateToProps = state => {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
     infoUser:state.user.infoUser.userInfo,
+    level:state.user.infoUser.level,
     totalWallet:state.user.infoUser.wallet.totalWallet,
     defaultCard:state.user.infoUser.wallet.defaultCard,
     tokenCusStripe:state.user.infoUser.wallet.tokenCusStripe,

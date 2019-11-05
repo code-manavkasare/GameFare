@@ -50,15 +50,24 @@ class Page1 extends Component {
         valueSelected:Object.values(this.props.sports)[0].value,
         listExpend:Object.values(this.props.sports)
       },
-      joiningFilter:{
+      levelFilter:{
         text:"Joining",
         value:'join',
         type:'join',
         expendable:true,
         alwaysExpanded:true,
-        value:Object.values(this.props.sports[0].level.filter)[0],
-        valueSelected:Object.values(this.props.sports[0].level.filter)[0].value,
-        listExpend:Object.values(this.props.sports[0].level.filter)
+        value:Object.values(this.props.sports[0].level.list)[0],
+        valueSelected:Object.values(this.props.sports[0].level.list)[0].value,
+        listExpend:Object.values(this.props.sports[0].level.list)
+      },
+      levelOption:{
+        text:"Joining",
+        value:'join',
+        type:'join',
+        expendable:true,
+        alwaysExpanded:true,
+        valueSelected:'equal',
+        listExpend:[{value:'equal',text:'Only'},{value:'min',text:'And above'},{value:'max',text:'And below'}]
       },
       showDate:false
     };
@@ -67,7 +76,7 @@ class Page1 extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Organize an event',
+      title: 'Event information',
       headerStyle: {
           backgroundColor: colors.primary,
           borderBottomWidth:0
@@ -78,7 +87,7 @@ class Page1 extends Component {
           fontSize:14,
       },
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
+        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
@@ -116,30 +125,42 @@ class Page1 extends Component {
           console.log(value)
           this.setState({
             sportsFilter:sportsFilter,
-            joiningFilter:{
+            levelFilter:{
               text:"Joining",
               value:'join',
               type:'join',
               expendable:true,
               alwaysExpanded:true,
-              value:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.filter)[0],
-              valueSelected:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.filter)[0].value,
-              listExpend:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.filter)
+              value:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.list)[0],
+              valueSelected:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.list)[0].value,
+              listExpend:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.list)
             }
           })
         }}
       />
     )
   }
-  filter() {
+  levelFilter() {
     return (
       <ExpandableCard 
-          option = {this.state.joiningFilter} 
+          option = {this.state.levelFilter} 
           tickFilter={(value) => {
-          var joiningFilter = this.state.joiningFilter
-          joiningFilter.value = Object.values(this.props.sports[0].level.filter).filter(filter => filter.value == value)[0]
-          joiningFilter.valueSelected = value
-          this.setState({joiningFilter:joiningFilter})
+          var levelFilter = this.state.levelFilter
+          levelFilter.value = Object.values(this.props.sports[0].level.list).filter(level => level.value == value)[0]
+          levelFilter.valueSelected = value
+          this.setState({levelFilter:levelFilter})
+        }}
+      />
+    )
+  }
+  levelOption() {
+    return (
+      <ExpandableCard 
+          option = {this.state.levelOption} 
+          tickFilter={(value) => {
+          var levelOption = this.state.levelOption
+          levelOption.valueSelected = value
+          this.setState({levelOption:levelOption})
         }}
       />
     )
@@ -326,9 +347,10 @@ class Page1 extends Component {
           {this.sports()}
           {this.tournamentName()}
 
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Joining information</Text>
-          {this.switch('Public','Private','private')}
-          {this.filter()}
+          <Text style={[styleApp.title,{fontSize:17,marginTop:20,marginBottom:10}]}>Joining information</Text>
+          {this.switch('Open access','Invite only','private')}
+          {this.levelFilter()}
+          {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
 
           <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entry fee</Text>
           {this.entreeFeeSection('free')}
@@ -365,7 +387,7 @@ class Page1 extends Component {
           loader={false} 
           translateYFooter={this.translateYFooter}
           translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('CreateEvent2',{data:this.state,sport:Object.values(this.props.sports).filter(sport => sport.value == this.state.sportsFilter.valueSelected)[0]})}
+          click={() => this.props.navigation.navigate('CreateEvent2',{data:this.state,sport:Object.values(this.props.sports).filter(sport => sport.value == this.state.sportsFilter.valueSelected)[0],step0:this.props.navigation.getParam('data')})}
          />
 
       </View>

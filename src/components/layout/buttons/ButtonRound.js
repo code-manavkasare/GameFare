@@ -59,7 +59,7 @@ export default class ButtonRound extends Component {
         disabled={this.props.loader}
         underlayColor={this.onPressColor()}
         style={this.styleButton()}
-        onPress={() => this.props.click()} 
+        onPress={() => this.props.enabled?this.props.click():console.log('')} 
       >
            {
              this.props.loader?

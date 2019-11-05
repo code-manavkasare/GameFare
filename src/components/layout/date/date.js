@@ -3,7 +3,6 @@ import jstz from 'jstz';
 
 
 function date(dateOff,format) {
-  console.log(dateOff)
   var date = dateOff.split(' GMT')[0]
   return (moment(date).format(format)).toString()
 }

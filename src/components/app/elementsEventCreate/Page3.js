@@ -110,10 +110,8 @@ class Page3 extends Component {
     return [icon,typeIcon]
   }
   privateText(data) {
-    var privateData = 'Public'
-    if (data.step1.private) privateData = 'Private'
-    data.step1.joiningFilter.valueSelected
-    return privateData + ' • ' + Object.values(data.step1.joiningFilter.listExpend).filter(element => element.value == data.step1.joiningFilter.valueSelected)[0].text
+    if (data.step1.private) return 'Private'
+    return 'Public • ' + Object.values(data.step1.levelFilter.listExpend).filter(element => element.value == data.step1.levelFilter.valueSelected)[0].text + ' ' + Object.values(data.step1.levelOption.listExpend).filter(element => element.value == data.step1.levelOption.valueSelected)[0].text.toLowerCase()
   }
   page2(data) {
     console.log('data')
@@ -184,7 +182,10 @@ class Page3 extends Component {
         "name": data.step1.name,
         "organizer": this.props.userID,
         "reward": 0.5,
-        'joiningFilter':data.step1.joiningFilter.valueSelected 
+        'levelFilter':data.step1.levelFilter.valueSelected,
+        'levelOption':data.step1.levelOption.valueSelected,
+        'coachNeeded':data.step0.coachNeeded,
+        'player':data.step0.player
       },
       "advancedSettings":advancedSettings,
       "location": {
@@ -207,7 +208,7 @@ class Page3 extends Component {
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
     await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(event)
     this.setState({loader:false})
-    this.props.navigation.navigate('CreateEvent4',{data:event,pageFrom:'CreateEvent3'})
+    this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3'})
   }
   render() {
     return (

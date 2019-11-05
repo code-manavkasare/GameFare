@@ -34,17 +34,22 @@ class ListEvents extends React.Component {
     this.loadEvent()
   }
   async loadEvent() {
+    console.log('on reload')
+    console.log(events)
+    this.setState({loader:true})
+    indexEvents.clearCache()
     var events = await indexEvents.search({
       query: ''
     })
     console.log('events.hits')
     console.log(events.hits)
     await this.setState({loader:false,events:events.hits})
+    events = ''
     return true
   }
   openEvent(event) {
     if (!event.info.public) {
-      return this.props.navigate('Alert',{title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',onGoBack:() => this.props.navigate1('Home',{})})
+      return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',onGoBack:() => this.props.navigate1('Home',{})})
     }
     return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
@@ -69,7 +74,7 @@ class ListEvents extends React.Component {
           <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:1,borderColor:'#eaeaea'}}>
             <Text style={[styles.text,{fontSize:18,}]}>Want to organize an event?</Text>
             <Text style={[styles.text,{fontSize:15,marginTop:10,fontFamily:'OpenSans-Regular'}]}>Pick your sport and join the GameFare community now!</Text>
-            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate('CreateEvent1',{'pageFrom':'Home'})} text={'Organize an event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
+            <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate1('CreateEvent0',{'pageFrom':'Home'})} text={'Organize an event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>
         </View>
       </View>
     )
@@ -80,7 +85,7 @@ class ListEvents extends React.Component {
           style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           refreshControl={true}
-          refresh={() => this.loadEvent()}
+          refresh={this.loadEvent.bind(this)}
           contentScrollView={this.homePageComponent.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}

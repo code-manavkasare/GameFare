@@ -44,14 +44,16 @@ export default class Alert extends Component {
   componentWillMount(){    
   }
   title() {
-    return <Text style={[styleApp.title,{fontSize:18}]}>{this.props.navigation.getParam('title')}</Text>
+    return <Text style={[styleApp.title,{fontSize:18,fontFamily:'OpenSans-SemiBold'}]}>{this.props.navigation.getParam('title')}</Text>
   }
   subtitle() {
     if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.subtitle,{marginTop:20}]}>{this.props.navigation.getParam('subtitle')}</Text>
     return null
   }
   click(){
-    this.setState({loader:true})
+    if (this.props.navigation.getParam('close') != true) {
+      this.setState({loader:true})
+    }
     this.props.navigation.state.params.onGoBack()
   }
   render() {  
