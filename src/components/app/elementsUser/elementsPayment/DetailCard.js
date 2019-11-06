@@ -33,17 +33,10 @@ class ListEvent extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('data').brand == 'applePay'?'Apple Pay':navigation.getParam('data').brand ,
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
@@ -77,8 +70,8 @@ class ListEvent extends Component {
   }
   row(icon,text,data){
     return (
-      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.action(data)}>
-        <Row>
+      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:0.3,borderColor:colors.borderColor,marginLeft:-20,width:width,backgroundColor:'white'}} onPress={() => this.action(data)}>
+        <Row style={{width:width-40,marginLeft:20}}>
           <Col size={15} style={styleApp.center2}>
             <AllIcons name={icon} color={colors.title} size={18} type='font' />
           </Col>
@@ -140,6 +133,7 @@ class ListEvent extends Component {
 
         {this.rowCB()}
 
+        <View style={{height:0.3,backgroundColor:colors.borderColor,marginLeft:-20,width:width}} />
         {this.row('check','Set as default','set')}
         {this.row('trash-alt','Delete payment method','delete')}
       </View>
@@ -147,7 +141,7 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={[styleApp.stylePage,{backgroundColor:colors.off2,borderLeftWidth:1}]}>
         <ScrollView 
           // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}

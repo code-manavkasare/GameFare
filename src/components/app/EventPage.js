@@ -15,6 +15,7 @@ import colors from '../style/colors'
 import styleApp from '../style/style'
 import sizes from '../style/sizes'
 import {Grid,Row,Col} from 'react-native-easy-grid';
+import FadeInView from 'react-native-fade-in-view';
 
 import ScrollView from '../layout/scrollViews/ScrollView'
 import Header from '../layout/headers/HeaderButton'
@@ -35,20 +36,13 @@ class EventPage extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('data').info.name,
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerRight: () => (
-        <BackButton name='share' type='moon' size={18} click={() => navigation.navigate('Contacts',{pageFrom:'Event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})} />
+        <BackButton color={colors.title} name='share' type='moon' size={18} click={() => navigation.navigate('Contacts',{pageFrom:'Event',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})} />
       ),
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -271,22 +265,23 @@ class EventPage extends React.Component {
 
         {
           this.state.usersConfirmed == true?
+          <FadeInView duration={130}>
           <Row style={{marginTop:20}}>
             <Col style={styleApp.center}>
             <Loader size={20} color='green' />
             </Col>
           </Row>
+          </FadeInView>
           :this.state.usersConfirmed.length == 0?
           null
           :
-          <View style={{marginTop:0}}>
+          <FadeInView duration={130} style={{marginTop:0}}>
           {Object.values(this.state.usersConfirmed).map((user,i) => (
             this.rowUser(user,i)
           ))}
-          </View>
+          </FadeInView>
         }
 
-        <View style={[styleApp.divider,{marginBottom:20}]} />
 
       </View>
     )
@@ -365,7 +360,7 @@ class EventPage extends React.Component {
           :!this.openCondition()?
           null
           :this.props.navigation.getParam('pageFrom') == 'Home'?
-          <View style={styleApp.footerBooking}>
+          <FadeInView duration={130} style={styleApp.footerBooking}>
           <Button2
           icon={'next'} 
           backgroundColor='green'
@@ -376,7 +371,7 @@ class EventPage extends React.Component {
           loader={false} 
           click={() => this.next()}
          />
-         </View>
+         </FadeInView>
          :null
         }
         

@@ -68,22 +68,15 @@ export default class Location extends Component {
       static navigationOptions = ({ navigation }) => {
         return {
           title: 'Location',
-          headerStyle: {
-              backgroundColor: colors.primary,
-              borderBottomWidth:0
-          },
-          headerTitleStyle: {
-              color:'white',
-              fontFamily:'OpenSans-Bold',
-              fontSize:14,
-          },
+          headerStyle:styleApp.styleHeader,
+          headerTitleStyle: styleApp.textHeader,
           headerLeft: () => (
-            <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent1')} />
+            <BackButton color={colors.title} name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent2')} />
           ),
           headerRight: () => (
             navigation.getParam('loader') == true?
             <View style={{paddingRight:15}} >
-              <Loader color='white' size={16} />
+              <Loader color='primary' size={16} />
             </View>
             :null
           ),
@@ -330,7 +323,7 @@ export default class Location extends Component {
     }
     buttonSearchAddress () {
       return (
-        <Animated.View style={[styleApp.inputForm,{height:60,marginTop:10,marginBottom:0,borderBottomWidth:1}]}>
+        <Animated.View style={[styleApp.inputForm,{height:60,marginTop:10,marginBottom:0,borderBottomWidth:0.3}]}>
           <Row style={{height:50}}>
               <Col size={15} style={styles.center}>
                 <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>

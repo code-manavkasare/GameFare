@@ -32,17 +32,10 @@ class ListEvent extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'New method',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
@@ -51,8 +44,8 @@ class ListEvent extends Component {
   }
   row(icon,text,page,data){
     return (
-      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.props.navigation.navigate(page,data)}>
-        <Row>
+      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:0.3,borderColor:colors.borderColor,backgroundColor:'white',marginLeft:-20,width:width}} onPress={() => this.props.navigation.navigate(page,data)}>
+        <Row style={{marginLeft:20,width:width-40}}>
           <Col size={15} style={styleApp.center2}>
             {icon}
           </Col>
@@ -71,6 +64,8 @@ class ListEvent extends Component {
       <View style={{marginTop:0}}>
         <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>New payment method</Text>
 
+        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
+
         {this.row(cardIcon('default'),'Credit/Debit card','NewCard',{pageFrom:this.props.navigation.getParam('pageFrom')})}
         {this.row(cardIcon('applePay'),'Apple Pay','ApplePay',{pageFrom:this.props.navigation.getParam('pageFrom')})}
       </View>
@@ -78,7 +73,7 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={[styleApp.stylePage,{backgroundColor:colors.off,backgroundColor:colors.off2}]}>
 
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}

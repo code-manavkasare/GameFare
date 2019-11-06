@@ -114,7 +114,7 @@ export default class ExpandableCard extends Component {
     }
     borderColor () {
       // if (this.state.expanded) return colors.primary
-      return '#eaeaea'
+      return colors.borderColor
     }
     textValue() {
       var value = this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].text

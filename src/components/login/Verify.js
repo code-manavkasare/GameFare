@@ -10,6 +10,7 @@ import {
 import Header from '../layout/headers/HeaderButton'
 import ScrollView from '../layout/scrollViews/ScrollView'
 import sizes from '../style/sizes'
+import styleApp from '../style/style'
 import VerifyFields from './elementsLogin/VerifyFields'
 import {connect} from 'react-redux';
 import AllIcons from '../layout/icons/AllIcons'
@@ -27,17 +28,10 @@ export default class Verify extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate('Phone')} />
+        <BackButton name='keyboard-arrow-left' color={colors.title} type='mat' click={() => navigation.navigate('Phone')} />
       ),
     }
   };
@@ -45,7 +39,7 @@ export default class Verify extends Component {
   }
   render() {
     return (
-      <View style={{ flex: 1,backgroundColor:'white',borderTopWidth:0,borderColor:'#eaeaea' }}>
+      <View style={styleApp.stylePage}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => <VerifyFields pageFrom={this.props.navigation.getParam('pageFrom')} navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}

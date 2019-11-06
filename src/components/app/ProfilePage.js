@@ -32,15 +32,8 @@ class ProfilePage extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Profile',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       // headerLeft: () => <BackButton name='home' size={20} type='mat' click={() => navigation.navigate('Home')} />,
     }
   };
@@ -159,30 +152,30 @@ class ProfilePage extends Component {
 
         {this.title('Account parameters')}
         
-        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
         {this.button('Personal information','Settings',{pageFrom:'Profile'})}
         {this.button('Payment','Payments',{pageFrom:'Profile'})}
         {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
 
         {this.title('Assistance')}
 
-        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
         {this.button('Email','Alert',{},'email')}
         {this.button('Call','Alert',{},'call')}
 
         {this.title('Social media')}
 
-        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
         {this.button('Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
 
         {this.title('Legal')}
 
-        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
         {this.button('Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
         {this.button('Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
 
         {this.title('')}
-        <View style={{backgroundColor:colors.off,height:1,marginLeft:-20,width:width}}/>
+        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
         {this.button('Logout','Alert',{close:true,textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
 
 
@@ -204,7 +197,7 @@ class ProfilePage extends Component {
           <AllIcons name='check' type='mat' size={17} color={colors.grey} />
         </Col>
         <Col size={90}  style={styleApp.center2}>
-          <Text style={[styleApp.text,{fontSize:14}]}>{text}</Text>
+          <Text style={[styleApp.text,{fontSize:14,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
         </Col>
       </Row>
     )
@@ -217,7 +210,7 @@ class ProfilePage extends Component {
             <Image source={require('../../img/images/rocket.png')} style={{width:100,height:100,marginBottom:30}} />
           </Col>
         </Row>
-        <Text style={[styleApp.title,{fontSize:19,marginBottom:15}]}>Join the GameFare community now!</Text>
+        <Text style={[styleApp.title,{fontSize:19,marginBottom:15,marginRight:20}]}>Join the GameFare community now!</Text>
 
         {this.rowCheck('Organize your sport events')}
         {this.rowCheck('Join sessions')}
@@ -251,9 +244,9 @@ const styles = StyleSheet.create({
     height:50,
     marginLeft:-20,
     width:width,
-    borderColor:colors.off,
+    borderColor:colors.borderColor,
     backgroundColor:'white',
-    borderBottomWidth:1,
+    borderBottomWidth:0.3,
   },
 });
 

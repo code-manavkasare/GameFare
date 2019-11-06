@@ -31,17 +31,10 @@ class ListEvent extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'My wallet',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -59,7 +52,7 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={{backgroundColor:'white',flex:1,borderLeftWidth:1,borderColor:colors.off ,showOpacity:0 }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.settings.bind(this)}

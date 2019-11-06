@@ -11,6 +11,8 @@ import CompleteFields from './elementsLogin/CompleteFields'
 const { height, width } = Dimensions.get('screen')
 import AllIcons from '../layout/icons/AllIcons'
 import BackButton from '../layout/buttons/BackButton'
+import colors from '../style/colors';
+import styleApp from '../style/style'
 
 export default class Complete extends Component {
   constructor(props) {
@@ -22,18 +24,11 @@ export default class Complete extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       gesturesEnabled:false,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.navigate('Phone')} />
+        <BackButton name='keyboard-arrow-left' color={colors.title} type='mat' click={() => navigation.navigate('Phone')} />
       ),
     }
   };
@@ -41,7 +36,7 @@ export default class Complete extends Component {
   }
   render() {
     return (
-      <View style={{ flex: 1,backgroundColor:'white',borderTopWidth:0,borderColor:'#eaeaea' }}>
+      <View style={styleApp.stylePage}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => <CompleteFields pageFrom={this.props.navigation.getParam('pageFrom')} navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}

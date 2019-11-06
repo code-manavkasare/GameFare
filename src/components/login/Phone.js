@@ -12,22 +12,16 @@ import sizes from '../style/sizes'
 import BackButton from '../layout/buttons/BackButton'
 import AllIcons from '../layout/icons/AllIcons'
 import styleApp from '../style/style'
+import colors from '../style/colors';
 
 export default class LoadingScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Sign in',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))}/>
+        <BackButton name='close' size={20} type='mat' color={colors.title} click={() => navigation.navigate(navigation.getParam('pageFrom'))}/>
       ),
     }
   };
@@ -46,7 +40,7 @@ export default class LoadingScreen extends React.Component {
   }
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor:'white',borderTopWidth:0,borderColor:'#eaeaea' }}>
+      <View style={styleApp.stylePage}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.phone.bind(this)}

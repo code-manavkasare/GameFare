@@ -1,143 +1,151 @@
-import React,{Component} from 'react';
+import React, {Component} from 'react';
 import { 
     View, 
     Text,
     TouchableOpacity,
     StyleSheet,
-    Dimensions,
+    Dimensions,TextInput,
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
-
 const { height, width } = Dimensions.get('screen')
-import Header from '../../layout/headers/HeaderButton'
-import ScrollView from '../../layout/scrollViews/ScrollView'
-import TextField from '../../layout/textField/TextField'
-import Switch from '../../layout/switch/Switch'
-import ButtonRound from '../../layout/buttons/ButtonRound'
-import AllIcons from '../../layout/icons/AllIcons'
-import ExpandableCard from '../../layout/cards/ExpandableCard'
 import { Col, Row, Grid } from "react-native-easy-grid";
-
+import FontIcon from 'react-native-vector-icons/FontAwesome';
+import StatusBar from '@react-native-community/status-bar';
 import BackButton from '../../layout/buttons/BackButton'
 
+import Header from '../../layout/headers/HeaderButton'
+import TextField from '../../layout/textField/TextField'
+import ButtonRound from '../../layout/buttons/ButtonRound'
+import ScrollView from '../../layout/scrollViews/ScrollView'
+import ExpandableCard from '../../layout/cards/ExpandableCard'
+import Switch from '../../layout/switch/Switch'
+import AllIcons from '../../layout/icons/AllIcons'
+import DateEvent from './DateEvent'
+import {date} from '../../layout/date/date'
 
-import styleApp from '../../style/style'
 import sizes from '../../style/sizes'
+import styleApp from '../../style/style'
 
 class Page2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialLoader:true
+      location:{address:'',},
+      area:'',       
+      startDate:'',
+      endDate:'',
+      name:'',
+      instructions:'',
+      loader:false,
     };
-    this.translateYFooter = new Animated.Value(0)
-    this.translateXFooter = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Advanced settings',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      title: 'Event information',
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
-  async componentDidMount() {
-    console.log('le mount step 2')
-    console.log(this.props.navigation.getParam('data'))
-    var fields =this.props.navigation.getParam('sport').fields
-    fields = fields.filter(field => field != null)
-    console.log(fields)
-    var states = {sport:this.props.navigation.getParam('data').sportsFilter.valueSelected,initialLoader:false}
-    for (var field in fields) {
-      if (fields[field].field == 'expandable') {
-        if (fields[field].value == 'rulesFilter') {
-          states = {
-            ...states,
-            [fields[field].value]:{
-              text:fields[field].value,
-              value:fields[field].value,
-              type:fields[field].value,
-              expendable:true,
-              alwaysExpanded:true,
-              valueSelected:Object.values(this.props.navigation.getParam('sport').rules)[0].value,
-              listExpend:Object.values(this.props.navigation.getParam('sport').rules)
-            },
-          }
-        } else {
-          states = {
-            ...states,
-            [fields[field].value]:{
-              text:fields[field].value,
-              value:fields[field].value,
-              type:fields[field].value,
-              expendable:true,
-              alwaysExpanded:true,
-              valueSelected:Object.values(fields[field].list)[0].value,
-              listExpend:Object.values(fields[field].list)
-            },
-          }
-        }
-      } else {
-        states = {
-          ...states,
-          [fields[field].value]:fields[field].initialValue == undefined?'':fields[field].initialValue
-        }
-      }
-    }
-    console.log('initStatessss')
-    console.log(this.props.navigation.getParam('sport').fields)
-    console.log(states)
-    await this.setState({...states})
+  componentDidMount() {
+    console.log('page 1 mount')
+    console.log(this.props.sports)
+    console.log(this.state.sportsFilter)
   }
-  switch (textOn,textOff,state) {
+  close() {
+      this.props.navigation.goBack()
+  }
+  switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
       <Switch 
         textOn={textOn}
         textOff={textOff}
         translateXTo={width/2-20}
         height={50}
+        translateXComponent0={translateXComponent0}
+        translateXComponent1={translateXComponent1}
         state={this.state[state]}
         setState={(val) => this.setState({[state]:val})}
       />
     )
   }
-  
-  plusMinus(state,maxValue,increment,minValue,icon) {
+
+  tournamentName () {
     return(
-      <Row style={styleApp.inputForm}>
+      <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
+      <Row >
         <Col size={15} style={styleApp.center}>
-          <AllIcons name={icon} color={colors.title} size={17} type='font' />
+          <AllIcons name='hashtag' size={16} color={colors.title} type='font' />
         </Col>
-        <Col size={55} style={[styleApp.center2,{paddingLeft:15}]}>
-          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular'}]}>{this.state[state]} {state}</Text>
+        <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
+          <TextInput
+            style={styleApp.input}
+            placeholder="Event name"
+            returnKeyType={'done'}
+            ref={(input) => { this.nameInput = input }}
+            underlineColorAndroid='rgba(0,0,0,0)'
+            autoCorrect={true}
+            onChangeText={text => this.setState({name:text})}
+            value={this.state.name}
+          />
         </Col>
-        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
-          if (this.state[state] != minValue) {
-            this.setState({[state]:this.state[state]-increment})
-          }
-        }} >
-          <AllIcons name={'minus'} color={colors.title} size={17} type='font' />
-        </Col>
-        
-        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
-          if (this.state[state] != maxValue) {
-            this.setState({[state]:this.state[state]+increment})
-          }
-        }} >
-          <AllIcons name={'plus'} color={colors.title} size={17} type='font' />
-        </Col>
-        
       </Row>
+      </TouchableOpacity>
+    )
+  }
+  address() {
+    return (
+      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,onGoBack: (data) => this.setLocation(data)})}>
+        <Row>
+          <Col style={styleApp.center} size={15}>
+            <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
+          </Col>
+          <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
+            <Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Event address':this.state.location.address}</Text>
+          </Col>
+        </Row>
+      </TouchableOpacity>
+    )
+  }
+  async setLocation(data) {
+    await this.setState({location:data})
+    this.props.navigation.navigate('CreateEvent2')
+  }
+  async setDate (data) {
+    await this.setState({endDate:data.endDate,startDate:data.startDate})
+    this.props.navigation.navigate('CreateEvent2')
+  }
+  dateTime(start,end) {
+    return <DateEvent 
+    start={start}
+    end={end}
+    />
+  }
+  heightDateTimeCard() {
+    if (this.state.startDate == '') return 50
+    else if (date(this.state.startDate,'ddd, MMM D') == date(this.state.endDate,'ddd, MMM D')) return 65
+    return 100
+  }
+  date() {
+    return (
+      <TouchableOpacity style={[styleApp.inputForm,{height:this.heightDateTimeCard()}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,onGoBack: (data) => this.setDate(data)})}>
+      <Row>
+        <Col style={styleApp.center} size={15}>
+          <AllIcons name='calendar-alt' size={18} color={colors.title} type='font'/>
+        </Col>
+        <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
+          {
+            this.state.startDate == ''?
+            <Text style={styleApp.inputOff}>Date and time</Text>
+            :
+            this.dateTime(this.state.startDate,this.state.endDate)
+          }
+        </Col>
+      </Row>
+    </TouchableOpacity>
     )
   }
   textField (state,placeHolder,heightField,multiline,keyboardType,icon) {
@@ -147,81 +155,104 @@ class Page2 extends Component {
       placeHolder={placeHolder}
       heightField={heightField}
       multiline={multiline}
+      setState={(val) => this.setState({[state]:val})}
       keyboardType={keyboardType}
       icon={icon}
       typeIcon={'font'}
       />
     )
   }
-  title(text){
-    return<Text style={[styleApp.title,{marginTop:20,fontSize:17}]}>{text}</Text>
-  }
-  field(field) {
-    if (field.field == 'expandable') {
-      return <ExpandableCard 
-          option = {this.state[field.value]} 
-          tickFilter={(value) => {
-          var filter = this.state[field.value]
-          filter.valueSelected = value
-          this.setState({[field.value]:filter})
-      }}
-    />
-    } else if (field.field == 'plus') {
-      return this.plusMinus(field.value,field.maxValue,field.increment,field.minValue,field.icon) 
-    } else if (field.field == 'text') {
-      return this.textField(field.value,field.placeHolder,field.heightField,field.multiline,field.keyboardType,field.icon)
-    }
-  }
-  page2() {
-      if (this.state.initialLoader) return null
+  page1() {
       return (
-          <View style={{marginTop:-20}}>
-            <TextField
-              state={this.props.navigation.getParam('sport').text}
-              placeHolder={''}
-              heightField={50}
-              multiline={false}
-              editable={false}
-              keyboardType={'default'}
-              icon={this.props.navigation.getParam('sport').icon}
-              typeIcon='moon'
-            />
+        <View style={{marginTop:-15}}>
+          
 
-            {Object.values(this.props.navigation.getParam('sport').fields).filter(field => field != null).map((field,i) => (
-              <View key={i}>
-                {this.title(field.text)}
-                {this.field(field)}
-              </View>
-            ))}
-          </View>
+          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Name</Text>
+          {this.tournamentName()}
+
+          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Information</Text>
+          {this.address()}
+          {this.date()}
+          
+          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Instructions</Text>
+          
+          {this.textField('instructions','E.g parking instruction, unit number...(optional)',100,true,'default','parking')}
+         
+
+        </View>
       )
+  }
+  conditionOn () {
+    if (this.state.location.address == '' || this.state.startDate == '' || this.state.name=='') return false
+    return true
+  }
+  async submit() {
+    await this.setState({loader:true})
+    console.log('submit page 2')
+    console.log(this.props.navigation.getParam('page0'))
+    console.log(this.props.navigation.getParam('page1'))
+    console.log(this.state)
+    var step0 = this.props.navigation.getParam('page0')
+    var step1 = this.props.navigation.getParam('page1')
+    var step2 = this.state
+    console.log(this.state)
+    var event = {
+      "date": {
+        "end": step2.endDate,
+        "start": step2.startDate,
+        "timeZone": step2.location.timeZone
+      },
+      "info": {
+        "commission": 0,       
+        "displayInApp": true,    
+        "sport": step0.sportsFilter.valueSelected,
+        "public": !step0.private,
+        "maxAttendance": step1.players,
+        "name": step2.name,
+        'levelFilter':step1.levelFilter.valueSelected,
+        'levelOption':step1.levelOption.valueSelected,
+        'coachNeeded':step0.coachNeeded,
+        'player':step0.player,
+        'gender':step1.genderFilter.valueSelected,
+        'instructions':step2.instructions
+      },
+      // "advancedSettings":advancedSettings,
+      "location": {
+        "address": step2.location.address,
+        "area": step2.location.area,
+        "centralLocation": !step2.randomLocation,
+        "lat": step2.location.lat,
+        "lng": step2.location.lng
+      },
+      "price": {
+        "joiningFee": Number(step0.joiningFee),
+      },
+      "subscribtionOpen": true,
+    }
+    console.log('event')
+    console.log(event)
+    await this.setState({loader:false})
+    return this.props.navigation.navigate('CreateEvent3',{data:event})
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1, }}>
-        {/* <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Advanced settings'}
-        icon={'angle-left'}
-        close={() => this.props.navigation.goBack()}
-        /> */}
+      <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
         <ScrollView 
-          // style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.page2.bind(this)}
+          contentScrollView={this.page1.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
+
         <ButtonRound
           icon={'next'} 
-          enabled={true} 
-          loader={false} 
-          translateYFooter={this.translateYFooter}
-          translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('CreateEvent3',{data:{step0:this.props.navigation.getParam('step0'),step1:this.props.navigation.getParam('data'),step2:this.state,sport:this.props.navigation.getParam('sport')}})}
+          enabled={this.conditionOn()} 
+          loader={this.state.loader} 
+          click={() => this.submit()}
          />
+
       </View>
     );
   }
@@ -229,13 +260,13 @@ class Page2 extends Component {
 
 const styles = StyleSheet.create({
 
-  });
+});
 
-
-  const  mapStateToProps = state => {
-    return {
-      sports:state.globaleVariables.sports.list,
-    };
+const  mapStateToProps = state => {
+  return {
+    sports:state.globaleVariables.sports.list,
   };
-  
-  export default connect(mapStateToProps,{})(Page2);
+};
+
+export default connect(mapStateToProps,{})(Page2);
+

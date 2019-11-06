@@ -115,7 +115,10 @@ class VerifyFields extends Component {
       console.log('this.props.profileCompleted')
       console.log(profileCompleted)
       if (profileCompleted) {
-        this.props.navigate(this.props.pageFrom)
+        var that = this
+        setTimeout(function(){
+          that.props.navigate(that.props.pageFrom)
+        }, 550)
       } else {
         this.props.navigate('Complete',{data:{userID:this.props.params.userID},pageFrom:this.props.pageFrom})
       }

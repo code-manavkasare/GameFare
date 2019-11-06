@@ -52,19 +52,12 @@ export default class ContactsComponent extends Component {
     static navigationOptions = ({ navigation }) => {
       return {
         title: 'Invite your friends',
-        headerStyle: {
-            backgroundColor: colors.primary,
-            borderBottomWidth:0
-        },
-        headerTitleStyle: {
-            color:'white',
-            fontFamily:'OpenSans-Bold',
-            fontSize:14,
-        },
+        headerStyle:styleApp.styleHeader,
+        headerTitleStyle: styleApp.textHeader,
         gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
-        headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3'?null:<BackButton name='close' type='mat' size={19} click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
-        headerRight: () => navigation.getParam('pageFrom') == 'Event'?null:<TouchableOpacity style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate('ListEvents',{})}>
-        <Text style={[styleApp.text,{fontFamily:'OpenSans-SemiBold',color:'white',fontSize:13}]}>Skip</Text>
+        headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3'?null:<BackButton color={colors.title} name='close' type='mat' size={19} click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
+        headerRight: () => navigation.getParam('pageFrom') == 'Event'?null:<TouchableOpacity color={colors.title} style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate('ListEvents',{})}>
+        <Text style={[styleApp.text,{fontFamily:'OpenSans-SemiBold',color:colors.title,fontSize:13}]}>Skip</Text>
         </TouchableOpacity>,
       }
     };
@@ -390,8 +383,8 @@ const styles = StyleSheet.create({
   rowContactSelected:{
     width:width,flexDirection: 'row', 
     marginLeft:-20,
-    borderBottomWidth:1,
-    borderColor:colors.off,
+    borderBottomWidth:0.3,
+    borderColor:colors.borderColor,
     flexWrap: 'wrap',
     backgroundColor:'white',
   },

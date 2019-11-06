@@ -26,7 +26,7 @@ class App extends Component {
 
     SplashScreen.hide()
     StatusBar.setHidden(false, "slide")
-    StatusBar.setBarStyle('light-content',true)
+    StatusBar.setBarStyle('dark-content',true)
     if (this.props.userID != '') {
       var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser'
       const promiseAxios = await axios.get(url, {

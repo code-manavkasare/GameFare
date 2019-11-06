@@ -156,9 +156,8 @@ const styles = StyleSheet.create({
     // marginLeft:-20,
     // aspectRatio: 1,
     backgroundColor:'white',  
-    borderBottomWidth: 1,
-    //transform:[{scaleX:1,scaleY:1}],
-    borderColor:'#eaeaea',
+    borderBottomWidth:0.3,
+    borderColor:colors.borderColor,
   },
   center:{
     alignItems: 'center',

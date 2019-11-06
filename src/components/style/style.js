@@ -24,13 +24,13 @@ export default styles = StyleSheet.create({
       alignItems: 'center',
     },
     divider:{
-      height:1,width:'100%',
+      height:0.3,width:'100%',
       marginTop:20,marginBottom:10,
-      backgroundColor:'#eaeaea'
+      backgroundColor:colors.borderColor
     },
     title:{
       fontSize:24,
-      fontFamily: 'OpenSans-Bold',
+      fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },
     text:{
@@ -53,13 +53,14 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-Regular',
       color:colors.title,
     },
+    iconFooter:{height:23,width:22,marginTop:3,marginBottom:-3},
     buttonRound:{
       width:65,height:65,
       borderRadius:32.5,
       alignItems: 'center',
       justifyContent: 'center',
-      borderWidth:1,
-      borderColor:'#eaeaea',
+      borderWidth:0.3,
+      borderColor:colors.borderColor,
       backgroundColor:colors.green,
       position:'absolute',
       bottom:40,
@@ -149,14 +150,14 @@ export default styles = StyleSheet.create({
     inputForm:{
       height:50,
       marginTop:10,
-      borderBottomWidth:1,
+      borderBottomWidth:0.3,
       width:'100%',
       backgroundColor:'white',
       borderRadius:0,
       shadowColor: '#46474B',
       shadowOffset: { width: 0, height: 0 },
       shadowRadius: 15,
-      borderColor:'#eaeaea',
+      borderColor:colors.borderColor,
       shadowOpacity: 0,
     },
     cardSelectFlex:{
@@ -210,5 +211,26 @@ export default styles = StyleSheet.create({
       color:colors.title,
       fontSize:13,
       fontFamily: 'OpenSans-SemiBold',
+    },
+    styleHeader:{
+        backgroundColor: 'white',
+        borderBottomWidth:0.3,
+        borderColor:'red',
+        shadowRadius: 0,
+        elevation: 0,
+        shadowOpacity: 0,
+        shadowOffset: {
+            height: 0,
+        },
+        borderLeftWidth:0,
+    },
+    textHeader:{
+      color:colors.title,
+      fontFamily:'OpenSans-Bold',
+      fontSize:14,
+    },
+    stylePage:{
+      flex:1,borderColor:'white',
+      borderLeftWidth:0,borderColor:colors.off
     }
   });

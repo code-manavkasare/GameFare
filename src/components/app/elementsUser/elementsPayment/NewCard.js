@@ -50,21 +50,14 @@ class ListEvent extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Credit/Debit card',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
       headerRight: () => (
         <TouchableOpacity style={[styleApp.center,{paddingRight:15}]} onPress={() => navigation.navigate(navigation.getParam('pageFrom'))}>
-          <Text style={[styleApp.text,{color:'white'}]}>Close</Text>
+          <Text style={[styleApp.text,{color:colors.primary}]}>Close</Text>
         </TouchableOpacity>
       ),
     }
@@ -343,7 +336,7 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.payments.bind(this)}

@@ -26,6 +26,7 @@ import ButtonFull from '../../../layout/buttons/ButtonFull'
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
+import colors from '../../../style/colors';
 
 class Page1 extends Component {
   constructor(props) {
@@ -38,17 +39,10 @@ class Page1 extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Add contact',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton name='keyboard-arrow-left' color={colors.title} type='mat' click={() => navigation.goBack()} />
       ),
     }
   };

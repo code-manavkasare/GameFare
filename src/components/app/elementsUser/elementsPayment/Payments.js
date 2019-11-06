@@ -32,17 +32,10 @@ class ListEvent extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Payments',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='close' size={19} type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
+        <BackButton name='close' color={colors.title} size={19} type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
       ),
     }
   };
@@ -55,8 +48,8 @@ class ListEvent extends Component {
     console.log(data)
     console.log(this.props.defaultCard)
     return (
-      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:1,borderColor:colors.off}} onPress={() => this.openPage(data)}>
-        <Row>
+      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:0.3,borderColor:colors.borderColor,marginLeft:-20,width:width,backgroundColor:'white',}} onPress={() => this.openPage(data)}>
+        <Row style={{marginLeft:20,width:width-40}}>
           <Col size={15} style={styleApp.center2}>
             {icon}
           </Col>
@@ -91,6 +84,8 @@ class ListEvent extends Component {
     console.log(data)
     if (data == 'new') {
       return this.props.navigation.navigate('NewMethod',{pageFrom:this.props.navigation.getParam('pageFrom')})
+    } else if (data == 'bank') {
+      return this.props.navigation.navigate('Alert',{textButton:'Close',title:'Coming soon!',close:true,onGoBack:() => this.props.navigation.navigate('Payments')})
     }
     return this.props.navigation.navigate('DetailCard',{pageFrom:this.props.navigation.getParam('pageFrom'),data:data})
   }
@@ -108,15 +103,20 @@ class ListEvent extends Component {
       <View style={{marginTop:0}}>
         <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text>
 
+        <View style={{height:0.3,backgroundColor:colors.borderColor,marginLeft:-20,width:width}} />
         {this.listCard()}
-
         {this.row(cardIcon('default'),'New payment method','new')}
+
+        <Text style={[styleApp.title,{marginBottom:20,fontSize:19,marginTop:30}]}>Bank Accounts</Text>
+
+        <View style={{height:0.3,backgroundColor:colors.borderColor,marginLeft:-20,width:width}} />
+        {this.row(cardIcon('bank'),'Link bank account','bank')}
       </View>
     )      
   }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={[styleApp.stylePage,{backgroundColor:colors.off2}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.payments.bind(this)}

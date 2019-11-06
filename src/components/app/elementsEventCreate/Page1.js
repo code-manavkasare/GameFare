@@ -31,25 +31,7 @@ class Page1 extends Component {
     super(props);
     this.state = {
       private:false,
-      joiningFee:'',
-      free:false,
-      randomLocation:false,
-      location:{address:'',},
-      area:'',       
-      startDate:'',
-      endDate:'',
-      rules:'',
-      name:'',
-      sportsFilter:{
-        text:"Sports",
-        value:'sports',
-        type:'sports',
-        expendable:true,
-        alwaysExpanded:true,
-        value:Object.values(this.props.sports)[0],
-        valueSelected:Object.values(this.props.sports)[0].value,
-        listExpend:Object.values(this.props.sports)
-      },
+      players:1,
       levelFilter:{
         text:"Joining",
         value:'join',
@@ -69,35 +51,47 @@ class Page1 extends Component {
         valueSelected:'equal',
         listExpend:[{value:'equal',text:'Only'},{value:'min',text:'And above'},{value:'max',text:'And below'}]
       },
-      showDate:false
+      genderFilter:{
+        text:"Gender",
+        value:'gender',
+        type:'gender',
+        expendable:true,
+        alwaysExpanded:true,
+        valueSelected:'mixed',
+        listExpend:[ {
+          "icon" : "venus-mars",
+          "text" : "Mixed",
+          "typeIcon" : "font",
+          "value" : "mixed"
+        }, {
+          "icon" : "venus",
+          "text" : "Female",
+          "typeIcon" : "font",
+          "value" : "female"
+        }, {
+          "icon" : "mars",
+          "text" : "Male",
+          "typeIcon" : "font",
+          "value" : "male"
+        } ]
+      },
     };
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Event information',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      title: 'Access settings',
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
   componentDidMount() {
     console.log('page 1 mount')
     console.log(this.props.sports)
-    console.log(this.state.sportsFilter)
-  }
-  close() {
-      this.props.navigation.goBack()
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
@@ -110,33 +104,6 @@ class Page1 extends Component {
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
         setState={(val) => this.setState({[state]:val})}
-      />
-    )
-  }
-  sports() {
-    return (
-      <ExpandableCard 
-          option = {this.state.sportsFilter} 
-          tickFilter={(value) => {
-          var sportsFilter = this.state.sportsFilter
-          sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
-          sportsFilter.valueSelected = value
-          console.log('le sport')
-          console.log(value)
-          this.setState({
-            sportsFilter:sportsFilter,
-            levelFilter:{
-              text:"Joining",
-              value:'join',
-              type:'join',
-              expendable:true,
-              alwaysExpanded:true,
-              value:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.list)[0],
-              valueSelected:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.list)[0].value,
-              listExpend:Object.values(Object.values(this.props.sports).filter(sport => sport.value == value)[0].level.list)
-            }
-          })
-        }}
       />
     )
   }
@@ -165,213 +132,72 @@ class Page1 extends Component {
       />
     )
   }
-  tournamentName () {
+  gender() {
+    return (
+      <ExpandableCard 
+          option = {this.state.genderFilter} 
+          tickFilter={(value) => {
+          var genderFilter = this.state.genderFilter
+          genderFilter.valueSelected = value
+          this.setState({genderFilter:genderFilter})
+        }}
+      />
+    )
+  }
+  plusMinus(state,maxValue,increment,minValue,icon) {
     return(
-      <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
-      <Row >
+      <Row style={styleApp.inputForm}>
         <Col size={15} style={styleApp.center}>
-          <AllIcons name='hashtag' size={16} color={colors.title} type='font' />
+          <AllIcons name={icon} color={colors.title} size={17} type='font' />
         </Col>
-        <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
-          <TextInput
-            style={styleApp.input}
-            placeholder="Event name"
-            returnKeyType={'done'}
-            ref={(input) => { this.nameInput = input }}
-            underlineColorAndroid='rgba(0,0,0,0)'
-            autoCorrect={true}
-            onChangeText={text => this.setState({name:text})}
-            value={this.state.name}
-          />
+        <Col size={55} style={[styleApp.center2,{paddingLeft:15}]}>
+          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular'}]}>{this.state[state]} {state}</Text>
         </Col>
+        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
+          if (this.state[state] != minValue) {
+            this.setState({[state]:this.state[state]-increment})
+          }
+        }} >
+          <AllIcons name={'minus'} color={colors.title} size={17} type='font' />
+        </Col>
+        
+        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
+          if (this.state[state] != maxValue) {
+            this.setState({[state]:this.state[state]+increment})
+          }
+        }} >
+          <AllIcons name={'plus'} color={colors.title} size={17} type='font' />
+        </Col>
+        
       </Row>
-      </TouchableOpacity>
     )
   }
-  styleCondition(condition,basicStyle,addStyle1,addStyle0) {
-    if (condition) return {...basicStyle,...addStyle1}
-    return {...basicStyle,...addStyle0}
-  }
-  styleTickFreeInput(free) {
-    if (free) return {
-      ...styleApp.input,
-      color:colors.title,
-      // fontFamily:Fonts.MarkOTMedium,
-    }
-    return {...styles.text,color:'#C7C7CC'}
-  }
-  styleTickFree(free) {
-    if (free) return styles.tickBox
-    return styles.tickBoxOff
-  }
-  styleTickFreeText(free,color) {
-    if (free) return {
-      ...styleApp.input,
-      color:color,
-      fontFamily:'OpenSans-SemiBold',
-      // textDecorationLine: 'underline',
+  
 
-    }
-    return {...styles.text,color:'#eaeaea'}
-  }
-  entreeFeeSection(state){
-    return(
-      <Row style={{height:55}}>
-        <Col size={60} style={styleApp.center2}>
-          <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} style={this.styleCondition(this.state[state],styleApp.inputForm,{borderColor:'#eaeaea'},{backgroundColor:'white',borderColor:'#eaeaea'})}>
-            <Row>
-              <Col style={styleApp.center} size={25}>
-                <AllIcons name='dollar-sign' size={18} color={colors.title} type='font'/>
-              </Col>
-              <Col style={[styleApp.center2,{paddingLeft:15}]} size={75}>
-                <TextInput
-                  style={this.styleTickFreeInput(!this.state.free)}
-                  placeholder="Entry fee"
-                  returnKeyType={'done'}
-                  //editable={!this.state.free}
-                  keyboardType={'phone-pad'}
-                  ref={(input) => { this.entreeFeeInputRef = input }}
-                  underlineColorAndroid='rgba(0,0,0,0)'
-                  autoCorrect={true}
-                  onChangeText={text => {
-                    if (text.length == 0 && this.state.joiningFee.length != 0) {
-                      this.setState({joiningFee:text,free:true})
-                    }
-                    else if (Number(text) == 0 ) {
-                      this.setState({joiningFee:text,free:true})
-                    } else {
-                      if (Number(text).toString() == 'NaN'){
-                        return this.setState({free:false,joiningFee:text.replace(text[text.length-1],'')})
-                      }
-                      return this.setState({joiningFee:text,free:false})
-                    }
-                    
-                  }}
-                  value={this.state.joiningFee}
-                />
-              </Col>
-            </Row>
-          </TouchableOpacity>
-        </Col>
-        <Col size={40} style={styleApp.center3} activeOpacity={0.7} onPress={() => {
-          if (!this.state.free) {
-            this.entreeFeeInputRef.blur()
-          }
-          this.setState({free:!this.state.free,joiningFee:!this.state.free?'0':''})
-        }}>
-          <Row style={[styleApp.cardSelect,{borderWidth:0,shadowOpacity:0}]}>
-            <Col style={styleApp.center} >
-              
-              <View style={this.styleTickFree(this.state.free)}>
-                {
-                this.state.free?
-                <FontIcon name="check" color={colors.primary} size={15} />
-                :
-                <FontIcon name="check" color="#eaeaea" size={15} />
-                }
-              </View>
-              
-            </Col>
-            <Col style={styleApp.center2} >
-              <Text style={this.styleTickFreeText(this.state.free,colors.primary)}>Free</Text>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-      
-    )
-  }
-  address() {
-    return (
-      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,onGoBack: (data) => this.setLocation(data)})}>
-        <Row>
-          <Col style={styleApp.center} size={15}>
-            <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
-          </Col>
-          <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-            <Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Event address':this.state.location.address}</Text>
-          </Col>
-        </Row>
-      </TouchableOpacity>
-    )
-  }
-  async setLocation(data) {
-    await this.setState({location:data})
-    this.props.navigation.navigate('CreateEvent1')
-  }
-  async setDate (data) {
-    console.log('setDate')
-    console.log(data)
-    await this.setState({endDate:data.endDate,startDate:data.startDate})
-    this.props.navigation.navigate('CreateEvent1')
-  }
-  dateTime(start,end) {
-    console.log('dateTime !!')
-    console.log(start)
-    console.log(end)
-    return <DateEvent 
-    start={start}
-    end={end}
-    />
-  }
-  heightDateTimeCard() {
-    if (this.state.startDate == '') return 50
-    else if (date(this.state.startDate,'ddd, MMM D') == date(this.state.endDate,'ddd, MMM D')) return 65
-    return 100
-  }
-  date() {
-    return (
-      <TouchableOpacity style={[styleApp.inputForm,{height:this.heightDateTimeCard()}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,onGoBack: (data) => this.setDate(data)})}>
-      <Row>
-        <Col style={styleApp.center} size={15}>
-          <AllIcons name='calendar-alt' size={18} color={colors.title} type='font'/>
-        </Col>
-        <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-          {
-            this.state.startDate == ''?
-            <Text style={styleApp.inputOff}>Date and time</Text>
-            :
-            this.dateTime(this.state.startDate,this.state.endDate)
-          }
-        </Col>
-      </Row>
-    </TouchableOpacity>
-    )
-  }
   page1() {
       return (
         <View style={{marginTop:-15}}>
-          
 
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Sport & Event name</Text>
-          {this.sports()}
-          {this.tournamentName()}
-
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20,marginBottom:10}]}>Joining information</Text>
+          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Access</Text>
           {this.switch('Open access','Invite only','private')}
           {this.levelFilter()}
           {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
 
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Entry fee</Text>
-          {this.entreeFeeSection('free')}
 
+          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Attendance</Text>
+          
+          {this.plusMinus('players',200,1,1,'user-check')}
 
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Location</Text>
-          {this.address()}
-
-          <Text style={[styleApp.title,{fontSize:17,marginTop:20}]}>Date & Time</Text>
-          {this.date()}
+          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Gender</Text>
+          
+          {this.gender()}
 
         </View>
       )
   }
-  conditionOn () {
-    if (this.state.name == '' || this.state.joiningFee == '' || (this.state.area == '' && this.state.randomLocation == true) || (this.state.location.address == '' && this.state.randomLocation == false) || this.state.startDate == '') return false
-    return true
-  }
   render() {
     return (
-      <View style={{backgroundColor:'white',flex:1 }}>
+      <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page1.bind(this)}
@@ -383,11 +209,11 @@ class Page1 extends Component {
 
         <ButtonRound
           icon={'next'} 
-          enabled={this.conditionOn()} 
+          enabled={true} 
           loader={false} 
           translateYFooter={this.translateYFooter}
           translateXFooter={this.translateXFooter} 
-          click={() => this.props.navigation.navigate('CreateEvent2',{data:this.state,sport:Object.values(this.props.sports).filter(sport => sport.value == this.state.sportsFilter.valueSelected)[0],step0:this.props.navigation.getParam('data')})}
+          click={() => this.props.navigation.navigate('CreateEvent2',{page1:this.state,page0:this.props.navigation.getParam('page0')})}
          />
 
       </View>

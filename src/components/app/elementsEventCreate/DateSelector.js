@@ -42,17 +42,10 @@ export default class Date extends Component {
       static navigationOptions = ({ navigation }) => {
         return {
           title: 'Date & Time',
-          headerStyle: {
-              backgroundColor: colors.primary,
-              borderBottomWidth:0
-          },
-          headerTitleStyle: {
-              color:'white',
-              fontFamily:'OpenSans-Bold',
-              fontSize:14,
-          },
+          headerStyle:styleApp.styleHeader,
+          headerTitleStyle: styleApp.textHeader,
           headerLeft: () => (
-            <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent1')} />
+            <BackButton color={colors.title} name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent2')} />
           ),
         }
       };

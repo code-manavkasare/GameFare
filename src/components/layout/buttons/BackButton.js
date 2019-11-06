@@ -37,7 +37,7 @@ export default class Button extends Component {
         style={this.styleButton()} 
         onPress={() => this.props.click()} 
       >
-          <AllIcons name={this.props.name} color='white' type={this.props.type} size={this.props.size!=undefined?this.props.size:25} />
+          <AllIcons name={this.props.name} color={this.props.color?this.props.color:'white'} type={this.props.type} size={this.props.size!=undefined?this.props.size:25} />
       </TouchableOpacity> 
     );
   }

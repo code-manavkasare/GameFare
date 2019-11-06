@@ -14,31 +14,54 @@ import {
 } from 'react-native';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
-// import {Fonts} from '../../../../utils/Font'
 import colors from '../../style/colors'
 import Icon from '../../layout/icons/icons'
 import AllIcons from '../../layout/icons/AllIcons'
 import styleApp from '../../style/style'
+import {timing} from '../../animations/animations'
 
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../layout/date/date'
 
 export default class CardEvent extends React.Component {
+  constructor(props) {
+      super(props);
+      this.state = {
+        player:false,
+        backgroundColorAnimation:new Animated.Value(0)
+      };
+    }
     entreeFee(entreeFee) {
       if (entreeFee == 0) return 'Free'
       return '$' + entreeFee 
     }
+    onPress(val) {
+      if (val) return Animated.parallel([
+        Animated.timing(this.state.backgroundColorAnimation,timing(300,100)),
+      ]).start()
+      return Animated.parallel([
+        Animated.timing(this.state.backgroundColorAnimation,timing(0,100)),
+      ]).start()
+    }
+    click() {
+      this.props.openEvent()
+    }
   render() {
+    var color = this.state.backgroundColorAnimation.interpolate({
+        inputRange: [0, 300],
+        outputRange: ['white', colors.off2]
+    });
     return (
-      <Animated.View style={[styles.cardList]}>
+      <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
         <TouchableOpacity 
-          onPress={() => {this.props.openEvent()}} 
+          onPress={() => this.click()} 
+          onPressIn={() => this.onPress(true)}
+          onPressIn={() => this.onPress(false)}
           style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
           activeOpacity={0.7} 
         >
-          
-          
+
           <Row>
             <Col size={75} style={styleApp.center2}>
               <Text style={styles.title}>{this.props.item.info.name}</Text>
@@ -112,9 +135,8 @@ const styles = StyleSheet.create({
     marginLeft:-20,
     // aspectRatio: 1,
     backgroundColor:'white',  
-    borderTopWidth: 1,
-    //transform:[{scaleX:1,scaleY:1}],
-    borderColor:'#eaeaea',
+    borderTopWidth:0.3,
+    borderColor:colors.borderColor,
   },
   center:{
     alignItems: 'center',

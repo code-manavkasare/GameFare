@@ -7,6 +7,8 @@ function cardIcon(brand) {
   var icon = 'credit-card'
   if (brand == 'MasterCard') {
     icon = 'cc-mastercard'
+  } if (brand == 'bank') {
+    icon = 'id-card'
   } else if (brand == 'applePay') {
     icon = 'cc-apple-pay'
   }  else if (brand == 'American Express') {

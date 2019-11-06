@@ -70,8 +70,8 @@ class ListEvents extends React.Component {
           </FadeInView>
         }
 
-      <View style={{height:1,backgroundColor:'#eaeaea',marginLeft:-20,width:width,}}/>
-          <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:1,borderColor:'#eaeaea'}}>
+      <View style={{height:0.3,backgroundColor:colors.borderColor,marginLeft:-20,width:width,}}/>
+          <View style={{flex:1,backgroundColor:'#F6F6F6',width:width,marginLeft:-20,paddingLeft:20,paddingRight:20,paddingTop:20,borderBottomWidth:0.3,borderColor:colors.borderColor}}>
             <Text style={[styles.text,{fontSize:18,}]}>Want to organize an event?</Text>
             <Text style={[styles.text,{fontSize:15,marginTop:10,fontFamily:'OpenSans-Regular'}]}>Pick your sport and join the GameFare community now!</Text>
             <Button backgroundColor={'green'} onPressColor={colors.greenClick} click={() => this.props.navigate1('CreateEvent0',{'pageFrom':'Home'})} text={'Organize an event'} styleButton={{marginBottom:25,marginTop:20}} loader={false}/>

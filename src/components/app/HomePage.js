@@ -26,21 +26,14 @@ export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Organize your event',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle: styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerTitle: () => <Image
-          source={require('../../img/logos/logoXS.png')}
+          source={require('../../img/logos/logoXSPrimary.png')}
           style={{ width: 30, height: 30,marginTop:-10 }}
         />,
       headerRight: () => (
-        <BackButton name="add" type='mat' click={() =>  navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}/>
+        <BackButton name="add" type='mat' color={colors.primary} click={() =>  navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}/>
       ),
     }
   };

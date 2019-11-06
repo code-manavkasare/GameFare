@@ -16,6 +16,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 const { height, width } = Dimensions.get('screen')
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import colors from '../../style/colors'
+import styleApp from '../../style/style'
 import Header from '../../layout/headers/HeaderButton'
 import sizes from '../../style/sizes'
 import AllIcons from '../../layout/icons/AllIcons'
@@ -35,17 +36,10 @@ export default class SelectCountry extends Component {
      static navigationOptions = ({ navigation }) => {
       return {
         title: '',
-        headerStyle: {
-            backgroundColor: colors.primary,
-            borderBottomWidth:0
-        },
-        headerTitleStyle: {
-            color:'white',
-            fontFamily:'OpenSans-Bold',
-            fontSize:14,
-        },
+        headerStyle:styleApp.styleHeader,
+        headerTitleStyle: styleApp.textHeader,
         headerLeft: () => (
-          <BackButton name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('Phone')} />
+          <BackButton name='keyboard-arrow-down' color={colors.title} type='mat' click={() => navigation.navigate('Phone')} />
         ),
       }
     };
@@ -109,7 +103,7 @@ export default class SelectCountry extends Component {
     }
   render() {
     return (  
-        <View style={styles.content}>
+        <View style={styleApp.stylePage}>
         {this.contryComponent()}
         </View>
     );

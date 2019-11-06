@@ -177,7 +177,8 @@ const styles = StyleSheet.create({
     position:'absolute',bottom:-3,right:-4,backgroundColor:colors.blue,height:15,width:15,borderRadius:7.5,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth:0.6,borderColor:colors.off
+    borderBottomWidth:0.3,
+    borderColor:colors.off,
   },
   viewDelete:{
     position:'absolute',top:-8,left:-4,backgroundColor:colors.primary,height:15,width:15,borderRadius:7.5,

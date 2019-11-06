@@ -49,17 +49,10 @@ class ProfilePage extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Join ' +navigation.getParam('data').info.name,
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
+        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
       ),
     }
   };
@@ -319,7 +312,7 @@ class ProfilePage extends Component {
   }
   render() {
     return (
-      <View style={{ flex: 1,backgroundColor:'white' }}>
+      <View style={[styleApp.stylePage,{borderLeftWidth:1,}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.checkout()}

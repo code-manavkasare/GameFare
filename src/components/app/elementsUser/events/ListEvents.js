@@ -44,17 +44,10 @@ class ListEvent extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'My events',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
+      headerStyle:styleApp.styleHeader,
+      headerTitleStyle: styleApp.textHeader,
       // headerLeft: () => <BackButton name='home' type='mat' size={20} click={() => navigation.navigate('Home')} />,
-      headerRight: () => <BackButton name='add' type='mat' click={() => navigation.navigate('CreateEvent0',{'pageFrom':'ListEvents'})}/>,
+      headerRight: () => <BackButton color={colors.primary} name='add' type='mat' click={() => navigation.navigate('CreateEvent0',{'pageFrom':'ListEvents'})}/>,
     }
   };
   async componentDidMount() {
@@ -107,10 +100,10 @@ class ListEvent extends Component {
           console.log(index)
           return this.setState({organizer:!!index,index:index})
            }}>
-        <View style={{borderTopWidth:1,borderColor:colors.off,borderRightWidth:1}}>
+        <View style={{borderTopWidth:0.3,borderColor:colors.borderColor,borderRightWidth:0.3}}>
           {this.listEvent('join')}
         </View>
-        <View style={{borderTopWidth:1,borderColor:colors.off}}>
+        <View style={{borderTopWidth:0.3,borderColor:colors.borderColor}}>
           {this.listEvent('organize')}
         </View>
       </Swiper>
@@ -184,7 +177,7 @@ class ListEvent extends Component {
           <AllIcons name='check' type='mat' size={17} color={colors.grey} />
         </Col>
         <Col size={90}  style={styleApp.center2}>
-          <Text style={[styleApp.text,{fontSize:14}]}>{text}</Text>
+          <Text style={[styleApp.text,{fontSize:14,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
         </Col>
       </Row>
     )
@@ -198,7 +191,7 @@ class ListEvent extends Component {
             <Image source={require('../../../../img/images/inauguration.png')} style={{width:85,height:85,marginBottom:30}} />
           </Col>
         </Row>
-        <Text style={[styleApp.title,{fontSize:19,marginBottom:15}]}>Join the GameFare community now!</Text>
+        <Text style={[styleApp.title,{fontSize:19,marginBottom:15,marginRight:20}]}>Join the GameFare community now!</Text>
 
         {this.rowCheck('Organize your sport events')}
         {this.rowCheck('Join sessions')}
