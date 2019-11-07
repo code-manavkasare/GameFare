@@ -113,12 +113,12 @@ class ListEvent extends Component {
   }
   listEvent(val) {
       if (this.state.initialLoader) return <PlaceHolder />
-      if ((val  == 'join' && this.state.events.filter(event => event.info.organizer !== this.props.userID).length == 0) || (val  == 'organize' && this.state.events.filter(event => event.info.organizer === this.props.userID).length == 0)) return this.noAppt(val)
+      if ((val  == 'join' && this.state.events.filter(event => !event.organizer).length == 0) || (val  == 'organize' && this.state.events.filter(event => event.organizer).length == 0)) return this.noAppt(val)
       if (val == 'join') {
         return (
           <ScrollView style={{height:'100%'}}>
-              {this.state.events.filter(event => event.info.organizer !== this.props.userID).map((event,i) => (
-                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={() => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents'})} item={event}/>
+              {this.state.events.filter(event => !event.organizer).map((event,i) => (
+                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={(event) => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents',loader:true})} item={event}/>
               ))}
             <View style={{height:80}} />
           </ScrollView>
@@ -126,8 +126,8 @@ class ListEvent extends Component {
       }
       return (
         <ScrollView style={{height:'100%'}}>
-            {this.state.events.filter(event => event.info.organizer === this.props.userID).map((event,i) => (
-              <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={() => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents'})} item={event}/>
+            {this.state.events.filter(event => event.organizer).map((event,i) => (
+              <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={(event) => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents',loader:true})} item={event}/>
             ))}
             <View style={{height:80}} />
         </ScrollView>

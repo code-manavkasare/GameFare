@@ -17,6 +17,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
 import Icon from '../../layout/icons/icons'
 import AllIcons from '../../layout/icons/AllIcons'
+import PlacelHolder from '../../placeHolders/CardEvent.js'
 import styleApp from '../../style/style'
 import {timing} from '../../animations/animations'
 
@@ -28,7 +29,8 @@ export default class CardEvent extends React.Component {
       super(props);
       this.state = {
         player:false,
-        backgroundColorAnimation:new Animated.Value(0)
+        backgroundColorAnimation:new Animated.Value(0),
+        loader:false
       };
     }
     entreeFee(entreeFee) {
@@ -47,13 +49,13 @@ export default class CardEvent extends React.Component {
     click() {
       this.props.openEvent()
     }
-  render() {
-    var color = this.state.backgroundColorAnimation.interpolate({
-        inputRange: [0, 300],
-        outputRange: ['white', colors.off2]
-    });
-    return (
-      <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
+    card (color) {
+      if (this.state.loader)return <PlacelHolder />
+      return this.displayCard(color)
+    }
+    displayCard(color) {
+      return (
+        <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
         <TouchableOpacity 
           onPress={() => this.click()} 
@@ -105,15 +107,6 @@ export default class CardEvent extends React.Component {
                   <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')} at {time(this.props.item.date.start,'h:mm a')}</Text>
                 </Col> 
               </Row>
-
-              {/* <Row>
-                <Col size={10} style={styles.center2}>
-                  <AllIcons name="user-check" size={15} color={colors.grey} type='font' />
-                </Col> 
-                <Col size={90} style={styles.center2}>
-                  <Text style={styles.subtitle}>{this.props.item.info.maxAttendance} people</Text>
-                </Col> 
-              </Row> */}
             </Col>
             <Col style={styleApp.center3} size={20}>
               <Text style={styles.textPrice}>{this.entreeFee(this.props.item.price.joiningFee)}</Text>
@@ -123,6 +116,16 @@ export default class CardEvent extends React.Component {
         </TouchableOpacity>
 
       </Animated.View>
+      )
+    }
+
+  render() {
+    var color = this.state.backgroundColorAnimation.interpolate({
+        inputRange: [0, 300],
+        outputRange: ['white', colors.off2]
+    });
+    return (
+      this.card(color)
     );
   }
 }

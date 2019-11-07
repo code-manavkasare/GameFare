@@ -172,34 +172,26 @@ class Page3 extends Component {
     }
     var attendees = {}
     var coaches = {}
+    var user = {
+      captainInfo:{
+        name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
+        level:this.props.level == undefined?'':this.props.level[data.info.sport] == undefined?'':this.props.level[data.info.sport],
+        picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
+        userID:this.props.userID,
+        phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
+      },
+      status:'confirmed',
+      teamID:this.props.userID,
+    }
     if (event.info.player) {
+      user.coach = false
       attendees = {
-        [this.props.userID]:{
-          coach:true,
-          captainInfo:{
-            name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
-            level:this.props.level == undefined?'':this.props.level[data.info.sport] == undefined?'':this.props.level[data.info.sport],
-            picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
-            userID:this.props.userID,
-          },
-          status:'confirmed',
-          teamID:this.props.userID,
-          
-        }
+        [this.props.userID]:user
       }
     } else {
+      user.coach = true
       coaches = {
-        [this.props.userID]:{
-          coach:true,
-          captainInfo:{
-            name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
-            level:this.props.level == undefined?'':this.props.level[data.info.sport] == undefined?'':this.props.level[data.info.sport],
-            picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
-            userID:this.props.userID,
-          },
-          status:'confirmed',
-          teamID:this.props.userID,
-        }
+        [this.props.userID]:user
       }
     }
     event={
@@ -207,13 +199,19 @@ class Page3 extends Component {
       coaches:coaches,
       attendees:attendees,
     }
+    
     console.log('event')
     console.log(event)
-    // this.setState({loader:false})
     var pushEvent = await firebase.database().ref('events').push(event)
     event.eventID = pushEvent.key
+    var userEvent={
+      eventID:pushEvent.key,
+      status:'confirmed',
+      organizer:true,
+      coach:user.coach
+    }
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
-    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(event)
+    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(userEvent)
     this.setState({loader:false})
     this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3'})
   }

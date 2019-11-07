@@ -122,10 +122,12 @@ class ProfilePage extends Component {
         
         <View style={[styleApp.divider,{marginBottom:10,marginTop:20}]} />
 
-        {this.rowText('Entry fee',colors.title,'OpenSans-SemiBold',Number(this.props.navigation.getParam('data').price.joiningFee)==0?'Free':'$' +this.props.navigation.getParam('data').price.joiningFee)}
-
+        {this.rowText(this.coach()?'Price per player':'Entry fee',colors.title,'OpenSans-SemiBold',Number(this.props.navigation.getParam('data').price.joiningFee)==0?'Free':'$' +this.props.navigation.getParam('data').price.joiningFee)}
+        {this.coach()?this.rowText('Attendance',colors.title,'OpenSans-SemiBold',this.props.navigation.getParam('data').info.maxAttendance):null}
+        {this.coach()?<View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />:null}
+        {this.coach()?this.rowText('Get',colors.title,'OpenSans-SemiBold','$' + Number(this.props.navigation.getParam('data').price.joiningFee)*Number(this.props.navigation.getParam('data').info.maxAttendance)):null}
         {
-          this.props.userConnected && Number(this.props.navigation.getParam('data').price.joiningFee)!=0?
+          !this.coach() && this.props.userConnected && Number(this.props.navigation.getParam('data').price.joiningFee)!=0?
           this.rowText('Credits',colors.green,'OpenSans-SemiBold','$' +Number(this.props.totalWallet).toFixed(2))
           :null
         }
@@ -133,7 +135,7 @@ class ProfilePage extends Component {
         <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
 
         {
-          Number(this.props.navigation.getParam('data').price.joiningFee)==0?
+          this.coach() || Number(this.props.navigation.getParam('data').price.joiningFee)==0?
           null
           :this.props.userConnected?
           <View>
@@ -150,13 +152,15 @@ class ProfilePage extends Component {
         
 
         {
-          this.props.userConnected && Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
+          !this.coach() && this.props.userConnected && Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
           this.creditCard()
           :null
         }
         
         {
-          Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
+          this.coach()?
+          <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Your payment for this session will be number of players entered multiplied by fee per player. You will be paid after the session takes place.</Text></Text>
+          :Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
           <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge the entry fee at the point of joining the event. No refunds unless your spot can be filled with an alternate player.</Text></Text>
           :null
         }
@@ -174,9 +178,7 @@ class ProfilePage extends Component {
     return false
   }
   coach() {
-    if (this.props.navigation.getParam('coach') == undefined) {
-      return false
-    }
+    if (this.props.navigation.getParam('coach') == undefined) return false
     return !this.props.navigation.getParam('coach').player
   }
   async submit(data) {
@@ -207,7 +209,9 @@ class ProfilePage extends Component {
         [data.info.sport]:newLevel
       })
     }
-    const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/usersConfirmed').push({
+    var pushSection = 'attendees'
+    if (this.coach()) pushSection = 'coaches'
+    const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/' + pushSection).push({
       captainInfo:{
         phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
         userID:this.props.userID,
@@ -219,10 +223,10 @@ class ProfilePage extends Component {
       status:this.status(data),
       date:now,
     })
-    await firebase.database().ref('events/' + data.eventID + '/usersConfirmed/' + pushNewTeam.key).update({
+    await firebase.database().ref('events/' + data.eventID + '/'+pushSection+'/' + pushNewTeam.key).update({
       teamID:pushNewTeam.key
     })
-    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update({...this.props.navigation.getParam('data'),status:this.status(data),coach:this.coach()})
+    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update({eventID:data.eventID,organizer:false,status:this.status(data),coach:this.coach()})
     this.props.navigation.navigate('ListEvents');
   }
   status(data) {
@@ -241,8 +245,8 @@ class ProfilePage extends Component {
   }
   async payEntryFee(now,data) {  
     var cardID = ''
-    console.log('Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0')
-    console.log(Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0)
+
+    if (this.coach()) return {response:true,message:''}
     if (Math.max(0,Number(data.price.joiningFee)-Number(this.props.totalWallet)) != 0) {
       cardID = this.props.defaultCard.id
     }

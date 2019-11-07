@@ -176,7 +176,7 @@ class ProfilePage extends Component {
 
         {this.title('')}
         <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
-        {this.button('Logout','Alert',{close:true,textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
+        {this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
 
 
 

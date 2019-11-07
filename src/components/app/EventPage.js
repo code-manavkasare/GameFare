@@ -18,14 +18,14 @@ import {Grid,Row,Col} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
 
 import ScrollView from '../layout/scrollViews/ScrollView'
-import Header from '../layout/headers/HeaderButton'
 import AllIcons from '../layout/icons/AllIcons'
 import DateEvent from './elementsEventCreate/DateEvent'
 import BackButton from '../layout/buttons/BackButton'
-import ButtonRound from '../layout/buttons/ButtonRound'
 import Button2 from '../layout/buttons/Button'
 import Loader from '../layout/loaders/Loader'
+import isEqual from 'lodash.isequal'
 
+import indexEvents from '../database/algolia'
 import PlaceHolder from '../placeHolders/ListAttendees'
 
 class EventPage extends React.Component {
@@ -50,20 +50,20 @@ class EventPage extends React.Component {
     }
   };
   async componentDidMount() {
-    this.loadEvent()
+    this.loadEvent(this.props.navigation.getParam('data'))
   }
-  async loadEvent() {
-    // await this.setState({usersConfirmed:true})
-    // var usersConfirmed = await firebase.database().ref('events/' + this.props.navigation.getParam('data').objectID + '/usersConfirmed').once('value')
-    // usersConfirmed = usersConfirmed.val()
-    // if (usersConfirmed == null) {
-    //   usersConfirmed = []
-    // }
-    // console.log('usersConfirmed')
-    // console.log(usersConfirmed)
-    // var infoOrganizer = await firebase.database().ref('users/' + this.props.navigation.getParam('data').info.organizer + '/userInfo').once('value')
-    // infoOrganizer = infoOrganizer.val()
-    // this.setState({usersConfirmed:usersConfirmed,infoOrganizer:infoOrganizer})
+  async loadEvent(data,refresh) {
+    if (refresh) {
+      await this.props.navigation.setParams({loader:true})
+    }
+    indexEvents.clearCache()
+    var event = await indexEvents.getObject(data.objectID)
+    if (!isEqual(data,event)) {
+      await this.props.navigation.setParams({data:event,loader:false})
+    } else {
+      await this.props.navigation.setParams({loader:false})
+    }
+    return true
   }
   cancel() {
     console.log('cancel!!!!')
@@ -171,12 +171,12 @@ class EventPage extends React.Component {
         {
           this.conditionAdmin() && user.status != 'confirmed' && user.status != 'rejected'?
           <Row style={{height:40,marginTop:15}}>
-            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Reject',title:'Do you want to reject this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.rejectAttendance(user)})}>
+            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Reject',title:'Do you want to reject this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.rejectAttendance(user,data)})}>
               <View style={[styleApp.center,{backgroundColor:colors.primary,height:40,borderRadius:4}]}>
                 <Text style={[styleApp.text,{color:'white'}]}>Reject</Text>
               </View>
             </Col>
-            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Confirm',title:'Do you want to confirm this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.confirmAttendance(user)})}>
+            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Confirm',title:'Do you want to confirm this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.confirmAttendance(user,data)})}>
               <View style={[styleApp.center,{backgroundColor:colors.green,height:40,borderRadius:4}]}>
                 <Text style={[styleApp.text,{color:'white'}]}>Confirm</Text>
               </View>
@@ -230,7 +230,7 @@ class EventPage extends React.Component {
       </View>
     )
   }
-  event(data) {
+  event(data,loader) {
     console.log('data')
     console.log(data)
     var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
@@ -244,10 +244,8 @@ class EventPage extends React.Component {
 
         <Text style={[styleApp.title,{fontSize:19,marginBottom:5}]}>Coach</Text>
         {
-          this.state.loader?
+          loader?
           <FadeInView duration={300} style={{paddingTop:10}}>
-            <PlaceHolder />
-            <PlaceHolder />
             <PlaceHolder />
           </FadeInView>
           :data.coaches == undefined?
@@ -263,7 +261,7 @@ class EventPage extends React.Component {
         <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Players</Text>
         
         {
-          this.state.loader?
+          loader?
           <FadeInView duration={300} style={{paddingTop:10}}>
             <PlaceHolder />
             <PlaceHolder />
@@ -272,7 +270,7 @@ class EventPage extends React.Component {
           :data.attendees == undefined?
           <Text style={[styleApp.smallText,{marginTop:10}]}>No players has joined the event yet.</Text>
           :
-          <FadeInView duration={300} style={{marginTop:0}}>
+          <FadeInView duration={300} style={{marginTop:5}}>
           {Object.values(data.attendees).map((user,i) => (
             this.rowUser(user,i,data)
           ))}
@@ -283,41 +281,42 @@ class EventPage extends React.Component {
       </View>
     )
   }
-  async confirmAttendance(user) {
-    console.log('confirm attendance')
-    console.log(user)
-    console.log(this.props.navigation.getParam('data'))
-    var infoEvent = this.props.navigation.getParam('data')
-    await firebase.database().ref('events/' + infoEvent.objectID + '/usersConfirmed/' + user.teamID).update({status:'confirmed'})
-    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + infoEvent.objectID).update({status:'confirmed'})
-    await this.setState({usersConfirmed:{
-      ...this.state.usersConfirmed,
-      [user.teamID]:{
-        ...this.state.usersConfirmed[user.teamID],
-        status:'confirmed'
+  async confirmAttendance(user,data) {
+    var section = user.coach?'coaches':'attendess'
+    await firebase.database().ref('events/' + data.objectID + '/'+section+'/' + user.teamID).update({status:'confirmed'})
+    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + data.objectID).update({status:'confirmed'})
+
+    await this.props.navigation.setParams({data:{
+      ...this.props.navigation.getParam('data'),
+      [section]:{
+        ...data[section],
+        [user.teamID]:{
+          ...data[section][user.teamID],
+          status:'confirmed'
+        }
       }
     }})
-    if (infoEvent.info.levelFilter != undefined) {
-      var newLevel = infoEvent.info.levelFilter
-      if (infoEvent.info.levelOption == 'max') {
+    if (data.info.levelFilter != undefined) {
+      var newLevel = data.info.levelFilter
+      if (data.info.levelOption == 'max') {
         newLevel = 1
       }
-      await firebase.database().ref('users/' + user.captainInfo.userID + '/level/').update({[infoEvent.info.sport]:newLevel})
+      await firebase.database().ref('users/' + user.captainInfo.userID + '/level/').update({[data.info.sport]:newLevel})
     }
     return this.props.navigation.navigate('Event')
   }
-  async rejectAttendance(user) {
-    console.log('confirm attendance')
-    console.log(user)
-    console.log(this.props.navigation.getParam('data'))
-    var infoEvent = this.props.navigation.getParam('data')
-    await firebase.database().ref('events/' + infoEvent.objectID + '/usersConfirmed/' + user.teamID).update({status:'rejected'})
-    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + infoEvent.objectID).update({status:'rejected'})
-    await this.setState({usersConfirmed:{
-      ...this.state.usersConfirmed,
-      [user.teamID]:{
-        ...this.state.usersConfirmed[user.teamID],
-        status:'rejected'
+  async rejectAttendance(user,data) {
+    var section = user.coach?'coaches':'attendess'
+    await firebase.database().ref('events/' + data.objectID + '/'+section+'/' + user.teamID).update({status:'rejected'})
+    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + data.objectID).update({status:'rejected'})
+    await this.props.navigation.setParams({data:{
+      ...this.props.navigation.getParam('data'),
+      [section]:{
+        ...data[section],
+        [user.teamID]:{
+          ...data[section][user.teamID],
+          status:'rejected'
+        }
       }
     }})
     return this.props.navigation.navigate('Event')
@@ -343,17 +342,17 @@ class EventPage extends React.Component {
       <View style={{ flex:1,backgroundColor:'white' }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.event(this.props.navigation.getParam('data'))}
+          contentScrollView={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))}
           marginBottomScrollView={0}
           marginTop={0}
           refreshControl={true}
-          refresh={this.loadEvent.bind(this)}
+          refresh={() => this.loadEvent(this.props.navigation.getParam('data'),true)}
           offsetBottom={sizes.heightFooterBooking+60}
           showsVerticalScrollIndicator={false}
         />
 
         {
-          this.state.loader?
+          this.props.navigation.getParam('loader')?
           null
           :!this.openCondition(this.props.navigation.getParam('data'))?
           null
