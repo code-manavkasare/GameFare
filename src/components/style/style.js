@@ -38,6 +38,11 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },
+    smallText:{
+      fontSize:14,
+      fontFamily: 'OpenSans-Regular',
+      color:colors.title,
+    },
     input:{
       fontSize:15,
       fontFamily: 'OpenSans-Regular',

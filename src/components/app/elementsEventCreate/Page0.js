@@ -12,11 +12,16 @@ const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import StatusBar from '@react-native-community/status-bar';
+
+
 import BackButton from '../../layout/buttons/BackButton'
 import Button from '../../layout/buttons/Button'
-
-import Header from '../../layout/headers/HeaderButton'
+import ButtonOff from '../../layout/buttons/ButtonOff'
+import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
+
+
+
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import Switch from '../../layout/switch/Switch'
@@ -46,6 +51,15 @@ class Page0 extends Component {
         valueSelected:Object.values(this.props.sports)[0].value,
         listExpend:Object.values(this.props.sports)
       },
+      rulesFilter:{
+        text:"rules",
+        value:'rules',
+        type:'rules',
+        expendable:true,
+        alwaysExpanded:true,
+        valueSelected:Object.values(this.props.sports)[0].rules[0].value,
+        listExpend:Object.values(this.props.sports)[0].rules
+      },
     };
   }
   static navigationOptions = ({ navigation }) => {
@@ -74,6 +88,31 @@ class Page0 extends Component {
           console.log(value)
           this.setState({
             sportsFilter:sportsFilter,
+            rulesFilter:{
+              text:"rules",
+              value:'rules',
+              type:'rules',
+              expendable:true,
+              alwaysExpanded:true,
+              valueSelected:sportsFilter.value.rules[0].value,
+              listExpend:sportsFilter.value.rules
+            },
+          })
+        }}
+      />
+    )
+  }
+  rules() {
+    return (
+      <ExpandableCard 
+          option = {this.state.rulesFilter} 
+          tickFilter={(value) => {
+          var rulesFilter = this.state.rulesFilter
+          rulesFilter.valueSelected = value
+          console.log('le sport')
+          console.log(value)
+          this.setState({
+            rulesFilter:rulesFilter,
           })
         }}
       />
@@ -81,7 +120,7 @@ class Page0 extends Component {
   }
   setCoach() {
     if (this.props.infoUser.coach && this.props.infoUser.coachVerified) return this.setState({player:false,coachNeeded:false})
-    return this.props.navigation.navigate('Alert',{close:true,textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'You need to become a verified coach in order to create coach events.',subtitle:'Please contact us.',})
+    return this.props.navigation.navigate('Alert',{textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'Access required.',subtitle:'You need to become a verified coach in order to create coach events.',icon:<AllIcons name='exclamation-circle' color={colors.secondary} size={20} type='font' />})
   }
   sendMessage () {
     var email1 = 'contact@getgamefare.com';
@@ -94,17 +133,17 @@ class Page0 extends Component {
       <View>
         {
           this.state.player?
-          <Button text="Coach" click={() => this.setCoach()} backgroundColor={'white'} onPressColor={colors.primary} textButton={{color:colors.primary}}/>
+          <ButtonOff text="Coach" click={() => this.setCoach()} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
           :
-          <Button text="Coach" click={() => this.setCoach()} backgroundColor={'primary'} onPressColor={colors.primary}/>
+          <Button text="Coach" click={() => this.setCoach()} backgroundColor={'primary'} onPressColor={colors.primaryLight}/>
         }
         
         <View style={{height:10}} />
         {
           !this.state.player?
-          <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={colors.primary} textButton={{color:colors.primary}}/>
+          <ButtonOff text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
           :
-          <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primary}/>
+          <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primaryLight}/>
         }
       </View>
     )
@@ -177,6 +216,7 @@ class Page0 extends Component {
           <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Sport</Text>
 
           {this.sports()}
+          {this.rules()}
           
           <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>I am a...</Text>
 
@@ -227,13 +267,25 @@ class Page0 extends Component {
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
-
-        <ButtonRound
+        
+        {
+          this.conditionOn()?
+          <ButtonRound
+          icon={'next'} 
+          onPressColor={colors.greenLight2}
+          enabled={this.conditionOn()}
+          loader={false} 
+          click={() => this.props.navigation.navigate('CreateEvent1',{page0:this.state})}
+         />
+         :
+         <ButtonRoundOff
           icon={'next'} 
           enabled={this.conditionOn()}
           loader={false} 
           click={() => this.props.navigation.navigate('CreateEvent1',{page0:this.state})}
          />
+        }
+        
 
       </View>
     );

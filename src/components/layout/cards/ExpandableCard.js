@@ -17,6 +17,7 @@ import colors from '../../style/colors'
 import styleApp from '../../style/style'
 import FadeInView from 'react-native-fade-in-view';
 import FastImage from 'react-native-fast-image';
+import NavigationService from '../../../../NavigationService'
 
 const { height, width } = Dimensions.get('screen')
 import Icon from '../icons/icons'
@@ -129,7 +130,9 @@ export default class ExpandableCard extends Component {
         }, 100)
       }
     }
-
+    openAlert(option) {
+      NavigationService.navigate('Alert',{close:true,textButton:'Close',title:option.title,subtitle:option.subtitle,icon:<AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />})
+    }
   render() {
     const spin = this.rotateIcon.interpolate({
       inputRange: [0,1],
@@ -162,7 +165,7 @@ export default class ExpandableCard extends Component {
             
           </Col>
          
-          <Col size={70} style={[styles.center2,{paddingLeft:15}]}>
+          <Col size={60} style={[styles.center2,{paddingLeft:15}]}>
             {
               this.props.option.expendable?
               <Text style={[styles.title2,{color:this.props.option.valueSelected == 'anyone'?'#C7C7CC':colors.title}]}>{this.textValue()}</Text>
@@ -170,6 +173,14 @@ export default class ExpandableCard extends Component {
               <Text style={[styles.title2,{color:this.colorCheck(this.props.option,true,colors.title)}]}>{this.props.option.text}</Text> 
             }
           </Col>
+          <Col size={10} style={styles.center} activeOpacity={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].title !=undefined?0.7:1} onPress={() => this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].title !=undefined?this.openAlert(this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0]):null}>
+            {
+              this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].title !=undefined?
+              <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
+              :null
+            }
+          </Col>
+
           <Col size={15} style={styleApp.center}>
           {
           this.props.option.expendable == true?
@@ -202,7 +213,7 @@ export default class ExpandableCard extends Component {
                   }
               
               </Col>
-              <Col size={70} style={[styles.center2,{paddingLeft:15}]}>
+              <Col size={60} style={[styles.center2,{paddingLeft:15}]}>
                 {
                   option.locked!=true?
                   <Text style={styleApp.inputOff}>{option.text}</Text> 
@@ -210,6 +221,13 @@ export default class ExpandableCard extends Component {
                   <Text style={[styleApp.inputOff,{color:colors.title}]}>{option.text}</Text> 
                 }
               
+              </Col>
+              <Col size={10} style={styles.center} activeOpacity={option.title !=undefined?0.7:1} onPress={() => option.title !=undefined?this.openAlert(option):null}>
+                {
+                  option.title !=undefined?
+                  <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
+                  :null
+                }
               </Col>
               <Col size={15} style={styleApp.center}>
               </Col>

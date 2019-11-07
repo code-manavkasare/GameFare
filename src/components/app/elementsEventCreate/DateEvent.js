@@ -56,7 +56,7 @@ export default class RowProductAdd extends Component {
 const styles = StyleSheet.create({
     textComment:{
         color:colors.title,
-        fontSize:17,
+        fontSize:16,
         fontFamily: 'OpenSans-Regular',
       },
       subtitle:{

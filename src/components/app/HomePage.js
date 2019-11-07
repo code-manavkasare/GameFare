@@ -9,9 +9,6 @@ import {
 } from 'react-native';
 
 import firebase from 'react-native-firebase'
-import HeaderHome from './elementsHome/HeaderHome'
-import FooterHome from './elementsHome/FooterHome'
-import FooterHomeProfile from './elementsHome/FooterHomeProfile'
 import ListEvents from './elementsHome/ListEvent'
 import styleApp from '../style/style'
 import colors from '../style/colors'

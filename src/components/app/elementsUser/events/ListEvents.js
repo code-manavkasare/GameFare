@@ -63,6 +63,7 @@ class ListEvent extends Component {
     var that = this
     firebase.database().ref('usersEvents/' + userID).on('value', function(snap) {
       console.log('on charge les match !!!!!!!')
+      that.setState({initialLoader:true})
       var events = snap.val()
       if (events == null) {
         events = []

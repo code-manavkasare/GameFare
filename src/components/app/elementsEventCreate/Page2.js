@@ -206,7 +206,7 @@ class Page2 extends Component {
         "commission": 0,       
         "displayInApp": true,    
         "sport": step0.sportsFilter.valueSelected,
-        "public": !step0.private,
+        "public": !step1.private,
         "maxAttendance": step1.players,
         "name": step2.name,
         'levelFilter':step1.levelFilter.valueSelected,
@@ -214,7 +214,8 @@ class Page2 extends Component {
         'coachNeeded':step0.coachNeeded,
         'player':step0.player,
         'gender':step1.genderFilter.valueSelected,
-        'instructions':step2.instructions
+        'instructions':step2.instructions,
+        'rules':step0.rulesFilter.valueSelected,
       },
       // "advancedSettings":advancedSettings,
       "location": {
@@ -248,6 +249,7 @@ class Page2 extends Component {
 
         <ButtonRound
           icon={'next'} 
+          onPressColor={colors.greenLight2}
           enabled={this.conditionOn()} 
           loader={this.state.loader} 
           click={() => this.submit()}

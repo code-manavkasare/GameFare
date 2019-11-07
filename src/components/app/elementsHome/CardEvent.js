@@ -35,6 +35,7 @@ export default class CardEvent extends React.Component {
       if (entreeFee == 0) return 'Free'
       return '$' + entreeFee 
     }
+
     onPress(val) {
       if (val) return Animated.parallel([
         Animated.timing(this.state.backgroundColorAnimation,timing(300,100)),
@@ -57,7 +58,7 @@ export default class CardEvent extends React.Component {
         <TouchableOpacity 
           onPress={() => this.click()} 
           onPressIn={() => this.onPress(true)}
-          onPressIn={() => this.onPress(false)}
+          onPressOut={() => this.onPress(false)}
           style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
           activeOpacity={0.7} 
         >
@@ -105,14 +106,14 @@ export default class CardEvent extends React.Component {
                 </Col> 
               </Row>
 
-              <Row>
+              {/* <Row>
                 <Col size={10} style={styles.center2}>
                   <AllIcons name="user-check" size={15} color={colors.grey} type='font' />
                 </Col> 
                 <Col size={90} style={styles.center2}>
                   <Text style={styles.subtitle}>{this.props.item.info.maxAttendance} people</Text>
                 </Col> 
-              </Row>
+              </Row> */}
             </Col>
             <Col style={styleApp.center3} size={20}>
               <Text style={styles.textPrice}>{this.entreeFee(this.props.item.price.joiningFee)}</Text>

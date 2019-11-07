@@ -40,6 +40,12 @@ class PhoneFields extends Component {
       console.log('cpountry2')
       console.log(this.props.country)
     }
+    componentDidMount() {
+      var that = this
+      setTimeout(function(){
+        that.firstTextInput.focus()
+      }, 600)
+    }
     focusPhoneField () {
       this.firstTextInput.focus()
     }
@@ -132,7 +138,7 @@ class PhoneFields extends Component {
           autoCapitalize = "none"
           underlineColorAndroid='rgba(0,0,0,0)'
           autoCorrect = {true}
-          autoFocus={true}
+          autoFocus={false}
           ref={(input) => { this.firstTextInput = input }}
           keyboardType={'phone-pad'}
           returnKeyType={ 'done' }

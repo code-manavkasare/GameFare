@@ -41,7 +41,7 @@ class ProfilePage extends Component {
     return (
       <Row style={{marginBottom:5,marginTop:20,marginBottom:10}}>
         <Col style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:13,color:colors.title,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+          <Text style={[styleApp.title,{fontSize:12,color:colors.title,fontFamily:'OpenSans-SemiBold'}]}>{text}</Text>
         </Col>
       </Row>
     )
@@ -69,7 +69,7 @@ class ProfilePage extends Component {
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.clickButton(text,page,data,type,url)} style={styles.button}>
       <Row style={{marginLeft:20,width:width-40}}>
         <Col size={90} style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:13,fontFamily:'OpenSans-SemiBold'}]}>{text}</Text>
+          <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
         </Col>
         <Col size={10} style={styleApp.center3}>
           <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
@@ -197,7 +197,7 @@ class ProfilePage extends Component {
           <AllIcons name='check' type='mat' size={17} color={colors.grey} />
         </Col>
         <Col size={90}  style={styleApp.center2}>
-          <Text style={[styleApp.text,{fontSize:14,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',fontSize:14}]}>{text}</Text>
         </Col>
       </Row>
     )

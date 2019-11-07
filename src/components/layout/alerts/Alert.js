@@ -14,6 +14,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import Button from '../buttons/Button'
 import colors from '../../style/colors';
+import AllIcons from '../../layout/icons/AllIcons'
 import styleApp from '../../style/style';
 
 const { height, width } = Dimensions.get('screen')
@@ -47,23 +48,33 @@ export default class Alert extends Component {
     return <Text style={[styleApp.title,{fontSize:18,fontFamily:'OpenSans-SemiBold'}]}>{this.props.navigation.getParam('title')}</Text>
   }
   subtitle() {
-    if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.subtitle,{marginTop:20}]}>{this.props.navigation.getParam('subtitle')}</Text>
+    if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.subtitle,{marginTop:20,fontFamily:'OpenSans-Regular',fontSize:15}]}>{this.props.navigation.getParam('subtitle')}</Text>
     return null
   }
   click(){
     if (this.props.navigation.getParam('close') != true) {
       this.setState({loader:true})
+      this.props.navigation.state.params.onGoBack()
+    } else {
+      this.props.navigation.goBack()
     }
-    this.props.navigation.state.params.onGoBack()
   }
   render() {  
     return (
       <View style={styles.viewModal}>
-          <TouchableOpacity style={styles.buttonClose} activeOpacity={0.8} onPress={() => {this.props.navigation.goBack()}}>
-            <MatIcon name="close" color={'#4a4a4a'} size={14} />
+          <TouchableOpacity style={styles.buttonClose} activeOpacity={0.5} onPress={() => {this.props.navigation.goBack()}}>
+            <MatIcon name="close" color={'#4a4a4a'} size={24} />
           </TouchableOpacity>
 
-         <Row style={{flex:1,marginBottom:0,marginLeft:20,width:width-70,marginBottom:9,marginTop:20}}>
+          {
+            this.props.navigation.getParam('icon') != undefined?
+            <View style={styles.viewIcon}>
+            {this.props.navigation.getParam('icon')}
+            </View>
+            :null
+          }
+
+         <Row style={{flex:1,marginBottom:0,marginLeft:20,width:width-110,marginBottom:9,marginTop:17}}>
           <Col>
             {this.title()}
             {this.subtitle()}
@@ -102,7 +113,20 @@ const styles = StyleSheet.create({
 
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:'#f6f6f6',
+    // backgroundColor:'#f6f6f6',
+    borderRadius:13
+  },
+  viewIcon:{
+    position:'absolute',
+    width:26,
+    height:26,
+    right:55,
+    top:20,
+    zIndex:30,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    //backgroundColor:'#f6f6f6',
     borderRadius:13
   },
   viewButton:{

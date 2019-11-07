@@ -14,6 +14,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome';
 import StatusBar from '@react-native-community/status-bar';
 import BackButton from '../../layout/buttons/BackButton'
 import Button from '../../layout/buttons/Button'
+import ButtonOff from '../../layout/buttons/ButtonOff'
 
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
@@ -56,17 +57,17 @@ export default class Page0 extends Component {
           <View style={{height:20}} />
           {
             this.state.player?
-            <Button text="Coach" click={() => this.setState({player:false})} backgroundColor={'white'} onPressColor={colors.primary} textButton={{color:colors.primary}}/>
+            <ButtonOff text="Coach" click={() => this.setState({player:false})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
             :
-            <Button text="Coach" click={() => this.setState({player:false})} backgroundColor={'primary'} onPressColor={colors.primary}/>
+            <Button text="Coach" click={() => this.setState({player:false})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
           }
           
           <View style={{height:10}} />
           {
             !this.state.player?
-            <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={colors.primary} textButton={{color:colors.primary}}/>
+            <ButtonOff text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
             :
-            <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primary}/>
+            <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
           }
 
         </View>

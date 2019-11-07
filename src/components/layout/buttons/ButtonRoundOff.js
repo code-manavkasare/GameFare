@@ -17,7 +17,6 @@ import LoaderWhite from '../loaders/Loader'
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import AllIcons from '../icons/AllIcons'
-import {timing} from '../../animations/animations'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -25,7 +24,6 @@ export default class ButtonRound extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      backgroundColorAnimation:new Animated.Value(0)
     };
     this.componentWillMount = this.componentWillMount.bind(this);
   }
@@ -54,30 +52,14 @@ export default class ButtonRound extends Component {
     if (!this.props.enabled) return '#eaeaea'
     return 'white'
   }
-  onPress(val) {
-    console.log('onPress')
-    console.log(val)
-    if (val) return Animated.parallel([
-      Animated.timing(this.state.backgroundColorAnimation,timing(300,100)),
-    ]).start()
-    return Animated.parallel([
-      Animated.timing(this.state.backgroundColorAnimation,timing(0,100)),
-    ]).start()
-  }
   render() {  
-    var color = this.state.backgroundColorAnimation.interpolate({
-      inputRange: [0, 300],
-      outputRange: [this.styleButton().backgroundColor, this.onPressColor()]
-    });
+  
     return (
-      <Animated.View style={[this.styleButton(),{backgroundColor:color}]}>
-      <TouchableOpacity 
+      <TouchableHighlight 
         activeOpacity={1} 
         disabled={this.props.loader}
-        onPressIn={() => this.onPress(true)}
-        onPressOut={() => this.onPress(false)}
-        //underlayColor={this.onPressColor()}
-        style={[styleApp.center,{width:'100%',height:'100%'}]}
+        underlayColor={this.onPressColor()}
+        style={this.styleButton()}
         onPress={() => this.props.enabled?this.props.click():console.log('')} 
       >
            {
@@ -99,8 +81,7 @@ export default class ButtonRound extends Component {
              <FontIcon name='arrow-right' size={20} color={this.colorIcon()} />
              :null
            }
-      </TouchableOpacity> 
-      </Animated.View>
+      </TouchableHighlight> 
     );
   }
 }

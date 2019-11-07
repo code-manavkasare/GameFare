@@ -61,12 +61,11 @@ export default class Button extends Component {
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()]
     });
     return (
-      <Animated.View style={[this.styleButton(),{backgroundColor:color}]}>
       <TouchableOpacity 
         activeOpacity={1} 
-        style={[styleApp.center,{width:'100%',height:'100%'}]}
-        // underlayColor={this.onPressColor()}
-        // style={[this.styleButton()]} 
+        //style={[styleApp.center,{width:'100%',height:'100%'}]}
+        underlayColor={this.onPressColor()}
+        style={[this.styleButton()]} 
         onPressIn={() => this.onPress(true)}
         onPressOut={() => this.onPress(false)}
         disabled={this.props.disabled}
@@ -79,7 +78,6 @@ export default class Button extends Component {
           <Text style={this.styleText()}>{this.props.text}</Text>
           }   
       </TouchableOpacity>
-      </Animated.View> 
     );
   }
 }

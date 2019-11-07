@@ -46,7 +46,7 @@ import Scan from '../app/elementsUser/elementsPayment/Scan'
 import ApplePay from '../app/elementsUser/elementsPayment/ApplePay'
 
 import Alert from '../layout/alerts/Alert'
-
+import AlertAddress from '../layout/alerts/AlertAddress'
 
 const CreateEventNavigator = createStackNavigator(
     {
@@ -288,6 +288,7 @@ const DateNavigator = createStackNavigator(
         SignIn:LoginNavigator,
         ListCountry:FlagsNavigator,
         Alert:{screen:Alert,gesturesEnabled:false},
+        AlertAddress:{screen:AlertAddress,gesturesEnabled:false},
         Payments:PaymentsNavigator,
         Date:DateNavigator,
         Location:LocationNavigator,

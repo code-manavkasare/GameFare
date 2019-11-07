@@ -54,7 +54,7 @@ class ListEvent extends Component {
             {icon}
           </Col>
           <Col size={65} style={styleApp.center2}>
-            <Text style={styleApp.text}>{text}</Text>
+            <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',fontSize:14}]}>{text}</Text>
           </Col>
           {
             data!= 'new'?
@@ -73,7 +73,7 @@ class ListEvent extends Component {
           }
           
           <Col size={10} style={styleApp.center3}>
-            <AllIcons name='angle-right' color={colors.title} type="font" size={16}/>
+          <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
           </Col>
         </Row>
       </TouchableOpacity>

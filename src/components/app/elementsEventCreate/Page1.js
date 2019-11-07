@@ -211,8 +211,7 @@ class Page1 extends Component {
           icon={'next'} 
           enabled={true} 
           loader={false} 
-          translateYFooter={this.translateYFooter}
-          translateXFooter={this.translateXFooter} 
+          onPressColor={colors.greenLight2}
           click={() => this.props.navigation.navigate('CreateEvent2',{page1:this.state,page0:this.props.navigation.getParam('page0')})}
          />
 

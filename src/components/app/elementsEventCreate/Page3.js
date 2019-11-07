@@ -107,19 +107,28 @@ class Page3 extends Component {
     if (data.step1.private) return 'Private'
     return 'Public • ' + Object.values(data.info.levelFilter.listExpend).filter(element => element.value == data.step1.levelFilter.valueSelected)[0].text + ' ' + Object.values(data.step1.levelOption.listExpend).filter(element => element.value == data.step1.levelOption.valueSelected)[0].text.toLowerCase()
   }
+  
   page2(data) {
     console.log('data')
     console.log(data)
+      var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
+      var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
+      var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
+      var levelOption = data.levelOption=='equal'?'only':data.levelOption=='min'?'and above':'and below'
       return (
           <View style={{marginTop:0}}>
             <Row style={{marginBottom:10}}>
-              <Col size={80} style={styleApp.center2}>
+              <Col size={70} style={styleApp.center2}>
                 <Text style={[styleApp.title,{fontSize:20}]}>{data.info.name}</Text>
               </Col>
-              <Col size={20} style={styleApp.center3}>
+              <Col size={10} style={styleApp.center2}>
+                <AllIcons name={data.info.public?'lock-open':'lock'} size={18} type={'font'} color={colors.blue}/>
+              </Col>
+              <Col size={20} style={styleApp.center}>
                 <View style={styleApp.viewSport}>
-                  <Text style={styleApp.textSport}>{data.info.sport}</Text>
+                  <Text style={styleApp.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                 </View>
+                <Text style={[styleApp.text,{color:colors.primary,marginTop:10,fontFamily:'OpenSans-Bold'}]}>{Number(data.price.joiningFee)==0?'Free':'$'+data.price.joiningFee}</Text>
               </Col>
             </Row>
             {this.rowIcon('calendar-alt',this.dateTime(data),'font')}
@@ -129,24 +138,21 @@ class Page3 extends Component {
 
             <View style={{height:10}} />
 
-            {/* {this.rowIcon('key',this.title(this.privateText(data)),'font')} */}
             <View style={{height:0.3,marginTop:10,marginBottom:10,backgroundColor:colors.borderColor}} />
+            {this.rowIcon('user-plus',this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players'),'font')}
+            <View style={{height:5}}/>
+            {this.rowIcon('balance-scale',this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'font')}
+            <View style={{height:5}}/>
 
+            {this.rowIcon(data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars',this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),'font')}
             
-            {this.rowIcon('dollar-sign',this.title(Number(data.info.joiningFee) == 0?'Free':data.info.joiningFee),'font')}
 
-            <View style={{height:0.3,marginTop:10,marginBottom:10,backgroundColor:colors.borderColor}} />
-
+            <View style={{height:0.3,marginTop:20,marginBottom:10,backgroundColor:colors.borderColor}} />
             
+            {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
 
-            {/* {
-            Object.values(data.sport.fields).filter(field => field != null).map((field,i) => (
-              <View key={i}>
-                {this.rowIcon(this.getIconField(field,data.step2)[0],this.title(this.getTextField(field,data.step2)),this.getIconField(field,data.step2)[1])}
-              </View>
-            ))} */}
 
-          <View style={{height:0.3,marginTop:10,marginBottom:20,backgroundColor:colors.borderColor}} />
+            <View style={{height:0.3,marginTop:20,marginBottom:20,backgroundColor:colors.borderColor}} />
 
             <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
 
@@ -156,56 +162,54 @@ class Page3 extends Component {
   }
   async submit(data) {
     this.setState({loader:true})
-    var advancedSettings = {}
-    var fields = Object.values(data.sport.fields).filter(field => field!= null)
-    for (var i in fields) {
-      var value = ''
-      if (fields[i].field == 'expandable') {
-        value = data.step2[fields[i].value].valueSelected
-      } else {
-        value = data.step2[fields[i].value]
-      }
-      advancedSettings= {
-        ...advancedSettings,
-        [fields[i].value]:value
+
+    var event = {
+      ...this.props.navigation.getParam('data'),
+      info:{
+        ...this.props.navigation.getParam('data').info,
+        organizer:this.props.userID,
       }
     }
-    var event = {
-      "date": {
-        "end": data.step1.endDate,
-        "start": data.step1.startDate,
-        "timeZone": data.step1.location.timeZone
-      },
-      "info": {
-        "commission": 0,       
-        "displayInApp": true,    
-        "sport": data.sport.value,
-        "public": !data.step1.private,
-        "maxAttendance": advancedSettings.players,
-        "name": data.step1.name,
-        "organizer": this.props.userID,
-        "reward": 0.5,
-        'levelFilter':data.step1.levelFilter.valueSelected,
-        'levelOption':data.step1.levelOption.valueSelected,
-        'coachNeeded':data.step0.coachNeeded,
-        'player':data.step0.player
-      },
-      "advancedSettings":advancedSettings,
-      "location": {
-        "address": data.step1.location.address,
-        "area": data.step1.location.area,
-        "centralLocation": !data.step1.randomLocation,
-        "lat": data.step1.location.lat,
-        "lng": data.step1.location.lng
-      },
-      "price": {
-        "joiningFee": Number(data.step1.joiningFee),
-        "prizeMoney": "50"
-      },
-      "subscribtionOpen": true,
+    var attendees = {}
+    var coaches = {}
+    if (event.info.player) {
+      attendees = {
+        [this.props.userID]:{
+          coach:true,
+          captainInfo:{
+            name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
+            level:this.props.level == undefined?'':this.props.level[data.info.sport] == undefined?'':this.props.level[data.info.sport],
+            picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
+            userID:this.props.userID,
+          },
+          status:'confirmed',
+          teamID:this.props.userID,
+          
+        }
+      }
+    } else {
+      coaches = {
+        [this.props.userID]:{
+          coach:true,
+          captainInfo:{
+            name:this.props.infoUser.firstname  + ' ' + this.props.infoUser.lastname,
+            level:this.props.level == undefined?'':this.props.level[data.info.sport] == undefined?'':this.props.level[data.info.sport],
+            picture:this.props.infoUser.picture == undefined?'':this.props.infoUser.picture,
+            userID:this.props.userID,
+          },
+          status:'confirmed',
+          teamID:this.props.userID,
+        }
+      }
+    }
+    event={
+      ...event,
+      coaches:coaches,
+      attendees:attendees,
     }
     console.log('event')
     console.log(event)
+    // this.setState({loader:false})
     var pushEvent = await firebase.database().ref('events').push(event)
     event.eventID = pushEvent.key
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
@@ -268,6 +272,8 @@ const styles = StyleSheet.create({
       sports:state.globaleVariables.sports.list,
       userConnected:state.user.userConnected,
       userID:state.user.userID,
+      infoUser:state.user.infoUser.userInfo,
+      level:state.user.infoUser.level,
     };
   };
   
