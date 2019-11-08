@@ -25,7 +25,7 @@ import Button2 from '../layout/buttons/Button'
 import Loader from '../layout/loaders/Loader'
 import isEqual from 'lodash.isequal'
 
-import indexEvents from '../database/algolia'
+import {indexEvents} from '../database/algolia'
 import PlaceHolder from '../placeHolders/ListAttendees'
 
 class EventPage extends React.Component {
@@ -108,9 +108,11 @@ class EventPage extends React.Component {
     return <AllIcons name={this.openCondition(data)?'lock-open':'lock'} type='font' color={this.openCondition(data)?colors.green:colors.primary} size={18} />
   }
   openProfile(user) {
+    console.log('user!! ')
+    console.log(user)
     var coach = 'Joined the event as a player'
     if (user.coach) {
-      coach = 'Joined the event as a coach'
+      coach = 'Joined the event as an instructor'
     }
     var level = ''
     if (user.captainInfo.level == '' || user.captainInfo.level == undefined) {
@@ -118,17 +120,23 @@ class EventPage extends React.Component {
     } else {
       level = Object.values(this.props.sports).filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0].level.list[user.captainInfo.level].text
     }
-    this.props.navigation.navigate('Alert',{textButton:'Close',title:user.captainInfo.name,subtitle:'- Level • '+ level +'\n- '+coach,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
+    var subtitle = '- Level • '+ level +'\n- '+coach
+    if (user.coach) {
+      subtitle = '- ' + coach
+    }
+    this.props.navigation.navigate('Alert',{textButton:'Close',title:user.captainInfo.name,subtitle:subtitle,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
   }
   alertCoach(coach,name,icon) {
-    var text = coach?'coach.':'player.'
+    var text = coach?'instructor.':'player.'
     var title = name + ' joined the event as a ' + text
     this.props.navigation.navigate('Alert',{textButton:'Close',icon:icon,title:title,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
   }
   openAlert(title,icon) {
     this.props.navigation.navigate('Alert',{textButton:'Close',title:title,icon:icon,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
   }
-  userCoach(user) {
+  allowCall(user,data) {
+    if (user.coach || user.captainInfo.userID == data.info.organizer) return true
+    return  false
   }
   rowUser(user,i,data) {
     console.log('userrrrrrrr')
@@ -140,12 +148,12 @@ class EventPage extends React.Component {
           <Col size={15} style={styleApp.center}>
             <AllIcons name='user-circle' color={colors.grey} type='font' size={20}/>
           </Col>
-          <Col size={65} style={styleApp.center2}>
+          <Col size={55} style={styleApp.center2}>
             <Text style={styleApp.text}>{user.captainInfo.name}</Text>
           </Col>
-          {/* <Col size={15} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach(user.coach == true,user.captainInfo.name,this.iconCoach(user.coach != true))}>
-          {this.iconCoach(user.coach)}
-          </Col> */}
+          <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => !this.allowCall(user,data)?null:this.props.navigation.navigate('AlertCall',{textButton:'Close',title:user.captainInfo.name,subtitle:user.captainInfo.phoneNumber,close:true,icon:<AllIcons name='phone' type='mat' color={colors.secondary} size={20} />})}>
+          {this.allowCall(user,data)?<AllIcons name='phone' type='mat' color={colors.secondary} size={20} />:null}
+          </Col>
 
           {
           user.captainInfo.userID == data.info.organizer?
@@ -153,7 +161,7 @@ class EventPage extends React.Component {
             <AllIcons name='bullhorn' color={colors.blue} type='font' size={16}/>
           </Col>
           :(user.status == 'confirmed' || !this.props.navigation.getParam('data').info.public)?
-          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:'This user is confirmed for the event.',subtitle:user.captainInfo.name,close:true,onGoBack:() => this.props.navigation.navigate('Event'),icon:<AllIcons name='check' type='mat' color={colors.green} size={20} />})}>
+          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:'This user is confirmed for the event.',subtitle:user.captainInfo.name,close:true,icon:<AllIcons name='check' type='mat' color={colors.green} size={20} />})}>
             <AllIcons name='check' type='mat' color={colors.green} size={20} />
           </Col>
           :user.status == 'rejected'?
@@ -189,7 +197,7 @@ class EventPage extends React.Component {
   }
   openCondition(data) {
     if (data.attendees == undefined) return true
-    if (Object.values(data.attendees).length <= Number(data.info.maxAttendance)) return true
+    if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) return true
     return false
   }
   eventInfo(data,sport) {
@@ -242,14 +250,14 @@ class EventPage extends React.Component {
 
         <View style={[styleApp.divider,{marginBottom:20}]} />
 
-        <Text style={[styleApp.title,{fontSize:19,marginBottom:5}]}>Coach</Text>
+        <Text style={[styleApp.title,{fontSize:19,marginBottom:5}]}>Instructor</Text>
         {
           loader?
           <FadeInView duration={300} style={{paddingTop:10}}>
             <PlaceHolder />
           </FadeInView>
           :data.coaches == undefined?
-          <Text style={[styleApp.smallText,{marginTop:5}]}>No coach has joined the event yet.</Text>
+          <Text style={[styleApp.smallText,{marginTop:5}]}>No instructor has joined the event yet.</Text>
           :
           <FadeInView duration={300} style={{marginTop:0}}>
           {Object.values(data.coaches).map((user,i) => (
@@ -333,7 +341,7 @@ class EventPage extends React.Component {
       pageFrom:'event',
       data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID},
       coach:{
-        player:false,
+        player:true,
       }
     })
   }

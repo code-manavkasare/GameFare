@@ -24,9 +24,14 @@ export default styles = StyleSheet.create({
       alignItems: 'center',
     },
     divider:{
-      height:0.3,width:'100%',
+      height:0.5,width:'100%',
       marginTop:20,marginBottom:10,
       backgroundColor:colors.borderColor
+    },
+    divider2:{
+      height:0.5,width:'100%',
+      marginTop:20,marginBottom:20,
+      backgroundColor:colors.grey
     },
     title:{
       fontSize:24,
@@ -237,5 +242,18 @@ export default styles = StyleSheet.create({
     stylePage:{
       flex:1,borderColor:'white',
       borderLeftWidth:0,borderColor:colors.off
+    },
+    marginView:{
+      marginLeft:20,
+      width:width-40
+    },
+    viewHome:{
+      marginBottom:0,
+      backgroundColor:'white',
+      paddingTop:20,paddingBottom:20,
+      borderColor:colors.off,
+      borderBottomWidth:0.3,
+      borderTopWidth:0.3,
+      marginTop:15
     }
   });

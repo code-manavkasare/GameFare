@@ -351,7 +351,7 @@ export default class ContactsComponent extends Component {
           }
           return that.props.navigation.navigate('ListEvents',{})
     
-        });
+      });
     }
   render() {
     return (

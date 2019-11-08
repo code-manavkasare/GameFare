@@ -8,7 +8,7 @@ import branch, { BranchEvent } from 'react-native-branch'
 import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
-import indexEvents from './src/components/database/algolia'
+import {indexEvents} from './src/components/database/algolia'
 
 import axios from 'axios'
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions'

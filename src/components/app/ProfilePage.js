@@ -214,7 +214,7 @@ class ProfilePage extends Component {
 
         {this.rowCheck('Organize your sport events')}
         {this.rowCheck('Join sessions')}
-        {this.rowCheck('Find your favorite coach')}
+        {this.rowCheck('Find your favorite instructor')}
         {this.rowCheck('Rate your opponents')}
         {this.rowCheck('Create your community')}
 

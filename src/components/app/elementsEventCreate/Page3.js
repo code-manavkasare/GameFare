@@ -154,8 +154,13 @@ class Page3 extends Component {
 
             <View style={{height:0.3,marginTop:20,marginBottom:20,backgroundColor:colors.borderColor}} />
 
-            <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
-
+            {
+              data.info.player?
+              <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>As a host you will get to play for free!</Text></Text>
+              :
+              <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
+            }
+            
 
           </View>
       )
@@ -211,7 +216,7 @@ class Page3 extends Component {
       coach:user.coach
     }
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
-    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(userEvent)
+    // await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(userEvent)
     this.setState({loader:false})
     this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3'})
   }

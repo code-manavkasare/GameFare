@@ -43,7 +43,7 @@ class ListEvent extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'My events',
+      title: 'My groups',
       headerStyle:styleApp.styleHeader,
       headerTitleStyle: styleApp.textHeader,
       // headerLeft: () => <BackButton name='home' type='mat' size={20} click={() => navigation.navigate('Home')} />,
@@ -61,7 +61,7 @@ class ListEvent extends Component {
   }
   loadEvents(userID) {
     var that = this
-    firebase.database().ref('usersEvents/' + userID).on('value', function(snap) {
+    firebase.database().ref('usersGroups/' + userID).on('value', function(snap) {
       console.log('on charge les match !!!!!!!')
       that.setState({initialLoader:true})
       var events = snap.val()
@@ -131,12 +131,12 @@ class ListEvent extends Component {
           </Col>
         </Row>
         
-        <Text style={[styleApp.text,{fontSize:15,marginBottom:20,marginTop:20}]}>You haven't joined any session yet.</Text>
+        <Text style={[styleApp.text,{fontSize:15,marginBottom:20,marginTop:20}]}>You haven't joined any group yet.</Text>
         
         <View style={{height:10}} />
-        <Button text='Join session' click={() => this.props.navigation.navigate('Home',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenLight2}/>
+        <Button text='Join group' click={() => this.props.navigation.navigate('Home',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenLight2}/>
         <View style={{height:10}} />
-        <Button text='Organize an event' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
+        <Button text='Create a group' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
 
         
         </View>
