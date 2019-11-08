@@ -19,7 +19,7 @@ import Icon from '../../layout/icons/icons'
 import AllIcons from '../../layout/icons/AllIcons'
 import PlacelHolder from '../../placeHolders/CardEvent.js'
 import styleApp from '../../style/style'
-import {timing} from '../../animations/animations'
+import {timing,native} from '../../animations/animations'
 
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../layout/date/date'
@@ -32,18 +32,21 @@ export default class CardEvent extends React.Component {
         backgroundColorAnimation:new Animated.Value(0),
         loader:false
       };
+      this.scaleCard = new Animated.Value(1);
     }
     entreeFee(entreeFee) {
-      if (entreeFee == 0) return 'Free'
-      return '$' + entreeFee 
+      if (entreeFee == 0) return 'Free entry'
+      return '$' + entreeFee + ' entry fee'
     }
 
     onPress(val) {
       if (val) return Animated.parallel([
-        Animated.timing(this.state.backgroundColorAnimation,timing(300,100)),
+        Animated.spring(this.state.backgroundColorAnimation,timing(300,170)),
+        //Animated.spring(this.scaleCard,timing(0.987,100)),
       ]).start()
       return Animated.parallel([
-        Animated.timing(this.state.backgroundColorAnimation,timing(0,100)),
+        Animated.spring(this.state.backgroundColorAnimation,timing(0,170)),
+        //Animated.spring(this.scaleCard,timing(1,100)),
       ]).start()
     }
     click() {
@@ -55,62 +58,40 @@ export default class CardEvent extends React.Component {
     }
     displayCard(color) {
       return (
-        <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
+        <Animated.View style={[styles.cardList,{backgroundColor:color},{transform:[{scale:this.scaleCard}]}]}>
         
         <TouchableOpacity 
           onPress={() => this.click()} 
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
-          style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
-          activeOpacity={0.7} 
+          style={{height:'100%',width:'100%',paddingLeft:20,paddingRight:20,paddingTop:15,paddingBottom:20}} 
+          activeOpacity={1} 
         >
 
           <Row>
-            <Col size={75} style={styleApp.center2}>
+            <Col size={70} style={[styleApp.center2,{paddingLeft:0}]}>
+              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',}]}>{date(this.props.item.date.start,'ddd, Do MMM')} at {time(this.props.item.date.start,'h:mm a')}</Text>
               <Text style={styles.title}>{this.props.item.info.name}</Text>
+              {
+              this.props.item.info.public?
+              <Text style={[styles.subtitle,{marginTop:5}]}>{this.props.item.location.area}</Text>
+              :null
+              }
+              <Text style={[styles.subtitle,{marginTop:5}]}>{this.entreeFee(this.props.item.price.joiningFee)}</Text>
             </Col>
-            <Col size={5} style={styleApp.center}>
+            <Col size={10} style={[styleApp.center4,{paddingTop:3}]}>
               {
               !this.props.item.info.public?
               <AllIcons name='lock' color={colors.blue} size={17} type='mat' />
               :null
               }
             </Col>
-            <Col size={20} style={styleApp.center3}>
+            <Col size={20} style={styleApp.center8}>
               <View style={styles.viewSport}>
                 <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
               </View>
             </Col>
 
-          </Row>
-
-          <Row style={{marginTop:5,marginBottom:15}}>
-            <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
-              {
-              this.props.item.info.public?
-              <Row style={{marginBottom:5}}>
-                <Col size={10} style={styles.center2}>
-                  <AllIcons name="map-marker-alt" size={15} color={colors.grey} type='font' />
-                </Col> 
-                <Col size={90} style={styles.center2}>
-                  <Text style={styles.subtitle}>{this.props.item.location.area}</Text>
-                </Col> 
-              </Row>
-              :null
-              }
-
-              <Row style={{paddingBottom:5}}>
-                <Col size={10} style={styles.center2}>
-                  <AllIcons name="calendar-alt" size={15} color={colors.grey} type='font' />
-                </Col> 
-                <Col size={90} style={styles.center2}>
-                  <Text style={styles.subtitle}>{date(this.props.item.date.start,'ddd, Do MMM')} at {time(this.props.item.date.start,'h:mm a')}</Text>
-                </Col> 
-              </Row>
-            </Col>
-            <Col style={styleApp.center3} size={20}>
-              <Text style={styles.textPrice}>{this.entreeFee(this.props.item.price.joiningFee)}</Text>
-            </Col>
           </Row>
 
         </TouchableOpacity>
@@ -122,7 +103,7 @@ export default class CardEvent extends React.Component {
   render() {
     var color = this.state.backgroundColorAnimation.interpolate({
         inputRange: [0, 300],
-        outputRange: ['white', colors.off2]
+        outputRange: ['white', colors.off]
     });
     return (
       this.card(color)
@@ -133,14 +114,16 @@ export default class CardEvent extends React.Component {
 const styles = StyleSheet.create({
   cardList:{
     flex:1,
-    marginTop:0,
-    //width: '48%',
     width:width,
-    marginLeft:-20,
+    shadowColor: colors.grey,
+    shadowOffset: { width: 2, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0,
     // aspectRatio: 1,
+    transform:[{scaleX:1,scaleY:1}],
     backgroundColor:'white',  
-    borderTopWidth:0.3,
-    borderColor:colors.borderColor,
+    borderTopWidth:0.5,
+    borderColor:colors.grey,
   },
   center:{
     alignItems: 'center',
@@ -169,18 +152,21 @@ const styles = StyleSheet.create({
   },
   textPrice:{
     color:colors.primary,
-    fontSize:18,
-    fontFamily: 'OpenSans-Bold',
+    fontSize:16,
+    marginTop:10,
+    fontFamily: 'OpenSans-SemiBold',
   },
   title:{
     color:colors.title,
-    fontSize:17,
+    fontSize:21,marginTop:8,
+    marginBottom:5,
+
     fontFamily: 'OpenSans-SemiBold',
   },
   subtitle:{
-    color:colors.title,
-    fontSize:13,
-    fontFamily: 'OpenSans-Light',
+    color:colors.subtitle,
+    fontSize:14,
+    fontFamily: 'OpenSans-Regular',
   },
 });
 

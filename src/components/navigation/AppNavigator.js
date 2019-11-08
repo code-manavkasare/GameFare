@@ -37,6 +37,7 @@ import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
 
 import ListEvents from '../app/elementsUser/events/ListEvents'
+import ListGroups from '../app/elementsUser/groups/ListGroups'
 
 import Payments from '../app/elementsUser/elementsPayment/Payments'
 import NewCard from '../app/elementsUser/elementsPayment/NewCard'
@@ -47,6 +48,7 @@ import ApplePay from '../app/elementsUser/elementsPayment/ApplePay'
 
 import Alert from '../layout/alerts/Alert'
 import AlertAddress from '../layout/alerts/AlertAddress'
+import AlertCall from '../layout/alerts/AlertCall'
 
 const CreateEventNavigator = createStackNavigator(
     {
@@ -133,6 +135,32 @@ const EventsNavigator = createStackNavigator(
     }
 );
 
+const ListGroupPageNavigator = createStackNavigator(
+    {
+        ListGroups:ListGroups,
+    },
+    {
+        initialRouteName:'ListGroups',
+        // headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false,
+        cardShadowEnabled:false
+    }
+);
+
+const GroupsNavigator = createStackNavigator(
+    {
+        ListGroups: ListGroupPageNavigator,
+    },
+    {
+        initialRouteName:'ListGroups',
+        headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false,
+        cardShadowEnabled:false
+    }
+);
+
 
 
 const ProfileNavigator = createStackNavigator(
@@ -199,6 +227,7 @@ const FlagsNavigator = createStackNavigator(
 const MainApp = createBottomTabNavigator(
     {
         Home: HomePageNavigator,
+        ListGroups:GroupsNavigator,
         ListEvents:EventsNavigator,
         Profile: ProfileNavigator,
     },
@@ -211,6 +240,12 @@ const MainApp = createBottomTabNavigator(
                     return <Image source={require('../../img/footer/findOn.png')} style={styles.iconFooter} />
                 }
                 return <Image source={require('../../img/footer/findOff.png')} style={styles.iconFooter} />
+            }
+            if (routeName == 'ListGroups') {
+                if (focused) {
+                    return <Image source={require('../../img/footer/apptOn.png')} style={styles.iconFooter} />
+                }
+                return <Image source={require('../../img/footer/apptOff.png')} style={styles.iconFooter} />
             }
             if (routeName == 'ListEvents') {
                 if (focused) {
@@ -228,6 +263,7 @@ const MainApp = createBottomTabNavigator(
         tabBarLabel:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
             if (routeName == 'Home') return <Text style={focused?styles.footerText:styles.footerTextOff}>Home</Text>
+            if (routeName == 'ListGroups') return <Text style={focused?styles.footerText:styles.footerTextOff}>Groups</Text>
             if (routeName == 'ListEvents') return <Text style={focused?styles.footerText:styles.footerTextOff}>Events</Text>
             if (routeName == 'Profile') return <Text style={focused?styles.footerText:styles.footerTextOff}>Profile</Text>
         }
@@ -289,6 +325,7 @@ const DateNavigator = createStackNavigator(
         ListCountry:FlagsNavigator,
         Alert:{screen:Alert,gesturesEnabled:false},
         AlertAddress:{screen:AlertAddress,gesturesEnabled:false},
+        AlertCall:AlertCall,
         Payments:PaymentsNavigator,
         Date:DateNavigator,
         Location:LocationNavigator,

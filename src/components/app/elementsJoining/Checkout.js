@@ -168,6 +168,7 @@ class ProfilePage extends Component {
     )
   }
   textButtonConfirm() {
+    if (this.coach()) return 'Confirm attendance'
     if (Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) == 0) return 'Confirm attendance'
     return 'Pay & Confirm attendance'
   }
@@ -178,7 +179,6 @@ class ProfilePage extends Component {
     return false
   }
   coach() {
-    if (this.props.navigation.getParam('coach') == undefined) return false
     return !this.props.navigation.getParam('coach').player
   }
   async submit(data) {

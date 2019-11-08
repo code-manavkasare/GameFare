@@ -18,7 +18,7 @@ import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
-import {indexEvents} from '../../database/algolia'
+import {indexGroups} from '../../database/algolia'
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/ListEvents'
 import CardEvent from './CardEvent'
@@ -38,8 +38,8 @@ class ListEvents extends React.Component {
     console.log('on reload')
     console.log(events)
     this.setState({loader:true})
-    indexEvents.clearCache()
-    var events = await indexEvents.search({
+    indexGroups.clearCache()
+    var events = await indexGroups.search({
       query: ''
     })
     console.log('events.hits')
@@ -57,7 +57,7 @@ class ListEvents extends React.Component {
   ListEvent () {
     return (
       <View style={styleApp.viewHome}>
-        <Text style={[styleApp.title,{marginBottom:5,marginLeft:20}]}>Upcoming events</Text>
+        <Text style={[styleApp.title,{marginBottom:5,marginLeft:20}]}>Groups</Text>
         <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:20}]}>Los Angeles, California</Text>
 
 

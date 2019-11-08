@@ -119,8 +119,8 @@ class Page0 extends Component {
     )
   }
   setCoach() {
-    if (this.props.infoUser.coach && this.props.infoUser.coachVerified) return this.setState({player:false,coachNeeded:false})
-    return this.props.navigation.navigate('Alert',{textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'Access required.',subtitle:'You need to become a verified coach in order to create coach events.',icon:<AllIcons name='exclamation-circle' color={colors.secondary} size={20} type='font' />})
+    if (this.props.infoUser.coach && this.props.infoUser.coachVerified) return this.setState({player:false,coachNeeded:false,joiningFee:'',free:false})
+    return this.props.navigation.navigate('Alert',{textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'Access required.',subtitle:'You need to become a verified instructor in order to create an instructor events.',icon:<AllIcons name='exclamation-circle' color={colors.secondary} size={20} type='font' />})
   }
   sendMessage () {
     var email1 = 'contact@getgamefare.com';
@@ -133,9 +133,9 @@ class Page0 extends Component {
       <View>
         {
           this.state.player?
-          <ButtonOff text="Coach" click={() => this.setCoach()} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
+          <ButtonOff text="Instructor" click={() => this.setCoach()} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
           :
-          <Button text="Coach" click={() => this.setCoach()} backgroundColor={'primary'} onPressColor={colors.primaryLight}/>
+          <Button text="Instructor" click={() => this.setCoach()} backgroundColor={'primary'} onPressColor={colors.primaryLight}/>
         }
         
         <View style={{height:10}} />
@@ -225,13 +225,13 @@ class Page0 extends Component {
           
           {
             this.state.player?
-            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.setState({coachNeeded:!this.state.coachNeeded,joiningFee:!this.state.coachNeeded?this.state.sportsFilter.value.fee.coachMatchFee:''})}>
+            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.setState({coachNeeded:!this.state.coachNeeded,joiningFee:!this.state.coachNeeded?this.state.sportsFilter.value.fee.coachMatchFee:'',free:false})}>
             <Row >
               <Col size={15} style={styleApp.center}>
                 <AllIcons name='check' type='mat' color={!this.state.coachNeeded?colors.grey:colors.green} size={23} />
               </Col>
               <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
-                <Text style={[styleApp.text,{fontSize:17,color:!this.state.coachNeeded?colors.grey:colors.green},]}>I need a coach</Text>
+                <Text style={[styleApp.text,{fontSize:17,color:!this.state.coachNeeded?colors.grey:colors.green},]}>I need an instructor</Text>
               </Col>
             </Row>
             </TouchableOpacity>
@@ -245,7 +245,7 @@ class Page0 extends Component {
             !this.state.coachNeeded?
             this.entreeFeeSection('free')
             :
-            <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with a coach. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${this.state.sportsFilter.value.fee.coachMatchFee}</Text> to participate, which will be payment for the coach.</Text>
+            <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with an instructor. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${this.state.sportsFilter.value.fee.coachMatchFee}</Text> to participate, which will be payment for the instructor.</Text>
           }
 
 

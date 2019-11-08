@@ -36,7 +36,7 @@ export default class Page0 extends Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Coach/Player',
+      title: 'Instructor/Player',
       headerStyle:styleApp.styleHeader,
       headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
@@ -57,9 +57,9 @@ export default class Page0 extends Component {
           <View style={{height:20}} />
           {
             this.state.player?
-            <ButtonOff text="Coach" click={() => this.setState({player:false})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
+            <ButtonOff text="Instructor" click={() => this.setState({player:false})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
             :
-            <Button text="Coach" click={() => this.setState({player:false})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
+            <Button text="Instructor" click={() => this.setState({player:false})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
           }
           
           <View style={{height:10}} />
