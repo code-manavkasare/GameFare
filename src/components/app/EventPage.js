@@ -206,35 +206,56 @@ class EventPage extends React.Component {
     var levelOption = data.levelOption=='equal'?'only':data.levelOption=='min'?'and above':'and below'
     return (
       <View>
-        <Row>
-          <Col size={65} style={styleApp.center2}>
-            <Text style={styleApp.title}>{data.info.name}</Text>
-          </Col>
-          <Col size={10} style={styleApp.center2} activeOpacity={0.7} onPress={() => this.openAlert(this.openCondition(data)?'The subscribtions are open.':'The subscribtions are closed.',this.openView(data))}>
-            {this.openView(data)}
-          </Col>
-          <Col size={25} style={styleApp.center}>
-            <View style={[styles.viewSport,{marginTop:5}]}>
-              <Text style={styles.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
-            </View>
-            <Text style={[styleApp.text,{color:colors.primary,marginTop:10,fontFamily:'OpenSans-Bold'}]}>{Number(data.price.joiningFee)==0?'Free entry':'$'+data.price.joiningFee}</Text>  
-          </Col>
-        </Row>
-        
-        {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
-        {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
-        {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
 
-        <View style={[styleApp.divider,{marginBottom:0}]} />
+            <Row>
+              <Col size={25} style={styleApp.center2}>
+                <View style={[styles.viewSport,{marginTop:5}]}>
+                  <Text style={styles.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                </View>
+              </Col>
+              <Col size={75} style={styleApp.center3}>            
+                <Text style={[styleApp.text,{color:colors.primary,marginTop:10,fontFamily:'OpenSans-Bold',fontSize:18}]}>{Number(data.price.joiningFee)==0?'Free entry':'$'+data.price.joiningFee}</Text>  
+              </Col>
+            </Row>
 
-        {this.rowIcon(this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player maximum':data.info.maxAttendance + ' players maximum'),'user-plus')}
-        {this.rowIcon(this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'balance-scale')}
-        {this.rowIcon(this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars')}
-        
+          </View>
+        </View>
 
-        <View style={{height:0.3,marginTop:20,marginBottom:0,backgroundColor:colors.borderColor}} />
-        
-        {this.rowIcon(this.title(rule.text),'puzzle-piece')}
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+
+            <Row>
+              <Col size={75} style={styleApp.center2}>
+                <Text style={styleApp.title}>{data.info.name}</Text>
+              </Col>
+              <Col size={25} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.openAlert(this.openCondition(data)?'The subscribtions are open.':'The subscribtions are closed.',this.openView(data))}>
+                {this.openView(data)}
+              </Col>
+            </Row>
+
+            <View style={[styleApp.divider2,{marginBottom:10}]} />
+            {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
+            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
+            {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
+
+          </View>
+        </View>
+
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+
+          {this.rowIcon(this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player maximum':data.info.maxAttendance + ' players maximum'),'user-plus')}
+          {this.rowIcon(this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'balance-scale')}
+          {this.rowIcon(this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars')}
+
+          <View style={[styleApp.divider2,{marginBottom:0}]} />
+
+          {this.rowIcon(this.title(rule.text),'puzzle-piece')}
+          </View>
+        </View>
+                
       </View>
     )
   }
@@ -245,46 +266,58 @@ class EventPage extends React.Component {
     console.log('sport')
     console.log(sport)
     return (
-      <View>
+      <View style={{marginLeft:-20,width:width,marginTop:-10}}>
         {this.eventInfo(data,sport)}
 
-        <View style={[styleApp.divider,{marginBottom:20}]} />
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
 
-        <Text style={[styleApp.title,{fontSize:19,marginBottom:5}]}>Instructor</Text>
-        {
-          loader?
-          <FadeInView duration={300} style={{paddingTop:10}}>
-            <PlaceHolder />
-          </FadeInView>
-          :data.coaches == undefined?
-          <Text style={[styleApp.smallText,{marginTop:5}]}>No instructor has joined the event yet.</Text>
-          :
-          <FadeInView duration={300} style={{marginTop:0}}>
-          {Object.values(data.coaches).map((user,i) => (
-            this.rowUser(user,i,data)
-          ))}
-          </FadeInView>
-        }
+          <Text style={[styleApp.title,{marginBottom:0}]}>Instructor</Text>
 
-        <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Players</Text>
-        
-        {
-          loader?
-          <FadeInView duration={300} style={{paddingTop:10}}>
-            <PlaceHolder />
-            <PlaceHolder />
-            <PlaceHolder />
-          </FadeInView>
-          :data.attendees == undefined?
-          <Text style={[styleApp.smallText,{marginTop:10}]}>No players has joined the event yet.</Text>
-          :
-          <FadeInView duration={300} style={{marginTop:5}}>
-          {Object.values(data.attendees).map((user,i) => (
-            this.rowUser(user,i,data)
-          ))}
-          </FadeInView>
-        }
+          <View style={[styleApp.divider2,{marginBottom:10}]} />
+            {
+            loader?
+            <FadeInView duration={300} style={{paddingTop:10}}>
+              <PlaceHolder />
+            </FadeInView>
+            :data.coaches == undefined?
+            <Text style={[styleApp.smallText,{marginTop:5}]}>No instructor has joined the event yet.</Text>
+            :
+            <FadeInView duration={300} style={{marginTop:0}}>
+            {Object.values(data.coaches).map((user,i) => (
+              this.rowUser(user,i,data)
+            ))}
+            </FadeInView>
+          }
 
+          </View>
+        </View>
+
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+
+          <Text style={[styleApp.title,{marginBottom:0}]}>Players</Text>
+
+          <View style={[styleApp.divider2,{marginBottom:10}]} />
+          {
+            loader?
+            <FadeInView duration={300} style={{paddingTop:10}}>
+              <PlaceHolder />
+              <PlaceHolder />
+              <PlaceHolder />
+            </FadeInView>
+            :data.attendees == undefined?
+            <Text style={[styleApp.smallText,{marginTop:10}]}>No players has joined the event yet.</Text>
+            :
+            <FadeInView duration={300} style={{marginTop:5}}>
+            {Object.values(data.attendees).map((user,i) => (
+              this.rowUser(user,i,data)
+            ))}
+            </FadeInView>
+          }
+
+          </View>
+        </View>
 
       </View>
     )
@@ -347,7 +380,7 @@ class EventPage extends React.Component {
   }
   render() {
     return (
-      <View style={{ flex:1,backgroundColor:'white' }}>
+      <View style={{ flex:1,backgroundColor:colors.off2 }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))}

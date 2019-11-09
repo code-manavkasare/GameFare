@@ -23,8 +23,7 @@ import AllIcons from '../../../layout/icons/AllIcons'
 import BackButton from '../../../layout/buttons/BackButton'
 import Button from '../../../layout/buttons/Button'
 import CardEvent from './CardEvent'
-import Swiper from 'react-native-swiper'
-
+import SwiperLogout from '../elementsProfile/SwiperLogout'
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
@@ -84,31 +83,6 @@ class ListEvent extends Component {
     return (
       <View style={{flex:1}}>
         {this.listEvent('join')}
-        {/* <Switch 
-          textOn={'Joined'}
-          textOff={'Organized'}
-          translateXTo={width/2}
-          height={50}
-          // color={colors.primary}
-          state={this.state['organizer']}
-          setState={(val) => {
-            console.log('val')
-            console.log(val)
-            this.setState({['organizer']:val,index:!!val})
-          }}
-        />
-        <Swiper activeDotStyle={{opacity:1}} dotStyle={{opacity:1}}dotColor={colors.grey} showsPagination={true} activeDotColor={colors.green} loop={false} index={this.state.index} showsButtons={false} onIndexChanged={(index) => {
-          console.log('index cganged')
-          console.log(index)
-          return this.setState({organizer:!!index,index:index})
-           }}>
-        <View style={{borderTopWidth:0.3,borderColor:colors.borderColor,borderRightWidth:0.3}}>
-          {this.listEvent('join')}
-        </View>
-        <View style={{borderTopWidth:0.3,borderColor:colors.borderColor}}>
-          {this.listEvent('organize')}
-        </View>
-      </Swiper> */}
       </View>
     )
   }
@@ -161,24 +135,17 @@ class ListEvent extends Component {
   }
   eventsLogout() {
     return (
-      <View style={[{flex:1,marginTop:30,width:width-40,marginLeft:20}]}>
-        <Row>
-          <Col style={styleApp.center}>
-            <Image source={require('../../../../img/images/inauguration.png')} style={{width:85,height:85,marginBottom:30}} />
-          </Col>
-        </Row>
-        <Text style={[styleApp.title,{fontSize:19,marginBottom:15,marginRight:20}]}>Join the GameFare community now!</Text>
+      <View>
+      <SwiperLogout type={'groups'}/>
 
-        {this.rowCheck('Organize your sport events')}
-        {this.rowCheck('Join sessions')}
-        {this.rowCheck('Find your favorite instructor')}
-        {this.rowCheck('Rate your opponents')}
-        {this.rowCheck('Create your community')}
-
-        <View style={{height:20}} />
-        <Button text='Organize your event' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
-        <View style={{height:10}} />
-        <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+      <View style={{height:20}} />
+      <Button text='Create your group' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListGroups'})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
+      <View style={{height:10}} />
+      {
+      !this.props.userConnected?
+      <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'ListGroups'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+      :null
+      }
       </View>
     )
   }
@@ -187,7 +154,7 @@ class ListEvent extends Component {
       <View style={{backgroundColor:colors.off2,flex:1,paddingTop:10 }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.props.userConnected?this.events():this.eventsLogout()}
+          contentScrollView={() => this.props.userConnected && Object.values(this.state.events).length != 0?this.events():this.eventsLogout()}
           marginBottomScrollView={0}
           marginTop={-20}
           refreshControl={true}

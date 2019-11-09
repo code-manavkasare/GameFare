@@ -211,18 +211,27 @@ class Page0 extends Component {
   
   page0() {
       return (
-        <View style={{marginTop:-15}}>
+        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
 
-          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Sport</Text>
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+
+          <Text style={[styleApp.title,{fontSize:19}]}>Sport</Text>
+
+          <View style={[styleApp.divider2,{marginBottom:0}]} />
 
           {this.sports()}
           {this.rules()}
-          
-          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>I am a...</Text>
+          </View>
+        </View>
 
-          <View style={{height:20}} />
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+
+          <Text style={[styleApp.title,{fontSize:19,marginBottom:20}]}>I am a...</Text>
+
           {this.buttonCoach()}
-          
+
           {
             this.state.player?
             <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.setState({coachNeeded:!this.state.coachNeeded,joiningFee:!this.state.coachNeeded?this.state.sportsFilter.value.fee.coachMatchFee:'',free:false})}>
@@ -237,16 +246,24 @@ class Page0 extends Component {
             </TouchableOpacity>
             :null
           }
+          </View>
+        </View>
 
-          <View style={styleApp.divider}/>
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
 
-          <Text style={[styleApp.title,{fontSize:19,marginTop:10}]}>Entry fee</Text>
+          <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Entry fee</Text>
+
+
+
           {
             !this.state.coachNeeded?
             this.entreeFeeSection('free')
             :
             <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with an instructor. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${this.state.sportsFilter.value.fee.coachMatchFee}</Text> to participate, which will be payment for the instructor.</Text>
           }
+          </View>
+        </View>
 
 
         </View>
@@ -258,14 +275,14 @@ class Page0 extends Component {
   }
   render() {
     return (
-      <View style={[styleApp.stylePage]}>
+      <View style={[styleApp.stylePage,{backgroundColor:colors.off2}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page0.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
-          offsetBottom={0}
-          showsVerticalScrollIndicator={true}
+          offsetBottom={120}
+          showsVerticalScrollIndicator={false}
         />
         
         {

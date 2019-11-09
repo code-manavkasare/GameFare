@@ -2,7 +2,7 @@ export default colors = {
     primary:'#FF453A',
     primary2:'#FE725E',
     primaryLight:'#F78F80',
-    secondary:'#FDD982',
+    secondary:'#FEDA66',
     terciary:'#5A5E74',
     title:'#222222',
     subtitle:'#656565',

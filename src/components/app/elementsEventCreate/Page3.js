@@ -209,6 +209,7 @@ class Page3 extends Component {
     console.log(event)
     var pushEvent = await firebase.database().ref('events').push(event)
     event.eventID = pushEvent.key
+    event.objectID = pushEvent.key
     var userEvent={
       eventID:pushEvent.key,
       status:'confirmed',

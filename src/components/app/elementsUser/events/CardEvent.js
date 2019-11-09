@@ -142,7 +142,7 @@ export default class CardEvent extends React.Component {
           </Row>
           <Row style={{marginTop:10}}>
             <Col size ={80} style={styleApp.center2}>
-            <Text style={styles.title}>{this.state.item.info.name}</Text>
+            <Text style={[styles.title,{fontFamily:'OpenSans-SemiBold',fontSize:20}]}>{this.state.item.info.name}</Text>
             </Col>
             <Col size ={20} style={styleApp.center3}>
             <Text style={styles.textPrice}>{this.entreeFee(this.state.item.price.joiningFee)}</Text>

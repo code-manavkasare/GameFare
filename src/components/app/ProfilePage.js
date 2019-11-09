@@ -22,6 +22,7 @@ import Button from '../layout/buttons/Button'
 import {userAction} from '../../actions/userActions'
 import InAppBrowser from 'react-native-inappbrowser-reborn'
 import Communications from 'react-native-communications';
+import SwiperLogout from './elementsUser/elementsProfile/SwiperLogout'
 const { height, width } = Dimensions.get('screen')
 
 class ProfilePage extends Component {
@@ -67,9 +68,9 @@ class ProfilePage extends Component {
   button(text,page,data,type,url) {
     return (
       <TouchableOpacity activeOpacity={0.7} onPress={() => this.clickButton(text,page,data,type,url)} style={styles.button}>
-      <Row style={{marginLeft:20,width:width-40}}>
+      <Row style={{marginLeft:0,width:'100%'}}>
         <Col size={90} style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+          <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.primary:colors.title}]}>{text}</Text>
         </Col>
         <Col size={10} style={styleApp.center3}>
           <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
@@ -144,39 +145,62 @@ class ProfilePage extends Component {
   }
   profile() {
     return (
-      <View>
-        {this.bigtitle('Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname)}
-        {this.subtitle(this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber)}
-
-        <View style={{height:10}} />
-
-        {this.title('Account parameters')}
+      <View style={{marginLeft:-20,width:width,marginTop:-10}}>
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+            <Text style={[styleApp.title,{marginBottom:0}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
+            <Text style={[styleApp.subtitle,{marginBottom:0,marginTop:10}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text>
+          </View>
+        </View>
         
-        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
-        {this.button('Personal information','Settings',{pageFrom:'Profile'})}
-        {this.button('Payment','Payments',{pageFrom:'Profile'})}
-        {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+          <Text style={[styleApp.title,{marginBottom:0}]}>Account parameters</Text>
 
-        {this.title('Assistance')}
+          <View style={styleApp.divider2} />
+          {this.button('Personal information','Settings',{pageFrom:'Profile'})}
+          {this.button('Payment','Payments',{pageFrom:'Profile'})}
+          {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
+          </View>
+        </View>
 
-        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
-        {this.button('Email','Alert',{},'email')}
-        {this.button('Call','Alert',{},'call')}
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+          <Text style={[styleApp.title,{marginBottom:0}]}>Assistance</Text>
 
-        {this.title('Social media')}
+          <View style={styleApp.divider2} />
+          {this.button('Email','Alert',{},'email')}
+          {this.button('Call','Alert',{},'call')}
+          </View>
+        </View>
+        
 
-        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
-        {this.button('Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+          <Text style={[styleApp.title,{marginBottom:0}]}>Social media</Text>
 
-        {this.title('Legal')}
+          <View style={styleApp.divider2} />
+          {this.button('Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
+          </View>
+        </View>
 
-        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
-        {this.button('Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
-        {this.button('Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+          <Text style={[styleApp.title,{marginBottom:0}]}>Legal</Text>
 
-        {this.title('')}
-        <View style={{backgroundColor:colors.borderColor,height:0.3,marginLeft:-20,width:width}}/>
-        {this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
+          <View style={styleApp.divider2} />
+          {this.button('Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
+          {this.button('Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
+          </View>
+        </View>
+
+        <View style={styleApp.viewHome}>
+          <View style={styleApp.marginView}>
+          
+          {this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
+          </View>
+        </View>
+        
 
 
 
@@ -204,19 +228,8 @@ class ProfilePage extends Component {
   }
   profileLogout() {
     return (
-      <View style={[{flex:1,marginTop:20}]}>
-        <Row>
-          <Col style={styleApp.center}>
-            <Image source={require('../../img/images/rocket.png')} style={{width:100,height:100,marginBottom:30}} />
-          </Col>
-        </Row>
-        <Text style={[styleApp.title,{fontSize:19,marginBottom:15,marginRight:20}]}>Join the GameFare community now!</Text>
-
-        {this.rowCheck('Organize your sport events')}
-        {this.rowCheck('Join sessions')}
-        {this.rowCheck('Find your favorite instructor')}
-        {this.rowCheck('Rate your opponents')}
-        {this.rowCheck('Create your community')}
+      <View style={[{flex:1,marginTop:0}]}>
+        <SwiperLogout type={'profile'}/>
 
         <View style={{height:20}} />
         <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'Profile'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
@@ -242,11 +255,11 @@ class ProfilePage extends Component {
 const styles = StyleSheet.create({
   button:{
     height:50,
-    marginLeft:-20,
-    width:width,
+    marginLeft:0,
+    width:'100%',
     borderColor:colors.borderColor,
     backgroundColor:'white',
-    borderBottomWidth:0.3,
+    borderBottomWidth:0,
   },
 });
 

@@ -52,12 +52,17 @@ export default class Alert extends Component {
   }
   clickCar2(val) {
     var address = this.props.navigation.getParam('data').address
-    
+    console.log('address')
+    console.log(address)
+    console.log(this.props.navigation.getParam('data'))
     const linkProps = { 
-      latitude: this.props.navigation.getParam('data').lat,
-      longitude: this.props.navigation.getParam('data').lng,
+      //latitude: this.props.navigation.getParam('data').lat,
+      //longitude: this.props.navigation.getParam('data').lng,
       query: address,
+      travelType:'drive',
+      navigate_mode:'navigate'
     }
+    console.log(linkProps)
     if (val == 'google') {
       linkProps.provider = 'google'
       openMap(linkProps);

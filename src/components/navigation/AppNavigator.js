@@ -243,9 +243,9 @@ const MainApp = createBottomTabNavigator(
             }
             if (routeName == 'ListGroups') {
                 if (focused) {
-                    return <Image source={require('../../img/footer/apptOn.png')} style={styles.iconFooter} />
+                    return <Image source={require('../../img/footer/inviteOn.png')} style={styles.iconFooter} />
                 }
-                return <Image source={require('../../img/footer/apptOff.png')} style={styles.iconFooter} />
+                return <Image source={require('../../img/footer/inviteOff.png')} style={styles.iconFooter} />
             }
             if (routeName == 'ListEvents') {
                 if (focused) {
