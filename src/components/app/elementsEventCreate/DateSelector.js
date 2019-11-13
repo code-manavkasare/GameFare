@@ -211,25 +211,33 @@ export default class Date extends Component {
     }
     dateFields () {
       return (
-        <View>
-          {this.headerText('Start')}
+        <View style={{marginLeft:-20,width:width}}>
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Start</Text>
+              <View style={styleApp.divider2}/>
+              {this.calendar('daySelectedStart','markedDatesStart')}
+              {this.timeSelect('startTimeHour','startTimeMin','startPart')}
+            </View>
+          </View>
 
-          {this.calendar('daySelectedStart','markedDatesStart')}
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>End</Text>
+              <View style={styleApp.divider2}/>
+              {this.sameDay()}
 
-          {this.timeSelect('startTimeHour','startTimeMin','startPart')}
+              {
+                !this.state.sameDay?
+                this.calendar('daySelectedEnd','markedDatesEnd')
+                :null
+              }
 
-          {this.headerText('End')}
+              <View style={{height:10}}/>
+              {this.timeSelect('endTimeHour','endTimeMin','endPart')}
+            </View>
+          </View>
 
-          {this.sameDay()}
-
-          {
-            !this.state.sameDay?
-            this.calendar('daySelectedEnd','markedDatesEnd')
-            :null
-          }
-
-          <View style={{height:10}}/>
-          {this.timeSelect('endTimeHour','endTimeMin','endPart')}
         </View>
       )
     }
@@ -293,7 +301,7 @@ export default class Date extends Component {
 
 const styles = StyleSheet.create({
   content:{
-    backgroundColor:'white',
+    // backgroundColor:colors.off2,
     // position:'absolute',
     top:0,
     flex:1,

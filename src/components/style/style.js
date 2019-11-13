@@ -63,7 +63,8 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-Regular',
       color:colors.title,
     },
-    iconFooter:{height:23,width:22,marginTop:3,marginBottom:-3},
+    iconFooter:{height:23,width:23,marginTop:3,marginBottom:-3},
+    
     buttonRound:{
       width:65,height:65,
       borderRadius:32.5,
@@ -160,7 +161,7 @@ export default styles = StyleSheet.create({
     inputForm:{
       height:50,
       marginTop:10,
-      borderBottomWidth:0.3,
+      borderBottomWidth:0,
       width:'100%',
       backgroundColor:'white',
       borderRadius:0,
@@ -214,13 +215,13 @@ export default styles = StyleSheet.create({
     },
     footerText:{
       color:colors.primary,
-      fontSize:13,
-      fontFamily: 'OpenSans-SemiBold',
+      fontSize:10,
+      fontFamily: 'OpenSans-Bold',
     },
     footerTextOff:{
       color:colors.title,
-      fontSize:13,
-      fontFamily: 'OpenSans-SemiBold',
+      fontSize:10,
+      fontFamily: 'OpenSans-Bold',
     },
     styleHeader:{
         backgroundColor: 'white',
@@ -237,7 +238,7 @@ export default styles = StyleSheet.create({
     textHeader:{
       color:colors.title,
       fontFamily:'OpenSans-Bold',
-      fontSize:14,
+      fontSize:16,
     },
     stylePage:{
       flex:1,borderColor:'white',
@@ -245,15 +246,23 @@ export default styles = StyleSheet.create({
     },
     marginView:{
       marginLeft:20,
-      width:width-40
+      width:width-60
     },
     viewHome:{
       marginBottom:0,
       backgroundColor:'white',
       paddingTop:20,paddingBottom:20,
-      borderColor:colors.off,
-      borderBottomWidth:0.3,
-      borderTopWidth:0.3,
-      marginTop:15
+      borderColor:colors.borderColor,
+      //borderBottomWidth:0.3,
+      //borderTopWidth:0.3,
+      borderWidth:0.3,
+      marginLeft:10,
+      marginRight:10,
+      marginTop:15,
+      borderRadius:16,
+      shadowColor: '#46474B',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.08,
+      shadowRadius:8
     }
   });

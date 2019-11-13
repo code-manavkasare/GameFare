@@ -33,6 +33,9 @@ PODS:
   - Firebase/Messaging (6.10.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 4.1.6)
+  - Firebase/Storage (6.10.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 3.4.1)
   - FirebaseAnalytics (6.1.3):
     - FirebaseCore (~> 6.3)
     - FirebaseInstanceID (~> 4.2)
@@ -79,6 +82,10 @@ PODS:
     - GoogleUtilities/Reachability (~> 6.2)
     - GoogleUtilities/UserDefaults (~> 6.2)
     - Protobuf (>= 3.9.2, ~> 3.9)
+  - FirebaseStorage (3.4.1):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 6.0)
+    - GTMSessionFetcher/Core (~> 1.1)
   - Folly (2018.10.22.00):
     - boost-for-react-native
     - DoubleConversion
@@ -134,6 +141,38 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - Permission-BluetoothPeripheral (2.0.3):
+    - RNPermissions
+  - Permission-Calendars (2.0.3):
+    - RNPermissions
+  - Permission-Camera (2.0.3):
+    - RNPermissions
+  - Permission-Contacts (2.0.3):
+    - RNPermissions
+  - Permission-FaceID (2.0.3):
+    - RNPermissions
+  - Permission-LocationAlways (2.0.3):
+    - RNPermissions
+  - Permission-LocationWhenInUse (2.0.3):
+    - RNPermissions
+  - Permission-MediaLibrary (2.0.3):
+    - RNPermissions
+  - Permission-Microphone (2.0.3):
+    - RNPermissions
+  - Permission-Motion (2.0.3):
+    - RNPermissions
+  - Permission-Notifications (2.0.3):
+    - RNPermissions
+  - Permission-PhotoLibrary (2.0.3):
+    - RNPermissions
+  - Permission-Reminders (2.0.3):
+    - RNPermissions
+  - Permission-Siri (2.0.3):
+    - RNPermissions
+  - Permission-SpeechRecognition (2.0.3):
+    - RNPermissions
+  - Permission-StoreKit (2.0.3):
+    - RNPermissions
   - Protobuf (3.10.0)
   - RCTRequired (0.61.2)
   - RCTTypeSafety (0.61.2):
@@ -306,9 +345,15 @@ PODS:
   - react-native-fcm (16.2.4):
     - Firebase/Messaging
     - React
+  - react-native-fetch-blob (0.10.6):
+    - React-Core
   - react-native-geocoder (0.5.0):
     - React
   - react-native-geolocation (2.0.2):
+    - React
+  - react-native-image-picker (1.1.0):
+    - React
+  - react-native-image-resizer (1.1.0):
     - React
   - react-native-mixpanel (0.0.6):
     - Mixpanel (~> 3.4.5)
@@ -377,7 +422,7 @@ PODS:
     - React
   - RNInAppBrowser (3.1.0):
     - React
-  - RNPermissions (2.0.2):
+  - RNPermissions (2.0.3):
     - React
   - RNReanimated (1.3.0):
     - React
@@ -408,8 +453,25 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Database
   - Firebase/Messaging
+  - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - Permission-BluetoothPeripheral (from `../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec`)
+  - Permission-Calendars (from `../node_modules/react-native-permissions/ios/Calendars.podspec`)
+  - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
+  - Permission-Contacts (from `../node_modules/react-native-permissions/ios/Contacts.podspec`)
+  - Permission-FaceID (from `../node_modules/react-native-permissions/ios/FaceID.podspec`)
+  - Permission-LocationAlways (from `../node_modules/react-native-permissions/ios/LocationAlways.podspec`)
+  - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse.podspec`)
+  - Permission-MediaLibrary (from `../node_modules/react-native-permissions/ios/MediaLibrary.podspec`)
+  - Permission-Microphone (from `../node_modules/react-native-permissions/ios/Microphone.podspec`)
+  - Permission-Motion (from `../node_modules/react-native-permissions/ios/Motion.podspec`)
+  - Permission-Notifications (from `../node_modules/react-native-permissions/ios/Notifications.podspec`)
+  - Permission-PhotoLibrary (from `../node_modules/react-native-permissions/ios/PhotoLibrary.podspec`)
+  - Permission-Reminders (from `../node_modules/react-native-permissions/ios/Reminders.podspec`)
+  - Permission-Siri (from `../node_modules/react-native-permissions/ios/Siri.podspec`)
+  - Permission-SpeechRecognition (from `../node_modules/react-native-permissions/ios/SpeechRecognition.podspec`)
+  - Permission-StoreKit (from `../node_modules/react-native-permissions/ios/StoreKit.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -424,8 +486,11 @@ DEPENDENCIES:
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
+  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
   - react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -469,6 +534,38 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
   glog:
     :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
+  Permission-BluetoothPeripheral:
+    :path: ../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec
+  Permission-Calendars:
+    :path: ../node_modules/react-native-permissions/ios/Calendars.podspec
+  Permission-Camera:
+    :path: ../node_modules/react-native-permissions/ios/Camera.podspec
+  Permission-Contacts:
+    :path: ../node_modules/react-native-permissions/ios/Contacts.podspec
+  Permission-FaceID:
+    :path: ../node_modules/react-native-permissions/ios/FaceID.podspec
+  Permission-LocationAlways:
+    :path: ../node_modules/react-native-permissions/ios/LocationAlways.podspec
+  Permission-LocationWhenInUse:
+    :path: ../node_modules/react-native-permissions/ios/LocationWhenInUse.podspec
+  Permission-MediaLibrary:
+    :path: ../node_modules/react-native-permissions/ios/MediaLibrary.podspec
+  Permission-Microphone:
+    :path: ../node_modules/react-native-permissions/ios/Microphone.podspec
+  Permission-Motion:
+    :path: ../node_modules/react-native-permissions/ios/Motion.podspec
+  Permission-Notifications:
+    :path: ../node_modules/react-native-permissions/ios/Notifications.podspec
+  Permission-PhotoLibrary:
+    :path: ../node_modules/react-native-permissions/ios/PhotoLibrary.podspec
+  Permission-Reminders:
+    :path: ../node_modules/react-native-permissions/ios/Reminders.podspec
+  Permission-Siri:
+    :path: ../node_modules/react-native-permissions/ios/Siri.podspec
+  Permission-SpeechRecognition:
+    :path: ../node_modules/react-native-permissions/ios/SpeechRecognition.podspec
+  Permission-StoreKit:
+    :path: ../node_modules/react-native-permissions/ios/StoreKit.podspec
   RCTRequired:
     :path: ../node_modules/react-native/Libraries/RCTRequired
   RCTTypeSafety:
@@ -493,10 +590,16 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-contacts
   react-native-fcm:
     :path: ../node_modules/react-native-fcm
+  react-native-fetch-blob:
+    :path: ../node_modules/react-native-fetch-blob
   react-native-geocoder:
     :path: ../node_modules/react-native-geocoder
   react-native-geolocation:
     :path: ../node_modules/@react-native-community/geolocation
+  react-native-image-picker:
+    :path: ../node_modules/react-native-image-picker
+  react-native-image-resizer:
+    :path: ../node_modules/react-native-image-resizer
   react-native-mixpanel:
     :path: ../node_modules/react-native-mixpanel
   react-native-sms:
@@ -572,6 +675,7 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 524802f7694268c79d34aeac3d67997593e1a0c9
   FirebaseInstanceID: 550df9be1f99f751d8fcde3ac342a1e21a0e6c42
   FirebaseMessaging: 35edef69a6af9b34e9e44624089f054be3c09089
+  FirebaseStorage: b7c6d00997bc21d4465453bdcc5cc65513110fed
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: 434cc7be25e71dc04b8d0e3079125127b330e84a
@@ -583,6 +687,22 @@ SPEC CHECKSUMS:
   libwebp: 057912d6d0abfb6357d8bb05c0ea470301f5d61e
   Mixpanel: 5aca6e506b34650b96dc759a208513d86650fac7
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  Permission-BluetoothPeripheral: d277013fe7f5d1c3f17094786f74535cca04d23b
+  Permission-Calendars: 84882884d0ed6452d35b761cbb724bdc37bba5cf
+  Permission-Camera: edf691d05c6a37d588c1245a62bb53cdbed5f6ca
+  Permission-Contacts: a3fc7fc7c2fa7c929791423cb4155f194fa6368f
+  Permission-FaceID: f016aad382561397acb3932736a247321222218b
+  Permission-LocationAlways: 9dd346ec4bd7aa43749acbe87f293df40e671b74
+  Permission-LocationWhenInUse: b7140659f4fbb8c1c883d93f1e4d3d513ff13351
+  Permission-MediaLibrary: 42313ecf9f4974a62a9f74cd2d34a72dc99c29f7
+  Permission-Microphone: 52676a9967eaca6ba6f09d275c9c35020b583add
+  Permission-Motion: 8ed89f1fe3545856fb62a196a01f63abfda55918
+  Permission-Notifications: 762ab4ed59676de16adeca3cbdda7339cd21bedc
+  Permission-PhotoLibrary: cc2a7040ab02d344f24536703f1e1fd4cea4fa37
+  Permission-Reminders: b33563320383a9c9bdac9745aa915d1d3a4a431b
+  Permission-Siri: 8a8683e3ac0997d0534f3f02da871cb40987eea3
+  Permission-SpeechRecognition: 2da97ac887497efe94b0d4df7d869b880a7aab29
+  Permission-StoreKit: 646720f7ecc94b9314e319429350bed973aacb5e
   Protobuf: a4dc852ad69c027ca2166ed287b856697814375b
   RCTRequired: 81db8debffc2eb932841fa02dcf5a2e911af74c1
   RCTTypeSafety: 39a7d8643abe2460aef0adeb9acbe9401b579fff
@@ -596,8 +716,11 @@ SPEC CHECKSUMS:
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
   react-native-contacts: 37359cc1f95ef1eab1c3bd541845a95a0b7b8ea6
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
+  react-native-fetch-blob: df3f2348d83fd7cc39ebac62e7c0178d3c79f09e
   react-native-geocoder: 33b16a5929aa868fef37acb4f7ee10a428cd5fff
   react-native-geolocation: 8710b1bae31e734191273344d52141151b94bb3f
+  react-native-image-picker: 02cc046cf072f1254fb6eba51990a3f25e138cb4
+  react-native-image-resizer: 04a3409e7d4ad646c4468671c69dec490def139c
   react-native-mixpanel: 794ab824eabb78cc90dc7f39c218be5ebd47023b
   react-native-sms: d11ae42d9e7b9de59d7e778d43c6a5983710f95a
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
@@ -629,6 +752,6 @@ SPEC CHECKSUMS:
   tipsi-stripe: 237cab79699eb7d354bfc09238b3284e3b8dad84
   Yoga: 6af72bedeaea291a3a3717772d6d41836f23a1b9
 
-PODFILE CHECKSUM: 11879668295af532e1cdd8358b2c03f3b8dd3ea3
+PODFILE CHECKSUM: b3ecc38acdf3de28334b103f281307030b1ca2b0
 
 COCOAPODS: 1.4.0

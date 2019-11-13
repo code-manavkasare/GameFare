@@ -23,7 +23,7 @@ export default class PlaceHolder extends PureComponent {
     return (
         <View style={styles.content}>
 
-          <View style={{height:1,backgroundColor:'#eaeaea',marginTop:0,marginBottom:5}}/>
+          <View style={{height:1,backgroundColor:'white',marginTop:0,marginBottom:5}}/>
 
           <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:14,borderRadius:7,marginRight:80,marginTop:10,marginLeft:20}} />
           <Row style={{height:130,marginTop:0,}}>

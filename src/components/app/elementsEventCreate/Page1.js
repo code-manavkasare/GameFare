@@ -158,7 +158,7 @@ class Page1 extends Component {
             this.setState({[state]:this.state[state]-increment})
           }
         }} >
-          <AllIcons name={'minus'} color={colors.title} size={17} type='font' />
+          <AllIcons name={'remove'} color={colors.title} size={25} type='mat' />
         </Col>
         
         <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
@@ -166,7 +166,7 @@ class Page1 extends Component {
             this.setState({[state]:this.state[state]+increment})
           }
         }} >
-          <AllIcons name={'plus'} color={colors.title} size={17} type='font' />
+          <AllIcons name={'add'} color={colors.title} size={25} type='mat' />
         </Col>
         
       </Row>
@@ -176,21 +176,29 @@ class Page1 extends Component {
 
   page1() {
       return (
-        <View style={{marginTop:-15}}>
+        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Access</Text>
+              {this.switch('Open access','Invite only','private')}
+              {this.levelFilter()}
+              {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
+            </View>
+          </View>
 
-          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Access</Text>
-          {this.switch('Open access','Invite only','private')}
-          {this.levelFilter()}
-          {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Attendance</Text>
+              {this.plusMinus('players',200,1,1,'user-check')}
+            </View>
+          </View>
 
-
-          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Attendance</Text>
-          
-          {this.plusMinus('players',200,1,1,'user-check')}
-
-          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Gender</Text>
-          
-          {this.gender()}
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Gender</Text>
+              {this.gender()}
+            </View>
+          </View>
 
         </View>
       )
@@ -204,7 +212,7 @@ class Page1 extends Component {
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
 
         <ButtonRound

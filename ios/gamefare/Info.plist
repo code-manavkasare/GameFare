@@ -96,6 +96,8 @@
 	<string>test</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photos if you would like to use your photo library to upload your profile picture.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>test</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>test</string>
 	<key>UIAppFonts</key>

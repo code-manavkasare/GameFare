@@ -133,7 +133,7 @@ class FooterContact extends Component {
   }
   render() {
     return (
-      <View style={{height:sizes.heightFooterBooking,position:'absolute',backgroundColor:'white',bottom:0,zIndex:200,width:width,borderTopWidth:1,borderColor:colors.off,paddingTop:4,}}>
+      <View style={{height:sizes.heightFooterBooking,position:'absolute',backgroundColor:'white',bottom:0,zIndex:200,width:width,borderTopWidth:0.3,borderColor:colors.borderColor,paddingTop:4,}}>
         <Row style={{height:70}}>
           <Col size={15} style={styleApp.center}>
             <View style={styles.viewNumber}>

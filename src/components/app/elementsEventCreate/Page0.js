@@ -26,7 +26,6 @@ import ScrollView from '../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import Switch from '../../layout/switch/Switch'
 import AllIcons from '../../layout/icons/AllIcons'
-import DateEvent from './DateEvent'
 import {date} from '../../layout/date/date'
 import Communications from 'react-native-communications';
 
@@ -275,13 +274,13 @@ class Page0 extends Component {
   }
   render() {
     return (
-      <View style={[styleApp.stylePage,{backgroundColor:colors.off2}]}>
+      <View style={styleApp.stylePage}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page0.bind(this)}
           marginBottomScrollView={0}
           marginTop={0}
-          offsetBottom={120}
+          offsetBottom={180}
           showsVerticalScrollIndicator={false}
         />
         

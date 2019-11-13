@@ -104,66 +104,80 @@ class ProfilePage extends Component {
     </Row>
   }
   creditCard () {
-    return (
-      <View>
-        <CardCreditCard navigate={(val,data) => this.props.navigation.navigate(val,data)}/>
-        <View style={[styleApp.divider,{marginBottom:20}]} />
-      </View>
-    )
+    return <CardCreditCard navigate={(val,data) => this.props.navigation.navigate(val,data)}/>
   }
-  checkout() {
+  checkout(data) {
     return (
-      <View>
-        {this.sport()}
-        
-        {this.rowIcon(this.dateTime(this.props.navigation.getParam('data').date.start,this.props.navigation.getParam('data').date.end),'calendar-alt')}
-        {this.rowIcon(this.title(this.props.navigation.getParam('data').location.area),'map-marker-alt')}
-        {this.rowIcon(this.title(this.props.navigation.getParam('data').info.maxAttendance + ' people'),'user-check')}
-        
-        <View style={[styleApp.divider,{marginBottom:10,marginTop:20}]} />
-
-        {this.rowText(this.coach()?'Price per player':'Entry fee',colors.title,'OpenSans-SemiBold',Number(this.props.navigation.getParam('data').price.joiningFee)==0?'Free':'$' +this.props.navigation.getParam('data').price.joiningFee)}
-        {this.coach()?this.rowText('Attendance',colors.title,'OpenSans-SemiBold',this.props.navigation.getParam('data').info.maxAttendance):null}
-        {this.coach()?<View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />:null}
-        {this.coach()?this.rowText('Get',colors.title,'OpenSans-SemiBold','$' + Number(this.props.navigation.getParam('data').price.joiningFee)*Number(this.props.navigation.getParam('data').info.maxAttendance)):null}
-        {
-          !this.coach() && this.props.userConnected && Number(this.props.navigation.getParam('data').price.joiningFee)!=0?
-          this.rowText('Credits',colors.green,'OpenSans-SemiBold','$' +Number(this.props.totalWallet).toFixed(2))
-          :null
-        }
-
-        <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
-
-        {
-          this.coach() || Number(this.props.navigation.getParam('data').price.joiningFee)==0?
-          null
-          :this.props.userConnected?
-          <View>
-            {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2))}
-            <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
+      <View style={{marginLeft:-20,width:width,marginTop:-15}}>
+        <View style={[styleApp.viewHome,{paddingTop:15}]}>
+          <View style={styleApp.marginView}>
+            {this.sport()}
           </View>
-          :
-          <View>
-            {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Number(this.props.navigation.getParam('data').price.joiningFee))}
-            <View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />
+        </View>
+
+        <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.marginView}>
+
+            {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
+            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
+            {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
+            {this.rowIcon(this.title(this.props.navigation.getParam('data').info.maxAttendance + ' people'),'user-check')}
+
           </View>
-        }
+        </View>
 
-        
+        <View style={[styleApp.viewHome,{paddingTop:15}]}>
+          <View style={styleApp.marginView}>
 
-        {
-          !this.coach() && this.props.userConnected && Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
-          this.creditCard()
-          :null
-        }
-        
-        {
+          {this.rowText(this.coach()?'Price per player':'Entry fee',colors.title,'OpenSans-SemiBold',Number(this.props.navigation.getParam('data').price.joiningFee)==0?'Free':'$' +this.props.navigation.getParam('data').price.joiningFee)}
+          {this.coach()?this.rowText('Attendance',colors.title,'OpenSans-SemiBold',this.props.navigation.getParam('data').info.maxAttendance):null}
+          {this.coach()?<View style={[styleApp.divider,{marginBottom:10,marginTop:10}]} />:null}
+          {this.coach()?this.rowText('Get',colors.title,'OpenSans-SemiBold','$' + Number(this.props.navigation.getParam('data').price.joiningFee)*Number(this.props.navigation.getParam('data').info.maxAttendance)):null}
+          {
+            !this.coach() && this.props.userConnected && Number(this.props.navigation.getParam('data').price.joiningFee)!=0?
+            this.rowText('Credits',colors.green,'OpenSans-SemiBold','$' +Number(this.props.totalWallet).toFixed(2))
+            :null
+          }
+
+          {
+            this.coach() || Number(this.props.navigation.getParam('data').price.joiningFee)==0?
+            null
+            :this.props.userConnected?
+            <View>
+              {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2))}
+              <View style={[styleApp.divider2,{marginBottom:10}]} />
+            </View>
+            :
+            <View>
+              {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Number(this.props.navigation.getParam('data').price.joiningFee))}
+              <View style={[styleApp.divider2,{marginBottom:10}]} />
+            </View>
+          }
+
+          {
+            !this.coach() && this.props.userConnected && Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
+            this.creditCard()
+            :null
+          }
+
+          </View>
+        </View>
+
+        <View style={[styleApp.viewHome,{paddingTop:15}]}>
+          <View style={styleApp.marginView}>
+
+          {
           this.coach()?
           <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Your payment for this session will be number of players entered multiplied by fee per player. You will be paid after the session takes place.</Text></Text>
           :Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
           <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>We will charge the entry fee at the point of joining the event. No refunds unless your spot can be filled with an alternate player.</Text></Text>
           :null
-        }
+          }
+
+          </View>
+        </View>
+
+
       </View>
     )
   }
@@ -227,6 +241,15 @@ class ProfilePage extends Component {
       teamID:pushNewTeam.key
     })
     await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update({eventID:data.eventID,organizer:false,status:this.status(data),coach:this.coach()})
+    try {
+      await firebase.messaging().requestPermission();
+      // User has authorised
+      await firebase.messaging().subscribeToTopic(this.props.userID)
+      await firebase.messaging().subscribeToTopic('all')
+      await firebase.messaging().subscribeToTopic(data.eventID)
+    } catch (error) {
+        // User has rejected permissions
+    }
     this.props.navigation.navigate('ListEvents');
   }
   status(data) {
@@ -316,10 +339,10 @@ class ProfilePage extends Component {
   }
   render() {
     return (
-      <View style={[styleApp.stylePage,{borderLeftWidth:1,}]}>
+      <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.checkout()}
+          contentScrollView={() => this.checkout(this.props.navigation.getParam('data'))}
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={sizes.heightFooterBooking+90}

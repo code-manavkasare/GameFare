@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import { 
     Image,
     Text,
+    View,
+    TouchableOpacity
 } from 'react-native';
 
 
@@ -12,12 +14,14 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import colors from '../style/colors'
 import styles from '../style/style'
 import AllIcons from '../layout/icons/AllIcons'
+import Button from '../layout/Views/Button'
 
 import HomePage from '../app/HomePage'
 import ProfilePage from '../app/ProfilePage'
 import Wallet from '../app/elementsUser/elementsProfile/Wallet'
 import Settings from '../app/elementsUser/elementsProfile/Settings'
 import EventPage from '../app/EventPage'
+import GroupPage from '../app/GroupPage'
 import Checkout from '../app/elementsJoining/Checkout'
 import Coach from '../app/elementsJoining/Coach'
 
@@ -32,6 +36,9 @@ import CreateEvent2 from '../app/elementsEventCreate/Page2'
 import CreateEvent3 from '../app/elementsEventCreate/Page3'
 import Contacts from '../app/elementsEventCreate/elementsContacts/Contacts'
 import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact'
+
+import CreateGroup0 from '../app/elementsGroupCreate/Page0'
+import CreateGroup1 from '../app/elementsGroupCreate/Page1'
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
@@ -66,6 +73,20 @@ const CreateEventNavigator = createStackNavigator(
     }
 );
 
+const CreateGroupNavigator = createStackNavigator(
+    {
+        CreateGroup0:CreateGroup0,
+        CreateGroup1:CreateGroup1,
+    },
+    {
+        initialRouteName:'CreateGroup0',
+       //  headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false,
+        cardShadowEnabled:false
+    }
+);
+
 const ContactNavigator = createStackNavigator(
     {
         Contacts:Contacts,
@@ -89,6 +110,19 @@ const JoinNavigator = createStackNavigator(
     },
     {
         initialRouteName:'Event',
+        // headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false,
+        cardShadowEnabled:false
+    }
+);
+
+const JoinGroupNavigator = createStackNavigator(
+    {
+        Group: GroupPage,
+    },
+    {
+        initialRouteName:'Group',
         // headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
@@ -226,7 +260,15 @@ const FlagsNavigator = createStackNavigator(
 
 const MainApp = createBottomTabNavigator(
     {
-        Home: HomePageNavigator,
+        Home: {
+            screen:HomePageNavigator,
+            tabBarIcon: ({ tintColor, focused }) => (
+                <View style={{height:'100%',width:'100%',backgroundColor:'red'}}>
+                    <Image source={focused? star_check : star} style={styles.icon} />
+                    <Text style={[styles.name, {color: tintColor}]}>Kampanjer</Text>
+                </View>
+            )
+        },
         ListGroups:GroupsNavigator,
         ListEvents:EventsNavigator,
         Profile: ProfileNavigator,
@@ -269,8 +311,12 @@ const MainApp = createBottomTabNavigator(
         }
       }),
       tabBarOptions: {
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
+        //activeTintColor: 'tomato',
+        //inactiveTintColor: 'gray',
+        showLabel:true,
+        style: {
+            backgroundColor: 'white',
+        },
       },
     },
     {
@@ -285,7 +331,9 @@ const MainApp = createBottomTabNavigator(
     {
         MainApp:MainApp,
         Event:JoinNavigator,
-        CreateEvent1:CreateEventNavigator
+        Group:JoinGroupNavigator,
+        CreateEvent1:CreateEventNavigator,
+        CreateGroup1:CreateGroupNavigator,
     },
     {
         initialRouteName:'MainApp',

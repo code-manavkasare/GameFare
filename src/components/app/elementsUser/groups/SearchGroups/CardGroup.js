@@ -14,17 +14,18 @@ import {
 } from 'react-native';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
-import colors from '../../style/colors'
-import Icon from '../../layout/icons/icons'
-import AllIcons from '../../layout/icons/AllIcons'
-import PlacelHolder from '../../placeHolders/CardEvent.js'
-import styleApp from '../../style/style'
-import {timing,native} from '../../animations/animations'
+import colors from '../../../../style/colors'
+import AllIcons from '../../../../layout/icons/AllIcons'
+import PlacelHolder from '../../../../placeHolders/CardEvent.js'
+import styleApp from '../../../../style/style'
+import {timing,native} from '../../../../animations/animations'
+import AsyncImage from '../../../../layout/image/AsyncImage'
+import FadeInView from 'react-native-fade-in-view';
 
 var  { height, width } = Dimensions.get('screen')
-import {date,time,timeZone} from '../../layout/date/date'
+import {date,time,timeZone} from '../../../../layout/date/date'
 
-export default class CardEvent extends React.Component {
+export default class CardGroup extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
@@ -54,7 +55,7 @@ export default class CardEvent extends React.Component {
     }
     card (color) {
       if (this.state.loader)return <PlacelHolder />
-      return this.displayCard(color)
+      return <FadeInView duration={250}>{this.displayCard(color)}</FadeInView>
     }
     displayCard(color) {
       return (
@@ -69,27 +70,23 @@ export default class CardEvent extends React.Component {
         >
 
           <Row>
-            <Col size={70} style={[styleApp.center2,{paddingLeft:0}]}>
-              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',}]}>{date(this.props.item.date.start,'ddd, Do MMM')} at {time(this.props.item.date.start,'h:mm a')}</Text>
-              <Text style={styles.title}>{this.props.item.info.name}</Text>
-              {
-              this.props.item.info.public?
-              <Text style={[styles.subtitle,{marginTop:5}]}>{this.props.item.location.area}</Text>
-              :null
-              }
-              <Text style={[styles.subtitle,{marginTop:5}]}>{this.entreeFee(this.props.item.price.joiningFee)}</Text>
+            <Col size={25} style={styleApp.center2}>
+            <AsyncImage style={{width:'100%',height:70,borderRadius:6}} mainImage={this.props.item.pictures[0]} imgInitial={this.props.item.pictures[0]} />
             </Col>
-            <Col size={10} style={[styleApp.center4,{paddingTop:3}]}>
-              {
-              !this.props.item.info.public?
-              <AllIcons name='lock' color={colors.blue} size={17} type='mat' />
-              :null
-              }
-            </Col>
-            <Col size={20} style={styleApp.center8}>
-              <View style={styles.viewSport}>
-                <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
-              </View>
+            <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
+              
+              <Row>
+                <Col size={75} style={styleApp.center2}>
+                  <Text style={styles.title}>{this.props.item.info.name}</Text>
+                </Col>
+                <Col size={25} style={styleApp.center2}>
+                  <View style={styles.viewSport}>
+                    <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
+                  </View>
+                </Col>
+              </Row>
+              <Text style={[styles.subtitle,{fontSize:12}]}>{this.props.item.location.address}</Text>
+              <Text style={[styles.subtitle,{fontSize:12}]}>Created by {this.props.item.organizer.name}</Text>
             </Col>
 
           </Row>
@@ -142,7 +139,7 @@ const styles = StyleSheet.create({
   },
   textSport:{
     color:colors.greenStrong,
-    fontSize:13,
+    fontSize:11,
     fontFamily: 'OpenSans-SemiBold',
   },
   textPrice:{

@@ -14,39 +14,43 @@ const { height, width } = Dimensions.get('screen')
 import firebase from 'react-native-firebase'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
-import PlaceHolder from '../../../placeHolders/ListEventsUser'
+import PlaceHolder from '../../../placeHolders/CardEvent'
 import Header from '../../../layout/headers/HeaderButton'
-import ScrollView from '../../../layout/scrollViews/ScrollView'
+import ScrollView from '../../../layout/scrollViews/ScrollView2'
 import Switch from '../../../layout/switch/Switch'
+import FadeInView from 'react-native-fade-in-view';
+import NewGroupCard from '../../elementsHome/NewGroupCard'
 
 import AllIcons from '../../../layout/icons/AllIcons'
 import BackButton from '../../../layout/buttons/BackButton'
 import Button from '../../../layout/buttons/Button'
-import CardEvent from './CardEvent'
+import CardGroup from './CardGroup'
 import SwiperLogout from '../elementsProfile/SwiperLogout'
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors';
 
+import ListGroupsSearch from './SearchGroups/ListGroups' 
+
 class ListEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialLoader:true,
-      events:[],
+      loader:true,
+      groups:[],
       organizer:false,
-      index:0
+      index:0,
     };
     this.events = this.events.bind(this)
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'My groups',
+      title: 'Groups',
       headerStyle:styleApp.styleHeader,
       headerTitleStyle: styleApp.textHeader,
       // headerLeft: () => <BackButton name='home' type='mat' size={20} click={() => navigation.navigate('Home')} />,
-      headerRight: () => <BackButton color={colors.primary} name='add' type='mat' click={() => navigation.navigate('CreateEvent0',{'pageFrom':'ListEvents'})}/>,
+      headerRight: () => <BackButton color={colors.primary} name='add' type='mat' click={() => navigation.navigate('CreateGroup0',{'pageFrom':'ListGroups'})}/>,
     }
   };
   async componentDidMount() {
@@ -60,23 +64,16 @@ class ListEvent extends Component {
   }
   loadEvents(userID) {
     var that = this
-    firebase.database().ref('usersGroups/' + userID).on('value', function(snap) {
+    firebase.database().ref('usersGroups/' + userID).on('value', function(snapshot) {
       console.log('on charge les match !!!!!!!')
-      that.setState({initialLoader:true})
-      var events = snap.val()
-      if (events == null) {
-        events = []
-      } else {
-        //events = Object.values(events)
-        events = Object.values(events).map((event,i) => {
-          var event = event
-          event.objectID = Object.keys(events)[i]
-          return event
-        });
-      }
-      console.log(events)
-      console.log(userID)
-      that.setState({events:events,initialLoader:false,index:0,organizer:false})
+      that.setState({loader:true})
+      var groups = []
+      snapshot.forEach(function(childSnapshot) {
+        var group = childSnapshot.val()
+        group.objectID = childSnapshot.key
+        groups.push(group)
+      });
+      that.setState({groups:groups,loader:false})
     })
   }
   events () {
@@ -86,33 +83,36 @@ class ListEvent extends Component {
       </View>
     )
   }
-  listEvent(val) {
-      if (this.state.initialLoader) return <PlaceHolder />
-      if (this.state.events.length == 0) return this.noAppt()
-      return (
-            this.state.events.map((event,i) => (
-              <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={(event) => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents',loader:true})} item={event}/>
-            ))
-      )
-  }
-  noAppt (val) {
+  listEvent() {
     return (
-      <View style={[{height:'100%',marginTop:70,marginLeft:0,width:'100%'}]}>
-        <View style={styleApp.center}>
-        <Row style={{height:100}}>
-          <Col style={styleApp.center}>
-            <Image source={require('../../../../img/images/desk.png')} style={{width:100,height:100,marginBottom:0}} />      
-          </Col>
-        </Row>
-        
-        <Text style={[styleApp.text,{fontSize:15,marginBottom:20,marginTop:20}]}>You haven't joined any group yet.</Text>
-        
-        <View style={{height:10}} />
-        <Button text='Join group' click={() => this.props.navigation.navigate('Home',{pageFrom:'ListEvents'})} backgroundColor={'green'} onPressColor={colors.greenLight2}/>
-        <View style={{height:10}} />
-        <Button text='Create a group' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListEvents'})} backgroundColor={'blue'} onPressColor={colors.blueLight}/>
-
-        
+      <View>
+        <View style={[styleApp.viewHome]}>
+          <View style={styleApp.marginView}>
+            <Text style={[styleApp.title,{marginBottom:15,marginLeft:0}]}>My groups</Text>
+          </View>
+          { 
+          !this.props.userConnected?
+          this.eventsLogout()
+          :this.state.loader?
+          <View>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </View>
+          :
+          <FadeInView duration={350}>
+            {
+              Object.values(this.state.groups).length == 0?
+              this.eventsLogout()
+              :
+              Object.values(this.state.groups).reverse().map((event,i) => (
+                <CardGroup userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickGroup={(event) => this.props.navigation.push('Group',{data:event,pageFrom:'ListGroups',loader:true})} item={event}/>
+              ))
+            }
+          </FadeInView>
+        }
         </View>
       </View>
     )
@@ -135,31 +135,57 @@ class ListEvent extends Component {
   }
   eventsLogout() {
     return (
-      <View>
+      <View style={styleApp.marginView}>
       <SwiperLogout type={'groups'}/>
 
       <View style={{height:20}} />
-      <Button text='Create your group' click={() => this.props.navigation.navigate('CreateEvent0',{pageFrom:'ListGroups'})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
+      <Button text='Create your group' click={() => this.props.navigation.navigate('CreateGroup0',{pageFrom:'ListGroups'})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
       <View style={{height:10}} />
       {
       !this.props.userConnected?
       <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'ListGroups'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
       :null
       }
+      <View style={{height:20}} />
+      </View>
+    )
+  }
+  async refresh() {
+    await this.setState({loader:true})
+    var that = this
+    setTimeout(function(){
+      that.setState({loader:false})
+    }, 150)
+  }
+  listGroups() {
+    //this.props.userConnected || (Object.values(this.state.groups).length != 0 && !this.state.loader)?this.events():this.eventsLogout()
+    return (
+      <View>
+      {this.listEvent()}
+
+        <ListGroupsSearch 
+            location={this.state.location} 
+            search={this.state.search} 
+            setState={(data) => this.setState(data)}
+            loader={this.state.loader}
+        />
+
+        <NewGroupCard pageFrom='ListGroups' />
       </View>
     )
   }
   render() {
     return (
-      <View style={{backgroundColor:colors.off2,flex:1,paddingTop:10 }}>
+      <View style={{flex:1,paddingTop:10 }}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.props.userConnected && Object.values(this.state.events).length != 0?this.events():this.eventsLogout()}
+          contentScrollView={() => this.listGroups()}
           marginBottomScrollView={0}
-          marginTop={-20}
+          marginTop={-10}
           refreshControl={true}
-          refresh={() => {this.setState({loader:true});this.setState({loader:false})}}
-          offsetBottom={sizes.heightFooterBooking+60}
+          colorRefresh={colors.primary}
+          refresh={() => this.refresh()}
+          offsetBottom={90}
           showsVerticalScrollIndicator={false}
         />
       </View>

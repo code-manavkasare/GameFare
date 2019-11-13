@@ -50,32 +50,39 @@ export default class Page0 extends Component {
   }
   page0() {
       return (
-        <View style={{marginTop:-15}}>
-          
-          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>I am a...</Text>
+        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
 
-          <View style={{height:20}} />
-          {
-            this.state.player?
-            <ButtonOff text="Instructor" click={() => this.setState({player:false})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
-            :
-            <Button text="Instructor" click={() => this.setState({player:false})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
-          }
+            <View style={[styleApp.viewHome,{paddingTop:15}]}>
+              <View style={styleApp.marginView}>
+                <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>I am a...</Text>
+
+                <View style={{height:20}} />
+                {
+                  this.state.player?
+                  <ButtonOff text="Instructor" click={() => this.setState({player:false})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
+                  :
+                  <Button text="Instructor" click={() => this.setState({player:false})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
+                }
+
+                <View style={{height:10}} />
+                {
+                  !this.state.player?
+                  <ButtonOff text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
+                  :
+                  <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
+                }
+              </View>
+            </View>
+        
           
-          <View style={{height:10}} />
-          {
-            !this.state.player?
-            <ButtonOff text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
-            :
-            <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primary2}/>
-          }
+          
 
         </View>
       )
   }
   render() {
     return (
-      <View style={[styleApp.stylePage,{borderLeftWidth:1,}]}>
+      <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page0.bind(this)}

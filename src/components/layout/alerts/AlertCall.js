@@ -98,34 +98,43 @@ export default class Alert extends Component {
           </Col>
          </Row>
 
-         <View style={{height:0.3,backgroundColor:colors.borderColor,marginTop:20}} />
+         {/* <View style={{height:0.3,backgroundColor:colors.borderColor,marginTop:20}} /> */}
+          
+        <View style={styleApp.marginView}>
+          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.click('call')}}>
+            <Row >
+              <Col style={styles.center} size={20}> 
+                <AllIcons name='phone' type={'font'} size={20} color={colors.green} />
+              </Col>  
+              <Col style={styleApp.center2} size={80}> 
+                <Text style={styles.text}>Call</Text>
+              </Col>  
+            </Row>
+          </TouchableOpacity >
 
+          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.click('text')}}>
+            <Row >
+              <Col style={styles.center} size={20}> 
+                <AllIcons name='sms' type={'font'} size={20} color={colors.green} />
+              </Col>  
+              <Col style={styleApp.center2} size={80}> 
+                <Text style={styles.text}>Send SMS</Text>
+              </Col>  
+            </Row>
+          </TouchableOpacity >
 
-        <Row style={{height:50,marginTop:0,borderBottomWidth:0.3,borderColor:colors.borderColor,width:width}} activeOpacity={0.7} onPress={() => {this.click('call')}}>
-          <Col style={styles.center} size={20}> 
-            <AllIcons name='phone' type={'font'} size={20} color={colors.green} />
-          </Col>  
-          <Col style={styleApp.center2} size={80}> 
-            <Text style={styles.text}>Call</Text>
-          </Col>  
-        </Row>
-        <Row style={{height:50,marginTop:0,borderBottomWidth:0.3,borderColor:colors.borderColor,width:width}} activeOpacity={0.7} onPress={() => {this.click('text')}}>
-          <Col style={styles.center} size={20}> 
-            <AllIcons name='sms' type={'font'} size={20} color={colors.green} />
-          </Col>  
-          <Col style={styleApp.center2} size={80}> 
-            <Text style={styles.text}>Send SMS</Text>
-          </Col>  
-        </Row>
-        <Row style={{height:50,marginTop:0,borderBottomWidth:0.3,borderColor:colors.borderColor,width:width}} activeOpacity={0.7} onPress={() => {this.click('copy')}}>
-          <Col style={styleApp.center} size={20}> 
-            {/* <Image style={{width:25,height:25,}} source={require('../../../img/map/document.png')} /> */}
-            <AllIcons name='copy' type={'font'} size={20} color={colors.title} />
-          </Col>  
-          <Col style={styleApp.center2} size={80}> 
-            <Text style={styles.text}>Copy phone number</Text>
-          </Col>  
-        </Row>
+          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.click('copy')}}>
+            <Row >
+              <Col style={styles.center} size={20}> 
+                <AllIcons name='copy' type={'font'} size={20} color={colors.title} />
+              </Col>  
+              <Col style={styleApp.center2} size={80}> 
+                <Text style={styles.text}>Copy phone number</Text>
+              </Col>  
+            </Row>
+          </TouchableOpacity >
+        </View>
+
 
           <View style={styles.viewButton}>
             <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={'Close'} click={() => this.props.navigation.goBack()} loader={this.state.loader}/>

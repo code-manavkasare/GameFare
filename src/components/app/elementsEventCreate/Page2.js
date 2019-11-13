@@ -98,7 +98,7 @@ class Page2 extends Component {
   }
   address() {
     return (
-      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,onGoBack: (data) => this.setLocation(data)})}>
+      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateEvent2',onGoBack: (data) => this.setLocation(data)})}>
         <Row>
           <Col style={styleApp.center} size={15}>
             <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
@@ -164,20 +164,28 @@ class Page2 extends Component {
   }
   page1() {
       return (
-        <View style={{marginTop:-15}}>
-          
+        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Name</Text>
+              {this.tournamentName()}
+            </View>
+          </View>
 
-          <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Name</Text>
-          {this.tournamentName()}
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Information</Text>
+              {this.address()}
+              {this.date()}
+            </View>
+          </View>
 
-          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Information</Text>
-          {this.address()}
-          {this.date()}
-          
-          <Text style={[styleApp.title,{fontSize:19,marginTop:30}]}>Instructions</Text>
-          
-          {this.textField('instructions','E.g parking instruction, unit number...(optional)',100,true,'default','parking')}
-         
+          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+            <View style={styleApp.marginView}>
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Instructions</Text>
+              {this.textField('instructions','E.g parking instruction, unit number...(optional)',100,true,'default','parking')}
+            </View>
+          </View>
 
         </View>
       )
@@ -244,7 +252,7 @@ class Page2 extends Component {
           marginBottomScrollView={0}
           marginTop={0}
           offsetBottom={90+60}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
 
         <ButtonRound

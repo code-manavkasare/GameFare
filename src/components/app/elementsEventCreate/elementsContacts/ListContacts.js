@@ -104,7 +104,7 @@ export default class ContactsComponent extends Component {
         initial = contact.givenName[0]
       }
       return (
-        <TouchableOpacity key={key} style={{marginTop:0,borderBottomWidth:1,borderColor:'#eaeaea',height:55}}activeOpacity={0.7} onPress={() => this.props.selectContact(contact,Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)} >
+        <TouchableOpacity key={key} style={{marginTop:0,borderBottomWidth:0.3,borderColor:colors.borderColor,height:55}}activeOpacity={0.7} onPress={() => this.props.selectContact(contact,Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)} >
           <Row>
             <Col size={15} style={styles.center}>
               <View style={[styleApp.center,{height:30,width:30,backgroundColor:contact.color,borderRadius:15,borderWidth:1,borderColor:colors.off}]}>
@@ -129,7 +129,7 @@ export default class ContactsComponent extends Component {
     }
     headerLetter (letter) {
       return (
-      <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:1,borderColor:'#eaeaea'}}>
+      <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:0.3,borderColor:colors.borderColor}}>
         <Col style={styles.center} size={15}>
           <Text style={[styles.text,{fontSize:12,fontFamily:'OpenSans-SemiBold'}]}>{letter}</Text>
         </Col>

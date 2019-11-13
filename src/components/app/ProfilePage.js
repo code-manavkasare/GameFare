@@ -11,7 +11,7 @@ import {
 import {connect} from 'react-redux';
 
 import Header from '../layout/headers/HeaderButton'
-import ScrollView from '../layout/scrollViews/ScrollView'
+import ScrollView from '../layout/scrollViews/ScrollView2'
 import sizes from '../style/sizes'
 import styleApp from '../style/style'
 import colors from '../style/colors'
@@ -19,6 +19,8 @@ import AllIcons from '../layout/icons/AllIcons'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import Button from '../layout/buttons/Button'
+import ButtonColor from '../layout/Views/Button'
+
 import {userAction} from '../../actions/userActions'
 import InAppBrowser from 'react-native-inappbrowser-reborn'
 import Communications from 'react-native-communications';
@@ -65,18 +67,27 @@ class ProfilePage extends Component {
       </Row>
     )
   }
+  /*
+  
+      
+  */
   button(text,page,data,type,url) {
     return (
-      <TouchableOpacity activeOpacity={0.7} onPress={() => this.clickButton(text,page,data,type,url)} style={styles.button}>
-      <Row style={{marginLeft:0,width:'100%'}}>
-        <Col size={90} style={styleApp.center2}>
-          <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.primary:colors.title}]}>{text}</Text>
-        </Col>
-        <Col size={10} style={styleApp.center3}>
-          <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
-        </Col>
-      </Row>
-      </TouchableOpacity>
+      <ButtonColor view={() => {
+        return <Row style={{marginLeft:0,width:'100%'}}>
+          <Col size={90} style={styleApp.center2}>
+            <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.primary:colors.title}]}>{text}</Text>
+          </Col>
+          <Col size={10} style={styleApp.center3}>
+            <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
+          </Col>
+        </Row>
+        }} 
+        click={() => this.clickButton(text,page,data,type,url)}
+        color='white'
+        style={styles.button}
+        onPressColor={colors.off}
+    />
     )
   }
   clickButton(text,page,data,type,url) {
@@ -101,8 +112,8 @@ class ProfilePage extends Component {
         const result = await InAppBrowser.open(url, {
           // iOS Properties
           dismissButtonStyle: 'cancel',
-          preferredBarTintColor: colors.primary,
-          preferredControlTintColor: 'white',
+          preferredBarTintColor: 'white',
+          preferredControlTintColor: colors.primary,
           readerMode: false,
           animated: true,
           modalPresentationStyle: 'overFullScreen',
@@ -110,7 +121,7 @@ class ProfilePage extends Component {
           modalEnabled: true,
           // Android Properties
           showTitle: true,
-          toolbarColor: colors.primary,
+          toolbarColor: 'white',
           secondaryToolbarColor: colors.primary,
           enableUrlBarHiding: true,
           enableDefaultShare: true,
@@ -145,7 +156,7 @@ class ProfilePage extends Component {
   }
   profile() {
     return (
-      <View style={{marginLeft:-20,width:width,marginTop:-10}}>
+      <View style={{marginLeft:0,width:width,marginTop:0}}>
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
             <Text style={[styleApp.title,{marginBottom:0}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
@@ -155,7 +166,7 @@ class ProfilePage extends Component {
         
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-          <Text style={[styleApp.title,{marginBottom:0}]}>Account parameters</Text>
+          <Text style={styleApp.smallText}>Account parameters</Text>
 
           <View style={styleApp.divider2} />
           {this.button('Personal information','Settings',{pageFrom:'Profile'})}
@@ -166,7 +177,7 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-          <Text style={[styleApp.title,{marginBottom:0}]}>Assistance</Text>
+          <Text style={styleApp.smallText}>Assistance</Text>
 
           <View style={styleApp.divider2} />
           {this.button('Email','Alert',{},'email')}
@@ -177,7 +188,7 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-          <Text style={[styleApp.title,{marginBottom:0}]}>Social media</Text>
+          <Text style={styleApp.smallText}>Social media</Text>
 
           <View style={styleApp.divider2} />
           {this.button('Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
@@ -186,7 +197,7 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-          <Text style={[styleApp.title,{marginBottom:0}]}>Legal</Text>
+          <Text style={styleApp.smallText}>Legal</Text>
 
           <View style={styleApp.divider2} />
           {this.button('Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
@@ -228,17 +239,19 @@ class ProfilePage extends Component {
   }
   profileLogout() {
     return (
-      <View style={[{flex:1,marginTop:0}]}>
-        <SwiperLogout type={'profile'}/>
+      <View style={[styleApp.viewHome]}>
+        <View style={styleApp.marginView}>
+          <SwiperLogout type={'profile'}/>
 
-        <View style={{height:20}} />
-        <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'Profile'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+          <View style={{height:20}} />
+          <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'Profile'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+        </View>
       </View>
     )
   }
   render() {
     return (
-      <View style={{ height:'100%',backgroundColor:colors.off2 }}>
+      <View style={{ height:'100%'}}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.props.userConnected?this.profile():this.profileLogout()}
@@ -255,8 +268,10 @@ class ProfilePage extends Component {
 const styles = StyleSheet.create({
   button:{
     height:50,
-    marginLeft:0,
-    width:'100%',
+    marginLeft:-20,
+    width:width-21,
+    paddingLeft:20,
+    paddingRight:20,
     borderColor:colors.borderColor,
     backgroundColor:'white',
     borderBottomWidth:0,

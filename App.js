@@ -8,7 +8,7 @@ import branch, { BranchEvent } from 'react-native-branch'
 import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
-import {indexEvents} from './src/components/database/algolia'
+import {indexEvents,indexGroups} from './src/components/database/algolia'
 
 import axios from 'axios'
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions'
@@ -17,6 +17,7 @@ const AppContainer = createAppContainer(AppSwitchNavigator)
 
 class App extends Component {
   async componentDidMount() {
+    
     await this.initBranch()
     var variables = await firebase.database().ref('variables').once('value')
     variables = variables.val()
@@ -57,9 +58,9 @@ class App extends Component {
       console.log('branch link opened !')
       console.log(params)
       if (params.action == 'openEventPage') {
-        
-        that.openEvent(params.eventID)
-        
+        that.openEvent(params.eventID)        
+      } else if (params.action == 'openGroupPage') {
+        that.openGroup(params.eventID)        
       } else if (params.type == 'share') {
         ls.save('giftShare', params.value)
       }
@@ -70,6 +71,12 @@ class App extends Component {
     console.log('riba data')
     console.log(data)
     NavigationService.navigate('Event',{data:data,pageFrom:'Home'})
+  }
+  async openGroup(eventID) {
+    var data = await indexGroups.getObject(eventID)
+    console.log('riba data')
+    console.log(data)
+    NavigationService.navigate('Group',{data:data,pageFrom:'Home'})
   }
   render() {
     return <AppContainer ref={navigatorRef => {

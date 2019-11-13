@@ -55,10 +55,10 @@ export default class ContactsComponent extends Component {
         headerStyle:styleApp.styleHeader,
         headerTitleStyle: styleApp.textHeader,
         gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
-        headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3'?null:<BackButton color={colors.title} name='close' type='mat' size={19} click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
-        headerRight: () => navigation.getParam('pageFrom') == 'Event'?null:<TouchableOpacity color={colors.title} style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate('ListEvents',{})}>
+        headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3' || navigation.getParam('pageFrom') == 'CreateGroup1'?null:<BackButton color={colors.title} name='close' type='mat' size={19} click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
+        headerRight: () => navigation.getParam('pageFrom') == 'CreateEvent3' || navigation.getParam('pageFrom') == 'CreateGroup1'?<TouchableOpacity color={colors.title} style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate(navigation.getParam('openPageLink')== 'openGroupPage'?'ListGroups':'ListEvents',{})}>
         <Text style={[styleApp.text,{fontFamily:'OpenSans-SemiBold',color:colors.title,fontSize:13}]}>Skip</Text>
-        </TouchableOpacity>,
+        </TouchableOpacity>:null,
       }
     };
     getContactSelected () {
@@ -145,7 +145,7 @@ export default class ContactsComponent extends Component {
     searchBar () {
       return (
         <Animated.View style={{transform:[{translateY:this.translateYShare}]}}>
-        <Row style={[styleApp.inputForm,{marginTop:0,marginBottom:0,marginLeft:0,width:width}]}>
+        <Row style={[styleApp.inputForm,{marginTop:0,marginBottom:0,marginLeft:0,width:width,borderBottomWidth:0.3}]}>
           <Col size={15} style={styles.center}>
             <AllIcons name="search" type="font" color={colors.primary} size={16} />
           </Col>
@@ -254,7 +254,15 @@ export default class ContactsComponent extends Component {
       var infoEvent = this.props.navigation.getParam('data')
       console.log('infoEvent')
       console.log(infoEvent)
-      var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
+      console.log(this.props.navigation.getParam('openPageLink'))
+      if (this.props.navigation.getParam('openPageLink') == 'openGroupPage') {
+        var description='Join my group ' + infoEvent.info.name + ' by following the link!'
+        var image = infoEvent.pictures[0]
+      } else {
+        var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
+        var image = 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+      }
+      
       branch.createBranchUniversalObject('canonicalIdentifier', {
         // contentTitle: description,
         contentDescription: description,
@@ -262,9 +270,9 @@ export default class ContactsComponent extends Component {
         contentMetadata: {
           customMetadata: {
             'eventID': infoEvent.objectID,
-            'action':'openEventPage',
+            'action':this.props.navigation.getParam('openPageLink'),
             '$uri_redirect_mode': '1',
-            '$og_image_url':'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+            '$og_image_url':image
           }
         }
       }).then( (branchUniversalObject) => {
@@ -288,7 +296,7 @@ export default class ContactsComponent extends Component {
     }
     rowShare() {
       return (
-        <Animated.View style={{height:55,borderBottomWidth:1,borderColor:colors.off,transform:[{translateY:this.translateYShare}]}}>
+        <Animated.View style={{height:55,borderBottomWidth:0.3,borderColor:colors.borderColor,transform:[{translateY:this.translateYShare}]}}>
           <Row activeOpacity={0.7} onPress={() => this.shareEvent()}>
             <Col size={15} style={styleApp.center}>
               <View style={[styleApp.center,{height:30,width:30,borderRadius:15,backgroundColor:colors.blue}]}>
@@ -296,7 +304,7 @@ export default class ContactsComponent extends Component {
               </View>
             </Col>
             <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
-              <Text style={[styleApp.text,{fontSize:14}]}>Share on Facebook, Messenger...</Text>
+              <Text style={[styleApp.text,{fontSize:13}]}>Share on Facebook, Messenger...</Text>
             </Col>
           </Row>
         </Animated.View>
@@ -305,11 +313,15 @@ export default class ContactsComponent extends Component {
     async sendSMS() {
       var contacts = this.state.contactsSelected
       var that = this
-      if (contacts.length == 0) {
-        return this.props.navigation.navigate('ListEvents',{})
-      }
+
       var infoEvent = this.props.navigation.getParam('data')
-      var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
+      if (this.props.navigation.getParam('openPageLink') == 'openGroupPage') {
+        var description='Join my group ' + infoEvent.info.name + ' by following the link!'
+        var image = infoEvent.pictures[0]
+      } else {
+        var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
+        var image = 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+      }
       console.log('event id!!!!')
       console.log(infoEvent)
       console.log(description)
@@ -320,9 +332,9 @@ export default class ContactsComponent extends Component {
         contentMetadata: {
           customMetadata: {
             'eventID': infoEvent.objectID,
-            'action':'openEventPage',
+            'action':this.props.navigation.getParam('openPageLink'),
             '$uri_redirect_mode': '1',
-            '$og_image_url':'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+            '$og_image_url':image
           }
         }
       })
@@ -349,7 +361,7 @@ export default class ContactsComponent extends Component {
           if (that.props.navigation.getParam('pageFrom') == 'event'){
             return that.props.navigation.goBack()
           }
-          return that.props.navigation.navigate('ListEvents',{})
+          return that.props.navigation.navigate(this.props.navigation.getParam('openPageLink')== 'openGroupPage'?'ListGroups':'ListEvents',{})
     
       });
     }

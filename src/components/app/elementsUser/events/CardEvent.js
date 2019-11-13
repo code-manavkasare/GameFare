@@ -20,9 +20,12 @@ import {timing} from '../../../animations/animations'
 import PlacelHolder from '../../../placeHolders/CardEvent'
 import Icon from '../../../layout/icons/icons'
 import AllIcons from '../../../layout/icons/AllIcons'
+
 import styleApp from '../../../style/style'
 import NavigationService from '../../../../../NavigationService'
+import AsyncImage from '../../../layout/image/AsyncImage'
 import {indexEvents} from '../../../database/algolia'
+import FadeInView from 'react-native-fade-in-view';
 
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../../layout/date/date'
@@ -39,6 +42,8 @@ export default class CardEvent extends React.Component {
     }
     async componentDidMount() {
       indexEvents.clearCache()
+      console.log('on charge levemt!!')
+      console.log(this.props.item.eventID)
       var event = await indexEvents.getObject(this.props.item.eventID)
       console.log('event!!!!!!@wqadjksfslf')
       console.log(event)
@@ -69,7 +74,7 @@ export default class CardEvent extends React.Component {
       else if (!this.coach()){
         alert = 'You attended this event as a player'
       }
-      this.props.navigate('Alert',{title:alert,close:true,textButton:'Got it!',onGoBack:() => this.closeAlert()})
+      this.props.navigate('Alert',{title:alert,close:true,textButton:'Got it!',onGoBack:() => this.closeAlert(),icon:this.iconCoach()})
     }
     closeAlert() {
       console.log('close alert!')
@@ -89,7 +94,17 @@ export default class CardEvent extends React.Component {
     }
     card (color) {
       if (this.state.loader)return <PlacelHolder />
-      return this.displayCard(color)
+      return <FadeInView duration={250}>{this.displayCard(color)}</FadeInView>
+    }
+    iconCoach() {
+      if (this.coach()) {
+        return <View style={[styleApp.roundView,{backgroundColor:colors.green}]}>
+                  <Text style={[styleApp.text,{color:'white',fontSize:10}]}>C</Text>
+                </View>
+      }
+      return <View style={[styleApp.roundView,{backgroundColor:colors.secondary}]}>
+      <Text style={[styleApp.text,{color:'white',fontSize:10}]}>P</Text>
+    </View>
     }
     displayCard(color) {
       
@@ -100,37 +115,28 @@ export default class CardEvent extends React.Component {
           onPress={() => {this.clickProduct()}} 
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
-          style={{height:'100%',width:width-40,marginLeft:20,paddingTop:15}} 
+          style={{height:'100%',width:'100%',paddingTop:15,paddingLeft:20,paddingRight:20}} 
           activeOpacity={1} 
         >
           
           <Row>
             <Col size={50} style={styleApp.center2} >
-            <Text style={[styles.subtitle,{color:colors.primary,fontFamily:'OpenSans-SemiBold'}]}>{date(this.state.item.date.start,'ddd, Do MMM')} at {date(this.state.item.date.start,'h:mm a')}</Text>
+            <Text style={[styles.subtitle,{color:colors.primary,fontFamily:'OpenSans-SemiBold',fontSize:12}]}>{date(this.state.item.date.start,'ddd, Do MMM')} at {date(this.state.item.date.start,'h:mm a')}</Text>
               
             </Col>
             <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach()}>
-              {
-                this.coach()?
-                <View style={[styleApp.roundView,{backgroundColor:colors.green}]}>
-                  <Text style={[styleApp.text,{color:'white',fontSize:10}]}>C</Text>
-                </View>
-                :
-                <View style={[styleApp.roundView,{backgroundColor:colors.secondary}]}>
-                  <Text style={[styleApp.text,{color:'white',fontSize:10}]}>P</Text>
-                </View>
-              }
+              {this.iconCoach()}
             </Col>
             <Col size={10} style={styleApp.center3} >
               {
               this.props.item.organizer?
-              <AllIcons name='bullhorn' type='font' color={colors.blue} size={20} />
+              <AllIcons name='bullhorn' type='font' color={colors.blue} size={15} />
               :!this.props.item.organizer && (this.props.item.status == 'confirmed' || !this.state.item.info.public)?
               <AllIcons name='check' type='mat' color={colors.green} size={20} />
               :!this.props.item.organizer && this.props.item.status == 'rejected'?
               <AllIcons name='close' type='mat' color={colors.primary} size={20} />
               :!this.props.item.organizer?
-              <AllIcons name='clock' type='font' color={colors.secondary} size={20} />
+              <AllIcons name='clock' type='font' color={colors.secondary} size={16} />
               :null
               }
             </Col>
@@ -140,17 +146,17 @@ export default class CardEvent extends React.Component {
               </View>
             </Col>
           </Row>
-          <Row style={{marginTop:10}}>
+          <Row style={{marginTop:0}}>
             <Col size ={80} style={styleApp.center2}>
-            <Text style={[styles.title,{fontFamily:'OpenSans-SemiBold',fontSize:20}]}>{this.state.item.info.name}</Text>
+            <Text style={[styles.title,{fontFamily:'OpenSans-SemiBold',fontSize:18}]}>{this.state.item.info.name}</Text>
             </Col>
             <Col size ={20} style={styleApp.center3}>
-            <Text style={styles.textPrice}>{this.entreeFee(this.state.item.price.joiningFee)}</Text>
+            <Text style={[styles.textPrice,{marginTop:20}]}>{this.entreeFee(this.state.item.price.joiningFee)}</Text>
             </Col>
           </Row>
           
-          <Row style={{marginTop:5,marginBottom:15}}>
-            <Col style={[styles.center2,{paddingTop:10,paddingBottom:10}]} size={80}>
+          <Row style={{marginTop:0,marginBottom:15}}>
+            <Col style={[styles.center2,{paddingTop:0,paddingBottom:10}]} size={80}>
               <Text style={styles.subtitle}>{this.state.item.location.area}</Text>
 
             </Col>
@@ -158,6 +164,7 @@ export default class CardEvent extends React.Component {
               
             </Col>
           </Row>
+          
 
         </TouchableOpacity>
 
@@ -178,14 +185,14 @@ export default class CardEvent extends React.Component {
 const styles = StyleSheet.create({
   cardList:{
     flex:1,
-    marginTop:0,
     //width: '48%',
-    width:width,
-    marginLeft:-20,
+    width:'100%',
+    //marginLeft:-20,
     // aspectRatio: 1,
     backgroundColor:'white',  
-    borderBottomWidth:0.3,
-    borderColor:colors.grey,
+    borderTopWidth:0.3,
+    borderRightWidth:0.3,
+    borderColor:colors.borderColor,
   },
   center:{
     alignItems: 'center',
@@ -208,7 +215,7 @@ const styles = StyleSheet.create({
   },
   textSport:{
     color:colors.greenStrong,
-    fontSize:13,
+    fontSize:11,
     fontFamily: 'OpenSans-SemiBold',
   },
   textPrice:{

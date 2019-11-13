@@ -22,7 +22,7 @@ import NavigationService from '../../../../NavigationService'
 const { height, width } = Dimensions.get('screen')
 import Icon from '../icons/icons'
 import AllIcons from '../icons/AllIcons'
-const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
+const AnimatedIcon = Animated.createAnimatedComponent(MatIcon)
 
 export default class ExpandableCard extends Component {
     constructor(props) {
@@ -160,7 +160,7 @@ export default class ExpandableCard extends Component {
               this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon!=undefined?
               <AllIcons type={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].typeIcon} name={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon} color={colors.title} size={17} />
               :
-              <FontIcon name="check" color={colors.title} size={17} />
+              <AllIcons type='mat' name="check" color={colors.title} size={22} />
             }
             
           </Col>
@@ -184,9 +184,9 @@ export default class ExpandableCard extends Component {
           <Col size={15} style={styleApp.center}>
           {
           this.props.option.expendable == true?
-          <AnimatedIcon name='angle-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={16} />
+          <AnimatedIcon name='keyboard-arrow-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={20} />
           :
-          <FontIcon name='check' color={this.colorCheck(this.props.option,true,'#eaeaea')} size={15} />
+          <AllIcons type='mat' name='check' color={this.colorCheck(this.props.option,true,'#eaeaea')} size={15} />
           }
           
           </Col>
@@ -209,18 +209,12 @@ export default class ExpandableCard extends Component {
                   option.icon != undefined?
                   <AllIcons type={option.typeIcon} name={option.icon} color={colors.title} size={17} />
                   :
-                  <FontIcon name="check" color={'#eaeaea'} size={20} />
+                  <AllIcons type='mat' name="check" color={'#eaeaea'} size={22} />
                   }
               
               </Col>
               <Col size={60} style={[styles.center2,{paddingLeft:15}]}>
-                {
-                  option.locked!=true?
-                  <Text style={styleApp.inputOff}>{option.text}</Text> 
-                  :
-                  <Text style={[styleApp.inputOff,{color:colors.title}]}>{option.text}</Text> 
-                }
-              
+                <Text style={styleApp.inputOff}>{option.text}</Text> 
               </Col>
               <Col size={10} style={styles.center} activeOpacity={option.title !=undefined?0.7:1} onPress={() => option.title !=undefined?this.openAlert(option):null}>
                 {

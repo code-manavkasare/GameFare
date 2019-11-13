@@ -23,7 +23,7 @@ import indexEvents from '../../database/algolia'
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/ListEvents'
 import CardEvent from './CardEvent'
-import Button from '../../layout/buttons/Button'
+import Button from '../../layout/Views/Button'
 import AsyncImage from '../../layout/image/AsyncImage'
 import AllIcons from '../../layout/icons/AllIcons'
 
@@ -45,12 +45,22 @@ class ListEvents extends React.Component {
         <Text style={[styleApp.title,{marginBottom:0}]}>Our sports</Text>
 
         <View style={styleApp.divider2} />
-        <ScrollView horizontal={true}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {this.props.sports.map((sport,i) => (
-            <TouchableOpacity activeOpacity={1} style={[styleApp.center,styles.cardSport]}>
-              <AsyncImage style={styles.imgBackground} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
-              <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',marginTop:10}]}>{sport.card.name}</Text>
-            </TouchableOpacity>
+            <Button view={() => {
+              return (
+                <View style={styleApp.center4}>
+                  <AsyncImage style={styles.imgBackground} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
+                  <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',marginTop:10,fontSize:12}]}>{sport.card.name}</Text>
+                </View>
+              )
+            }} 
+            click={() => console.log('')}
+            color='white'
+            style={[styleApp.center,styles.cardSport]}
+            onPressColor={colors.off}
+            />
+            
           ))}
         </ScrollView>   
         </View>       
@@ -68,16 +78,18 @@ const styles = StyleSheet.create({
     color:colors.title
   },
   imgBackground:{
-    height:80,
-    width:80,
+    height:70,
+    width:70,
     borderRadius:40,
-    
+    borderColor:colors.off,
+    borderWidth:1,
   },
   cardSport:{
     // backgroundColor:'red',
     marginRight:10,
-    height:110,
-    width:90
+    height:130,
+    borderRadius:5,
+    width:80
   }
 });
 

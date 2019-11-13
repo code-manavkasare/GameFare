@@ -116,50 +116,69 @@ class Page3 extends Component {
       var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
       var levelOption = data.levelOption=='equal'?'only':data.levelOption=='min'?'and above':'and below'
       return (
-          <View style={{marginTop:0}}>
-            <Row style={{marginBottom:10}}>
-              <Col size={70} style={styleApp.center2}>
+          <View style={{width:width,marginLeft:-20,marginTop:-15}}>
+
+            <View style={[styleApp.viewHome,{paddingTop:15}]}>
+              <View style={styleApp.marginView}>
+                <Row>
+                  <Col size={25} style={styleApp.center2}>
+                    <View style={[styleApp.viewSport,{marginTop:5}]}>
+                      <Text style={styleApp.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                    </View>
+                  </Col>
+                  <Col size={10} style={styleApp.center3}>
+                    <AllIcons name={data.info.public?'lock-open':'lock'} size={18} type={'font'} color={colors.blue}/>
+                  </Col>
+                  <Col size={65} style={styleApp.center3}>            
+                    <Text style={[styleApp.text,{color:colors.primary,marginTop:10,fontFamily:'OpenSans-Bold',fontSize:18}]}>{Number(data.price.joiningFee)==0?'Free entry':'$'+data.price.joiningFee}</Text>  
+                  </Col>
+                </Row>
+              </View>
+            </View>
+
+            <View style={[styleApp.viewHome,{paddingTop:15}]}>
+              <View style={styleApp.marginView}>
                 <Text style={[styleApp.title,{fontSize:20}]}>{data.info.name}</Text>
-              </Col>
-              <Col size={10} style={styleApp.center2}>
-                <AllIcons name={data.info.public?'lock-open':'lock'} size={18} type={'font'} color={colors.blue}/>
-              </Col>
-              <Col size={20} style={styleApp.center}>
-                <View style={styleApp.viewSport}>
-                  <Text style={styleApp.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
-                </View>
-                <Text style={[styleApp.text,{color:colors.primary,marginTop:10,fontFamily:'OpenSans-Bold'}]}>{Number(data.price.joiningFee)==0?'Free':'$'+data.price.joiningFee}</Text>
-              </Col>
-            </Row>
-            {this.rowIcon('calendar-alt',this.dateTime(data),'font')}
-            {this.rowIcon('map-marker-alt',this.title(data.location.area),'font')}
+                <View style={[styleApp.divider2,{marginBottom:10}]} />
 
-            {/* {this.sport(data.info.sport)} */}
+                {this.rowIcon('calendar-alt',this.dateTime(data),'font')}
+                {this.rowIcon('map-marker-alt',this.title(data.location.area),'font')}
+                <View style={{height:5}}/>
+                {data.info.instructions != ''?this.rowIcon('parking',this.title(data.info.instructions),'font'):null}
+              </View>
+            </View>
 
-            <View style={{height:10}} />
+            <View style={[styleApp.viewHome,{paddingTop:15}]}>
+              <View style={styleApp.marginView}>
+              {this.rowIcon('user-plus',this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players'),'font')}
+              <View style={{height:5}}/>
+              {this.rowIcon('balance-scale',this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'font')}
+              <View style={{height:5}}/>
 
-            <View style={{height:0.3,marginTop:10,marginBottom:10,backgroundColor:colors.borderColor}} />
-            {this.rowIcon('user-plus',this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players'),'font')}
-            <View style={{height:5}}/>
-            {this.rowIcon('balance-scale',this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'font')}
-            <View style={{height:5}}/>
+              {this.rowIcon(data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars',this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),'font')}
+              
 
-            {this.rowIcon(data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars',this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),'font')}
+              <View style={{height:0.3,marginTop:20,marginBottom:10,backgroundColor:colors.borderColor}} />
+              
+              {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
+              </View>
+            </View>
+
+
+            <View style={[styleApp.viewHome,{paddingTop:20}]}>
+              <View style={styleApp.marginView}>
+                {
+                  data.info.player?
+                  <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>As a host you will get to play for free!</Text></Text>
+                  :
+                  <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
+                }
+              </View>
+            </View>
+
+
+
             
-
-            <View style={{height:0.3,marginTop:20,marginBottom:10,backgroundColor:colors.borderColor}} />
-            
-            {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
-
-
-            <View style={{height:0.3,marginTop:20,marginBottom:20,backgroundColor:colors.borderColor}} />
-
-            {
-              data.info.player?
-              <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>As a host you will get to play for free!</Text></Text>
-              :
-              <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
-            }
             
 
           </View>
@@ -218,8 +237,17 @@ class Page3 extends Component {
     }
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
     // await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(userEvent)
+    try {
+      await firebase.messaging().requestPermission();
+      // User has authorised
+      await firebase.messaging().subscribeToTopic(this.props.userID)
+      await firebase.messaging().subscribeToTopic('all')
+      await firebase.messaging().subscribeToTopic(pushEvent.key)
+    } catch (error) {
+        // User has rejected permissions
+    }
     this.setState({loader:false})
-    this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3'})
+    this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})
   }
   render() {
     return (

@@ -23,6 +23,9 @@ import momentTZ from 'moment-timezone';
 import moment from 'moment'
 import BackButton from '../../layout/buttons/BackButton'
 
+import RNFetchBlob from 'react-native-fetch-blob'
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = RNFetchBlob.polyfill.Blob
 
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
@@ -42,7 +45,7 @@ export default class Location extends Component {
         super(props);
         this.state = {
           EventCode:'',
-          textInput:this.props.navigation.getParam('location').address,
+          textInput:'',
           loader: false,
           showAlert:false,
           message:'',
@@ -71,7 +74,7 @@ export default class Location extends Component {
           headerStyle:styleApp.styleHeader,
           headerTitleStyle: styleApp.textHeader,
           headerLeft: () => (
-            <BackButton color={colors.title} name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent2')} />
+            <BackButton color={colors.title} name='keyboard-arrow-down' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
           ),
           headerRight: () => (
             navigation.getParam('loader') == true?
@@ -122,7 +125,7 @@ export default class Location extends Component {
         console.log('val')
         console.log(val)
         const apiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk&input='+val+'&fields=formatted_address'
-        const result = await fetch(apiUrl)
+        const result = await RNFetchBlob.fetch('GET',apiUrl)
         console.log(result)
         const json = await result.json()
         console.log(json)
@@ -184,7 +187,7 @@ export default class Location extends Component {
         console.log('url2')
 
         console.log(url2)
-        const result2 = await fetch(url2)
+        const result2 = await RNFetchBlob.fetch('GET',url2)
         console.log('result2')
         console.log(result2)
         const json = await result2.json()
@@ -220,16 +223,18 @@ export default class Location extends Component {
           zipCode = Number(filterZip[0].long_name)
         }
 
-        if (zipCode == 0) {
-          this.props.navigation.setParams({ loader: false })
-          this.setState({
-            loader:false,
-            showAlert:true,
-            message:'Wrong address. Please try again.'
-          })
-        } else {
-          var urlTimeZone = 'https://maps.googleapis.com/maps/api/timezone/json?location='+locationObj.geometry.location.lat+','+locationObj.geometry.location.lng+'&timestamp='+(Math.round((new Date().getTime())/1000)).toString()+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
-          const timeZoneresult = await fetch(urlTimeZone)
+        // if (zipCode != 0) {
+        //   this.props.navigation.setParams({ loader: false })
+        //   this.setState({
+        //     loader:false,
+        //     showAlert:true,
+        //     message:'Wrong address. Please try again.'
+        //   })
+        // } else {
+          
+        // } 
+        var urlTimeZone = 'https://maps.googleapis.com/maps/api/timezone/json?location='+locationObj.geometry.location.lat+','+locationObj.geometry.location.lng+'&timestamp='+(Math.round((new Date().getTime())/1000)).toString()+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
+          const timeZoneresult = await RNFetchBlob.fetch('GET',urlTimeZone)
           const jsonTimeZone = await timeZoneresult.json()
           var timeZoneName = jsonTimeZone.timeZoneName
           var timeZoneName = timeZoneName.split(' ')
@@ -259,8 +264,7 @@ export default class Location extends Component {
             area:addressOff,
             lat:locationObj.geometry.location.lat,
             lng:locationObj.geometry.location.lng,
-          })
-        }      
+          })     
       }
       } catch (err) {
         console.log('errrrrrr')
@@ -299,7 +303,7 @@ export default class Location extends Component {
     async currentLocationOK(position,location,address) {
       console.log('location okkkkkay')
       var urlTimeZone = 'https://maps.googleapis.com/maps/api/timezone/json?location='+position.coords.latitude+','+position.coords.longitude+'&timestamp='+(Math.round((new Date().getTime())/1000)).toString()+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
-      const timeZoneresult = await fetch(urlTimeZone)
+      const timeZoneresult = await RNFetchBlob.fetch('GET',urlTimeZone)
       const jsonTimeZone = await timeZoneresult.json()
 
       var timeZoneName = jsonTimeZone.timeZoneName
