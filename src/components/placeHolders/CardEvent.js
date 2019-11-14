@@ -21,7 +21,7 @@ export default class PlaceHolder extends PureComponent {
       }
   render() {
     return (
-        <View style={styles.content}>
+        <View style={[styles.content,{borderRightWidth:this.props.groupPage?0:0.3,borderTopWidth:this.props.groupPage?0:0.3}]}>
           
           <Row>
             <Col size={80} style={styles.center2}>

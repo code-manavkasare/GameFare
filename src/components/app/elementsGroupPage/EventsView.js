@@ -18,6 +18,7 @@ import Communications from 'react-native-communications';
 import FadeInView from 'react-native-fade-in-view';
 import LinearGradient from 'react-native-linear-gradient';
 import PlaceHolder from '../../placeHolders/CardEvent'
+import CardEvent from '../elementsUser/events/CardEvent'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
@@ -46,15 +47,20 @@ export default class Events extends Component {
     this.setState({loader:false,events:events})
   }
   rowEvent(event,i){
+    console.log('events!!!')
+    console.log(event)
     return (
-      <View key={i}>
-        <Text>event</Text>
-      </View>
+      <CardEvent userID={this.props.userID} key={i} groupPage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} clickEvent={(event) => this.props.push('Event',{data:event,pageFrom:'Group',loader:true})} item={event}/>
     )
+  }
+  newEvent() {
+    if (!this.props.userConnected) return this.props.navigate('SignIn',{pageFrom:'Group'})
+    if (this.props.userID != this.props.data.info.organizer) return this.props.navigate('Alert',{textButton:'Got it!',close:true,title:'You need to be admin of this groups in order to add events.',})
+    return this.props.navigate('CreateEvent0',{'pageFrom':'Group',group:this.props.data,sport:this.props.sport})
   }
   eventsView(data) {
       return (
-        <View style={[styleApp.viewHome,{paddingBottom:0}]}>
+        <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
@@ -64,7 +70,7 @@ export default class Events extends Component {
               <ButtonColor view={() => {
                 return <Text style={styleApp.title}>+</Text>
               }} 
-              click={() => this.props.newEvent()}
+              click={this.newEvent.bind(this)}
               color='white'
               style={[styleApp.center,{borderColor:colors.off,height:40,width:40,borderRadius:20,borderWidth:1}]}
               onPressColor={colors.off}
@@ -75,7 +81,7 @@ export default class Events extends Component {
           
 
           <View style={[styleApp.divider2,{marginBottom:10}]} />
-          <View style={{marginLeft:-20,width:width}}>
+          <View style={{marginLeft:-20,width:width-21}}>
           {
             this.state.loader?
             <FadeInView duration={300} style={{paddingTop:10}}>
@@ -85,7 +91,7 @@ export default class Events extends Component {
             <Text style={[styleApp.smallText,{marginTop:10,marginBottom:20,marginLeft:20}]}>No events has been created yet.</Text>
             :
             <FadeInView duration={300} style={{marginTop:5}}>
-            {Object.values(this.state.events).map((event,i) => (
+            {Object.values(this.state.events).reverse().map((event,i) => (
               this.rowEvent(event,i)
             ))}
             </FadeInView>

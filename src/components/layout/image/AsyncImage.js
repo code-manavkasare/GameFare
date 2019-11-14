@@ -60,8 +60,6 @@ export default class AsyncImage extends Component {
         return this.props.mainImage
     }
     imgDisplay () {
-        console.log('le check token')
-        console.log(this.state.checkToken)
         if (this.state.checkToken == 'null') {
             return (
                 <Animated.View style={{opacity:this.opacityFastImageCached,height:this.props.style.height,width:this.props.style.width}}>
@@ -93,8 +91,6 @@ export default class AsyncImage extends Component {
                 <FastImage
                         resizeMode={"cover"}
                         onLoadEnd={() => {
-                            console.log('end loader')
-                            console.log(this.props.mainImage)
                             // this.enterPictureCached()
                         }}
                         style={[this.props.style,{zIndex:this.state.zIndexInitial}]}

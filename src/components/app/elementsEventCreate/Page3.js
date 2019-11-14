@@ -16,9 +16,11 @@ import TextField from '../../layout/textField/TextField'
 import Switch from '../../layout/switch/Switch'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import Button from '../../layout/buttons/Button'
+import ButtonColor from '../../layout/Views/Button'
 import DateEvent from './DateEvent'
 import firebase from 'react-native-firebase'
 import { Col, Row, Grid } from "react-native-easy-grid";
+import AsyncImage from '../../layout/image/AsyncImage'
 
 import AllIcons from '../../layout/icons/AllIcons'
 import BackButton from '../../layout/buttons/BackButton'
@@ -107,6 +109,45 @@ class Page3 extends Component {
     if (data.step1.private) return 'Private'
     return 'Public • ' + Object.values(data.info.levelFilter.listExpend).filter(element => element.value == data.step1.levelFilter.valueSelected)[0].text + ' ' + Object.values(data.step1.levelOption.listExpend).filter(element => element.value == data.step1.levelOption.valueSelected)[0].text.toLowerCase()
   }
+  rowGroup(group,i){
+    return (
+      <ButtonColor view={() => {
+        return (
+          <Row>       
+            <Col size={15} style={styleApp.center2}>
+              <AsyncImage style={{width:'100%',height:40,borderRadius:6}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
+            </Col>
+            <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
+              <Text style={styleApp.text}>{group.info.name}</Text>
+              <Text style={[styleApp.smallText,{fontSize:12}]}>{group.info.sport.charAt(0).toUpperCase() + group.info.sport.slice(1)}</Text>
+            </Col>
+            <Col size={10} style={styleApp.center3}>
+              <AllIcons name='check' type='mat' size={20} color={colors.green} />
+            </Col>
+          </Row>
+        )
+      }} 
+      click={() => console.log('')}
+      color='white'
+      style={[styles.rowGroup,{marginTop:10,flex:1}]}
+      onPressColor='white'
+      />
+    )
+  }
+  listGroups (groups) {
+    if (Object.values(groups).length == 0) return null
+    return (
+      <View style={styleApp.viewHome}>
+              <View style={styleApp.marginView}>
+                <Text style={styleApp.text}>Groups</Text>
+                <View style={[styleApp.divider2,{marginBottom:10}]} />
+                {Object.values(groups).map((group,i) => (
+                      this.rowGroup(group,i)
+                ))}
+              </View>
+      </View>
+    )
+  }
   
   page2(data) {
     console.log('data')
@@ -148,6 +189,8 @@ class Page3 extends Component {
               </View>
             </View>
 
+            
+
             <View style={[styleApp.viewHome,{paddingTop:15}]}>
               <View style={styleApp.marginView}>
               {this.rowIcon('user-plus',this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players'),'font')}
@@ -164,6 +207,7 @@ class Page3 extends Component {
               </View>
             </View>
 
+            {this.listGroups(this.props.navigation.getParam('groups'))}
 
             <View style={[styleApp.viewHome,{paddingTop:20}]}>
               <View style={styleApp.marginView}>
@@ -218,10 +262,18 @@ class Page3 extends Component {
         [this.props.userID]:user
       }
     }
+    var groupsToPush = []
+    var groups = this.props.navigation.getParam('groups')
+    if (Object.values(groups).length != 0) {
+      var groupsToPush = Object.values(groups).map((group) => {
+        return group.objectID
+      })
+    }
     event={
       ...event,
       coaches:coaches,
       attendees:attendees,
+      groups:groupsToPush
     }
     
     console.log('event')
@@ -246,6 +298,14 @@ class Page3 extends Component {
     } catch (error) {
         // User has rejected permissions
     }
+    for (var i in groupsToPush) {
+      await firebase.database().ref('groups/' + groupsToPush[i] + '/events').update({[pushEvent.key]:{
+        eventID:pushEvent.key
+      }})
+    }
+    
+    console.log('groupsToPush')
+    console.log(groupsToPush)
     this.setState({loader:false})
     this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})
   }

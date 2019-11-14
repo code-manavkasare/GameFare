@@ -54,6 +54,7 @@ class Page2 extends Component {
     console.log('page 1 mount')
     console.log(this.props.sports)
     console.log(this.state.sportsFilter)
+    
   }
   close() {
       this.props.navigation.goBack()
@@ -165,24 +166,24 @@ class Page2 extends Component {
   page1() {
       return (
         <View style={{marginTop:-15,marginLeft:-20,width:width}}>
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Name</Text>
+              <Text style={styleApp.text}>Name</Text>
               {this.tournamentName()}
             </View>
           </View>
 
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Information</Text>
+              <Text style={styleApp.text}>Information</Text>
               {this.address()}
               {this.date()}
             </View>
           </View>
 
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Instructions</Text>
+              <Text style={styleApp.text}>Instructions</Text>
               {this.textField('instructions','E.g parking instruction, unit number...(optional)',100,true,'default','parking')}
             </View>
           </View>
@@ -241,7 +242,7 @@ class Page2 extends Component {
     console.log('event')
     console.log(event)
     await this.setState({loader:false})
-    return this.props.navigation.navigate('CreateEvent3',{data:event})
+    return this.props.navigation.navigate('CreateEvent3',{data:event,groups:step1.groups})
   }
   render() {
     return (

@@ -31,18 +31,6 @@ class HomeScreen extends React.Component {
       this.state = {
         events:[],
         loader:false,
-        location:{
-          address:'Los Angeles, California',
-          lat:34.052235,
-          lng:-118.243683
-        },
-        search:{
-          aroundLatLng: '34.052235'+','+'-118.243683',
-          aroundRadius: 20*1000,
-          // filters:'info.sport:' + 'tennis' + ' OR info.sport:' + 'soccer' + " ",
-          query:'',
-          // sports:[],
-        }
       };
     }
     static navigationOptions = ({ navigation }) => {

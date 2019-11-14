@@ -63,6 +63,7 @@ export default class CardEvent extends React.Component {
     }
     alertCoach() {
       var alert = ''
+      if (this.props.groupPage) return true
       if (this.coach() && this.state.item.info.organizer == this.props.userID) {
         alert = 'You created this event as a coach'
       }
@@ -93,7 +94,7 @@ export default class CardEvent extends React.Component {
       ]).start()
     }
     card (color) {
-      if (this.state.loader)return <PlacelHolder />
+      if (this.state.loader)return <PlacelHolder groupPage={this.props.groupPage}/>
       return <FadeInView duration={250}>{this.displayCard(color)}</FadeInView>
     }
     iconCoach() {
@@ -109,7 +110,7 @@ export default class CardEvent extends React.Component {
     displayCard(color) {
       
       return (
-        <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
+        <Animated.View style={[styles.cardList,{backgroundColor:color},{borderRightWidth:this.props.groupPage?0:0.3,borderTopWidth:this.props.groupPage?0:0.3}]}>
         
         <TouchableOpacity 
           onPress={() => {this.clickProduct()}} 
@@ -125,11 +126,13 @@ export default class CardEvent extends React.Component {
               
             </Col>
             <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach()}>
-              {this.iconCoach()}
+              {this.props.groupPage!= true?this.iconCoach():null}
             </Col>
             <Col size={10} style={styleApp.center3} >
               {
-              this.props.item.organizer?
+              this.props.groupPage?
+              null
+              :this.props.item.organizer?
               <AllIcons name='bullhorn' type='font' color={colors.blue} size={15} />
               :!this.props.item.organizer && (this.props.item.status == 'confirmed' || !this.state.item.info.public)?
               <AllIcons name='check' type='mat' color={colors.green} size={20} />

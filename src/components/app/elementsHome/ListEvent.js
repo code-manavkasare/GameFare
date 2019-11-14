@@ -33,15 +33,27 @@ class ListEvents extends React.Component {
   state={
     events:[],
     loader:true,
+    location:{
+      address:'Los Angeles, California',
+      lat:34.052235,
+      lng:-118.243683
+    },
+    search:{
+      aroundLatLng: '34.052235'+','+'-118.243683',
+      aroundRadius: 20*1000,
+      filters:'info.public=1',
+      query:'',
+      // sports:[],
+    }
   }
   async componentDidMount() {
     await this.setState({loader:true})
-    this.loadEvent(this.props.search)
+    this.loadEvent(this.state.search)
   }
   async componentWillReceiveProps(nextProps) {
     if (this.props.loader != nextProps.loader && nextProps.loader == true) {
       await this.setState({loader:true})
-      this.loadEvent(this.props.search)
+      this.loadEvent(this.state.search)
     }
   }
   async loadEvent(search) {
@@ -66,13 +78,13 @@ class ListEvents extends React.Component {
     console.log('location')
     console.log(location)
     var search = {
-      ...this.props.search,
+      ...this.state.search,
       hitsPerPage:20,
       aroundLatLng: location.lat+','+location.lng,
       aroundRadius: 20*1000,
     }
-    await this.props.setState({location:location,loader:true,search:search})
-    // this.loadEvent(search)
+    await this.setState({location:location,loader:true,search:search})
+    this.loadEvent(search)
     
     return NavigationService.navigate('Home')
   }
@@ -82,13 +94,13 @@ class ListEvents extends React.Component {
         <Row style={{marginLeft:20,width:width-60}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>Upcoming events</Text>
-            <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0}]}>{this.props.location.address}</Text>
+            <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0}]}>{this.state.location.address}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>
           <Button view={() => {
                 return <AllIcons name='map-marker-alt' size={16} color={colors.title} type='font' />
               }} 
-              click={() => NavigationService.navigate('Location',{pageFrom:'Home',location:this.props.location,onGoBack:(location) => this.setLocation(location)})}
+              click={() => NavigationService.navigate('Location',{pageFrom:'Home',location:this.state.location,onGoBack:(location) => this.setLocation(location)})}
               color='white'
               style={[styleApp.center,{borderColor:colors.off,height:40,width:40,borderRadius:20,borderWidth:1}]}
               onPressColor={colors.off}

@@ -211,6 +211,10 @@ class EventPage extends React.Component {
           objectID={data.objectID} 
           userID={this.props.userID} 
           loader={this.state.loader}
+          userConnected={this.props.userConnected}
+          sport={sport}
+          navigate={(val,data) => this.props.navigation.navigate(val,data)} 
+          push={(val,data) => this.props.navigation.push(val,data)}
         />
 
         <MembersView 

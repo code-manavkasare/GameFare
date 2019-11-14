@@ -16,10 +16,12 @@ import BackButton from '../../layout/buttons/BackButton'
 
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
+import ButtonColor from '../../layout/Views/Button'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import Switch from '../../layout/switch/Switch'
 import AllIcons from '../../layout/icons/AllIcons'
+import AsyncImage from '../../layout/image/AsyncImage'
 import DateEvent from './DateEvent'
 import {date} from '../../layout/date/date'
 
@@ -32,6 +34,7 @@ class Page1 extends Component {
     this.state = {
       private:false,
       players:1,
+      groups:{},
       levelFilter:{
         text:"Joining",
         value:'join',
@@ -92,6 +95,11 @@ class Page1 extends Component {
   componentDidMount() {
     console.log('page 1 mount')
     console.log(this.props.sports)
+    if (this.props.navigation.getParam('group') != undefined) {
+      this.setState({groups:{
+        [this.props.navigation.getParam('group').objectID]:this.props.navigation.getParam('group')
+      }})
+    }
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
@@ -173,29 +181,86 @@ class Page1 extends Component {
     )
   }
   
-
+  async setGroups(groups) {
+    console.log('set groups!')
+    console.log(groups)
+    await this.setState({groups:groups})
+    this.props.navigation.navigate('CreateEvent1')
+  }
+  openAddGroups() {
+    if (!this.props.userConnected) return this.props.navigation.navigate('SignIn',{pageFrom:'CreateEvent1'})
+    return this.props.navigation.navigate('AddGroups',{userID:this.props.userID,groups:this.state.groups,onGoBack:(groups) => this.setGroups(groups)})
+  }
+  rowGroup(group,i){
+    return (
+      <ButtonColor view={() => {
+        return (
+          <Row>       
+            <Col size={15} style={styleApp.center2}>
+              <AsyncImage style={{width:'100%',height:40,borderRadius:6}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
+            </Col>
+            <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
+              <Text style={styleApp.text}>{group.info.name}</Text>
+              <Text style={[styleApp.smallText,{fontSize:12}]}>{group.info.sport.charAt(0).toUpperCase() + group.info.sport.slice(1)}</Text>
+            </Col>
+            <Col size={10} style={styleApp.center3}>
+              <AllIcons name='check' type='mat' size={20} color={colors.green} />
+            </Col>
+          </Row>
+        )
+      }} 
+      click={() => console.log('')}
+      color='white'
+      style={[styles.rowGroup,{marginTop:10,flex:1}]}
+      onPressColor='white'
+      />
+    )
+  }
   page1() {
       return (
         <View style={{marginTop:-15,marginLeft:-20,width:width}}>
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Access</Text>
+              <Text style={styleApp.text}>Access</Text>
               {this.switch('Open access','Invite only','private')}
               {this.levelFilter()}
               {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
             </View>
           </View>
 
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Attendance</Text>
+              <Text style={styleApp.text}>Attendance</Text>
               {this.plusMinus('players',200,1,1,'user-check')}
             </View>
           </View>
 
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Gender</Text>
+              <Text style={styleApp.text}>Add event to groups</Text>
+                {
+                  Object.values(this.state.groups).length!=0?
+                  <View style={{marginTop:10}}>
+                  {Object.values(this.state.groups).map((group,i) => (
+                      this.rowGroup(group,i)
+                  ))}
+                  </View>
+                  :null
+                }
+                <ButtonColor view={() => {
+                  return <Text style={styleApp.title}>+</Text>
+                }} 
+                click={() => this.openAddGroups()}
+                color='white'
+                style={[styleApp.center,{borderColor:colors.off,height:40,width:'100%',borderRadius:20,borderWidth:1,marginTop:20}]}
+                onPressColor={colors.off}
+                />
+            </View>
+          </View>
+
+          <View style={styleApp.viewHome}>
+            <View style={styleApp.marginView}>
+              <Text style={styleApp.text}>Gender</Text>
               {this.gender()}
             </View>
           </View>
@@ -235,6 +300,8 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
+    userConnected:state.user.userConnected,
+    userID:state.user.userID
   };
 };
 

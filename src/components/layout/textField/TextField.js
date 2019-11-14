@@ -31,7 +31,7 @@ export default class TextField extends Component {
   render() {
     return ( 
       <Row style={[styleApp.inputForm,{height:this.props.heightField}]}>
-          <Col style={[styleApp.center4,{paddingTop:14}]} size={15}>
+          <Col style={[styleApp.center4,{paddingTop:11}]} size={15}>
             <AllIcons name={this.props.icon} color={colors.title} size={18} type={this.props.typeIcon} />
           </Col>
           <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>

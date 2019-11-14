@@ -74,6 +74,13 @@ class Page0 extends Component {
   componentDidMount() {
     console.log('page 1 mount')
     console.log(this.state.sportsFilter)
+    if (this.props.navigation.getParam('sport')!= undefined) {
+      this.setState({sportsFilter:{
+        ...this.state.sportsFilter,
+        value:this.props.navigation.getParam('sport'),
+        valueSelected:this.props.navigation.getParam('sport').value,
+      }})
+    }
   }
   sports() {
     return (
@@ -215,7 +222,7 @@ class Page0 extends Component {
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
-          <Text style={[styleApp.title,{fontSize:19}]}>Sport</Text>
+          <Text style={styleApp.text}>Sport</Text>
 
           <View style={[styleApp.divider2,{marginBottom:0}]} />
 
@@ -227,7 +234,7 @@ class Page0 extends Component {
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
-          <Text style={[styleApp.title,{fontSize:19,marginBottom:20}]}>I am a...</Text>
+          <Text style={[styleApp.text,{marginBottom:20}]}>I am a...</Text>
 
           {this.buttonCoach()}
 
@@ -251,7 +258,7 @@ class Page0 extends Component {
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
-          <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Entry fee</Text>
+          <Text style={styleApp.text}>Entry fee</Text>
 
 
 
@@ -291,7 +298,7 @@ class Page0 extends Component {
           onPressColor={colors.greenLight2}
           enabled={this.conditionOn()}
           loader={false} 
-          click={() => this.props.navigation.navigate('CreateEvent1',{page0:this.state})}
+          click={() => this.props.navigation.navigate('CreateEvent1',{page0:this.state,group:this.props.navigation.getParam('group')})}
          />
          :
          <ButtonRoundOff
