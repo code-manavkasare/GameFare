@@ -72,7 +72,7 @@ class ListEvents extends React.Component {
     if (!event.info.public) {
       return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
     }
-    return this.props.navigate('Event',{data:event,pageFrom:'Home',loader:true})
+    return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
   async setLocation (location) {
     console.log('location')

@@ -51,7 +51,9 @@ class ListEvents extends React.Component {
               return (
                 <View style={styleApp.center4}>
                   <AsyncImage style={styles.imgBackground} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
-                  <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',marginTop:10,fontSize:12}]}>{sport.card.name}</Text>
+                  <View style={[styleApp.viewSport,{marginTop:10,backgroundColor:sport.card.color.backgroundColor}]}>
+                    <Text style={[styleApp.textSport,{color:sport.card.color.color}]}>{sport.card.name}</Text>
+                  </View>
                 </View>
               )
             }} 

@@ -215,13 +215,13 @@ export default styles = StyleSheet.create({
     },
     footerText:{
       color:colors.primary,
-      fontSize:10,
-      fontFamily: 'OpenSans-Bold',
+      fontSize:12,
+      fontFamily: 'OpenSans-SemiBold',
     },
     footerTextOff:{
       color:colors.title,
-      fontSize:10,
-      fontFamily: 'OpenSans-Bold',
+      fontSize:12,
+      fontFamily: 'OpenSans-SemiBold',
     },
     styleHeader:{
         backgroundColor: 'white',

@@ -173,12 +173,12 @@ class EventPage extends React.Component {
           <View style={styleApp.marginView}>
 
             <Row>
-              <Col size={75} style={styleApp.center2}>
+              <Col size={75} style={[styleApp.center2,{paddingRight:10}]}>
                 <Text style={styleApp.title}>{data.info.name}</Text>
               </Col>
               <Col size={25} style={styleApp.center3}>
-                <View style={[styles.viewSport,{marginTop:5}]}>
-                  <Text style={styles.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
+                  <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                 </View>
               </Col>
             </Row>
@@ -198,7 +198,7 @@ class EventPage extends React.Component {
     var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
     return (
       <View style={{width:width,marginTop:-5}}>
-        <View style={[styleApp.viewHome,{marginBottom:10,paddingTop:0,paddingBottom:0}]}>
+        <View style={[styleApp.viewHome,{marginBottom:10,paddingTop:0,paddingBottom:0,overflow: 'hidden'}]}>
         <AsyncImage style={{width:'100%',height:270,borderRadius:16}} mainImage={this.props.navigation.getParam('data').pictures[0]} imgInitial={this.props.navigation.getParam('data').pictures[0]} />
         </View>
 

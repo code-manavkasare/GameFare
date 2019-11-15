@@ -355,6 +355,8 @@ PODS:
     - React
   - react-native-image-resizer (1.1.0):
     - React
+  - react-native-mapbox-gl (7.0.8):
+    - React
   - react-native-mixpanel (0.0.6):
     - Mixpanel (~> 3.4.5)
     - React
@@ -491,6 +493,7 @@ DEPENDENCIES:
   - react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
+  - react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -600,6 +603,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-image-picker
   react-native-image-resizer:
     :path: ../node_modules/react-native-image-resizer
+  react-native-mapbox-gl:
+    :path: ../node_modules/@react-native-mapbox-gl/maps
   react-native-mixpanel:
     :path: ../node_modules/react-native-mixpanel
   react-native-sms:
@@ -721,6 +726,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: 8710b1bae31e734191273344d52141151b94bb3f
   react-native-image-picker: 02cc046cf072f1254fb6eba51990a3f25e138cb4
   react-native-image-resizer: 04a3409e7d4ad646c4468671c69dec490def139c
+  react-native-mapbox-gl: 099d223de88d75815e3a5a0a04b64c970b929105
   react-native-mixpanel: 794ab824eabb78cc90dc7f39c218be5ebd47023b
   react-native-sms: d11ae42d9e7b9de59d7e778d43c6a5983710f95a
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
@@ -752,6 +758,6 @@ SPEC CHECKSUMS:
   tipsi-stripe: 237cab79699eb7d354bfc09238b3284e3b8dad84
   Yoga: 6af72bedeaea291a3a3717772d6d41836f23a1b9
 
-PODFILE CHECKSUM: b3ecc38acdf3de28334b103f281307030b1ca2b0
+PODFILE CHECKSUM: 31da7dc75a77c525151d324291878bc41a3654a0
 
 COCOAPODS: 1.4.0

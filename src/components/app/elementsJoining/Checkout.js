@@ -162,7 +162,9 @@ class ProfilePage extends Component {
 
           </View>
         </View>
-
+        
+        {
+        this.coach() || Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)) != 0?
         <View style={[styleApp.viewHome,{paddingTop:15}]}>
           <View style={styleApp.marginView}>
 
@@ -176,6 +178,8 @@ class ProfilePage extends Component {
 
           </View>
         </View>
+        :null
+        }
 
 
       </View>

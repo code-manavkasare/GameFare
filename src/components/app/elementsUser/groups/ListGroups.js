@@ -88,7 +88,7 @@ class ListEvent extends Component {
       <View>
         <View style={[styleApp.viewHome]}>
           <View style={styleApp.marginView}>
-            <Text style={[styleApp.title,{marginBottom:15,marginLeft:0}]}>My groups</Text>
+            <Text style={[styleApp.text,{marginBottom:15,marginLeft:0}]}>My groups</Text>
           </View>
           { 
           !this.props.userConnected?
@@ -183,7 +183,7 @@ class ListEvent extends Component {
           marginBottomScrollView={0}
           marginTop={-10}
           refreshControl={true}
-          colorRefresh={colors.primary}
+          colorRefresh={colors.title}
           refresh={() => this.refresh()}
           offsetBottom={90}
           showsVerticalScrollIndicator={false}

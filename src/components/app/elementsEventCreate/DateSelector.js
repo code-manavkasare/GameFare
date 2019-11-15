@@ -214,14 +214,18 @@ export default class Date extends Component {
         <View style={{marginLeft:-20,width:width}}>
           <View style={[styleApp.viewHome,{paddingTop:5}]}>
             <View style={styleApp.marginView}>
-              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Start</Text>
-              <View style={styleApp.divider2}/>
+              
               {this.calendar('daySelectedStart','markedDatesStart')}
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Start time</Text>
+              <View style={styleApp.divider2}/>
               {this.timeSelect('startTimeHour','startTimeMin','startPart')}
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>End time</Text>
+              <View style={styleApp.divider2}/>
+              {this.timeSelect('endTimeHour','endTimeMin','endPart')}
             </View>
           </View>
 
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
+          {/* <View style={[styleApp.viewHome,{paddingTop:5}]}>
             <View style={styleApp.marginView}>
               <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>End</Text>
               <View style={styleApp.divider2}/>
@@ -234,9 +238,9 @@ export default class Date extends Component {
               }
 
               <View style={{height:10}}/>
-              {this.timeSelect('endTimeHour','endTimeMin','endPart')}
+              
             </View>
-          </View>
+          </View> */}
 
         </View>
       )

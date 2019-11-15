@@ -91,7 +91,7 @@ export default class Alert extends Component {
           </Col>
          </Row>
 
-         <View style={styleApp.marginView}>
+         <View style={[styleApp.marginView,{width:width-40}]}>
          {
              Platform.OS == 'ios'?
             <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.clickCar2('apple')}}>

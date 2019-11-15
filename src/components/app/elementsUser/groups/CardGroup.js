@@ -12,6 +12,7 @@ import {
   ScrollView,
   View
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 // import {Fonts} from '../../../../utils/Font'
@@ -29,7 +30,7 @@ import FadeInView from 'react-native-fade-in-view';
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../../layout/date/date'
 
-export default class CardGroup extends React.Component {
+class CardGroup extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -68,7 +69,7 @@ export default class CardGroup extends React.Component {
       return <FadeInView duration={250}>{this.displayCard(color)}</FadeInView>
     }
     displayCard(color) {
-      
+      var sport = Object.values(this.props.sports).filter(sport => sport.value == this.state.item.info.sport)[0]
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
@@ -76,7 +77,7 @@ export default class CardGroup extends React.Component {
           onPress={() => {this.clickProduct()}} 
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
-          style={{height:'100%',width:'100%',paddingLeft:20,paddingRight:20,paddingTop:15,paddingBottom:20}} 
+          style={{height:'100%',width:'100%',paddingLeft:20,paddingRight:20,paddingTop:30,paddingBottom:20}} 
           activeOpacity={1} 
         >
           <Row style={{marginBottom:5}}>
@@ -90,7 +91,7 @@ export default class CardGroup extends React.Component {
             <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
               
               <Row>
-                <Col size={65} style={styleApp.center2}>
+                <Col size={65} style={[styleApp.center2,{paddingRight:10}]}>
                   <Text style={[styleApp.title,{fontSize:19}]}>{this.state.item.info.name}</Text>
                 </Col>
                 <Col size={10} style={styleApp.center2} >
@@ -107,13 +108,13 @@ export default class CardGroup extends React.Component {
                   }
                 </Col>
                 <Col size={25} style={styleApp.center2}>
-                  <View style={styles.viewSport}>
-                    <Text style={styles.textSport}>{this.state.item.info.sport.charAt(0).toUpperCase() + this.state.item.info.sport.slice(1)}</Text>
+                  <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor}]}>
+                    <Text style={[styles.textSport,{color:sport.card.color.color}]}>{this.state.item.info.sport.charAt(0).toUpperCase() + this.state.item.info.sport.slice(1)}</Text>
                   </View>
                 </Col>
               </Row>
-              <Text style={[styles.subtitle,{fontSize:12}]}>{this.state.item.location.address}</Text>
-              <Text style={[styles.subtitle,{fontSize:12}]}>Created by {this.state.item.organizer.name}</Text>
+              {/* <Text style={[styles.subtitle,{fontSize:12}]}>{this.state.item.location.address}</Text> */}
+              <Text style={[styles.subtitle,{fontSize:12,marginBottom:10,marginTop:5}]}>Created by {this.state.item.organizer.name}</Text>
             </Col>
 
           </Row>
@@ -184,6 +185,14 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
   },
 });
+
+const  mapStateToProps = state => {
+  return {
+    sports:state.globaleVariables.sports.list,
+  };
+};
+
+export default connect(mapStateToProps,{})(CardGroup);
 
 
 

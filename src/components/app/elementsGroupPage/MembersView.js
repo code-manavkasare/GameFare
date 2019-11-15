@@ -48,7 +48,7 @@ export default class Members extends Component {
   }
   rowUser (user,i,data) {
     return (
-      <View  key={i}>
+      <View  key={i} style={{paddingTop:10,paddingBottom:10}}>
         <Row>
           <Col size={10} style={styleApp.center2}>
             <AllIcons name='user' color={colors.grey} type='font' size={19} />

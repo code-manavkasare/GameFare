@@ -74,7 +74,8 @@ permissions_path = '../node_modules/react-native-permissions/ios'
 
 
  
-
+# Mapbox
+  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
 
   pod 'react-native-statusbar', :path => '../node_modules/@react-native-community/status-bar'
 

@@ -16,6 +16,10 @@ import styleApp from '../style/style'
 import sizes from '../style/sizes'
 import {Grid,Row,Col} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+import AsyncImage from '../layout/image/AsyncImage'
+MapboxGL.setAccessToken('pk.eyJ1IjoiYmlyb2xsZWF1ZiIsImEiOiJjampuMHByenoxNmRoM2ttcHVqNmd0bzFvIn0.Fml-ls_j4kW_OJViww4D_w');
+import AsyncStorage from '@react-native-community/async-storage';
 
 import ScrollView from '../layout/scrollViews/ScrollView2'
 import AllIcons from '../layout/icons/AllIcons'
@@ -24,6 +28,7 @@ import BackButton from '../layout/buttons/BackButton'
 import Button2 from '../layout/buttons/Button'
 import Loader from '../layout/loaders/Loader'
 import isEqual from 'lodash.isequal'
+import LinearGradient from 'react-native-linear-gradient';
 
 import {indexEvents} from '../database/algolia'
 import PlaceHolder from '../placeHolders/ListAttendees'
@@ -34,6 +39,8 @@ class EventPage extends React.Component {
     this.state = {
       usersConfirmed:true,
       loader:false,
+      location:[-122.400021, 37.789085],
+      imageMap:'',
     };
   }
   static navigationOptions = ({ navigation }) => {
@@ -50,7 +57,28 @@ class EventPage extends React.Component {
     }
   };
   async componentDidMount() {
-    this.loadEvent(this.props.navigation.getParam('data'))
+    console.log('event page mount')
+    console.log(this.props.navigation.getParam('data'))
+    // this.loadEvent(this.props.navigation.getParam('data'))
+    var uri = await AsyncStorage.getItem(this.props.navigation.getParam('data').objectID)
+    if(uri == null) {
+      uri = await MapboxGL.snapshotManager.takeSnap({
+        centerCoordinate: [this.props.navigation.getParam('data').location.lng, this.props.navigation.getParam('data').location.lat],
+        width: width-20,
+        height: 180,
+        zoomLevel: 12,
+        pitch: 30,
+        heading: 20,
+        // styleURL: MapboxGL.StyleURL.Dark,
+        writeToDisk: true, // Create a temporary file
+      });
+      
+      AsyncStorage.setItem(this.props.navigation.getParam('data').objectID, uri)
+    }
+    console.log('uri!!!!!!')
+    console.log(uri)
+    
+    this.setState({imageMap:uri})
   }
   async loadEvent(data,refresh) {
     if (refresh) {
@@ -200,10 +228,25 @@ class EventPage extends React.Component {
     if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) return true
     return false
   }
+  imageMap(data) {
+    return (
+      <TouchableOpacity style={[styleApp.viewHome,{paddingTop:0,paddingBottom:0,overflow: 'hidden'}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('AlertAddress',{data:data.location})}>
+        {
+          this.state.imageMap != ''?
+          <AsyncImage style={{width:'100%',height:120,borderRadius:16}} mainImage={this.state.imageMap} imgInitial={this.state.imageMap} />
+          :
+          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{width:'100%',height:118,borderRadius:16}} />
+        }
+      </TouchableOpacity>
+    )
+  }
   eventInfo(data,sport) {
     var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
     var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
-    var levelOption = data.levelOption=='equal'?'only':data.levelOption=='min'?'and above':'and below'
+    var levelOption = data.info.levelOption=='equal'?'only':data.info.levelOption=='min'?'and above':'and below'
+    console.log('level')
+    console.log(data)
+    console.log(rule)
     return (
       <View>
 
@@ -224,8 +267,8 @@ class EventPage extends React.Component {
 
             <Row>
               <Col size={25} style={styleApp.center2}>
-                <View style={[styles.viewSport,{marginTop:5}]}>
-                  <Text style={styles.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
+                  <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                 </View>
               </Col>
               <Col size={75} style={styleApp.center3}>            
@@ -262,12 +305,16 @@ class EventPage extends React.Component {
     console.log('data')
     console.log(data)
     var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
+    var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
     console.log('sport')
     console.log(sport)
     return (
       <View style={{marginLeft:0,width:width,marginTop:0}}>
+        {this.imageMap(data)}
         {this.eventInfo(data,sport)}
 
+        {
+        rule.coachNeeded?
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
@@ -291,6 +338,8 @@ class EventPage extends React.Component {
 
           </View>
         </View>
+        :null
+        }
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
@@ -317,6 +366,7 @@ class EventPage extends React.Component {
 
           </View>
         </View>
+
 
       </View>
     )
@@ -365,8 +415,10 @@ class EventPage extends React.Component {
     if (this.props.navigation.getParam('pageFrom') != 'Home' && this.props.navigation.getParam('data').info.organizer == this.props.userID && this.props.navigation.getParam('data').info.public) return true
     return false
   }
-  next() {
-    if (this.props.infoUser.coach == true && this.props.infoUser.coachVerified == true && this.props.navigation.getParam('data').info.player == true) {
+  next(data) {
+    var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
+    var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
+    if (this.props.infoUser.coach == true && this.props.infoUser.coachVerified == true && this.props.navigation.getParam('data').info.player == true && rule.coachNeeded) {
       return this.props.navigation.navigate('Coach',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
     }
     return this.props.navigation.navigate('Checkout',{
@@ -377,7 +429,28 @@ class EventPage extends React.Component {
       }
     })
   }
+  async joinWaitlist () {
+    if (!this.props.userConnected) return this.props.navigation.navigate('SignIn',{pageFrom:'Event'})
+    await firebase.database().ref('events/' + this.props.navigation.getParam('data').objectID + '/waitlist').push({
+      userID:this.props.userID,
+      date:(new Date()).toString(),
+      nameUser:this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
+      nameEvent:this.props.navigation.getParam('data').info.name,
+    })
+    return this.props.navigation.navigate('Alert',{textButton:'Got it!',title:"You are now waitlisted for the event. We will notify you if a spot becomes available.",close:true})
+  }
+  waitlistCondition() {
+    if (!this.openCondition(this.props.navigation.getParam('data')) && this.props.navigation.getParam('data').info.organizer !== this.props.userID) {
+      if (this.props.navigation.getParam('data').attendees == undefined) return true
+      if (Object.values(this.props.navigation.getParam('data').attendees).filter(user => user.captainInfo.userID === this.props.userID).length == 0) return true
+    }
+    return false
+  }
   render() {
+    console.log('waitlistCondition')
+    console.log(this.waitlistCondition())
+    console.log(this.props.userID)
+    console.log(this.props.navigation.getParam('data'))
     return (
       <View style={{ flex:1}}>
         <ScrollView 
@@ -395,9 +468,20 @@ class EventPage extends React.Component {
         {
           this.props.navigation.getParam('loader')?
           null
-          :!this.openCondition(this.props.navigation.getParam('data'))?
-          null
-          :this.props.navigation.getParam('pageFrom') == 'Home'?
+          :this.waitlistCondition()?
+          <FadeInView duration={300} style={styleApp.footerBooking}>
+          <Button2
+          icon={'next'} 
+          backgroundColor='green'
+          onPressColor={colors.greenClick}
+          styleButton={{marginLeft:20,width:width-40}}
+          disabled={false} 
+          text='Join the waitlist'
+          loader={false} 
+          click={() => this.joinWaitlist()}
+         />
+         </FadeInView>
+          :this.openCondition(this.props.navigation.getParam('data')) && this.props.navigation.getParam('pageFrom') == 'Home' || this.props.navigation.getParam('pageFrom') == 'Group'?
           <FadeInView duration={300} style={styleApp.footerBooking}>
           <Button2
           icon={'next'} 
@@ -407,7 +491,7 @@ class EventPage extends React.Component {
           disabled={false} 
           text='Join the event'
           loader={false} 
-          click={() => this.next()}
+          click={() => this.next(this.props.navigation.getParam('data'))}
          />
          </FadeInView>
          :null
@@ -441,7 +525,8 @@ const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
     userID:state.user.userID,
-    infoUser:state.user.infoUser.userInfo
+    infoUser:state.user.infoUser.userInfo,
+    userConnected:state.user.userConnected
   };
 };
 

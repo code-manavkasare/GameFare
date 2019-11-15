@@ -61,7 +61,7 @@ class ListEvents extends React.Component {
   }
   openEvent(event) {
     if (!event.info.public) {
-      return this.props.navigate('Alert',{close:true,title:'The group is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'ListGroups',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
+      return NavigationService.navigate('Alert',{close:true,title:'The group is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'ListGroups',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
     }
     return NavigationService.navigate('Group',{data:event,pageFrom:'ListGroups',loader:true})
   }
@@ -84,7 +84,7 @@ class ListEvents extends React.Component {
       <View style={[styleApp.viewHome]}>
         <Row style={{marginLeft:20,width:width-60}}>
           <Col size={85} style={styleApp.center2}>
-            <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>Popular groups</Text>
+            <Text style={[styleApp.text,{marginBottom:5,marginLeft:0}]}>Popular groups</Text>
             <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0}]}>{this.state.location.address}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>

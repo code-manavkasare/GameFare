@@ -57,6 +57,7 @@ class Page0 extends Component {
         expendable:true,
         alwaysExpanded:true,
         valueSelected:Object.values(this.props.sports)[0].rules[0].value,
+        value:Object.values(this.props.sports)[0].rules[0],
         listExpend:Object.values(this.props.sports)[0].rules
       },
     };
@@ -75,11 +76,20 @@ class Page0 extends Component {
     console.log('page 1 mount')
     console.log(this.state.sportsFilter)
     if (this.props.navigation.getParam('sport')!= undefined) {
-      this.setState({sportsFilter:{
-        ...this.state.sportsFilter,
-        value:this.props.navigation.getParam('sport'),
-        valueSelected:this.props.navigation.getParam('sport').value,
-      }})
+      this.setState({
+        sportsFilter:{
+          ...this.state.sportsFilter,
+          value:this.props.navigation.getParam('sport'),
+          valueSelected:this.props.navigation.getParam('sport').value,
+        }
+        ,
+        rulesFilter:{
+          ...this.state.rulesFilter,
+          value:this.props.navigation.getParam('sport').rules[0],
+          valueSelected:this.props.navigation.getParam('sport').rules[0].value,
+          listExpend:this.props.navigation.getParam('sport').rules
+        }
+      })
     }
   }
   sports() {
@@ -101,6 +111,7 @@ class Page0 extends Component {
               expendable:true,
               alwaysExpanded:true,
               valueSelected:sportsFilter.value.rules[0].value,
+              value:sportsFilter.value.rules[0],
               listExpend:sportsFilter.value.rules
             },
           })
@@ -115,6 +126,7 @@ class Page0 extends Component {
           tickFilter={(value) => {
           var rulesFilter = this.state.rulesFilter
           rulesFilter.valueSelected = value
+          rulesFilter.value = Object.values(this.state.sportsFilter.value.rules).filter(rule => rule.value == value)[0]
           console.log('le sport')
           console.log(value)
           this.setState({
@@ -230,7 +242,9 @@ class Page0 extends Component {
           {this.rules()}
           </View>
         </View>
-
+        
+        {
+        this.state.rulesFilter.value.coachNeeded?
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
@@ -254,6 +268,8 @@ class Page0 extends Component {
           }
           </View>
         </View>
+        :null
+        }
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
@@ -279,6 +295,12 @@ class Page0 extends Component {
     if (this.state.joiningFee == '') return false
     return true
   }
+  valuePlayer() {
+    if (!this.state.rulesFilter.value.coachNeeded) {
+      return true
+    }
+    return this.state.player
+  }
   render() {
     return (
       <View style={styleApp.stylePage}>
@@ -298,14 +320,13 @@ class Page0 extends Component {
           onPressColor={colors.greenLight2}
           enabled={this.conditionOn()}
           loader={false} 
-          click={() => this.props.navigation.navigate('CreateEvent1',{page0:this.state,group:this.props.navigation.getParam('group')})}
+          click={() => this.props.navigation.navigate('CreateEvent1',{page0:{...this.state,player:this.valuePlayer()},group:this.props.navigation.getParam('group')})}
          />
          :
          <ButtonRoundOff
           icon={'next'} 
           enabled={this.conditionOn()}
           loader={false} 
-          click={() => this.props.navigation.navigate('CreateEvent1',{page0:this.state})}
          />
         }
         

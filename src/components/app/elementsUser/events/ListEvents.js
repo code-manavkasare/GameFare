@@ -89,7 +89,7 @@ class ListEvent extends Component {
       <View>
         <View style={[styleApp.viewHome]}>
           <View style={styleApp.marginView}>
-            <Text style={[styleApp.title,{marginBottom:15,marginLeft:0}]}>My events</Text>
+            <Text style={[styleApp.text,{marginBottom:15,marginLeft:0}]}>My events</Text>
           </View>
           { 
           !this.props.userConnected?
@@ -109,7 +109,7 @@ class ListEvent extends Component {
               this.eventsLogout()
               :
               Object.values(this.state.events).reverse().map((event,i) => (
-                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={(event) => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents',loader:true})} item={event}/>
+                <CardEvent userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickEvent={(event) => this.props.navigation.push('Event',{data:event,pageFrom:'ListEvents'})} item={event}/>
               ))
             }
           </FadeInView>

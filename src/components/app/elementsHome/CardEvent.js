@@ -12,6 +12,7 @@ import {
   ScrollView,
   View
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
@@ -24,7 +25,7 @@ import {timing,native} from '../../animations/animations'
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../layout/date/date'
 
-export default class CardEvent extends React.Component {
+class CardEvent extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
@@ -57,6 +58,7 @@ export default class CardEvent extends React.Component {
       return this.displayCard(color)
     }
     displayCard(color) {
+      var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.item.info.sport)[0]
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
@@ -87,8 +89,8 @@ export default class CardEvent extends React.Component {
               }
             </Col>
             <Col size={20} style={styleApp.center8}>
-              <View style={styles.viewSport}>
-                <Text style={styles.textSport}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
+              <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor}]}>
+                <Text style={[styles.textSport,{color:sport.card.color.color}]}>{this.props.item.info.sport.charAt(0).toUpperCase() + this.props.item.info.sport.slice(1)}</Text>
               </View>
             </Col>
 
@@ -164,6 +166,15 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
   },
 });
+
+
+const  mapStateToProps = state => {
+  return {
+    sports:state.globaleVariables.sports.list,
+  };
+};
+
+export default connect(mapStateToProps,{})(CardEvent);
 
 
 

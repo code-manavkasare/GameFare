@@ -12,6 +12,7 @@ import {
   ScrollView,
   View
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 // import {Fonts} from '../../../../utils/Font'
@@ -30,7 +31,7 @@ import FadeInView from 'react-native-fade-in-view';
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../../layout/date/date'
 
-export default class CardEvent extends React.Component {
+class CardEvent extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -108,7 +109,7 @@ export default class CardEvent extends React.Component {
     </View>
     }
     displayCard(color) {
-      
+      var sport = Object.values(this.props.sports).filter(sport => sport.value == this.state.item.info.sport)[0]
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color},{borderRightWidth:this.props.groupPage?0:0.3,borderTopWidth:this.props.groupPage?0:0.3}]}>
         
@@ -121,13 +122,13 @@ export default class CardEvent extends React.Component {
         >
           
           <Row>
-            <Col size={50} style={styleApp.center2} >
+            <Col size={60} style={styleApp.center2} >
             <Text style={[styles.subtitle,{color:colors.primary,fontFamily:'OpenSans-SemiBold',fontSize:12}]}>{date(this.state.item.date.start,'ddd, Do MMM')} at {date(this.state.item.date.start,'h:mm a')}</Text>
               
             </Col>
-            <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach()}>
+            {/* <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.alertCoach()}>
               {this.props.groupPage!= true?this.iconCoach():null}
-            </Col>
+            </Col> */}
             <Col size={10} style={styleApp.center3} >
               {
               this.props.groupPage?
@@ -144,8 +145,8 @@ export default class CardEvent extends React.Component {
               }
             </Col>
             <Col size={20} style={styleApp.center3} >
-              <View style={styles.viewSport}>
-                <Text style={styles.textSport}>{this.state.item.info.sport.charAt(0).toUpperCase() + this.state.item.info.sport.slice(1)}</Text>
+              <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor}]}>
+                <Text style={[styles.textSport,{color:sport.card.color.color}]}>{this.state.item.info.sport.charAt(0).toUpperCase() + this.state.item.info.sport.slice(1)}</Text>
               </View>
             </Col>
           </Row>
@@ -237,6 +238,15 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
   },
 });
+
+
+const  mapStateToProps = state => {
+  return {
+    sports:state.globaleVariables.sports.list,
+  };
+};
+
+export default connect(mapStateToProps,{})(CardEvent);
 
 
 

@@ -150,12 +150,17 @@ class Page3 extends Component {
   }
   
   page2(data) {
-    console.log('data')
+    console.log('data page 3')
     console.log(data)
+    
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
       var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
-      var levelOption = data.levelOption=='equal'?'only':data.levelOption=='min'?'and above':'and below'
+      console.log(sport)
+      console.log(level)
+      console.log(rule)
+      var levelOption = data.info.levelOption=='equal'?'only':data.info.levelOption=='min'?'and above':'and below'
+      console.log(levelOption)
       return (
           <View style={{width:width,marginLeft:-20,marginTop:-15}}>
 
@@ -163,8 +168,8 @@ class Page3 extends Component {
               <View style={styleApp.marginView}>
                 <Row>
                   <Col size={25} style={styleApp.center2}>
-                    <View style={[styleApp.viewSport,{marginTop:5}]}>
-                      <Text style={styleApp.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                    <View style={[styleApp.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
+                      <Text style={[styleApp.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                     </View>
                   </Col>
                   <Col size={10} style={styleApp.center3}>

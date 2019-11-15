@@ -5,6 +5,9 @@ import {
 const initialState = {
     tabs:{
         home:{}
+    },
+    sports:{
+        list:[]
     }
 }
 

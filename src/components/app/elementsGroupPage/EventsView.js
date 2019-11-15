@@ -50,7 +50,7 @@ export default class Events extends Component {
     console.log('events!!!')
     console.log(event)
     return (
-      <CardEvent userID={this.props.userID} key={i} groupPage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} clickEvent={(event) => this.props.push('Event',{data:event,pageFrom:'Group',loader:true})} item={event}/>
+      <CardEvent userID={this.props.userID} key={i} groupPage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} clickEvent={(event) => this.props.push('Event',{data:event,pageFrom:'Group'})} item={event}/>
     )
   }
   newEvent() {

@@ -100,7 +100,7 @@ export default class Alert extends Component {
 
          {/* <View style={{height:0.3,backgroundColor:colors.borderColor,marginTop:20}} /> */}
           
-        <View style={styleApp.marginView}>
+        <View style={[styleApp.marginView,{width:width-40}]}>
           <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.click('call')}}>
             <Row >
               <Col style={styles.center} size={20}> 
@@ -112,7 +112,7 @@ export default class Alert extends Component {
             </Row>
           </TouchableOpacity >
 
-          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.click('text')}}>
+          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.click('sms')}}>
             <Row >
               <Col style={styles.center} size={20}> 
                 <AllIcons name='sms' type={'font'} size={20} color={colors.green} />
