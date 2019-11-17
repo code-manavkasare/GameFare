@@ -111,7 +111,7 @@ class CardEvent extends React.Component {
     displayCard(color) {
       var sport = Object.values(this.props.sports).filter(sport => sport.value == this.state.item.info.sport)[0]
       return (
-        <Animated.View style={[styles.cardList,{backgroundColor:color},{borderRightWidth:this.props.groupPage?0:0.3,borderTopWidth:this.props.groupPage?0:0.3}]}>
+        <Animated.View style={[styles.cardList,{backgroundColor:color},]}>
         
         <TouchableOpacity 
           onPress={() => {this.clickProduct()}} 
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     //marginLeft:-20,
     // aspectRatio: 1,
     backgroundColor:'white',  
-    borderTopWidth:0.3,
-    borderRightWidth:0.3,
+    //borderTopWidth:0.3,
+    //borderRightWidth:0.3,
     borderColor:colors.borderColor,
   },
   center:{

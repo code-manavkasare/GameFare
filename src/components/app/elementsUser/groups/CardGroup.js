@@ -37,24 +37,27 @@ class CardGroup extends React.Component {
         player:false,
         backgroundColorAnimation:new Animated.Value(0),
         loader:true,
-        item:{}
+        item:{
+          info:{},
+        }
       };
     }
     async componentDidMount() {
-      indexGroups.clearCache()
-      var group = await indexGroups.getObject(this.props.item.groupID)
-      console.log('event!!!!!!@wqadjksfslf')
-      console.log(group)
-      this.setState({loader:false,item:group})
+      console.log('la card group monrt')
+      console.log(this.props.loadData)
+      if (this.props.loadData) {
+        indexGroups.clearCache()
+        var group = await indexGroups.getObject(this.props.item.groupID)
+        console.log('event!!!!!!@wqadjksfslf')
+        console.log(group)
+        return this.setState({loader:false,item:group})
+      }
+      return this.setState({loader:false})
     }
     async clickProduct () {
       console.log('this.props.category')
       console.log(this.props.item)
       this.props.clickGroup(this.state.item)
-    }
-    closeAlert() {
-      console.log('close alert!')
-      this.props.navigate('ListEvents',{})
     }
     onPress(val) {
       if (val) return Animated.parallel([
@@ -64,12 +67,20 @@ class CardGroup extends React.Component {
         Animated.timing(this.state.backgroundColorAnimation,timing(0,100)),
       ]).start()
     }
-    card (color) {
+    card (color,data) {
       if (this.state.loader)return <PlacelHolder />
-      return <FadeInView duration={250}>{this.displayCard(color)}</FadeInView>
+      return <FadeInView duration={250}>{this.displayCard(color,data)}</FadeInView>
     }
-    displayCard(color) {
-      var sport = Object.values(this.props.sports).filter(sport => sport.value == this.state.item.info.sport)[0]
+  
+    numberMember(data) {
+      if (data.members != undefined) return Object.values(data.members).length
+      return 0
+    }
+    displayCard(color,data) {
+      console.log('display card')
+
+      console.log(data)
+      var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
@@ -77,47 +88,63 @@ class CardGroup extends React.Component {
           onPress={() => {this.clickProduct()}} 
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
-          style={{height:'100%',width:'100%',paddingLeft:20,paddingRight:20,paddingTop:30,paddingBottom:20}} 
+          style={{height:'100%',width:'100%',paddingLeft:20,paddingRight:20,paddingTop:15,paddingBottom:15}} 
           activeOpacity={1} 
         >
           <Row style={{marginBottom:5}}>
-            <Col size={25} style={styleApp.center2}>
+            <Col size={25} >
               {
-                this.state.item.pictures!=undefined?
-                <AsyncImage style={{width:'100%',height:70,borderRadius:6}} mainImage={this.state.item.pictures[0]} imgInitial={this.state.item.pictures[0]} />
+                data.pictures!=undefined?
+                <AsyncImage style={{width:'100%',height:70,borderRadius:5,borderWidth:0.6,borderColor:colors.off}} mainImage={data.pictures[0]} imgInitial={data.pictures[0]} />
                 :null
               } 
             </Col>
-            <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
-              
+            <Col size={85} style={[{paddingLeft:15}]}>         
               <Row>
-                <Col size={65} style={[styleApp.center2,{paddingRight:10}]}>
-                  <Text style={[styleApp.title,{fontSize:19}]}>{this.state.item.info.name}</Text>
-                </Col>
-                <Col size={10} style={styleApp.center2} >
-                  {
-                  this.props.item.organizer?
-                  <AllIcons name='bullhorn' type='font' color={colors.blue} size={15} />
-                  :!this.props.item.organizer && (this.props.item.status == 'confirmed' || !this.state.item.info.public)?
-                  <AllIcons name='check' type='mat' color={colors.green} size={15} />
-                  :!this.props.item.organizer && this.props.item.status == 'rejected'?
-                  <AllIcons name='close' type='mat' color={colors.primary} size={15} />
-                  :!this.props.item.organizer?
-                  <AllIcons name='clock' type='font' color={colors.secondary} size={15} />
-                  :null
-                  }
-                </Col>
-                <Col size={25} style={styleApp.center2}>
-                  <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor}]}>
-                    <Text style={[styles.textSport,{color:sport.card.color.color}]}>{this.state.item.info.sport.charAt(0).toUpperCase() + this.state.item.info.sport.slice(1)}</Text>
-                  </View>
+                <Col size={65} style={[{paddingRight:110}]}>
+                  <Text style={[styleApp.title,{fontSize:14}]}>{data.info.name}</Text>
                 </Col>
               </Row>
-              {/* <Text style={[styles.subtitle,{fontSize:12}]}>{this.state.item.location.address}</Text> */}
-              <Text style={[styles.subtitle,{fontSize:12,marginBottom:10,marginTop:5}]}>Created by {this.state.item.organizer.name}</Text>
+              <Row>
+                <Col size={10} style={[{paddingRight:10},styleApp.center2]}>
+                  <View style={[styles.viewNumber,styleApp.center,{backgroundColor:colors.primaryLight,}]}>
+                    <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
+                  </View>
+                </Col>
+                <Col size={90} style={[{paddingRight:10},styleApp.center2]}>
+                  {
+                    data.members == undefined?
+                    <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',fontSize:11}]}>No members yet</Text>
+                    :
+                    Object.values(data.members).map((member,i) => (
+                    <View style={[styles.viewNumber,styleApp.center,{position:'absolute',left:i*23}]}>
+                      <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.info.name.split(' ')[0][0] + member.info.name.split(' ')[1][0]}</Text>
+                    </View>
+                    ))
+                  }
+                </Col>
+              </Row>              
             </Col>
 
           </Row>
+
+          <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor,position:'absolute',right:20,top:15}]}>
+            <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+          </View>
+
+          <View style={[styleApp.center,{position:'absolute',top:15,right:80,height:25,width:35}]}>
+            {
+            this.props.item.organizer?
+            <AllIcons name='bullhorn' type='font' color={colors.blue} size={15} />
+            :!this.props.item.organizer && (this.props.item.status == 'confirmed' || !data.info.public)?
+            <AllIcons name='check' type='mat' color={colors.green} size={15} />
+            :!this.props.item.organizer && this.props.item.status == 'rejected'?
+            <AllIcons name='close' type='mat' color={colors.primary} size={15} />
+            :!this.props.item.organizer?
+            <AllIcons name='clock' type='font' color={colors.secondary} size={15} />
+            :null
+            }
+            </View>
 
         </TouchableOpacity>
 
@@ -129,8 +156,12 @@ class CardGroup extends React.Component {
       inputRange: [0, 300],
       outputRange: ['white', colors.off]
     });
+    console.log('render')
+    console.log(this.state.item)
+    console.log(this.props.data)
+    console.log(this.props.loadData)
     return (
-      this.card(color)
+      this.card(color,this.props.loadData?this.state.item:this.props.data)
     );
   }
 }
@@ -141,8 +172,8 @@ const styles = StyleSheet.create({
     marginTop:0,
     //width: '48%',
     width:'100%',
-    borderTopWidth:0.3,
-    borderRightWidth:0.3,
+    //borderTopWidth:0.3,
+    //borderRightWidth:0.3,
     borderColor:colors.borderColor,
   },
   center:{
@@ -163,6 +194,9 @@ const styles = StyleSheet.create({
     height:25,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  viewNumber:{
+    height:27,width:27,borderRadius:13.5,backgroundColor:colors.off2,borderColor:colors.off,borderWidth:0.7
   },
   textSport:{
     color:colors.greenStrong,

@@ -29,9 +29,11 @@ export default styles = StyleSheet.create({
       backgroundColor:colors.borderColor
     },
     divider2:{
-      height:0.5,width:'100%',
-      marginTop:20,marginBottom:20,
-      backgroundColor:colors.grey
+      height:0.3,width:'100%',
+      borderTopWidth:0.5,
+      marginTop:20,
+      marginBottom:20,
+      borderColor:colors.grey
     },
     title:{
       fontSize:24,
@@ -119,6 +121,9 @@ export default styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+    viewNumber:{
+      height:27,width:27,borderRadius:13.5,backgroundColor:colors.off2,borderColor:colors.off,borderWidth:0.7
+    },
     footerBooking:{
       position:'absolute',
       bottom:0,
@@ -134,8 +139,8 @@ export default styles = StyleSheet.create({
     },
     cardSelect:{
       height:50,
-      marginTop:10,
-      borderWidth:1,
+      marginTop:0,
+      borderBottomWidth:1,
       width:'100%',
       backgroundColor:'white',
       borderRadius:5,
@@ -143,7 +148,7 @@ export default styles = StyleSheet.create({
       shadowOffset: { width: 0, height: 0 },
       shadowRadius: 15,
       borderColor:'#eaeaea',
-      shadowOpacity: 0.05,
+      shadowOpacity: 0,
     },
     searchBarHome:{
       height:45,
@@ -246,23 +251,25 @@ export default styles = StyleSheet.create({
     },
     marginView:{
       marginLeft:20,
-      width:width-60
+      width:width-40
     },
     viewHome:{
       marginBottom:0,
       backgroundColor:'white',
-      paddingTop:20,paddingBottom:20,
-      borderColor:colors.borderColor,
+      paddingTop:20,
+      paddingBottom:20,
+      borderColor:colors.off,
       //borderBottomWidth:0.3,
       //borderTopWidth:0.3,
-      borderWidth:0.3,
-      marginLeft:10,
-      marginRight:10,
+      borderTopWidth:0,
+      marginLeft:0,
+      marginRight:0,
+      // borderBottomWidth:1,
       marginTop:15,
-      borderRadius:16,
+      borderRadius:0,
       shadowColor: '#46474B',
       shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.08,
+      shadowOpacity: 0,
       shadowRadius:8
     }
   });

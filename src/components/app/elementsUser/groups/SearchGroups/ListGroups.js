@@ -21,7 +21,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import {indexGroups} from '../../../../database/algolia'
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../../../placeHolders/CardEvent'
-import CardGroup from './CardGroup'
+import CardGroup from '../CardGroup'
 import Button from '../../../../layout/Views/Button'
 import AllIcons from '../../../../layout/icons/AllIcons'
 import NavigationService from '../../../../../../NavigationService';
@@ -111,7 +111,7 @@ class ListEvents extends React.Component {
           :
           <FadeInView duration={350}>
             {this.state.events.map((event,i) => (
-              <CardGroup key={i} homePage={true} marginTop={25} openEvent={() => this.openEvent(event)} item={event}/>
+              <CardGroup loadData={false} key={i} homePage={true} marginTop={25} clickGroup={() => this.openEvent(event)} item={event} data={event}/>
             ))}
           </FadeInView>
         }

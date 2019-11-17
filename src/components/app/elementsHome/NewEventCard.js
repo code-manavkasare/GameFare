@@ -33,6 +33,8 @@ export default class NewEventCard extends React.Component {
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
+        
+
           <Text style={styleApp.title}>Want to organize an event?</Text>
           <Text style={[styleApp.subtitle,{marginBottom:20,marginRight:30,marginTop:10}]}>Pick your sport and join the GameFare community now!</Text>
           <Button backgroundColor={'green'} onPressColor={colors.greenLight2} click={() => NavigationService.navigate('CreateEvent0',{'pageFrom':this.props.pageFrom})} text={'Organize an event'} styleButton={{marginBottom:15,marginTop:10}} loader={false}/>

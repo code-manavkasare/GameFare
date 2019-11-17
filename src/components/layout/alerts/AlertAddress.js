@@ -15,6 +15,7 @@ import {
 import { Col, Row, Grid } from "react-native-easy-grid";
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import Button from '../buttons/Button'
+import ButtonColor from '../Views/Button'
 import colors from '../../style/colors';
 import AllIcons from '../../layout/icons/AllIcons'
 import styleApp from '../../style/style';
@@ -41,14 +42,15 @@ export default class Alert extends Component {
     super(props);
     this.state = {
       step:1,
-      loader: false
+      loader: false,
+
     };
     this.componentWillMount = this.componentWillMount.bind(this);
   }
   componentWillMount(){    
   }
   title() {
-    return <Text style={[styleApp.title,{fontSize:18,fontFamily:'OpenSans-SemiBold'}]}>{this.props.navigation.getParam('data').address}</Text>
+    return <Text style={[styleApp.title,{fontSize:16,fontFamily:'OpenSans-SemiBold'}]}>{this.props.navigation.getParam('data').address}</Text>
   }
   clickCar2(val) {
     var address = this.props.navigation.getParam('data').address
@@ -76,7 +78,30 @@ export default class Alert extends Component {
       this.props.navigation.goBack()
     }
   }
+  button(valClick,text,image) {
+    return (
+      <ButtonColor view={() => {
+        return <Row >
+              <Col style={styles.center2} size={13}> 
+                {image}
+              </Col>  
+              <Col style={styleApp.center2} size={77}> 
+                <Text style={styles.text}>{text}</Text>
+              </Col> 
+              <Col size={10} style={styleApp.center3}>
+                <AllIcons type='mat' name='keyboard-arrow-right' size={20} color={colors.title} />
+              </Col>   
+        </Row>
+        }} 
+        click={() => this.clickCar2(valClick)}
+        color='white'
+        style={[styleApp.cardSelect,{height:55}]}
+        onPressColor={colors.off}
+    />
+    )
+  }
   render() {  
+    // this.button('copy','Copy the address',<Image style={{width:23,height:23,}} source={require('../../../img/map/document.png')} />)
     return (
       <View style={styles.viewModal}>
           <TouchableOpacity style={styles.buttonClose} activeOpacity={0.5} onPress={() => {this.props.navigation.goBack()}}>
@@ -85,48 +110,24 @@ export default class Alert extends Component {
 
 
 
-         <Row style={{flex:1,marginBottom:0,marginLeft:20,width:width-110,marginBottom:9,marginTop:20}}>
+         <Row style={{flex:1,marginBottom:0,marginLeft:20,width:width-110,marginBottom:29,marginTop:20}}>
           <Col>
             {this.title()}
           </Col>
          </Row>
 
+         <View style={{height:0.5,borderTopWidth:1,borderColor:colors.off,width:width-40,marginLeft:20,marginTop:10,marginBottom:0}}/>
+
          <View style={[styleApp.marginView,{width:width-40}]}>
          {
              Platform.OS == 'ios'?
-            <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.clickCar2('apple')}}>
-            <Row >
-              <Col style={styles.center} size={20}> 
-              <Image style={{width:23,height:23,}} source={require('../../../img/map/appleMap.png')} />
-              </Col>  
-              <Col style={styleApp.center2} size={80}> 
-                <Text style={styles.text}>Open with Apple Maps</Text>
-              </Col>  
-            </Row>
-          </TouchableOpacity >
+             this.button('apple','Open with Apple Maps',<Image style={{width:23,height:23,}} source={require('../../../img/map/appleMap.png')} />)
             :null
            }
-          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.clickCar2('google')}}>
-            <Row >
-              <Col style={styles.center} size={20}> 
-              <Image style={{width:23,height:23,}} source={require('../../../img/map/googleMap.png')} />
-              </Col>  
-              <Col style={styleApp.center2} size={80}> 
-                <Text style={styles.text}>Open with Google Maps</Text>
-              </Col>  
-            </Row>
-          </TouchableOpacity >
+          
+          {this.button('google','Open with Google Maps',<Image style={{width:23,height:23,}} source={require('../../../img/map/googleMap.png')} />)}
 
-          <TouchableOpacity style={styleApp.cardSelect} activeOpacity={0.7} onPress={() => {this.clickCar2('copy')}}>
-            <Row >
-              <Col style={styles.center} size={20}> 
-              <Image style={{width:23,height:23,}} source={require('../../../img/map/document.png')} />
-              </Col>  
-              <Col style={styleApp.center2} size={80}> 
-                <Text style={styles.text}>Copy the address</Text>
-              </Col>  
-            </Row>
-          </TouchableOpacity >
+          {this.button('copy','Copy the address',<Image style={{width:23,height:23,}} source={require('../../../img/map/document.png')} />)}
 
         </View>
 
@@ -189,7 +190,8 @@ const styles = StyleSheet.create({
   },
   text:{
     ...styleApp.text,
-    fontFamily:'OpenSans-Regular'
+    fontFamily:'OpenSans-SemiBold',
+    fontSize:13
   },
   center:{
     alignItems: 'center',

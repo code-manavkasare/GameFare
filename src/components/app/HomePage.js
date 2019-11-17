@@ -70,8 +70,12 @@ class HomeScreen extends React.Component {
            navigate={this.navigate.bind(this)} 
            navigate1={(val,data) => this.props.navigation.navigate(val,data)}
           />
+          
+          
+          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
 
           <NewEventCard pageFrom='Home' />
+          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
           <NewGroupCard pageFrom='Home' />
 
         </View>
@@ -93,7 +97,7 @@ class HomeScreen extends React.Component {
           contentScrollView={() => this.homePageView()}
           marginBottomScrollView={0}
           marginTop={0}
-          colorRefresh={colors.primary}
+          colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}
           refresh={() => this.refresh()}

@@ -46,7 +46,7 @@ class EventPage extends React.Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('data').info.name,
+      title: '',
       headerStyle:styleApp.styleHeader,
       headerTitleStyle: styleApp.textHeader,
       headerRight: () => (
@@ -70,17 +70,22 @@ class EventPage extends React.Component {
     await this.props.navigation.setParams({data:event,loader:false})
     return true
   }
-  rowIcon (component,icon,alert,dataAlert) {
+  rowIcon (component,icon,alert,dataAlert,image) {
     console.log('Alert')
     console.log(alert)
     console.log(dataAlert)
     return (
       <TouchableOpacity style={{marginTop:20}} activeOpacity={alert!=undefined?0.7:1} onPress={() => alert!=undefined?this.props.navigation.navigate('AlertAddress',{data:dataAlert}):null}>
         <Row>
-          <Col size={10} style={styleApp.center2}>
-            <AllIcons name={icon} color={colors.grey} size={18} type='font' />
+          <Col size={15} style={styleApp.center2}>
+            {
+              image!=undefined?
+              image
+              :
+              <AllIcons name={icon} color={colors.grey} size={18} type='font' />
+            }
           </Col>
-          <Col size={90} style={styleApp.center2}>
+          <Col size={85} style={styleApp.center2}>
             {component}
           </Col>
         </Row>
@@ -184,8 +189,12 @@ class EventPage extends React.Component {
             </Row>
 
             <View style={[styleApp.divider2,{marginBottom:10}]} />
-            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
-            {this.rowIcon(this.title(data.organizer.name),'user-alt','AlertAddress',data.location)}
+            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location,<View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:'white',borderWidth:0}]}>
+              <AllIcons name={'map-marker-alt'} color={colors.grey} size={18} type='font' />
+            </View>)}
+            {this.rowIcon(this.title(data.organizer.name),'user-alt',undefined,undefined,<View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.grey,}]}>
+              <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{data.organizer.name.split(' ')[0][0] + data.organizer.name.split(' ')[1][0]}</Text>
+            </View>)}
 
           </View>
         </View>
@@ -198,13 +207,22 @@ class EventPage extends React.Component {
     var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
     return (
       <View style={{width:width,marginTop:-5}}>
-        <View style={[styleApp.viewHome,{marginBottom:10,paddingTop:0,paddingBottom:0,overflow: 'hidden'}]}>
-        <AsyncImage style={{width:'100%',height:270,borderRadius:16}} mainImage={this.props.navigation.getParam('data').pictures[0]} imgInitial={this.props.navigation.getParam('data').pictures[0]} />
+        <View style={[styleApp.viewHome,{marginBottom:10,marginTop:-15,paddingBottom:0,overflow: 'hidden'}]}>
+        <AsyncImage style={{width:'100%',height:240,borderRadius:0}} mainImage={this.props.navigation.getParam('data').pictures[0]} imgInitial={this.props.navigation.getParam('data').pictures[0]} />
         </View>
 
         {this.eventInfo(data,sport)}
 
         <DescriptionView objectID={data.objectID} loader={this.state.loader}/>
+        
+        <MembersView 
+          data={data} 
+          objectID={data.objectID} 
+          userID={this.props.userID}  
+          loader={this.state.loader} 
+          infoUser={this.props.infoUser}
+          userConnected={this.props.userConnected}
+        />
 
         <EventsView 
           data={data} 
@@ -217,14 +235,7 @@ class EventPage extends React.Component {
           push={(val,data) => this.props.navigation.push(val,data)}
         />
 
-        <MembersView 
-          data={data} 
-          objectID={data.objectID} 
-          userID={this.props.userID}  
-          loader={this.state.loader} 
-          infoUser={this.props.infoUser}
-          userConnected={this.props.userConnected}
-        />
+        
 
         <PostsView 
           objectID={data.objectID} 

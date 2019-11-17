@@ -41,7 +41,7 @@ class ListEvents extends React.Component {
   sports () {
     return (
       <View duration={350} style={styleApp.viewHome}>
-        <View style={styleApp.marginView}>
+        <View style={[styleApp.marginView,{width:width-40}]}>
         <Text style={[styleApp.title,{marginBottom:0}]}>Our sports</Text>
 
         <View style={styleApp.divider2} />

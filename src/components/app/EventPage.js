@@ -45,7 +45,7 @@ class EventPage extends React.Component {
   }
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('data').info.name,
+      title: '',
       headerStyle:styleApp.styleHeader,
       headerTitleStyle: styleApp.textHeader,
       headerRight: () => (
@@ -114,6 +114,18 @@ class EventPage extends React.Component {
       </TouchableOpacity>
     )
   }
+  colIcon (text,icon) {
+    return (
+          <Col style={styleApp.center} size={50}>
+            <View style={[styleApp.center,{marginBottom:15}]}>
+              <View style={[styleApp.center,styles.roundView]}>
+                <AllIcons name={icon} size={17} color={colors.title} type='font' />
+              </View>       
+            </View>
+            <Text style={styleApp.text}>{text}</Text>
+          </Col>
+    )
+  }
   title(text) {
     return <Text style={[styleApp.title,{fontSize:15,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
   }
@@ -179,9 +191,10 @@ class EventPage extends React.Component {
           <Col size={55} style={styleApp.center2}>
             <Text style={styleApp.text}>{user.captainInfo.name}</Text>
           </Col>
-          <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => !this.allowCall(user,data)?null:this.props.navigation.navigate('AlertCall',{textButton:'Close',title:user.captainInfo.name,subtitle:user.captainInfo.phoneNumber,close:true,icon:<AllIcons name='phone' type='font' color={colors.green} size={17} />})}>
-          {this.allowCall(user,data)?<AllIcons name='phone' type='font' color={colors.green} size={17} />:null}
+          <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => !this.allowCall(user,data)?null:this.props.navigation.navigate('AlertCall',{textButton:'Close',title:user.captainInfo.name,subtitle:user.captainInfo.phoneNumber,close:true,icon:<AllIcons name='envelope' type='font' color={colors.green} size={17} />})}>
+          {this.allowCall(user,data)?<AllIcons name='envelope' type='font' color={colors.green} size={17} />:null}
           </Col>
+          
 
           {
           user.captainInfo.userID == data.info.organizer?
@@ -230,13 +243,30 @@ class EventPage extends React.Component {
   }
   imageMap(data) {
     return (
-      <TouchableOpacity style={[styleApp.viewHome,{paddingTop:0,paddingBottom:0,overflow: 'hidden'}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('AlertAddress',{data:data.location})}>
+      <TouchableOpacity activeOpacity={0.9} style={[styleApp.viewHome,styleApp.center,{paddingTop:0,paddingBottom:0,overflow: 'hidden',marginBottom:-42}]}  onPress={() => this.props.navigation.navigate('AlertAddress',{data:data.location})}>
         {
           this.state.imageMap != ''?
-          <AsyncImage style={{width:'100%',height:120,borderRadius:16}} mainImage={this.state.imageMap} imgInitial={this.state.imageMap} />
+          <AsyncImage style={{width:'100%',height:210,borderRadius:0}} mainImage={this.state.imageMap} imgInitial={this.state.imageMap} />
           :
-          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{width:'100%',height:118,borderRadius:16}} />
+          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{width:'100%',height:210,borderRadius:16}} />
         }
+        
+        <View style={{position:"absolute"}}>
+          <AllIcons name='map-marker-alt' type='font' size={28} color={colors.blue} />
+        </View>
+        {/* <MapboxGL.MapView 
+        style={{width:'100%',height:170}}  
+        // centerCoordinate= {[this.props.navigation.getParam('data').location.lng, this.props.navigation.getParam('data').location.lat]}
+        zoomLevel= {6}
+        showUserLocation={true}
+        animated={true}
+        heading={5}
+        centerCoordinate={[-73.970895, 40.723279]}
+        >
+
+
+          
+        </MapboxGL.MapView> */}
       </TouchableOpacity>
     )
   }
@@ -248,13 +278,10 @@ class EventPage extends React.Component {
     console.log(data)
     console.log(rule)
     return (
-      <View>
+      <View style={[{backgroundColor:'white',borderTopWidth:0.3,borderColor:colors.borderColor}]}>
+        <View style={styleApp.marginView} >
 
-
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
-
-            <Row>
+            <Row style={{marginTop:20}}>
               <Col size={75} style={styleApp.center2}>
                 <Text style={styleApp.title}>{data.info.name}</Text>
               </Col>
@@ -263,9 +290,7 @@ class EventPage extends React.Component {
               </Col>
             </Row>
 
-            <View style={[styleApp.divider2,{marginBottom:10}]} />
-
-            <Row>
+            <Row style={{marginTop:20}}>
               <Col size={25} style={styleApp.center2}>
                 <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
                   <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
@@ -282,22 +307,20 @@ class EventPage extends React.Component {
             {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
             {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
 
-          </View>
-        </View>
 
-        <View style={[styleApp.viewHome,{paddingTop:0}]}>
-          <View style={styleApp.marginView}>
+          <View style={[styleApp.divider2,{marginBottom:10}]} />
 
-          {this.rowIcon(this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player maximum':data.info.maxAttendance + ' players maximum'),'user-plus')}
-          {this.rowIcon(this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'balance-scale')}
-          {this.rowIcon(this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars')}
+          <Row style={{height:100,marginTop:20}}>
+            {this.colIcon(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players','user-plus')}
+            {this.colIcon(level.value=='0'?level.text:level.text.split('/')[0],'balance-scale')}
+          </Row>
 
-          <View style={[styleApp.divider2,{marginBottom:0}]} />
+          <Row style={{height:100,marginTop:20,}}>
+            {this.colIcon(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1),data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars')}
+            {this.colIcon(rule.text,'puzzle-piece')}
+          </Row>
 
-          {this.rowIcon(this.title(rule.text),'puzzle-piece')}
-          </View>
-        </View>
-                
+        </View>     
       </View>
     )
   }
@@ -309,7 +332,7 @@ class EventPage extends React.Component {
     console.log('sport')
     console.log(sport)
     return (
-      <View style={{marginLeft:0,width:width,marginTop:0}}>
+      <View style={{marginLeft:0,width:width,marginTop:-15}}>
         {this.imageMap(data)}
         {this.eventInfo(data,sport)}
 
@@ -447,10 +470,6 @@ class EventPage extends React.Component {
     return false
   }
   render() {
-    console.log('waitlistCondition')
-    console.log(this.waitlistCondition())
-    console.log(this.props.userID)
-    console.log(this.props.navigation.getParam('data'))
     return (
       <View style={{ flex:1}}>
         <ScrollView 
@@ -458,7 +477,7 @@ class EventPage extends React.Component {
           contentScrollView={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))}
           marginBottomScrollView={0}
           marginTop={0}
-          colorRefresh={colors.primary}
+          colorRefresh={colors.title}
           refreshControl={true}
           refresh={() => this.loadEvent(this.props.navigation.getParam('data'),true)}
           offsetBottom={sizes.heightFooterBooking+60}
@@ -518,6 +537,9 @@ const styles = StyleSheet.create({
     fontSize:13,
     fontFamily: 'OpenSans-SemiBold',
   },
+  roundView:{
+    height:50,width:50,backgroundColor:colors.off,borderRadius:25,borderColor:colors.grey,borderWidth:0.7,
+  }
 });
 
 

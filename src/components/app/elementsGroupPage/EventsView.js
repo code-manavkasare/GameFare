@@ -90,7 +90,7 @@ export default class Events extends Component {
             :Object.values(this.state.events).length == 0?
             <Text style={[styleApp.smallText,{marginTop:10,marginBottom:20,marginLeft:20}]}>No events has been created yet.</Text>
             :
-            <FadeInView duration={300} style={{marginTop:5}}>
+            <FadeInView duration={300} style={{marginTop:5,width:width}}>
             {Object.values(this.state.events).reverse().map((event,i) => (
               this.rowEvent(event,i)
             ))}

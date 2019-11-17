@@ -50,13 +50,16 @@ export default class Members extends Component {
     return (
       <View  key={i} style={{paddingTop:10,paddingBottom:10}}>
         <Row>
-          <Col size={10} style={styleApp.center2}>
-            <AllIcons name='user' color={colors.grey} type='font' size={19} />
+          <Col size={15} style={styleApp.center2}>
+            <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primaryLight,}]}>
+              <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{user.info.name.split(' ')[0][0] + user.info.name.split(' ')[1][0]}</Text>
+            </View>
           </Col>
-          <Col size={70} style={styleApp.center2}>
+          <Col size={75} style={styleApp.center2}>
             <Text style={styleApp.text}>{user.info.name}</Text>
           </Col>
-          <Col size={20} style={styleApp.center}>
+          <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => !this.props.userID == data.info.organizer?null:NavigationService.navigate('AlertCall',{textButton:'Close',title:user.info.name,subtitle:user.info.phoneNumber,close:true,icon:<AllIcons name='envelope' type='font' color={colors.green} size={17} />})}>
+          {this.props.userID == data.info.organizer?<AllIcons name='envelope' type='font' color={colors.green} size={17} />:null}
           </Col>
         </Row>
       </View>

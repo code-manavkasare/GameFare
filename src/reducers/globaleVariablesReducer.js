@@ -7,7 +7,12 @@ const initialState = {
         home:{}
     },
     sports:{
-        list:[]
+        list:[{
+            card:{
+                img:{},
+                color:{}
+            }
+        }]
     }
 }
 

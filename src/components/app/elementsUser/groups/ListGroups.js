@@ -88,8 +88,10 @@ class ListEvent extends Component {
       <View>
         <View style={[styleApp.viewHome]}>
           <View style={styleApp.marginView}>
-            <Text style={[styleApp.text,{marginBottom:15,marginLeft:0}]}>My groups</Text>
+            <Text style={[styleApp.title,{marginBottom:15,marginLeft:0}]}>My groups</Text>
           </View>
+
+          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]}/>
           { 
           !this.props.userConnected?
           this.eventsLogout()
@@ -108,7 +110,7 @@ class ListEvent extends Component {
               this.eventsLogout()
               :
               Object.values(this.state.groups).reverse().map((event,i) => (
-                <CardGroup userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickGroup={(event) => this.props.navigation.push('Group',{data:event,pageFrom:'ListGroups',loader:true})} item={event}/>
+                <CardGroup loadData={true} userID={this.props.userID} key={i} homePage={true} marginTop={25} navigate={(val,data) => this.props.navigation.navigate(val,data)} clickGroup={(event) => this.props.navigation.push('Group',{data:event,pageFrom:'ListGroups',loader:true})} item={event}/>
               ))
             }
           </FadeInView>

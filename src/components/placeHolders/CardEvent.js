@@ -21,7 +21,7 @@ export default class PlaceHolder extends PureComponent {
       }
   render() {
     return (
-        <View style={[styles.content,{borderRightWidth:this.props.groupPage?0:0.3,borderTopWidth:this.props.groupPage?0:0.3}]}>
+        <View style={[styles.content]}>
           
           <Row>
             <Col size={80} style={styles.center2}>
@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
     // //position:'absolute',
     backgroundColor:'white',
     paddingTop:20,
-    borderTopWidth:0.3,
-    borderRightWidth:0.3,
+    //borderTopWidth:0.3,
+    //borderRightWidth:0.3,
     borderColor:colors.borderColor,
     // zIndex:40,
     // top:0,

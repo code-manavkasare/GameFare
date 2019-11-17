@@ -165,7 +165,7 @@ class ListEvent extends Component {
           contentScrollView={() => this.listEvent()}
           marginBottomScrollView={0}
           marginTop={0}
-          colorRefresh={colors.primary}
+          colorRefresh={colors.title}
           refreshControl={true}
           refresh={() => this.refresh()}
           offsetBottom={60}

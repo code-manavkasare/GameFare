@@ -59,6 +59,7 @@ class CardEvent extends React.Component {
     }
     displayCard(color) {
       var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.item.info.sport)[0]
+      if (sport == undefined) return null
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
@@ -118,8 +119,7 @@ const styles = StyleSheet.create({
     flex:1,
     width:'100%',
     backgroundColor:'white',  
-    borderTopWidth:0.3,
-    borderRightWidth:0.3,
+    // borderTopWidth:0.3,
     borderColor:colors.borderColor,
   },
   center:{
