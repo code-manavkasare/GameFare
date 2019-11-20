@@ -1,7 +1,10 @@
 export default colors = {
-    primary:'#FF453A',
+    primary:'#54A0FF',
     primary2:'#FE725E',
-    primaryLight:'#F78F80',
+    primaryLight:'#5499E9',
+    red:'#F66259',
+    red2:'#FE725E',
+    redLight:'#F78F80',
     secondary:'#FEDA66',
     terciary:'#5A5E74',
     title:'#222222',
@@ -10,17 +13,24 @@ export default colors = {
     subtitleCard:'#AFAFAF',
     footerOff:'#3C3C3C',
     backdropModal:'#3C3C3C',
+
     placeHolder1:'#FAFAFA',
     placeHolder2:'#f6f6f6',
-    green:'#32C759',
-    greenClick:'#35D15D',
+
+
+    green:'#1DD1A1',
+    greenClick:'#28D9AA',
     greenStrong:'#32C759',
-    greenLight:'#DEF0E6',
+    greenLight:'#28D9AA',
     greenLight2:'#3ED665',
+
     off:'#eaeaea',
     off2:'#FAFAFA',
+
     borderColor:'#A7A7AA',
     grey:'#D8D8D8',
-    blue:'#5AC8FA',
-    blueLight:'#6CCCF6',
+    greyDark:'#AEAEAE',
+
+    blue:'#54A0FF',
+    blueLight:'#5499E9',
 }

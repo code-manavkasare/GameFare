@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     Dimensions,
+    Animated,
     Button
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -33,6 +34,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import {indexEvents} from '../database/algolia'
 import PlaceHolder from '../placeHolders/ListAttendees'
 
+import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView'
+import HeaderBackButton from '../layout/headers/HeaderBackButton'
+
 class EventPage extends React.Component {
   constructor(props) {
     super(props);
@@ -42,6 +46,7 @@ class EventPage extends React.Component {
       location:[-122.400021, 37.789085],
       imageMap:'',
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -65,7 +70,7 @@ class EventPage extends React.Component {
       uri = await MapboxGL.snapshotManager.takeSnap({
         centerCoordinate: [this.props.navigation.getParam('data').location.lng, this.props.navigation.getParam('data').location.lat],
         width: width-20,
-        height: 180,
+        height: 300,
         zoomLevel: 12,
         pitch: 30,
         heading: 20,
@@ -241,35 +246,6 @@ class EventPage extends React.Component {
     if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) return true
     return false
   }
-  imageMap(data) {
-    return (
-      <TouchableOpacity activeOpacity={0.9} style={[styleApp.viewHome,styleApp.center,{paddingTop:0,paddingBottom:0,overflow: 'hidden',marginBottom:-42}]}  onPress={() => this.props.navigation.navigate('AlertAddress',{data:data.location})}>
-        {
-          this.state.imageMap != ''?
-          <AsyncImage style={{width:'100%',height:210,borderRadius:0}} mainImage={this.state.imageMap} imgInitial={this.state.imageMap} />
-          :
-          <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{width:'100%',height:210,borderRadius:16}} />
-        }
-        
-        <View style={{position:"absolute"}}>
-          <AllIcons name='map-marker-alt' type='font' size={28} color={colors.blue} />
-        </View>
-        {/* <MapboxGL.MapView 
-        style={{width:'100%',height:170}}  
-        // centerCoordinate= {[this.props.navigation.getParam('data').location.lng, this.props.navigation.getParam('data').location.lat]}
-        zoomLevel= {6}
-        showUserLocation={true}
-        animated={true}
-        heading={5}
-        centerCoordinate={[-73.970895, 40.723279]}
-        >
-
-
-          
-        </MapboxGL.MapView> */}
-      </TouchableOpacity>
-    )
-  }
   eventInfo(data,sport) {
     var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
     var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
@@ -292,8 +268,8 @@ class EventPage extends React.Component {
 
             <Row style={{marginTop:20}}>
               <Col size={25} style={styleApp.center2}>
-                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
-                  <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.color}]}>
+                  <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                 </View>
               </Col>
               <Col size={75} style={styleApp.center3}>            
@@ -304,6 +280,7 @@ class EventPage extends React.Component {
             <View style={[styleApp.divider2,{marginBottom:10}]} />
 
             {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
+            {data.date.recurrence != '' && data.date.recurrence != undefined?this.rowIcon(this.title(data.date.recurrence.charAt(0).toUpperCase() + data.date.recurrence.slice(1)),'stopwatch'):null}
             {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
             {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
 
@@ -333,7 +310,7 @@ class EventPage extends React.Component {
     console.log(sport)
     return (
       <View style={{marginLeft:0,width:width,marginTop:-15}}>
-        {this.imageMap(data)}
+        {/* {this.imageMap(data)} */}
         {this.eventInfo(data,sport)}
 
         {
@@ -389,7 +366,8 @@ class EventPage extends React.Component {
 
           </View>
         </View>
-
+        
+        <View style={{height:sizes.heightFooterBooking+50}} />
 
       </View>
     )
@@ -472,17 +450,54 @@ class EventPage extends React.Component {
   render() {
     return (
       <View style={{ flex:1}}>
-        <ScrollView 
-          onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))}
-          marginBottomScrollView={0}
-          marginTop={0}
-          colorRefresh={colors.title}
-          refreshControl={true}
-          refresh={() => this.loadEvent(this.props.navigation.getParam('data'),true)}
-          offsetBottom={sizes.heightFooterBooking+60}
-          showsVerticalScrollIndicator={false}
+
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        textHeader={this.props.navigation.getParam('data').info.name}
+        inputRange={[190,220]}
+        initialBorderColorIcon={colors.grey}
+        initialBackgroundColor={'transparent'}
+        typeIcon2={'moon'}
+        sizeIcon2={17}
+        initialTitleOpacity={0}
+        icon1='arrow-left'
+        icon2='share'
+
+        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openEventPage',pageFrom:'Event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
         />
+       
+      <ParalaxScrollView 
+        setState={(val) => this.setState(val)} 
+        
+        image={
+          this.state.imageMap!=''?
+          <TouchableOpacity activeOpacity={0.3} style={{height:280,width:'100%'}}  onPress={() => {this.props.navigation.navigate('AlertAddress',{data:this.props.navigation.getParam('data').location})}}>
+             <AsyncImage style={{width:'100%',height:300,borderRadius:0}} mainImage={this.state.imageMap} imgInitial={this.state.imageMap} />
+             <View style={{position:"absolute",left:width/2-15,top:280/2-5}}>
+                <AllIcons name='map-marker-alt' type='font' size={28} color={colors.blue} />
+              </View>
+            </TouchableOpacity>
+          :
+          <FadeInView duration={250}>
+            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{width:'100%',height:300,borderRadius:0}} />
+            <View style={{position:"absolute",left:width/2-15,top:280/2-5}}>
+              <Loader size={28} color={'primary'} />
+            </View>
+          </FadeInView>
+        }
+
+        content={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))} 
+        header={false}
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        
+        initialColorIcon={colors.title}
+        colorRefreshControl ={colors.title}
+        
+        
+      />
+       
 
         {
           this.props.navigation.getParam('loader')?

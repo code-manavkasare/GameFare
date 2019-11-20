@@ -21,6 +21,7 @@ import DateEvent from './DateEvent'
 import firebase from 'react-native-firebase'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import AsyncImage from '../../layout/image/AsyncImage'
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import AllIcons from '../../layout/icons/AllIcons'
 import BackButton from '../../layout/buttons/BackButton'
@@ -38,6 +39,7 @@ class Page3 extends Component {
     };
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -162,9 +164,8 @@ class Page3 extends Component {
       var levelOption = data.info.levelOption=='equal'?'only':data.info.levelOption=='min'?'and above':'and below'
       console.log(levelOption)
       return (
-          <View style={{width:width,marginLeft:-20,marginTop:-15}}>
+          <View style={{width:width,marginLeft:-20,marginTop:0}}>
 
-            <View style={[styleApp.viewHome,{paddingTop:15}]}>
               <View style={styleApp.marginView}>
                 <Row>
                   <Col size={25} style={styleApp.center2}>
@@ -180,23 +181,25 @@ class Page3 extends Component {
                   </Col>
                 </Row>
               </View>
-            </View>
 
-            <View style={[styleApp.viewHome,{paddingTop:15}]}>
+            <View style={[{paddingTop:15}]}>
               <View style={styleApp.marginView}>
                 <Text style={[styleApp.title,{fontSize:20}]}>{data.info.name}</Text>
                 <View style={[styleApp.divider2,{marginBottom:10}]} />
 
                 {this.rowIcon('calendar-alt',this.dateTime(data),'font')}
+                {data.date.recurrence != ''?this.rowIcon('stopwatch',this.title(data.date.recurrence.charAt(0).toUpperCase() + data.date.recurrence.slice(1)),'font'):null}
                 {this.rowIcon('map-marker-alt',this.title(data.location.area),'font')}
                 <View style={{height:5}}/>
                 {data.info.instructions != ''?this.rowIcon('parking',this.title(data.info.instructions),'font'):null}
               </View>
             </View>
 
+
+            <View style={[styleApp.divider2,{marginLeft:20,width:width-40,marginBottom:10}]} />
+
             
 
-            <View style={[styleApp.viewHome,{paddingTop:15}]}>
               <View style={styleApp.marginView}>
               {this.rowIcon('user-plus',this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players'),'font')}
               <View style={{height:5}}/>
@@ -210,11 +213,11 @@ class Page3 extends Component {
               
               {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
               </View>
-            </View>
+
+              <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
 
             {this.listGroups(this.props.navigation.getParam('groups'))}
 
-            <View style={[styleApp.viewHome,{paddingTop:20}]}>
               <View style={styleApp.marginView}>
                 {
                   data.info.player?
@@ -223,7 +226,6 @@ class Page3 extends Component {
                   <Text style={[styleApp.title,{fontSize:13}]}>Reminder • <Text style={{fontFamily:'OpenSans-Regular'}}>Players will be charged when they register for the event. You’ll get paid once the session is over.</Text></Text>
                 }
               </View>
-            </View>
 
 
 
@@ -317,11 +319,24 @@ class Page3 extends Component {
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
+         <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={'Event summary'}
+        inputRange={[5,10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1='arrow-left'
+        icon2={null}
+        clickButton1={() => this.props.navigation.goBack()} 
+        />
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.page2(this.props.navigation.getParam('data'))}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={false}
         />

@@ -40,6 +40,8 @@ class CardEvent extends React.Component {
       if (this.props.loadData) {
         indexEvents.clearCache()
         var group = await indexEvents.getObject(this.props.item.eventID)
+        console.log('event!!!!!!@wqadjksfslf')
+        console.log(group)
         return this.setState({loader:false,item:group})
       }
       return this.setState({loader:false})
@@ -72,17 +74,17 @@ class CardEvent extends React.Component {
     }
     rowAttendees(data) {
       return <Row style={{marginTop:15}}>
-      <Col size={7} style={[{paddingRight:10},styleApp.center2]}>
+      <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
         <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primaryLight,}]}>
           <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
         </View>
       </Col>
         {
         data.attendees != undefined?
-        <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
+        <Col size={85} style={[{paddingRight:10},styleApp.center2]}>
           {
           Object.values(data.attendees).slice(0,3).map((member,i) => (
-          <View key={i} style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
+          <View style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
             <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.captainInfo.name.split(' ')[0][0] + member.captainInfo.name.split(' ')[1][0]}</Text>
           </View>
           ))
@@ -90,13 +92,11 @@ class CardEvent extends React.Component {
         </Col>
         :null
         }
-
-      <Col size={70} style={styleApp.center2}>
-        <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',fontSize:11}]}>Person coming</Text>
-      </Col>
     </Row> 
     }
     displayCard(color,data) {
+      console.log('display card')
+      console.log(this.props.item)
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       if (sport == undefined) return null
       return (
@@ -106,44 +106,29 @@ class CardEvent extends React.Component {
           onPress={() => this.click(data)} 
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
-          style={{height:'100%',width:'100%',paddingLeft:20,paddingRight:20,paddingTop:15,paddingBottom:20}} 
+          style={{height:'100%',width:'100%',paddingLeft:10,paddingRight:10,paddingTop:15,paddingBottom:20}} 
           activeOpacity={1} 
         >
 
           <Row>
-            <Col size={70} style={[styleApp.center2,{paddingLeft:0}]}>
-              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',}]}>{date(data.date.start,'ddd, Do MMM')} at {time(data.date.start,'h:mm a')}</Text>
+            <Col size={80} style={[styleApp.center2,{paddingLeft:0}]}>
+              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',fontSize:11}]}>{date(data.date.start,'ddd, Do MMM')} at {time(data.date.start,'h:mm a')}</Text>
               
             </Col>
-            <Col size={10} style={styleApp.center2} >
-              {
-              !this.props.userCard && !data.info.public?
-              <AllIcons name='lock' color={colors.blue} size={17} type='mat' />
-              :this.props.userCard && this.props.item.organizer?
-              <AllIcons name='bullhorn' type='font' color={colors.blue} size={15} />
-              :this.props.userCard && !this.props.item.organizer && (this.props.item.status == 'confirmed' || !this.state.item.info.public)?
-              <AllIcons name='check' type='mat' color={colors.green} size={20} />
-              :this.props.userCard && !this.props.item.organizer && this.props.item.status == 'rejected'?
-              <AllIcons name='close' type='mat' color={colors.primary} size={20} />
-              :this.props.userCard && !this.props.item.organizer?
-              <AllIcons name='clock' type='font' color={colors.secondary} size={16} />
-              :null
-              }
-            </Col>
-            <Col size={20} style={styleApp.center8}>
-              <View style={[styles.viewSport,{backgroundColor:sport.card.color.color}]}>
-                <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+            <Col size={20} style={styleApp.center3}>
+              <View style={[styles.viewSport,{backgroundColor:sport.card.color.color,width:30,height:30,borderRadius:15}]}>
+                <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase()}</Text>
               </View>
             </Col>
 
           </Row>
-          <Text style={styles.title}>{data.info.name}</Text>
+          <Text style={[styles.title,{fontSize:14}]}>{data.info.name}</Text>
           {
           data.info.public?
           <Text style={[styles.subtitle,{marginTop:5}]}>{data.location.area}</Text>
           :null
           }
-          <Text style={[styles.subtitle,{marginTop:5}]}>{this.entreeFee(data.price.joiningFee)}</Text>
+          {/* <Text style={[styles.subtitle,{marginTop:5}]}>{this.entreeFee(data.price.joiningFee)}</Text> */}
 
           {this.rowAttendees(data)}
 
@@ -169,8 +154,9 @@ const styles = StyleSheet.create({
     flex:1,
     width:'100%',
     backgroundColor:'white',  
-    // borderTopWidth:0.3,
-    borderColor:colors.borderColor,
+    // borderRadius:10,
+    overflow:'hidden',
+  
   },
   center:{
     alignItems: 'center',

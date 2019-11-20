@@ -16,9 +16,8 @@ import {userAction} from './src/actions/userActions'
 const AppContainer = createAppContainer(AppSwitchNavigator)
 
 class App extends Component {
-  async componentDidMount() {
-    
-    await this.initBranch()
+  async componentDidMount() { 
+    this.initBranch()
     var variables = await firebase.database().ref('variables').once('value')
     variables = variables.val()
     await this.props.globaleVariablesAction(variables)

@@ -19,6 +19,7 @@ import ButtonRound from '../../layout/buttons/ButtonRound'
 import Button from '../../layout/buttons/Button'
 import firebase from 'react-native-firebase'
 import { Col, Row, Grid } from "react-native-easy-grid";
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import AllIcons from '../../layout/icons/AllIcons'
 import BackButton from '../../layout/buttons/BackButton'
@@ -42,6 +43,7 @@ class Page3 extends Component {
     };
     this.translateYFooter = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -97,8 +99,8 @@ class Page3 extends Component {
               <View style={styleApp.marginView}>
                 <Row>
                   <Col size={25} style={styleApp.center2}>
-                    <View style={[styleApp.viewSport,{marginTop:5}]}>
-                      <Text style={styleApp.textSport}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                    <View style={[styleApp.viewSport,{marginTop:5,backgroundColor:sport.card.color.color}]}>
+                      <Text style={[styleApp.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                     </View>
                   </Col>
                   <Col size={65} style={styleApp.center3}></Col>
@@ -197,11 +199,25 @@ class Page3 extends Component {
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1,borderRightWidth:1}]}>
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.goBack()}
+        textHeader={'Group summary'}
+        inputRange={[120,155]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'transparent'}
+        initialTitleOpacity={0}
+        icon1='arrow-left'
+        icon2={null}
+        clickButton1={() => this.props.navigation.goBack()} 
+        />
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.page2(this.props.navigation.getParam('data'))}
           marginBottomScrollView={0}
           marginTop={0}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={90+90}
           showsVerticalScrollIndicator={false}
         />

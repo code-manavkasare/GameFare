@@ -6,7 +6,9 @@ import {
     StyleSheet,
     Dimensions,
     Button,
-    RefreshControl
+    RefreshControl,
+    Animated,
+    Image
 } from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase'
@@ -16,17 +18,10 @@ import colors from '../style/colors'
 import styleApp from '../style/style'
 import sizes from '../style/sizes'
 import {Grid,Row,Col} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 
-import ScrollView from '../layout/scrollViews/ScrollView2'
 import AsyncImage from '../layout/image/AsyncImage'
 import AllIcons from '../layout/icons/AllIcons'
-import BackButton from '../layout/buttons/BackButton'
-import Button2 from '../layout/buttons/Button'
-import ButtonColor from '../layout/Views/Button'
-import Loader from '../layout/loaders/Loader'
-import isEqual from 'lodash.isequal'
-import ParallaxScrollView from 'react-native-parallax-scroll-view';
+import HeaderBackButton from '../layout/headers/HeaderBackButton'
 
 import {indexGroups} from '../database/algolia'
 import PlaceHolder from '../placeHolders/ListAttendees'
@@ -35,6 +30,7 @@ import DescriptionView from './elementsGroupPage/DescriptionView'
 import MembersView from './elementsGroupPage/MembersView'
 import PostsView from './elementsGroupPage/PostsView'
 import EventsView from './elementsGroupPage/EventsView'
+import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView'
 
 class EventPage extends React.Component {
   constructor(props) {
@@ -43,20 +39,8 @@ class EventPage extends React.Component {
       usersConfirmed:true,
       loader:false,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: '',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerRight: () => (
-        <BackButton  color={colors.title} name='share' type='moon' size={16} click={() => navigation.navigate('Contacts',{openPageLink:'openGroupPage',pageFrom:'Group',data:{...navigation.getParam('data'),eventID:navigation.getParam('data').objectID}})} />
-      ),
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
-      ),
-    }
-  };
   async componentDidMount() {
     this.loadEvent(this.props.navigation.getParam('data'))
   }
@@ -182,8 +166,8 @@ class EventPage extends React.Component {
                 <Text style={styleApp.title}>{data.info.name}</Text>
               </Col>
               <Col size={25} style={styleApp.center3}>
-                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
-                  <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.color}]}>
+                  <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                 </View>
               </Col>
             </Row>
@@ -206,10 +190,8 @@ class EventPage extends React.Component {
   event(data,loader) {
     var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
     return (
-      <View style={{width:width,marginTop:-5}}>
-        <View style={[styleApp.viewHome,{marginBottom:10,marginTop:-15,paddingBottom:0,overflow: 'hidden'}]}>
-        <AsyncImage style={{width:'100%',height:240,borderRadius:0}} mainImage={this.props.navigation.getParam('data').pictures[0]} imgInitial={this.props.navigation.getParam('data').pictures[0]} />
-        </View>
+      <View style={{width:width,marginTop:0}}>
+
 
         {this.eventInfo(data,sport)}
 
@@ -244,6 +226,7 @@ class EventPage extends React.Component {
           userConnected={this.props.userConnected}
         />
 
+        <View style={{height:100}} />
 
       </View>
     )
@@ -308,34 +291,43 @@ class EventPage extends React.Component {
   }
   render() {
     return (
-      <View style={{height:'100%'}}>
-      {/* <ParallaxScrollView
-      backgroundColor={'white'}
-      contentBackgroundColor={'white'}
-      parallaxHeaderHeight={0}
-      style={{backgroundColor:'white'}}
-      showsVerticalScrollIndicator={false}
-      refreshControl={this.refreshControl()}
-      // renderBackground={() => (
-        
-      // )}
-      stickyHeaderHeight={88}
-      >
-       {this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))}
-    </ParallaxScrollView> */}
-      <ScrollView 
-          onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))}
-          marginBottomScrollView={0}
-          marginTop={0}
-          refreshControl={true}
-          refresh={() => this.refresh()}
-          colorRefresh={colors.primary}
-          offsetBottom={90}
-          showsVerticalScrollIndicator={false}
+      <View>
+      <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        textHeader={this.props.navigation.getParam('data').info.name}
+        inputRange={[190,220]}
+        initialTitleOpacity={0}
+        initialBackgroundColor={'transparent'}
+        initialBorderColorIcon={colors.grey}
+        typeIcon2={'moon'}
+        sizeIcon2={17}
+
+        icon1='arrow-left'
+        icon2='share'
+
+        clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openGroupPage',pageFrom:'Group',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
         />
-    </View>
-    );
+
+        <ParalaxScrollView 
+        setState={(val) => this.setState(val)} 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        image={<AsyncImage style={{width:'100%',height:280,borderRadius:0}} mainImage={this.props.navigation.getParam('data').pictures[0]} imgInitial={this.props.navigation.getParam('data').pictures[0]} />}
+
+        content={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))} 
+        icon1='arrow-left'
+        icon2='share'
+        colorRefreshControl ={colors.title}
+        initialColorIcon={'white'}
+
+        
+        
+      />
+
+      </View>
+      
+      )
   }
 }
 

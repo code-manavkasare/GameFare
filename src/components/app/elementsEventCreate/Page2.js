@@ -23,6 +23,7 @@ import Switch from '../../layout/switch/Switch'
 import AllIcons from '../../layout/icons/AllIcons'
 import DateEvent from './DateEvent'
 import {date} from '../../layout/date/date'
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
@@ -37,8 +38,10 @@ class Page2 extends Component {
       endDate:'',
       name:'',
       instructions:'',
+      recurrence:'',
       loader:false,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -116,7 +119,7 @@ class Page2 extends Component {
     this.props.navigation.navigate('CreateEvent2')
   }
   async setDate (data) {
-    await this.setState({endDate:data.endDate,startDate:data.startDate})
+    await this.setState({endDate:data.endDate,startDate:data.startDate,recurrence:data.recurrence})
     this.props.navigation.navigate('CreateEvent2')
   }
   dateTime(start,end) {
@@ -132,7 +135,7 @@ class Page2 extends Component {
   }
   date() {
     return (
-      <TouchableOpacity style={[styleApp.inputForm,{height:this.heightDateTimeCard()}]} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,onGoBack: (data) => this.setDate(data)})}>
+      <TouchableOpacity style={{paddingTop:10,paddingBottom:10}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,recurrence:this.state.recurrence,onGoBack: (data) => this.setDate(data)})}>
       <Row>
         <Col style={styleApp.center} size={15}>
           <AllIcons name='calendar-alt' size={18} color={colors.title} type='font'/>
@@ -142,10 +145,22 @@ class Page2 extends Component {
             this.state.startDate == ''?
             <Text style={styleApp.inputOff}>Date and time</Text>
             :
-            this.dateTime(this.state.startDate,this.state.endDate)
+            this.dateTime(this.state.startDate,this.state.endDate,this.state.recurrence)
           }
         </Col>
       </Row>
+      {
+        this.state.recurrence != ''?
+        <Row style={{marginTop:10}}>
+        <Col style={styleApp.center} size={15}>
+          <AllIcons name='stopwatch' size={18} color={colors.title} type='font'/>
+        </Col>
+        <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
+          <Text style={styleApp.input}>{this.state.recurrence.charAt(0).toUpperCase() + this.state.recurrence.slice(1)}</Text>
+        </Col>
+      </Row>
+      :null
+      }
     </TouchableOpacity>
     )
   }
@@ -166,27 +181,17 @@ class Page2 extends Component {
   page1() {
       return (
         <View style={{marginTop:-15,marginLeft:-20,width:width}}>
-          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Name</Text>
               {this.tournamentName()}
             </View>
-          </View>
 
-          <View style={styleApp.viewHome}>
-            <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Information</Text>
+            <View style={[styleApp.marginView,{marginTop:20}]}>
+              <Text style={styleApp.title}>Schedule</Text>
               {this.address()}
               {this.date()}
-            </View>
-          </View>
-
-          <View style={styleApp.viewHome}>
-            <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Instructions</Text>
               {this.textField('instructions','E.g parking instruction, unit number...(optional)',100,true,'default','parking')}
             </View>
-          </View>
+
 
         </View>
       )
@@ -209,6 +214,7 @@ class Page2 extends Component {
       "date": {
         "end": step2.endDate,
         "start": step2.startDate,
+        'recurrence':step2.recurrence,
         "timeZone": step2.location.timeZone
       },
       "info": {
@@ -247,11 +253,25 @@ class Page2 extends Component {
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
+         <HeaderBackButton 
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={'Event information'}
+            inputRange={[5,10]}
+            initialBorderColorIcon={'white'}
+            initialBackgroundColor={'white'}
+
+            icon1='arrow-left'
+            initialTitleOpacity={1}
+            icon2={null}
+            clickButton1={() => this.props.navigation.goBack()} 
+            />
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page1.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={false}
         />

@@ -20,6 +20,7 @@ import ButtonOff from '../../layout/buttons/ButtonOff'
 import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
@@ -54,6 +55,7 @@ class Page0 extends Component {
         listExpend:Object.values(this.props.sports)
       },
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -174,42 +176,26 @@ class Page0 extends Component {
       return (
         <View style={{marginTop:-15,marginLeft:-20,width:width}}>
 
-        
-
-        <View style={styleApp.viewHome}>
+ 
           <View style={styleApp.marginView}>
-
-          <Text style={[styleApp.title,{fontSize:19}]}>Sport</Text>
-          {this.sports()}
+            {this.sports()}
           </View>
-        </View>
 
-        <View style={styleApp.viewHome}>
+          <View style={[styleApp.marginView,{marginTop:30}]}>
+
+          <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Group information</Text>
+            {this.switch('Open access','Invite only','private')}
+            {this.address()}
+            {this.tournamentName()}
+
+            {this.textField('description','Group description',80,true,'default','info-circle')}         
+          </View>
+
+
           <View style={styleApp.marginView}>
-
-          <Text style={[styleApp.title,{fontSize:19}]}>Group information</Text>
-
-          <View style={[styleApp.divider2,{marginBottom:0}]} />
-
-          {this.switch('Open access','Invite only','private')}
-          {this.address()}
-          {this.tournamentName()}
-
-          {this.textField('description','Group description',80,true,'default','info-circle')}
-          
+            <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Image</Text>
+            <UploadImage setImage={this.setImage.bind(this)}/>
           </View>
-        </View>
-
-
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
-
-          <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Image</Text>
-
-          <UploadImage setImage={this.setImage.bind(this)}/>
-
-          </View>
-        </View>
 
 
         </View>
@@ -234,11 +220,25 @@ class Page0 extends Component {
   render() {
     return (
       <View style={styleApp.stylePage}>
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        textHeader={'Create your group'}
+        inputRange={[5,10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1='arrow-left'
+        icon2={null}
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
+        />
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page0.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={150}
           showsVerticalScrollIndicator={false}
         />

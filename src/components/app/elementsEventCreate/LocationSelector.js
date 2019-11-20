@@ -13,6 +13,10 @@ import {
   Dimensions,
   View
 } from 'react-native';
+import {connect} from 'react-redux';
+import {historicSearchAction} from '../../../actions/historicSearchActions'
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
+
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import FadeInView from 'react-native-fade-in-view';
@@ -32,15 +36,17 @@ import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import Icon from '../../layout/icons/icons'
 import Loader from '../../layout/loaders/Loader'
+import ButtonColor from '../../layout/Views/Button'
 import AllIcons from '../../layout/icons/AllIcons'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Header from '../../layout/headers/HeaderButton'
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 const { height, width } = Dimensions.get('screen')
 
-export default class Location extends Component {
+class LocationSelector extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -49,7 +55,7 @@ export default class Location extends Component {
           loader: false,
           showAlert:false,
           message:'',
-          historicSearchLocation: [],
+          historicSearchLocation: {},
           initialResults: [{
             type: 'currentLocation',
             description:'Current Location',
@@ -70,11 +76,11 @@ export default class Location extends Component {
       }
       static navigationOptions = ({ navigation }) => {
         return {
-          title: 'Location',
+          title: '',
           headerStyle:styleApp.styleHeader,
           headerTitleStyle: styleApp.textHeader,
           headerLeft: () => (
-            <BackButton color={colors.title} name='keyboard-arrow-down' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
+            <BackButton color={colors.title} name='close' size={24} type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
           ),
           headerRight: () => (
             navigation.getParam('loader') == true?
@@ -85,34 +91,7 @@ export default class Location extends Component {
           ),
         }
       };
-    componentDidMount(){
-      console.log('locatiin mount')
-      // this.props.onRef(this)
-      // this.loadPastSearch()
-      console.log(this.props.navigation.getParam('location'))
-    }
-    focusField() {
-      this.textSearchInput.focus()
-    }
-    async blurField() {
-      await this.textSearchInput.blur()
-      // return true
-    }
-    async loadPastSearch () {
-      var address = ''
-      var historicSearchLocation = await ls.get('historicSearchLocation')
-      if (historicSearchLocation == null) {
-        historicSearchLocation = []
-      }
-      var initialResult = this.state.initialResults
-      
-      this.setState({
-        textInput:address,
-        initialLoader:false,
-        historicSearchLocation:historicSearchLocation,
-        initialResults:initialResult.concat(historicSearchLocation),
-        results:initialResult.concat(historicSearchLocation)
-      })
+      async componentDidMount(){
     }
     shouldComponentUpdate(nextProps,nextState) {
       if (this.state !== nextState) return true
@@ -188,51 +167,26 @@ export default class Location extends Component {
 
         console.log(url2)
         const result2 = await RNFetchBlob.fetch('GET',url2)
-        console.log('result2')
-        console.log(result2)
         const json = await result2.json()
         var locationObj =json.results[0]
 
 
-        var currentHistoricSearchLocation = this.state.historicSearchLocation
-        var checkAddressExists = currentHistoricSearchLocation.filter(location => (location.id == address.id))
-        console.log(checkAddressExists)
-        if (checkAddressExists.length == 0) {
+        var currentHistoricSearchLocation = this.props.searchLocation
+        if (currentHistoricSearchLocation[address.id] == undefined) {
           var add = address
           add.type = 'past'
-          currentHistoricSearchLocation.push(add)
-          // ls.save('historicSearchLocation', currentHistoricSearchLocation)
-          var initialResults = this.state.initialResults
-          initialResults.push(add)
-          this.setState({
-            historicSearchLocation:currentHistoricSearchLocation,
-            initialResults:initialResults,
-            textInput:address.description
-          })
-        }
-        var region = {
-          latitude: locationObj.geometry.location.lat,
-          longitude: locationObj.geometry.location.lng,
-          latitudeDelta: 0.22,
-          longitudeDelta: 0.22,
-        }
-        var addressComponent = locationObj.address_components
-        var filterZip = addressComponent.filter(component => component.types.indexOf('postal_code') == 0)
-        var zipCode  = 0
-        if (filterZip.length != 0) {
-          zipCode = Number(filterZip[0].long_name)
+          currentHistoricSearchLocation = {
+            ...currentHistoricSearchLocation,
+            [address.id]:add
+          }
+          console.log('currentHistoricSearchLocation')
+          console.log(currentHistoricSearchLocation)
+          this.props.historicSearchAction('setLocationSearch',currentHistoricSearchLocation)
         }
 
-        // if (zipCode != 0) {
-        //   this.props.navigation.setParams({ loader: false })
-        //   this.setState({
-        //     loader:false,
-        //     showAlert:true,
-        //     message:'Wrong address. Please try again.'
-        //   })
-        // } else {
-          
-        // } 
+        var addressComponent = locationObj.address_components
+        // var filterZip = addressComponent.filter(component => component.types.indexOf('postal_code') == 0)
+
         var urlTimeZone = 'https://maps.googleapis.com/maps/api/timezone/json?location='+locationObj.geometry.location.lat+','+locationObj.geometry.location.lng+'&timestamp='+(Math.round((new Date().getTime())/1000)).toString()+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
           const timeZoneresult = await RNFetchBlob.fetch('GET',urlTimeZone)
           const jsonTimeZone = await timeZoneresult.json()
@@ -248,14 +202,7 @@ export default class Location extends Component {
           var addressOff = address.description
           addressOff = addressOff.replace(', USA', '')
           addressOff = addressOff.replace(', Australia', '')
-          var latOffer = locationObj.geometry.location.lat
-          var lngOffer = locationObj.geometry.location.lng
 
-          console.log('finitptttt')
-          console.log(address)
-          console.log(addressOff)
-          console.log(region)
-          console.log(jsonTimeZone)
           this.props.navigation.setParams({ loader: false })
           await Keyboard.dismiss()
           this.props.navigation.state.params.onGoBack({
@@ -327,7 +274,7 @@ export default class Location extends Component {
     }
     buttonSearchAddress () {
       return (
-        <Animated.View style={[styleApp.inputForm,{height:60,marginTop:10,marginBottom:0,borderBottomWidth:0.3}]}>
+        <Animated.View style={[styleApp.inputForm,{height:50,marginTop:10,marginLeft:20,width:width-40,backgroundColor:colors.off2,borderWidth:0.3,borderRadius:5}]}>
           <Row style={{height:50}}>
               <Col size={15} style={styles.center}>
                 <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
@@ -361,63 +308,85 @@ export default class Location extends Component {
           </Animated.View>
       )
     }
+    /*
+
+    
+    */
     cardResult (result) {
       return (
-        <Row style={{flex:1,borderBottomWidth:0,borderColor:'#EAEAEA',paddingTop:15,paddingBottom:15,marginLeft:-20,width:width}}>
-          <Col size={15} style={styles.center}>
-            {
-              result.type=='currentLocation'?
-              <MatIcon name='my-location' color='grey' size={18}/>  
-              :result.type=='past'?
-              <MatIcon name='access-time' color="grey" size={16}/> 
-              :
-              <FontIcon name='map-marker' color="grey" size={16}/> 
-            }
-            
-          </Col>
-          <Col size={85} style={styles.center2}>
-            {
-              result.type=='currentLocation'?
-              <Text style={styles.mainRes}>{result.structured_formatting.main_text}</Text>
-              :
-              <View>
-                <Text style={styles.mainRes}>{result.structured_formatting.main_text}</Text>
-                <Text style={styles.secondRes}>{result.structured_formatting.secondary_text}</Text>    
-              </View>
-            }               
-          </Col>
-        </Row>
+        <ButtonColor view={() => {
+          return (
+            <Row>
+                <Col size={15} style={styles.center}>
+                  {
+                    result.type=='currentLocation'?
+                    <MatIcon name='my-location' color='grey' size={18}/>  
+                    :this.props.searchLocation[result.id]!= undefined?
+                    <MatIcon name='access-time' color="grey" size={16}/> 
+                    :
+                    <FontIcon name='map-marker' color="grey" size={16}/> 
+                  }
+                  
+                </Col>
+                <Col size={85} style={styles.center2}>
+                  {
+                    result.type=='currentLocation'?
+                    <Text style={styles.mainRes}>{result.structured_formatting.main_text}</Text>
+                    :
+                    <View>
+                      <Text style={styles.mainRes}>{result.structured_formatting.main_text}</Text>
+                      <Text style={styles.secondRes}>{result.structured_formatting.secondary_text}</Text>    
+                    </View>
+                  }               
+                </Col>
+              </Row>
+              )
+            }} 
+            click={() => {
+              this.onclickLocation(result)
+            }}
+            color='white'
+            style={{flex:1,borderBottomWidth:0,borderColor:'#EAEAEA',paddingTop:15,paddingBottom:15,marginLeft:-20,width:width}}
+            onPressColor={colors.off}
+        />
       )
     }
     locationFields () {
       return (
         <View>
          
-          
-
-          {Object.values(this.state.results).map((result,i) => (
+          {
+            this.state.textInput == ''?
+            <View style={{backgroundColor:'red'}}>
+            {this.cardResult(
+              {
+                type: 'currentLocation',
+                description:'Current Location',
+                structured_formatting: {
+                  main_text: 'Current Location'
+                }
+              }
+            )}
+            {Object.values(this.props.searchLocation).map((result,i) => (
               <TouchableOpacity key={i} activeOpacity={0.8} onPress={() => {this.onclickLocation(result)}}>
                 {this.cardResult(result)}
               </TouchableOpacity>
             ))}
+            </View>
+            :
+            Object.values(this.state.results).map((result,i) => (
+              <TouchableOpacity key={i} activeOpacity={0.8} onPress={() => {this.onclickLocation(result)}}>
+                {this.cardResult(result)}
+              </TouchableOpacity>
+            ))
+          }
 
         </View>
       )
     }
-    async close() {
-      this.blurField()
-      return this.props.close()
-    }
   render() {
     return (
       <View style={styles.content}>
-        {/* <Header
-        onRef={ref => (this.headerRef = ref)}
-        title={'Location'}
-        icon={'angle-down'}
-        loader={this.state.loader}
-        close={() => this.props.navigation.goBack()}
-        /> */}
 
         {this.buttonSearchAddress()}
 
@@ -481,4 +450,12 @@ const styles = StyleSheet.create({
     marginLeft:0,
   },
 });
+
+const  mapStateToProps = state => {
+  return {
+    searchLocation:state.historicSearch.searchLocation,
+  };
+};
+
+export default connect(mapStateToProps,{historicSearchAction})(LocationSelector);
 

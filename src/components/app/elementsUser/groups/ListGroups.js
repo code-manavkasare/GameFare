@@ -20,6 +20,7 @@ import ScrollView from '../../../layout/scrollViews/ScrollView2'
 import Switch from '../../../layout/switch/Switch'
 import FadeInView from 'react-native-fade-in-view';
 import NewGroupCard from '../../elementsHome/NewGroupCard'
+import ButtonAdd from '../../elementsHome/ButtonAdd'
 
 import AllIcons from '../../../layout/icons/AllIcons'
 import BackButton from '../../../layout/buttons/BackButton'
@@ -43,6 +44,9 @@ class ListEvent extends Component {
       index:0,
     };
     this.events = this.events.bind(this)
+    this.translateXVoile = new Animated.Value(width)
+    this.AnimatedHeaderValue = new Animated.Value(0);
+    this.opacityVoile = new Animated.Value(0.3)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -85,10 +89,9 @@ class ListEvent extends Component {
   }
   listEvent() {
     return (
-      <View>
-        <View style={[styleApp.viewHome]}>
+      <View style={{paddingTop:20}}>
           <View style={styleApp.marginView}>
-            <Text style={[styleApp.title,{marginBottom:15,marginLeft:0}]}>My groups</Text>
+            <Text style={styleApp.title}>My groups</Text>
           </View>
 
           <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]}/>
@@ -115,7 +118,6 @@ class ListEvent extends Component {
             }
           </FadeInView>
         }
-        </View>
       </View>
     )
   }
@@ -154,10 +156,11 @@ class ListEvent extends Component {
   }
   async refresh() {
     await this.setState({loader:true})
-    var that = this
-    setTimeout(function(){
-      that.setState({loader:false})
-    }, 150)
+    this.setState({loader:false})
+    // var that = this
+    // setTimeout(function(){
+    //   that.setState({loader:false})
+    // }, 150)
   }
   listGroups() {
     //this.props.userConnected || (Object.values(this.state.groups).length != 0 && !this.state.loader)?this.events():this.eventsLogout()
@@ -165,12 +168,16 @@ class ListEvent extends Component {
       <View>
       {this.listEvent()}
 
-        <ListGroupsSearch 
-            location={this.state.location} 
-            search={this.state.search} 
-            setState={(data) => this.setState(data)}
-            loader={this.state.loader}
-        />
+      <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]}/>
+
+          <ListGroupsSearch 
+              location={this.state.location} 
+              search={this.state.search} 
+              setState={(data) => this.setState(data)}
+              loader={this.state.loader}
+          />
+
+        <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]}/>
 
         <NewGroupCard pageFrom='ListGroups' />
       </View>
@@ -178,18 +185,37 @@ class ListEvent extends Component {
   }
   render() {
     return (
-      <View style={{flex:1,paddingTop:10 }}>
+      <View style={{flex:1 }}>
+        <View style={{height:sizes.marginTopApp}} />
+
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.listGroups()}
-          marginBottomScrollView={0}
-          marginTop={-10}
+          marginBottomScrollView={sizes.marginTopApp}
+          initialColorIcon={colors.title}
+
+          icon1={'plus'}
+          clickButton1={() => this.props.navigation.navigate('CreateGroup0',{'pageFrom':'ListGroups'})}
+
+          marginTop={0}
           refreshControl={true}
           colorRefresh={colors.title}
           refresh={() => this.refresh()}
           offsetBottom={90}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
+
+        <Animated.View style={[styleApp.voile,{opacity:this.opacityVoile,transform:[{translateX:this.translateXVoile}]}]}/>
+        <ButtonAdd 
+        translateXVoile={this.translateXVoile}
+        opacityVoile={this.opacityVoile}
+        new ={(val) => {
+          if (val == 'event') return this.props.navigation.navigate('CreateEvent0',{'pageFrom':'ListGroups'})
+          return this.props.navigation.navigate('CreateGroup0',{'pageFrom':'ListGroups'})
+        }}
+        />
+
       </View>
     );
   }

@@ -105,39 +105,43 @@ class CardGroup extends React.Component {
                   <Text style={[styleApp.title,{fontSize:14}]}>{data.info.name}</Text>
                 </Col>
               </Row>
-              <Row>
-                <Col size={10} style={[{paddingRight:10},styleApp.center2]}>
+              <Row style={{borderTopWidth:1,borderColor:colors.off,marginTop:10,paddingTop:10}}>
+                <Col size={12} style={[{paddingRight:10},styleApp.center2]}>
                   <View style={[styles.viewNumber,styleApp.center,{backgroundColor:colors.primaryLight,}]}>
                     <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
                   </View>
                 </Col>
-                <Col size={90} style={[{paddingRight:10},styleApp.center2]}>
-                  {
-                    data.members == undefined?
-                    <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',fontSize:11}]}>No members yet</Text>
-                    :
-                    Object.values(data.members).map((member,i) => (
-                    <View style={[styles.viewNumber,styleApp.center,{position:'absolute',left:i*23}]}>
+
+                {
+                data.members != undefined?
+                <Col size={20} style={[{paddingRight:10},styleApp.center2]}>
+                    {Object.values(data.members).map((member,i) => (
+                    <View style={[styles.viewNumber,styleApp.center,{position:'absolute',left:i*16}]}>
                       <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.info.name.split(' ')[0][0] + member.info.name.split(' ')[1][0]}</Text>
                     </View>
                     ))
-                  }
+                    }
+                </Col>
+                :null
+                }
+                <Col size={70} style={styleApp.center2}>
+                  <Text style={[styleApp.smallText,{fontFamily:'OpenSans-SemiBold',fontSize:11}]}>Person coming</Text>
                 </Col>
               </Row>              
             </Col>
 
           </Row>
 
-          <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor,position:'absolute',right:20,top:15}]}>
+          <View style={[styles.viewSport,{backgroundColor:sport.card.color.backgroundColor,position:'absolute',right:20,top:12}]}>
             <Text style={[styles.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
           </View>
 
-          <View style={[styleApp.center,{position:'absolute',top:15,right:80,height:25,width:35}]}>
+          <View style={[styleApp.center,{position:'absolute',top:12,right:80,height:25,width:35}]}>
             {
             this.props.item.organizer?
             <AllIcons name='bullhorn' type='font' color={colors.blue} size={15} />
             :!this.props.item.organizer && (this.props.item.status == 'confirmed' || !data.info.public)?
-            <AllIcons name='check' type='mat' color={colors.green} size={15} />
+            null
             :!this.props.item.organizer && this.props.item.status == 'rejected'?
             <AllIcons name='close' type='mat' color={colors.primary} size={15} />
             :!this.props.item.organizer?

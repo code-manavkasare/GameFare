@@ -28,7 +28,7 @@ export default class Verify extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '',
-      headerStyle:styleApp.styleHeader,
+      headerStyle:[styleApp.styleHeader,{borderBottomWidth:0}],
       headerTitleStyle: styleApp.textHeader,
       headerLeft: () => (
         <BackButton name='keyboard-arrow-left' color={colors.title} type='mat' click={() => navigation.navigate('Phone')} />

@@ -20,6 +20,7 @@ import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import BackButton from '../../layout/buttons/BackButton'
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Header from '../../layout/headers/HeaderButton'
@@ -27,7 +28,9 @@ import Switch from '../../layout/switch/Switch'
 import Picker from '../../layout/pickers/Picker'
 
 import Button from '../../layout/buttons/Button';
+import ButtonColor from '../../layout/Views/Button'
 import {date} from '../../layout/date/date'
+import AllIcon from '../../layout/icons/AllIcons';
 
 const { height, width } = Dimensions.get('screen')
 
@@ -50,23 +53,26 @@ export default class Date extends Component {
         }
       };
     componentWillMount(){
-      this.setState({startTimeHour:this.props.navigation.getParam('startDate') == ''?'1':moment(this.props.navigation.getParam('startDate')).format('h'),
-      startTimeMin:this.props.navigation.getParam('startDate') == ''?'00':moment(this.props.navigation.getParam('startDate')).format('mm'),
-      endTimeHour:this.props.navigation.getParam('endDate') == ''?'1':moment(this.props.navigation.getParam('endDate')).format('h'),
-      endTimeMin:this.props.navigation.getParam('endDate') == ''?'00':moment(this.props.navigation.getParam('endDate')).format('mm'),
-      startPart:this.props.navigation.getParam('startDate') == ''?false:moment(this.props.navigation.getParam('startDate')).format('a') == 'am'?false:true,
-      endPart:this.props.navigation.getParam('endDate') == ''?false:moment(this.props.navigation.getParam('endDate')).format('a') == 'am'?false:true,
-      sameDay:this.props.navigation.getParam('startDate') == ''?true:moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD') == moment(this.props.navigation.getParam('startDate')).format('YYYY-MM-DD')?true:false,
-      daySelectedStart: this.props.navigation.getParam('startDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD'),
-      markedDatesStart:{
-        [this.props.navigation.getParam('startDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
-      },
-      daySelectedEnd: this.props.navigation.getParam('endDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD'),
-      markedDatesEnd:{
-        [this.props.navigation.getParam('endDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
-      },
-      hourPicker:['1','2','3','4','5','6','7','8','9','10','11','12'],
-      minutePicker:['00','05','10','15','20','25','30','35','40','45','50','55'],})
+      this.setState({
+        startTimeHour:this.props.navigation.getParam('startDate') == ''?'1':moment(this.props.navigation.getParam('startDate')).format('h'),
+        startTimeMin:this.props.navigation.getParam('startDate') == ''?'00':moment(this.props.navigation.getParam('startDate')).format('mm'),
+        endTimeHour:this.props.navigation.getParam('endDate') == ''?'1':moment(this.props.navigation.getParam('endDate')).format('h'),
+        endTimeMin:this.props.navigation.getParam('endDate') == ''?'00':moment(this.props.navigation.getParam('endDate')).format('mm'),
+        startPart:this.props.navigation.getParam('startDate') == ''?false:moment(this.props.navigation.getParam('startDate')).format('a') == 'am'?false:true,
+        endPart:this.props.navigation.getParam('endDate') == ''?false:moment(this.props.navigation.getParam('endDate')).format('a') == 'am'?false:true,
+        sameDay:this.props.navigation.getParam('startDate') == ''?true:moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD') == moment(this.props.navigation.getParam('startDate')).format('YYYY-MM-DD')?true:false,
+        daySelectedStart: this.props.navigation.getParam('startDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD'),
+        markedDatesStart:{
+          [this.props.navigation.getParam('startDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
+        },
+        daySelectedEnd: this.props.navigation.getParam('endDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD'),
+        markedDatesEnd:{
+          [this.props.navigation.getParam('endDate') == ''?moment().format('YYYY-MM-DD'):moment(this.props.navigation.getParam('endDate')).format('YYYY-MM-DD')]: {selected: true,selectedColor: colors.primary}
+        },
+        hourPicker:['1','2','3','4','5','6','7','8','9','10','11','12'],
+        minutePicker:['00','05','10','15','20','25','30','35','40','45','50','55'],
+        recurrence:this.props.navigation.getParam('recurrence')
+      })
     }
     selectDay(day,date,markedDates) {
       console.log(day)
@@ -74,7 +80,8 @@ export default class Date extends Component {
         [markedDates]:{
           [day.dateString]: {selected: true,selectedColor: colors.primary}
         },
-        [date]:day.dateString
+        [date]:day.dateString,
+        recurrence:''
       })
     }
     calendar (date,markedDates) {
@@ -212,7 +219,6 @@ export default class Date extends Component {
     dateFields () {
       return (
         <View style={{marginLeft:-20,width:width}}>
-          <View style={[styleApp.viewHome,{paddingTop:5}]}>
             <View style={styleApp.marginView}>
               
               {this.calendar('daySelectedStart','markedDatesStart')}
@@ -222,8 +228,61 @@ export default class Date extends Component {
               <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>End time</Text>
               <View style={styleApp.divider2}/>
               {this.timeSelect('endTimeHour','endTimeMin','endPart')}
+
+              <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Recurrence</Text>
+
+            {/*
+            
+            
+            */}
+
+            <ButtonColor view={() => {
+              return (
+                <Row>
+                  <Col size={15} style={styleApp.center2}>        
+                    {
+                      this.state.recurrence == 'daily'?
+                      <AllIcon name='check' type='mat' color={colors.green} size={25} />
+                      :
+                      <AllIcon name='check' type='mat' color={colors.grey} size={25} />
+                    }
+                  </Col>
+                  <Col size={85} style={styleApp.center2}>
+                    <Text style={styleApp.text}>Daily</Text>
+                  </Col>
+                </Row>
+              )
+            }} 
+            click={() => this.setState({recurrence:this.state.recurrence != 'daily'?'daily':''})}
+            color='white'
+            style={[{height:50,marginTop:20,borderRadius:5}]}
+            onPressColor={colors.off}
+            />
+
+            <ButtonColor view={() => {
+              return (
+                <Row>
+                  <Col size={15} style={styleApp.center2}>        
+                    {
+                      this.state.recurrence == 'weekly'?
+                      <AllIcon name='check' type='mat' color={colors.green} size={25} />
+                      :
+                      <AllIcon name='check' type='mat' color={colors.grey} size={25} />
+                    }
+                  </Col>
+                  <Col size={85} style={styleApp.center2}>
+                    <Text style={styleApp.text}>Weekly</Text>
+                  </Col>
+                </Row>
+              )
+            }} 
+            click={() => this.setState({recurrence:this.state.recurrence != 'weekly'?'weekly':''})}
+            color='white'
+            style={[{height:50,marginTop:0,borderRadius:5}]}
+            onPressColor={colors.off}
+            />
+              
             </View>
-          </View>
 
           {/* <View style={[styleApp.viewHome,{paddingTop:5}]}>
             <View style={styleApp.marginView}>
@@ -265,6 +324,8 @@ export default class Date extends Component {
       this.props.navigation.state.params.onGoBack({
         startDate:startDate,
         endDate:endDate,
+        recurrence:this.state.recurrence
+
       })
     }
     header() {

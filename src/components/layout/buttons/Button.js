@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     width:'100%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 0.3,borderColor:colors.borderColor,
+    borderWidth: 0,borderColor:colors.borderColor,
     shadowColor: '#46474B',
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 15,
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
   },
   textButtonOn:{
     color:'white',
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize:18,
+    fontFamily: 'OpenSans-Bold',
+    fontSize:16,
   },
 });
 

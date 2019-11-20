@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import {Animated} from 'react-native'
 import Icons from './icons'
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
+
+const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 
 export default class AllIcon extends Component {
     constructor(props) {
@@ -13,7 +16,7 @@ export default class AllIcon extends Component {
       if (type =='moon') {
         return <Icons name={icon} color={this.props.color} size={this.props.size} />
       } else if (type == 'font') {
-        return <FontIcon name={icon} color={this.props.color} size={this.props.size} />
+        return <AnimatedIcon name={icon} color={this.props.color} size={this.props.size} />
       } else if (type == 'mat') {
         return <MatIcon name={icon} color={this.props.color} size={this.props.size} />
       }

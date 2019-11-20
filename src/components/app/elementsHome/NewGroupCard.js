@@ -33,9 +33,14 @@ export default class NewEventCard extends React.Component {
     return (
       <View key={4} style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
-          <Text style={styleApp.title}>Want to create your own community?</Text>
+          <View style={styleApp.center}>
+            <Image source={require('../../../img/images/users.png')} style={{width:100,height:100,marginBottom:25}} />
+          </View>
+          
+          <Text style={[styleApp.title,{fontSize:18}]}>Want to create your own community?</Text>
+          
           <Text style={[styleApp.subtitle,{marginBottom:20,marginRight:30,marginTop:10}]}>Pick your sport, create your group and start growing your community</Text>
-          <Button backgroundColor={'primary'} onPressColor={colors.primaryLight} click={() => NavigationService.navigate('CreateGroup0',{'pageFrom':this.props.pageFrom})} text={'Create a group'} styleButton={{marginBottom:15,marginTop:10}} loader={false}/>
+          <Button backgroundColor={'blue'} onPressColor={colors.blueLight} click={() => NavigationService.navigate('CreateGroup0',{'pageFrom':this.props.pageFrom})} text={'Create a group'} styleButton={{marginBottom:15,marginTop:10}} loader={false}/>
         </View>
       </View>
     )

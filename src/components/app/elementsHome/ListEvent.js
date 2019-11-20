@@ -41,26 +41,27 @@ class ListEvents extends React.Component {
     search:{
       aroundLatLng: '34.052235'+','+'-118.243683',
       aroundRadius: 20*1000,
-      filters:'info.public=1',
       query:'',
       // sports:[],
     }
   }
   async componentDidMount() {
     await this.setState({loader:true})
-    this.loadEvent(this.state.search)
+    this.loadEvent(this.state.search,this.props.filterSports)
   }
   async componentWillReceiveProps(nextProps) {
     if (this.props.loader != nextProps.loader && nextProps.loader == true) {
       await this.setState({loader:true})
-      this.loadEvent(this.state.search)
+      this.loadEvent(this.state.search,nextProps.filterSports)
     }
   }
-  async loadEvent(search) {
+  async loadEvent(search,sport) {
     console.log('on reload')
     indexEvents.clearCache()
+    //'info.sport:' + 
     var events = await indexEvents.search({
       ...search,
+      filters:'info.public=1 AND ' + 'info.sport:' + sport  ,
     })
     console.log('events.hits')
     console.log(events.hits)
@@ -75,8 +76,6 @@ class ListEvents extends React.Component {
     return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
   async setLocation (location) {
-    console.log('location')
-    console.log(location)
     var search = {
       ...this.state.search,
       hitsPerPage:20,
@@ -94,7 +93,7 @@ class ListEvents extends React.Component {
         <Row style={{marginLeft:20,width:width-40}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>Upcoming events</Text>
-            <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0}]}>{this.state.location.address}</Text>
+            <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0,fontSize:12}]}>{this.state.location.address}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>
           <Button view={() => {
@@ -127,8 +126,15 @@ class ListEvents extends React.Component {
           </View>
           :
           <FadeInView duration={350}>
-            {this.state.events.map((event,i) => (
-              <CardEvent key={i} homePage={true} marginTop={25} openEvent={() => this.openEvent(event)} item={event}/>
+            {
+            this.state.events.length == 0?
+            <View style={[styleApp.center,{marginTop:23}]}>
+              <Image source={require('../../../img/images/location.png')} style={{width:65,height:65}} />
+              <Text style={[styleApp.text,{marginTop:10}]}>No events found</Text>
+              <Text style={styleApp.subtitle}>Create the first {this.props.filterSports} event in the area</Text>
+            </View>
+            :this.state.events.map((event,i) => (
+              <CardEvent userCard={false} key={i} homePage={true} marginTop={25} openEvent={() => this.openEvent(event)} item={event} data={event}/>
             ))}
           </FadeInView>
         }

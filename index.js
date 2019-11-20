@@ -13,7 +13,7 @@ console.disableYellowBox = true;
 
 const AppContainer = () =>
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
           <App />
       </PersistGate>
     </Provider>

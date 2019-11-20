@@ -24,7 +24,7 @@ export default class Complete extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '',
-      headerStyle:styleApp.styleHeader,
+      headerStyle:[styleApp.styleHeader,{borderBottomWidth:0}],
       headerTitleStyle: styleApp.textHeader,
       gesturesEnabled:false,
       headerLeft: () => (

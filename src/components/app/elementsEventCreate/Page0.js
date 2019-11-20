@@ -10,21 +10,16 @@ import {
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import StatusBar from '@react-native-community/status-bar';
-
 
 import BackButton from '../../layout/buttons/BackButton'
 import Button from '../../layout/buttons/Button'
 import ButtonOff from '../../layout/buttons/ButtonOff'
 import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
-
-
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
-import Switch from '../../layout/switch/Switch'
 import AllIcons from '../../layout/icons/AllIcons'
 import {date} from '../../layout/date/date'
 import Communications from 'react-native-communications';
@@ -61,6 +56,7 @@ class Page0 extends Component {
         listExpend:Object.values(this.props.sports)[0].rules
       },
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -226,29 +222,27 @@ class Page0 extends Component {
       
     )
   }
-  
+  openAlertInfo(title,info) {
+    this.props.navigation.navigate('Alert',{close:true,textButton:'Got it!',title:title,subtitle:info,icon:<AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />})
+  }
   page0() {
       return (
         <View style={{marginTop:-15,marginLeft:-20,width:width}}>
 
-        <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
-          <Text style={styleApp.text}>Sport</Text>
 
-          <View style={[styleApp.divider2,{marginBottom:0}]} />
+ 
 
           {this.sports()}
           {this.rules()}
           </View>
-        </View>
-        
-        {
-        this.state.rulesFilter.value.coachNeeded?
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
 
-          <Text style={[styleApp.text,{marginBottom:20}]}>I am a...</Text>
+          {
+        this.state.rulesFilter.value.coachNeeded?
+          <View style={[styleApp.marginView,{marginTop:30}]}>
+
+          <Text style={[styleApp.title,{marginBottom:20}]}>I am a...</Text>
 
           {this.buttonCoach()}
 
@@ -267,25 +261,32 @@ class Page0 extends Component {
             :null
           }
           </View>
-        </View>
-        :null
-        }
+          :null
+          }
 
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
-
-          <Text style={styleApp.text}>Entry fee</Text>
-
-
-
-          {
+          <View style={[styleApp.marginView,{marginTop:30}]}>
+            <Row style>
+              <Col size={80} style={styleApp.center2}>
+                <Text style={[styleApp.title]}>Entry fee <Text style={{fontSize:12,fontFamily:'OpenSans-SemiBold'}}>(per player)</Text></Text>
+              </Col>
+              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.openAlertInfo('Entry fee per player.',this.state.sportsFilter.value.fee.entryFeeInfo)}>
+                <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
+              </Col>
+            </Row>
+            
+            {
             !this.state.coachNeeded?
             this.entreeFeeSection('free')
             :
             <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with an instructor. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${this.state.sportsFilter.value.fee.coachMatchFee}</Text> to participate, which will be payment for the instructor.</Text>
-          }
+            }
           </View>
-        </View>
+        
+        
+
+          
+
+          
 
 
         </View>
@@ -304,13 +305,29 @@ class Page0 extends Component {
   render() {
     return (
       <View style={styleApp.stylePage}>
-        <ScrollView 
+
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        textHeader={'Organize your event'}
+        inputRange={[5,10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1='arrow-left'
+        icon2={null}
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
+        />
+
+        <ScrollView
           onRef={ref => (this.scrollViewRef = ref)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          
           contentScrollView={this.page0.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={180}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
         
         {

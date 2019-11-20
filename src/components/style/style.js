@@ -36,7 +36,7 @@ export default styles = StyleSheet.create({
       borderColor:colors.grey
     },
     title:{
-      fontSize:24,
+      fontSize:20,
       fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },
@@ -101,6 +101,12 @@ export default styles = StyleSheet.create({
       shadowRadius: 20,
       shadowOpacity: 0.05,
     },
+    shade:{
+      shadowColor: '#46474B',
+      shadowOffset: { width: 2, height: 0 },
+      shadowRadius: 20,
+      shadowOpacity: 0.3,
+    },
     headerBooking:{
       position:'absolute',
       top:0,
@@ -163,13 +169,15 @@ export default styles = StyleSheet.create({
       borderColor:'#eaeaea',
       shadowOpacity: 0,
     },
+    voile:{
+      position:'absolute',height:height,backgroundColor:colors.title,width:width,opacity:0.4,
+      // zIndex:220,
+    },
     inputForm:{
       height:50,
       marginTop:10,
-      borderBottomWidth:0,
       width:'100%',
       backgroundColor:'white',
-      borderRadius:0,
       shadowColor: '#46474B',
       shadowOffset: { width: 0, height: 0 },
       shadowRadius: 15,
@@ -219,13 +227,13 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-SemiBold',
     },
     footerText:{
-      color:colors.primary,
-      fontSize:12,
+      color:colors.blue,
+      fontSize:11,
       fontFamily: 'OpenSans-SemiBold',
     },
     footerTextOff:{
       color:colors.title,
-      fontSize:12,
+      fontSize:11,
       fontFamily: 'OpenSans-SemiBold',
     },
     styleHeader:{
@@ -242,8 +250,8 @@ export default styles = StyleSheet.create({
     },
     textHeader:{
       color:colors.title,
-      fontFamily:'OpenSans-Bold',
-      fontSize:16,
+      fontFamily:'OpenSans-SemiBold',
+      fontSize:13,
     },
     stylePage:{
       flex:1,borderColor:'white',

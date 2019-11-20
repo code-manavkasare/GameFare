@@ -252,7 +252,7 @@ export default class ImageSelection extends Component {
             }} 
             click={() => this.takePhoto()}
             color='white'
-            style={[styleApp.center,{backgroundColor:colors.green,height:50,borderTopWidth:1,borderColor:colors.off,marginTop:0}]}
+            style={[styleApp.center,{backgroundColor:colors.green,height:50,borderTopWidth:1,borderColor:colors.off,marginTop:0,marginLeft:-20,width:width,paddingLeft:20,paddingRight:20}]}
             onPressColor={colors.off}
         />
         
@@ -272,7 +272,7 @@ export default class ImageSelection extends Component {
             }} 
             click={() => this.selectPhoto()}
             color='white'
-            style={[styleApp.center,{backgroundColor:colors.green,height:50,borderTopWidth:1,borderColor:colors.off,marginTop:0}]}
+            style={[styleApp.center,{backgroundColor:colors.green,height:50,borderTopWidth:1,borderColor:colors.off,marginTop:0,marginLeft:-20,width:width,paddingLeft:20,paddingRight:20}]}
             onPressColor={colors.off}
         />
 

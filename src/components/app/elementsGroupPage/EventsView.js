@@ -18,7 +18,7 @@ import Communications from 'react-native-communications';
 import FadeInView from 'react-native-fade-in-view';
 import LinearGradient from 'react-native-linear-gradient';
 import PlaceHolder from '../../placeHolders/CardEvent'
-import CardEvent from '../elementsUser/events/CardEvent'
+import CardEvent from '../elementsHome/CardEvent'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
@@ -50,7 +50,7 @@ export default class Events extends Component {
     console.log('events!!!')
     console.log(event)
     return (
-      <CardEvent userID={this.props.userID} key={i} groupPage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} clickEvent={(event) => this.props.push('Event',{data:event,pageFrom:'Group'})} item={event}/>
+      <CardEvent userID={this.props.userID} key={i} groupPage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} clickEvent={(event) => this.props.push('Event',{data:event,pageFrom:'Group'})} item={event} loadData={true}/>
     )
   }
   newEvent() {

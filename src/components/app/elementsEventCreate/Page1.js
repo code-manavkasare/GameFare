@@ -13,6 +13,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import StatusBar from '@react-native-community/status-bar';
 import BackButton from '../../layout/buttons/BackButton'
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
@@ -80,6 +81,7 @@ class Page1 extends Component {
       },
     };
     this.translateYFooter = new Animated.Value(0)
+    this.AnimatedHeaderValue = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
@@ -153,13 +155,15 @@ class Page1 extends Component {
     )
   }
   plusMinus(state,maxValue,increment,minValue,icon) {
+    var text = state
+    if (this.state[state]==1) text = state + 's'
     return(
       <Row style={styleApp.inputForm}>
         <Col size={15} style={styleApp.center}>
           <AllIcons name={icon} color={colors.title} size={17} type='font' />
         </Col>
         <Col size={55} style={[styleApp.center2,{paddingLeft:15}]}>
-          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular'}]}>{this.state[state]} {state}</Text>
+          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular'}]}>{this.state[state]} {this.state[state]==1?'player':'players'} total</Text>
         </Col>
         <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.state[state] != minValue) {
@@ -219,25 +223,17 @@ class Page1 extends Component {
   page1() {
       return (
         <View style={{marginTop:-15,marginLeft:-20,width:width}}>
-          <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Access</Text>
               {this.switch('Open access','Invite only','private')}
               {this.levelFilter()}
               {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
-            </View>
-          </View>
-
-          <View style={styleApp.viewHome}>
-            <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Attendance</Text>
               {this.plusMinus('players',200,1,1,'user-check')}
             </View>
-          </View>
 
-          <View style={styleApp.viewHome}>
-            <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Add event to groups</Text>
+
+
+            <View style={[styleApp.marginView,{marginTop:30}]}>
+              <Text style={styleApp.title}>Add event to groups</Text>
                 {
                   Object.values(this.state.groups).length!=0?
                   <View style={{marginTop:10}}>
@@ -256,14 +252,11 @@ class Page1 extends Component {
                 onPressColor={colors.off}
                 />
             </View>
-          </View>
 
-          <View style={styleApp.viewHome}>
-            <View style={styleApp.marginView}>
-              <Text style={styleApp.text}>Gender</Text>
+            <View style={[styleApp.marginView,{marginTop:30}]}>
+              <Text style={styleApp.title}>Gender</Text>
               {this.gender()}
             </View>
-          </View>
 
         </View>
       )
@@ -271,11 +264,24 @@ class Page1 extends Component {
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
+         <HeaderBackButton 
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={'Access settings'}
+            inputRange={[5,10]}
+            initialBorderColorIcon={'white'}
+            initialBackgroundColor={'white'}
+            initialTitleOpacity={1}
+            icon1='arrow-left'
+            icon2={null}
+            clickButton1={() => this.props.navigation.goBack()} 
+        />
+
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page1.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={false}
         />
