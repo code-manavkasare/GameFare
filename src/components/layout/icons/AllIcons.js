@@ -14,7 +14,7 @@ export default class AllIcon extends Component {
       }
     icon(type,icon) {
       if (type =='moon') {
-        return <Icons name={icon} color={this.props.color} size={this.props.size} />
+        return <Icons name={icon} color={this.props.color} size={this.props.size} style={this.props.style}/>
       } else if (type == 'font') {
         return <AnimatedIcon name={icon} color={this.props.color} size={this.props.size} />
       } else if (type == 'mat') {

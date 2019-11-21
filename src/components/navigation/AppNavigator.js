@@ -58,6 +58,8 @@ import Alert from '../layout/alerts/Alert'
 import AlertAddress from '../layout/alerts/AlertAddress'
 import AlertCall from '../layout/alerts/AlertCall'
 
+import InitialPage from '../app/elementsOnBoard/InitialPage'
+
 
 const CreateEventNavigator = createStackNavigator(
     {
@@ -72,7 +74,7 @@ const CreateEventNavigator = createStackNavigator(
         headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:false
+        cardShadowEnabled:true
     }
 );
 
@@ -86,7 +88,7 @@ const CreateGroupNavigator = createStackNavigator(
         headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:false
+        cardShadowEnabled:true
     }
 );
 
@@ -104,20 +106,6 @@ const ContactNavigator = createStackNavigator(
     }
 );
 
-const EventNavigor = createStackNavigator(
-    {
-        Event:EventPage,
-    },
-    {
-        initialRouteName:'Event',
-        headerMode: 'none',
-        mode: 'card',
-        cardOverlayEnabled:false,
-        cardShadowEnabled:false
-    }
-);
-
-
 const JoinNavigator = createStackNavigator(
     {
         Checkout:Checkout,
@@ -129,7 +117,7 @@ const JoinNavigator = createStackNavigator(
         headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:false
+        cardShadowEnabled:true
     }
 );
 
@@ -142,7 +130,7 @@ const JoinGroupNavigator = createStackNavigator(
         headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:false
+        cardShadowEnabled:true
     }
 );
 
@@ -155,10 +143,10 @@ const ProfileNavigator = createStackNavigator(
     },
     {
         initialRouteName:'Profile',
-        // headerMode: 'none',
+        headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:false
+        cardShadowEnabled:true
     }
 );
 
@@ -170,10 +158,10 @@ const LoginNavigator = createStackNavigator(
     },
     {
         initialRouteName:'Phone',
-        // headerMode: 'none',
+        headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:false
+        cardShadowEnabled:true
     }
 );
 
@@ -195,60 +183,25 @@ const PaymentsNavigator = createStackNavigator(
     }
 );
 
-const FlagsNavigator = createStackNavigator(
-    {
-        ListCountry:ListCountry
-    },
-    {
-        initialRouteName:'ListCountry',
-        // headerMode: 'none',
-        mode: 'modal',
-        cardOverlayEnabled:false,
-        cardShadowEnabled:false
-    }
-);
-
 const MainApp = createBottomTabNavigator(
-    {
+    {   
         Home:HomePage,
         ListGroups:ListGroups,
-        ListEvents:ListEvents,
+        // ListEvents:ListEvents,
         Profile: ProfileNavigator,
     },
     {
       defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
-            if (routeName == 'Home') {
-                if (focused) {
-                    return <Image source={require('../../img/footer/findOn.png')} style={styles.iconFooter} />
-                }
-                return <Image source={require('../../img/footer/findOff.png')} style={styles.iconFooter} />
-            }
-            if (routeName == 'ListGroups') {
-                if (focused) {
-                    return <Image source={require('../../img/footer/inviteOn.png')} style={styles.iconFooter} />
-                }
-                return <Image source={require('../../img/footer/inviteOff.png')} style={styles.iconFooter} />
-            }
-            if (routeName == 'ListEvents') {
-                if (focused) {
-                    return <Image source={require('../../img/footer/apptOn.png')} style={styles.iconFooter} />
-                }
-                return <Image source={require('../../img/footer/apptOff.png')} style={styles.iconFooter} />
-            }
-            if (routeName == 'Profile') {
-                if (focused) {
-                    return <Image source={require('../../img/footer/profileOn.png')} style={styles.iconFooter} />
-                }
-                return <Image source={require('../../img/footer/profileOff.png')} style={styles.iconFooter} />
-            }
+            if (routeName == 'Home') return <AllIcons name='eventFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
+            if (routeName == 'ListGroups') return <AllIcons name='groupFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
+            if (routeName == 'Profile') return <AllIcons name='profileFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
         },
         tabBarLabel:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
-            if (routeName == 'Home') return <Text style={focused?styles.footerText:styles.footerTextOff}>HOME</Text>
+            if (routeName == 'Home') return <Text style={focused?styles.footerText:styles.footerTextOff}>EVENTS</Text>
             if (routeName == 'ListGroups') return <Text style={focused?styles.footerText:styles.footerTextOff}>GROUPS</Text>
-            if (routeName == 'ListEvents') return <Text style={focused?styles.footerText:styles.footerTextOff}>EVENTS</Text>
             if (routeName == 'Profile') return <Text style={focused?styles.footerText:styles.footerTextOff}>PROFILE</Text>
         }
       }),
@@ -257,7 +210,8 @@ const MainApp = createBottomTabNavigator(
         //inactiveTintColor: 'gray',
         showLabel:true,
         style: {
-            backgroundColor: 'white',
+            borderTopWidth:0,
+            backgroundColor: colors.primary,
         },
       },
     },
@@ -271,14 +225,21 @@ const MainApp = createBottomTabNavigator(
 
   const MainStack = createStackNavigator(
     {
-        MainApp:MainApp,
+        InitialPage:InitialPage,
+        TabsApp:{
+            screen:MainApp,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:false
+            },
+        },
         Event:JoinNavigator,
         Group:JoinGroupNavigator,
         CreateEvent1:CreateEventNavigator,
         CreateGroup1:CreateGroupNavigator,
     },
     {
-        initialRouteName:'MainApp',
+        initialRouteName:'InitialPage',
         headerMode: 'none',
     }
 )
@@ -310,12 +271,17 @@ const DateNavigator = createStackNavigator(
 );
 
 
-
   const RootStack = createStackNavigator(
     {
-        MainApp:MainStack,
+        
+        MainStack:MainStack,
         SignIn:LoginNavigator,
-        ListCountry:FlagsNavigator,
+        ListCountry:{
+            screen:ListCountry,
+            navigationOptions:{
+                gesturesEnabled:false
+            },
+        },
         Alert:{screen:Alert,gesturesEnabled:false},
         AlertAddress:{screen:AlertAddress,gesturesEnabled:false},
         AlertCall:AlertCall,
@@ -325,7 +291,7 @@ const DateNavigator = createStackNavigator(
         ContactNavigator:ContactNavigator
     },
     {
-        initialRouteName:'MainApp',
+        initialRouteName:'MainStack',
         headerMode: 'none',
         mode: 'modal',
         transparentCard: true,

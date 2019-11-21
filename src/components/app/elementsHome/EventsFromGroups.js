@@ -79,6 +79,7 @@ class ListEvents extends React.Component {
     return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
   ListEvent () {
+    if (!this.props.userConnected) return null
     return (
       <View style={{marginTop:20}}>
         <View style={styleApp.marginView}>
@@ -90,7 +91,7 @@ class ListEvents extends React.Component {
         <View style={[styleApp.divider2,{marginTop:10,marginBottom:20}]} />
 
 
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginLeft:-20,width:width,paddingLeft:20,paddingRight:20}}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginLeft:-20,width:width,paddingLeft:20,paddingRight:20,}}>
           {
           this.state.loader?
           [0,1,2,3].map((event,i) => (
@@ -115,16 +116,7 @@ class ListEvents extends React.Component {
           />
           :
           Object.values(this.state.events).map((event,i) => (
-            <Button key={i} view={() => {
-              return (
-                <CardEvent userCard={false} key={i} loadData={true} homePage={true} openEvent={(event) => this.openEvent(event)} item={event}/>
-              )
-            }} 
-            click={() => console.log('')}
-            color='white'
-            style={styles.cardSport}
-            onPressColor={'white'}
-            />
+            <CardEvent userCard={false} key={i} loadData={true} homePage={true} openEvent={(event) => this.openEvent(event)} item={event}/>
           ))
 
           }
@@ -147,8 +139,11 @@ const styles = StyleSheet.create({
     color:colors.title
   },
   cardSport:{
-    // ackgroundColor:'red',
-    ...styleApp.shade,
+    backgroundColor:'red',
+    shadowColor: '#46474B',
+      shadowOffset: { width: 2, height: 0 },
+      shadowRadius: 20,
+      shadowOpacity: 0.3,
     marginRight:0,
     overflow:'hidden',
     height:170,

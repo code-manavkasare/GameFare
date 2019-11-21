@@ -53,7 +53,7 @@ class VerifyFields extends Component {
     const promiseAxios = await axios.get(url, {
       params: {
         phoneNumber: phoneNumber,
-        countryCode: ''+this.props.params.country.dial_code.replace('+','')+'',
+        countryCode: this.props.params.country.callingCode,
         userID: this.props.params.userID,
       }
     })
@@ -89,7 +89,7 @@ class VerifyFields extends Component {
     const promiseAxios = await axios.get(url, {
       params: {
         phoneNumber: phoneNumber,
-        countryCode: ''+this.props.params.country.dial_code.replace('+','')+'',
+        countryCode: this.props.params.country.callingCode,
         userID: this.props.params.userID,
         code: code.toString(),
       }
@@ -110,7 +110,7 @@ class VerifyFields extends Component {
         userID:this.props.params.userID,
         firebaseSignInToken: this.props.params.firebaseSignInToken, 
         phoneNumber:phoneNumber,
-        countryCode:this.props.params.country.dial_code.replace('+','')
+        countryCode:this.props.params.country.callingCode
       })
       console.log('this.props.profileCompleted')
       console.log(profileCompleted)
@@ -171,11 +171,11 @@ class VerifyFields extends Component {
     )
   }
   subtitle() {
-    return 'Enter the code sent to ' +this.props.params.country.dial_code + ' ' + this.props.params.phoneNumber
+    return 'Enter the code sent to +' +this.props.params.country.callingCode + ' ' + this.props.params.phoneNumber
   }
   verify() {
     return (
-      <View>
+      <View style={styleApp.marginView}>
           <Text style={[styleApp.title,{marginBottom:10}]}>Verification code</Text>
           <Text style={[styleApp.subtitle,{marginBottom:10}]}>{this.subtitle()}</Text>
           <View style={styles.inputWrapper}>

@@ -89,7 +89,7 @@ class ListEvents extends React.Component {
   }
   ListEvent () {
     return (
-      <View style={[styleApp.viewHome]}>
+      <View >
         <Row style={{marginLeft:20,width:width-40}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>Upcoming events</Text>

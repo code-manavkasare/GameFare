@@ -1,10 +1,8 @@
 export default colors = {
     primary:'#54A0FF',
-    primary2:'#FE725E',
-    primaryLight:'#5499E9',
-    red:'#F66259',
-    red2:'#FE725E',
-    redLight:'#F78F80',
+    primary2:'#5499E9',
+    primaryLight:'#88BEFD',
+    
     secondary:'#FEDA66',
     terciary:'#5A5E74',
     title:'#222222',
@@ -16,6 +14,10 @@ export default colors = {
 
     placeHolder1:'#FAFAFA',
     placeHolder2:'#f6f6f6',
+
+    red:'#F66259',
+    red2:'#FE725E',
+    redLight:'#F78F80',
 
 
     green:'#1DD1A1',

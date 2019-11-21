@@ -112,7 +112,7 @@ class CardEvent extends React.Component {
 
           <Row>
             <Col size={70} style={[styleApp.center2,{paddingLeft:0}]}>
-              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',}]}>{date(data.date.start,'ddd, Do MMM')} at {time(data.date.start,'h:mm a')}</Text>
+              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:13}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
               
             </Col>
             <Col size={10} style={styleApp.center2} >
@@ -131,9 +131,9 @@ class CardEvent extends React.Component {
               }
             </Col>
             <Col size={20} style={styleApp.center8}>
-              <View style={[styles.viewSport,{backgroundColor:sport.card.color.color}]}>
+              {/* <View style={[styles.viewSport,{backgroundColor:sport.card.color.color}]}>
                 <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
-              </View>
+              </View> */}
             </Col>
 
           </Row>

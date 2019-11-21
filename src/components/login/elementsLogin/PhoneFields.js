@@ -12,6 +12,7 @@ import {
 import {connect} from 'react-redux';
 // import {updateStepLogin} from '../../../actions/loginActions'
 // import {initApp} from '../../../actions/initAppActions'
+import Flag from 'react-native-flags';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import { Col, Row, Grid } from "react-native-easy-grid";
@@ -20,7 +21,7 @@ import axios from 'axios'
 import colors from '../../style/colors'
 import styleApp from '../../style/style'
 import Button from '../../layout/buttons/Button';
-const ListCountry = require('../elementsFlags/listCountry.json')
+const ListCountry = require('../elementsFlags/country.json')
 
 
 const { height, width } = Dimensions.get('screen')
@@ -69,7 +70,7 @@ class PhoneFields extends Component {
       const promiseAxios = await axios.get(url, {
         params: {
           phone: phoneNumber,
-          countryCode:this.props.country.dial_code,
+          countryCode:'+'+this.props.country.callingCode,
           giftAmount: 0
         }
       })
@@ -151,7 +152,7 @@ class PhoneFields extends Component {
       return (
         <Row>
           <Col style={styles.center} size={50}>
-            <Image source={{uri:'data:image/png;base64,'+Object.values(ListCountry).filter(country => this.props.country.code == country.code)[0].flag}} style={{width:24,height:16,borderRadius:2}} /> 
+            <Image source={{uri:Object.values(ListCountry).filter(country => this.props.country.code == country.code)[0].flag}} style={{width:30,height:30,borderRadius:15}} /> 
           </Col>
           <Col style={[styles.center2,{backgroundColor:'white'}]} size={30}>
             <MatIcon name='keyboard-arrow-down' color='#757575' size={15}/>  
@@ -167,7 +168,7 @@ class PhoneFields extends Component {
                   {this.countryCol()}
                 </Col>
                 <Col size={15} style={[styles.center,{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>
-                  <Text style={styles.countryCode}>{this.props.country.dial_code}</Text>
+                  <Text style={styles.countryCode}>+{this.props.country.callingCode}</Text>
                 </Col>
                 <Col size={80} style={[styles.center,{marginRight:10,},{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>
                   {this.inputPhone()}

@@ -78,9 +78,9 @@ export default class ButtonAdd extends React.Component {
       <View>
 
         <Animated.View style={[styles.viewButton,{opacity:this.opacityButton2,transform: [{translateY: this.translateYButton2}]}]}>
-          <View style={{position:'absolute',left:-54,}}>
-            <Text style={[styleApp.title,{color:'white',fontSize:16}]}>Group</Text>
-          </View>
+          <TouchableOpacity activeOpacity={1} onPress={() => this.open(!this.state.open,'group')} style={{position:'absolute',left:-104,width:100}} >
+            <Text style={[styleApp.title,{color:'white',fontSize:16}]}>New Group</Text>
+          </TouchableOpacity>
 
           <ButtonColor view={() => {
                 return <AllIcons name='user-friends' color={colors.blue} size={18} type='font' />
@@ -93,9 +93,9 @@ export default class ButtonAdd extends React.Component {
         </Animated.View>
 
         <Animated.View style={[styles.viewButton,{opacity:this.opacityButton1,transform: [{translateY: this.translateYButton1}]}]}>
-          <View style={{position:'absolute',left:-50,}}>
-            <Text style={[styleApp.title,{color:'white',fontSize:16}]}>Event</Text>
-          </View>
+          <TouchableOpacity activeOpacity={1} onPress={() => this.open(!this.state.open,'event')}  style={{position:'absolute',left:-100,width:100}}>
+            <Text style={[styleApp.title,{color:'white',fontSize:16}]}>New Event</Text>
+          </TouchableOpacity>
           
           <ButtonColor view={() => {
                 return <AllIcons name='calendar-day' color={colors.blue} size={18} type='font' />
@@ -112,9 +112,9 @@ export default class ButtonAdd extends React.Component {
                 return <AllIcons name='plus' color={'white'} size={18} type='font' />
               }}
               click={() => this.open(!this.state.open)}
-              color={colors.blue}
+              color={colors.green}
               style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:55,width:55,borderRadius:27.5}]}
-              onPressColor={colors.blueLight}
+              onPressColor={colors.greenLight}
           />
         </Animated.View>
       </View>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   viewButton:{
     ...styleApp.center,
     borderColor:colors.off,
-    height:55,width:55,position:'absolute',zIndex:40,bottom:50,right:20
+    height:55,width:55,position:'absolute',zIndex:40,bottom:20,right:20
   },
   
 });

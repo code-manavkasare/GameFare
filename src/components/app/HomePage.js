@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 
 import firebase from 'react-native-firebase'
 import ListEvents from './elementsHome/ListEvent'
+import HeaderHome from '../layout/headers/HeaderHome'
 import EventFromGroups from './elementsHome/EventsFromGroups'
 import styleApp from '../style/style'
 import colors from '../style/colors'
@@ -67,13 +68,13 @@ class HomeScreen extends React.Component {
     }
     homePageView () {
       return (
-        <View style={{paddingTop:20}}>
-          <ListSports 
+        <View style={{paddingTop:10}}>
+          {/* <ListSports 
           changeSport={this.changeSport.bind(this)}
           loader={this.state.loader} 
           filterSports={this.state.filterSports}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          />
+          /> */}
 
           <EventFromGroups 
             navigate={this.navigate.bind(this)} 
@@ -111,20 +112,42 @@ class HomeScreen extends React.Component {
     }
     
   render() {
+    const translateYHeader = this.AnimatedHeaderValue.interpolate(
+      {
+          inputRange: [0,20],
+          outputRange: [ 0, -30],
+          extrapolate: 'clamp'
+    });
     return (
-      <View style={{ flex:1,backgroundColor:'white'}}>
+      <View style={styleApp.stylePage}>
 
-        
+        <HeaderHome
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        textHeader={'Organize your event'}
+        inputRange={[0,sizes.heightHeaderHome+0]}
+        initialBorderColorIcon={colors.off}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1='arrow-left'
+        filterSports={this.state.filterSports}
+        sports={this.props.sports}
 
-        <View style={{height:sizes.marginTopApp}} />
+        icon2={'map-marker-alt'}
+        sizeIcon2={20}
+        typeIcon2={'font'}
+        clickButton2={() =>  this.props.navigation.navigate('Location',{'pageFrom':'Home'})}
+
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
+        />
         
         <ScrollView2
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.homePageView()}
-          marginBottomScrollView={sizes.marginTopApp}
-          marginTop={0}
+          marginBottomScrollView={0}
+          marginTop={sizes.heightHeaderHome+100}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottom={sizes.marginTopApp}
+          marginBottom={0}
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}
@@ -137,8 +160,8 @@ class HomeScreen extends React.Component {
           // }}
           icon1={'plus'}
           clickButton1={() =>  this.props.navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}
-
-          offsetBottom={70}
+          
+          offsetBottom={200}
           showsVerticalScrollIndicator={false}
         />
 
@@ -177,7 +200,7 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    sports:state.globaleVariables.sports.list
+    sports:state.globaleVariables.sports.list,
   };
 };
 

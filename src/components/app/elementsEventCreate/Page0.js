@@ -306,6 +306,7 @@ class Page0 extends Component {
     return (
       <View style={styleApp.stylePage}>
 
+
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}

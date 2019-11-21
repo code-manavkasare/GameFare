@@ -17,16 +17,20 @@ const AppContainer = createAppContainer(AppSwitchNavigator)
 
 class App extends Component {
   async componentDidMount() { 
+    SplashScreen.hide()
     this.initBranch()
+    
+    // await NavigationService.navigate('SelectSport')
     var variables = await firebase.database().ref('variables').once('value')
     variables = variables.val()
     await this.props.globaleVariablesAction(variables)
     console.log('getUserID')
     console.log(this.props.userID)
-
-    SplashScreen.hide()
+    
+    
+    
     StatusBar.setHidden(false, "slide")
-    StatusBar.setBarStyle('dark-content',true)
+    StatusBar.setBarStyle('light-content',true)
     if (this.props.userID != '') {
       var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser'
       const promiseAxios = await axios.get(url, {

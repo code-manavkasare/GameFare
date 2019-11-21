@@ -420,6 +420,8 @@ PODS:
     - Fabric
     - Firebase/Core
     - React
+  - RNFS (2.16.2):
+    - React
   - RNGestureHandler (1.4.1):
     - React
   - RNInAppBrowser (3.1.0):
@@ -514,6 +516,7 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -643,6 +646,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-fast-image
   RNFirebase:
     :path: ../node_modules/react-native-firebase/ios
+  RNFS:
+    :path: ../node_modules/react-native-fs
   RNGestureHandler:
     :path: ../node_modules/react-native-gesture-handler
   RNInAppBrowser:
@@ -746,6 +751,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 5b5b42b12587207b6bd686441ac42d19d8e07933
   RNFastImage: b9535ebddb6105f5d244b023d79676979cb14034
   RNFirebase: ca408d6bee0ca9383bd0cfe84f40b01370b8ad4d
+  RNFS: 63be1ccb4bf27a09d1cf7f481c86fdfba9e4a0a2
   RNGestureHandler: 311e3b1cef021a7c9ef31e97e7dc31970cc6288d
   RNInAppBrowser: 13e6fe396c274632dbbcc9f963edbf82f5dc24b3
   RNPermissions: 09451e563764b938c2bbc945ca430f758044f0dd

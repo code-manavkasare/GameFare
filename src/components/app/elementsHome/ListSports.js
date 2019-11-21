@@ -143,6 +143,10 @@ const styles = StyleSheet.create({
   cardSport:{
     // backgroundColor:'red',
     marginRight:0,
+    shadowColor: '#46474B',
+      shadowOffset: { width: 2, height: 0 },
+      shadowRadius: 20,
+      shadowOpacity: 0.3,
     overflow:'hidden',
     height:130,
     // marginRight:10,

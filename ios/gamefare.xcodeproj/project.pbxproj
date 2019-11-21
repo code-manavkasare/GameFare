@@ -24,7 +24,7 @@
 		172D14A0235D2FB300560A8E /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1492235D2F9500560A8E /* OpenSans-Regular.ttf */; };
 		172D14A1235D2FB300560A8E /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1494235D2F9500560A8E /* OpenSans-SemiBold.ttf */; };
 		172D14A2235D2FB300560A8E /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1495235D2F9600560A8E /* OpenSans-SemiBoldItalic.ttf */; };
-		17A8CCC92363B34C006BB419 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 17A8CCC82363B342006BB419 /* icomoon.ttf */; };
+		175376B423865AAC0088FFC8 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 175376B323865AAC0088FFC8 /* icomoon.ttf */; };
 		17BC97A2235B3ABE009F0EC8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */; };
 		17C26B8A236A3B80006835E7 /* logoios.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B88236A3B80006835E7 /* logoios.png */; };
 		17C26B8C236A3BC7006835E7 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B8B236A3BC6006835E7 /* logo.png */; };
@@ -89,7 +89,7 @@
 		172D1497235D2F9600560A8E /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		172D1498235D2F9600560A8E /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		172D14A3235DA3F800560A8E /* RNCStatusBar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCStatusBar.xcodeproj; path = "../node_modules/@react-native-community/status-bar/ios/RNCStatusBar.xcodeproj"; sourceTree = "<group>"; };
-		17A8CCC82363B342006BB419 /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
+		175376B323865AAC0088FFC8 /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icomoon.ttf; path = "../../../Downloads/icomoon-v1.0 (4)/fonts/icomoon.ttf"; sourceTree = "<group>"; };
 		17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		17BC97A3235B3CB6009F0EC8 /* gamefare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = gamefare.entitlements; path = gamefare/gamefare.entitlements; sourceTree = "<group>"; };
 		17C26B88236A3B80006835E7 /* logoios.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logoios.png; sourceTree = "<group>"; };
@@ -190,7 +190,7 @@
 		0E5EB86E236842468BEB826B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				17A8CCC82363B342006BB419 /* icomoon.ttf */,
+				175376B323865AAC0088FFC8 /* icomoon.ttf */,
 				BE0DAE674B794C5087F79B0D /* OpenSans-Bold.ttf */,
 				A7CA9426255744A2AA3C5EEF /* OpenSans-BoldItalic.ttf */,
 				3E2490FD729142B4BC1B692E /* OpenSans-ExtraBold.ttf */,
@@ -509,8 +509,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				175376B423865AAC0088FFC8 /* icomoon.ttf in Resources */,
 				172D1499235D2FB300560A8E /* OpenSans-Bold.ttf in Resources */,
-				17A8CCC92363B34C006BB419 /* icomoon.ttf in Resources */,
 				172D149A235D2FB300560A8E /* OpenSans-BoldItalic.ttf in Resources */,
 				172D149B235D2FB300560A8E /* OpenSans-ExtraBold.ttf in Resources */,
 				172D149C235D2FB300560A8E /* OpenSans-ExtraBoldItalic.ttf in Resources */,

@@ -65,7 +65,7 @@ class CardEvent extends React.Component {
       this.props.openEvent(data)
     }
     card (color,data) {
-      if (this.state.loader)return <PlacelHolder />
+      if (this.state.loader)return <View style={styles.cardList}><PlacelHolder /></View>
       return this.displayCard(color,data)
     }
     numberMember(data) {
@@ -116,9 +116,9 @@ class CardEvent extends React.Component {
               
             </Col>
             <Col size={20} style={styleApp.center3}>
-              <View style={[styles.viewSport,{backgroundColor:sport.card.color.color,width:30,height:30,borderRadius:15}]}>
+              {/* <View style={[styles.viewSport,{backgroundColor:sport.card.color.color,width:30,height:30,borderRadius:15}]}>
                 <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase()}</Text>
-              </View>
+              </View> */}
             </Col>
 
           </Row>
@@ -151,11 +151,19 @@ class CardEvent extends React.Component {
 
 const styles = StyleSheet.create({
   cardList:{
-    flex:1,
-    width:'100%',
-    backgroundColor:'white',  
-    // borderRadius:10,
+    backgroundColor:'white',
+    shadowColor: '#46474B',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 60,
+    shadowOpacity: 1,
+    marginRight:0,
     overflow:'hidden',
+    height:170,
+    marginRight:10,
+    borderRadius:10,
+    borderWidth:0.3,
+    borderColor:colors.borderColor,
+    width:220
   
   },
   center:{

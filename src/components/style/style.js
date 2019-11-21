@@ -65,7 +65,10 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-Regular',
       color:colors.title,
     },
-    iconFooter:{height:23,width:23,marginTop:3,marginBottom:-3},
+    iconFooter:{
+      height:18,width:18,
+      marginTop:3,marginBottom:-5
+    },
     
     buttonRound:{
       width:65,height:65,
@@ -227,13 +230,15 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-SemiBold',
     },
     footerText:{
-      color:colors.blue,
+      color:'white',
       fontSize:11,
+      marginTop:0,
       fontFamily: 'OpenSans-SemiBold',
     },
     footerTextOff:{
-      color:colors.title,
+      color:colors.primaryLight,
       fontSize:11,
+      marginTop:0,
       fontFamily: 'OpenSans-SemiBold',
     },
     styleHeader:{
