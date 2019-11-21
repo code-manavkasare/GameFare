@@ -219,6 +219,7 @@ class Page0 extends Component {
   }
   render() {
     return (
+      
       <View style={styleApp.stylePage}>
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}

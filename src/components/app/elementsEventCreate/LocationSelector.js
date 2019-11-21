@@ -39,10 +39,9 @@ import Loader from '../../layout/loaders/Loader'
 import ButtonColor from '../../layout/Views/Button'
 import AllIcons from '../../layout/icons/AllIcons'
 
-import ScrollView from '../../layout/scrollViews/ScrollView'
+import ScrollView from '../../layout/scrollViews/ScrollView2'
 import Header from '../../layout/headers/HeaderButton'
 import AsyncStorage from '@react-native-community/async-storage';
-
 
 const { height, width } = Dimensions.get('screen')
 
@@ -73,6 +72,7 @@ class LocationSelector extends Component {
           initialLoader:true,
         };
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.AnimatedHeaderValue = new Animated.Value(0)
       }
       static navigationOptions = ({ navigation }) => {
         return {
@@ -150,7 +150,7 @@ class LocationSelector extends Component {
     }
     async onclickLocation (address) {
       Keyboard.dismiss()
-      this.props.navigation.setParams({ loader: true })
+      this.setState({ loader: true })
       console.log('on click sur locations')
       console.log(address)
       try{
@@ -203,7 +203,7 @@ class LocationSelector extends Component {
           addressOff = addressOff.replace(', USA', '')
           addressOff = addressOff.replace(', Australia', '')
 
-          this.props.navigation.setParams({ loader: false })
+          this.setState({ loader: false })
           await Keyboard.dismiss()
           this.props.navigation.state.params.onGoBack({
             address:addressOff,
@@ -216,7 +216,7 @@ class LocationSelector extends Component {
       } catch (err) {
         console.log('errrrrrr')
         console.log(err)
-        this.props.navigation.setParams({ loader: false })
+        this.setState({ loader: false })
         this.setState({loader:false,showAlert:true,message:'An error has occured. Please try again.'})
       }
     }
@@ -236,13 +236,13 @@ class LocationSelector extends Component {
             }).catch(err => {
               console.log('erro location')
               console.log(err)
-              this.props.navigation.setParams({ loader: false })
+              this.setState({ loader: false })
             })
         },
         error => {
           console.log('error location 2')
           console.log(error)
-          this.props.navigation.setParams({ loader: false })
+          this.setState({ loader: false })
         },
         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
       )
@@ -274,7 +274,7 @@ class LocationSelector extends Component {
     }
     buttonSearchAddress () {
       return (
-        <Animated.View style={[styleApp.inputForm,{height:50,marginTop:10,marginLeft:20,width:width-40,backgroundColor:colors.off2,borderWidth:0.3,borderRadius:5}]}>
+        <Animated.View style={[styleApp.inputForm,{height:50,marginTop:10,marginLeft:20,width:width-40,backgroundColor:colors.off2,borderWidth:0.3,borderRadius:5,marginBottom:10}]}>
           <Row style={{height:50}}>
               <Col size={15} style={styles.center}>
                 <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
@@ -346,7 +346,7 @@ class LocationSelector extends Component {
               this.onclickLocation(result)
             }}
             color='white'
-            style={{flex:1,borderBottomWidth:0,borderColor:'#EAEAEA',paddingTop:15,paddingBottom:15,marginLeft:-20,width:width}}
+            style={{flex:1,borderBottomWidth:0,borderColor:'#EAEAEA',paddingTop:15,paddingBottom:15,marginLeft:0,width:width}}
             onPressColor={colors.off}
         />
       )
@@ -354,10 +354,11 @@ class LocationSelector extends Component {
     locationFields () {
       return (
         <View>
+          {this.buttonSearchAddress()}
          
           {
             this.state.textInput == ''?
-            <View style={{backgroundColor:'red'}}>
+            <View >
             {this.cardResult(
               {
                 type: 'currentLocation',
@@ -387,15 +388,30 @@ class LocationSelector extends Component {
   render() {
     return (
       <View style={styles.content}>
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        textHeader={''}
+        inputRange={[5,10]}
+        loader={this.state.loader}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1='times'
+        icon2={null}
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
+        />
 
-        {this.buttonSearchAddress()}
+
+        
 
         <ScrollView 
           style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.locationFields.bind(this)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={90}
           showsVerticalScrollIndicator={false}
         />

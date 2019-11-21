@@ -43,9 +43,9 @@ class InitialPage extends Component {
     console.log('pagecoach mount')
     var that = this
       setTimeout(function(){
-        // StatusBar.setBarStyle('dark-content',true)
-        that.setState({loader:false})
-        //that.props.navigation.navigate('TabsApp')
+        StatusBar.setBarStyle('dark-content',true)
+        // that.setState({loader:false})
+        that.props.navigation.navigate('SportSelect')
       }, 2000);   
   }
   loader() {
@@ -63,110 +63,10 @@ class InitialPage extends Component {
         </FadeInView>
       )
   }
-  selectSport (sport) {
-    this.setState({sport:sport,page:'location'})
-  }
-  button(sport,i) {
-    console.log(sport.value)
-    console.log('sport.value')
-    return (
-      
-      <ButtonColor key={i} view={() => {
-        return (
-            <Row >
-              <Col size={20} style={styleApp.center}>
-              <AsyncImage style={styles.imgBackground} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
-              </Col>
-              <Col size={75} style={styleApp.center2}>
-              <Text style={[styleApp.title,{color:'white',fontSize:15,fontFamily:'OpenSans-Bold'}]}>{sport.card.name}</Text>
-              </Col>
-              <Col size={15}>
-                
-              </Col>
-            </Row>
-        )
-      }} 
-      click={() => {
-        this.selectSport(sport.value)
-        this.setState({sport:sport})
-      }}
-      color={colors.blue}
-      style={[styles.cardSports,{height:60,borderWidth:1,borderColor:'white',marginTop:10,borderRadius:10}]}
-      onPressColor={colors.primaryLight}
-
-      />
-    )
-  }
-  sport () {
-    return (
-      <FadeInView duration={200} style={[{height:height,paddingTop:sizes.marginTopApp}]}>
-
-          
-        <Text style={[styleApp.title,{color:'white',marginBottom:30}]}>Which sport do you practice?</Text>
-
-        {/* <View style={styleApp.divider2}/> */}
-
-        {this.props.sports.map((sport,i) => (
-            this.button(sport,i+1)
-          ))}
-      </FadeInView>
-    )
-  }
-  location() {
-    return (
-      <FadeInView duration={200} style={[{height:height,paddingTop:sizes.marginTopApp}]}>
-
-          
-        <Text style={[styleApp.title,{color:'white',marginBottom:30}]}>Location</Text>
-
-        <ButtonColor view={() => {
-        return (
-            <Row >
-              <Col size={75} style={[styleApp.center2,{paddingLeft:20}]}>
-              <Text style={[styleApp.title,{color:'white',fontSize:15,fontFamily:'OpenSans-Bold'}]}>Skip</Text>
-              </Col>
-              <Col size={15}>
-                
-              </Col>
-            </Row>
-        )
-      }} 
-      click={() => this.props.navigation.navigate('TabsApp')}
-      color={colors.blue}
-      style={[styles.cardSports,{height:60,borderWidth:1,borderColor:'white',marginTop:10,borderRadius:10}]}
-      onPressColor={colors.primaryLight}
-
-      />
-      </FadeInView>
-    )
-  }
   render() {
     return (
       <View style={[{borderLeftWidth:0,backgroundColor:colors.blue,height:height}]}>
-        {
-          this.state.loader?
-          this.loader()
-          :this.state.page== 'sport'?
-          <ScrollView 
-          onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.sport.bind(this)}
-          marginBottomScrollView={0}
-          marginTop={0}
-          offsetBottom={0}
-          showsVerticalScrollIndicator={false}
-        />
-        :
-        <ScrollView 
-          onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.location.bind(this)}
-          marginBottomScrollView={0}
-          marginTop={0}
-          offsetBottom={0}
-          showsVerticalScrollIndicator={false}
-        />
-        }
-        
-
+        {this.loader()}
       </View>
     );
   }

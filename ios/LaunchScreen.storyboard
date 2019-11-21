@@ -15,14 +15,8 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" preservesSuperviewLayoutMargins="YES" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="5ES-qX-bgm">
-                                <rect key="frame" x="129" y="301" width="117" height="211"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <viewLayoutGuide key="safeArea" id="XwV-mQ-PbO"/>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" red="0.17740064859390259" green="0.56987684965133667" blue="0.91178268194198608" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.40195280313491821" green="0.62010842561721802" blue="0.97261935472488403" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                     </view>
                 </viewController>
@@ -31,7 +25,4 @@
             <point key="canvasLocation" x="50.724637681159422" y="373.66071428571428"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="logo.png" width="523" height="523"/>
-    </resources>
 </document>

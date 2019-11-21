@@ -88,10 +88,9 @@ class ListEvents extends React.Component {
         <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>My groups events</Text>
 
         
-        <View style={[styleApp.divider2,{marginTop:10,marginBottom:20}]} />
 
 
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginLeft:-20,width:width,paddingLeft:20,paddingRight:20,}}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginLeft:-20,width:width,paddingLeft:20,paddingRight:20,marginTop:15}}>
           {
           this.state.loader?
           [0,1,2,3].map((event,i) => (

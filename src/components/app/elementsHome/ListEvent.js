@@ -46,6 +46,7 @@ class ListEvents extends React.Component {
     }
   }
   async componentDidMount() {
+    this.props.onRef(this)
     await this.setState({loader:true})
     this.loadEvent(this.state.search,this.props.filterSports)
   }
@@ -89,14 +90,14 @@ class ListEvents extends React.Component {
   }
   ListEvent () {
     return (
-      <View >
+      <View style={{marginTop:20}}>
         <Row style={{marginLeft:20,width:width-40}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>Upcoming events</Text>
             <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0,fontSize:12}]}>{this.state.location.address}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>
-          <Button view={() => {
+          {/* <Button view={() => {
                 return <AllIcons name='map-marker-alt' size={16} color={colors.title} type='font' />
               }} 
               click={() => NavigationService.navigate('Location',{pageFrom:'Home',location:this.state.location,onGoBack:(location) => this.setLocation(location)})}
@@ -104,7 +105,7 @@ class ListEvents extends React.Component {
               style={[styleApp.center,{borderColor:colors.off,height:40,width:40,borderRadius:20,borderWidth:1}]}
               onPressColor={colors.off}
               />
-            
+             */}
           </Col>
         </Row>
 

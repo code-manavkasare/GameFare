@@ -87,6 +87,7 @@ class HomeScreen extends React.Component {
            filterSports={this.state.filterSports}
            search={this.state.search} 
            key={2} 
+           onRef={ref => (this.listEventsRef = ref)}
            setState={(data) => this.setState(data)}
            loader={this.state.loader} 
            navigate={this.navigate.bind(this)} 
@@ -110,7 +111,9 @@ class HomeScreen extends React.Component {
         that.setState({loader:false})
       }, 400);   
     }
-    
+    async setLocation(data) {
+      this.listEventsRef.setLocation(data)
+    }
   render() {
     const translateYHeader = this.AnimatedHeaderValue.interpolate(
       {
@@ -136,7 +139,7 @@ class HomeScreen extends React.Component {
         icon2={'map-marker-alt'}
         sizeIcon2={20}
         typeIcon2={'font'}
-        clickButton2={() =>  this.props.navigation.navigate('Location',{'pageFrom':'Home'})}
+        clickButton2={() =>  this.props.navigation.navigate('Location',{'pageFrom':'Home',onGoBack: (data) => this.setLocation(data)})}
 
         clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
         />
@@ -145,7 +148,7 @@ class HomeScreen extends React.Component {
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.homePageView()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome+100}
+          marginTop={sizes.heightHeaderHome-11}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottom={0}
           colorRefresh={colors.title}
@@ -161,7 +164,7 @@ class HomeScreen extends React.Component {
           icon1={'plus'}
           clickButton1={() =>  this.props.navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}
           
-          offsetBottom={200}
+          offsetBottom={100}
           showsVerticalScrollIndicator={false}
         />
 

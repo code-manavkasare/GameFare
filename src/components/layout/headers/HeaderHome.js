@@ -83,7 +83,7 @@ export default class HeaderFlow extends Component {
     const borderWidth = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: [0,10],
-          outputRange: [ 0, 0.3 ],
+          outputRange: [ 0, 1 ],
           extrapolate: 'clamp'
     });
     const AnimateColorIcon = this.props.AnimatedHeaderValue.interpolate(
@@ -107,7 +107,7 @@ export default class HeaderFlow extends Component {
     const translateYHeader = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: this.props.inputRange,
-          outputRange: [ 0, -30],
+          outputRange: [ 0, -11],
           extrapolate: 'clamp'
     });
     const scaleIcon = this.props.AnimatedHeaderValue.interpolate({
@@ -117,35 +117,27 @@ export default class HeaderFlow extends Component {
     var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.filterSports)[0]
     return ( 
       <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,borderColor:borderColorView,transform:[{translateY:translateYHeader}]}]}>
-        <Row style={{width:width-40,marginLeft:20}}>
+        <Row style={{width:width,paddingLeft:20,paddingRight:20}}>
           <Col size={50} style={styleApp.center2}>
-            <Animated.View style={[{borderColor:borderColorIcon,height:48,width:48,borderRadius:23.8,borderWidth:1,backgroundColor:'white',overFlow:'hidden'}]} >
-                      <ButtonColor view={() => {
-                        return <AsyncImage style={{height:46,width:46,borderRadius:23,borderWidth:0,overFlow:'hidden'}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
+              <ButtonColor view={() => {
+                        return <AsyncImage style={{height:40,width:40,borderRadius:20,borderWidth:0,overFlow:'hidden'}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
                       }}
                       click={() => this.props.clickButton1()}
                       color={'white'}
-                      style={[styleApp.center,{height:46,width:46,borderRadius:23,borderWidth:0,overFlow:'hidden'}]}
+                      style={[styleApp.center,{height:40,width:40,borderRadius:20,borderWidth:0,overFlow:'hidden'}]}
                       onPressColor={colors.off}
                       />
-            </Animated.View>
             {/* <Text style={[styles.text,{marginTop:5}]}>{this.props.filterSports.charAt(0).toUpperCase() + this.props.filterSports.slice(1)}</Text> */}
           </Col>
-          <Col size={50} style={styles.center2}>
-            {
-            this.props.icon2!=null?
-            <Animated.View style={[styles.icon,{borderColor:borderColorIcon,}]} >
-                      <ButtonColor view={() => {
+          <Col size={50} style={[styleApp.center3]}>
+            <ButtonColor view={() => {
                         return <AllIcons name={this.props.icon2} color={colors.title} size={20} type={this.props.typeIcon2} />
                       }}
                       click={() => this.props.clickButton2()}
                       color={'white'}
-                      style={[styleApp.center,{height:46,width:46,borderRadius:23,borderWidth:0,overFlow:'hidden'}]}
+                      style={[styleApp.center,{height:40,width:40,borderRadius:20,borderWidth:1,overFlow:'hidden',borderColor:colors.off}]}
                       onPressColor={colors.off}
                       />
-            </Animated.View>
-            :null
-            }
           </Col>
         </Row>
       </Animated.View>
@@ -167,7 +159,7 @@ const styles = StyleSheet.create({
     
   },
   header:{
-    height:100+sizes.marginTopHeader,
+    height:50+sizes.marginTopHeader,
     paddingTop:sizes.marginTopHeader-5,
     borderBottomWidth:1,
     position:'absolute',

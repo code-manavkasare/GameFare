@@ -59,7 +59,8 @@ import AlertAddress from '../layout/alerts/AlertAddress'
 import AlertCall from '../layout/alerts/AlertCall'
 
 import InitialPage from '../app/elementsOnBoard/InitialPage'
-
+import SportSelect from '../app/elementsOnBoard/SportSelect'
+import LocationSelect from '../app/elementsOnBoard/LocationSelect'
 
 const CreateEventNavigator = createStackNavigator(
     {
@@ -223,9 +224,34 @@ const MainApp = createBottomTabNavigator(
     }
   );
 
-  const MainStack = createStackNavigator(
+  const InitialPageNavigator = createStackNavigator(
     {
         InitialPage:InitialPage,
+        LocationSelect:{screen:LocationSelect,
+            navigationOptions:{
+                gesturesEnabled:true,
+                cardShadowEnabled:true
+            }
+        },
+        SportSelect:{screen:SportSelect,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:false
+            }
+        },
+    },
+    {
+        initialRouteName:'InitialPage',
+        headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false,
+        cardShadowEnabled:true
+    }
+);
+
+  const MainStack = createStackNavigator(
+    {
+        InitialPage:InitialPageNavigator,
         TabsApp:{
             screen:MainApp,
             navigationOptions:{
@@ -244,20 +270,6 @@ const MainApp = createBottomTabNavigator(
     }
 )
 
-const LocationNavigator = createStackNavigator(
-    {
-        Location: LocationSelector,
-    },
-    {
-        initialRouteName:'Location',
-        // headerMode: 'none',
-        navigationOptions:{
-            gesturesEnabled:false
-        },
-        mode: 'card',
-        cardOverlayEnabled:false
-    }
-);
 const DateNavigator = createStackNavigator(
     {
         Date: DateSelector,
@@ -287,7 +299,7 @@ const DateNavigator = createStackNavigator(
         AlertCall:AlertCall,
         Payments:PaymentsNavigator,
         Date:DateNavigator,
-        Location:LocationNavigator,
+        Location:LocationSelector,
         ContactNavigator:ContactNavigator
     },
     {
