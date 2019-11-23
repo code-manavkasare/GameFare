@@ -11,6 +11,7 @@ var heightFooterBooking =155
 var heightFooter = 135
 var marginTopApp = 10
 var heightHeaderHome = 70
+var heightHeaderFilter = 100
 var heightHeaderHomeSearch = 130
 var marginBottomAlert = 50
 var height0 = 50
@@ -19,6 +20,7 @@ if (Platform.OS == 'ios'){
     marginTopHeader = 24
     heightPicture=240
     heightHeaderHome = 70
+    heightHeaderFilter = 100
     heightFooterBooking =82
     heightFooter = 60
     marginTopApp = 20
@@ -29,6 +31,7 @@ if (Platform.OS == 'ios'){
         marginTopHeader = 50
         heightPicture=280
         heightHeaderHome = 100
+        heightHeaderFilter = 130
         heightFooterBooking =110
         heightFooter = 93
         marginTopApp = 35
@@ -39,6 +42,7 @@ if (Platform.OS == 'ios'){
         marginTopHeader = 48
         heightPicture=280
         heightHeaderHome = 100
+        heightHeaderFilter = 130
         heightFooterBooking =110
         heightFooter = 91
         marginTopApp = 35
@@ -48,12 +52,14 @@ if (Platform.OS == 'ios'){
     } else if (height == 667){
         heightFooterBooking =85
         heightHeaderHome = 70
+        heightHeaderFilter = 100
         heightHeaderHomeSearch = 130
 
         marginBottomAlert = 50
     } else if (height == 736){
         heightFooterBooking =85
         heightHeaderHome = 70
+        heightHeaderFilter = 100
         heightHeaderHomeSearch = 130
 
         marginBottomAlert = 50
@@ -68,6 +74,7 @@ var sizes = {
     heightPicture:heightPicture,
     height0:height0,
     heightHeaderHome:heightHeaderHome,
+    heightHeaderFilter:heightHeaderFilter,
     heightHeaderHomeSearch:heightHeaderHomeSearch
 }
 

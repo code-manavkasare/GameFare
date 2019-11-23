@@ -74,7 +74,7 @@ export default class Button extends Component {
       >
           {
           this.props.loader?
-          <Loader size={20} color='white'/>
+          <Loader size={26} color='white'/>
           :
           <Text style={this.styleText()}>{this.props.text}</Text>
           }   

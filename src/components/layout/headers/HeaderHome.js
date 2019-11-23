@@ -10,7 +10,8 @@ import {
   View
 } from 'react-native';
 import {Grid,Row,Col} from 'react-native-easy-grid';
-
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
+const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 
 import sizes from '../../style/sizes'
 import Loader from '../loaders/Loader'
@@ -18,10 +19,9 @@ import colors from '../../style/colors';
 import ButtonColor from '../Views/Button'
 import AllIcons from '../icons/AllIcons'
 import styleApp from '../../style/style'
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import AllIcon from '../icons/AllIcons';
+import {native,timing} from '../../animations/animations'
 import AsyncImage from '../image/AsyncImage'
-const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 const { height, width } = Dimensions.get('screen')
 
 
@@ -29,10 +29,14 @@ export default class HeaderFlow extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          enableClickButton:true
+          enableClickButton:true,
+          heightButtonSport:new Animated.Value(45),
+          openSport:false
         };
         this.componentWillMount = this.componentWillMount.bind(this);
         this.handleBackPress = this.handleBackPress.bind(this)
+        this.heightButtonSport = new Animated.Value(45)
+        this.rotateIcon = new Animated.Value(0);
       }
     componentWillMount(){
       this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
@@ -67,6 +71,53 @@ export default class HeaderFlow extends Component {
       if (this.props.headerType) return 25
       return 70
     }
+    openSport (val,sport){
+      if (val) {
+        return Animated.parallel([
+          Animated.timing(this.state.heightButtonSport,timing(Object.values(this.props.sports).length*45,200)),
+          Animated.timing(this.rotateIcon,timing(1,200)),
+        ]).start(() => {
+          this.setState({openSport:true})
+        })
+      }
+      this.props.setSport(sport)
+      return Animated.parallel([
+        Animated.timing(this.state.heightButtonSport,timing(45,200)),
+        Animated.timing(this.rotateIcon,timing(0,200)),
+      ]).start(() => {
+        this.setState({openSport:false})
+      })
+    }
+    buttonSport (sport,i) {
+      const spin = this.rotateIcon.interpolate({
+        inputRange: [0,1],
+        outputRange: ['0deg','180deg']
+      })
+      return (
+        <ButtonColor view={() => {
+          return <Row style={{}}>
+            <Col size={35} style={[styleApp.center2,{paddingLeft:5}]}>
+              <AsyncImage style={{height:35,width:35,borderRadius:20,borderWidth:1,overFlow:'hidden',borderColor:colors.off}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
+            </Col>
+            <Col size={15} style={[styleApp.center]}>
+              {
+                i==0?
+                <AnimatedIcon name='caret-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
+                :null
+              } 
+            </Col>
+            <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
+              <Text style={[{fontFamily:'OpenSans-Bold',fontSize:15,color:colors.title}]}>{sport.text.charAt(0).toUpperCase() + sport.text.slice(1)}</Text>
+            </Col>
+          </Row>
+        }}
+        click={() => this.openSport(!this.state.openSport,sport.value)}
+        color={'white'}
+        style={[styleApp.center,{height:45,width:150,borderRadius:0,borderWidth:0,overFlow:'hidden'}]}
+        onPressColor={colors.off}
+        />
+      )
+    }
   render() {
     const AnimateOpacityTitle = this.props.AnimatedHeaderValue.interpolate(
       {
@@ -76,7 +127,7 @@ export default class HeaderFlow extends Component {
     });
     const AnimateBackgroundView = this.props.AnimatedHeaderValue.interpolate(
       {
-          inputRange: [this.props.inputRange[1]-0.42,this.props.inputRange[1]-0.1],
+          inputRange: [0,100],
           outputRange: [ this.props.initialBackgroundColor, 'white' ],
           extrapolate: 'clamp'
     });
@@ -107,35 +158,50 @@ export default class HeaderFlow extends Component {
     const translateYHeader = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: this.props.inputRange,
-          outputRange: [ 0, -11],
+          outputRange: [ 0, -10],
+          extrapolate: 'clamp'
+    });
+    const heightHeaderFilter = this.props.AnimatedHeaderValue.interpolate(
+      {
+          inputRange: this.props.inputRange,
+          outputRange: [ sizes.heightHeaderFilter, sizes.heightHeaderFilter-20],
           extrapolate: 'clamp'
     });
     const scaleIcon = this.props.AnimatedHeaderValue.interpolate({
       inputRange: this.props.inputRange,
       outputRange: [35, 20],
     });
-    var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.filterSports)[0]
+    var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.sportSelected)[0]
     return ( 
-      <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,borderColor:borderColorView,transform:[{translateY:translateYHeader}]}]}>
+      <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,height:heightHeaderFilter,borderColor:borderColorView}]}>
         <Row style={{width:width,paddingLeft:20,paddingRight:20}}>
-          <Col size={50} style={styleApp.center2}>
-              <ButtonColor view={() => {
-                        return <AsyncImage style={{height:40,width:40,borderRadius:20,borderWidth:0,overFlow:'hidden'}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
+          <Col size={50} style={{paddingTop:15}}>
+              <Animated.View style={{height:this.state.heightButtonSport,overflow:'hidden',borderWidth:1,borderRadius:10,width:150,backgroundColor:'white',borderColor:colors.off,transform:[{translateY:translateYHeader}]}}>
+                {this.buttonSport(sport,0)}
+
+                {Object.values(this.props.sports).filter(item => item.value != sport.value).map((sport,i) => (
+                  this.buttonSport(sport,i+1)
+                ))}
+              </Animated.View>
+          </Col>
+          <Col size={16}></Col>
+          <Col size={17} style={[{paddingTop:15,alignItems:'flex-end'}]}>
+            <ButtonColor view={() => {
+                        return <AllIcons name={'sliders-h'} color={colors.title} size={15} type={this.props.typeIcon2} />
                       }}
-                      click={() => this.props.clickButton1()}
+                      click={() => this.props.clickButton2()}
                       color={'white'}
-                      style={[styleApp.center,{height:40,width:40,borderRadius:20,borderWidth:0,overFlow:'hidden'}]}
+                      style={[styleApp.center,{height:45,width:45,borderRadius:22.5,borderWidth:1,overFlow:'hidden',borderColor:colors.off,transform:[{translateY:translateYHeader}]}]}
                       onPressColor={colors.off}
                       />
-            {/* <Text style={[styles.text,{marginTop:5}]}>{this.props.filterSports.charAt(0).toUpperCase() + this.props.filterSports.slice(1)}</Text> */}
           </Col>
-          <Col size={50} style={[styleApp.center3]}>
+          <Col size={17} style={[{paddingTop:15,alignItems:'flex-end'}]}>
             <ButtonColor view={() => {
                         return <AllIcons name={this.props.icon2} color={colors.title} size={20} type={this.props.typeIcon2} />
                       }}
                       click={() => this.props.clickButton2()}
                       color={'white'}
-                      style={[styleApp.center,{height:40,width:40,borderRadius:20,borderWidth:1,overFlow:'hidden',borderColor:colors.off}]}
+                      style={[styleApp.center,{height:45,width:45,borderRadius:22.5,borderWidth:1,overFlow:'hidden',borderColor:colors.off,transform:[{translateY:translateYHeader}]}]}
                       onPressColor={colors.off}
                       />
           </Col>
@@ -159,7 +225,7 @@ const styles = StyleSheet.create({
     
   },
   header:{
-    height:50+sizes.marginTopHeader,
+    height:sizes.heightHeaderFilter,
     paddingTop:sizes.marginTopHeader-5,
     borderBottomWidth:1,
     position:'absolute',

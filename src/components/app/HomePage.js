@@ -10,8 +10,9 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {historicSearchAction} from '../../actions/historicSearchActions'
 
-import firebase from 'react-native-firebase'
+
 import ListEvents from './elementsHome/ListEvent'
 import HeaderHome from '../layout/headers/HeaderHome'
 import EventFromGroups from './elementsHome/EventsFromGroups'
@@ -19,6 +20,8 @@ import styleApp from '../style/style'
 import colors from '../style/colors'
 import Button from '../layout/buttons/Button'
 import ButtonColor from '../layout/Views/Button'
+
+
 import ScrollView2 from '../layout/scrollViews/ScrollView2'
 import AllIcons from '../layout/icons/AllIcons'
 const { height, width } = Dimensions.get('screen')
@@ -27,8 +30,7 @@ import NewEventCard from './elementsHome/NewEventCard'
 import NewGroupCard from './elementsHome/NewGroupCard'
 import ButtonAdd from './elementsHome/ButtonAdd'
 
-import BackButton from '../layout/buttons/BackButton'
-import ListSports from './elementsHome/ListSports'
+
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal'
 
@@ -38,25 +40,25 @@ class HomeScreen extends React.Component {
       this.state = {
         events:[],
         loader:false,
-        filterSports:this.props.sports[0].value
       };
       this.translateXVoile = new Animated.Value(width)
       this.AnimatedHeaderValue = new Animated.Value(0);
       this.opacityVoile = new Animated.Value(0.3)
     }
     async componentDidMount() {
+      StatusBar.setHidden(false, "slide")
+      StatusBar.setBarStyle('dark-content',true)
     }
     navigate(val,data) {
       this.props.navigation.push(val,data)
     }
     async componentWillReceiveProps(nextProps) {
       if (!isEqual(this.props.sports,nextProps.sports)) {
-        await this.setState({loader:true,filterSports:nextProps.sports[0].value})
+        await this.setState({loader:true,filterSports:nextProps.sportSelected})
         this.setState({loader:false})
       }
     }
     async changeSport (val) {
-
       await this.setState({loader:true,filterSports:val})
       var that = this
       setTimeout(function(){
@@ -69,22 +71,17 @@ class HomeScreen extends React.Component {
     homePageView () {
       return (
         <View style={{paddingTop:10}}>
-          {/* <ListSports 
-          changeSport={this.changeSport.bind(this)}
-          loader={this.state.loader} 
-          filterSports={this.state.filterSports}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          /> */}
 
           <EventFromGroups 
             navigate={this.navigate.bind(this)} 
             navigate1={(val,data) => this.props.navigation.navigate(val,data)}
-            loader={this.state.loader} 
+            loader={this.state.loader}
+            onRef={ref => (this.eventGroupsRef = ref)} 
           />
 
           <ListEvents
            location={this.state.location} 
-           filterSports={this.state.filterSports}
+           sportSelected={this.props.sportSelected}
            search={this.state.search} 
            key={2} 
            onRef={ref => (this.listEventsRef = ref)}
@@ -97,43 +94,41 @@ class HomeScreen extends React.Component {
           
           <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
 
-          <NewEventCard pageFrom='Home' />
-          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
+          {/* <NewEventCard pageFrom='Home' />
+          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} /> */}
           <NewGroupCard pageFrom='Home' />
 
         </View>
       )
     }
     async refresh () {
-      await this.setState({loader:true})
-      var that = this
-      setTimeout(function(){
-        that.setState({loader:false})
-      }, 400);   
+      this.eventGroupsRef.reload()
+      this.listEventsRef.reload()
+      return true
+      // await this.setState({loader:true})
+      // var that = this
+      // return setTimeout(function(){
+      //   return that.setState({loader:false})
+      // }, 400);   
     }
     async setLocation(data) {
       this.listEventsRef.setLocation(data)
     }
   render() {
-    const translateYHeader = this.AnimatedHeaderValue.interpolate(
-      {
-          inputRange: [0,20],
-          outputRange: [ 0, -30],
-          extrapolate: 'clamp'
-    });
     return (
       <View style={styleApp.stylePage}>
 
         <HeaderHome
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        setSport={(sport) => this.props.historicSearchAction('setSport',sport)}
         textHeader={'Organize your event'}
         inputRange={[0,sizes.heightHeaderHome+0]}
         initialBorderColorIcon={colors.off}
         initialBackgroundColor={'white'}
         initialTitleOpacity={1}
         icon1='arrow-left'
-        filterSports={this.state.filterSports}
+        sportSelected={this.props.sportSelected}
         sports={this.props.sports}
 
         icon2={'map-marker-alt'}
@@ -148,7 +143,7 @@ class HomeScreen extends React.Component {
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.homePageView()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome-11}
+          marginTop={sizes.heightHeaderFilter-30}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottom={0}
           colorRefresh={colors.title}
@@ -204,7 +199,8 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
+    sportSelected:state.historicSearch.sport
   };
 };
 
-export default connect(mapStateToProps,{})(HomeScreen);
+export default connect(mapStateToProps,{historicSearchAction})(HomeScreen);

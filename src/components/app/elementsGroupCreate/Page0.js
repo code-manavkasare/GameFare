@@ -174,7 +174,7 @@ class Page0 extends Component {
   }
   page0() {
       return (
-        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+        <View style={{marginTop:-15,marginLeft:0,width:width}}>
 
  
           <View style={styleApp.marginView}>

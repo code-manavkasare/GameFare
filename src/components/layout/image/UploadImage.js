@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 // import Permissions from 'react-native-permissions'
 
+
 import {request, PERMISSIONS} from 'react-native-permissions';
 
 import ImagePicker from 'react-native-image-picker';

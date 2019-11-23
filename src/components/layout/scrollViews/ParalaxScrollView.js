@@ -78,9 +78,9 @@ class ParalaxScrollView extends React.Component {
               refreshControl={this.refreshControl()}
               showsVerticalScrollIndicator={false}
               stickyHeaderHeight={100}
-              outputScaleValue={4}
+              outputScaleValue={6}
               fadeOutForeground={true}
-              backgroundScrollSpeed={1}
+              backgroundScrollSpeed={2}
               backgroundColor={'white'}
               onScroll = { 
               Animated.event(

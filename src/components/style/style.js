@@ -23,6 +23,9 @@ export default styles = StyleSheet.create({
     center4:{
       alignItems: 'center',
     },
+    center5:{
+      justifyContent: 'flex-end',
+    },
     divider:{
       height:0.5,width:'100%',
       marginTop:20,marginBottom:10,

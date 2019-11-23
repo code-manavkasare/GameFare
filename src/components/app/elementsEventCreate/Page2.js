@@ -180,7 +180,7 @@ class Page2 extends Component {
   }
   page1() {
       return (
-        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+        <View style={{marginTop:-15,marginLeft:0,width:width}}>
             <View style={styleApp.marginView}>
               {this.tournamentName()}
             </View>

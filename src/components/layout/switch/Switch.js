@@ -97,7 +97,7 @@ export default class Switch extends Component {
       extrapolate: 'clamp'
     });
     return (
-      <View style={{height:this.props.height}}>
+      <View style={{height:this.props.height,width:'100%'}}>
       <Row >
       <Col style={styles.center} >
         <TouchableOpacity style={this.styleButton()} activeOpacity={0.7} onPress={() => this.changeValue(false)}>
@@ -111,7 +111,7 @@ export default class Switch extends Component {
         </Col>
       </Row>
 
-      <Animated.View style={[{height:1.2,position:'absolute',bottom:0,width:'50%',backgroundColor:this.props.color != undefined?'white':colors.primary,borderRadius:0.5,},{transform:[{translateX:this.translateXBorder}]}]}/>
+      <Animated.View style={[{height:'100%',position:'absolute',borderWidth:1,bottom:0,borderRadius:4,width:'50%',backgroundColor:'transparent',borderColor:this.props.color != undefined?'white':colors.primary,},{transform:[{translateX:this.translateXBorder}]}]}/>
 
       </View>
 
@@ -136,9 +136,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height:50,
-    width:'100%',
+    width:width/2,
     // borderRadius:4,
-    borderColor:colors.primary,
+    // borderColor:colors.primary,
     backgroundColor:'white',
     borderWidth:0,
   },

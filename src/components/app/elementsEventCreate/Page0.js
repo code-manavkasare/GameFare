@@ -18,7 +18,7 @@ import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
-import ScrollView from '../../layout/scrollViews/ScrollView'
+import ScrollView from '../../layout/scrollViews/ScrollView2'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import AllIcons from '../../layout/icons/AllIcons'
 import {date} from '../../layout/date/date'
@@ -227,7 +227,7 @@ class Page0 extends Component {
   }
   page0() {
       return (
-        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+        <View style={{marginTop:-15,marginLeft:0,width:width}}>
 
           <View style={styleApp.marginView}>
 
@@ -304,7 +304,7 @@ class Page0 extends Component {
   }
   render() {
     return (
-      <View style={styleApp.stylePage}>
+      <View style={[styleApp.stylePage]}>
 
 
         <HeaderBackButton 

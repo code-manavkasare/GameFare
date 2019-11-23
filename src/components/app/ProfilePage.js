@@ -157,33 +157,35 @@ class ProfilePage extends Component {
   profile() {
     return (
       <View style={{marginLeft:0,width:width,marginTop:0}}>
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
+
+
+         
+          <View style={[styleApp.marginView,{marginTop:20}]}>
+          {this.props.userConnected?
+          <View>
             <Text style={[styleApp.title,{marginBottom:0}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
-            <Text style={[styleApp.subtitle,{marginBottom:0,marginTop:10}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text>
-          </View>
-        </View>
-        
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
-          <Text style={styleApp.smallText}>Account parameters</Text>
+            <Text style={[styleApp.text,{marginTop:10,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text>
 
-          <View style={styleApp.divider2} />
-          {this.button('Personal information','Settings',{pageFrom:'Profile'})}
-          {this.button('Payment','Payments',{pageFrom:'Profile'})}
-          {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
-          </View>
-        </View>
 
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
+            <Text style={styleApp.smallText}>{this.props.userConnected?'Account parameters':'Sign in to GameFare'}</Text>
+            <View style={[styleApp.divider2,{marginBottom:0,marginTop:15}]} />
+            {this.button('Personal information','Settings',{pageFrom:'Profile'})}
+            {this.button('Payment','Payments',{pageFrom:'Profile'})}
+            {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
+            </View>
+            :
+            <Text style={[styleApp.title,{marginBottom:0}]}>My profile</Text>
+            }
+          </View>
+          
+
+          <View style={[styleApp.marginView,{marginTop:30}]}>
           <Text style={styleApp.smallText}>Assistance</Text>
 
-          <View style={styleApp.divider2} />
+          <View style={[styleApp.divider2,{marginBottom:0,marginTop:15}]} />
           {this.button('Email','Alert',{},'email')}
           {this.button('Call','Alert',{},'call')}
           </View>
-        </View>
         
 
         <View style={styleApp.viewHome}>
@@ -207,14 +209,15 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-          
-          {this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})}
+          {this.props.userConnected?
+          this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})
+          :null}
           </View>
         </View>
         
 
 
-
+        
 
       </View>
     )
@@ -254,12 +257,20 @@ class ProfilePage extends Component {
       <View style={{ height:'100%'}}>
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.props.userConnected?this.profile():this.profileLogout()}
+          contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.marginTopApp}
           offsetBottom={90}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
+
+        {
+          !this.props.userConnected?
+          <View style={[styleApp.footerBooking,{bottom:0,height:90,paddingLeft:20,paddingRight:20}]}>
+          <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'Profile'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
+          </View>
+          :null
+        }
       </View>
     );
   }

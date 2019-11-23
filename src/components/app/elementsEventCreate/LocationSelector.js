@@ -15,16 +15,12 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions'
+import {currentLocation} from '../../functions/location'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
-import FadeInView from 'react-native-fade-in-view';
-import Geolocation from '@react-native-community/geolocation';
-import Geocoder from 'react-native-geocoder';
 import { Col, Row, Grid } from "react-native-easy-grid";
-import momentTZ from 'moment-timezone';
-import moment from 'moment'
 import BackButton from '../../layout/buttons/BackButton'
 
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -34,15 +30,11 @@ window.Blob = RNFetchBlob.polyfill.Blob
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
-import Icon from '../../layout/icons/icons'
 import Loader from '../../layout/loaders/Loader'
 import ButtonColor from '../../layout/Views/Button'
 import AllIcons from '../../layout/icons/AllIcons'
 
-import ScrollView from '../../layout/scrollViews/ScrollView2'
-import Header from '../../layout/headers/HeaderButton'
-import AsyncStorage from '@react-native-community/async-storage';
-
+import ScrollView from '../../layout/scrollViews/ScrollView'
 const { height, width } = Dimensions.get('screen')
 
 class LocationSelector extends Component {
@@ -92,6 +84,7 @@ class LocationSelector extends Component {
         }
       };
       async componentDidMount(){
+
     }
     shouldComponentUpdate(nextProps,nextState) {
       if (this.state !== nextState) return true
@@ -119,60 +112,32 @@ class LocationSelector extends Component {
       }
      
     }
-    async permissionAndroid () {
-      var that = this
-      try {
-        console.log('permission')
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Wlnss Nurse Location Permission',
-            message:
-              'Wlnss Nurse needs access to your location ' +
-              'so you can get the closest offers.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('You can use the camera');
-          that.currentLocation()
-        } else {
-          console.log('Camera permission denied');
-          that.props.navigation.setParams({ loader: false })
-        }
-      } catch (err) {
-        console.log('errrro')
-        console.log(err);
-        that.props.navigation.setParams({ loader: false })
-      }
-    }
     async onclickLocation (address) {
       Keyboard.dismiss()
       this.setState({ loader: true })
       console.log('on click sur locations')
       console.log(address)
       try{
-
-      if (address.type == 'currentLocation' && this.state.loader == false) {
-        if (Platform.OS == 'android') {
-          this.permissionAndroid()
-        } else {
-          this.currentLocation()
-        }
-      } else if (this.state.loader == false) {
+        
+      if (address.type == 'currentLocation' && this.state.loader == false) return this.getCurrentLocation()
+      
+      if (this.state.loader == false) {
         var url2 = 'https://maps.googleapis.com/maps/api/geocode/json?new_forward_geocoder=true&place_id='+address.place_id+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
-        console.log('url2')
-
-        console.log(url2)
         const result2 = await RNFetchBlob.fetch('GET',url2)
         const json = await result2.json()
         var locationObj =json.results[0]
 
 
-        var currentHistoricSearchLocation = this.props.searchLocation
-        if (currentHistoricSearchLocation[address.id] == undefined) {
+        var currentHistoricSearchLocation = this.props.historicSearchLocation
+        if (Object.values(currentHistoricSearchLocation) == 0) {
+          var add = address
+          add.type = 'past'
+          currentHistoricSearchLocation = {
+            ...currentHistoricSearchLocation,
+            [address.id]:add
+          }
+          await this.props.historicSearchAction('setHistoricLocationSearch',currentHistoricSearchLocation)
+        } else if (currentHistoricSearchLocation[address.id] == undefined) {
           var add = address
           add.type = 'past'
           currentHistoricSearchLocation = {
@@ -181,96 +146,34 @@ class LocationSelector extends Component {
           }
           console.log('currentHistoricSearchLocation')
           console.log(currentHistoricSearchLocation)
-          this.props.historicSearchAction('setLocationSearch',currentHistoricSearchLocation)
+          await this.props.historicSearchAction('setHistoricLocationSearch',currentHistoricSearchLocation)
         }
+        // addressOff = addressOff.replace(', USA', '')
+        // addressOff = addressOff.replace(', Australia', '')
 
-        var addressComponent = locationObj.address_components
-        // var filterZip = addressComponent.filter(component => component.types.indexOf('postal_code') == 0)
-
-        var urlTimeZone = 'https://maps.googleapis.com/maps/api/timezone/json?location='+locationObj.geometry.location.lat+','+locationObj.geometry.location.lng+'&timestamp='+(Math.round((new Date().getTime())/1000)).toString()+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
-          const timeZoneresult = await RNFetchBlob.fetch('GET',urlTimeZone)
-          const jsonTimeZone = await timeZoneresult.json()
-          var timeZoneName = jsonTimeZone.timeZoneName
-          var timeZoneName = timeZoneName.split(' ')
-          var timeZoneName2 = ''
-          for (var i in timeZoneName) {
-            timeZoneName2 = timeZoneName2 + timeZoneName[i][0]
-          }
-          jsonTimeZone.timeZoneName2 = timeZoneName2
-          jsonTimeZone.offSet = momentTZ.tz(moment().format('ddd, MMM Do'),'ddd, MMM Do',jsonTimeZone.timeZoneId).format('Z')
-          Keyboard.dismiss()
-          var addressOff = address.description
-          addressOff = addressOff.replace(', USA', '')
-          addressOff = addressOff.replace(', Australia', '')
-
-          this.setState({ loader: false })
-          await Keyboard.dismiss()
-          this.props.navigation.state.params.onGoBack({
-            address:addressOff,
-            timeZone:jsonTimeZone,
-            area:addressOff,
-            lat:locationObj.geometry.location.lat,
-            lng:locationObj.geometry.location.lng,
-          })     
+        // this.setState({ loader: false })
+        this.props.navigation.state.params.onGoBack({
+          address:address.description,
+          area:address.description,
+          lat:locationObj.geometry.location.lat,
+          lng:locationObj.geometry.location.lng,
+        })     
       }
       } catch (err) {
         console.log('errrrrrr')
         console.log(err)
-        this.setState({ loader: false })
-        this.setState({loader:false,showAlert:true,message:'An error has occured. Please try again.'})
+        this.setState({loader: false})
       }
     }
-    currentLocation () {
-        Geolocation.getCurrentPosition(
-        position => {
-            console.log(position)
-            var pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            const geocode = Geocoder.geocodePosition(pos)
-            Promise.all([geocode]).then(results => {
-              var location = results[0][0].formattedAddress
-              location = location.replace(', United States', '')
-              this.currentLocationOK(position,location,results[0][0]) 
-            }).catch(err => {
-              console.log('erro location')
-              console.log(err)
-              this.setState({ loader: false })
-            })
-        },
-        error => {
-          console.log('error location 2')
-          console.log(error)
-          this.setState({ loader: false })
-        },
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-      )
-    }
-    async currentLocationOK(position,location,address) {
-      console.log('location okkkkkay')
-      var urlTimeZone = 'https://maps.googleapis.com/maps/api/timezone/json?location='+position.coords.latitude+','+position.coords.longitude+'&timestamp='+(Math.round((new Date().getTime())/1000)).toString()+'&key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk'
-      const timeZoneresult = await RNFetchBlob.fetch('GET',urlTimeZone)
-      const jsonTimeZone = await timeZoneresult.json()
-
-      var timeZoneName = jsonTimeZone.timeZoneName
-      var timeZoneName = timeZoneName.split(' ')
-      var timeZoneName2 = ''
-
-      for (var i in timeZoneName) {
-        timeZoneName2 = timeZoneName2 + timeZoneName[i][0]
+    async getCurrentLocation () {
+      var CurrentLocation = await currentLocation()
+      console.log('currentLocation')
+      console.log(CurrentLocation)
+      if (CurrentLocation.response == false) {
+        this.setState({loader:false})
+        return this.props.navigation.navigate('Alert',{close:true,textButton:'Got it!',title:'An error has occured.',subtitle:'Please check your settings.'})
       }
-      jsonTimeZone.timeZoneName2 = timeZoneName2
-
-
-      await this.setState({loader:false,textInput:location})
-      this.props.navigation.state.params.onGoBack({
-        address:location,
-        timeZone:jsonTimeZone,
-        area:location,
-        lat:position.coords.latitude,
-        lng:position.coords.longitude,
-      })
+      return this.props.navigation.state.params.onGoBack(CurrentLocation)
     }
     buttonSearchAddress () {
       return (
@@ -321,7 +224,7 @@ class LocationSelector extends Component {
                   {
                     result.type=='currentLocation'?
                     <MatIcon name='my-location' color='grey' size={18}/>  
-                    :this.props.searchLocation[result.id]!= undefined?
+                    :this.props.historicSearchLocation[result.id]!= undefined?
                     <MatIcon name='access-time' color="grey" size={16}/> 
                     :
                     <FontIcon name='map-marker' color="grey" size={16}/> 
@@ -368,7 +271,7 @@ class LocationSelector extends Component {
                 }
               }
             )}
-            {Object.values(this.props.searchLocation).map((result,i) => (
+            {Object.values(this.props.historicSearchLocation).map((result,i) => (
               <TouchableOpacity key={i} activeOpacity={0.8} onPress={() => {this.onclickLocation(result)}}>
                 {this.cardResult(result)}
               </TouchableOpacity>
@@ -387,6 +290,7 @@ class LocationSelector extends Component {
     }
   render() {
     return (
+      //
       <View style={styles.content}>
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -397,7 +301,7 @@ class LocationSelector extends Component {
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         initialTitleOpacity={1}
-        icon1='times'
+        icon1={this.props.navigation.getParam('pageFrom')=='LocationSelect'?'arrow-left':'times'}
         icon2={null}
         clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
         />
@@ -469,7 +373,7 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    searchLocation:state.historicSearch.searchLocation,
+    historicSearchLocation:state.historicSearch.historicSearchLocation,
   };
 };
 

@@ -9,7 +9,7 @@ import {
     Image
 } from 'react-native';
 import {connect} from 'react-redux';
-import {globaleVariablesAction} from '../../../actions/globaleVariablesActions'
+import {historicSearchAction} from '../../../actions/historicSearchActions'
 
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
@@ -21,10 +21,7 @@ import ButtonColor from '../../layout/Views/Button'
 
 import ScrollView from '../../layout/scrollViews/ScrollView2'
 import AllIcons from '../../layout/icons/AllIcons'
-
-import {timing,native} from '../../animations/animations'
-import Loader from '../../layout/loaders/Loader'
-import AsyncImage from '../../layout/image/AsyncImage'
+import {currentLocation} from '../../functions/location'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
@@ -42,21 +39,36 @@ class InitialPage extends Component {
   componentDidMount() {
 
   }
+  async setLocation(location){
+    await this.props.historicSearchAction('setLocationSearch',location)
+    return this.props.navigation.navigate('TabsApp')
+  }
+  async currentLocation () {
+    this.setState({loader:true})
+    var location = await currentLocation()
+    if (location.response == false) {
+      this.setState({loader:false})
+      return this.props.navigation.navigate('Alert',{close:true,textButton:'Got it!',title:'An error has occured.',subtitle:'Please check your settings.'})
+    }
+    return this.setLocation(location)
+  }
   location() {
     return (
       <FadeInView duration={200} style={{height:height/2}}>
-        <View style={styleApp.marginView}>
-         <Text style={[styleApp.title,{color:colors.title,marginBottom:30}]}>Where do you plan to practice?</Text>
+        <View style={[styleApp.marginView,{width:width-90}]}>
+    <Text style={[styleApp.title,{color:colors.title,marginBottom:30}]}>Where do you plan to play {this.props.navigation.getParam('sport')}?</Text>
         </View>
+
+        {/* <View style={[styleApp.divider2,{marginBottom:0,marginTop:5}]} /> */}
 
         <ButtonColor view={() => {
         return (
             <Row >
               <Col size={15} style={styleApp.center2}>
-                <AllIcon name='search' size={17} type={'font'} color={colors.title} />
+                <AllIcon name='search' size={15} type={'font'} color={colors.title} />
               </Col>
               <Col size={60} style={[styleApp.center2,{paddingLeft:0}]}>
-              <Text style={[styleApp.title,{color:colors.title,fontSize:15,fontFamily:'OpenSans-SemiBold'}]}>Search for an address</Text>
+              <Text style={[styleApp.title,{color:colors.title,fontSize:15,fontFamily:'OpenSans-SemiBold'}]}>Search for an area</Text>
               </Col>
               <Col size={15} style={styleApp.center3}>
                 <AllIcon name='arrow-right' size={14} type={'font'} color={colors.title} />
@@ -65,11 +77,11 @@ class InitialPage extends Component {
         )
       }} 
       click={() => {
-        StatusBar.setBarStyle('dark-content',true)
-        this.props.navigation.navigate('TabsApp')
+        // StatusBar.setBarStyle('dark-content',true)
+        this.props.navigation.navigate('LocationOnBoard',{pageFrom:'LocationSelect',onGoBack:(location) => this.setLocation(location)})
       }}
       color={'white'}
-      style={[styles.cardSports,{height:60,borderBottomWidth:0.3,borderColor:colors.grey,paddingRight:20,paddingLeft:20,width:width}]}
+      style={[styles.cardSports,{height:60,borderBottomWidth:0,borderColor:colors.grey,paddingRight:20,paddingLeft:20,width:width}]}
       onPressColor={colors.off}
 
       />
@@ -79,7 +91,7 @@ class InitialPage extends Component {
         return (
             <Row >
               <Col size={15} style={styleApp.center2}>
-                <AllIcon name='location-arrow' size={17} type={'font'} color={colors.title} />
+                <AllIcon name='my-location' size={20} type={'mat'} color={colors.title} />
               </Col>
               <Col size={60} style={[styleApp.center2,{paddingLeft:0}]}>
               <Text style={[styleApp.title,{color:colors.title,fontSize:15,fontFamily:'OpenSans-SemiBold'}]}>Use current location</Text>
@@ -90,12 +102,9 @@ class InitialPage extends Component {
             </Row>
         )
       }} 
-      click={() => {
-        StatusBar.setBarStyle('dark-content',true)
-        this.props.navigation.navigate('TabsApp')
-      }}
+      click={() => this.currentLocation()}
       color={'white'}
-      style={[styles.cardSports,{height:60,borderBottomWidth:0.3,borderColor:colors.grey,paddingRight:20,paddingLeft:20,width:width}]}
+      style={[styles.cardSports,{height:60,borderBottomWidth:0,borderColor:colors.grey,paddingRight:20,paddingLeft:20,width:width}]}
       onPressColor={colors.off}
 
       />
@@ -113,11 +122,11 @@ class InitialPage extends Component {
         )
       }} 
       click={() => {
-        StatusBar.setBarStyle('dark-content',true)
+        // .setBarStyle('dark-content',true)
         this.props.navigation.navigate('TabsApp')
       }}
       color={'white'}
-      style={[styles.cardSports,{height:60,borderWidth:0.3,borderColor:colors.grey,paddingRight:20,paddingLeft:20,width:width}]}
+      style={[styles.cardSports,{height:60,borderWidth:0,borderColor:colors.grey,paddingRight:20,paddingLeft:20,width:width}]}
       onPressColor={colors.off}
 
       />
@@ -126,7 +135,7 @@ class InitialPage extends Component {
   }
   render() {
     return (
-      <View style={[{borderLeftWidth:0,backgroundColor:'white',flex:1}]}>
+      <View style={[{backgroundColor:'white',flex:1}]}>
         <HeaderBackButton 
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             textHeader={''}
@@ -134,6 +143,7 @@ class InitialPage extends Component {
             initialBorderColorIcon={'white'}
             initialBackgroundColor={'white'}
             initialTitleOpacity={1}
+            loader={this.state.loader}
             icon1='arrow-left'
             icon2={null}
             clickButton1={() => this.props.navigation.goBack()} 
@@ -175,12 +185,8 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    userID:state.user.userIDSaved,
-    phoneNumber:state.user.phoneNumber,
-    countryCode:state.user.countryCode,
-    sports:state.globaleVariables.sports.list,
   };
 };
 
-export default connect(mapStateToProps,{globaleVariablesAction})(InitialPage);
+export default connect(mapStateToProps,{historicSearchAction})(InitialPage);
 

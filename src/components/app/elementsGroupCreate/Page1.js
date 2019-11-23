@@ -93,7 +93,7 @@ class Page3 extends Component {
       console.log(data)
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       return (
-          <View style={{width:width,marginLeft:-20,marginTop:-20}}>
+          <View style={{width:width,marginLeft:0,marginTop:-20}}>
              <Image source={{uri:data.img}} style={{width:'100%',height:250,}}/>
             <View style={[styleApp.viewHome,{paddingTop:15}]}>
               <View style={styleApp.marginView}>
@@ -198,7 +198,7 @@ class Page3 extends Component {
   }
   render() {
     return (
-      <View style={[styleApp.stylePage,{borderLeftWidth:1,borderRightWidth:1}]}>
+      <View style={[styleApp.stylePage]}>
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.goBack()}

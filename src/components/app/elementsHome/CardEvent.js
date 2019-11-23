@@ -13,6 +13,9 @@ import {
   View
 } from 'react-native';
 import {connect} from 'react-redux';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+MapboxGL.setAccessToken('pk.eyJ1IjoiYmlyb2xsZWF1ZiIsImEiOiJjampuMHByenoxNmRoM2ttcHVqNmd0bzFvIn0.Fml-ls_j4kW_OJViww4D_w');
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
@@ -22,6 +25,8 @@ import PlacelHolder from '../../placeHolders/CardEvent.js'
 import styleApp from '../../style/style'
 import {indexEvents} from '../../database/algolia'
 import {timing,native} from '../../animations/animations'
+
+
 
 var  { height, width } = Dimensions.get('screen')
 import {date,time,timeZone} from '../../layout/date/date'
@@ -37,16 +42,36 @@ class CardEvent extends React.Component {
       this.scaleCard = new Animated.Value(1);
     }
     async componentDidMount() {
-      if (this.props.loadData) {
-        indexEvents.clearCache()
-        var group = await indexEvents.getObject(this.props.item.eventID)
-        return this.setState({loader:false,item:group})
-      }
-      return this.setState({loader:false})
+      // if (this.props.loadData) {
+      //   indexEvents.clearCache()
+      //   var group = await indexEvents.getObject(this.props.data.objectID)
+      //  this.setState({loader:false,item:group})
+      // }
+      this.setState({loader:false})
+      return this.loadMapImage(this.props.data)
     }
     entreeFee(entreeFee) {
       if (entreeFee == 0) return 'Free entry'
       return '$' + entreeFee + ' entry fee'
+    }
+    async loadMapImage (data) {
+      console.log('loulouloulou')
+      console.log(data)
+      var uri = await AsyncStorage.getItem(data.objectID)
+      if(uri == null) {
+        uri = await MapboxGL.snapshotManager.takeSnap({
+          centerCoordinate: [data.location.lng, data.location.lat],
+          width: width-20,
+          height: 300,
+          zoomLevel: 12,
+          pitch: 30,
+          heading: 20,
+          // styleURL: MapboxGL.StyleURL.Dark,
+          writeToDisk: true, // Create a temporary file
+        });
+        return AsyncStorage.setItem(data.objectID, uri)
+      }
+      return true
     }
 
     onPress(val) {
@@ -99,6 +124,7 @@ class CardEvent extends React.Component {
     displayCard(color,data) {
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       if (sport == undefined) return null
+      // this.loadMapImage(data)
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
@@ -159,7 +185,7 @@ class CardEvent extends React.Component {
         outputRange: ['white', colors.off]
     });
     return (
-      this.card(color,this.props.loadData?this.state.item:this.props.data)
+      this.card(color,this.props.data)
     );
   }
 }

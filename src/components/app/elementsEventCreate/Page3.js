@@ -164,13 +164,13 @@ class Page3 extends Component {
       var levelOption = data.info.levelOption=='equal'?'only':data.info.levelOption=='min'?'and above':'and below'
       console.log(levelOption)
       return (
-          <View style={{width:width,marginLeft:-20,marginTop:0}}>
+          <View style={{width:width,marginLeft:0,marginTop:0}}>
 
               <View style={styleApp.marginView}>
                 <Row>
                   <Col size={25} style={styleApp.center2}>
-                    <View style={[styleApp.viewSport,{marginTop:5,backgroundColor:sport.card.color.backgroundColor}]}>
-                      <Text style={[styleApp.textSport,{color:sport.card.color.color}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
+                    <View style={[styleApp.viewSport,{marginTop:5,backgroundColor:sport.card.color.color}]}>
+                      <Text style={[styleApp.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
                     </View>
                   </Col>
                   <Col size={10} style={styleApp.center3}>

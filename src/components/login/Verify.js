@@ -9,7 +9,7 @@ import {
     Animated
 } from 'react-native';
 import Header from '../layout/headers/HeaderButton'
-import ScrollView from '../layout/scrollViews/ScrollView2'
+import ScrollView from '../layout/scrollViews/ScrollView'
 import sizes from '../style/sizes'
 import styleApp from '../style/style'
 import VerifyFields from './elementsLogin/VerifyFields'

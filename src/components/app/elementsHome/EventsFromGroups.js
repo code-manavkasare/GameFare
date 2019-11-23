@@ -19,31 +19,46 @@ import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
-import {indexEvents} from '../../database/algolia'
 import FadeInView from 'react-native-fade-in-view';
+import Switch from '../../layout/switch/Switch'
+
 import PlaceHolder from '../../placeHolders/CardEvent'
 import CardEvent from './CardEventSM'
+import {timing,native} from '../../animations/animations'
 import Button from '../../layout/Views/Button'
+import {indexGroups,indexEvents} from '../../database/algolia'
+
+import ScrollViewX from '../../layout/scrollViews/ScrollViewX'
 
 
 import AllIcons from '../../layout/icons/AllIcons'
 import NavigationService from '../../../../NavigationService';
 
 class ListEvents extends React.Component {
-  state={
-    events:[],
-    loader:true,
+  constructor(props) {
+    super(props);
+    this.state={
+      events:[],
+      eventsPast:[],
+      loader:true,
+      past:false,
+    }
+    this.componentDidMount = this.componentDidMount.bind(this)
+    this.translateXView1 = new Animated.Value(0)
+    this.translateXView2 = new Animated.Value(width)
   }
+  
   async componentDidMount() {
+    this.props.onRef(this)
     await this.setState({loader:true})
-    if (!this.props.userConnected) return this.setState({loader:false})
-    this.loadEvent()
+    return this.loadEvent()
+  }
+  async reload() {
+    await this.setState({loader:true})
+    return this.loadEvent()
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.loader != nextProps.loader && nextProps.loader == true) {
-      await this.setState({loader:true})
-      this.loadEvent()
-    } else if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true) {
+    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true) {
       await this.setState({loader:true})
       this.loadEvent()
     }
@@ -73,10 +88,39 @@ class ListEvents extends React.Component {
     // return true
   }
   openEvent(event) {
-    if (!event.info.public) {
-      return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
-    }
+    // if (!event.info.public) {
+    //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
+    // }
     return this.props.navigate('Event',{data:event,pageFrom:'Home'})
+  }
+  switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
+    return (
+      <Switch 
+        textOn={textOn}
+        textOff={textOff}
+        translateXTo={width/2-20}
+        height={50}
+        translateXComponent0={translateXComponent0}
+        translateXComponent1={translateXComponent1}
+        state={this.state[state]}
+        setState={(val) => {
+          this.setState({[state]:val})
+          this.translateViews(val)
+        }}
+      />
+    )
+  }
+  translateViews(val) {
+    if (val) {
+      return Animated.parallel([
+        Animated.spring(this.translateXView1,native(-width)),
+        Animated.spring(this.translateXView2,native(0)),
+      ]).start()
+    }
+    return Animated.parallel([
+      Animated.spring(this.translateXView1,native(0)),
+      Animated.spring(this.translateXView2,native(width)),
+    ]).start()
   }
   ListEvent () {
     if (!this.props.userConnected) return null
@@ -84,45 +128,32 @@ class ListEvents extends React.Component {
       <View style={{marginTop:20}}>
         <View style={styleApp.marginView}>
 
-        
-        <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>My groups events</Text>
-
-        
-
-
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginLeft:-20,width:width,paddingLeft:20,paddingRight:20,marginTop:15}}>
-          {
-          this.state.loader?
-          [0,1,2,3].map((event,i) => (
-            <View key={i} style={[styles.cardSport,styleApp.center,{backgroundColor:'white'}]} >
-              <PlaceHolder />
-            </View>
-          ))
-          :!this.props.userConnected?
-          <Button view={() => {
-            return (
-              <View style={styleApp.center}>
-                <Image source={require('../../../img/images/smartphone.png')} style={{width:100,height:100,marginBottom:10}} />
-
-                <Text style={[styleApp.text,{marginTop:5}]}>Sign in to see your events</Text>
-              </View>
-            )
-          }} 
-          click={() => NavigationService.navigate('SignIn',{pageFrom:'Home'})}
-          color='white'
-          style={[styles.cardSport,styleApp.center,{backgroundColor:colors.off2,borderWidth:0,borderColor:colors.borderColor,width:width-40}]}
-          onPressColor={colors.off}
-          />
-          :
-          Object.values(this.state.events).map((event,i) => (
-            <CardEvent userCard={false} key={i} loadData={true} homePage={true} openEvent={(event) => this.openEvent(event)} item={event}/>
-          ))
-
-          }
-          <View style={{width:30}}/>
-        </ScrollView>  
-
+        <Text style={[styleApp.title,{marginBottom:20,marginLeft:0}]}>My events</Text>
+        {this.switch('Upcoming','Past','past')}
         </View>
+
+        <View style={{flex:1}}>
+        <Animated.View style={{flex:1,backgroundColor:'white',transform:[{translateX:this.translateXView1}]}}>
+        <ScrollViewX 
+        loader={this.state.loader}
+        events={this.state.events}
+        height={180}
+        openEvent={(event) => this.openEvent(event)}
+        onRef={ref => (this.scrollViewRef1 = ref)}
+        />
+        </Animated.View>
+
+        <Animated.View style={{flex:1,backgroundColor:'white',position:'absolute',top:0,transform:[{translateX:this.translateXView2}]}}>
+        <ScrollViewX 
+        height={180}
+        loader={this.state.loader}
+        events={this.state.eventsPast}
+        openEvent={(event) => this.openEvent(event)}
+        onRef={ref => (this.scrollViewRef2 = ref)}
+        />
+        </Animated.View>
+        </View>
+       
         
       </View>
     )

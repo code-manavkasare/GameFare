@@ -7,7 +7,7 @@ import {
     Animated
 } from 'react-native';
 import Header from '../layout/headers/HeaderButton'
-import ScrollView from '../layout/scrollViews/ScrollView2'
+import ScrollView from '../layout/scrollViews/ScrollView'
 import PhoneFields from './elementsLogin/PhoneFields'
 import sizes from '../style/sizes'
 import BackButton from '../layout/buttons/BackButton'
@@ -67,7 +67,7 @@ export default class LoadingScreen extends React.Component {
           contentScrollView={this.phone.bind(this)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
-          offsetBottom={90+60}
+          offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />
       </View>

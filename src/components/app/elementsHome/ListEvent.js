@@ -12,7 +12,9 @@ import {
 
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
+import {historicSearchAction} from '../../../actions/historicSearchActions'
 
+import Switch from '../../layout/switch/Switch'
 const { height, width } = Dimensions.get('screen')
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
@@ -33,41 +35,34 @@ class ListEvents extends React.Component {
   state={
     events:[],
     loader:true,
-    location:{
-      address:'Los Angeles, California',
-      lat:34.052235,
-      lng:-118.243683
-    },
-    search:{
-      aroundLatLng: '34.052235'+','+'-118.243683',
-      aroundRadius: 20*1000,
-      query:'',
-      // sports:[],
-    }
+    pastEvents:false,
   }
   async componentDidMount() {
     this.props.onRef(this)
-    await this.setState({loader:true})
-    this.loadEvent(this.state.search,this.props.filterSports)
+    this.loadEvent(this.props.searchLocation,this.props.sportSelected)
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.loader != nextProps.loader && nextProps.loader == true) {
-      await this.setState({loader:true})
-      this.loadEvent(this.state.search,nextProps.filterSports)
+    if (this.props.searchLocation.lat != nextProps.searchLocation.lat || this.props.sportSelected != nextProps.sportSelected || (this.props.loader != nextProps.loader && !this.props.loader)) {
+      this.loadEvent(nextProps.searchLocation,nextProps.sportSelected)
     }
   }
-  async loadEvent(search,sport) {
+  reload() {
+    this.loadEvent(this.props.searchLocation,this.props.sportSelected)
+  }
+  async loadEvent(location,sport) {
     console.log('on reload')
+    await this.setState({loader:true})
     indexEvents.clearCache()
     //'info.sport:' + 
     var events = await indexEvents.search({
-      ...search,
+      aroundLatLng: location.lat+','+location.lng,
+      aroundRadius: 20*1000,
+      query:'',
       filters:'info.public=1 AND ' + 'info.sport:' + sport  ,
     })
     console.log('events.hits')
     console.log(events.hits)
     await this.setState({loader:false,events:events.hits})
-    events = ''
     return true
   }
   openEvent(event) {
@@ -77,48 +72,45 @@ class ListEvents extends React.Component {
     return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
   async setLocation (location) {
-    var search = {
-      ...this.state.search,
-      hitsPerPage:20,
-      aroundLatLng: location.lat+','+location.lng,
-      aroundRadius: 20*1000,
-    }
-    await this.setState({location:location,loader:true,search:search})
-    this.loadEvent(search)
-    
+    this.props.historicSearchAction('setLocationSearch',location)
     return NavigationService.navigate('Home')
+  }
+  switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
+    return (
+      <Switch 
+        textOn={textOn}
+        textOff={textOff}
+        translateXTo={width/2-20}
+        height={50}
+        translateXComponent0={translateXComponent0}
+        translateXComponent1={translateXComponent1}
+        state={this.state[state]}
+        setState={(val) => {
+          this.setState({[state]:val})
+          
+        }}
+      />
+    )
   }
   ListEvent () {
     return (
       <View style={{marginTop:20}}>
         <Row style={{marginLeft:20,width:width-40}}>
           <Col size={85} style={styleApp.center2}>
-            <Text style={[styleApp.title,{marginBottom:5,marginLeft:0}]}>Upcoming events</Text>
-            <Text style={[styleApp.subtitle,{marginBottom:20,marginLeft:0,fontSize:12}]}>{this.state.location.address}</Text>
+            <Text style={[styleApp.title,{marginBottom:5,marginLeft:0,fontSize:22}]}>Events around</Text>
+            <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{this.props.searchLocation.address}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>
-          {/* <Button view={() => {
-                return <AllIcons name='map-marker-alt' size={16} color={colors.title} type='font' />
-              }} 
-              click={() => NavigationService.navigate('Location',{pageFrom:'Home',location:this.state.location,onGoBack:(location) => this.setLocation(location)})}
-              color='white'
-              style={[styleApp.center,{borderColor:colors.off,height:40,width:40,borderRadius:20,borderWidth:1}]}
-              onPressColor={colors.off}
-              />
-             */}
           </Col>
         </Row>
 
-        
-        <View  style={{marginLeft:20,width:width-40}}>
-          <View style={[styleApp.divider2,{marginTop:0,marginBottom:0}]} />
+        <View style={{marginLeft:20,marginTop:0,width:width-40}}>
+        {this.switch('Public','From my groups','pastEvents')}
         </View>
-
 
         { 
           this.state.loader?
           <View>
-         
           <PlaceHolder />
           <PlaceHolder />
           <PlaceHolder />
@@ -129,10 +121,10 @@ class ListEvents extends React.Component {
           <FadeInView duration={350}>
             {
             this.state.events.length == 0?
-            <View style={[styleApp.center,{marginTop:23}]}>
+            <View style={[styleApp.center,{marginTop:35,marginBottom:20}]}>
               <Image source={require('../../../img/images/location.png')} style={{width:65,height:65}} />
-              <Text style={[styleApp.text,{marginTop:10}]}>No events found</Text>
-              <Text style={styleApp.subtitle}>Create the first {this.props.filterSports} event in the area</Text>
+              <Text style={[styleApp.text,{marginTop:10}]}>No {this.props.sportSelected} events found</Text>
+              {/* <Text style={styleApp.subtitle}>Create the first {this.props.filterSports} event in the area</Text> */}
             </View>
             :this.state.events.map((event,i) => (
               <CardEvent userCard={false} key={i} homePage={true} marginTop={25} openEvent={() => this.openEvent(event)} item={event} data={event}/>
@@ -158,8 +150,10 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    globaleVariables:state.globaleVariables
+    globaleVariables:state.globaleVariables,
+    searchLocation:state.historicSearch.searchLocation,
+    sportSelected:state.historicSearch.sport,
   };
 };
 
-export default connect(mapStateToProps,{})(ListEvents);
+export default connect(mapStateToProps,{historicSearchAction})(ListEvents);

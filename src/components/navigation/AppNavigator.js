@@ -213,6 +213,8 @@ const MainApp = createBottomTabNavigator(
         style: {
             borderTopWidth:0,
             backgroundColor: colors.primary,
+            // height:55,
+            paddingBottom:20,
         },
       },
     },
@@ -237,6 +239,12 @@ const MainApp = createBottomTabNavigator(
             navigationOptions:{
                 gesturesEnabled:false,
                 cardShadowEnabled:false
+            }
+        },
+        LocationOnBoard:{screen:LocationSelector,
+            navigationOptions:{
+                gesturesEnabled:true,
+                cardShadowEnabled:true
             }
         },
     },

@@ -78,9 +78,9 @@ export default class ScrollViewPage extends PureComponent {
           // style={}
           style={this.styleScrollView()}
         >
-          <View style={this.styleInsideView()}>
+     
           {this.props.contentScrollView()}
-          </View>
+       
 
           <View style={{height:this.props.offsetBottom}}/>
 

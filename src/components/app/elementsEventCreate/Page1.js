@@ -222,7 +222,7 @@ class Page1 extends Component {
   }
   page1() {
       return (
-        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+        <View style={{marginTop:0,marginLeft:0,width:width}}>
             <View style={styleApp.marginView}>
               {this.switch('Open access','Invite only','private')}
               {this.levelFilter()}
@@ -233,7 +233,7 @@ class Page1 extends Component {
 
 
             <View style={[styleApp.marginView,{marginTop:30}]}>
-              <Text style={styleApp.title}>Add event to groups</Text>
+              <Text style={styleApp.title}>Add groups</Text>
                 {
                   Object.values(this.state.groups).length!=0?
                   <View style={{marginTop:10}}>
@@ -266,7 +266,7 @@ class Page1 extends Component {
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
          <HeaderBackButton 
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={'Access settings'}
+            textHeader={''}
             inputRange={[5,10]}
             initialBorderColorIcon={'white'}
             initialBackgroundColor={'white'}

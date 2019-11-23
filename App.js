@@ -19,37 +19,32 @@ class App extends Component {
   async componentDidMount() { 
     SplashScreen.hide()
     this.initBranch()
-    
-    // await NavigationService.navigate('SelectSport')
-    var variables = await firebase.database().ref('variables').once('value')
-    variables = variables.val()
-    await this.props.globaleVariablesAction(variables)
-    console.log('getUserID')
-    console.log(this.props.userID)
-    
-    
-    
-    StatusBar.setHidden(false, "slide")
+
+    StatusBar.setHidden(true, "slide")
     StatusBar.setBarStyle('light-content',true)
     if (this.props.userID != '') {
-      var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser'
-      const promiseAxios = await axios.get(url, {
-        params: {
-          phone: this.props.phoneNumber,
-          countryCode:'+'+this.props.countryCode,
-          giftAmount: 0
-        }
-      })
-
-      if (promiseAxios.data.response != false) {    
-        await this.props.userAction('signIn',{
-          userID:this.props.userID,
-          firebaseSignInToken: promiseAxios.data.firebaseSignInToken, 
-          phoneNumber:this.props.phoneNumber,
-          countryCode:this.props.countryCode
-        })
-      }
+      this.autoSignIn()
     }
+  }
+  async autoSignIn() {
+    var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser'
+    const promiseAxios = await axios.get(url, {
+      params: {
+        phone: this.props.phoneNumber,
+        countryCode:'+'+this.props.countryCode,
+        giftAmount: 0
+      }
+    })
+
+    if (promiseAxios.data.response != false) {    
+      await this.props.userAction('signIn',{
+        userID:this.props.userID,
+        firebaseSignInToken: promiseAxios.data.firebaseSignInToken, 
+        phoneNumber:this.props.phoneNumber,
+        countryCode:this.props.countryCode
+      })
+    }
+    return true
   }
   initBranch() {
     var that = this
@@ -71,14 +66,10 @@ class App extends Component {
   }
   async openEvent(eventID) {
     var data = await indexEvents.getObject(eventID)
-    console.log('riba data')
-    console.log(data)
     NavigationService.navigate('Event',{data:data,pageFrom:'Home'})
   }
   async openGroup(eventID) {
     var data = await indexGroups.getObject(eventID)
-    console.log('riba data')
-    console.log(data)
     NavigationService.navigate('Group',{data:data,pageFrom:'Home'})
   }
   render() {

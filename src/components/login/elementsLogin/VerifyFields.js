@@ -132,7 +132,7 @@ class VerifyFields extends Component {
     }
   }
   loader() {
-    if (this.state.loader) return <View style={[styles.center,{marginTop:10}]}><Loader color={'green'} size={20}/></View>
+    if (this.state.loader) return <View style={[styles.center,{marginTop:10}]}><Loader color={'green'} size={27}/></View>
     return null
   }
   buttonResend () {

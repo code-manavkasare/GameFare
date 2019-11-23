@@ -6,7 +6,7 @@ import {
     Animated
 } from 'react-native';
 import Header from '../layout/headers/HeaderButton'
-import ScrollView from '../layout/scrollViews/ScrollView2'
+import ScrollView from '../layout/scrollViews/ScrollView'
 import sizes from '../style/sizes'
 import CompleteFields from './elementsLogin/CompleteFields'
 const { height, width } = Dimensions.get('screen')

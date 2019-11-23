@@ -40,8 +40,6 @@ class CardEvent extends React.Component {
       if (this.props.loadData) {
         indexEvents.clearCache()
         var group = await indexEvents.getObject(this.props.item.eventID)
-        console.log('event!!!!!!@wqadjksfslf')
-        console.log(group)
         return this.setState({loader:false,item:group})
       }
       return this.setState({loader:false})
@@ -95,8 +93,6 @@ class CardEvent extends React.Component {
     </Row> 
     }
     displayCard(color,data) {
-      console.log('display card')
-      console.log(this.props.item)
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       if (sport == undefined) return null
       return (
@@ -158,10 +154,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     marginRight:0,
     overflow:'hidden',
-    height:170,
+    height:180,
     marginRight:10,
-    borderRadius:10,
-    borderWidth:0.3,
+    borderRadius:0,
+    borderWidth:0,
     borderColor:colors.borderColor,
     width:220
   

@@ -48,8 +48,6 @@ class CardGroup extends React.Component {
       if (this.props.loadData) {
         indexGroups.clearCache()
         var group = await indexGroups.getObject(this.props.item.groupID)
-        console.log('event!!!!!!@wqadjksfslf')
-        console.log(group)
         return this.setState({loader:false,item:group})
       }
       return this.setState({loader:false})
@@ -77,9 +75,6 @@ class CardGroup extends React.Component {
       return 0
     }
     displayCard(color,data) {
-      console.log('display card')
-
-      console.log(data)
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>

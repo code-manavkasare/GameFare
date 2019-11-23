@@ -218,7 +218,7 @@ export default class Date extends Component {
     }
     dateFields () {
       return (
-        <View style={{marginLeft:-20,width:width}}>
+        <View style={{marginLeft:0,width:width}}>
             <View style={styleApp.marginView}>
               
               {this.calendar('daySelectedStart','markedDatesStart')}
