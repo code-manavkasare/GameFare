@@ -5,3 +5,7 @@ export const RESET_USER_INFO = 'RESET_USER_INFO';
 export const SET_LOCATION_SEARCH = 'SET_LOCATION_SEARCH';
 export const SET_HISTORIC_LOCATION_SEARCH = 'SET_HISTORIC_LOCATION_SEARCH';
 export const SET_SPORT = 'SET_SPORT';
+
+export const SET_STEP0 = 'SET_STEP0';
+export const SET_STEP1 = 'SET_STEP1';
+export const SET_STEP2 = 'SET_STEP2';

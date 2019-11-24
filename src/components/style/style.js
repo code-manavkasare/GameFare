@@ -55,7 +55,7 @@ export default styles = StyleSheet.create({
     },
     input:{
       fontSize:15,
-      fontFamily: 'OpenSans-Regular',
+      fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },
     inputOff:{
@@ -110,7 +110,7 @@ export default styles = StyleSheet.create({
     shade:{
       shadowColor: '#46474B',
       shadowOffset: { width: 2, height: 0 },
-      shadowRadius: 20,
+      shadowRadius: 7,
       shadowOpacity: 0.3,
     },
     headerBooking:{
@@ -231,6 +231,9 @@ export default styles = StyleSheet.create({
       color:colors.greenStrong,
       fontSize:13,
       fontFamily: 'OpenSans-SemiBold',
+    },
+    regularText:{
+      fontFamily: 'OpenSans-Regular',
     },
     footerText:{
       color:'white',

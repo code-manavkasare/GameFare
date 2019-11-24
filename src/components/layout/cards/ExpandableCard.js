@@ -15,14 +15,14 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
 import styleApp from '../../style/style'
-import FadeInView from 'react-native-fade-in-view';
-import FastImage from 'react-native-fast-image';
+import ButtonColor from '../Views/Button'
 import NavigationService from '../../../../NavigationService'
 
 const { height, width } = Dimensions.get('screen')
 import Icon from '../icons/icons'
 import AllIcons from '../icons/AllIcons'
-const AnimatedIcon = Animated.createAnimatedComponent(MatIcon)
+import {timing,native} from '../../animations/animations'
+const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 
 export default class ExpandableCard extends Component {
     constructor(props) {
@@ -30,17 +30,19 @@ export default class ExpandableCard extends Component {
         this.state = {
           expanded:false,
           heightCard: new Animated.Value(this.initialHeight()),
-          heightDropDown:new Animated.Value(50)
+          heightDropDown:new Animated.Value(60),
+          listExpend:this.props.option.listExpend
         };
         this.componentWillMount = this.componentWillMount.bind(this);
         this.heightCard = new Animated.Value(this.initialHeight());
-        this.heightDropDown = new Animated.Value(50);
+        this.heightDropDown = new Animated.Value(60);
         this.rotateIcon = new Animated.Value(0);
         this.opacityExpand = new Animated.Value(0);
+        this.open = 0
       }
       initialHeight () {
         if (this.props.option.alwaysExpanded) return this.getHeightExpand()
-        return 50
+        return 60
       }
       initialList () {
         if (this.props.option.alwaysExpanded) return 1
@@ -64,47 +66,17 @@ export default class ExpandableCard extends Component {
       //return this.props.option.listExpend.length*50 + 50
       return 50
     }
-    async expand() {
-      if (!this.state.expanded) {
-        await this.setState({expanded:true})
+    async expand(listExpend) {
+      if (this.open == 0) {
         await Animated.parallel([
-          Animated.timing(this.rotateIcon, {
-            toValue: 1,
-            duration: 120,
-            easing: Easing.linear
-          }),
-          Animated.timing(this.state.heightDropDown, {
-            toValue: this.props.option.listExpend.length*50,
-            
-            duration: 120,
-            easing: Easing.linear
-          }),
-          Animated.timing(this.opacityExpand, {
-            toValue: 1,
-            duration: 85,
-            delay:80,
-            easing: Easing.linear
-          }),
-        ]).start()
+          Animated.timing(this.rotateIcon, native(1,200)),
+          Animated.timing(this.state.heightDropDown, timing(listExpend.length*60,250))
+        ]).start(() => this.open = 1)
       } else {
         await Animated.parallel([
-          Animated.timing(this.rotateIcon, {
-            toValue: 0,
-            duration: 120,
-            easing: Easing.linear
-          }),
-          Animated.timing(this.state.heightDropDown, {
-            toValue: 50,
-            duration: 120,
-            delay:50,
-            easing: Easing.linear
-          }),
-          Animated.timing(this.opacityExpand, {
-            toValue: 0,
-            duration: 70,
-            easing: Easing.linear
-          }),
-        ]).start(() => this.setState({expanded:false}))
+          Animated.timing(this.rotateIcon, native(0,200)),
+          Animated.timing(this.state.heightDropDown, timing(60,250))
+        ]).start(() => this.open = 0)
       }
       return true
     }
@@ -117,8 +89,8 @@ export default class ExpandableCard extends Component {
       // if (this.state.expanded) return colors.primary
       return colors.borderColor
     }
-    textValue() {
-      var value = this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].text
+    textValue(item) {
+      var value = item.text
       return value.charAt(0).toUpperCase() + value.slice(1)
     }
     async expandClose (option){
@@ -133,108 +105,64 @@ export default class ExpandableCard extends Component {
     openAlert(option) {
       NavigationService.navigate('Alert',{close:true,textButton:'Close',title:option.title,subtitle:option.subtitle,icon:<AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />})
     }
+    buttonSport (spin,item,i,click) {
+      console.log('item!!!!')
+      console.log(item)
+      return (
+        <ButtonColor key={i} view={() => {
+          return <Row >
+            <Col size={10} style={styleApp.center2}>
+            {
+              item.icon!=undefined?
+              <AllIcons type={item.typeIcon} name={item.icon} color={colors.greyDark} size={17} />
+              :
+              <AllIcons type='mat' name="check" color={colors.greyDark} size={17} />
+            }
+            </Col>
+            <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
+              <Text style={[styleApp.input,{color:this.props.option.valueSelected == 'anyone'?'#C7C7CC':colors.title}]}>{this.textValue(item)}</Text>
+            </Col>
+            <Col size={15} style={styleApp.center} activeOpacity={item.title !=undefined?0.7:1} onPress={() => item.title !=undefined?this.openAlert(item):null}>
+            {
+              item.title !=undefined?
+              <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
+              :null
+            }
+            </Col> 
+            
+           
+            <Col size={10} style={[styleApp.center]}>
+              {
+                i==0?
+                <AnimatedIcon name='caret-up' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
+                :null
+              } 
+            </Col>
+          </Row>
+        }}
+        click={() => click()}
+        color={'white'}
+        style={[styleApp.center,{height:60,width:width,borderRadius:0,borderWidth:0,overFlow:'hidden',paddingLeft:20,paddingRight:20}]}
+        onPressColor={colors.off}
+        />
+      )
+    }
   render() {
     const spin = this.rotateIcon.interpolate({
       inputRange: [0,1],
       outputRange: ['0deg','180deg']
     })
+    console.log('listExpend')
+    console.log(this.props.option.listExpend)
     return (  
-      <Animated.View style={[styleApp.inputForm,{borderColor:this.borderColor(),height:this.state.heightDropDown}]}>
+      <Animated.View style={[{borderColor:colors.off,height:this.state.heightDropDown,borderBottomWidth:1,overflow:'hidden',}]}>
+        {this.buttonSport(spin,this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0],0,() => this.expand(this.props.option.listExpend))}
 
-        <TouchableOpacity 
-            activeOpacity={0.75} 
-            onPress={() => {
-            if (this.props.locked != true) {
-              if (this.props.option.expendable == false) {
-                return this.props.tickFilter(!this.props.option.selected)
-              }
-              return this.expand()
-            }
-          }} 
-          style={{height:50,width:'100%'}}
-        >
-        <Row style={{height:50}}>
-          
-          <Col size={15} style={styles.center}>
-            {
-              this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon!=undefined?
-              <AllIcons type={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].typeIcon} name={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].icon} color={colors.title} size={17} />
-              :
-              <AllIcons type='mat' name="check" color={colors.title} size={22} />
-            }
-            
-          </Col>
-         
-          <Col size={60} style={[styles.center2,{paddingLeft:15}]}>
-            {
-              this.props.option.expendable?
-              <Text style={[styles.title2,{color:this.props.option.valueSelected == 'anyone'?'#C7C7CC':colors.title}]}>{this.textValue()}</Text>
-              :
-              <Text style={[styles.title2,{color:this.colorCheck(this.props.option,true,colors.title)}]}>{this.props.option.text}</Text> 
-            }
-          </Col>
-          <Col size={10} style={styles.center} activeOpacity={this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].title !=undefined?0.7:1} onPress={() => this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].title !=undefined?this.openAlert(this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0]):null}>
-            {
-              this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0].title !=undefined?
-              <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
-              :null
-            }
-          </Col>
-
-          <Col size={15} style={styleApp.center}>
-          {
-          this.props.option.expendable == true?
-          <AnimatedIcon name='keyboard-arrow-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={20} />
-          :
-          <AllIcons type='mat' name='check' color={this.colorCheck(this.props.option,true,'#eaeaea')} size={15} />
-          }
-          
-          </Col>
-        </Row>
-        </TouchableOpacity>
-
-          {
-            this.state.expanded?
-        <Animated.View style={{opacity:this.opacityExpand}}>
         {this.props.option.listExpend.filter(option => option.value!= this.props.option.valueSelected).map((option,i) => (
-          <TouchableOpacity 
-            key={i}
-            activeOpacity={0.75} 
-            onPress={() => this.expandClose(option)} 
-            style={{height:50,width:'100%'}}
-          >
-            <Row style={{height:50}}>
-              <Col size={15} style={styles.center}>
-                {
-                  option.icon != undefined?
-                  <AllIcons type={option.typeIcon} name={option.icon} color={colors.title} size={17} />
-                  :
-                  <AllIcons type='mat' name="check" color={'#eaeaea'} size={22} />
-                  }
-              
-              </Col>
-              <Col size={60} style={[styles.center2,{paddingLeft:15}]}>
-                <Text style={styleApp.inputOff}>{option.text}</Text> 
-              </Col>
-              <Col size={10} style={styles.center} activeOpacity={option.title !=undefined?0.7:1} onPress={() => option.title !=undefined?this.openAlert(option):null}>
-                {
-                  option.title !=undefined?
-                  <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
-                  :null
-                }
-              </Col>
-              <Col size={15} style={styleApp.center}>
-              </Col>
-            </Row>
-          </TouchableOpacity>
+          this.buttonSport(spin,option,i+1,() => this.expandClose(option))
         ))}
-        </Animated.View>
-        :null
-          }
-        
 
-      
-  </Animated.View>
+      </Animated.View>
 
 
     );

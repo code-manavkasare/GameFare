@@ -28,11 +28,12 @@ export default colors = {
 
     off:'#eaeaea',
     off2:'#FAFAFA',
+    white:'white',
 
     borderColor:'#A7A7AA',
     grey:'#D8D8D8',
     greyDark:'#AEAEAE',
-
+ 
     blue:'#54A0FF',
     blueLight:'#5499E9',
 }

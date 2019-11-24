@@ -81,7 +81,8 @@ export default class SelectCountry extends Component {
       this.props.close()
     }
     async selectCountry(country){
-      this.props.navigation.navigate('Phone',{country:country})
+      this.props.navigation.state.params.onGoBack(country)
+      
     }
     conditionCheck (country) {
       return false

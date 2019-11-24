@@ -8,7 +8,8 @@ import {
   Keyboard,
   PermissionsAndroid,
   Dimensions,
-  View
+  View,
+  Animated
 } from 'react-native';
 
 import FontIcon from 'react-native-vector-icons/FontAwesome';
@@ -41,17 +42,8 @@ export default class Date extends Component {
           
         };
         this.componentWillMount = this.componentWillMount.bind(this);
+        this.AnimatedHeaderValue = new Animated.Value(0)
       }
-      static navigationOptions = ({ navigation }) => {
-        return {
-          title: 'Date & Time',
-          headerStyle:styleApp.styleHeader,
-          headerTitleStyle: styleApp.textHeader,
-          headerLeft: () => (
-            <BackButton color={colors.title} name='keyboard-arrow-down' type='mat' click={() => navigation.navigate('CreateEvent2')} />
-          ),
-        }
-      };
     componentWillMount(){
       this.setState({
         startTimeHour:this.props.navigation.getParam('startDate') == ''?'1':moment(this.props.navigation.getParam('startDate')).format('h'),
@@ -113,7 +105,7 @@ export default class Date extends Component {
                 //onPressArrowLeft={substractMonth => substractMonth()}
                 // Handler which gets executed when press arrow icon left. It receive a callback can go next month
                 //onPressArrowRight={addMonth => addMonth()}
-                style={{height:340}}
+                style={{height:340,marginLeft:-5}}
                 theme={{
                   base: { width: 20, height: 10, justifyContent: 'center' },
                   textMonthFontWeight:'bold',
@@ -141,8 +133,8 @@ export default class Date extends Component {
         <Switch 
           textOn={textOn}
           textOff={textOff}
-          translateXTo={0.3*(width-40)}
-          height={50}
+          translateXTo={(width)/4}
+          height={43}
           translateXComponent0={translateXComponent0}
           translateXComponent1={translateXComponent1}
           state={this.state[state]}
@@ -175,7 +167,7 @@ export default class Date extends Component {
             </Row>
           </Col>
           <Col size={3}></Col>
-          <Col style={styles.center2} size={57}>
+          <Col style={[styles.center2,{paddingTop:7}]} size={57}>
             {this.switch('am','pm',part)}
           </Col>
         </Row>
@@ -223,10 +215,10 @@ export default class Date extends Component {
               
               {this.calendar('daySelectedStart','markedDatesStart')}
               <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Start time</Text>
-              <View style={styleApp.divider2}/>
+              {/* <View style={styleApp.divider2}/> */}
               {this.timeSelect('startTimeHour','startTimeMin','startPart')}
               <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>End time</Text>
-              <View style={styleApp.divider2}/>
+              {/* <View style={styleApp.divider2}/> */}
               {this.timeSelect('endTimeHour','endTimeMin','endPart')}
 
               <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Recurrence</Text>
@@ -239,7 +231,7 @@ export default class Date extends Component {
             <ButtonColor view={() => {
               return (
                 <Row>
-                  <Col size={15} style={styleApp.center2}>        
+                  <Col size={20} style={styleApp.center}>        
                     {
                       this.state.recurrence == 'daily'?
                       <AllIcon name='check' type='mat' color={colors.green} size={25} />
@@ -247,7 +239,7 @@ export default class Date extends Component {
                       <AllIcon name='check' type='mat' color={colors.grey} size={25} />
                     }
                   </Col>
-                  <Col size={85} style={styleApp.center2}>
+                  <Col size={80} style={styleApp.center2}>
                     <Text style={styleApp.text}>Daily</Text>
                   </Col>
                 </Row>
@@ -262,7 +254,7 @@ export default class Date extends Component {
             <ButtonColor view={() => {
               return (
                 <Row>
-                  <Col size={15} style={styleApp.center2}>        
+                  <Col size={20} style={styleApp.center}>        
                     {
                       this.state.recurrence == 'weekly'?
                       <AllIcon name='check' type='mat' color={colors.green} size={25} />
@@ -270,7 +262,7 @@ export default class Date extends Component {
                       <AllIcon name='check' type='mat' color={colors.grey} size={25} />
                     }
                   </Col>
-                  <Col size={85} style={styleApp.center2}>
+                  <Col size={80} style={styleApp.center2}>
                     <Text style={styleApp.text}>Weekly</Text>
                   </Col>
                 </Row>
@@ -344,12 +336,26 @@ export default class Date extends Component {
       <View style={styles.content}>
           {/* {this.header()} */}
 
+          <HeaderBackButton 
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={''}
+            inputRange={[5,10]}
+            loader={this.state.loader}
+            initialBorderColorIcon={'white'}
+            initialBackgroundColor={'white'}
+            initialTitleOpacity={1}
+            icon1={this.props.navigation.getParam('pageFrom')=='LocationSelect'?'arrow-left':'times'}
+            icon2={null}
+            clickButton1={() => this.props.navigation.navigate('CreateEvent2')} 
+            />
+
         <ScrollView 
           style={{marginTop:sizes.heightHeaderHome}}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.dateFields.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={sizes.heightFooterBooking+70}
           showsVerticalScrollIndicator={false}
         />
@@ -366,7 +372,7 @@ export default class Date extends Component {
 
 const styles = StyleSheet.create({
   content:{
-    // backgroundColor:colors.off2,
+    backgroundColor:colors.white,
     // position:'absolute',
     top:0,
     flex:1,

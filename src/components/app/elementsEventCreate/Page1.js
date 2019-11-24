@@ -8,6 +8,9 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {createEventAction} from '../../../actions/createEventActions'
+
+
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
@@ -84,19 +87,62 @@ class Page1 extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0)
     this.translateXFooter = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Access settings',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
-      ),
-    }
-  };
   componentDidMount() {
     console.log('page 1 mount')
     console.log(this.props.sports)
+    if (Object.values(this.props.step1).length != 0) {
+      this.setState(this.props.step1)
+    } else {
+      this.setState({
+        private:false,
+        players:1,
+        groups:{},
+        levelFilter:{
+          text:"Joining",
+          value:'join',
+          type:'join',
+          expendable:true,
+          alwaysExpanded:true,
+          value:Object.values(this.props.sports[0].level.list)[0],
+          valueSelected:Object.values(this.props.sports[0].level.list)[0].value,
+          listExpend:Object.values(this.props.sports[0].level.list)
+        },
+        levelOption:{
+          text:"Joining",
+          value:'join',
+          type:'join',
+          expendable:true,
+          alwaysExpanded:true,
+          valueSelected:'equal',
+          listExpend:[{value:'equal',text:'Only'},{value:'min',text:'And above'},{value:'max',text:'And below'}]
+        },
+        genderFilter:{
+          text:"Gender",
+          value:'gender',
+          type:'gender',
+          expendable:true,
+          alwaysExpanded:true,
+          valueSelected:'mixed',
+          listExpend:[ {
+            "icon" : "venus-mars",
+            "text" : "Mixed",
+            "typeIcon" : "font",
+            "value" : "mixed"
+          }, {
+            "icon" : "venus",
+            "text" : "Female",
+            "typeIcon" : "font",
+            "value" : "female"
+          }, {
+            "icon" : "mars",
+            "text" : "Male",
+            "typeIcon" : "font",
+            "value" : "male"
+          } ]
+        },
+      })
+    }
+
     if (this.props.navigation.getParam('group') != undefined) {
       this.setState({groups:{
         [this.props.navigation.getParam('group').objectID]:this.props.navigation.getParam('group')
@@ -119,6 +165,7 @@ class Page1 extends Component {
   }
   levelFilter() {
     return (
+      <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
           option = {this.state.levelFilter} 
           tickFilter={(value) => {
@@ -128,10 +175,12 @@ class Page1 extends Component {
           this.setState({levelFilter:levelFilter})
         }}
       />
+      </View>
     )
   }
   levelOption() {
     return (
+      <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
           option = {this.state.levelOption} 
           tickFilter={(value) => {
@@ -140,10 +189,12 @@ class Page1 extends Component {
           this.setState({levelOption:levelOption})
         }}
       />
+      </View>
     )
   }
   gender() {
     return (
+      <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
           option = {this.state.genderFilter} 
           tickFilter={(value) => {
@@ -152,33 +203,34 @@ class Page1 extends Component {
           this.setState({genderFilter:genderFilter})
         }}
       />
+      </View>
     )
   }
   plusMinus(state,maxValue,increment,minValue,icon) {
     var text = state
     if (this.state[state]==1) text = state + 's'
     return(
-      <Row style={styleApp.inputForm}>
-        <Col size={15} style={styleApp.center}>
-          <AllIcons name={icon} color={colors.title} size={17} type='font' />
+      <Row style={{paddingLeft:20,paddingRight:20,height:60,borderBottomWidth:1,borderColor:colors.off}}>
+        <Col size={10} style={styleApp.center2}>
+          <AllIcons name={icon} color={colors.greyDark} size={17} type='font' />
         </Col>
-        <Col size={55} style={[styleApp.center2,{paddingLeft:15}]}>
-          <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular'}]}>{this.state[state]} {this.state[state]==1?'player':'players'} total</Text>
+        <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
+          <Text style={styleApp.input}>{this.state[state]} {this.state[state]==1?'player':'players'} <Text style={styleApp.regularText}>(total)</Text></Text>
         </Col>
         <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.state[state] != minValue) {
             this.setState({[state]:this.state[state]-increment})
           }
         }} >
-          <AllIcons name={'remove'} color={colors.title} size={25} type='mat' />
+          <AllIcons name={'minus'} color={colors.title} size={15} type='font' />
         </Col>
         
-        <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
+        <Col size={10} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.state[state] != maxValue) {
             this.setState({[state]:this.state[state]+increment})
           }
         }} >
-          <AllIcons name={'add'} color={colors.title} size={25} type='mat' />
+          <AllIcons name={'plus'} color={colors.title} size={15} type='font' />
         </Col>
         
       </Row>
@@ -199,9 +251,9 @@ class Page1 extends Component {
     return (
       <ButtonColor view={() => {
         return (
-          <Row>       
+          <Row style={{padddingBottom:10,}}>       
             <Col size={15} style={styleApp.center2}>
-              <AsyncImage style={{width:'100%',height:40,borderRadius:6}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
+              <AsyncImage style={{width:'100%',height:40,borderRadius:3}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
             </Col>
             <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
               <Text style={styleApp.text}>{group.info.name}</Text>
@@ -215,65 +267,75 @@ class Page1 extends Component {
       }} 
       click={() => console.log('')}
       color='white'
-      style={[styles.rowGroup,{marginTop:10,flex:1}]}
+      style={[{marginTop:10,flex:1,paddingLeft:20,paddingRight:20,height:60}]}
       onPressColor='white'
       />
     )
   }
   page1() {
       return (
-        <View style={{marginTop:0,marginLeft:0,width:width}}>
-            <View style={styleApp.marginView}>
+        <View style={{marginTop:10,marginLeft:0,width:width}}>
+            <View style={[styleApp.marginView,{marginBottom:15}]}>
               {this.switch('Open access','Invite only','private')}
+             
+            </View>
+
               {this.levelFilter()}
               {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
               {this.plusMinus('players',200,1,1,'user-check')}
-            </View>
-
-
-
-            <View style={[styleApp.marginView,{marginTop:30}]}>
-              <Text style={styleApp.title}>Add groups</Text>
-                {
-                  Object.values(this.state.groups).length!=0?
-                  <View style={{marginTop:10}}>
-                  {Object.values(this.state.groups).map((group,i) => (
-                      this.rowGroup(group,i)
-                  ))}
-                  </View>
-                  :null
-                }
-                <ButtonColor view={() => {
-                  return <Text style={styleApp.title}>+</Text>
-                }} 
-                click={() => this.openAddGroups()}
-                color='white'
-                style={[styleApp.center,{borderColor:colors.off,height:40,width:'100%',borderRadius:20,borderWidth:1,marginTop:20}]}
-                onPressColor={colors.off}
-                />
-            </View>
-
-            <View style={[styleApp.marginView,{marginTop:30}]}>
-              <Text style={styleApp.title}>Gender</Text>
               {this.gender()}
-            </View>
+
+            {/* <View style={{marginTop:25,borderTopWidth:1,borderColor:colors.off,height:1}} /> */}
+            {
+              Object.values(this.state.groups).length!=0?
+              Object.values(this.state.groups).map((group,i) => (
+                  this.rowGroup(group,i)
+              ))
+              :null
+            }
+            
+            <ButtonColor view={() => {
+              return <Row style={{paddingLeft:20,paddingRight:20}}>
+                <Col size={90} style={[styleApp.center2]}>
+                  <Text style={styleApp.input}>Add groups</Text>
+                </Col>
+                <Col size={10} style={styleApp.center}>
+                  <AllIcons name={'plus'} color={colors.title} size={15} type='font' />
+                </Col>
+              </Row>
+            }} 
+            click={() => this.openAddGroups()}
+            color='white'
+            style={[{borderColor:colors.off,height:60,width:'100%',borderRadius:0,borderBottomWidth:1,marginTop:0}]}
+            onPressColor={colors.off}
+            />
+
 
         </View>
       )
+  }
+  async close () {
+    console.log('close')
+    await this.props.createEventAction('setStep1',this.state)
+    return this.props.navigation.navigate(this.props.navigation.goBack())
+  }
+  async next() {
+    await this.props.createEventAction('setStep1',this.state)
+    return this.props.navigation.navigate('CreateEvent2',{page1:this.state,page0:this.props.navigation.getParam('page0')})
   }
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
          <HeaderBackButton 
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={''}
+            textHeader={'Access settings'}
             inputRange={[5,10]}
             initialBorderColorIcon={'white'}
             initialBackgroundColor={'white'}
             initialTitleOpacity={1}
             icon1='arrow-left'
             icon2={null}
-            clickButton1={() => this.props.navigation.goBack()} 
+            clickButton1={() => this.close()} 
         />
 
         <ScrollView 
@@ -290,8 +352,8 @@ class Page1 extends Component {
           icon={'next'} 
           enabled={true} 
           loader={false} 
-          onPressColor={colors.greenLight2}
-          click={() => this.props.navigation.navigate('CreateEvent2',{page1:this.state,page0:this.props.navigation.getParam('page0')})}
+          onPressColor={colors.greenLight}
+          click={() => this.next()}
          />
 
       </View>
@@ -307,9 +369,10 @@ const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
     userConnected:state.user.userConnected,
-    userID:state.user.userID
+    userID:state.user.userID,
+    step1:state.createEventData.step1,
   };
 };
 
-export default connect(mapStateToProps,{})(Page1);
+export default connect(mapStateToProps,{createEventAction})(Page1);
 

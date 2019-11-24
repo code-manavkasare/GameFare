@@ -93,8 +93,10 @@ class CardEvent extends React.Component {
     </Row> 
     }
     displayCard(color,data) {
-      var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
-      if (sport == undefined) return null
+      console.log('la datatatatata')
+      console.log(data)
+      // var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
+      // if (sport == undefined) return null
       return (
         <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
         
@@ -112,9 +114,7 @@ class CardEvent extends React.Component {
               
             </Col>
             <Col size={20} style={styleApp.center3}>
-              {/* <View style={[styles.viewSport,{backgroundColor:sport.card.color.color,width:30,height:30,borderRadius:15}]}>
-                <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase()}</Text>
-              </View> */}
+       
             </Col>
 
           </Row>
@@ -124,7 +124,7 @@ class CardEvent extends React.Component {
           <Text style={[styles.subtitle,{marginTop:5}]}>{data.location.area}</Text>
           :null
           }
-          {/* <Text style={[styles.subtitle,{marginTop:5}]}>{this.entreeFee(data.price.joiningFee)}</Text> */}
+      
 
           {this.rowAttendees(data)}
 

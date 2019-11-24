@@ -8,18 +8,15 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {createEventAction} from '../../../actions/createEventActions'
+
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import StatusBar from '@react-native-community/status-bar';
-import BackButton from '../../layout/buttons/BackButton'
+import ButtonColor from '../../layout/Views/Button'
 
-import Header from '../../layout/headers/HeaderButton'
 import TextField from '../../layout/textField/TextField'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import ScrollView from '../../layout/scrollViews/ScrollView'
-import ExpandableCard from '../../layout/cards/ExpandableCard'
-import Switch from '../../layout/switch/Switch'
 import AllIcons from '../../layout/icons/AllIcons'
 import DateEvent from './DateEvent'
 import {date} from '../../layout/date/date'
@@ -43,76 +40,87 @@ class Page2 extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Event information',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
-      ),
-    }
-  };
   componentDidMount() {
-    console.log('page 1 mount')
-    console.log(this.props.sports)
-    console.log(this.state.sportsFilter)
-    
+    if (Object.values(this.props.step2).length != 0) {
+      this.setState(this.props.step2)
+    } else {
+      this.setState({
+        location:{address:'',},
+        area:'',       
+        startDate:'',
+        endDate:'',
+        name:'',
+        instructions:'',
+        recurrence:'',
+        loader:false,
+      })
+    }
   }
-  close() {
-      this.props.navigation.goBack()
-  }
-  switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
+  ligneButton(iconLeft,componentMiddle,iconRight,click,conditionCheck) {
     return (
-      <Switch 
-        textOn={textOn}
-        textOff={textOff}
-        translateXTo={width/2-20}
-        height={50}
-        translateXComponent0={translateXComponent0}
-        translateXComponent1={translateXComponent1}
-        state={this.state[state]}
-        setState={(val) => this.setState({[state]:val})}
+      <ButtonColor view={() => {
+        return (
+          <Row style={{paddingTop:23,paddingBottom:23}}>       
+            <Col size={15} style={[styleApp.center]}>
+              <AllIcons name={iconLeft} size={16} color={colors.greyDark} type='font' />
+            </Col>
+            <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
+              {componentMiddle}
+            </Col>
+            <Col size={20} style={styleApp.center}>
+              {
+                iconRight ==null?null
+                :conditionCheck?
+                <AllIcons name={'check'} type='font' size={14} color={colors.green} />
+                :
+                <AllIcons name={iconRight} type='font' size={14} color={colors.title} />
+              }
+            </Col>
+          </Row>
+        )
+      }} 
+      click={() => click()}
+      color={'white'}
+      style={[{flex:1,borderBottomWidth:1,borderColor:colors.off}]}
+      onPressColor={colors.off}
       />
     )
   }
-
-  tournamentName () {
-    return(
-      <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
-      <Row >
-        <Col size={15} style={styleApp.center}>
-          <AllIcons name='hashtag' size={16} color={colors.title} type='font' />
-        </Col>
-        <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
-          <TextInput
-            style={styleApp.input}
-            placeholder="Event name"
-            returnKeyType={'done'}
-            ref={(input) => { this.nameInput = input }}
-            underlineColorAndroid='rgba(0,0,0,0)'
-            autoCorrect={true}
-            onChangeText={text => this.setState({name:text})}
-            value={this.state.name}
-          />
-        </Col>
-      </Row>
-      </TouchableOpacity>
+  inputName() {
+    return (
+      <TextInput
+        style={styleApp.input}
+        placeholder="Add Event name"
+        returnKeyType={'done'}
+        ref={(input) => { this.nameInput = input }}
+        underlineColorAndroid='rgba(0,0,0,0)'
+        autoCorrect={true}
+        placeholderTextColor={colors.grey}
+        onChangeText={text => this.setState({name:text})}
+        value={this.state.name}
+      />
     )
   }
-  address() {
+  inputInstruction() {
     return (
-      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateEvent2',onGoBack: (data) => this.setLocation(data)})}>
-        <Row>
-          <Col style={styleApp.center} size={15}>
-            <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
-          </Col>
-          <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-            <Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Event address':this.state.location.address}</Text>
-          </Col>
-        </Row>
-      </TouchableOpacity>
+      <TextInput
+        style={styleApp.input}
+        placeholder="Parking instruction, unit number...(optional)"
+        returnKeyType={'done'}
+        ref={(input) => { this.instructionInput = input }}
+        underlineColorAndroid='rgba(0,0,0,0)'
+        autoCorrect={true}
+        multiline={true}
+        numberOfLines={6}
+        blurOnSubmit={true}
+        placeholderTextColor={colors.grey}
+        onChangeText={text => this.setState({instructions:text})}
+        value={this.state.instructions}
+      />
     )
+  }
+  locationText() {
+    return <Text style={this.state.location.address==''?{...styleApp.input,color:colors.grey}:styleApp.input}>{this.state.location.address==''?'Add event address':this.state.location.address}</Text>
   }
   async setLocation(data) {
     await this.setState({location:data})
@@ -128,12 +136,11 @@ class Page2 extends Component {
     end={end}
     />
   }
-  heightDateTimeCard() {
-    if (this.state.startDate == '') return 50
-    else if (date(this.state.startDate,'ddd, MMM D') == date(this.state.endDate,'ddd, MMM D')) return 65
-    return 100
-  }
   date() {
+    if (this.state.startDate == '') return <Text style={[styleApp.input,{color:colors.grey}]}>Add date and time</Text>
+    return this.dateTime(this.state.startDate,this.state.endDate,this.state.recurrence)
+  }
+  date2() {
     return (
       <TouchableOpacity style={{paddingTop:10,paddingBottom:10}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,recurrence:this.state.recurrence,onGoBack: (data) => this.setDate(data)})}>
       <Row>
@@ -141,12 +148,7 @@ class Page2 extends Component {
           <AllIcons name='calendar-alt' size={18} color={colors.title} type='font'/>
         </Col>
         <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-          {
-            this.state.startDate == ''?
-            <Text style={styleApp.inputOff}>Date and time</Text>
-            :
-            this.dateTime(this.state.startDate,this.state.endDate,this.state.recurrence)
-          }
+
         </Col>
       </Row>
       {
@@ -180,18 +182,13 @@ class Page2 extends Component {
   }
   page1() {
       return (
-        <View style={{marginTop:-15,marginLeft:0,width:width}}>
-            <View style={styleApp.marginView}>
-              {this.tournamentName()}
-            </View>
+        <View style={{marginTop:0,marginLeft:0,width:width,paddingTop:20}}>
 
-            <View style={[styleApp.marginView,{marginTop:20}]}>
-              <Text style={styleApp.title}>Schedule</Text>
-              {this.address()}
-              {this.date()}
-              {this.textField('instructions','E.g parking instruction, unit number...(optional)',100,true,'default','parking')}
-            </View>
-
+              {this.ligneButton('ribbon',this.inputName(),'plus',() => this.nameInput.focus(),this.state.name != '')}
+              {this.ligneButton('map-marker-alt',this.locationText(),'plus',() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateEvent2',onGoBack: (data) => this.setLocation(data)}),this.state.location.address != '')}
+              {this.ligneButton('calendar-alt',this.date(),'plus',() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,recurrence:this.state.recurrence,onGoBack: (data) => this.setDate(data)}),this.state.startDate != '')}
+              {this.ligneButton('parking',this.inputInstruction(),'plus',() => this.instructionInput.focus(),this.state.instructions != '')}
+             
 
         </View>
       )
@@ -250,6 +247,15 @@ class Page2 extends Component {
     await this.setState({loader:false})
     return this.props.navigation.navigate('CreateEvent3',{data:event,groups:step1.groups})
   }
+  async close () {
+    console.log('close')
+    await this.props.createEventAction('setStep2',this.state)
+    return this.props.navigation.navigate(this.props.navigation.goBack())
+  }
+  async next() {
+    await this.props.createEventAction('setStep2',this.state)
+    return this.submit()
+  }
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
@@ -263,7 +269,7 @@ class Page2 extends Component {
             icon1='arrow-left'
             initialTitleOpacity={1}
             icon2={null}
-            clickButton1={() => this.props.navigation.goBack()} 
+            clickButton1={() => this.close()} 
             />
 
         <ScrollView 
@@ -278,10 +284,10 @@ class Page2 extends Component {
 
         <ButtonRound
           icon={'next'} 
-          onPressColor={colors.greenLight2}
+          onPressColor={colors.greenLight}
           enabled={this.conditionOn()} 
           loader={this.state.loader} 
-          click={() => this.submit()}
+          click={() => this.next()}
          />
 
       </View>
@@ -296,8 +302,9 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
+    step2:state.createEventData.step2,
   };
 };
 
-export default connect(mapStateToProps,{})(Page2);
+export default connect(mapStateToProps,{createEventAction})(Page2);
 

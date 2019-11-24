@@ -119,7 +119,7 @@ export default class HeaderFlow extends Component {
           <Col size={70} style={styles.center}>
             <Animated.Text style={[styleApp.textHeader,{opacity:AnimateOpacityTitle}]}>{this.props.textHeader}</Animated.Text>
           </Col>
-          <Col size={15} style={[styles.center3]}>
+          <Col size={15} style={[styleApp.center]}>
             {
               this.props.loader?
               <Loader color={'green'} size={24} />

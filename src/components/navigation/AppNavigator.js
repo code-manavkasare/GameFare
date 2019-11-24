@@ -196,7 +196,7 @@ const MainApp = createBottomTabNavigator(
         tabBarIcon:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
             if (routeName == 'Home') return <AllIcons name='eventFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
-            if (routeName == 'ListGroups') return <AllIcons name='groupFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
+            if (routeName == 'ListGroups') return <AllIcons name='bowling-ball' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='font'/>
             if (routeName == 'Profile') return <AllIcons name='profileFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
         },
         tabBarLabel:({ focused, tintColor }) => { 
@@ -278,17 +278,6 @@ const MainApp = createBottomTabNavigator(
     }
 )
 
-const DateNavigator = createStackNavigator(
-    {
-        Date: DateSelector,
-    },
-    {
-        initialRouteName:'Date',
-        mode: 'card',
-        cardOverlayEnabled:false,
-        cardShadowEnabled:false
-    }
-);
 
 
   const RootStack = createStackNavigator(
@@ -306,7 +295,7 @@ const DateNavigator = createStackNavigator(
         AlertAddress:{screen:AlertAddress,gesturesEnabled:false},
         AlertCall:AlertCall,
         Payments:PaymentsNavigator,
-        Date:DateNavigator,
+        Date:DateSelector,
         Location:LocationSelector,
         ContactNavigator:ContactNavigator
     },

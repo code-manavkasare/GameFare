@@ -38,8 +38,8 @@ class ListEvents extends React.Component {
   constructor(props) {
     super(props);
     this.state={
-      events:[],
-      eventsPast:[],
+      futureEvents:[],
+      pastEvents:[],
       loader:true,
       past:false,
     }
@@ -50,7 +50,6 @@ class ListEvents extends React.Component {
   
   async componentDidMount() {
     this.props.onRef(this)
-    await this.setState({loader:true})
     return this.loadEvent()
   }
   async reload() {
@@ -65,26 +64,17 @@ class ListEvents extends React.Component {
   }
   async loadEvent(search) {
     console.log('on reload')
-    var allEvents = {}
-    var groups = await firebase.database().ref('usersGroups/' + this.props.userID).once('value')
-    groups = groups.val()
-    if (groups == null) return this.setState({loader:false})
-    for (var i in groups) {
-      var group = groups[i]
-      var events = await firebase.database().ref('groups/' + group.groupID + '/events/').once('value')
-      console.log('events')
-      
-      events = events.val()
-      console.log(events)
-      if (events != null) {
-        allEvents = {
-          ...allEvents,
-          ...events
-        }
-      }
-      
-    }
-    this.setState({loader:false,events:allEvents})
+    indexEvents.clearCache()
+    //'info.sport:' + 
+    //'AND allMembers:' + this.props.userID 
+    var futureEvents = await indexEvents.search({
+      query:'',
+      filters:'info.sport:' + this.props.sportSelected  ,
+    })
+    futureEvents = futureEvents.hits
+    console.log('futureEvents')
+    console.log(futureEvents)
+    this.setState({loader:false,futureEvents:futureEvents})
     // return true
   }
   openEvent(event) {
@@ -122,11 +112,18 @@ class ListEvents extends React.Component {
       Animated.spring(this.translateXView2,native(width)),
     ]).start()
   }
+  listEvents(events) {
+    console.log('display future events')
+    console.log(events)
+    return Object.values(events).map((event,i) => (
+      <CardEvent userCard={false} key={i} loadData={false} homePage={true} openEvent={(event) => this.openEvent(event)} item={event} data={event}/>
+    ))
+  }
   ListEvent () {
     if (!this.props.userConnected) return null
     return (
       <View style={{marginTop:20}}>
-        <View style={styleApp.marginView}>
+        <View style={[styleApp.marginView,{marginBottom:15}]}>
 
         <Text style={[styleApp.title,{marginBottom:20,marginLeft:0}]}>My events</Text>
         {this.switch('Upcoming','Past','past')}
@@ -136,8 +133,9 @@ class ListEvents extends React.Component {
         <Animated.View style={{flex:1,backgroundColor:'white',transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader}
-        events={this.state.events}
+        events={this.state.futureEvents}
         height={180}
+        content={() => this.listEvents(this.state.futureEvents)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef1 = ref)}
         />
@@ -147,7 +145,8 @@ class ListEvents extends React.Component {
         <ScrollViewX 
         height={180}
         loader={this.state.loader}
-        events={this.state.eventsPast}
+        events={this.state.pastEvents}
+        content={() => this.listEvents(this.state.pastEvents)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef2 = ref)}
         />
@@ -187,9 +186,9 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    globaleVariables:state.globaleVariables,
     userID:state.user.userID,
-    userConnected:state.user.userConnected
+    userConnected:state.user.userConnected,
+    sportSelected:state.historicSearch.sport,
   };
 };
 

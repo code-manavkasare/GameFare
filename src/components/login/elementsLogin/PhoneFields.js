@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 // import {updateStepLogin} from '../../../actions/loginActions'
 // import {initApp} from '../../../actions/initAppActions'
 import Flag from 'react-native-flags';
+import NavigationService from '../../../../NavigationService'
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import { Col, Row, Grid } from "react-native-easy-grid";
@@ -45,7 +46,7 @@ class PhoneFields extends Component {
       var that = this
       setTimeout(function(){
         that.firstTextInput.focus()
-      }, 600)
+      }, 550)
     }
     focusPhoneField () {
       this.firstTextInput.focus()
@@ -160,11 +161,15 @@ class PhoneFields extends Component {
         </Row>
       )
     }
+    async selectCountry(country) {
+      await NavigationService.navigate('Phone',{country:country})
+      this.firstTextInput.focus()
+    }
   render() {
     return (      
         <View style={styles.content}>
               <Row>
-                <Col size={20} style={[{borderRightWidth:0,borderColor:'#EAEAEA'}]} activeOpacity={0.8} onPress={() => {this.props.navigate('ListCountry',{})}}>
+                <Col size={20} style={[{borderRightWidth:0,borderColor:'#EAEAEA'}]} activeOpacity={0.8} onPress={() => {this.props.navigate('ListCountry',{onGoBack:(country)=> this.selectCountry(country)})}}>
                   {this.countryCol()}
                 </Col>
                 <Col size={15} style={[styles.center,{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>

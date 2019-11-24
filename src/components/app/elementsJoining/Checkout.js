@@ -5,11 +5,13 @@ import {
     TouchableOpacity,
     StyleSheet,
     Dimensions,
-    Linking
+    Linking,
+    Animated
 } from 'react-native';
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
 import { StackActions, NavigationActions } from 'react-navigation';
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import Header from '../../layout/headers/HeaderButton'
 import BackButton from '../../layout/buttons/BackButton'
@@ -45,6 +47,7 @@ class ProfilePage extends Component {
     this.state = {
       loader:false,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -70,7 +73,7 @@ class ProfilePage extends Component {
     return (
       <Row style={{marginTop:20}}>
         <Col size={10} style={styleApp.center2}>
-          <AllIcons name={icon} color={colors.grey} size={20} type='font' />
+          <AllIcons name={icon} color={colors.greyDark} size={16} type='font' />
         </Col>
         <Col size={90} style={styleApp.center2}>
           {component}
@@ -79,7 +82,7 @@ class ProfilePage extends Component {
     )
   }
   title(text) {
-    return <Text style={[styleApp.title,{fontSize:16,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+    return <Text style={styleApp.input}>{text}</Text>
   }
   rowText(text,colorText,fontFamily,val) {
     return <Row style={{height:35}}>
@@ -91,14 +94,14 @@ class ProfilePage extends Component {
       </Col>
     </Row>
   }
-  sport() {
+  sport(sport) {
     return <Row>
-      <Col size={80} style={styleApp.center2}>
+      <Col size={75} style={styleApp.center2}>
         <Text style={styleApp.title}>{this.props.navigation.getParam('data').info.name}</Text>
       </Col>
-      <Col size={20} style={styleApp.center3}>
-      <View style={styles.viewSport}>
-        <Text style={styles.textSport}>{this.props.navigation.getParam('data').info.sport.charAt(0).toUpperCase() + this.props.navigation.getParam('data').info.sport.slice(1)}</Text>
+      <Col size={25} style={styleApp.center3}>
+      <View style={[styles.viewSport,{backgroundColor:sport.card.color.color,width:'100%'}]}>
+        <Text style={[styles.textSport,{color:'white'}]}>{this.props.navigation.getParam('data').info.sport.charAt(0).toUpperCase() + this.props.navigation.getParam('data').info.sport.slice(1)}</Text>
       </View>
       </Col>
     </Row>
@@ -107,20 +110,21 @@ class ProfilePage extends Component {
     return <CardCreditCard navigate={(val,data) => this.props.navigation.navigate(val,data)}/>
   }
   checkout(data) {
+    var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
     return (
-      <View style={{marginLeft:-20,width:width,marginTop:-15}}>
-        <View style={[styleApp.viewHome,{paddingTop:15}]}>
+      <View style={{marginLeft:0,width:width,marginTop:0}}>
+        <View style={[styleApp.viewHome,{paddingTop:0}]}>
           <View style={styleApp.marginView}>
-            {this.sport()}
+            {this.sport(sport)}
           </View>
         </View>
 
-        <View style={[styleApp.viewHome,{paddingTop:5}]}>
+        <View style={[{paddingTop:5}]}>
           <View style={styleApp.marginView}>
 
             {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
             {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
-            {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
+            {/* {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null} */}
             {this.rowIcon(this.title(this.props.navigation.getParam('data').info.maxAttendance + ' people'),'user-check')}
 
           </View>
@@ -144,12 +148,12 @@ class ProfilePage extends Component {
             null
             :this.props.userConnected?
             <View>
-              {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2))}
+              {this.rowText('Charge amount',colors.title,'OpenSans-SemiBold','$' +Math.max(0,Number(this.props.navigation.getParam('data').price.joiningFee)-Number(this.props.totalWallet)).toFixed(2))}
               <View style={[styleApp.divider2,{marginBottom:10}]} />
             </View>
             :
             <View>
-              {this.rowText('Charge amount',colors.title,'OpenSans-Bold','$' +Number(this.props.navigation.getParam('data').price.joiningFee))}
+              {this.rowText('Charge amount',colors.title,'OpenSans-SemiBold','$' +Number(this.props.navigation.getParam('data').price.joiningFee))}
               <View style={[styleApp.divider2,{marginBottom:10}]} />
             </View>
           }
@@ -344,11 +348,25 @@ class ProfilePage extends Component {
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
+        <HeaderBackButton 
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={''}
+            inputRange={[5,10]}
+            initialBorderColorIcon={'white'}
+            initialBackgroundColor={'white'}
+
+            icon1='arrow-left'
+            initialTitleOpacity={1}
+            icon2={null}
+            clickButton1={() => this.props.navigation.goBack()} 
+        />
+
         <ScrollView 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.checkout(this.props.navigation.getParam('data'))}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={sizes.heightFooterBooking+90}
           showsVerticalScrollIndicator={false}
         />
@@ -406,6 +424,7 @@ const  mapStateToProps = state => {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
     infoUser:state.user.infoUser.userInfo,
+    sports:state.globaleVariables.sports.list,
     level:state.user.infoUser.level,
     totalWallet:state.user.infoUser.wallet.totalWallet,
     defaultCard:state.user.infoUser.wallet.defaultCard,

@@ -18,6 +18,7 @@ import {historicSearchAction} from '../../../actions/historicSearchActions'
 import {currentLocation} from '../../functions/location'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
+
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import { Col, Row, Grid } from "react-native-easy-grid";

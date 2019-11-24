@@ -8,6 +8,7 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {createEventAction} from '../../../actions/createEventActions'
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 
@@ -26,70 +27,90 @@ import Communications from 'react-native-communications';
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
+import isEqual from 'lodash.isequal'
 
 class Page0 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      player:this.props.infoUser.coach && this.props.infoUser.coachVerified?false:true,
-      coachNeeded:false,
-      joiningFee:'',
-      free:false,
-      sportsFilter:{
-        text:"Sports",
-        value:'sports',
-        type:'sports',
-        expendable:true,
-        alwaysExpanded:true,
-        value:Object.values(this.props.sports)[0],
-        valueSelected:Object.values(this.props.sports)[0].value,
-        listExpend:Object.values(this.props.sports)
-      },
-      rulesFilter:{
-        text:"rules",
-        value:'rules',
-        type:'rules',
-        expendable:true,
-        alwaysExpanded:true,
-        valueSelected:Object.values(this.props.sports)[0].rules[0].value,
-        value:Object.values(this.props.sports)[0].rules[0],
-        listExpend:Object.values(this.props.sports)[0].rules
-      },
+      initialLoader:true
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Organize an event',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
-      ),
-    }
-  };
-  componentDidMount() {
+  shouldComponentUpdate(nextProps,nextState) {
+    // if (!isEqual(this.state,nextState)) return true
+    // return false
+    return true
+  }
+  async componentDidMount() {
     console.log('page 1 mount')
     console.log(this.state.sportsFilter)
-    if (this.props.navigation.getParam('sport')!= undefined) {
+    console.log('llalalalala')
+    console.log(this.props.step0)
+    if (Object.values(this.props.step0).length != 0) {
+      this.setState(this.props.step0)
+    } else {
+      console.log('ici mem')
+      console.log({
+          text:"rules",
+          value:'rules',
+          type:'rules',
+          expendable:true,
+          alwaysExpanded:true,
+          valueSelected:Object.values(this.props.sports)[0].rules[0].value,
+          value:Object.values(this.props.sports)[0].rules[0],
+          listExpend:Object.values(this.props.sports)[0].rules
+        })
       this.setState({
+        initialLoader:false,
+        player:this.props.infoUser.coach && this.props.infoUser.coachVerified?false:true,
+        coachNeeded:false,
+        joiningFee:'',
+        free:false,
         sportsFilter:{
-          ...this.state.sportsFilter,
-          value:this.props.navigation.getParam('sport'),
-          valueSelected:this.props.navigation.getParam('sport').value,
-        }
-        ,
+          text:"Sports",
+          value:'sports',
+          type:'sports',
+          expendable:true,
+          alwaysExpanded:true,
+          value:Object.values(this.props.sports)[0],
+          valueSelected:Object.values(this.props.sports)[0].value,
+          listExpend:Object.values(this.props.sports)
+        },
         rulesFilter:{
-          ...this.state.rulesFilter,
-          value:this.props.navigation.getParam('sport').rules[0],
-          valueSelected:this.props.navigation.getParam('sport').rules[0].value,
-          listExpend:this.props.navigation.getParam('sport').rules
-        }
-      })
+          text:"rules",
+          value:'rules',
+          type:'rules',
+          expendable:true,
+          alwaysExpanded:true,
+          valueSelected:Object.values(this.props.sports)[0].rules[0].value,
+          value:Object.values(this.props.sports)[0].rules[0],
+          listExpend:Object.values(this.props.sports)[0].rules
+        }})
     }
+    
+    // if (this.props.navigation.getParam('sport')!= undefined) {
+    //   this.setState({
+    //     sportsFilter:{
+    //       ...this.state.sportsFilter,
+    //       value:this.props.navigation.getParam('sport'),
+    //       valueSelected:this.props.navigation.getParam('sport').value,
+    //     }
+    //     ,
+    //     rulesFilter:{
+    //       ...this.state.rulesFilter,
+    //       value:this.props.navigation.getParam('sport').rules[0],
+    //       valueSelected:this.props.navigation.getParam('sport').rules[0].value,
+    //       listExpend:this.props.navigation.getParam('sport').rules
+    //     }
+    //   })
+    // }
   }
   sports() {
+    console.log('le re render !')
+    console.log(this.props.sports)
     return (
+      <View style={{borderColor:colors.off,borderBottomWidth:1}}>
       <ExpandableCard 
           option = {this.state.sportsFilter} 
           tickFilter={(value) => {
@@ -113,12 +134,16 @@ class Page0 extends Component {
           })
         }}
       />
+
+      </View>
     )
   }
   rules() {
     return (
+      <View style={{borderColor:colors.off,borderBottomWidth:1}}>
       <ExpandableCard 
           option = {this.state.rulesFilter} 
+          // listExpend={this.state.rulesFilter.listExpend}
           tickFilter={(value) => {
           var rulesFilter = this.state.rulesFilter
           rulesFilter.valueSelected = value
@@ -129,7 +154,9 @@ class Page0 extends Component {
             rulesFilter:rulesFilter,
           })
         }}
+        // listExpend={Object.values(this.props.sports)}
       />
+      </View>
     )
   }
   setCoach() {
@@ -164,10 +191,10 @@ class Page0 extends Component {
   }
   entreeFeeSection(state){
     return(
-      <Row style={{height:55}}>
+      <Row style={{height:60,marginTop:15,}}>
         <Col size={60} style={styleApp.center2}>
-          <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} style={styleApp.inputForm}>
-            <Row>
+          <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} >
+            <Row style={{height:60}}>
               <Col style={styleApp.center} size={25}>
                 <AllIcons name='dollar-sign' size={18} color={colors.title} type='font'/>
               </Col>
@@ -201,22 +228,21 @@ class Page0 extends Component {
             </Row>
           </TouchableOpacity>
         </Col>
-        <Col size={40} style={styleApp.center3} activeOpacity={0.7} onPress={() => {
+        <Col size={20} style={styleApp.center3} activeOpacity={0.7} onPress={() => {
           if (!this.state.free) {
             this.entreeFeeInputRef.blur()
           }
           this.setState({free:!this.state.free,joiningFee:!this.state.free?'0':''})
         }}>
-          <Row style={[styleApp.cardSelect,{borderWidth:0,shadowOpacity:0}]}>
+          <Row style={{height:55,width:'100%',}}>
             <Col style={styleApp.center} >          
-              <View style={{}}>
-                <AllIcons name="check" type='mat' color={this.state.free?colors.primary:colors.grey} size={15} />
-              </View>
+              <AllIcons name="check" type='mat' color={this.state.free?colors.primary:colors.grey} size={15} />
             </Col>
             <Col style={styleApp.center2} >
               <Text style={[styleApp.text,{color:this.state.free?colors.primary:colors.grey}]}>Free</Text>
             </Col>
           </Row>
+
         </Col>
       </Row>
       
@@ -227,19 +253,13 @@ class Page0 extends Component {
   }
   page0() {
       return (
-        <View style={{marginTop:-15,marginLeft:0,width:width}}>
-
-          <View style={styleApp.marginView}>
-
-
- 
+        <View >
 
           {this.sports()}
           {this.rules()}
-          </View>
 
           {
-        this.state.rulesFilter.value.coachNeeded?
+          this.state.rulesFilter.value.coachNeeded != false?
           <View style={[styleApp.marginView,{marginTop:30}]}>
 
           <Text style={[styleApp.title,{marginBottom:20}]}>I am a...</Text>
@@ -274,21 +294,18 @@ class Page0 extends Component {
               </Col>
             </Row>
             
-            {
+            
+          </View>
+
+          {
             !this.state.coachNeeded?
             this.entreeFeeSection('free')
             :
+            <View style={styleApp.marginView}>
             <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with an instructor. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${this.state.sportsFilter.value.fee.coachMatchFee}</Text> to participate, which will be payment for the instructor.</Text>
+            </View>
             }
-          </View>
         
-        
-
-          
-
-          
-
-
         </View>
       )
   }
@@ -302,6 +319,15 @@ class Page0 extends Component {
     }
     return this.state.player
   }
+  async close () {
+    console.log('close')
+    await this.props.createEventAction('setStep0',this.state)
+    return this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))
+  }
+  async next() {
+    await this.props.createEventAction('setStep0',this.state)
+    return this.props.navigation.navigate('CreateEvent1',{page0:{...this.state,player:this.valuePlayer()},group:this.props.navigation.getParam('group')})
+  }
   render() {
     return (
       <View style={[styleApp.stylePage]}>
@@ -309,7 +335,6 @@ class Page0 extends Component {
 
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
         textHeader={'Organize your event'}
         inputRange={[5,10]}
         initialBorderColorIcon={'white'}
@@ -317,28 +342,28 @@ class Page0 extends Component {
         initialTitleOpacity={1}
         icon1='arrow-left'
         icon2={null}
-        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
+        clickButton1={() => this.close()} 
         />
 
         <ScrollView
           onRef={ref => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           
-          contentScrollView={this.page0.bind(this)}
+          contentScrollView={() => this.state.initialLoader?null:this.page0()}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={180}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
         
         {
           this.conditionOn()?
           <ButtonRound
           icon={'next'} 
-          onPressColor={colors.greenLight2}
+          onPressColor={colors.greenLight}
           enabled={this.conditionOn()}
           loader={false} 
-          click={() => this.props.navigation.navigate('CreateEvent1',{page0:{...this.state,player:this.valuePlayer()},group:this.props.navigation.getParam('group')})}
+          click={() => this.next()}
          />
          :
          <ButtonRoundOff
@@ -362,8 +387,9 @@ const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
     infoUser:state.user.infoUser.userInfo,
+    step0:state.createEventData.step0,
   };
 };
 
-export default connect(mapStateToProps,{})(Page0);
+export default connect(mapStateToProps,{createEventAction})(Page0);
 

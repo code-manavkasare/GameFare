@@ -110,7 +110,7 @@ class EventPage extends React.Component {
       <TouchableOpacity style={{marginTop:20}} activeOpacity={alert!=undefined?0.7:1} onPress={() => alert!=undefined?this.props.navigation.navigate('AlertAddress',{data:dataAlert}):null}>
         <Row>
           <Col size={10} style={styleApp.center2}>
-            <AllIcons name={icon} color={colors.grey} size={18} type='font' />
+            <AllIcons name={icon} color={colors.greyDark} size={16} type='font' />
           </Col>
           <Col size={90} style={styleApp.center2}>
             {component}
@@ -132,7 +132,7 @@ class EventPage extends React.Component {
     )
   }
   title(text) {
-    return <Text style={[styleApp.title,{fontSize:15,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+    return <Text style={styleApp.input}>{text}</Text>
   }
   dateTime(start,end) {
     return <DateEvent 

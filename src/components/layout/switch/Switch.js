@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height:50,
-    width:width/2,
+    width:'100%',
     // borderRadius:4,
     // borderColor:colors.primary,
-    backgroundColor:'white',
+    //backgroundColor:'yellow',
     borderWidth:0,
   },
   text:{

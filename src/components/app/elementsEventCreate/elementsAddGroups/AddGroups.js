@@ -15,8 +15,9 @@ import BackButton from '../../../layout/buttons/BackButton'
 import Button from '../../../layout/buttons/Button'
 import ButtonColor from '../../../layout/Views/Button'
 import LinearGradient from 'react-native-linear-gradient';
+import HeaderBackButton from '../../../layout/headers/HeaderBackButton'
 
-import ScrollView from '../../../layout/scrollViews/ScrollView2'
+import ScrollView from '../../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../../layout/cards/ExpandableCard'
 import Switch from '../../../layout/switch/Switch'
 import AllIcons from '../../../layout/icons/AllIcons'
@@ -37,6 +38,7 @@ export default class AddGroups extends Component {
       search:'',
       loader:true,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -78,10 +80,10 @@ export default class AddGroups extends Component {
   }
   searchBar() {
     return (
-      <TouchableOpacity style={[styleApp.inputForm,{borderBottomWidth:0.3,borderColor:colors.borderColor,paddingTop:0,paddingBottom:10}]} activeOpacity={0.7} onPress={() => this.inputRef.focus()} >
+      <TouchableOpacity style={[{borderBottomWidth:0.3,borderColor:colors.borderColor,paddingTop:20,paddingBottom:20,backgroundColor:'white'}]} activeOpacity={0.7} onPress={() => this.inputRef.focus()} >
         <Row >
           <Col size={15} style={styleApp.center}>
-            <AllIcons name='search' type='mat' size={18} color={colors.primary} />
+            <AllIcons name='search' type='mat' size={20} color={colors.title} />
           </Col>
           <Col size={70} style={styleApp.center2}>
             <TextInput
@@ -138,9 +140,9 @@ export default class AddGroups extends Component {
     return (
       <ButtonColor view={() => {
         return (
-          <Row style={{marginLeft:0,width:width-40}}>       
+          <Row style={{paddingTop:10,paddingLeft:20,paddingRight:20,paddingBottom:10,}}>       
             <Col size={15} style={styleApp.center2}>
-              <AsyncImage style={{width:'100%',height:40,borderRadius:6}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
+              <AsyncImage style={{width:'100%',height:40,borderRadius:3}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
             </Col>
             <Col size={75} style={[styleApp.center2,{paddingLeft:15}]}>
               <Text style={styleApp.text}>{group.info.name}</Text>
@@ -162,6 +164,12 @@ export default class AddGroups extends Component {
       onPressColor={colors.off}
       />
     )
+  }
+  listGroupPage() {
+    return <View>
+      {this.searchBar()}
+      {this.listGroups()}
+    </View>
   }
   listGroups() {
       if (this.state.loader) return <View>
@@ -193,12 +201,25 @@ export default class AddGroups extends Component {
   render() {
     return (
       <View style={{backgroundColor:'white',flex:1,borderLeftWidth:1,borderColor:colors.off }}>
-        {this.searchBar()}
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={''}
+        inputRange={[5,10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1='arrow-left'
+        icon2={null}
+        clickButton1={() => this.props.navigation.goBack()} 
+        />
+
+        
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.listGroups.bind(this)}
+          contentScrollView={this.listGroupPage.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />

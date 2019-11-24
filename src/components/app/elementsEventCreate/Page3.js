@@ -77,7 +77,7 @@ class Page3 extends Component {
     return (
       <Row style={{marginBottom:0,marginTop:10}}>
         <Col size={10} style={styleApp.center2}>
-          <AllIcons name={icon} size={18} type={typeIcon} color={colors.grey}/>
+          <AllIcons name={icon} size={18} type={typeIcon} color={colors.greyDark}/>
         </Col>
         
         <Col size={80} style={styleApp.center2}>
@@ -87,7 +87,7 @@ class Page3 extends Component {
     )
   }
   title(text) {
-    return <Text style={[styleApp.title,{fontSize:15,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+    return <Text style={[styleApp.input]}>{text}</Text>
   }
   getTextField(field,step2) {
     if (field.field == 'expandable') {
@@ -196,11 +196,11 @@ class Page3 extends Component {
             </View>
 
 
-            <View style={[styleApp.divider2,{marginLeft:20,width:width-40,marginBottom:10}]} />
+            {/* <View style={[styleApp.divider2,{marginLeft:20,width:width-40,marginBottom:10}]} /> */}
 
             
 
-              <View style={styleApp.marginView}>
+              <View style={[styleApp.marginView,{marginTop:25}]}>
               {this.rowIcon('user-plus',this.title(Number(data.info.maxAttendance)==1?data.info.maxAttendance + ' player':data.info.maxAttendance + ' players'),'font')}
               <View style={{height:5}}/>
               {this.rowIcon('balance-scale',this.title(level.value=='0'?level.text:level.text + ' ' + levelOption),'font')}
@@ -209,7 +209,7 @@ class Page3 extends Component {
               {this.rowIcon(data.info.gender == 'mixed'?'venus-mars':data.info.gender == 'female'?'venus':'mars',this.title(data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1)),'font')}
               
 
-              <View style={{height:0.3,marginTop:20,marginBottom:10,backgroundColor:colors.borderColor}} />
+              <View style={{height:0,marginTop:20,marginBottom:10,backgroundColor:colors.borderColor}} />
               
               {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
               </View>
@@ -256,7 +256,7 @@ class Page3 extends Component {
         phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
       },
       status:'confirmed',
-      teamID:this.props.userID,
+      userID:this.props.userID,
     }
     if (event.info.player) {
       user.coach = false
@@ -276,10 +276,18 @@ class Page3 extends Component {
         return group.objectID
       })
     }
+    var allAttendees = Object.values(attendees).map((user) => {
+      return user.userID
+    })
+    var allCoaches = Object.values(coaches).map((user) => {
+      return user.userID
+    })
     event={
       ...event,
       coaches:coaches,
+      allCoaches:allCoaches,
       attendees:attendees,
+      allAttendees:allAttendees,
       groups:groupsToPush
     }
     
@@ -288,12 +296,7 @@ class Page3 extends Component {
     var pushEvent = await firebase.database().ref('events').push(event)
     event.eventID = pushEvent.key
     event.objectID = pushEvent.key
-    var userEvent={
-      eventID:pushEvent.key,
-      status:'confirmed',
-      organizer:true,
-      coach:user.coach
-    }
+
     await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
     // await firebase.database().ref('usersEvents/' + this.props.userID + '/' + pushEvent.key).update(userEvent)
     try {
@@ -321,7 +324,7 @@ class Page3 extends Component {
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
          <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        textHeader={'Event summary'}
+        textHeader={''}
         inputRange={[5,10]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
@@ -348,7 +351,7 @@ class Page3 extends Component {
           <Button
           icon={'next'} 
           backgroundColor='green'
-          onPressColor={colors.greenClick}
+          onPressColor={colors.greenLight}
           styleButton={{marginLeft:20,width:width-40}}
           enabled={true} 
           disabled={false}
@@ -359,7 +362,7 @@ class Page3 extends Component {
          :
          <Button
           backgroundColor='green'
-          onPressColor={colors.greenClick}
+          onPressColor={colors.greenLight}
           styleButton={{marginLeft:20,width:width-40}}
           enabled={true} 
           text='Sign in to proceed'

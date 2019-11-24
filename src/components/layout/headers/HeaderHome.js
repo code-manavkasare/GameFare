@@ -113,7 +113,7 @@ export default class HeaderFlow extends Component {
         }}
         click={() => this.openSport(!this.state.openSport,sport.value)}
         color={'white'}
-        style={[styleApp.center,{height:45,width:150,borderRadius:0,borderWidth:0,overFlow:'hidden'}]}
+        style={[styleApp.center,{height:45,width:150,borderRadius:0,borderWidth:0,overFlow:'hidden',}]}
         onPressColor={colors.off}
         />
       )
@@ -152,7 +152,7 @@ export default class HeaderFlow extends Component {
     const borderColorView = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: this.props.inputRange,
-          outputRange: [ 'white', colors.off ],
+          outputRange: [ 'white', colors.grey ],
           extrapolate: 'clamp'
     });
     const translateYHeader = this.props.AnimatedHeaderValue.interpolate(
@@ -171,12 +171,16 @@ export default class HeaderFlow extends Component {
       inputRange: this.props.inputRange,
       outputRange: [35, 20],
     });
+    const shadeOpacityHeader = this.props.AnimatedHeaderValue.interpolate({
+      inputRange: this.props.inputRange,
+      outputRange: [0, 0.03],
+    });
     var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.sportSelected)[0]
     return ( 
-      <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,height:heightHeaderFilter,borderColor:borderColorView}]}>
+      <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,height:heightHeaderFilter,borderColor:borderColorView,shadowOpacity:shadeOpacityHeader}]}>
         <Row style={{width:width,paddingLeft:20,paddingRight:20}}>
           <Col size={50} style={{paddingTop:15}}>
-              <Animated.View style={{height:this.state.heightButtonSport,overflow:'hidden',borderWidth:1,borderRadius:10,width:150,backgroundColor:'white',borderColor:colors.off,transform:[{translateY:translateYHeader}]}}>
+              <Animated.View style={[styleApp.shade,{height:this.state.heightButtonSport,overflow:'hidden',borderWidth:1,borderRadius:10,width:150,borderColor:colors.off,transform:[{translateY:translateYHeader}]}]}>
                 {this.buttonSport(sport,0)}
 
                 {Object.values(this.props.sports).filter(item => item.value != sport.value).map((sport,i) => (

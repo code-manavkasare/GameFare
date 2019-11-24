@@ -15,6 +15,7 @@ import StatusBar from '@react-native-community/status-bar';
 import BackButton from '../../layout/buttons/BackButton'
 import Button from '../../layout/buttons/Button'
 import ButtonOff from '../../layout/buttons/ButtonOff'
+import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import Header from '../../layout/headers/HeaderButton'
 import ButtonRound from '../../layout/buttons/ButtonRound'
@@ -33,6 +34,7 @@ export default class Page0 extends Component {
     this.state = {
       player:false,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0)
   }
   static navigationOptions = ({ navigation }) => {
     return {
@@ -50,9 +52,9 @@ export default class Page0 extends Component {
   }
   page0() {
       return (
-        <View style={{marginTop:-15,marginLeft:-20,width:width}}>
+        <View style={{marginTop:0,marginLeft:0,width:width}}>
 
-            <View style={[styleApp.viewHome,{paddingTop:15}]}>
+            <View style={[{paddingTop:0}]}>
               <View style={styleApp.marginView}>
                 <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>I am a...</Text>
 
@@ -83,11 +85,24 @@ export default class Page0 extends Component {
   render() {
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
+        <HeaderBackButton 
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={''}
+            inputRange={[5,10]}
+            initialBorderColorIcon={'white'}
+            initialBackgroundColor={'white'}
+
+            icon1='arrow-left'
+            initialTitleOpacity={1}
+            icon2={null}
+            clickButton1={() => this.props.navigation.goBack()} 
+        />
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={this.page0.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={0}
           showsVerticalScrollIndicator={true}
         />

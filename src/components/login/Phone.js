@@ -17,16 +17,6 @@ import HeaderBackButton from '../layout/headers/HeaderBackButton'
 import colors from '../style/colors';
 
 export default class LoadingScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Sign in',
-      headerStyle:[styleApp.styleHeader,{borderBottomWidth:0}],
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton name='close' size={24} type='mat' color={colors.title} click={() => navigation.navigate(navigation.getParam('pageFrom'))}/>
-      ),
-    }
-  };
   constructor(props) {
     super(props);
     this.state = {

@@ -81,8 +81,6 @@ export default class ScrollViewPage extends PureComponent {
       <Button view={() => {
         return (
           <View style={[styleApp.center2,{height:50,}]}>
-            {/* <Image source={require('../../../img/images/smartphone.png')} style={{width:100,height:100,marginBottom:10}} /> */}
-
             <Text style={[styleApp.text,{marginTop:5,fontSize:12}]}>You haven't joined any event yet.</Text>
           </View>
         )
@@ -92,11 +90,7 @@ export default class ScrollViewPage extends PureComponent {
       style={[styleApp.center,{backgroundColor:colors.off2,borderWidth:0,borderColor:colors.borderColor,width:width-40,height:55}]}
       onPressColor={colors.off}
       />
-      :
-      Object.values(this.props.events).map((event,i) => (
-        <CardEvent userCard={false} key={i} loadData={true} homePage={true} openEvent={(event) => this.props.openEvent(event)} item={event}/>
-      ))
-
+      :this.props.content()
       }
       <View style={{width:30}}/>
     </ScrollView>  
