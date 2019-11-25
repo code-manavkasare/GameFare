@@ -3,8 +3,11 @@ import {
     Image,
     Text,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions
 } from 'react-native';
+const { height, width } = Dimensions.get('screen')
+import { Col, Row, Grid } from "react-native-easy-grid";
 
 
 import { createAppContainer } from 'react-navigation';
@@ -191,31 +194,97 @@ const MainApp = createBottomTabNavigator(
         // ListEvents:ListEvents,
         Profile: ProfileNavigator,
     },
+    /*
+    <Button   view={() => {
+          return <Row >
+            <Col size={10} style={[styleApp.center]}>
+              <AllIcons name={routeName == 'Home'?
+                'calendar'
+                :
+                routeName == 'ListGroups'?
+                'tennis'
+                :routeName == 'Profile'?
+                'profileFooter'
+                :null
+                } size={18} color={tintColor} style={styles.iconFooter} type='moon'/>
+                <Text style={[styles.footerText,{color:tintColor,marginTop:10}]}>
+                {routeName == 'Home'?
+                'EVENTS'
+                :
+                routeName == 'ListGroups'?
+                'GROUPS'
+                :routeName == 'Profile'?
+                'PROFILE'
+                :null
+                }
+                </Text>
+            </Col>
+          </Row>
+        }}
+        click={() => navigation.navigate(routeName)}
+        color={'white'}
+        style={[styles.center,{borderTopWidth:1.5,marginTop:5,borderColor:tintColor,paddingTop:6,backgroundColor:'white',width:'100%',height:'120%'}]}
+        onPressColor={colors.off}
+        />
+    
+    */
     {
       defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
-            if (routeName == 'Home') return <AllIcons name='eventFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
-            if (routeName == 'ListGroups') return <AllIcons name='bowling-ball' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='font'/>
-            if (routeName == 'Profile') return <AllIcons name='profileFooter' size={18} color={focused?'white':colors.primaryLight} style={styles.iconFooter} type='moon'/>
+            return <Button   view={() => {
+                return <Row style={{height:45}}>
+                  <Col size={10} style={[styles.center]}>
+                    <AllIcons name={routeName == 'Home'?
+                      'calendar'
+                      :
+                      routeName == 'ListGroups'?
+                      'tennis'
+                      :routeName == 'Profile'?
+                      'profileFooter'
+                      :null
+                      } size={16} color={tintColor} style={styles.iconFooter} type='moon'/>
+                      <Text style={[styles.footerText,{color:tintColor,marginTop:6,marginBottom:5,fontSize:12.5}]}>
+                      {routeName == 'Home'?
+                      'Events'
+                      :
+                      routeName == 'ListGroups'?
+                      'Groups'
+                      :routeName == 'Profile'?
+                      'Profile'
+                      :null
+                      }
+                      </Text>
+                  </Col>
+                </Row>
+              }}
+              click={() => navigation.navigate(routeName)}
+              color={'white'}
+              style={[{borderTopWidth:1.3,marginTop:0,borderColor:tintColor,paddingTop:14,backgroundColor:'white',width:'100%',height:'100%'}]}
+              onPressColor={'white'}
+              />
         },
         tabBarLabel:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
-            if (routeName == 'Home') return <Text style={focused?styles.footerText:styles.footerTextOff}>EVENTS</Text>
-            if (routeName == 'ListGroups') return <Text style={focused?styles.footerText:styles.footerTextOff}>GROUPS</Text>
-            if (routeName == 'Profile') return <Text style={focused?styles.footerText:styles.footerTextOff}>PROFILE</Text>
-        }
-      }),
-      tabBarOptions: {
-        //activeTintColor: 'tomato',
-        //inactiveTintColor: 'gray',
-        showLabel:true,
-        style: {
-            borderTopWidth:0,
-            backgroundColor: colors.primary,
-            // height:55,
-            paddingBottom:20,
+            if (routeName == 'Home') return <Text style={[styles.input,{color:tintColor}]}>Events</Text>
+            if (routeName == 'ListGroups') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
+            if (routeName == 'Profile') return <Text style={[styles.footerText,{color:tintColor}]}>PROFILE</Text>
         },
+      }),   
+      tabBarOptions: {
+        activeTintColor: colors.primary,
+        inactiveTintColor: colors.grey,
+        showLabel:false,
+        style: [styles.shade,{
+            borderTopWidth:0,
+            shadowOpacity:0.07,
+            backgroundColor: colors.white,
+            borderTopWidth:0,
+            borderTopColor:colors.off,
+            height:45,
+
+            paddingBottom:20,
+        }],
       },
     },
     {

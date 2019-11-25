@@ -1,7 +1,8 @@
 import {
   SET_LOCATION_SEARCH,
   SET_HISTORIC_LOCATION_SEARCH,
-  SET_SPORT
+  SET_SPORT,
+  SET_LEAGUE
   } from './types';
   
   const setLocationSearch = (value) => ({
@@ -18,6 +19,11 @@ import {
     type: SET_SPORT,
     sport:value
   }); 
+
+  const setLeague = (value) => ({
+    type: SET_LEAGUE,
+    league:value
+  });
   
   export const historicSearchAction = (val,data) =>{
     return async function(dispatch){
@@ -27,6 +33,8 @@ import {
         await dispatch(setHistoricLocationSearch(data))
       } else if (val == 'setSport') {
         await dispatch(setSport(data))
+      } else if (val == 'setLeague') {
+        await dispatch(setLeague(data))
       }
       
       return true

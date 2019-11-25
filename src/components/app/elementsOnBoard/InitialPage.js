@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {globaleVariablesAction} from '../../../actions/globaleVariablesActions'
+import {historicSearchAction} from '../../../actions/historicSearchActions'
 import isEqual from 'lodash.isequal'
 import firebase from 'react-native-firebase'
 
@@ -37,15 +38,19 @@ class InitialPage extends Component {
   async componentDidMount() {
     var variables = await firebase.database().ref('variables').once('value')
     variables = variables.val()
-    if (!isEqual(variables,this.props.variables)) {
-      await this.props.globaleVariablesAction(variables)
-    }
+    await this.props.globaleVariablesAction(variables)
+
     console.log('sdfdfkjhgdfjkhgfdg')
     console.log(this.props.sportSelected)
-    if (this.props.sportSelected != '') {
+    if (this.props.sportSelected != '' && this.props.leagueSelected != '') {
+      // await this.props.historicSearchAction('setSport',variables.sports.list[0].value)
       return this.props.navigation.navigate('TabsApp')
     }
+    await this.props.historicSearchAction('setSport',variables.sports.list[0].value)
     return this.props.navigation.navigate('SportSelect') 
+  }
+  shouldComponentUpdate(nextProps) {
+    return false
   }
   loader() {
       return (
@@ -97,9 +102,10 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     variables:state.globaleVariables,
-    sportSelected:state.historicSearch.sport
+    sportSelected:state.historicSearch.sport,
+    leagueSelected:state.historicSearch.league
   };
 };
 
-export default connect(mapStateToProps,{globaleVariablesAction})(InitialPage);
+export default connect(mapStateToProps,{globaleVariablesAction,historicSearchAction})(InitialPage);
 

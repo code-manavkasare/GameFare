@@ -227,6 +227,7 @@ class Page2 extends Component {
         'player':step0.player,
         'gender':step1.genderFilter.valueSelected,
         'instructions':step2.instructions,
+        'league':step0.leagueFilter.valueSelected,
         'rules':step0.rulesFilter.valueSelected,
       },
       // "advancedSettings":advancedSettings,

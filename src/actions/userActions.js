@@ -6,6 +6,7 @@ import {
 import firebase from 'react-native-firebase'
 import Mixpanel from 'react-native-mixpanel';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738'
+import NavigationService from '../../NavigationService'
 Mixpanel.sharedInstanceWithToken(mixPanelToken)
   
   const setUserInfo = (value) => ({
@@ -59,6 +60,7 @@ Mixpanel.sharedInstanceWithToken(mixPanelToken)
               countryCode:data.countryCode,
               userIDSaved:userIDSaved
           }
+          // NavigationService.navigate('Alert',{textButton:'Yes',close:true,title:'Yes',subtitle:'Se'})
           console.log('infoUserToPush')
           console.log(infoUserToPush)
           if (infoUserToPushSaved !== infoUserToPush) {

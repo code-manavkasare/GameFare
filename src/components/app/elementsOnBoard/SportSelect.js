@@ -42,64 +42,104 @@ class InitialPage extends Component {
   componentDidMount() {
  
   }
-  async selectSport (sport) {
+  async selectLeague (sport,league) {
     // write sport to redux
-    await this.props.historicSearchAction('setSport',sport)
-    this.props.navigation.navigate('LocationSelect',{sport:sport})
+    console.log('on set league')
+    console.log(league)
+    await this.props.historicSearchAction('setLeague',league)
+    this.props.navigation.navigate('LocationSelect')
   }
-  button(sport,i) {
-    console.log(sport.value)
+  isOdd(num) { return (num) % 2;}
+  button(league,i,sport) {
+    console.log(league)
     console.log('sport.value')
+    console.log(this.props.leagueSelected)
     return (
       <ButtonColor key={i} view={() => {
         return (
-            <View style={[{borderWidth:5,borderColor:sport.value == this.state.sport?colors.green:'white',borderRadius:16,height:'100%',width:'100%',overflow:'hidden',backgroundColor:colors.off}]}>
-              <AsyncImage style={[styles.imgBackground]} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
-              {/* <View style={[styleApp.voile,{backgroundColor:colors.title,opacity:0.25}]}/> */}
-              <Text style={[styleApp.title,{color:'white',fontSize:15,fontFamily:'OpenSans-SemiBold',position:'absolute',bottom:10,left:10}]}>{sport.card.name}</Text>
+            <View style={[{borderWidth:3,borderColor:league.value == this.props.leagueSelected?colors.primary:'white',borderRadius:15,width:160,height:160,overflow:'hidden',backgroundColor:colors.off}]}>
+
+               <AsyncImage style={{position:'absolute',height:'100%',width:'100%'}} mainImage={league.img.imgSM} imgInitial={league.img.imgXS} />
+               {league.img.icon!=undefined?
+               <AsyncImage style={{position:'absolute',height:23,width:league.value=='usta'?26:23,right:5,top:5}} mainImage={league.img.icon} imgInitial={league.img.icon} />
+               :null
+                }
+               <Text style={[styleApp.title,styleApp.textShade,{color:'white',fontSize:15,fontFamily:'OpenSans-SemiBold',position:'absolute',bottom:15,left:15,right:15}]}>{league.name}</Text>
             </View>
         )
       }} 
       click={() => {
-        this.selectSport(sport.value)
-        this.setState({sport:sport.value})
+        this.selectLeague(sport,league.value)
       }}
-      color={'transparent'}
-      style={[styles.cardSports,styleApp.center,{height:155,borderWidth:0,borderColor:colors.title,marginTop:10,borderRadius:0,marginLeft:0,width:'50%',flexDirection:'column',paddingLeft:5,paddingRight:5}]}
-      onPressColor={'transparent'}
+      color={'white'}
+      style={{height:170,width:width/2}}
+      onPressColor={colors.off2}
 
       />
       
     )
   }
-  sport () {
+  rowTopSport(sport) {
+    return (
+      <ButtonColor  view={() => {
+        return (
+            <Row>
+              <Col size={15} style={styleApp.center}>
+                <AsyncImage style={{height:45,borderRadius:22.5,width:45}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
+              </Col>
+              <Col size={85} style={[styleApp.center2,{paddingLeft:20}]}>
+                <Text style={styleApp.input}>{sport.card.name}</Text>
+              </Col>
+            </Row>
+        )
+      }} 
+      click={() => {
+        // this.selectSport(sport.value)
+        // this.setState({sport:sport.value})
+      }}
+      color={'white'}
+      style={{height:55,paddingLeft:20,paddingRight:20}}
+      onPressColor={colors.off}
+
+      />
+    )
+  }
+  sportPage (sport) {
     return (
       <FadeInView duration={200} style={{height:height}}>
+        {this.rowTopSport(sport)}
+
         
-        <View style={[styleApp.marginView,{width:width-110}]}>
-          <Text style={[styleApp.title,{color:colors.title,marginBottom:10,fontSize:35,marginTop:20,fontSize:26}]}>Welcome to GameFare!</Text>
-          <Text style={[styleApp.smallText,{color:colors.title,marginBottom:20,marginTop:10,fontSize:16}]}>Pick your sport, join groups and find events.</Text>
+        <View style={[styleApp.marginView]}>
+          <Text style={[styleApp.input,{marginTop:20,fontSize:24}]}>Welcome to GameFare!</Text>
+          <Text style={[styleApp.smallText,{color:colors.title,marginBottom:20,marginTop:10,fontSize:16}]}>Pick your league, join groups and find events. </Text>
         </View>
         
 
         {/* <View style={styleApp.divider2}/> */}
         
-        <View style={{flexDirection:'row',flexWrap: 'wrap',paddingLeft:20,paddingRight:20}}>
-        {this.props.sports.map((sport,i) => (
-            this.button(sport,i+1)
+        <View style={{flexDirection:'row',flexWrap: 'wrap',paddingLeft:0,paddingRight:0,width:width}}>
+        {sport.typeEvent.map((league,i) => (
+            <View style={{height:170,borderColor:colors.title,width:width/2,flexDirection:'column'}}>
+            {this.button(league,i+1,sport.value)}
+            </View>
           ))}
         </View>
       </FadeInView>
     )
   }
   render() {
+    if (this.props.sportSelected == '') return null
+    var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.sportSelected)[0]
+    console.log('sport ici')
+    console.log(sport)
     return (
       <View style={[{borderLeftWidth:0,backgroundColor:'white',flex:1}]}>
 
 
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.sport.bind(this)}
+          contentScrollView={() => this.sportPage(sport)}
           marginBottomScrollView={0}
           marginTop={sizes.marginTopApp}
           offsetBottom={0}
@@ -134,6 +174,8 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
+    sportSelected:state.historicSearch.sport,
+    leagueSelected:state.historicSearch.league
   };
 };
 

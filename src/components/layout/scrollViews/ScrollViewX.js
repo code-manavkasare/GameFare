@@ -69,7 +69,7 @@ export default class ScrollViewPage extends PureComponent {
     console.log(this.props.events)
     console.log(Object.values(this.props.events).length)
     return ( 
-      <ScrollView horizontal={true}  showsHorizontalScrollIndicator={false} style={{marginLeft:0,height:this.props.height,width:width,paddingLeft:20,paddingRight:20,paddingTop:5,flex:1,paddingBottom:0}}>
+      <ScrollView horizontal={true}  showsHorizontalScrollIndicator={false} style={{marginLeft:0,flex:1,width:width,paddingLeft:20,paddingRight:20,paddingTop:5,flex:1,paddingBottom:0}}>
       {
       this.props.loader?
       [0,1,2,3].map((event,i) => (
@@ -81,7 +81,7 @@ export default class ScrollViewPage extends PureComponent {
       <Button view={() => {
         return (
           <View style={[styleApp.center2,{height:50,}]}>
-            <Text style={[styleApp.text,{marginTop:5,fontSize:12}]}>You haven't joined any event yet.</Text>
+      <Text style={[styleApp.text,{marginTop:5,fontSize:12}]}>{this.props.messageNoEvent}</Text>
           </View>
         )
       }} 

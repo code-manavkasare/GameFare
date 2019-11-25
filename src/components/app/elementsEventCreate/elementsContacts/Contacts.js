@@ -56,7 +56,8 @@ export default class ContactsComponent extends Component {
         headerTitleStyle: styleApp.textHeader,
         gesturesEnabled: navigation.getParam('pageFrom')=='CreateEvent3'?false:true,
         headerLeft: () => navigation.getParam('pageFrom') == 'CreateEvent3' || navigation.getParam('pageFrom') == 'CreateGroup1'?null:<BackButton color={colors.title} name='close' type='mat' size={19} click={() => navigation.navigate(navigation.getParam('pageFrom'))} />,
-        headerRight: () => navigation.getParam('pageFrom') == 'CreateEvent3' || navigation.getParam('pageFrom') == 'CreateGroup1'?<TouchableOpacity color={colors.title} style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate(navigation.getParam('openPageLink')== 'openGroupPage'?'ListGroups':'ListEvents',{})}>
+        headerRight: () => navigation.getParam('pageFrom') == 'CreateEvent3' || navigation.getParam('pageFrom') == 'CreateGroup1'?
+        <TouchableOpacity color={colors.title} style={[styleApp.center,{paddingRight:15,height:50,width:50}]} onPress={() => navigation.navigate('Home')}>
         <Text style={[styleApp.text,{fontFamily:'OpenSans-SemiBold',color:colors.title,fontSize:13}]}>Skip</Text>
         </TouchableOpacity>:null,
       }

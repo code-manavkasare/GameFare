@@ -45,7 +45,7 @@ export default class NewEventCard extends React.Component {
 
 
           <Text style={[styleApp.title,{fontSize:18,marginTop:20}]}>Become a host</Text>
-          <Text style={[styleApp.subtitle,{marginBottom:20,marginRight:30,marginTop:10}]}>Pick your sport, your location and many other settings.</Text>
+          <Text style={[styleApp.subtitle,{marginBottom:20,marginRight:30,marginTop:10}]}>Pick your sport, your location and create a personalized the experience for your sport venue. </Text>
           <Button backgroundColor={'green'} onPressColor={colors.greenLight} click={() => NavigationService.navigate('CreateEvent0',{'pageFrom':this.props.pageFrom})} text={'Organize an event'} styleButton={{marginBottom:15,marginTop:10}} loader={false}/>
         </View>
       </View>

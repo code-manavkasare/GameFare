@@ -108,7 +108,7 @@ export default class AsyncImage extends Component {
         console.log('checkToken')
         console.log(checkToken)
         return (
-            <Animated.View style={{opacity:this.opacityFastImageCached}}>
+            <Animated.View style={[{opacity:this.opacityFastImageCached}]}>
                     <FastImage
                         resizeMode={"cover"}
                         onLoadEnd={() => this.enterPictureCached()}
@@ -132,7 +132,7 @@ export default class AsyncImage extends Component {
     }
     render() {
         return (
-            <View style={{height:this.props.style.height,width:this.props.style.width}}>
+            <View style={this.props.style}>
                 {   
                     !this.state.initialLoader?
                     this.imgDisplay()

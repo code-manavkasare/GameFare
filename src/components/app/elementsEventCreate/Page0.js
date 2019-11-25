@@ -50,17 +50,6 @@ class Page0 extends Component {
     if (Object.values(this.props.step0).length != 0) {
       this.setState(this.props.step0)
     } else {
-      console.log('ici mem')
-      console.log({
-          text:"rules",
-          value:'rules',
-          type:'rules',
-          expendable:true,
-          alwaysExpanded:true,
-          valueSelected:Object.values(this.props.sports)[0].rules[0].value,
-          value:Object.values(this.props.sports)[0].rules[0],
-          listExpend:Object.values(this.props.sports)[0].rules
-        })
       this.setState({
         initialLoader:false,
         player:this.props.infoUser.coach && this.props.infoUser.coachVerified?false:true,
@@ -68,21 +57,16 @@ class Page0 extends Component {
         joiningFee:'',
         free:false,
         sportsFilter:{
-          text:"Sports",
-          value:'sports',
-          type:'sports',
-          expendable:true,
-          alwaysExpanded:true,
           value:Object.values(this.props.sports)[0],
           valueSelected:Object.values(this.props.sports)[0].value,
           listExpend:Object.values(this.props.sports)
         },
+        leagueFilter:{
+          valueSelected:Object.values(this.props.sports)[0].typeEvent[0].value,
+          value:Object.values(this.props.sports)[0].typeEvent[0],
+          listExpend:Object.values(this.props.sports)[0].typeEvent
+        },
         rulesFilter:{
-          text:"rules",
-          value:'rules',
-          type:'rules',
-          expendable:true,
-          alwaysExpanded:true,
           valueSelected:Object.values(this.props.sports)[0].rules[0].value,
           value:Object.values(this.props.sports)[0].rules[0],
           listExpend:Object.values(this.props.sports)[0].rules
@@ -113,6 +97,8 @@ class Page0 extends Component {
       <View style={{borderColor:colors.off,borderBottomWidth:1}}>
       <ExpandableCard 
           option = {this.state.sportsFilter} 
+          image={true}
+
           tickFilter={(value) => {
           var sportsFilter = this.state.sportsFilter
           sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
@@ -122,14 +108,38 @@ class Page0 extends Component {
           this.setState({
             sportsFilter:sportsFilter,
             rulesFilter:{
-              text:"rules",
-              value:'rules',
-              type:'rules',
-              expendable:true,
-              alwaysExpanded:true,
               valueSelected:sportsFilter.value.rules[0].value,
               value:sportsFilter.value.rules[0],
               listExpend:sportsFilter.value.rules
+            },
+          })
+        }}
+      />
+
+      </View>
+    )
+  }
+  leagues() {
+    console.log('le re render !')
+    console.log(this.props.sports)
+    return (
+      <View style={{borderColor:colors.off,borderBottomWidth:1}}>
+      <ExpandableCard 
+          option = {this.state.leagueFilter} 
+          image={true}
+          
+          tickFilter={(value) => {
+          var leagueFilter = this.state.leagueFilter
+          leagueFilter.value = Object.values(this.props.sports).filter(sport => sport.value == this.state.sportsFilter.valueSelected)[0].typeEvent.filter(item => item.value == value)[0]
+          leagueFilter.valueSelected = value
+          console.log('le sport')
+          console.log(value)
+          this.setState({
+            leagueFilter:leagueFilter,
+            rulesFilter:{
+              valueSelected:leagueFilter.value.rules[0].value,
+              value:leagueFilter.value.rules[0],
+              listExpend:leagueFilter.value.rules
             },
           })
         }}
@@ -256,6 +266,7 @@ class Page0 extends Component {
         <View >
 
           {this.sports()}
+          {this.leagues()}
           {this.rules()}
 
           {

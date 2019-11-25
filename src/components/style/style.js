@@ -107,6 +107,11 @@ export default styles = StyleSheet.create({
       shadowRadius: 20,
       shadowOpacity: 0.05,
     },
+    textShade:{
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: {width: -1, height: 1},
+      textShadowRadius: 5
+    },
     shade:{
       shadowColor: '#46474B',
       shadowOffset: { width: 2, height: 0 },

@@ -21,6 +21,7 @@ import NavigationService from '../../../../NavigationService'
 const { height, width } = Dimensions.get('screen')
 import Icon from '../icons/icons'
 import AllIcons from '../icons/AllIcons'
+import AsyncImage from '../image/AsyncImage'
 import {timing,native} from '../../animations/animations'
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon)
 
@@ -41,7 +42,6 @@ export default class ExpandableCard extends Component {
         this.open = 0
       }
       initialHeight () {
-        if (this.props.option.alwaysExpanded) return this.getHeightExpand()
         return 60
       }
       initialList () {
@@ -113,7 +113,9 @@ export default class ExpandableCard extends Component {
           return <Row >
             <Col size={10} style={styleApp.center2}>
             {
-              item.icon!=undefined?
+              this.props.image?
+              <AsyncImage style={{height:27,width:27,borderRadius:13.5,}} mainImage={item.icon} imgInitial={item.icon} />
+              :item.icon!=undefined?
               <AllIcons type={item.typeIcon} name={item.icon} color={colors.greyDark} size={17} />
               :
               <AllIcons type='mat' name="check" color={colors.greyDark} size={17} />
@@ -134,7 +136,7 @@ export default class ExpandableCard extends Component {
             <Col size={10} style={[styleApp.center]}>
               {
                 i==0?
-                <AnimatedIcon name='caret-up' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
+                <AnimatedIcon name='caret-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
                 :null
               } 
             </Col>

@@ -1,7 +1,8 @@
 import {
     SET_LOCATION_SEARCH,
     SET_HISTORIC_LOCATION_SEARCH,
-    SET_SPORT
+    SET_SPORT,
+    SET_LEAGUE
 } from '../actions/types';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
         lng:-118.243683
     },
     sport:'',
+    league:''
 }
 
 const historicSearchReducer =  (state=initialState,action) => {
@@ -22,6 +24,8 @@ const historicSearchReducer =  (state=initialState,action) => {
                 return {...state,searchLocation:action.searchLocation};
         case SET_SPORT:
             return {...state,sport:action.sport};
+        case SET_LEAGUE:
+            return {...state,league:action.league};
         default:
             return state;
     }

@@ -73,11 +73,17 @@ class Page3 extends Component {
     typeIcon={sport.typeIcon}
   />
   }
-  rowIcon(icon,component,typeIcon) {
+  rowIcon(icon,component,typeIcon,img) {
     return (
-      <Row style={{marginBottom:0,marginTop:10}}>
-        <Col size={10} style={styleApp.center2}>
-          <AllIcons name={icon} size={18} type={typeIcon} color={colors.greyDark}/>
+      <Row style={{paddingTop:6,paddingBottom:6}}>
+        <Col size={20} style={styleApp.center}>
+          {
+            img?
+            <AsyncImage style={{width:30,height:30,borderRadius:15}} mainImage={icon} imgInitial={icon} />
+            :
+            <AllIcons name={icon} size={18} type={typeIcon} color={colors.greyDark}/>
+          }
+          
         </Col>
         
         <Col size={80} style={styleApp.center2}>
@@ -154,12 +160,14 @@ class Page3 extends Component {
   page2(data) {
     console.log('data page 3')
     console.log(data)
-    
+      // return null
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
+      var league = Object.values(sport.typeEvent).filter(item => item.value == data.info.league)[0]
       var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
-      var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
+      var rule = Object.values(league.rules).filter(rule => rule.value == data.info.rules)[0]
       console.log(sport)
       console.log(level)
+      console.log(league)
       console.log(rule)
       var levelOption = data.info.levelOption=='equal'?'only':data.info.levelOption=='min'?'and above':'and below'
       console.log(levelOption)
@@ -212,6 +220,7 @@ class Page3 extends Component {
               <View style={{height:0,marginTop:20,marginBottom:10,backgroundColor:colors.borderColor}} />
               
               {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
+              {this.rowIcon(league.icon,this.title(league.text),'font',true)}
               </View>
 
               <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />

@@ -84,9 +84,9 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
   buttonSubmit:{
-    height:55,
+    height:56,
     backgroundColor:colors.primary,
-    borderRadius:5,
+    borderRadius:3,
     width:'100%',
     alignItems: 'center',
     justifyContent: 'center',

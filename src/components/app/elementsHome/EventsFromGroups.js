@@ -10,7 +10,6 @@ import {
     TextInput,
     ScrollView
 } from 'react-native';
-
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
 
@@ -22,17 +21,11 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import FadeInView from 'react-native-fade-in-view';
 import Switch from '../../layout/switch/Switch'
 
-import PlaceHolder from '../../placeHolders/CardEvent'
 import CardEvent from './CardEventSM'
 import {timing,native} from '../../animations/animations'
-import Button from '../../layout/Views/Button'
-import {indexGroups,indexEvents} from '../../database/algolia'
+import {indexGroups,indexEvents,indexPastEvents} from '../../database/algolia'
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX'
-
-
-import AllIcons from '../../layout/icons/AllIcons'
-import NavigationService from '../../../../NavigationService';
 
 class ListEvents extends React.Component {
   constructor(props) {
@@ -40,7 +33,8 @@ class ListEvents extends React.Component {
     this.state={
       futureEvents:[],
       pastEvents:[],
-      loader:true,
+      loader1:true,
+      loader2:false,
       past:false,
     }
     this.componentDidMount = this.componentDidMount.bind(this)
@@ -50,32 +44,46 @@ class ListEvents extends React.Component {
   
   async componentDidMount() {
     this.props.onRef(this)
-    return this.loadEvent()
+    return this.loadEvent(this.state.past)
   }
   async reload() {
-    await this.setState({loader:true})
-    return this.loadEvent()
+    return this.loadEvent(this.state.past)
   }
   async componentWillReceiveProps(nextProps) {
     if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true) {
-      await this.setState({loader:true})
-      this.loadEvent()
+      this.loadEvent(this.state.past)
     }
   }
-  async loadEvent(search) {
+  async loadEvent(past) {
     console.log('on reload')
-    indexEvents.clearCache()
-    //'info.sport:' + 
-    //'AND allMembers:' + this.props.userID 
-    var futureEvents = await indexEvents.search({
-      query:'',
-      filters:'info.sport:' + this.props.sportSelected  ,
-    })
-    futureEvents = futureEvents.hits
-    console.log('futureEvents')
-    console.log(futureEvents)
-    this.setState({loader:false,futureEvents:futureEvents})
-    // return true
+    if (!past) {
+      await this.setState({loader1:true})
+      indexEvents.clearCache()
+      //'info.sport:' + 
+      var filterAttendees = ' AND allAttendees:' + this.props.userID 
+      var futureEvents = await indexEvents.search({
+        query:'',
+        filters:'info.sport:' + this.props.sportSelected + filterAttendees  ,
+      })
+      futureEvents = futureEvents.hits
+      console.log('futureEvents')
+      console.log(futureEvents)
+      this.setState({loader1:false,futureEvents:futureEvents})
+    } else {
+      await this.setState({loader2:true})
+      indexPastEvents.clearCache()
+      //'info.sport:' + 
+      //'AND allMembers:' + this.props.userID 
+      var pastEvents = await indexPastEvents.search({
+        query:'',
+        filters:'info.sport:' + this.props.sportSelected  ,
+      })
+      pastEvents = pastEvents.hits
+      console.log('futureEvents')
+      console.log(pastEvents)
+      this.setState({loader2:false,pastEvents:pastEvents})
+    }
+    
   }
   openEvent(event) {
     // if (!event.info.public) {
@@ -123,18 +131,19 @@ class ListEvents extends React.Component {
     if (!this.props.userConnected) return null
     return (
       <View style={{marginTop:20}}>
-        <View style={[styleApp.marginView,{marginBottom:15}]}>
+        <View style={[styleApp.marginView,{marginBottom:25}]}>
 
-        <Text style={[styleApp.title,{marginBottom:20,marginLeft:0}]}>My events</Text>
+        <Text style={[styleApp.input,{marginBottom:10,marginLeft:0,fontSize:22}]}>My events</Text>
         {this.switch('Upcoming','Past','past')}
         </View>
 
-        <View style={{flex:1}}>
+        <View style={{flex:1,marginTop:-5}}>
         <Animated.View style={{flex:1,backgroundColor:'white',transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
-        loader={this.state.loader}
+        loader={this.state.loader1}
         events={this.state.futureEvents}
         height={180}
+        messageNoEvent = {"You haven't subscribe to any event."}
         content={() => this.listEvents(this.state.futureEvents)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef1 = ref)}
@@ -144,8 +153,9 @@ class ListEvents extends React.Component {
         <Animated.View style={{flex:1,backgroundColor:'white',position:'absolute',top:0,transform:[{translateX:this.translateXView2}]}}>
         <ScrollViewX 
         height={180}
-        loader={this.state.loader}
+        loader={this.state.loader2}
         events={this.state.pastEvents}
+        messageNoEvent = {"You don't have any past events."}
         content={() => this.listEvents(this.state.pastEvents)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef2 = ref)}

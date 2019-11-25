@@ -121,7 +121,7 @@ class HomeScreen extends React.Component {
         <HeaderHome
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        setSport={(sport) => this.props.historicSearchAction('setSport',sport)}
+      
         textHeader={'Organize your event'}
         inputRange={[0,sizes.heightHeaderHome+0]}
         initialBorderColorIcon={colors.off}

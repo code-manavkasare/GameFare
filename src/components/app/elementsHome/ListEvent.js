@@ -39,17 +39,17 @@ class ListEvents extends React.Component {
   }
   async componentDidMount() {
     this.props.onRef(this)
-    this.loadEvent(this.props.searchLocation,this.props.sportSelected)
+    this.loadEvent(this.props.searchLocation,this.props.sportSelected,this.props.leagueSelected)
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.searchLocation.lat != nextProps.searchLocation.lat || this.props.sportSelected != nextProps.sportSelected || (this.props.loader != nextProps.loader && !this.props.loader)) {
-      this.loadEvent(nextProps.searchLocation,nextProps.sportSelected)
+    if (this.props.searchLocation.lat != nextProps.searchLocation.lat || this.props.sportSelected != nextProps.sportSelected || this.props.leagueSelected != nextProps.leagueSelected || (this.props.loader != nextProps.loader && !this.props.loader)) {
+      this.loadEvent(nextProps.searchLocation,nextProps.sportSelected,nextProps.leagueSelected)
     }
   }
   reload() {
-    this.loadEvent(this.props.searchLocation,this.props.sportSelected)
+    this.loadEvent(this.props.searchLocation,this.props.sportSelected,this.props.leagueSelected)
   }
-  async loadEvent(location,sport) {
+  async loadEvent(location,sport,league) {
     console.log('on reload')
     await this.setState({loader:true})
     indexEvents.clearCache()
@@ -58,7 +58,7 @@ class ListEvents extends React.Component {
       aroundLatLng: location.lat+','+location.lng,
       aroundRadius: 20*1000,
       query:'',
-      filters:'info.public=1 AND ' + 'info.sport:' + sport  ,
+      filters:'info.public=1 AND ' + 'info.sport:' + sport + ' AND info.league:' + league  ,
     })
     console.log('events.hits')
     console.log(events.hits)
@@ -94,8 +94,8 @@ class ListEvents extends React.Component {
   }
   ListEvent () {
     return (
-      <View style={{marginTop:20}}>
-        <Row style={{marginLeft:20,width:width-40}}>
+      <View style={{marginTop:30}}>
+        <Row style={{marginLeft:20,width:width-40,marginBottom:15}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5,marginLeft:0,fontSize:22}]}>Events around</Text>
             <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{this.props.searchLocation.address}</Text>
@@ -104,7 +104,7 @@ class ListEvents extends React.Component {
           </Col>
         </Row>
 
-        <View style={{marginLeft:20,marginTop:0,width:width-40}}>
+        <View style={{marginLeft:20,marginTop:0,width:width-40,marginBottom:15}}>
         {this.switch('Public','From my groups','pastEvents')}
         </View>
 
@@ -153,6 +153,7 @@ const  mapStateToProps = state => {
     globaleVariables:state.globaleVariables,
     searchLocation:state.historicSearch.searchLocation,
     sportSelected:state.historicSearch.sport,
+    leagueSelected:state.historicSearch.league,
   };
 };
 

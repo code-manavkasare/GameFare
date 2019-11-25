@@ -19,6 +19,7 @@ import colors from '../../style/colors'
 import Icon from '../../layout/icons/icons'
 import AllIcons from '../../layout/icons/AllIcons'
 import PlacelHolder from '../../placeHolders/CardEvent.js'
+import ButtonColor from '../../layout/Views/Button'
 import styleApp from '../../style/style'
 import {indexEvents} from '../../database/algolia'
 import {timing,native} from '../../animations/animations'
@@ -31,33 +32,20 @@ class CardEvent extends React.Component {
       super(props);
       this.state = {
         player:false,
-        backgroundColorAnimation:new Animated.Value(0),
-        loader:true
+        loader:false
       };
-      this.scaleCard = new Animated.Value(1);
     }
     async componentDidMount() {
-      if (this.props.loadData) {
-        indexEvents.clearCache()
-        var group = await indexEvents.getObject(this.props.item.eventID)
-        return this.setState({loader:false,item:group})
-      }
-      return this.setState({loader:false})
+      // if (this.props.loadData) {
+      //   indexEvents.clearCache()
+      //   var group = await indexEvents.getObject(this.props.item.eventID)
+      //   return this.setState({loader:false,item:group})
+      // }
+      // return this.setState({loader:false})
     }
     entreeFee(entreeFee) {
       if (entreeFee == 0) return 'Free entry'
       return '$' + entreeFee + ' entry fee'
-    }
-
-    onPress(val) {
-      if (val) return Animated.parallel([
-        Animated.spring(this.state.backgroundColorAnimation,timing(300,170)),
-        //Animated.spring(this.scaleCard,timing(0.987,100)),
-      ]).start()
-      return Animated.parallel([
-        Animated.spring(this.state.backgroundColorAnimation,timing(0,170)),
-        //Animated.spring(this.scaleCard,timing(1,100)),
-      ]).start()
     }
     click(data) {
       this.props.openEvent(data)
@@ -92,55 +80,34 @@ class CardEvent extends React.Component {
         }
     </Row> 
     }
-    displayCard(color,data) {
+    displayCard(data) {
       console.log('la datatatatata')
       console.log(data)
-      // var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
-      // if (sport == undefined) return null
+      var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       return (
-        <Animated.View style={[styles.cardList,{backgroundColor:color}]}>
+        <ButtonColor view={() => {
+          return (
+            <View style={{width:'100%',height:'100%',paddingLeft:15,paddingRight:15,paddingTop:10,paddingBottom:10}}>
+            <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',fontSize:11}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
+            <Text style={[styles.title,{fontSize:14,minHeight:20}]}>{data.info.name}</Text>
+            <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.area}</Text>
         
-        <TouchableOpacity 
-          onPress={() => this.click(data)} 
-          onPressIn={() => this.onPress(true)}
-          onPressOut={() => this.onPress(false)}
-          style={{height:'100%',width:'100%',paddingLeft:10,paddingRight:10,paddingTop:15,paddingBottom:20}} 
-          activeOpacity={1} 
-        >
-
-          <Row>
-            <Col size={80} style={[styleApp.center2,{paddingLeft:0}]}>
-              <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',fontSize:11}]}>{date(data.date.start,'ddd, Do MMM')} at {time(data.date.start,'h:mm a')}</Text>
-              
-            </Col>
-            <Col size={20} style={styleApp.center3}>
-       
-            </Col>
-
-          </Row>
-          <Text style={[styles.title,{fontSize:14}]}>{data.info.name}</Text>
-          {
-          data.info.public?
-          <Text style={[styles.subtitle,{marginTop:5}]}>{data.location.area}</Text>
-          :null
-          }
-      
-
-          {this.rowAttendees(data)}
-
-        </TouchableOpacity>
-
-      </Animated.View>
+  
+            {this.rowAttendees(data)}
+            </View>
+          )
+        }} 
+        click={() => this.click(data)}
+        color={'white'}
+        style={[styles.cardList]}
+        onPressColor={colors.off}
+        />
       )
     }
 
   render() {
-    var color = this.state.backgroundColorAnimation.interpolate({
-        inputRange: [0, 300],
-        outputRange: ['white', colors.off]
-    });
     return (
-      this.card(color,this.props.loadData?this.state.item:this.props.data)
+      this.card(this.props.data)
     );
   }
 }
@@ -156,9 +123,9 @@ const styles = StyleSheet.create({
     overflow:'hidden',
     height:180,
     marginRight:10,
-    borderRadius:0,
-    borderWidth:0,
-    borderColor:colors.borderColor,
+    borderRadius:6,
+    borderWidth:0.6,
+    borderColor:colors.grey,
     width:220
   
   },
