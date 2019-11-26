@@ -44,26 +44,30 @@ class ListEvents extends React.Component {
   
   async componentDidMount() {
     this.props.onRef(this)
-    return this.loadEvent(this.state.past)
+    return this.loadEvent(this.state.past,this.props.sportSelected,this.props.leagueSelected)
   }
   async reload() {
-    return this.loadEvent(this.state.past)
+    return this.loadEvent(this.state.past,this.props.sportSelected,this.props.leagueSelected)
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true) {
-      this.loadEvent(this.state.past)
+    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true || this.props.sportSelected != nextProps.sportSelected || this.props.leagueSelected != nextProps.leagueSelected) {
+      this.loadEvent(this.state.past,nextProps.sportSelected,nextProps.leagueSelected)
     }
   }
-  async loadEvent(past) {
+  async loadEvent(past,sport,league,) {
     console.log('on reload')
     if (!past) {
       await this.setState({loader1:true})
       indexEvents.clearCache()
-      //'info.sport:' + 
+      var filterSport = 'info.sport:' + sport 
+      var filterLeague = ' AND info.league:' + league
+      if (league == 'all') {
+        filterLeague = ''
+      }
       var filterAttendees = ' AND allAttendees:' + this.props.userID 
       var futureEvents = await indexEvents.search({
         query:'',
-        filters:'info.sport:' + this.props.sportSelected + filterAttendees  ,
+        filters:filterSport + filterAttendees + filterLeague ,
       })
       futureEvents = futureEvents.hits
       console.log('futureEvents')
@@ -91,6 +95,11 @@ class ListEvents extends React.Component {
     // }
     return this.props.navigate('Event',{data:event,pageFrom:'Home'})
   }
+  async setSwitch(state,val) {
+    await this.setState({[state]:val})
+    await this.translateViews(val)
+    return true
+  }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
       <Switch 
@@ -101,10 +110,7 @@ class ListEvents extends React.Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
-        setState={(val) => {
-          this.setState({[state]:val})
-          this.translateViews(val)
-        }}
+        setState={(val) => this.setSwitch(state,val)}
       />
     )
   }
@@ -129,16 +135,22 @@ class ListEvents extends React.Component {
   }
   ListEvent () {
     if (!this.props.userConnected) return null
+    var numberPast = ''
+    var numberFuture = ''
+    if (!this.state.loader1) {
+      numberPast = ' ('+this.state.pastEvents.length + ')'
+      numberFuture = ' ('+this.state.futureEvents.length + ')'
+    }
     return (
       <View style={{marginTop:20}}>
         <View style={[styleApp.marginView,{marginBottom:25}]}>
 
-        <Text style={[styleApp.input,{marginBottom:10,marginLeft:0,fontSize:22}]}>My events</Text>
-        {this.switch('Upcoming','Past','past')}
+        <Text style={[styleApp.input,{marginBottom:15,marginLeft:0,fontSize:22}]}>My events</Text>
+        {this.switch('Upcoming' + numberFuture,'Past' + numberPast)}
         </View>
 
         <View style={{flex:1,marginTop:-5}}>
-        <Animated.View style={{flex:1,backgroundColor:'white',transform:[{translateX:this.translateXView1}]}}>
+        <Animated.View style={{flex:1,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader1}
         events={this.state.futureEvents}
@@ -199,6 +211,7 @@ const  mapStateToProps = state => {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
     sportSelected:state.historicSearch.sport,
+    leagueSelected:state.historicSearch.league,
   };
 };
 

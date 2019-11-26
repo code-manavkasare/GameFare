@@ -10,18 +10,11 @@ import {
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import StatusBar from '@react-native-community/status-bar';
-
-
-import BackButton from '../../layout/buttons/BackButton'
-import Button from '../../layout/buttons/Button'
-import ButtonOff from '../../layout/buttons/ButtonOff'
 import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
+import ButtonColor from '../../layout/Views/Button'
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
-
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
@@ -57,16 +50,6 @@ class Page0 extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Create a group',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
-      ),
-    }
-  };
   componentDidMount() {
     console.log('page 1 mount')
     console.log(this.state.sportsFilter)
@@ -75,12 +58,11 @@ class Page0 extends Component {
     return (
       <ExpandableCard 
           option = {this.state.sportsFilter} 
+          image={true}
           tickFilter={(value) => {
           var sportsFilter = this.state.sportsFilter
           sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
           sportsFilter.valueSelected = value
-          console.log('le sport')
-          console.log(value)
           this.setState({
             sportsFilter:sportsFilter,
           })
@@ -94,6 +76,10 @@ class Page0 extends Component {
     Communications.email([email1],null,null, subject ,'');
     this.props.navigation.navigate('CreateEvent0')
   }
+  async setAccess(state,val) {
+    await this.setState({[state]:val})
+    return true
+  }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
       <Switch 
@@ -104,21 +90,15 @@ class Page0 extends Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
-        setState={(val) => this.setState({[state]:val})}
+        setState={(val) => this.setAccess(state,val)}
       />
     )
   }
   tournamentName () {
     return(
-      <TouchableOpacity activeOpacity={0.7} onPress={() => this.nameInput.focus()} style={styleApp.inputForm}>
-      <Row >
-        <Col size={15} style={styleApp.center}>
-          <AllIcons name='hashtag' size={16} color={colors.title} type='font' />
-        </Col>
-        <Col style={[styleApp.center2,{paddingLeft:15}]} size={90}>
-          <TextInput
+      <TextInput
             style={styleApp.input}
-            placeholder="Group name"
+            placeholder="Add name"
             returnKeyType={'done'}
             ref={(input) => { this.nameInput = input }}
             underlineColorAndroid='rgba(0,0,0,0)'
@@ -126,23 +106,22 @@ class Page0 extends Component {
             onChangeText={text => this.setState({name:text})}
             value={this.state.name}
           />
-        </Col>
-      </Row>
-      </TouchableOpacity>
     )
   }
-  textField (state,placeHolder,heightField,multiline,keyboardType,icon) {
+  description () {
     return(
-      <TextField
-      state={this.state[state]}
-      placeHolder={placeHolder}
-      heightField={heightField}
-      multiline={multiline}
-      setState={(val) => this.setState({[state]:val})}
-      keyboardType={keyboardType}
-      icon={icon}
-      typeIcon={'font'}
-      />
+      <TextInput
+            style={styleApp.input}
+            placeholder="Add description"
+            returnKeyType={'done'}
+            ref={(input) => { this.descriptionInput = input }}
+            underlineColorAndroid='rgba(0,0,0,0)'
+            autoCorrect={true}
+            multiline={true}
+            blurOnSubmit={true}
+            onChangeText={text => this.setState({description:text})}
+            value={this.state.description}
+          />
     )
   }
   setImage(img, resized){
@@ -158,37 +137,49 @@ class Page0 extends Component {
     await this.setState({location:data})
     this.props.navigation.navigate('CreateGroup0')
   }
-  address() {
+  button(icon,component,click,img) {
     return (
-      <TouchableOpacity style={styleApp.inputForm} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateGroup0',onGoBack: (data) => this.setLocation(data)})}>
-        <Row>
-          <Col style={styleApp.center} size={15}>
-            <AllIcons name='map-marker-alt' size={18} color={colors.title} type='font'/>
+      <ButtonColor  view={() => {
+        return <Row >
+          <Col size={15} style={[styleApp.center2,{paddingLeft:0,}]}>
+            {
+              img?
+              <AsyncImage style={{height:'100%',width:'100%',borderRadius:20,}} mainImage={icon} imgInitial={icon} />
+              :
+              <AllIcons name={icon} size={18} color={colors.grey} type='font'/>
+            }
           </Col>
-          <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-            <Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Group area':this.state.location.address}</Text>
+          <Col size={70} style={[styleApp.center2,{paddingLeft:0}]}>
+            {component}
+          </Col>
+          <Col size={15} style={[styleApp.center3,{paddingLeft:0}]}>
+            <AllIcons name={'arrow-right'} size={14} color={colors.title} type='font'/>
           </Col>
         </Row>
-      </TouchableOpacity>
+      }}
+      click={() => click()}
+      color={'white'}
+      style={[{height:50,width:width,paddingLeft:20,paddingRight:20,marginLeft:-20}]}
+      onPressColor={colors.off}
+      />
     )
   }
   page0() {
       return (
-        <View style={{marginTop:-15,marginLeft:0,width:width}}>
+        <View style={{marginTop:0,marginLeft:0,width:width}}>
 
  
-          <View style={styleApp.marginView}>
+          <View style={{marginBottom:10}}>
             {this.sports()}
           </View>
 
-          <View style={[styleApp.marginView,{marginTop:30}]}>
-
-          <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Group information</Text>
+          <View style={[styleApp.marginView,{marginTop:0,marginBottom:10}]}>
             {this.switch('Open access','Invite only','private')}
-            {this.address()}
-            {this.tournamentName()}
-
-            {this.textField('description','Group description',80,true,'default','info-circle')}         
+            <View style={{height:10}} />
+            {this.button('map-marker-alt',<Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Add group area':this.state.location.address}</Text>,() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateGroup0',onGoBack: (data) => this.setLocation(data)}),false)}
+            {this.button('hashtag',this.tournamentName(),() => this.nameInput.focus())}
+            {this.button('info-circle',this.description(),() => this.descriptionInput.focus())}
+       
           </View>
 
 

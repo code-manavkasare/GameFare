@@ -154,17 +154,17 @@ class VerifyFields extends Component {
       <Col style={styles.center}>
         {
           this.state.step == 'verifying'?
-          <Text style={styles.text}>Verifying code...</Text>        
+          <Text style={styleApp.input}>Verifying code...</Text>        
           :this.state.step == 'signIn'?
-          <Text style={styles.text}>We are signing you in...</Text>     
+          <Text style={styleApp.input}>We are signing you in...</Text>     
           :this.state.step == 'sending'?
-          <Text style={styles.text}>SMS being sent...</Text>
+          <Text style={styleApp.input}>SMS being sent...</Text>
           :this.state.step == 'error'?
-          <Text style={styles.text}>Wrong code</Text>
+          <Text style={styleApp.input}>Wrong code</Text>
           :this.state.step == 'wrongNumber'?
-          <Text style={styles.text}>Error, verify your number</Text>
+          <Text style={styleApp.input}>Error, verify your number</Text>
           :this.state.step == 'sent'?
-          <Text style={styles.text}>SMS sent.</Text>
+          <Text style={styleApp.input}>SMS sent</Text>
           :null
         }
       </Col>
@@ -176,14 +176,15 @@ class VerifyFields extends Component {
   verify() {
     return (
       <View style={styleApp.marginView}>
-          <Text style={[styleApp.title,{marginBottom:10}]}>Verification code</Text>
-          <Text style={[styleApp.subtitle,{marginBottom:10}]}>{this.subtitle()}</Text>
+          <Text style={[styleApp.title,{marginBottom:5}]}>Verification code</Text>
+          <Text style={[styleApp.smallText,{marginBottom:10}]}>{this.subtitle()}</Text>
           <View style={styles.inputWrapper}>
               <CodeFiled
                 blurOnSubmit={true}
                 variant="clear"
                 autoFocus={true}
                 codeLength={4}
+                caretHidden={true}
                 keyboardType="numeric"
                 ref={this.field}
                 cellProps={this.cellProps}
@@ -193,7 +194,7 @@ class VerifyFields extends Component {
             </View>
 
 
-            <Row style={{height:40}}>
+            <Row style={{height:45}}>
               {this.statusSMS()}
             </Row>
             {this.loader()}
@@ -235,17 +236,18 @@ const styles = StyleSheet.create({
     fontFamily:'OpenSans-SemiBold'
   },
   inputNotEmpty: {
-    backgroundColor: colors.green,
+    borderColor: colors.green,
   },
   input: {
     height: 55,
     width: 50,
-    borderRadius: 4,
-    color: 'white',
+    borderRadius: 2,
+    color: colors.green,
+    fontSize:29,
     fontFamily: 'OpenSans-SemiBold',
     backgroundColor: 'white',
-    borderWidth:1,
-    borderColor:'#E5E3E3',
+    borderBottomWidth:3,
+    borderColor:colors.grey,
     ...Platform.select({
       web: {
         lineHeight: 46,
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
     }),
     shadowColor: '#46474B',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
+    shadowOpacity: 0,
     shadowRadius: 5,
   },
 });

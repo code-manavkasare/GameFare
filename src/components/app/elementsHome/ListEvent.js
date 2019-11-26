@@ -75,6 +75,11 @@ class ListEvents extends React.Component {
     this.props.historicSearchAction('setLocationSearch',location)
     return NavigationService.navigate('Home')
   }
+  async setSwitch(state,val) {
+    await this.setState({[state]:val})
+    // await this.translateViews(val)
+    return true
+  }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
       <Switch 
@@ -85,10 +90,7 @@ class ListEvents extends React.Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
-        setState={(val) => {
-          this.setState({[state]:val})
-          
-        }}
+        setState={(val) => this.setSwitch(state,val)}
       />
     )
   }

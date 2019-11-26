@@ -68,17 +68,17 @@ class ListEvent extends Component {
   }
   loadEvents(userID) {
     var that = this
-    firebase.database().ref('usersGroups/' + userID).on('value', function(snapshot) {
-      console.log('on charge les match !!!!!!!')
-      that.setState({loader:true})
-      var groups = []
-      snapshot.forEach(function(childSnapshot) {
-        var group = childSnapshot.val()
-        group.objectID = childSnapshot.key
-        groups.push(group)
-      });
-      that.setState({groups:groups,loader:false})
-    })
+    // firebase.database().ref('usersGroups/' + userID).on('value', function(snapshot) {
+    //   console.log('on charge les match !!!!!!!')
+    //   that.setState({loader:true})
+    //   var groups = []
+    //   snapshot.forEach(function(childSnapshot) {
+    //     var group = childSnapshot.val()
+    //     group.objectID = childSnapshot.key
+    //     groups.push(group)
+    //   });
+    //   that.setState({groups:groups,loader:false})
+    // })
   }
   events () {
     return (

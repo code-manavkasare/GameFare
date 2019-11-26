@@ -247,7 +247,7 @@ export default class ImageSelection extends Component {
                     <Text style={styleApp.text}>Take Photo</Text>
                 </Col>
                 <Col style={styleApp.center3} size={15}>
-                    <AllIcons name='keyboard-arrow-right' type='mat' color={colors.title} size={20} />
+                    <AllIcons name='arrow-right' type='font' color={colors.title} size={14} />
                 </Col>
             </Row>
             }} 
@@ -267,7 +267,7 @@ export default class ImageSelection extends Component {
                     <Text style={styleApp.text}>Choose from Library</Text>
                 </Col>
                 <Col style={styleApp.center3} size={15}>
-                    <AllIcons name='keyboard-arrow-right' type='mat' color={colors.title} size={20} />
+                    <AllIcons name='arrow-right' type='font' color={colors.title} size={14} />
                 </Col>
             </Row>
             }} 

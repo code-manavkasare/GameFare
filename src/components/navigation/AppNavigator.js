@@ -191,7 +191,7 @@ const MainApp = createBottomTabNavigator(
     {   
         Home:HomePage,
         ListGroups:ListGroups,
-        // ListEvents:ListEvents,
+        Message:ProfileNavigator,
         Profile: ProfileNavigator,
     },
     /*
@@ -232,14 +232,16 @@ const MainApp = createBottomTabNavigator(
       defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon:({ focused, tintColor }) => { 
             const { routeName } = navigation.state
+            var borderOff = 'white'
             return <Button   view={() => {
                 return <Row style={{height:45}}>
                   <Col size={10} style={[styles.center]}>
                     <AllIcons name={routeName == 'Home'?
-                      'calendar'
-                      :
-                      routeName == 'ListGroups'?
-                      'tennis'
+                      'calendar2'
+                      :routeName == 'ListGroups'?
+                      'suitcase'
+                      :routeName == 'Message'?
+                      'chat'
                       :routeName == 'Profile'?
                       'profileFooter'
                       :null
@@ -247,9 +249,10 @@ const MainApp = createBottomTabNavigator(
                       <Text style={[styles.footerText,{color:tintColor,marginTop:6,marginBottom:5,fontSize:12.5}]}>
                       {routeName == 'Home'?
                       'Events'
-                      :
-                      routeName == 'ListGroups'?
+                      :routeName == 'ListGroups'?
                       'Groups'
+                      :routeName == 'Message'?
+                      'Message'
                       :routeName == 'Profile'?
                       'Profile'
                       :null
@@ -260,7 +263,7 @@ const MainApp = createBottomTabNavigator(
               }}
               click={() => navigation.navigate(routeName)}
               color={'white'}
-              style={[{borderTopWidth:1.3,marginTop:0,borderColor:tintColor,paddingTop:14,backgroundColor:'white',width:'100%',height:'100%'}]}
+              style={[{borderTopWidth:2,marginTop:0,borderColor:focused?colors.primary:'white',paddingTop:14,backgroundColor:'white',width:'100%',height:'100%'}]}
               onPressColor={'white'}
               />
         },
@@ -268,6 +271,7 @@ const MainApp = createBottomTabNavigator(
             const { routeName } = navigation.state
             if (routeName == 'Home') return <Text style={[styles.input,{color:tintColor}]}>Events</Text>
             if (routeName == 'ListGroups') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
+            if (routeName == 'Message') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
             if (routeName == 'Profile') return <Text style={[styles.footerText,{color:tintColor}]}>PROFILE</Text>
         },
       }),   

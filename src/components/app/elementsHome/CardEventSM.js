@@ -123,8 +123,8 @@ const styles = StyleSheet.create({
     overflow:'hidden',
     height:180,
     marginRight:10,
-    borderRadius:6,
-    borderWidth:0.6,
+    borderRadius:3,
+    borderWidth:1,
     borderColor:colors.grey,
     width:220
   

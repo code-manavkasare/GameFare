@@ -134,7 +134,7 @@ class PhoneFields extends Component {
     inputPhone () {
       return (
         <TextInput
-          style={styles.input}
+          style={[styleApp.input,{fontSize:17}]}
           placeholder={'(012) 345 6789'}
           placeholderTextColor={"#AFAFAF"}
           autoCapitalize = "none"
@@ -152,11 +152,14 @@ class PhoneFields extends Component {
     countryCol () {
       return (
         <Row>
-          <Col style={styles.center} size={50}>
+          <Col style={styles.center} size={40}>
             <Image source={{uri:Object.values(ListCountry).filter(country => this.props.country.code == country.code)[0].flag}} style={{width:30,height:30,borderRadius:15}} /> 
           </Col>
-          <Col style={[styles.center2,{backgroundColor:'white'}]} size={30}>
+          <Col style={[styles.center,{backgroundColor:'white'}]} size={20}>
             <MatIcon name='keyboard-arrow-down' color='#757575' size={15}/>  
+          </Col>
+          <Col size={40} style={[styles.center2,{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>
+            <Text style={styles.countryCode}>+{this.props.country.callingCode}</Text>
           </Col>
         </Row>
       )
@@ -168,14 +171,12 @@ class PhoneFields extends Component {
   render() {
     return (      
         <View style={styles.content}>
-              <Row>
-                <Col size={20} style={[{borderRightWidth:0,borderColor:'#EAEAEA'}]} activeOpacity={0.8} onPress={() => {this.props.navigate('ListCountry',{onGoBack:(country)=> this.selectCountry(country)})}}>
+              <Row style={{height:55,backgroundColor:'white'}}>
+                <Col size={35} style={[{borderRightWidth:0,borderColor:'#EAEAEA'}]} activeOpacity={0.8} onPress={() => {this.props.navigate('ListCountry',{onGoBack:(country)=> this.selectCountry(country)})}}>
                   {this.countryCol()}
                 </Col>
-                <Col size={15} style={[styles.center,{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>
-                  <Text style={styles.countryCode}>+{this.props.country.callingCode}</Text>
-                </Col>
-                <Col size={80} style={[styles.center,{marginRight:10,},{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>
+                
+                <Col size={80} style={[styles.center2,{marginRight:0,},{borderBottomWidth:0,borderColor:'#EAEAEA'}]}>
                   {this.inputPhone()}
                 </Col>
               </Row>

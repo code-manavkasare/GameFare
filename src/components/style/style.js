@@ -61,7 +61,7 @@ export default styles = StyleSheet.create({
     inputOff:{
       color:'#C7C7CC',
       fontSize:15,
-      fontFamily: 'OpenSans-Regular'
+      fontFamily: 'OpenSans-SemiBold'
     },
     subtitle:{
       fontSize:14,

@@ -31,12 +31,12 @@ export default class ExpandableCard extends Component {
         this.state = {
           expanded:false,
           heightCard: new Animated.Value(this.initialHeight()),
-          heightDropDown:new Animated.Value(60),
+          heightDropDown:new Animated.Value(55),
           listExpend:this.props.option.listExpend
         };
         this.componentWillMount = this.componentWillMount.bind(this);
         this.heightCard = new Animated.Value(this.initialHeight());
-        this.heightDropDown = new Animated.Value(60);
+        this.heightDropDown = new Animated.Value(55);
         this.rotateIcon = new Animated.Value(0);
         this.opacityExpand = new Animated.Value(0);
         this.open = 0
@@ -70,12 +70,12 @@ export default class ExpandableCard extends Component {
       if (this.open == 0) {
         await Animated.parallel([
           Animated.timing(this.rotateIcon, native(1,200)),
-          Animated.timing(this.state.heightDropDown, timing(listExpend.length*60,250))
+          Animated.timing(this.state.heightDropDown, timing(listExpend.length*55,250))
         ]).start(() => this.open = 1)
       } else {
         await Animated.parallel([
           Animated.timing(this.rotateIcon, native(0,200)),
-          Animated.timing(this.state.heightDropDown, timing(60,250))
+          Animated.timing(this.state.heightDropDown, timing(55,250))
         ]).start(() => this.open = 0)
       }
       return true
@@ -110,7 +110,7 @@ export default class ExpandableCard extends Component {
       console.log(item)
       return (
         <ButtonColor key={i} view={() => {
-          return <Row >
+          return <Row style={{height:55}}>
             <Col size={10} style={styleApp.center2}>
             {
               this.props.image?
@@ -135,7 +135,7 @@ export default class ExpandableCard extends Component {
            
             <Col size={10} style={[styleApp.center]}>
               {
-                i==0?
+                i==0 && this.props.option.listExpend.filter(option => option.value!= this.props.option.valueSelected).length != 0?
                 <AnimatedIcon name='caret-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
                 :null
               } 
@@ -144,7 +144,7 @@ export default class ExpandableCard extends Component {
         }}
         click={() => click()}
         color={'white'}
-        style={[styleApp.center,{height:60,width:width,borderRadius:0,borderWidth:0,overFlow:'hidden',paddingLeft:20,paddingRight:20}]}
+        style={[styleApp.center,{height:55,width:width,paddingLeft:20,paddingRight:20}]}
         onPressColor={colors.off}
         />
       )
@@ -157,7 +157,7 @@ export default class ExpandableCard extends Component {
     console.log('listExpend')
     console.log(this.props.option.listExpend)
     return (  
-      <Animated.View style={[{borderColor:colors.off,height:this.state.heightDropDown,borderBottomWidth:1,overflow:'hidden',}]}>
+      <Animated.View style={[{borderColor:colors.off,height:this.state.heightDropDown,borderBottomWidth:0,overflow:'hidden'}]}>
         {this.buttonSport(spin,this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0],0,() => this.expand(this.props.option.listExpend))}
 
         {this.props.option.listExpend.filter(option => option.value!= this.props.option.valueSelected).map((option,i) => (

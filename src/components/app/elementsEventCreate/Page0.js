@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {createEventAction} from '../../../actions/createEventActions'
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
+import Switch from '../../layout/switch/Switch'
 
 import BackButton from '../../layout/buttons/BackButton'
 import Button from '../../layout/buttons/Button'
@@ -52,7 +53,7 @@ class Page0 extends Component {
     } else {
       this.setState({
         initialLoader:false,
-        player:this.props.infoUser.coach && this.props.infoUser.coachVerified?false:true,
+        coach:this.props.infoUser.coach && this.props.infoUser.coachVerified?true:false,
         coachNeeded:false,
         joiningFee:'',
         free:false,
@@ -169,9 +170,18 @@ class Page0 extends Component {
       </View>
     )
   }
-  setCoach() {
-    if (this.props.infoUser.coach && this.props.infoUser.coachVerified) return this.setState({player:false,coachNeeded:false,joiningFee:'',free:false})
-    return this.props.navigation.navigate('Alert',{textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'Access required.',subtitle:'You need to become a verified instructor in order to create an instructor events.',icon:<AllIcons name='exclamation-circle' color={colors.secondary} size={20} type='font' />})
+  async setCoach(val) {
+    console.log('setCoach ' + val)
+    if (!val) {
+      await this.setState({coach:val})
+      return true
+    }
+    if (this.props.infoUser.coach && this.props.infoUser.coachVerified) {
+      await this.setState({coach:val,coachNeeded:false,joiningFee:'',free:false})
+      return true
+    }
+    await this.props.navigation.navigate('Alert',{textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'Access required.',subtitle:'You need to become a verified instructor in order to create an instructor events.',icon:<AllIcons name='exclamation-circle' color={colors.secondary} size={20} type='font' />})
+    return false
   }
   sendMessage () {
     var email1 = 'contact@getgamefare.com';
@@ -182,20 +192,22 @@ class Page0 extends Component {
   buttonCoach() {
     return (
       <View>
+        {this.switch('Player','Instructor','coach',(val) => this.setCoach(val))}
+
         {
-          this.state.player?
-          <ButtonOff text="Instructor" click={() => this.setCoach()} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
-          :
-          <Button text="Instructor" click={() => this.setCoach()} backgroundColor={'primary'} onPressColor={colors.primaryLight}/>
-        }
-        
-        <View style={{height:10}} />
-        {
-          !this.state.player?
-          <ButtonOff text="Player" click={() => this.setState({player:true})} backgroundColor={'white'} onPressColor={'white'} textButton={{color:colors.primary}}/>
-          :
-          <Button text="Player" click={() => this.setState({player:true})} backgroundColor={'primary'} onPressColor={colors.primaryLight}/>
-        }
+            !this.state.coach?
+            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.setState({coachNeeded:!this.state.coachNeeded,joiningFee:!this.state.coachNeeded?this.state.sportsFilter.value.fee.coachMatchFee:'',free:false})}>
+            <Row >
+              <Col size={15} style={styleApp.center}>
+                <AllIcons name='check' type='mat' color={!this.state.coachNeeded?colors.grey:colors.green} size={23} />
+              </Col>
+              <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
+                <Text style={[styleApp.text,{fontSize:17,color:!this.state.coachNeeded?colors.grey:colors.green},]}>I need an instructor</Text>
+              </Col>
+            </Row>
+            </TouchableOpacity>
+            :null
+          }
       </View>
     )
   }
@@ -261,6 +273,18 @@ class Page0 extends Component {
   openAlertInfo(title,info) {
     this.props.navigation.navigate('Alert',{close:true,textButton:'Got it!',title:title,subtitle:info,icon:<AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />})
   }
+  switch (textOn,textOff,state,click) {
+    return (
+      <Switch 
+        textOn={textOn}
+        textOff={textOff}
+        translateXTo={width/2-20}
+        height={50}
+        state={this.state[state]}
+        setState={(val) => click(val)}
+      />
+    )
+  }
   page0() {
       return (
         <View >
@@ -271,26 +295,13 @@ class Page0 extends Component {
 
           {
           this.state.rulesFilter.value.coachNeeded != false?
-          <View style={[styleApp.marginView,{marginTop:30}]}>
+          <View style={[styleApp.marginView,{marginTop:20}]}>
 
           <Text style={[styleApp.title,{marginBottom:20}]}>I am a...</Text>
 
           {this.buttonCoach()}
 
-          {
-            this.state.player?
-            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.setState({coachNeeded:!this.state.coachNeeded,joiningFee:!this.state.coachNeeded?this.state.sportsFilter.value.fee.coachMatchFee:'',free:false})}>
-            <Row >
-              <Col size={15} style={styleApp.center}>
-                <AllIcons name='check' type='mat' color={!this.state.coachNeeded?colors.grey:colors.green} size={23} />
-              </Col>
-              <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
-                <Text style={[styleApp.text,{fontSize:17,color:!this.state.coachNeeded?colors.grey:colors.green},]}>I need an instructor</Text>
-              </Col>
-            </Row>
-            </TouchableOpacity>
-            :null
-          }
+          
           </View>
           :null
           }

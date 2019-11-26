@@ -42,7 +42,8 @@ export default class Switch extends Component {
       return {...styles.text,color:'#eaeaea'}
     }
     async changeValue(newVal) {
-      await this.props.setState(newVal)
+      var check = await this.props.setState(newVal)
+      if (!check) return true
       if (newVal) {
         if (this.props.translateXComponent0 != undefined) {
           return Animated.parallel([
