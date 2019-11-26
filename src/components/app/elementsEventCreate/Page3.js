@@ -8,6 +8,7 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {eventsAction} from '../../../actions/eventsActions'
 
 const { height, width } = Dimensions.get('screen')
 import Header from '../../layout/headers/HeaderButton'
@@ -41,16 +42,10 @@ class Page3 extends Component {
     this.translateXFooter = new Animated.Value(0)
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Event summary',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
-      ),
-    }
-  };
+  shouldComponentUpdate(nextProps,nextState) {
+    if (this.props.futureEvents != nextProps.futureEvents) return false
+    return true
+  }
   async componentDidMount() {
     console.log('page3 mount')
     console.log(this.props.navigation.getParam('data'))
@@ -293,6 +288,7 @@ class Page3 extends Component {
     })
     event={
       ...event,
+      date_timestamp:Number(new Date(event.date.start)),
       coaches:coaches,
       allCoaches:allCoaches,
       attendees:attendees,
@@ -322,10 +318,14 @@ class Page3 extends Component {
         eventID:pushEvent.key
       }})
     }
-    
+    var futureEvents = this.props.futureEvents.slice(0).reverse()
+    futureEvents.push(event)
+    futureEvents = futureEvents.reverse()
+    await  this.props.eventsAction('setFutureUserEvents',futureEvents)
     console.log('groupsToPush')
     console.log(groupsToPush)
     this.setState({loader:false})
+    
     this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})
   }
   render() {
@@ -398,7 +398,9 @@ const styles = StyleSheet.create({
       userID:state.user.userID,
       infoUser:state.user.infoUser.userInfo,
       level:state.user.infoUser.level,
+
+      futureEvents:state.events.futureUserEvents,
     };
   };
   
-  export default connect(mapStateToProps,{})(Page3);
+  export default connect(mapStateToProps,{eventsAction})(Page3);

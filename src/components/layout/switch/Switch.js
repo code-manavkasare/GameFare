@@ -12,7 +12,7 @@ import {
 import {Grid,Row,Col} from 'react-native-easy-grid';
 
 import colors from '../../style/colors'
-import {timing} from '../../animations/animations'
+import {timing,native} from '../../animations/animations'
 import styleApp from '../../style/style'
 
 const { height, width } = Dimensions.get('screen')
@@ -47,15 +47,15 @@ export default class Switch extends Component {
       if (newVal) {
         if (this.props.translateXComponent0 != undefined) {
           return Animated.parallel([
-            Animated.spring(this.translateXBorder, timing(newVal?this.props.translateXTo:0)),
+            Animated.spring(this.translateXBorder, native(newVal?this.props.translateXTo:0)),
             Animated.spring(this.state.colorAnim1, timing(1)),
             Animated.spring(this.state.colorAnim0, timing(0)),
-            Animated.spring(this.props.translateXComponent0, timing(width)),
-            Animated.spring(this.props.translateXComponent1, timing(0)),
+            Animated.spring(this.props.translateXComponent0, native(-width)),
+            Animated.spring(this.props.translateXComponent1, native(0)),
           ]).start()
         }
         return Animated.parallel([
-          Animated.spring(this.translateXBorder, timing(newVal?this.props.translateXTo:0)),
+          Animated.spring(this.translateXBorder, native(newVal?this.props.translateXTo:0)),
           Animated.spring(this.state.colorAnim1, timing(1)),
           Animated.spring(this.state.colorAnim0, timing(0)),
         ]).start()
@@ -63,16 +63,16 @@ export default class Switch extends Component {
       } else {
         if (this.props.translateXComponent0 != undefined) {
           return Animated.parallel([
-            Animated.spring(this.translateXBorder, timing(newVal?this.props.translateXTo:0)),
+            Animated.spring(this.translateXBorder, native(newVal?this.props.translateXTo:0)),
             Animated.spring(this.state.colorAnim1, timing(0)),
             Animated.spring(this.state.colorAnim0, timing(1)),
-            Animated.spring(this.props.translateXComponent0, timing(0)),
-            Animated.spring(this.props.translateXComponent1, timing(-width)),
+            Animated.spring(this.props.translateXComponent0, native(0)),
+            Animated.spring(this.props.translateXComponent1, native(width)),
           ]).start()
         }
 
         return Animated.parallel([
-          Animated.spring(this.translateXBorder, timing(newVal?this.props.translateXTo:0)),
+          Animated.spring(this.translateXBorder, native(newVal?this.props.translateXTo:0)),
           Animated.spring(this.state.colorAnim1, timing(0)),
           Animated.spring(this.state.colorAnim0, timing(1)),
         ]).start()

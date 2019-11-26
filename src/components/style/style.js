@@ -38,6 +38,32 @@ export default styles = StyleSheet.create({
       marginBottom:20,
       borderColor:colors.grey
     },
+    cardEventSM:{
+      backgroundColor:'white',
+      shadowColor: '#46474B',
+      shadowOffset: { width: 0, height: 0 },
+      shadowRadius: 60,
+      shadowOpacity: 1,
+      marginRight:0,
+      overflow:'hidden',
+      height:180,
+      width:220,
+      
+      marginRight:10,
+      paddingLeft:10,paddingRight:10,paddingTop:10,paddingBottom:10,
+
+      borderRadius:9,
+      borderWidth:1.5,
+      borderColor:colors.off,
+
+      
+
+
+      shadowColor: '#46474B',
+      shadowOffset: { width: 2, height: 0 },
+      shadowRadius: 7,
+      shadowOpacity: 0.3,
+    },
     title:{
       fontSize:20,
       fontFamily: 'OpenSans-SemiBold',
@@ -181,7 +207,7 @@ export default styles = StyleSheet.create({
       shadowOpacity: 0,
     },
     voile:{
-      position:'absolute',height:height,backgroundColor:colors.title,width:width,opacity:0.4,
+      position:'absolute',height:height,backgroundColor:colors.backdropModal,width:width,opacity:0.5,
       // zIndex:220,
     },
     inputForm:{

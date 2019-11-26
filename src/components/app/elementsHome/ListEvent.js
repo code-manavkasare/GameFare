@@ -13,6 +13,7 @@ import {
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions'
+import {getZone} from '../../functions/location'
 
 import Switch from '../../layout/switch/Switch'
 const { height, width } = Dimensions.get('screen')
@@ -76,9 +77,9 @@ class ListEvents extends React.Component {
     return NavigationService.navigate('Home')
   }
   async setSwitch(state,val) {
-    await this.setState({[state]:val})
+    // await this.setState({[state]:val})
     // await this.translateViews(val)
-    return true
+    return false
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
@@ -100,14 +101,14 @@ class ListEvents extends React.Component {
         <Row style={{marginLeft:20,width:width-40,marginBottom:15}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5,marginLeft:0,fontSize:22}]}>Events around</Text>
-            <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{this.props.searchLocation.address}</Text>
+            <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>
           </Col>
         </Row>
 
         <View style={{marginLeft:20,marginTop:0,width:width-40,marginBottom:15}}>
-        {this.switch('Public','From my groups','pastEvents')}
+        {this.switch('Public','My groups','pastEvents')}
         </View>
 
         { 

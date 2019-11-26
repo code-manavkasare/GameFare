@@ -43,6 +43,7 @@ class HeaderHome extends Component {
         this.componentWillMount = this.componentWillMount.bind(this);
         this.handleBackPress = this.handleBackPress.bind(this)
         this.rotateIcon = new Animated.Value(0);
+        this.borderWidthButtonLeague  = new Animated.Value(0);
       }
     componentWillMount(){
       this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
@@ -100,6 +101,7 @@ class HeaderHome extends Component {
       if (val) {
         return Animated.parallel([
           Animated.timing(this.state.heightButtonLeague,timing(numberElements*50,200)),
+          Animated.timing(this.borderWidthButtonLeague,timing(0.5,200)),
           Animated.timing(this.state.widthButtonLeague,timing(150,200)),
           Animated.timing(this.rotateIcon,timing(1,200)),
         ]).start(() => {
@@ -109,6 +111,7 @@ class HeaderHome extends Component {
       this.props.historicSearchAction('setLeague',league)
       return Animated.parallel([
         Animated.timing(this.state.heightButtonLeague,timing(50,200)),
+        Animated.timing(this.borderWidthButtonLeague,timing(0,200)),
         Animated.timing(this.state.widthButtonLeague,timing(45,200)),
         Animated.timing(this.rotateIcon,timing(0,200)),
       ]).start(() => {
@@ -157,7 +160,7 @@ class HeaderHome extends Component {
         <ButtonColor key={i} view={() => {
           return <Row >
             <Col size={25} style={[styleApp.center2,{paddingLeft:0,}]}>
-              <View style={{overflow:'hidden',height:40,width:40,borderWidth:1,borderColor:colors.off,borderRadius:20,}}>
+              <View style={{overflow:'hidden',height:40,width:40,borderWidth:0,borderColor:colors.off,borderRadius:20,}}>
                  <AsyncImage style={{height:'100%',width:'100%',borderRadius:20,}} mainImage={league.icon} imgInitial={league.img.icon} />
               </View>
               
@@ -190,7 +193,7 @@ class HeaderHome extends Component {
     const borderWidth = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: [0,10],
-          outputRange: [ 0, 1 ],
+          outputRange: [ 0, 0.5 ],
           extrapolate: 'clamp'
     });
     const AnimateColorIcon = this.props.AnimatedHeaderValue.interpolate(
@@ -202,7 +205,7 @@ class HeaderHome extends Component {
     const borderColorIcon = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: this.props.inputRange,
-          outputRange: [ colors.off, 'white' ],
+          outputRange: [colors.white, colors.off ],
           extrapolate: 'clamp'
     });
     const borderColorView = this.props.AnimatedHeaderValue.interpolate(
@@ -247,7 +250,7 @@ class HeaderHome extends Component {
               </Animated.View>
           </Col>
           <Col size={70} style={{paddingTop:15}}>
-              <Animated.View style={[{height:this.state.heightButtonLeague,width:200,overflow:'hidden',borderWidth:1,borderRadius:10,borderColor:borderColorIcon,transform:[{translateY:translateYHeader}]}]}>
+              <Animated.View style={[{height:this.state.heightButtonLeague,width:200,overflow:'hidden',borderColor:colors.grey,borderWidth:this.borderWidthButtonLeague,borderRadius:10,transform:[{translateY:translateYHeader}]}]}>
                 {this.buttonLeague(league,0,sport)}
 
                 {Object.values(sport.typeEvent).filter(item => item.value != this.props.leagueSelected).map((league,i) => (

@@ -13,6 +13,7 @@ import {
   View
 } from 'react-native';
 import {connect} from 'react-redux';
+import FadeInView from 'react-native-fade-in-view';
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
@@ -51,7 +52,7 @@ class CardEvent extends React.Component {
       this.props.openEvent(data)
     }
     card (color,data) {
-      if (this.state.loader)return <View style={styles.cardList}><PlacelHolder /></View>
+      if (this.state.loader)return <View style={styleApp.cardEventSM}><PlacelHolder /></View>
       return this.displayCard(color,data)
     }
     numberMember(data) {
@@ -87,19 +88,19 @@ class CardEvent extends React.Component {
       return (
         <ButtonColor view={() => {
           return (
-            <View style={{width:'100%',height:'100%',paddingLeft:15,paddingRight:15,paddingTop:10,paddingBottom:10}}>
-            <Text style={[styles.subtitle,{color:colors.primary,fontFamily: 'OpenSans-SemiBold',fontSize:11}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
-            <Text style={[styles.title,{fontSize:14,minHeight:20}]}>{data.info.name}</Text>
+            <FadeInView duration={300} style={{width:'100%',height:'100%',}}>
+            <Text style={[styleApp.input,{color:colors.primary,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
+            <Text style={[styleApp.input,{fontSize:15,minHeight:20,marginTop:5}]}>{data.info.name}</Text>
             <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.area}</Text>
         
   
             {this.rowAttendees(data)}
-            </View>
+            </FadeInView>
           )
         }} 
         click={() => this.click(data)}
         color={'white'}
-        style={[styles.cardList]}
+        style={[styleApp.cardEventSM]}
         onPressColor={colors.off}
         />
       )

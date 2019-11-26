@@ -102,9 +102,11 @@ export default class HeaderFlow extends Component {
           extrapolate: 'clamp'
     });
     return ( 
-      <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,borderColor:borderColorView}]}>
-        <Row style={{width:width}}>
-          <Col size={15} style={[styles.center2,{paddingLeft:5,}]} activeOpacity={0.4} onPress={() => this.close()} >
+      <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,borderColor:borderColorView,paddingLeft:20,paddingRight:20,width:width}]}>
+        <Row>
+          <Col size={15} style={styles.center2} activeOpacity={0.4} onPress={() => this.close()} >
+            {
+              this.props.icon1!=null?
             <Animated.View style={[{borderColor:borderColorIcon,height:48,width:48,borderRadius:23.8,borderWidth:1,backgroundColor:'white',overFlow:'hidden'}]} >
                       <ButtonColor view={() => {
                         return <AllIcons name={this.props.icon1} color={colors.title} size={15} type='font' />
@@ -115,18 +117,20 @@ export default class HeaderFlow extends Component {
                       onPressColor={colors.off}
                       />
             </Animated.View>
+            :null
+            }
           </Col>
           <Col size={70} style={styles.center}>
             <Animated.Text style={[styleApp.textHeader,{opacity:AnimateOpacityTitle}]}>{this.props.textHeader}</Animated.Text>
           </Col>
-          <Col size={15} style={[styleApp.center]}>
+          <Col size={15} style={[styleApp.center3]}>
             {
               this.props.loader?
               <Loader color={'green'} size={24} />
             :this.props.icon2!=null?
             <Animated.View style={[{borderColor:borderColorIcon,height:48,width:48,borderRadius:23.8,borderWidth:1,backgroundColor:'white',overFlow:'hidden'}]} >
                       <ButtonColor view={() => {
-                        return this.props.loader?<Loader size={20} color={'primary'}/>:<AllIcons name={this.props.icon2} color={colors.title} size={this.props.sizeIcon2} type={this.props.typeIcon2} />
+                        return this.props.loader?<Loader size={20} color={'primary'}/>:<AllIcons name={this.props.icon2} color={colors.primary} size={this.props.sizeIcon2} type={this.props.typeIcon2} />
                       }}
                       click={() => this.props.clickButton2()}
                       color={'white'}
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header:{
-    height:50+sizes.marginTopHeader,
+    height:sizes.heightHeaderHome,
     paddingTop:sizes.marginTopHeader-5,
     borderBottomWidth:1,
     position:'absolute',

@@ -1,5 +1,5 @@
 export default colors = {
-    primary:'#54A0FF',
+    primary:'#4998FA',
     primary2:'#5499E9',
     primaryLight:'#88BEFD',
     
@@ -34,6 +34,6 @@ export default colors = {
     grey:'#D8D8D8',
     greyDark:'#AEAEAE',
  
-    blue:'#54A0FF',
+    blue:'#4998FA',
     blueLight:'#5499E9',
 }

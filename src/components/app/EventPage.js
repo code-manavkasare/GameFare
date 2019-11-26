@@ -246,9 +246,8 @@ class EventPage extends React.Component {
     if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) return true
     return false
   }
-  eventInfo(data,sport) {
+  eventInfo(data,sport,rule) {
     var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
-    var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
     var levelOption = data.info.levelOption=='equal'?'only':data.info.levelOption=='min'?'and above':'and below'
     console.log('level')
     console.log(data)
@@ -301,17 +300,16 @@ class EventPage extends React.Component {
       </View>
     )
   }
-  event(data,loader) {
+  event(data,loader,sport,league,rule) {
     console.log('data')
     console.log(data)
-    var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
-    var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
+    
     console.log('sport')
     console.log(sport)
     return (
       <View style={{marginLeft:0,width:width,marginTop:-15}}>
         {/* {this.imageMap(data)} */}
-        {this.eventInfo(data,sport)}
+        {this.eventInfo(data,sport,rule)}
 
         {
         rule.coachNeeded?
@@ -416,9 +414,7 @@ class EventPage extends React.Component {
     if (this.props.navigation.getParam('pageFrom') != 'Home' && this.props.navigation.getParam('data').info.organizer == this.props.userID && this.props.navigation.getParam('data').info.public) return true
     return false
   }
-  next(data) {
-    var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
-    var rule = Object.values(sport.rules).filter(rule => rule.value == data.info.rules)[0]
+  next(data,sport,rule) {
     if (this.props.infoUser.coach == true && this.props.infoUser.coachVerified == true && this.props.navigation.getParam('data').info.player == true && rule.coachNeeded) {
       return this.props.navigation.navigate('Coach',{pageFrom:'event',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})
     }
@@ -448,6 +444,10 @@ class EventPage extends React.Component {
     return false
   }
   render() {
+    var sport = this.props.sports.filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0]
+
+    var league = Object.values(sport.typeEvent).filter(item => item.value == this.props.navigation.getParam('data').info.league)[0]
+    var rule = Object.values(league.rules).filter(rule => rule.value == this.props.navigation.getParam('data').info.rules)[0]
     return (
       <View style={{ flex:1}}>
 
@@ -488,7 +488,7 @@ class EventPage extends React.Component {
           </FadeInView>
         }
 
-        content={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))} 
+        content={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'),sport,league,rule)} 
         header={false}
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         
@@ -525,7 +525,7 @@ class EventPage extends React.Component {
           disabled={false} 
           text='Join the event'
           loader={false} 
-          click={() => this.next(this.props.navigation.getParam('data'))}
+          click={() => this.next(this.props.navigation.getParam('data'),sport,rule)}
          />
          </FadeInView>
          :null

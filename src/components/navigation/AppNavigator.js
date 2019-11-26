@@ -24,6 +24,7 @@ import ProfilePage from '../app/ProfilePage'
 import Wallet from '../app/elementsUser/elementsProfile/Wallet'
 import Settings from '../app/elementsUser/elementsProfile/Settings'
 import EventPage from '../app/EventPage'
+
 import GroupPage from '../app/GroupPage'
 import Checkout from '../app/elementsJoining/Checkout'
 import Coach from '../app/elementsJoining/Coach'
@@ -47,8 +48,8 @@ import CreateGroup1 from '../app/elementsGroupCreate/Page1'
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
 
-import ListEvents from '../app/elementsUser/events/ListEvents'
-import ListGroups from '../app/elementsUser/groups/ListGroups'
+
+import ListGroups from '../app/elementsGroupTab/GroupList'
 
 import Payments from '../app/elementsUser/elementsPayment/Payments'
 import NewCard from '../app/elementsUser/elementsPayment/NewCard'
@@ -64,6 +65,9 @@ import AlertCall from '../layout/alerts/AlertCall'
 import InitialPage from '../app/elementsOnBoard/InitialPage'
 import SportSelect from '../app/elementsOnBoard/SportSelect'
 import LocationSelect from '../app/elementsOnBoard/LocationSelect'
+
+
+import MessageList from '../app/elementsMessage/MessageList'
 
 const CreateEventNavigator = createStackNavigator(
     {
@@ -191,8 +195,9 @@ const MainApp = createBottomTabNavigator(
     {   
         Home:HomePage,
         ListGroups:ListGroups,
-        Message:ProfileNavigator,
+        MessageList:MessageList,
         Profile: ProfileNavigator,
+        
     },
     /*
     <Button   view={() => {
@@ -240,8 +245,8 @@ const MainApp = createBottomTabNavigator(
                       'calendar2'
                       :routeName == 'ListGroups'?
                       'suitcase'
-                      :routeName == 'Message'?
-                      'chat'
+                      :routeName == 'MessageList'?
+                      'messageTab'
                       :routeName == 'Profile'?
                       'profileFooter'
                       :null
@@ -251,7 +256,7 @@ const MainApp = createBottomTabNavigator(
                       'Events'
                       :routeName == 'ListGroups'?
                       'Groups'
-                      :routeName == 'Message'?
+                      :routeName == 'MessageList'?
                       'Message'
                       :routeName == 'Profile'?
                       'Profile'
@@ -263,7 +268,7 @@ const MainApp = createBottomTabNavigator(
               }}
               click={() => navigation.navigate(routeName)}
               color={'white'}
-              style={[{borderTopWidth:2,marginTop:0,borderColor:focused?colors.primary:'white',paddingTop:14,backgroundColor:'white',width:'100%',height:'100%'}]}
+              style={[{borderTopWidth:1.5,marginTop:0,borderColor:focused?colors.primary:'white',paddingTop:15,backgroundColor:'white',width:'100%',height:'100%',borderRadius:0,paddingLeft:0,paddingRight:0}]}
               onPressColor={'white'}
               />
         },
@@ -271,21 +276,20 @@ const MainApp = createBottomTabNavigator(
             const { routeName } = navigation.state
             if (routeName == 'Home') return <Text style={[styles.input,{color:tintColor}]}>Events</Text>
             if (routeName == 'ListGroups') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
-            if (routeName == 'Message') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
+            if (routeName == 'MessageList') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
             if (routeName == 'Profile') return <Text style={[styles.footerText,{color:tintColor}]}>PROFILE</Text>
         },
       }),   
       tabBarOptions: {
         activeTintColor: colors.primary,
-        inactiveTintColor: colors.grey,
+        inactiveTintColor: colors.title,
         showLabel:false,
         style: [styles.shade,{
-            borderTopWidth:0,
-            shadowOpacity:0.07,
+            borderTopWidth:0.5,
+            shadowOpacity:0.04,
             backgroundColor: colors.white,
-            borderTopWidth:0,
-            borderTopColor:colors.off,
-            height:45,
+            borderTopColor:colors.grey,
+            height:46,
 
             paddingBottom:20,
         }],

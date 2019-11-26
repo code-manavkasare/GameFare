@@ -20,7 +20,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import FadeInView from 'react-native-fade-in-view';
 
 
-import PlaceHolder from '../../placeHolders/CardEvent'
+import PlaceHolder from '../../placeHolders/CardEventSM'
 import CardEvent from '../../app/elementsHome/CardEventSM'
 import Button from '../../layout/Views/Button'
 
@@ -73,7 +73,7 @@ export default class ScrollViewPage extends PureComponent {
       {
       this.props.loader?
       [0,1,2,3].map((event,i) => (
-        <View key={i} style={[styles.cardSport,styleApp.center,{backgroundColor:'white'}]} >
+        <View key={i} style={[styleApp.cardEventSM,{backgroundColor:'white'}]} >
           <PlaceHolder />
         </View>
       ))

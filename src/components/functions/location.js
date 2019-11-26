@@ -52,6 +52,12 @@ async function currentLocation() {
         lng: currentPosition.coords.longitude
     }
 }
+
+function getZone(rawAddress) {
+    var address =rawAddress.replace(', USA','')
+    address =address.replace(', Canada','')
+    return address.split(',')[address.split(',').length-2]+',' + address.split(',')[address.split(',').length-1]
+}
   
   
-module.exports = {currentLocation};
+module.exports = {currentLocation,getZone};
