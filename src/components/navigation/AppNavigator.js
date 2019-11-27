@@ -244,7 +244,7 @@ const MainApp = createBottomTabNavigator(
                     <AllIcons name={routeName == 'Home'?
                       'calendar2'
                       :routeName == 'ListGroups'?
-                      'suitcase'
+                      'suitecase'
                       :routeName == 'MessageList'?
                       'messageTab'
                       :routeName == 'Profile'?

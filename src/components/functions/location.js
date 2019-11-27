@@ -56,6 +56,7 @@ async function currentLocation() {
 function getZone(rawAddress) {
     var address =rawAddress.replace(', USA','')
     address =address.replace(', Canada','')
+    if (address.split(',').length == 1) return address.split(',')[address.split(',').length-1]
     return address.split(',')[address.split(',').length-2]+',' + address.split(',')[address.split(',').length-1]
 }
   

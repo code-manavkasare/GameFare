@@ -65,7 +65,7 @@ export default styles = StyleSheet.create({
       shadowOpacity: 0.3,
     },
     title:{
-      fontSize:20,
+      fontSize:22,
       fontFamily: 'OpenSans-SemiBold',
       color:colors.title,
     },
@@ -90,9 +90,8 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-SemiBold'
     },
     subtitle:{
-      fontSize:14,
-      fontFamily: 'OpenSans-Regular',
-      color:colors.title,
+      fontFamily: 'OpenSans-SemiBold',
+      fontSize:14,color:colors.greyDark,
     },
     iconFooter:{
       height:18,width:18,

@@ -69,7 +69,7 @@ class HomeScreen extends React.Component {
         <View style={{paddingTop:0,flex:1}}>
                 <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
                   <View style={styleApp.marginView}>
-                    <Text style={[styleApp.input,{fontSize:27}]}>My groups</Text>
+                    <Text style={styleApp.title}>My groups</Text>
 
                   </View>
                   
@@ -119,7 +119,7 @@ class HomeScreen extends React.Component {
         textHeader={'My groups'}
         inputRange={[50,80]}
         initialBorderColorIcon={colors.grey}
-        initialBackgroundColor={'transparent'}
+        initialBackgroundColor={'white'}
         typeIcon2={'font'}
         sizeIcon2={17}
         initialTitleOpacity={0}

@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Linking,
     Image,
+    Animated,
     Dimensions
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -20,6 +21,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import Button from '../layout/buttons/Button'
 import ButtonColor from '../layout/Views/Button'
+import HeaderBackButton from '../layout/headers/HeaderBackButton'
 
 import {userAction} from '../../actions/userActions'
 import InAppBrowser from 'react-native-inappbrowser-reborn'
@@ -28,18 +30,12 @@ import SwiperLogout from './elementsUser/elementsProfile/SwiperLogout'
 const { height, width } = Dimensions.get('screen')
 
 class ProfilePage extends Component {
-  state={check:false}
-  static getDerivedStateFromProps(props, state) {
-    return state
+  constructor(props) {
+    super(props);
+    this.state = {
+    };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Profile',
-      headerStyle:[styleApp.styleHeader,{borderBottomWidth:0}],
-      headerTitleStyle: styleApp.textHeader,
-      // headerLeft: () => <BackButton name='home' size={20} type='mat' click={() => navigation.navigate('Home')} />,
-    }
-  };
   title(text) {
     return (
       <Row style={{marginBottom:5,marginTop:20,marginBottom:10}}>
@@ -71,15 +67,19 @@ class ProfilePage extends Component {
   
       
   */
-  button(text,page,data,type,url) {
+  button(icon,text,page,data,type,url) {
     return (
       <ButtonColor view={() => {
         return <Row style={{marginLeft:0,width:'100%'}}>
-          <Col size={90} style={styleApp.center2}>
-            <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.primary:colors.title}]}>{text}</Text>
+          <Col size={15} style={styleApp.center2}>
+          <AllIcons type='font' size={15} name={icon == 'logout'?'bicycle':icon} color={icon == 'logout'?colors.green:colors.title} /> 
+            
+          </Col>
+          <Col size={75} style={[styleApp.center2,{paddingLeft:0}]}>
+            <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.green:colors.title}]}>{text}</Text>
           </Col>
           <Col size={10} style={styleApp.center3}>
-            <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
+            <AllIcons type='font' size={13} name={'arrow-right'} color={icon == 'logout'?colors.green:colors.title} /> 
           </Col>
         </Row>
         }} 
@@ -160,21 +160,19 @@ class ProfilePage extends Component {
 
 
          
-          <View style={[styleApp.marginView,{marginTop:20}]}>
-          {this.props.userConnected?
-          <View>
-            <Text style={[styleApp.title,{marginBottom:0}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
-            <Text style={[styleApp.text,{marginTop:10,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text>
+          <View style={[styleApp.marginView,{marginTop:0}]}>
+            {this.props.userConnected?
+            <View>
+              <Text style={[styleApp.title,{marginBottom:0}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
+              <Text style={[styleApp.subtitle,{marginTop:5,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text>
 
-
-            <Text style={styleApp.smallText}>{this.props.userConnected?'Account parameters':'Sign in to GameFare'}</Text>
-            <View style={[styleApp.divider2,{marginBottom:0,marginTop:15}]} />
-            {this.button('Personal information','Settings',{pageFrom:'Profile'})}
-            {this.button('Payment','Payments',{pageFrom:'Profile'})}
-            {this.button('My wallet','Wallet',{pageFrom:'Profile'})}
+              <Text style={styleApp.smallText}>{this.props.userConnected?'Account parameters':'Sign in to GameFare'}</Text>
+              <View style={[styleApp.divider2,{marginBottom:0,marginTop:15}]} />
+              {this.button('credit-card','Payment','Payments',{pageFrom:'Profile'})}
+              {this.button('shopping-bag','My wallet','Wallet',{pageFrom:'Profile'})}
             </View>
-            :
-            <Text style={[styleApp.title,{marginBottom:0}]}>My profile</Text>
+              :
+              <Text style={[styleApp.title,{marginBottom:0}]}>My profile</Text>
             }
           </View>
           
@@ -183,8 +181,8 @@ class ProfilePage extends Component {
           <Text style={styleApp.smallText}>Assistance</Text>
 
           <View style={[styleApp.divider2,{marginBottom:0,marginTop:15}]} />
-          {this.button('Email','Alert',{},'email')}
-          {this.button('Call','Alert',{},'call')}
+          {this.button('envelope','Email','Alert',{},'email')}
+          {this.button('phone','Call','Alert',{},'call')}
           </View>
         
 
@@ -192,8 +190,8 @@ class ProfilePage extends Component {
           <View style={styleApp.marginView}>
           <Text style={styleApp.smallText}>Social media</Text>
 
-          <View style={styleApp.divider2} />
-          {this.button('Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
+          <View style={[styleApp.divider2,{marginBottom:0}]} />
+          {this.button('instagram','Visit us on Instagram','Alert',{},'url','https://www.instagram.com/getgamefare')}
           </View>
         </View>
 
@@ -201,16 +199,16 @@ class ProfilePage extends Component {
           <View style={styleApp.marginView}>
           <Text style={styleApp.smallText}>Legal</Text>
 
-          <View style={styleApp.divider2} />
-          {this.button('Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
-          {this.button('Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
+          <View style={[styleApp.divider2,{marginBottom:0}]} />
+          {this.button('file-contract','Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
+          {this.button('balance-scale','Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
           </View>
         </View>
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
           {this.props.userConnected?
-          this.button('Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})
+          this.button('logout','Logout','Alert',{textButton:'Logout',title:'Do you want to log out?',onGoBack: (data) => this.confirmLogout(data)})
           :null}
           </View>
         </View>
@@ -255,13 +253,28 @@ class ProfilePage extends Component {
   render() {
     return (
       <View style={{ height:'100%'}}>
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={'Profile'}
+        inputRange={[50,80]}
+        initialBorderColorIcon={colors.grey}
+        initialBackgroundColor={'white'}
+        typeIcon2={'font'}
+        sizeIcon2={17}
+        initialTitleOpacity={0}
+        icon1={null}
+        icon2='cog'
+
+        clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
+        />
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.marginTopApp}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={90}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
 
         {

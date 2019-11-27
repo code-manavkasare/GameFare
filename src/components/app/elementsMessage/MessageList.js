@@ -69,8 +69,8 @@ class HomeScreen extends React.Component {
         <View style={{paddingTop:0,flex:1}}>
                 <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
                   <View style={styleApp.marginView}>
-                    <Text style={[styleApp.input,{fontSize:20}]}>Inbox</Text>
-                    <Text style={[styleApp.text,{fontSize:14,color:colors.greyDark,marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text>
+                    <Text style={styleApp.title}>Inbox</Text>
+                    <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text>
 
                   </View>
                   
@@ -120,12 +120,12 @@ class HomeScreen extends React.Component {
         textHeader={'Inbox (' + this.state.unreadMessages + ')'}
         inputRange={[50,80]}
         initialBorderColorIcon={colors.grey}
-        initialBackgroundColor={'transparent'}
-        typeIcon2={'font'}
+        initialBackgroundColor={'white'}
+        typeIcon2={'mat'}
         sizeIcon2={17}
         initialTitleOpacity={0}
         icon1={null}
-        icon2='pen-alt'
+        icon2='edit'
 
         clickButton2={() => console.log('')}
         />
