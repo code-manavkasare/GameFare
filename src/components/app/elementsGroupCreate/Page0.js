@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     Dimensions,TextInput,
-    Animated
+    Animated,
+    Image
 } from 'react-native';
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
@@ -13,6 +14,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import ButtonColor from '../../layout/Views/Button'
+import ButtonAddImage from '../../layout/buttons/ButtonAddImage'
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
@@ -25,8 +27,10 @@ import {date} from '../../layout/date/date'
 import Communications from 'react-native-communications';
 
 import sizes from '../../style/sizes'
+import colors from '../../style/colors'
 import styleApp from '../../style/style'
 import UploadImage from '../../layout/image/UploadImage';
+import FadeInView from 'react-native-fade-in-view';
 
 class Page0 extends Component {
   constructor(props) {
@@ -164,10 +168,19 @@ class Page0 extends Component {
       />
     )
   }
+  selectImageButton() {
+    return (
+      <ButtonAddImage setState={(val) => this.setState(val)}/>
+    )
+  }
+  textPrivate() {
+    if (this.state.private) return 'You will have to invite your members after creating your group.'
+    return 'Anyone will be able to join your group.'
+  }
   page0() {
       return (
         <View style={{marginTop:0,marginLeft:0,width:width}}>
-
+          {this.selectImageButton()}
  
           <View style={{marginBottom:10}}>
             {this.sports()}
@@ -175,19 +188,21 @@ class Page0 extends Component {
 
           <View style={[styleApp.marginView,{marginTop:0,marginBottom:10}]}>
             {this.switch('Open access','Invite only','private')}
-            <View style={{height:10}} />
+            <Text style={[styleApp.text,{marginTop:20,fontSize:13}]}>{this.textPrivate()}</Text>
+            <View style={{height:20}} />
+         
             {this.button('map-marker-alt',<Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Add group area':this.state.location.address}</Text>,() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateGroup0',onGoBack: (data) => this.setLocation(data)}),false)}
             {this.button('hashtag',this.tournamentName(),() => this.nameInput.focus())}
             {this.button('info-circle',this.description(),() => this.descriptionInput.focus())}
        
           </View>
-
+{/* 
 
           <View style={styleApp.marginView}>
             <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Image</Text>
             <UploadImage setImage={this.setImage.bind(this)}/>
           </View>
-
+ */}
 
         </View>
       )

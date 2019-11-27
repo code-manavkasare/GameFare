@@ -41,7 +41,7 @@ export default class NewEventCard extends React.Component {
           
           <Text style={[styleApp.subtitle,{marginBottom:20,marginRight:30,marginTop:10}]}>Pick your sport, create your group and start growing your community</Text>
 
-          <Button backgroundColor={'blue'} onPressColor={colors.blueLight} click={() => NavigationService.navigate('CreateGroup0',{'pageFrom':this.props.pageFrom})} text={'Create a group'} styleButton={{marginBottom:15,marginTop:10}} loader={false}/>
+          <Button backgroundColor={'blue'} onPressColor={colors.primary2} click={() => NavigationService.navigate('CreateGroup0',{'pageFrom':this.props.pageFrom})} text={'Create a group'} styleButton={{marginBottom:15,marginTop:10}} loader={false}/>
 
 
           <Text style={[styleApp.title,{fontSize:18,marginTop:20}]}>Become a host</Text>

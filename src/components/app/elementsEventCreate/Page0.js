@@ -20,6 +20,7 @@ import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
+
 import ScrollView from '../../layout/scrollViews/ScrollView2'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import AllIcons from '../../layout/icons/AllIcons'
@@ -213,7 +214,7 @@ class Page0 extends Component {
   }
   entreeFeeSection(state){
     return(
-      <Row style={{height:60,marginTop:15,}}>
+      <Row style={{height:60,marginTop:15,paddingRight:20,paddingLeft:20}}>
         <Col size={60} style={styleApp.center2}>
           <TouchableOpacity activeOpacity={0.7}  onPress={() => this.entreeFeeInputRef.focus()} >
             <Row style={{height:60}}>
@@ -258,10 +259,10 @@ class Page0 extends Component {
         }}>
           <Row style={{height:55,width:'100%',}}>
             <Col style={styleApp.center} >          
-              <AllIcons name="check" type='mat' color={this.state.free?colors.primary:colors.grey} size={15} />
+              <AllIcons name="check" type='font' color={this.state.free?colors.primary:colors.grey} size={16} />
             </Col>
-            <Col style={styleApp.center2} >
-              <Text style={[styleApp.text,{color:this.state.free?colors.primary:colors.grey}]}>Free</Text>
+            <Col style={styleApp.center3} >
+              <Text style={[styleApp.input,{fontSize:17},{color:this.state.free?colors.primary:colors.grey}]}>Free</Text>
             </Col>
           </Row>
 

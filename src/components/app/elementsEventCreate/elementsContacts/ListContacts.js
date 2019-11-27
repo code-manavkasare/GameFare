@@ -158,7 +158,7 @@ export default class ContactsComponent extends Component {
       // return this.scrollViewY = event.nativeEvent.contentOffset.y
     }
     listContacts() {  
-      return <ScrollView keyboardShouldPersistTaps={true} onScroll={this.handleScroll.bind(this)} style={{height:'100%',marginBottom:sizes.heightFooterBooking}} stickyHeaderIndices={this.state.stickyHeader} >
+      return <ScrollView keyboardShouldPersistTaps={true} onScroll={this.handleScroll.bind(this)} style={{height:height-sizes.heightHeaderHome-50-sizes.heightFooterBooking-sizes.marginTopApp-10,marginBottom:sizes.heightFooterBooking}} stickyHeaderIndices={this.state.stickyHeader} >
         {this.state.contacts.map((contact,i) => (
           this.contact(contact,i)
         ))}

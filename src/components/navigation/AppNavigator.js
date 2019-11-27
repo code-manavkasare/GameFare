@@ -61,6 +61,7 @@ import ApplePay from '../app/elementsUser/elementsPayment/ApplePay'
 import Alert from '../layout/alerts/Alert'
 import AlertAddress from '../layout/alerts/AlertAddress'
 import AlertCall from '../layout/alerts/AlertCall'
+import AlertAddImage from '../layout/alerts/AlertAddImage'
 
 import InitialPage from '../app/elementsOnBoard/InitialPage'
 import SportSelect from '../app/elementsOnBoard/SportSelect'
@@ -102,12 +103,18 @@ const CreateGroupNavigator = createStackNavigator(
 
 const ContactNavigator = createStackNavigator(
     {
-        Contacts:Contacts,
+        Contacts:{
+            screen:Contacts,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:true
+            }
+        },
         NewContact:NewContact
     },
     {
         initialRouteName:'Contacts',
-       //  headerMode: 'none',
+        headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
         cardShadowEnabled:false
@@ -371,10 +378,16 @@ const MainApp = createBottomTabNavigator(
         Alert:{screen:Alert,gesturesEnabled:false},
         AlertAddress:{screen:AlertAddress,gesturesEnabled:false},
         AlertCall:AlertCall,
+        AlertAddImage:AlertAddImage,
         Payments:PaymentsNavigator,
         Date:DateSelector,
         Location:LocationSelector,
-        ContactNavigator:ContactNavigator
+        ContactNavigator:{
+            screen:ContactNavigator,
+            navigationOptions:{
+                gesturesEnabled:false
+            },
+        }
     },
     {
         initialRouteName:'MainStack',

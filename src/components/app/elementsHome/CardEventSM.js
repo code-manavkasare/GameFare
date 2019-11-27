@@ -62,7 +62,7 @@ class CardEvent extends React.Component {
     rowAttendees(data) {
       return <Row style={{marginTop:15}}>
       <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
-        <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primaryLight,}]}>
+        <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,}]}>
           <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
         </View>
       </Col>
@@ -89,7 +89,7 @@ class CardEvent extends React.Component {
         <ButtonColor view={() => {
           return (
             <FadeInView duration={300} style={{width:'100%',height:'100%',}}>
-            <Text style={[styleApp.input,{color:colors.primary,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
+            <Text style={[styleApp.input,{color:colors.primary2,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
             <Text style={[styleApp.input,{fontSize:15,minHeight:20,marginTop:5}]}>{data.info.name}</Text>
             <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.area}</Text>
         

@@ -9,6 +9,8 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {eventsAction} from '../../../actions/eventsActions'
+
 const { height, width } = Dimensions.get('screen')
 import { StackActions, NavigationActions } from 'react-navigation';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
@@ -49,16 +51,10 @@ class ProfilePage extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Join ' +navigation.getParam('data').info.name,
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
-      ),
-    }
-  };
+  shouldComponentUpdate(nextProps,nextState) {
+    if (this.props.futureEvents != nextProps.futureEvents) return false
+    return true
+  }
   componentDidMount() {
     console.log('checkout mount')
     console.log(this.status(this.props.navigation.getParam('data')))
@@ -100,8 +96,8 @@ class ProfilePage extends Component {
         <Text style={styleApp.title}>{this.props.navigation.getParam('data').info.name}</Text>
       </Col>
       <Col size={25} style={styleApp.center3}>
-      <View style={[styles.viewSport,{backgroundColor:sport.card.color.color,width:'100%'}]}>
-        <Text style={[styles.textSport,{color:'white'}]}>{this.props.navigation.getParam('data').info.sport.charAt(0).toUpperCase() + this.props.navigation.getParam('data').info.sport.slice(1)}</Text>
+      <View style={[styleApp.viewSport,{backgroundColor:sport.card.color.color,width:'100%'}]}>
+        <Text style={[styleApp.textSport,{color:'white'}]}>{this.props.navigation.getParam('data').info.sport.charAt(0).toUpperCase() + this.props.navigation.getParam('data').info.sport.slice(1)}</Text>
       </View>
       </Col>
     </Row>
@@ -203,16 +199,19 @@ class ProfilePage extends Component {
   coach() {
     return !this.props.navigation.getParam('coach').player
   }
+  openAlert(organizer) {
+    if (organizer == this.props.userID) {
+      return this.props.navigation.navigate('Alert',{close:true,title:'You are the organizer of this event.',subtitle:'You cannot attend your own event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+    }
+    return this.props.navigation.navigate('Alert',{close:true,title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
+  }
   async submit(data) {
     await this.setState({loader:true})
-    var check = await this.checkAttendingEvent(this.props.userID,data.eventID) 
+    // var check = await this.checkAttendingEvent(this.props.userID,data.eventID) 
+    var check = true
     if (!check) {
       await this.setState({loader:false})
-      if (data.info.organizer == this.props.userID) {
-        return this.props.navigation.navigate('Alert',{close:true,title:'You are the organizer of this event.',subtitle:'You cannot attend your own event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
-      }
-      return this.props.navigation.navigate('Alert',{close:true,title:'You are already attending this event.',textButton:'Got it!',onGoBack:() => this.props.navigation.navigate('Checkout')})
-      
+      return this.openAlert(data.info.organizer) 
     }
     var now = (new Date()).toString()
     var {message,response} = await this.payEntryFee(now,data)
@@ -233,7 +232,7 @@ class ProfilePage extends Component {
     }
     var pushSection = 'attendees'
     if (this.coach()) pushSection = 'coaches'
-    const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/' + pushSection).push({
+    var user = {
       captainInfo:{
         phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber,
         userID:this.props.userID,
@@ -244,11 +243,21 @@ class ProfilePage extends Component {
       coach:this.coach(),
       status:this.status(data),
       date:now,
-    })
+    }
+    const pushNewTeam = await firebase.database().ref('events/' + data.eventID + '/' + pushSection).push(user)
     await firebase.database().ref('events/' + data.eventID + '/'+pushSection+'/' + pushNewTeam.key).update({
       teamID:pushNewTeam.key
     })
-    await firebase.database().ref('usersEvents/' + this.props.userID + '/' + data.eventID).update({eventID:data.eventID,organizer:false,status:this.status(data),coach:this.coach()})
+    var event = {
+      ...data,
+      [pushSection]:{
+        ...data[pushSection],
+        [pushNewTeam.key]:{
+          ...user,
+          teamID:pushNewTeam.key
+        }
+      }
+    }
     try {
       await firebase.messaging().requestPermission();
       // User has authorised
@@ -258,7 +267,11 @@ class ProfilePage extends Component {
     } catch (error) {
         // User has rejected permissions
     }
-    this.props.navigation.navigate('ListEvents');
+    var futureEvents = this.props.futureEvents.slice(0).reverse()
+    futureEvents.push(event)
+    futureEvents = futureEvents.reverse()
+    await  this.props.eventsAction('setFutureUserEvents',futureEvents)
+    this.props.navigation.navigate('Event',{data:event});
   }
   status(data) {
     if (this.coach()) return 'pending'
@@ -403,20 +416,6 @@ class ProfilePage extends Component {
 }
 
 const styles = StyleSheet.create({
-  viewSport:{
-    backgroundColor:colors.greenLight,
-    borderRadius:3,
-    paddingLeft:10,
-    paddingRight:10,
-    height:25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textSport:{
-    color:colors.greenStrong,
-    fontSize:13,
-    fontFamily: 'OpenSans-SemiBold',
-  },
 });
 
 const  mapStateToProps = state => {
@@ -429,7 +428,8 @@ const  mapStateToProps = state => {
     totalWallet:state.user.infoUser.wallet.totalWallet,
     defaultCard:state.user.infoUser.wallet.defaultCard,
     tokenCusStripe:state.user.infoUser.wallet.tokenCusStripe,
+    futureEvents:state.events.futureUserEvents,
   };
 };
 
-export default connect(mapStateToProps,{userAction})(ProfilePage);
+export default connect(mapStateToProps,{userAction,eventsAction})(ProfilePage);

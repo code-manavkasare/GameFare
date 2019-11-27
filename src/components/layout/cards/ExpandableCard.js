@@ -50,6 +50,18 @@ export default class ExpandableCard extends Component {
       }
     componentWillMount(){
     }
+    componentWillReceiveProps(nextProps) {
+      console.log('receiprops card')
+      console.log(nextProps)
+      console.log(this.props.option)
+      if (this.props.option != nextProps.option) {
+        console.log('rl')
+        Animated.parallel([
+          Animated.timing(this.rotateIcon, native(0,150)),
+          Animated.timing(this.state.heightDropDown, timing(55,130))
+        ]).start(() => this.open = 0)
+      }
+    }
     valueOption(option) {
       if (option.value == this.props.providersPreference.type) return <Text style={[styles.title,{color:colors.title}]}>{this.props.providersPreference.text}</Text> 
       return <Text style={styles.title}>{option.text}</Text> 
@@ -69,13 +81,13 @@ export default class ExpandableCard extends Component {
     async expand(listExpend) {
       if (this.open == 0) {
         await Animated.parallel([
-          Animated.timing(this.rotateIcon, native(1,200)),
-          Animated.timing(this.state.heightDropDown, timing(listExpend.length*55,250))
+          Animated.timing(this.rotateIcon, native(1,150)),
+          Animated.timing(this.state.heightDropDown, timing(listExpend.length*55,130))
         ]).start(() => this.open = 1)
       } else {
         await Animated.parallel([
-          Animated.timing(this.rotateIcon, native(0,200)),
-          Animated.timing(this.state.heightDropDown, timing(55,250))
+          Animated.timing(this.rotateIcon, native(0,150)),
+          Animated.timing(this.state.heightDropDown, timing(55,130))
         ]).start(() => this.open = 0)
       }
       return true
@@ -95,11 +107,12 @@ export default class ExpandableCard extends Component {
     }
     async expandClose (option){
       if (option.locked != true) {
-        await this.expand()
-        var that = this
-        setTimeout(function(){
-         that.props.tickFilter(option.value)
-        }, 100)
+        this.expand()
+        this.props.tickFilter(option.value)
+        // var that = this
+        // setTimeout(function(){
+        //  that.props.tickFilter(option.value)
+        // }, 100)
       }
     }
     openAlert(option) {

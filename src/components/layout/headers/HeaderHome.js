@@ -101,7 +101,7 @@ class HeaderHome extends Component {
       if (val) {
         return Animated.parallel([
           Animated.timing(this.state.heightButtonLeague,timing(numberElements*50,200)),
-          Animated.timing(this.borderWidthButtonLeague,timing(0.5,200)),
+          Animated.timing(this.borderWidthButtonLeague,timing(1,200)),
           Animated.timing(this.state.widthButtonLeague,timing(150,200)),
           Animated.timing(this.rotateIcon,timing(1,200)),
         ]).start(() => {
@@ -127,10 +127,10 @@ class HeaderHome extends Component {
         <ButtonColor key={i} view={() => {
           return <Row style={{height:45}}>
             <Col size={35} style={[styleApp.center2,{paddingLeft:5,}]}>
-              <View style={{overflow:'hidden',height:40,width:40,borderWidth:1,borderColor:colors.off,borderRadius:20,}}>
-                 <AsyncImage style={{height:'100%',width:'100%',borderRadius:20,}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
-              </View>
-              
+              {/* <View style={{overflow:'hidden',height:40,width:40,borderWidth:1,borderColor:colors.off,borderRadius:20,}}>
+                 
+              </View> */}
+              <AsyncImage style={{height:40,width:40,borderRadius:20,}} mainImage={sport.card.img.imgSM} imgInitial={sport.card.img.imgXS} />
             </Col>
             {/* <Col size={10} style={[styleApp.center]}>
               {
@@ -160,19 +160,17 @@ class HeaderHome extends Component {
         <ButtonColor key={i} view={() => {
           return <Row >
             <Col size={25} style={[styleApp.center2,{paddingLeft:0,}]}>
-              <View style={{overflow:'hidden',height:40,width:40,borderWidth:0,borderColor:colors.off,borderRadius:20,}}>
-                 <AsyncImage style={{height:'100%',width:'100%',borderRadius:20,}} mainImage={league.icon} imgInitial={league.img.icon} />
-              </View>
+              <AsyncImage style={{height:40,width:40,borderRadius:20,}} mainImage={league.icon} imgInitial={league.img.icon} />
               
             </Col>
             <Col size={75} style={[styleApp.center2,{paddingLeft:0}]}>
-              <Text style={[styleApp.input,{fontSize:12 }]}>{league.name.charAt(0).toUpperCase() + league.name.slice(1)}</Text>
+              <Text style={[styleApp.input,{fontSize:15 }]}>{league.name.charAt(0).toUpperCase() + league.name.slice(1)}</Text>
             </Col>
           </Row>
         }}
         click={() => this.openLeague(!this.state.openLeague,league.value,Object.values(sport.typeEvent).length)}
         color={'white'}
-        style={[{height:50,width:210,paddingLeft:5,paddingRight:5}]}
+        style={[{height:50,width:190,paddingLeft:5,paddingRight:5}]}
         onPressColor={colors.off}
         />
       )
@@ -200,6 +198,12 @@ class HeaderHome extends Component {
       {
           inputRange: this.props.inputRange,
           outputRange: [ colors.title, colors.title ],
+          extrapolate: 'clamp'
+    });
+    const borderColorButton = this.borderWidthButtonLeague.interpolate(
+      {
+          inputRange: [0,1],
+          outputRange: [ 'white', colors.grey ],
           extrapolate: 'clamp'
     });
     const borderColorIcon = this.props.AnimatedHeaderValue.interpolate(
@@ -250,7 +254,7 @@ class HeaderHome extends Component {
               </Animated.View>
           </Col>
           <Col size={70} style={{paddingTop:15}}>
-              <Animated.View style={[{height:this.state.heightButtonLeague,width:200,overflow:'hidden',borderColor:colors.grey,borderWidth:this.borderWidthButtonLeague,borderRadius:10,transform:[{translateY:translateYHeader}]}]}>
+              <Animated.View style={[{height:this.state.heightButtonLeague,width:190,overflow:'hidden',borderWidth:1,borderColor:borderColorButton,borderRadius:10,transform:[{translateY:translateYHeader}]}]}>
                 {this.buttonLeague(league,0,sport)}
 
                 {Object.values(sport.typeEvent).filter(item => item.value != this.props.leagueSelected).map((league,i) => (
@@ -264,7 +268,7 @@ class HeaderHome extends Component {
                       }}
                       click={() => this.props.clickButton2()}
                       color={'white'}
-                      style={[styleApp.center,{height:50,width:50,borderRadius:25,borderWidth:1,overFlow:'hidden',borderColor:borderColorIcon,transform:[{translateY:translateYHeader}]}]}
+                      style={[styleApp.center,{height:45,width:45,borderRadius:25,borderWidth:1,borderColor:borderColorIcon,transform:[{translateY:translateYHeader}]}]}
                       onPressColor={colors.off}
                       />
           </Col>

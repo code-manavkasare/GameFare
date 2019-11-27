@@ -97,10 +97,10 @@ class ListEvents extends React.Component {
   }
   ListEvent () {
     return (
-      <View style={{marginTop:30}}>
+      <View style={{marginTop:20}}>
         <Row style={{marginLeft:20,width:width-40,marginBottom:15}}>
           <Col size={85} style={styleApp.center2}>
-            <Text style={[styleApp.title,{marginBottom:5,marginLeft:0,fontSize:22}]}>Events around</Text>
+            <Text style={[styleApp.title,{marginBottom:5}]}>Events around</Text>
             <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>

@@ -24,11 +24,15 @@ import styleApp from '../../../style/style'
 import colors from '../../../style/colors'
 import {date} from '../../../layout/date/date'
 import AllIcons from '../../../layout/icons/AllIcons'
+import ButtonColor from '../../../layout/Views/Button'
 import BackButton from '../../../layout/buttons/BackButton'
+import HeaderBackButton from '../../../layout/headers/HeaderBackButton'
+
 
 import ListContacts from './ListContacts'
 import {timing} from '../../../animations/animations'
 import FooterContact from './FooterContact';
+import sizes from '../../../style/sizes';
 const { height, width } = Dimensions.get('screen')
 
 export default class ContactsComponent extends Component {
@@ -46,6 +50,7 @@ export default class ContactsComponent extends Component {
         this.counter=0
         this.componentDidMount = this.componentDidMount.bind(this);
         this.translateYShare = new Animated.Value(0)
+        this.AnimatedHeaderValue = new Animated.Value(0)
       }
       componentDidMount(){
     } 
@@ -142,42 +147,52 @@ export default class ContactsComponent extends Component {
       }
       return this.listContactRef.setState({contacts:this.listContactRef.getContacts().filter(contact => contact.givenName.toLowerCase().search(search.toLowerCase()) != -1 || contact.familyName.toLowerCase().search(search.toLowerCase()) != -1)})
     }
+    /*
     
+    
+    */
     searchBar () {
       return (
-        <Animated.View style={{transform:[{translateY:this.translateYShare}]}}>
-        <Row style={[styleApp.inputForm,{marginTop:0,marginBottom:0,marginLeft:0,width:width,borderBottomWidth:0.3}]}>
-          <Col size={15} style={styles.center}>
-            <AllIcons name="search" type="font" color={colors.primary} size={16} />
-          </Col>
-          <Col size={55} style={[styles.center2,{paddingLeft:15}]}>
-          <TextInput
-              style={styles.input}
-              placeholder={'Search for contact...'}
-              returnKeyType={'done'}
-              // keyboardType={this.props.keyboardType}
-              blurOnSubmit={true}
-              onFocus={() => this.setState({showShareIcons:false})}
-              onBlur={() => this.setState({showShareIcons:true})}
-              underlineColorAndroid='rgba(0,0,0,0)'
-              autoCorrect={true}
-              onChangeText={text => this.changeSearch(text)}
-              value={this.state.search}
-            />
-          </Col>
-          {
-            this.state.search!=''?
-            <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.changeSearch('')}>
-              <FontIcon name='times-circle' color={'#eaeaea'} size={12} />
-            </Col>
-            :
-            <Col size={15}></Col>
-          }
-          <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.props.navigation.navigate('NewContact',{onGoBack:(data) => this.addNewContact(data)})}>
-              <FontIcon name={'user-plus'} color={colors.primary} size={14} />
-          </Col>
-        </Row>
-        </Animated.View>
+        <ButtonColor view={() => {
+          return (
+            <Row >
+                <Col size={15} style={styles.center}>
+                  <AllIcons name="search" type="font" color={colors.primary} size={16} />
+                </Col>
+                <Col size={55} style={[styles.center2,{paddingLeft:15}]}>
+                <TextInput
+                    style={styleApp.input}
+                    placeholder={'Search for contact...'}
+                    returnKeyType={'search'}
+                    blurOnSubmit={true}
+                    ref={(input) => { this.searchRef = input }}
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                    autoCorrect={true}
+                    onChangeText={text => this.changeSearch(text)}
+                    value={this.state.search}
+                  />
+                </Col>
+                {
+                  this.state.search!=''?
+                  <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.changeSearch('')}>
+                    <FontIcon name='times-circle' color={'#eaeaea'} size={12} />
+                  </Col>
+                  :
+                  <Col size={15}></Col>
+                }
+                <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.props.navigation.navigate('NewContact',{onGoBack:(data) => this.addNewContact(data)})}>
+                    <FontIcon name={'user-plus'} color={colors.primary} size={14} />
+                </Col>
+              </Row>
+              )
+            }} 
+            click={() => {
+              this.searchRef.focus()
+            }}
+            color='white'
+            style={{height:55,width:width,borderBottomWidth:0.3,borderColor:colors.borderColor}}
+            onPressColor={colors.off}
+        />
       )
     }
     addNewContact (data) {
@@ -297,18 +312,28 @@ export default class ContactsComponent extends Component {
     }
     rowShare() {
       return (
-        <Animated.View style={{height:55,borderBottomWidth:0.3,borderColor:colors.borderColor,transform:[{translateY:this.translateYShare}]}}>
-          <Row activeOpacity={0.7} onPress={() => this.shareEvent()}>
+        // <Animated.View style={{height:50,borderBottomWidth:0.3,backgroundColor:'white',borderColor:colors.borderColor,transform:[{translateY:this.translateYShare}]}}>
+         
+        // </Animated.View>
+        <ButtonColor view={() => {
+          return (
+            <Row >
             <Col size={15} style={styleApp.center}>
-              <View style={[styleApp.center,{height:30,width:30,borderRadius:15,backgroundColor:colors.blue}]}>
-                <AllIcons name='share' type='moon' color={'white'} size={13} />
-              </View>
+              <AllIcons name='share' type='moon' color={colors.primary} size={17} />
             </Col>
             <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
-              <Text style={[styleApp.text,{fontSize:13}]}>Share on Facebook, Messenger...</Text>
+              <Text style={[styleApp.input,{fontSize:14}]}>Share on Facebook, Messenger...</Text>
             </Col>
-          </Row>
-        </Animated.View>
+            </Row>
+              )
+            }} 
+            click={() => {
+              this.shareEvent()
+            }}
+            color='white'
+            style={{height:55,width:width,borderBottomWidth:0.3,borderColor:colors.borderColor}}
+            onPressColor={colors.off}
+        />
       )
     }
     async sendSMS() {
@@ -366,15 +391,39 @@ export default class ContactsComponent extends Component {
     
       });
     }
+    icon1Header() {
+      if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3' || this.props.navigation.getParam('pageFrom') == 'CreateGroup1') return null
+      return 'times'
+    }
+    icon2Header() {
+      if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3' || this.props.navigation.getParam('pageFrom') == 'CreateGroup1') return 'text'
+      return null
+    }
   render() {
     return (
-        <View style={{height:height-85}}>
+        <View style={{height:height}}>
+          <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={'Invite your friends'}
+        inputRange={[5,10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialTitleOpacity={1}
+        icon1={this.icon1Header()}
+        icon2={this.icon2Header()}
+        text2="Skip"
+        clickButton2={() => this.props.navigation.navigate('Home')}
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        />
 
+          <View style={{marginTop:sizes.heightHeaderHome}}>
           {this.rowShare()}
           {this.searchBar()}
 
 
           {this.listContacts()}
+          </View>
+          
 
           <FooterContact sendSMS={this.sendSMS.bind(this)} deleteContact={this.deleteContact.bind(this)} contactsSelected={this.state.contactsSelected} />
 

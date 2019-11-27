@@ -251,7 +251,7 @@ class Page2 extends Component {
   async close () {
     console.log('close')
     await this.props.createEventAction('setStep2',this.state)
-    return this.props.navigation.navigate(this.props.navigation.goBack())
+    return this.props.navigation.goBack()
   }
   async next() {
     await this.props.createEventAction('setStep2',this.state)

@@ -149,6 +149,10 @@ class Page1 extends Component {
       }})
     }
   }
+  async setStateSwitch (state,val) {
+    await this.setState({[state]:val})
+    return true
+  }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
       <Switch 
@@ -159,7 +163,7 @@ class Page1 extends Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
-        setState={(val) => this.setState({[state]:val})}
+        setState={(val) => this.setStateSwitch(state,val)}
       />
     )
   }
@@ -317,7 +321,7 @@ class Page1 extends Component {
   async close () {
     console.log('close')
     await this.props.createEventAction('setStep1',this.state)
-    return this.props.navigation.navigate(this.props.navigation.goBack())
+    return this.props.navigation.goBack()
   }
   async next() {
     await this.props.createEventAction('setStep1',this.state)

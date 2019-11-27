@@ -130,7 +130,7 @@ export default class HeaderFlow extends Component {
             :this.props.icon2!=null?
             <Animated.View style={[{borderColor:borderColorIcon,height:48,width:48,borderRadius:23.8,borderWidth:1,backgroundColor:'white',overFlow:'hidden'}]} >
                       <ButtonColor view={() => {
-                        return this.props.loader?<Loader size={20} color={'primary'}/>:<AllIcons name={this.props.icon2} color={colors.title} size={this.props.sizeIcon2} type={this.props.typeIcon2} />
+                      return this.props.loader?<Loader size={20} color={'primary'}/>:this.props.icon2=='text'?<Text style={styleApp.text}>{this.props.text2}</Text>:<AllIcons name={this.props.icon2} color={colors.title} size={this.props.sizeIcon2} type={this.props.typeIcon2} />
                       }}
                       click={() => this.props.clickButton2()}
                       color={'white'}

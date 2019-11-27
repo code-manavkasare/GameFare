@@ -71,10 +71,13 @@ class ProfilePage extends Component {
     return (
       <ButtonColor view={() => {
         return <Row style={{marginLeft:0,width:'100%'}}>
+          {
+          icon?
           <Col size={15} style={styleApp.center2}>
-          <AllIcons type='font' size={15} name={icon == 'logout'?'bicycle':icon} color={icon == 'logout'?colors.green:colors.title} /> 
-            
+            <AllIcons type='font' size={15} name={icon == 'logout'?'bicycle':icon} color={icon == 'logout'?colors.green:colors.grey} />    
           </Col>
+          :null
+          }
           <Col size={75} style={[styleApp.center2,{paddingLeft:0}]}>
             <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.green:colors.title}]}>{text}</Text>
           </Col>
@@ -200,8 +203,8 @@ class ProfilePage extends Component {
           <Text style={styleApp.smallText}>Legal</Text>
 
           <View style={[styleApp.divider2,{marginBottom:0}]} />
-          {this.button('file-contract','Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
-          {this.button('balance-scale','Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
+          {this.button(false,'Privacy policy','Alert',{},'url','https://www.getgamefare.com/privacy')}
+          {this.button(false,'Terms of service','Alert',{},'url','https://www.getgamefare.com/terms')}
           </View>
         </View>
 
