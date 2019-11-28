@@ -45,16 +45,6 @@ class Page3 extends Component {
     this.translateXFooter = new Animated.Value(0)
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Group summary',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton color={colors.title} name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
-      ),
-    }
-  };
   async componentDidMount() {
     console.log('page3 mount')
     console.log(this.props.navigation.getParam('data'))
@@ -147,13 +137,15 @@ class Page3 extends Component {
   }
   async submit(data) {
     this.setState({loader:true})
-    
+
+    var pictureUri = await this.uploadImage(data.img,pushEvent.key)
     var group = {
       ...data,
       info:{
         ...data.info,
         organizer:this.props.userID,
       },
+      pictures:[pictureUri],
       organizer:{
         userID:this.props.userID,
         name:this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname
@@ -164,22 +156,7 @@ class Page3 extends Component {
       console.log('event')
       console.log(group)
       var pushEvent = await firebase.database().ref('groups').push(group)
-      group.eventID = pushEvent.key
-      group.objectID = pushEvent.key
-      var uri = await this.uploadImage(data.img,pushEvent.key)
-      await firebase.database().ref('groups/' + pushEvent.key).update({'groupID':pushEvent.key,'pictures':[uri]})
-      var userGroup={
-          groupID:pushEvent.key,
-          status:'confirmed',
-          organizer:true,
-      }
-      group.pictures = [uri]
 
-      // var that = this
-      // setTimeout(function () {
-      //     firebase.database().ref('usersGroups/' + this.props.userID + '/' + pushEvent.key).update(userGroup)
-             
-      // }, 1000);
       try {
         await firebase.messaging().requestPermission();
         // User has authorised

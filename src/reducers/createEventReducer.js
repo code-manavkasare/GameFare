@@ -6,9 +6,35 @@ import {
 } from '../actions/types';
 
 const initialState = {
-    step0:{},
-    step1:{},
+    step0:{
+        sport:'',
+        league:'',
+        rule:'',
+    },
+    step1:{
+        level:-1,
+        levelOption:'equal',
+        gender:'mixed',
+        numberPlayers:1
+    },
     step2:{},
+    listGender:[{
+        "icon" : "venus-mars",
+        "text" : "Mixed",
+        "typeIcon" : "font",
+        "value" : "mixed"
+        }, {
+        "icon" : "venus",
+        "text" : "Female",
+        "typeIcon" : "font",
+        "value" : "female"
+        }, {
+        "icon" : "mars",
+        "text" : "Male",
+        "typeIcon" : "font",
+        "value" : "male"
+    }],
+    listLevelOption:[{value:'equal',text:'Only'},{value:'min',text:'And above'},{value:'max',text:'And below'}]
 }
 
 const createEventReducer =  (state=initialState,action) => {

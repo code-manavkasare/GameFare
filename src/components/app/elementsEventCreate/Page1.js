@@ -36,52 +36,6 @@ class Page1 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      private:false,
-      players:1,
-      groups:{},
-      levelFilter:{
-        text:"Joining",
-        value:'join',
-        type:'join',
-        expendable:true,
-        alwaysExpanded:true,
-        value:Object.values(this.props.sports[0].level.list)[0],
-        valueSelected:Object.values(this.props.sports[0].level.list)[0].value,
-        listExpend:Object.values(this.props.sports[0].level.list)
-      },
-      levelOption:{
-        text:"Joining",
-        value:'join',
-        type:'join',
-        expendable:true,
-        alwaysExpanded:true,
-        valueSelected:'equal',
-        listExpend:[{value:'equal',text:'Only'},{value:'min',text:'And above'},{value:'max',text:'And below'}]
-      },
-      genderFilter:{
-        text:"Gender",
-        value:'gender',
-        type:'gender',
-        expendable:true,
-        alwaysExpanded:true,
-        valueSelected:'mixed',
-        listExpend:[ {
-          "icon" : "venus-mars",
-          "text" : "Mixed",
-          "typeIcon" : "font",
-          "value" : "mixed"
-        }, {
-          "icon" : "venus",
-          "text" : "Female",
-          "typeIcon" : "font",
-          "value" : "female"
-        }, {
-          "icon" : "mars",
-          "text" : "Male",
-          "typeIcon" : "font",
-          "value" : "male"
-        } ]
-      },
     };
     this.translateYFooter = new Animated.Value(0)
     this.AnimatedHeaderValue = new Animated.Value(0)
@@ -89,65 +43,14 @@ class Page1 extends Component {
   }
   componentDidMount() {
     console.log('page 1 mount')
-    console.log(this.props.sports)
-    if (Object.values(this.props.step1).length != 0) {
-      this.setState(this.props.step1)
-    } else {
-      this.setState({
-        private:false,
-        players:1,
-        groups:{},
-        levelFilter:{
-          text:"Joining",
-          value:'join',
-          type:'join',
-          expendable:true,
-          alwaysExpanded:true,
-          value:Object.values(this.props.sports[0].level.list)[0],
-          valueSelected:Object.values(this.props.sports[0].level.list)[0].value,
-          listExpend:Object.values(this.props.sports[0].level.list)
-        },
-        levelOption:{
-          text:"Joining",
-          value:'join',
-          type:'join',
-          expendable:true,
-          alwaysExpanded:true,
-          valueSelected:'equal',
-          listExpend:[{value:'equal',text:'Only'},{value:'min',text:'And above'},{value:'max',text:'And below'}]
-        },
-        genderFilter:{
-          text:"Gender",
-          value:'gender',
-          type:'gender',
-          expendable:true,
-          alwaysExpanded:true,
-          valueSelected:'mixed',
-          listExpend:[ {
-            "icon" : "venus-mars",
-            "text" : "Mixed",
-            "typeIcon" : "font",
-            "value" : "mixed"
-          }, {
-            "icon" : "venus",
-            "text" : "Female",
-            "typeIcon" : "font",
-            "value" : "female"
-          }, {
-            "icon" : "mars",
-            "text" : "Male",
-            "typeIcon" : "font",
-            "value" : "male"
-          } ]
-        },
-      })
-    }
-
-    if (this.props.navigation.getParam('group') != undefined) {
-      this.setState({groups:{
-        [this.props.navigation.getParam('group').objectID]:this.props.navigation.getParam('group')
-      }})
-    }
+    console.log(this.props.navigation.getParam('sport').level)
+    console.log(this.props.step1)
+    this.props.createEventAction('setStep1',{...this.props.step1,level:this.props.navigation.getParam('sport').level.list[0].value})
+    console.log(this.props.navigation.getParam('sport').level.list[0])
+      if (this.props.step1.level == -1) {
+      console.log('lalalal')
+        this.props.createEventAction('setStep1',{...this.props.step1,level:this.props.navigation.getParam('sport').level.list[0].value})
+      }
   }
   async setStateSwitch (state,val) {
     await this.setState({[state]:val})
@@ -167,31 +70,30 @@ class Page1 extends Component {
       />
     )
   }
-  levelFilter() {
+  levelFilter(sport) {
+    console.log('level filter')
+    console.log(sport.level.list)
+    console.log(this.props.step1.level)
     return (
       <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
-          option = {this.state.levelFilter} 
-          tickFilter={(value) => {
-          var levelFilter = this.state.levelFilter
-          levelFilter.value = Object.values(this.props.sports[0].level.list).filter(level => level.value == value)[0]
-          levelFilter.valueSelected = value
-          this.setState({levelFilter:levelFilter})
-        }}
+          list={sport.level.list}
+          valueSelected = {this.props.step1.level} 
+          tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,level:data.value})}
       />
       </View>
     )
   }
   levelOption() {
+    console.log('level option')
+    console.log(this.props.listLevelOption)
+    console.log(this.props.step1.levelOption)
     return (
       <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
-          option = {this.state.levelOption} 
-          tickFilter={(value) => {
-          var levelOption = this.state.levelOption
-          levelOption.valueSelected = value
-          this.setState({levelOption:levelOption})
-        }}
+          list={this.props.listLevelOption}
+          valueSelected = {this.props.step1.levelOption} 
+          tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,levelOption:data.value})}
       />
       </View>
     )
@@ -200,38 +102,35 @@ class Page1 extends Component {
     return (
       <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
-          option = {this.state.genderFilter} 
-          tickFilter={(value) => {
-          var genderFilter = this.state.genderFilter
-          genderFilter.valueSelected = value
-          this.setState({genderFilter:genderFilter})
-        }}
+          list={this.props.listLevelOption}
+          valueSelected = {this.props.step1.gender} 
+          tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,gender:data.value})}
       />
       </View>
     )
   }
   plusMinus(state,maxValue,increment,minValue,icon) {
     var text = state
-    if (this.state[state]==1) text = state + 's'
+    if (this.props.step1[state]==1) text = state + 's'
     return(
       <Row style={{paddingLeft:20,paddingRight:20,height:60,borderBottomWidth:1,borderColor:colors.off}}>
         <Col size={10} style={styleApp.center2}>
           <AllIcons name={icon} color={colors.greyDark} size={17} type='font' />
         </Col>
         <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
-          <Text style={styleApp.input}>{this.state[state]} {this.state[state]==1?'player':'players'} <Text style={styleApp.regularText}>(total)</Text></Text>
+          <Text style={styleApp.input}>{this.props.step1[state]} {this.props.step1[state]==1?'player':'players'} <Text style={styleApp.regularText}>(total)</Text></Text>
         </Col>
         <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
-          if (this.state[state] != minValue) {
-            this.setState({[state]:this.state[state]-increment})
+          if (this.props.step1[state] != minValue) {
+            this.props.createEventAction('setStep1',{...this.props.step1,[state]:this.props.step1[state]-increment})
           }
         }} >
           <AllIcons name={'minus'} color={colors.title} size={15} type='font' />
         </Col>
         
         <Col size={10} style={styleApp.center} activeOpacity={0.7} onPress={() => {
-          if (this.state[state] != maxValue) {
-            this.setState({[state]:this.state[state]+increment})
+          if (this.props.step1[state] != maxValue) {
+            this.props.createEventAction('setStep1',{...this.props.step1,[state]:this.props.step1[state]+increment})
           }
         }} >
           <AllIcons name={'plus'} color={colors.title} size={15} type='font' />
@@ -276,7 +175,10 @@ class Page1 extends Component {
       />
     )
   }
-  page1() {
+  page1(sport) {
+    console.log('render page 1') 
+    console.log(sport)
+    // var level = Object.values(sport.level.list).filter(level => level.value == this.props.step1.level)[0]
       return (
         <View style={{marginTop:10,marginLeft:0,width:width}}>
             <View style={[styleApp.marginView,{marginBottom:15}]}>
@@ -284,12 +186,15 @@ class Page1 extends Component {
              
             </View>
 
-              {this.levelFilter()}
-              {this.state.levelFilter.valueSelected != 0?this.levelOption():null}
-              {this.plusMinus('players',200,1,1,'user-check')}
-              {this.gender()}
+            {this.levelFilter(sport)}
 
-            {/* <View style={{marginTop:25,borderTopWidth:1,borderColor:colors.off,height:1}} /> */}
+           
+              {this.props.step1.level != 0?this.levelOption():null}
+{/*    
+
+              {this.plusMinus('numberPlayers',200,1,1,'user-check')}
+              {this.gender()} */}
+ {/*
             {
               Object.values(this.state.groups).length!=0?
               Object.values(this.state.groups).map((group,i) => (
@@ -313,21 +218,23 @@ class Page1 extends Component {
             style={[{borderColor:colors.off,height:60,width:'100%',borderRadius:0,borderBottomWidth:1,marginTop:0}]}
             onPressColor={colors.off}
             />
-
+ */}
 
         </View>
       )
   }
-  async close () {
-    console.log('close')
-    await this.props.createEventAction('setStep1',this.state)
-    return this.props.navigation.goBack()
+  close () {
+    this.props.navigation.goBack()
   }
-  async next() {
-    await this.props.createEventAction('setStep1',this.state)
+  next() {
     return this.props.navigation.navigate('CreateEvent2',{page1:this.state,page0:this.props.navigation.getParam('page0')})
   }
   render() {
+    console.log('lw `111`')
+    console.log(this.props.step1)
+    if (this.props.step1.level == -1) return null
+
+    console.log('lw ewnswe')
     return (
       <View style={[styleApp.stylePage,{borderLeftWidth:1}]}>
          <HeaderBackButton 
@@ -344,7 +251,7 @@ class Page1 extends Component {
 
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={this.page1.bind(this)}
+          contentScrollView={() => this.page1(this.props.navigation.getParam('sport'))}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -375,6 +282,8 @@ const  mapStateToProps = state => {
     userConnected:state.user.userConnected,
     userID:state.user.userID,
     step1:state.createEventData.step1,
+    listGender:state.createEventData.listGender,
+    listLevelOption:state.createEventData.listLevelOption
   };
 };
 

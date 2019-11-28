@@ -16,6 +16,7 @@ import {historicSearchAction} from '../../../actions/historicSearchActions'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 import styleApp from '../../style/style'
 import colors from '../../style/colors'
+import MyGroups from './MyGroups'
 import Button from '../../layout/buttons/Button'
 import ButtonColor from '../../layout/Views/Button'
 
@@ -66,21 +67,21 @@ class HomeScreen extends React.Component {
     }
     messagePageView () {
       return (
-        <View style={{paddingTop:0,flex:1}}>
-                <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
+        <View style={{paddingTop:0,minHeight:height/1.5}}>
+                {/* <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
                   <View style={styleApp.marginView}>
                     <Text style={styleApp.title}>My groups</Text>
 
                   </View>
                   
-                </View>
-          {/* <EventFromGroups 
+                </View> */}
+          <MyGroups 
             navigate={this.navigate.bind(this)} 
             navigate1={(val,data) => this.props.navigation.navigate(val,data)}
             loader={this.state.loader}
             onRef={ref => (this.eventGroupsRef = ref)} 
           />
-
+{/* 
           <ListEvents
            location={this.state.location} 
            sportSelected={this.props.sportSelected}
@@ -103,7 +104,7 @@ class HomeScreen extends React.Component {
     }
     async refresh () {
       // this.eventGroupsRef.reload()
-      // this.listEventsRef.reload()
+      this.eventGroupsRef.reload()
       return true
     }
     async setLocation(data) {
@@ -150,7 +151,7 @@ class HomeScreen extends React.Component {
           clickButton1={() =>  this.props.navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}
           
           offsetBottom={100}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
 
         <Animated.View style={[styleApp.voile,{opacity:this.opacityVoile,transform:[{translateX:this.translateXVoile}]}]}/>

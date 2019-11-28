@@ -29,9 +29,7 @@ export default class Button extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      backgroundColorAnimation:new Animated.Value(0),
       loader:false,
-      img:''
     };
     this.AnimatedButton = new Animated.Value(1);
   }
@@ -39,19 +37,16 @@ export default class Button extends Component {
     await this.setState({loader:true})
     console.log('loader set')
     if (val == 'take') {
-      
+      var uri = await takePicture()
     } else if (val == 'pick') {
-      this.setState({loader:true})
       var uri = await pickLibrary()
-      
     }
     if (!uri) return this.setState({loader:false})
     const uriResized = await resize(uri)
     if (!uriResized) return this.setState({loader:false})
 
-    // this.props.navigation.navigate('CreateGroup0')
-    this.setState({img:uriResized,loader:false})
-    this.props.setState({img:uriResized})
+    await this.props.setState(uriResized)
+    this.setState({loader:false})
   }
   render() {  
     return (
@@ -61,14 +56,14 @@ export default class Button extends Component {
               {   
               this.state.loader?
               <ActivityIndicator size="small" color={colors.title} />
-              :this.state.img==''?
+              :this.props.img==''?
               <View style={styleApp.center}>
                 <AllIcons name={'image'} size={18} color={colors.grey} type='font'/>
                 <Text style={[styleApp.input,{marginTop:8}]}>Add picture</Text>
               </View>
               :
               <FadeInView duration={200} style={{height:'100%',width:'100%'}}>
-                <Image source={{uri:this.state.img}} style={{height:'100%',width:'100%'}} />
+                <Image source={{uri:this.props.img}} style={{height:'100%',width:'100%'}} />
               </FadeInView>
             }
           </View>

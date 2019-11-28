@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
-import {eventsAction} from '../../../actions/eventsActions'
+import {groupsAction} from '../../../actions/groupsActions'
 
 const { height, width } = Dimensions.get('screen')
 import colors from '../../style/colors'
@@ -22,7 +22,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import FadeInView from 'react-native-fade-in-view';
 import Switch from '../../layout/switch/Switch'
 
-import CardEvent from './CardEventSM'
+import CardGroup from './CardGroup'
 import {timing,native} from '../../animations/animations'
 import {indexGroups,indexEvents,indexPastEvents} from '../../database/algolia'
 
@@ -47,59 +47,60 @@ class ListEvents extends React.Component {
     this.props.onRef(this)
     console.log('le time stamt !!!')
     console.log(Number(new Date()))
-    console.log(this.props.futureEvents)
-    return this.loadEvent(this.state.past,this.props.sportSelected,this.props.leagueSelected)
+    console.log(this.props.mygroups)
+    return this.loadEvent(this.props.sportSelected,this.props.leagueSelected)
   }
   async reload() {
-    return this.loadEvent(this.state.past,this.props.sportSelected,this.props.leagueSelected)
+    return this.loadEvent(this.props.sportSelected,this.props.leagueSelected)
   }
   async componentWillReceiveProps(nextProps) {
     if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true || this.props.sportSelected != nextProps.sportSelected || this.props.leagueSelected != nextProps.leagueSelected) {
-      this.loadEvent(this.state.past,nextProps.sportSelected,nextProps.leagueSelected)
+      this.loadEvent(nextProps.sportSelected,nextProps.leagueSelected)
     }
   }
-  async getEvents (filters) {
-      var futureEvents = await indexEvents.search({
+  async getGroups (filters) {
+      var mygroups = await indexGroups.search({
         query:'',
         filters:filters,
       })
-      return futureEvents.hits
+      return mygroups.hits
   }
-  async loadEvent(past,sport,league,) {
+  async loadEvent(sport,league,) {
     console.log('on reload')
     await this.setState({loader1:true})
 
-    indexEvents.clearCache()
-    var filterSport = 'info.sport:' + sport 
-    var filterLeague = ' AND info.league:' + league
+    indexGroups.clearCache()
+    var filterSport = ' AND info.sport:' + sport 
+    // var filterLeague = ' AND info.league:' + league
     if (league == 'all') {
       filterLeague = ''
     }
-    var filterAttendees = ' AND allAttendees:' + this.props.userID + ' OR allCoaches:' + this.props.userID + ' OR info.organizer:' + this.props.userID 
-    var filters = filterSport + filterAttendees + filterLeague
+    console.log(this.props.userID)
+    console.log(sport)
+    var filterOrganizer='info.organizer:' + this.props.userID 
+    var filters = filterOrganizer + filterSport
 
-    var filterDate =' AND date_timestamp>' + Number(new Date())
-    var futureEvents = await this.getEvents (filters + filterDate) 
+    // var filterDate =' AND date_timestamp>' + Number(new Date())
+    //var mygroups = await this.getGroups (filters) 
+    console.log('myGroups')
+   //console.log(mygroups)
+    // filterDate =' AND date_timestamp<' + Number(new Date())
+    // var pastEvents = await this.getEvents (filters + filterDate) 
 
-    filterDate =' AND date_timestamp<' + Number(new Date())
-    var pastEvents = await this.getEvents (filters + filterDate) 
+    //await  this.props.groupsAction('setMygroups',mygroups)
 
-    await  this.props.eventsAction('setAllUserEvents',{futureEvents:futureEvents,pastEvents:pastEvents})
     this.setState({loader1:false})
    
   }
-  openEvent(event) {
-    // if (!event.info.public) {
-    //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
-    // }
-    console.log('openEvent')
-    console.log(event)
-    return this.props.navigate('Event',{data:event,pageFrom:'Home'})
+  openGroup(group) {
+    console.log('click group')
+    console.log(group)
+    return this.props.navigate('Group',{data:group,pageFrom:'ListGroups'})
   }
   async setSwitch(state,val) {
-    await this.setState({[state]:val})
+    // await this.setState({[state]:val})
     // await this.translateViews(val)
-    return true
+    return false
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
     return (
@@ -131,40 +132,44 @@ class ListEvents extends React.Component {
     console.log('display future events')
     console.log(events)
     return Object.values(events).map((event,i) => (
-      <CardEvent userCard={false} key={i} loadData={false} homePage={true} openEvent={(event) => this.openEvent(event)} item={event} data={event}/>
+      <CardGroup userCard={false} key={i} loadData={false} homePage={true} openGroup={(group) => this.openGroup(group)} item={event} data={event}/>
     ))
   }
   ListEvent () {
+    console.log('My groups')
+    console.log(this.props.mygroups)
     if (!this.props.userConnected) return null
     var numberPast = ''
     var numberFuture = ''
     if (!this.state.loader1) {
-      numberPast = ' ('+this.props.pastEvents.length + ')'
-      numberFuture = ' ('+this.props.futureEvents.length + ')'
+      // numberPast = ' ('+this.props.mygroups.length + ')'
+      // numberFuture = ' ('+this.props.mygroups.length + ')'
     }
+
     return (
-      <View style={{marginTop:20}}>
+      <View style={{marginTop:0}}>
         <View style={[styleApp.marginView,{marginBottom:25}]}>
 
-        <Text style={[styleApp.input,{marginBottom:15,marginLeft:0,fontSize:22}]}>My events</Text>
-        {this.switch('Upcoming' + numberFuture,'Past' + numberPast)}
+        <Text style={[styleApp.input,{marginBottom:25,marginLeft:0,fontSize:22}]}>My groups</Text>
+        {this.switch('All' + numberFuture,'Past' + numberPast)}
         </View>
 
-        <View style={{flex:1,marginTop:-5}}>
+        <View style={{flex:1,marginTop:0}}>
         <Animated.View style={{height:200,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader1}
-        events={this.props.futureEvents}
+        events={this.props.mygroups}
         height={180}
-        messageNoEvent = {"You haven't subscribe to any event."}
-        content={() => this.listEvents(this.props.futureEvents)}
-        openEvent={(event) => this.openEvent(event)}
+        placeHolder={styleApp.cardGroup}
+        messageNoEvent = {"You haven't joined any group yet."}
+        content={() => this.listEvents(this.props.mygroups)}
+        // openEvent={(group) => this.openGroup(group)}
         onRef={ref => (this.scrollViewRef1 = ref)}
         />
         </Animated.View>
 
         <Animated.View style={{height:200,backgroundColor:'white',position:'absolute',top:0,transform:[{translateX:this.translateXView2}]}}>
-        <ScrollViewX 
+        {/* <ScrollViewX 
         height={180}
         loader={this.state.loader1}
         events={this.props.pastEvents}
@@ -172,7 +177,7 @@ class ListEvents extends React.Component {
         content={() => this.listEvents(this.props.pastEvents)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef2 = ref)}
-        />
+        /> */}
         </Animated.View>
         </View>
        
@@ -185,37 +190,14 @@ class ListEvents extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  text:{
-    fontFamily:'OpenSans-SemiBold',
-    color:colors.title
-  },
-  cardSport:{
-    backgroundColor:'red',
-    shadowColor: '#46474B',
-      shadowOffset: { width: 2, height: 0 },
-      shadowRadius: 20,
-      shadowOpacity: 0.3,
-    marginRight:0,
-    overflow:'hidden',
-    height:170,
-    marginRight:10,
-    borderRadius:10,
-    borderWidth:0.3,
-    borderColor:colors.borderColor,
-    width:220
-  }
-});
-
 const  mapStateToProps = state => {
   return {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
     sportSelected:state.historicSearch.sport,
     leagueSelected:state.historicSearch.league,
-    futureEvents:state.events.futureUserEvents,
-    pastEvents:state.events.pastUserEvents
+    mygroups:state.groups.mygroups
   };
 };
 
-export default connect(mapStateToProps,{eventsAction})(ListEvents);
+export default connect(mapStateToProps,{groupsAction})(ListEvents);

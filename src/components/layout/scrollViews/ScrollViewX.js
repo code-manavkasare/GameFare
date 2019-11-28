@@ -73,7 +73,7 @@ export default class ScrollViewPage extends PureComponent {
       {
       this.props.loader?
       [0,1,2,3].map((event,i) => (
-        <View key={i} style={[styleApp.cardEventSM,{backgroundColor:'white'}]} >
+        <View key={i} style={[this.props.placeHolder != undefined?this.props.placeHolder:styleApp.cardEventSM,{backgroundColor:'white'}]} >
           <PlaceHolder />
         </View>
       ))

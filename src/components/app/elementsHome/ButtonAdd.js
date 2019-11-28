@@ -83,7 +83,7 @@ export default class ButtonAdd extends React.Component {
           </TouchableOpacity>
 
           <ButtonColor view={() => {
-                return <AllIcons name='suitcase' color={colors.blue} size={18} type='font' />
+                return <AllIcons name='suitcase' color={colors.blue} size={18} type='moon' />
               }}
               click={() => this.open(!this.state.open,'group')}
               color={'white'}

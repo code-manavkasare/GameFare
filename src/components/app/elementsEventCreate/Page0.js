@@ -9,22 +9,21 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {createEventAction} from '../../../actions/createEventActions'
+
+
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
-import Switch from '../../layout/switch/Switch'
 
-import BackButton from '../../layout/buttons/BackButton'
-import Button from '../../layout/buttons/Button'
-import ButtonOff from '../../layout/buttons/ButtonOff'
+import Switch from '../../layout/switch/Switch'
 import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
 import ButtonRound from '../../layout/buttons/ButtonRound'
+import Button from '../../layout/buttons/Button'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 
 import ScrollView from '../../layout/scrollViews/ScrollView2'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import AllIcons from '../../layout/icons/AllIcons'
-import {date} from '../../layout/date/date'
 import Communications from 'react-native-communications';
 
 import sizes from '../../style/sizes'
@@ -35,7 +34,6 @@ class Page0 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialLoader:true
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
@@ -44,129 +42,83 @@ class Page0 extends Component {
     // return false
     return true
   }
+  
   async componentDidMount() {
     console.log('page 1 mount')
-    console.log(this.state.sportsFilter)
-    console.log('llalalalala')
     console.log(this.props.step0)
-    if (Object.values(this.props.step0).length != 0) {
-      this.setState(this.props.step0)
-    } else {
-      this.setState({
-        initialLoader:false,
-        coach:this.props.infoUser.coach && this.props.infoUser.coachVerified?true:false,
-        coachNeeded:false,
-        joiningFee:'',
-        free:false,
-        sportsFilter:{
-          value:Object.values(this.props.sports)[0],
-          valueSelected:Object.values(this.props.sports)[0].value,
-          listExpend:Object.values(this.props.sports)
-        },
-        leagueFilter:{
-          valueSelected:Object.values(this.props.sports)[0].typeEvent[0].value,
-          value:Object.values(this.props.sports)[0].typeEvent[0],
-          listExpend:Object.values(this.props.sports)[0].typeEvent
-        },
-        rulesFilter:{
-          valueSelected:Object.values(this.props.sports)[0].rules[0].value,
-          value:Object.values(this.props.sports)[0].rules[0],
-          listExpend:Object.values(this.props.sports)[0].rules
-        }})
+    if (this.props.step0.sport == ''){
+      this.setSport(this.props.sports[0])
     }
-    
-    // if (this.props.navigation.getParam('sport')!= undefined) {
-    //   this.setState({
-    //     sportsFilter:{
-    //       ...this.state.sportsFilter,
-    //       value:this.props.navigation.getParam('sport'),
-    //       valueSelected:this.props.navigation.getParam('sport').value,
-    //     }
-    //     ,
-    //     rulesFilter:{
-    //       ...this.state.rulesFilter,
-    //       value:this.props.navigation.getParam('sport').rules[0],
-    //       valueSelected:this.props.navigation.getParam('sport').rules[0].value,
-    //       listExpend:this.props.navigation.getParam('sport').rules
-    //     }
-    //   })
-    // }
   }
+  async setSport(data) {
+    console.log('ici spot')
+    await this.props.createEventAction('setStep0',{
+      ...this.props.step0,
+      sport:data.value,
+      rule:data.typeEvent[0].rules[0].value,
+      level:data.level.list[0].value,
+      league:data.typeEvent[0].value
+    })
+    return true
+  }
+
+  async setLeague(data) {
+    console.log('ici spot')
+    await this.props.createEventAction('setStep0',{
+      ...this.props.step0,
+      rule:data.rules[0].value,
+      league:data.value
+    })
+    return true
+  }
+
+  async setRule(data) {
+    console.log('ici spot')
+    await this.props.createEventAction('setStep0',{
+      ...this.props.step0,
+      rule:data.value,
+    })
+    return true
+  }
+
+
   sports() {
     console.log('le re render !')
     console.log(this.props.sports)
     return (
       <View style={{borderColor:colors.off,borderBottomWidth:1}}>
       <ExpandableCard 
-          option = {this.state.sportsFilter} 
+          list={this.props.sports}
+          valueSelected={this.props.step0.sport}
           image={true}
-
-          tickFilter={(value) => {
-          var sportsFilter = this.state.sportsFilter
-          sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
-          sportsFilter.valueSelected = value
-          console.log('le sport')
-          console.log(value)
-          this.setState({
-            sportsFilter:sportsFilter,
-            rulesFilter:{
-              valueSelected:sportsFilter.value.rules[0].value,
-              value:sportsFilter.value.rules[0],
-              listExpend:sportsFilter.value.rules
-            },
-          })
-        }}
+          tickFilter={(value) => this.setSport(value)}
       />
 
       </View>
     )
   }
-  leagues() {
-    console.log('le re render !')
-    console.log(this.props.sports)
+  leagues(sport) {
+    console.log('le re renderleagues !')
     return (
       <View style={{borderColor:colors.off,borderBottomWidth:1}}>
       <ExpandableCard 
-          option = {this.state.leagueFilter} 
+          list={sport.typeEvent} 
+          valueSelected={this.props.step0.league}
           image={true}
-          
-          tickFilter={(value) => {
-          var leagueFilter = this.state.leagueFilter
-          leagueFilter.value = Object.values(this.props.sports).filter(sport => sport.value == this.state.sportsFilter.valueSelected)[0].typeEvent.filter(item => item.value == value)[0]
-          leagueFilter.valueSelected = value
-          console.log('le sport')
-          console.log(value)
-          this.setState({
-            leagueFilter:leagueFilter,
-            rulesFilter:{
-              valueSelected:leagueFilter.value.rules[0].value,
-              value:leagueFilter.value.rules[0],
-              listExpend:leagueFilter.value.rules
-            },
-          })
-        }}
+          tickFilter={(value) => this.setLeague(value)}
       />
 
       </View>
     )
   }
-  rules() {
+  rules(sport) {
     return (
       <View style={{borderColor:colors.off,borderBottomWidth:1}}>
       <ExpandableCard 
-          option = {this.state.rulesFilter} 
-          // listExpend={this.state.rulesFilter.listExpend}
-          tickFilter={(value) => {
-          var rulesFilter = this.state.rulesFilter
-          rulesFilter.valueSelected = value
-          rulesFilter.value = Object.values(this.state.sportsFilter.value.rules).filter(rule => rule.value == value)[0]
-          console.log('le sport')
-          console.log(value)
-          this.setState({
-            rulesFilter:rulesFilter,
-          })
-        }}
-        // listExpend={Object.values(this.props.sports)}
+          list={sport.typeEvent.filter(league => league.value == this.props.step0.league)[0].rules} 
+          valueSelected={this.props.step0.rule}
+          // image={true}
+          tickFilter={(value) => this.setRule(value)}
       />
       </View>
     )
@@ -286,16 +238,18 @@ class Page0 extends Component {
       />
     )
   }
-  page0() {
+  page0(sport,league,rule) {
+    console.log('render page 0')
+    // var rule = sport.typeEvent.filter(league => league.value == this.props.step.league)[0].rules.filter(rule => rule.value == this.props.step0.rule)[0].coachNeeded
       return (
         <View >
 
           {this.sports()}
-          {this.leagues()}
-          {this.rules()}
+          {this.leagues(sport)}
+          {this.rules(sport)}
 
           {
-          this.state.rulesFilter.value.coachNeeded != false?
+          rule.coachNeeded != false?
           <View style={[styleApp.marginView,{marginTop:20}]}>
 
           <Text style={[styleApp.title,{marginBottom:20}]}>I am a...</Text>
@@ -342,16 +296,22 @@ class Page0 extends Component {
     }
     return this.state.player
   }
-  async close () {
-    console.log('close')
-    await this.props.createEventAction('setStep0',this.state)
-    return this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))
+  close () {
+    this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))
   }
-  async next() {
-    await this.props.createEventAction('setStep0',this.state)
-    return this.props.navigation.navigate('CreateEvent1',{page0:{...this.state,player:this.valuePlayer()},group:this.props.navigation.getParam('group')})
+  next(sport) {
+    this.props.navigation.navigate('CreateEvent1',{group:this.props.navigation.getParam('group'),sport:sport})
   }
   render() {
+    if (this.props.step0.sport == '') return null
+    var sport = this.props.sports.filter(sport => sport.value == this.props.step0.sport)[0]
+    var league = Object.values(sport.typeEvent).filter(item => item.value == this.props.step0.league)[0]
+    var rule = Object.values(league.rules).filter(rule => rule.value == this.props.step0.rule)[0]
+    console.log('le sport page 0')
+    console.log(sport)
+    console.log(league)
+    console.log(rule)
+    // return null
     return (
       <View style={[styleApp.stylePage]}>
 
@@ -372,29 +332,41 @@ class Page0 extends Component {
           onRef={ref => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           
-          contentScrollView={() => this.state.initialLoader?null:this.page0()}
+          contentScrollView={() => this.page0(sport,league,rule)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={180}
           showsVerticalScrollIndicator={false}
         />
         
-        {
-          this.conditionOn()?
-          <ButtonRound
-          icon={'next'} 
-          onPressColor={colors.greenLight}
-          enabled={this.conditionOn()}
-          loader={false} 
-          click={() => this.next()}
-         />
-         :
-         <ButtonRoundOff
-          icon={'next'} 
-          enabled={this.conditionOn()}
-          loader={false} 
-         />
-        }
+
+        <View style={styleApp.footerBooking}>
+          <View style={styleApp.marginView}>
+          {
+            this.conditionOn()?
+            <Button
+            text='Next'
+            backgroundColor={'green'}
+            onPressColor={colors.greenLight}
+            enabled={this.conditionOn()}
+            loader={this.state.loader} 
+            click={() => this.next(sport)}
+          />
+          :
+          <Button
+            icon={'Next'} 
+            text='Next'
+            backgroundColor={'green'}
+            styleButton={{borderWidth:1,borderColor:colors.grey}}
+            disabled={true}
+            onPressColor={colors.greenLight}
+            loader={false} 
+          />
+          }
+          </View>
+        
+        </View>
+
         
 
       </View>

@@ -43,26 +43,40 @@ export default styles = StyleSheet.create({
       shadowColor: '#46474B',
       shadowOffset: { width: 0, height: 0 },
       shadowRadius: 60,
-      shadowOpacity: 1,
+      shadowOpacity: 0.5,
       marginRight:0,
       overflow:'hidden',
-      height:180,
+      height:190,
       width:220,
       
       marginRight:10,
-      paddingLeft:10,paddingRight:10,paddingTop:10,paddingBottom:10,
+      paddingLeft:10,paddingRight:10,
+      paddingTop:10,
+      paddingBottom:10,
 
-      borderRadius:9,
-      borderWidth:1.5,
+      borderRadius:4,
+      borderWidth:1,
       borderColor:colors.off,
-
-      
-
-
+    },
+    cardGroup:{
+      backgroundColor:'white',
       shadowColor: '#46474B',
-      shadowOffset: { width: 2, height: 0 },
-      shadowRadius: 7,
-      shadowOpacity: 0.3,
+      shadowOffset: { width: 0, height: 0 },
+      shadowRadius: 60,
+      shadowOpacity: 0.5,
+      marginRight:0,
+      overflow:'hidden',
+      height:190,
+      width:200,
+      
+      marginRight:10,
+      // paddingLeft:10,paddingRight:10,
+      // paddingTop:10,
+      paddingBottom:10,
+
+      borderRadius:4,
+      borderWidth:1,
+      borderColor:colors.off,
     },
     title:{
       fontSize:22,

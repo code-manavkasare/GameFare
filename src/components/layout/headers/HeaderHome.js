@@ -160,7 +160,7 @@ class HeaderHome extends Component {
         <ButtonColor key={i} view={() => {
           return <Row >
             <Col size={25} style={[styleApp.center2,{paddingLeft:0,}]}>
-              <AsyncImage style={{height:40,width:40,borderRadius:20,}} mainImage={league.icon} imgInitial={league.img.icon} />
+              <AsyncImage style={{height:37,width:37,borderRadius:20,}} mainImage={league.icon} imgInitial={league.img.icon} />
               
             </Col>
             <Col size={75} style={[styleApp.center2,{paddingLeft:0}]}>

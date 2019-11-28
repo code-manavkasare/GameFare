@@ -4,6 +4,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 
+import firebase from 'react-native-firebase'
 import {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
@@ -51,12 +52,22 @@ async function resize(uri){
 async function takePicture() {
     var permissionVal = await permission('camera')
     if (!permissionVal) return false
-    var image = await ImagePicker.launchCamera(options)
-    if (!image.uri) {
-        return false
-    }
-    var uri = await this.resize(image.uri)
-    return uri
+
+    let promise = new Promise(function(resolve, reject) {
+        // executor (the producing code, "singer")
+        ImagePicker.launchCamera(options, response => {    
+            console.log('image')
+            console.log(response)
+            if (!response.uri) {
+                resolve(false)
+            }
+            // var uri = await this.resize(response.uri)
+            resolve(response.uri)
+        })
+        
+    });
+
+    return promise
 }
 
 async function pickLibrary() {
@@ -81,6 +92,21 @@ async function pickLibrary() {
 
 }
 
+async function uploadPictureFirebase  (localUri,destination) {
+    console.log('start upload picture')
+    try {
+        let imageName = 'groupPicture'
+        const imageRef = firebase.storage().ref(destination).child(imageName)
+        await imageRef.put(localUri, { contentType: 'image/jpg' })
+        var url = imageRef.getDownloadURL()
+        return url
+      } catch (error) {
+        console.log('error upload')
+        console.log(error)
+        return false
+      }
+}
+
 
   
-module.exports = {takePicture,pickLibrary,resize};
+module.exports = {takePicture,pickLibrary,resize,uploadPictureFirebase};

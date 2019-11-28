@@ -43,7 +43,6 @@ import Contacts from '../app/elementsEventCreate/elementsContacts/Contacts'
 import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact'
 
 import CreateGroup0 from '../app/elementsGroupCreate/Page0'
-import CreateGroup1 from '../app/elementsGroupCreate/Page1'
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector'
 import DateSelector from '../app/elementsEventCreate/DateSelector'
@@ -90,7 +89,6 @@ const CreateEventNavigator = createStackNavigator(
 const CreateGroupNavigator = createStackNavigator(
     {
         CreateGroup0:CreateGroup0,
-        CreateGroup1:CreateGroup1,
     },
     {
         initialRouteName:'CreateGroup0',
@@ -288,7 +286,7 @@ const MainApp = createBottomTabNavigator(
         },
       }),   
       tabBarOptions: {
-        activeTintColor: colors.primary,
+        activeTintColor: colors.primary2,
         inactiveTintColor: colors.title,
         showLabel:false,
         style: [styles.shade,{

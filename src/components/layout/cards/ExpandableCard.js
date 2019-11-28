@@ -32,7 +32,7 @@ export default class ExpandableCard extends Component {
           expanded:false,
           heightCard: new Animated.Value(this.initialHeight()),
           heightDropDown:new Animated.Value(55),
-          listExpend:this.props.option.listExpend
+          // listExpend:this.props.option.listExpend
         };
         this.componentWillMount = this.componentWillMount.bind(this);
         this.heightCard = new Animated.Value(this.initialHeight());
@@ -81,12 +81,12 @@ export default class ExpandableCard extends Component {
     async expand(listExpend) {
       if (this.open == 0) {
         await Animated.parallel([
-          Animated.timing(this.rotateIcon, native(1,150)),
+          Animated.timing(this.rotateIcon, native(1,80)),
           Animated.timing(this.state.heightDropDown, timing(listExpend.length*55,130))
         ]).start(() => this.open = 1)
       } else {
         await Animated.parallel([
-          Animated.timing(this.rotateIcon, native(0,150)),
+          Animated.timing(this.rotateIcon, native(0,80)),
           Animated.timing(this.state.heightDropDown, timing(55,130))
         ]).start(() => this.open = 0)
       }
@@ -107,13 +107,12 @@ export default class ExpandableCard extends Component {
     }
     async expandClose (option){
       if (option.locked != true) {
-        this.expand()
-        this.props.tickFilter(option.value)
-        // var that = this
-        // setTimeout(function(){
-        //  that.props.tickFilter(option.value)
-        // }, 100)
+        await this.expand()
+        if (option.value != this.props.valueSelected) {
+          this.props.tickFilter(option)
+        }
       }
+      return true
     }
     openAlert(option) {
       NavigationService.navigate('Alert',{close:true,textButton:'Close',title:option.title,subtitle:option.subtitle,icon:<AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />})
@@ -124,7 +123,7 @@ export default class ExpandableCard extends Component {
       return (
         <ButtonColor key={i} view={() => {
           return <Row style={{height:55}}>
-            <Col size={10} style={styleApp.center2}>
+            <Col size={15} style={styleApp.center}>
             {
               this.props.image?
               <AsyncImage style={{height:27,width:27,borderRadius:13.5,}} mainImage={item.icon} imgInitial={item.icon} />
@@ -134,8 +133,8 @@ export default class ExpandableCard extends Component {
               <AllIcons type='mat' name="check" color={colors.greyDark} size={17} />
             }
             </Col>
-            <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
-              <Text style={[styleApp.input,{color:this.props.option.valueSelected == 'anyone'?'#C7C7CC':colors.title}]}>{this.textValue(item)}</Text>
+            <Col size={60} style={[styleApp.center2,{paddingLeft:10}]}>
+              <Text style={[styleApp.input,{color:this.props.valueSelected == 'anyone'?'#C7C7CC':colors.title}]}>{this.textValue(item)}</Text>
             </Col>
             <Col size={15} style={styleApp.center} activeOpacity={item.title !=undefined?0.7:1} onPress={() => item.title !=undefined?this.openAlert(item):null}>
             {
@@ -148,7 +147,7 @@ export default class ExpandableCard extends Component {
            
             <Col size={10} style={[styleApp.center]}>
               {
-                i==0 && this.props.option.listExpend.filter(option => option.value!= this.props.option.valueSelected).length != 0?
+                i==0 && this.props.list.filter(option => option.value!= this.props.valueSelected).length != 0?
                 <AnimatedIcon name='caret-down' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
                 :null
               } 
@@ -168,12 +167,13 @@ export default class ExpandableCard extends Component {
       outputRange: ['0deg','180deg']
     })
     console.log('listExpend')
-    console.log(this.props.option.listExpend)
+    console.log(this.props.list)
+    console.log(this.props.valueSelected)
     return (  
       <Animated.View style={[{borderColor:colors.off,height:this.state.heightDropDown,borderBottomWidth:0,overflow:'hidden'}]}>
-        {this.buttonSport(spin,this.props.option.listExpend.filter(option => option.value == this.props.option.valueSelected)[0],0,() => this.expand(this.props.option.listExpend))}
+        {this.buttonSport(spin,this.props.list.filter(option => option.value == this.props.valueSelected)[0],0,() => this.expand(this.props.list))}
 
-        {this.props.option.listExpend.filter(option => option.value!= this.props.option.valueSelected).map((option,i) => (
+        {this.props.list.filter(option => option.value!= this.props.valueSelected).map((option,i) => (
           this.buttonSport(spin,option,i+1,() => this.expandClose(option))
         ))}
 

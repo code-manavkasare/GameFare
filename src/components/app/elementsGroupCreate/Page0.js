@@ -2,74 +2,64 @@ import React, {Component} from 'react';
 import { 
     View, 
     Text,
-    TouchableOpacity,
     StyleSheet,
     Dimensions,TextInput,
     Animated,
     Image
 } from 'react-native';
 import {connect} from 'react-redux';
+import {createGroupAction} from '../../../actions/createGroupActions'
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
-import ButtonRoundOff  from '../../layout/buttons/ButtonRoundOff'
-import ButtonRound from '../../layout/buttons/ButtonRound'
+
+import Button  from '../../layout/buttons/Button'
 import ButtonColor from '../../layout/Views/Button'
 import ButtonAddImage from '../../layout/buttons/ButtonAddImage'
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
-
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import ExpandableCard from '../../layout/cards/ExpandableCard'
 import Switch from '../../layout/switch/Switch'
 import TextField from '../../layout/textField/TextField'
 import AllIcons from '../../layout/icons/AllIcons'
-import {date} from '../../layout/date/date'
 import Communications from 'react-native-communications';
 
 import sizes from '../../style/sizes'
 import colors from '../../style/colors'
 import styleApp from '../../style/style'
-import UploadImage from '../../layout/image/UploadImage';
-import FadeInView from 'react-native-fade-in-view';
+
+import {createGroup} from '../../functions/createGroup'
 
 class Page0 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      private:false,
-      name:'',
-      img:'',
-      location:{address:''},
-      description:'',
-      sportsFilter:{
-        text:"Sports",
-        value:'sports',
-        type:'sports',
-        expendable:true,
-        alwaysExpanded:true,
-        value:Object.values(this.props.sports)[0],
-        valueSelected:Object.values(this.props.sports)[0].value,
-        listExpend:Object.values(this.props.sports)
-      },
+      loader:false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
   componentDidMount() {
     console.log('page 1 mount')
-    console.log(this.state.sportsFilter)
+    console.log(this.props.createGroupData)
+    if (this.props.createGroupData.info.sport == '') {
+      console.log('set balue')
+      console.log(this.props.sports[0].value)
+      this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,sport:this.props.sports[0].value})
+    }
   }
   sports() {
+    console.log('this.props.createGroupData.info.sport')
+    console.log(this.props.createGroupData.info.sport)
+    console.log(this.props.sports)
+    
+    // return null
     return (
       <ExpandableCard 
-          option = {this.state.sportsFilter} 
+          valueSelected = {this.props.createGroupData.info.sport} 
           image={true}
+          list={this.props.sports}
           tickFilter={(value) => {
-          var sportsFilter = this.state.sportsFilter
-          sportsFilter.value = Object.values(this.props.sports).filter(sport => sport.value == value)[0]
-          sportsFilter.valueSelected = value
-          this.setState({
-            sportsFilter:sportsFilter,
-          })
+            this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,sport:value})
         }}
       />
     )
@@ -81,7 +71,7 @@ class Page0 extends Component {
     this.props.navigation.navigate('CreateEvent0')
   }
   async setAccess(state,val) {
-    await this.setState({[state]:val})
+    await this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,[state]:val})
     return true
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -93,7 +83,7 @@ class Page0 extends Component {
         height={50}
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
-        state={this.state[state]}
+        state={this.props.createGroupData.info[state]}
         setState={(val) => this.setAccess(state,val)}
       />
     )
@@ -107,8 +97,8 @@ class Page0 extends Component {
             ref={(input) => { this.nameInput = input }}
             underlineColorAndroid='rgba(0,0,0,0)'
             autoCorrect={true}
-            onChangeText={text => this.setState({name:text})}
-            value={this.state.name}
+            onChangeText={text => this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,name:text})}
+            value={this.props.createGroupData.info.name}
           />
     )
   }
@@ -123,22 +113,13 @@ class Page0 extends Component {
             autoCorrect={true}
             multiline={true}
             blurOnSubmit={true}
-            onChangeText={text => this.setState({description:text})}
-            value={this.state.description}
+            onChangeText={text => this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,description:text})}
+            value={this.props.createGroupData.info.description}
           />
     )
   }
-  setImage(img, resized){
-    // this.state.importedPicture = img
-    console.log("this is now the charting pic")
-    console.log(resized)
-    var uri = resized
-    if (Platform.OS == 'ios' && uri) resized = resized.substr(7)
-    this.setState({img: resized})
-    console.log(this.state)
-  }
   async setLocation(data) {
-    await this.setState({location:data})
+    await this.props.createGroupAction('setLocationCreateGroup',data)
     this.props.navigation.navigate('CreateGroup0')
   }
   button(icon,component,click,img) {
@@ -168,64 +149,60 @@ class Page0 extends Component {
       />
     )
   }
-  selectImageButton() {
-    return (
-      <ButtonAddImage setState={(val) => this.setState(val)}/>
-    )
-  }
   textPrivate() {
     if (this.state.private) return 'You will have to invite your members after creating your group.'
     return 'Anyone will be able to join your group.'
   }
+  async setImg (img) {
+    await this.props.createGroupAction('setImgCreateGroup',img)
+    return true
+  }
   page0() {
       return (
         <View style={{marginTop:0,marginLeft:0,width:width}}>
-          {this.selectImageButton()}
+          <ButtonAddImage setState={(val) => this.setImg(val)} img={this.props.createGroupData.img}/>
  
           <View style={{marginBottom:10}}>
             {this.sports()}
           </View>
+          
 
           <View style={[styleApp.marginView,{marginTop:0,marginBottom:10}]}>
-            {this.switch('Open access','Invite only','private')}
+            {this.switch('Open access','Invite only','public')}
             <Text style={[styleApp.text,{marginTop:20,fontSize:13}]}>{this.textPrivate()}</Text>
             <View style={{height:20}} />
-         
-            {this.button('map-marker-alt',<Text style={this.state.location.address == ''?styleApp.inputOff:styleApp.input}>{this.state.location.address==''?'Add group area':this.state.location.address}</Text>,() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateGroup0',onGoBack: (data) => this.setLocation(data)}),false)}
-            {this.button('hashtag',this.tournamentName(),() => this.nameInput.focus())}
+          
+            {this.button('map-marker-alt',<Text style={this.props.createGroupData.location.address == ''?styleApp.inputOff:styleApp.input}>{this.props.createGroupData.location.address==''?'Add group area':this.props.createGroupData.location.address}</Text>,() => this.props.navigation.navigate('Location',{pageFrom:'CreateGroup0',onGoBack: (data) => this.setLocation(data)}),false)}
+            {this.button('ribbon',this.tournamentName(),() => this.nameInput.focus())}
             {this.button('info-circle',this.description(),() => this.descriptionInput.focus())}
        
           </View>
-{/* 
-
-          <View style={styleApp.marginView}>
-            <Text style={[styleApp.title,{fontSize:19,marginBottom:10}]}>Image</Text>
-            <UploadImage setImage={this.setImage.bind(this)}/>
-          </View>
- */}
 
         </View>
       )
   }
   conditionOn() {
-    if (this.state.name == '' || this.state.description == '' || this.state.img == '' || this.state.location.address == '') return false
+    if (this.props.createGroupData.info.name == '' || this.props.createGroupData.info.description == '' || this.props.createGroupData.img == '' || this.props.createGroupData.location.address == '') return false
     return true
   }
-  data(state) {
-    return {
-      info:{
-        sport:state.sportsFilter.valueSelected,
-        name:state.name,
-        description:state.description,
-        public:!state.private
-      },
-      location:this.state.location,
-      img:state.img,
+  async submit (data) {
+    await this.setState({loader:true})
+    var group = await createGroup(this.props.createGroupData,this.props.userID,this.props.infoUser)
+    console.log('submitt group')
+    console.log(this.props.infoUser)
+    console.log(this.props.userID)
+    // var group = false
+    if (!group) {
+      return this.props.navigation.navigate('Alert',{title:'An error has occured',subtitle:'Please check your connection.',textButton:'Got it!',close:true})
     }
+    return this.props.navigation.navigate('Group',{data:group,pageFrom:'ListGroups'})
+    console.log('groupCreation done')
+    console.log(group)
+    this.setState({loader:false})
   }
-  render() {
+   render() {
+    if (this.props.createGroupData.info.sport == '') return null
     return (
-      
       <View style={styleApp.stylePage}>
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -249,24 +226,44 @@ class Page0 extends Component {
           offsetBottom={150}
           showsVerticalScrollIndicator={false}
         />
+        <View style={styleApp.footerBooking}>
+          <View style={styleApp.marginView}>
+          {
+            !this.props.userConnected?
+            <Button
+            icon={'next'} 
+            text='Sign in to proceed'
+            backgroundColor={'green'}
+            onPressColor={colors.greenLight}
+            enabled={true}
+            loader={false} 
+            click={() => this.props.navigation.navigate('SignIn',{pageFrom:'CreateGroup0'})}
+          />
+            :this.conditionOn()?
+            <Button
+            icon={'next'} 
+            text='Create group'
+            backgroundColor={'green'}
+            onPressColor={colors.greenLight}
+            enabled={this.conditionOn()}
+            loader={this.state.loader} 
+            click={() => this.submit()}
+          />
+          :
+          <Button
+            icon={'next'} 
+            text='Create group'
+            backgroundColor={'green'}
+            styleButton={{borderWidth:1,borderColor:colors.grey}}
+            disabled={true}
+            onPressColor={colors.greenLight}
+            loader={false} 
+          />
+          }
+          </View>
         
-        {
-          this.conditionOn()?
-          <ButtonRound
-          icon={'next'} 
-          onPressColor={colors.greenLight2}
-          enabled={this.conditionOn()}
-          loader={false} 
-          click={() => this.props.navigation.navigate('CreateGroup1',{data:this.data(this.state)})}
-         />
-         :
-         <ButtonRoundOff
-          icon={'next'} 
-          enabled={this.conditionOn()}
-          loader={false} 
-          click={() => this.props.navigation.navigate('CreateGroup1',{data:this.data(this.state)})}
-         />
-        }
+        </View>
+        
         
 
       </View>
@@ -282,8 +279,11 @@ const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
     infoUser:state.user.infoUser.userInfo,
+    userConnected:state.user.userConnected,
+    createGroupData:state.createGroup,
+    userID:state.user.userID,
   };
 };
 
-export default connect(mapStateToProps,{})(Page0);
+export default connect(mapStateToProps,{createGroupAction})(Page0);
 

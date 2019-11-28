@@ -206,7 +206,7 @@ class EventPage extends React.Component {
           userConnected={this.props.userConnected}
         />
 
-        <EventsView 
+        {/* <EventsView 
           data={data} 
           objectID={data.objectID} 
           userID={this.props.userID} 
@@ -215,7 +215,7 @@ class EventPage extends React.Component {
           sport={sport}
           navigate={(val,data) => this.props.navigation.navigate(val,data)} 
           push={(val,data) => this.props.navigation.push(val,data)}
-        />
+        /> */}
 
         
 
@@ -296,7 +296,7 @@ class EventPage extends React.Component {
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
         textHeader={this.props.navigation.getParam('data').info.name}
-        inputRange={[190,220]}
+        inputRange={[20,50]}
         initialTitleOpacity={0}
         initialBackgroundColor={'transparent'}
         initialBorderColorIcon={colors.grey}
