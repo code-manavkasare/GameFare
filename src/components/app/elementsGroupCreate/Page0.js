@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {createGroupAction} from '../../../actions/createGroupActions'
+import {groupsAction} from '../../../actions/groupsActions'
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 
@@ -195,10 +196,15 @@ class Page0 extends Component {
     if (!group) {
       return this.props.navigation.navigate('Alert',{title:'An error has occured',subtitle:'Please check your connection.',textButton:'Got it!',close:true})
     }
-    return this.props.navigation.navigate('Group',{data:group,pageFrom:'ListGroups'})
     console.log('groupCreation done')
     console.log(group)
-    this.setState({loader:false})
+    var newGroups = this.props.mygroups.slice(0).reverse()
+    newGroups.push(group.objectID)
+    newGroups = newGroups.reverse()
+    console.log(newGroups)
+    await  this.props.groupsAction('setAllGroups',{[group.objectID]:group})
+    await  this.props.groupsAction('setMygroups',newGroups)
+    return this.props.navigation.navigate('Group',{objectID:group.objectID,pageFrom:'ListGroups'})
   }
    render() {
     if (this.props.createGroupData.info.sport == '') return null
@@ -281,9 +287,10 @@ const  mapStateToProps = state => {
     infoUser:state.user.infoUser.userInfo,
     userConnected:state.user.userConnected,
     createGroupData:state.createGroup,
+    mygroups:state.groups.mygroups,
     userID:state.user.userID,
   };
 };
 
-export default connect(mapStateToProps,{createGroupAction})(Page0);
+export default connect(mapStateToProps,{createGroupAction,groupsAction})(Page0);
 

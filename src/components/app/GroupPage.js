@@ -32,7 +32,7 @@ import PostsView from './elementsGroupPage/PostsView'
 import EventsView from './elementsGroupPage/EventsView'
 import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView'
 
-class EventPage extends React.Component {
+class GroupPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,7 +42,7 @@ class EventPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    this.loadEvent(this.props.navigation.getParam('data'))
+    // this.loadEvent(this.props.navigation.getParam('data'))
   }
   async loadEvent(data,refresh) {
     if (refresh) {
@@ -79,81 +79,7 @@ class EventPage extends React.Component {
   title(text) {
     return <Text style={[styleApp.title,{fontSize:15,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
   }
-  openProfile(user) {
-    console.log('user!! ')
-    console.log(user)
-    var coach = 'Joined the event as a player'
-    if (user.coach) {
-      coach = 'Joined the event as an instructor'
-    }
-    var level = ''
-    if (user.captainInfo.level == '' || user.captainInfo.level == undefined) {
-      level = "Unclassified yet"
-    } else {
-      level = Object.values(this.props.sports).filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0].level.list[user.captainInfo.level].text
-    }
-    var subtitle = '- Level • '+ level +'\n- '+coach
-    if (user.coach) {
-      subtitle = '- ' + coach
-    }
-    this.props.navigation.navigate('Alert',{textButton:'Close',title:user.captainInfo.name,subtitle:subtitle,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
-  }
-  rowUser(user,i,data) {
-    console.log('userrrrrrrr')
-    console.log(user)
-    console.log(data)
-    return (
-      <TouchableOpacity key={i} style={[styleApp.cardSelectFlex,{paddingTop:10,paddingBottom:10,flex:1,marginTop:10,minHeight:50}]} activeOpacity={0.7} onPress={() => this.openProfile(user)}>
-        <Row>
-          <Col size={15} style={styleApp.center}>
-            <AllIcons name='user-circle' color={colors.grey} type='font' size={20}/>
-          </Col>
-          <Col size={65} style={styleApp.center2}>
-            <Text style={styleApp.text}>{user.captainInfo.name}</Text>
-          </Col>
-
-          {
-          user.status == 'confirmed' ?
-          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:'This user is confirmed for the event.',subtitle:user.captainInfo.name,close:true,icon:<AllIcons name='check' type='mat' color={colors.green} size={20} />})}>
-            <AllIcons name='check' type='mat' color={colors.green} size={20} />
-          </Col>
-          :user.status == 'rejected'?
-          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:'This user has been rejected by the organizer.',subtitle:user.captainInfo.name,close:true,onGoBack:() => this.props.navigation.navigate('Event'),icon:<AllIcons name='close' type='mat' color={colors.primary} size={20} />})}>
-            <AllIcons name='close' type='mat' color={colors.primary} size={20} />
-          </Col>
-          :
-          <Col size={20} style={styleApp.center} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Got it!',title:"This user is waiting for the organizer's aproval.",subtitle:user.captainInfo.name,close:true,onGoBack:() => this.props.navigation.navigate('Event'),icon:<AllIcons name='clock' type='font' color={colors.secondary} size={20} />})}>
-            <AllIcons name='clock' type='font' color={colors.secondary} size={20} />
-          </Col>
-          }
-      </Row>
-
-
-        {
-          this.conditionAdmin() && user.status != 'confirmed' && user.status != 'rejected'?
-          <Row style={{height:40,marginTop:15}}>
-            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Reject',title:'Do you want to reject this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.rejectAttendance(user,data)})}>
-              <View style={[styleApp.center,{backgroundColor:colors.primary,height:40,borderRadius:4}]}>
-                <Text style={[styleApp.text,{color:'white'}]}>Reject</Text>
-              </View>
-            </Col>
-            <Col style={{paddingLeft:5,paddingRight:5}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Alert',{textButton:'Confirm',title:'Do you want to confirm this attendance?',subtitle:user.captainInfo.name,onGoBack:() => this.confirmAttendance(user,data)})}>
-              <View style={[styleApp.center,{backgroundColor:colors.green,height:40,borderRadius:4}]}>
-                <Text style={[styleApp.text,{color:'white'}]}>Confirm</Text>
-              </View>
-            </Col>
-          </Row>
-          :null
-        }
-      </TouchableOpacity>
-    )
-  }
-  openCondition(data) {
-    if (data.attendees == undefined) return true
-    if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) return true
-    return false
-  }
-  eventInfo(data,sport) {
+  groupInfo(data,sport) {
     return (
       <View style={{marginTop:-10}}>
 
@@ -187,13 +113,16 @@ class EventPage extends React.Component {
       </View>
     )
   }
-  event(data,loader) {
+  group(data) {
     var sport = this.props.sports.filter(sport => sport.value == data.info.sport)[0]
+    console.log('group page')
+    console.log(sport)
+    console.log(data)
     return (
       <View style={{width:width,marginTop:0}}>
 
 
-        {this.eventInfo(data,sport)}
+        {this.groupInfo(data,sport)}
 
         <DescriptionView objectID={data.objectID} loader={this.state.loader}/>
         
@@ -231,46 +160,6 @@ class EventPage extends React.Component {
       </View>
     )
   }
-  async confirmAttendance(user,data) {
-    var section = user.coach?'coaches':'attendess'
-    await firebase.database().ref('events/' + data.objectID + '/'+section+'/' + user.teamID).update({status:'confirmed'})
-    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + data.objectID).update({status:'confirmed'})
-
-    await this.props.navigation.setParams({data:{
-      ...this.props.navigation.getParam('data'),
-      [section]:{
-        ...data[section],
-        [user.teamID]:{
-          ...data[section][user.teamID],
-          status:'confirmed'
-        }
-      }
-    }})
-    if (data.info.levelFilter != undefined) {
-      var newLevel = data.info.levelFilter
-      if (data.info.levelOption == 'max') {
-        newLevel = 1
-      }
-      await firebase.database().ref('users/' + user.captainInfo.userID + '/level/').update({[data.info.sport]:newLevel})
-    }
-    return this.props.navigation.navigate('Event')
-  }
-  async rejectAttendance(user,data) {
-    var section = user.coach?'coaches':'attendess'
-    await firebase.database().ref('events/' + data.objectID + '/'+section+'/' + user.teamID).update({status:'rejected'})
-    await firebase.database().ref('usersEvents/' + user.captainInfo.userID + '/' + data.objectID).update({status:'rejected'})
-    await this.props.navigation.setParams({data:{
-      ...this.props.navigation.getParam('data'),
-      [section]:{
-        ...data[section],
-        [user.teamID]:{
-          ...data[section][user.teamID],
-          status:'rejected'
-        }
-      }
-    }})
-    return this.props.navigation.navigate('Event')
-  }
   conditionAdmin() {
     if (this.props.navigation.getParam('pageFrom') != 'Home' && this.props.navigation.getParam('data').info.organizer == this.props.userID && this.props.navigation.getParam('data').info.public) return true
     return false
@@ -290,12 +179,13 @@ class EventPage extends React.Component {
     )
   }
   render() {
+    var data= this.props.allGroups[this.props.navigation.getParam('objectID')]
     return (
       <View>
       <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        textHeader={this.props.navigation.getParam('data').info.name}
+        textHeader={data.info.name}
         inputRange={[20,50]}
         initialTitleOpacity={0}
         initialBackgroundColor={'transparent'}
@@ -307,15 +197,15 @@ class EventPage extends React.Component {
         icon2='share'
 
         clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openGroupPage',pageFrom:'Group',data:{...this.props.navigation.getParam('data'),eventID:this.props.navigation.getParam('data').objectID}})}
+        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openGroupPage',pageFrom:'Group',data:{...data,eventID:data.objectID}})}
         />
 
         <ParalaxScrollView 
         setState={(val) => this.setState(val)} 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        image={<AsyncImage style={{width:'100%',height:280,borderRadius:0}} mainImage={this.props.navigation.getParam('data').pictures[0]} imgInitial={this.props.navigation.getParam('data').pictures[0]} />}
+        image={<AsyncImage style={{width:'100%',height:280,borderRadius:0}} mainImage={data.pictures[0]} imgInitial={data.pictures[0]} />}
 
-        content={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'))} 
+        content={() => this.group(data)} 
         icon1='arrow-left'
         icon2='share'
         colorRefreshControl ={colors.title}
@@ -355,8 +245,9 @@ const  mapStateToProps = state => {
     sports:state.globaleVariables.sports.list,
     userID:state.user.userID,
     infoUser:state.user.infoUser.userInfo,
-    userConnected:state.user.userConnected
+    userConnected:state.user.userConnected,
+    allGroups:state.groups.allGroups
   };
 };
 
-export default connect(mapStateToProps,{})(EventPage);
+export default connect(mapStateToProps,{})(GroupPage);

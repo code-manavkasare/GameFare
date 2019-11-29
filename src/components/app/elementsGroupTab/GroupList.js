@@ -14,13 +14,13 @@ import {historicSearchAction} from '../../../actions/historicSearchActions'
 
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
+import HeaderHome from '../../layout/headers/HeaderHome'
 import styleApp from '../../style/style'
 import colors from '../../style/colors'
 import MyGroups from './MyGroups'
-import Button from '../../layout/buttons/Button'
-import ButtonColor from '../../layout/Views/Button'
+import GroupsAround from './GroupsAround'
 
-import ScrollView2 from '../../layout/scrollViews/ScrollView2'
+import ScrollView2 from '../../layout/scrollViews/ScrollView'
 import AllIcons from '../../layout/icons/AllIcons'
 const { height, width } = Dimensions.get('screen')
 import StatusBar from '@react-native-community/status-bar';
@@ -67,74 +67,63 @@ class HomeScreen extends React.Component {
     }
     messagePageView () {
       return (
-        <View style={{paddingTop:0,minHeight:height/1.5}}>
-                {/* <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
-                  <View style={styleApp.marginView}>
-                    <Text style={styleApp.title}>My groups</Text>
-
-                  </View>
-                  
-                </View> */}
+        <View style={{paddingTop:30,minHeight:height/1.5}}>
           <MyGroups 
             navigate={this.navigate.bind(this)} 
             navigate1={(val,data) => this.props.navigation.navigate(val,data)}
             loader={this.state.loader}
-            onRef={ref => (this.eventGroupsRef = ref)} 
+            onRef={ref => (this.myGroupsRef = ref)} 
           />
-{/* 
-          <ListEvents
-           location={this.state.location} 
-           sportSelected={this.props.sportSelected}
-           search={this.state.search} 
-           key={2} 
-           onRef={ref => (this.listEventsRef = ref)}
-           setState={(data) => this.setState(data)}
-           loader={this.state.loader} 
-           navigate={this.navigate.bind(this)} 
-           navigate1={(val,data) => this.props.navigation.navigate(val,data)}
+
+          <GroupsAround 
+            navigate={this.navigate.bind(this)} 
+            navigate1={(val,data) => this.props.navigation.navigate(val,data)}
+            loader={this.state.loader}
+            onRef={ref => (this.groupsAroundRef = ref)} 
           />
-          
-          
-          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
-
-          <NewGroupCard pageFrom='Home' /> */}
-
         </View>
       )
     }
     async refresh () {
       // this.eventGroupsRef.reload()
-      this.eventGroupsRef.reload()
+      this.myGroupsRef.reload()
+      this.groupsAroundRef.reload()
       return true
     }
-    async setLocation(data) {
-      this.listEventsRef.setLocation(data)
+    setLocation(location) {
+      this.props.historicSearchAction('setLocationSearch',location)
     }
   render() {
     return (
       <View style={styleApp.stylePage}>
 
-        <HeaderBackButton 
+      <HeaderHome
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        textHeader={'My groups'}
-        inputRange={[50,80]}
-        initialBorderColorIcon={colors.grey}
+      
+        textHeader={'Organize your event'}
+        inputRange={[0,sizes.heightHeaderHome+0]}
+        initialBorderColorIcon={colors.off}
         initialBackgroundColor={'white'}
-        typeIcon2={'font'}
-        sizeIcon2={17}
-        initialTitleOpacity={0}
-        icon1={null}
-        icon2={null}
+        initialTitleOpacity={1}
+        icon1='arrow-left'
+        league={false}
+        sportSelected={this.props.sportSelected}
+        sports={this.props.sports}
 
-        clickButton2={() => console.log('')}
+        icon2={'map-marker-alt'}
+        sizeIcon2={20}
+        typeIcon2={'font'}
+        clickButton2={() =>  this.props.navigation.navigate('Location',{'pageFrom':'ListGroups',onGoBack: (data) => this.setLocation(data)})}
+
+        clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
         />
         
         <ScrollView2
           onRef={ref => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.heightHeaderFilter-30}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottom={0}
           colorRefresh={colors.title}

@@ -51,31 +51,31 @@ class CardEvent extends React.Component {
       if (entreeFee == 0) return 'Free entry'
       return '$' + entreeFee + ' entry fee'
     }
-    click(data) {
-      this.props.openGroup(data)
+    click(objectID) {
+      this.props.openGroup(objectID)
     }
     card (color,data) {
       if (this.state.loader)return <View style={styleApp.cardGroup}><PlacelHolder /></View>
       return this.displayCard(color,data)
     }
     numberMember(data) {
-      if (data.attendees != undefined) return Object.values(data.attendees).length
+      if (data.members != undefined) return Object.values(data.members).length
       return 0
     }
-    rowAttendees(data) {
-      return <Row style={{marginTop:0}}>
+    rowMembers(data) {
+      return <Row style={{marginTop:0,height:50}}>
       <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
         <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,}]}>
           <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
         </View>
       </Col>
         {
-        data.attendees != undefined?
+        data.members != undefined?
         <Col size={85} style={[{paddingRight:10},styleApp.center2]}>
           {
-          Object.values(data.attendees).slice(0,3).map((member,i) => (
+          Object.values(data.members).slice(0,3).map((member,i) => (
           <View style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
-            <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.captainInfo.name.split(' ')[0][0] + member.captainInfo.name.split(' ')[1][0]}</Text>
+            <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.info.name.split(' ')[0][0] + member.info.name.split(' ')[1][0]}</Text>
           </View>
           ))
         }
@@ -97,18 +97,21 @@ class CardEvent extends React.Component {
                 <View style={{paddingLeft:10,paddingRight:10,paddingTop:10}}>
                   <Text style={[styleApp.input,{fontSize:15,minHeight:20,marginTop:5}]}>{data.info.name}</Text>
                   <Text style={[styleApp.subtitle,{minHeight:20,marginTop:5,fontSize:11}]}>{getZone(data.location.address)}</Text>
+                  {this.rowMembers(data)}
                 </View>
+
+                
                
             {/* <Text style={[styleApp.input,{color:colors.primary2,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
            
             <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.area}</Text>
         
   
-            {this.rowAttendees(data)} */}
+            {this.rowMembers(data)} */}
             </FadeInView>
           )
         }} 
-        click={() => this.click(data)}
+        click={() => this.click(data.objectID)}
         color={'white'}
         style={[styleApp.cardGroup]}
         onPressColor={colors.off}

@@ -13,7 +13,6 @@ import {
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions'
-import isEqual from 'lodash.isequal'
 
 const { height, width } = Dimensions.get('screen')
 import colors from '../../style/colors'
@@ -22,6 +21,7 @@ import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import FadeInView from 'react-native-fade-in-view';
 import Switch from '../../layout/switch/Switch'
+import {getZone} from '../../functions/location'
 
 import CardGroup from './CardGroup'
 import {timing,native} from '../../animations/animations'
@@ -49,40 +49,47 @@ class ListEvents extends React.Component {
     console.log('le time stamt !!!')
     console.log(Number(new Date()))
     console.log(this.props.mygroups)
-    return this.loadEvent(this.props.sportSelected,this.props.leagueSelected)
+    console.log(this.props.searchLocation)
+    return this.loadEvent(this.props.sportSelected,this.props.searchLocation)
   }
   async reload() {
-    return this.loadEvent(this.props.sportSelected,this.props.leagueSelected)
+    return this.loadEvent(this.props.sportSelected,this.props.searchLocation)
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true || this.props.sportSelected != nextProps.sportSelected || this.props.leagueSelected != nextProps.leagueSelected) {
-      this.loadEvent(nextProps.sportSelected,nextProps.leagueSelected)
+    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true || this.props.sportSelected != nextProps.sportSelected || this.props.searchLocation != nextProps.searchLocation ) {
+      this.loadEvent(nextProps.sportSelected,nextProps.searchLocation)
     }
   }
-  async getGroups (filters) {
-      var mygroups = await indexGroups.search({
+  async getGroups (filters,location) {
+    console.log('get groups')
+    console.log(location)
+      var groups = await indexGroups.search({
         query:'',
+        aroundLatLng: location.lat+','+location.lng,
         filters:filters,
+        aroundRadius: 20*1000,
       })
-      return mygroups.hits
+      console.log(groups.hits)
+      return groups.hits
   }
-  async loadEvent(sport,league,) {
+  async loadEvent(sport,location) {
     console.log('on reload')
     await this.setState({loader1:true})
 
     indexGroups.clearCache()
     var filterSport = ' AND info.sport:' + sport 
     // var filterLeague = ' AND info.league:' + league
-    if (league == 'all') {
-      filterLeague = ''
-    }
+    // if (league == 'all') {
+    //   filterLeague = ''
+    // }
     console.log(this.props.userID)
     console.log(sport)
-    var filterOrganizer='info.organizer:' + this.props.userID 
-    var filters = filterOrganizer + filterSport
+    var filterPublic = 'info.public=1'
+    // var filterOrganizer='info.organizer:' + this.props.userID 
+    var filters = filterPublic
 
     // var filterDate =' AND date_timestamp>' + Number(new Date())
-    var mygroups = await this.getGroups (filters) 
+    var mygroups = await this.getGroups (filters,location) 
     var infoGroups = mygroups.reduce(function(result, item) {
       result[item.objectID] = item;
       return result;
@@ -94,10 +101,9 @@ class ListEvents extends React.Component {
     // filterDate =' AND date_timestamp<' + Number(new Date())
     // var pastEvents = await this.getEvents (filters + filterDate) 
 
-    if (!isEqual(this.props.mygroups,mygroups)) {
-      await  this.props.groupsAction('setAllGroups',infoGroups)
-      await  this.props.groupsAction('setMygroups',mygroups)
-    }
+    await  this.props.groupsAction('setAllGroups',infoGroups)
+    await  this.props.groupsAction('setGroupsAround',mygroups)
+
     this.setState({loader1:false})
    
   }
@@ -149,7 +155,6 @@ class ListEvents extends React.Component {
   ListEvent () {
     console.log('My groups')
     console.log(this.props.mygroups)
-    if (!this.props.userConnected) return null
     var numberPast = ''
     var numberFuture = ''
     if (!this.state.loader1) {
@@ -161,19 +166,20 @@ class ListEvents extends React.Component {
       <View style={{marginTop:20}}>
         <View style={[styleApp.marginView,{marginBottom:10}]}>
 
-        <Text style={[styleApp.input,{marginBottom:10,marginLeft:0,fontSize:22}]}>My groups</Text>
+        <Text style={[styleApp.input,{marginBottom:0,marginLeft:0,fontSize:22}]}>Groups around</Text>
+        <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
         {/* {this.switch('All' + numberFuture,'Past' + numberPast)} */}
         </View>
 
         <View style={{flex:1,marginTop:0}}>
-        <Animated.View style={{flex:1,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
+        <Animated.View style={{height:220,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader1}
-        events={this.props.mygroups}
+        events={this.props.groupsAround}
         height={210}
         placeHolder={[styleApp.cardGroup,{paddingLeft:10,paddingRight:10,paddingTop:10}]}
         messageNoEvent = {"You haven't joined any group yet."}
-        content={() => this.listEvents(this.props.mygroups)}
+        content={() => this.listEvents(this.props.groupsAround)}
         // openEvent={(group) => this.openGroup(group)}
         onRef={ref => (this.scrollViewRef1 = ref)}
         />
@@ -206,8 +212,9 @@ const  mapStateToProps = state => {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
     sportSelected:state.historicSearch.sport,
-    leagueSelected:state.historicSearch.league,
-    mygroups:state.groups.mygroups,
+    //leagueSelected:state.historicSearch.league,
+    searchLocation:state.historicSearch.searchLocation,
+    groupsAround:state.groups.groupsAround,
     allGroups:state.groups.allGroups
   };
 };

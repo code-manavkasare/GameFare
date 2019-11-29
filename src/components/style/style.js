@@ -66,13 +66,13 @@ export default styles = StyleSheet.create({
       shadowOpacity: 0.5,
       marginRight:0,
       overflow:'hidden',
-      height:190,
+      height:210,
       width:200,
       
       marginRight:10,
       // paddingLeft:10,paddingRight:10,
       // paddingTop:10,
-      paddingBottom:10,
+      // paddingBottom:10,
 
       borderRadius:4,
       borderWidth:1,

@@ -23,10 +23,6 @@ import {
     return async function(dispatch){
       if (val == 'setMygroups') {
         await dispatch(setMygroups(data))
-      } else if (val == 'setAllGroups') {
-        await dispatch(setAllGroups(data))
-      } else if (val == 'setGroupsAround') {
-        await dispatch(setGroupsAround(data))
       }
       return true
     }

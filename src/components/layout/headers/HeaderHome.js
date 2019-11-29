@@ -152,10 +152,7 @@ class HeaderHome extends Component {
       )
     }
     buttonLeague (league,i,sport) {
-      const spin = this.rotateIcon.interpolate({
-        inputRange: [0,1],
-        outputRange: ['0deg','180deg']
-      })
+      if (!this.props.league) return null
       return (
         <ButtonColor key={i} view={() => {
           return <Row >
