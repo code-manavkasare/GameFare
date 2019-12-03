@@ -53,9 +53,11 @@ export default class Events extends Component {
       <CardEvent userID={this.props.userID} key={i} groupPage={true} marginTop={25} navigate={(val,data) => this.props.navigate(val,data)} clickEvent={(event) => this.props.push('Event',{data:event,pageFrom:'Group'})} item={event} loadData={true}/>
     )
   }
-  newEvent() {
+  async newEvent() {
     if (!this.props.userConnected) return this.props.navigate('SignIn',{pageFrom:'Group'})
     if (this.props.userID != this.props.data.info.organizer) return this.props.navigate('Alert',{textButton:'Got it!',close:true,title:'You need to be admin of this groups in order to add events.',})
+    await this.props.createEventAction('setStep1',{groups:[this.props.data]})
+    await this.props.createEventAction('setStep0',{sport:this.props.data.info.sport})
     return this.props.navigate('CreateEvent0',{'pageFrom':'Group',group:this.props.data,sport:this.props.sport})
   }
   eventsView(data) {

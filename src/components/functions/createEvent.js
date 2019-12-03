@@ -8,7 +8,7 @@ import {uploadPictureFirebase} from '../functions/pictures'
 import {subscribeToTopics} from '../functions/notifications'
 import firebase from 'react-native-firebase'
 
-function createEventObj(data,userID,infoUser,level,groups) {
+async function createEventObj(data,userID,infoUser,level,groups) {
   var event = {
     ...data,
     info:{
@@ -65,7 +65,7 @@ async function pushEventToGroups(groups,eventID) {
 }
 
 async function createEvent(data,userID,infoUser,level) {
-  var event = createEventObj(data,userID,infoUser,level)
+  var event = await createEventObj(data,userID,infoUser,level)
   console.log('createEventObj')
   console.log(event)
 
@@ -76,6 +76,9 @@ async function createEvent(data,userID,infoUser,level) {
 
   await pushEventToGroups(data.groups,pushEvent.key)
   await subscribeToTopics([userID,'all',pushEvent.key])
+
+  console.log('event 222222222222')
+  console.log(event)
 
   return event
 }

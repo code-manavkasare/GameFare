@@ -45,7 +45,7 @@ class Page0 extends Component {
     if (this.props.createGroupData.info.sport == '') {
       console.log('set balue')
       console.log(this.props.sports[0].value)
-      this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,sport:this.props.sports[0].value})
+      this.props.createGroupAction('setInfoCreateGroup',{sport:this.props.sports[0].value})
     }
   }
   sports() {
@@ -60,7 +60,7 @@ class Page0 extends Component {
           image={true}
           list={this.props.sports}
           tickFilter={(value) => {
-            this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,sport:value})
+            this.props.createGroupAction('setInfoCreateGroup',{sport:value})
         }}
       />
     )
@@ -72,7 +72,7 @@ class Page0 extends Component {
     this.props.navigation.navigate('CreateEvent0')
   }
   async setAccess(state,val) {
-    await this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,[state]:val})
+    await this.props.createGroupAction('setInfoCreateGroup',{[state]:val})
     return true
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -98,7 +98,7 @@ class Page0 extends Component {
             ref={(input) => { this.nameInput = input }}
             underlineColorAndroid='rgba(0,0,0,0)'
             autoCorrect={true}
-            onChangeText={text => this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,name:text})}
+            onChangeText={text => this.props.createGroupAction('setInfoCreateGroup',{name:text})}
             value={this.props.createGroupData.info.name}
           />
     )
@@ -114,7 +114,7 @@ class Page0 extends Component {
             autoCorrect={true}
             multiline={true}
             blurOnSubmit={true}
-            onChangeText={text => this.props.createGroupAction('setInfoCreateGroup',{...this.props.createGroupData.info,description:text})}
+            onChangeText={text => this.props.createGroupAction('setInfoCreateGroup',{description:text})}
             value={this.props.createGroupData.info.description}
           />
     )

@@ -53,7 +53,6 @@ class Page0 extends Component {
   async setSport(data) {
     console.log('ici spot')
     await this.props.createEventAction('setStep0',{
-      ...this.props.step0,
       sport:data.value,
       rule:data.typeEvent[0].rules[0].value,
       level:data.level.list[0].value,
@@ -65,7 +64,6 @@ class Page0 extends Component {
   async setLeague(data) {
     console.log('ici spot')
     await this.props.createEventAction('setStep0',{
-      ...this.props.step0,
       rule:data.rules[0].value,
       league:data.value
     })
@@ -75,7 +73,6 @@ class Page0 extends Component {
   async setRule(data) {
     console.log('ici spot')
     await this.props.createEventAction('setStep0',{
-      ...this.props.step0,
       rule:data.value,
     })
     return true
@@ -127,7 +124,7 @@ class Page0 extends Component {
     console.log('setCoach ' + val)
     if (!val) {
       await this.props.createEventAction('setStep0',{
-        ...this.props.step0,
+        
         coach:val,
       })
       return true
@@ -135,7 +132,7 @@ class Page0 extends Component {
 
     if (this.props.infoUser.coach && this.props.infoUser.coachVerified) {
       await this.props.createEventAction('setStep0',{
-        ...this.props.step0,
+        
         coach:val,
         coachNeeded:false,joiningFee:'',free:false
       })
@@ -157,7 +154,7 @@ class Page0 extends Component {
 
         {
             !this.props.step0.coach?
-            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.props.createEventAction('setStep0',{...this.props.step0,coachNeeded:!this.props.step0.coachNeeded,joiningFee:!this.props.step0.coachNeeded?sport.fee.coachMatchFee:'',free:false})}>
+            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.props.createEventAction('setStep0',{coachNeeded:!this.props.step0.coachNeeded,joiningFee:!this.props.step0.coachNeeded?sport.fee.coachMatchFee:'',free:false})}>
             <Row >
               <Col size={15} style={styleApp.center}>
                 <AllIcons name='check' type='mat' color={!this.props.step0.coachNeeded?colors.grey:colors.green} size={23} />
@@ -193,27 +190,27 @@ class Page0 extends Component {
                   onChangeText={text => {
                     if (text.length == 0 && this.props.step0.joiningFee.length != 0) {
                       this.props.createEventAction('setStep0',{
-                        ...this.props.step0,
+                        
                         joiningFee:text,
                         free:true
                       })
                     }
                     else if (Number(text) == 0 ) {
                       this.props.createEventAction('setStep0',{
-                        ...this.props.step0,
+                        
                         joiningFee:text,
                         free:true
                       })
                     } else {
                       if (Number(text).toString() == 'NaN'){
                         return this.props.createEventAction('setStep0',{
-                          ...this.props.step0,
+                          
                           joiningFee:text.replace(text[text.length-1],''),
                           free:false
                         })
                       }
                       return this.props.createEventAction('setStep0',{
-                        ...this.props.step0,
+                        
                         joiningFee:text,
                         free:false
                       })
@@ -230,7 +227,7 @@ class Page0 extends Component {
             this.entreeFeeInputRef.blur()
           }
           this.props.createEventAction('setStep0',{
-            ...this.props.step0,
+            
             free:!this.props.step0.free,
             joiningFee:!this.props.step0.free?'0':''
           })
