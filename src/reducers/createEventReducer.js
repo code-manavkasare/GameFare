@@ -54,11 +54,11 @@ const initialState = {
 const createEventReducer =  (state=initialState,action) => {
     switch (action.type){
         case SET_STEP0:
-            return {...state,step0:action.step0};
+            return {...state,step0:{...state.step0,...action.step0}};
         case SET_STEP1:
-                return {...state,step1:action.step1};
+                return {...state,step1:{...state.step1,...action.step1}};
         case SET_STEP2:
-            return {...state,step2:action.step2};
+            return {...state,step2:{...state.step2,...action.step2}};
         case RESET_CREATE_EVENT:
             return initialState;
         default:

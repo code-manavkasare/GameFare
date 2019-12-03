@@ -184,11 +184,14 @@ class Page3 extends Component {
   }
   async submit(data) {
     this.setState({loader:true})
-    var event = createEvent(data,this.props.userID,this.props.infoUser,this.props.level,this.props.navigation.getParam('groups'))
-
+    var event = await createEvent(data,this.props.userID,this.props.infoUser,this.props.level,this.props.navigation.getParam('groups'))
+    console.log('event sdfg')
+    console.log(event)
     var futureEvents = this.props.futureEvents.slice(0).reverse()
     futureEvents.push(event)
     futureEvents = futureEvents.reverse()
+    console.log('le future event la ')
+    console.log(futureEvents)
     await  this.props.eventsAction('setFutureUserEvents',futureEvents)
     await  this.props.createEventAction('reset')
     this.setState({loader:false})

@@ -11,6 +11,7 @@ import {
     Image
 } from 'react-native';
 import {connect} from 'react-redux';
+import {createEventAction} from '../../actions/createEventActions'
 import firebase from 'react-native-firebase'
 
 const { height, width } = Dimensions.get('screen')
@@ -140,6 +141,7 @@ class GroupPage extends React.Component {
           objectID={data.objectID} 
           userID={this.props.userID} 
           loader={this.state.loader}
+          createEventAction = {(val,data) => this.props.createEventAction(val,data)}
           userConnected={this.props.userConnected}
           sport={sport}
           navigate={(val,data) => this.props.navigation.navigate(val,data)} 
@@ -250,4 +252,4 @@ const  mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps,{})(GroupPage);
+export default connect(mapStateToProps,{createEventAction})(GroupPage);

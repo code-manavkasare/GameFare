@@ -43,15 +43,15 @@ class Page1 extends Component {
     console.log('page 1 mount')
     console.log(this.props.navigation.getParam('sport').level)
     console.log(this.props.step1)
-    this.props.createEventAction('setStep1',{...this.props.step1,level:this.props.navigation.getParam('sport').level.list[0].value})
+    this.props.createEventAction('setStep1',{level:this.props.navigation.getParam('sport').level.list[0].value})
     console.log(this.props.navigation.getParam('sport').level.list[0])
       if (this.props.step1.level == -1) {
       console.log('lalalal')
-        this.props.createEventAction('setStep1',{...this.props.step1,level:this.props.navigation.getParam('sport').level.list[0].value})
+        this.props.createEventAction('setStep1',{level:this.props.navigation.getParam('sport').level.list[0].value})
       }
   }
   async setStateSwitch (state,val) {
-    await this.props.createEventAction('setStep1',{...this.props.step1,[state]:val})
+    await this.props.createEventAction('setStep1',{[state]:val})
     return true
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -77,7 +77,7 @@ class Page1 extends Component {
       <ExpandableCard 
           list={sport.level.list}
           valueSelected = {this.props.step1.level} 
-          tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,level:data.value})}
+          tickFilter={(data) => this.props.createEventAction('setStep1',{level:data.value})}
       />
       </View>
     )
@@ -91,7 +91,7 @@ class Page1 extends Component {
       <ExpandableCard 
           list={this.props.listLevelOption}
           valueSelected = {this.props.step1.levelOption} 
-          tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,levelOption:data.value})}
+          tickFilter={(data) => this.props.createEventAction('setStep1',{levelOption:data.value})}
       />
       </View>
     )
@@ -102,7 +102,7 @@ class Page1 extends Component {
       <ExpandableCard 
           list={this.props.listGender}
           valueSelected = {this.props.step1.gender} 
-          tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,gender:data.value})}
+          tickFilter={(data) => this.props.createEventAction('setStep1',{gender:data.value})}
       />
       </View>
     )
@@ -120,7 +120,7 @@ class Page1 extends Component {
         </Col>
         <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.props.step1[state] != minValue) {
-            this.props.createEventAction('setStep1',{...this.props.step1,[state]:this.props.step1[state]-increment})
+            this.props.createEventAction('setStep1',{[state]:this.props.step1[state]-increment})
           }
         }} >
           <AllIcons name={'minus'} color={colors.title} size={15} type='font' />
@@ -128,7 +128,7 @@ class Page1 extends Component {
         
         <Col size={10} style={styleApp.center} activeOpacity={0.7} onPress={() => {
           if (this.props.step1[state] != maxValue) {
-            this.props.createEventAction('setStep1',{...this.props.step1,[state]:this.props.step1[state]+increment})
+            this.props.createEventAction('setStep1',{[state]:this.props.step1[state]+increment})
           }
         }} >
           <AllIcons name={'plus'} color={colors.title} size={15} type='font' />
@@ -141,7 +141,7 @@ class Page1 extends Component {
   async setGroups(groups) {
     console.log('set groups!')
     console.log(groups)
-    await this.props.createEventAction('setStep1',{...this.props.step1,groups:groups})
+    await this.props.createEventAction('setStep1',{groups:groups})
     this.props.navigation.navigate('CreateEvent1')
   }
   openAddGroups() {

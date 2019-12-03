@@ -65,7 +65,7 @@ class Page2 extends Component {
     )
   }
   inputName() {
-    //this.props.createEventAction('setStep2',{...this.props.step2,instructions:text})
+    //this.props.createEventAction('setStep2',{instructions:text})
     return (
       <TextInput
         style={styleApp.input}
@@ -75,7 +75,7 @@ class Page2 extends Component {
         underlineColorAndroid='rgba(0,0,0,0)'
         autoCorrect={true}
         placeholderTextColor={colors.grey}
-        onChangeText={text => this.props.createEventAction('setStep2',{...this.props.step2,name:text})}
+        onChangeText={text => this.props.createEventAction('setStep2',{name:text})}
         value={this.props.step2.name}
       />
     )
@@ -93,7 +93,7 @@ class Page2 extends Component {
         numberOfLines={6}
         blurOnSubmit={true}
         placeholderTextColor={colors.grey}
-        onChangeText={text => this.props.createEventAction('setStep2',{...this.props.step2,instructions:text})}
+        onChangeText={text => this.props.createEventAction('setStep2',{instructions:text})}
         value={this.props.step2.instructions}
       />
     )
@@ -104,13 +104,13 @@ class Page2 extends Component {
   async setLocation(data) {
     console.log('set location step 2')
     console.log(data)
-    await this.props.createEventAction('setStep2',{...this.props.step2,location:data})
+    await this.props.createEventAction('setStep2',{location:data})
     return this.props.navigation.navigate('CreateEvent2')
   }
   async setDate (data) {
     console.log('set date step 2')
     console.log(data)
-    await this.props.createEventAction('setStep2',{...this.props.step2,endDate:data.endDate,startDate:data.startDate,recurrence:data.recurrence})
+    await this.props.createEventAction('setStep2',{endDate:data.endDate,startDate:data.startDate,recurrence:data.recurrence})
     return this.props.navigation.navigate('CreateEvent2')
   }
   dateTime(start,end) {
@@ -135,7 +135,7 @@ class Page2 extends Component {
       placeHolder={placeHolder}
       heightField={heightField}
       multiline={multiline}
-      setState={(val) => this.props.createEventAction('setStep2',{...this.props.step2,[state]:val})}
+      setState={(val) => this.props.createEventAction('setStep2',{[state]:val})}
       keyboardType={keyboardType}
       icon={icon}
       typeIcon={'font'}
