@@ -13,13 +13,12 @@ import {createEventAction} from '../../../actions/createEventActions'
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 import ButtonColor from '../../layout/Views/Button'
+import Button from '../../layout/buttons/Button'
 
 import TextField from '../../layout/textField/TextField'
-import ButtonRound from '../../layout/buttons/ButtonRound'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import AllIcons from '../../layout/icons/AllIcons'
 import DateEvent from './DateEvent'
-import {date} from '../../layout/date/date'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import sizes from '../../style/sizes'
@@ -29,32 +28,11 @@ class Page2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      location:{address:'',},
-      area:'',       
-      startDate:'',
-      endDate:'',
-      name:'',
-      instructions:'',
-      recurrence:'',
       loader:false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
   componentDidMount() {
-    if (Object.values(this.props.step2).length != 0) {
-      this.setState(this.props.step2)
-    } else {
-      this.setState({
-        location:{address:'',},
-        area:'',       
-        startDate:'',
-        endDate:'',
-        name:'',
-        instructions:'',
-        recurrence:'',
-        loader:false,
-      })
-    }
   }
   ligneButton(iconLeft,componentMiddle,iconRight,click,conditionCheck) {
     return (
@@ -87,6 +65,7 @@ class Page2 extends Component {
     )
   }
   inputName() {
+    //this.props.createEventAction('setStep2',{...this.props.step2,instructions:text})
     return (
       <TextInput
         style={styleApp.input}
@@ -96,8 +75,8 @@ class Page2 extends Component {
         underlineColorAndroid='rgba(0,0,0,0)'
         autoCorrect={true}
         placeholderTextColor={colors.grey}
-        onChangeText={text => this.setState({name:text})}
-        value={this.state.name}
+        onChangeText={text => this.props.createEventAction('setStep2',{...this.props.step2,name:text})}
+        value={this.props.step2.name}
       />
     )
   }
@@ -114,66 +93,49 @@ class Page2 extends Component {
         numberOfLines={6}
         blurOnSubmit={true}
         placeholderTextColor={colors.grey}
-        onChangeText={text => this.setState({instructions:text})}
-        value={this.state.instructions}
+        onChangeText={text => this.props.createEventAction('setStep2',{...this.props.step2,instructions:text})}
+        value={this.props.step2.instructions}
       />
     )
   }
   locationText() {
-    return <Text style={this.state.location.address==''?{...styleApp.input,color:colors.grey}:styleApp.input}>{this.state.location.address==''?'Add event address':this.state.location.address}</Text>
+    return <Text style={this.props.step2.location.address==''?{...styleApp.input,color:colors.grey}:styleApp.input}>{this.props.step2.location.address==''?'Add event address':this.props.step2.location.address}</Text>
   }
   async setLocation(data) {
-    await this.setState({location:data})
-    this.props.navigation.navigate('CreateEvent2')
+    console.log('set location step 2')
+    console.log(data)
+    await this.props.createEventAction('setStep2',{...this.props.step2,location:data})
+    return this.props.navigation.navigate('CreateEvent2')
   }
   async setDate (data) {
-    await this.setState({endDate:data.endDate,startDate:data.startDate,recurrence:data.recurrence})
-    this.props.navigation.navigate('CreateEvent2')
+    console.log('set date step 2')
+    console.log(data)
+    await this.props.createEventAction('setStep2',{...this.props.step2,endDate:data.endDate,startDate:data.startDate,recurrence:data.recurrence})
+    return this.props.navigation.navigate('CreateEvent2')
   }
   dateTime(start,end) {
-    return <DateEvent 
+    return <View>
+      <DateEvent 
     start={start}
     end={end}
     />
+    {this.props.step2.recurrence !== ''?
+    <Text style={[styleApp.smallText,{marginTop:10}]}>{this.props.step2.recurrence.charAt(0).toUpperCase() + this.props.step2.recurrence.slice(1)} recurrence</Text>
+    :null} 
+    </View>
   }
   date() {
-    if (this.state.startDate == '') return <Text style={[styleApp.input,{color:colors.grey}]}>Add date and time</Text>
-    return this.dateTime(this.state.startDate,this.state.endDate,this.state.recurrence)
-  }
-  date2() {
-    return (
-      <TouchableOpacity style={{paddingTop:10,paddingBottom:10}} activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,recurrence:this.state.recurrence,onGoBack: (data) => this.setDate(data)})}>
-      <Row>
-        <Col style={styleApp.center} size={15}>
-          <AllIcons name='calendar-alt' size={18} color={colors.title} type='font'/>
-        </Col>
-        <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-
-        </Col>
-      </Row>
-      {
-        this.state.recurrence != ''?
-        <Row style={{marginTop:10}}>
-        <Col style={styleApp.center} size={15}>
-          <AllIcons name='stopwatch' size={18} color={colors.title} type='font'/>
-        </Col>
-        <Col style={[styleApp.center2,{paddingLeft:15}]} size={85}>
-          <Text style={styleApp.input}>{this.state.recurrence.charAt(0).toUpperCase() + this.state.recurrence.slice(1)}</Text>
-        </Col>
-      </Row>
-      :null
-      }
-    </TouchableOpacity>
-    )
+    if (this.props.step2.startDate == '') return <Text style={[styleApp.input,{color:colors.grey}]}>Add date and time</Text>
+    return this.dateTime(this.props.step2.startDate,this.props.step2.endDate,this.props.step2.recurrence)
   }
   textField (state,placeHolder,heightField,multiline,keyboardType,icon) {
     return(
       <TextField
-      state={this.state[state]}
+      state={this.props.step2[state]}
       placeHolder={placeHolder}
       heightField={heightField}
       multiline={multiline}
-      setState={(val) => this.setState({[state]:val})}
+      setState={(val) => this.props.createEventAction('setStep2',{...this.props.step2,[state]:val})}
       keyboardType={keyboardType}
       icon={icon}
       typeIcon={'font'}
@@ -183,79 +145,51 @@ class Page2 extends Component {
   page1() {
       return (
         <View style={{marginTop:0,marginLeft:0,width:width,paddingTop:20}}>
-
-              {this.ligneButton('ribbon',this.inputName(),'plus',() => this.nameInput.focus(),this.state.name != '')}
-              {this.ligneButton('map-marker-alt',this.locationText(),'plus',() => this.props.navigation.navigate('Location',{location:this.state.location,pageFrom:'CreateEvent2',onGoBack: (data) => this.setLocation(data)}),this.state.location.address != '')}
-              {this.ligneButton('calendar-alt',this.date(),'plus',() => this.props.navigation.navigate('Date',{startDate:this.state.startDate,endDate:this.state.endDate,recurrence:this.state.recurrence,onGoBack: (data) => this.setDate(data)}),this.state.startDate != '')}
-              {this.ligneButton('parking',this.inputInstruction(),'plus',() => this.instructionInput.focus(),this.state.instructions != '')}
-             
-
+          {this.ligneButton('ribbon',this.inputName(),'plus',() => this.nameInput.focus(),this.props.step2.name != '')}
+          {this.ligneButton('map-marker-alt',this.locationText(),'plus',() => this.props.navigation.navigate('Location',{location:this.props.step2.location,pageFrom:'CreateEvent2',onGoBack: (data) => this.setLocation(data)}),this.props.step2.location.address != '')}
+          {this.ligneButton('calendar-alt',this.date(),'plus',() => this.props.navigation.navigate('Date',{startDate:this.props.step2.startDate,endDate:this.props.step2.endDate,recurrence:this.props.step2.recurrence,onGoBack: (data) => this.setDate(data)}),this.props.step2.startDate != '')}
+          {this.ligneButton('parking',this.inputInstruction(),'plus',() => this.instructionInput.focus(),this.props.step2.instructions != '')}
         </View>
       )
   }
   conditionOn () {
-    if (this.state.location.address == '' || this.state.startDate == '' || this.state.name=='') return false
+    if (this.props.step2.location.address == '' || this.props.step2.startDate == '' || this.props.step2.name=='') return false
     return true
   }
-  async submit() {
-    await this.setState({loader:true})
-    console.log('submit page 2')
-    console.log(this.props.navigation.getParam('page0'))
-    console.log(this.props.navigation.getParam('page1'))
-    console.log(this.state)
-    var step0 = this.props.navigation.getParam('page0')
-    var step1 = this.props.navigation.getParam('page1')
-    var step2 = this.state
-    console.log(this.state)
-    var event = {
-      "date": {
-        "end": step2.endDate,
-        "start": step2.startDate,
-        'recurrence':step2.recurrence,
-        "timeZone": step2.location.timeZone
-      },
-      "info": {
-        "commission": 0,       
-        "displayInApp": true,    
-        "sport": step0.sportsFilter.valueSelected,
-        "public": !step1.private,
-        "maxAttendance": step1.players,
-        "name": step2.name,
-        'levelFilter':step1.levelFilter.valueSelected,
-        'levelOption':step1.levelOption.valueSelected,
-        'coachNeeded':step0.coachNeeded,
-        'player':step0.player,
-        'gender':step1.genderFilter.valueSelected,
-        'instructions':step2.instructions,
-        'league':step0.leagueFilter.valueSelected,
-        'rules':step0.rulesFilter.valueSelected,
-      },
-      // "advancedSettings":advancedSettings,
-      "location": {
-        "address": step2.location.address,
-        "area": step2.location.area,
-        "centralLocation": !step2.randomLocation,
-        "lat": step2.location.lat,
-        "lng": step2.location.lng
-      },
-      "price": {
-        "joiningFee": Number(step0.joiningFee),
-      },
-      "subscribtionOpen": true,
-    }
-    console.log('event')
-    console.log(event)
-    await this.setState({loader:false})
-    return this.props.navigation.navigate('CreateEvent3',{data:event,groups:step1.groups})
-  }
-  async close () {
-    console.log('close')
-    await this.props.createEventAction('setStep2',this.state)
-    return this.props.navigation.goBack()
-  }
   async next() {
-    await this.props.createEventAction('setStep2',this.state)
-    return this.submit()
+    var groups = Object.values(this.props.step1.groups).map(group => group.objectID)
+    return this.props.navigation.navigate('CreateEvent3',{
+      data:{
+        "date": {
+          "end": this.props.step2.endDate,
+          "start": this.props.step2.startDate,
+          'recurrence':this.props.step2.recurrence,
+        },
+        "info": {
+          "commission": 0,       
+          "displayInApp": true,    
+          "sport": this.props.step0.sport,
+          "public": !this.props.step1.private,
+          "maxAttendance": this.props.step1.numberPlayers,
+          "name": this.props.step2.name,
+          'levelFilter':this.props.step1.level,
+          'levelOption':this.props.step1.levelOption,
+          'coachNeeded':this.props.step0.coachNeeded,
+          'gender':this.props.step1.gender,
+          'instructions':this.props.step2.instructions,
+          'league':this.props.step0.league,
+          'rules':this.props.step0.rule,
+        },
+        'groups':groups,
+        "location": this.props.step2.location,
+        "price": {
+          "joiningFee": Number(this.props.step0.joiningFee),
+        },
+        "subscribtionOpen": true,
+      },
+      groups:this.props.step1.groups,
+      sport:this.props.navigation.getParam('sport')
+    })
   }
   render() {
     return (
@@ -270,7 +204,7 @@ class Page2 extends Component {
             icon1='arrow-left'
             initialTitleOpacity={1}
             icon2={null}
-            clickButton1={() => this.close()} 
+            clickButton1={() => this.props.navigation.goBack()} 
             />
 
         <ScrollView 
@@ -283,13 +217,30 @@ class Page2 extends Component {
           showsVerticalScrollIndicator={false}
         />
 
-        <ButtonRound
-          icon={'next'} 
-          onPressColor={colors.greenLight}
-          enabled={this.conditionOn()} 
-          loader={this.state.loader} 
-          click={() => this.next()}
-         />
+
+        <View style={[styleApp.footerBooking,styleApp.marginView]}>
+          {
+            this.conditionOn()?
+            <Button
+            text='Next'
+            backgroundColor={'green'}
+            onPressColor={colors.greenLight}
+            enabled={this.conditionOn()}
+            loader={this.state.loader} 
+            click={() => this.next()}
+          />
+          :
+          <Button
+            icon={'Next'} 
+            text='Next'
+            backgroundColor={'green'}
+            styleButton={{borderWidth:1,borderColor:colors.grey}}
+            disabled={true}
+            onPressColor={colors.greenLight}
+            loader={false} 
+          />
+          }        
+        </View>
 
       </View>
     );
@@ -303,6 +254,8 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
+    step0:state.createEventData.step0,
+    step1:state.createEventData.step1,
     step2:state.createEventData.step2,
   };
 };

@@ -99,7 +99,7 @@ class GroupPage extends React.Component {
             </Row>
 
             <View style={[styleApp.divider2,{marginBottom:10}]} />
-            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location,<View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:'white',borderWidth:0}]}>
+            {this.rowIcon(this.title(data.location.address),'map-marker-alt','AlertAddress',data.location,<View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:'white',borderWidth:0}]}>
               <AllIcons name={'map-marker-alt'} color={colors.grey} size={18} type='font' />
             </View>)}
             {this.rowIcon(this.title(data.organizer.name),'user-alt',undefined,undefined,<View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.grey,}]}>

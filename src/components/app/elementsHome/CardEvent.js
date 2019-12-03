@@ -166,7 +166,7 @@ class CardEvent extends React.Component {
           <Text style={styles.title}>{data.info.name}</Text>
           {
           data.info.public?
-          <Text style={[styles.subtitle,{marginTop:5}]}>{data.location.area}</Text>
+          <Text style={[styles.subtitle,{marginTop:5}]}>{data.location.address}</Text>
           :null
           }
           <Text style={[styles.subtitle,{marginTop:5}]}>{this.entreeFee(data.price.joiningFee)}</Text>

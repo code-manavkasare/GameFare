@@ -1,28 +1,18 @@
 import {
-  SET_MYGROUPS,
-  SET_ALL_GROUPS,
-  SET_GROUPS_AROUND
+  SET_CONVERSATION
   } from './types';
   
-  const setMygroups = (value) => ({
-    type: SET_MYGROUPS,
-    mygroups:value
+  const setConversation = (value) => ({
+    type: SET_CONVERSATION,
+    conversationID:value.conversationID,
+    messages:value.messages
   }); 
 
-  const setAllGroups = (value) => ({
-    type: SET_ALL_GROUPS,
-    groupsToModify:value
-  }); 
-
-  const setGroupsAround = (value) => ({
-    type: SET_GROUPS_AROUND,
-    groupsAround:value
-  }); 
   
-  export const groupsAction = (val,data) =>{
+  export const messageAction = (val,data) =>{
     return async function(dispatch){
-      if (val == 'setMygroups') {
-        await dispatch(setMygroups(data))
+      if (val == 'setConversation') {
+        await dispatch(setConversation(data))
       }
       return true
     }

@@ -2,7 +2,7 @@ import {
     SET_STEP0,
     SET_STEP1,
     SET_STEP2,
-    RESET
+    RESET_CREATE_EVENT
 } from '../actions/types';
 
 const initialState = {
@@ -10,14 +10,28 @@ const initialState = {
         sport:'',
         league:'',
         rule:'',
+        coach:false,
+        coachNeeded:false,
+        free:false,
+        joiningFee:'',
+        
     },
     step1:{
         level:-1,
         levelOption:'equal',
         gender:'mixed',
-        numberPlayers:1
+        numberPlayers:1,
+        private:false,
+        groups:{}
     },
-    step2:{},
+    step2:{
+        location:{address:''},
+        startDate:'',
+        endDate:'',
+        instructions:'',
+        name:'',
+        recurrence:''
+    },
     listGender:[{
         "icon" : "venus-mars",
         "text" : "Mixed",
@@ -45,7 +59,7 @@ const createEventReducer =  (state=initialState,action) => {
                 return {...state,step1:action.step1};
         case SET_STEP2:
             return {...state,step2:action.step2};
-        case RESET:
+        case RESET_CREATE_EVENT:
             return initialState;
         default:
             return state;

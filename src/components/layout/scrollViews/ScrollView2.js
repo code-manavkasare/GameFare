@@ -34,6 +34,10 @@ export default class ScrollViewPage extends PureComponent {
       componentDidMount() {
         this.props.onRef(this)
       }
+      scrollToEnd(data){
+        console.log('scroll end')
+        this.scrollRef.props.scrollToEnd({ animated:false})
+      }
       styleScrollView() {
         return {
           marginTop:this.props.marginTop,
@@ -106,7 +110,10 @@ export default class ScrollViewPage extends PureComponent {
           keyboardShouldPersistTaps={'always'}
           keyboardDismissMode = {'none'}
           stickyHeaderIndices={this.props.stickyHeaderIndices}
-
+          // onRef={ref => (this.scrollViewRef = ref)}
+          innerRef={ref => {
+            this.scrollRef = ref
+          }}
           extraHeight={100} 
           showsVerticalScrollIndicator={this.props.showsVerticalScrollIndicator}
           scrollEventThrottle ={16} 

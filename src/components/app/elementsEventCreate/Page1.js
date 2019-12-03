@@ -13,9 +13,7 @@ import {createEventAction} from '../../../actions/createEventActions'
 
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import StatusBar from '@react-native-community/status-bar';
-import BackButton from '../../layout/buttons/BackButton'
+import Button from '../../layout/buttons/Button'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import Header from '../../layout/headers/HeaderButton'
@@ -53,7 +51,7 @@ class Page1 extends Component {
       }
   }
   async setStateSwitch (state,val) {
-    await this.setState({[state]:val})
+    await this.props.createEventAction('setStep1',{...this.props.step1,[state]:val})
     return true
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -65,7 +63,7 @@ class Page1 extends Component {
         height={50}
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
-        state={this.state[state]}
+        state={this.props.step1[state]}
         setState={(val) => this.setStateSwitch(state,val)}
       />
     )
@@ -102,7 +100,7 @@ class Page1 extends Component {
     return (
       <View style={{borderBottomWidth:1,borderColor:colors.off}}>
       <ExpandableCard 
-          list={this.props.listLevelOption}
+          list={this.props.listGender}
           valueSelected = {this.props.step1.gender} 
           tickFilter={(data) => this.props.createEventAction('setStep1',{...this.props.step1,gender:data.value})}
       />
@@ -114,10 +112,10 @@ class Page1 extends Component {
     if (this.props.step1[state]==1) text = state + 's'
     return(
       <Row style={{paddingLeft:20,paddingRight:20,height:60,borderBottomWidth:1,borderColor:colors.off}}>
-        <Col size={10} style={styleApp.center2}>
-          <AllIcons name={icon} color={colors.greyDark} size={17} type='font' />
+        <Col size={15} style={styleApp.center}>
+          <AllIcons name={icon} color={colors.greyDark} size={15} type='font' />
         </Col>
-        <Col size={65} style={[styleApp.center2,{paddingLeft:10}]}>
+        <Col size={60} style={[styleApp.center2,{paddingLeft:10}]}>
           <Text style={styleApp.input}>{this.props.step1[state]} {this.props.step1[state]==1?'player':'players'} <Text style={styleApp.regularText}>(total)</Text></Text>
         </Col>
         <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => {
@@ -143,12 +141,12 @@ class Page1 extends Component {
   async setGroups(groups) {
     console.log('set groups!')
     console.log(groups)
-    await this.setState({groups:groups})
+    await this.props.createEventAction('setStep1',{...this.props.step1,groups:groups})
     this.props.navigation.navigate('CreateEvent1')
   }
   openAddGroups() {
     if (!this.props.userConnected) return this.props.navigation.navigate('SignIn',{pageFrom:'CreateEvent1'})
-    return this.props.navigation.navigate('AddGroups',{userID:this.props.userID,groups:this.state.groups,onGoBack:(groups) => this.setGroups(groups)})
+    return this.props.navigation.navigate('AddGroups',{userID:this.props.userID,groups:this.props.step1.groups,onGoBack:(groups) => this.setGroups(groups)})
   }
   rowGroup(group,i){
     return (
@@ -158,11 +156,11 @@ class Page1 extends Component {
             <Col size={15} style={styleApp.center2}>
               <AsyncImage style={{width:'100%',height:40,borderRadius:3}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} />
             </Col>
-            <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
+            <Col size={75} style={[styleApp.center2,{paddingLeft:15}]}>
               <Text style={styleApp.text}>{group.info.name}</Text>
               <Text style={[styleApp.smallText,{fontSize:12}]}>{group.info.sport.charAt(0).toUpperCase() + group.info.sport.slice(1)}</Text>
             </Col>
-            <Col size={10} style={styleApp.center3}>
+            <Col size={10} style={styleApp.center}>
               <AllIcons name='check' type='mat' size={20} color={colors.green} />
             </Col>
           </Row>
@@ -182,22 +180,18 @@ class Page1 extends Component {
       return (
         <View style={{marginTop:10,marginLeft:0,width:width}}>
             <View style={[styleApp.marginView,{marginBottom:15}]}>
-              {this.switch('Open access','Invite only','private')}
-             
+              {this.switch('Open access','Invite only','private')}      
             </View>
 
             {this.levelFilter(sport)}
-
-           
-              {this.props.step1.level != 0?this.levelOption():null}
-{/*    
-
-              {this.plusMinus('numberPlayers',200,1,1,'user-check')}
-              {this.gender()} */}
- {/*
+            {this.props.step1.level != 0?this.levelOption():null}
+   
+            {this.plusMinus('numberPlayers',200,1,1,'user-check')}
+            {this.gender()}
+ 
             {
-              Object.values(this.state.groups).length!=0?
-              Object.values(this.state.groups).map((group,i) => (
+              Object.values(this.props.step1.groups).length!=0?
+              Object.values(this.props.step1.groups).map((group,i) => (
                   this.rowGroup(group,i)
               ))
               :null
@@ -218,16 +212,11 @@ class Page1 extends Component {
             style={[{borderColor:colors.off,height:60,width:'100%',borderRadius:0,borderBottomWidth:1,marginTop:0}]}
             onPressColor={colors.off}
             />
- */}
-
         </View>
       )
   }
-  close () {
-    this.props.navigation.goBack()
-  }
-  next() {
-    return this.props.navigation.navigate('CreateEvent2',{page1:this.state,page0:this.props.navigation.getParam('page0')})
+  next(sport) {
+    return this.props.navigation.navigate('CreateEvent2',{sport:sport})
   }
   render() {
     console.log('lw `111`')
@@ -246,7 +235,7 @@ class Page1 extends Component {
             initialTitleOpacity={1}
             icon1='arrow-left'
             icon2={null}
-            clickButton1={() => this.close()} 
+            clickButton1={() => this.props.navigation.goBack()} 
         />
 
         <ScrollView 
@@ -259,13 +248,17 @@ class Page1 extends Component {
           showsVerticalScrollIndicator={false}
         />
 
-        <ButtonRound
-          icon={'next'} 
-          enabled={true} 
-          loader={false} 
-          onPressColor={colors.greenLight}
-          click={() => this.next()}
-         />
+        <View style={[styleApp.footerBooking,styleApp.marginView]}>
+          <Button
+            text='Next'
+            backgroundColor={'green'}
+            onPressColor={colors.greenLight}
+            enabled={true}
+            loader={this.state.loader} 
+            click={() => this.next(this.props.navigation.getParam('sport'))}
+          />
+        </View>
+        
 
       </View>
     );

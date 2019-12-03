@@ -119,7 +119,7 @@ class ProfilePage extends Component {
           <View style={styleApp.marginView}>
 
             {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
-            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
+            {this.rowIcon(this.title(data.location.address),'map-marker-alt','AlertAddress',data.location)}
             {/* {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null} */}
             {this.rowIcon(this.title(this.props.navigation.getParam('data').info.maxAttendance + ' people'),'user-check')}
 

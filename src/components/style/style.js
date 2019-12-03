@@ -104,8 +104,8 @@ export default styles = StyleSheet.create({
       fontFamily: 'OpenSans-SemiBold'
     },
     subtitle:{
-      fontFamily: 'OpenSans-SemiBold',
-      fontSize:14,color:colors.greyDark,
+      fontFamily: 'OpenSans-Regular',
+      fontSize:15,color:colors.greyDark,
     },
     iconFooter:{
       height:18,width:18,

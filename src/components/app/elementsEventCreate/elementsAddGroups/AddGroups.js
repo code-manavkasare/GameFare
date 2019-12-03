@@ -190,12 +190,10 @@ export default class AddGroups extends Component {
       )
   }
   submit () {
-    if (Object.values(this.state.groups).length == 0) return this.props.navigation.goBack()
     return this.props.navigation.state.params.onGoBack(this.state.groups)
   }
   textButton () {
-    if (Object.values(this.state.groups).length == 0) return 'Close'
-    if (Object.values(this.state.groups).length == 1) return 'Add ' + Object.values(this.state.groups).length + ' group'
+    if (Object.values(this.state.groups).length == 1 || Object.values(this.state.groups).length == 0) return 'Add ' + Object.values(this.state.groups).length + ' group'
     return 'Add ' + Object.values(this.state.groups).length + ' groups'
   }
   render() {

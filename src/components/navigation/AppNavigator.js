@@ -68,6 +68,7 @@ import LocationSelect from '../app/elementsOnBoard/LocationSelect'
 
 
 import MessageList from '../app/elementsMessage/MessageList'
+import Conversation from '../app/elementsMessage/Conversation'
 
 const CreateEventNavigator = createStackNavigator(
     {
@@ -147,6 +148,19 @@ const JoinGroupNavigator = createStackNavigator(
     }
 );
 
+const MessageNavigator = createStackNavigator(
+    {
+        Conversation: Conversation,
+    },
+    {
+        initialRouteName:'Conversation',
+        headerMode: 'none',
+        mode: 'card',
+        cardOverlayEnabled:false,
+        cardShadowEnabled:true
+    }
+);
+
 
 const ProfileNavigator = createStackNavigator(
     {
@@ -204,40 +218,6 @@ const MainApp = createBottomTabNavigator(
         Profile: ProfileNavigator,
         
     },
-    /*
-    <Button   view={() => {
-          return <Row >
-            <Col size={10} style={[styleApp.center]}>
-              <AllIcons name={routeName == 'Home'?
-                'calendar'
-                :
-                routeName == 'ListGroups'?
-                'tennis'
-                :routeName == 'Profile'?
-                'profileFooter'
-                :null
-                } size={18} color={tintColor} style={styles.iconFooter} type='moon'/>
-                <Text style={[styles.footerText,{color:tintColor,marginTop:10}]}>
-                {routeName == 'Home'?
-                'EVENTS'
-                :
-                routeName == 'ListGroups'?
-                'GROUPS'
-                :routeName == 'Profile'?
-                'PROFILE'
-                :null
-                }
-                </Text>
-            </Col>
-          </Row>
-        }}
-        click={() => navigation.navigate(routeName)}
-        color={'white'}
-        style={[styles.center,{borderTopWidth:1.5,marginTop:5,borderColor:tintColor,paddingTop:6,backgroundColor:'white',width:'100%',height:'120%'}]}
-        onPressColor={colors.off}
-        />
-    
-    */
     {
       defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon:({ focused, tintColor }) => { 
@@ -288,6 +268,7 @@ const MainApp = createBottomTabNavigator(
       tabBarOptions: {
         activeTintColor: colors.primary2,
         inactiveTintColor: colors.title,
+        // tabBarVisible:false,
         showLabel:false,
         style: [styles.shade,{
             borderTopWidth:0.5,
@@ -350,6 +331,7 @@ const MainApp = createBottomTabNavigator(
             },
         },
         Event:JoinNavigator,
+        Conversation:MessageNavigator,
         Group:JoinGroupNavigator,
         CreateEvent1:CreateEventNavigator,
         CreateGroup1:CreateGroupNavigator,

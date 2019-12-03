@@ -280,7 +280,7 @@ class EventPage extends React.Component {
 
             {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt')}
             {data.date.recurrence != '' && data.date.recurrence != undefined?this.rowIcon(this.title(data.date.recurrence.charAt(0).toUpperCase() + data.date.recurrence.slice(1)),'stopwatch'):null}
-            {this.rowIcon(this.title(data.location.area),'map-marker-alt','AlertAddress',data.location)}
+            {this.rowIcon(this.title(data.location.address),'map-marker-alt','AlertAddress',data.location)}
             {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}
 
 

@@ -29,10 +29,7 @@ async function createGroup(data,userID,infoUser) {
     }
     delete group['img']
 
-    console.log('event')
-    console.log(group)
-    //var pushEvent = await firebase.database().ref('groups').push(group)
-    var pushEvent = {key:'skfjhdfgkdjhgjf'}
+    var pushEvent = await firebase.database().ref('groups').push(group)
     group.objectID = pushEvent.key
 
     await subscribeToTopics([userID,'all',pushEvent.key])

@@ -66,7 +66,6 @@ export default class ScrollViewPage extends PureComponent {
           keyboardShouldPersistTaps={'always'}
           keyboardDismissMode = {'none'}
 
-
           extraHeight={100} 
           showsVerticalScrollIndicator={this.props.showsVerticalScrollIndicator}
           scrollEventThrottle ={16} 

@@ -6,6 +6,7 @@ import createEventReducer from './createEventReducer';
 import eventsReducer from './eventsReducer'
 import createGroupReducer from './createGroupReducer'
 import groupsReducer from './groupsReducer'
+import messageReducer from './messageReducer'
 
 export default combineReducers({
     globaleVariables:globaleVariablesReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
     createEventData:createEventReducer,
     events:eventsReducer,
     groups:groupsReducer,
-    createGroup:createGroupReducer
+    createGroup:createGroupReducer,
+    conversations:messageReducer
 });

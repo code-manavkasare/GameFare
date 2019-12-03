@@ -10,6 +10,7 @@ export const SET_LEAGUE = 'SET_LEAGUE';
 export const SET_STEP0 = 'SET_STEP0';
 export const SET_STEP1 = 'SET_STEP1';
 export const SET_STEP2 = 'SET_STEP2';
+export const RESET_CREATE_EVENT = 'RESET_CREATE_EVENT';
 
 export const SET_FUTURE_USER_EVENTS = 'SET_FUTURE_USER_EVENTS';
 export const SET_PAST_USER_EVENTS = 'SET_PAST_USER_EVENTS';
@@ -24,3 +25,4 @@ export const SET_ALL_GROUPS = 'SET_ALL_GROUPS';
 export const SET_GROUPS_AROUND = 'SET_GROUPS_AROUND';
 
 export const SET_CONVERSATION = 'SET_CONVERSATION';
+export const SET_MESSAGES ='SET_MESSAGES';

@@ -155,7 +155,6 @@ class LocationSelector extends Component {
         // this.setState({ loader: false })
         await this.props.navigation.state.params.onGoBack({
           address:address.description,
-          area:address.description,
           lat:locationObj.geometry.location.lat,
           lng:locationObj.geometry.location.lng,
         }) 

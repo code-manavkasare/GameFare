@@ -20,11 +20,9 @@ import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
-import BackButton from '../../layout/buttons/BackButton'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import ScrollView from '../../layout/scrollViews/ScrollView'
-import Header from '../../layout/headers/HeaderButton'
 import Switch from '../../layout/switch/Switch'
 import Picker from '../../layout/pickers/Picker'
 
@@ -128,21 +126,26 @@ export default class Date extends Component {
               />
       )
     }
-    switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
+    async setPart(state,val) {
+      await this.setState({[state]:val})
+      return true
+    }
+    switch (textOn,textOff,state) {
       return (
         <Switch 
           textOn={textOn}
           textOff={textOff}
-          translateXTo={(width)/4}
+          translateXTo={(width)/3.9}
           height={43}
-          translateXComponent0={translateXComponent0}
-          translateXComponent1={translateXComponent1}
           state={this.state[state]}
-          setState={(val) => this.setState({[state]:val})}
+          setState={(val) => this.setPart(state,val)}
         />
       )
     }
     timeSelect (hour,min,part) {
+      console.log('part')
+      console.log(part)
+      console.log(this.state[part])
       return (
         <Row style={{marginBottom:20,height:100}}>
           <Col size={40} style={styles.center2}>
@@ -223,11 +226,6 @@ export default class Date extends Component {
 
               <Text style={[styleApp.title,{fontSize:19,marginTop:20}]}>Recurrence</Text>
 
-            {/*
-            
-            
-            */}
-
             <ButtonColor view={() => {
               return (
                 <Row>
@@ -301,6 +299,7 @@ export default class Date extends Component {
       this.props.close()
     }
     async submit() {
+      var now = moment()
       var startPart = this.state.startPart?'pm':'am'
       var endPart = this.state.endPart?'pm':'am'
       var startDate = moment(this.state.daySelectedStart + ' ' + this.state.startTimeHour + ':' + this.state.startTimeMin + ' ' + startPart,'YYYY-MM-DD h:mm a').toString()
@@ -310,25 +309,28 @@ export default class Date extends Component {
         endDate = moment(this.state.daySelectedStart + ' ' + this.state.endTimeHour + ':' + this.state.endTimeMin + ' ' + endPart,'YYYY-MM-DD h:mm a').toString()
       }
       endDate = endDate.split(' GMT')[0]
-      console.log('startDate')
-      console.log(startDate)
-      console.log(endDate)
-      this.props.navigation.state.params.onGoBack({
+
+      var durationStart = moment.duration(moment(startDate).diff(now))
+      durationStart = durationStart._milliseconds
+
+      var durationEnd = moment.duration(moment(endDate).diff(now))
+      durationEnd = durationEnd._milliseconds
+
+      var durationStartEnd = moment.duration(moment(endDate).diff(moment(startDate)))
+      durationStartEnd = durationStartEnd._milliseconds
+      console.log(durationStart)
+      if (durationStart < 0) {
+        return this.props.navigation.navigate('Alert',{close:true,title:'Please select a start date in the future.',textButton:'Got it!'})
+      } else if (durationEnd < 0) {
+        return this.props.navigation.navigate('Alert',{close:true,title:'Please select an end date in the future.',textButton:'Got it!'})
+      }  else if (durationStartEnd < 0) {
+        return this.props.navigation.navigate('Alert',{close:true,title:'Please select an end date in the future compare to the start date.',textButton:'Got it!'})
+      }
+      return this.props.navigation.state.params.onGoBack({
         startDate:startDate,
         endDate:endDate,
         recurrence:this.state.recurrence
-
       })
-    }
-    header() {
-      return <Header 
-      icon={'angle-down'}
-      borderColor={'white'}
-      title={'Date & Time'}
-      loader={this.state.loader}
-      close={() => this.props.navigation.goBack()}
-      onRef={ref => (this.headerRef = ref)}
-    />
     }
   render() {
     console.log('render location')
@@ -362,7 +364,7 @@ export default class Date extends Component {
 
         <View style={styleApp.footerBooking}>
           <View style={{marginLeft:20,width:width-40}}>
-            <Button backgroundColor={'green'} onPressColor={colors.greenClick} text={'Submit'} click={() => this.submit()} />
+            <Button backgroundColor={'primary'} onPressColor={colors.primary2} text={'Submit'} click={() => this.submit()} />
           </View>
         </View>
       </View>

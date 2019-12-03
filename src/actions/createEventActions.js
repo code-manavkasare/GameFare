@@ -2,7 +2,7 @@ import {
   SET_STEP0,
   SET_STEP1,
   SET_STEP2,
-  
+  RESET_CREATE_EVENT
   } from './types';
   
   const setStep0 = (value) => ({
@@ -18,6 +18,10 @@ import {
     step2:value
   }); 
 
+  const reset = () => ({
+    type: RESET_CREATE_EVENT,
+  }); 
+
   
   export const createEventAction = (val,data) =>{
     return async function(dispatch){
@@ -28,6 +32,8 @@ import {
         await dispatch(setStep1(data))
       } else if (val == 'setStep2') {
         await dispatch(setStep2(data))
+      } else if (val == 'reset') {
+        await dispatch(reset())
       }
       
       return true

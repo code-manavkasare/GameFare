@@ -80,7 +80,7 @@ export default class HeaderFlow extends Component {
     const borderWidth = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: this.props.inputRange,
-          outputRange: [ 0, 0.3 ],
+          outputRange: [ this.props.initialBorderWidth?this.props.initialBorderWidth:0, 0.3 ],
           extrapolate: 'clamp'
     });
     const AnimateColorIcon = this.props.AnimatedHeaderValue.interpolate(
@@ -98,7 +98,7 @@ export default class HeaderFlow extends Component {
     const borderColorView = this.props.AnimatedHeaderValue.interpolate(
       {
           inputRange: this.props.inputRange,
-          outputRange: [ 'white', colors.borderColor ],
+          outputRange: [ this.props.initialBorderColorHeader?this.props.initialBorderColorHeader:'white', colors.borderColor ],
           extrapolate: 'clamp'
     });
     return ( 

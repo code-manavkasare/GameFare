@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions'
+import { Col, Row, Grid } from "react-native-easy-grid";
 
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
@@ -29,7 +30,7 @@ import ButtonAdd from '../../app/elementsHome/ButtonAdd'
 import sizes from '../../style/sizes';
 import isEqual from 'lodash.isequal'
 
-class HomeScreen extends React.Component {
+class MessageTab extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -42,8 +43,7 @@ class HomeScreen extends React.Component {
       this.opacityVoile = new Animated.Value(0.3)
     }
     async componentDidMount() {
-      StatusBar.setHidden(false, "slide")
-      StatusBar.setBarStyle('dark-content',true)
+     console.log(this.props.conversations)
     }
     navigate(val,data) {
       this.props.navigation.push(val,data)
@@ -64,40 +64,53 @@ class HomeScreen extends React.Component {
     getAnimateHeader() {
       return this.scrollViewRef.getAnimateHeader()
     }
+    cardConversation(conversation,i) {
+      return <ButtonColor key={i} view={() => {
+        return (
+          <View>
+          <Row style={{paddingTop:10,marginLeft:0,width:width-40,paddingBottom:0,borderBottomWidth:1,borderColor:colors.off,flex:1}}>    
+            <Col size={3} style={styleApp.center2}>
+              <Text style={[styleApp.input,{color:colors.green}]}>•</Text>
+            </Col>   
+            <Col size={15} style={styleApp.center}>
+              <View style={[styleApp.roundView,{backgroundColor:colors.off2,width:35,height:35,borderRadius:17.5,borderWidth:0.5,borderColor:colors.borderColor}]}>
+                <Text style={[styleApp.text,{fontSize:13}]}>{Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].firstname[0] + Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].lastname[0]}</Text>
+              </View>
+              {/* <AsyncImage style={{width:'100%',height:40,borderRadius:3}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} /> */}
+            </Col>
+            <Col size={75} style={[styleApp.center2,{paddingLeft:5}]}>
+              <Text style={styleApp.text}>{Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].firstname} {Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].lastname}</Text>
+              <Text style={[styleApp.smallText,{fontSize:12,marginTop:2,color:colors.greyDark}]}>{Object.values(conversation.messages)[0].text.slice(0,70)}...</Text>
+            </Col>
+            <Col size={10} style={styleApp.center3}>
+              <AllIcons name='keyboard-arrow-right' type='mat' size={20} color={colors.grey} />
+            </Col>
+          </Row>
+          </View>
+        )
+      }} 
+      click={() => this.props.navigation.navigate('Conversation',{conversationID:'convo1'})}
+      color='white'
+      style={{height:100}}
+      onPressColor={colors.off}
+      />
+    }
     messagePageView () {
+      if (!this.props.userConnected) return <View>
+
+      </View>
       return (
-        <View style={{paddingTop:0,flex:1}}>
-                <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
-                  <View style={styleApp.marginView}>
-                    <Text style={styleApp.title}>Inbox</Text>
-                    <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text>
-
-                  </View>
-                  
-                </View>
-          {/* <EventFromGroups 
-            navigate={this.navigate.bind(this)} 
-            navigate1={(val,data) => this.props.navigation.navigate(val,data)}
-            loader={this.state.loader}
-            onRef={ref => (this.eventGroupsRef = ref)} 
-          />
-
-          <ListEvents
-           location={this.state.location} 
-           sportSelected={this.props.sportSelected}
-           search={this.state.search} 
-           key={2} 
-           onRef={ref => (this.listEventsRef = ref)}
-           setState={(data) => this.setState(data)}
-           loader={this.state.loader} 
-           navigate={this.navigate.bind(this)} 
-           navigate1={(val,data) => this.props.navigation.navigate(val,data)}
-          />
-          
-          
-          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
-
-          <NewGroupCard pageFrom='Home' /> */}
+        <View style={{paddingTop:20,flex:1}}>
+          <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
+            <View style={[styleApp.marginView,{marginBottom:15}]}>
+              <Text style={styleApp.title}>Inbox</Text>
+              <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text>
+            </View>
+            
+            {Object.values(this.props.conversations).map((conversation,i) => (
+              this.cardConversation(conversation,i)
+            ))}
+          </View>
 
         </View>
       )
@@ -111,12 +124,12 @@ class HomeScreen extends React.Component {
       this.listEventsRef.setLocation(data)
     }
   render() {
+    
     return (
       <View style={styleApp.stylePage}>
 
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
         textHeader={'Inbox (' + this.state.unreadMessages + ')'}
         inputRange={[50,80]}
         initialBorderColorIcon={colors.grey}
@@ -155,18 +168,7 @@ class HomeScreen extends React.Component {
         />
 
         <Animated.View style={[styleApp.voile,{opacity:this.opacityVoile,transform:[{translateX:this.translateXVoile}]}]}/>
-        {/* <ButtonAdd 
-        translateXVoile={this.translateXVoile}
-        opacityVoile={this.opacityVoile}
-        new ={(val) => {
-          if (val == 'event') return this.props.navigation.navigate('CreateEvent0',{'pageFrom':'Home'})
-          return this.props.navigation.navigate('CreateGroup0',{'pageFrom':'Home'})
-        }}
-        /> */}
 
-
-        
-        
 
       </View>
     );
@@ -189,9 +191,10 @@ const styles = StyleSheet.create({
 
 const  mapStateToProps = state => {
   return {
-    sports:state.globaleVariables.sports.list,
-    sportSelected:state.historicSearch.sport
+    conversations:state.conversations,
+    userID:state.user.userID,
+    userConnected:state.user.userConnected
   };
 };
 
-export default connect(mapStateToProps,{historicSearchAction})(HomeScreen);
+export default connect(mapStateToProps,{historicSearchAction})(MessageTab);

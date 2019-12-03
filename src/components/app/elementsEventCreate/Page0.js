@@ -126,11 +126,19 @@ class Page0 extends Component {
   async setCoach(val) {
     console.log('setCoach ' + val)
     if (!val) {
-      await this.setState({coach:val})
+      await this.props.createEventAction('setStep0',{
+        ...this.props.step0,
+        coach:val,
+      })
       return true
     }
+
     if (this.props.infoUser.coach && this.props.infoUser.coachVerified) {
-      await this.setState({coach:val,coachNeeded:false,joiningFee:'',free:false})
+      await this.props.createEventAction('setStep0',{
+        ...this.props.step0,
+        coach:val,
+        coachNeeded:false,joiningFee:'',free:false
+      })
       return true
     }
     await this.props.navigation.navigate('Alert',{textButton:'Contact us',onGoBack:() => this.sendMessage(),title:'Access required.',subtitle:'You need to become a verified instructor in order to create an instructor events.',icon:<AllIcons name='exclamation-circle' color={colors.secondary} size={20} type='font' />})
@@ -142,20 +150,20 @@ class Page0 extends Component {
     Communications.email([email1],null,null, subject ,'');
     this.props.navigation.navigate('CreateEvent0')
   }
-  buttonCoach() {
+  buttonCoach(sport) {
     return (
       <View>
         {this.switch('Player','Instructor','coach',(val) => this.setCoach(val))}
 
         {
-            !this.state.coach?
-            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.setState({coachNeeded:!this.state.coachNeeded,joiningFee:!this.state.coachNeeded?this.state.sportsFilter.value.fee.coachMatchFee:'',free:false})}>
+            !this.props.step0.coach?
+            <TouchableOpacity style={{marginTop:25}} activeOpacity={0.7} onPress={() => this.props.createEventAction('setStep0',{...this.props.step0,coachNeeded:!this.props.step0.coachNeeded,joiningFee:!this.props.step0.coachNeeded?sport.fee.coachMatchFee:'',free:false})}>
             <Row >
               <Col size={15} style={styleApp.center}>
-                <AllIcons name='check' type='mat' color={!this.state.coachNeeded?colors.grey:colors.green} size={23} />
+                <AllIcons name='check' type='mat' color={!this.props.step0.coachNeeded?colors.grey:colors.green} size={23} />
               </Col>
               <Col size={85} style={[styleApp.center2,{paddingLeft:15}]}>
-                <Text style={[styleApp.text,{fontSize:17,color:!this.state.coachNeeded?colors.grey:colors.green},]}>I need an instructor</Text>
+                <Text style={[styleApp.text,{fontSize:17,color:!this.props.step0.coachNeeded?colors.grey:colors.green},]}>I need an instructor</Text>
               </Col>
             </Row>
             </TouchableOpacity>
@@ -178,43 +186,61 @@ class Page0 extends Component {
                   style={styleApp.input}
                   placeholder="Entry fee"
                   returnKeyType={'done'}
-                  //editable={!this.state.free}
                   keyboardType={'phone-pad'}
                   ref={(input) => { this.entreeFeeInputRef = input }}
                   underlineColorAndroid='rgba(0,0,0,0)'
                   autoCorrect={true}
                   onChangeText={text => {
-                    if (text.length == 0 && this.state.joiningFee.length != 0) {
-                      this.setState({joiningFee:text,free:true})
+                    if (text.length == 0 && this.props.step0.joiningFee.length != 0) {
+                      this.props.createEventAction('setStep0',{
+                        ...this.props.step0,
+                        joiningFee:text,
+                        free:true
+                      })
                     }
                     else if (Number(text) == 0 ) {
-                      this.setState({joiningFee:text,free:true})
+                      this.props.createEventAction('setStep0',{
+                        ...this.props.step0,
+                        joiningFee:text,
+                        free:true
+                      })
                     } else {
                       if (Number(text).toString() == 'NaN'){
-                        return this.setState({free:false,joiningFee:text.replace(text[text.length-1],'')})
+                        return this.props.createEventAction('setStep0',{
+                          ...this.props.step0,
+                          joiningFee:text.replace(text[text.length-1],''),
+                          free:false
+                        })
                       }
-                      return this.setState({joiningFee:text,free:false})
-                    }
-                    
+                      return this.props.createEventAction('setStep0',{
+                        ...this.props.step0,
+                        joiningFee:text,
+                        free:false
+                      })
+                    }          
                   }}
-                  value={this.state.joiningFee}
+                  value={this.props.step0.joiningFee}
                 />
               </Col>
             </Row>
           </TouchableOpacity>
         </Col>
         <Col size={20} style={styleApp.center3} activeOpacity={0.7} onPress={() => {
-          if (!this.state.free) {
+          if (!this.props.step0.free) {
             this.entreeFeeInputRef.blur()
           }
-          this.setState({free:!this.state.free,joiningFee:!this.state.free?'0':''})
+          this.props.createEventAction('setStep0',{
+            ...this.props.step0,
+            free:!this.props.step0.free,
+            joiningFee:!this.props.step0.free?'0':''
+          })
         }}>
           <Row style={{height:55,width:'100%',}}>
             <Col style={styleApp.center} >          
-              <AllIcons name="check" type='font' color={this.state.free?colors.primary:colors.grey} size={16} />
+              <AllIcons name="check" type='font' color={this.props.step0.free?colors.primary:colors.grey} size={16} />
             </Col>
             <Col style={styleApp.center3} >
-              <Text style={[styleApp.input,{fontSize:17},{color:this.state.free?colors.primary:colors.grey}]}>Free</Text>
+              <Text style={[styleApp.input,{fontSize:17},{color:this.props.step0.free?colors.primary:colors.grey}]}>Free</Text>
             </Col>
           </Row>
 
@@ -233,7 +259,7 @@ class Page0 extends Component {
         textOff={textOff}
         translateXTo={width/2-20}
         height={50}
-        state={this.state[state]}
+        state={this.props.step0[state]}
         setState={(val) => click(val)}
       />
     )
@@ -254,7 +280,7 @@ class Page0 extends Component {
 
           <Text style={[styleApp.title,{marginBottom:20}]}>I am a...</Text>
 
-          {this.buttonCoach()}
+          {this.buttonCoach(sport)}
 
           
           </View>
@@ -266,7 +292,7 @@ class Page0 extends Component {
               <Col size={80} style={styleApp.center2}>
                 <Text style={[styleApp.title]}>Entry fee <Text style={{fontSize:12,fontFamily:'OpenSans-SemiBold'}}>(per player)</Text></Text>
               </Col>
-              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.openAlertInfo('Entry fee per player.',this.state.sportsFilter.value.fee.entryFeeInfo)}>
+              <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => this.openAlertInfo('Entry fee per player.',sport.fee.entryFeeInfo)}>
                 <AllIcons type={'font'} name={'info-circle'} color={colors.secondary} size={17} />
               </Col>
             </Row>
@@ -275,11 +301,11 @@ class Page0 extends Component {
           </View>
 
           {
-            !this.state.coachNeeded?
+            !this.props.step0.coachNeeded?
             this.entreeFeeSection('free')
             :
             <View style={styleApp.marginView}>
-            <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with an instructor. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${this.state.sportsFilter.value.fee.coachMatchFee}</Text> to participate, which will be payment for the instructor.</Text>
+            <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',marginTop:10}]}>We are happy to match you with an instructor. Every player will be charged <Text style={{fontFamily:'OpenSans-SemiBold',color:colors.title}}>${sport.fee.coachMatchFee}</Text> to participate, which will be payment for the instructor.</Text>
             </View>
             }
         
@@ -287,14 +313,8 @@ class Page0 extends Component {
       )
   }
   conditionOn() {
-    if (this.state.joiningFee == '') return false
+    if (this.props.step0.joiningFee == '') return false
     return true
-  }
-  valuePlayer() {
-    if (!this.state.rulesFilter.value.coachNeeded) {
-      return true
-    }
-    return this.state.player
   }
   close () {
     this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))
@@ -340,8 +360,7 @@ class Page0 extends Component {
         />
         
 
-        <View style={styleApp.footerBooking}>
-          <View style={styleApp.marginView}>
+        <View style={[styleApp.footerBooking,styleApp.marginView]}>
           {
             this.conditionOn()?
             <Button
@@ -362,9 +381,7 @@ class Page0 extends Component {
             onPressColor={colors.greenLight}
             loader={false} 
           />
-          }
-          </View>
-        
+          }        
         </View>
 
         
