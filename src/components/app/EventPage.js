@@ -17,9 +17,9 @@ import styleApp from '../style/style'
 import sizes from '../style/sizes'
 import {Grid,Row,Col} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
-import MapboxGL from '@react-native-mapbox-gl/maps';
+
 import AsyncImage from '../layout/image/AsyncImage'
-MapboxGL.setAccessToken('pk.eyJ1IjoiYmlyb2xsZWF1ZiIsImEiOiJjampuMHByenoxNmRoM2ttcHVqNmd0bzFvIn0.Fml-ls_j4kW_OJViww4D_w');
+
 import AsyncStorage from '@react-native-community/async-storage';
 
 import ScrollView from '../layout/scrollViews/ScrollView2'
@@ -62,28 +62,28 @@ class EventPage extends React.Component {
     }
   };
   async componentDidMount() {
-    console.log('event page mount')
-    console.log(this.props.navigation.getParam('data'))
-    // this.loadEvent(this.props.navigation.getParam('data'))
-    var uri = await AsyncStorage.getItem(this.props.navigation.getParam('data').objectID)
-    if(uri == null) {
-      uri = await MapboxGL.snapshotManager.takeSnap({
-        centerCoordinate: [this.props.navigation.getParam('data').location.lng, this.props.navigation.getParam('data').location.lat],
-        width: width-20,
-        height: 300,
-        zoomLevel: 12,
-        pitch: 30,
-        heading: 20,
-        // styleURL: MapboxGL.StyleURL.Dark,
-        writeToDisk: true, // Create a temporary file
-      });
+    // console.log('event page mount')
+    // console.log(this.props.navigation.getParam('data'))
+    // // this.loadEvent(this.props.navigation.getParam('data'))
+    // var uri = await AsyncStorage.getItem(this.props.navigation.getParam('data').objectID)
+    // if(uri == null) {
+    //   uri = await MapboxGL.snapshotManager.takeSnap({
+    //     centerCoordinate: [this.props.navigation.getParam('data').location.lng, this.props.navigation.getParam('data').location.lat],
+    //     width: width-20,
+    //     height: 300,
+    //     zoomLevel: 12,
+    //     pitch: 30,
+    //     heading: 20,
+    //     // styleURL: MapboxGL.StyleURL.Dark,
+    //     writeToDisk: true, // Create a temporary file
+    //   });
       
-      AsyncStorage.setItem(this.props.navigation.getParam('data').objectID, uri)
-    }
-    console.log('uri!!!!!!')
-    console.log(uri)
+    //   AsyncStorage.setItem(this.props.navigation.getParam('data').objectID, uri)
+    // }
+    // console.log('uri!!!!!!')
+    // console.log(uri)
     
-    this.setState({imageMap:uri})
+    // this.setState({imageMap:uri})
   }
   async loadEvent(data,refresh) {
     if (refresh) {
@@ -471,22 +471,12 @@ class EventPage extends React.Component {
       <ParalaxScrollView 
         setState={(val) => this.setState(val)} 
         
-        image={
-          this.state.imageMap!=''?
-          <TouchableOpacity activeOpacity={0.3} style={{height:280,width:'100%'}}  onPress={() => {this.props.navigation.navigate('AlertAddress',{data:this.props.navigation.getParam('data').location})}}>
-             <AsyncImage style={{width:'100%',height:300,borderRadius:0}} mainImage={this.state.imageMap} imgInitial={this.state.imageMap} />
-             <View style={{position:"absolute",left:width/2-15,top:280/2-5}}>
-                <AllIcons name='map-marker-alt' type='font' size={28} color={colors.blue} />
-              </View>
-            </TouchableOpacity>
-          :
-          <FadeInView duration={250}>
-            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{width:'100%',height:300,borderRadius:0}} />
-            <View style={{position:"absolute",left:width/2-15,top:280/2-5}}>
-              <Loader size={28} color={'primary'} />
-            </View>
-          </FadeInView>
-        }
+        image={<TouchableOpacity activeOpacity={0.3} style={{height:280,width:'100%'}}  onPress={() => {this.props.navigation.navigate('AlertAddress',{data:this.props.navigation.getParam('data').location})}}>
+        <AsyncImage style={{width:'100%',height:300,borderRadius:0}} mainImage={this.props.navigation.getParam('data').images[0]} imgInitial={this.props.navigation.getParam('data').images[0]} />
+        <View style={{position:"absolute",left:width/2-15,top:280/2-5}}>
+           <AllIcons name='map-marker-alt' type='font' size={28} color={colors.blue} />
+         </View>
+       </TouchableOpacity>}
 
         content={() => this.event(this.props.navigation.getParam('data'),this.props.navigation.getParam('loader'),sport,league,rule)} 
         header={false}

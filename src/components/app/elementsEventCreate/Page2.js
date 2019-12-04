@@ -4,6 +4,7 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Image,
     Dimensions,TextInput,
     Animated
 } from 'react-native';
@@ -11,6 +12,7 @@ import {connect} from 'react-redux';
 import {createEventAction} from '../../../actions/createEventActions'
 
 const { height, width } = Dimensions.get('screen')
+import {loadImageMap} from '../../functions/location'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import ButtonColor from '../../layout/Views/Button'
 import Button from '../../layout/buttons/Button'
@@ -18,17 +20,20 @@ import Button from '../../layout/buttons/Button'
 import TextField from '../../layout/textField/TextField'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import AllIcons from '../../layout/icons/AllIcons'
+import Loader from '../../layout/loaders/Loader'
 import DateEvent from './DateEvent'
 import HeaderBackButton from '../../layout/headers/HeaderBackButton'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
+import AllIcon from '../../layout/icons/AllIcons';
 
 class Page2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader:false,
+      image:''
     };
     this.AnimatedHeaderValue = new Animated.Value(0)
   }
@@ -104,8 +109,13 @@ class Page2 extends Component {
   async setLocation(data) {
     console.log('set location step 2')
     console.log(data)
-    await this.props.createEventAction('setStep2',{location:data})
-    return this.props.navigation.navigate('CreateEvent2')
+    await this.props.createEventAction('setStep2',{location:data,image:'loading'})
+    await this.props.navigation.navigate('CreateEvent2')
+    return this.loadImage(data)
+  }
+  async loadImage(location) {
+    var image = await loadImageMap(location)
+    return this.props.createEventAction('setStep2',{image:image})
   }
   async setDate (data) {
     console.log('set date step 2')
@@ -144,9 +154,26 @@ class Page2 extends Component {
   }
   page1() {
       return (
-        <View style={{marginTop:0,marginLeft:0,width:width,paddingTop:20}}>
-          {this.ligneButton('ribbon',this.inputName(),'plus',() => this.nameInput.focus(),this.props.step2.name != '')}
+        <View style={{marginTop:0,marginLeft:0,width:width,paddingTop:0}}>
+          {
+            this.props.step2.image == 'loading'?
+            <View style={[styleApp.center,{height:120,backgroundColor:colors.off2,borderBottomWidth:1,borderColor:colors.off}]}>
+              <Loader color={'green'} size={20} />
+            </View>
+            :this.props.step2.image != ''?
+            <View style={[{height:120}]}>
+              <View style={[styleApp.center,{position:'absolute',width:'100%',height:'100%',zIndex:20}]} >
+                <AllIcon name='map-marker-alt' color={colors.green} size={20} type={'font'} style={{position:'absolute'}}/>
+              </View>
+            
+              <Image source={{uri:this.props.step2.image}} style={{height:'100%',width:'100%'}} />
+            </View>
+            :null
+          }
           {this.ligneButton('map-marker-alt',this.locationText(),'plus',() => this.props.navigation.navigate('Location',{location:this.props.step2.location,pageFrom:'CreateEvent2',onGoBack: (data) => this.setLocation(data)}),this.props.step2.location.address != '')}
+
+          {this.ligneButton('ribbon',this.inputName(),'plus',() => this.nameInput.focus(),this.props.step2.name != '')}
+          
           {this.ligneButton('calendar-alt',this.date(),'plus',() => this.props.navigation.navigate('Date',{startDate:this.props.step2.startDate,endDate:this.props.step2.endDate,recurrence:this.props.step2.recurrence,onGoBack: (data) => this.setDate(data)}),this.props.step2.startDate != '')}
           {this.ligneButton('parking',this.inputInstruction(),'plus',() => this.instructionInput.focus(),this.props.step2.instructions != '')}
         </View>
@@ -180,6 +207,7 @@ class Page2 extends Component {
           'league':this.props.step0.league,
           'rules':this.props.step0.rule,
         },
+        'images':[this.props.step2.image],
         'groups':groups,
         "location": this.props.step2.location,
         "price": {

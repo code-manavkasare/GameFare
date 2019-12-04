@@ -82,8 +82,6 @@ class CardEvent extends React.Component {
     </Row> 
     }
     displayCard(data) {
-      console.log('la datatatatata')
-      console.log(data)
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
       return (
         <ButtonColor view={() => {

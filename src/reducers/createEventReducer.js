@@ -14,7 +14,6 @@ const initialState = {
         coachNeeded:false,
         free:false,
         joiningFee:'',
-        
     },
     step1:{
         level:-1,
@@ -30,6 +29,7 @@ const initialState = {
         endDate:'',
         instructions:'',
         name:'',
+        image:'',
         recurrence:''
     },
     listGender:[{

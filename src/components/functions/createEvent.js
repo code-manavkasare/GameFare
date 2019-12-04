@@ -8,6 +8,11 @@ import {uploadPictureFirebase} from '../functions/pictures'
 import {subscribeToTopics} from '../functions/notifications'
 import firebase from 'react-native-firebase'
 
+function generateID () {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+
 async function createEventObj(data,userID,infoUser,level,groups) {
   var event = {
     ...data,
@@ -29,7 +34,7 @@ async function createEventObj(data,userID,infoUser,level,groups) {
     status:'confirmed',
     userID:userID,
   }
-  if (event.info.player) {
+  if (!event.info.coach) {
     user.coach = false
     attendees = {
       [userID]:user
@@ -65,20 +70,22 @@ async function pushEventToGroups(groups,eventID) {
 }
 
 async function createEvent(data,userID,infoUser,level) {
-  var event = await createEventObj(data,userID,infoUser,level)
-  console.log('createEventObj')
-  console.log(event)
+  var pictureUri = await uploadPictureFirebase(data.images[0],'events/' + generateID())
+  if (!pictureUri) return false
 
+  var event = await createEventObj(data,userID,infoUser,level)
+  console.log('event obj received')
+  console.log(event)
+  
+  event.images = [pictureUri]
   var pushEvent = await firebase.database().ref('events').push(event)
   event.eventID = pushEvent.key
   event.objectID = pushEvent.key
+  
   await firebase.database().ref('events/' + pushEvent.key).update({'eventID':pushEvent.key})
 
   await pushEventToGroups(data.groups,pushEvent.key)
   await subscribeToTopics([userID,'all',pushEvent.key])
-
-  console.log('event 222222222222')
-  console.log(event)
 
   return event
 }

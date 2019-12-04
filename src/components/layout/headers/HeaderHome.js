@@ -44,15 +44,13 @@ class HeaderHome extends Component {
         this.handleBackPress = this.handleBackPress.bind(this)
         this.rotateIcon = new Animated.Value(0);
         this.borderWidthButtonLeague  = new Animated.Value(0);
+        this.openLeagueVal = false
       }
     componentWillMount(){
       this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
       if (this.props.loaderOn == true) {
         this.props.onRef(this)
       }
-    }
-    shouldComponentUpdate (nextProps,nextState) {
-      return (this.props.loader !== nextProps.loader || this.state !== nextState || this.props.enableClickButton !== nextProps.enableClickButton)
     }
     handleBackPress = () => {
       if (this.props.enableClickButton && this.state.enableClickButton) {
@@ -98,31 +96,31 @@ class HeaderHome extends Component {
       })
     }
     openLeague (val,league,numberElements){
+      console.log('val')
+      console.log(val)
       if (val) {
+        this.openLeagueVal = true
         return Animated.parallel([
           Animated.timing(this.state.heightButtonLeague,timing(numberElements*50,200)),
           Animated.timing(this.borderWidthButtonLeague,timing(1,200)),
           Animated.timing(this.state.widthButtonLeague,timing(150,200)),
           Animated.timing(this.rotateIcon,timing(1,200)),
-        ]).start(() => {
-          this.setState({openLeague:true})
-        })
+        ]).start()
       }
+      console.log('setLeague')
+      console.log(league)
       this.props.historicSearchAction('setLeague',league)
+      this.openLeagueVal = false
       return Animated.parallel([
         Animated.timing(this.state.heightButtonLeague,timing(50,200)),
         Animated.timing(this.borderWidthButtonLeague,timing(0,200)),
         Animated.timing(this.state.widthButtonLeague,timing(45,200)),
         Animated.timing(this.rotateIcon,timing(0,200)),
       ]).start(() => {
-        this.setState({openLeague:false})
+        
       })
     }
     buttonSport (sport,i) {
-      const spin = this.rotateIcon.interpolate({
-        inputRange: [0,1],
-        outputRange: ['0deg','180deg']
-      })
       return (
         <ButtonColor key={i} view={() => {
           return <Row style={{height:45}}>
@@ -157,7 +155,7 @@ class HeaderHome extends Component {
         <ButtonColor key={i} view={() => {
           return <Row >
             <Col size={25} style={[styleApp.center2,{paddingLeft:0,}]}>
-              <AsyncImage style={{height:37,width:37,borderRadius:20,}} mainImage={league.icon} imgInitial={league.img.icon} />
+              <AsyncImage style={{height:37,width:37,borderRadius:20,}} mainImage={league.img.icon} imgInitial={league.img.icon} />
               
             </Col>
             <Col size={75} style={[styleApp.center2,{paddingLeft:0}]}>
@@ -165,7 +163,7 @@ class HeaderHome extends Component {
             </Col>
           </Row>
         }}
-        click={() => this.openLeague(!this.state.openLeague,league.value,Object.values(sport.typeEvent).length)}
+        click={() => this.openLeague(!this.openLeagueVal,league.value,Object.values(sport.typeEvent).length+1)}
         color={'white'}
         style={[{height:50,width:190,paddingLeft:5,paddingRight:5}]}
         onPressColor={colors.off}
@@ -237,6 +235,13 @@ class HeaderHome extends Component {
     });
     var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.sportSelected)[0]
     var league= Object.values(sport.typeEvent).filter(league => league.value == this.props.leagueSelected)[0]
+    if (league == undefined) {
+      league = this.props.leagueAll
+    }
+    console.log('render  headerHome !~')
+    console.log(league)
+    console.log(this.props.leagueSelected)
+    console.log(sport.typeEvent)
     return ( 
       <Animated.View style={[styles.header,{backgroundColor:AnimateBackgroundView,borderBottomWidth:borderWidth,height:heightHeaderFilter,borderColor:borderColorView,shadowOpacity:shadeOpacityHeader}]}>
         <Row style={{width:width,paddingLeft:20,paddingRight:20}}>
@@ -257,6 +262,9 @@ class HeaderHome extends Component {
                 {Object.values(sport.typeEvent).filter(item => item.value != this.props.leagueSelected).map((league,i) => (
                   this.buttonLeague(league,i+1,sport)
                 ))}
+               
+                {this.buttonLeague(this.props.leagueAll,9,sport)}
+              
               </Animated.View>
           </Col>
           <Col size={15} style={[{paddingTop:15,alignItems:'flex-end'}]}>
@@ -322,7 +330,8 @@ const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
     sportSelected:state.historicSearch.sport,
-    leagueSelected:state.historicSearch.league
+    leagueSelected:state.historicSearch.league,
+    leagueAll:state.globaleVariables.leagueAll,
   };
 };
 

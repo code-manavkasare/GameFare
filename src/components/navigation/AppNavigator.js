@@ -224,16 +224,17 @@ const MainApp = createBottomTabNavigator(
             const { routeName } = navigation.state
             var borderOff = 'white'
             return <Button   view={() => {
-                return <Row style={{height:45}}>
-                  <Col size={10} style={[styles.center]}>
+                return <Row style={{height:'100%',borderTopWidth:1.5,borderColor:focused?colors.primary:'transparent',}}>
+                {routeName == 'MessageList'?<View style={styles.roundMessage}/>:null}
+                  <Col size={10} style={[styles.center4,{paddingTop:10}]}>
                     <AllIcons name={routeName == 'Home'?
                       'calendar2'
                       :routeName == 'ListGroups'?
-                      'suitecase'
-                      :routeName == 'MessageList'?
-                      'messageTab'
-                      :routeName == 'Profile'?
                       'profileFooter'
+                      :routeName == 'MessageList'?
+                      'speech'
+                      :routeName == 'Profile'?
+                      'menu'
                       :null
                       } size={16} color={tintColor} style={styles.iconFooter} type='moon'/>
                       <Text style={[styles.footerText,{color:tintColor,marginTop:6,marginBottom:5,fontSize:12.5}]}>
@@ -253,8 +254,8 @@ const MainApp = createBottomTabNavigator(
               }}
               click={() => navigation.navigate(routeName)}
               color={'white'}
-              style={[{borderTopWidth:1.5,marginTop:0,borderColor:focused?colors.primary:'white',paddingTop:15,backgroundColor:'white',width:'100%',height:'100%',borderRadius:0,paddingLeft:0,paddingRight:0}]}
-              onPressColor={'white'}
+              style={[{paddingTop:0,backgroundColor:'white',width:'100%',height:'100%',borderRadius:0,paddingLeft:0,paddingRight:0}]}
+              onPressColor={colors.off2}
               />
         },
         tabBarLabel:({ focused, tintColor }) => { 
@@ -273,11 +274,10 @@ const MainApp = createBottomTabNavigator(
         style: [styles.shade,{
             borderTopWidth:0.5,
             shadowOpacity:0.04,
-            backgroundColor: colors.white,
+            backgroundColor: colors.blue,
             borderTopColor:colors.grey,
-            height:46,
-
-            paddingBottom:20,
+            height:90,
+            marginBottom:-35,
         }],
       },
     },

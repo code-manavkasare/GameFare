@@ -323,7 +323,7 @@ export default class Date extends Component {
         return this.props.navigation.navigate('Alert',{close:true,title:'Please select a start date in the future.',textButton:'Got it!'})
       } else if (durationEnd < 0) {
         return this.props.navigation.navigate('Alert',{close:true,title:'Please select an end date in the future.',textButton:'Got it!'})
-      }  else if (durationStartEnd < 0) {
+      }  else if (durationStartEnd < 0 || durationStartEnd == 0) {
         return this.props.navigation.navigate('Alert',{close:true,title:'Please select an end date in the future compare to the start date.',textButton:'Got it!'})
       }
       return this.props.navigation.state.params.onGoBack({

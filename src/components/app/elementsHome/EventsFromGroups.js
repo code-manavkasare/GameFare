@@ -28,13 +28,13 @@ import {indexGroups,indexEvents,indexPastEvents} from '../../database/algolia'
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX'
 
-class ListEvents extends React.Component {
+class MyEvents extends React.Component {
   constructor(props) {
     super(props);
     this.state={
       futureEvents:[],
       pastEvents:[],
-      loader1:true,
+      loader:true,
       loader2:false,
       past:false,
     }
@@ -54,7 +54,7 @@ class ListEvents extends React.Component {
     return this.loadEvent(this.state.past,this.props.sportSelected,this.props.leagueSelected)
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true || this.props.sportSelected != nextProps.sportSelected || this.props.leagueSelected != nextProps.leagueSelected) {
+    if (this.props.userConnected != nextProps.userConnected && nextProps.userConnected == true) {
       this.loadEvent(this.state.past,nextProps.sportSelected,nextProps.leagueSelected)
     }
   }
@@ -67,26 +67,44 @@ class ListEvents extends React.Component {
   }
   async loadEvent(past,sport,league,) {
     console.log('on reload')
-    await this.setState({loader1:true})
+    await this.setState({loader:true})
 
     indexEvents.clearCache()
-    var filterSport = 'info.sport:' + sport 
-    var filterLeague = ' AND info.league:' + league
-    if (league == 'all') {
-      filterLeague = ''
-    }
-    var filterAttendees = ' AND allAttendees:' + this.props.userID + ' OR allCoaches:' + this.props.userID + ' OR info.organizer:' + this.props.userID 
-    var filters = filterSport + filterAttendees + filterLeague
+
+    var filterAttendees = 'allAttendees:' + this.props.userID + ' OR allCoaches:' + this.props.userID + ' OR info.organizer:' + this.props.userID 
+    var filters = filterAttendees
 
     var filterDate =' AND date_timestamp>' + Number(new Date())
     var futureEvents = await this.getEvents (filters + filterDate) 
+    var allEvents = futureEvents.reduce(function(result, item) {
+      result[item.objectID] = item;
+      return result;
+    }, {});
+    futureEvents = futureEvents.map(x => x.objectID);
 
     filterDate =' AND date_timestamp<' + Number(new Date())
     var pastEvents = await this.getEvents (filters + filterDate) 
+    var allEventsPast = pastEvents.reduce(function(result, item) {
+      result[item.objectID] = item;
+      return result;
+    }, {});
+    pastEvents = pastEvents.map(x => x.objectID);
 
-    await  this.props.eventsAction('setAllUserEvents',{futureEvents:futureEvents,pastEvents:pastEvents})
-    this.setState({loader1:false})
-   
+    allEvents = {
+      ...allEvents,
+      ...allEventsPast
+    }
+
+    console.log('pastEvents')
+    console.log(pastEvents)
+    console.log(futureEvents)
+    console.log(allEvents)
+    await  this.props.eventsAction('setAllEvents',allEvents)
+    await  this.props.eventsAction('setFutureUserEvents',futureEvents)
+    await  this.props.eventsAction('setPastUserEvents',pastEvents)
+    
+
+    this.setState({loader:false})
   }
   openEvent(event) {
     // if (!event.info.public) {
@@ -98,7 +116,6 @@ class ListEvents extends React.Component {
   }
   async setSwitch(state,val) {
     await this.setState({[state]:val})
-    // await this.translateViews(val)
     return true
   }
   switch (textOn,textOff,state,translateXComponent0,translateXComponent1) {
@@ -128,36 +145,54 @@ class ListEvents extends React.Component {
     ]).start()
   }
   listEvents(events) {
-    console.log('display future events')
+    // console.log('display future events')
+    // console.log(events)
+    // const AllEventsDisplay = events.map(event => this.props.allEvents[event])
+    // console.log('eventsDisplay')
+    // var eventsToDisplay = AllEventsDisplay.filter(event => event.info.sport == this.props.sportSelected && event.info.league == this.props.leagueSelected)
+    // console.log(eventsToDisplay)
+    // console.log(AllEventsDisplay)
+    console.log('robooooo')
     console.log(events)
-    return Object.values(events).map((event,i) => (
-      <CardEvent userCard={false} key={i} loadData={false} homePage={true} openEvent={(event) => this.openEvent(event)} item={event} data={event}/>
+    return events.map((event,i) => (
+      <CardEvent userCard={false} key={i}  loadData={false} homePage={true} openEvent={(event) => this.openEvent(event)} item={event} data={event}/>
     ))
+  }
+  leagueFilter(league) {
+    if (this.props.leagueSelected == 'all') return true
+    return league == this.props.leagueSelected
   }
   ListEvent () {
     if (!this.props.userConnected) return null
-    var numberPast = ''
+
+    const AllFutureEvents = this.props.futureEvents.map(event => this.props.allEvents[event])
+    const AllPastEvents = this.props.pastEvents.map(event => this.props.allEvents[event])
+
+    var futureEvents = AllFutureEvents.filter(event => event.info.sport == this.props.sportSelected && this.leagueFilter(event.info.league))
+    var pastEvents = AllPastEvents.filter(event => event.info.sport == this.props.sportSelected && this.leagueFilter(event.info.league))
+
     var numberFuture = ''
-    if (!this.state.loader1) {
-      numberPast = ' ('+this.props.pastEvents.length + ')'
-      numberFuture = ' ('+this.props.futureEvents.length + ')'
+    var numberPast = ''
+    if (!this.state.loader) {
+      numberFuture = ' (' + futureEvents.length + ')'
+      numberPast = ' (' + pastEvents.length + ')'
     }
     return (
       <View style={{marginTop:20}}>
         <View style={[styleApp.marginView,{marginBottom:25}]}>
 
         <Text style={[styleApp.input,{marginBottom:15,marginLeft:0,fontSize:22}]}>My events</Text>
-        {this.switch('Upcoming' + numberFuture,'Past' + numberPast)}
+        {this.switch('Upcoming' + numberFuture,'Past'+numberPast)}
         </View>
 
         <View style={{flex:1,marginTop:-5}}>
         <Animated.View style={{height:200,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
-        loader={this.state.loader1}
-        events={this.props.futureEvents}
+        loader={this.state.loader}
+        events={futureEvents}
         height={180}
         messageNoEvent = {"You haven't subscribe to any event."}
-        content={() => this.listEvents(this.props.futureEvents)}
+        content={this.listEvents.bind(this)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef1 = ref)}
         />
@@ -166,10 +201,10 @@ class ListEvents extends React.Component {
         <Animated.View style={{height:200,backgroundColor:'white',position:'absolute',top:0,transform:[{translateX:this.translateXView2}]}}>
         <ScrollViewX 
         height={180}
-        loader={this.state.loader1}
-        events={this.props.pastEvents}
+        loader={this.state.loader}
+        events={pastEvents}
         messageNoEvent = {"You don't have any past events."}
-        content={() => this.listEvents(this.props.pastEvents)}
+        content={this.listEvents.bind(this)}
         openEvent={(event) => this.openEvent(event)}
         onRef={ref => (this.scrollViewRef2 = ref)}
         />
@@ -213,9 +248,11 @@ const  mapStateToProps = state => {
     userConnected:state.user.userConnected,
     sportSelected:state.historicSearch.sport,
     leagueSelected:state.historicSearch.league,
+
     futureEvents:state.events.futureUserEvents,
-    pastEvents:state.events.pastUserEvents
+    pastEvents:state.events.pastUserEvents,
+    allEvents:state.events.allEvents
   };
 };
 
-export default connect(mapStateToProps,{eventsAction})(ListEvents);
+export default connect(mapStateToProps,{eventsAction})(MyEvents);

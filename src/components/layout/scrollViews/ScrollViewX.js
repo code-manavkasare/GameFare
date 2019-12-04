@@ -90,7 +90,7 @@ export default class ScrollViewPage extends PureComponent {
       style={[styleApp.center,{backgroundColor:colors.off2,borderWidth:0,borderColor:colors.borderColor,width:width-40,height:55}]}
       onPressColor={colors.off}
       />
-      :this.props.content()
+      :this.props.content(this.props.events)
       }
       <View style={{width:30}}/>
     </ScrollView>  

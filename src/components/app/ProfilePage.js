@@ -73,16 +73,16 @@ class ProfilePage extends Component {
         return <Row style={{marginLeft:0,width:'100%'}}>
           {
           icon?
-          <Col size={15} style={styleApp.center2}>
-            <AllIcons type='font' size={15} name={icon == 'logout'?'bicycle':icon} color={icon == 'logout'?colors.green:colors.grey} />    
+          <Col size={10} style={styleApp.center2}>
+            <AllIcons type='font' size={15} name={icon == 'logout'?'bicycle':icon} color={icon == 'logout'?colors.green:colors.greyDark} />    
           </Col>
           :null
           }
-          <Col size={75} style={[styleApp.center2,{paddingLeft:0}]}>
+          <Col size={80} style={[styleApp.center2,{paddingLeft:0}]}>
             <Text style={[styleApp.title,{fontSize:14,fontFamily:'OpenSans-SemiBold',color:text=='Logout'?colors.green:colors.title}]}>{text}</Text>
           </Col>
           <Col size={10} style={styleApp.center3}>
-            <AllIcons type='font' size={13} name={'arrow-right'} color={icon == 'logout'?colors.green:colors.title} /> 
+            {/* <AllIcons type='font' size={13} name={'arrow-right'} color={icon == 'logout'?colors.green:colors.title} />  */}
           </Col>
         </Row>
         }} 
@@ -268,7 +268,8 @@ class ProfilePage extends Component {
         icon1={null}
         icon2='cog'
 
-        clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
+        // clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
+        clickButton2={() => console.log('')}
         />
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}

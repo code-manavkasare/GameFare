@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 import {
   Platform,
   PermissionsAndroid,
+  Dimensions,
 } from 'react-native';
+const { height, width } = Dimensions.get('screen')
+
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoder';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
-const options = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+import MapboxGL from '@react-native-mapbox-gl/maps';
+MapboxGL.setAccessToken('pk.eyJ1IjoiYmlyb2xsZWF1ZiIsImEiOiJjampuMHByenoxNmRoM2ttcHVqNmd0bzFvIn0.Fml-ls_j4kW_OJViww4D_w');
 
+const options = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 
 async function getPermission () {
     if (Platform.OS == 'ios') {
@@ -59,6 +64,21 @@ function getZone(rawAddress) {
     if (address.split(',').length == 1) return address.split(', ')[address.split(', ').length-1]
     return address.split(',')[address.split(', ').length-2]+', ' + address.split(', ')[address.split(', ').length-1]
 }
+
+async function loadImageMap (location) {
+    var uri = await MapboxGL.snapshotManager.takeSnap({
+        centerCoordinate: [location.lng, location.lat],
+        width: width,
+        height: 300,
+        zoomLevel: 12,
+        pitch: 30,
+        heading: 20,
+        // styleURL: MapboxGL.StyleURL.Dark,
+        writeToDisk: true, // Create a temporary file
+        });
+    
+    return uri
+}
   
   
-module.exports = {currentLocation,getZone};
+module.exports = {currentLocation,getZone,loadImageMap};

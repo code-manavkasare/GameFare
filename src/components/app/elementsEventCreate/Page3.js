@@ -10,6 +10,8 @@ import {
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions'
 import {createEventAction} from '../../../actions/createEventActions'
+import {historicSearchAction} from '../../../actions/historicSearchActions'
+
 import {createEvent} from '../../functions/createEvent'
 const { height, width } = Dimensions.get('screen')
 import ScrollView from '../../layout/scrollViews/ScrollView'
@@ -71,7 +73,7 @@ class Page3 extends Component {
   rowIcon(icon,component,typeIcon,img) {
     return (
       <Row style={{paddingTop:6,paddingBottom:6}}>
-        <Col size={15} style={styleApp.center2}>
+        <Col size={10} style={styleApp.center}>
           {
             img?
             <AsyncImage style={{width:30,height:30,borderRadius:15}} mainImage={icon} imgInitial={icon} />
@@ -81,7 +83,7 @@ class Page3 extends Component {
           
         </Col>
         
-        <Col size={85} style={styleApp.center2}>
+        <Col size={85} style={[styleApp.center2,{paddingLeft:23}]}>
           {component}
         </Col>
       </Row>
@@ -119,7 +121,7 @@ class Page3 extends Component {
     if (Object.values(groups).length == 0) return null
     return (
       <View>
-        <Text style={styleApp.text}>Groups</Text>
+       
         <View style={[styleApp.divider2,{marginBottom:10}]} />
         {Object.values(groups).map((group,i) => (
               this.rowGroup(group,i)
@@ -151,7 +153,7 @@ class Page3 extends Component {
 
           {this.rowIcon(sport.icon,this.title(sport.text),'font',true)}
           {this.rowIcon(league.icon,this.title(league.text),'font',true)}
-          {this.rowIcon('puzzle-piece',this.title(rule.text),'font')}
+          {this.rowIcon('extension',this.title(rule.text),'mat')}
 
           <View style={[styleApp.divider2,{marginBottom:10}]}/>
 
@@ -185,18 +187,23 @@ class Page3 extends Component {
   async submit(data) {
     this.setState({loader:true})
     var event = await createEvent(data,this.props.userID,this.props.infoUser,this.props.level,this.props.navigation.getParam('groups'))
-    console.log('event sdfg')
-    console.log(event)
-    var futureEvents = this.props.futureEvents.slice(0).reverse()
-    futureEvents.push(event)
-    futureEvents = futureEvents.reverse()
-    console.log('le future event la ')
-    console.log(futureEvents)
-    await  this.props.eventsAction('setFutureUserEvents',futureEvents)
-    await  this.props.createEventAction('reset')
-    this.setState({loader:false})
+    if (!event) {
+      await this.setState({loader:false})
+      return this.props.navigation.navigate('Alert',{close:true,title:'An error has occured.',subtitle:'Please try again.',textButton:'Got it!'})
+    }
+
     
-    this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})
+    await  this.props.eventsAction('setAllEvents',{[event.objectID]:event})
+    await  this.props.eventsAction('addFutureEvent',event.objectID)
+
+
+    await  this.props.historicSearchAction('setSport',event.info.sport)
+    await  this.props.historicSearchAction('setLeague',event.info.league)
+
+    // await  this.props.createEventAction('reset')
+    await  this.setState({loader:false})
+    
+    return this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})
   }
   render() {
     return (
@@ -273,4 +280,4 @@ const styles = StyleSheet.create({
     };
   };
   
-  export default connect(mapStateToProps,{eventsAction,createEventAction})(Page3);
+  export default connect(mapStateToProps,{eventsAction,createEventAction,historicSearchAction})(Page3);

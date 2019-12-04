@@ -89,7 +89,7 @@ export default styles = StyleSheet.create({
       color:colors.title,
     },
     smallText:{
-      fontSize:14,
+      fontSize:13,
       fontFamily: 'OpenSans-Regular',
       color:colors.title,
     },
@@ -220,8 +220,27 @@ export default styles = StyleSheet.create({
       shadowOpacity: 0,
     },
     voile:{
-      position:'absolute',height:height,backgroundColor:colors.backdropModal,width:width,opacity:0.5,
+      position:'absolute',height:height,backgroundColor:colors.backdropModal,width:width,opacity:0.65,
       // zIndex:220,
+    },
+    roundMessageView:{
+      position:'absolute',
+      height:'100%',width:'100%',
+      backgroundColor:'blue',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    roundMessage:{
+      height:9,
+      width:9,
+      borderRadius:4.5,
+      top:8.5,
+      left:width/4-43,
+      position:'absolute',
+      zIndex:30,
+      borderWidth:1,
+      borderColor:colors.white,
+      backgroundColor:colors.primary
     },
     inputForm:{
       height:50,

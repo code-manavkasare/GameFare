@@ -96,15 +96,20 @@ class MessageTab extends React.Component {
       />
     }
     messagePageView () {
-      if (!this.props.userConnected) return <View>
+      if (!this.props.userConnected) return <View style={[styleApp.marginView,{marginTop:30}]}>
+        <View style={styleApp.center}>
+          <Image style={{height:85,width:85,marginBottom:30}} source={require('../../../img/images/conversation.png')} />
+        </View>
+        <Text style={[styleApp.text,{marginBottom:30}]}>You need to be signed in in order to consult your conversations.</Text>
 
+        <Button text='Sign in' click={() => this.props.navigation.navigate('Phone',{pageFrom:'MessageList'})} backgroundColor={'green'} onPressColor={colors.greenClick}/>
       </View>
       return (
         <View style={{paddingTop:20,flex:1}}>
           <View style={{minHeight:height-sizes.heightHeaderHome-70,backgroundColor:'white'}}>
             <View style={[styleApp.marginView,{marginBottom:15}]}>
               <Text style={styleApp.title}>Inbox</Text>
-              <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text>
+              {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
             </View>
             
             {Object.values(this.props.conversations).map((conversation,i) => (
@@ -130,7 +135,7 @@ class MessageTab extends React.Component {
 
         <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        textHeader={'Inbox (' + this.state.unreadMessages + ')'}
+        textHeader={this.props.userConnected?'Inbox':null}
         inputRange={[50,80]}
         initialBorderColorIcon={colors.grey}
         initialBackgroundColor={'white'}
@@ -138,7 +143,7 @@ class MessageTab extends React.Component {
         sizeIcon2={17}
         initialTitleOpacity={0}
         icon1={null}
-        icon2='edit'
+        icon2={this.props.userConnected?'edit':null}
 
         clickButton2={() => console.log('')}
         />
@@ -154,21 +159,9 @@ class MessageTab extends React.Component {
           stickyHeaderIndices={[3]}
           refreshControl={true}
           refresh={() => this.refresh()}
-
-          initialColorIcon={colors.title}
-          // header={{
-          //   on:false,
-            
-          // }}
-          icon1={'plus'}
-          clickButton1={() =>  this.props.navigation.navigate('CreateEvent0',{'pageFrom':'Home'})}
-          
           offsetBottom={100}
           showsVerticalScrollIndicator={true}
         />
-
-        <Animated.View style={[styleApp.voile,{opacity:this.opacityVoile,transform:[{translateX:this.translateXVoile}]}]}/>
-
 
       </View>
     );

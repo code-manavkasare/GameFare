@@ -48,8 +48,8 @@ export default class ButtonAdd extends React.Component {
         await this.opacityButton1.setValue(1)
         return Animated.parallel([
           Animated.timing(this.rotateButton,native(1,200)),
-          Animated.timing(this.translateYButton1,native(-60,200)),
-          Animated.timing(this.translateYButton2,native(-120,200)),
+          Animated.timing(this.translateYButton1,native(-65,200)),
+          Animated.timing(this.translateYButton2,native(-130,200)),
           Animated.timing(this.props.opacityVoile,native(0.4,200)),
         ]).start(() => this.setState({open:true}))
       }
@@ -79,30 +79,30 @@ export default class ButtonAdd extends React.Component {
 
         <Animated.View style={[styles.viewButton,{opacity:this.opacityButton2,transform: [{translateY: this.translateYButton2}]}]}>
           <TouchableOpacity activeOpacity={1} onPress={() => this.open(!this.state.open,'group')} style={{position:'absolute',left:-104,width:100}} >
-            <Text style={[styleApp.title,styleApp.textShadowColor,{color:'white',fontSize:17}]}>New Group</Text>
+            <Text style={[styleApp.title,styleApp.textShadowColor,{color:'white',fontSize:17,fontFamily:'OpenSans-Bold'}]}>New Group</Text>
           </TouchableOpacity>
 
           <ButtonColor view={() => {
-                return <AllIcons name='suitcase' color={colors.blue} size={18} type='moon' />
+                return <AllIcons name='profileFooter' color={colors.green} size={21} type='moon' />
               }}
               click={() => this.open(!this.state.open,'group')}
               color={'white'}
-              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:55,width:55,borderRadius:27.5,borderWidth:1}]}
+              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:60,width:60,borderRadius:30,borderWidth:1}]}
               onPressColor={colors.off}
           />
         </Animated.View>
 
         <Animated.View style={[styles.viewButton,{opacity:this.opacityButton1,transform: [{translateY: this.translateYButton1}]}]}>
           <TouchableOpacity activeOpacity={1} onPress={() => this.open(!this.state.open,'event')}  style={{position:'absolute',left:-100,width:100}}>
-            <Text style={[styleApp.input,styleApp.textShadowColor2,{color:'white',fontSize:17}]}>New Event</Text>
+            <Text style={[styleApp.title,styleApp.textShadowColor2,{color:'white',fontSize:17,fontFamily:'OpenSans-Bold'}]}>New Event</Text>
           </TouchableOpacity>
           
           <ButtonColor view={() => {
-                return <AllIcons name='calendar' color={colors.blue} size={18} type='font' />
+                return <AllIcons name='calendar2' color={colors.green} size={21} type='moon' />
               }}
               click={() => this.open(!this.state.open,'event')}
               color={'white'}
-              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:55,width:55,borderRadius:27.5,borderWidth:1}]}
+              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:60,width:60,borderRadius:30,borderWidth:1}]}
               onPressColor={colors.off}
           />
         </Animated.View>
@@ -113,7 +113,7 @@ export default class ButtonAdd extends React.Component {
               }}
               click={() => this.open(!this.state.open)}
               color={colors.green}
-              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:55,width:55,borderRadius:27.5}]}
+              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:60,width:60,borderRadius:30}]}
               onPressColor={colors.greenLight}
           />
         </Animated.View>

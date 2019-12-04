@@ -124,6 +124,7 @@ class InitialPage extends Component {
             {this.button(league,i+1,sport.value)}
             </View>
           ))}
+          {this.button(this.props.leagueAll,8,sport.value)}
         </View>
       </FadeInView>
     )
@@ -133,6 +134,7 @@ class InitialPage extends Component {
     var sport = Object.values(this.props.sports).filter(sport => sport.value == this.props.sportSelected)[0]
     console.log('sport ici')
     console.log(sport)
+    console.log(this.props.leagueAll)
     return (
       <View style={[{borderLeftWidth:0,backgroundColor:'white',flex:1}]}>
 
@@ -175,7 +177,8 @@ const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
     sportSelected:state.historicSearch.sport,
-    leagueSelected:state.historicSearch.league
+    leagueSelected:state.historicSearch.league,
+    leagueAll:state.globaleVariables.leagueAll
   };
 };
 

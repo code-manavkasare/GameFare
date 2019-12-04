@@ -35,7 +35,7 @@ import NavigationService from '../../../../NavigationService';
 class ListEvents extends React.Component {
   state={
     events:[],
-    loader:true,
+    loader:false,
     pastEvents:false,
   }
   async componentDidMount() {
@@ -52,18 +52,22 @@ class ListEvents extends React.Component {
   }
   async loadEvent(location,sport,league) {
     console.log('on reload')
-    await this.setState({loader:true})
-    indexEvents.clearCache()
-    //'info.sport:' + 
-    var events = await indexEvents.search({
-      aroundLatLng: location.lat+','+location.lng,
-      aroundRadius: 20*1000,
-      query:'',
-      filters:'info.public=1 AND ' + 'info.sport:' + sport + ' AND info.league:' + league  ,
-    })
-    console.log('events.hits')
-    console.log(events.hits)
-    await this.setState({loader:false,events:events.hits})
+    // await this.setState({loader:true})
+    // indexEvents.clearCache()
+    // //'info.sport:' + 
+    // var leagueFilter =' AND info.league:' + league
+    // if (league == 'all') {
+    //   leagueFilter = ''
+    // }
+    // var events = await indexEvents.search({
+    //   aroundLatLng: location.lat+','+location.lng,
+    //   aroundRadius: 20*1000,
+    //   query:'',
+    //   filters:'info.public=1 AND ' + 'info.sport:' + sport + leagueFilter ,
+    // })
+    // console.log('events.hits')
+    // console.log(events.hits)
+    // await this.setState({loader:false,events:events.hits})
     return true
   }
   openEvent(event) {
