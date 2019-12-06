@@ -11,6 +11,9 @@ import {
 import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions'
 import firebase from 'react-native-firebase'
+import RNCalendarEvents from 'react-native-calendar-events';
+import {getPermissionCalendar} from '../functions/date'
+import moment from 'moment'
 
 const { height, width } = Dimensions.get('screen')
 import colors from '../style/colors'
@@ -190,9 +193,32 @@ class EventPage extends React.Component {
     if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) return true
     return false
   }
-  addCalendar(date) {
+  async addCalendar(data) {
     console.log('add to calendar')
-    console.log(date)
+    console.log(data)
+    console.log({
+      id:data.objectID,
+      title:data.info.name,
+      calendarId:data.objectID,
+      startDate: (moment(data.date.start).toISOString()).toString(),
+        endDate: '2017-08-19T19:26:00.000Z'
+    })
+    var permission = await getPermissionCalendar()
+    await RNCalendarEvents.authorizeEventStore()
+    if (!permission) return true
+
+    try {
+      await RNCalendarEvents.saveEvent(data.info.name, {
+        calendarId: data.objectID,
+        startDate: moment(data.date.start).toISOString(),
+        endDate: moment(data.date.end).toISOString()
+      });
+    } catch (err) {
+      console.log('errorrrr')
+      console.log(err)
+      return true
+    }
+    return this.props.navigation.navigate('Alert',{close:true,textButton:'Got it!',title:data.info.name + ' has been added to your personnal calendar.'})
   }
   eventInfo(data,sport,rule,league) {
     var level = Object.values(sport.level.list).filter(level => level.value == data.info.levelFilter)[0]
@@ -220,7 +246,7 @@ class EventPage extends React.Component {
             {this.rowImage(sport.icon,sport.text)}
             {this.rowImage(league.icon,league.text)}
 
-            {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt',() => this.addCalendar(data.date))}
+            {this.rowIcon(this.dateTime(data.date.start,data.date.end),'calendar-alt',() => this.addCalendar(data))}
             {data.date.recurrence != '' && data.date.recurrence != undefined?this.rowIcon(this.title(data.date.recurrence.charAt(0).toUpperCase() + data.date.recurrence.slice(1)),'stopwatch'):null}
             {this.rowIcon(this.title(data.location.address),'map-marker-alt',() => this.props.navigation.navigate('AlertAddress',{data:data.location}))}
             {data.info.instructions != ''?this.rowIcon(this.title(data.info.instructions),'parking'):null}

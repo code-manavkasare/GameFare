@@ -95,7 +95,7 @@ export default class Alert extends Component {
         }} 
         click={() => this.clickCar2(valClick)}
         color='white'
-        style={[styleApp.cardSelect,{height:55}]}
+        style={[styleApp.cardSelect,{height:55,paddingLeft:20,paddingRight:20}]}
         onPressColor={colors.off}
     />
     )
@@ -116,9 +116,9 @@ export default class Alert extends Component {
           </Col>
          </Row>
 
-         <View style={{height:0.5,borderTopWidth:1,borderColor:colors.off,width:width-40,marginLeft:20,marginTop:10,marginBottom:0}}/>
+         <View style={{height:0.5,borderTopWidth:1,borderColor:colors.off,width:width-0,marginLeft:0,marginTop:10,marginBottom:0}}/>
 
-         <View style={[styleApp.marginView,{width:width-40}]}>
+      
          {
              Platform.OS == 'ios'?
              this.button('apple','Open with Apple Maps',<Image style={{width:23,height:23,}} source={require('../../../img/map/appleMap.png')} />)
@@ -129,7 +129,6 @@ export default class Alert extends Component {
 
           {this.button('copy','Copy the address',<Image style={{width:23,height:23,}} source={require('../../../img/map/document.png')} />)}
 
-        </View>
 
           <View style={styles.viewButton}>
             <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={'Close'} click={() => this.props.navigation.goBack()} loader={this.state.loader}/>
