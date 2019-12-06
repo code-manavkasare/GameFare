@@ -18,7 +18,7 @@ import Communications from 'react-native-communications';
 import FadeInView from 'react-native-fade-in-view';
 import LinearGradient from 'react-native-linear-gradient';
 import PlaceHolder from '../../placeHolders/CardEvent'
-import CardEvent from '../elementsHome/CardEvent'
+import CardEvent from '../elementsHome/CardEventSM'
 
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'

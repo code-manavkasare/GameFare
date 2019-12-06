@@ -13,6 +13,8 @@ import {
 import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions'
+import {eventsAction} from '../../../actions/eventsActions'
+
 import {getZone} from '../../functions/location'
 
 import Switch from '../../layout/switch/Switch'
@@ -24,7 +26,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import {indexEvents} from '../../database/algolia'
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/CardEvent'
-import CardEvent from './CardEvent'
+import CardEvent from './CardEventSM'
 import ScrollView from '../../layout/scrollViews/ScrollView'
 import Button from '../../layout/Views/Button'
 
@@ -52,29 +54,38 @@ class ListEvents extends React.Component {
   }
   async loadEvent(location,sport,league) {
     console.log('on reload')
-    // await this.setState({loader:true})
-    // indexEvents.clearCache()
-    // //'info.sport:' + 
-    // var leagueFilter =' AND info.league:' + league
-    // if (league == 'all') {
-    //   leagueFilter = ''
-    // }
-    // var events = await indexEvents.search({
-    //   aroundLatLng: location.lat+','+location.lng,
-    //   aroundRadius: 20*1000,
-    //   query:'',
-    //   filters:'info.public=1 AND ' + 'info.sport:' + sport + leagueFilter ,
-    // })
-    // console.log('events.hits')
-    // console.log(events.hits)
-    // await this.setState({loader:false,events:events.hits})
-    return true
-  }
-  openEvent(event) {
-    if (!event.info.public) {
-      return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
+    await this.setState({loader:true})
+    indexEvents.clearCache()
+    var leagueFilter =' AND info.league:' + league
+    if (league == 'all') {
+      leagueFilter = ''
     }
-    return this.props.navigate('Event',{data:event,pageFrom:'Home'})
+    var {hits} = await indexEvents.search({
+      aroundLatLng: location.lat+','+location.lng,
+      aroundRadius: 20*1000,
+      query:'',
+      filters:'info.public=1 AND ' + 'info.sport:' + sport + leagueFilter ,
+    })
+    console.log('hits !!!!')
+    console.log(hits)
+    var allEventsPublic = hits.reduce(function(result, item) {
+      result[item.objectID] = item;
+      return result;
+    }, {});
+    var publicEvents = hits.map(x => x.objectID);
+
+    console.log('public events')
+    console.log(allEventsPublic)
+    console.log(publicEvents)
+    await  this.props.eventsAction('setAllEvents',allEventsPublic)
+    await  this.props.eventsAction('setPublicEvents',publicEvents)
+    return this.setState({loader:false})
+  }
+  openEvent(objectID) {
+    // if (!event.info.public) {
+    //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
+    // }
+    return this.props.navigate('Event',{objectID:objectID,pageFrom:'Home'})
   }
   async setLocation (location) {
     this.props.historicSearchAction('setLocationSearch',location)
@@ -100,6 +111,7 @@ class ListEvents extends React.Component {
     )
   }
   ListEvent () {
+    var allPublicEvents = this.props.publicEvents.map(event => this.props.allEvents[event])
     return (
       <View style={{marginTop:20}}>
         <Row style={{marginLeft:20,width:width-40,marginBottom:15}}>
@@ -127,14 +139,15 @@ class ListEvents extends React.Component {
           :
           <FadeInView duration={350}>
             {
-            this.state.events.length == 0?
-            <View style={[styleApp.center,{marginTop:35,marginBottom:20}]}>
+            allPublicEvents.length == 0?
+            <View style={[styleApp.center,styleApp.marginView,{marginTop:35,marginBottom:20,borderBottomWidth:0.5,borderColor:colors.grey}]}>
+
               <Image source={require('../../../img/images/location.png')} style={{width:65,height:65}} />
-              <Text style={[styleApp.text,{marginTop:10}]}>No {this.props.sportSelected} events found</Text>
-              {/* <Text style={styleApp.subtitle}>Create the first {this.props.filterSports} event in the area</Text> */}
+              <Text style={[styleApp.text,{marginTop:10,marginBottom:20}]}>No {this.props.sportSelected} events found</Text>
+              <View style={{height:6.5,borderTopWidth:0.5,borderColor:colors.grey,marginTop:0}} />
             </View>
-            :this.state.events.map((event,i) => (
-              <CardEvent userCard={false} key={i} homePage={true} marginTop={25} openEvent={() => this.openEvent(event)} item={event} data={event}/>
+            :allPublicEvents.map((event,i) => (
+              <CardEvent size={'M'} userCard={false} key={i} homePage={true} marginTop={25} openEvent={(objectID) => this.openEvent(objectID)} item={event} data={event}/>
             ))}
           </FadeInView>
         }
@@ -148,20 +161,16 @@ class ListEvents extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  text:{
-    fontFamily:'OpenSans-SemiBold',
-    color:colors.title
-  }
-});
-
 const  mapStateToProps = state => {
   return {
     globaleVariables:state.globaleVariables,
     searchLocation:state.historicSearch.searchLocation,
     sportSelected:state.historicSearch.sport,
     leagueSelected:state.historicSearch.league,
+
+    publicEvents:state.events.publicEvents,
+    allEvents:state.events.allEvents
   };
 };
 
-export default connect(mapStateToProps,{historicSearchAction})(ListEvents);
+export default connect(mapStateToProps,{historicSearchAction,eventsAction})(ListEvents);

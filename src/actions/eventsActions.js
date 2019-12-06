@@ -3,7 +3,8 @@ import {
     SET_PAST_USER_EVENTS,
     SET_ALL_USER_EVENTS,
     SET_ALL_EVENTS,
-    ADD_FUTURE_EVENT
+    ADD_FUTURE_EVENT,
+    SET_PUBLIC_EVENTS
   } from './types';
 
   const setAllEvents = (value) => ({
@@ -32,7 +33,10 @@ import {
     eventID:value
   }); 
 
-  
+  const setPublicEvents = (value) => ({
+    type: SET_PUBLIC_EVENTS,
+    publicEvents:value
+  }); 
 
   
   export const eventsAction = (val,data) =>{
@@ -47,6 +51,8 @@ import {
         await dispatch(setAllEvents(data))
       } else if (val == 'addFutureEvent') {
         await dispatch(addFutureEvent(data))
+      } else if (val == 'setPublicEvents') {
+        await dispatch(setPublicEvents(data))
       }
       
       return true

@@ -340,6 +340,8 @@ PODS:
   - react-native-branch (3.1.1):
     - Branch (= 0.27.1)
     - React
+  - react-native-calendar-events (1.7.3):
+    - React
   - react-native-contacts (5.0.4):
     - React
   - react-native-fcm (16.2.4):
@@ -488,6 +490,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-branch (from `../node_modules/react-native-branch`)
+  - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
@@ -592,6 +595,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/jsinspector
   react-native-branch:
     :path: ../node_modules/react-native-branch
+  react-native-calendar-events:
+    :path: ../node_modules/react-native-calendar-events
   react-native-contacts:
     :path: ../node_modules/react-native-contacts
   react-native-fcm:
@@ -724,6 +729,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 752f034d0f007d1141a1c52ba9ef3fd9668fbfa7
   React-jsinspector: 044105eea064aec81adc5e4d777a8f6589e7d094
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
+  react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
   react-native-contacts: 37359cc1f95ef1eab1c3bd541845a95a0b7b8ea6
   react-native-fcm: 7de3ba1108aba709c3d2b4237594554eb5f6f026
   react-native-fetch-blob: df3f2348d83fd7cc39ebac62e7c0178d3c79f09e

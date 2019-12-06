@@ -19,12 +19,8 @@ import colors from '../../style/colors'
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 import { Col, Row, Grid } from "react-native-easy-grid";
-import indexEvents from '../../database/algolia'
-import FadeInView from 'react-native-fade-in-view';
-import PlaceHolder from '../../placeHolders/ListEvents'
-import CardEvent from './CardEvent'
+
 import Button from '../../layout/buttons/Button'
-import AsyncImage from '../../layout/image/AsyncImage'
 import AllIcons from '../../layout/icons/AllIcons'
 import NavigationService from '../../../../NavigationService'
 

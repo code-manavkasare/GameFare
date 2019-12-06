@@ -3,7 +3,8 @@ import {
     SET_PAST_USER_EVENTS,
     SET_ALL_USER_EVENTS,
     SET_ALL_EVENTS,
-    ADD_FUTURE_EVENT
+    ADD_FUTURE_EVENT,
+    SET_PUBLIC_EVENTS
 } from '../actions/types';
 
 import union from 'lodash/union'
@@ -11,6 +12,7 @@ import union from 'lodash/union'
 const initialState = {
     futureUserEvents:[],
     pastUserEvents:[],
+    publicEvents:[],
     allEvents:{}
 }
 
@@ -19,10 +21,9 @@ const eventsReducer =  (state=initialState,action) => {
         case SET_ALL_EVENTS:
             return {...state,allEvents:{...state.allEvents,...action.events}};
         case SET_FUTURE_USER_EVENTS:
-            console.log('set future eventss')
-            console.log(state.futureUserEvents)
-            console.log(action.futureUserEvents)
             return {...state,futureUserEvents:action.futureUserEvents};
+        case SET_PUBLIC_EVENTS:
+                return {...state,publicEvents:action.publicEvents};
         case SET_PAST_USER_EVENTS:
             return {...state,pastUserEvents:action.pastUserEvents};
         case ADD_FUTURE_EVENT:

@@ -19,6 +19,8 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import colors from '../../style/colors'
 import Icon from '../../layout/icons/icons'
 import AllIcons from '../../layout/icons/AllIcons'
+import AsyncImage from '../../layout/image/AsyncImage'
+
 import PlacelHolder from '../../placeHolders/CardEvent.js'
 import ButtonColor from '../../layout/Views/Button'
 import styleApp from '../../style/style'
@@ -48,9 +50,6 @@ class CardEvent extends React.Component {
       if (entreeFee == 0) return 'Free entry'
       return '$' + entreeFee + ' entry fee'
     }
-    click(data) {
-      this.props.openEvent(data)
-    }
     card (color,data) {
       if (this.state.loader)return <View style={styleApp.cardEventSM}><PlacelHolder /></View>
       return this.displayCard(color,data)
@@ -60,6 +59,8 @@ class CardEvent extends React.Component {
       return 0
     }
     rowAttendees(data) {
+      console.log('data evnet')
+      console.log(data)
       return <Row style={{marginTop:15}}>
       <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
         <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,}]}>
@@ -68,37 +69,55 @@ class CardEvent extends React.Component {
       </Col>
         {
         data.attendees != undefined?
-        <Col size={85} style={[{paddingRight:10},styleApp.center2]}>
+        <Col size={30} style={[{paddingRight:10},styleApp.center2]}>
           {
           Object.values(data.attendees).slice(0,3).map((member,i) => (
-          <View style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
-            <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.captainInfo.name.split(' ')[0][0] + member.captainInfo.name.split(' ')[1][0]}</Text>
+          <View key={i} style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
+            <Text style={[styleApp.text,{fontSize:10,fontFamily:'OpenSans-Bold'}]} >{member.info.firstname[0] + member.info.lastname[0]}</Text>
           </View>
           ))
         }
         </Col>
         :null
         }
+        <Col size={55} style={styleApp.center2}>
+        <Text style={[styleApp.text,{fontSize:11}]}>Person coming</Text>
+        </Col>
     </Row> 
     }
     displayCard(data) {
       var sport = Object.values(this.props.sports).filter(sport => sport.value == data.info.sport)[0]
+      var league = Object.values(sport.typeEvent).filter(item => item.value == data.info.league)[0]
+      console.log('display card')
+      console.log(league)
+      console.log(sport)
       return (
-        <ButtonColor view={() => {
+        <ButtonColor key={this.props.index} view={() => {
           return (
             <FadeInView duration={300} style={{width:'100%',height:'100%',}}>
-            <Text style={[styleApp.input,{color:colors.primary2,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
-            <Text style={[styleApp.input,{fontSize:15,minHeight:20,marginTop:5}]}>{data.info.name}</Text>
-            <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.address}</Text>
-        
-  
-            {this.rowAttendees(data)}
+              {
+                this.props.league == 'all'?
+                <AsyncImage style={{width:28,height:28,borderRadius:14,position:'absolute',right:0,top:0}} mainImage={league.icon} imgInitial={league.icon} />
+                :null
+              }
+              
+              <Text style={[styleApp.input,{color:colors.primary2,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
+              <Text style={[styleApp.input,{fontSize:15,minHeight:20,marginTop:5}]}>{data.info.name}</Text>
+              <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.address}</Text>
+          
+    
+              {this.rowAttendees(data)}
+              {
+                this.props.size=='M'?
+                <View style={{height:0.5,borderTopWidth:0.5,borderColor:colors.grey,marginTop:15}} />
+                :null
+              }
             </FadeInView>
           )
         }} 
-        click={() => this.click(data)}
+        click={() => this.props.openEvent(data.objectID)}
         color={'white'}
-        style={[styleApp.cardEventSM]}
+        style={this.props.size=='SM'?styleApp.cardEventSM:styleApp.cardEvent}
         onPressColor={colors.off}
         />
       )
@@ -177,6 +196,7 @@ const styles = StyleSheet.create({
 const  mapStateToProps = state => {
   return {
     sports:state.globaleVariables.sports.list,
+    league:state.historicSearch.league
   };
 };
 

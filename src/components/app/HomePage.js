@@ -9,32 +9,23 @@ import {
     ScrollView,
     Animated
 } from 'react-native';
-import {connect} from 'react-redux';
-import {historicSearchAction} from '../../actions/historicSearchActions'
-
 
 import ListEvents from './elementsHome/ListEvent'
 import HeaderHome from '../layout/headers/HeaderHome'
 import EventFromGroups from './elementsHome/EventsFromGroups'
 import styleApp from '../style/style'
 import colors from '../style/colors'
-import Button from '../layout/buttons/Button'
-import ButtonColor from '../layout/Views/Button'
-
 
 import ScrollView2 from '../layout/scrollViews/ScrollView2'
-import AllIcons from '../layout/icons/AllIcons'
 const { height, width } = Dimensions.get('screen')
 import StatusBar from '@react-native-community/status-bar';
-import NewEventCard from './elementsHome/NewEventCard'
 import NewGroupCard from './elementsHome/NewGroupCard'
 import ButtonAdd from './elementsHome/ButtonAdd'
-
 
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal'
 
-class HomeScreen extends React.Component {
+export default class HomeScreen extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -54,12 +45,12 @@ class HomeScreen extends React.Component {
     }
     async componentWillReceiveProps(nextProps) {
       if (!isEqual(this.props.sports,nextProps.sports)) {
-        await this.setState({loader:true,filterSports:nextProps.sportSelected})
+        await this.setState({loader:true})
         this.setState({loader:false})
       }
     }
     async changeSport (val) {
-      await this.setState({loader:true,filterSports:val})
+      await this.setState({loader:true})
       var that = this
       setTimeout(function(){
         that.setState({loader:false})
@@ -81,7 +72,6 @@ class HomeScreen extends React.Component {
 
           <ListEvents
            location={this.state.location} 
-           sportSelected={this.props.sportSelected}
            search={this.state.search} 
            key={2} 
            onRef={ref => (this.listEventsRef = ref)}
@@ -92,10 +82,9 @@ class HomeScreen extends React.Component {
           />
           
           
-          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} />
+          {/* <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} /> */}
 
-          {/* <NewEventCard pageFrom='Home' />
-          <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} /> */}
+
           <NewGroupCard pageFrom='Home' />
 
         </View>
@@ -105,11 +94,6 @@ class HomeScreen extends React.Component {
       this.eventGroupsRef.reload()
       this.listEventsRef.reload()
       return true
-      // await this.setState({loader:true})
-      // var that = this
-      // return setTimeout(function(){
-      //   return that.setState({loader:false})
-      // }, 400);   
     }
     async setLocation(data) {
       this.listEventsRef.setLocation(data)
@@ -129,7 +113,6 @@ class HomeScreen extends React.Component {
         initialTitleOpacity={1}
         icon1='arrow-left'
         league={true}
-        sportSelected={this.props.sportSelected}
         sports={this.props.sports}
 
         icon2={'map-marker-alt'}
@@ -174,34 +157,8 @@ class HomeScreen extends React.Component {
         }}
         />
 
-
-        
-        
-
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-    button:{
-        height:40,width:120,
-        backgroundColor:'blue',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    voile:{
-      position:'absolute',height:height,backgroundColor:colors.title,width:width,opacity:0.4,
-      // zIndex:220,
-    }
-    
-});
-
-const  mapStateToProps = state => {
-  return {
-    sports:state.globaleVariables.sports.list,
-    sportSelected:state.historicSearch.sport
-  };
-};
-
-export default connect(mapStateToProps,{historicSearchAction})(HomeScreen);

@@ -200,7 +200,7 @@ class Page3 extends Component {
     await  this.props.historicSearchAction('setSport',event.info.sport)
     await  this.props.historicSearchAction('setLeague',event.info.league)
 
-    // await  this.props.createEventAction('reset')
+    await  this.props.createEventAction('reset')
     await  this.setState({loader:false})
     
     return this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})

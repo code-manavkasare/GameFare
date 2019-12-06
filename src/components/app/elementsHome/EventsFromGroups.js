@@ -106,13 +106,13 @@ class MyEvents extends React.Component {
 
     this.setState({loader:false})
   }
-  openEvent(event) {
+  openEvent(objectID) {
     // if (!event.info.public) {
     //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
     // }
     console.log('openEvent')
-    console.log(event)
-    return this.props.navigate('Event',{data:event,pageFrom:'Home'})
+    console.log(objectID)
+    return this.props.navigate('Event',{objectID:objectID,pageFrom:'Home'})
   }
   async setSwitch(state,val) {
     await this.setState({[state]:val})
@@ -145,17 +145,8 @@ class MyEvents extends React.Component {
     ]).start()
   }
   listEvents(events) {
-    // console.log('display future events')
-    // console.log(events)
-    // const AllEventsDisplay = events.map(event => this.props.allEvents[event])
-    // console.log('eventsDisplay')
-    // var eventsToDisplay = AllEventsDisplay.filter(event => event.info.sport == this.props.sportSelected && event.info.league == this.props.leagueSelected)
-    // console.log(eventsToDisplay)
-    // console.log(AllEventsDisplay)
-    console.log('robooooo')
-    console.log(events)
     return events.map((event,i) => (
-      <CardEvent userCard={false} key={i}  loadData={false} homePage={true} openEvent={(event) => this.openEvent(event)} item={event} data={event}/>
+      <CardEvent size={'SM'} userCard={false} key={i} index={i} league={this.props.leagueSelected}  loadData={false} homePage={true} openEvent={(objectID) => this.openEvent(objectID)} item={event} data={event}/>
     ))
   }
   leagueFilter(league) {
@@ -164,6 +155,8 @@ class MyEvents extends React.Component {
   }
   ListEvent () {
     if (!this.props.userConnected) return null
+
+    
 
     const AllFutureEvents = this.props.futureEvents.map(event => this.props.allEvents[event])
     const AllPastEvents = this.props.pastEvents.map(event => this.props.allEvents[event])
@@ -192,8 +185,8 @@ class MyEvents extends React.Component {
         events={futureEvents}
         height={180}
         messageNoEvent = {"You haven't subscribe to any event."}
-        content={this.listEvents.bind(this)}
-        openEvent={(event) => this.openEvent(event)}
+        content={(events) => this.listEvents(events)}
+        openEvent={(objectID) => this.openEvent(objectID)}
         onRef={ref => (this.scrollViewRef1 = ref)}
         />
         </Animated.View>
@@ -204,8 +197,8 @@ class MyEvents extends React.Component {
         loader={this.state.loader}
         events={pastEvents}
         messageNoEvent = {"You don't have any past events."}
-        content={this.listEvents.bind(this)}
-        openEvent={(event) => this.openEvent(event)}
+        content={(events) => this.listEvents(events)}
+        openEvent={(objectID) => this.openEvent(objectID)}
         onRef={ref => (this.scrollViewRef2 = ref)}
         />
         </Animated.View>
@@ -246,6 +239,8 @@ const  mapStateToProps = state => {
   return {
     userID:state.user.userID,
     userConnected:state.user.userConnected,
+
+    sports:state.globaleVariables.sports.list,
     sportSelected:state.historicSearch.sport,
     leagueSelected:state.historicSearch.league,
 

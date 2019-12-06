@@ -47,8 +47,7 @@ export default styles = StyleSheet.create({
       marginRight:0,
       overflow:'hidden',
       height:190,
-      width:220,
-      
+      width:230,
       marginRight:10,
       paddingLeft:10,paddingRight:10,
       paddingTop:10,
@@ -57,6 +56,15 @@ export default styles = StyleSheet.create({
       borderRadius:4,
       borderWidth:1,
       borderColor:colors.off,
+    },
+    cardEvent:{
+      flex:1,
+      width:'100%',
+      backgroundColor:'white',  
+      // borderTopWidth:0.3,
+      paddingLeft:20,paddingRight:20,
+      paddingTop:15,paddingBottom:0,
+      borderColor:colors.borderColor,
     },
     cardGroup:{
       backgroundColor:'white',

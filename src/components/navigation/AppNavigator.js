@@ -61,6 +61,7 @@ import Alert from '../layout/alerts/Alert'
 import AlertAddress from '../layout/alerts/AlertAddress'
 import AlertCall from '../layout/alerts/AlertCall'
 import AlertAddImage from '../layout/alerts/AlertAddImage'
+import AlertAddUsers from '../layout/alerts/AlertAddUsers'
 
 import InitialPage from '../app/elementsOnBoard/InitialPage'
 import SportSelect from '../app/elementsOnBoard/SportSelect'
@@ -355,10 +356,35 @@ const MainApp = createBottomTabNavigator(
                 gesturesEnabled:false
             },
         },
-        Alert:{screen:Alert,gesturesEnabled:false},
-        AlertAddress:{screen:AlertAddress,gesturesEnabled:false},
-        AlertCall:AlertCall,
+        Alert:{
+            screen:Alert,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:false
+            },
+        },
+        AlertAddress:{
+            screen:AlertAddress,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:false
+            },
+        },
+        AlertCall:{
+            screen:AlertCall,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:false
+            },
+        },
         AlertAddImage:AlertAddImage,
+        AlertAddUsers:{
+            screen:AlertAddUsers,
+            navigationOptions:{
+                gesturesEnabled:false,
+                cardShadowEnabled:false
+            },
+        },
         Payments:PaymentsNavigator,
         Date:DateSelector,
         Location:LocationSelector,
