@@ -62,7 +62,7 @@ class GroupPage extends React.Component {
     return (
       <TouchableOpacity style={{marginTop:20}} activeOpacity={alert!=undefined?0.7:1} onPress={() => alert!=undefined?this.props.navigation.navigate('AlertAddress',{data:dataAlert}):null}>
         <Row>
-          <Col size={15} style={styleApp.center2}>
+          <Col size={15} style={styleApp.center}>
             {
               image!=undefined?
               image
@@ -70,7 +70,7 @@ class GroupPage extends React.Component {
               <AllIcons name={icon} color={colors.grey} size={18} type='font' />
             }
           </Col>
-          <Col size={85} style={styleApp.center2}>
+          <Col size={85} style={[styleApp.center2,{paddingLeft:10}]}>
             {component}
           </Col>
         </Row>
@@ -78,7 +78,7 @@ class GroupPage extends React.Component {
     )
   }
   title(text) {
-    return <Text style={[styleApp.title,{fontSize:15,fontFamily:'OpenSans-Regular'}]}>{text}</Text>
+    return <Text style={styleApp.text}>{text}</Text>
   }
   groupInfo(data,sport) {
     return (
@@ -88,18 +88,17 @@ class GroupPage extends React.Component {
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
 
+            <Text style={styleApp.title}>{data.info.name}</Text>
+
+            <View style={[styleApp.divider2,{marginBottom:25}]} />
             <Row>
-              <Col size={75} style={[styleApp.center2,{paddingRight:10}]}>
-                <Text style={styleApp.title}>{data.info.name}</Text>
+              <Col size={15} style={styleApp.center}>
+                <AsyncImage style={{width:35,height:35,borderRadius:17.5}} mainImage={sport.card.img.imgM} imgInitial={sport.card.img.imgSM} />
               </Col>
-              <Col size={25} style={styleApp.center3}>
-                <View style={[styles.viewSport,{marginTop:5,backgroundColor:sport.card.color.color}]}>
-                  <Text style={[styles.textSport,{color:'white'}]}>{data.info.sport.charAt(0).toUpperCase() + data.info.sport.slice(1)}</Text>
-                </View>
+              <Col size={85} style={[styleApp.center2,{paddingLeft:10}]}>
+                <Text style={styleApp.text}>{sport.text}</Text>
               </Col>
             </Row>
-
-            <View style={[styleApp.divider2,{marginBottom:10}]} />
             {this.rowIcon(this.title(data.location.address),'map-marker-alt','AlertAddress',data.location,<View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:'white',borderWidth:0}]}>
               <AllIcons name={'map-marker-alt'} color={colors.grey} size={18} type='font' />
             </View>)}
@@ -125,8 +124,9 @@ class GroupPage extends React.Component {
 
         {this.groupInfo(data,sport)}
 
-        <DescriptionView objectID={data.objectID} loader={this.state.loader}/>
+        <DescriptionView objectID={data.objectID} loader={this.state.loader} data={data}/>
         
+
         <MembersView 
           data={data} 
           objectID={data.objectID} 
@@ -136,7 +136,7 @@ class GroupPage extends React.Component {
           userConnected={this.props.userConnected}
         />
 
-        {/* <EventsView 
+        <EventsView 
           data={data} 
           objectID={data.objectID} 
           userID={this.props.userID} 
@@ -146,7 +146,7 @@ class GroupPage extends React.Component {
           sport={sport}
           navigate={(val,data) => this.props.navigation.navigate(val,data)} 
           push={(val,data) => this.props.navigation.push(val,data)}
-        /> */}
+        />
 
         
 
@@ -182,24 +182,25 @@ class GroupPage extends React.Component {
   }
   render() {
     var data= this.props.allGroups[this.props.navigation.getParam('objectID')]
+    var dots = data.info.name.slice(0,20).length < data.info.name.length?'...':''
     return (
       <View>
       <HeaderBackButton 
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         close={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        textHeader={data.info.name}
+        textHeader={data.info.name.slice(0,20) + dots}
         inputRange={[20,50]}
         initialTitleOpacity={0}
         initialBackgroundColor={'transparent'}
         initialBorderColorIcon={colors.grey}
         typeIcon2={'moon'}
-        sizeIcon2={17}
+        sizeIcon2={15}
 
         icon1='arrow-left'
         icon2='share'
 
         clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openGroupPage',pageFrom:'Group',data:{...data,eventID:data.objectID}})}
+        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openGroupPage',pageTo:'Group',objectID:data.objectID,pageFrom:'Group',data:{...data,eventID:data.objectID}})}
         />
 
         <ParalaxScrollView 

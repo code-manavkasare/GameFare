@@ -15,6 +15,7 @@ import {
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
 import AsyncImage from '../../layout/image/AsyncImage'
+import NavigationService from '../../../../NavigationService'
 import {getZone} from '../../functions/location'
 
 
@@ -52,7 +53,7 @@ class CardEvent extends React.Component {
       return '$' + entreeFee + ' entry fee'
     }
     click(objectID) {
-      this.props.openGroup(objectID)
+      NavigationService.navigate('Group',{objectID:objectID,pageFrom:this.props.pageFrom})
     }
     card (color,data) {
       if (this.state.loader)return <View style={styleApp.cardGroup}><PlacelHolder /></View>
@@ -65,13 +66,13 @@ class CardEvent extends React.Component {
     rowMembers(data) {
       return <Row style={{marginTop:0,height:50}}>
       <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
-        <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,}]}>
+        <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,borderWidth:0}]}>
           <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
         </View>
       </Col>
         {
         data.members != undefined?
-        <Col size={85} style={[{paddingRight:10},styleApp.center2]}>
+        <Col size={30} style={[{paddingRight:10},styleApp.center2]}>
           {
           Object.values(data.members).slice(0,3).map((member,i) => (
           <View style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
@@ -82,6 +83,9 @@ class CardEvent extends React.Component {
         </Col>
         :null
         }
+        <Col style={styleApp.center2} size={55}>
+          <Text style={[styleApp.input,{fontSize:12}]}>Members</Text>
+        </Col>
     </Row> 
     }
     displayCard(data) {
@@ -92,7 +96,7 @@ class CardEvent extends React.Component {
           return (
             <FadeInView duration={300} style={{width:'100%',height:'100%',}}>
                 <Row style={{height:100}}>
-                  <AsyncImage style={{width:'100%',height:100}} mainImage={data.pictures[0]} imgInitial={data.pictures[0]} />
+                  <AsyncImage style={{width:'100%',height:100,borderTopLeftRadius:7,borderTopRightRadius:7}} mainImage={data.pictures[0]} imgInitial={data.pictures[0]} />
                 </Row>
                 <View style={{paddingLeft:10,paddingRight:10,paddingTop:10}}>
                   <Text style={[styleApp.input,{fontSize:15,minHeight:20,marginTop:5}]}>{data.info.name}</Text>
@@ -113,7 +117,7 @@ class CardEvent extends React.Component {
         }} 
         click={() => this.click(data.objectID)}
         color={'white'}
-        style={[styleApp.cardGroup]}
+        style={[styleApp.cardGroup,styleApp.shade]}
         onPressColor={colors.off}
         />
       )

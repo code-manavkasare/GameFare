@@ -9,16 +9,15 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 const { height, width } = Dimensions.get('screen')
-import firebase from 'react-native-firebase'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import AllIcons from '../../../layout/icons/AllIcons'
-import Header from '../../../layout/headers/HeaderButton'
+import HeaderBackButton from '../../../layout/headers/HeaderBackButton'
 import ScrollView from '../../../layout/scrollViews/ScrollView'
 
 import sizes from '../../../style/sizes'
 import styleApp from '../../../style/style'
 import colors from '../../../style/colors';
-import BackButton from '../../../layout/buttons/BackButton'
+import ButtonColor from '../../../layout/Views/Button'
 import {cardIcon} from './iconCard'
 
 class ListEvent extends Component {
@@ -28,17 +27,8 @@ class ListEvent extends Component {
       initialLoader:true,
       events:[]
     };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Payments',
-      headerStyle:styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton name='close' color={colors.title} size={19} type='mat' click={() => navigation.navigate(navigation.getParam('pageFrom'))} />
-      ),
-    }
-  };
   async componentDidMount() {
     console.log('payments mount')
     console.log(this.props.navigation.getParam())
@@ -47,37 +37,31 @@ class ListEvent extends Component {
     console.log('cest ici meme')
     console.log(data)
     console.log(this.props.defaultCard)
-    return (
-      <TouchableOpacity activeOpacity={0.7} style={{height:50,borderBottomWidth:0.3,borderColor:colors.borderColor,marginLeft:-20,width:width,backgroundColor:'white',}} onPress={() => this.openPage(data)}>
-        <Row style={{marginLeft:20,width:width-40}}>
-          <Col size={15} style={styleApp.center2}>
+    return <ButtonColor view={() => {
+      return <Row style={{paddingLeft:20,paddingRight:20}}>
+        <Col size={15} style={styleApp.center2}>
             {icon}
           </Col>
-          <Col size={65} style={styleApp.center2}>
-            <Text style={[styleApp.text,{fontFamily:'OpenSans-Regular',fontSize:14}]}>{text}</Text>
-          </Col>
-          {
-            data!= 'new'?
-            <Col size={10} style={styleApp.center3}>
-            { 
+        <Col size={75} style={[styleApp.center2]}>
+          <Text style={styleApp.input}>{text}</Text>
+        </Col>
+        <Col size={10} style={styleApp.center}>
+          { 
               this.props.defaultCard == undefined?null
               :this.props.defaultCard.id == data.id?
               <View style={styles.defaultView}>
                 <Text style={styles.textDefault}>D</Text>
               </View>
               :null
-            }
-          </Col>
-          :
-          <Col size={10} ></Col>
           }
-          
-          <Col size={10} style={styleApp.center3}>
-          <AllIcons type='mat' size={20} name={'keyboard-arrow-right'} color={colors.title} /> 
-          </Col>
-        </Row>
-      </TouchableOpacity>
-    )
+        </Col>
+      </Row>
+    }} 
+    click={() => this.openPage(data)}
+    color='white'
+    style={[{borderColor:colors.off,height:60,width:'100%',borderRadius:0,borderBottomWidth:0,marginTop:0}]}
+    onPressColor={colors.off}
+    />
   } 
   openPage(data) {
     console.log('openpage')
@@ -100,28 +84,41 @@ class ListEvent extends Component {
   }
   payments() {
     return (
-      <View style={{marginTop:0}}>
-        <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text>
+      <View style={{marginTop:20}}>
+        <Text style={[styleApp.title,{marginBottom:20,fontSize:19,marginLeft:20}]}>Payment methods</Text>
 
-        <View style={{height:0.3,backgroundColor:colors.borderColor,marginLeft:-20,width:width}} />
+        <View style={{height:0.3,backgroundColor:colors.borderColor,width:width-40,marginLeft:20}} />
         {this.listCard()}
         {this.row(cardIcon('default'),'New payment method','new')}
 
-        <Text style={[styleApp.title,{marginBottom:20,fontSize:19,marginTop:30}]}>Bank Accounts</Text>
+        <Text style={[styleApp.title,{marginBottom:20,fontSize:19,marginTop:30,marginLeft:20}]}>Bank Accounts</Text>
 
-        <View style={{height:0.3,backgroundColor:colors.borderColor,marginLeft:-20,width:width}} />
+        <View style={{height:0.3,backgroundColor:colors.borderColor,width:width-40,marginLeft:20}} />
         {this.row(cardIcon('bank'),'Link bank account','bank')}
       </View>
     )      
   }
   render() {
     return (
-      <View style={[styleApp.stylePage,{backgroundColor:colors.off2}]}>
+      <View style={styleApp.stylePage}>
+        <HeaderBackButton 
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={'Payment methods'}
+        inputRange={[20,50]}
+        initialTitleOpacity={0}
+        initialBackgroundColor={'white'}
+        initialBorderColorIcon={'white'}
+
+        icon1='times'
+
+        clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+        />
         <ScrollView 
           onRef={ref => (this.scrollViewRef = ref)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.payments.bind(this)}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={90+60}
           showsVerticalScrollIndicator={true}
         />
@@ -140,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textDefault:{
-    color:colors.greenStrong,
+    color:colors.white,
     fontSize:12,
     fontFamily: 'OpenSans-Bold',
   },

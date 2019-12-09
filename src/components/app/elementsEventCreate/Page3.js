@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions'
+import {groupsAction} from '../../../actions/groupsActions'
 import {createEventAction} from '../../../actions/createEventActions'
 import {historicSearchAction} from '../../../actions/historicSearchActions'
 
@@ -35,7 +36,6 @@ class Page3 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialLoader:true,
       loader:false
     };
     this.translateYFooter = new Animated.Value(0)
@@ -47,8 +47,6 @@ class Page3 extends Component {
     return true
   }
   async componentDidMount() {
-    console.log('page3 mount')
-    console.log(this.props.navigation.getParam('data'))
   }
   dateTime(data) {
     return <View>
@@ -192,6 +190,16 @@ class Page3 extends Component {
       return this.props.navigation.navigate('Alert',{close:true,title:'An error has occured.',subtitle:'Please try again.',textButton:'Got it!'})
     }
 
+    if (data.groups.length != 0) {
+      var groups = this.props.navigation.getParam('groups')
+      for (var i in groups) {
+        await  this.props.groupsAction('editGroup',{
+          objectID:groups[i].objectID,
+          ...groups[i].events,
+          [event.objectID]:event.objectID
+        })
+      }
+    } 
     
     await  this.props.eventsAction('setAllEvents',{[event.objectID]:event})
     await  this.props.eventsAction('addFutureEvent',event.objectID)
@@ -203,7 +211,7 @@ class Page3 extends Component {
     await  this.props.createEventAction('reset')
     await  this.setState({loader:false})
     
-    return this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage'})
+    return this.props.navigation.navigate('Contacts',{data:event,pageFrom:'CreateEvent3',openPageLink:'openEventPage',pageTo:'Event',objectID:event.objectID})
   }
   render() {
     return (
@@ -280,4 +288,4 @@ const styles = StyleSheet.create({
     };
   };
   
-  export default connect(mapStateToProps,{eventsAction,createEventAction,historicSearchAction})(Page3);
+  export default connect(mapStateToProps,{eventsAction,createEventAction,historicSearchAction,groupsAction})(Page3);

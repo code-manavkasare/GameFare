@@ -138,40 +138,35 @@ class ListEvents extends React.Component {
     ]).start()
   }
   listEvents(events) {
-    console.log('display future events')
-    console.log(events)
-    console.log(this.props.allGroups)
-    //return null
     return Object.values(events).map((event,i) => (
-      <CardGroup userCard={false} key={i} loadData={false} homePage={true} openGroup={(objectID) => this.openGroup(objectID)} item={this.props.allGroups[event]} data={this.props.allGroups[event]}/>
+      <CardGroup userCard={false} pageFrom={'ListGroups'} key={i} loadData={false} homePage={true} openGroup={(objectID) => this.openGroup(objectID)} item={this.props.allGroups[event]} data={this.props.allGroups[event]}/>
     ))
   }
   ListEvent () {
     console.log('My groups')
     console.log(this.props.mygroups)
     if (!this.props.userConnected) return null
-    var numberPast = ''
     var numberFuture = ''
     if (!this.state.loader1) {
-      // numberPast = ' ('+this.props.mygroups.length + ')'
-      // numberFuture = ' ('+this.props.mygroups.length + ')'
+      numberFuture = ' ('+this.props.mygroups.length + ')'
     }
 
     return (
-      <View style={{marginTop:20}}>
+      <View style={{marginTop:10}}>
         <View style={[styleApp.marginView,{marginBottom:10}]}>
 
-        <Text style={[styleApp.input,{marginBottom:10,marginLeft:0,fontSize:22}]}>My groups</Text>
+        <Text style={[styleApp.input,{marginBottom:10,marginLeft:0,fontSize:22}]}>My groups {numberFuture}</Text>
         {/* {this.switch('All' + numberFuture,'Past' + numberPast)} */}
         </View>
 
-        <View style={{flex:1,marginTop:0}}>
-        <Animated.View style={{flex:1,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
+
+        <Animated.View style={{height:250,borderRightWidth:0,backgroundColor:'red',borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader1}
         events={this.props.mygroups}
-        height={210}
-        placeHolder={[styleApp.cardGroup,{paddingLeft:10,paddingRight:10,paddingTop:10}]}
+        // height={260}
+        placeHolder={[styleApp.cardGroup,styleApp.shade,{paddingLeft:10,paddingRight:10,paddingTop:10}]}
+        imageNoEvent = 'group'
         messageNoEvent = {"You haven't joined any group yet."}
         content={() => this.listEvents(this.props.mygroups)}
         // openEvent={(group) => this.openGroup(group)}
@@ -190,7 +185,12 @@ class ListEvents extends React.Component {
         onRef={ref => (this.scrollViewRef2 = ref)}
         /> */}
         </Animated.View>
-        </View>
+
+
+
+       <View style={styleApp.marginView}>
+        <View style={[styleApp.divider2,{marginTop:30}]} />
+       </View>
        
         
       </View>

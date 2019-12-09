@@ -41,8 +41,10 @@ export default class Events extends Component {
     }
   }
   async load() {
-    var events = await firebase.database().ref('groups/' + this.props.objectID + '/events/').once('value')
-    events = events.val()
+    console.log('events')
+    console.log(this.props.data.events)
+    console.log(this.props.data)
+    var events = []
     if (events == null) events = []
     this.setState({loader:false,events:events})
   }

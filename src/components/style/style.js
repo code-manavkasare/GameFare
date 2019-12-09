@@ -40,12 +40,8 @@ export default styles = StyleSheet.create({
     },
     cardEventSM:{
       backgroundColor:'white',
-      shadowColor: '#46474B',
-      shadowOffset: { width: 0, height: 0 },
-      shadowRadius: 60,
-      shadowOpacity: 0.5,
       marginRight:0,
-      overflow:'hidden',
+      // overflow:'hidden',
       height:190,
       width:230,
       marginRight:10,
@@ -53,7 +49,7 @@ export default styles = StyleSheet.create({
       paddingTop:10,
       paddingBottom:10,
 
-      borderRadius:4,
+      borderRadius:7,
       borderWidth:1,
       borderColor:colors.off,
     },
@@ -68,21 +64,17 @@ export default styles = StyleSheet.create({
     },
     cardGroup:{
       backgroundColor:'white',
-      shadowColor: '#46474B',
-      shadowOffset: { width: 0, height: 0 },
-      shadowRadius: 60,
-      shadowOpacity: 0.5,
       marginRight:0,
-      overflow:'hidden',
-      height:210,
-      width:200,
+      // overflow:'hidden',
+      height:220,
+      width:220,
       
       marginRight:10,
       // paddingLeft:10,paddingRight:10,
       // paddingTop:10,
       // paddingBottom:10,
 
-      borderRadius:4,
+      borderRadius:7,
       borderWidth:1,
       borderColor:colors.off,
     },
@@ -114,6 +106,10 @@ export default styles = StyleSheet.create({
     subtitle:{
       fontFamily: 'OpenSans-Regular',
       fontSize:15,color:colors.greyDark,
+    },
+    subtitleSX:{
+      fontFamily: 'OpenSans-Light',
+      fontSize:15,color:colors.title,
     },
     iconFooter:{
       height:18,width:18,
@@ -161,9 +157,9 @@ export default styles = StyleSheet.create({
     },
     shade:{
       shadowColor: '#46474B',
-      shadowOffset: { width: 2, height: 0 },
-      shadowRadius: 7,
-      shadowOpacity: 0.3,
+      shadowOffset: { width: 0, height: 0 },
+      shadowRadius: 5,
+      shadowOpacity: 0.05,
     },
     headerBooking:{
       position:'absolute',
@@ -186,7 +182,7 @@ export default styles = StyleSheet.create({
       justifyContent: 'center',
     },
     viewNumber:{
-      height:27,width:27,borderRadius:13.5,backgroundColor:colors.off2,borderColor:colors.off,borderWidth:0.7
+      height:30,width:30,borderRadius:15,backgroundColor:colors.off2,borderColor:colors.off,borderWidth:0.7
     },
     footerBooking:{
       position:'absolute',

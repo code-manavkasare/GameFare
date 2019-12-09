@@ -9,6 +9,7 @@ import {
     ScrollView,
     Animated
 } from 'react-native';
+import branch, { BranchEvent } from 'react-native-branch'
 
 import ListEvents from './elementsHome/ListEvent'
 import HeaderHome from '../layout/headers/HeaderHome'
@@ -39,6 +40,23 @@ export default class HomeScreen extends React.Component {
     async componentDidMount() {
       StatusBar.setHidden(false, "slide")
       StatusBar.setBarStyle('dark-content',true)
+      this.initBranch()
+    }
+    initBranch() {
+      var that = this
+      branch.subscribe(({ error, params }) => {
+        if (error) {
+          console.log("Error from Branch: " + error)
+          return
+        }
+        console.log('branch link opened !')
+        console.log(params)
+        if (params.action == 'openEventPage') {
+          this.props.navigation.navigate('Event',{objectID:params.eventID,pageFrom:'Home'})    
+        } else if (params.action == 'openGroupPage') {
+          this.props.navigation.navigate('Group',{objectID:params.eventID,pageFrom:'Home'})       
+        }
+      })
     }
     navigate(val,data) {
       this.props.navigation.push(val,data)

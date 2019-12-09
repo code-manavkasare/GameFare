@@ -10,6 +10,7 @@ import {indexEvents} from '../database/algolia'
 import firebase from 'react-native-firebase'
 import axios from 'axios'
 import stripe from 'tipsi-stripe'
+import Date from '../app/elementsEventCreate/DateSelector';
 
 stripe.setOptions({
   publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
@@ -190,6 +191,7 @@ function statusNewUser (data,level,coach) {
 }
 
 async function joinEvent (data,userID,infoUser,level,cardInfo,coach,users) {
+  if (data.date_timestamp < Number(new Date())) return {response:false,message:'This event is now past. You cannot join it anymore.'}
   var {response,message} = await checkUserAttendingEvent(userID,data) 
   if (!response) return {response,message}
 

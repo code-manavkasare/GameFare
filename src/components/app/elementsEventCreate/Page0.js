@@ -46,12 +46,18 @@ class Page0 extends Component {
   async componentDidMount() {
     console.log('page 1 mount')
     console.log(this.props.step0)
-    if (this.props.step0.sport == ''){
+    if (this.props.step0.sport == '' || this.props.step0.sport != ''){
       this.setSport(this.props.sports[0])
     }
   }
   async setSport(data) {
     console.log('ici spot')
+    console.log({
+      sport:data.value,
+      rule:data.typeEvent[0].rules[0].value,
+      level:data.level.list[0].value,
+      league:data.typeEvent[0].value
+    })
     await this.props.createEventAction('setStep0',{
       sport:data.value,
       rule:data.typeEvent[0].rules[0].value,
@@ -320,14 +326,20 @@ class Page0 extends Component {
     this.props.navigation.navigate('CreateEvent1',{group:this.props.navigation.getParam('group'),sport:sport})
   }
   render() {
-    if (this.props.step0.sport == '') return null
+    if (this.props.step0.sport == '' || this.props.step0.league == '') return null
     var sport = this.props.sports.filter(sport => sport.value == this.props.step0.sport)[0]
-    var league = Object.values(sport.typeEvent).filter(item => item.value == this.props.step0.league)[0]
-    var rule = Object.values(league.rules).filter(rule => rule.value == this.props.step0.rule)[0]
     console.log('le sport page 0')
     console.log(sport)
+    console.log(this.props.step0)
+    var league = Object.values(sport.typeEvent).filter(item => item.value == this.props.step0.league)[0]
+    console.log('league')
+    console.log(league)
+    // return null
+    var rule = Object.values(league.rules).filter(rule => rule.value == this.props.step0.rule)[0]
+    console.log('louloulouolou')
     console.log(league)
     console.log(rule)
+   
     // return null
     return (
       <View style={[styleApp.stylePage]}>

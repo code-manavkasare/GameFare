@@ -149,7 +149,7 @@ class ListEvents extends React.Component {
     console.log(this.props.allGroups)
     //return null
     return Object.values(events).map((event,i) => (
-      <CardGroup userCard={false} key={i} loadData={false} homePage={true} openGroup={(objectID) => this.openGroup(objectID)} item={this.props.allGroups[event]} data={this.props.allGroups[event]}/>
+      <CardGroup userCard={false} pageFrom={'ListGroups'} key={i} loadData={false} homePage={true} openGroup={(objectID) => this.openGroup(objectID)} item={this.props.allGroups[event]} data={this.props.allGroups[event]}/>
     ))
   }
   ListEvent () {
@@ -163,22 +163,23 @@ class ListEvents extends React.Component {
     }
 
     return (
-      <View style={{marginTop:20}}>
-        <View style={[styleApp.marginView,{marginBottom:10}]}>
+      <View style={{marginTop:0}}>
+        <View style={[styleApp.marginView,{marginBottom:10,paddingTop:10}]}>
 
         <Text style={[styleApp.input,{marginBottom:0,marginLeft:0,fontSize:22}]}>Groups around</Text>
-        <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
+        <Text style={[styleApp.subtitleXS,{marginBottom:10,marginTop:5,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
         {/* {this.switch('All' + numberFuture,'Past' + numberPast)} */}
         </View>
 
         <View style={{flex:1,marginTop:0}}>
-        <Animated.View style={{height:220,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
+        <Animated.View style={{flex:1,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader1}
         events={this.props.groupsAround}
         height={210}
         placeHolder={[styleApp.cardGroup,{paddingLeft:10,paddingRight:10,paddingTop:10}]}
-        messageNoEvent = {"You haven't joined any group yet."}
+        imageNoEvent='location'
+        messageNoEvent = {"We haven't find any group in this area."}
         content={() => this.listEvents(this.props.groupsAround)}
         // openEvent={(group) => this.openGroup(group)}
         onRef={ref => (this.scrollViewRef1 = ref)}

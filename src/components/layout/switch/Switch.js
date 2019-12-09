@@ -14,6 +14,7 @@ import {Grid,Row,Col} from 'react-native-easy-grid';
 import colors from '../../style/colors'
 import {timing,native} from '../../animations/animations'
 import styleApp from '../../style/style'
+import ButtonColor from '../Views/Button'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -86,6 +87,10 @@ export default class Switch extends Component {
       if (this.props.color != undefined) return {...styles.button,backgroundColor:colors.green}
       return styles.button
     }
+    borderStyle(state) {
+      if (!state) return {borderTopLeftRadius:7,borderBottomLeftRadius:7,}
+      return {borderTopRightRadius:7,borderBottomRightRadius:7,}
+    }
   render() {
     var colorText1 = this.state.colorAnim1.interpolate({
       inputRange: [0, 1],
@@ -99,22 +104,30 @@ export default class Switch extends Component {
     });
     return (
       <View style={{height:this.props.height,width:'100%',}}>
-      <Row style={{borderWidth:1,borderColor:colors.grey,borderRadius:2}}>
+      <Row style={{borderRadius:7}}>
       <Col style={styles.center} >
-        <TouchableOpacity style={this.styleButton()} activeOpacity={0.7} onPress={() => this.changeValue(false)}>
-          <Animated.Text style={[styles.text,{color:colorText0}]}>{this.props.textOn}</Animated.Text>
-        </TouchableOpacity>
+          <ButtonColor view={() => {
+                return <Animated.Text style={[styles.text,{color:colorText0}]}>{this.props.textOn}</Animated.Text>
+              }}
+              click={() => this.changeValue(false)}
+              color={colors.white}
+              style={[this.styleButton(),this.borderStyle(false)]}
+              onPressColor={colors.off}
+          />
       </Col>
         <Col style={styleApp.center}>
-          <TouchableOpacity style={this.styleButton()} activeOpacity={0.7} onPress={() => this.changeValue(true)}>
-            <Animated.Text style={[styles.text,{color:colorText1}]}>{this.props.textOff}</Animated.Text>
-          </TouchableOpacity>
+          <ButtonColor view={() => {
+                return <Animated.Text style={[styles.text,{color:colorText1}]}>{this.props.textOff}</Animated.Text>
+              }}
+              click={() => this.changeValue(true)}
+              color={colors.white}
+              style={[this.styleButton(),this.borderStyle(true)]}
+              onPressColor={colors.off}
+          />
         </Col>
       </Row>
 
-      <Animated.View style={[styleApp.center,{height:'100%',position:'absolute',borderWidth:1,bottom:0,borderRadius:2,width:'50%',backgroundColor:colors.green,borderColor:this.props.color != undefined?'white':colors.green,},{transform:[{translateX:this.translateXBorder}]}]}>
-        
-        
+      <Animated.View style={[styleApp.center,{height:'100%',position:'absolute',borderWidth:1,bottom:0,width:'50%',backgroundColor:colors.green,borderColor:this.props.color != undefined?'white':colors.green,},{transform:[{translateX:this.translateXBorder}]},this.borderStyle(this.props.state)]}>
         <Animated.Text style={[styles.text,{color:'white'}]}>
         {
           !this.props.state?
@@ -149,10 +162,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height:50,
     width:'100%',
-    // borderRadius:4,
+    overflow:'hidden',
+    borderWidth:1,borderColor:colors.grey,
+    // borderRadius:7,
     // borderColor:colors.primary,
     //backgroundColor:'yellow',
-    borderWidth:0,
+   // borderWidth:0,
   },
   text:{
     //color:colors.title,

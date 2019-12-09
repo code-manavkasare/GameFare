@@ -28,6 +28,7 @@ import AllIcons from '../layout/icons/AllIcons'
 import DateEvent from './elementsEventCreate/DateEvent'
 import Button2 from '../layout/buttons/Button'
 import ButtonColor from '../layout/Views/Button'
+import GroupsEvent from './elementsGroupPage/GroupsEvent'
 
 import {indexEvents} from '../database/algolia'
 import PlaceHolder from '../placeHolders/EventPage'
@@ -227,7 +228,6 @@ class EventPage extends React.Component {
     console.log(data)
     console.log(rule)
     return (
-      <View style={[{backgroundColor:'white',borderTopWidth:0.3,borderColor:colors.borderColor}]}>
         <View style={styleApp.marginView} >
 
             <Row style={{marginTop:20}}>
@@ -273,12 +273,12 @@ class EventPage extends React.Component {
           </Row>
 
         </View>     
-      </View>
+
     )
   }
   event(data,loader,sport,league,rule) {
     return (
-      <View style={{marginLeft:0,width:width,marginTop:-15}}>
+      <View style={{marginLeft:0,width:width,marginTop:0}}>
         {/* {this.imageMap(data)} */}
         {this.eventInfo(data,sport,rule,league)}
 
@@ -309,11 +309,10 @@ class EventPage extends React.Component {
         :null
         }
 
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
-          <View style={[styleApp.divider2,{marginTop:0}]} />
+        <View style={[styleApp.marginView,{marginTop:30}]}>
+     
           <Text style={styleApp.text}>Players</Text>
-
+          <View style={[styleApp.divider2,{marginTop:20,marginBottom:10}]} />
           
           {
             loader?
@@ -325,7 +324,7 @@ class EventPage extends React.Component {
             :data.attendees == undefined?
             <Text style={[styleApp.smallText,{marginTop:10}]}>No players has joined the event yet.</Text>
             :
-            <FadeInView duration={300} style={{marginTop:10}}>
+            <FadeInView duration={300} style={{marginTop:0}}>
             {Object.values(data.attendees).map((user,i) => (
               this.rowUser(user,i,data)
             ))}
@@ -333,7 +332,16 @@ class EventPage extends React.Component {
           }
 
           </View>
-        </View>
+
+          
+
+        {
+          data.groups !=undefined?
+          <View style={{marginTop:35}}>
+          <GroupsEvent groups={data.groups}/>
+          </View>
+          :null
+        }
         
         <View style={{height:sizes.heightFooterBooking+50}} />
 
@@ -398,6 +406,8 @@ class EventPage extends React.Component {
     var sport = this.props.sports.filter(sport => sport.value == event.info.sport)[0]
     var league = Object.values(sport.typeEvent).filter(item => item.value == event.info.league)[0]
     var rule = Object.values(league.rules).filter(rule => rule.value == event.info.rules)[0]
+    console.log('events !!!!!')
+    console.log(event)
     return (
       <View style={{ flex:1}}>
 
@@ -414,7 +424,7 @@ class EventPage extends React.Component {
         icon1='arrow-left'
         icon2='share'
 
-        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openEventPage',pageFrom:'Event',data:{...event,eventID:event.objectID}})}
+        clickButton2={() => this.props.navigation.navigate('Contacts',{openPageLink:'openEventPage',pageTo:'Group',objectID:event.objectID,pageFrom:'Event',pageFrom:'Event',data:{...event,eventID:event.objectID}})}
         clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))} 
         />
        

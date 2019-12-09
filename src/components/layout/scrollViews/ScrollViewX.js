@@ -69,7 +69,7 @@ export default class ScrollViewPage extends PureComponent {
     console.log(this.props.events)
     console.log(Object.values(this.props.events).length)
     return ( 
-      <ScrollView horizontal={true}  showsHorizontalScrollIndicator={false} style={{marginLeft:0,flex:1,width:width,paddingLeft:20,paddingRight:20,paddingTop:0,flex:1,paddingBottom:0}}>
+      <ScrollView horizontal={true}  showsHorizontalScrollIndicator={false} style={{marginLeft:0,flex:1,width:width,paddingLeft:20,paddingRight:20,backgroundColor:'white',paddingTop:7}}>
       {
       this.props.loader?
       [0,1,2,3].map((event,i) => (
@@ -80,14 +80,21 @@ export default class ScrollViewPage extends PureComponent {
       :Object.values(this.props.events).length == 0?
       <Button view={() => {
         return (
-          <View style={[styleApp.center2,{height:50,}]}>
-      <Text style={[styleApp.text,{marginTop:5,fontSize:12}]}>{this.props.messageNoEvent}</Text>
+          <View style={styleApp.center}>
+            {
+              this.props.imageNoEvent == 'location'?
+              <Image source={require('../../../img/images/location.png')} style={{width:60,height:60,marginBottom:15}} />
+              :this.props.imageNoEvent == 'group'?
+              <Image source={require('../../../img/images/shelve.png')} style={{width:60,height:60,marginBottom:15}} />
+              :null
+            }
+            <Text style={[styleApp.text,{marginTop:5,fontSize:12}]}>{this.props.messageNoEvent}</Text>
           </View>
         )
       }} 
       click={() => console.log('click')}
       color='white'
-      style={[styleApp.center,{backgroundColor:colors.off2,borderWidth:0,borderColor:colors.borderColor,width:width-40,height:55}]}
+      style={[styleApp.center,{backgroundColor:colors.off2,borderWidth:0,borderColor:colors.borderColor,width:width-40,flex:1,paddingTop:10,paddingBottom:10,borderRadius:7}]}
       onPressColor={colors.off}
       />
       :this.props.content(this.props.events)

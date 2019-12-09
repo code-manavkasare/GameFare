@@ -167,7 +167,7 @@ class Page3 extends Component {
           // User has rejected permissions
       }
       this.setState({loader:false})
-      this.props.navigation.navigate('Contacts',{data:group,pageFrom:'CreateGroup1',openPageLink:'openGroupPage'}) 
+      this.props.navigation.navigate('Contacts',{data:group,pageFrom:'CreateGroup1',openPageLink:'openGroupPage',pageTo:'Group',objectID:group.objectID}) 
 
     } else {
       return this.setState({loader:false})

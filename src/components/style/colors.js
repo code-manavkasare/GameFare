@@ -12,7 +12,7 @@ export default colors = {
     footerOff:'#3C3C3C',
     backdropModal:'#3C3C3C',
 
-    placeHolder1:'#FAFAFA',
+    placeHolder1:'#eaeaea',
     placeHolder2:'#f6f6f6',
 
     red:'#F66259',

@@ -63,13 +63,13 @@ class CardEvent extends React.Component {
       console.log(data)
       return <Row style={{marginTop:15}}>
       <Col size={15} style={[{paddingRight:10},styleApp.center2]}>
-        <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,}]}>
+        <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primary2,borderWidth:0}]}>
           <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{this.numberMember(data)}</Text>
         </View>
       </Col>
         {
         data.attendees != undefined?
-        <Col size={30} style={[{paddingRight:10},styleApp.center2]}>
+        <Col size={this.props.size=='SM'?30:20} style={[{paddingRight:10},styleApp.center2]}>
           {
           Object.values(data.attendees).slice(0,3).map((member,i) => (
           <View key={i} style={[styleApp.viewNumber,styleApp.center,{position:'absolute',left:i*14}]}>
@@ -80,7 +80,7 @@ class CardEvent extends React.Component {
         </Col>
         :null
         }
-        <Col size={55} style={styleApp.center2}>
+        <Col size={this.props.size=='SM'?55:65} style={styleApp.center2}>
         <Text style={[styleApp.text,{fontSize:11}]}>Person coming</Text>
         </Col>
     </Row> 
@@ -117,7 +117,7 @@ class CardEvent extends React.Component {
         }} 
         click={() => this.props.openEvent(data.objectID)}
         color={'white'}
-        style={this.props.size=='SM'?styleApp.cardEventSM:styleApp.cardEvent}
+        style={[this.props.size=='SM'?[styleApp.cardEventSM,styleApp.shade]:styleApp.cardEvent]}
         onPressColor={colors.off}
         />
       )

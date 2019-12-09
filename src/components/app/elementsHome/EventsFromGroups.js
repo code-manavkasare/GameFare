@@ -172,14 +172,14 @@ class MyEvents extends React.Component {
     }
     return (
       <View style={{marginTop:20}}>
-        <View style={[styleApp.marginView,{marginBottom:25}]}>
+        <View style={[styleApp.marginView,{marginBottom:15}]}>
 
         <Text style={[styleApp.input,{marginBottom:15,marginLeft:0,fontSize:22}]}>My events</Text>
         {this.switch('Upcoming' + numberFuture,'Past'+numberPast)}
         </View>
 
         <View style={{flex:1,marginTop:-5}}>
-        <Animated.View style={{height:200,backgroundColor:'white',borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
+        <Animated.View style={{height:225,paddingTop:15,borderRightWidth:0,borderColor:colors.grey,transform:[{translateX:this.translateXView1}]}}>
         <ScrollViewX 
         loader={this.state.loader}
         events={futureEvents}

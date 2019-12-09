@@ -204,7 +204,7 @@ const PaymentsNavigator = createStackNavigator(
     },
     {
         initialRouteName:'Payments',
-        // headerMode: 'none',
+        headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
         cardShadowEnabled:false

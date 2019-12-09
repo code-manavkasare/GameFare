@@ -113,7 +113,7 @@ export default class ButtonAdd extends React.Component {
               }}
               click={() => this.open(!this.state.open)}
               color={colors.green}
-              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:60,width:60,borderRadius:30}]}
+              style={[styleApp.center,styleApp.shade2,{borderColor:colors.greyDark,height:60,width:60,borderRadius:30,borderWidth:0.3,}]}
               onPressColor={colors.greenLight}
           />
         </Animated.View>

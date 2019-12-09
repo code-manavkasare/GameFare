@@ -39,8 +39,9 @@ export default class Posts extends Component {
     }
   }
   async load() {
-    var posts = await firebase.database().ref('groups/' + this.props.objectID + '/posts/').once('value')
-    posts = posts.val()
+    // var posts = await firebase.database().ref('groups/' + this.props.objectID + '/posts/').once('value')
+    // posts = posts.val()
+    var posts = []
     if (posts == null) posts = []
     this.setState({loader:false,posts:posts})
   }
@@ -53,7 +54,7 @@ export default class Posts extends Component {
           <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
-              <Text style={styleApp.text}>Posts</Text>
+              <Text style={styleApp.text}>Discussions</Text>
             </Col >
             <Col style={styleApp.center3} size={20}>
               <ButtonColor view={() => {

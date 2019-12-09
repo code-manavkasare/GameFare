@@ -64,7 +64,7 @@ class ListEvents extends React.Component {
       aroundLatLng: location.lat+','+location.lng,
       aroundRadius: 20*1000,
       query:'',
-      filters:'info.public=1 AND ' + 'info.sport:' + sport + leagueFilter ,
+      filters:'info.public=1' + ' AND info.sport:' + sport + leagueFilter ,
     })
     console.log('hits !!!!')
     console.log(hits)
@@ -112,19 +112,21 @@ class ListEvents extends React.Component {
   }
   ListEvent () {
     var allPublicEvents = this.props.publicEvents.map(event => this.props.allEvents[event])
+    var numberPublic = ' (' + allPublicEvents.length + ')'
+    if (this.state.loader) numberPublic = '' 
     return (
       <View style={{marginTop:20}}>
         <Row style={{marginLeft:20,width:width-40,marginBottom:15}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title,{marginBottom:5}]}>Events around</Text>
-            <Text style={[styleApp.subtitle,{marginBottom:10,marginLeft:0,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
+            <Text style={[styleApp.subtitleSX,{marginBottom:10,marginLeft:0,fontSize:12}]}>{getZone(this.props.searchLocation.address)}</Text>
           </Col>
           <Col size={15} style={styleApp.center3}>
           </Col>
         </Row>
 
         <View style={{marginLeft:20,marginTop:0,width:width-40,marginBottom:15}}>
-        {this.switch('Public','My groups','pastEvents')}
+        {this.switch('Public' + numberPublic,'My groups','pastEvents')}
         </View>
 
         { 

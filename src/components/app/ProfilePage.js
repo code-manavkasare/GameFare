@@ -166,8 +166,8 @@ class ProfilePage extends Component {
           <View style={[styleApp.marginView,{marginTop:0}]}>
             {this.props.userConnected?
             <View>
-              <Text style={[styleApp.title,{marginBottom:0}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
-              <Text style={[styleApp.subtitle,{marginTop:5,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text>
+              <Text style={[styleApp.title,{marginBottom:30}]}>{'Hi, ' + this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname}</Text>
+              {/* <Text style={[styleApp.subtitle,{marginTop:5,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text> */}
 
               <Text style={styleApp.smallText}>{this.props.userConnected?'Account parameters':'Sign in to GameFare'}</Text>
               <View style={[styleApp.divider2,{marginBottom:0,marginTop:15}]} />

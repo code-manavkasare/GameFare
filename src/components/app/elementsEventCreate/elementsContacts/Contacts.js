@@ -157,7 +157,7 @@ export default class ContactsComponent extends Component {
           return (
             <Row >
                 <Col size={15} style={styles.center}>
-                  <AllIcons name="search" type="font" color={colors.primary} size={16} />
+                  <AllIcons name="search" type="font" color={colors.grey} size={16} />
                 </Col>
                 <Col size={55} style={[styles.center2,{paddingLeft:15}]}>
                 <TextInput
@@ -181,7 +181,7 @@ export default class ContactsComponent extends Component {
                   <Col size={15}></Col>
                 }
                 <Col size={15} activeOpacity={0.7} style={styles.center} onPress={() => this.props.navigation.navigate('NewContact',{onGoBack:(data) => this.addNewContact(data)})}>
-                    <FontIcon name={'user-plus'} color={colors.primary} size={14} />
+                    <FontIcon name={'user-plus'} color={colors.green} size={14} />
                 </Col>
               </Row>
               )
@@ -190,7 +190,7 @@ export default class ContactsComponent extends Component {
               this.searchRef.focus()
             }}
             color='white'
-            style={{height:55,width:width,borderBottomWidth:0.3,borderColor:colors.borderColor}}
+            style={{height:55,width:width,borderBottomWidth:0.5,borderColor:colors.off}}
             onPressColor={colors.off}
         />
       )
@@ -276,7 +276,7 @@ export default class ContactsComponent extends Component {
         var image = infoEvent.pictures[0]
       } else {
         var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
-        var image = 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+        var image = infoEvent.images[0]
       }
       
       branch.createBranchUniversalObject('canonicalIdentifier', {
@@ -331,7 +331,7 @@ export default class ContactsComponent extends Component {
               this.shareEvent()
             }}
             color='white'
-            style={{height:55,width:width,borderBottomWidth:0.3,borderColor:colors.borderColor}}
+            style={{height:55,width:width,borderBottomWidth:0.5,borderColor:colors.off}}
             onPressColor={colors.off}
         />
       )
@@ -343,10 +343,10 @@ export default class ContactsComponent extends Component {
       var infoEvent = this.props.navigation.getParam('data')
       if (this.props.navigation.getParam('openPageLink') == 'openGroupPage') {
         var description='Join my group ' + infoEvent.info.name + ' by following the link!'
-        var image = infoEvent.pictures[0]
+        var image = infoEvent.images[0]
       } else {
         var description='Join my event ' + infoEvent.info.name + ' on ' + date(infoEvent.date.start,'ddd, MMM D') + ' at ' + date(infoEvent.date.start,'h:mm a') +  ' by following the link!'
-        var image = 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Flogoios.png?alt=media&token=f7d4d951-ecfb-4264-a338-60affacae254'
+        var image = infoEvent.images[0]
       }
       console.log('event id!!!!')
       console.log(infoEvent)
@@ -384,10 +384,11 @@ export default class ContactsComponent extends Component {
             return true
           }
           console.log('SMS Callback: completed: ' + completed + ' cancelled: ' + cancelled + 'error: ' + error);
-          if (that.props.navigation.getParam('pageFrom') == 'event'){
-            return that.props.navigation.goBack()
-          }
-          return that.props.navigation.navigate(this.props.navigation.getParam('openPageLink')== 'openGroupPage'?'ListGroups':'ListEvents',{})
+          // if (that.props.navigation.getParam('pageFrom') == 'event'){
+          //   return that.props.navigation.goBack()
+          // }
+          return this.props.navigation.navigate(this.props.navigation.getParam('pageTo'),{objectID:this.props.navigation.getParam('objectID')})
+          //return that.props.navigation.navigate(this.props.navigation.getParam('openPageLink')== 'openGroupPage'?'ListGroups':'ListEvents',{})
     
       });
     }
@@ -398,6 +399,11 @@ export default class ContactsComponent extends Component {
     icon2Header() {
       if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3' || this.props.navigation.getParam('pageFrom') == 'CreateGroup1') return 'text'
       return null
+    }
+    pageFromNextPage() {
+      if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3') return 'Home'
+      else if (this.props.navigation.getParam('pageFrom') == 'CreateGroup1') return 'LstGroups'
+      return 'Home'
     }
   render() {
     return (
@@ -412,7 +418,7 @@ export default class ContactsComponent extends Component {
         icon1={this.icon1Header()}
         icon2={this.icon2Header()}
         text2="Skip"
-        clickButton2={() => this.props.navigation.navigate('Home')}
+        clickButton2={() => this.props.navigation.navigate(this.props.navigation.getParam('pageTo'),{objectID:this.props.navigation.getParam('objectID'),pageFrom:this.pageFromNextPage()})}
         clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
         />
 

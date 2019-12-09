@@ -8,6 +8,7 @@ import {
     Animated
 } from 'react-native';
 import {connect} from 'react-redux';
+import {groupsAction} from '../../../actions/groupsActions'
 const { height, width } = Dimensions.get('screen')
 import { Col, Row, Grid } from "react-native-easy-grid";
 import firebase from 'react-native-firebase'
@@ -21,7 +22,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import sizes from '../../style/sizes'
 import styleApp from '../../style/style'
 
-export default class Description extends Component {
+class DescriptionView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,12 +31,25 @@ export default class Description extends Component {
     };
   }
   componentDidMount() {
-    this.load()
+    if (this.props.data.info.description == undefined) {
+      this.load()
+    } else {
+      this.setState({loader:false})
+    }
   }
   async load() {
     var description = await firebase.database().ref('groups/' + this.props.objectID + '/info/description/').once('value')
     description = description.val()
-    this.setState({loader:false,description:description})
+    await  this.props.groupsAction('setAllGroups',{
+      [this.props.data.objectID]:{
+        ...this.props.data,
+        info:{
+          ...this.props.data.info,
+          description:description
+        }
+      }
+    })
+    return true
   }
   async componentWillReceiveProps(nextProps) {
     if (nextProps.loader) {
@@ -53,11 +67,11 @@ export default class Description extends Component {
 
           <View style={[styleApp.divider2,{marginBottom:10}]} />
           {
-            this.state.loader?
+            this.props.data.info.description == undefined?
             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}   colors={[colors.placeHolder1, colors.placeHolder2]} style={{height:20,borderRadius:7,marginRight:80,marginTop:10,marginLeft:0}} />
             :
             <FadeInView duration={300} style={{marginTop:5}}>
-              <Text style={styleApp.smallText}>{this.state.description}</Text>
+              <Text style={styleApp.smallText}>{this.props.data.info.description}</Text>
             </FadeInView>
           }
 
@@ -73,5 +87,13 @@ export default class Description extends Component {
 const styles = StyleSheet.create({
 
 });
+
+const  mapStateToProps = state => {
+  return {
+
+  };
+};
+
+export default connect(mapStateToProps,{groupsAction})(DescriptionView);
 
 
