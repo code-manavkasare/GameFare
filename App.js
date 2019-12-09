@@ -1,3 +1,7 @@
+if(__DEV__) {
+  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+}
+
 import React, {Component} from 'react';
 import AppSwitchNavigator from './src/components/navigation/AppNavigator'
 import NavigationService from './NavigationService';
