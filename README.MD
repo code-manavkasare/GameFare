@@ -17,3 +17,5 @@ Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration 
 ##Debugging
 
 We use Reactotron for debugging please install the software from github page : https://github.com/infinitered/reactotron/releases
+
+We also use ESLint, be sure to have it installed on your VSCode extension
