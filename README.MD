@@ -1,20 +1,26 @@
-#Hello ald welcome to GameFare
+#Welcome to GameFare
 
-##Installation React native
-    yarn && cd ios pod install
+## Installation React native
 
-If error with react blob open /node_mudules/react-native-fetch-blob/iOS/react-native-fetch-blob.podspec
-Change ‘React/Core’ to ‘React-Core’ then
+Install everything needed for react-native : https://facebook.github.io/react-native/docs/getting-started from React Native CLI Quickstart
 
-    cd ios && pod update Mixpanel && pod install
+    yarn && cd ios && pod install
 
-To start application go to root folder then yarn iOS , normally if you have the last version of Xcode it should work :)
+## Start the App
 
-Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration put Debut instead of Release, then run
+Go to root folder then
 
     yarn ios
 
-##Debugging
+Firt build can throw bundle url error on emulator, if so relaunch and everything should work
+
+## Xcode config for debugging
+
+Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration put Debug instead of Release, then run
+
+    yarn ios
+
+## Debugging
 
 We use Reactotron for debugging please install the software from github page : https://github.com/infinitered/reactotron/releases
 
