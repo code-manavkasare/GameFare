@@ -16,13 +16,14 @@ function generateID() {
   );
 }
 
-function newDiscussion() {
+function newDiscussion(discussionID, groupID) {
   return {
-    id: generateID(),
+    id: discussionID,
     title: 'General',
     members: {},
     messages: {},
     type: 'group',
+    groupID: groupID,
   };
 }
 
@@ -46,16 +47,16 @@ async function createGroup(data, userID, infoUser) {
     },
   };
   delete group['img'];
-  const discussion = newDiscussion();
-  group.discussions = [discussion.id];
+  const discussionID = generateID();
+  group.discussions = [discussionID];
   var {key} = await firebase
     .database()
     .ref('groups')
     .push(group);
   await firebase
     .database()
-    .ref('discussions/' + discussion.id)
-    .update(discussion);
+    .ref('discussions/' + discussionID)
+    .update(newDiscussion(discussionID, key));
   group.objectID = key;
 
   await subscribeToTopics([userID, 'all', key]);

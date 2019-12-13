@@ -39,8 +39,10 @@ class CardConversation extends React.Component {
       .limitToLast(1)
       .once('value');
     lastMessage = lastMessage.val();
-    if (lastMessage === null) lastMessage = '';
-    return this.setState({lastMessage: lastMessage});
+    console.log('le last message');
+    console.log(lastMessage);
+    if (lastMessage === null) lastMessage = [{text: 'Write the first message'}];
+    return this.setState({lastMessage: Object.values(lastMessage)[0]});
   }
   imageCard(conversation) {
     if (this.props.conversation.type === 'group') {
@@ -63,7 +65,7 @@ class CardConversation extends React.Component {
     return 'Name member';
   }
   lastMessage() {
-    if (this.state.lastMessage === null)
+    if (!this.state.lastMessage)
       return (
         <View
           style={{
@@ -75,6 +77,8 @@ class CardConversation extends React.Component {
           }}
         />
       );
+    console.log('display last message');
+    console.log(this.state.lastMessage);
     return (
       <Text
         style={[
@@ -83,11 +87,9 @@ class CardConversation extends React.Component {
         ]}>
         {this.state.lastMessage === ''
           ? '...'
-          : this.state.lastMessage.type === 'text'
-          ? this.state.lastMessage.text
           : this.state.lastMessage.type === 'img'
           ? '1 picture sent'
-          : null}
+          : this.state.lastMessage.text}
       </Text>
     );
   }

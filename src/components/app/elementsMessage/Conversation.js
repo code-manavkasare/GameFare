@@ -13,7 +13,7 @@ import {
 import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
 import firebase from 'react-native-firebase';
-import Loader from '../../layout/loaders/Loader'
+import Loader from '../../layout/loaders/Loader';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {GiftedChat, Bubble, Send, Actions} from 'react-native-gifted-chat';
 import {pickLibrary, takePicture} from '../../functions/pictures';
@@ -21,6 +21,7 @@ import {pickLibrary, takePicture} from '../../functions/pictures';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
+import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
 
 import AllIcons from '../../layout/icons/AllIcons';
@@ -41,18 +42,27 @@ class MessageTab extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    this.loadMessages()
+    this.loadMessages();
   }
   loadMessages() {
-    const that = this
+    const that = this;
     firebase
       .database()
-      .ref('discussions/' + this.props.navigation.getParam('data').objectID + '/messages')
+      .ref(
+        'discussions/' +
+          this.props.navigation.getParam('data').objectID +
+          '/messages',
+      )
       .on('value', function(snap) {
-        const messages = snap.val();
+        var messages = snap.val();
         console.log('messages loaded');
         console.log(messages);
+        if (messages === null) messages = [];
 
+        that.setState({
+          messages: Object.values(messages).reverse(),
+          loader: false,
+        });
       });
   }
   async componentWillReceiveProps(nextProps) {}
@@ -96,14 +106,25 @@ class MessageTab extends React.Component {
     }
     return true;
   }
-  async sendNewMessage(conversation, newMessage) {
-    await this.props.messageAction('setConversation', {
-      messages: conversation.messages.concat([newMessage]),
-      conversationID: conversation.id,
-    });
+  async sendNewMessage(user) {
+    if (!this.props.userConnected)
+      return this.props.navigation.navigate('SignIn');
+    await firebase
+      .database()
+      .ref(
+        'discussions/' +
+          this.props.navigation.getParam('data').objectID +
+          '/messages',
+      )
+      .push({
+        user: user,
+        text: this.state.input,
+        createdAt: new Date(),
+      });
+    await this.setState({input: ''});
     return true;
   }
-  renderChatFooter(props) {
+  renderChatFooter(user) {
     return (
       <Row
         style={{
@@ -120,7 +141,11 @@ class MessageTab extends React.Component {
         <Col size={60} style={styleApp.center2}></Col>
 
         {this.state.input != '' ? (
-          <Col size={20} style={styleApp.center3}>
+          <Col
+            size={20}
+            style={styleApp.center3}
+            activeOpacity={0.7}
+            onPress={() => this.sendNewMessage(user)}>
             <AllIcon
               name="paper-plane"
               color={colors.primary}
@@ -136,7 +161,7 @@ class MessageTab extends React.Component {
             onPress={() => this.inputRef.blur()}>
             <AllIcon
               name="keyboard-hide"
-              color={colors.grey}
+              color={colors.title}
               type="mat"
               size={18}
             />
@@ -195,12 +220,11 @@ class MessageTab extends React.Component {
   renderChatEmpty() {
     return (
       <View style={[styleApp.center, {height: '100%'}]}>
-        {
-          this.state.loader?
-          <Loader color='primary' size={25} />
-          :
+        {this.state.loader ? (
+          <Loader color="green" size={30} />
+        ) : (
           <Text style={styleApp.text}>No message has been sent yet.</Text>
-        }
+        )}
       </View>
     );
   }
@@ -215,12 +239,12 @@ class MessageTab extends React.Component {
         messageTextStyle={styleApp.input}
         renderBubble={this.renderBubble}
         user={user}
-        inverted={false}
-        bottomOffset={90}
+        //inverted={true}
+        bottomOffset={0}
         // textInputStyle={{backgroundColor: 'red', borderWidth: 2}}
         renderChatEmpty={() => this.renderChatEmpty()}
         renderComposer={() => this.renderComposer()}
-        renderAccessory={() => this.renderChatFooter()}
+        renderAccessory={() => this.renderChatFooter(user)}
       />
     );
   }
@@ -231,8 +255,7 @@ class MessageTab extends React.Component {
     var user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-      avatar:
-        'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Ftennis%2FtypeEvent%2Fball%20(1).png?alt=media&token=a7be580e-a13b-4432-92bb-b31014675ab3',
+      avatar: !this.props.infoUser.picture ? '' : this.props.infoUser.picture,
     };
     return (
       <View style={styleApp.stylePage}>
@@ -277,6 +300,7 @@ const mapStateToProps = state => {
   return {
     conversations: state.conversations,
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
   };
 };
