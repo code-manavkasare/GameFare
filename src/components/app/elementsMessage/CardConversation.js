@@ -12,6 +12,7 @@ import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import NavigationService from '../../../../NavigationService';
+import firebase from 'react-native-firebase';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -19,7 +20,6 @@ import ButtonColor from '../../layout/Views/Button';
 
 import AsyncImage from '../../layout/image/AsyncImage';
 import AllIcons from '../../layout/icons/AllIcons';
-const {height, width} = Dimensions.get('screen');
 
 class CardConversation extends React.Component {
   constructor(props) {
@@ -27,20 +27,28 @@ class CardConversation extends React.Component {
     this.state = {
       events: [],
       loader: false,
-      unreadMessages: 3,
+      lastMessage: null,
     };
   }
   async componentDidMount() {
     console.log('this.;rops.conversation');
     console.log(this.props.conversation);
+    var lastMessage = await firebase
+      .database()
+      .ref('discussions/' + this.props.conversation.objectID + '/messages')
+      .limitToLast(1)
+      .once('value');
+    lastMessage = lastMessage.val();
+    if (lastMessage === null) lastMessage = '';
+    return this.setState({lastMessage: lastMessage});
   }
-  imageCard() {
+  imageCard(conversation) {
     if (this.props.conversation.type === 'group') {
       return (
         <AsyncImage
           style={styles.roundImage}
-          mainImage={this.props.conversation.image}
-          imgInitial={this.props.conversation.image}
+          mainImage={conversation.image}
+          imgInitial={conversation.image}
         />
       );
     }
@@ -50,19 +58,36 @@ class CardConversation extends React.Component {
       </View>
     );
   }
-  titleConversation() {
-    if (this.props.conversation.type === 'group')
-      return this.props.conversation.title;
+  titleConversation(conversation) {
+    if (conversation.type === 'group') return conversation.title;
     return 'Name member';
   }
   lastMessage() {
+    if (this.state.lastMessage === null)
+      return (
+        <View
+          style={{
+            height: 15,
+            width: '80%',
+            borderRadius: 4,
+            marginTop: 4,
+            backgroundColor: colors.off,
+          }}
+        />
+      );
     return (
       <Text
         style={[
           styleApp.smallText,
           {fontSize: 12, marginTop: 2, color: colors.greyDark},
         ]}>
-        coucou
+        {this.state.lastMessage === ''
+          ? '...'
+          : this.state.lastMessage.type === 'text'
+          ? this.state.lastMessage.text
+          : this.state.lastMessage.type === 'img'
+          ? '1 picture sent'
+          : null}
       </Text>
     );
   }
@@ -77,19 +102,13 @@ class CardConversation extends React.Component {
                 {/* <Text style={[styleApp.input, {color: colors.green}]}>•</Text> */}
               </Col>
               <Col size={15} style={styleApp.center2}>
-                {this.imageCard()}
+                {this.imageCard(conversation)}
               </Col>
               <Col size={75} style={[styleApp.center2, {paddingLeft: 5}]}>
-                <Text style={styleApp.text}>{this.titleConversation()}</Text>
+                <Text style={styleApp.text}>
+                  {this.titleConversation(conversation)}
+                </Text>
                 {this.lastMessage()}
-                {/* <Text
-                    style={[
-                      styleApp.smallText,
-                      {fontSize: 12, marginTop: 2, color: colors.greyDark},
-                    ]}>
-                    {Object.values(conversation.messages)[0].text.slice(0, 70)}
-                    ...
-                  </Text> */}
               </Col>
               <Col size={10} style={styleApp.center3}>
                 <AllIcons
@@ -103,7 +122,9 @@ class CardConversation extends React.Component {
           );
         }}
         click={() =>
-          NavigationService.navigate('Conversation', {conversationID: 'convo1'})
+          NavigationService.navigate('Conversation', {
+            data: conversation,
+          })
         }
         color="white"
         style={styleApp.cardConversation}

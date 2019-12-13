@@ -6,11 +6,14 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  TextInput,
   ScrollView,
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
+import firebase from 'react-native-firebase';
+import Loader from '../../layout/loaders/Loader'
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {GiftedChat, Bubble, Send, Actions} from 'react-native-gifted-chat';
 import {pickLibrary, takePicture} from '../../functions/pictures';
@@ -23,7 +26,6 @@ import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 const {height, width} = Dimensions.get('screen');
 
-import sizes from '../../style/sizes';
 import isEqual from 'lodash.isequal';
 import AllIcon from '../../layout/icons/AllIcons';
 
@@ -31,16 +33,28 @@ class MessageTab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
-      loader: false,
-      unreadMessages: 3,
+      loader: true,
+      focus: false,
       messages: [],
+      input: '',
     };
-    this.translateXVoile = new Animated.Value(width);
     this.AnimatedHeaderValue = new Animated.Value(0);
-    this.opacityVoile = new Animated.Value(0.3);
   }
-  async componentDidMount() {}
+  componentDidMount() {
+    this.loadMessages()
+  }
+  loadMessages() {
+    const that = this
+    firebase
+      .database()
+      .ref('discussions/' + this.props.navigation.getParam('data').objectID + '/messages')
+      .on('value', function(snap) {
+        const messages = snap.val();
+        console.log('messages loaded');
+        console.log(messages);
+
+      });
+  }
   async componentWillReceiveProps(nextProps) {}
   renderBubble(props) {
     return (
@@ -57,22 +71,6 @@ class MessageTab extends React.Component {
           left: [styleApp.smallText],
         }}
       />
-    );
-  }
-  renderSendButton(props) {
-    console.log(' la props');
-    console.log(props);
-    return (
-      <Send {...props}>
-        <View style={{marginRight: 15, marginBottom: 15}}>
-          <AllIcon
-            name="paper-plane"
-            color={colors.primary}
-            type="font"
-            size={16}
-          />
-        </View>
-      </Send>
     );
   }
   async sendPicture(val, conversation, user) {
@@ -105,54 +103,124 @@ class MessageTab extends React.Component {
     });
     return true;
   }
-  renderPictureButton(conversation, user) {
+  renderChatFooter(props) {
     return (
-      <View style={{width: 80, paddingTop: 7}}>
-        <Row>
-          <Col>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => this.sendPicture('take', conversation, user)}>
-              <View style={{marginLeft: 10, marginBottom: 16}}>
-                <AllIcon
-                  name="camera"
-                  color={colors.green}
-                  type="font"
-                  size={20}
-                />
-              </View>
-            </TouchableOpacity>
+      <Row
+        style={{
+          height: 45,
+          paddingLeft: 20,
+          paddingRight: 20,
+        }}>
+        <Col size={10} style={styleApp.center2}>
+          <AllIcon name="camera" color={colors.title} type="font" size={20} />
+        </Col>
+        <Col size={10} style={styleApp.center2}>
+          <AllIcon name="image" color={colors.title} type="font" size={20} />
+        </Col>
+        <Col size={60} style={styleApp.center2}></Col>
+
+        {this.state.input != '' ? (
+          <Col size={20} style={styleApp.center3}>
+            <AllIcon
+              name="paper-plane"
+              color={colors.primary}
+              type="font"
+              size={18}
+            />
           </Col>
-          <Col>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => this.sendPicture('pick', conversation, user)}>
-              <View style={{marginLeft: 10, marginBottom: 16}}>
-                <AllIcon
-                  name="image"
-                  color={colors.green}
-                  type="font"
-                  size={20}
-                />
-              </View>
-            </TouchableOpacity>
+        ) : this.state.focus ? (
+          <Col
+            size={20}
+            style={styleApp.center3}
+            activeOpacity={0.7}
+            onPress={() => this.inputRef.blur()}>
+            <AllIcon
+              name="keyboard-hide"
+              color={colors.grey}
+              type="mat"
+              size={18}
+            />
           </Col>
-        </Row>
+        ) : (
+          <Col size={20} />
+        )}
+      </Row>
+    );
+  }
+  renderComposer() {
+    return (
+      <Row
+        style={{
+          backgroundColor: 'white',
+          height: 40,
+          borderColor: colors.white,
+          borderTopWidth: 1,
+          width: width,
+          paddingLeft: 20,
+          paddingRight: 20,
+        }}>
+        <Col style={styleApp.center}>
+          <ButtonColor
+            view={() => {
+              return (
+                <TextInput
+                  multiline={true}
+                  placeholder="Message"
+                  onFocus={() => this.setState({focus: true})}
+                  onBlur={() => this.setState({focus: false})}
+                  ref={input => {
+                    this.inputRef = input;
+                  }}
+                  onChangeText={text => this.setState({input: text})}
+                  value={this.state.input}
+                  style={[
+                    styleApp.input,
+                    {
+                      height: '100%',
+                      width: '100%',
+                    },
+                  ]}
+                />
+              );
+            }}
+            click={() => console.log('')}
+            color={colors.off2}
+            style={styles.inputContainer}
+            onPressColor={colors.off}
+          />
+        </Col>
+      </Row>
+    );
+  }
+  renderChatEmpty() {
+    return (
+      <View style={[styleApp.center, {height: '100%'}]}>
+        {
+          this.state.loader?
+          <Loader color='primary' size={25} />
+          :
+          <Text style={styleApp.text}>No message has been sent yet.</Text>
+        }
       </View>
     );
   }
   messagePageView(conversation, user) {
     console.log('render convo');
+    // return null;
     return (
       <GiftedChat
-        messages={Object.values(conversation.messages).reverse()}
-        onSend={messages => this.onSend(messages, conversation)}
-        textInputStyle={styleApp.input}
+        messages={this.state.messages.reverse()}
+        onSend={message => this.onSend(message, conversation)}
+        ///textInputStyle={{backgroundColor: 'red', borderWidth: 2}}
         messageTextStyle={styleApp.input}
         renderBubble={this.renderBubble}
         user={user}
-        renderActions={() => this.renderPictureButton(conversation, user)}
-        renderSend={this.renderSendButton}
+        inverted={false}
+        bottomOffset={90}
+        // textInputStyle={{backgroundColor: 'red', borderWidth: 2}}
+        renderChatEmpty={() => this.renderChatEmpty()}
+        renderComposer={() => this.renderComposer()}
+        renderAccessory={() => this.renderChatFooter()}
       />
     );
   }
@@ -160,10 +228,6 @@ class MessageTab extends React.Component {
     this.sendNewMessage(conversation, messages[0]);
   }
   render() {
-    var conversation = Object.values(this.props.conversations).filter(
-      conversation =>
-        conversation.id == this.props.navigation.getParam('conversationID'),
-    )[0];
     var user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
@@ -174,7 +238,7 @@ class MessageTab extends React.Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
+          textHeader={this.props.navigation.getParam('data').title}
           inputRange={[50, 80]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
@@ -182,20 +246,32 @@ class MessageTab extends React.Component {
           initialBorderWidth={0.3}
           initialBorderColorHeader={colors.borderColor}
           sizeIcon2={17}
-          initialTitleOpacity={0}
+          initialTitleOpacity={1}
           icon1={'arrow-left'}
           icon2={null}
           clickButton1={() => this.props.navigation.dismiss()}
           clickButton2={() => console.log('')}
         />
 
-        {this.messagePageView(conversation, user)}
+        {this.messagePageView(this.props.navigation.getParam('data'), user)}
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  inputContainer: {
+    borderWidth: 0.5,
+    width: '100%',
+    flex: 1,
+    overflow: 'hidden',
+    paddingLeft: 15,
+    paddingTop: 4,
+    //paddingLeft: 10,
+    borderColor: colors.borderColor,
+    borderRadius: 25,
+  },
+});
 
 const mapStateToProps = state => {
   return {
