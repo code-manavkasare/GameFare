@@ -194,6 +194,7 @@ class GroupPage extends React.Component {
 
         <PostsView
           objectID={data.objectID}
+          data={data}
           loader={this.state.loader}
           infoUser={this.props.infoUser}
         />

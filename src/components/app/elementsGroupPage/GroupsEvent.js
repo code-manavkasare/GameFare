@@ -60,7 +60,7 @@ class ListEvents extends React.Component {
     }
   }
   async getGroups(groups) {
-    var {results} = await indexGroups.getObjects(groups);
+    const {results} = await indexGroups.getObjects(groups);
     console.log('hits');
     console.log(results);
     return results;

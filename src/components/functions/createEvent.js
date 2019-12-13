@@ -8,6 +8,7 @@ import firebase from 'react-native-firebase';
 import axios from 'axios';
 import stripe from 'tipsi-stripe';
 import Date from '../app/elementsEventCreate/DateSelector';
+import moment from 'moment';
 
 stripe.setOptions({
   publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
@@ -37,7 +38,7 @@ async function createEventObj(data, userID, infoUser, level, groups) {
       ...data.info,
       organizer: userID,
     },
-    date_timestamp: Number(new Date(data.date.start)),
+    /// date_timestamp: Number(new Date(data.date.start)),
   };
   var attendees = {};
   var coaches = {};
@@ -66,7 +67,7 @@ async function createEventObj(data, userID, infoUser, level, groups) {
   });
   return {
     ...event,
-    date_timestamp: Number(new Date(event.date.start)),
+    date_timestamp: moment(event.date.start).valueOf(),
     coaches: coaches,
     allCoaches: allCoaches,
     attendees: attendees,

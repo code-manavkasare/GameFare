@@ -11,12 +11,9 @@ import {
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
 
-import ButtonColor from '../../layout/Views/Button';
-import AllIcons from '../../layout/icons/AllIcons';
-import Communications from 'react-native-communications';
+import colors from '../../style/colors';
 import FadeInView from 'react-native-fade-in-view';
 import LinearGradient from 'react-native-linear-gradient';
 

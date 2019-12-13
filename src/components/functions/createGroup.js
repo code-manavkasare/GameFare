@@ -47,7 +47,7 @@ async function createGroup(data, userID, infoUser) {
   };
   delete group['img'];
   const discussion = newDiscussion();
-  group.dicussions = [discussion.id];
+  group.discussions = [discussion.id];
   var {key} = await firebase
     .database()
     .ref('groups')

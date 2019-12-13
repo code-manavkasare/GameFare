@@ -29,6 +29,7 @@ import ButtonAdd from '../../app/elementsHome/ButtonAdd'
 
 import sizes from '../../style/sizes';
 import isEqual from 'lodash.isequal'
+import CardConversation from './CardConversation';
 
 class MessageTab extends React.Component {
     constructor(props) {
@@ -43,10 +44,6 @@ class MessageTab extends React.Component {
       this.opacityVoile = new Animated.Value(0.3)
     }
     async componentDidMount() {
-     console.log(this.props.conversations)
-    }
-    navigate(val,data) {
-      this.props.navigation.push(val,data)
     }
     async componentWillReceiveProps(nextProps) {
       if (!isEqual(this.props.sports,nextProps.sports)) {
@@ -63,37 +60,6 @@ class MessageTab extends React.Component {
     }
     getAnimateHeader() {
       return this.scrollViewRef.getAnimateHeader()
-    }
-    cardConversation(conversation,i) {
-      return <ButtonColor key={i} view={() => {
-        return (
-          <View>
-          <Row style={{paddingTop:10,marginLeft:0,width:width-40,paddingBottom:0,borderBottomWidth:1,borderColor:colors.off,flex:1}}>    
-            <Col size={3} style={styleApp.center2}>
-              <Text style={[styleApp.input,{color:colors.green}]}>•</Text>
-            </Col>   
-            <Col size={15} style={styleApp.center}>
-              <View style={[styleApp.roundView,{backgroundColor:colors.off2,width:35,height:35,borderRadius:17.5,borderWidth:0.5,borderColor:colors.borderColor}]}>
-                <Text style={[styleApp.text,{fontSize:13}]}>{Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].firstname[0] + Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].lastname[0]}</Text>
-              </View>
-              {/* <AsyncImage style={{width:'100%',height:40,borderRadius:3}} mainImage={group.pictures[0]} imgInitial={group.pictures[0]} /> */}
-            </Col>
-            <Col size={75} style={[styleApp.center2,{paddingLeft:5}]}>
-              <Text style={styleApp.text}>{Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].firstname} {Object.values(conversation.members).filter(user => user.userID != this.props.userID)[0].lastname}</Text>
-              <Text style={[styleApp.smallText,{fontSize:12,marginTop:2,color:colors.greyDark}]}>{Object.values(conversation.messages)[0].text.slice(0,70)}...</Text>
-            </Col>
-            <Col size={10} style={styleApp.center3}>
-              <AllIcons name='keyboard-arrow-right' type='mat' size={20} color={colors.grey} />
-            </Col>
-          </Row>
-          </View>
-        )
-      }} 
-      click={() => this.props.navigation.navigate('Conversation',{conversationID:'convo1'})}
-      color='white'
-      style={{height:100}}
-      onPressColor={colors.off}
-      />
     }
     messagePageView () {
       if (!this.props.userConnected) return <View style={[styleApp.marginView,{marginTop:30}]}>
@@ -113,7 +79,7 @@ class MessageTab extends React.Component {
             </View>
             
             {Object.values(this.props.conversations).map((conversation,i) => (
-              this.cardConversation(conversation,i)
+              <CardConversation index={i} conversation={conversation} />
             ))}
           </View>
 
