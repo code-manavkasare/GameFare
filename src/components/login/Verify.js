@@ -1,53 +1,62 @@
-import React, {Component,createRef} from 'react';
-import { 
-    View, 
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    Platform,
-    Dimensions,
-    Animated
+import React, {Component, createRef} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Dimensions,
+  Animated,
 } from 'react-native';
-import Header from '../layout/headers/HeaderButton'
-import ScrollView from '../layout/scrollViews/ScrollView'
-import sizes from '../style/sizes'
-import styleApp from '../style/style'
-import VerifyFields from './elementsLogin/VerifyFields'
+import Header from '../layout/headers/HeaderButton';
+import ScrollView from '../layout/scrollViews/ScrollView';
+import sizes from '../style/sizes';
+import styleApp from '../style/style';
+import VerifyFields from './elementsLogin/VerifyFields';
 import {connect} from 'react-redux';
-import AllIcons from '../layout/icons/AllIcons'
-import BackButton from '../layout/buttons/BackButton'
-import HeaderBackButton from '../layout/headers/HeaderBackButton'
+import AllIcons from '../layout/icons/AllIcons';
+import BackButton from '../layout/buttons/BackButton';
+import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
-const { height, width } = Dimensions.get('screen')
+const {height, width} = Dimensions.get('screen');
 
 export default class Verify extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.AnimatedHeaderValue = new Animated.Value(0)
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
-  }
+  componentDidMount() {}
   render() {
+    const {dismiss} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderBackButton 
-        AnimatedHeaderValue={this.AnimatedHeaderValue}
-        textHeader={''}
-        inputRange={[5,10]}
-        initialBorderColorIcon={'white'}
-        initialBackgroundColor={'white'}
-        initialTitleOpacity={1}
-        icon1='arrow-left'
-        icon2={null}
-        clickButton1={() => this.props.navigation.navigate('Phone')} 
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={''}
+          inputRange={[5, 10]}
+          initialBorderColorIcon={'white'}
+          initialBackgroundColor={'white'}
+          initialTitleOpacity={1}
+          icon1="arrow-left"
+          icon2={null}
+          
+          clickButton1={() => this.props.navigation.navigate('Phone')}
         />
 
-        <ScrollView 
+        <ScrollView
           onRef={ref => (this.scrollViewRef = ref)}
-          contentScrollView={() => <VerifyFields pageFrom={this.props.navigation.getParam('pageFrom')} navigate={(val,data) => this.props.navigation.navigate(val,data)}  params={this.props.navigation.getParam('data')}/>}
+          contentScrollView={() => (
+            <VerifyFields
+              pageFrom={this.props.navigation.getParam('pageFrom')}
+              close={() => dismiss()}
+              navigate={(val, data) =>
+                this.props.navigation.navigate(val, data)
+              }
+              params={this.props.navigation.getParam('data')}
+            />
+          )}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginTop={sizes.heightHeaderHome}
@@ -59,7 +68,4 @@ export default class Verify extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-
-});
-
+const styles = StyleSheet.create({});
