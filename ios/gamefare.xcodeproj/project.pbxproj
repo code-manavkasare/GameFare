@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* gamefareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* gamefareTests.m */; };
+		05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 05B34DCC23A397CD001B955A /* icomoon.ttf */; };
 		067A36C1D3A3166B17C94454 /* libPods-gamefare-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -66,6 +67,7 @@
 		00E356EE1AD99517003FC87E /* gamefareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = gamefareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* gamefareTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gamefareTests.m; sourceTree = "<group>"; };
+		05B34DCC23A397CD001B955A /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icomoon.ttf; path = ../assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
 		0AFCFD661DCEBF4D89A565D8 /* Pods-gamefare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.release.xcconfig"; sourceTree = "<group>"; };
 		0E75EAC3BEE0426BBEE4E246 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		10C51D15B39B5041A9EFBB64 /* Pods-gamefare-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -190,7 +192,7 @@
 		0E5EB86E236842468BEB826B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				17F58B08239E7C20001D7862 /* icomoon.ttf */,
+				05B34DCC23A397CD001B955A /* icomoon.ttf */,
 				BE0DAE674B794C5087F79B0D /* OpenSans-Bold.ttf */,
 				A7CA9426255744A2AA3C5EEF /* OpenSans-BoldItalic.ttf */,
 				3E2490FD729142B4BC1B692E /* OpenSans-ExtraBold.ttf */,
@@ -509,7 +511,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F58B09239E7C20001D7862 /* icomoon.ttf in Resources */,
+				05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */,
 				172D1499235D2FB300560A8E /* OpenSans-Bold.ttf in Resources */,
 				172D149A235D2FB300560A8E /* OpenSans-BoldItalic.ttf in Resources */,
 				172D149B235D2FB300560A8E /* OpenSans-ExtraBold.ttf in Resources */,
