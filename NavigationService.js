@@ -1,4 +1,4 @@
-import { NavigationActions } from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 
 let _navigator;
 
@@ -11,14 +11,37 @@ function navigate(routeName, params) {
     NavigationActions.navigate({
       routeName,
       params,
-    })
+    }),
   );
 }
 
+function push(routeName, params) {
+  _navigator.dispatch(
+    StackActions.push({
+      routeName,
+      params,
+    }),
+  );
+}
+
+function pop(number) {
+  _navigator.dispatch(
+    StackActions.pop({
+      n: number,
+    }),
+  );
+}
+
+function goBack() {
+  _navigator.dispatch(NavigationActions.goBack());
+}
 
 // add other navigation functions that you need and export them
 
 export default {
   navigate,
+  push,
   setTopLevelNavigator,
+  pop,
+  goBack,
 };
