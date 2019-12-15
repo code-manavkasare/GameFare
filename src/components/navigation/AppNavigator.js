@@ -230,22 +230,22 @@ const MainApp = createBottomTabNavigator(
                   <Col size={10} style={[styles.center4,{paddingTop:10}]}>
                     <AllIcons name={routeName == 'Home'?
                       'calendar2'
-                      :routeName == 'ListGroups'?
+                      :routeName === 'ListGroups'?
                       'profileFooter'
-                      :routeName == 'MessageList'?
+                      :routeName === 'MessageList'?
                       'speech'
-                      :routeName == 'Profile'?
+                      :routeName === 'Profile'?
                       'menu'
                       :null
                       } size={16} color={tintColor} style={styles.iconFooter} type='moon'/>
                       <Text style={[styles.footerText,{color:tintColor,marginTop:6,marginBottom:5,fontSize:12.5}]}>
-                      {routeName == 'Home'?
+                      {routeName === 'Home'?
                       'Events'
-                      :routeName == 'ListGroups'?
+                      :routeName === 'ListGroups'?
                       'Groups'
-                      :routeName == 'MessageList'?
+                      :routeName === 'MessageList'?
                       'Message'
-                      :routeName == 'Profile'?
+                      :routeName === 'Profile'?
                       'Profile'
                       :null
                       }
@@ -259,12 +259,12 @@ const MainApp = createBottomTabNavigator(
               onPressColor={colors.off2}
               />
         },
-        tabBarLabel:({ focused, tintColor }) => { 
+        tabBarLabel:({ focused, tintColor }) => {
             const { routeName } = navigation.state
-            if (routeName == 'Home') return <Text style={[styles.input,{color:tintColor}]}>Events</Text>
-            if (routeName == 'ListGroups') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
-            if (routeName == 'MessageList') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
-            if (routeName == 'Profile') return <Text style={[styles.footerText,{color:tintColor}]}>PROFILE</Text>
+            if (routeName === 'Home') return <Text style={[styles.input,{color:tintColor}]}>Events</Text>
+            if (routeName === 'ListGroups') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
+            if (routeName === 'MessageList') return <Text style={[styles.footerText,{color:tintColor}]}>GROUPS</Text>
+            if (routeName === 'Profile') return <Text style={[styles.footerText,{color:tintColor}]}>PROFILE</Text>
         },
       }),   
       tabBarOptions: {
@@ -286,7 +286,7 @@ const MainApp = createBottomTabNavigator(
         initialRouteName:'Home',
         headerMode: 'none',
         mode: 'card',
-        cardOverlayEnabled:true
+        cardOverlayEnabled:true,
     }
   );
 
@@ -296,20 +296,20 @@ const MainApp = createBottomTabNavigator(
         LocationSelect:{screen:LocationSelect,
             navigationOptions:{
                 gesturesEnabled:true,
-                cardShadowEnabled:true
-            }
+                cardShadowEnabled:true,
+            },
         },
         SportSelect:{screen:SportSelect,
             navigationOptions:{
                 gesturesEnabled:false,
-                cardShadowEnabled:false
-            }
+                cardShadowEnabled:false,
+            },
         },
         LocationOnBoard:{screen:LocationSelector,
             navigationOptions:{
                 gesturesEnabled:true,
-                cardShadowEnabled:true
-            }
+                cardShadowEnabled:true,
+            },
         },
     },
     {
@@ -317,7 +317,7 @@ const MainApp = createBottomTabNavigator(
         headerMode: 'none',
         mode: 'card',
         cardOverlayEnabled:false,
-        cardShadowEnabled:true
+        cardShadowEnabled:true,
     }
 );
 
@@ -328,7 +328,7 @@ const MainApp = createBottomTabNavigator(
             screen:MainApp,
             navigationOptions:{
                 gesturesEnabled:false,
-                cardShadowEnabled:false
+                cardShadowEnabled:false,
             },
         },
         Event:JoinNavigator,

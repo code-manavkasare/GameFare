@@ -37,7 +37,7 @@ async function createGroup(data, userID, infoUser) {
     ...data,
     info: {
       ...data.info,
-      public: !data.public,
+      public: !data.info.public,
       organizer: userID,
     },
     pictures: [pictureUri],

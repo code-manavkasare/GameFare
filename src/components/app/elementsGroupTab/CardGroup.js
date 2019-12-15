@@ -50,9 +50,15 @@ class CardEvent extends React.Component {
     if (entreeFee == 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
-  click(objectID) {
-    NavigationService.push('Group', {
-      objectID: objectID,
+  click(data) {
+    if (!data.info.public && !this.props.allAccess)
+      return NavigationService.navigate('Alert', {
+        close: true,
+        textButton: 'Got it!',
+        title: 'This groups requires access.',
+      });
+    return NavigationService.push('Group', {
+      objectID: data.objectID,
       pageFrom: this.props.pageFrom,
     });
   }
@@ -171,7 +177,7 @@ class CardEvent extends React.Component {
             </FadeInView>
           );
         }}
-        click={() => this.click(data.objectID)}
+        click={() => this.click(data)}
         color={'white'}
         style={[styleApp.cardGroup, styleApp.shade]}
         onPressColor={colors.off}

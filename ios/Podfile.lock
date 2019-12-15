@@ -117,7 +117,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/Network (6.3.2):
     - GoogleUtilities/Logger
-    - GoogleUtilities/NSData+zlib
+    - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
   - "GoogleUtilities/NSData+zlib (6.3.2)"
   - GoogleUtilities/Reachability (6.3.2):
@@ -432,7 +432,7 @@ PODS:
     - React
   - RNReanimated (1.4.0):
     - React
-  - RNScreens (1.0.0-alpha.23):
+  - RNScreens (2.0.0-alpha.19):
     - React
   - RNVectorIcons (6.6.0):
     - React
@@ -494,14 +494,14 @@ DEPENDENCIES:
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
-  - react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
-  - react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)
+  - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
-  - react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)
+  - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -515,7 +515,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
-  - RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
@@ -530,150 +530,182 @@ DEPENDENCIES:
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
+SPEC REPOS:
+  trunk:
+    - boost-for-react-native
+    - Branch
+    - Crashlytics
+    - Fabric
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseAnalyticsInterop
+    - FirebaseAuth
+    - FirebaseAuthInterop
+    - FirebaseCore
+    - FirebaseCoreDiagnostics
+    - FirebaseCoreDiagnosticsInterop
+    - FirebaseDatabase
+    - FirebaseInstanceID
+    - FirebaseMessaging
+    - FirebaseStorage
+    - GoogleAppMeasurement
+    - GoogleDataTransport
+    - GoogleDataTransportCCTSupport
+    - GoogleUtilities
+    - GTMSessionFetcher
+    - leveldb-library
+    - libwebp
+    - Mixpanel
+    - nanopb
+    - Protobuf
+    - SDWebImage
+    - SDWebImageWebPCoder
+    - Stripe
+
 EXTERNAL SOURCES:
   BVLinearGradient:
-    :path: ../node_modules/react-native-linear-gradient
+    :path: "../node_modules/react-native-linear-gradient"
   DoubleConversion:
-    :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
+    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
-    :path: ../node_modules/react-native/Libraries/FBLazyVector
+    :path: "../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
-    :path: ../node_modules/react-native/Libraries/FBReactNativeSpec
+    :path: "../node_modules/react-native/Libraries/FBReactNativeSpec"
   Folly:
-    :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
+    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
-    :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
+    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   Permission-BluetoothPeripheral:
-    :path: ../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec
+    :path: "../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec"
   Permission-Calendars:
-    :path: ../node_modules/react-native-permissions/ios/Calendars.podspec
+    :path: "../node_modules/react-native-permissions/ios/Calendars.podspec"
   Permission-Camera:
-    :path: ../node_modules/react-native-permissions/ios/Camera.podspec
+    :path: "../node_modules/react-native-permissions/ios/Camera.podspec"
   Permission-Contacts:
-    :path: ../node_modules/react-native-permissions/ios/Contacts.podspec
+    :path: "../node_modules/react-native-permissions/ios/Contacts.podspec"
   Permission-FaceID:
-    :path: ../node_modules/react-native-permissions/ios/FaceID.podspec
+    :path: "../node_modules/react-native-permissions/ios/FaceID.podspec"
   Permission-LocationAlways:
-    :path: ../node_modules/react-native-permissions/ios/LocationAlways.podspec
+    :path: "../node_modules/react-native-permissions/ios/LocationAlways.podspec"
   Permission-LocationWhenInUse:
-    :path: ../node_modules/react-native-permissions/ios/LocationWhenInUse.podspec
+    :path: "../node_modules/react-native-permissions/ios/LocationWhenInUse.podspec"
   Permission-MediaLibrary:
-    :path: ../node_modules/react-native-permissions/ios/MediaLibrary.podspec
+    :path: "../node_modules/react-native-permissions/ios/MediaLibrary.podspec"
   Permission-Microphone:
-    :path: ../node_modules/react-native-permissions/ios/Microphone.podspec
+    :path: "../node_modules/react-native-permissions/ios/Microphone.podspec"
   Permission-Motion:
-    :path: ../node_modules/react-native-permissions/ios/Motion.podspec
+    :path: "../node_modules/react-native-permissions/ios/Motion.podspec"
   Permission-Notifications:
-    :path: ../node_modules/react-native-permissions/ios/Notifications.podspec
+    :path: "../node_modules/react-native-permissions/ios/Notifications.podspec"
   Permission-PhotoLibrary:
-    :path: ../node_modules/react-native-permissions/ios/PhotoLibrary.podspec
+    :path: "../node_modules/react-native-permissions/ios/PhotoLibrary.podspec"
   Permission-Reminders:
-    :path: ../node_modules/react-native-permissions/ios/Reminders.podspec
+    :path: "../node_modules/react-native-permissions/ios/Reminders.podspec"
   Permission-Siri:
-    :path: ../node_modules/react-native-permissions/ios/Siri.podspec
+    :path: "../node_modules/react-native-permissions/ios/Siri.podspec"
   Permission-SpeechRecognition:
-    :path: ../node_modules/react-native-permissions/ios/SpeechRecognition.podspec
+    :path: "../node_modules/react-native-permissions/ios/SpeechRecognition.podspec"
   Permission-StoreKit:
-    :path: ../node_modules/react-native-permissions/ios/StoreKit.podspec
+    :path: "../node_modules/react-native-permissions/ios/StoreKit.podspec"
   RCTRequired:
-    :path: ../node_modules/react-native/Libraries/RCTRequired
+    :path: "../node_modules/react-native/Libraries/RCTRequired"
   RCTTypeSafety:
-    :path: ../node_modules/react-native/Libraries/TypeSafety
+    :path: "../node_modules/react-native/Libraries/TypeSafety"
   React:
-    :path: ../node_modules/react-native/
+    :path: "../node_modules/react-native/"
   React-Core:
-    :path: ../node_modules/react-native/
+    :path: "../node_modules/react-native/"
   React-CoreModules:
-    :path: ../node_modules/react-native/React/CoreModules
+    :path: "../node_modules/react-native/React/CoreModules"
   React-cxxreact:
-    :path: ../node_modules/react-native/ReactCommon/cxxreact
+    :path: "../node_modules/react-native/ReactCommon/cxxreact"
   React-jsi:
-    :path: ../node_modules/react-native/ReactCommon/jsi
+    :path: "../node_modules/react-native/ReactCommon/jsi"
   React-jsiexecutor:
-    :path: ../node_modules/react-native/ReactCommon/jsiexecutor
+    :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
-    :path: ../node_modules/react-native/ReactCommon/jsinspector
+    :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-branch:
-    :path: ../node_modules/react-native-branch
+    :path: "../node_modules/react-native-branch"
   react-native-calendar-events:
-    :path: ../node_modules/react-native-calendar-events
+    :path: "../node_modules/react-native-calendar-events"
   react-native-contacts:
-    :path: ../node_modules/react-native-contacts
+    :path: "../node_modules/react-native-contacts"
   react-native-fcm:
     :path: "../node_modules/react-native-fcm"
   react-native-geocoder:
-    :path: ../node_modules/react-native-geocoder
+    :path: "../node_modules/react-native-geocoder"
   react-native-geolocation:
-    :path: ../node_modules/@react-native-community/geolocation
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-picker:
-    :path: ../node_modules/react-native-image-picker
+    :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
-    :path: ../node_modules/react-native-image-resizer
+    :path: "../node_modules/react-native-image-resizer"
   react-native-mapbox-gl:
-    :path: ../node_modules/@react-native-mapbox-gl/maps
+    :path: "../node_modules/@react-native-mapbox-gl/maps"
   react-native-mixpanel:
-    :path: ../node_modules/react-native-mixpanel
+    :path: "../node_modules/react-native-mixpanel"
   react-native-sms:
-    :path: ../node_modules/react-native-sms
+    :path: "../node_modules/react-native-sms"
   react-native-splash-screen:
-    :path: ../node_modules/react-native-splash-screen
+    :path: "../node_modules/react-native-splash-screen"
   react-native-statusbar:
-    :path: ../node_modules/@react-native-community/status-bar
+    :path: "../node_modules/@react-native-community/status-bar"
   React-RCTActionSheet:
-    :path: ../node_modules/react-native/Libraries/ActionSheetIOS
+    :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
-    :path: ../node_modules/react-native/Libraries/NativeAnimation
+    :path: "../node_modules/react-native/Libraries/NativeAnimation"
   React-RCTBlob:
-    :path: ../node_modules/react-native/Libraries/Blob
+    :path: "../node_modules/react-native/Libraries/Blob"
   React-RCTImage:
-    :path: ../node_modules/react-native/Libraries/Image
+    :path: "../node_modules/react-native/Libraries/Image"
   React-RCTLinking:
-    :path: ../node_modules/react-native/Libraries/LinkingIOS
+    :path: "../node_modules/react-native/Libraries/LinkingIOS"
   React-RCTNetwork:
-    :path: ../node_modules/react-native/Libraries/Network
+    :path: "../node_modules/react-native/Libraries/Network"
   React-RCTSettings:
-    :path: ../node_modules/react-native/Libraries/Settings
+    :path: "../node_modules/react-native/Libraries/Settings"
   React-RCTText:
-    :path: ../node_modules/react-native/Libraries/Text
+    :path: "../node_modules/react-native/Libraries/Text"
   React-RCTVibration:
-    :path: ../node_modules/react-native/Libraries/Vibration
+    :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNAwesomeCardIO:
-    :path: ../node_modules/react-native-awesome-card-io
+    :path: "../node_modules/react-native-awesome-card-io"
   RNCAsyncStorage:
-    :path: ../node_modules/@react-native-community/async-storage
+    :path: "../node_modules/@react-native-community/async-storage"
   RNDeviceInfo:
-    :path: ../node_modules/react-native-device-info
+    :path: "../node_modules/react-native-device-info"
   RNFastImage:
-    :path: ../node_modules/react-native-fast-image
+    :path: "../node_modules/react-native-fast-image"
   RNFirebase:
-    :path: ../node_modules/react-native-firebase/ios
+    :path: "../node_modules/react-native-firebase/ios"
   RNFS:
-    :path: ../node_modules/react-native-fs
+    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
-    :path: ../node_modules/react-native-gesture-handler
+    :path: "../node_modules/react-native-gesture-handler"
   RNInAppBrowser:
-    :path: ../node_modules/react-native-inappbrowser-reborn
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNPermissions:
-    :path: ../node_modules/react-native-permissions
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
-    :path: ../node_modules/react-native-reanimated
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
-    :path: ../node_modules/react-native-screens
+    :path: "../node_modules/react-native-screens"
   RNVectorIcons:
-    :path: ../node_modules/react-native-vector-icons
+    :path: "../node_modules/react-native-vector-icons"
   tipsi-stripe:
-    :path: ../node_modules/tipsi-stripe
+    :path: "../node_modules/tipsi-stripe"
   Yoga:
-    :path: ../node_modules/react-native/ReactCommon/yoga
+    :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   Branch: 1ace77c04b6e3efbf982bf4364f0662bfac156a0
-  BVLinearGradient: b0b70acf63ee888829b7c2ebbf6b50e227396e55
+  BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
@@ -762,14 +794,14 @@ SPEC CHECKSUMS:
   RNInAppBrowser: 0800f17fd7ed9fc503eb68e427befebb41ee719b
   RNPermissions: 923c1506d0bde387fbcfc18a8f87945806d03c19
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
-  RNScreens: f28b48b8345f2f5f39ed6195518291515032a788
+  RNScreens: 62284de159bbddba268edd282337afdb8771aaed
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   SDWebImage: 5bf6aec6481ae2a062bdc59f9d6c1d1e552090e0
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987
   Stripe: db29ad197c74aca6fb981e4e8355cf7ebd0fca5a
-  tipsi-stripe: 237cab79699eb7d354bfc09238b3284e3b8dad84
-  Yoga: 6af72bedeaea291a3a3717772d6d41836f23a1b9
+  tipsi-stripe: 61c247493a58d7e8e0bf6ee6b014271f473d2b11
+  Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
 PODFILE CHECKSUM: 65df3ad8c4dfe013ef40e4f95627c8995c92f176
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.8.4

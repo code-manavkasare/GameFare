@@ -519,10 +519,12 @@ export default class ContactsComponent extends Component {
     var that = this;
 
     var infoEvent = this.props.navigation.getParam('data');
-    if (this.props.navigation.getParam('openPageLink') == 'openGroupPage') {
+    console.log('infoEvent');
+    console.log(infoEvent);
+    if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
       var description =
         'Join my group ' + infoEvent.info.name + ' by following the link!';
-      var image = infoEvent.images[0];
+      var image = infoEvent.pictures[0];
     } else {
       var description =
         'Join my event ' +

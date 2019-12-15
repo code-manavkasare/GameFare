@@ -264,6 +264,7 @@ class Page0 extends Component {
     console.log(this.props.userID);
     // var group = false
     if (!group) {
+      await this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
         title: 'An error has occured',
         subtitle: 'Please check your connection.',
@@ -279,11 +280,16 @@ class Page0 extends Component {
     console.log(newGroups);
     await this.props.groupsAction('setAllGroups', {[group.objectID]: group});
     await this.props.groupsAction('setMygroups', newGroups);
-    await this.props.navigation.dismiss();
-    return this.props.navigation.navigate('Group', {
-      objectID: group.objectID,
-      pageFrom: 'ListGroups',
-    });
+    var that = this;
+    return setTimeout(async function() {
+      await that.props.navigation.dismiss();
+      return this.props.createGroupAction('reset');
+    }, 700);
+
+    // return this.props.navigation.navigate('Group', {
+    //   objectID: group.objectID,
+    //   pageFrom: 'ListGroups',
+    // });
   }
   render() {
     if (this.props.createGroupData.info.sport == '') return null;
@@ -291,11 +297,6 @@ class Page0 extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
           textHeader={'Create your group'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
@@ -303,11 +304,7 @@ class Page0 extends Component {
           initialTitleOpacity={1}
           icon1="arrow-left"
           icon2={null}
-          clickButton1={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
+          clickButton1={() => this.props.navigation.dismiss()}
         />
 
         <ScrollView

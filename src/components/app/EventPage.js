@@ -565,7 +565,7 @@ class EventPage extends React.Component {
         {/* {this.imageMap(data)} */}
         {this.eventInfo(data, sport, rule, league)}
 
-        {rule.coachNeeded ? (
+        {/* {rule.coachNeeded ? (
           <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
               <View style={[styleApp.divider2, {marginTop: 0}]} />
@@ -588,7 +588,7 @@ class EventPage extends React.Component {
               )}
             </View>
           </View>
-        ) : null}
+        ) : null} */}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Text style={styleApp.text}>Players</Text>

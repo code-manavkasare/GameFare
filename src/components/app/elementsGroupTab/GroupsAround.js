@@ -90,7 +90,7 @@ class ListEvents extends React.Component {
     console.log(sport);
     var filterPublic = 'info.public=1';
 
-    var groups = await this.getGroups(filterPublic, location);
+    var groups = await this.getGroups('', location);
     console.log('laa');
     console.log(groups);
 
@@ -152,7 +152,7 @@ class ListEvents extends React.Component {
     console.log(groups);
     //return null
     return Object.values(groups).map((group, i) => (
-      <CardGroup key={i} data={group} />
+      <CardGroup key={i} data={group} allAccess={false}/>
     ));
   }
   ListEvent() {
