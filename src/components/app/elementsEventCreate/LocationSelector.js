@@ -169,12 +169,12 @@ class LocationSelector extends Component {
         // addressOff = addressOff.replace(', Australia', '')
 
         // this.setState({ loader: false })
-        await this.props.navigation.state.params.onGoBack({
+        return this.props.navigation.state.params.onGoBack({
           address: address.description,
           lat: locationObj.geometry.location.lat,
           lng: locationObj.geometry.location.lng,
         });
-        return this.props.navigation.goBack();
+        // return this.props.navigation.goBack();
       }
     } catch (err) {
       console.log('errrrrrr');
@@ -186,7 +186,7 @@ class LocationSelector extends Component {
     var CurrentLocation = await currentLocation();
     console.log('currentLocation');
     console.log(CurrentLocation);
-    if (CurrentLocation.response == false) {
+    if (CurrentLocation.response === false) {
       this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
         close: true,
@@ -196,7 +196,7 @@ class LocationSelector extends Component {
       });
     }
     console.log('set lovation back');
-    await this.props.navigation.state.params.onGoBack(CurrentLocation);
+    return this.props.navigation.state.params.onGoBack(CurrentLocation);
     return this.props.navigation.goBack();
   }
   buttonSearchAddress() {

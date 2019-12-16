@@ -92,6 +92,7 @@ class HomeScreen extends React.Component {
     return true;
   }
   setLocation(location) {
+    this.props.navigation.navigate('ListGroups');
     this.props.historicSearchAction('setLocationSearch', location);
   }
   render() {

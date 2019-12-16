@@ -283,7 +283,7 @@ class Page0 extends Component {
     var that = this;
     return setTimeout(async function() {
       await that.props.navigation.dismiss();
-      return this.props.createGroupAction('reset');
+      return that.props.createGroupAction('reset');
     }, 700);
 
     // return this.props.navigation.navigate('Group', {

@@ -17,7 +17,6 @@ import colors from '../../style/colors';
 import FadeInView from 'react-native-fade-in-view';
 import LinearGradient from 'react-native-linear-gradient';
 
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 
 class DescriptionView extends Component {
@@ -29,39 +28,34 @@ class DescriptionView extends Component {
     };
   }
   componentDidMount() {
-    console.log('mount description view');
-    console.log(this.props.data);
-    if (this.props.data.info.description == undefined) {
-      this.load();
-    } else {
-      this.setState({loader: false});
-    }
+    if (!this.props.data.info.description) return this.load();
+    return this.setState({loader: false});
   }
   async load() {
+    console.log('load dta description');
+    console.log(this.props.data);
     var description = await firebase
       .database()
       .ref('groups/' + this.props.objectID + '/info/description/')
       .once('value');
     description = description.val();
-    await this.props.groupsAction('setAllGroups', {
-      [this.props.data.objectID]: {
-        ...this.props.data,
-        info: {
-          ...this.props.data.info,
-          description: description,
-        },
+    await this.props.groupsAction('editGroup', {
+      ...this.props.data,
+      info: {
+        ...this.props.data.info,
+        description: description,
       },
     });
     await this.setState({loader: false});
     return true;
   }
   async componentWillReceiveProps(nextProps) {
-    if (nextProps.loader !== this.props.loader && nextProps.loader) {
-      console.log('llalalala');
-      console.log(nextProps);
-      await this.setState({loader: true});
-      return this.load();
-    }
+    // if (nextProps.loader !== this.props.loader && nextProps.loader) {
+    //   console.log('llalalala');
+    //   console.log(nextProps);
+    //   await this.setState({loader: true});
+    //   return this.load();
+    // }
   }
   descriptionView() {
     console.log('render description view');
@@ -72,7 +66,7 @@ class DescriptionView extends Component {
           <Text style={[styleApp.text, {marginBottom: 0}]}>Description</Text>
 
           <View style={[styleApp.divider2, {marginBottom: 10}]} />
-          {this.props.data.info.description == undefined ? (
+          {!this.props.data.info.description ? (
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}

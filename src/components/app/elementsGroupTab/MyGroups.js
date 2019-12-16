@@ -80,7 +80,7 @@ class ListEvents extends React.Component {
 
     indexGroups.clearCache();
     var filterSport = ' AND info.sport:' + sport;
-    if (league == 'all') filterLeague = '';
+    if (league === 'all') filterLeague = '';
     console.log(this.props.userID);
     console.log(sport);
     var filterOrganizer =
@@ -98,10 +98,8 @@ class ListEvents extends React.Component {
     }, {});
     mygroups = mygroups.map(x => x.objectID);
 
-    if (!isEqual(this.props.mygroups, mygroups)) {
-      await this.props.groupsAction('setAllGroups', infoGroups);
-      await this.props.groupsAction('setMygroups', mygroups);
-    }
+    await this.props.groupsAction('setAllGroups', infoGroups);
+    await this.props.groupsAction('setMygroups', mygroups);
     this.setState({loader1: false});
   }
   listEvents(events) {
