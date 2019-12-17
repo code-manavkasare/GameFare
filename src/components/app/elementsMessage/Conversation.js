@@ -226,7 +226,7 @@ class MessageTab extends React.Component {
           // paddingBottom: 10,
           paddingLeft: 20,
           // marginTop: -this.state.offSet,
-          backgroundColor: 'red',
+          backgroundColor: 'white',
           paddingRight: 10,
         }}>
         <Col size={10} style={styleApp.center2}>
@@ -333,18 +333,25 @@ class MessageTab extends React.Component {
         messages={this.state.messages}
         messageTextStyle={styleApp.input}
         // containerStyle={{borderTopWidth: 0.5}}
+        placeholder={'Write your message'}
         renderMessage={props => this.renderMessage(props)}
         user={user}
         inverted={true}
         multiline={true}
         //inverted={true}
-        bottomOffset={this.state.offSet}
-        scrollToBottomOffset={0}
+        //bottomOffset={0}
+        minInputToolbarHeight={50}
+        //scrollToBottomOffset={0}
+        textInputProps={{
+          returnKeyType:'done',
+          blurOnSubmit:true,
+        }}
         textInputStyle={[
           styleApp.text,
           {
-            paddingTop: 10,
-            paddingBottom: 10,
+            paddingTop: 5,
+            paddingBottom: 5,
+            flex:1,
             paddingLeft: 0,
             paddingRight: 10,
             lineHeight: 21,

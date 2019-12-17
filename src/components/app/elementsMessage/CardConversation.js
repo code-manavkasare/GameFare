@@ -56,15 +56,27 @@ class CardConversation extends React.Component {
         />
       );
     }
+    if (this.infoOtherMember(conversation).picture) {
+      return (
+        <AsyncImage
+          style={styles.roundImage}
+          mainImage={this.infoOtherMember(conversation).picture}
+          imgInitial={this.infoOtherMember(conversation).picture}
+        />
+      );
+    }
     return (
       <View style={styles.roundImage}>
         <Text style={[styleApp.text, {fontSize: 13}]}>NG</Text>
       </View>
     );
   }
+  infoOtherMember(conversation) {
+    return Object.values(conversation.members).filter(user => user.id != this.props.userID)[0].info
+  }
   titleConversation(conversation) {
     if (conversation.type === 'group') return conversation.title;
-    return 'Name member';
+    return this.infoOtherMember(conversation).firstname + ' ' + this.infoOtherMember(conversation).lastName 
   }
   lastMessage() {
     if (!this.state.lastMessage)
@@ -75,7 +87,7 @@ class CardConversation extends React.Component {
             width: '80%',
             borderRadius: 4,
             marginTop: 4,
-            backgroundColor: colors.off,
+            backgroundColor: colors.off2,
           }}
         />
       );
@@ -85,7 +97,7 @@ class CardConversation extends React.Component {
       <Text
         style={[
           styleApp.smallText,
-          {fontSize: 12, marginTop: 2, color: colors.greyDark},
+          {fontSize: 13, marginTop: 2, color: colors.greyDark},
         ]}>
         {this.state.lastMessage === ''
           ? '...'
@@ -105,11 +117,11 @@ class CardConversation extends React.Component {
               {/* <Col size={3} style={styleApp.center2}>
                 <Text style={[styleApp.input, {color: colors.green}]}>•</Text>
               </Col> */}
-              <Col size={15} style={styleApp.center2}>
+              <Col size={20} style={styleApp.center2}>
                 {this.imageCard(conversation)}
               </Col>
-              <Col size={75} style={[styleApp.center2, {paddingLeft: 5}]}>
-                <Text style={styleApp.text}>
+              <Col size={70} style={[styleApp.center2, {paddingLeft: 5}]}>
+                <Text style={[styleApp.text,{fontSize:18}]}>
                   {this.titleConversation(conversation)}
                 </Text>
                 {this.lastMessage()}
@@ -152,9 +164,9 @@ const styles = StyleSheet.create({
   roundImage: {
     ...styleApp.center,
     backgroundColor: colors.off2,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 55,
+    height: 55,
+    borderRadius: 5,
     borderWidth: 0.5,
     borderColor: colors.borderColor,
   },

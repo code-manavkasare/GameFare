@@ -51,7 +51,7 @@ class CardEvent extends React.Component {
     return '$' + entreeFee + ' entry fee';
   }
   click(data) {
-    if (!data.info.public && !this.props.allAccess)
+    if (!data.info.public && !this.props.allAccess && data.info.organizer !== this.props.userID)
       return NavigationService.navigate('Alert', {
         close: true,
         textButton: 'Got it!',
@@ -204,71 +204,10 @@ class CardEvent extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  cardList: {
-    backgroundColor: 'white',
-    shadowColor: '#46474B',
-    shadowOffset: {width: 0, height: 0},
-    shadowRadius: 60,
-    shadowOpacity: 1,
-    marginRight: 0,
-    overflow: 'hidden',
-    height: 180,
-    marginRight: 10,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: colors.grey,
-    width: 220,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    //alignItems: 'center',
-    justifyContent: 'center',
-  },
-  viewSport: {
-    //position:'absolute',
-    backgroundColor: colors.greenLight,
-    borderRadius: 3,
-    paddingLeft: 10,
-    paddingRight: 10,
-    //top:15,
-    right: 0,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textSport: {
-    color: colors.greenStrong,
-    fontSize: 13,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  textPrice: {
-    color: colors.primary,
-    fontSize: 16,
-    marginTop: 10,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  title: {
-    color: colors.title,
-    fontSize: 21,
-    marginTop: 8,
-    marginBottom: 5,
-
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  subtitle: {
-    color: colors.subtitle,
-    fontSize: 14,
-    fontFamily: 'OpenSans-Regular',
-  },
-});
-
 const mapStateToProps = state => {
   return {
     sports: state.globaleVariables.sports.list,
+    userID:state.user.userID
   };
 };
 
