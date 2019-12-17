@@ -225,9 +225,9 @@ class MessageTab extends React.Component {
           height: 45,
           // paddingBottom: 10,
           paddingLeft: 20,
-          marginTop: -this.state.offSet,
-          // backgroundColor: 'red',
-          paddingRight: 20,
+          // marginTop: -this.state.offSet,
+          backgroundColor: 'red',
+          paddingRight: 10,
         }}>
         <Col size={10} style={styleApp.center2}>
           {/* <AllIcon name="camera" color={colors.title} type="font" size={20} /> */}
@@ -339,10 +339,16 @@ class MessageTab extends React.Component {
         multiline={true}
         //inverted={true}
         bottomOffset={this.state.offSet}
-        scrollToBottomOffset={20}
+        scrollToBottomOffset={0}
         textInputStyle={[
           styleApp.text,
-          {paddingTop: 10, paddingLeft: 0, paddingRight: 10, lineHeight: 21},
+          {
+            paddingTop: 10,
+            paddingBottom: 10,
+            paddingLeft: 0,
+            paddingRight: 10,
+            lineHeight: 21,
+          },
         ]}
         text={this.state.input}
         onInputTextChanged={text => this.setState({input: text})}
