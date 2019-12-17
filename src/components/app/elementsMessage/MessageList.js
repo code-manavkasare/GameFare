@@ -86,17 +86,15 @@ class MessageTab extends React.Component {
         </View>
       );
     return (
-      <View style={{paddingTop: 20, flex: 1}}>
-
-          <View style={[styleApp.marginView, {marginBottom: 15}]}>
-            <Text style={styleApp.title}>Inbox</Text>
-            {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
-          </View>
-
+      <View style={{paddingTop: 20, minHeight: height}}>
+        <View style={[styleApp.marginView, {marginBottom: 15}]}>
+          <Text style={styleApp.title}>Inbox</Text>
+          {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
+        </View>
+        {/* 
           {Object.values(this.props.conversations).map((conversation, i) => (
             <CardConversation index={i} conversation={conversation} />
-          ))}
-
+          ))} */}
       </View>
     );
   }
@@ -136,7 +134,7 @@ class MessageTab extends React.Component {
           stickyHeaderIndices={[3]}
           refreshControl={true}
           refresh={() => this.refresh()}
-          offsetBottom={100}
+          offsetBottom={10}
           showsVerticalScrollIndicator={true}
         />
       </View>
