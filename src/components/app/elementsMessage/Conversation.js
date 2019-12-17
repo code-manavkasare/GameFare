@@ -43,6 +43,7 @@ class MessageTab extends React.Component {
       focus: false,
       messages: [],
       input: '',
+      offSet: 0,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -130,7 +131,7 @@ class MessageTab extends React.Component {
         style={{
           flex: 1,
           width: '100%',
-          marginTop: 5,
+          marginBottom: 5,
           paddingLeft: 20,
           paddingRight: 20,
         }}>
@@ -196,7 +197,7 @@ class MessageTab extends React.Component {
     }
     return true;
   }
-  async sendNewMessage(user) {
+  async sendNewMessage(user, text) {
     if (!this.props.userConnected)
       return this.props.navigation.navigate('SignIn');
     await firebase
@@ -208,21 +209,24 @@ class MessageTab extends React.Component {
       )
       .push({
         user: user,
-        text: this.state.input,
+        text: text,
         createdAt: new Date(),
         timeStamp: moment().valueOf(),
       });
     await this.setState({input: ''});
     return true;
   }
-  renderChatFooter(user) {
+  renderChatFooter(user, props) {
+    console.log('renderChatFooter');
+    console.log(props);
     return (
       <Row
         style={{
-          height: 55,
+          height: 45,
           // paddingBottom: 10,
           paddingLeft: 20,
-          backgroundColor: 'red',
+          marginTop: -this.state.offSet,
+          // backgroundColor: 'red',
           paddingRight: 20,
         }}>
         <Col size={10} style={styleApp.center2}>
@@ -241,10 +245,7 @@ class MessageTab extends React.Component {
                   style={[
                     styleApp.input,
                     {
-                      color:
-                        this.state.input === ''
-                          ? colors.greyDark
-                          : colors.white,
+                      color: props.text === '' ? colors.greyDark : colors.white,
                     },
                   ]}>
                   Send
@@ -252,20 +253,18 @@ class MessageTab extends React.Component {
               );
             }}
             click={() =>
-              this.state.input === '' ? null : this.sendNewMessage(user)
+              props.text === '' ? null : this.sendNewMessage(user, props.text)
             }
-            color={this.state.input === '' ? colors.white : colors.primary}
+            color={props.text === '' ? colors.white : colors.primary}
             style={[
               styleApp.center,
               styles.buttonSend,
               {
                 borderColor:
-                  this.state.input === '' ? colors.greyDark : colors.primary,
+                  props.text === '' ? colors.greyDark : colors.primary,
               },
             ]}
-            onPressColor={
-              this.state.input === '' ? colors.white : colors.primary2
-            }
+            onPressColor={props.text === '' ? colors.white : colors.primary2}
           />
         </Col>
       </Row>
@@ -273,38 +272,44 @@ class MessageTab extends React.Component {
   }
   renderComposer(user) {
     return (
-      <View
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => this.inputRef.focus()}
         style={{
-          backgroundColor: 'white',
+          backgroundColor: 'red',
+          // height: 45,
           flex: 1,
-          borderColor: colors.white,
-          borderTopWidth: 0,
+          minHeight: 50,
+          paddingTop: 10,
+          paddingBottom: 10,
+          borderColor: colors.borderColor,
+          borderTopWidth: 0.5,
           width: width,
-          paddingLeft: 20,
-          paddingRight: 20,
+          paddingLeft: 10,
+          flexDirection: 'row',
+          paddingRight: 10,
         }}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            multiline={true}
-            placeholder="Message"
-            onFocus={() => this.setState({focus: true})}
-            onBlur={() => this.setState({focus: false})}
-            ref={input => {
-              this.inputRef = input;
-            }}
-            onChangeText={text => this.setState({input: text})}
-            value={this.state.input}
-            style={[
-              styleApp.input,
-              {
-                height: '100%',
-                width: '100%',
-              },
-            ]}
-          />
-        </View>
+        <TextInput
+          multiline={true}
+          placeholder="Message"
+          // onFocus={() => this.setState({focus: true})}
+          // onBlur={() => this.setState({focus: false})}
+          ref={input => {
+            this.inputRef = input;
+          }}
+          onContentSizeChange={event => {
+            console.log(event.nativeEvent.contentSize.height);
+            this.setState({
+              offSet: event.nativeEvent.contentSize.height,
+            });
+          }}
+          numberOfLines={2}
+          onChangeText={text => this.setState({input: text})}
+          value={this.state.input}
+          style={styleApp.input}
+        />
         {/* {this.renderChatFooter(user)} */}
-      </View>
+      </TouchableOpacity>
     );
   }
   renderChatEmpty() {
@@ -327,16 +332,25 @@ class MessageTab extends React.Component {
       <GiftedChat
         messages={this.state.messages}
         messageTextStyle={styleApp.input}
-        containerStyle={{borderTopWidth: 0}}
+        // containerStyle={{borderTopWidth: 0.5}}
         renderMessage={props => this.renderMessage(props)}
         user={user}
         inverted={true}
+        multiline={true}
         //inverted={true}
-        bottomOffset={0}
+        bottomOffset={this.state.offSet}
+        scrollToBottomOffset={20}
+        textInputStyle={[
+          styleApp.text,
+          {paddingTop: 10, paddingLeft: 0, paddingRight: 10, lineHeight: 21},
+        ]}
+        text={this.state.input}
+        onInputTextChanged={text => this.setState({input: text})}
         // renderMessage={this.renderMessage}
         renderChatEmpty={() => this.renderChatEmpty()}
-        renderComposer={() => this.renderComposer(user)}
-        renderAccessory={() => this.renderChatFooter(user)}
+        renderSend={() => null}
+        // renderComposer={() => this.renderComposer(user)}
+        renderAccessory={props => this.renderChatFooter(user, props)}
       />
     );
   }
@@ -375,7 +389,7 @@ class MessageTab extends React.Component {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    borderWidth: 0.5,
+    borderWidth: 0,
     width: '100%',
     height: 45,
     overflow: 'hidden',
@@ -383,7 +397,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     //paddingLeft: 10,
     borderColor: colors.borderColor,
-    borderRadius: 25,
+    // borderRadius: 25,
   },
   buttonSend: {
     height: 35,

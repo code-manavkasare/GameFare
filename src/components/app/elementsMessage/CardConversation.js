@@ -102,9 +102,9 @@ class CardConversation extends React.Component {
         view={() => {
           return (
             <Row>
-              <Col size={3} style={styleApp.center2}>
-                {/* <Text style={[styleApp.input, {color: colors.green}]}>•</Text> */}
-              </Col>
+              {/* <Col size={3} style={styleApp.center2}>
+                <Text style={[styleApp.input, {color: colors.green}]}>•</Text>
+              </Col> */}
               <Col size={15} style={styleApp.center2}>
                 {this.imageCard(conversation)}
               </Col>
@@ -152,9 +152,9 @@ const styles = StyleSheet.create({
   roundImage: {
     ...styleApp.center,
     backgroundColor: colors.off2,
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 0.5,
     borderColor: colors.borderColor,
   },
