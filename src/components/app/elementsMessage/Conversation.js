@@ -51,30 +51,23 @@ class MessageTab extends React.Component {
   }
   async loadMessages() {
     const that = this;
-    var test = await firebase
-      .database()
-      .ref(
-        'discussions/' +
-          this.props.navigation.getParam('data').objectID +
-          '/messages',
-      )
-      .once('value');
-    test = test.val();
-    console.log('rest');
-    console.log(test);
     firebase
       .database()
       .ref('discussions/' + this.props.navigation.getParam('data').objectID)
       .limitToLast(15)
       .on('value', function(snap) {
-        console.log('on value');
-        console.log(snap.val());
         var discussion = snap.val();
         var messages = discussion.messages;
-        console.log('messages loaded');
-        console.log(snap.val());
-        console.log(messages);
-        if (messages === undefined) messages = {};
+        if (!messages)
+          messages = {
+            0: {
+              user: that.props.gamefareUser,
+              text:
+                'No messages has been send on this conversation. Be the first one.',
+              createdAt: new Date(),
+              timeStamp: moment().valueOf(),
+            },
+          };
 
         messages = Object.keys(messages)
           .map(_id => ({
@@ -226,8 +219,10 @@ class MessageTab extends React.Component {
     return (
       <Row
         style={{
-          height: 45,
+          height: 55,
+          // paddingBottom: 10,
           paddingLeft: 20,
+          backgroundColor: 'red',
           paddingRight: 20,
         }}>
         <Col size={10} style={styleApp.center2}>
@@ -244,10 +239,12 @@ class MessageTab extends React.Component {
               return (
                 <Text
                   style={[
-                    styles.input,
+                    styleApp.input,
                     {
                       color:
-                        this.state.input === '' ? colors.grey : colors.white,
+                        this.state.input === ''
+                          ? colors.greyDark
+                          : colors.white,
                     },
                   ]}>
                   Send
@@ -263,7 +260,7 @@ class MessageTab extends React.Component {
               styles.buttonSend,
               {
                 borderColor:
-                  this.state.input === '' ? colors.grey : colors.primary,
+                  this.state.input === '' ? colors.greyDark : colors.primary,
               },
             ]}
             onPressColor={
@@ -274,49 +271,40 @@ class MessageTab extends React.Component {
       </Row>
     );
   }
-  renderComposer() {
+  renderComposer(user) {
     return (
-      <Row
+      <View
         style={{
           backgroundColor: 'white',
-          height: 40,
+          flex: 1,
           borderColor: colors.white,
           borderTopWidth: 0,
           width: width,
           paddingLeft: 20,
           paddingRight: 20,
         }}>
-        <Col style={styleApp.center}>
-          <ButtonColor
-            view={() => {
-              return (
-                <TextInput
-                  multiline={true}
-                  placeholder="Message"
-                  onFocus={() => this.setState({focus: true})}
-                  onBlur={() => this.setState({focus: false})}
-                  ref={input => {
-                    this.inputRef = input;
-                  }}
-                  onChangeText={text => this.setState({input: text})}
-                  value={this.state.input}
-                  style={[
-                    styleApp.input,
-                    {
-                      height: '100%',
-                      width: '100%',
-                    },
-                  ]}
-                />
-              );
+        <View style={styles.inputContainer}>
+          <TextInput
+            multiline={true}
+            placeholder="Message"
+            onFocus={() => this.setState({focus: true})}
+            onBlur={() => this.setState({focus: false})}
+            ref={input => {
+              this.inputRef = input;
             }}
-            click={() => console.log('')}
-            color={colors.off2}
-            style={styles.inputContainer}
-            onPressColor={colors.off}
+            onChangeText={text => this.setState({input: text})}
+            value={this.state.input}
+            style={[
+              styleApp.input,
+              {
+                height: '100%',
+                width: '100%',
+              },
+            ]}
           />
-        </Col>
-      </Row>
+        </View>
+        {/* {this.renderChatFooter(user)} */}
+      </View>
     );
   }
   renderChatEmpty() {
@@ -347,7 +335,7 @@ class MessageTab extends React.Component {
         bottomOffset={0}
         // renderMessage={this.renderMessage}
         renderChatEmpty={() => this.renderChatEmpty()}
-        renderComposer={() => this.renderComposer()}
+        renderComposer={() => this.renderComposer(user)}
         renderAccessory={() => this.renderChatFooter(user)}
       />
     );
@@ -356,7 +344,9 @@ class MessageTab extends React.Component {
     var user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-      avatar: !this.props.infoUser.picture ? '' : this.props.infoUser.picture,
+      avatar: !this.props.infoUser.picture
+        ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
+        : this.props.infoUser.picture,
     };
     return (
       <View keyboardDismissMode="on-drag" style={styleApp.stylePage}>
@@ -387,26 +377,26 @@ const styles = StyleSheet.create({
   inputContainer: {
     borderWidth: 0.5,
     width: '100%',
-    flex: 1,
+    height: 45,
     overflow: 'hidden',
     paddingLeft: 15,
-    paddingTop: 4,
+    paddingTop: 6,
     //paddingLeft: 10,
     borderColor: colors.borderColor,
     borderRadius: 25,
   },
   buttonSend: {
-    height: 30,
-    width: 70,
+    height: 35,
+    width: 100,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: colors.off,
   },
 });
 
 const mapStateToProps = state => {
   return {
-    // discussions: state.discussions,
+    gamefareUser: state.message.gamefareUser,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,

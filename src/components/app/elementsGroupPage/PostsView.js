@@ -65,7 +65,7 @@ export default class Posts extends Component {
               <Text style={styleApp.text}>Discussions</Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
-              <ButtonColor
+              {/* <ButtonColor
                 view={() => {
                   return (
                     <AllIcons
@@ -89,7 +89,7 @@ export default class Posts extends Component {
                   },
                 ]}
                 onPressColor={colors.off}
-              />
+              /> */}
             </Col>
           </Row>
 

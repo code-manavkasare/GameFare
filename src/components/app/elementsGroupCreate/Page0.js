@@ -43,11 +43,10 @@ class Page0 extends Component {
   componentDidMount() {
     console.log('page 1 mount');
     console.log(this.props.createGroupData);
-    if (this.props.createGroupData.info.sport == '') {
+    if (this.props.createGroupData.info.sport === '') {
       console.log('set balue');
-      console.log(this.props.sports[0].value);
       this.props.createGroupAction('setInfoCreateGroup', {
-        sport: this.props.sports[0].value,
+        sport: this.props.sportSelected,
       });
     }
   }
@@ -57,13 +56,18 @@ class Page0 extends Component {
     console.log(this.props.sports);
 
     // return null
+
     return (
       <ExpandableCard
         valueSelected={this.props.createGroupData.info.sport}
         image={true}
         list={this.props.sports}
         tickFilter={value => {
-          this.props.createGroupAction('setInfoCreateGroup', {sport: value});
+          console.log('ou pas val');
+          console.log(value);
+          this.props.createGroupAction('setInfoCreateGroup', {
+            sport: value.value,
+          });
         }}
       />
     );
@@ -365,6 +369,7 @@ const styles = StyleSheet.create({});
 const mapStateToProps = state => {
   return {
     sports: state.globaleVariables.sports.list,
+    sportSelected: state.historicSearch.sport,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     createGroupData: state.createGroup,

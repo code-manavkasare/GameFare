@@ -148,9 +148,9 @@ class InitialPage extends Component {
 
         {/* <View style={styleApp.divider2}/> */}
 
-        {sport.typeEvent.map((league, i) =>
-          this.button(league, i + 1, sport.value),
-        )}
+        {Object.values(sport.typeEvent)
+          .filter(type => type)
+          .map((league, i) => this.button(league, i + 1, sport.value))}
         {this.button(this.props.leagueAll, 8, sport.value)}
       </View>
     );

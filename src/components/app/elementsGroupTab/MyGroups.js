@@ -60,10 +60,10 @@ class ListEvents extends React.Component {
   }
   async componentWillReceiveProps(nextProps) {
     if (
-      (this.props.userConnected != nextProps.userConnected &&
-        nextProps.userConnected == true) ||
-      this.props.sportSelected != nextProps.sportSelected ||
-      this.props.leagueSelected != nextProps.leagueSelected
+      (this.props.userConnected !== nextProps.userConnected &&
+        nextProps.userConnected === true) ||
+      this.props.sportSelected !== nextProps.sportSelected ||
+      this.props.leagueSelected !== nextProps.leagueSelected
     ) {
       this.loadEvent(nextProps.sportSelected, nextProps.leagueSelected);
     }
@@ -147,7 +147,11 @@ class ListEvents extends React.Component {
               {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
             ]}
             imageNoEvent="group"
-            messageNoEvent={"You haven't joined any group yet."}
+            messageNoEvent={
+              "You haven't joined any " +
+              this.props.sportSelected +
+              ' group yet.'
+            }
             content={() => this.listEvents(this.props.mygroups)}
             // openEvent={(group) => this.openGroup(group)}
             onRef={ref => (this.scrollViewRef1 = ref)}

@@ -45,6 +45,8 @@ class CardConversation extends React.Component {
     return this.setState({lastMessage: Object.values(lastMessage)[0]});
   }
   imageCard(conversation) {
+    console.log('conversation');
+    console.log(conversation);
     if (this.props.conversation.type === 'group') {
       return (
         <AsyncImage

@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   Animated,
-  BackHandler,
   Easing,
   Dimensions,
   View,
@@ -30,7 +29,7 @@ class HeaderHome extends Component {
     this.state = {
       enableClickButton: true,
       heightButtonSport: new Animated.Value(50),
-      widthButtonSport: new Animated.Value(45),
+      widthButtonSport: new Animated.Value(51),
       heightButtonLeague: new Animated.Value(50),
       widthButtonLeague: new Animated.Value(150),
       openSport: false,
@@ -39,15 +38,13 @@ class HeaderHome extends Component {
     this.componentWillMount = this.componentWillMount.bind(this);
     this.rotateIcon = new Animated.Value(0);
     this.borderWidthButtonLeague = new Animated.Value(0);
+    this.borderWidthButtonSport = new Animated.Value(0);
     this.openLeagueVal = false;
   }
   componentWillMount() {
     if (this.props.loaderOn === true) {
       this.props.onRef(this);
     }
-  }
-  componentWillUnmount() {
-    this.backHandler.remove();
   }
   async close() {
     console.log('close en cour');
@@ -72,6 +69,7 @@ class HeaderHome extends Component {
           this.state.heightButtonSport,
           timing(Object.values(this.props.sports).length * 50, 200),
         ),
+        Animated.timing(this.borderWidthButtonSport, timing(1, 200)),
         Animated.timing(this.state.widthButtonSport, timing(150, 200)),
         Animated.timing(this.rotateIcon, timing(1, 200)),
       ]).start(() => {
@@ -81,7 +79,8 @@ class HeaderHome extends Component {
     this.props.historicSearchAction('setSport', sport);
     return Animated.parallel([
       Animated.timing(this.state.heightButtonSport, timing(50, 200)),
-      Animated.timing(this.state.widthButtonSport, timing(45, 200)),
+      Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
+      Animated.timing(this.state.widthButtonSport, timing(51, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {
       this.setState({openSport: false});
@@ -125,7 +124,7 @@ class HeaderHome extends Component {
                  
               </View> */}
                 <AsyncImage
-                  style={{height: 40, width: 40, borderRadius: 20}}
+                  style={{height: 37, width: 37, borderRadius: 20}}
                   mainImage={sport.card.img.imgSM}
                   imgInitial={sport.card.img.imgXS}
                 />
@@ -195,7 +194,7 @@ class HeaderHome extends Component {
           this.openLeague(
             !this.openLeagueVal,
             league.value,
-            Object.values(sport.typeEvent).length + 1,
+            Object.values(sport.typeEvent).filter(item => item).length + 1,
           )
         }
         color={'white'}
@@ -233,6 +232,11 @@ class HeaderHome extends Component {
       outputRange: ['white', colors.grey],
       extrapolate: 'clamp',
     });
+    const borderColorButtonSport = this.borderWidthButtonSport.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['white', colors.grey],
+      extrapolate: 'clamp',
+    });
     const borderColorIcon = this.props.AnimatedHeaderValue.interpolate({
       inputRange: this.props.inputRange,
       outputRange: [colors.white, colors.off],
@@ -262,12 +266,12 @@ class HeaderHome extends Component {
       outputRange: [0, 0.03],
     });
     var sport = Object.values(this.props.sports).filter(
-      sport => sport.value == this.props.sportSelected,
+      sport => sport.value === this.props.sportSelected,
     )[0];
-    var league = Object.values(sport.typeEvent).filter(
-      league => league.value == this.props.leagueSelected,
-    )[0];
-    if (league == undefined) {
+    var league = Object.values(sport.typeEvent)
+      .filter(league => league)
+      .filter(league => league.value == this.props.leagueSelected)[0];
+    if (league === undefined) {
       league = this.props.leagueAll;
     }
     console.log('render  headerHome !~');
@@ -286,77 +290,84 @@ class HeaderHome extends Component {
             shadowOpacity: shadeOpacityHeader,
           },
         ]}>
-        <Row style={{width: width, paddingLeft: 20, paddingRight: 20}}>
-          <Col size={15} style={{paddingTop: 15}}>
-            <Animated.View
-              style={[
-                {
-                  height: this.state.heightButtonSport,
-                  width: this.state.widthButtonSport,
-                  overflow: 'hidden',
-                  borderWidth: 0,
-                  borderRadius: 10,
-                  borderColor: colors.off,
-                  transform: [{translateY: translateYHeader}],
-                },
-              ]}>
-              {this.buttonSport(sport, 0)}
+        <Row
+          style={{
+            width: width,
+            paddingLeft: 20,
+            paddingRight: 20,
+            marginTop: 15,
+          }}>
+          <Animated.View
+            style={[
+              {
+                height: this.state.heightButtonSport,
+                width: this.state.widthButtonSport,
+                overflow: 'hidden',
+                position: 'absolute',
+                zIndex: 40,
+                left: 20,
+                borderWidth: 1,
+                borderRadius: 10,
+                borderColor: borderColorButtonSport,
+                transform: [{translateY: translateYHeader}],
+              },
+            ]}>
+            {this.buttonSport(sport, 0)}
 
-              {Object.values(this.props.sports)
-                .filter(item => item.value != sport.value)
-                .map((sportIn, i) => this.buttonSport(sportIn, i + 1))}
-            </Animated.View>
-          </Col>
-          <Col size={70} style={{paddingTop: 15}}>
-            <Animated.View
-              style={[
-                {
-                  height: this.state.heightButtonLeague,
-                  width: 190,
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  borderColor: borderColorButton,
-                  borderRadius: 10,
-                  transform: [{translateY: translateYHeader}],
-                },
-              ]}>
-              {this.buttonLeague(league, 0, sport)}
+            {Object.values(this.props.sports)
+              .filter(item => item && item.value != sport.value)
+              .map((sportIn, i) => this.buttonSport(sportIn, i + 1))}
+          </Animated.View>
+          <Animated.View
+            style={[
+              {
+                height: this.state.heightButtonLeague,
+                width: 190,
+                overflow: 'hidden',
+                borderWidth: 1,
+                position: 'absolute',
+                left: 90,
+                borderColor: borderColorButton,
+                borderRadius: 10,
+                transform: [{translateY: translateYHeader}],
+              },
+            ]}>
+            {this.buttonLeague(league, 0, sport)}
 
-              {Object.values(sport.typeEvent)
-                .filter(item => item.value != this.props.leagueSelected)
-                .map((league, i) => this.buttonLeague(league, i + 1, sport))}
+            {Object.values(sport.typeEvent)
+              .filter(item => item && item.value != this.props.leagueSelected)
+              .map((league, i) => this.buttonLeague(league, i + 1, sport))}
 
-              {this.buttonLeague(this.props.leagueAll, 9, sport)}
-            </Animated.View>
-          </Col>
-          <Col size={15} style={[{paddingTop: 15, alignItems: 'flex-end'}]}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name={this.props.icon2}
-                    color={colors.title}
-                    size={20}
-                    type={this.props.typeIcon2}
-                  />
-                );
-              }}
-              click={() => this.props.clickButton2()}
-              color={'white'}
-              style={[
-                styleApp.center,
-                {
-                  height: 45,
-                  width: 45,
-                  borderRadius: 25,
-                  borderWidth: 1,
-                  borderColor: borderColorIcon,
-                  transform: [{translateY: translateYHeader}],
-                },
-              ]}
-              onPressColor={colors.off}
-            />
-          </Col>
+            {this.buttonLeague(this.props.leagueAll, 9, sport)}
+          </Animated.View>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name={this.props.icon2}
+                  color={colors.title}
+                  size={20}
+                  type={this.props.typeIcon2}
+                />
+              );
+            }}
+            click={() => this.props.clickButton2()}
+            color={'white'}
+            style={[
+              styleApp.center,
+              {
+                height: 45,
+                width: 45,
+                position: 'absolute',
+                right: 20,
+                borderRadius: 25,
+                borderWidth: 1,
+                borderColor: borderColorIcon,
+                transform: [{translateY: translateYHeader}],
+              },
+            ]}
+            onPressColor={colors.off}
+          />
         </Row>
       </Animated.View>
     );

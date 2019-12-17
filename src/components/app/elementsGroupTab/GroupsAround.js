@@ -66,7 +66,7 @@ class ListEvents extends React.Component {
   }
   async loadEvent(sport, location) {
     indexGroups.clearCache();
-    var groups = await this.getGroups('', location);
+    var groups = await this.getGroups('info.sport:' + sport, location);
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
@@ -142,7 +142,11 @@ class ListEvents extends React.Component {
                 {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
               ]}
               imageNoEvent="location"
-              messageNoEvent={"We haven't find any group in this area."}
+              messageNoEvent={
+                "We haven't find any " +
+                this.props.sportSelected +
+                ' group in this area.'
+              }
               content={() => this.listGroups(this.state.groups)}
               // openEvent={(group) => this.openGroup(group)}
               onRef={ref => (this.scrollViewRef1 = ref)}
