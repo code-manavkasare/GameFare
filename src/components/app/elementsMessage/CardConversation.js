@@ -39,10 +39,14 @@ class CardConversation extends React.Component {
       .limitToLast(1)
       .once('value');
     lastMessage = lastMessage.val();
-    if (lastMessage === null) lastMessage = '';
-    return this.setState({lastMessage: lastMessage});
+    console.log('le last message');
+    console.log(lastMessage);
+    if (lastMessage === null) lastMessage = [{text: 'Write the first message'}];
+    return this.setState({lastMessage: Object.values(lastMessage)[0]});
   }
   imageCard(conversation) {
+    console.log('conversation');
+    console.log(conversation);
     if (this.props.conversation.type === 'group') {
       return (
         <AsyncImage
@@ -63,7 +67,7 @@ class CardConversation extends React.Component {
     return 'Name member';
   }
   lastMessage() {
-    if (this.state.lastMessage === null)
+    if (!this.state.lastMessage)
       return (
         <View
           style={{
@@ -75,6 +79,8 @@ class CardConversation extends React.Component {
           }}
         />
       );
+    console.log('display last message');
+    console.log(this.state.lastMessage);
     return (
       <Text
         style={[
@@ -83,11 +89,9 @@ class CardConversation extends React.Component {
         ]}>
         {this.state.lastMessage === ''
           ? '...'
-          : this.state.lastMessage.type === 'text'
-          ? this.state.lastMessage.text
           : this.state.lastMessage.type === 'img'
           ? '1 picture sent'
-          : null}
+          : this.state.lastMessage.text}
       </Text>
     );
   }
@@ -98,9 +102,9 @@ class CardConversation extends React.Component {
         view={() => {
           return (
             <Row>
-              <Col size={3} style={styleApp.center2}>
-                {/* <Text style={[styleApp.input, {color: colors.green}]}>•</Text> */}
-              </Col>
+              {/* <Col size={3} style={styleApp.center2}>
+                <Text style={[styleApp.input, {color: colors.green}]}>•</Text>
+              </Col> */}
               <Col size={15} style={styleApp.center2}>
                 {this.imageCard(conversation)}
               </Col>
@@ -148,9 +152,9 @@ const styles = StyleSheet.create({
   roundImage: {
     ...styleApp.center,
     backgroundColor: colors.off2,
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 0.5,
     borderColor: colors.borderColor,
   },

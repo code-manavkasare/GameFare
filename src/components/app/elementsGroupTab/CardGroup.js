@@ -50,9 +50,16 @@ class CardEvent extends React.Component {
     if (entreeFee == 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
-  click(objectID) {
-    NavigationService.push('Group', {
-      objectID: objectID,
+  click(data) {
+    if (!data.info.public && !this.props.allAccess)
+      return NavigationService.navigate('Alert', {
+        close: true,
+        textButton: 'Got it!',
+        title: 'This is a private group.',
+        subtitle: 'You need an invite to join.',
+      });
+    return NavigationService.push('Group', {
+      objectID: data.objectID,
       pageFrom: this.props.pageFrom,
     });
   }
@@ -96,9 +103,15 @@ class CardEvent extends React.Component {
                 member.info.picture == undefined ? (
                   <View
                     style={[
-                      styleApp.viewNumber,
                       styleApp.center,
-                      {position: 'absolute', left: i * 14},
+                      {
+                        position: 'absolute',
+                        left: i * 12,
+                        backgroundColor: colors.off,
+                        height: 25,
+                        width: 25,
+                        borderRadius: 20,
+                      },
                     ]}>
                     <Text
                       style={[
@@ -110,7 +123,14 @@ class CardEvent extends React.Component {
                   </View>
                 ) : (
                   <AsyncImage
-                    style={{height: 25, width: 25, borderRadius: 20}}
+                    style={{
+                      ...styleApp.center,
+                      height: 25,
+                      width: 25,
+                      borderRadius: 20,
+                      position: 'absolute',
+                      left: i * 12,
+                    }}
                     mainImage={member.info.picture}
                     imgInitial={member.info.picture}
                   />
@@ -132,11 +152,11 @@ class CardEvent extends React.Component {
         view={() => {
           return (
             <FadeInView duration={300} style={{width: '100%', height: '100%'}}>
-              <Row style={{height: 100}}>
+              <Row style={{height: 115}}>
                 <AsyncImage
                   style={{
                     width: '100%',
-                    height: 100,
+                    height: 115,
                     borderTopLeftRadius: 7,
                     borderTopRightRadius: 7,
                   }}
@@ -144,7 +164,7 @@ class CardEvent extends React.Component {
                   imgInitial={data.pictures[0]}
                 />
               </Row>
-              <View style={{paddingLeft: 10, paddingRight: 10, paddingTop: 10}}>
+              <View style={{paddingLeft: 10, paddingRight: 10, marginTop: 5}}>
                 <Text
                   style={[
                     styleApp.input,
@@ -171,7 +191,7 @@ class CardEvent extends React.Component {
             </FadeInView>
           );
         }}
-        click={() => this.click(data.objectID)}
+        click={() => this.click(data)}
         color={'white'}
         style={[styleApp.cardGroup, styleApp.shade]}
         onPressColor={colors.off}

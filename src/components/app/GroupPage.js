@@ -13,13 +13,10 @@ import {
 import {connect} from 'react-redux';
 import {createEventAction} from '../../actions/createEventActions';
 import {groupsAction} from '../../actions/groupsActions';
-import NavigationService from '../../../NavigationService';
-import firebase from 'react-native-firebase';
 
 const {height, width} = Dimensions.get('screen');
 import colors from '../style/colors';
 import styleApp from '../style/style';
-import sizes from '../style/sizes';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
 import AsyncImage from '../layout/image/AsyncImage';
@@ -46,16 +43,18 @@ class GroupPage extends React.Component {
   }
   async componentDidMount() {
     if (
-      this.props.allGroups[this.props.navigation.getParam('objectID')] ==
-      undefined
-    )
+      !this.props.allGroups[this.props.navigation.getParam('objectID')]
+    ) {
+      await this.setState({loader: true});
       this.loadGroup(this.props.navigation.getParam('objectID'));
+    }
+     
   }
   async loadGroup(objectID) {
     indexGroups.clearCache();
     var group = await indexGroups.getObject(objectID);
-    await this.props.groupsAction('setAllGroups', {[objectID]: group});
-    return true;
+    await this.props.groupsAction('editGroup', group);
+    return this.setState({loader: false});
   }
   rowIcon(component, icon, alert, dataAlert, image) {
     console.log('Alert');
@@ -64,7 +63,7 @@ class GroupPage extends React.Component {
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
-        activeOpacity={alert != undefined ? 0.7 : 1}
+        activeOpacity={alert !== undefined ? 0.7 : 1}
         onPress={() =>
           alert != undefined
             ? this.props.navigation.navigate('AlertAddress', {data: dataAlert})
@@ -154,9 +153,9 @@ class GroupPage extends React.Component {
     );
   }
   group(data) {
-    if (data == undefined) return <PlaceHolder />;
+    if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
-      sport => sport.value == data.info.sport,
+      sport => sport.value === data.info.sport,
     )[0];
     console.log('group page');
     console.log(sport);
@@ -205,8 +204,8 @@ class GroupPage extends React.Component {
   }
   conditionAdmin() {
     if (
-      this.props.navigation.getParam('pageFrom') != 'Home' &&
-      this.props.navigation.getParam('data').info.organizer ==
+      this.props.navigation.getParam('pageFrom') !== 'Home' &&
+      this.props.navigation.getParam('data').info.organizer ===
         this.props.userID &&
       this.props.navigation.getParam('data').info.public
     )
@@ -214,7 +213,7 @@ class GroupPage extends React.Component {
     return false;
   }
   async refresh() {
-    // await this.setState({loader: true});
+    await this.setState({loader: true});
     return this.loadGroup(this.props.navigation.getParam('objectID'));
   }
   refreshControl() {

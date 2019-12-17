@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  Image,
-  TextInput,
-  ScrollView,
-} from 'react-native';
-import firebase from 'react-native-firebase';
+import {View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 
@@ -18,9 +7,6 @@ const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
-import Switch from '../../layout/switch/Switch';
 import {getZone} from '../../functions/location';
 
 import CardGroup from './CardGroup';
@@ -46,24 +32,22 @@ class ListEvents extends React.Component {
     this.translateXView2 = new Animated.Value(width);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.props.onRef(this);
-    console.log('le time stamt !!!');
-    console.log(Number(new Date()));
-    console.log(this.props.mygroups);
-    console.log(this.props.searchLocation);
-    return this.loadEvent(this.props.sportSelected, this.props.searchLocation);
+    this.loadEvent(this.props.sportSelected, this.props.searchLocation);
   }
   async reload() {
+    await this.setState({loader: true});
     return this.loadEvent(this.props.sportSelected, this.props.searchLocation);
   }
   async componentWillReceiveProps(nextProps) {
     if (
-      (this.props.userConnected != nextProps.userConnected &&
-        nextProps.userConnected == true) ||
-      this.props.sportSelected != nextProps.sportSelected ||
-      this.props.searchLocation != nextProps.searchLocation
+      (this.props.userConnected !== nextProps.userConnected &&
+        nextProps.userConnected === true) ||
+      this.props.sportSelected !== nextProps.sportSelected ||
+      this.props.searchLocation !== nextProps.searchLocation
     ) {
+      await this.setState({loader: true});
       this.loadEvent(nextProps.sportSelected, nextProps.searchLocation);
     }
   }
@@ -81,31 +65,8 @@ class ListEvents extends React.Component {
     return groups.hits;
   }
   async loadEvent(sport, location) {
-    console.log('on reload');
-    await this.setState({loader: true});
-
     indexGroups.clearCache();
-
-    console.log(this.props.userID);
-    console.log(sport);
-    var filterPublic = 'info.public=1';
-
-    var groups = await this.getGroups(filterPublic, location);
-    console.log('laa');
-    console.log(groups);
-
-    // var infoGroups = mygroups.reduce(function(result, item) {
-    //   result[item.objectID] = item;
-    //   return result;
-    // }, {});
-    // mygroups = mygroups.map(x => x.objectID);
-    // console.log('myGroups hihaaaaa');
-    // console.log(infoGroups);
-    // console.log(mygroups);
-
-    // await this.props.groupsAction('setAllGroups', infoGroups);
-    // await this.props.groupsAction('setGroupsAround', mygroups);
-
+    var groups = await this.getGroups('info.sport:' + sport, location);
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
@@ -115,25 +76,6 @@ class ListEvents extends React.Component {
       objectID: objectID,
       pageFrom: 'ListGroups',
     });
-  }
-  async setSwitch(state, val) {
-    // await this.setState({[state]:val})
-    // await this.translateViews(val)
-    return false;
-  }
-  switch(textOn, textOff, state, translateXComponent0, translateXComponent1) {
-    return (
-      <Switch
-        textOn={textOn}
-        textOff={textOff}
-        translateXTo={width / 2 - 20}
-        height={50}
-        translateXComponent0={this.translateXView1}
-        translateXComponent1={this.translateXView2}
-        state={this.state[state]}
-        setState={val => this.setSwitch(state, val)}
-      />
-    );
   }
   translateViews(val) {
     if (val) {
@@ -152,7 +94,7 @@ class ListEvents extends React.Component {
     console.log(groups);
     //return null
     return Object.values(groups).map((group, i) => (
-      <CardGroup key={i} data={group} />
+      <CardGroup key={i} data={group} allAccess={false} />
     ));
   }
   ListEvent() {
@@ -180,7 +122,6 @@ class ListEvents extends React.Component {
             ]}>
             {getZone(this.props.searchLocation.address)}
           </Text>
-          {/* {this.switch('All' + numberFuture,'Past' + numberPast)} */}
         </View>
 
         <View style={{flex: 1, marginTop: 0}}>
@@ -201,7 +142,11 @@ class ListEvents extends React.Component {
                 {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
               ]}
               imageNoEvent="location"
-              messageNoEvent={"We haven't find any group in this area."}
+              messageNoEvent={
+                "We haven't find any " +
+                this.props.sportSelected +
+                ' group in this area.'
+              }
               content={() => this.listGroups(this.state.groups)}
               // openEvent={(group) => this.openGroup(group)}
               onRef={ref => (this.scrollViewRef1 = ref)}

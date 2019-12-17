@@ -68,8 +68,8 @@ export default styles = StyleSheet.create({
   cardGroup: {
     backgroundColor: 'white',
     // overflow:'hidden',
-    height: 220,
-    width: 220,
+    height: 240,
+    width: 250,
     marginRight: 10,
     borderRadius: 7,
     borderWidth: 1,
@@ -90,6 +90,11 @@ export default styles = StyleSheet.create({
   text: {
     fontSize: 15,
     fontFamily: 'OpenSans-SemiBold',
+    color: colors.title,
+  },
+  textBold: {
+    fontSize: 15,
+    fontFamily: 'OpenSans-Bold',
     color: colors.title,
   },
   smallText: {

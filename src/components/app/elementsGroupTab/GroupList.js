@@ -92,6 +92,7 @@ class HomeScreen extends React.Component {
     return true;
   }
   setLocation(location) {
+    this.props.navigation.navigate('ListGroups');
     this.props.historicSearchAction('setLocationSearch', location);
   }
   render() {
@@ -140,7 +141,6 @@ class HomeScreen extends React.Component {
           stickyHeaderIndices={[3]}
           refreshControl={true}
           refresh={() => this.refresh()}
-
           offsetBottom={120}
           showsVerticalScrollIndicator={false}
         />
@@ -157,15 +157,8 @@ class HomeScreen extends React.Component {
         <ButtonAdd
           translateXVoile={this.translateXVoile}
           opacityVoile={this.opacityVoile}
-          new={val => {
-            if (val == 'event')
-              return this.props.navigation.navigate('CreateEvent0', {
-                pageFrom: 'ListGroups',
-              });
-            return this.props.navigation.navigate('CreateGroup0', {
-              pageFrom: 'ListGroups',
-            });
-          }}
+          typeButton={'group'}
+          pageTo="CreateGroup0"
         />
       </View>
     );

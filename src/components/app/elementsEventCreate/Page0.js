@@ -352,13 +352,13 @@ class Page0 extends Component {
         {this.leagues(sport)}
         {this.rules(sport)}
 
-        {rule.coachNeeded != false ? (
+        {/* {rule.coachNeeded != false ? (
           <View style={[styleApp.marginView, {marginTop: 20}]}>
             <Text style={[styleApp.title, {marginBottom: 20}]}>I am a...</Text>
 
             {this.buttonCoach(sport)}
           </View>
-        ) : null}
+        ) : null} */}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Row style>

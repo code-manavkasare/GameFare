@@ -49,7 +49,8 @@ export default class Posts extends Component {
     // posts = posts.val()
     var discussions = this.props.data.discussions;
     if (discussions === undefined) discussions = [];
-    const {results} = await indexDiscussions.getObjects(discussions);
+    var {results} = await indexDiscussions.getObjects(discussions);
+    if (results === null) results = [];
     console.log('results ');
     console.log(results);
     this.setState({loader: false, discussions: results});
@@ -64,7 +65,7 @@ export default class Posts extends Component {
               <Text style={styleApp.text}>Discussions</Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
-              <ButtonColor
+              {/* <ButtonColor
                 view={() => {
                   return (
                     <AllIcons
@@ -88,42 +89,37 @@ export default class Posts extends Component {
                   },
                 ]}
                 onPressColor={colors.off}
-              />
+              /> */}
             </Col>
           </Row>
 
           <View style={[styleApp.divider2, {marginBottom: 10}]} />
-          </View>
-          
-          {this.state.loader ? (
-            <LinearGradient
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
-              colors={[colors.placeHolder1, colors.placeHolder2]}
-              style={{
-                height: 20,
-                borderRadius: 7,
-                marginRight: 80,
-                marginTop: 10,
-                marginLeft: 0,
-              }}
-            />
-          ) : Object.values(this.state.discussions).length == 0 ? (
-            <Text style={[styleApp.smallText, {marginTop: 10}]}>
-              Be the first one to post a comment.
-            </Text>
-          ) : (
-            <FadeInView duration={300} style={{marginTop: 5}}>
-              {Object.values(this.state.discussions).map((conversation, i) => (
-                <CardConversation
-                  index={i}
-                  key={i}
-                  conversation={conversation}
-                />
-              ))}
-            </FadeInView>
-          )}
-       
+        </View>
+
+        {this.state.loader ? (
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            colors={[colors.placeHolder1, colors.placeHolder2]}
+            style={{
+              height: 20,
+              borderRadius: 7,
+              marginRight: 80,
+              marginTop: 10,
+              marginLeft: 0,
+            }}
+          />
+        ) : Object.values(this.state.discussions).length == 0 ? (
+          <Text style={[styleApp.smallText, {marginTop: 10}]}>
+            Be the first one to post a comment.
+          </Text>
+        ) : (
+          <FadeInView duration={300} style={{marginTop: 5}}>
+            {Object.values(this.state.discussions).map((conversation, i) => (
+              <CardConversation index={i} key={i} conversation={conversation} />
+            ))}
+          </FadeInView>
+        )}
       </View>
     );
   }

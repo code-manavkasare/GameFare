@@ -542,21 +542,21 @@ class EventPage extends React.Component {
   }
   event(data) {
     // return <PlaceHolder />;
-    if (data == undefined || this.state.loader) return <PlaceHolder />;
+    if (data === undefined || this.state.loader) return <PlaceHolder />;
     console.log('data event ');
     console.log(data);
     var sport = this.props.sports.filter(
-      sport => sport.value == data.info.sport,
+      sport => sport.value === data.info.sport,
     )[0];
     console.log('sport');
     console.log(sport);
     var league = Object.values(sport.typeEvent).filter(
-      item => item.value == data.info.league,
+      item => item.value === data.info.league,
     )[0];
     console.log('league');
     console.log(league);
     var rule = Object.values(league.rules).filter(
-      rule => rule.value == data.info.rules,
+      rule => rule.value === data.info.rules,
     )[0];
     console.log(data);
     console.log(rule);
@@ -565,7 +565,7 @@ class EventPage extends React.Component {
         {/* {this.imageMap(data)} */}
         {this.eventInfo(data, sport, rule, league)}
 
-        {rule.coachNeeded ? (
+        {/* {rule.coachNeeded ? (
           <View style={styleApp.viewHome}>
             <View style={styleApp.marginView}>
               <View style={[styleApp.divider2, {marginTop: 0}]} />
@@ -588,7 +588,7 @@ class EventPage extends React.Component {
               )}
             </View>
           </View>
-        ) : null}
+        ) : null} */}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Text style={styleApp.text}>Players</Text>
@@ -602,7 +602,7 @@ class EventPage extends React.Component {
               <PlaceHolder />
               <PlaceHolder />
             </FadeInView>
-          ) : data.attendees == undefined ? (
+          ) : !data.attendees ? (
             <Text style={[styleApp.smallText, {marginTop: 10}]}>
               No players has joined the event yet.
             </Text>
@@ -625,24 +625,10 @@ class EventPage extends React.Component {
       </View>
     );
   }
-  next(event, sport, rule) {
+  next(event) {
     if (!this.props.userConnected)
       return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
-    if (
-      this.props.infoUser.coach == true &&
-      this.props.infoUser.coachVerified == true &&
-      event.info.player == true &&
-      rule.coachNeeded
-    ) {
-      return this.props.navigation.navigate('Coach', {
-        pageFrom: 'event',
-        data: event,
-      });
-    }
-    // return this.props.navigation.navigate('AlertAddUsers',{
-    //   data:event,
-    //   coach:false
-    // })
+
     return this.props.navigation.navigate('Checkout', {
       data: {...event},
       coach: false,
@@ -723,7 +709,7 @@ class EventPage extends React.Component {
       <View style={{flex: 1}}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event == undefined ? '' : event.info.name}
+          textHeader={!event ? '' : event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -737,7 +723,6 @@ class EventPage extends React.Component {
               openPageLink: 'openEventPage',
               pageTo: 'Group',
               objectID: event.objectID,
-              pageFrom: 'Event',
               pageFrom: 'Event',
               data: {...event, eventID: event.objectID},
             })
@@ -796,7 +781,7 @@ class EventPage extends React.Component {
           colorRefreshControl={colors.title}
         />
 
-        {event == undefined ? null : (
+        {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
             {this.waitlistCondition(event) ? (
               <Button2
@@ -820,7 +805,7 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Join the event"
                 loader={false}
-                click={() => this.next(event, sport, rule)}
+                click={() => this.next(event)}
               />
             ) : null}
           </FadeInView>

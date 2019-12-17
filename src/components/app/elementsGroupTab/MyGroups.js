@@ -60,10 +60,10 @@ class ListEvents extends React.Component {
   }
   async componentWillReceiveProps(nextProps) {
     if (
-      (this.props.userConnected != nextProps.userConnected &&
-        nextProps.userConnected == true) ||
-      this.props.sportSelected != nextProps.sportSelected ||
-      this.props.leagueSelected != nextProps.leagueSelected
+      (this.props.userConnected !== nextProps.userConnected &&
+        nextProps.userConnected === true) ||
+      this.props.sportSelected !== nextProps.sportSelected ||
+      this.props.leagueSelected !== nextProps.leagueSelected
     ) {
       this.loadEvent(nextProps.sportSelected, nextProps.leagueSelected);
     }
@@ -76,15 +76,11 @@ class ListEvents extends React.Component {
     return mygroups.hits;
   }
   async loadEvent(sport, league) {
-    console.log('on reload');
     await this.setState({loader1: true});
 
     indexGroups.clearCache();
     var filterSport = ' AND info.sport:' + sport;
-    // var filterLeague = ' AND info.league:' + league
-    if (league == 'all') {
-      filterLeague = '';
-    }
+    if (league === 'all') filterLeague = '';
     console.log(this.props.userID);
     console.log(sport);
     var filterOrganizer =
@@ -101,69 +97,14 @@ class ListEvents extends React.Component {
       return result;
     }, {});
     mygroups = mygroups.map(x => x.objectID);
-    console.log('myGroups hihaaaaa');
-    console.log(infoGroups);
-    console.log(mygroups);
-    // filterDate =' AND date_timestamp<' + Number(new Date())
-    // var pastEvents = await this.getEvents (filters + filterDate)
 
-    if (!isEqual(this.props.mygroups, mygroups)) {
-      await this.props.groupsAction('setAllGroups', infoGroups);
-      await this.props.groupsAction('setMygroups', mygroups);
-    }
+    await this.props.groupsAction('setAllGroups', infoGroups);
+    await this.props.groupsAction('setMygroups', mygroups);
     this.setState({loader1: false});
-  }
-  openGroup(objectID) {
-    console.log('click group');
-    console.log(objectID);
-    return this.props.navigate('Group', {
-      objectID: objectID,
-      pageFrom: 'ListGroups',
-    });
-  }
-  async setSwitch(state, val) {
-    // await this.setState({[state]:val})
-    // await this.translateViews(val)
-    return false;
-  }
-  switch(textOn, textOff, state, translateXComponent0, translateXComponent1) {
-    return (
-      <Switch
-        textOn={textOn}
-        textOff={textOff}
-        translateXTo={width / 2 - 20}
-        height={50}
-        translateXComponent0={this.translateXView1}
-        translateXComponent1={this.translateXView2}
-        state={this.state[state]}
-        setState={val => this.setSwitch(state, val)}
-      />
-    );
-  }
-  translateViews(val) {
-    if (val) {
-      return Animated.parallel([
-        Animated.spring(this.translateXView1, native(-width)),
-        Animated.spring(this.translateXView2, native(0)),
-      ]).start();
-    }
-    return Animated.parallel([
-      Animated.spring(this.translateXView1, native(0)),
-      Animated.spring(this.translateXView2, native(width)),
-    ]).start();
   }
   listEvents(events) {
     return Object.values(events).map((event, i) => (
-      <CardGroup
-        userCard={false}
-        pageFrom={'ListGroups'}
-        key={i}
-        loadData={false}
-        homePage={true}
-        openGroup={objectID => this.openGroup(objectID)}
-        item={this.props.allGroups[event]}
-        data={this.props.allGroups[event]}
-      />
+      <CardGroup key={i} allAccess={true} data={this.props.allGroups[event]} />
     ));
   }
   ListEvent() {
@@ -206,30 +147,15 @@ class ListEvents extends React.Component {
               {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
             ]}
             imageNoEvent="group"
-            messageNoEvent={"You haven't joined any group yet."}
+            messageNoEvent={
+              "You haven't joined any " +
+              this.props.sportSelected +
+              ' group yet.'
+            }
             content={() => this.listEvents(this.props.mygroups)}
             // openEvent={(group) => this.openGroup(group)}
             onRef={ref => (this.scrollViewRef1 = ref)}
           />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            height: 200,
-            backgroundColor: 'white',
-            position: 'absolute',
-            top: 0,
-            transform: [{translateX: this.translateXView2}],
-          }}>
-          {/* <ScrollViewX 
-        height={180}
-        loader={this.state.loader1}
-        events={this.props.pastEvents}
-        messageNoEvent = {"You don't have any past events."}
-        content={() => this.listEvents(this.props.pastEvents)}
-        openEvent={(event) => this.openEvent(event)}
-        onRef={ref => (this.scrollViewRef2 = ref)}
-        /> */}
         </Animated.View>
 
         <View style={styleApp.marginView}>

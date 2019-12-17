@@ -43,11 +43,10 @@ class Page0 extends Component {
   componentDidMount() {
     console.log('page 1 mount');
     console.log(this.props.createGroupData);
-    if (this.props.createGroupData.info.sport == '') {
+    if (this.props.createGroupData.info.sport === '') {
       console.log('set balue');
-      console.log(this.props.sports[0].value);
       this.props.createGroupAction('setInfoCreateGroup', {
-        sport: this.props.sports[0].value,
+        sport: this.props.sportSelected,
       });
     }
   }
@@ -57,13 +56,18 @@ class Page0 extends Component {
     console.log(this.props.sports);
 
     // return null
+
     return (
       <ExpandableCard
         valueSelected={this.props.createGroupData.info.sport}
         image={true}
         list={this.props.sports}
         tickFilter={value => {
-          this.props.createGroupAction('setInfoCreateGroup', {sport: value});
+          console.log('ou pas val');
+          console.log(value);
+          this.props.createGroupAction('setInfoCreateGroup', {
+            sport: value.value,
+          });
         }}
       />
     );
@@ -264,6 +268,7 @@ class Page0 extends Component {
     console.log(this.props.userID);
     // var group = false
     if (!group) {
+      await this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
         title: 'An error has occured',
         subtitle: 'Please check your connection.',
@@ -279,11 +284,16 @@ class Page0 extends Component {
     console.log(newGroups);
     await this.props.groupsAction('setAllGroups', {[group.objectID]: group});
     await this.props.groupsAction('setMygroups', newGroups);
-    await this.props.navigation.dismiss();
-    return this.props.navigation.navigate('Group', {
-      objectID: group.objectID,
-      pageFrom: 'ListGroups',
-    });
+    var that = this;
+    return setTimeout(async function() {
+      await that.props.navigation.dismiss();
+      return that.props.createGroupAction('reset');
+    }, 700);
+
+    // return this.props.navigation.navigate('Group', {
+    //   objectID: group.objectID,
+    //   pageFrom: 'ListGroups',
+    // });
   }
   render() {
     if (this.props.createGroupData.info.sport == '') return null;
@@ -291,11 +301,6 @@ class Page0 extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
           textHeader={'Create your group'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
@@ -303,11 +308,7 @@ class Page0 extends Component {
           initialTitleOpacity={1}
           icon1="arrow-left"
           icon2={null}
-          clickButton1={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
+          clickButton1={() => this.props.navigation.dismiss()}
         />
 
         <ScrollView
@@ -368,6 +369,7 @@ const styles = StyleSheet.create({});
 const mapStateToProps = state => {
   return {
     sports: state.globaleVariables.sports.list,
+    sportSelected: state.historicSearch.sport,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     createGroupData: state.createGroup,

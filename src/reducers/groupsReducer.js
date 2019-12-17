@@ -13,6 +13,16 @@ const initialState = {
   groupsAround: [],
 };
 
+function getInfoGroup(state, action) {
+  if (state.allGroups[action.data.objectID]) {
+    return {
+      ...action.data.info,
+      ...state.allGroups[action.data.objectID],
+    };
+  }
+  return action.data.info;
+}
+
 const eventsReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_MYGROUPS:
@@ -27,6 +37,7 @@ const eventsReducer = (state = initialState, action) => {
           [action.data.objectID]: {
             ...state.allGroups[action.data.objectID],
             ...action.data,
+            info: getInfoGroup(state, action),
           },
         },
       };
