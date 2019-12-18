@@ -101,31 +101,26 @@ class LocationSelector extends Component {
     try {
       this.setState({textInput: value});
       var val = value.replace(/ /g, '+');
-      console.log('val');
-      console.log(val);
       const apiUrl =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyDmY5dDppV_dAZDv9PYRjfAgxJKn3-U5gk&input=' +
         val +
         '&fields=formatted_address';
       const result = await RNFetchBlob.fetch('GET', apiUrl);
-      console.log(result);
+
       const json = await result.json();
-      console.log(json);
+
       if (json.status == 'INVALID_REQUEST' || json.status == 'ZERO_RESULTS') {
         this.setState({results: this.state.initialResults});
       } else {
         this.setState({results: json.predictions});
       }
     } catch (err) {
-      console.log('erfrfrord');
-      console.log(err);
+      console.log('errrrrr', err);
     }
   }
   async onclickLocation(address) {
     Keyboard.dismiss();
     this.setState({loader: true});
-    console.log('on click sur locations');
-    console.log(address);
     try {
       if (address.type == 'currentLocation' && this.state.loader == false)
         return this.getCurrentLocation();
@@ -158,23 +153,25 @@ class LocationSelector extends Component {
             ...currentHistoricSearchLocation,
             [address.id]: add,
           };
-          console.log('currentHistoricSearchLocation');
-          console.log(currentHistoricSearchLocation);
           await this.props.historicSearchAction(
             'setHistoricLocationSearch',
             currentHistoricSearchLocation,
           );
         }
-        // addressOff = addressOff.replace(', USA', '')
-        // addressOff = addressOff.replace(', Australia', '')
 
-        // this.setState({ loader: false })
-        return this.props.navigation.state.params.onGoBack({
-          address: address.description,
-          lat: locationObj.geometry.location.lat,
-          lng: locationObj.geometry.location.lng,
-        });
-        // return this.props.navigation.goBack();
+        this.props.navigation.getParam('setUserLocation', false)
+          ? await this.props.historicSearchAction('setLocationSearch', {
+              address: address.description,
+              lat: locationObj.geometry.location.lat,
+              lng: locationObj.geometry.location.lng,
+            })
+          : await this.props.navigation.state.params.onGoBack({
+              address: address.description,
+              lat: locationObj.geometry.location.lat,
+              lng: locationObj.geometry.location.lng,
+            });
+
+        return this.props.navigation.goBack();
       }
     } catch (err) {
       console.log('errrrrrr');

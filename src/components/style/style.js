@@ -4,7 +4,7 @@ import colors from './colors';
 // import {Fonts} from '../../utils/Font'
 const {height, width} = Dimensions.get('screen');
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   center: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -40,8 +40,6 @@ export default styles = StyleSheet.create({
   },
   cardEventSM: {
     backgroundColor: 'white',
-    marginRight: 0,
-    // overflow:'hidden',
     height: 190,
     width: 230,
     marginRight: 10,
@@ -164,6 +162,17 @@ export default styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0},
     shadowRadius: 20,
     shadowOpacity: 0.05,
+  },
+  buttonMap: {
+    borderColor: colors.off,
+    height: 40,
+    width: 80,
+    borderRadius: 20,
+    borderWidth: 1,
+    position: 'absolute',
+    zIndex: 40,
+    bottom: 20,
+    right: '40%',
   },
   textShade: {
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
@@ -359,7 +368,6 @@ export default styles = StyleSheet.create({
   },
   stylePage: {
     flex: 1,
-    borderColor: 'white',
     borderLeftWidth: 0,
     borderColor: colors.off,
   },
@@ -387,3 +395,5 @@ export default styles = StyleSheet.create({
     shadowRadius: 8,
   },
 });
+
+export default styles;
