@@ -72,11 +72,17 @@ class CardConversation extends React.Component {
     );
   }
   infoOtherMember(conversation) {
-    return Object.values(conversation.members).filter(user => user.id != this.props.userID)[0].info
+    return Object.values(conversation.members).filter(
+      user => user.id != this.props.userID,
+    )[0].info;
   }
   titleConversation(conversation) {
     if (conversation.type === 'group') return conversation.title;
-    return this.infoOtherMember(conversation).firstname + ' ' + this.infoOtherMember(conversation).lastName 
+    return (
+      this.infoOtherMember(conversation).firstname +
+      ' ' +
+      this.infoOtherMember(conversation).lastname
+    );
   }
   lastMessage() {
     if (!this.state.lastMessage)
@@ -121,7 +127,7 @@ class CardConversation extends React.Component {
                 {this.imageCard(conversation)}
               </Col>
               <Col size={70} style={[styleApp.center2, {paddingLeft: 5}]}>
-                <Text style={[styleApp.text,{fontSize:18}]}>
+                <Text style={[styleApp.text, {fontSize: 18}]}>
                   {this.titleConversation(conversation)}
                 </Text>
                 {this.lastMessage()}

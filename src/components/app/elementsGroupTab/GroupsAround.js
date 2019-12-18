@@ -59,14 +59,23 @@ class ListEvents extends React.Component {
       query: '',
       aroundLatLng: location.lat + ',' + location.lng,
       filters: filters,
-      aroundRadius: 20 * 1000,
+      aroundRadius: this.props.radiusSearch * 1000,
     });
     console.log(groups.hits);
     return groups.hits;
   }
   async loadEvent(sport, location) {
+    //
     indexGroups.clearCache();
-    var groups = await this.getGroups('info.sport:' + sport, location);
+    var groups = await this.getGroups(
+      'info.sport:' +
+        sport +
+        ' AND NOT info.organizer:' +
+        this.props.userID +
+        ' AND NOT allMembers:' +
+        this.props.userID,
+      location,
+    );
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
@@ -113,7 +122,7 @@ class ListEvents extends React.Component {
               styleApp.input,
               {marginBottom: 0, marginLeft: 0, fontSize: 22},
             ]}>
-            Groups around {numberGroups}
+            New groups {numberGroups}
           </Text>
           <Text
             style={[
@@ -170,6 +179,7 @@ const mapStateToProps = state => {
     searchLocation: state.historicSearch.searchLocation,
     groupsAround: state.groups.groupsAround,
     allGroups: state.groups.allGroups,
+    radiusSearch: state.globaleVariables.radiusSearch,
   };
 };
 

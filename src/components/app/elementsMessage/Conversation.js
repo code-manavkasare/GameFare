@@ -243,7 +243,7 @@ class MessageTab extends React.Component {
               return (
                 <Text
                   style={[
-                    styleApp.input,
+                    styleApp.textBold,
                     {
                       color: props.text === '' ? colors.greyDark : colors.white,
                     },
@@ -343,15 +343,15 @@ class MessageTab extends React.Component {
         minInputToolbarHeight={50}
         //scrollToBottomOffset={0}
         textInputProps={{
-          returnKeyType:'done',
-          blurOnSubmit:true,
+          returnKeyType: 'done',
+          blurOnSubmit: true,
         }}
         textInputStyle={[
           styleApp.text,
           {
-            paddingTop: 5,
+            paddingTop: -15,
             paddingBottom: 5,
-            flex:1,
+            flex: 1,
             paddingLeft: 0,
             paddingRight: 10,
             lineHeight: 21,

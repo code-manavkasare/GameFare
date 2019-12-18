@@ -64,6 +64,39 @@ class CardEvent extends React.Component {
       return Object.values(data.attendees).length;
     return 0;
   }
+  cardAttendee(member, i) {
+    if (!member.info.picture)
+      return (
+        <View
+          key={i}
+          style={{
+            ...styleApp.roundView,
+            left: i * 15,
+          }}>
+          <Text
+            style={[
+              styleApp.text,
+              {fontSize: 10, fontFamily: 'OpenSans-Bold'},
+            ]}>
+            {member.info.firstname[0] + member.info.lastname[0]}
+          </Text>
+        </View>
+      );
+    return (
+      <View
+        style={{
+          ...styleApp.roundView,
+          left: i * 15,
+        }}
+        key={i}>
+        <AsyncImage
+          style={{width: '100%', height: '100%'}}
+          mainImage={member.info.picture}
+          imgInitial={member.info.picture}
+        />
+      </View>
+    );
+  }
   rowAttendees(data) {
     console.log('data evnet');
     console.log(data);
@@ -85,43 +118,13 @@ class CardEvent extends React.Component {
             </Text>
           </View>
         </Col>
-        {data.attendees != undefined ? (
+        {data.attendees ? (
           <Col
-            size={this.props.size == 'SM' ? 30 : 20}
-            style={[{paddingRight: 10}, styleApp.center2]}>
+            size={this.props.size === 'SM' ? 40 : 20}
+            style={styleApp.center2}>
             {Object.values(data.attendees)
               .slice(0, 3)
-              .map((member, i) =>
-                member.info.picture == undefined ? (
-                  <View
-                    key={i}
-                    style={[
-                      styleApp.viewNumber,
-                      styleApp.center,
-                      {position: 'absolute', left: i * 14},
-                    ]}>
-                    <Text
-                      style={[
-                        styleApp.text,
-                        {fontSize: 10, fontFamily: 'OpenSans-Bold'},
-                      ]}>
-                      {member.info.firstname[0] + member.info.lastname[0]}
-                    </Text>
-                  </View>
-                ) : (
-                  <AsyncImage
-                    style={{
-                      height: 30,
-                      width: 30,
-                      borderRadius: 20,
-                      position: 'absolute',
-                      left: i * 10,
-                    }}
-                    mainImage={member.info.picture}
-                    imgInitial={member.info.picture}
-                  />
-                ),
-              )}
+              .map((member, i) => this.cardAttendee(member, i))}
           </Col>
         ) : null}
         <Col size={this.props.size == 'SM' ? 55 : 65} style={styleApp.center2}>
@@ -178,7 +181,7 @@ class CardEvent extends React.Component {
                 ]}>
                 {data.info.name}
               </Text>
-              <Text style={[styles.subtitle, {marginTop: 5, minHeight: 35}]}>
+              <Text style={[styleApp.subtitle, {marginTop: 5, minHeight: 35}]}>
                 {data.location.address}
               </Text>
 
@@ -213,67 +216,7 @@ class CardEvent extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  cardList: {
-    backgroundColor: 'white',
-    shadowColor: '#46474B',
-    shadowOffset: {width: 0, height: 0},
-    shadowRadius: 60,
-    shadowOpacity: 1,
-    marginRight: 0,
-    overflow: 'hidden',
-    height: 180,
-    marginRight: 10,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: colors.grey,
-    width: 220,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    //alignItems: 'center',
-    justifyContent: 'center',
-  },
-  viewSport: {
-    //position:'absolute',
-    backgroundColor: colors.greenLight,
-    borderRadius: 3,
-    paddingLeft: 10,
-    paddingRight: 10,
-    //top:15,
-    right: 0,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textSport: {
-    color: colors.greenStrong,
-    fontSize: 13,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  textPrice: {
-    color: colors.primary,
-    fontSize: 16,
-    marginTop: 10,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  title: {
-    color: colors.title,
-    fontSize: 21,
-    marginTop: 8,
-    marginBottom: 5,
-
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  subtitle: {
-    color: colors.subtitle,
-    fontSize: 14,
-    fontFamily: 'OpenSans-Regular',
-  },
-});
+const styles = StyleSheet.create({});
 
 const mapStateToProps = state => {
   return {

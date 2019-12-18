@@ -14,9 +14,9 @@ MapboxGL.setAccessToken(
 const options = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000};
 
 async function getPermission() {
-  if (Platform.OS == 'ios') {
+  if (Platform.OS === 'ios') {
     var permission = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
-    if (permission != 'granted') {
+    if (permission !== 'granted') {
       permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
     }
   } else {
@@ -24,7 +24,7 @@ async function getPermission() {
   }
   console.log('permission');
   console.log(permission);
-  if (permission != 'granted') return false;
+  if (permission !== 'granted') return false;
   return true;
 }
 
@@ -55,7 +55,7 @@ async function currentLocation() {
       response: false,
     };
   var currentPosition = await getCurrentPosition();
-  if (currentPosition.name == 'PositionError') return currentPosition;
+  if (currentPosition.name === 'PositionError') return currentPosition;
   var geocodeLocation = await Geocoder.geocodePosition({
     lat: currentPosition.coords.latitude,
     lng: currentPosition.coords.longitude,

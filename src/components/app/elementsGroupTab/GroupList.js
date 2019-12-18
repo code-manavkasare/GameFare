@@ -43,6 +43,7 @@ class HomeScreen extends React.Component {
   async componentDidMount() {
     StatusBar.setHidden(false, 'slide');
     StatusBar.setBarStyle('dark-content', true);
+    
   }
   navigate(val, data) {
     this.props.navigation.push(val, data);

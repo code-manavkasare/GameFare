@@ -12,18 +12,24 @@ import {
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
+import union from 'lodash/union';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
-import {indexDiscussions} from '../../database/algolia'
+import {
+  indexDiscussions,
+  indexGroups,
+  indexEvents,
+  getMyGroups,
+} from '../../database/algolia';
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import AllIcons from '../../layout/icons/AllIcons';
+import Loader from '../../layout/loaders/Loader';
 const {height, width} = Dimensions.get('screen');
-
 
 import sizes from '../../style/sizes';
 import CardConversation from './CardConversation';
@@ -35,25 +41,31 @@ class MessageTab extends React.Component {
       events: [],
       loader: true,
       unreadMessages: 3,
-      discussions:[],
+      discussions: [],
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    this.loadDiscussions()
+    this.loadDiscussions();
   }
   async loadDiscussions() {
-    console.log('loadDiscussions')
+    console.log('loadDiscussions');
+    indexDiscussions.clearCache();
     var {hits} = await indexDiscussions.search({
       query: '',
       filters: 'allMembers:' + this.props.userID,
     });
-    console.log(hits)
-    this.setState({loader:false,discussions:hits})
-  }
-  async componentWillReceiveProps(nextProps) {
+    var myGroups = await getMyGroups(this.props.userID, '');
+    var groupsDiscussions = myGroups.map(group => group.discussions[0]);
+    console.log('myGroups');
+    console.log(myGroups);
+    console.log(groupsDiscussions);
+    var {results} = await indexDiscussions.getObjects(groupsDiscussions);
+    console.log(hits);
 
+    this.setState({loader: false, discussions: union(results, hits)});
   }
+  async componentWillReceiveProps(nextProps) {}
   messagePageView() {
     if (!this.props.userConnected)
       return (
@@ -79,23 +91,30 @@ class MessageTab extends React.Component {
         </View>
       );
     return (
-      <View style={{paddingTop: 20, minHeight: height}}>
+      <View style={{paddingTop: 20, minHeight: height - 200}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={styleApp.title}>Inbox</Text>
           {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
         </View>
-        
-          {Object.values(this.state.discussions).map((conversation, i) => (
-            <CardConversation index={i} conversation={conversation} />
-          ))}
+        <View>
+          {this.state.loader ? (
+            <View style={[styleApp.center, {marginTop: 100}]}>
+              <Loader size={35} color="green" />
+            </View>
+          ) : (
+            Object.values(this.state.discussions).map((conversation, i) => (
+              <CardConversation key={i} index={i} conversation={conversation} />
+            ))
+          )}
+        </View>
       </View>
     );
   }
   async refresh() {
     // this.eventGroupsRef.reload()
     // this.listEventsRef.reload()
-    await this.setState({loader:true})
-    this.loadDiscussions()
+    await this.setState({loader: true});
+    this.loadDiscussions();
     return true;
   }
   async setLocation(data) {
@@ -103,7 +122,7 @@ class MessageTab extends React.Component {
   }
   render() {
     return (
-      <View style={styleApp.stylePage}>
+      <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={this.props.userConnected ? 'Inbox' : null}

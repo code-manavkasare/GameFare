@@ -80,9 +80,6 @@ class ListEvents extends React.Component {
 
     indexGroups.clearCache();
     var filterSport = ' AND info.sport:' + sport;
-    if (league === 'all') filterLeague = '';
-    console.log(this.props.userID);
-    console.log(sport);
     var filterOrganizer =
       'info.organizer:' +
       this.props.userID +
