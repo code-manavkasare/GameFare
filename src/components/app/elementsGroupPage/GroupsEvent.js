@@ -133,7 +133,6 @@ class ListEvents extends React.Component {
           <ScrollViewX
             loader={this.state.loader}
             events={this.state.groups}
-            // height={260}
             placeHolder={[
               styleApp.cardGroup,
               styleApp.shade,

@@ -17,11 +17,14 @@ import EventFromGroups from './elementsHome/EventsFromGroups';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 
+import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
 import StatusBar from '@react-native-community/status-bar';
 import NewGroupCard from './elementsHome/NewGroupCard';
 import ButtonAdd from './elementsHome/ButtonAdd';
+import AllIcons from '../layout/icons/AllIcons';
+import {Col, Row} from 'react-native-easy-grid';
 
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal';
@@ -32,6 +35,7 @@ export default class HomeScreen extends React.Component {
     this.state = {
       events: [],
       loader: false,
+      showMap: false,
     };
     this.translateXVoile = new Animated.Value(width);
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -115,9 +119,6 @@ export default class HomeScreen extends React.Component {
     this.listEventsRef.reload();
     return true;
   }
-  async setLocation(data) {
-    this.listEventsRef.setLocation(data);
-  }
   render() {
     return (
       <View style={styleApp.stylePage}>
@@ -142,7 +143,7 @@ export default class HomeScreen extends React.Component {
           clickButton2={() =>
             this.props.navigation.navigate('Location', {
               pageFrom: 'Home',
-              onGoBack: data => this.setLocation(data),
+              setUserLocation: true,
             })
           }
           clickButton1={() =>
@@ -164,10 +165,6 @@ export default class HomeScreen extends React.Component {
           refreshControl={true}
           refresh={() => this.refresh()}
           initialColorIcon={colors.title}
-          // header={{
-          //   on:false,
-
-          // }}
           icon1={'plus'}
           clickButton1={() =>
             this.props.navigation.navigate('CreateEvent0', {pageFrom: 'Home'})
@@ -190,6 +187,31 @@ export default class HomeScreen extends React.Component {
           typeButton={'event'}
           pageTo="CreateEvent0"
           opacityVoile={this.opacityVoile}
+        />
+        <ButtonColor
+          view={() => {
+            return (
+              <Row>
+                <Col size={60} style={styleApp.center}>
+                  <AllIcons
+                    name="map-marker-alt"
+                    color={colors.blue}
+                    size={16}
+                    type="font"
+                  />
+                </Col>
+                <Col size={120} style={styleApp.center2}>
+                  <Text style={styleApp.text}> Map</Text>
+                </Col>
+              </Row>
+            );
+          }}
+          color={'white'}
+          style={[styleApp.center, styleApp.shade2, styleApp.buttonMap]}
+          click={() => {
+            this.props.navigation.navigate('MapPage');
+          }}
+          onPressColor={colors.off}
         />
       </View>
     );

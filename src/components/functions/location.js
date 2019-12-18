@@ -99,4 +99,4 @@ async function loadImageMap(location) {
   return uri;
 }
 
-module.exports = {currentLocation, getZone, loadImageMap};
+export {currentLocation, getZone, loadImageMap};

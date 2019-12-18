@@ -98,8 +98,6 @@ class CardEvent extends React.Component {
     );
   }
   rowAttendees(data) {
-    console.log('data evnet');
-    console.log(data);
     return (
       <Row style={{marginTop: 15}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
@@ -140,9 +138,6 @@ class CardEvent extends React.Component {
     var league = Object.values(sport.typeEvent)
       .filter(item => item)
       .filter(item => item.value === data.info.league)[0];
-    console.log('display card');
-    console.log(league);
-    console.log(sport);
     if (!league) return null;
     return (
       <ButtonColor
@@ -203,7 +198,14 @@ class CardEvent extends React.Component {
         color={'white'}
         style={[
           this.props.size == 'SM'
-            ? [styleApp.cardEventSM, styleApp.shade]
+            ? [
+                styleApp.cardEventSM,
+                styleApp.shade,
+                this.props.pagingEnabled && {
+                  width: width - 40,
+                  marginRight: 40,
+                },
+              ]
             : styleApp.cardEvent,
         ]}
         onPressColor={colors.off}

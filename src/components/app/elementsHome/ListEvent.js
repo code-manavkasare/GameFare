@@ -9,9 +9,9 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-
 import firebase from 'react-native-firebase';
 import {connect} from 'react-redux';
+
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {eventsAction} from '../../../actions/eventsActions';
 
@@ -97,7 +97,7 @@ class ListEvents extends React.Component {
       result[item.objectID] = item;
       return result;
     }, {});
-    var publicEvents = hits.map(x => x.objectID);
+    var publicEvents = hits.map((x) => x.objectID);
 
     var allGroupsEvents = {};
     var groupsEvents = [];
@@ -139,16 +139,16 @@ class ListEvents extends React.Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
-        setState={val => this.setSwitch(state, val)}
+        setState={(val) => this.setSwitch(state, val)}
       />
     );
   }
   ListEvent() {
     var allPublicEvents = this.props.publicEvents.map(
-      event => this.props.allEvents[event],
+      (event) => this.props.allEvents[event],
     );
     var allGroupsEvents = this.props.groupsEvents.map(
-      event => this.props.allEvents[event],
+      (event) => this.props.allEvents[event],
     );
     var numberPublic = ' (' + allPublicEvents.length + ')';
     var numberGroups = ' (' + allGroupsEvents.length + ')';
@@ -234,7 +234,7 @@ class ListEvents extends React.Component {
                   key={i}
                   homePage={true}
                   marginTop={25}
-                  openEvent={objectID => this.openEvent(objectID)}
+                  openEvent={(objectID) => this.openEvent(objectID)}
                   item={event}
                   data={event}
                 />
@@ -280,7 +280,7 @@ class ListEvents extends React.Component {
                   key={i}
                   homePage={true}
                   marginTop={25}
-                  openEvent={objectID => this.openEvent(objectID)}
+                  openEvent={(objectID) => this.openEvent(objectID)}
                   item={event}
                   data={event}
                 />
@@ -296,7 +296,7 @@ class ListEvents extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     globaleVariables: state.globaleVariables,
     searchLocation: state.historicSearch.searchLocation,

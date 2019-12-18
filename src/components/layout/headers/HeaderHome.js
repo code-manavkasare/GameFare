@@ -12,6 +12,8 @@ import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 
 import {Grid, Row, Col} from 'react-native-easy-grid';
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
+const AnimatedIcon = Animated.createAnimatedComponent(FontIcon);
 
 import sizes from '../../style/sizes';
 import Loader from '../loaders/Loader';
@@ -19,6 +21,7 @@ import colors from '../../style/colors';
 import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
 import styleApp from '../../style/style';
+import AllIcon from '../icons/AllIcons';
 import {native, timing} from '../../animations/animations';
 import AsyncImage from '../image/AsyncImage';
 const {height, width} = Dimensions.get('screen');
