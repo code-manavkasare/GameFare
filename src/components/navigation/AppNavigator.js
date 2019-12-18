@@ -17,6 +17,8 @@ import ProfilePage from '../app/ProfilePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
 import EventPage from '../app/EventPage';
+import MapPage from '../app/elementsHome/MapPage';
+import MapFiltersModals from '../app/elementsHome/MapFiltersModal';
 
 import GroupPage from '../app/GroupPage';
 import Checkout from '../app/elementsJoining/Checkout';
@@ -381,6 +383,13 @@ const MainStack = createStackNavigator(
         cardShadowEnabled: false,
       },
     },
+    MapPage: {
+      screen: MapPage,
+      navigationOptions: {
+        gesturesEnabled: true,
+        cardShadowEnabled: false,
+      },
+    },
     Event: JoinNavigator,
     Conversation: MessageNavigator,
     Group: JoinGroupNavigator,
@@ -441,6 +450,7 @@ const RootStack = createStackNavigator(
         gesturesEnabled: false,
       },
     },
+    MapFiltersModals: MapFiltersModals,
   },
   {
     initialRouteName: 'MainStack',

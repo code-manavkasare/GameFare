@@ -1,34 +1,16 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  Image,
-  TextInput,
-  ScrollView,
-} from 'react-native';
-import firebase from 'react-native-firebase';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
 
 const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 import Switch from '../../layout/switch/Switch';
 
 import CardEvent from './CardEventSM';
 import {timing, native} from '../../animations/animations';
-import {
-  indexGroups,
-  indexEvents,
-  indexPastEvents,
-} from '../../database/algolia';
+import {indexEvents} from '../../database/algolia';
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
@@ -49,9 +31,6 @@ class MyEvents extends React.Component {
 
   async componentDidMount() {
     this.props.onRef(this);
-    console.log('le time stamt !!!');
-    console.log(Number(new Date()));
-    console.log(this.props.futureEvents);
     return this.loadEvent(
       this.state.past,
       this.props.sportSelected,
@@ -86,7 +65,6 @@ class MyEvents extends React.Component {
     return futureEvents.hits;
   }
   async loadEvent(past, sport, league) {
-    console.log('on reload');
     await this.setState({loader: true});
 
     var filterAttendees =
@@ -100,9 +78,6 @@ class MyEvents extends React.Component {
 
     var filterDate = ' AND date_timestamp>' + Number(new Date());
     var futureEvents = await this.getEvents(filters + filterDate);
-    console.log('futureEvents ');
-    console.log(futureEvents);
-    console.log(this.props.userID);
     var allEvents = futureEvents.reduce(function(result, item) {
       result[item.objectID] = item;
       return result;
@@ -121,11 +96,6 @@ class MyEvents extends React.Component {
       ...allEvents,
       ...allEventsPast,
     };
-
-    console.log('pastEvents');
-    console.log(pastEvents);
-    console.log(futureEvents);
-    console.log(allEvents);
     await this.props.eventsAction('setAllEvents', allEvents);
     await this.props.eventsAction('setFutureUserEvents', futureEvents);
     await this.props.eventsAction('setPastUserEvents', pastEvents);
@@ -136,8 +106,6 @@ class MyEvents extends React.Component {
     // if (!event.info.public) {
     //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
     // }
-    console.log('openEvent');
-    console.log(objectID);
     return this.props.navigate('Event', {objectID: objectID, pageFrom: 'Home'});
   }
   async setSwitch(state, val) {
@@ -288,7 +256,6 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 2, height: 0},
     shadowRadius: 20,
     shadowOpacity: 0.3,
-    marginRight: 0,
     overflow: 'hidden',
     height: 170,
     marginRight: 10,
