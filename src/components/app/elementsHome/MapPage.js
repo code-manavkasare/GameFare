@@ -36,6 +36,8 @@ class MapPage extends Component {
     filters: {},
     filtersNumber: 0,
     stopScrollListening: false,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   };
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
@@ -55,8 +57,11 @@ class MapPage extends Component {
   }
 
   async componentDidMount() {
-    await this.getEvents();
-    this.initialMarker();
+    const allPublicEvents = this.props.publicEvents.map(
+      (event) => this.props.allEvents[event],
+    );
+    await this.setState({eventsArray: allPublicEvents});
+    this.initialiseToFirstMarker();
   }
 
   initialMarker = () => {
@@ -66,9 +71,12 @@ class MapPage extends Component {
 
   animateMapToInitialMarker = () => {
     const {lat, lng} = this.state.eventsArray[0].location;
+    const {latitudeDelta, longitudeDelta} = this.state;
     this.map.animateToRegion({
       latitude: lat,
       longitude: lng,
+      latitudeDelta,
+      longitudeDelta,
     });
   };
 
@@ -171,6 +179,7 @@ class MapPage extends Component {
 
   render() {
     const {lat: latCenter, lng: lngCenter} = this.state.mapCenter;
+    const {latitudeDelta, longitudeDelta} = this.state;
 
     return (
       <View style={{height: height, width: width}}>
@@ -202,8 +211,8 @@ class MapPage extends Component {
           initialRegion={{
             latitude: latCenter,
             longitude: lngCenter,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta,
+            longitudeDelta,
           }}
           loadingEnabled={true}
           onPanDrag={this.hideScrollViewX()}>
@@ -295,7 +304,7 @@ const mapStateToProps = (state) => {
   return {
     searchLocation: state.historicSearch.searchLocation,
     publicEvents: state.events.publicEvents,
-    allEventsPublic: state.events.allEvents,
+    allEvents: state.events.allEvents,
     leagueSelected: state.historicSearch.league,
     sportSelected: state.historicSearch.sport,
     userID: state.user.userID,
