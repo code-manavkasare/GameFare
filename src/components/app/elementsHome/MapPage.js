@@ -257,7 +257,11 @@ class MapPage extends Component {
               );
             }}
             color={'white'}
-            style={[styleApp.center, styleApp.shade2, styles.filterButton]}
+            style={[
+              styleApp.center,
+              styleApp.shade2,
+              stylesMapPage.filterButton,
+            ]}
             click={() =>
               this.props.navigation.navigate('MapFiltersModals', {
                 pageFrom: 'MapPage',
@@ -273,6 +277,7 @@ class MapPage extends Component {
             onScrollEndScrollViewX={this.onScrollEndScrollViewX}
             backgroundTransparent={true}
             loader={this.state.loader}
+            placeHolder={[styleApp.cardEventSM, stylesMapPage.cardEventMap]}
             events={this.state.eventsArray}
             height={180}
             messageNoEvent={'No event found around'}
@@ -301,7 +306,7 @@ export default connect(mapStateToProps, {historicSearchAction, eventsAction})(
   MapPage,
 );
 
-const styles = StyleSheet.create({
+export const stylesMapPage = StyleSheet.create({
   filterButton: {
     borderColor: colors.off,
     height: 40,
@@ -310,5 +315,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     zIndex: 40,
+  },
+  cardEventMap: {
+    width: width - 40,
+    marginRight: 40,
   },
 });
