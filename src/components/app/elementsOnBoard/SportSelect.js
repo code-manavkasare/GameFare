@@ -42,7 +42,7 @@ class InitialPage extends Component {
     // write sport to redux
     console.log('on set league');
     console.log(sport);
-    await this.props.historicSearchAction('setSport', sport);
+    await this.props.historicSearchAction('setSport', {value: sport});
     this.props.navigation.navigate('LeagueSelect');
   }
   isOdd(num) {
@@ -173,7 +173,7 @@ class InitialPage extends Component {
     return (
       <View style={[{borderLeftWidth: 0, backgroundColor: 'white', flex: 1}]}>
         <ScrollView
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.sportPage()}
           marginBottomScrollView={0}
           marginTop={sizes.marginTopApp}
@@ -185,7 +185,7 @@ class InitialPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     sportSelected: state.historicSearch.sport,

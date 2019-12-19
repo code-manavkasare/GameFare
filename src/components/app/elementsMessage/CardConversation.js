@@ -65,15 +65,30 @@ class CardConversation extends React.Component {
         />
       );
     }
+    console.log('nggggggfgf');
+    console.log(this.infoOtherMember(conversation));
     return (
       <View style={styles.roundImage}>
-        <Text style={[styleApp.text, {fontSize: 13}]}>NG</Text>
+        {this.infoOtherMember(conversation).firstname ? (
+          <Text style={[styleApp.text, {fontSize: 13}]}>
+            {this.infoOtherMember(conversation).firstname[0] +
+              this.infoOtherMember(conversation).lastname[0]}
+          </Text>
+        ) : (
+          <Text style={[styleApp.text, {fontSize: 13}]}>GF</Text>
+        )}
       </View>
     );
   }
   infoOtherMember(conversation) {
+    if (
+      Object.values(conversation.members).filter(
+        (user) => user.id !== this.props.userID,
+      ).length === 0
+    )
+      return Object.values(conversation.members)[0].info;
     return Object.values(conversation.members).filter(
-      user => user.id != this.props.userID,
+      (user) => user.id !== this.props.userID,
     )[0].info;
   }
   titleConversation(conversation) {
@@ -159,7 +174,7 @@ class CardConversation extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     conversations: state.conversations,
     userID: state.user.userID,

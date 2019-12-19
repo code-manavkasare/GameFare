@@ -67,13 +67,14 @@ class ListEvents extends React.Component {
   async loadEvent(sport, location) {
     //
     indexGroups.clearCache();
+    var userFilter =
+      ' AND NOT info.organizer:' +
+      this.props.userID +
+      ' AND NOT allMembers:' +
+      this.props.userID;
+    if (!this.props.userConnected) userFilter = '';
     var groups = await this.getGroups(
-      'info.sport:' +
-        sport +
-        ' AND NOT info.organizer:' +
-        this.props.userID +
-        ' AND NOT allMembers:' +
-        this.props.userID,
+      'info.sport:' + sport + userFilter,
       location,
     );
     this.setState({loader: false, groups: groups});
@@ -158,7 +159,7 @@ class ListEvents extends React.Component {
               }
               content={() => this.listGroups(this.state.groups)}
               // openEvent={(group) => this.openGroup(group)}
-              onRef={ref => (this.scrollViewRef1 = ref)}
+              onRef={(ref) => (this.scrollViewRef1 = ref)}
             />
           </Animated.View>
         </View>
@@ -170,7 +171,7 @@ class ListEvents extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,

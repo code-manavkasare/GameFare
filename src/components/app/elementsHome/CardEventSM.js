@@ -39,6 +39,8 @@ class CardEvent extends React.Component {
     };
   }
   async componentDidMount() {
+    console.log('dats card event');
+    console.log(this.props.data);
     // if (this.props.loadData) {
     //   indexEvents.clearCache()
     //   var group = await indexEvents.getObject(this.props.item.eventID)
@@ -133,11 +135,11 @@ class CardEvent extends React.Component {
   }
   displayCard(data) {
     var sport = Object.values(this.props.sports).filter(
-      sport => sport.value === data.info.sport,
+      (sport) => sport.value === data.info.sport,
     )[0];
     var league = Object.values(sport.typeEvent)
-      .filter(item => item)
-      .filter(item => item.value === data.info.league)[0];
+      .filter((item) => item)
+      .filter((item) => item.value === data.info.league)[0];
     if (!league) return null;
     return (
       <ButtonColor
@@ -220,7 +222,7 @@ class CardEvent extends React.Component {
 
 const styles = StyleSheet.create({});
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     league: state.historicSearch.league,

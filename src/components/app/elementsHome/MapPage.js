@@ -54,25 +54,26 @@ class MapPage extends Component {
   }
 
   async componentDidMount() {
-    await this.getEvents();
+    // await this.getEvents();
     this.initialMarker();
   }
 
-  initialMarker = () => {
+  initialMarker() {
     const firstSelectedMarker = this.state.eventsArray[0].objectID;
     this.setState({selectedMarkerObjectID: firstSelectedMarker});
-  };
+  }
 
-  getEvents = async () => {
+  async getEvents() {
     const {searchLocation, sportSelected, leagueSelected} = this.props;
     const NewEventsList = await getEventPublic(
       searchLocation,
       sportSelected,
       leagueSelected,
       this.state.filters,
+      this.props.userID,
     );
     this.setState({eventsArray: Object.values(NewEventsList)});
-  };
+  }
 
   listEvents = (events) => {
     return events.map((event, i) => (
@@ -217,7 +218,7 @@ class MapPage extends Component {
         <View
           style={{
             position: 'absolute',
-            bottom: 20,
+            bottom: 35,
             backgroundColor: 'transparent',
             alignItems: 'center',
             justifyContent: 'center',
@@ -227,11 +228,10 @@ class MapPage extends Component {
             view={() => {
               return (
                 <Row>
-                  <Col size={120} style={styleApp.center2}>
+                  <Col size={120} style={styleApp.center}>
                     <Text style={styleApp.text}>
                       Filters {''}
                       <Text>({this.state.filtersNumber})</Text>
-                      {/* </View> */}
                     </Text>
                   </Col>
                 </Row>
@@ -274,6 +274,7 @@ const mapStateToProps = (state) => {
     allEventsPublic: state.events.allEvents,
     leagueSelected: state.historicSearch.league,
     sportSelected: state.historicSearch.sport,
+    userID: state.user.userID,
   };
 };
 
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
   filterButton: {
     borderColor: colors.off,
     height: 40,
-    width: 95,
+    width: 105,
     paddingHorizontal: 10,
     borderRadius: 20,
     borderWidth: 1,

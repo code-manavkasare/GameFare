@@ -18,7 +18,7 @@ async function getMyGroups(userID, filterSport) {
   return hits;
 }
 
-const getEventPublic = async (location, sport, league, filters) => {
+const getEventPublic = async (location, sport, league, filters, userID) => {
   indexEvents.clearCache();
 
   var leagueFilter = ' AND info.league:' + league;
@@ -37,6 +37,10 @@ const getEventPublic = async (location, sport, league, filters) => {
   }
 
   //Searh Algolia, if with filter we add 24h to timestamp, to see all day event
+  var filterUser =
+    ' AND NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
+  if (userID === '') filterUser = '';
+
   var {hits} = await indexEvents.search({
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: 20 * 1000,
@@ -46,9 +50,14 @@ const getEventPublic = async (location, sport, league, filters) => {
         ' AND info.sport:' +
         sport +
         leagueFilter +
+        filterUser +
         ` AND date_timestamp:${timestampDaySelected} TO ${timestampDaySelected +
           24 * 3600 * 1000}`
-      : 'info.public=1' + ' AND info.sport:' + sport + leagueFilter,
+      : 'info.public=1' +
+        ' AND info.sport:' +
+        sport +
+        leagueFilter +
+        filterUser,
   });
 
   var allEventsPublic = hits.reduce(function(result, item) {

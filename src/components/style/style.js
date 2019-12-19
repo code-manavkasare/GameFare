@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   buttonMap: {
     borderColor: colors.off,
     height: 40,
-    width: 80,
+    width: 90,
     borderRadius: 20,
     borderWidth: 1,
     position: 'absolute',

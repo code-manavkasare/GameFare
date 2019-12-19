@@ -82,7 +82,7 @@ class MyEvents extends React.Component {
       result[item.objectID] = item;
       return result;
     }, {});
-    futureEvents = futureEvents.map(x => x.objectID);
+    futureEvents = futureEvents.map((x) => x.objectID);
 
     filterDate = ' AND date_timestamp<' + Number(new Date());
     var pastEvents = await this.getEvents(filters + filterDate);
@@ -90,7 +90,7 @@ class MyEvents extends React.Component {
       result[item.objectID] = item;
       return result;
     }, {});
-    pastEvents = pastEvents.map(x => x.objectID);
+    pastEvents = pastEvents.map((x) => x.objectID);
 
     allEvents = {
       ...allEvents,
@@ -122,7 +122,7 @@ class MyEvents extends React.Component {
         translateXComponent0={this.translateXView1}
         translateXComponent1={this.translateXView2}
         state={this.state[state]}
-        setState={val => this.setSwitch(state, val)}
+        setState={(val) => this.setSwitch(state, val)}
       />
     );
   }
@@ -148,7 +148,7 @@ class MyEvents extends React.Component {
         league={this.props.leagueSelected}
         loadData={false}
         homePage={true}
-        openEvent={objectID => this.openEvent(objectID)}
+        openEvent={(objectID) => this.openEvent(objectID)}
         item={event}
         data={event}
       />
@@ -162,19 +162,19 @@ class MyEvents extends React.Component {
     if (!this.props.userConnected) return null;
 
     const AllFutureEvents = this.props.futureEvents.map(
-      event => this.props.allEvents[event],
+      (event) => this.props.allEvents[event],
     );
     const AllPastEvents = this.props.pastEvents.map(
-      event => this.props.allEvents[event],
+      (event) => this.props.allEvents[event],
     );
 
     var futureEvents = AllFutureEvents.filter(
-      event =>
+      (event) =>
         event.info.sport == this.props.sportSelected &&
         this.leagueFilter(event.info.league),
     );
     var pastEvents = AllPastEvents.filter(
-      event =>
+      (event) =>
         event.info.sport == this.props.sportSelected &&
         this.leagueFilter(event.info.league),
     );
@@ -211,10 +211,11 @@ class MyEvents extends React.Component {
               loader={this.state.loader}
               events={futureEvents}
               height={180}
+              imageNoEvent="group"
               messageNoEvent={"You haven't subscribe to any event."}
-              content={events => this.listEvents(events)}
-              openEvent={objectID => this.openEvent(objectID)}
-              onRef={ref => (this.scrollViewRef1 = ref)}
+              content={(events) => this.listEvents(events)}
+              openEvent={(objectID) => this.openEvent(objectID)}
+              onRef={(ref) => (this.scrollViewRef1 = ref)}
             />
           </Animated.View>
 
@@ -231,9 +232,9 @@ class MyEvents extends React.Component {
               loader={this.state.loader}
               events={pastEvents}
               messageNoEvent={"You don't have any past events."}
-              content={events => this.listEvents(events)}
-              openEvent={objectID => this.openEvent(objectID)}
-              onRef={ref => (this.scrollViewRef2 = ref)}
+              content={(events) => this.listEvents(events)}
+              openEvent={(objectID) => this.openEvent(objectID)}
+              onRef={(ref) => (this.scrollViewRef2 = ref)}
             />
           </Animated.View>
         </View>
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,

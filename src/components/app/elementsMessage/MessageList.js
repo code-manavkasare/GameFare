@@ -46,17 +46,18 @@ class MessageTab extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    this.loadDiscussions();
+    if (this.props.userConnected) this.loadDiscussions(this.props.userID);
   }
-  async loadDiscussions() {
+
+  async loadDiscussions(userID) {
     console.log('loadDiscussions');
     indexDiscussions.clearCache();
     var {hits} = await indexDiscussions.search({
       query: '',
-      filters: 'allMembers:' + this.props.userID,
+      filters: 'allMembers:' + userID,
     });
-    var myGroups = await getMyGroups(this.props.userID, '');
-    var groupsDiscussions = myGroups.map(group => group.discussions[0]);
+    var myGroups = await getMyGroups(userID, '');
+    var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
     console.log('myGroups');
     console.log(myGroups);
     console.log(groupsDiscussions);
@@ -65,7 +66,13 @@ class MessageTab extends React.Component {
 
     this.setState({loader: false, discussions: union(results, hits)});
   }
-  async componentWillReceiveProps(nextProps) {}
+  async componentWillReceiveProps(nextProps) {
+    if (
+      this.props.userConnected !== nextProps.userConnected &&
+      nextProps.userConnected
+    )
+      this.loadDiscussions(nextProps.userID);
+  }
   messagePageView() {
     if (!this.props.userConnected)
       return (
@@ -91,7 +98,7 @@ class MessageTab extends React.Component {
         </View>
       );
     return (
-      <View style={{paddingTop: 20, minHeight: height - 200}}>
+      <View style={{paddingTop: 20, minHeight: height / 1.5}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={styleApp.title}>Inbox</Text>
           {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
@@ -138,7 +145,7 @@ class MessageTab extends React.Component {
         />
 
         <ScrollView2
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -174,7 +181,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     conversations: state.conversations,
     userID: state.user.userID,

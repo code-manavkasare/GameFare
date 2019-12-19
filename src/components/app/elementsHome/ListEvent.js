@@ -23,7 +23,7 @@ import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import {indexEvents} from '../../database/algolia';
+import {indexEvents, getEventPublic} from '../../database/algolia';
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/CardEvent';
 import CardEvent from './CardEventSM';
@@ -73,44 +73,30 @@ class ListEvents extends React.Component {
     console.log('on reload');
     await this.setState({loader: true});
     indexEvents.clearCache();
-    var leagueFilter = ' AND info.league:' + league;
-    if (league === 'all') {
-      leagueFilter = '';
-    }
-    var {hits} = await indexEvents.search({
-      aroundLatLng: location.lat + ',' + location.lng,
-      aroundRadius: this.props.radiusSearch * 1000,
-      query: '',
-      filters:
-        'info.public=1' +
-        ' AND info.sport:' +
-        sport +
-        leagueFilter +
-        ' AND NOT info.organizer:' +
-        this.props.userID +
-        ' AND NOT allAttendees:' +
-        this.props.userID,
-    });
-    console.log('hits !!!!');
-    console.log(hits);
-    var allEventsPublic = hits.reduce(function(result, item) {
-      result[item.objectID] = item;
-      return result;
-    }, {});
-    var publicEvents = hits.map((x) => x.objectID);
+    const allEventsPublic = await getEventPublic(
+      location,
+      sport,
+      league,
+      {},
+      this.props.userID,
+    );
+    console.log('NewEventsList');
+    console.log(allEventsPublic);
 
     var allGroupsEvents = {};
     var groupsEvents = [];
 
     console.log('public events');
     console.log(allEventsPublic);
-    console.log(publicEvents);
     var allEvents = {
       ...allEventsPublic,
       ...allGroupsEvents,
     };
     await this.props.eventsAction('setAllEvents', allEvents);
-    await this.props.eventsAction('setPublicEvents', publicEvents);
+    await this.props.eventsAction(
+      'setPublicEvents',
+      Object.values(allEventsPublic).map((x) => x.objectID),
+    );
     await this.props.eventsAction('setGroupsEvents', groupsEvents);
     return this.setState({loader: false});
   }
@@ -144,9 +130,12 @@ class ListEvents extends React.Component {
     );
   }
   ListEvent() {
-    var allPublicEvents = this.props.publicEvents.map(
+    const allPublicEvents = this.props.publicEvents.map(
       (event) => this.props.allEvents[event],
     );
+    console.log('allPublicEvents');
+    console.log(allPublicEvents);
+    console.log(this.props.publicEvents);
     var allGroupsEvents = this.props.groupsEvents.map(
       (event) => this.props.allEvents[event],
     );
@@ -161,7 +150,9 @@ class ListEvents extends React.Component {
       <View style={{marginTop: 20}}>
         <Row style={{marginLeft: 20, width: width - 40, marginBottom: 15}}>
           <Col size={85} style={styleApp.center2}>
-            <Text style={[styleApp.title, {marginBottom: 5}]}>New events</Text>
+            <Text style={[styleApp.title, {marginBottom: 5}]}>
+              New events {numberPublic}
+            </Text>
             <Text
               style={[
                 styleApp.subtitleSX,
@@ -173,7 +164,7 @@ class ListEvents extends React.Component {
           <Col size={15} style={styleApp.center3}></Col>
         </Row>
 
-        <View
+        {/* <View
           style={{
             marginLeft: 20,
             marginTop: 0,
@@ -185,7 +176,7 @@ class ListEvents extends React.Component {
             'My groups' + numberGroups,
             'public',
           )}
-        </View>
+        </View> */}
 
         {this.state.loader ? (
           <View>
@@ -307,6 +298,7 @@ const mapStateToProps = (state) => {
     groupsEvents: state.events.groupsEvents,
     allEvents: state.events.allEvents,
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 

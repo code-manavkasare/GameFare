@@ -79,7 +79,10 @@ class HeaderHome extends Component {
         this.setState({openSport: true});
       });
     }
-    this.props.historicSearchAction('setSport', sport);
+    this.props.historicSearchAction('setSport', {
+      value: sport.value,
+      league: 'all',
+    });
     return Animated.parallel([
       Animated.timing(this.state.heightButtonSport, timing(50, 200)),
       Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
@@ -154,7 +157,7 @@ class HeaderHome extends Component {
             </Row>
           );
         }}
-        click={() => this.openSport(!this.state.openSport, sport.value)}
+        click={() => this.openSport(!this.state.openSport, sport)}
         color={'white'}
         style={[
           styleApp.center,
@@ -197,7 +200,7 @@ class HeaderHome extends Component {
           this.openLeague(
             !this.openLeagueVal,
             league.value,
-            Object.values(sport.typeEvent).filter(item => item).length + 1,
+            Object.values(sport.typeEvent).filter((item) => item).length + 1,
           )
         }
         color={'white'}
@@ -269,11 +272,11 @@ class HeaderHome extends Component {
       outputRange: [0, 0.03],
     });
     var sport = Object.values(this.props.sports).filter(
-      sport => sport.value === this.props.sportSelected,
+      (sport) => sport.value === this.props.sportSelected,
     )[0];
     var league = Object.values(sport.typeEvent)
-      .filter(league => league)
-      .filter(league => league.value == this.props.leagueSelected)[0];
+      .filter((league) => league)
+      .filter((league) => league.value == this.props.leagueSelected)[0];
     if (league === undefined) {
       league = this.props.leagueAll;
     }
@@ -318,7 +321,7 @@ class HeaderHome extends Component {
             {this.buttonSport(sport, 0)}
 
             {Object.values(this.props.sports)
-              .filter(item => item && item.value != sport.value)
+              .filter((item) => item && item.value != sport.value)
               .map((sportIn, i) => this.buttonSport(sportIn, i + 1))}
           </Animated.View>
           <Animated.View
@@ -338,7 +341,7 @@ class HeaderHome extends Component {
             {this.buttonLeague(league, 0, sport)}
 
             {Object.values(sport.typeEvent)
-              .filter(item => item && item.value != this.props.leagueSelected)
+              .filter((item) => item && item.value != this.props.leagueSelected)
               .map((league, i) => this.buttonLeague(league, i + 1, sport))}
 
             {this.buttonLeague(this.props.leagueAll, 9, sport)}
@@ -425,7 +428,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     sportSelected: state.historicSearch.sport,
