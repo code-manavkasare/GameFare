@@ -40,16 +40,17 @@ class MapPage extends Component {
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.searchLocation !== prevProps.searchLocation) {
-      const {lat, lng} = this.props.searchLocation;
-      this.map.animateToRegion({
-        latitude: lat,
-        longitude: lng,
-      });
-
       await this.setState({stopScrollListening: true});
       await this.getEvents();
-      this.initialMarker();
-      this.scrollViewXRef.scrollTo(0);
+      this.initialiseToFirstMarker();
+
+      if (!this.state.eventsArray[0]) {
+        const {lat, lng} = this.props.searchLocation;
+        this.map.animateToRegion({
+          latitude: lat,
+          longitude: lng,
+        });
+      }
     }
   }
 
@@ -58,12 +59,28 @@ class MapPage extends Component {
     this.initialMarker();
   }
 
-  initialMarker() {
+  initialMarker = () => {
     const firstSelectedMarker = this.state.eventsArray[0].objectID;
     this.setState({selectedMarkerObjectID: firstSelectedMarker});
-  }
+  };
 
-  async getEvents() {
+  animateMapToInitialMarker = () => {
+    const {lat, lng} = this.state.eventsArray[0].location;
+    this.map.animateToRegion({
+      latitude: lat,
+      longitude: lng,
+    });
+  };
+
+  initialiseToFirstMarker = () => {
+    if (this.state.eventsArray[0]) {
+      this.animateMapToInitialMarker();
+      this.initialMarker();
+      this.scrollViewXRef.scrollTo(0);
+    }
+  };
+
+  getEvents = async () => {
     this.setState({loader: true});
     const {searchLocation, sportSelected, leagueSelected} = this.props;
     const NewEventsList = await getEventPublic(
@@ -74,7 +91,7 @@ class MapPage extends Component {
       this.props.userID,
     );
     this.setState({eventsArray: Object.values(NewEventsList), loader: false});
-  }
+  };
 
   listEvents = (events) => {
     return events.map((event, i) => (
@@ -126,7 +143,8 @@ class MapPage extends Component {
       filters: filters,
       filtersNumber: Object.keys(filters).length,
     });
-    this.getEvents();
+    await this.getEvents();
+    this.initialiseToFirstMarker();
   };
 
   onScrollViewX = (data) => {
