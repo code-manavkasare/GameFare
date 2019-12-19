@@ -2,9 +2,7 @@ import {connect} from 'react-redux';
 import MapView, {Marker} from 'react-native-maps';
 import {Col, Row} from 'react-native-easy-grid';
 import {View, Animated, Text, Dimensions, StyleSheet} from 'react-native';
-import {uniq, prepend} from 'ramda';
 import React, {Component} from 'react';
-import {Button} from 'react-native';
 
 import {eventsAction} from '../../../actions/eventsActions';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
@@ -155,7 +153,7 @@ class MapPage extends Component {
     this.initialiseToFirstMarker();
   };
 
-  onScrollViewX = (data) => {
+  onScrollViewX = async (data) => {
     const contentOffsetX = data.nativeEvent.contentOffset.x;
     const pageNum = Math.floor(contentOffsetX / width);
 
@@ -170,6 +168,15 @@ class MapPage extends Component {
       this.setState({
         selectedMarkerObjectID: this.state.eventsArray[pageNum].objectID,
       });
+    }
+
+    //Recalibrate last event Card when scrolled away
+    if (
+      pageNum + 1 === this.state.eventsArray.length &&
+      !this.state.stopScrollListening
+    ) {
+      await this.setState({stopScrollListening: true});
+      this.scrollViewXRef.scrollTo(pageNum * width);
     }
   };
 
