@@ -50,10 +50,10 @@ class ListEvents extends React.Component {
   }
   async componentWillReceiveProps(nextProps) {
     if (
-      this.props.searchLocation.lat != nextProps.searchLocation.lat ||
-      this.props.sportSelected != nextProps.sportSelected ||
-      this.props.leagueSelected != nextProps.leagueSelected ||
-      (this.props.loader != nextProps.loader && !this.props.loader)
+      this.props.searchLocation.lat !== nextProps.searchLocation.lat ||
+      this.props.sportSelected !== nextProps.sportSelected ||
+      this.props.leagueSelected !== nextProps.leagueSelected ||
+      (this.props.loader !== nextProps.loader && !this.props.loader)
     ) {
       this.loadEvent(
         nextProps.searchLocation,

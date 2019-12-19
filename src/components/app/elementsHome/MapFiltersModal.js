@@ -10,6 +10,7 @@ import styleApp from '../../style/style';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import Button from '../../layout/buttons/Button';
+import {Grid, Row, Col} from 'react-native-easy-grid';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -47,7 +48,7 @@ export default class MapFiltersModal extends Component {
       <Calendar
         minDate={new Date()}
         markedDates={this.state[markedDates]}
-        onDayPress={day => this.selectDay(day, date, markedDates)}
+        onDayPress={(day) => this.selectDay(day, date, markedDates)}
         monthFormat={'MMMM'}
         hideExtraDays={true}
         firstDay={1}
@@ -133,7 +134,7 @@ export default class MapFiltersModal extends Component {
 
         <ScrollView
           style={{marginTop: sizes.heightHeaderHome}}
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.dateFields.bind(this)}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -143,13 +144,28 @@ export default class MapFiltersModal extends Component {
         />
 
         <View style={styleApp.footerBooking}>
-          <View style={{marginLeft: 20, width: width - 40}}>
-            <Button
-              backgroundColor={'primary'}
-              onPressColor={colors.primary2}
-              text={'Submit'}
-              click={() => this.submit()}
-            />
+          <View
+            style={{marginLeft: 20, width: width - 40, backgroundColor: 'red'}}>
+            <Row style={{backgroundColor: 'red'}}>
+              <Col size={45}>
+                <Button
+                  backgroundColor={'white'}
+                  onPressColor={colors.off}
+                  text={'Reset filters'}
+                  textButton={{color: colors.green}}
+                  click={() => this.submit()}
+                />
+              </Col>
+              <Col size={5}></Col>
+              <Col size={45}>
+                <Button
+                  backgroundColor={'primary'}
+                  onPressColor={colors.primary2}
+                  text={'Apply'}
+                  click={() => this.submit()}
+                />
+              </Col>
+            </Row>
           </View>
         </View>
       </View>
