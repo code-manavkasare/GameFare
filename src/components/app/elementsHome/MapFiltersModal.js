@@ -18,13 +18,25 @@ export default class MapFiltersModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startingDay: {},
+      filters: {
+        startingDay: {},
+      },
       markedDates: {},
       daySelectedStart: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
+    const filters = this.props.navigation.getParam('filters');
+    const markedDates = filters.startingDay
+      ? {
+          [filters.startingDay.dateString]: {
+            selected: true,
+            selectedColor: colors.primary,
+          },
+        }
+      : {};
+
     this.setState({
       daySelectedStart:
         this.props.navigation.getParam('startDate') === ''
@@ -32,23 +44,28 @@ export default class MapFiltersModal extends Component {
           : moment(this.props.navigation.getParam('endDate')).format(
               'YYYY-MM-DD',
             ),
+      filters,
+      markedDates,
     });
   }
-  selectDay(day, date, markedDates) {
+  selectDay(day) {
     this.setState({
-      [markedDates]: {
+      markedDates: {
         [day.dateString]: {selected: true, selectedColor: colors.primary},
       },
-      startingDay: day,
+      filters: {startingDay: day},
     });
-    console.log(this.state.startingDay, this.state);
   }
-  calendar(date, markedDates) {
+  calendar() {
+    const daySelected = this.state.filters.startingDay
+      ? this.state.filters.startingDay.dateString
+      : false;
     return (
       <Calendar
+        current={daySelected}
         minDate={new Date()}
-        markedDates={this.state[markedDates]}
-        onDayPress={(day) => this.selectDay(day, date, markedDates)}
+        markedDates={this.state.markedDates}
+        onDayPress={(day) => this.selectDay(day)}
         monthFormat={'MMMM'}
         hideExtraDays={true}
         firstDay={1}
@@ -85,21 +102,26 @@ export default class MapFiltersModal extends Component {
     return styles.tickBoxOff;
   }
 
+  resetFilters = () => {
+    this.setState({filters: {}, markedDates: {}});
+  };
+
   dateFields() {
     return (
       <View style={{marginLeft: 0, width: width}}>
         <View style={styleApp.marginView}>
-          {this.calendar('daySelectedStart')}
+          {this.calendar('daySelectedStart', this.state.startingDay)}
         </View>
       </View>
     );
   }
   async submit() {
-    if (equal(this.state.startingDay, {})) {
+    const {filters} = this.state;
+    if (equal(filters, {})) {
       this.props.navigation.state.params.onGoBack({});
     } else {
       this.props.navigation.state.params.onGoBack({
-        startingDay: this.state.startingDay,
+        startingDay: filters.startingDay,
       });
     }
     this.props.navigation.goBack();
@@ -153,7 +175,7 @@ export default class MapFiltersModal extends Component {
                   onPressColor={colors.off}
                   text={'Reset filters'}
                   textButton={{color: colors.green}}
-                  click={() => this.submit()}
+                  click={() => this.resetFilters()}
                 />
               </Col>
               <Col size={5}></Col>

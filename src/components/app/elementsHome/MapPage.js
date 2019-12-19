@@ -54,7 +54,7 @@ class MapPage extends Component {
   }
 
   async componentDidMount() {
-    // await this.getEvents();
+    await this.getEvents();
     this.initialMarker();
   }
 
@@ -64,6 +64,7 @@ class MapPage extends Component {
   }
 
   async getEvents() {
+    this.setState({loader: true});
     const {searchLocation, sportSelected, leagueSelected} = this.props;
     const NewEventsList = await getEventPublic(
       searchLocation,
@@ -72,7 +73,7 @@ class MapPage extends Component {
       this.state.filters,
       this.props.userID,
     );
-    this.setState({eventsArray: Object.values(NewEventsList)});
+    this.setState({eventsArray: Object.values(NewEventsList), loader: false});
   }
 
   listEvents = (events) => {
@@ -242,7 +243,7 @@ class MapPage extends Component {
             click={() =>
               this.props.navigation.navigate('MapFiltersModals', {
                 pageFrom: 'MapPage',
-                setUserLocation: true,
+                filters: this.state.filters,
                 onGoBack: (filters) => this.applyFilters(filters),
               })
             }
