@@ -1,34 +1,18 @@
-import React, {Component, PureComponent} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  Animated,
-  Easing,
-  Image,
-  ScrollView,
-  View,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, Dimensions, View} from 'react-native';
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
 import NavigationService from '../../../../NavigationService';
 
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import colors from '../../style/colors';
-import Icon from '../../layout/icons/icons';
-import AllIcons from '../../layout/icons/AllIcons';
 import AsyncImage from '../../layout/image/AsyncImage';
 
 import PlacelHolder from '../../placeHolders/CardEvent.js';
 import ButtonColor from '../../layout/Views/Button';
 import styleApp from '../../style/style';
-import {indexEvents} from '../../database/algolia';
-import {timing, native} from '../../animations/animations';
-
-var {height, width} = Dimensions.get('screen');
-import {date, time, timeZone} from '../../layout/date/date';
+import {stylesMapPage} from './MapPage';
+import {date, time} from '../../layout/date/date';
 
 class CardEvent extends React.Component {
   constructor(props) {
@@ -49,7 +33,7 @@ class CardEvent extends React.Component {
     // return this.setState({loader:false})
   }
   entreeFee(entreeFee) {
-    if (entreeFee == 0) return 'Free entry';
+    if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
   card(color, data) {
@@ -199,14 +183,11 @@ class CardEvent extends React.Component {
         click={() => NavigationService.push('Event', {objectID: data.objectID})}
         color={'white'}
         style={[
-          this.props.size == 'SM'
+          this.props.size === 'SM'
             ? [
                 styleApp.cardEventSM,
                 styleApp.shade,
-                this.props.pagingEnabled && {
-                  width: width - 40,
-                  marginRight: 40,
-                },
+                this.props.pagingEnabled && stylesMapPage.cardEventMap,
               ]
             : styleApp.cardEvent,
         ]}

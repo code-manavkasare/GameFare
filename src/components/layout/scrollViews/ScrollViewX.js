@@ -157,7 +157,7 @@ export default class ScrollViewX extends PureComponent {
 }
 
 ScrollViewX.propTypes = {
-  backgroundTransparent: bool.isRequired,
+  backgroundTransparent: bool,
 };
 
 const styles = StyleSheet.create({

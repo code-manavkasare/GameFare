@@ -36,34 +36,60 @@ class MapPage extends Component {
     filters: {},
     filtersNumber: 0,
     stopScrollListening: false,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   };
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.searchLocation !== prevProps.searchLocation) {
-      const {lat, lng} = this.props.searchLocation;
-      this.map.animateToRegion({
-        latitude: lat,
-        longitude: lng,
-      });
-
       await this.setState({stopScrollListening: true});
       await this.getEvents();
-      this.initialMarker();
-      this.scrollViewXRef.scrollTo(0);
+      this.initialiseToFirstMarker();
+
+      if (!this.state.eventsArray[0]) {
+        const {lat, lng} = this.props.searchLocation;
+        this.map.animateToRegion({
+          latitude: lat,
+          longitude: lng,
+        });
+      }
     }
   }
 
   async componentDidMount() {
-    // await this.getEvents();
-    this.initialMarker();
+    const allPublicEvents = this.props.publicEvents.map(
+      (event) => this.props.allEvents[event],
+    );
+    await this.setState({eventsArray: allPublicEvents});
+    this.initialiseToFirstMarker();
   }
 
-  initialMarker() {
+  initialMarker = () => {
     const firstSelectedMarker = this.state.eventsArray[0].objectID;
     this.setState({selectedMarkerObjectID: firstSelectedMarker});
-  }
+  };
 
-  async getEvents() {
+  animateMapToInitialMarker = () => {
+    const {lat, lng} = this.state.eventsArray[0].location;
+    const {latitudeDelta, longitudeDelta} = this.state;
+    this.map.animateToRegion({
+      latitude: lat,
+      longitude: lng,
+      latitudeDelta,
+      longitudeDelta,
+    });
+  };
+
+  initialiseToFirstMarker = () => {
+    if (this.state.eventsArray[0]) {
+      this.animateMapToInitialMarker();
+      this.initialMarker();
+      this.scrollViewXRef.scrollTo(0);
+    }
+  };
+
+  getEvents = async () => {
+    this.setState({loader: true});
     const {searchLocation, sportSelected, leagueSelected} = this.props;
     const NewEventsList = await getEventPublic(
       searchLocation,
@@ -72,8 +98,8 @@ class MapPage extends Component {
       this.state.filters,
       this.props.userID,
     );
-    this.setState({eventsArray: Object.values(NewEventsList)});
-  }
+    this.setState({eventsArray: Object.values(NewEventsList), loader: false});
+  };
 
   listEvents = (events) => {
     return events.map((event, i) => (
@@ -125,7 +151,8 @@ class MapPage extends Component {
       filters: filters,
       filtersNumber: Object.keys(filters).length,
     });
-    this.getEvents();
+    await this.getEvents();
+    this.initialiseToFirstMarker();
   };
 
   onScrollViewX = (data) => {
@@ -152,6 +179,7 @@ class MapPage extends Component {
 
   render() {
     const {lat: latCenter, lng: lngCenter} = this.state.mapCenter;
+    const {latitudeDelta, longitudeDelta} = this.state;
 
     return (
       <View style={{height: height, width: width}}>
@@ -183,8 +211,8 @@ class MapPage extends Component {
           initialRegion={{
             latitude: latCenter,
             longitude: lngCenter,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta,
+            longitudeDelta,
           }}
           loadingEnabled={true}
           onPanDrag={this.hideScrollViewX()}>
@@ -238,11 +266,15 @@ class MapPage extends Component {
               );
             }}
             color={'white'}
-            style={[styleApp.center, styleApp.shade2, styles.filterButton]}
+            style={[
+              styleApp.center,
+              styleApp.shade2,
+              stylesMapPage.filterButton,
+            ]}
             click={() =>
               this.props.navigation.navigate('MapFiltersModals', {
                 pageFrom: 'MapPage',
-                setUserLocation: true,
+                filters: this.state.filters,
                 onGoBack: (filters) => this.applyFilters(filters),
               })
             }
@@ -254,6 +286,7 @@ class MapPage extends Component {
             onScrollEndScrollViewX={this.onScrollEndScrollViewX}
             backgroundTransparent={true}
             loader={this.state.loader}
+            placeHolder={[styleApp.cardEventSM, stylesMapPage.cardEventMap]}
             events={this.state.eventsArray}
             height={180}
             messageNoEvent={'No event found around'}
@@ -271,7 +304,7 @@ const mapStateToProps = (state) => {
   return {
     searchLocation: state.historicSearch.searchLocation,
     publicEvents: state.events.publicEvents,
-    allEventsPublic: state.events.allEvents,
+    allEvents: state.events.allEvents,
     leagueSelected: state.historicSearch.league,
     sportSelected: state.historicSearch.sport,
     userID: state.user.userID,
@@ -282,7 +315,7 @@ export default connect(mapStateToProps, {historicSearchAction, eventsAction})(
   MapPage,
 );
 
-const styles = StyleSheet.create({
+export const stylesMapPage = StyleSheet.create({
   filterButton: {
     borderColor: colors.off,
     height: 40,
@@ -291,5 +324,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     zIndex: 40,
+  },
+  cardEventMap: {
+    width: width - 40,
+    marginRight: 40,
   },
 });
