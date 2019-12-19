@@ -16,10 +16,10 @@ function generateID() {
   );
 }
 
-function newDiscussion(discussionID, groupID, image) {
+function newDiscussion(discussionID, groupID, image, nameGroup) {
   return {
     id: discussionID,
-    title: 'General',
+    title: nameGroup,
     members: {},
     messages: {},
     type: 'group',
@@ -57,7 +57,7 @@ async function createGroup(data, userID, infoUser) {
   await firebase
     .database()
     .ref('discussions/' + discussionID)
-    .update(newDiscussion(discussionID, key, pictureUri));
+    .update(newDiscussion(discussionID, key, pictureUri, group.info.name));
   group.objectID = key;
 
   await subscribeToTopics([userID, 'all', key]);

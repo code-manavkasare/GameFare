@@ -59,14 +59,24 @@ class ListEvents extends React.Component {
       query: '',
       aroundLatLng: location.lat + ',' + location.lng,
       filters: filters,
-      aroundRadius: 20 * 1000,
+      aroundRadius: this.props.radiusSearch * 1000,
     });
     console.log(groups.hits);
     return groups.hits;
   }
   async loadEvent(sport, location) {
+    //
     indexGroups.clearCache();
-    var groups = await this.getGroups('info.sport:' + sport, location);
+    var userFilter =
+      ' AND NOT info.organizer:' +
+      this.props.userID +
+      ' AND NOT allMembers:' +
+      this.props.userID;
+    if (!this.props.userConnected) userFilter = '';
+    var groups = await this.getGroups(
+      'info.sport:' + sport + userFilter,
+      location,
+    );
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
@@ -113,7 +123,7 @@ class ListEvents extends React.Component {
               styleApp.input,
               {marginBottom: 0, marginLeft: 0, fontSize: 22},
             ]}>
-            Groups around {numberGroups}
+            New groups {numberGroups}
           </Text>
           <Text
             style={[
@@ -149,7 +159,7 @@ class ListEvents extends React.Component {
               }
               content={() => this.listGroups(this.state.groups)}
               // openEvent={(group) => this.openGroup(group)}
-              onRef={ref => (this.scrollViewRef1 = ref)}
+              onRef={(ref) => (this.scrollViewRef1 = ref)}
             />
           </Animated.View>
         </View>
@@ -161,7 +171,7 @@ class ListEvents extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
@@ -170,6 +180,7 @@ const mapStateToProps = state => {
     searchLocation: state.historicSearch.searchLocation,
     groupsAround: state.groups.groupsAround,
     allGroups: state.groups.allGroups,
+    radiusSearch: state.globaleVariables.radiusSearch,
   };
 };
 

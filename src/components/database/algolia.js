@@ -1,13 +1,24 @@
 import algoliasearch from 'algoliasearch/reactnative';
 import equal from 'fast-deep-equal';
 
-var client = algoliasearch('EX9TV715SD', '36bc4371bcdde61e2e4d5f05c8a274ce');
-var indexEvents = client.initIndex('eventsGF');
-var indexPastEvents = client.initIndex('pastEventsGF');
-var indexGroups = client.initIndex('groupsGF');
-var indexDiscussions = client.initIndex('discussionsGF');
+const client = algoliasearch('EX9TV715SD', '36bc4371bcdde61e2e4d5f05c8a274ce');
+const indexEvents = client.initIndex('eventsGF');
+const indexPastEvents = client.initIndex('pastEventsGF');
+const indexGroups = client.initIndex('groupsGF');
+const indexDiscussions = client.initIndex('discussionsGF');
 
-const getEventPublic = async (location, sport, league, filters) => {
+async function getMyGroups(userID, filterSport) {
+  indexGroups.clearCache();
+  var filterOrganizer = 'info.organizer:' + userID + ' OR allMembers:' + userID;
+  var filters = filterOrganizer + filterSport;
+  var {hits} = await indexGroups.search({
+    query: '',
+    filters: filters,
+  });
+  return hits;
+}
+
+const getEventPublic = async (location, sport, league, filters, userID) => {
   indexEvents.clearCache();
 
   var leagueFilter = ' AND info.league:' + league;
@@ -26,6 +37,10 @@ const getEventPublic = async (location, sport, league, filters) => {
   }
 
   //Searh Algolia, if with filter we add 24h to timestamp, to see all day event
+  var filterUser =
+    ' AND NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
+  if (userID === '') filterUser = '';
+
   var {hits} = await indexEvents.search({
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: 20 * 1000,
@@ -35,9 +50,14 @@ const getEventPublic = async (location, sport, league, filters) => {
         ' AND info.sport:' +
         sport +
         leagueFilter +
+        filterUser +
         ` AND date_timestamp:${timestampDaySelected} TO ${timestampDaySelected +
           24 * 3600 * 1000}`
-      : 'info.public=1' + ' AND info.sport:' + sport + leagueFilter,
+      : 'info.public=1' +
+        ' AND info.sport:' +
+        sport +
+        leagueFilter +
+        filterUser,
   });
 
   var allEventsPublic = hits.reduce(function(result, item) {
@@ -54,4 +74,5 @@ module.exports = {
   indexPastEvents,
   getEventPublic,
   indexDiscussions,
+  getMyGroups,
 };

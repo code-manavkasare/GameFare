@@ -23,7 +23,7 @@ import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import {indexEvents} from '../../database/algolia';
+import {indexEvents, getEventPublic} from '../../database/algolia';
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/CardEvent';
 import CardEvent from './CardEventSM';
@@ -38,6 +38,7 @@ class ListEvents extends React.Component {
     events: [],
     loader: false,
     pastEvents: false,
+    public: false,
   };
   async componentDidMount() {
     this.props.onRef(this);
@@ -49,10 +50,10 @@ class ListEvents extends React.Component {
   }
   async componentWillReceiveProps(nextProps) {
     if (
-      this.props.searchLocation.lat != nextProps.searchLocation.lat ||
-      this.props.sportSelected != nextProps.sportSelected ||
-      this.props.leagueSelected != nextProps.leagueSelected ||
-      (this.props.loader != nextProps.loader && !this.props.loader)
+      this.props.searchLocation.lat !== nextProps.searchLocation.lat ||
+      this.props.sportSelected !== nextProps.sportSelected ||
+      this.props.leagueSelected !== nextProps.leagueSelected ||
+      (this.props.loader !== nextProps.loader && !this.props.loader)
     ) {
       this.loadEvent(
         nextProps.searchLocation,
@@ -69,27 +70,34 @@ class ListEvents extends React.Component {
     );
   }
   async loadEvent(location, sport, league) {
-    console.log('on reload location', location);
-
+    console.log('on reload');
     await this.setState({loader: true});
     indexEvents.clearCache();
-    var leagueFilter = ' AND info.league:' + league;
-    if (league == 'all') {
-      leagueFilter = '';
-    }
-    var {hits} = await indexEvents.search({
-      aroundLatLng: location.lat + ',' + location.lng,
-      aroundRadius: 20 * 1000,
-      query: '',
-      filters: 'info.public=1' + ' AND info.sport:' + sport + leagueFilter,
-    });
-    var allEventsPublic = hits.reduce(function(result, item) {
-      result[item.objectID] = item;
-      return result;
-    }, {});
-    var publicEvents = hits.map(x => x.objectID);
-    await this.props.eventsAction('setAllEvents', allEventsPublic);
-    await this.props.eventsAction('setPublicEvents', publicEvents);
+    const allEventsPublic = await getEventPublic(
+      location,
+      sport,
+      league,
+      {},
+      this.props.userID,
+    );
+    console.log('NewEventsList');
+    console.log(allEventsPublic);
+
+    var allGroupsEvents = {};
+    var groupsEvents = [];
+
+    console.log('public events');
+    console.log(allEventsPublic);
+    var allEvents = {
+      ...allEventsPublic,
+      ...allGroupsEvents,
+    };
+    await this.props.eventsAction('setAllEvents', allEvents);
+    await this.props.eventsAction(
+      'setPublicEvents',
+      Object.values(allEventsPublic).map((x) => x.objectID),
+    );
+    await this.props.eventsAction('setGroupsEvents', groupsEvents);
     return this.setState({loader: false});
   }
   openEvent(objectID) {
@@ -98,10 +106,14 @@ class ListEvents extends React.Component {
     // }
     return this.props.navigate('Event', {objectID: objectID, pageFrom: 'Home'});
   }
+  async setLocation(location) {
+    this.props.historicSearchAction('setLocationSearch', location);
+    return NavigationService.navigate('Home');
+  }
   async setSwitch(state, val) {
-    // await this.setState({[state]:val})
+    await this.setState({[state]: val});
     // await this.translateViews(val)
-    return false;
+    return true;
   }
   switch(textOn, textOff, state, translateXComponent0, translateXComponent1) {
     return (
@@ -113,22 +125,33 @@ class ListEvents extends React.Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.state[state]}
-        setState={val => this.setSwitch(state, val)}
+        setState={(val) => this.setSwitch(state, val)}
       />
     );
   }
   ListEvent() {
-    var allPublicEvents = this.props.publicEvents.map(
-      event => this.props.allEvents[event],
+    const allPublicEvents = this.props.publicEvents.map(
+      (event) => this.props.allEvents[event],
+    );
+    console.log('allPublicEvents');
+    console.log(allPublicEvents);
+    console.log(this.props.publicEvents);
+    var allGroupsEvents = this.props.groupsEvents.map(
+      (event) => this.props.allEvents[event],
     );
     var numberPublic = ' (' + allPublicEvents.length + ')';
-    if (this.state.loader) numberPublic = '';
+    var numberGroups = ' (' + allGroupsEvents.length + ')';
+    if (this.state.loader) {
+      numberPublic = '';
+      numberGroups = '';
+    }
+
     return (
       <View style={{marginTop: 20}}>
         <Row style={{marginLeft: 20, width: width - 40, marginBottom: 15}}>
           <Col size={85} style={styleApp.center2}>
             <Text style={[styleApp.title, {marginBottom: 5}]}>
-              Events around
+              New events {numberPublic}
             </Text>
             <Text
               style={[
@@ -141,15 +164,19 @@ class ListEvents extends React.Component {
           <Col size={15} style={styleApp.center3}></Col>
         </Row>
 
-        <View
+        {/* <View
           style={{
             marginLeft: 20,
             marginTop: 0,
             width: width - 40,
             marginBottom: 15,
           }}>
-          {this.switch('Public' + numberPublic, 'My groups', 'pastEvents')}
-        </View>
+          {this.switch(
+            'Public' + numberPublic,
+            'My groups' + numberGroups,
+            'public',
+          )}
+        </View> */}
 
         {this.state.loader ? (
           <View>
@@ -159,9 +186,9 @@ class ListEvents extends React.Component {
             <PlaceHolder />
             <PlaceHolder />
           </View>
-        ) : (
+        ) : !this.state.public ? (
           <FadeInView duration={350}>
-            {allPublicEvents.length == 0 ? (
+            {allPublicEvents.length === 0 ? (
               <View
                 style={[
                   styleApp.center,
@@ -198,7 +225,53 @@ class ListEvents extends React.Component {
                   key={i}
                   homePage={true}
                   marginTop={25}
-                  openEvent={objectID => this.openEvent(objectID)}
+                  openEvent={(objectID) => this.openEvent(objectID)}
+                  item={event}
+                  data={event}
+                />
+              ))
+            )}
+          </FadeInView>
+        ) : (
+          <FadeInView duration={350}>
+            {allGroupsEvents.length === 0 ? (
+              <View
+                style={[
+                  styleApp.center,
+                  styleApp.marginView,
+                  {
+                    marginTop: 35,
+                    marginBottom: 20,
+                    borderBottomWidth: 0.5,
+                    borderColor: colors.grey,
+                  },
+                ]}>
+                <Image
+                  source={require('../../../img/images/location.png')}
+                  style={{width: 65, height: 65}}
+                />
+                <Text
+                  style={[styleApp.text, {marginTop: 10, marginBottom: 20}]}>
+                  No groups events found
+                </Text>
+                <View
+                  style={{
+                    height: 6.5,
+                    borderTopWidth: 0.5,
+                    borderColor: colors.grey,
+                    marginTop: 0,
+                  }}
+                />
+              </View>
+            ) : (
+              allGroupsEvents.map((event, i) => (
+                <CardEvent
+                  size={'M'}
+                  userCard={false}
+                  key={i}
+                  homePage={true}
+                  marginTop={25}
+                  openEvent={(objectID) => this.openEvent(objectID)}
                   item={event}
                   data={event}
                 />
@@ -214,15 +287,18 @@ class ListEvents extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     globaleVariables: state.globaleVariables,
     searchLocation: state.historicSearch.searchLocation,
     sportSelected: state.historicSearch.sport,
     leagueSelected: state.historicSearch.league,
-
+    radiusSearch: state.globaleVariables.radiusSearch,
     publicEvents: state.events.publicEvents,
+    groupsEvents: state.events.groupsEvents,
     allEvents: state.events.allEvents,
+    userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 

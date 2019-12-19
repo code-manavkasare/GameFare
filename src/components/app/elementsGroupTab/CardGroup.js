@@ -50,8 +50,22 @@ class CardEvent extends React.Component {
     if (entreeFee == 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
+  userAlreadyJoined(data) {
+    if (!data.members) return false;
+    if (
+      Object.values(data.members).filter(
+        user => user.userID === this.props.userID,
+      ).length === 0
+    )
+      return false;
+    return true;
+  }
   click(data) {
-    if (!data.info.public && !this.props.allAccess)
+    if (
+      !data.info.public &&
+      !this.props.allAccess &&
+      data.info.organizer !== this.props.userID && !this.userAlreadyJoined(data)
+    )
       return NavigationService.navigate('Alert', {
         close: true,
         textButton: 'Got it!',
@@ -76,6 +90,39 @@ class CardEvent extends React.Component {
     if (data.members != undefined) return Object.values(data.members).length;
     return 0;
   }
+  cardAttendee(member, i) {
+    if (!member.info.picture)
+      return (
+        <View
+          key={i}
+          style={{
+            ...styleApp.roundView,
+            left: i * 15,
+          }}>
+          <Text
+            style={[
+              styleApp.text,
+              {fontSize: 10, fontFamily: 'OpenSans-Bold'},
+            ]}>
+            {member.info.firstname[0] + member.info.lastname[0]}
+          </Text>
+        </View>
+      );
+    return (
+      <View
+        style={{
+          ...styleApp.roundView,
+          left: i * 15,
+        }}
+        key={i}>
+        <AsyncImage
+          style={{width: '100%', height: '100%'}}
+          mainImage={member.info.picture}
+          imgInitial={member.info.picture}
+        />
+      </View>
+    );
+  }
   rowMembers(data) {
     return (
       <Row style={{marginTop: 0, height: 50}}>
@@ -99,43 +146,7 @@ class CardEvent extends React.Component {
           <Col size={30} style={[{paddingRight: 10}, styleApp.center2]}>
             {Object.values(data.members)
               .slice(0, 3)
-              .map((member, i) =>
-                member.info.picture == undefined ? (
-                  <View
-                    style={[
-                      styleApp.center,
-                      {
-                        position: 'absolute',
-                        left: i * 12,
-                        backgroundColor: colors.off,
-                        height: 25,
-                        width: 25,
-                        borderRadius: 20,
-                      },
-                    ]}>
-                    <Text
-                      style={[
-                        styleApp.text,
-                        {fontSize: 10, fontFamily: 'OpenSans-Bold'},
-                      ]}>
-                      {member.info.firstname[0] + member.info.lastname[0]}
-                    </Text>
-                  </View>
-                ) : (
-                  <AsyncImage
-                    style={{
-                      ...styleApp.center,
-                      height: 25,
-                      width: 25,
-                      borderRadius: 20,
-                      position: 'absolute',
-                      left: i * 12,
-                    }}
-                    mainImage={member.info.picture}
-                    imgInitial={member.info.picture}
-                  />
-                ),
-              )}
+              .map((member, i) => this.cardAttendee(member, i))}
           </Col>
         ) : null}
         <Col style={styleApp.center2} size={55}>
@@ -204,71 +215,10 @@ class CardEvent extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  cardList: {
-    backgroundColor: 'white',
-    shadowColor: '#46474B',
-    shadowOffset: {width: 0, height: 0},
-    shadowRadius: 60,
-    shadowOpacity: 1,
-    marginRight: 0,
-    overflow: 'hidden',
-    height: 180,
-    marginRight: 10,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: colors.grey,
-    width: 220,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    //alignItems: 'center',
-    justifyContent: 'center',
-  },
-  viewSport: {
-    //position:'absolute',
-    backgroundColor: colors.greenLight,
-    borderRadius: 3,
-    paddingLeft: 10,
-    paddingRight: 10,
-    //top:15,
-    right: 0,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textSport: {
-    color: colors.greenStrong,
-    fontSize: 13,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  textPrice: {
-    color: colors.primary,
-    fontSize: 16,
-    marginTop: 10,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  title: {
-    color: colors.title,
-    fontSize: 21,
-    marginTop: 8,
-    marginBottom: 5,
-
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  subtitle: {
-    color: colors.subtitle,
-    fontSize: 14,
-    fontFamily: 'OpenSans-Regular',
-  },
-});
-
 const mapStateToProps = state => {
   return {
     sports: state.globaleVariables.sports.list,
+    userID: state.user.userID,
   };
 };
 

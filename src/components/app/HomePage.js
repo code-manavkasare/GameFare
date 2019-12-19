@@ -89,28 +89,28 @@ export default class HomeScreen extends React.Component {
   }
   homePageView() {
     return (
-      <View style={{paddingTop: 10}}>
+      <View style={{paddingTop: 10,minHeight: height / 1.5}}>
         <EventFromGroups
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
           loader={this.state.loader}
-          onRef={ref => (this.eventGroupsRef = ref)}
+          onRef={(ref) => (this.eventGroupsRef = ref)}
         />
 
         <ListEvents
           location={this.state.location}
           search={this.state.search}
           key={2}
-          onRef={ref => (this.listEventsRef = ref)}
-          setState={data => this.setState(data)}
+          onRef={(ref) => (this.listEventsRef = ref)}
+          setState={(data) => this.setState(data)}
           loader={this.state.loader}
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
         />
 
         {/* <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} /> */}
-
-        <NewGroupCard pageFrom="Home" />
+        {/* 
+        <NewGroupCard pageFrom="Home" /> */}
       </View>
     );
   }
@@ -154,7 +154,7 @@ export default class HomeScreen extends React.Component {
         />
 
         <ScrollView2
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.homePageView()}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderFilter - 30}
@@ -192,7 +192,7 @@ export default class HomeScreen extends React.Component {
           view={() => {
             return (
               <Row>
-                <Col size={60} style={styleApp.center}>
+                <Col size={50} style={styleApp.center}>
                   <AllIcons
                     name="map-marker-alt"
                     color={colors.blue}
@@ -200,7 +200,7 @@ export default class HomeScreen extends React.Component {
                     type="font"
                   />
                 </Col>
-                <Col size={120} style={styleApp.center2}>
+                <Col size={70} style={styleApp.center2}>
                   <Text style={styleApp.text}> Map</Text>
                 </Col>
               </Row>

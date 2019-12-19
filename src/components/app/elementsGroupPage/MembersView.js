@@ -16,10 +16,10 @@ import firebase from 'react-native-firebase';
 
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
-import Communications from 'react-native-communications';
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/ListAttendees';
 import AsyncImage from '../../layout/image/AsyncImage';
+import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 
 import sizes from '../../style/sizes';
@@ -35,33 +35,29 @@ class MembersView extends Component {
   componentDidMount() {
     /// this.load()
   }
+  pictureUser(user) {
+    return (
+      <View style={styleApp.roundView2}>
+        {!user.info.picture ? (
+          <Text style={[styleApp.text, {fontSize: 12}]}>
+            {user.info.firstname[0] + user.info.lastname[0]}
+          </Text>
+        ) : (
+          <AsyncImage
+            style={{height: '100%', width: '100%'}}
+            mainImage={user.info.picture}
+            imgInitial={user.info.picture}
+          />
+        )}
+      </View>
+    );
+  }
   rowUser(user, i, data) {
     return (
       <View key={i} style={{paddingTop: 10, paddingBottom: 10}}>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            {user.info.picture == undefined ? (
-              <View
-                style={[
-                  styleApp.viewNumber,
-                  styleApp.center,
-                  {backgroundColor: colors.primaryLight},
-                ]}>
-                <Text
-                  style={[
-                    styleApp.text,
-                    {fontSize: 10, color: 'white', fontFamily: 'OpenSans-Bold'},
-                  ]}>
-                  {user.info.firstname[0] + user.info.lastname[0]}
-                </Text>
-              </View>
-            ) : (
-              <AsyncImage
-                style={{height: 35, width: 35, borderRadius: 20}}
-                mainImage={user.info.picture}
-                imgInitial={user.info.picture}
-              />
-            )}
+            {this.pictureUser(user)}
           </Col>
           <Col size={75} style={styleApp.center2}>
             <Text style={styleApp.text}>
@@ -117,9 +113,10 @@ class MembersView extends Component {
       .update(user);
 
     var members = this.props.data.members;
-    if (members == undefined) members = {};
+    if (members === undefined) members = {};
     await this.props.groupsAction('editGroup', {
       objectID: this.props.data.objectID,
+      info: this.props.data.info,
       members: {
         ...members,
         [this.props.userID]: user,
@@ -134,7 +131,7 @@ class MembersView extends Component {
     if (!this.props.userConnected)
       return NavigationService.navigate('SignIn', {pageFrom: 'Group'});
 
-    if (data.organizer.userID == this.props.userID) {
+    if (data.organizer.userID === this.props.userID) {
       return NavigationService.navigate('Alert', {
         textButton: 'Got it!',
         close: true,
@@ -142,7 +139,7 @@ class MembersView extends Component {
         subtitle: 'You cannot join it.',
       });
     }
-    if (data.members == undefined) return this.openJoinAlert(data);
+    if (!data.members) return this.openJoinAlert(data);
 
     if (
       Object.values(data.members).filter(
@@ -165,35 +162,66 @@ class MembersView extends Component {
       onGoBack: () => this.joinGroup(),
     });
   }
+  userAlreadyJoined(data) {
+    if (!data.members) return false;
+    if (
+      Object.values(data.members).filter(
+        user => user.userID === this.props.userID,
+      ).length === 0
+    )
+      return false;
+    return true;
+  }
   membersView(data) {
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
           <Row>
-            <Col style={styleApp.center2} size={80}>
+            <Col style={styleApp.center2} size={70}>
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
-            <Col style={styleApp.center3} size={20}>
-              <ButtonColor
-                view={() => {
-                  return (
-                    <Text style={[styleApp.text, {color: 'white'}]}>Join</Text>
-                  );
-                }}
-                click={() => this.join(data)}
-                color={colors.green}
-                style={[
-                  styleApp.center,
-                  {
-                    borderColor: colors.off,
-                    height: 40,
-                    width: 90,
-                    borderRadius: 20,
-                    borderWidth: 1,
-                  },
-                ]}
-                onPressColor={colors.greenClick}
-              />
+            <Col style={styleApp.center3} size={30}>
+              {data.organizer.userID ===
+              this.props.userID ? null : this.userAlreadyJoined(data) ? (
+                <Row>
+                  <Col size={50} style={styleApp.center}>
+                    <AllIcons
+                      name="check"
+                      type="font"
+                      color={colors.green}
+                      size={17}
+                    />
+                  </Col>
+                  <Col size={50} style={styleApp.center2}>
+                    <Text style={[styleApp.text, {color: colors.green}]}>
+                      Joined
+                    </Text>
+                  </Col>
+                </Row>
+              ) : (
+                <ButtonColor
+                  view={() => {
+                    return (
+                      <Text style={[styleApp.text, {color: 'white'}]}>
+                        Join
+                      </Text>
+                    );
+                  }}
+                  click={() => this.join(data)}
+                  color={colors.green}
+                  style={[
+                    styleApp.center,
+                    {
+                      borderColor: colors.off,
+                      height: 40,
+                      width: 90,
+                      borderRadius: 20,
+                      borderWidth: 1,
+                    },
+                  ]}
+                  onPressColor={colors.greenClick}
+                />
+              )}
             </Col>
           </Row>
 

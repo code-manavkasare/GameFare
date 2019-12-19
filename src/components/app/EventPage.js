@@ -31,6 +31,7 @@ import DateEvent from './elementsEventCreate/DateEvent';
 import Button2 from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
+import CardUser from './elementsEventPage/CardUser';
 
 import {indexEvents} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
@@ -158,25 +159,6 @@ class EventPage extends React.Component {
       />
     );
   }
-  openProfile(user) {
-    // console.log('user!! ')
-    // console.log(user)
-    // var coach = 'Joined the event as a player'
-    // if (user.coach) {
-    //   coach = 'Joined the event as an instructor'
-    // }
-    // var level = ''
-    // if (user.captainInfo.level == '' || user.captainInfo.level == undefined) {
-    //   level = "Unclassified yet"
-    // } else {
-    //   level = Object.values(this.props.sports).filter(sport => sport.value == this.props.navigation.getParam('data').info.sport)[0].level.list[user.captainInfo.level].text
-    // }
-    // var subtitle = '- Level • '+ level +'\n- '+coach
-    // if (user.coach) {
-    //   subtitle = '- ' + coach
-    // }
-    // this.props.navigation.navigate('Alert',{textButton:'Close',title:user.info.firstname + ' ' + user.info.lastname,subtitle:subtitle,close:true,onGoBack:() => this.props.navigation.navigate('Event')})
-  }
   alertCoach(coach, name, icon) {
     var text = coach ? 'instructor.' : 'player.';
     var title = name + ' joined the event as a ' + text;
@@ -198,207 +180,28 @@ class EventPage extends React.Component {
     });
   }
   allowCall(user, data) {
-    if (user.coach || user.userID == data.info.organizer) return true;
+    if (user.coach || user.userID === data.info.organizer) return true;
     return false;
   }
   rowUser(user, i, data) {
     return (
-      <TouchableOpacity
+      <CardUser
+        user={user}
+        infoUser={this.props.infoUser}
+        userConnected={this.props.userConnected}
         key={i}
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            marginTop: 10,
-            minHeight: 50,
-            borderBottomWidth: 0,
-            backgroundColor: 'white',
-            borderColor: colors.off,
-          },
-        ]}
-        activeOpacity={1}
-        onPress={() => this.openProfile(user)}>
-        <Row>
-          <Col size={15} style={styleApp.center}>
-            {user.info.picture != undefined ? (
-              <AsyncImage
-                style={{width: 35, height: 35, borderRadius: 17.5}}
-                mainImage={user.info.picture}
-                imgInitial={user.info.picture}
-              />
-            ) : (
-              <View
-                style={[
-                  styleApp.center,
-                  {
-                    height: 30,
-                    width: 30,
-                    borderRadius: 15,
-                    backgroundColor: colors.off2,
-                    borderWidth: 1,
-                    borderColor: colors.off,
-                  },
-                ]}>
-                <Text style={[styleApp.input, {fontSize: 11}]}>
-                  {user.info.firstname[0] + user.info.lastname[0]}
-                </Text>
-              </View>
-            )}
-          </Col>
-          <Col size={55} style={[styleApp.center2, {paddingLeft: 10}]}>
-            <Text style={styleApp.text}>
-              {user.info.firstname} {user.info.lastname}
-            </Text>
-          </Col>
-          <Col
-            size={10}
-            style={styleApp.center3}
-            activeOpacity={0.7}
-            onPress={() =>
-              !this.allowCall(user, data)
-                ? null
-                : this.props.navigation.navigate('AlertCall', {
-                    textButton: 'Close',
-                    title: user.info.firstname + ' ' + user.info.lastname,
-                    subtitle: user.info.phoneNumber,
-                    close: true,
-                    icon: (
-                      <AllIcons
-                        name="envelope"
-                        type="font"
-                        color={colors.green}
-                        size={17}
-                      />
-                    ),
-                  })
-            }>
-            {this.allowCall(user, data) ? (
-              <AllIcons
-                name="envelope"
-                type="font"
-                color={colors.green}
-                size={17}
-              />
-            ) : null}
-          </Col>
-
-          {user.userID == data.info.organizer ? (
-            <Col
-              size={20}
-              style={styleApp.center}
-              activeOpacity={0.7}
-              onPress={() =>
-                this.props.navigation.navigate('Alert', {
-                  textButton: 'Close',
-                  close: true,
-                  onGoBack: () => this.props.navigation.navigate('Event'),
-                  title:
-                    user.info.firstname +
-                    ' ' +
-                    user.info.lastname +
-                    ' is the organizer of the event.',
-                  icon: (
-                    <AllIcons
-                      name="bullhorn"
-                      color={colors.blue}
-                      type="font"
-                      size={16}
-                    />
-                  ),
-                })
-              }>
-              <AllIcons
-                name="bullhorn"
-                color={colors.blue}
-                type="font"
-                size={16}
-              />
-            </Col>
-          ) : user.status == 'confirmed' ? (
-            <Col size={20} style={styleApp.center}></Col>
-          ) : user.status == 'rejected' ? (
-            <Col
-              size={20}
-              style={styleApp.center}
-              activeOpacity={0.7}
-              onPress={() =>
-                this.props.navigation.navigate('Alert', {
-                  textButton: 'Got it!',
-                  title: 'This user has been rejected by the organizer.',
-                  subtitle: user.info.firstname + ' ' + user.info.lastname,
-                  close: true,
-                  onGoBack: () => this.props.navigation.navigate('Event'),
-                  icon: (
-                    <AllIcons
-                      name="close"
-                      type="mat"
-                      color={colors.primary}
-                      size={20}
-                    />
-                  ),
-                })
-              }>
-              <AllIcons
-                name="close"
-                type="mat"
-                color={colors.primary}
-                size={20}
-              />
-            </Col>
-          ) : (
-            <Col
-              size={20}
-              style={styleApp.center}
-              activeOpacity={0.7}
-              onPress={() =>
-                this.props.navigation.navigate('Alert', {
-                  textButton: 'Got it!',
-                  title: "This user is waiting for the organizer's aproval.",
-                  subtitle: user.info.firstname + ' ' + user.info.lastname,
-                  close: true,
-                  onGoBack: () => this.props.navigation.navigate('Event'),
-                  icon: (
-                    <AllIcons
-                      name="clock"
-                      type="font"
-                      color={colors.secondary}
-                      size={20}
-                    />
-                  ),
-                })
-              }>
-              <AllIcons
-                name="clock"
-                type="font"
-                color={colors.secondary}
-                size={20}
-              />
-            </Col>
-          )}
-        </Row>
-      </TouchableOpacity>
+        userID={this.props.userID}
+      />
     );
   }
   openCondition(data) {
-    if (data == undefined) return false;
-    if (data.attendees == undefined) return true;
+    if (!data) return false;
+    if (!data.attendees) return true;
     if (Object.values(data.attendees).length < Number(data.info.maxAttendance))
       return true;
     return false;
   }
   async addCalendar(data) {
-    console.log('add to calendar');
-    console.log(data);
-    console.log({
-      id: data.objectID,
-      title: data.info.name,
-      calendarId: data.objectID,
-      startDate: moment(data.date.start)
-        .toISOString()
-        .toString(),
-      endDate: '2017-08-19T19:26:00.000Z',
-    });
     var permission = await getPermissionCalendar();
     await RNCalendarEvents.authorizeEventStore();
     if (!permission) return true;
@@ -410,8 +213,6 @@ class EventPage extends React.Component {
         endDate: moment(data.date.end).toISOString(),
       });
     } catch (err) {
-      console.log('errorrrr');
-      console.log(err);
       return true;
     }
     return this.props.navigation.navigate('Alert', {
@@ -422,17 +223,14 @@ class EventPage extends React.Component {
   }
   eventInfo(data, sport, rule, league) {
     var level = Object.values(sport.level.list).filter(
-      level => level.value == data.info.levelFilter,
+      (level) => level.value === data.info.levelFilter,
     )[0];
     var levelOption =
-      data.info.levelOption == 'equal'
+      data.info.levelOption === 'equal'
         ? 'only'
-        : data.info.levelOption == 'min'
+        : data.info.levelOption === 'min'
         ? 'and above'
         : 'and below';
-    console.log('level');
-    console.log(data);
-    console.log(rule);
     return (
       <View style={styleApp.marginView}>
         <Row style={{marginTop: 20}}>
@@ -447,7 +245,7 @@ class EventPage extends React.Component {
                   fontSize: 18,
                 },
               ]}>
-              {Number(data.price.joiningFee) == 0
+              {Number(data.price.joiningFee) === 0
                 ? 'Free entry'
                 : '$' + data.price.joiningFee}
             </Text>
@@ -543,23 +341,15 @@ class EventPage extends React.Component {
   event(data) {
     // return <PlaceHolder />;
     if (data === undefined || this.state.loader) return <PlaceHolder />;
-    console.log('data event ');
-    console.log(data);
     var sport = this.props.sports.filter(
-      sport => sport.value === data.info.sport,
+      (sport) => sport.value === data.info.sport,
     )[0];
-    console.log('sport');
-    console.log(sport);
     var league = Object.values(sport.typeEvent).filter(
-      item => item.value === data.info.league,
+      (item) => item.value === data.info.league,
     )[0];
-    console.log('league');
-    console.log(league);
     var rule = Object.values(league.rules).filter(
-      rule => rule.value === data.info.rules,
+      (rule) => rule.value === data.info.rules,
     )[0];
-    console.log(data);
-    console.log(rule);
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {/* {this.imageMap(data)} */}
@@ -595,25 +385,24 @@ class EventPage extends React.Component {
           <View
             style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
           />
-
-          {this.state.loader ? (
-            <FadeInView duration={300} style={{paddingTop: 10}}>
-              <PlaceHolder />
-              <PlaceHolder />
-              <PlaceHolder />
-            </FadeInView>
-          ) : !data.attendees ? (
-            <Text style={[styleApp.smallText, {marginTop: 10}]}>
-              No players has joined the event yet.
-            </Text>
-          ) : (
-            <FadeInView duration={300} style={{marginTop: 0}}>
-              {Object.values(data.attendees).map((user, i) =>
-                this.rowUser(user, i, data),
-              )}
-            </FadeInView>
-          )}
         </View>
+        {this.state.loader ? (
+          <FadeInView duration={300} style={{paddingTop: 10}}>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </FadeInView>
+        ) : !data.attendees ? (
+          <Text style={[styleApp.smallText, {marginTop: 10}]}>
+            No players has joined the event yet.
+          </Text>
+        ) : (
+          <FadeInView duration={300} style={{marginTop: 0}}>
+            {Object.values(data.attendees).map((user, i) =>
+              this.rowUser(user, i, data),
+            )}
+          </FadeInView>
+        )}
 
         {data.groups != undefined ? (
           <View style={{marginTop: 35}}>
@@ -669,7 +458,7 @@ class EventPage extends React.Component {
       if (event.attendees == undefined) return true;
       if (
         Object.values(event.attendees).filter(
-          user => user.userID === this.props.userID,
+          (user) => user.userID === this.props.userID,
         ).length == 0
       )
         return true;
@@ -679,8 +468,9 @@ class EventPage extends React.Component {
   userAlreadySubscribed(attendees) {
     if (attendees == undefined) return true;
     if (
-      Object.values(attendees).filter(user => user.userID == this.props.userID)
-        .length == 0
+      Object.values(attendees).filter(
+        (user) => user.userID == this.props.userID,
+      ).length == 0
     )
       return true;
     return false;
@@ -688,7 +478,7 @@ class EventPage extends React.Component {
   coachAlreadySubscribed(coaches) {
     if (coaches == undefined) return true;
     if (
-      Object.values(coaches).filter(user => user.userID == this.props.userID)
+      Object.values(coaches).filter((user) => user.userID == this.props.userID)
         .length == 0
     )
       return true;
@@ -732,7 +522,7 @@ class EventPage extends React.Component {
         />
 
         <ParalaxScrollView
-          setState={val => this.setState(val)}
+          setState={(val) => this.setState(val)}
           image={
             <TouchableOpacity
               activeOpacity={0.3}
@@ -815,7 +605,7 @@ class EventPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     userID: state.user.userID,

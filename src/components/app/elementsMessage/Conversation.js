@@ -71,7 +71,7 @@ class MessageTab extends React.Component {
           };
 
         messages = Object.keys(messages)
-          .map(_id => ({
+          .map((_id) => ({
             _id,
             ...messages[_id],
           }))
@@ -225,9 +225,9 @@ class MessageTab extends React.Component {
           height: 45,
           // paddingBottom: 10,
           paddingLeft: 20,
-          marginTop: -this.state.offSet,
-          // backgroundColor: 'red',
-          paddingRight: 20,
+          // marginTop: -this.state.offSet,
+          backgroundColor: 'white',
+          paddingRight: 10,
         }}>
         <Col size={10} style={styleApp.center2}>
           {/* <AllIcon name="camera" color={colors.title} type="font" size={20} /> */}
@@ -243,7 +243,7 @@ class MessageTab extends React.Component {
               return (
                 <Text
                   style={[
-                    styleApp.input,
+                    styleApp.textBold,
                     {
                       color: props.text === '' ? colors.greyDark : colors.white,
                     },
@@ -294,17 +294,17 @@ class MessageTab extends React.Component {
           placeholder="Message"
           // onFocus={() => this.setState({focus: true})}
           // onBlur={() => this.setState({focus: false})}
-          ref={input => {
+          ref={(input) => {
             this.inputRef = input;
           }}
-          onContentSizeChange={event => {
+          onContentSizeChange={(event) => {
             console.log(event.nativeEvent.contentSize.height);
             this.setState({
               offSet: event.nativeEvent.contentSize.height,
             });
           }}
           numberOfLines={2}
-          onChangeText={text => this.setState({input: text})}
+          onChangeText={(text) => this.setState({input: text})}
           value={this.state.input}
           style={styleApp.input}
         />
@@ -333,25 +333,85 @@ class MessageTab extends React.Component {
         messages={this.state.messages}
         messageTextStyle={styleApp.input}
         // containerStyle={{borderTopWidth: 0.5}}
-        renderMessage={props => this.renderMessage(props)}
+        placeholder={'Write your message'}
+        renderMessage={(props) => this.renderMessage(props)}
         user={user}
         inverted={true}
         multiline={true}
         //inverted={true}
-        bottomOffset={this.state.offSet}
-        scrollToBottomOffset={20}
+        //bottomOffset={0}
+        minInputToolbarHeight={50}
+        //scrollToBottomOffset={0}
+        textInputProps={{
+          returnKeyType: 'done',
+          blurOnSubmit: true,
+        }}
         textInputStyle={[
           styleApp.text,
-          {paddingTop: 10, paddingLeft: 0, paddingRight: 10, lineHeight: 21},
+          {
+            paddingTop: -15,
+            paddingBottom: 5,
+            flex: 1,
+            paddingLeft: 0,
+            paddingRight: 10,
+            lineHeight: 21,
+          },
         ]}
         text={this.state.input}
-        onInputTextChanged={text => this.setState({input: text})}
+        onInputTextChanged={(text) => this.setState({input: text})}
         // renderMessage={this.renderMessage}
         renderChatEmpty={() => this.renderChatEmpty()}
         renderSend={() => null}
         // renderComposer={() => this.renderComposer(user)}
-        renderAccessory={props => this.renderChatFooter(user, props)}
+        renderAccessory={(props) => this.renderChatFooter(user, props)}
       />
+    );
+  }
+  infoOtherMember(conversation) {
+    if (
+      Object.values(conversation.members).filter(
+        (user) => user.id !== this.props.userID,
+      ).length === 0
+    )
+      return Object.values(conversation.members)[0].info;
+    return Object.values(conversation.members).filter(
+      (user) => user.id !== this.props.userID,
+    )[0].info;
+  }
+  titleHeader(data) {
+    if (data.type === 'users') {
+      return (
+        this.infoOtherMember(data).firstname +
+        ' ' +
+        this.infoOtherMember(data).lastname
+      );
+    }
+    return data.title;
+  }
+  imgHeader(data) {
+    if (data.type === 'group')
+      return (
+        <AsyncImage
+          style={styleApp.roundView2}
+          mainImage={data.image}
+          imgInitial={data.image}
+        />
+      );
+    if (this.infoOtherMember(data).picture)
+      return (
+        <AsyncImage
+          style={styleApp.roundView2}
+          mainImage={this.infoOtherMember(data).picture}
+          imgInitial={this.infoOtherMember(data).picture}
+        />
+      );
+    return (
+      <View style={styleApp.roundView2}>
+        <Text style={[styleApp.input, {fontSize: 11}]}>
+          {this.infoOtherMember(data).firstname[0] +
+            this.infoOtherMember(data).lastname[0]}
+        </Text>
+      </View>
     );
   }
   render() {
@@ -362,11 +422,14 @@ class MessageTab extends React.Component {
         ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
         : this.props.infoUser.picture,
     };
+    console.log('this.titleHeader(this.props.navigation.getParam)');
+    console.log(this.titleHeader(this.props.navigation.getParam('data')));
     return (
       <View keyboardDismissMode="on-drag" style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={this.props.navigation.getParam('data').title}
+          textHeader={this.titleHeader(this.props.navigation.getParam('data'))}
+          imgHeader={this.imgHeader(this.props.navigation.getParam('data'))}
           inputRange={[50, 80]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
@@ -408,7 +471,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     gamefareUser: state.message.gamefareUser,
     userID: state.user.userID,
