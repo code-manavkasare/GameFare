@@ -67,16 +67,20 @@ class MyEvents extends React.Component {
   async loadEvent(past, sport, league) {
     await this.setState({loader: true});
 
-    var filterAttendees =
-      'allAttendees:' +
-      this.props.userID +
-      ' OR allCoaches:' +
-      this.props.userID +
-      ' OR info.organizer:' +
-      this.props.userID;
+    let filterAttendees = '';
+    if (this.props.userID) {
+      filterAttendees =
+        'allAttendees:' +
+        this.props.userID +
+        ' OR allCoaches:' +
+        this.props.userID +
+        ' OR info.organizer:' +
+        this.props.userID +
+        ' AND ';
+    }
     var filters = filterAttendees;
 
-    var filterDate = ' AND date_timestamp>' + Number(new Date());
+    var filterDate = 'date_timestamp>' + Number(new Date());
     var futureEvents = await this.getEvents(filters + filterDate);
     var allEvents = futureEvents.reduce(function(result, item) {
       result[item.objectID] = item;
@@ -84,7 +88,7 @@ class MyEvents extends React.Component {
     }, {});
     futureEvents = futureEvents.map((x) => x.objectID);
 
-    filterDate = ' AND date_timestamp<' + Number(new Date());
+    filterDate = 'date_timestamp<' + Number(new Date());
     var pastEvents = await this.getEvents(filters + filterDate);
     var allEventsPast = pastEvents.reduce(function(result, item) {
       result[item.objectID] = item;
