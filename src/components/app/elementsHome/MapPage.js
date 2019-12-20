@@ -131,10 +131,6 @@ class MapPage extends Component {
     });
   };
 
-  onMarkerDeselect = () => {
-    this.setState({selectedMarkerObjectID: false});
-  };
-
   hideScrollViewX = () => {
     if (this.state.showScrollViewX) {
       this.setState({showScrollViewX: false});
@@ -233,9 +229,7 @@ class MapPage extends Component {
                 coordinate={{latitude, longitude}}
                 description={marker.description}
                 key={marker.objectID}
-                onSelect={() => this.onMarkerSelect(marker, i)}
-                // onDeselect={() => this.onMarkerDeselect()}
-              >
+                onPress={() => this.onMarkerSelect(marker, i)}>
                 <View>
                   <AllIcons
                     name="map-marker-alt"
@@ -324,7 +318,7 @@ class MapPage extends Component {
             placeHolder={[styleApp.cardEventSM, stylesMapPage.cardEventMap]}
             events={this.state.eventsArray}
             height={180}
-            messageNoEvent={'No event found around'}
+            messageNoEvent={'No new events in the area'}
             content={(events) => this.listEvents(events)}
             onRef={(ref) => (this.scrollViewXRef = ref)}
             pagingEnabled={true}
