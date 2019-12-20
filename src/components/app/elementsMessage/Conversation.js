@@ -64,7 +64,7 @@ class MessageTab extends React.Component {
             0: {
               user: that.props.gamefareUser,
               text:
-                'No messages has been send on this conversation. Be the first one.',
+                'No messages have been sent in this conversation. Write the first one!',
               createdAt: new Date(),
               timeStamp: moment().valueOf(),
             },

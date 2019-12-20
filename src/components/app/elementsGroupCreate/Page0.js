@@ -62,7 +62,7 @@ class Page0 extends Component {
         valueSelected={this.props.createGroupData.info.sport}
         image={true}
         list={this.props.sports}
-        tickFilter={value => {
+        tickFilter={(value) => {
           console.log('ou pas val');
           console.log(value);
           this.props.createGroupAction('setInfoCreateGroup', {
@@ -92,7 +92,7 @@ class Page0 extends Component {
         translateXComponent0={translateXComponent0}
         translateXComponent1={translateXComponent1}
         state={this.props.createGroupData.info[state]}
-        setState={val => this.setAccess(state, val)}
+        setState={(val) => this.setAccess(state, val)}
       />
     );
   }
@@ -102,12 +102,12 @@ class Page0 extends Component {
         style={styleApp.input}
         placeholder="Add name"
         returnKeyType={'done'}
-        ref={input => {
+        ref={(input) => {
           this.nameInput = input;
         }}
         underlineColorAndroid="rgba(0,0,0,0)"
         autoCorrect={true}
-        onChangeText={text =>
+        onChangeText={(text) =>
           this.props.createGroupAction('setInfoCreateGroup', {name: text})
         }
         value={this.props.createGroupData.info.name}
@@ -120,14 +120,14 @@ class Page0 extends Component {
         style={styleApp.input}
         placeholder="Add description"
         returnKeyType={'done'}
-        ref={input => {
+        ref={(input) => {
           this.descriptionInput = input;
         }}
         underlineColorAndroid="rgba(0,0,0,0)"
         autoCorrect={true}
         multiline={true}
         blurOnSubmit={true}
-        onChangeText={text =>
+        onChangeText={(text) =>
           this.props.createGroupAction('setInfoCreateGroup', {
             description: text,
           })
@@ -192,8 +192,8 @@ class Page0 extends Component {
     );
   }
   textPrivate() {
-    if (this.state.private)
-      return 'You will have to invite your members after creating your group.';
+    if (this.props.createGroupData.info.public)
+      return 'New players can only join with an invite from existing members.';
     return 'Anyone will be able to join your group.';
   }
   async setImg(img) {
@@ -204,7 +204,7 @@ class Page0 extends Component {
     return (
       <View style={{marginTop: 0, marginLeft: 0, width: width}}>
         <ButtonAddImage
-          setState={val => this.setImg(val)}
+          setState={(val) => this.setImg(val)}
           img={this.props.createGroupData.img}
         />
 
@@ -232,7 +232,7 @@ class Page0 extends Component {
             () =>
               this.props.navigation.navigate('Location', {
                 pageFrom: 'CreateGroup0',
-                onGoBack: data => this.setLocation(data),
+                onGoBack: (data) => this.setLocation(data),
               }),
             false,
           )}
@@ -312,7 +312,7 @@ class Page0 extends Component {
         />
 
         <ScrollView
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.page0.bind(this)}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -366,7 +366,7 @@ class Page0 extends Component {
 
 const styles = StyleSheet.create({});
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     sportSelected: state.historicSearch.sport,

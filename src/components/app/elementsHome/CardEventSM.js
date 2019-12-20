@@ -111,8 +111,14 @@ class CardEvent extends React.Component {
               .map((member, i) => this.cardAttendee(member, i))}
           </Col>
         ) : null}
-        <Col size={this.props.size == 'SM' ? 55 : 65} style={styleApp.center2}>
-          <Text style={[styleApp.text, {fontSize: 11}]}>Person coming</Text>
+        <Col size={this.props.size === 'SM' ? 55 : 65} style={styleApp.center2}>
+          <Text style={[styleApp.text, {fontSize: 11}]}>
+            Player
+            {this.numberMember(data) === 0 || this.numberMember(data) === 1
+              ? null
+              : 's'}{' '}
+            coming
+          </Text>
         </Col>
       </Row>
     );

@@ -145,13 +145,13 @@ class Page3 extends Component {
     console.log('data page 3');
     console.log(data);
     var league = Object.values(sport.typeEvent).filter(
-      item => item.value == data.info.league,
+      (item) => item.value == data.info.league,
     )[0];
     var level = Object.values(sport.level.list).filter(
-      level => level.value == data.info.levelFilter,
+      (level) => level.value == data.info.levelFilter,
     )[0];
     var rule = Object.values(league.rules).filter(
-      rule => rule.value == data.info.rules,
+      (rule) => rule.value == data.info.rules,
     )[0];
     var levelOption =
       data.info.levelOption == 'equal'
@@ -263,7 +263,7 @@ class Page3 extends Component {
               As a host you will get to play for free!
             </Text>
           </Text>
-        ) : (
+        ) : Number(data.price.joiningFee) !== 0 ? (
           <Text style={[styleApp.title, {fontSize: 13}]}>
             Reminder •{' '}
             <Text style={{fontFamily: 'OpenSans-Regular'}}>
@@ -271,7 +271,7 @@ class Page3 extends Component {
               get paid once the session is over.
             </Text>
           </Text>
-        )}
+        ) : null}
       </View>
     );
   }
@@ -295,7 +295,7 @@ class Page3 extends Component {
       });
     }
 
-    if (data.groups.length != 0) {
+    if (data.groups.length !== 0) {
       var groups = this.props.navigation.getParam('groups');
       for (var i in groups) {
         console.log('lunion est la !');
@@ -311,8 +311,10 @@ class Page3 extends Component {
     await this.props.eventsAction('setAllEvents', {[event.objectID]: event});
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
-    await this.props.historicSearchAction('setSport', event.info.sport);
-    await this.props.historicSearchAction('setLeague', event.info.league);
+    await this.props.historicSearchAction('setSport', {
+      value: event.info.sport,
+      league: event.info.league,
+    });
 
     await this.props.createEventAction('reset');
     await this.setState({loader: false});
@@ -343,7 +345,7 @@ class Page3 extends Component {
         />
 
         <ScrollView
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() =>
             this.page2(
               this.props.navigation.getParam('data'),
@@ -393,7 +395,7 @@ class Page3 extends Component {
 
 const styles = StyleSheet.create({});
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     userConnected: state.user.userConnected,

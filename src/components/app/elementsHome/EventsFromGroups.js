@@ -216,7 +216,7 @@ class MyEvents extends React.Component {
               events={futureEvents}
               height={180}
               imageNoEvent="group"
-              messageNoEvent={"You haven't subscribe to any event."}
+              messageNoEvent={"You don’t have any upcoming events."}
               content={(events) => this.listEvents(events)}
               openEvent={(objectID) => this.openEvent(objectID)}
               onRef={(ref) => (this.scrollViewRef1 = ref)}

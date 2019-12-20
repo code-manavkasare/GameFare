@@ -45,17 +45,14 @@ class EventsView extends Component {
     return false;
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.data.events != nextProps.data.events) {
+    if (this.props.data.events !== nextProps.data.events) {
       await this.setState({loader: true});
       this.load();
     }
   }
   async load() {
-    console.log('events');
-    console.log(this.props.data.events);
-    console.log(this.props.data);
     var events = this.props.data.events;
-    if (events == undefined) events = [];
+    if (!events) events = [];
     var {results} = await indexEvents.getObjects(events.reverse());
     return this.setState({events: results, loader: false});
   }
@@ -78,7 +75,10 @@ class EventsView extends Component {
   async newEvent() {
     if (!this.props.userConnected)
       return this.props.navigate('SignIn', {pageFrom: 'Group'});
-    if (this.props.userID != this.props.data.info.organizer)
+    console.log('userIDDD');
+    console.log(this.props.userID);
+    console.log(this.props.data);
+    if (this.props.userID !== this.props.data.info.organizer)
       return this.props.navigate('Alert', {
         textButton: 'Got it!',
         close: true,
@@ -145,10 +145,10 @@ class EventsView extends Component {
               {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
             ]}
             imageNoEvent="group"
-            messageNoEvent={'No events has been created yet.'}
+            messageNoEvent={'No events have been created yet.'}
             content={() => this.listEvents(this.state.events)}
             // openEvent={(group) => this.openGroup(group)}
-            onRef={ref => (this.scrollViewRef1 = ref)}
+            onRef={(ref) => (this.scrollViewRef1 = ref)}
           />
         </View>
       </View>
@@ -159,12 +159,11 @@ class EventsView extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     allEvents: state.events.allEvents,
     userConnected: state.user.userConnected,
+    userID: state.user.userID,
   };
 };
 

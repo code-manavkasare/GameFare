@@ -20,7 +20,7 @@ import ButtonRound from '../../layout/buttons/ButtonRound';
 import Button from '../../layout/buttons/Button';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
-import ScrollView from '../../layout/scrollViews/ScrollView2';
+import ScrollView from '../../layout/scrollViews/ScrollView';
 import ExpandableCard from '../../layout/cards/ExpandableCard';
 import AllIcons from '../../layout/icons/AllIcons';
 import Communications from 'react-native-communications';
@@ -91,7 +91,7 @@ class Page0 extends Component {
           list={this.props.sports}
           valueSelected={this.props.step0.sport}
           image={true}
-          tickFilter={value => this.setSport(value)}
+          tickFilter={(value) => this.setSport(value)}
         />
       </View>
     );
@@ -104,7 +104,7 @@ class Page0 extends Component {
           list={sport.typeEvent}
           valueSelected={this.props.step0.league}
           image={true}
-          tickFilter={value => this.setLeague(value)}
+          tickFilter={(value) => this.setLeague(value)}
         />
       </View>
     );
@@ -115,12 +115,12 @@ class Page0 extends Component {
         <ExpandableCard
           list={
             sport.typeEvent.filter(
-              league => league.value == this.props.step0.league,
+              (league) => league.value == this.props.step0.league,
             )[0].rules
           }
           valueSelected={this.props.step0.rule}
           // image={true}
-          tickFilter={value => this.setRule(value)}
+          tickFilter={(value) => this.setRule(value)}
         />
       </View>
     );
@@ -169,7 +169,7 @@ class Page0 extends Component {
   buttonCoach(sport) {
     return (
       <View>
-        {this.switch('Player', 'Instructor', 'coach', val =>
+        {this.switch('Player', 'Instructor', 'coach', (val) =>
           this.setCoach(val),
         )}
 
@@ -240,12 +240,12 @@ class Page0 extends Component {
                   placeholder="Entry fee"
                   returnKeyType={'done'}
                   keyboardType={'phone-pad'}
-                  ref={input => {
+                  ref={(input) => {
                     this.entreeFeeInputRef = input;
                   }}
                   underlineColorAndroid="rgba(0,0,0,0)"
                   autoCorrect={true}
-                  onChangeText={text => {
+                  onChangeText={(text) => {
                     if (
                       text.length == 0 &&
                       this.props.step0.joiningFee.length != 0
@@ -339,7 +339,7 @@ class Page0 extends Component {
         translateXTo={width / 2 - 20}
         height={50}
         state={this.props.step0[state]}
-        setState={val => click(val)}
+        setState={(val) => click(val)}
       />
     );
   }
@@ -429,19 +429,19 @@ class Page0 extends Component {
     if (this.props.step0.sport == '' || this.props.step0.league == '')
       return null;
     var sport = this.props.sports.filter(
-      sport => sport.value == this.props.step0.sport,
+      (sport) => sport.value == this.props.step0.sport,
     )[0];
     console.log('le sport page 0');
     console.log(sport);
     console.log(this.props.step0);
     var league = Object.values(sport.typeEvent).filter(
-      item => item.value == this.props.step0.league,
+      (item) => item.value == this.props.step0.league,
     )[0];
     console.log('league');
     console.log(league);
     // return null
     var rule = Object.values(league.rules).filter(
-      rule => rule.value == this.props.step0.rule,
+      (rule) => rule.value == this.props.step0.rule,
     )[0];
     console.log('louloulouolou');
     console.log(league);
@@ -463,7 +463,7 @@ class Page0 extends Component {
         />
 
         <ScrollView
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.page0(sport, league, rule)}
           marginBottomScrollView={0}
@@ -501,7 +501,7 @@ class Page0 extends Component {
 
 const styles = StyleSheet.create({});
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     infoUser: state.user.infoUser.userInfo,

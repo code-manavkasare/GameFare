@@ -59,10 +59,10 @@ async function createEventObj(data, userID, infoUser, level, groups) {
       [userID]: user,
     };
   }
-  var allAttendees = Object.values(attendees).map(user => {
+  var allAttendees = Object.values(attendees).map((user) => {
     return user.userID;
   });
-  var allCoaches = Object.values(coaches).map(user => {
+  var allCoaches = Object.values(coaches).map((user) => {
     return user.userID;
   });
   return {
@@ -157,9 +157,8 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
   if (amountToPay != 0) {
     cardID = cardInfo.defaultCard.id;
   }
-  if (amountToPay != 0 && cardID == 'applePay') {
+  if (amountToPay !== 0 && cardID === 'applePay') {
     try {
-      this.setState({loader: false});
       const items = [
         {
           label: 'GameFare',
@@ -177,11 +176,11 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
           userID: userID,
           tokenStripeCus: cardInfo.tokenCusStripe,
           name: infoUser.firstname + ' ' + infoUser.lastname,
-          email: infoUser.email == undefined ? '' : infoUser.email,
+          email: !infoUser.email ? '' : infoUser.email,
           brand: cardInfo.defaultCard.brand,
         },
       });
-      if (promiseAxios.data.response == false) {
+      if (!promiseAxios.data.response) {
         stripe.cancelApplePayRequest();
       } else {
         cardID = promiseAxios.data.cardID;
@@ -189,25 +188,27 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
       }
     } catch (err) {
       stripe.cancelApplePayRequest();
-      return {response: false, message: 'cancel'};
+      console.log('eerrrrro');
+      console.log(err);
+      return {response: 'cancel', message: 'cancel'};
     }
   }
-  if (Number(data.price.joiningFee) != 0) {
+  if (Number(data.price.joiningFee) !== 0) {
     try {
       var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee';
       const promiseAxios = await axios.get(url, {
         params: {
           cardID: cardID,
           now: now,
-          userID: this.props.userID,
-          tokenCusStripe: this.props.tokenCusStripe,
-          currentUserWallet: Number(this.props.totalWallet),
+          userID: userID,
+          tokenCusStripe: cardInfo.tokenCusStripe,
+          currentUserWallet: Number(cardInfo.totalWallet),
           amount: data.price.joiningFee,
-          eventID: data.eventID,
+          eventID: data.objectID,
         },
       });
 
-      if (promiseAxios.data.response == false)
+      if (!promiseAxios.data.response)
         return {response: false, message: promiseAxios.data.message};
       return {response: true};
     } catch (err) {
@@ -215,21 +216,6 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
     }
   }
   return {response: true};
-}
-
-function statusNewUser(data, level, coach) {
-  if (coach) return 'pending';
-  if (!data.info.public) return 'confirmed';
-  if (data.info.levelFilter == undefined) return 'confirmed';
-  if (level == undefined) return 'pending';
-  if (level[data.info.sport] == undefined) return 'pending';
-  var levelOption = data.info.levelOption;
-  var levelFilter = data.info.levelFilter;
-  var userLevel = level[data.info.sport];
-  if (levelOption == 'equal' && userLevel == levelFilter) return 'confirmed';
-  else if (levelOption == 'min' && userLevel >= levelFilter) return 'confirmed';
-  else if (levelOption == 'max' && userLevel <= levelFilter) return 'confirmed';
-  return 'pending';
 }
 
 async function joinEvent(
@@ -249,7 +235,7 @@ async function joinEvent(
   var {response, message} = await checkUserAttendingEvent(userID, data);
   if (!response) return {response, message};
 
-  var now = new Date().toString();
+  var now = new Date();
   var {message, response} = await payEntryFee(
     now,
     data,
@@ -258,6 +244,10 @@ async function joinEvent(
     coach,
     infoUser,
   );
+  console.log('{message, response}');
+  console.log({message, response});
+
+  if (response === 'cancel') return {message, response};
 
   // if (!data.info.public && coach) {
   //   var newLevel = data.info.levelFilter

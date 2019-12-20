@@ -15,10 +15,13 @@ const options = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000};
 
 async function getPermission() {
   if (Platform.OS === 'ios') {
-    var permission = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
-    if (permission !== 'granted') {
-      permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-    }
+    var permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+    console.log('permission location');
+    console.log(permission);
+    // var permission = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
+    // if (permission !== 'granted') {
+    //   permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+    // }
   } else {
     var permission = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
   }

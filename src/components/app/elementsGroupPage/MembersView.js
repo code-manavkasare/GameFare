@@ -10,9 +10,11 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
+import {subscribeToTopics} from '../../functions/notifications';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
+import CardUser from '../elementsEventPage/CardUser';
 
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
@@ -32,78 +34,23 @@ class MembersView extends Component {
       loader: false,
     };
   }
-  componentDidMount() {
-    /// this.load()
-  }
-  pictureUser(user) {
-    return (
-      <View style={styleApp.roundView2}>
-        {!user.info.picture ? (
-          <Text style={[styleApp.text, {fontSize: 12}]}>
-            {user.info.firstname[0] + user.info.lastname[0]}
-          </Text>
-        ) : (
-          <AsyncImage
-            style={{height: '100%', width: '100%'}}
-            mainImage={user.info.picture}
-            imgInitial={user.info.picture}
-          />
-        )}
-      </View>
-    );
-  }
+  componentDidMount() {}
   rowUser(user, i, data) {
     return (
-      <View key={i} style={{paddingTop: 10, paddingBottom: 10}}>
-        <Row>
-          <Col size={15} style={styleApp.center2}>
-            {this.pictureUser(user)}
-          </Col>
-          <Col size={75} style={styleApp.center2}>
-            <Text style={styleApp.text}>
-              {user.info.firstname} {user.info.lastname}
-            </Text>
-          </Col>
-          <Col
-            size={10}
-            style={styleApp.center3}
-            activeOpacity={0.7}
-            onPress={() =>
-              !this.props.userID == data.info.organizer
-                ? null
-                : NavigationService.navigate('AlertCall', {
-                    textButton: 'Close',
-                    title: user.info.firstname + ' ' + user.info.lastname,
-                    subtitle:
-                      user.info.countryCode + ' ' + user.info.phoneNumber,
-                    close: true,
-                    icon: (
-                      <AllIcons
-                        name="envelope"
-                        type="font"
-                        color={colors.green}
-                        size={17}
-                      />
-                    ),
-                  })
-            }>
-            {this.props.userID == data.info.organizer ? (
-              <AllIcons
-                name="envelope"
-                type="font"
-                color={colors.green}
-                size={17}
-              />
-            ) : null}
-          </Col>
-        </Row>
-      </View>
+      <CardUser
+        user={user}
+        infoUser={this.props.infoUser}
+        userConnected={this.props.userConnected}
+        key={i}
+        userID={this.props.userID}
+      />
     );
   }
   async joinGroup() {
     console.log('join');
     var user = {
       userID: this.props.userID,
+      id: this.props.userID,
       status: 'confirmed',
       info: this.props.infoUser,
     };
@@ -112,8 +59,10 @@ class MembersView extends Component {
       .ref('groups/' + this.props.objectID + '/members/' + this.props.userID)
       .update(user);
 
+    await subscribeToTopics([this.props.userID, 'all', this.props.objectID]);
+
     var members = this.props.data.members;
-    if (members === undefined) members = {};
+    if (!members) members = {};
     await this.props.groupsAction('editGroup', {
       objectID: this.props.data.objectID,
       info: this.props.data.info,
@@ -126,24 +75,13 @@ class MembersView extends Component {
     return NavigationService.navigate('Group');
   }
   join(data) {
-    console.log('data join');
-    console.log(data);
     if (!this.props.userConnected)
       return NavigationService.navigate('SignIn', {pageFrom: 'Group'});
-
-    if (data.organizer.userID === this.props.userID) {
-      return NavigationService.navigate('Alert', {
-        textButton: 'Got it!',
-        close: true,
-        title: 'You are the admin of this group.',
-        subtitle: 'You cannot join it.',
-      });
-    }
     if (!data.members) return this.openJoinAlert(data);
 
     if (
       Object.values(data.members).filter(
-        user => user.userID == this.props.userID,
+        (user) => user.userID === this.props.userID,
       ).length != 0
     ) {
       return NavigationService.navigate('Alert', {
@@ -166,7 +104,7 @@ class MembersView extends Component {
     if (!data.members) return false;
     if (
       Object.values(data.members).filter(
-        user => user.userID === this.props.userID,
+        (user) => user.userID === this.props.userID,
       ).length === 0
     )
       return false;
@@ -181,7 +119,7 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.userID ===
+              {data.organizer.id ===
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 <Row>
                   <Col size={50} style={styleApp.center}>
@@ -224,26 +162,26 @@ class MembersView extends Component {
               )}
             </Col>
           </Row>
-
           <View style={[styleApp.divider2, {marginBottom: 10}]} />
-          {this.state.loader ? (
-            <FadeInView duration={300} style={{paddingTop: 10}}>
-              <PlaceHolder />
-              <PlaceHolder />
-              <PlaceHolder />
-            </FadeInView>
-          ) : this.props.data.members == undefined ? (
-            <Text style={[styleApp.smallText, {marginTop: 10}]}>
-              No one has joined the group yet.
-            </Text>
-          ) : (
-            <FadeInView duration={300} style={{marginTop: 5}}>
-              {Object.values(this.props.data.members).map((user, i) =>
-                this.rowUser(user, i, data),
-              )}
-            </FadeInView>
-          )}
         </View>
+
+        {this.state.loader ? (
+          <FadeInView duration={300} style={{paddingTop: 10}}>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </FadeInView>
+        ) : this.props.data.members == undefined ? (
+          <Text style={[styleApp.smallText, {marginTop: 10, marginLeft: 20}]}>
+            No one has joined the group yet.
+          </Text>
+        ) : (
+          <FadeInView duration={300} style={{marginTop: 5}}>
+            {Object.values(this.props.data.members).map((user, i) =>
+              this.rowUser(user, i, data),
+            )}
+          </FadeInView>
+        )}
       </View>
     );
   }
@@ -252,7 +190,7 @@ class MembersView extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,

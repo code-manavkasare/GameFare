@@ -92,9 +92,9 @@ class ProfilePage extends Component {
                 <Col size={10} style={styleApp.center2}>
                   <AllIcons
                     type="font"
-                    size={15}
+                    size={17}
                     name={icon == 'logout' ? 'bicycle' : icon}
-                    color={icon == 'logout' ? colors.green : colors.greyDark}
+                    color={icon == 'logout' ? colors.green : colors.title}
                   />
                 </Col>
               ) : null}
@@ -112,7 +112,12 @@ class ProfilePage extends Component {
                 </Text>
               </Col>
               <Col size={10} style={styleApp.center3}>
-                {/* <AllIcons type='font' size={13} name={'arrow-right'} color={icon == 'logout'?colors.green:colors.title} />  */}
+                <AllIcons
+                  type="mat"
+                  size={20}
+                  name={'keyboard-arrow-right'}
+                  color={icon == 'logout' ? colors.green : colors.grey}
+                />
               </Col>
             </Row>
           );
@@ -215,13 +220,11 @@ class ProfilePage extends Component {
               })}
               {/* {this.button('shopping-bag','My wallet','Wallet',{pageFrom:'Profile'})} */}
             </View>
-          ) : (
-            <Text style={[styleApp.title, {marginBottom: 0}]}>My profile</Text>
-          )}
+          ) : null}
         </View>
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
-          <Text style={styleApp.smallText}>Assistance</Text>
+          <Text style={styleApp.text}>Assistance</Text>
 
           <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]} />
           {this.button('envelope', 'Email', 'Alert', {}, 'email')}
@@ -230,7 +233,7 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            <Text style={styleApp.smallText}>Social media</Text>
+            <Text style={styleApp.text}>Social media</Text>
 
             <View style={[styleApp.divider2, {marginBottom: 0}]} />
             {this.button(
@@ -246,7 +249,7 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            <Text style={styleApp.smallText}>Legal</Text>
+            <Text style={styleApp.text}>Legal</Text>
 
             <View style={[styleApp.divider2, {marginBottom: 0}]} />
             {this.button(
@@ -375,7 +378,7 @@ class ProfilePage extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    height: 50,
+    height: 55,
     marginLeft: -20,
     width: width,
     paddingLeft: 20,
