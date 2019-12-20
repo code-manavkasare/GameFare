@@ -158,19 +158,18 @@ class LocationSelector extends Component {
             currentHistoricSearchLocation,
           );
         }
-
-        this.props.navigation.getParam('setUserLocation', false)
-          ? await this.props.historicSearchAction('setLocationSearch', {
-              address: address.description,
-              lat: locationObj.geometry.location.lat,
-              lng: locationObj.geometry.location.lng,
-            })
-          : await this.props.navigation.state.params.onGoBack({
-              address: address.description,
-              lat: locationObj.geometry.location.lat,
-              lng: locationObj.geometry.location.lng,
-            });
-
+        if (!this.props.navigation.getParam('setUserLocation')) {
+          return this.props.navigation.state.params.onGoBack({
+            address: address.description,
+            lat: locationObj.geometry.location.lat,
+            lng: locationObj.geometry.location.lng,
+          });
+        }
+        await this.props.historicSearchAction('setLocationSearch', {
+          address: address.description,
+          lat: locationObj.geometry.location.lat,
+          lng: locationObj.geometry.location.lng,
+        });
         return this.props.navigation.goBack();
       }
     } catch (err) {
@@ -193,7 +192,11 @@ class LocationSelector extends Component {
       });
     }
     console.log('set lovation back');
-    return this.props.navigation.state.params.onGoBack(CurrentLocation);
+
+    if (!this.props.navigation.getParam('setUserLocation')) {
+      return this.props.navigation.state.params.onGoBack(CurrentLocation);
+    }
+    await this.props.historicSearchAction('setLocationSearch', CurrentLocation);
     return this.props.navigation.goBack();
   }
   buttonSearchAddress() {
@@ -229,12 +232,12 @@ class LocationSelector extends Component {
               icon={'angle-down'}
               style={styleApp.input}
               autoFocus={true}
-              ref={input => {
+              ref={(input) => {
                 this.textSearchInput = input;
               }}
               underlineColorAndroid="rgba(0,0,0,0)"
               returnKeyType={'done'}
-              onChangeText={text => this.changeLocation(text)}
+              onChangeText={(text) => this.changeLocation(text)}
               value={this.state.textInput}
             />
           </Col>
@@ -383,7 +386,7 @@ class LocationSelector extends Component {
 
         <ScrollView
           style={{marginTop: sizes.heightHeaderHome}}
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.locationFields.bind(this)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
@@ -443,7 +446,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     historicSearchLocation: state.historicSearch.historicSearchLocation,
   };

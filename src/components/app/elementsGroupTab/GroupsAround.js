@@ -153,9 +153,9 @@ class ListEvents extends React.Component {
               ]}
               imageNoEvent="location"
               messageNoEvent={
-                "We haven't find any " +
+                'There are no new ' +
                 this.props.sportSelected +
-                ' group in this area.'
+                ' groups in this area.'
               }
               content={() => this.listGroups(this.state.groups)}
               // openEvent={(group) => this.openGroup(group)}

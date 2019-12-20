@@ -107,7 +107,7 @@ class InitialPage extends Component {
             // StatusBar.setBarStyle('dark-content',true)
             this.props.navigation.navigate('LocationOnBoard', {
               pageFrom: 'LocationSelect',
-              onGoBack: location => this.setLocation(location),
+              onGoBack: (location) => this.setLocation(location),
             });
           }}
           color={'white'}
@@ -235,7 +235,7 @@ class InitialPage extends Component {
           clickButton1={() => this.props.navigation.goBack()}
         />
         <ScrollView
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.location.bind(this)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 

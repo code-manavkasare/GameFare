@@ -17,6 +17,7 @@ import {groupsAction} from '../../actions/groupsActions';
 const {height, width} = Dimensions.get('screen');
 import colors from '../style/colors';
 import styleApp from '../style/style';
+import CardUser from './elementsEventPage/CardUser';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
 import AsyncImage from '../layout/image/AsyncImage';
@@ -42,13 +43,10 @@ class GroupPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    if (
-      !this.props.allGroups[this.props.navigation.getParam('objectID')]
-    ) {
+    if (!this.props.allGroups[this.props.navigation.getParam('objectID')]) {
       await this.setState({loader: true});
       this.loadGroup(this.props.navigation.getParam('objectID'));
     }
-     
   }
   async loadGroup(objectID) {
     indexGroups.clearCache();
@@ -70,7 +68,7 @@ class GroupPage extends React.Component {
             : null
         }>
         <Row>
-          <Col size={15} style={styleApp.center}>
+          <Col size={15} style={styleApp.center2}>
             {image != undefined ? (
               image
             ) : (
@@ -96,7 +94,7 @@ class GroupPage extends React.Component {
 
             <View style={[styleApp.divider2, {marginBottom: 25}]} />
             <Row>
-              <Col size={15} style={styleApp.center}>
+              <Col size={15} style={styleApp.center2}>
                 <AsyncImage
                   style={{width: 35, height: 35, borderRadius: 17.5}}
                   mainImage={sport.card.img.imgM}
@@ -126,6 +124,8 @@ class GroupPage extends React.Component {
                 />
               </View>,
             )}
+
+            {/* 
             {this.rowIcon(
               this.title(data.organizer.name),
               'user-alt',
@@ -146,16 +146,23 @@ class GroupPage extends React.Component {
                     data.organizer.name.split(' ')[1][0]}
                 </Text>
               </View>,
-            )}
+            )} */}
           </View>
         </View>
+
+        <CardUser
+          user={data.organizer}
+          infoUser={this.props.infoUser}
+          userConnected={this.props.userConnected}
+          userID={this.props.userID}
+        />
       </View>
     );
   }
   group(data) {
     if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
-      sport => sport.value === data.info.sport,
+      (sport) => sport.value === data.info.sport,
     )[0];
     console.log('group page');
     console.log(sport);
@@ -231,18 +238,16 @@ class GroupPage extends React.Component {
   render() {
     const {goBack, dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
-    if (data != undefined) {
-      var dots =
-        data.info.name.slice(0, 20).length < data.info.name.length ? '...' : '';
-    }
+    // if (data != undefined) {
+    //   var dots =
+    //     data.info.name.slice(0, 20).length < data.info.name.length ? '...' : '';
+    // }
 
     return (
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={
-            data != undefined ? data.info.name.slice(0, 20) + dots : ''
-          }
+          textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
           inputRange={[20, 50]}
           initialTitleOpacity={0}
           initialBackgroundColor={'transparent'}
@@ -265,7 +270,7 @@ class GroupPage extends React.Component {
         />
 
         <ParalaxScrollView
-          setState={val => this.setState(val)}
+          setState={(val) => this.setState(val)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           image={
             data != undefined ? (
@@ -297,12 +302,13 @@ class GroupPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     allGroups: state.groups.allGroups,
+    userConnected: state.user.userConnected,
   };
 };
 

@@ -43,8 +43,8 @@ async function createGroup(data, userID, infoUser) {
     },
     pictures: [pictureUri],
     organizer: {
-      userID: userID,
-      name: infoUser.firstname + ' ' + infoUser.lastname,
+      id: userID,
+      info: infoUser,
     },
   };
   delete group['img'];

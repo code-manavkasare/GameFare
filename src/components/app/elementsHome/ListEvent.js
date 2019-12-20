@@ -79,6 +79,7 @@ class ListEvents extends React.Component {
       league,
       {},
       this.props.userID,
+      this.props.radiusSearch,
     );
     console.log('NewEventsList');
     console.log(allEventsPublic);

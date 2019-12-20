@@ -14,6 +14,8 @@ import styleApp from '../../style/style';
 import AllIcons from '../../layout/icons/AllIcons';
 import CardEvent from './CardEventSM';
 import ButtonColor from '../../layout/Views/Button';
+import styles from '../../style/style';
+import AllIcon from '../../layout/icons/AllIcons';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -95,6 +97,7 @@ class MapPage extends Component {
       leagueSelected,
       this.state.filters,
       this.props.userID,
+      this.props.radiusSearch,
     );
     this.setState({eventsArray: Object.values(NewEventsList), loader: false});
   };
@@ -263,11 +266,36 @@ class MapPage extends Component {
             view={() => {
               return (
                 <Row>
-                  <Col size={120} style={styleApp.center}>
-                    <Text style={styleApp.text}>
-                      Filters {''}
-                      <Text>({this.state.filtersNumber})</Text>
-                    </Text>
+                  <Col size={70} style={styleApp.center}>
+                    <Text style={styleApp.text}>Filters</Text>
+                  </Col>
+                  <Col size={30} style={styleApp.center2}>
+                    {this.state.filtersNumber !== 0 ? (
+                      <View
+                        style={[
+                          styleApp.viewNumber,
+                          {
+                            backgroundColor: colors.green,
+                            height: 20,
+                            width: 20,
+                          },
+                        ]}>
+                        <Text
+                          style={[
+                            styleApp.text,
+                            {color: colors.white, fontSize: 11},
+                          ]}>
+                          {this.state.filtersNumber}
+                        </Text>
+                      </View>
+                    ) : (
+                      <AllIcon
+                        name="sliders-h"
+                        type="font"
+                        color={colors.title}
+                        size={16}
+                      />
+                    )}
                   </Col>
                 </Row>
               );
@@ -315,6 +343,7 @@ const mapStateToProps = (state) => {
     leagueSelected: state.historicSearch.league,
     sportSelected: state.historicSearch.sport,
     userID: state.user.userID,
+    radiusSearch: state.globaleVariables.radiusSearch,
   };
 };
 
@@ -325,10 +354,10 @@ export default connect(mapStateToProps, {historicSearchAction, eventsAction})(
 export const stylesMapPage = StyleSheet.create({
   filterButton: {
     borderColor: colors.off,
-    height: 40,
-    width: 105,
+    height: 45,
+    width: 130,
     paddingHorizontal: 10,
-    borderRadius: 20,
+    borderRadius: 22.5,
     borderWidth: 1,
     zIndex: 40,
   },

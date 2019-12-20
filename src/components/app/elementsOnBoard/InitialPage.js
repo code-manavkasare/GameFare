@@ -30,7 +30,7 @@ class InitialPage extends Component {
       .once('value');
     variables = variables.val();
     await this.props.globaleVariablesAction(variables);
-
+    // return this.props.navigation.navigate('SportSelect');
     console.log('sdfdfkjhgdfjkhgfdg');
     console.log(this.props.sportSelected);
     // return this.props.navigation.navigate('SportSelect');
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     variables: state.globaleVariables,
     sportSelected: state.historicSearch.sport,

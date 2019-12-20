@@ -257,8 +257,8 @@ class EventPage extends React.Component {
             onPress={() =>
               this.openAlert(
                 this.openCondition(data)
-                  ? 'The subscribtions for ' + data.info.name + ' are open.'
-                  : 'The subscribtions for ' + data.info.name + ' are closed.',
+                  ? 'Registrations for ' + data.info.name + ' are open.'
+                  : 'No open slots are left in this event.',
                 this.openView(data),
               )
             }>

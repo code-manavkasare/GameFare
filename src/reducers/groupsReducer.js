@@ -17,7 +17,7 @@ function getInfoGroup(state, action) {
   if (state.allGroups[action.data.objectID]) {
     return {
       ...action.data.info,
-      ...state.allGroups[action.data.objectID],
+      ...state.allGroups[action.data.objectID].info,
     };
   }
   return action.data.info;

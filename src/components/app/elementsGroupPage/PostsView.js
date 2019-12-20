@@ -38,7 +38,10 @@ export default class Posts extends Component {
   async componentWillReceiveProps(nextProps) {
     if (nextProps.loader) {
       await this.setState({loader: true});
-      this.load();
+      var that = this;
+      setTimeout(function() {
+        that.load();
+      }, 2000);
     }
   }
   async load() {
@@ -62,7 +65,7 @@ export default class Posts extends Component {
         <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
-              <Text style={styleApp.text}>Discussions</Text>
+              <Text style={styleApp.text}>Group chat</Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
               {/* <ButtonColor

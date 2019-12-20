@@ -87,13 +87,13 @@
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need to access your location to display the right address in your booking. Alternatively you can type in the address you’d like to book in.</string>
+	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need to access your location to display the right address in your booking. Alternatively you can type in the address you’d like to book in.</string>
+	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>We need to access your location to display the right address in your booking. Alternatively you can type in the address you’d like to book in.</string>
+	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need to access your location to display the right address in your booking. Alternatively you can type in the address you’d like to book in.</string>
+	<string>We need to access your location to show events in your area.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>test</string>
 	<key>NSPhotoLibraryUsageDescription</key>

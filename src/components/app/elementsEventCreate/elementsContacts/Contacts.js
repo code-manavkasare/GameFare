@@ -80,46 +80,6 @@ export default class ContactsComponent extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {}
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: 'Invite your friends',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      gesturesEnabled:
-        navigation.getParam('pageFrom') == 'CreateEvent3' ? false : true,
-      headerLeft: () =>
-        navigation.getParam('pageFrom') == 'CreateEvent3' ||
-        navigation.getParam('pageFrom') == 'CreateGroup1' ? null : (
-          <BackButton
-            color={colors.title}
-            name="close"
-            type="mat"
-            size={19}
-            click={() => navigation.navigate(navigation.getParam('pageFrom'))}
-          />
-        ),
-      headerRight: () =>
-        navigation.getParam('pageFrom') == 'CreateEvent3' ||
-        navigation.getParam('pageFrom') == 'CreateGroup1' ? (
-          <TouchableOpacity
-            color={colors.title}
-            style={[styleApp.center, {paddingRight: 15, height: 50, width: 50}]}
-            onPress={() => navigation.navigate('Home')}>
-            <Text
-              style={[
-                styleApp.text,
-                {
-                  fontFamily: 'OpenSans-SemiBold',
-                  color: colors.title,
-                  fontSize: 13,
-                },
-              ]}>
-              Skip
-            </Text>
-          </TouchableOpacity>
-        ) : null,
-    };
-  };
   getContactSelected() {
     return this.state.contactsSelected;
   }
@@ -212,7 +172,7 @@ export default class ContactsComponent extends Component {
     return (
       <ListContacts
         openShareEvent={this.openShareEvent.bind(this)}
-        onRef={ref => (this.listContactRef = ref)}
+        onRef={(ref) => (this.listContactRef = ref)}
         translateYShare={this.translateYShare}
         contactsSelected={this.state.contactsSelected}
         selectContact={this.selectContact.bind(this)}
@@ -243,7 +203,7 @@ export default class ContactsComponent extends Component {
       contacts: this.listContactRef
         .getContacts()
         .filter(
-          contact =>
+          (contact) =>
             contact.givenName.toLowerCase().search(search.toLowerCase()) !=
               -1 ||
             contact.familyName.toLowerCase().search(search.toLowerCase()) != -1,
@@ -274,12 +234,12 @@ export default class ContactsComponent extends Component {
                   placeholder={'Search for contact...'}
                   returnKeyType={'search'}
                   blurOnSubmit={true}
-                  ref={input => {
+                  ref={(input) => {
                     this.searchRef = input;
                   }}
                   underlineColorAndroid="rgba(0,0,0,0)"
                   autoCorrect={true}
-                  onChangeText={text => this.changeSearch(text)}
+                  onChangeText={(text) => this.changeSearch(text)}
                   value={this.state.search}
                 />
               </Col>
@@ -300,7 +260,7 @@ export default class ContactsComponent extends Component {
                 style={styles.center}
                 onPress={() =>
                   this.props.navigation.navigate('NewContact', {
-                    onGoBack: data => this.addNewContact(data),
+                    onGoBack: (data) => this.addNewContact(data),
                   })
                 }>
                 <FontIcon name={'user-plus'} color={colors.green} size={14} />
@@ -368,7 +328,9 @@ export default class ContactsComponent extends Component {
                     blurOnSubmit={true}
                     underlineColorAndroid="rgba(0,0,0,0)"
                     autoCorrect={true}
-                    onChangeText={text => this.setState({nameNewContact: text})}
+                    onChangeText={(text) =>
+                      this.setState({nameNewContact: text})
+                    }
                     value={this.state.nameNewContact}
                   />
                 </Col>
@@ -383,7 +345,7 @@ export default class ContactsComponent extends Component {
                     blurOnSubmit={true}
                     underlineColorAndroid="rgba(0,0,0,0)"
                     autoCorrect={true}
-                    onChangeText={text =>
+                    onChangeText={(text) =>
                       this.setState({phoneNewContact: text})
                     }
                     value={this.state.phoneNewContact}
@@ -451,7 +413,7 @@ export default class ContactsComponent extends Component {
           },
         },
       })
-      .then(branchUniversalObject => {
+      .then((branchUniversalObject) => {
         let shareOptions = {
           messageHeader: description,
           messageBody: description,
@@ -565,7 +527,7 @@ export default class ContactsComponent extends Component {
     );
 
     var phoneNumbers = Object.values(contacts).map(
-      contact => contact.phoneNumbers[0].number,
+      (contact) => contact.phoneNumbers[0].number,
     );
     console.log(url);
     console.log(phoneNumbers);

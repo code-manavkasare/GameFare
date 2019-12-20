@@ -111,7 +111,7 @@ const ContactNavigator = createStackNavigator(
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
-    cardShadowEnabled: false,
+    cardShadowEnabled: true,
   },
 );
 
@@ -200,7 +200,7 @@ const PaymentsNavigator = createStackNavigator(
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
-    cardShadowEnabled: false,
+    cardShadowEnabled: true,
   },
 );
 
@@ -441,7 +441,13 @@ const RootStack = createStackNavigator(
         cardShadowEnabled: false,
       },
     },
-    Payments: PaymentsNavigator,
+    Payments: {
+      screen: PaymentsNavigator,
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: true,
+      },
+    },
     Date: DateSelector,
     Location: LocationSelector,
     ContactNavigator: {
