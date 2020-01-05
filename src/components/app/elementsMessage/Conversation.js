@@ -8,6 +8,8 @@ import {
   Image,
   TextInput,
   ScrollView,
+  InputAccessoryView,
+  KeyboardAvoidingView,
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -18,7 +20,14 @@ import Loader from '../../layout/loaders/Loader';
 import AsyncImage from '../../layout/image/AsyncImage';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {GiftedChat, Bubble, Send, Actions} from 'react-native-gifted-chat';
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import {
+  KeyboardAccessoryView,
+  KeyboardUtils,
+} from 'react-native-keyboard-input';
+
 import emojiUtils from 'emoji-utils';
+import Conversation2 from './Conversation2';
 
 import {pickLibrary, takePicture} from '../../functions/pictures';
 
@@ -44,7 +53,9 @@ class MessageTab extends React.Component {
       messages: [],
       input: '',
       offSet: 0,
+      inputValue: '',
     };
+    this.inputValue = '';
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
@@ -59,6 +70,7 @@ class MessageTab extends React.Component {
       .on('value', function(snap) {
         var discussion = snap.val();
         var messages = discussion.messages;
+        console.log('messages', messages);
         if (!messages)
           messages = {
             0: {
@@ -127,14 +139,7 @@ class MessageTab extends React.Component {
     // console.log(props);
 
     return (
-      <View
-        style={{
-          flex: 1,
-          width: '100%',
-          marginBottom: 5,
-          paddingLeft: 20,
-          paddingRight: 20,
-        }}>
+      <View style={styleApp.cardMessage}>
         {this.rowDay(props)}
         <Row>
           <Col size={15}>
@@ -158,21 +163,6 @@ class MessageTab extends React.Component {
         </Row>
       </View>
     );
-    // return (
-    //   <Bubble
-    //     {...props}
-    //     messageTextProps={{
-    //       linkStyle: {
-    //         right: {color: 'red'},
-    //         left: {color: 'red'},
-    //       },
-    //     }}
-    //     textStyle={{
-    //       right: [styleApp.smallText, {color: colors.blue}],
-    //       left: [styleApp.smallText],
-    //     }}
-    //   />
-    // );
   }
   async sendPicture(val, discussion, user) {
     if (val == 'pick') {
@@ -213,61 +203,71 @@ class MessageTab extends React.Component {
         createdAt: new Date(),
         timeStamp: moment().valueOf(),
       });
-    await this.setState({input: ''});
+    this.inputValue.setValue('');
     return true;
   }
-  renderChatFooter(user, props) {
+  renderChatFooter(user) {
     console.log('renderChatFooter');
-    console.log(props);
     return (
-      <Row
+      <View
         style={{
-          height: 45,
-          // paddingBottom: 10,
+          //backgroundColor: 'red',
+          height: 55,
           paddingLeft: 20,
-          // marginTop: -this.state.offSet,
-          backgroundColor: 'white',
-          paddingRight: 10,
+          paddingRight: 20,
         }}>
-        <Col size={10} style={styleApp.center2}>
-          {/* <AllIcon name="camera" color={colors.title} type="font" size={20} /> */}
-        </Col>
-        <Col size={10} style={styleApp.center2}>
-          {/* <AllIcon name="image" color={colors.title} type="font" size={20} /> */}
-        </Col>
-        <Col size={60} style={styleApp.center2}></Col>
+        <Row>
+          <Col size={10} style={styleApp.center2}>
+            <AllIcon name="camera" color={colors.title} type="font" size={20} />
+          </Col>
+          <Col size={10} style={styleApp.center2}>
+            <AllIcon name="image" color={colors.title} type="font" size={20} />
+          </Col>
+          <Col size={60} style={styleApp.center2}></Col>
 
-        <Col size={20} style={styleApp.center3}>
-          <ButtonColor
-            view={() => {
-              return (
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    {
-                      color: props.text === '' ? colors.greyDark : colors.white,
-                    },
-                  ]}>
-                  Send
-                </Text>
-              );
-            }}
-            click={() =>
-              props.text === '' ? null : this.sendNewMessage(user, props.text)
-            }
-            color={props.text === '' ? colors.white : colors.primary}
-            style={[
-              styleApp.center,
-              styles.buttonSend,
-              {
-                borderColor:
-                  props.text === '' ? colors.greyDark : colors.primary,
-              },
-            ]}
-            onPressColor={props.text === '' ? colors.white : colors.primary2}
-          />
-        </Col>
-      </Row>
+          <Col size={20} style={styleApp.center3}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <Text
+                    style={[
+                      styleApp.textBold,
+                      {
+                        color:
+                          this.state.inputValue === ''
+                            ? colors.greyDark
+                            : colors.white,
+                      },
+                    ]}>
+                    Send
+                  </Text>
+                );
+              }}
+              click={() =>
+                this.state.inputValue === ''
+                  ? null
+                  : this.sendNewMessage(user, this.state.inputValue)
+              }
+              color={
+                this.state.inputValue === '' ? colors.white : colors.primary
+              }
+              style={[
+                styleApp.center,
+                styles.buttonSend,
+                {
+                  borderColor:
+                    this.state.inputValue === ''
+                      ? colors.greyDark
+                      : colors.primary,
+                },
+              ]}
+              onPressColor={
+                this.state.inputValue === '' ? colors.white : colors.primary2
+              }
+            />
+          </Col>
+        </Row>
+      </View>
     );
   }
   renderComposer(user) {
@@ -276,9 +276,9 @@ class MessageTab extends React.Component {
         activeOpacity={1}
         onPress={() => this.inputRef.focus()}
         style={{
-          backgroundColor: 'red',
+          //  backgroundColor: 'green',
           // height: 45,
-          flex: 1,
+          // flex: 1,
           minHeight: 50,
           paddingTop: 10,
           paddingBottom: 10,
@@ -297,6 +297,7 @@ class MessageTab extends React.Component {
           ref={(input) => {
             this.inputRef = input;
           }}
+          inputAccessoryViewID={'chatInput'}
           onContentSizeChange={(event) => {
             console.log(event.nativeEvent.contentSize.height);
             this.setState({
@@ -304,8 +305,8 @@ class MessageTab extends React.Component {
             });
           }}
           numberOfLines={2}
-          onChangeText={(text) => this.setState({input: text})}
-          value={this.state.input}
+          onChangeText={(text) => this.setState({inputValue: text})}
+          // value={this.}
           style={styleApp.input}
         />
         {/* {this.renderChatFooter(user)} */}
@@ -329,45 +330,56 @@ class MessageTab extends React.Component {
     // return null;
     console.log(this.state.messages);
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        messageTextStyle={styleApp.input}
-        // containerStyle={{borderTopWidth: 0.5}}
-        placeholder={'Write your message'}
-        renderMessage={(props) => this.renderMessage(props)}
-        user={user}
-        inverted={true}
-        multiline={true}
-        //inverted={true}
-        //bottomOffset={0}
-        minInputToolbarHeight={50}
-        //scrollToBottomOffset={0}
-        textInputProps={{
-          returnKeyType: 'done',
-          blurOnSubmit: true,
-        }}
-        textInputStyle={[
-          styleApp.text,
-          {
-            paddingTop: -15,
-            paddingBottom: 5,
-            flex: 1,
-            paddingLeft: 0,
-            paddingRight: 10,
-            lineHeight: 21,
-          },
-        ]}
-        text={this.state.input}
-        onInputTextChanged={(text) => this.setState({input: text})}
-        // renderMessage={this.renderMessage}
-        renderChatEmpty={() => this.renderChatEmpty()}
-        renderSend={() => null}
-        // renderComposer={() => this.renderComposer(user)}
-        renderAccessory={(props) => this.renderChatFooter(user, props)}
-      />
+      <KeyboardAvoidingView style={{flex: 1}} behavior="padding" enabled>
+        <GiftedChat
+          messages={this.state.messages}
+          // messageTextStyle={styleApp.input}
+          // containerStyle={{borderTopWidth: 0.5}}
+          text={this.state.inputValue}
+          placeholder={'Write your message'}
+          renderMessage={(props) => this.renderMessage(props)}
+          user={user}
+          inverted={true}
+          multiline={true}
+          //inverted={true}
+          bottomOffset={60}
+          minInputToolbarHeight={50}
+          isKeyboardInternallyHandled={false}
+          //scrollToBottomOffset={0}
+          listViewProps={{keyboardDismissMode: 'interactive'}}
+          textInputProps={{
+            returnKeyType: 'done',
+            blurOnSubmit: true,
+          }}
+          // minComposerHeight={40}
+          // maxComposerHeight={350}
+          textInputStyle={[
+            styleApp.text,
+            styleApp.inputMessage,
+            // {backgroundColor: 'blue', height: 55},
+          ]}
+          //renderComposer={(props) => this.renderComposer(props)}
+          renderComposer={() => null}
+          scrollToBottomStyle={() => (
+            <View style={{height: 55, backgroundColor: 'red', width: width}}>
+              <Text>You are up to date</Text>
+            </View>
+          )}
+          isTyping={true}
+          onInputTextChanged={(text) => (this.inputValue = text)}
+          // renderMessage={this.renderMessage}
+          renderChatEmpty={() => this.renderChatEmpty()}
+          renderSend={() => null}
+          // renderAccessory={(props) => this.renderChatFooter(user, props)}
+          renderActions={() => null}
+          renderInputToolbar={() => null}
+          renderComposer={() => null}
+        />
+      </KeyboardAvoidingView>
     );
   }
   infoOtherMember(conversation) {
+    if (!conversation.members) return null;
     if (
       Object.values(conversation.members).filter(
         (user) => user.id !== this.props.userID,
@@ -389,6 +401,10 @@ class MessageTab extends React.Component {
     return data.title;
   }
   imgHeader(data) {
+    console.log('6MiP4pldY8TYLYYh1Zen2ZlIBjG2');
+    console.log(data);
+    console.log(this.infoOtherMember(data));
+    // return null;
     if (data.type === 'group')
       return (
         <AsyncImage
@@ -411,6 +427,14 @@ class MessageTab extends React.Component {
           {this.infoOtherMember(data).firstname[0] +
             this.infoOtherMember(data).lastname[0]}
         </Text>
+      </View>
+    );
+  }
+  footer(user) {
+    return (
+      <View>
+        {this.renderComposer()}
+        {this.renderChatFooter(user)}
       </View>
     );
   }
@@ -444,7 +468,14 @@ class MessageTab extends React.Component {
           clickButton2={() => console.log('')}
         />
         <View style={{height: sizes.heightHeaderHome}} />
-        {this.messagePageView(this.props.navigation.getParam('data'), user)}
+        {/* {this.messagePageView(this.props.navigation.getParam('data'), user)}
+
+        <View style={styleApp.footerBooking}>{this.footer(user)}</View>
+
+        <InputAccessoryView nativeID={'chatInput'}>
+          {this.footer(user)}
+        </InputAccessoryView> */}
+        <Conversation2 />
       </View>
     );
   }

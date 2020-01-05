@@ -26,7 +26,7 @@ import {
   getMyGroups,
 } from '../../database/algolia';
 
-import ScrollView2 from '../../layout/scrollViews/ScrollView2';
+import ScrollView2 from '../../layout/scrollViews/ScrollView';
 const {height, width} = Dimensions.get('screen');
 
 import sizes from '../../style/sizes';
@@ -65,14 +65,17 @@ class MessageTab extends React.Component {
     console.log(hits);
 
     this.setState({loader: false, discussions: union(results, hits)});
-
   }
   async componentWillReceiveProps(nextProps) {
     if (
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
-    )
-      this.loadDiscussions(nextProps.userID);
+    ) {
+      var that = this;
+      setTimeout(function() {
+        that.loadDiscussions(nextProps.userID);
+      }, 2000);
+    }
   }
   messagePageView() {
     if (!this.props.userConnected)
@@ -155,6 +158,7 @@ class MessageTab extends React.Component {
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
+          keyboardAvoidDisable={true}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}

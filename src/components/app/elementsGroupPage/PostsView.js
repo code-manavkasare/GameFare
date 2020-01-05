@@ -65,7 +65,9 @@ export default class Posts extends Component {
         <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
-              <Text style={styleApp.text}>Group chat</Text>
+              <Text style={styleApp.text}>
+                {this.props.type === 'event' ? 'Event' : 'Group'} chat
+              </Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
               {/* <ButtonColor

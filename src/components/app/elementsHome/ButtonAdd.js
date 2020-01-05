@@ -31,7 +31,12 @@ export default class ButtonAdd extends Component {
     this.opacityButton2 = new Animated.Value(0);
     this.translateYButton2 = new Animated.Value(0);
   }
-  async componentDidMount() {}
+  async componentDidMount() {
+    this.props.onRef(this);
+  }
+  close() {
+    this.open(!this.state.open);
+  }
   async open(val, to) {
     if (val) {
       await this.props.translateXVoile.setValue(0);

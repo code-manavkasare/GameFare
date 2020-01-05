@@ -21,7 +21,6 @@ import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
 import StatusBar from '@react-native-community/status-bar';
-import NewGroupCard from './elementsHome/NewGroupCard';
 import ButtonAdd from './elementsHome/ButtonAdd';
 import AllIcons from '../layout/icons/AllIcons';
 import {Col, Row} from 'react-native-easy-grid';
@@ -89,7 +88,7 @@ export default class HomeScreen extends React.Component {
   }
   homePageView() {
     return (
-      <View style={{paddingTop: 10,minHeight: height / 1.5}}>
+      <View style={{paddingTop: 10, minHeight: height / 1.5}}>
         <EventFromGroups
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
@@ -172,7 +171,6 @@ export default class HomeScreen extends React.Component {
           offsetBottom={100}
           showsVerticalScrollIndicator={false}
         />
-
         <Animated.View
           style={[
             styleApp.voile,
@@ -180,12 +178,17 @@ export default class HomeScreen extends React.Component {
               opacity: this.opacityVoile,
               transform: [{translateX: this.translateXVoile}],
             },
-          ]}
-        />
+          ]}>
+          <TouchableOpacity
+            style={{height: '100%', width: '100%'}}
+            onPress={() => this.buttonAddRef.close()}/>
+        </Animated.View>
+
         <ButtonAdd
           translateXVoile={this.translateXVoile}
           typeButton={'event'}
           pageTo="CreateEvent0"
+          onRef={(ref) => (this.buttonAddRef = ref)}
           opacityVoile={this.opacityVoile}
         />
         <ButtonColor

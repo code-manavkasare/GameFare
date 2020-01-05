@@ -44,7 +44,7 @@ class Page0 extends Component {
   async componentDidMount() {
     console.log('page 1 mount');
     console.log(this.props.step0);
-    if (this.props.step0.sport == '' || this.props.step0.sport != '') {
+    if (this.props.step0.sport === '' || this.props.step0.sport !== '') {
       this.setSport(this.props.sports[0]);
     }
   }
