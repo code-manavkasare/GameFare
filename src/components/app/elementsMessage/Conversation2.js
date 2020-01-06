@@ -10,6 +10,8 @@ import {
 const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
+import styleApp from '../../style/style';
+import Loader from '../../layout/loaders/Loader';
 import InputMessage from './InputMessage';
 
 import {Grid, Row, Col} from 'react-native-easy-grid';
@@ -27,12 +29,17 @@ export default class KeyboardInput extends Component {
     this.onKeyboardItemSelected = this.onKeyboardItemSelected.bind(this);
     this.renderContent = this.renderContent.bind(this);
     this.state = {
+      loader: true,
       customKeyboard: {
         component: undefined,
         initialProps: undefined,
       },
       receivedKeyboardData: undefined,
     };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.messages !== this.props.messages)
+      this.setState({loader: false});
   }
 
   onKeyboardItemSelected(keyboardId, params) {
@@ -54,6 +61,7 @@ export default class KeyboardInput extends Component {
       <InputMessage
         userConnected={this.props.userConnected}
         conversation={this.props.conversation}
+        infoOtherMember={this.props.infoOtherMember}
         user={this.props.user}
         openPicturesView={(val) => {
           console.log('switch to other view');
@@ -74,11 +82,24 @@ export default class KeyboardInput extends Component {
           keyboardDismissMode="interactive"
           ref={(ref) => (this.listViewRef = ref)}
           inverted>
+          {this.state.loader ? (
+            <View style={[styleApp.center, {marginBottom: 20}]}>
+              <Loader size={25} color={'green'} />
+            </View>
+          ) : (
+            <View style={[styleApp.center, {marginBottom: -30}]}>
+              <Text style={[styleApp.smallText, {color: colors.grey}]}>
+                <Text>✓</Text> You are to date
+              </Text>
+            </View>
+          )}
+
+          <View style={{height: 20}} />
           {this.props.messages.map((message, i) => (
             <CardMessage
               message={{
-                previousMessage: this.props.messages[i - 1]
-                  ? this.props.messages[i - 1]
+                previousMessage: this.props.messages[i + 1]
+                  ? this.props.messages[i + 1]
                   : null,
                 currentMessage: message,
               }}
@@ -87,6 +108,7 @@ export default class KeyboardInput extends Component {
               index={i}
             />
           ))}
+          <View style={{height: 30}} />
         </InvertibleScrollView>
 
         <KeyboardAccessoryView

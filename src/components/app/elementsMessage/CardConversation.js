@@ -159,7 +159,7 @@ class CardConversation extends React.Component {
           );
         }}
         click={() =>
-          NavigationService.navigate('Conversation', {
+          NavigationService.push('Conversation', {
             data: conversation,
           })
         }

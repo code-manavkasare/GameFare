@@ -40,8 +40,10 @@ class InputMessage extends React.Component {
     return true;
   }
   renderInput() {
+    console.log('render inoyt', this.props.infoOtherMember);
     return (
       <View style={styles.keyboardContainer}>
+        {/* <View style={{height: 50, backgroundColor: 'blue'}}></View> */}
         <AutoGrowingTextInput
           maxHeight={200}
           // minHeight={35}
@@ -52,7 +54,9 @@ class InputMessage extends React.Component {
           enableScrollToCaret
           value={this.state.inputValue}
           // onFocus={() => this.focusInput()}
-          placeholder={'Your message'}
+          placeholder={
+            'Send a message to ' + this.props.infoOtherMember.firstname
+          }
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
           //onFocus={() => this.resetKeyboardView()}
@@ -135,8 +139,8 @@ class InputMessage extends React.Component {
 
 const styles = StyleSheet.create({
   keyboardContainer: {
-    borderTopWidth: 1,
-    borderColor: colors.grey,
+    borderTopWidth: 0.5,
+    borderColor: colors.borderColor,
     ...Platform.select({
       ios: {
         flex: 1,

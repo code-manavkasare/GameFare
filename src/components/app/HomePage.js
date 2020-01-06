@@ -181,7 +181,8 @@ export default class HomeScreen extends React.Component {
           ]}>
           <TouchableOpacity
             style={{height: '100%', width: '100%'}}
-            onPress={() => this.buttonAddRef.close()}/>
+            onPress={() => this.buttonAddRef.close()}
+          />
         </Animated.View>
 
         <ButtonAdd

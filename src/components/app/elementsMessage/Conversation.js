@@ -86,6 +86,7 @@ class MessageTab extends React.Component {
     return true;
   }
   infoOtherMember(conversation) {
+    if (conversation.type === 'group') return {firstname: conversation.title};
     if (!conversation.members) return null;
     if (
       Object.values(conversation.members).filter(
@@ -141,6 +142,11 @@ class MessageTab extends React.Component {
         ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
         : this.props.infoUser.picture,
     };
+    console.log(
+      'render discussion',
+      this.infoOtherMember(this.props.navigation.getParam('data')),
+    );
+    console.log(this.props.navigation.getParam('data'));
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -165,6 +171,9 @@ class MessageTab extends React.Component {
         <Conversation2
           messages={this.state.messages}
           user={user}
+          infoOtherMember={this.infoOtherMember(
+            this.props.navigation.getParam('data'),
+          )}
           userConnected={this.props.userConnected}
           conversation={this.props.navigation.getParam('data')}
         />
