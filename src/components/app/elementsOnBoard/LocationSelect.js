@@ -231,10 +231,12 @@ class InitialPage extends Component {
           initialTitleOpacity={1}
           loader={this.state.loader}
           icon1="arrow-left"
-          icon2={null}
           clickButton1={() => this.props.navigation.goBack()}
+          icon2="text"
+          texticon2="Skip"
+          clickButton2={() => this.props.navigation.navigate('TabsApp')}
         />
-        <ScrollView
+        {/* <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.location.bind(this)}
           marginBottomScrollView={0}
@@ -242,7 +244,7 @@ class InitialPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={0}
           showsVerticalScrollIndicator={false}
-        />
+        /> */}
       </View>
     );
   }
