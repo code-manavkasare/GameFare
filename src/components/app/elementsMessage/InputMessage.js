@@ -24,7 +24,9 @@ class InputMessage extends React.Component {
       inputValue: '',
     };
   }
-  componentDidMount() {}
+  componentDidMount() {
+    this.props.onRef(this);
+  }
   async sendNewMessage(user, text) {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
     this.setState({inputValue: ''});
@@ -38,6 +40,10 @@ class InputMessage extends React.Component {
         timeStamp: moment().valueOf(),
       });
     return true;
+  }
+  async openPicturesView(val) {
+    await this.textInputRef.focus();
+    return this.props.openPicturesView(val);
   }
   renderInput() {
     console.log('render inoyt', this.props.infoOtherMember);
@@ -82,7 +88,7 @@ class InputMessage extends React.Component {
             size={10}
             style={styleApp.center2}
             activeOpacity={0.7}
-            onPress={() => this.props.openPicturesView(true)}>
+            onPress={() => this.openPicturesView(true)}>
             <AllIcons name="image" color={colors.title} type="font" size={20} />
           </Col>
           <Col size={60} style={styleApp.center2}></Col>

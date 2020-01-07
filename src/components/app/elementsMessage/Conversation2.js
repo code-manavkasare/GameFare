@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Dimensions, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Platform,
+  TouchableOpacity,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 
@@ -13,6 +20,7 @@ import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import Loader from '../../layout/loaders/Loader';
 import InputMessage from './InputMessage';
+import './Keyboard';
 
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import CardMessage from './CardMessage';
@@ -27,6 +35,9 @@ export default class KeyboardInput extends Component {
   constructor(props) {
     super(props);
     this.onKeyboardItemSelected = this.onKeyboardItemSelected.bind(this);
+    this.resetKeyboardView = this.resetKeyboardView.bind(this);
+    this.onKeyboardResigned = this.onKeyboardResigned.bind(this);
+
     this.renderContent = this.renderContent.bind(this);
     this.state = {
       loader: true,
@@ -40,6 +51,13 @@ export default class KeyboardInput extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.messages !== this.props.messages)
       this.setState({loader: false});
+  }
+
+  resetKeyboardView() {
+    this.setState({customKeyboard: {}});
+  }
+  onKeyboardResigned() {
+    this.resetKeyboardView();
   }
 
   onKeyboardItemSelected(keyboardId, params) {
@@ -63,14 +81,16 @@ export default class KeyboardInput extends Component {
         conversation={this.props.conversation}
         infoOtherMember={this.props.infoOtherMember}
         user={this.props.user}
+        onRef={(ref) => (this.inputRef = ref)}
         openPicturesView={(val) => {
           console.log('switch to other view');
-          this.setState({
-            customKeyboard: {
-              component: 'KeyboardView',
-              initialProps: 'FIRST - 1 (passed prop)',
-            },
-          });
+          this.showKeyboardView('KeyboardView', 'FIRST - 1 (passed prop)');
+          // this.setState({
+          //   customKeyboard: {
+          //     component: 'KeyboardView',
+          //     initialProps: 'FIRST - 1 (passed prop)',
+          //   },
+          // });
         }}
       />
     );
@@ -120,7 +140,7 @@ export default class KeyboardInput extends Component {
               : undefined
           }
           trackInteractive={TrackInteractive}
-          kbInputRef={this.textInputRef}
+          kbInputRef={this.inputRef}
           kbComponent={this.state.customKeyboard.component}
           kbInitialProps={this.state.customKeyboard.initialProps}
           onItemSelected={this.onKeyboardItemSelected}
