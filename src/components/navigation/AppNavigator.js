@@ -349,13 +349,13 @@ const InitialPageNavigator = createStackNavigator(
         cardShadowEnabled: false,
       },
     },
-    LeagueSelect: {
-      screen: LeagueSelect,
-      navigationOptions: {
-        gesturesEnabled: false,
-        cardShadowEnabled: false,
-      },
-    },
+    // LeagueSelect: {
+    //   screen: LeagueSelect,
+    //   navigationOptions: {
+    //     gesturesEnabled: false,
+    //     cardShadowEnabled: false,
+    //   },
+    // },
     LocationOnBoard: {
       screen: LocationSelector,
       navigationOptions: {

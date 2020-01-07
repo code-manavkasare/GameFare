@@ -30,11 +30,9 @@ class InitialPage extends Component {
       .once('value');
     variables = variables.val();
     await this.props.globaleVariablesAction(variables);
-
-    // return this.props.navigation.navigate('SportSelect');
-    // if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
-    //   return this.props.navigation.navigate('TabsApp');
-    // }
+    if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
+      return this.props.navigation.navigate('TabsApp');
+    }
     return this.props.navigation.navigate('SportSelect');
   }
   shouldComponentUpdate(nextProps) {
