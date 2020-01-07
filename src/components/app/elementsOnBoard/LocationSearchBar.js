@@ -85,7 +85,7 @@ class LocationSelector extends Component {
         />
       ),
       headerRight: () =>
-        navigation.getParam('loader') == true ? (
+        navigation.getParam('loader') === true ? (
           <View style={{paddingRight: 15}}>
             <Loader color="primary" size={16} />
           </View>
@@ -109,7 +109,7 @@ class LocationSelector extends Component {
 
       const json = await result.json();
 
-      if (json.status == 'INVALID_REQUEST' || json.status == 'ZERO_RESULTS') {
+      if (json.status === 'INVALID_REQUEST' || json.status === 'ZERO_RESULTS') {
         this.setState({results: this.state.initialResults});
       } else {
         this.setState({results: json.predictions});
@@ -121,10 +121,10 @@ class LocationSelector extends Component {
   async onclickLocation(address) {
     Keyboard.dismiss();
     try {
-      if (address.type == 'currentLocation' && this.state.loader == false)
+      if (address.type === 'currentLocation' && this.state.loader === false)
         return this.getCurrentLocation();
 
-      if (this.state.loader == false) {
+      if (this.state.loader === false) {
         var url2 =
           'https://maps.googleapis.com/maps/api/geocode/json?new_forward_geocoder=true&place_id=' +
           address.place_id +
@@ -145,7 +145,7 @@ class LocationSelector extends Component {
             'setHistoricLocationSearch',
             currentHistoricSearchLocation,
           );
-        } else if (currentHistoricSearchLocation[address.id] == undefined) {
+        } else if (currentHistoricSearchLocation[address.id] === undefined) {
           var add = address;
           add.type = 'past';
           currentHistoricSearchLocation = {
@@ -253,7 +253,7 @@ class LocationSelector extends Component {
           return (
             <Row style={{marginLeft: 20, width: width - 40}}>
               <Col size={15} style={styles.center}>
-                {result.type == 'currentLocation' ? (
+                {result.type === 'currentLocation' ? (
                   <MatIcon name="my-location" color="grey" size={18} />
                 ) : this.props.historicSearchLocation[result.id] !=
                   undefined ? (
@@ -263,7 +263,7 @@ class LocationSelector extends Component {
                 )}
               </Col>
               <Col size={85} style={styles.center2}>
-                {result.type == 'currentLocation' ? (
+                {result.type === 'currentLocation' ? (
                   <Text style={styles.mainRes}>
                     {result.structured_formatting.main_text}
                   </Text>
@@ -303,9 +303,6 @@ class LocationSelector extends Component {
       <View>
         {this.buttonSearchAddress()}
 
-        {/* {this.state.textInput == '' ? (
-          <View />
-        ) : ( */}
         {(Object.values(this.state.results).map((result, i) => (
           <TouchableOpacity
             key={i}
