@@ -116,65 +116,7 @@ class InitialPage extends Component {
           </Text>
         </View>
 
-        {/* <View style={[styleApp.divider2,{marginBottom:0,marginTop:5}]} /> */}
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={15} style={styleApp.center2}>
-                  <AllIcon
-                    name="search"
-                    size={15}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
-                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Search for an area
-                  </Text>
-                </Col>
-                <Col size={15} style={styleApp.center3}>
-                  <AllIcon
-                    name="arrow-right"
-                    size={14}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => {
-            // StatusBar.setBarStyle('dark-content',true)
-            this.props.navigation.navigate('LocationOnBoard', {
-              pageFrom: 'LocationSelect',
-              onGoBack: (location) => this.setLocation(location),
-            });
-          }}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
+        <LocationSearchBar selectLocation={(location) => this.setLocation(location)} />
 
         <ButtonColor
           view={() => {
