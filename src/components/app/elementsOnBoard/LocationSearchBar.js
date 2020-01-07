@@ -183,12 +183,7 @@ class LocationSelector extends Component {
       });
     }
     console.log('set lovation back');
-
-    if (!this.props.navigation.getParam('setUserLocation')) {
-      return this.props.navigation.state.params.onGoBack(CurrentLocation);
-    }
-    await this.props.historicSearchAction('setLocationSearch', CurrentLocation);
-    return this.props.navigation.goBack();
+    this.props.selectLocation(CurrentLocation);
   }
   buttonSearchAddress() {
     return (
@@ -308,19 +303,19 @@ class LocationSelector extends Component {
       <View>
         {this.buttonSearchAddress()}
 
-        {this.state.textInput == '' ? (
+        {/* {this.state.textInput == '' ? (
           <View />
-        ) : (
-          Object.values(this.state.results).map((result, i) => (
-            <TouchableOpacity
-              key={i}
-              activeOpacity={0.8}
-              onPress={() => {
-                this.onclickLocation(result);
-              }}>
-              {this.cardResult(result)}
-            </TouchableOpacity>
-          ))
+        ) : ( */}
+        {(Object.values(this.state.results).map((result, i) => (
+          <TouchableOpacity
+            key={i}
+            activeOpacity={0.8}
+            onPress={() => {
+              this.onclickLocation(result);
+            }}>
+            {this.cardResult(result)}
+          </TouchableOpacity>
+        ))
         )}
       </View>
     );
@@ -334,7 +329,6 @@ class LocationSelector extends Component {
           contentScrollView={this.locationFields.bind(this)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
           offsetBottom={90}
           showsVerticalScrollIndicator={false}
         />

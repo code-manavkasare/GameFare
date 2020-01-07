@@ -55,112 +55,11 @@ class InitialPage extends Component {
     }
     return this.setLocation(location);
   }
-  location() {
-    return (
-      <View>
-        <LocationSearchBar selectLocation={(location) => this.setLocation(location)} />
-        {/*<ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={15} style={styleApp.center2}>
-                  <AllIcon
-                    name="my-location"
-                    size={20}
-                    type={'mat'}
-                    color={colors.title}
-                  />
-                </Col>
-                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Use current location
-                  </Text>
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => this.currentLocation()}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        /> */}
-      </View>
 
-    );
-  }
   locationSelector() {
     return (
       <FadeInView duration={200} style={{height: height / 2}}>
-        <View style={[styleApp.marginView, {width: width - 90}]}>
-          <Text
-            style={[styleApp.title, {color: colors.title, marginBottom: 30}]}>
-            Where do you plan to play {this.props.navigation.getParam('sport')}?
-          </Text>
-        </View>
-
         <LocationSearchBar selectLocation={(location) => this.setLocation(location)} />
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={15} style={styleApp.center2}>
-                  <AllIcon
-                    name="my-location"
-                    size={20}
-                    type={'mat'}
-                    color={colors.title}
-                  />
-                </Col>
-                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Use current location
-                  </Text>
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => this.currentLocation()}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
       </FadeInView>
     );
   }
