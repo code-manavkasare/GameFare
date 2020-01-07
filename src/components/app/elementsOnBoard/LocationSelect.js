@@ -37,7 +37,6 @@ class InitialPage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.setLocation.bind(this);
   }
-  componentDidMount() {}
   async setLocation(location) {
     await this.props.historicSearchAction('setLocationSearch', location);
     return this.props.navigation.navigate('TabsApp');
@@ -55,6 +54,57 @@ class InitialPage extends Component {
       });
     }
     return this.setLocation(location);
+  }
+  location() {
+    return (
+      <View>
+        <LocationSearchBar selectLocation={(location) => this.setLocation(location)} />
+        {/*<ButtonColor
+          view={() => {
+            return (
+              <Row>
+                <Col size={15} style={styleApp.center2}>
+                  <AllIcon
+                    name="my-location"
+                    size={20}
+                    type={'mat'}
+                    color={colors.title}
+                  />
+                </Col>
+                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
+                  <Text
+                    style={[
+                      styleApp.title,
+                      {
+                        color: colors.title,
+                        fontSize: 15,
+                        fontFamily: 'OpenSans-SemiBold',
+                      },
+                    ]}>
+                    Use current location
+                  </Text>
+                </Col>
+              </Row>
+            );
+          }}
+          click={() => this.currentLocation()}
+          color={'white'}
+          style={[
+            styles.cardSports,
+            {
+              height: 60,
+              borderBottomWidth: 0,
+              borderColor: colors.grey,
+              paddingRight: 20,
+              paddingLeft: 20,
+              width: width,
+            },
+          ]}
+          onPressColor={colors.off}
+        /> */}
+      </View>
+
+    );
   }
   locationSelector() {
     return (
@@ -151,14 +201,6 @@ class InitialPage extends Component {
                     Use current location
                   </Text>
                 </Col>
-                <Col size={15} style={styleApp.center3}>
-                  <AllIcon
-                    name="arrow-right"
-                    size={14}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
               </Row>
             );
           }}
@@ -169,46 +211,6 @@ class InitialPage extends Component {
             {
               height: 60,
               borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={75} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Skip
-                  </Text>
-                </Col>
-                <Col size={15}></Col>
-              </Row>
-            );
-          }}
-          click={() => {
-            // .setBarStyle('dark-content',true)
-            this.props.navigation.navigate('TabsApp');
-          }}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderWidth: 0,
               borderColor: colors.grey,
               paddingRight: 20,
               paddingLeft: 20,
@@ -237,63 +239,7 @@ class InitialPage extends Component {
           text2={'Skip'}
           clickButton2={() => this.props.navigation.navigate('TabsApp')}
         />
-        <LocationSearchBar 
-              selectLocation={(location) => this.selectLocation(location)}
-        />
-          */}
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={15} style={styleApp.center2}>
-                  <AllIcon
-                    name="my-location"
-                    size={20}
-                    type={'mat'}
-                    color={colors.title}
-                  />
-                </Col>
-                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Use current location
-                  </Text>
-                </Col>
-                <Col size={15} style={styleApp.center3}>
-                  <AllIcon
-                    name="arrow-right"
-                    size={14}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => this.currentLocation()}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
-
-        {/* <ScrollView
+        <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.location.bind(this)}
           marginBottomScrollView={0}
@@ -301,7 +247,7 @@ class InitialPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={0}
           showsVerticalScrollIndicator={false}
-        /> */}
+        />
       </View>
     );
   }
