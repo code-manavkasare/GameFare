@@ -183,7 +183,7 @@ class InitialPage extends Component {
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.location.bind(this)}
+          contentScrollView={this.locationSelector.bind(this)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
