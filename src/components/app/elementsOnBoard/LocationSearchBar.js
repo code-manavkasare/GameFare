@@ -251,7 +251,7 @@ class LocationSelector extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Row>
+            <Row style={{marginLeft: 20, width: width - 40}}>
               <Col size={15} style={styles.center}>
                 {result.type == 'currentLocation' ? (
                   <MatIcon name="my-location" color="grey" size={18} />
