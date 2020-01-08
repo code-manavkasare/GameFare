@@ -73,7 +73,6 @@ class InputMessage extends React.Component {
     console.log(images);
     this.setState({images: images});
   }
-  deleteImage(uri) {}
   conditionInputOn() {
     if (this.state.inputValue === '' && this.state.images.length === 0)
       return false;

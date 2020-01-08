@@ -72,7 +72,7 @@ class KeyboardView extends Component {
   async selectPicture() {
     var picture = await pickLibrary();
     console.log('picture', picture);
-    this.addPicture(picture, true);
+    // this.addPicture(picture, true);
   }
   addPicture(uri, selected, index) {
     console.log('addPicture', uri);
