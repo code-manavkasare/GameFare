@@ -23,6 +23,10 @@ const styles = StyleSheet.create({
   center5: {
     justifyContent: 'flex-end',
   },
+  center6: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
   divider: {
     height: 0.5,
     width: '100%',
@@ -126,7 +130,18 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginBottom: -5,
   },
-
+  buttonRoundLibray: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    height: 60,
+    borderRadius: 30,
+    width: 60,
+    zIndex: 20,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.off,
+  },
   buttonRound: {
     width: 65,
     height: 65,
@@ -198,6 +213,24 @@ const styles = StyleSheet.create({
     borderColor: '#EAEAEA',
     //paddingLeft:0,
     alignItems: 'center',
+  },
+  inputMessage: {
+    //  paddingTop: -15,
+    // paddingBottom: 5,
+    minHeight: 50,
+    marginBottom: 10,
+    flex: 1,
+    backgroundColor: 'red',
+    paddingLeft: 0,
+    paddingRight: 10,
+    lineHeight: 21,
+  },
+  cardMessage: {
+    flex: 1,
+    width: '100%',
+    marginBottom: 5,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   roundView: {
     height: 30,

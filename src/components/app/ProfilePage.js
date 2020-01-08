@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Linking,
   Image,
+  Alert,
   Animated,
   Dimensions,
 } from 'react-native';

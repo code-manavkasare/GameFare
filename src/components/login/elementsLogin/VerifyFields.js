@@ -196,11 +196,9 @@ class VerifyFields extends Component {
   verify() {
     return (
       <View style={styleApp.marginView}>
-        <Text style={[styleApp.title, {marginBottom: 5}]}>
-          Verification code
-        </Text>
-        <Text style={[styleApp.smallText, {marginBottom: 10}]}>
-          {this.subtitle()}
+        <Text style={[styleApp.title, {marginBottom: 5, marginTop: 10}]}>
+          Please enter the 4-digit code sent to you at{' '}
+          {this.props.params.phoneNumber}
         </Text>
         <View style={styles.inputWrapper}>
           <CodeFiled
@@ -213,7 +211,7 @@ class VerifyFields extends Component {
             ref={this.field}
             cellProps={this.cellProps}
             containerProps={this.containerProps}
-            onFulfill={code => this.onFinishCheckingCode(code)}
+            onFulfill={(code) => this.onFinishCheckingCode(code)}
           />
         </View>
 
@@ -280,7 +278,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     user: state.user,
   };

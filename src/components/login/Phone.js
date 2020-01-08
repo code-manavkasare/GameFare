@@ -16,16 +16,23 @@ export default class LoadingScreen extends React.Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  componentDidMount() {
+    console.log('sign in mount');
+  }
   phone() {
     return (
       <View style={styleApp.marginView}>
-        <Text style={[styleApp.title, {marginBottom: 20, fontSize: 21}]}>
-          We will text your verification code.
+        <Text
+          style={[
+            styleApp.title,
+            {marginBottom: 20, fontSize: 21, marginTop: 10},
+          ]}>
+          Enter your mobile number.
         </Text>
         <PhoneFields
           pageFrom={this.props.navigation.getParam('pageFrom')}
           country={
-            this.props.navigation.getParam('country') == undefined
+            !this.props.navigation.getParam('country')
               ? {name: 'United States', callingCode: '1', code: 'US'}
               : this.props.navigation.getParam('country')
           }
@@ -42,7 +49,7 @@ export default class LoadingScreen extends React.Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Sign in'}
+          textHeader={''}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}

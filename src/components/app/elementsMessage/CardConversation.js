@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
+import {messageAction} from '../../../actions/messageActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import NavigationService from '../../../../NavigationService';
 import firebase from 'react-native-firebase';
@@ -33,6 +34,7 @@ class CardConversation extends React.Component {
   async componentDidMount() {
     console.log('this.;rops.conversation');
     console.log(this.props.conversation);
+
     var lastMessage = await firebase
       .database()
       .ref('discussions/' + this.props.conversation.objectID + '/messages')
@@ -42,6 +44,10 @@ class CardConversation extends React.Component {
     console.log('le last message');
     console.log(lastMessage);
     if (lastMessage === null) lastMessage = [{text: 'Write the first message'}];
+    await this.props.messageAction('setConversation', {
+      ...this.props.conversation,
+      lastMessage: lastMessage,
+    });
     return this.setState({lastMessage: Object.values(lastMessage)[0]});
   }
   imageCard(conversation) {
@@ -129,6 +135,7 @@ class CardConversation extends React.Component {
     );
   }
   cardConversation(conversation, i) {
+    console.log('render card convo', this.props.conversations);
     return (
       <ButtonColor
         key={i}
@@ -159,7 +166,7 @@ class CardConversation extends React.Component {
           );
         }}
         click={() =>
-          NavigationService.navigate('Conversation', {
+          NavigationService.push('Conversation', {
             data: conversation,
           })
         }
@@ -193,6 +200,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps, {historicSearchAction})(
+export default connect(mapStateToProps, {historicSearchAction, messageAction})(
   CardConversation,
 );

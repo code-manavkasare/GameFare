@@ -43,7 +43,6 @@ class HomeScreen extends React.Component {
   async componentDidMount() {
     StatusBar.setHidden(false, 'slide');
     StatusBar.setBarStyle('dark-content', true);
-    
   }
   navigate(val, data) {
     this.props.navigation.push(val, data);
@@ -74,14 +73,14 @@ class HomeScreen extends React.Component {
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
           loader={this.state.loader}
-          onRef={ref => (this.myGroupsRef = ref)}
+          onRef={(ref) => (this.myGroupsRef = ref)}
         />
 
         <GroupsAround
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
           loader={this.state.loader}
-          onRef={ref => (this.groupsAroundRef = ref)}
+          onRef={(ref) => (this.groupsAroundRef = ref)}
         />
       </View>
     );
@@ -121,7 +120,7 @@ class HomeScreen extends React.Component {
           clickButton2={() =>
             this.props.navigation.navigate('Location', {
               pageFrom: 'ListGroups',
-              onGoBack: data => this.setLocation(data),
+              onGoBack: (data) => this.setLocation(data),
             })
           }
           clickButton1={() =>
@@ -132,7 +131,7 @@ class HomeScreen extends React.Component {
         />
 
         <ScrollView2
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderFilter - 30}
@@ -153,11 +152,16 @@ class HomeScreen extends React.Component {
               opacity: this.opacityVoile,
               transform: [{translateX: this.translateXVoile}],
             },
-          ]}
-        />
+          ]}>
+          <TouchableOpacity
+            style={{height: '100%', width: '100%'}}
+            onPress={() => this.buttonAddRef.close()}
+          />
+        </Animated.View>
         <ButtonAdd
           translateXVoile={this.translateXVoile}
           opacityVoile={this.opacityVoile}
+          onRef={(ref) => (this.buttonAddRef = ref)}
           typeButton={'group'}
           pageTo="CreateGroup0"
         />
@@ -184,7 +188,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     sportSelected: state.historicSearch.sport,

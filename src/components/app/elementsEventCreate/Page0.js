@@ -15,8 +15,6 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import Switch from '../../layout/switch/Switch';
-import ButtonRoundOff from '../../layout/buttons/ButtonRoundOff';
-import ButtonRound from '../../layout/buttons/ButtonRound';
 import Button from '../../layout/buttons/Button';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 

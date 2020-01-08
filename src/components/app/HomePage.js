@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Dimensions, Animated} from 'react-native';
+import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
 import StatusBar from '@react-native-community/status-bar';
 
 import ListEvents from './elementsHome/ListEvent';
@@ -134,7 +134,6 @@ export default class HomeScreen extends React.Component {
           offsetBottom={100}
           showsVerticalScrollIndicator={false}
         />
-
         <Animated.View
           style={[
             styleApp.voile,
@@ -142,12 +141,18 @@ export default class HomeScreen extends React.Component {
               opacity: this.opacityVoile,
               transform: [{translateX: this.translateXVoile}],
             },
-          ]}
-        />
+          ]}>
+          <TouchableOpacity
+            style={{height: '100%', width: '100%'}}
+            onPress={() => this.buttonAddRef.close()}
+          />
+        </Animated.View>
+
         <ButtonAdd
           translateXVoile={this.translateXVoile}
           typeButton={'event'}
           pageTo="CreateEvent0"
+          onRef={(ref) => (this.buttonAddRef = ref)}
           opacityVoile={this.opacityVoile}
         />
         <ButtonColor

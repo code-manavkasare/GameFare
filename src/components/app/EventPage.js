@@ -31,6 +31,8 @@ import DateEvent from './elementsEventCreate/DateEvent';
 import Button2 from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
+import PostsView from './elementsGroupPage/PostsView';
+
 import CardUser from './elementsEventPage/CardUser';
 
 import {indexEvents} from '../database/algolia';
@@ -410,6 +412,16 @@ class EventPage extends React.Component {
           </View>
         ) : null}
 
+        {data.discussions ? (
+          <PostsView
+            objectID={data.objectID}
+            data={data}
+            type="event"
+            loader={this.state.loader}
+            infoUser={this.props.infoUser}
+          />
+        ) : null}
+
         <View style={{height: sizes.heightFooterBooking + 50}} />
       </View>
     );
@@ -455,31 +467,31 @@ class EventPage extends React.Component {
       !this.openCondition(event) &&
       event.info.organizer !== this.props.userID
     ) {
-      if (event.attendees == undefined) return true;
+      if (!event.attendees) return true;
       if (
         Object.values(event.attendees).filter(
           (user) => user.userID === this.props.userID,
-        ).length == 0
+        ).length === 0
       )
         return true;
     }
     return false;
   }
   userAlreadySubscribed(attendees) {
-    if (attendees == undefined) return true;
+    if (!attendees) return true;
     if (
       Object.values(attendees).filter(
-        (user) => user.userID == this.props.userID,
-      ).length == 0
+        (user) => user.userID === this.props.userID,
+      ).length === 0
     )
       return true;
     return false;
   }
   coachAlreadySubscribed(coaches) {
-    if (coaches == undefined) return true;
+    if (!coaches) return true;
     if (
-      Object.values(coaches).filter((user) => user.userID == this.props.userID)
-        .length == 0
+      Object.values(coaches).filter((user) => user.userID === this.props.userID)
+        .length === 0
     )
       return true;
     return false;

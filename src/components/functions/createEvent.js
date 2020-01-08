@@ -31,6 +31,18 @@ function generateID() {
   );
 }
 
+function newDiscussion(discussionID, groupID, image, nameGroup) {
+  return {
+    id: discussionID,
+    title: nameGroup,
+    members: {},
+    messages: {},
+    type: 'group',
+    groupID: groupID,
+    image: image,
+  };
+}
+
 async function createEventObj(data, userID, infoUser, level, groups) {
   var event = {
     ...data,
@@ -101,20 +113,27 @@ async function createEvent(data, userID, infoUser, level) {
   console.log(event);
 
   event.images = [pictureUri];
-  var pushEvent = await firebase
+  const discussionID = generateID();
+  event.discussions = [discussionID];
+  const {key} = await firebase
     .database()
     .ref('events')
     .push(event);
-  event.eventID = pushEvent.key;
-  event.objectID = pushEvent.key;
+  event.eventID = key;
+  event.objectID = key;
 
   await firebase
     .database()
-    .ref('events/' + pushEvent.key)
-    .update({eventID: pushEvent.key});
+    .ref('events/' + key)
+    .update({eventID: key});
 
-  await pushEventToGroups(data.groups, pushEvent.key);
-  await subscribeToTopics([userID, 'all', pushEvent.key]);
+  await firebase
+    .database()
+    .ref('discussions/' + discussionID)
+    .update(newDiscussion(discussionID, key, pictureUri, event.info.name));
+
+  await pushEventToGroups(data.groups, key);
+  await subscribeToTopics([userID, 'all', key]);
 
   return event;
 }
