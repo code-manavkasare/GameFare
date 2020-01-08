@@ -59,7 +59,6 @@ import AlertAddUsers from '../layout/alerts/AlertAddUsers';
 
 import InitialPage from '../app/elementsOnBoard/InitialPage';
 import SportSelect from '../app/elementsOnBoard/SportSelect';
-import LeagueSelect from '../app/elementsOnBoard/LeagueSelect';
 import LocationSelect from '../app/elementsOnBoard/LocationSelect';
 
 import MessageList from '../app/elementsMessage/MessageList';
@@ -344,13 +343,6 @@ const InitialPageNavigator = createStackNavigator(
     },
     SportSelect: {
       screen: SportSelect,
-      navigationOptions: {
-        gesturesEnabled: false,
-        cardShadowEnabled: false,
-      },
-    },
-    LeagueSelect: {
-      screen: LeagueSelect,
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
