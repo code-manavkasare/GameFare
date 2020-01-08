@@ -1,4 +1,4 @@
-#Welcome to GameFare
+# Welcome to GameFare
 
 ## Installation React native
 
@@ -25,9 +25,11 @@ Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration 
 We use Reactotron for debugging please install the software from github page : https://github.com/infinitered/reactotron/releases
 We also use ESLint, be sure to have it installed on your VSCode extension
 
-##Font
+## Font
+
 We use material and font awesome : https://fontawesome.com/icons?d=gallery
 
-##Code Guidelines
+## Code Guidelines
+
 We simply follow Airbnb Guideline : https://github.com/airbnb/javascript
 And the guide for React work also for React Native: https://github.com/airbnb/javascript/tree/master/react

@@ -68,6 +68,7 @@ async function createEventObj(data, userID, infoUser, level, groups) {
   return {
     ...event,
     date_timestamp: moment(event.date.start).valueOf(),
+    end_timestamp: moment(event.date.end).valueOf(),
     coaches: coaches,
     allCoaches: allCoaches,
     attendees: attendees,

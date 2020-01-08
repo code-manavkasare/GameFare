@@ -44,7 +44,7 @@ class Page0 extends Component {
   async componentDidMount() {
     console.log('page 1 mount');
     console.log(this.props.step0);
-    if (this.props.step0.sport == '' || this.props.step0.sport != '') {
+    if (this.props.step0.sport === '') {
       this.setSport(this.props.sports[0]);
     }
   }
@@ -115,7 +115,7 @@ class Page0 extends Component {
         <ExpandableCard
           list={
             sport.typeEvent.filter(
-              (league) => league.value == this.props.step0.league,
+              (league) => league.value === this.props.step0.league,
             )[0].rules
           }
           valueSelected={this.props.step0.rule}
@@ -247,14 +247,14 @@ class Page0 extends Component {
                   autoCorrect={true}
                   onChangeText={(text) => {
                     if (
-                      text.length == 0 &&
+                      text.length === 0 &&
                       this.props.step0.joiningFee.length != 0
                     ) {
                       this.props.createEventAction('setStep0', {
                         joiningFee: text,
                         free: true,
                       });
-                    } else if (Number(text) == 0) {
+                    } else if (Number(text) === 0) {
                       this.props.createEventAction('setStep0', {
                         joiningFee: text,
                         free: true,
@@ -413,7 +413,7 @@ class Page0 extends Component {
     );
   }
   conditionOn() {
-    if (this.props.step0.joiningFee == '') return false;
+    if (this.props.step0.joiningFee === '') return false;
     return true;
   }
   close() {
@@ -426,25 +426,25 @@ class Page0 extends Component {
     });
   }
   render() {
-    if (this.props.step0.sport == '' || this.props.step0.league == '')
+    if (this.props.step0.sport === '' || this.props.step0.league === '') {
+      // return a component saying no sport or league has been selected?
       return null;
+    }
     var sport = this.props.sports.filter(
-      (sport) => sport.value == this.props.step0.sport,
+      (sport) => sport.value === this.props.step0.sport,
     )[0];
     console.log('le sport page 0');
-    console.log(sport);
-    console.log(this.props.step0);
+    console.log(sport.value);
     var league = Object.values(sport.typeEvent).filter(
-      (item) => item.value == this.props.step0.league,
+      (item) => item.value === this.props.step0.league,
     )[0];
     console.log('league');
-    console.log(league);
+    console.log(league.value);
     // return null
     var rule = Object.values(league.rules).filter(
-      (rule) => rule.value == this.props.step0.rule,
+      (rule) => rule.value === this.props.step0.rule,
     )[0];
     console.log('louloulouolou');
-    console.log(league);
     console.log(rule);
     const {dismiss} = this.props.navigation;
     // return null
