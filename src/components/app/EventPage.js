@@ -270,7 +270,7 @@ class EventPage extends React.Component {
           'calendar-alt',
           () => this.addCalendar(data),
         )}
-        {data.date.recurrence != '' && data.date.recurrence != undefined
+        {data.date.recurrence !== '' && data.date.recurrence !== undefined
           ? this.rowIcon(
               this.title(
                 data.date.recurrence.charAt(0).toUpperCase() +
@@ -282,7 +282,7 @@ class EventPage extends React.Component {
         {this.rowIcon(this.title(data.location.address), 'map-marker-alt', () =>
           this.props.navigation.navigate('AlertAddress', {data: data.location}),
         )}
-        {data.info.instructions != ''
+        {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}
 
@@ -291,7 +291,7 @@ class EventPage extends React.Component {
         <Row style={{height: 90, marginTop: 0}}>
           <Col>
             {this.colIcon(
-              Number(data.info.maxAttendance) == 1
+              Number(data.info.maxAttendance) === 1
                 ? data.info.maxAttendance + ' player'
                 : data.info.maxAttendance + ' players',
               'user-plus',
@@ -300,7 +300,7 @@ class EventPage extends React.Component {
           </Col>
           <Col>
             {this.colIcon(
-              level.value == '0' ? level.text : level.text.split('/')[0],
+              level.value === '0' ? level.text : level.text.split('/')[0],
               'balance-scale',
               {title: level.title, subtitle: level.subtitle},
             )}
@@ -312,9 +312,9 @@ class EventPage extends React.Component {
             {this.colIcon(
               data.info.gender.charAt(0).toUpperCase() +
                 data.info.gender.slice(1),
-              data.info.gender == 'mixed'
+              data.info.gender === 'mixed'
                 ? 'venus-mars'
-                : data.info.gender == 'female'
+                : data.info.gender === 'female'
                 ? 'venus'
                 : 'mars',
               false,
@@ -344,7 +344,6 @@ class EventPage extends React.Component {
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {/* {this.imageMap(data)} */}
         {this.eventInfo(data, sport, rule, league)}
 
         {/* {rule.coachNeeded ? (
@@ -396,7 +395,7 @@ class EventPage extends React.Component {
           </FadeInView>
         )}
 
-        {data.groups != undefined ? (
+        {data.groups !== undefined ? (
           <View style={{marginTop: 35}}>
             <GroupsEvent groups={data.groups} />
           </View>
