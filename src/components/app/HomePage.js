@@ -1,15 +1,6 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Image,
-  ScrollView,
-  Animated,
-} from 'react-native';
-import branch, {BranchEvent} from 'react-native-branch';
+import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
+import StatusBar from '@react-native-community/status-bar';
 
 import ListEvents from './elementsHome/ListEvent';
 import HeaderHome from '../layout/headers/HeaderHome';
@@ -20,7 +11,6 @@ import colors from '../style/colors';
 import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
-import StatusBar from '@react-native-community/status-bar';
 import ButtonAdd from './elementsHome/ButtonAdd';
 import AllIcons from '../layout/icons/AllIcons';
 import {Col, Row} from 'react-native-easy-grid';
@@ -43,29 +33,6 @@ export default class HomeScreen extends React.Component {
   async componentDidMount() {
     StatusBar.setHidden(false, 'slide');
     StatusBar.setBarStyle('dark-content', true);
-    this.initBranch();
-  }
-  initBranch() {
-    var that = this;
-    branch.subscribe(({error, params}) => {
-      if (error) {
-        console.log('Error from Branch: ' + error);
-        return;
-      }
-      console.log('branch link opened !');
-      console.log(params);
-      if (params.action == 'openEventPage') {
-        this.props.navigation.navigate('Event', {
-          objectID: params.eventID,
-          pageFrom: 'Home',
-        });
-      } else if (params.action == 'openGroupPage') {
-        this.props.navigation.navigate('Group', {
-          objectID: params.eventID,
-          pageFrom: 'Home',
-        });
-      }
-    });
   }
   navigate(val, data) {
     this.props.navigation.push(val, data);
@@ -106,10 +73,6 @@ export default class HomeScreen extends React.Component {
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
         />
-
-        {/* <View style={[styleApp.divider2,{marginLeft:20,width:width-40}]} /> */}
-        {/* 
-        <NewGroupCard pageFrom="Home" /> */}
       </View>
     );
   }

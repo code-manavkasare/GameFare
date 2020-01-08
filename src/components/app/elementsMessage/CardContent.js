@@ -45,7 +45,8 @@ export default class CardContent extends React.Component {
 
   cardContent(rowData, i) {
     const {uri} = rowData.node.image;
-    console.log('render card convo', uri, i);
+    const {type} = rowData.node;
+    console.log('render card convo', rowData.node, i);
     return (
       <ButtonColor
         key={i}
@@ -76,6 +77,16 @@ export default class CardContent extends React.Component {
                   />
                 </View>
               )}
+              {type === 'video' ? (
+                <View style={{position: 'absolute', zIndex: 40}}>
+                  <AllIcons
+                    name="video"
+                    type="font"
+                    color={colors.white}
+                    size={13}
+                  />
+                </View>
+              ) : null}
               <Image
                 source={{uri: uri}}
                 style={{height: '100%', width: '100%'}}
@@ -83,7 +94,7 @@ export default class CardContent extends React.Component {
             </Row>
           );
         }}
-        click={() => this.selectImage(uri, !this.state.selected)}
+        click={() => this.selectImage(uri, !this.state.selected, type)}
         color="white"
         style={this.props.style}
         onPressColor={colors.off}
@@ -99,7 +110,7 @@ const styles = StyleSheet.create({
   roundImage: {
     ...styleApp.center,
     backgroundColor: colors.off2,
-    width: '100%',
+    width: 200,
     height: '100%',
     borderRadius: 5,
     borderWidth: 0.5,

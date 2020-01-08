@@ -58,6 +58,7 @@ class InputMessage extends React.Component {
     return this.props.openPicturesView(val);
   }
   addImage(uri, add) {
+    console.log('this images', this.state.images);
     if (add) return this.setState({images: union([uri], this.state.images)});
 
     console.log('delte image', add);
@@ -66,7 +67,9 @@ class InputMessage extends React.Component {
     console.log(images);
     const index = this.state.images.keys(uri);
     console.log(index);
-    delete images[images.indexOf(uri)];
+    // delete images[images.indexOf(uri)];
+    images = images.filter((img) => img !== uri);
+    console.log('images');
     console.log(images);
     this.setState({images: images});
   }
