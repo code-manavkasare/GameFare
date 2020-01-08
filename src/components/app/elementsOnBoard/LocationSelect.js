@@ -68,7 +68,7 @@ class InitialPage extends Component {
       <View style={[{backgroundColor: 'white', flex: 1}]}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Search for an address'}
+          textHeader={'Pick your location'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
