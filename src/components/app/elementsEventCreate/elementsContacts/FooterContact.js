@@ -16,11 +16,7 @@ import StatusBar from '@react-native-community/status-bar';
 import BackButton from '../../../layout/buttons/BackButton'
 import isEqual from 'lodash.isequal'
 
-import Header from '../../../layout/headers/HeaderButton'
-import ButtonRound from '../../../layout/buttons/ButtonRound'
-// import ScrollView from '../../../layout/scrollViews/ScrollView'
-import ExpandableCard from '../../../layout/cards/ExpandableCard'
-import Switch from '../../../layout/switch/Switch'
+import ButtonColor from '../../../layout/Views/Button'
 import AllIcons from '../../../layout/icons/AllIcons'
 import {date} from '../../../layout/date/date'
 
@@ -39,27 +35,8 @@ class FooterContact extends Component {
     this.translateYCurrent = new Animated.Value(0)
     this.translateYNext = new Animated.Value(30)
   }
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'New contact',
-      headerStyle: {
-          backgroundColor: colors.primary,
-          borderBottomWidth:0
-      },
-      headerTitleStyle: {
-          color:'white',
-          fontFamily:'OpenSans-Bold',
-          fontSize:14,
-      },
-      headerLeft: () => (
-        <BackButton name='keyboard-arrow-left' type='mat' click={() => navigation.goBack()} />
-      ),
-    }
-  };
+
   componentDidMount() {
-    console.log('page 1 mount')
-    console.log(this.props.sports)
-    console.log(this.state.sportsFilter)
   }
   async componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.contactsSelected,this.props.contactsSelected)) {
@@ -91,9 +68,45 @@ class FooterContact extends Component {
       }
     }
   }
+  buttonClose(contact) {
+    return <ButtonColor view={() => {
+      return <AllIcons name="close" type="mat" color={'white'} size={9} />
+    }}
+    click={() => this.props.deleteContact(contact)}
+    color={colors.green}
+    style={styles.viewDelete}
+    onPressColor={colors.greenLight}
+    />
+  }
+  buttonSend() {
+    return <ButtonColor view={() => {
+      return <Row>
+        <Col style={styleApp.center} size={40}>
+          <View style={styles.viewNumber}>
+              <Animated.Text style={[styleApp.text,{color:this.colorIconSMS(),elevation: 20,position:'absolute',transform:[{translateY:this.translateYCurrent}]}]}>{this.state.val}</Animated.Text>
+              {
+                this.state.showNextVal?
+                <Animated.Text style={[styleApp.text,{color:this.colorIconSMS(),position:'absolute',transform:[{translateY:this.translateYNext}]}]}>{this.state.nextVal}</Animated.Text>
+                :null
+              }
+              
+            </View>
+
+        </Col>
+        <Col size={60} style={styleApp.center}>
+          <AllIcons name='sms' type='font' color={this.colorIconSMS()} size={20} />
+        </Col>
+      </Row>
+    }}
+    click={() => this.send()}
+    color={this.colorButtonSMS()}
+    style={styles.buttonSend}
+    onPressColor={colors.greenLight}
+    />
+  }
   contact(contact,i) {
     var name = contact.givenName
-    var name = name.slice(0,6)
+    var name = name.slice(0,5)
     name = name+ '..'
     var family = contact.familyName[0]
     console.log('lalalala')
@@ -106,9 +119,7 @@ class FooterContact extends Component {
       <View style={[styleApp.center,{height:70,width:50,marginTop:2}]}>
       <View style={[styleApp.center,{height:30,width:30,backgroundColor:contact.color,borderRadius:15,borderWidth:1,borderColor:colors.off}]}>
         <Text style={[styleApp.subtitle,{color:'white',fontSize:11,fontFamily:'OpenSans-SemiBold'}]}>{initial}</Text>    
-        <TouchableOpacity style={styles.viewDelete} activeOpacity={0.7} onPress={() => this.props.deleteContact(contact)}>
-          <AllIcons name="close" type="mat" color={'white'} size={9} />
-        </TouchableOpacity>
+        {this.buttonClose(contact)}
       </View>
       <Text style={[styleApp.text,{fontSize:12,marginTop:4}]}>{name}</Text>
       </View>
@@ -119,13 +130,13 @@ class FooterContact extends Component {
       this.props.sendSMS()
     }
   }
-  styleButtonSMS () {
-    if (this.state.nextVal != 0) {
-      return [styles.viewNumber,{backgroundColor:colors.green,width:40,height:40,borderRadius:20,borderWidth:1,borderColor:colors.off}]
-    }
-    return [styles.viewNumber,{backgroundColor:'white',width:40,height:40,borderRadius:20,borderColor:colors.off,borderWidth:1}]
-  }
   colorButtonSMS () {
+    if (this.state.nextVal != 0) {
+      return colors.green
+    }
+    return colors.white
+  }
+  colorIconSMS () {
     if (this.state.nextVal != 0) {
       return 'white'
     }
@@ -133,9 +144,21 @@ class FooterContact extends Component {
   }
   render() {
     return (
-      <View style={{height:sizes.heightFooterBooking,position:'absolute',backgroundColor:'white',bottom:0,zIndex:200,width:width,borderTopWidth:1,borderColor:colors.grey,paddingTop:4,}}>
+      <View style={{height:sizes.heightFooterBooking,position:'absolute',backgroundColor:'white',bottom:0,zIndex:200,width:width,borderTopWidth:1,borderColor:colors.off,paddingTop:4,paddingLeft:10,paddingRight:10}}>
         <Row style={{height:70}}>
-          <Col size={15} style={styleApp.center}>
+          <Col size={70} style={[styleApp.center2,{borderLeftWidth:0,borderColor:colors.off,borderRightWidth:0,paddingTop:5}]}>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            {Object.values(this.props.contactsSelected).map((contact,i) => (
+              this.contact(contact,i)
+            ))}
+            </ScrollView>
+          </Col>
+          <Col size={30} style={styleApp.center3}>
+            {this.buttonSend()}
+          </Col>
+        </Row>
+
+        {/* <View style={[styleApp.center,{height:60,width:60,borderRadius:30,position:'absolute',top:-70,right:10,backgroundColor:colors.blue,borderWidth:0.5,borderColor:colors.off}]}>
             <View style={styles.viewNumber}>
               <Animated.Text style={[styleApp.text,{color:'white',elevation: 20,position:'absolute',transform:[{translateY:this.translateYCurrent}]}]}>{this.state.val}</Animated.Text>
               {
@@ -145,21 +168,8 @@ class FooterContact extends Component {
               }
               
             </View>
-            <Text style={[styleApp.text,{fontSize:12}]}>Total</Text>
-          </Col>
-          <Col size={70} style={[styleApp.center2,{borderLeftWidth:0,borderColor:colors.off,borderRightWidth:0}]}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {Object.values(this.props.contactsSelected).map((contact,i) => (
-              this.contact(contact,i)
-            ))}
-            </ScrollView>
-          </Col>
-          <Col size={15} style={styleApp.center} activeOpacity={0.7} onPress={() => this.send()}>
-            <View style={this.styleButtonSMS()}>
-              <AllIcons name='sms' type='font' color={this.colorButtonSMS()} size={20} />
-            </View>
-          </Col>
-        </Row>
+            <Text style={[styleApp.text,{fontSize:11,color:colors.white}]}>Total</Text>
+        </View> */}
 
         </View>
     );
@@ -168,7 +178,9 @@ class FooterContact extends Component {
 
 const styles = StyleSheet.create({
   viewNumber:{
-    backgroundColor:colors.blue,height:35,width:35,borderRadius:17.5,
+    // backgroundColor:colors.red,
+    height:25,width:25,
+    //borderRadius:17.5,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden'
@@ -181,10 +193,14 @@ const styles = StyleSheet.create({
     borderColor:colors.off,
   },
   viewDelete:{
-    position:'absolute',top:-8,left:-4,backgroundColor:colors.primary,height:15,width:15,borderRadius:7.5,
+    position:'absolute',top:-13,left:-8,backgroundColor:colors.green,height:20,width:20,borderRadius:10,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth:0.6,borderColor:colors.off
+  },
+  buttonSend:{
+    backgroundColor:colors.green,width:80,height:45,borderRadius:5,borderWidth:1,
+    borderColor:colors.off
   },
 });
 

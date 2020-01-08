@@ -40,13 +40,7 @@ class Page1 extends Component {
     this.translateXFooter = new Animated.Value(0)
   }
   componentDidMount() {
-    console.log('page 1 mount')
-    console.log(this.props.navigation.getParam('sport').level)
-    console.log(this.props.step1)
-    this.props.createEventAction('setStep1',{level:this.props.navigation.getParam('sport').level.list[0].value})
-    console.log(this.props.navigation.getParam('sport').level.list[0])
       if (this.props.step1.level == -1) {
-      console.log('lalalal')
         this.props.createEventAction('setStep1',{level:this.props.navigation.getParam('sport').level.list[0].value})
       }
   }

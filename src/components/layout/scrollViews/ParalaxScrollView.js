@@ -40,8 +40,7 @@ class ParalaxScrollView extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async refresh() {
-    await this.props.setState({loader:true})
-    return this.props.setState({loader:false})
+    this.props.refresh()
   }
   refreshControl() {
     return (

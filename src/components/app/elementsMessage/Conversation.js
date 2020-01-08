@@ -1,191 +1,231 @@
 import React from 'react';
-import { 
-    View, 
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    Dimensions,
-    Image,
-    ScrollView,
-    Animated
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {messageAction} from '../../../actions/messageActions'
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { GiftedChat,Bubble,Send,Actions } from 'react-native-gifted-chat'
-import {pickLibrary,takePicture} from '../../functions/pictures'
+import {messageAction} from '../../../actions/messageActions';
+import firebase from 'react-native-firebase';
+import moment from 'moment';
+import Loader from '../../layout/loaders/Loader';
+import AsyncImage from '../../layout/image/AsyncImage';
+import Conversation2 from './Conversation2';
 
-import HeaderBackButton from '../../layout/headers/HeaderBackButton'
-import styleApp from '../../style/style'
-import colors from '../../style/colors'
-import ButtonColor from '../../layout/Views/Button'
+import {pickLibrary, takePicture} from '../../functions/pictures';
 
-import AllIcons from '../../layout/icons/AllIcons'
-const { height, width } = Dimensions.get('screen')
-
+import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import styleApp from '../../style/style';
+import colors from '../../style/colors';
 import sizes from '../../style/sizes';
-import isEqual from 'lodash.isequal'
-import AllIcon from '../../layout/icons/AllIcons';
 
 class MessageTab extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        events:[],
-        loader:false,
-        unreadMessages:3,
-        messages:[],
-      };
-      this.translateXVoile = new Animated.Value(width)
-      this.AnimatedHeaderValue = new Animated.Value(0);
-      this.opacityVoile = new Animated.Value(0.3)
+  constructor(props) {
+    super(props);
+    this.state = {
+      loader: true,
+      messages: [],
+    };
+    this.inputValue = '';
+    this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  componentDidMount() {
+    this.loadMessages();
+  }
+  async loadMessages() {
+    const that = this;
+    firebase
+      .database()
+      .ref('discussions/' + this.props.navigation.getParam('data').objectID)
+      .limitToLast(15)
+      .on('value', function(snap) {
+        var discussion = snap.val();
+        var messages = discussion.messages;
+        console.log('messages', messages);
+        if (!messages)
+          messages = {
+            0: {
+              user: that.props.gamefareUser,
+              text:
+                'No messages have been sent in this conversation. Write the first one!',
+              createdAt: new Date(),
+              timeStamp: moment().valueOf(),
+            },
+          };
+
+        messages = Object.keys(messages)
+          .map((_id) => ({
+            _id,
+            ...messages[_id],
+          }))
+          .sort((a, b) => a.timeStamp - b.timeStamp)
+          .reverse();
+
+        console.log('set atqte messages');
+        console.log(messages);
+        that.setState({messages: messages, loader: false});
+      });
+  }
+  async sendPicture(val, discussion, user) {
+    if (val == 'pick') {
+      var localPicture = await pickLibrary();
+    } else {
+      var localPicture = await takePicture();
     }
-    async componentDidMount() {
+    console.log('localPicture');
+    console.log(localPicture);
+    if (localPicture) {
+      this.sendNewMessage(discussion, {
+        _id:
+          Math.random()
+            .toString(36)
+            .substring(2) + Date.now().toString(36),
+        user: user,
+        text: '',
+        image: localPicture,
+        status: 'pending',
+        createdAt: new Date(),
+      });
     }
-    async componentWillReceiveProps(nextProps) {
-      
-    }
-    renderBubble(props) {
-      return <Bubble
-      {...props}
-      messageTextProps={{
-        linkStyle: {
-          right: { color: 'red' },
-          left: { color: 'red' },
-        },
-      }}
-      textStyle={{
-        right: [styleApp.smallText,{color:colors.white}],
-        left: [styleApp.smallText]
-      }}
-    />
-    }
-    renderSendButton(props) {
-      console.log(' la props')
-      console.log(props)
-      return <Send
-      {...props}
-      >
-          <View style={{marginRight: 15, marginBottom: 15}}>
-            <AllIcon name='paper-plane' color={colors.primary} type='font' size={16} />
-          </View>
-      </Send>
-    }
-    async sendPicture(val,conversation,user) {
-      if (val == 'pick') {
-        var localPicture = await pickLibrary()
-      } else {
-        var localPicture = await takePicture()
-      }
-      console.log('localPicture')
-      console.log(localPicture)
-      if (localPicture) {
-        this.sendNewMessage(conversation,{
-          _id:Math.random().toString(36).substring(2) + Date.now().toString(36),
-          user: user,
-          text:'',
-          image:localPicture,
-          status:'pending',
-          createdAt:new Date()
-        })
-      }
-      return true
-    }
-    async sendNewMessage(conversation,newMessage) {
-      await this.props.messageAction('setConversation',{messages:conversation.messages.concat([newMessage]),conversationID:conversation.id})
-      return true
-    }
-    renderPictureButton(conversation,user) {
-      return <View style={{width:80,paddingTop:7}}>
-        <Row>
-          <Col>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => this.sendPicture('take',conversation,user)}
-          >
-              <View style={{marginLeft: 10, marginBottom: 16}}>
-                <AllIcon name='camera' color={colors.green} type='font' size={20} />
-              </View>
-          </TouchableOpacity>
-          </Col>
-          <Col>
-          <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => this.sendPicture('pick',conversation,user)}
-            >
-                <View style={{marginLeft: 10, marginBottom: 16}}>
-                  <AllIcon name='image' color={colors.green} type='font' size={20} />
-                </View>
-            </TouchableOpacity>
-          </Col>
-        </Row>
-      </View>
-    }
-    messagePageView (conversation,user) {
-      console.log('render convo')
+    return true;
+  }
+  infoOtherMember(conversation) {
+    if (conversation.type === 'group') return {firstname: conversation.title};
+    if (!conversation.members) return null;
+    if (
+      Object.values(conversation.members).filter(
+        (user) => user.id !== this.props.userID,
+      ).length === 0
+    )
+      return Object.values(conversation.members)[0].info;
+    return Object.values(conversation.members).filter(
+      (user) => user.id !== this.props.userID,
+    )[0].info;
+  }
+  titleHeader(data) {
+    if (data.type === 'users') {
       return (
-        <GiftedChat
-            messages={Object.values(conversation.messages).reverse()}
-            onSend={messages => this.onSend(messages,conversation)}
-            textInputStyle={styleApp.input}
-            messageTextStyle={styleApp.input}
-            renderBubble={this.renderBubble}
-            user={user}
-            renderActions={() => this.renderPictureButton(conversation,user)}
-            renderSend={this.renderSendButton}
+        this.infoOtherMember(data).firstname +
+        ' ' +
+        this.infoOtherMember(data).lastname
+      );
+    }
+    return data.title;
+  }
+  imgHeader(data) {
+    if (data.type === 'group')
+      return (
+        <AsyncImage
+          style={styleApp.roundView2}
+          mainImage={data.image}
+          imgInitial={data.image}
         />
-      )
-    }
-    onSend(messages = [],conversation) {
-      this.sendNewMessage(conversation,messages[0])
-    }
+      );
+    if (this.infoOtherMember(data).picture)
+      return (
+        <AsyncImage
+          style={styleApp.roundView2}
+          mainImage={this.infoOtherMember(data).picture}
+          imgInitial={this.infoOtherMember(data).picture}
+        />
+      );
+    return (
+      <View style={styleApp.roundView2}>
+        <Text style={[styleApp.input, {fontSize: 11}]}>
+          {this.infoOtherMember(data).firstname[0] +
+            this.infoOtherMember(data).lastname[0]}
+        </Text>
+      </View>
+    );
+  }
+
   render() {
-    var conversation = Object.values(this.props.conversations).filter(conversation => conversation.id == this.props.navigation.getParam('conversationID'))[0]
-    var user = {
+    const discussion = {};
+    const user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-      avatar: 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/sports%2Ftennis%2FtypeEvent%2Fball%20(1).png?alt=media&token=a7be580e-a13b-4432-92bb-b31014675ab3',
-    }
+      avatar: !this.props.infoUser.picture
+        ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
+        : this.props.infoUser.picture,
+    };
+    console.log(
+      'render discussion',
+      this.infoOtherMember(this.props.navigation.getParam('data')),
+    );
+    console.log(this.props.navigation.getParam('data'));
     return (
       <View style={styleApp.stylePage}>
-
-        <HeaderBackButton 
-        AnimatedHeaderValue={this.AnimatedHeaderValue}
-        
-        textHeader={''}
-        inputRange={[50,80]}
-        initialBorderColorIcon={'white'}
-        initialBackgroundColor={'white'}
-        typeIcon2={'mat'}
-        initialBorderWidth={0.3}
-        initialBorderColorHeader={colors.borderColor}
-        sizeIcon2={17}
-        initialTitleOpacity={0}
-        icon1={'arrow-left'}
-        icon2={null}
-
-        clickButton1={() => this.props.navigation.navigate('MessageList')}
-        clickButton2={() => console.log('')}
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={this.titleHeader(this.props.navigation.getParam('data'))}
+          imgHeader={this.imgHeader(this.props.navigation.getParam('data'))}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={'white'}
+          initialBackgroundColor={'white'}
+          typeIcon2={'mat'}
+          initialBorderWidth={0.3}
+          initialBorderColorHeader={colors.borderColor}
+          sizeIcon2={17}
+          initialTitleOpacity={1}
+          icon1={'arrow-left'}
+          icon2={null}
+          clickButton1={async () => {
+            // await Keyboard.dismiss();
+            await this.conversationRef.dismiss();
+            this.props.navigation.dismiss();
+          }}
+          clickButton2={() => console.log('')}
         />
-        
-        
-      {this.messagePageView(conversation,user)}
+        <View style={{height: sizes.heightHeaderHome}} />
 
+        <Conversation2
+          messages={this.state.messages}
+          user={user}
+          onRef={(ref) => (this.conversationRef = ref)}
+          infoOtherMember={this.infoOtherMember(
+            this.props.navigation.getParam('data'),
+          )}
+          messageAction={this.props.messageAction}
+          userConnected={this.props.userConnected}
+          conversation={this.props.navigation.getParam('data')}
+        />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-
+  inputContainer: {
+    borderWidth: 0,
+    width: '100%',
+    height: 45,
+    overflow: 'hidden',
+    paddingLeft: 15,
+    paddingTop: 6,
+    //paddingLeft: 10,
+    borderColor: colors.borderColor,
+    // borderRadius: 25,
+  },
+  buttonSend: {
+    height: 35,
+    width: 100,
+    borderRadius: 5,
+    borderWidth: 0.5,
+    borderColor: colors.off,
+  },
 });
 
-const  mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    conversations:state.conversations,
-    userID:state.user.userID,
-    infoUser:state.user.infoUser.userInfo
+    gamefareUser: state.message.gamefareUser,
+    conversations: state.message.conversation,
+    userID: state.user.userID,
+    userConnected: state.user.userConnected,
+    infoUser: state.user.infoUser.userInfo,
   };
 };
 
-export default connect(mapStateToProps,{messageAction})(MessageTab);
+export default connect(mapStateToProps, {messageAction})(MessageTab);

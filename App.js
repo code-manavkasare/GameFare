@@ -1,14 +1,15 @@
+if(__DEV__) {
+  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+}
+
 import React, {Component} from 'react';
 import AppSwitchNavigator from './src/components/navigation/AppNavigator'
 import NavigationService from './NavigationService';
 
 import { createAppContainer , createStackNavigator,StackActions} from 'react-navigation';
 import SplashScreen from 'react-native-splash-screen';
-import branch, { BranchEvent } from 'react-native-branch'
 import StatusBar from '@react-native-community/status-bar';
-import firebase from 'react-native-firebase'
 import {connect} from 'react-redux';
-import {indexEvents,indexGroups} from './src/components/database/algolia'
 
 import axios from 'axios'
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions'
@@ -18,7 +19,6 @@ const AppContainer = createAppContainer(AppSwitchNavigator)
 class App extends Component {
   async componentDidMount() { 
     SplashScreen.hide()
-    this.initBranch()
 
     StatusBar.setHidden(true, "slide")
     StatusBar.setBarStyle('light-content',true)
@@ -45,32 +45,6 @@ class App extends Component {
       })
     }
     return true
-  }
-  initBranch() {
-    var that = this
-    branch.subscribe(({ error, params }) => {
-      if (error) {
-        console.log("Error from Branch: " + error)
-        return
-      }
-      console.log('branch link opened !')
-      console.log(params)
-      if (params.action == 'openEventPage') {
-        that.openEvent(params.eventID)        
-      } else if (params.action == 'openGroupPage') {
-        that.openGroup(params.eventID)        
-      } else if (params.type == 'share') {
-        ls.save('giftShare', params.value)
-      }
-    })
-  }
-  async openEvent(eventID) {
-    var data = await indexEvents.getObject(eventID)
-    NavigationService.navigate('Event',{data:data,pageFrom:'Home'})
-  }
-  async openGroup(eventID) {
-    var data = await indexGroups.getObject(eventID)
-    NavigationService.navigate('Group',{data:data,pageFrom:'Home'})
   }
   render() {
     return <AppContainer ref={navigatorRef => {

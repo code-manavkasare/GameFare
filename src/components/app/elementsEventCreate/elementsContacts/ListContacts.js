@@ -27,6 +27,7 @@ import Loader from '../../../layout/loaders/Loader'
 import sizes from '../../../style/sizes';
 // import ScrollView from '../../../layout/scrollViews/ScrollView'
 import Button from '../../../layout/buttons/Button'
+import ButtonColor from '../../../layout/Views/Button'
 
 const { height, width } = Dimensions.get('screen')
 
@@ -103,33 +104,39 @@ export default class ContactsComponent extends Component {
       if (contact.familyName == '') {
         initial = contact.givenName[0]
       }
-      return (
-        <TouchableOpacity key={key} style={{marginTop:0,borderBottomWidth:0.3,borderColor:colors.borderColor,height:55}}activeOpacity={0.7} onPress={() => this.props.selectContact(contact,Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)} >
-          <Row>
-            <Col size={15} style={styles.center}>
-              <View style={[styleApp.center,{height:30,width:30,backgroundColor:contact.color,borderRadius:15,borderWidth:1,borderColor:colors.off}]}>
-                <Text style={[styleApp.subtitle,{color:'white',fontSize:11,fontFamily:'OpenSans-SemiBold'}]}>{initial}</Text>    
-                {
-                  Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0?
-                  <View style={styles.viewTick}>
-                    <AllIcons name="check" type="font" color={'white'} size={9} />
-                  </View>
-                  :null
-                  }
-              </View>
-              
-            </Col>
-            <Col size={85} style={[styles.center2,{paddingLeft:15}]}>
-              <Text style={[styles.text,{fontSize:14}]}>{contact.givenName} {contact.familyName}</Text>
-              <Text style={[styles.text,{fontSize:12,color:colors.title,marginTop:4}]}>{contact.phoneNumbers[0].number} • {contact.phoneNumbers[0].label}</Text>
-            </Col>
-          </Row>
-        </TouchableOpacity>
-      )
+      return <ButtonColor view={() => {
+        return <Row>
+        <Col size={15} style={styles.center}>
+          <View style={[styleApp.center,{height:30,width:30,backgroundColor:contact.color,borderRadius:15,borderWidth:0.5,borderColor:colors.off}]}>
+            <Text style={[styleApp.subtitle,{color:'white',fontSize:11,fontFamily:'OpenSans-SemiBold'}]}>{initial}</Text>    
+            
+          </View>
+          
+        </Col>
+        <Col size={70} style={[styles.center2,{paddingLeft:15}]}>
+          <Text style={[styles.input,{fontSize:14}]}>{contact.givenName} {contact.familyName}</Text>
+          <Text style={[styles.subtitle,{fontSize:12,marginTop:4,color:colors.greyDark}]}>{contact.phoneNumbers[0].number} 
+          {/* • {contact.phoneNumbers[0].label} */}
+           </Text>
+        </Col>
+        <Col size={15} style={styleApp.center}>
+          {
+          Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0?
+          <AllIcons name="check" type="mat" color={colors.green} size={13} />
+          :null
+          }
+        </Col>
+      </Row>
+      }}
+      click={() => this.props.selectContact(contact,Object.values(this.props.contactsSelected).filter(contact1 => contact1.recordID == contact.recordID).length != 0)}
+      color={colors.white}
+      style={{marginTop:0,borderBottomWidth:0.5,borderColor:colors.off,height:55}}
+      onPressColor={colors.off}
+      />
     }
     headerLetter (letter) {
       return (
-      <Row style={{height:25,backgroundColor:'#F6F6F6',borderBottomWidth:0.3,borderColor:colors.borderColor}}>
+      <Row style={{height:25,backgroundColor:colors.off2,borderBottomWidth:0.5,borderColor:colors.off}}>
         <Col style={styles.center} size={15}>
           <Text style={[styles.text,{fontSize:12,fontFamily:'OpenSans-SemiBold'}]}>{letter}</Text>
         </Col>
@@ -158,7 +165,7 @@ export default class ContactsComponent extends Component {
       // return this.scrollViewY = event.nativeEvent.contentOffset.y
     }
     listContacts() {  
-      return <ScrollView keyboardShouldPersistTaps={true} onScroll={this.handleScroll.bind(this)} style={{height:height-sizes.heightHeaderHome-50-sizes.heightFooterBooking-sizes.marginTopApp-10,marginBottom:sizes.heightFooterBooking}} stickyHeaderIndices={this.state.stickyHeader} >
+      return <ScrollView keyboardShouldPersistTaps={true} onScroll={this.handleScroll.bind(this)} style={{height:height-sizes.heightHeaderHome-50-sizes.heightFooterBooking-sizes.marginTopApp-25,marginBottom:sizes.heightFooterBooking}} stickyHeaderIndices={this.state.stickyHeader} >
         {this.state.contacts.map((contact,i) => (
           this.contact(contact,i)
         ))}

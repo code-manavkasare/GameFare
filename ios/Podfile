@@ -34,7 +34,7 @@ target 'gamefare' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod ‘Firebase’ 
+  pod ‘Firebase’
   
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 

@@ -1,155 +1,201 @@
 import React, {Component} from 'react';
-import { 
-    View, 
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    Dimensions,TextInput,
-    Animated
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-const { height, width } = Dimensions.get('screen')
-import { Col, Row, Grid } from "react-native-easy-grid";
-import firebase from 'react-native-firebase'
+import {groupsAction} from '../../../actions/groupsActions';
+import {subscribeToTopics} from '../../functions/notifications';
+const {height, width} = Dimensions.get('screen');
+import {Col, Row, Grid} from 'react-native-easy-grid';
+import firebase from 'react-native-firebase';
+import CardUser from '../elementsEventPage/CardUser';
 
-import ButtonColor from '../../layout/Views/Button'
-import AllIcons from '../../layout/icons/AllIcons'
-import Communications from 'react-native-communications';
+import ButtonColor from '../../layout/Views/Button';
+import AllIcons from '../../layout/icons/AllIcons';
 import FadeInView from 'react-native-fade-in-view';
-import PlaceHolder from '../../placeHolders/ListAttendees'
-import LinearGradient from 'react-native-linear-gradient';
-import NavigationService from '../../../../NavigationService'
+import PlaceHolder from '../../placeHolders/ListAttendees';
+import AsyncImage from '../../layout/image/AsyncImage';
+import colors from '../../style/colors';
+import NavigationService from '../../../../NavigationService';
 
-import sizes from '../../style/sizes'
-import styleApp from '../../style/style'
+import sizes from '../../style/sizes';
+import styleApp from '../../style/style';
 
-export default class Members extends Component {
+class MembersView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader:true,
-      members:[]
+      loader: false,
     };
   }
-  componentDidMount() {
-    this.load()
-  }
-  async load() {
-    var members = await firebase.database().ref('groups/' + this.props.objectID + '/members/').once('value')
-    members = members.val()
-    if (members == null) members = []
-    this.setState({loader:false,members:members})
-  }
-  async componentWillReceiveProps(nextProps) {
-    if (nextProps.loader) {
-      await this.setState({loader:true})
-      this.load()
-    }
-  }
-  rowUser (user,i,data) {
+  componentDidMount() {}
+  rowUser(user, i, data) {
     return (
-      <View  key={i} style={{paddingTop:10,paddingBottom:10}}>
-        <Row>
-          <Col size={15} style={styleApp.center2}>
-            <View style={[styleApp.viewNumber,styleApp.center,{backgroundColor:colors.primaryLight,}]}>
-              <Text style={[styleApp.text,{fontSize:10,color:'white',fontFamily:'OpenSans-Bold'}]} >{user.info.name.split(' ')[0][0] + user.info.name.split(' ')[1][0]}</Text>
-            </View>
-          </Col>
-          <Col size={75} style={styleApp.center2}>
-            <Text style={styleApp.text}>{user.info.name}</Text>
-          </Col>
-          <Col size={10} style={styleApp.center3} activeOpacity={0.7} onPress={() => !this.props.userID == data.info.organizer?null:NavigationService.navigate('AlertCall',{textButton:'Close',title:user.info.name,subtitle:user.info.phoneNumber,close:true,icon:<AllIcons name='envelope' type='font' color={colors.green} size={17} />})}>
-          {this.props.userID == data.info.organizer?<AllIcons name='envelope' type='font' color={colors.green} size={17} />:null}
-          </Col>
-        </Row>
-      </View>
-    )
+      <CardUser
+        user={user}
+        infoUser={this.props.infoUser}
+        userConnected={this.props.userConnected}
+        key={i}
+        userID={this.props.userID}
+      />
+    );
   }
-  async joinGroup () {
-    console.log('join')
+  async joinGroup() {
+    console.log('join');
     var user = {
-      userID:this.props.userID,
-      status:'confirmed',
-      info:{
-        name:this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-        phoneNumber:this.props.infoUser.countryCode + this.props.infoUser.phoneNumber
-      }
-    }
-    await this.setState({members:{
-      ...this.state.members,
-      [this.props.userID]:user,
-    }})
-    await firebase.database().ref('usersGroups/' + this.props.userID + '/' + this.props.objectID).update({
-      groupID:this.props.objectID,
-      status:'confirmed',
-      organizer:false,
-    })
-    await firebase.database().ref('groups/' + this.props.objectID + '/members/' + this.props.userID).update(user)
-    return NavigationService.navigate('Group')
+      userID: this.props.userID,
+      id: this.props.userID,
+      status: 'confirmed',
+      info: this.props.infoUser,
+    };
+    await firebase
+      .database()
+      .ref('groups/' + this.props.objectID + '/members/' + this.props.userID)
+      .update(user);
+
+    await subscribeToTopics([this.props.userID, 'all', this.props.objectID]);
+
+    var members = this.props.data.members;
+    if (!members) members = {};
+    await this.props.groupsAction('editGroup', {
+      objectID: this.props.data.objectID,
+      info: this.props.data.info,
+      members: {
+        ...members,
+        [this.props.userID]: user,
+      },
+    });
+    await this.props.groupsAction('addMyGroup', this.props.data.objectID);
+    return NavigationService.navigate('Group');
   }
-  join (data) {
-    if (!this.props.userConnected) {
-      return NavigationService.navigate('SignIn',{pageFrom:'Group'})
+  join(data) {
+    if (!this.props.userConnected)
+      return NavigationService.navigate('SignIn', {pageFrom: 'Group'});
+    if (!data.members) return this.openJoinAlert(data);
+
+    if (
+      Object.values(data.members).filter(
+        (user) => user.userID === this.props.userID,
+      ).length != 0
+    ) {
+      return NavigationService.navigate('Alert', {
+        textButton: 'Got it!',
+        close: true,
+        title: 'You are already a member of this group.',
+        subtitle: 'You cannot join it.',
+      });
     }
-    if (data.organizer.userID == this.props.userID) {
-      return NavigationService.navigate('Alert',{textButton:'Got it!',close:true,title:'You are the admin of this group.',subtitle:'You cannot join it.'})
-    } else if (Object.values(this.state.members).filter(user => user.userID == this.props.userID).length != 0) {
-      return NavigationService.navigate('Alert',{textButton:'Got it!',close:true,title:'You are already a member of this group.',subtitle:'You cannot join it.'})
-    }
-    return NavigationService.navigate('Alert',{textButton:'Join now',title:'Join ' + data.info.name,onGoBack:() => this.joinGroup()})
+    return this.openJoinAlert(data);
+  }
+  openJoinAlert(data) {
+    NavigationService.navigate('Alert', {
+      textButton: 'Join now',
+      title: 'Do you wish to join ' + data.info.name + '?',
+      onGoBack: () => this.joinGroup(),
+    });
+  }
+  userAlreadyJoined(data) {
+    if (!data.members) return false;
+    if (
+      Object.values(data.members).filter(
+        (user) => user.userID === this.props.userID,
+      ).length === 0
+    )
+      return false;
+    return true;
   }
   membersView(data) {
-      return (
-        <View style={styleApp.viewHome}>
-          <View style={styleApp.marginView}>
-
+    return (
+      <View style={styleApp.viewHome}>
+        <View style={styleApp.marginView}>
           <Row>
-            <Col style={styleApp.center2} size={80}>
-              <Text style={[styleApp.text,{marginBottom:0}]}>Members</Text>
-            </Col >
-            <Col style={styleApp.center3} size={20}>
-              <ButtonColor view={() => {
-                return <Text style={[styleApp.text,{color:'white'}]}>Join</Text>
-              }} 
-              click={() => this.join(data)}
-              color={colors.green}
-              style={[styleApp.center,{borderColor:colors.off,height:40,width:90,borderRadius:20,borderWidth:1}]}
-              onPressColor={colors.greenClick}
-              />
-              </Col>
+            <Col style={styleApp.center2} size={70}>
+              <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
+            </Col>
+            <Col style={styleApp.center3} size={30}>
+              {data.organizer.id ===
+              this.props.userID ? null : this.userAlreadyJoined(data) ? (
+                <Row>
+                  <Col size={50} style={styleApp.center}>
+                    <AllIcons
+                      name="check"
+                      type="font"
+                      color={colors.green}
+                      size={17}
+                    />
+                  </Col>
+                  <Col size={50} style={styleApp.center2}>
+                    <Text style={[styleApp.text, {color: colors.green}]}>
+                      Joined
+                    </Text>
+                  </Col>
+                </Row>
+              ) : (
+                <ButtonColor
+                  view={() => {
+                    return (
+                      <Text style={[styleApp.text, {color: 'white'}]}>
+                        Join
+                      </Text>
+                    );
+                  }}
+                  click={() => this.join(data)}
+                  color={colors.green}
+                  style={[
+                    styleApp.center,
+                    {
+                      borderColor: colors.off,
+                      height: 40,
+                      width: 90,
+                      borderRadius: 20,
+                      borderWidth: 1,
+                    },
+                  ]}
+                  onPressColor={colors.greenClick}
+                />
+              )}
+            </Col>
           </Row>
-          
-          
-
-          <View style={[styleApp.divider2,{marginBottom:10}]} />
-          {
-            this.state.loader?
-            <FadeInView duration={300} style={{paddingTop:10}}>
-              <PlaceHolder />
-              <PlaceHolder />
-              <PlaceHolder />
-            </FadeInView>
-            :Object.values(this.state.members).length == 0?
-            <Text style={[styleApp.smallText,{marginTop:10}]}>No one has joined the group yet.</Text>
-            :
-            <FadeInView duration={300} style={{marginTop:5}}>
-            {Object.values(this.state.members).map((user,i) => (
-              this.rowUser(user,i,data)
-            ))}
-            </FadeInView>
-          }
-
-          </View>
+          <View style={[styleApp.divider2, {marginBottom: 10}]} />
         </View>
-      )
+
+        {this.state.loader ? (
+          <FadeInView duration={300} style={{paddingTop: 10}}>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </FadeInView>
+        ) : this.props.data.members == undefined ? (
+          <Text style={[styleApp.smallText, {marginTop: 10, marginLeft: 20}]}>
+            No one has joined the group yet.
+          </Text>
+        ) : (
+          <FadeInView duration={300} style={{marginTop: 5}}>
+            {Object.values(this.props.data.members).map((user, i) =>
+              this.rowUser(user, i, data),
+            )}
+          </FadeInView>
+        )}
+      </View>
+    );
   }
   render() {
-    return (this.membersView(this.props.data));
+    return this.membersView(this.props.data);
   }
 }
 
-const styles = StyleSheet.create({
+const mapStateToProps = (state) => {
+  return {
+    userConnected: state.user.userConnected,
+    infoUser: state.user.infoUser.userInfo,
+    userID: state.user.userID,
+  };
+};
 
-});
-
-
+export default connect(mapStateToProps, {groupsAction})(MembersView);
