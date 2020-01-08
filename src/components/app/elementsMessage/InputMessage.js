@@ -1,5 +1,14 @@
 import React from 'react';
-import {View, Text, Dimensions, StyleSheet, Platform} from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
 import firebase from 'react-native-firebase';
@@ -8,6 +17,8 @@ import Loader from '../../layout/loaders/Loader';
 import AsyncImage from '../../layout/image/AsyncImage';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import FadeInView from 'react-native-fade-in-view';
+import union from 'lodash/union';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -22,6 +33,7 @@ class InputMessage extends React.Component {
     super(props);
     this.state = {
       inputValue: '',
+      images: '',
     };
   }
   componentDidMount() {
@@ -44,6 +56,25 @@ class InputMessage extends React.Component {
   async openPicturesView(val) {
     await this.textInputRef.focus();
     return this.props.openPicturesView(val);
+  }
+  addImage(uri, add) {
+    if (add) return this.setState({images: union([uri], this.state.images)});
+
+    console.log('delte image', add);
+
+    var images = this.state.images.slice(0);
+    console.log(images);
+    const index = this.state.images.keys(uri);
+    console.log(index);
+    delete images[images.indexOf(uri)];
+    console.log(images);
+    this.setState({images: images});
+  }
+  deleteImage(uri) {}
+  conditionInputOn() {
+    if (this.state.inputValue === '' && this.state.images.length === 0)
+      return false;
+    return true;
   }
   renderInput() {
     console.log('render inoyt', this.props.infoOtherMember);
@@ -69,6 +100,37 @@ class InputMessage extends React.Component {
           // testID={'inputValue'}
         />
 
+        {this.state.images.length !== 0 ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{
+              paddingTop: 10,
+              paddingBottom: 10,
+              paddingLeft: 20,
+              //backgroundColor: 'red',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}>
+            {this.state.images.map((uri, i) => (
+              <FadeInView duration={250} style={{marginRight: 10}}>
+                <TouchableOpacity
+                  style={styles.buttonCloseImg}
+                  activeOpacity={0.8}
+                  onPress={() => this.addImage(uri, false)}>
+                  <AllIcons name="times" type="font" color="white" size={8} />
+                </TouchableOpacity>
+                <Image
+                  source={{uri: uri}}
+                  key={i}
+                  style={{height: 45, width: 45, borderRadius: 5}}
+                />
+              </FadeInView>
+            ))}
+            <View style={{width: 30}} />
+          </ScrollView>
+        ) : null}
+
         <Row
           style={{
             paddingLeft: 20,
@@ -78,10 +140,10 @@ class InputMessage extends React.Component {
           }}>
           <Col size={10} style={styleApp.center2}>
             <AllIcons
-              name="camera"
+              name="add-a-photo"
               color={colors.title}
-              type="font"
-              size={20}
+              type="mat"
+              size={23}
             />
           </Col>
           <Col
@@ -89,7 +151,12 @@ class InputMessage extends React.Component {
             style={styleApp.center2}
             activeOpacity={0.7}
             onPress={() => this.openPicturesView(true)}>
-            <AllIcons name="image" color={colors.title} type="font" size={20} />
+            <AllIcons
+              name="collections"
+              color={colors.title}
+              type="mat"
+              size={23}
+            />
           </Col>
           <Col size={60} style={styleApp.center2}></Col>
 
@@ -101,10 +168,9 @@ class InputMessage extends React.Component {
                     style={[
                       styleApp.textBold,
                       {
-                        color:
-                          this.state.inputValue === ''
-                            ? colors.greyDark
-                            : colors.white,
+                        color: !this.conditionInputOn()
+                          ? colors.greyDark
+                          : colors.white,
                       },
                     ]}>
                     Send
@@ -112,25 +178,22 @@ class InputMessage extends React.Component {
                 );
               }}
               click={() =>
-                this.state.inputValue === ''
+                this.conditionInputOn()
                   ? null
                   : this.sendNewMessage(this.props.user, this.state.inputValue)
               }
-              color={
-                this.state.inputValue === '' ? colors.white : colors.primary
-              }
+              color={!this.conditionInputOn() ? colors.white : colors.primary}
               style={[
                 styleApp.center,
                 styles.buttonSend,
                 {
-                  borderColor:
-                    this.state.inputValue === ''
-                      ? colors.greyDark
-                      : colors.primary,
+                  borderColor: !this.conditionInputOn()
+                    ? colors.greyDark
+                    : colors.primary,
                 },
               ]}
               onPressColor={
-                this.state.inputValue === '' ? colors.white : colors.primary2
+                !this.conditionInputOn() ? colors.white : colors.primary2
               }
             />
           </Col>
@@ -179,10 +242,25 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignSelf: 'center',
   },
+  buttonCloseImg: {
+    ...styleApp.center,
+    position: 'absolute',
+    height: 22,
+    width: 22,
+    borderRadius: 12.5,
+    right: -7,
+    top: -7,
+    zIndex: 40,
+    backgroundColor: colors.title,
+    borderWidth: 2,
+    borderColor: colors.white,
+  },
 });
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    input: state.message.input,
+  };
 };
 
 export default connect(mapStateToProps, {})(InputMessage);

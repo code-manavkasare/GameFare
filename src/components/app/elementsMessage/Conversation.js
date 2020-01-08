@@ -134,8 +134,10 @@ class MessageTab extends React.Component {
       </View>
     );
   }
+
   render() {
-    var user = {
+    const discussion={}
+    const user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
       avatar: !this.props.infoUser.picture
@@ -174,6 +176,7 @@ class MessageTab extends React.Component {
           infoOtherMember={this.infoOtherMember(
             this.props.navigation.getParam('data'),
           )}
+          messageAction={this.props.messageAction}
           userConnected={this.props.userConnected}
           conversation={this.props.navigation.getParam('data')}
         />
@@ -206,6 +209,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     gamefareUser: state.message.gamefareUser,
+    conversations:state.message.conversation,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,

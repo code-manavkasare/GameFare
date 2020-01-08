@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
+
 import PropTypes from 'prop-types';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 
@@ -61,10 +62,7 @@ export default class KeyboardInput extends Component {
   }
 
   onKeyboardItemSelected(keyboardId, params) {
-    const receivedKeyboardData = `onItemSelected from "${keyboardId}"\nreceived params: ${JSON.stringify(
-      params,
-    )}`;
-    this.setState({receivedKeyboardData});
+    this.inputRef.addImage(params.image, params.selected);
   }
   showKeyboardView(component, title) {
     this.setState({

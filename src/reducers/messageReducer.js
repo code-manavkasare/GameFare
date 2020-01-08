@@ -1,4 +1,10 @@
-import {SET_CONVERSATION, SET_CONVERSATIONS} from '../actions/types';
+import {
+  SET_CONVERSATION,
+  SET_CONVERSATIONS,
+  SET_INPUT,
+  ADD_IMAGE,
+} from '../actions/types';
+import union from 'lodash/union';
 
 const initialState = {
   gamefareUser: {
@@ -9,6 +15,10 @@ const initialState = {
   },
   conversations: {},
   messages: {},
+  input: {
+    textInput: '',
+    images: [],
+  },
 };
 
 const messageReducer = (state = initialState, action) => {
@@ -17,6 +27,22 @@ const messageReducer = (state = initialState, action) => {
       return {
         ...state,
         ...action.conversations,
+      };
+    case ADD_IMAGE:
+      return {
+        ...state,
+        input: {
+          ...state.input,
+          images: union([action.image], state.input.images),
+        },
+      };
+    case SET_INPUT:
+      return {
+        ...state,
+        input: {
+          ...state.input,
+          ...action.input,
+        },
       };
     case SET_CONVERSATION:
       console.log('SET_CONVERSATION', action.conversation);

@@ -130,7 +130,18 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginBottom: -5,
   },
-
+  buttonRoundLibray: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    height: 60,
+    borderRadius: 30,
+    width: 60,
+    zIndex: 20,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.off,
+  },
   buttonRound: {
     width: 65,
     height: 65,
