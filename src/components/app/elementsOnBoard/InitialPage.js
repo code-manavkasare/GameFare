@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
+import firebase from 'react-native-firebase';
 import {View, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import {globaleVariablesAction} from '../../../actions/globaleVariablesActions';
-import {historicSearchAction} from '../../../actions/historicSearchActions';
-import firebase from 'react-native-firebase';
-
-const {height, width} = Dimensions.get('screen');
+import branch from 'react-native-branch';
 import FadeInView from 'react-native-fade-in-view';
 
-import Loader from '../../layout/loaders/Loader';
+import {globaleVariablesAction} from '../../../actions/globaleVariablesActions';
+import {historicSearchAction} from '../../../actions/historicSearchActions';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
+import Loader from '../../layout/loaders/Loader';
 
+const {height, width} = Dimensions.get('screen');
 class InitialPage extends Component {
   constructor(props) {
     super(props);
@@ -30,18 +30,62 @@ class InitialPage extends Component {
       .once('value');
     variables = variables.val();
     await this.props.globaleVariablesAction(variables);
-    // return this.props.navigation.navigate('SportSelect');
-    console.log('sdfdfkjhgdfjkhgfdg');
-    console.log(this.props.sportSelected);
-    // return this.props.navigation.navigate('SportSelect');
+    await this.goToHomePageDirectlyFromRefLink();
+
     if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
       return this.props.navigation.navigate('TabsApp');
     }
     return this.props.navigation.navigate('SportSelect');
   }
-  shouldComponentUpdate(nextProps) {
-    return false;
-  }
+
+  goToHomePageDirectlyFromRefLink = async () => {
+    branch.subscribe(async ({error, params}) => {
+      if (error) {
+        console.log('Error from Branch: ' + error);
+        return;
+      }
+      const {eventID, action} = params;
+
+      if (params['+clicked_branch_link']) {
+        if (
+          this.props.sportSelected === '' &&
+          this.props.leagueSelected === ''
+        ) {
+          await this.initialSetupFromRefLink(
+            action === 'openEventPage' ? true : false,
+            eventID,
+          );
+        }
+        this.props.navigation.navigate('TabsApp');
+        if (action === 'openEventPage') {
+          this.props.navigation.push('Event', {objectID: eventID});
+        } else if (action === 'openGroupPage') {
+          this.props.navigation.push('Group', {objectID: eventID});
+        }
+      }
+    });
+  };
+
+  initialSetupFromRefLink = async (isEvent, eventID) => {
+    const eventFirebase = await firebase
+      .database()
+      .ref((isEvent ? '/events/' : '/groups/') + eventID)
+      .once('value');
+    const event = eventFirebase.val();
+
+    this.props.historicSearchAction('setSport', {
+      value: event.info.sport,
+      league: 'all',
+    });
+
+    const {address, lat, lng} = event.location;
+    this.props.historicSearchAction('setLocationSearch', {
+      address,
+      lat,
+      lng,
+    });
+  };
+
   loader() {
     return (
       <FadeInView duration={200} style={[styleApp.center, {height: height}]}>
@@ -73,27 +117,6 @@ class InitialPage extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  imgBackground: {
-    height: 40,
-    width: 40,
-    // borderRadius:24,
-    borderColor: colors.off,
-    borderWidth: 0,
-    borderRadius: 20,
-  },
-  cardSport: {
-    // backgroundColor:'red',
-    marginRight: 0,
-    height: 60,
-    width: width,
-    borderColor: colors.off,
-    borderWidth: 1,
-    // marginRight:10,
-    borderRadius: 10,
-  },
-});
 
 const mapStateToProps = (state) => {
   return {
