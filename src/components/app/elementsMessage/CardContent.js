@@ -40,14 +40,15 @@ export default class CardContent extends React.Component {
       <AsyncImage style={styles.roundImage} mainImage={img} imgInitial={img} />
     );
   }
-  selectImage(uri, newSelected) {
+  selectImage(uri, type, newSelected, playableDuration) {
     this.setState({selected: newSelected});
-    // this.props.selectImage(uri, newSelected);
+    console.log('addPicture', playableDuration);
+    this.props.selectImage(uri, type, newSelected, playableDuration);
   }
   sendImage(uri, info) {}
 
   cardContent(rowData, i) {
-    const {uri} = rowData.node.image;
+    const {uri, playableDuration} = rowData.node.image;
     const {type} = rowData.node;
     console.log('render card convo', rowData.node, i);
     return (
@@ -57,13 +58,35 @@ export default class CardContent extends React.Component {
           return (
             <Row>
               {this.state.selected && (
-                <FadeInView duration={300} style={styles.voile}>
-                  <AllIcons
-                    name="check"
-                    type="font"
-                    color={colors.white}
-                    size={13}
-                  />
+                <FadeInView
+                  duration={300}
+                  style={[
+                    styles.voile,
+                    {opacity: 1, backgroundColor: 'transparent'},
+                  ]}>
+                  {/* <ButtonColor
+                    view={() => {
+                      return (
+                        <Text style={[styleApp.text, {color: colors.white}]}>
+                          Send
+                        </Text>
+                      );
+                    }}
+                    click={() => this.selectPicture()}
+                    color={colors.green}
+                    style={{
+                      height: 70,
+                      width: 70,
+                      borderRadius: 35,
+                      borderColor: colors.off,
+                      borderWidth: 1,
+                      opacity: 1,
+                      zIndex: 50,
+                      position: 'absolute',
+                    }}
+                    onPressColor={colors.off}
+                  /> */}
+                  <View style={styles.voile}></View>
                 </FadeInView>
               )}
               {type === 'video' ? (
@@ -84,8 +107,12 @@ export default class CardContent extends React.Component {
                       />
                     </Col>
                     <Col style={styleApp.center3}>
-                      <Text style={[styleApp.input, {color: colors.white}]}>
-                        {rowData.node.image.playableDuration.toFixed(0)}sec
+                      <Text
+                        style={[
+                          styleApp.input,
+                          {color: colors.white, fontWeight: 'bold'},
+                        ]}>
+                        {playableDuration.toFixed(0)} sec
                       </Text>
                     </Col>
                   </Row>
@@ -98,7 +125,9 @@ export default class CardContent extends React.Component {
             </Row>
           );
         }}
-        click={() => this.selectImage(uri, !this.state.selected, type)}
+        click={() =>
+          this.selectImage(uri, type, !this.state.selected, playableDuration)
+        }
         color="white"
         style={this.props.style}
         onPressColor={colors.off}
@@ -113,20 +142,20 @@ export default class CardContent extends React.Component {
 const styles = StyleSheet.create({
   roundImage: {
     ...styleApp.center,
-    backgroundColor: colors.off2,
+    // backgroundColor: colors.off2,
     width: 200,
     height: '100%',
     borderRadius: 5,
-    borderWidth: 0.5,
+    // borderWidth: 0.5,
     borderColor: colors.borderColor,
   },
   voile: {
     ...styleApp.center,
-    backgroundColor: colors.grey,
+    backgroundColor: colors.title,
     height: '100%',
     width: '100%',
     //borderRadius: 15,
-    opacity: 0.7,
+    opacity: 0.4,
     //right: 5,
     //top: 5,
     zIndex: 30,

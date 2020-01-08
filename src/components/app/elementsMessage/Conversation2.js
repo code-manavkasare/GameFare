@@ -49,6 +49,12 @@ export default class KeyboardInput extends Component {
       receivedKeyboardData: undefined,
     };
   }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  dismiss() {
+    this.inputRef.blur();
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.messages !== this.props.messages)
       this.setState({loader: false});

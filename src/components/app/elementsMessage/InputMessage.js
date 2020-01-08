@@ -13,16 +13,17 @@ import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
 import firebase from 'react-native-firebase';
 import moment from 'moment';
-import Loader from '../../layout/loaders/Loader';
-import AsyncImage from '../../layout/image/AsyncImage';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
+import {takePicture} from '../../functions/pictures';
+import {sendNewMessage} from '../../functions/message';
+
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import FadeInView from 'react-native-fade-in-view';
 import union from 'lodash/union';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
+
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import NavigationService from '../../../../NavigationService';
@@ -33,48 +34,64 @@ class InputMessage extends React.Component {
     super(props);
     this.state = {
       inputValue: '',
-      images: '',
+      images: {},
     };
   }
   componentDidMount() {
     this.props.onRef(this);
   }
-  async sendNewMessage(user, text) {
+  blur() {
+    this.textInputRef.blur();
+  }
+  async sendNewMessage() {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
-    this.setState({inputValue: ''});
-    await firebase
-      .database()
-      .ref('discussions/' + this.props.conversation.objectID + '/messages')
-      .push({
-        user: user,
-        text: text,
-        createdAt: new Date(),
-        timeStamp: moment().valueOf(),
-      });
+    console.log('send new message', this.props.conversation.objectID);
+    console.log(this.props.user, this.state.inputValue, this.state.images);
+    this.setState({inputValue: '', images: {}});
+    await sendNewMessage(
+      this.props.conversation.objectID,
+      this.props.user,
+      this.state.inputValue,
+      this.state.images,
+    );
+
     return true;
   }
   async openPicturesView(val) {
     await this.textInputRef.focus();
-    return this.props.openPicturesView(val);
+    return this.props.openPicturesView(val, {
+      discussionID: this.props.conversation.objectID,
+      user: this.props.user,
+      images: this.state.images,
+    });
   }
-  addImage(uri, add) {
+  addImage(image, val) {
     console.log('this images', this.state.images);
-    if (add) return this.setState({images: union([uri], this.state.images)});
-
-    console.log('delte image', add);
-
-    var images = this.state.images.slice(0);
-    console.log(images);
-    const index = this.state.images.keys(uri);
-    console.log(index);
-    // delete images[images.indexOf(uri)];
-    images = images.filter((img) => img !== uri);
-    console.log('images');
-    console.log(images);
-    this.setState({images: images});
+    console.log(image);
+    if (!val)
+      return this.setState({
+        images: {
+          ...Object.values(this.state.images).filter(
+            (img) => img.uri !== image.uri,
+          ),
+        },
+      });
+    return this.setState({
+      images: {
+        ...this.state.images,
+        [image.id]: image,
+      },
+    });
+  }
+  async takePicture() {
+    const picture = await takePicture();
+    if (picture) return this.addImage(picture, true);
   }
   conditionInputOn() {
-    if (this.state.inputValue === '' && this.state.images.length === 0)
+    if (
+      this.state.inputValue === '' &&
+      Object.values(this.state.images).length === 0
+    )
       return false;
     return true;
   }
@@ -102,28 +119,21 @@ class InputMessage extends React.Component {
           // testID={'inputValue'}
         />
 
-        {this.state.images.length !== 0 ? (
+        {Object.values(this.state.images).length !== 0 ? (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{
-              paddingTop: 10,
-              paddingBottom: 10,
-              paddingLeft: 20,
-              //backgroundColor: 'red',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}>
-            {this.state.images.map((uri, i) => (
+            style={styles.scrollViewImages}>
+            {Object.values(this.state.images).map((image, i) => (
               <FadeInView duration={250} style={{marginRight: 10}}>
                 <TouchableOpacity
                   style={styles.buttonCloseImg}
                   activeOpacity={0.8}
-                  onPress={() => this.addImage(uri, false)}>
+                  onPress={() => this.addImage(image, false)}>
                   <AllIcons name="times" type="font" color="white" size={8} />
                 </TouchableOpacity>
                 <Image
-                  source={{uri: uri}}
+                  source={{uri: image.uri}}
                   key={i}
                   style={{height: 45, width: 45, borderRadius: 5}}
                 />
@@ -140,7 +150,11 @@ class InputMessage extends React.Component {
             height: 50,
             // backgroundColor: 'red',
           }}>
-          <Col size={10} style={styleApp.center2}>
+          <Col
+            size={10}
+            style={styleApp.center2}
+            activeOpacity={0.7}
+            onPress={() => this.takePicture()}>
             <AllIcons
               name="add-a-photo"
               color={colors.title}
@@ -180,9 +194,8 @@ class InputMessage extends React.Component {
                 );
               }}
               click={() =>
-                this.conditionInputOn()
-                  ? null
-                  : this.sendNewMessage(this.props.user, this.state.inputValue)
+                this.conditionInputOn() &&
+                this.sendNewMessage(this.props.user, this.state.inputValue)
               }
               color={!this.conditionInputOn() ? colors.white : colors.primary}
               style={[
@@ -218,6 +231,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
       },
     }),
+  },
+  scrollViewImages: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    //backgroundColor: 'red',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   textInput: {
     flex: 1,

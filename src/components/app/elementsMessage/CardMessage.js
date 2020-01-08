@@ -1,5 +1,13 @@
 import React from 'react';
-import {View, Text, Dimensions, StyleSheet, Alert, Linking} from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  Alert,
+  Linking,
+  Image,
+} from 'react-native';
 
 import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
@@ -111,7 +119,74 @@ class CardMessage extends React.Component {
     }
     return null;
   }
+  viewTopVideo(duration, play) {
+    return (
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+          position: 'absolute',
+          zIndex: 20,
+          // backgroundColor: 'red',
+        }}>
+        <View
+          style={{
+            ...styleApp.center,
+            position: 'absolute',
+            height: '100%',
+            backgroundColor: colors.title,
+            opacity: 0.1,
+            zIndex: 20,
+            width: '100%',
+          }}>
+          <AllIcons name="play" type="font" color={colors.white} size={30} />
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            zIndex: 60,
+            height: 20,
+            // backgroundColor: 'blue',
+          }}>
+          <Row style={{height: 20, paddingLeft: 5, paddingRight: 5}}>
+            <Col style={styleApp.center2}>
+              <AllIcons
+                name="video"
+                type="font"
+                color={colors.white}
+                size={13}
+              />
+            </Col>
+            <Col style={styleApp.center3}>
+              <Text
+                style={[
+                  styleApp.input,
+                  {color: colors.white, fontWeight: 'bold'},
+                ]}>
+                {duration ? duration.toFixed(0) + ' sec' : '2sec'}
+              </Text>
+            </Col>
+          </Row>
+        </View>
+      </View>
+    );
+  }
+  renderImages(images) {
+    if (images)
+      return Object.values(images).map((image, i) => (
+        <View style={styles.viewImg}>
+          {image.type === 'video' && this.viewTopVideo(image.duration)}
+          <Image style={styles.image} source={{uri: image.uri}} key={i} />
+        </View>
+      ));
+    return null;
+  }
   renderMessage(props) {
+    if (props.currentMessage.images)
+      console.log('render message', Object.values(props.currentMessage.images));
+
     return (
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}
@@ -140,9 +215,9 @@ class CardMessage extends React.Component {
                   : props.currentMessage.text}
               </Text>
             </Hyperlink>
-            {/*
-            
-            */}
+
+            {this.renderImages(props.currentMessage.images)}
+
             {this.state.viewUrl ? (
               <ButtonColor
                 view={() => {
@@ -213,6 +288,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     marginBottom: 10,
     borderColor: colors.grey,
+  },
+  viewImg: {
+    borderRadius: 5,
+    width: 120,
+    height: 120,
+    marginTop: 10,
+    overflow: 'hidden',
+  },
+  image: {
+    height: '100%',
+    width: '100%',
   },
 });
 

@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Keyboard,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
 import firebase from 'react-native-firebase';
@@ -136,7 +143,7 @@ class MessageTab extends React.Component {
   }
 
   render() {
-    const discussion={}
+    const discussion = {};
     const user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
@@ -165,7 +172,11 @@ class MessageTab extends React.Component {
           initialTitleOpacity={1}
           icon1={'arrow-left'}
           icon2={null}
-          clickButton1={() => this.props.navigation.dismiss()}
+          clickButton1={async () => {
+            // await Keyboard.dismiss();
+            await this.conversationRef.dismiss();
+            this.props.navigation.dismiss();
+          }}
           clickButton2={() => console.log('')}
         />
         <View style={{height: sizes.heightHeaderHome}} />
@@ -173,6 +184,7 @@ class MessageTab extends React.Component {
         <Conversation2
           messages={this.state.messages}
           user={user}
+          onRef={(ref) => (this.conversationRef = ref)}
           infoOtherMember={this.infoOtherMember(
             this.props.navigation.getParam('data'),
           )}
@@ -209,7 +221,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     gamefareUser: state.message.gamefareUser,
-    conversations:state.message.conversation,
+    conversations: state.message.conversation,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,

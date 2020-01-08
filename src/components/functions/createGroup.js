@@ -64,4 +64,4 @@ async function createGroup(data, userID, infoUser) {
   return group;
 }
 
-module.exports = {createGroup};
+module.exports = {createGroup, generateID};

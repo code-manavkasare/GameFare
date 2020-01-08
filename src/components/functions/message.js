@@ -1,4 +1,5 @@
 import firebase from 'react-native-firebase';
+import moment from 'moment';
 import {indexDiscussions} from '../database/algolia';
 
 function discussionObj(members, nameDiscussion) {
@@ -25,6 +26,28 @@ async function createDiscussion(members, nameDiscussion) {
   return newDiscussion;
 }
 
+async function sendNewMessage(discusssionID, user, text, images) {
+  console.log(discusssionID);
+  console.log('push firebase', {
+    user: user,
+    text: text,
+    images: images,
+    createdAt: new Date(),
+    timeStamp: moment().valueOf(),
+  });
+  await firebase
+    .database()
+    .ref('discussions/' + discusssionID + '/messages')
+    .push({
+      user: user,
+      text: text,
+      images: images,
+      createdAt: new Date(),
+      timeStamp: moment().valueOf(),
+    });
+  return true;
+}
+
 async function searchDiscussion(ids) {
   console.log('searchDiscussion');
   var filterMembers = '';
@@ -49,4 +72,4 @@ async function searchDiscussion(ids) {
   return hits[0];
 }
 
-export {createDiscussion, searchDiscussion};
+export {createDiscussion, searchDiscussion, sendNewMessage};

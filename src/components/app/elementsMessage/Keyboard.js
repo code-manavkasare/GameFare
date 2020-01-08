@@ -12,6 +12,7 @@ import {
 import {KeyboardRegistry} from 'react-native-keyboard-input';
 import CameraRoll from '@react-native-community/cameraroll';
 import {pickLibrary} from '../../functions/pictures';
+import {generateID} from '../../functions/createGroup';
 
 import AllIcons from '../../layout/icons/AllIcons';
 import ButtonColor from '../../layout/Views/Button';
@@ -59,10 +60,12 @@ class KeyboardView extends Component {
           marginRight: 5,
           borderRadius: 0,
           borderColor: colors.grey,
-          borderWidth:0,
+          borderWidth: 0,
           overflow: 'hidden',
         }}
-        selectImage={(uri, selected, index) => this.addPicture(uri, selected)}
+        selectImage={(uri, type, selected, duration) =>
+          this.addPicture(uri, type, selected, duration)
+        }
         image={data}
         key={i}
         index={i}
@@ -72,12 +75,24 @@ class KeyboardView extends Component {
   async selectPicture() {
     var picture = await pickLibrary();
     console.log('picture', picture);
-    // this.addPicture(picture, true);
+    this.addPicture(picture, 'image', true);
   }
-  addPicture(uri, selected, index) {
-    console.log('addPicture', uri);
+  addPicture(uri, type, selected, duration) {
+    console.log('addPicture', {
+      id: generateID(),
+      type: type,
+      duration: duration,
+      uploaded: false,
+      uri: uri,
+    });
     KeyboardRegistry.onItemSelected('KeyboardView', {
-      image: uri,
+      image: {
+        id: generateID(),
+        type: type,
+        duration: duration,
+        uploaded: false,
+        uri: uri,
+      },
       selected: selected,
     });
   }
