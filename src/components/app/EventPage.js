@@ -7,11 +7,14 @@ import {
   Dimensions,
   Animated,
   Button,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
+import {editEventPrice, editEventName} from '../functions/editEvent';
+
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar} from '../functions/date';
@@ -47,6 +50,8 @@ class EventPage extends React.Component {
     this.state = {
       loader: false,
       editMode: false,
+      editPrice: '',
+      editName: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -227,6 +232,181 @@ class EventPage extends React.Component {
       title: data.info.name + ' has been added to your personnal calendar.',
     });
   }
+
+  // edit event components
+  editPrice(data) {
+    return (
+      <Row>
+        <Col style={styleApp.center2}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.entreeFeeInputRef.focus()}>
+            <Row>
+              <TextInput
+                style={[
+                  styleApp.input,
+                  {
+                    color: colors.primary,
+                    marginTop: 0,
+                    fontFamily: 'OpenSans-Bold',
+                    fontSize: 18,
+                  },
+                ]}
+                placeholder={String(data.price.joiningFee)}
+                returnKeyType={'done'}
+                keyboardType={'phone-pad'}
+                ref={(input) => {
+                  this.entreeFeeInputRef = input;
+                }}
+                underlineColorAndroid="rgba(0,0,0,0)"
+                autoCorrect={true}
+                onChangeText={(text) => this.setState({editPrice: text})}
+                value={this.state.editPrice}
+              />
+            </Row>
+          </TouchableOpacity>
+        </Col>
+      </Row>
+    );
+  }
+  editName(data) {
+    return (
+      <Row>
+        <Col style={styleApp.center2}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.nameInputRef.focus()}>
+            <Row>
+              <TextInput
+                style={styleApp.title}
+                placeholder={String(data.info.name)}
+                returnKeyType={'done'}
+                ref={(input) => {
+                  this.nameInputRef = input;
+                }}
+                underlineColorAndroid="rgba(0,0,0,0)"
+                autoCorrect={true}
+                onChangeText={(text) => this.setState({editName: text})}
+                value={this.state.editName}
+              />
+            </Row>
+          </TouchableOpacity>
+        </Col>
+      </Row>
+    );
+  }
+  async saveEdits(data) {
+    this.setState({loader: true});
+    console.log(data);
+    if (this.state.editPrice !== '') {
+      editEventPrice(data.objectID, this.state.editPrice, () => console.log('edit price failed'));
+    }
+    if (this.state.editName !== '') {
+      editEventName(data.objectID, this.state.editName, () => console.log('edit name failed'));
+    }
+    let objectID = this.props.navigation.getParam('objectID');
+    await this.loadEvent(objectID);
+    this.setState({
+      ...this.state,
+      editMode: false,
+      editPrice: '',
+      editName: '',
+    });
+    this.setState({loader: false});
+  }
+  editEventInfo(data, sport, rule, league) {
+    var level = Object.values(sport.level.list).filter(
+      (level) => level.value === data.info.levelFilter,
+    )[0];
+    var levelOption =
+      data.info.levelOption === 'equal'
+        ? 'only'
+        : data.info.levelOption === 'min'
+        ? 'and above'
+        : 'and below';
+    return (
+      <View style={styleApp.marginView}>
+        <Row style={{marginTop: 20}}>
+          <Col style={styleApp.center2}>
+            {this.editPrice(data)}
+          </Col>
+        </Row>
+        <Row style={{marginTop: 20}}>
+          <Col style={styleApp.center2}>
+            {this.editName(data)}
+          </Col>
+        </Row>
+        <View style={[styleApp.divider2, {marginBottom: 20}]} />
+
+        {this.rowImage(sport.icon, sport.text)}
+        {this.rowImage(league.icon, league.text)}
+
+        {this.rowIcon(
+          this.dateTime(data.date.start, data.date.end),
+          'calendar-alt',
+          () => this.addCalendar(data),
+        )}
+        {data.date.recurrence !== '' && data.date.recurrence !== undefined
+          ? this.rowIcon(
+              this.title(
+                data.date.recurrence.charAt(0).toUpperCase() +
+                  data.date.recurrence.slice(1),
+              ),
+              'stopwatch',
+            )
+          : null}
+        {this.rowIcon(this.title(data.location.address), 'map-marker-alt', () =>
+          this.props.navigation.navigate('AlertAddress', {data: data.location}),
+        )}
+        {data.info.instructions !== ''
+          ? this.rowIcon(this.title(data.info.instructions), 'parking')
+          : null}
+
+        <View style={[styleApp.divider2, {marginBottom: 25}]} />
+
+        <Row style={{height: 90, marginTop: 0}}>
+          <Col>
+            {this.colIcon(
+              Number(data.info.maxAttendance) === 1
+                ? data.info.maxAttendance + ' player'
+                : data.info.maxAttendance + ' players',
+              'user-plus',
+              false,
+            )}
+          </Col>
+          <Col>
+            {this.colIcon(
+              level.value === '0' ? level.text : level.text.split('/')[0],
+              'balance-scale',
+              {title: level.title, subtitle: level.subtitle},
+            )}
+          </Col>
+        </Row>
+
+        <Row style={{height: 90, marginTop: 10}}>
+  <Col>
+    {this.colIcon(
+      data.info.gender.charAt(0).toUpperCase() +
+        data.info.gender.slice(1),
+      data.info.gender === 'mixed'
+        ? 'venus-mars'
+        : data.info.gender === 'female'
+        ? 'venus'
+        : 'mars',
+      false,
+    )}
+  </Col>
+  <Col>
+    {this.colIcon(rule.text, 'puzzle-piece', {
+      title: rule.title,
+      subtitle: rule.subtitle,
+    })}
+  </Col>
+</Row>
+      </View>
+
+    );
+  }
   eventInfo(data, sport, rule, league) {
     var level = Object.values(sport.level.list).filter(
       (level) => level.value === data.info.levelFilter,
@@ -344,7 +524,7 @@ class EventPage extends React.Component {
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {this.eventInfo(data, sport, rule, league)}
+        {this.state.editMode ? this.editEventInfo(data, sport, rule, league) : this.eventInfo(data, sport, rule, league)}
 
         {/* {rule.coachNeeded ? (
           <View style={styleApp.viewHome}>
@@ -519,7 +699,7 @@ class EventPage extends React.Component {
           }
           // clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
           clickButton1={() => dismiss()}
-          clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
+          clickButtonOffset={() => !this.state.editMode ? this.setState({editMode: true}) : null}
         />
 
         <ParalaxScrollView
@@ -574,7 +754,18 @@ class EventPage extends React.Component {
 
         {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {this.waitlistCondition(event) ? (
+            {this.state.editMode ? (
+              <Button2
+                icon={'next'}
+                backgroundColor="green"
+                onPressColor={colors.greenClick}
+                styleButton={{marginLeft: 20, width: width - 40}}
+                disabled={false}
+                text="Save edits"
+                loader={false}
+                click={() => this.saveEdits(event)}
+              />
+            ) : this.waitlistCondition(event) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"

@@ -1,6 +1,3 @@
-import React, {Component} from 'react';
-import {Platform, PermissionsAndroid} from 'react-native';
-
 import {uploadPictureFirebase} from '../functions/pictures';
 import {subscribeToTopics} from '../functions/notifications';
 import {indexEvents} from '../database/algolia';
