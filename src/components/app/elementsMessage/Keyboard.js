@@ -55,11 +55,11 @@ class KeyboardView extends Component {
       <CardContent
         style={{
           height: '100%',
-          width: 140,
-          marginLeft: 10,
-          borderRadius: 6,
+          width: 240,
+          marginRight: 5,
+          borderRadius: 0,
           borderColor: colors.grey,
-          borderWidth: 1,
+          borderWidth:0,
           overflow: 'hidden',
         }}
         selectImage={(uri, selected, index) => this.addPicture(uri, selected)}

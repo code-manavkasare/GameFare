@@ -57,16 +57,16 @@ export default class CardContent extends React.Component {
                 <View
                   style={{
                     ...styleApp.center,
-
-                    backgroundColor: colors.green,
-                    height: 25,
-                    width: 25,
-                    borderRadius: 15,
-                    right: 5,
-                    top: 5,
+                    backgroundColor: colors.grey,
+                    height: '100%',
+                    width: '100%',
+                    //borderRadius: 15,
+                    opacity: 0.7,
+                    //right: 5,
+                    //top: 5,
                     zIndex: 30,
                     borderColor: colors.grey,
-                    borderWidth: 1,
+                    //borderWidth: 1,
                     position: 'absolute',
                   }}>
                   <AllIcons
