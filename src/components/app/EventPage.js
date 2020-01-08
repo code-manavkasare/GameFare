@@ -240,7 +240,7 @@ class EventPage extends React.Component {
     return (
       <View style={styleApp.marginView}>
         <Row style={{marginTop: 20}}>
-          <Col size={75} style={styleApp.center2}>
+          <Col style={styleApp.center2}>
             <Text
               style={[
                 styleApp.text,
@@ -255,20 +255,6 @@ class EventPage extends React.Component {
                 ? 'Free entry'
                 : '$' + data.price.joiningFee}
             </Text>
-          </Col>
-          <Col
-            size={25}
-            style={styleApp.center3}
-            activeOpacity={0.7}
-            onPress={() =>
-              this.openAlert(
-                this.openCondition(data)
-                  ? 'Registrations for ' + data.info.name + ' are open.'
-                  : 'No open slots are left in this event.',
-                this.openView(data),
-              )
-            }>
-            {this.openView(data)}
           </Col>
         </Row>
 
@@ -548,7 +534,7 @@ class EventPage extends React.Component {
                   data: event.location,
                 });
               }}>
-              {event == undefined ? (
+              {event === undefined ? (
                 <View
                   style={{
                     width: '100%',
