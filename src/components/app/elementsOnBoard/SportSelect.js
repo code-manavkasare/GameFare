@@ -43,7 +43,7 @@ class InitialPage extends Component {
     console.log('on set league');
     console.log(sport);
     await this.props.historicSearchAction('setSport', {value: sport});
-    this.props.navigation.navigate('LeagueSelect');
+    this.props.navigation.navigate('LocationSelect');
   }
   isOdd(num) {
     return num % 2;

@@ -16,6 +16,7 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import LocationSearchBar from './LocationSearchBar';
 import ButtonColor from '../../layout/Views/Button';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
@@ -34,11 +35,10 @@ class InitialPage extends Component {
     };
     this.translateXText = new Animated.Value(90);
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.setLocation.bind(this);
   }
-  componentDidMount() {}
   async setLocation(location) {
     await this.props.historicSearchAction('setLocationSearch', location);
-    // await this.props.navigation.navigate('LocationOnBoard');
     return this.props.navigation.navigate('TabsApp');
   }
   async currentLocation() {
@@ -55,167 +55,11 @@ class InitialPage extends Component {
     }
     return this.setLocation(location);
   }
-  location() {
+
+  locationSelector() {
     return (
       <FadeInView duration={200} style={{height: height / 2}}>
-        <View style={[styleApp.marginView, {width: width - 90}]}>
-          <Text
-            style={[styleApp.title, {color: colors.title, marginBottom: 30}]}>
-            Where do you plan to play {this.props.navigation.getParam('sport')}?
-          </Text>
-        </View>
-
-        {/* <View style={[styleApp.divider2,{marginBottom:0,marginTop:5}]} /> */}
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={15} style={styleApp.center2}>
-                  <AllIcon
-                    name="search"
-                    size={15}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
-                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Search for an area
-                  </Text>
-                </Col>
-                <Col size={15} style={styleApp.center3}>
-                  <AllIcon
-                    name="arrow-right"
-                    size={14}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => {
-            // StatusBar.setBarStyle('dark-content',true)
-            this.props.navigation.navigate('LocationOnBoard', {
-              pageFrom: 'LocationSelect',
-              onGoBack: (location) => this.setLocation(location),
-            });
-          }}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={15} style={styleApp.center2}>
-                  <AllIcon
-                    name="my-location"
-                    size={20}
-                    type={'mat'}
-                    color={colors.title}
-                  />
-                </Col>
-                <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Use current location
-                  </Text>
-                </Col>
-                <Col size={15} style={styleApp.center3}>
-                  <AllIcon
-                    name="arrow-right"
-                    size={14}
-                    type={'font'}
-                    color={colors.title}
-                  />
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => this.currentLocation()}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderBottomWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={75} style={[styleApp.center2, {paddingLeft: 0}]}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {
-                        color: colors.title,
-                        fontSize: 15,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    Skip
-                  </Text>
-                </Col>
-                <Col size={15}></Col>
-              </Row>
-            );
-          }}
-          click={() => {
-            // .setBarStyle('dark-content',true)
-            this.props.navigation.navigate('TabsApp');
-          }}
-          color={'white'}
-          style={[
-            styles.cardSports,
-            {
-              height: 60,
-              borderWidth: 0,
-              borderColor: colors.grey,
-              paddingRight: 20,
-              paddingLeft: 20,
-              width: width,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
+        <LocationSearchBar selectLocation={(location) => this.setLocation(location)} />
       </FadeInView>
     );
   }
@@ -224,19 +68,21 @@ class InitialPage extends Component {
       <View style={[{backgroundColor: 'white', flex: 1}]}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
+          textHeader={'Pick your location'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           loader={this.state.loader}
           icon1="arrow-left"
-          icon2={null}
           clickButton1={() => this.props.navigation.goBack()}
+          icon2="text"
+          text2={'Skip'}
+          clickButton2={() => this.props.navigation.navigate('TabsApp')}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.location.bind(this)}
+          contentScrollView={this.locationSelector.bind(this)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
