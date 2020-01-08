@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
+import {createEventAction} from '../../../actions/createEventActions';
 
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -38,13 +39,15 @@ class HeaderHome extends Component {
       openSport: false,
       openLeague: false,
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
     this.rotateIcon = new Animated.Value(0);
     this.borderWidthButtonLeague = new Animated.Value(0);
     this.borderWidthButtonSport = new Animated.Value(0);
     this.openLeagueVal = false;
   }
-  componentWillMount() {
+
+  componentDidMount() {
+    this.setupEventCreateSport({value: this.props.sportSelected});
     if (this.props.loaderOn === true) {
       this.props.onRef(this);
     }
@@ -65,6 +68,18 @@ class HeaderHome extends Component {
     if (this.props.headerType) return 25;
     return 70;
   }
+
+  setupEventCreateSport(sport) {
+    // store selected sport so create event page pre-selects correct sport
+    let sportData = this.props.sports.filter((s) => s.value === sport.value)[0];
+    this.props.createEventAction('setStep0', {
+      sport: sport.value,
+      rule: sportData.typeEvent[0].rules[0].value,
+      level: sportData.level.list[0].value,
+      league: sportData.typeEvent[0].value,
+    });
+  }
+
   openSport(val, sport) {
     if (val) {
       return Animated.parallel([
@@ -83,6 +98,7 @@ class HeaderHome extends Component {
       value: sport.value,
       league: 'all',
     });
+    this.setupEventCreateSport(sport);
     return Animated.parallel([
       Animated.timing(this.state.heightButtonSport, timing(50, 200)),
       Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
@@ -276,7 +292,7 @@ class HeaderHome extends Component {
     )[0];
     var league = Object.values(sport.typeEvent)
       .filter((league) => league)
-      .filter((league) => league.value == this.props.leagueSelected)[0];
+      .filter((league) => league.value === this.props.leagueSelected)[0];
     if (league === undefined) {
       league = this.props.leagueAll;
     }
@@ -437,4 +453,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(HeaderHome);
+export default connect(mapStateToProps, {
+  historicSearchAction,
+  createEventAction,
+})(HeaderHome);
