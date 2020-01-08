@@ -46,15 +46,18 @@ class EventPage extends React.Component {
     super(props);
     this.state = {
       loader: false,
+      editMode: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    if (
-      this.props.allEvents[this.props.navigation.getParam('objectID')] ==
-      undefined
-    )
+    if (this.props.allEvents[this.props.navigation.getParam('objectID')] === undefined) {
       this.loadEvent(this.props.navigation.getParam('objectID'));
+    }
+  }
+  async componentDidUpdate() {
+    console.log('EventPage: componentDidUpdate');
+    console.log(this.state);
   }
   async loadEvent(objectID) {
     indexEvents.clearCache();
@@ -197,16 +200,17 @@ class EventPage extends React.Component {
     );
   }
   openCondition(data) {
-    if (!data) return false;
-    if (!data.attendees) return true;
-    if (Object.values(data.attendees).length < Number(data.info.maxAttendance))
+    if (!data) { return false; }
+    if (!data.attendees) { return true; }
+    if (Object.values(data.attendees).length < Number(data.info.maxAttendance)) {
       return true;
+    }
     return false;
   }
   async addCalendar(data) {
     var permission = await getPermissionCalendar();
     await RNCalendarEvents.authorizeEventStore();
-    if (!permission) return true;
+    if (!permission) { return true; }
 
     try {
       await RNCalendarEvents.saveEvent(data.info.name, {
@@ -518,6 +522,7 @@ class EventPage extends React.Component {
           initialTitleOpacity={0}
           icon1="arrow-left"
           icon2="share"
+          iconOffset="share"
           clickButton2={() =>
             this.props.navigation.navigate('Contacts', {
               openPageLink: 'openEventPage',
@@ -529,6 +534,7 @@ class EventPage extends React.Component {
           }
           // clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
           clickButton1={() => dismiss()}
+          clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
         />
 
         <ParalaxScrollView
