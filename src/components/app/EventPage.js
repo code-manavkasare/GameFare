@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
-import {editEventPrice, editEventName} from '../functions/editEvent';
+import {editEvent} from '../functions/editEvent';
 
 
 import RNCalendarEvents from 'react-native-calendar-events';
@@ -298,14 +298,19 @@ class EventPage extends React.Component {
   async saveEdits(data) {
     this.setState({loader: true});
     console.log(data);
-    if (this.state.editPrice !== '') {
-      editEventPrice(data.objectID, this.state.editPrice, () => console.log('edit price failed'));
+    let newData = {
+      ...data,
+      price: {...data.price, joiningFee: this.state.editPrice == '' ? data.price.joiningFee : Number(this.state.editPrice)},
+      info: {...data.info, name: this.state.editName == '' ? data.info.name : this.state.editName},
     }
-    if (this.state.editName !== '') {
-      editEventName(data.objectID, this.state.editName, () => console.log('edit name failed'));
-    }
-    let objectID = this.props.navigation.getParam('objectID');
-    await this.loadEvent(objectID);
+    console.log('editing event');
+    console.log('old data -------');
+    console.log(data);
+    console.log('new data -------');
+    console.log(newData);
+    editEvent(newData, () => console.log('edit event failed'));
+    console.log('-------');
+    await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
     this.setState({
       ...this.state,
       editMode: false,
