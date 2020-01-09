@@ -42,7 +42,10 @@ class InitialPage extends Component {
     // write sport to redux
     console.log('on set league');
     console.log(sport);
-    await this.props.historicSearchAction('setSport', {value: sport});
+    await this.props.historicSearchAction('setSport', {
+      value: sport,
+      league: 'all',
+    });
     this.props.navigation.navigate('LocationSelect');
   }
   isOdd(num) {
