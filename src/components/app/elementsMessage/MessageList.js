@@ -88,7 +88,7 @@ class MessageTab extends React.Component {
             />
           </View>
           <Text style={[styleApp.text, {marginBottom: 30}]}>
-            You need to be signed in in order to consult your conversations.
+          Sign in to see or start a conversation.
           </Text>
 
           <Button
