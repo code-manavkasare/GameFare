@@ -10,7 +10,7 @@ const indexDiscussions = client.initIndex('discussionsGF');
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
   indexGroups.clearCache();
-  console.log('get my groups');
+
   var filterOrganizer = 'info.organizer:' + userID + ' OR allMembers:' + userID;
   var filters = filterOrganizer + filterSport;
   if (location) {
@@ -26,8 +26,7 @@ async function getMyGroups(userID, filterSport, location, radiusSearch) {
       filters: filters,
     });
   }
-  
-  console.log('my groups got', hits);
+
   return hits;
 }
 
@@ -47,15 +46,11 @@ async function getEventsFromGroups(
   let filterIds = '';
   let prefix = ' AND ';
   for (var j in events) {
-    console.log('j');
-    console.log(j);
     if (Number(j) === 0) prefix = '';
     else prefix = ' AND ';
     filterIds = filterIds + prefix + 'objectID:' + Object.values(events)[j];
   }
-  console.log('dfjydjkfgjkdfgdg');
-  console.log(filterIds);
-  console.log(sport);
+
   var filterUser =
     'NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   let prefix2 = ' AND ';
@@ -106,22 +101,18 @@ const getEventPublic = async (
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
     query: '',
-    filters: withFilters
-      ? 'info.public=1' +
-        ' AND info.sport:' +
-        sport +
-        leagueFilter +
-        filterUser +
-        ` AND date_timestamp:${timestampDaySelected} TO ${timestampDaySelected +
-          24 * 3600 * 1000}`
-      : 'info.public=1' +
-        ' AND info.sport:' +
-        sport +
-        leagueFilter +
-        filterUser,
+    filters:
+      'info.public=1' +
+      ' AND info.sport:' +
+      sport +
+      leagueFilter +
+      filterUser +
+      ` AND end_timestamp > ${Date.now()}` +
+      (withFilters
+        ? ` AND date_timestamp:${timestampDaySelected} TO ${timestampDaySelected +
+            24 * 3600 * 1000}`
+        : ''),
   });
-  console.log('le hits');
-  console.log(hits);
 
   var allEventsPublic = hits.reduce(function(result, item) {
     result[item.objectID] = item;
@@ -136,8 +127,7 @@ const getEventPublic = async (
       location,
       radiusSearch,
     );
-    console.log('my groupsss');
-    console.log(myGroups);
+
     eventsMyGroups = await getEventsFromGroups(
       myGroups,
       location,
@@ -146,12 +136,12 @@ const getEventPublic = async (
       sport,
     );
   }
-  console.log(eventsMyGroups);
+
   allEventsPublic = {
     ...allEventsPublic,
     ...eventsMyGroups,
   };
-  console.log('allEentsPublic', allEventsPublic);
+
   return allEventsPublic;
 };
 
