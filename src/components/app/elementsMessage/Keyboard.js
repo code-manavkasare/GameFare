@@ -55,7 +55,7 @@ class KeyboardView extends Component {
     return (
       <CardContent
         style={{
-          height: '100%',
+          height: 250,
           width: 240,
           marginRight: 5,
           borderRadius: 0,
@@ -75,7 +75,8 @@ class KeyboardView extends Component {
   async selectPicture() {
     var picture = await pickLibrary();
     console.log('picture', picture);
-    this.addPicture(picture, 'image', true);
+    if (picture) return this.addPicture(picture, 'image', true);
+    return true
   }
   addPicture(uri, type, selected, duration) {
     console.log('addPicture', {
@@ -114,14 +115,14 @@ class KeyboardView extends Component {
             return (
               <AllIcons
                 name="dots-menu"
-                color={colors.title}
+                color={colors.white}
                 type="moon"
                 size={17}
               />
             );
           }}
           click={() => this.selectPicture()}
-          color={colors.white}
+          color={colors.title}
           style={StyleApp.buttonRoundLibray}
           onPressColor={colors.off}
         />
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // backgroundColor: 'whit',
+    // backgroundColor: 'blue',
     //  position: 'absolute',
     // alignItems: 'center',
     // justifyContent: 'center',

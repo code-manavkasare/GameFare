@@ -128,6 +128,7 @@ export default class KeyboardInput extends Component {
                 currentMessage: message,
               }}
               conversation={this.props.conversation}
+              user={this.props.user}
               key={i}
               index={i}
             />
@@ -150,6 +151,13 @@ export default class KeyboardInput extends Component {
           onItemSelected={this.onKeyboardItemSelected}
           onKeyboardResigned={this.onKeyboardResigned}
           //  revealKeyboardInteractive
+          renderCoverSafeArea = {() =><View style={{
+            backgroundColor: 'blue',
+            height: 34,
+            width,
+            // position: 'absolute',
+            bottom: 0,
+          }} />}
           requiresSameParentToManageScrollView
         />
       </View>

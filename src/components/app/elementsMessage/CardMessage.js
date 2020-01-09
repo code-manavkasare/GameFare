@@ -10,21 +10,19 @@ import {
 } from 'react-native';
 
 import {connect} from 'react-redux';
-import {messageAction} from '../../../actions/messageActions';
-import firebase from 'react-native-firebase';
 import moment from 'moment';
-import Loader from '../../layout/loaders/Loader';
-import AsyncImage from '../../layout/image/AsyncImage';
+import Hyperlink from 'react-native-hyperlink';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
+import AsyncImage from '../../layout/image/AsyncImage';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
+import CardImg from './elementsChat/CardImg'
 import AllIcons from '../../layout/icons/AllIcons';
-import Hyperlink from 'react-native-hyperlink';
+
 import {getParams, openUrl} from '../../database/branch';
-import LinkPreview from 'react-native-link-preview';
 import NavigationService from '../../../../NavigationService';
 
 const {height, width} = Dimensions.get('screen');
@@ -41,7 +39,6 @@ class CardMessage extends React.Component {
   }
   componentDidMount() {
     console.log('csrd message mount');
-    // this.getDataUrl('https://docs.branch.io/apps/react-native/');
     this.urlify(this.props.message.currentMessage.text);
   }
   urlify(text) {
@@ -119,67 +116,10 @@ class CardMessage extends React.Component {
     }
     return null;
   }
-  viewTopVideo(duration, play) {
-    return (
-      <View
-        style={{
-          height: '100%',
-          width: '100%',
-          position: 'absolute',
-          zIndex: 20,
-          // backgroundColor: 'red',
-        }}>
-        <View
-          style={{
-            ...styleApp.center,
-            position: 'absolute',
-            height: '100%',
-            backgroundColor: colors.title,
-            opacity: 0.1,
-            zIndex: 20,
-            width: '100%',
-          }}>
-          <AllIcons name="play" type="font" color={colors.white} size={30} />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            zIndex: 60,
-            height: 20,
-            // backgroundColor: 'blue',
-          }}>
-          <Row style={{height: 20, paddingLeft: 5, paddingRight: 5}}>
-            <Col style={styleApp.center2}>
-              <AllIcons
-                name="video"
-                type="font"
-                color={colors.white}
-                size={13}
-              />
-            </Col>
-            <Col style={styleApp.center3}>
-              <Text
-                style={[
-                  styleApp.input,
-                  {color: colors.white, fontWeight: 'bold'},
-                ]}>
-                {duration ? duration.toFixed(0) + ' sec' : '2sec'}
-              </Text>
-            </Col>
-          </Row>
-        </View>
-      </View>
-    );
-  }
-  renderImages(images) {
+  renderImages(images,message,discussionID) {
     if (images)
       return Object.values(images).map((image, i) => (
-        <View style={styles.viewImg}>
-          {image.type === 'video' && this.viewTopVideo(image.duration)}
-          <Image style={styles.image} source={{uri: image.uri}} key={i} />
-        </View>
+        <CardImg image={image} key={i} index={i} discussionID={discussionID} indexMessage={this.props.index} user={this.props.user} message={message}/>
       ));
     return null;
   }
@@ -205,18 +145,21 @@ class CardMessage extends React.Component {
                 {moment(props.currentMessage.createdAt).format('h:mm a')}
               </Text>
             </Text>
+            {
+            props.currentMessage.text !== '' &&
             <Hyperlink
               // linkDefault={true}
               onPress={(url) => this.clickLink(url, this.state.viewUrl)}
               linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
-              <Text style={[styleApp.smallText, {marginTop: 5, fontSize: 14}]}>
+              <Text style={[styleApp.smallText, {marginTop: 5, fontSize: 14,marginBottom:10}]}>
                 {this.state.viewUrl
                   ? props.currentMessage.text
                   : props.currentMessage.text}
               </Text>
             </Hyperlink>
+            }
 
-            {this.renderImages(props.currentMessage.images)}
+            {this.renderImages(props.currentMessage.images,props.currentMessage,this.props.conversation.objectID)}
 
             {this.state.viewUrl ? (
               <ButtonColor
@@ -259,7 +202,7 @@ class CardMessage extends React.Component {
                 color={colors.white}
                 style={{
                   ...styleApp.center2,
-                  marginTop: 20,
+                  marginBotttom: 10,
                   flex: 1,
                   width: '100%',
                   borderLeftWidth: 3,
@@ -288,13 +231,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     marginBottom: 10,
     borderColor: colors.grey,
-  },
-  viewImg: {
-    borderRadius: 5,
-    width: 120,
-    height: 120,
-    marginTop: 10,
-    overflow: 'hidden',
   },
   image: {
     height: '100%',

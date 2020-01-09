@@ -118,6 +118,9 @@ class MessageTab extends React.Component {
               <PlaceHolder />
               <PlaceHolder />
               <PlaceHolder />
+              <PlaceHolder />
+              <PlaceHolder />
+              <PlaceHolder />
             </View>
           ) : (
             Object.values(this.state.discussions).map((conversation, i) => (

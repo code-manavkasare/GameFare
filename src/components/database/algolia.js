@@ -83,7 +83,7 @@ const getEventPublic = async (
   indexEvents.clearCache();
 
   var leagueFilter = ' AND info.league:' + league;
-  if (league === 'all') {
+  if (league === 'all' || league === '')  {
     leagueFilter = '';
   }
 
@@ -98,9 +98,16 @@ const getEventPublic = async (
   }
 
   //Searh Algolia, if with filter we add 24h to timestamp, to see all day event
+  console.log('bim userID',userID)
   var filterUser =
     ' AND NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   if (userID === '') filterUser = '';
+
+
+  console.log('leagueFilter',leagueFilter)
+  console.log(sport)
+  console.log(filterUser)
+  console.log(withFilters)
 
   var {hits} = await indexEvents.search({
     aroundLatLng: location.lat + ',' + location.lng,

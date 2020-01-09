@@ -40,7 +40,6 @@ class MessageTab extends React.Component {
     firebase
       .database()
       .ref('discussions/' + this.props.navigation.getParam('data').objectID)
-      .limitToLast(15)
       .on('value', function(snap) {
         var discussion = snap.val();
         var messages = discussion.messages;
@@ -66,6 +65,7 @@ class MessageTab extends React.Component {
 
         console.log('set atqte messages');
         console.log(messages);
+        console.log(that.state.messages)
         that.setState({messages: messages, loader: false});
       });
   }

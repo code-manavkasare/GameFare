@@ -126,10 +126,8 @@ class CardConversation extends React.Component {
           styleApp.smallText,
           {fontSize: 13, marginTop: 2, color: colors.greyDark},
         ]}>
-        {this.state.lastMessage === ''
-          ? '...'
-          : this.state.lastMessage.type === 'img'
-          ? '1 picture sent'
+        {this.state.lastMessage.text === ''
+          ? Object.values(this.state.lastMessage.images).length + ' file sent'
           : this.state.lastMessage.text}
       </Text>
     );

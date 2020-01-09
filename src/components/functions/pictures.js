@@ -7,6 +7,8 @@ import {
 import firebase from 'react-native-firebase'
 import {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
+import RNVideoHelper from 'react-native-video-helper';
+
 import ImageResizer from 'react-native-image-resizer';
 
 const options = {
@@ -47,6 +49,23 @@ async function resize(uri){
     console.log(err)
       return false
     }
+}
+
+async function resizeVideo (uri) {
+    try {
+        console.log('uri',uri)
+        // const newUri = await RNVideoHelper.compress(uri, {
+        //     quality: 'medium', // default low, can be medium or high
+        //     defaultOrientation: 0 // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
+        // })
+        // console.log('resized video',newUri)
+        return false
+    } catch (err) {
+        console.log('errror',err)
+    }
+    
+    return false
+    return newUri
 }
 
 async function takePicture() {
@@ -107,6 +126,23 @@ async function uploadPictureFirebase  (localUri,destination) {
       }
 }
 
+async function uploadVideoFirebase (image,destination) {
+    try {
+        console.log('start upload video ',image)
+        let imageName = 'content.mp4'
+        const imageRef = firebase.storage().ref(destination).child(imageName)
+        await imageRef.put(image.uri, {contentType:'video' })
+        var url = await imageRef.getDownloadURL()
+        console.log('upload video',url)
+        // return false
+        return url
+      } catch (error) {
+        console.log('error upload')
+        console.log(error)
+        return false
+      }
+}
+
 
   
-module.exports = {takePicture,pickLibrary,resize,uploadPictureFirebase};
+module.exports = {takePicture,pickLibrary,resize,resizeVideo,uploadPictureFirebase,uploadVideoFirebase};
