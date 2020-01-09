@@ -12,8 +12,7 @@ import {
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
 // import Video from 'react-native-video';
-import Video from 'react-native-af-video-player'
-
+import Video from 'react-native-af-video-player';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -21,45 +20,87 @@ import ButtonColor from '../../../layout/Views/Button';
 const {height, width} = Dimensions.get('screen');
 
 import AsyncImage from '../../../layout/image/AsyncImage';
-import Loader from '../../../layout/loaders/Loader'
+import Loader from '../../../layout/loaders/Loader';
 import AllIcons from '../../../layout/icons/AllIcons';
-import {uploadPictureFirebase,uploadVideoFirebase,resize,resizeVideo} from '../../../functions/pictures'
+import {
+  uploadPictureFirebase,
+  uploadVideoFirebase,
+  resize,
+  resizeVideo,
+} from '../../../functions/pictures';
 import FadeInView from 'react-native-fade-in-view';
 
 export default class CardContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader:false
+      loader: false,
     };
   }
   componentDidMount() {
-    if (!this.props.image.uploaded && this.props.user._id === this.props.message.user._id) this.uploadPicture(this.props.image,this.props.discussionID,this.props.message._id)
+    console.log(
+      'mount card img',
+      !this.props.image.uploaded &&
+        this.props.user._id === this.props.message.user._id,
+    );
+    if (
+      !this.props.image.uploaded &&
+      this.props.user._id === this.props.message.user._id
+    )
+      this.uploadPicture(
+        this.props.image,
+        this.props.discussionID,
+        this.props.message._id,
+      );
   }
-  componentWillReceiveProps(nextProps){
-    if (!nextProps.image.uploaded && nextProps.user._id === nextProps.message.user._id) this.uploadPicture(nextProps.image,nextProps.discussionID,nextProps.message._id)
+  componentWillReceiveProps(nextProps) {
+    if (
+      !nextProps.image.uploaded &&
+      nextProps.user._id === nextProps.message.user._id
+    )
+      this.uploadPicture(
+        nextProps.image,
+        nextProps.discussionID,
+        nextProps.message._id,
+      );
   }
-  async uploadPicture(image,discussionID,messageID) {
-    await this.setState({loader:true})
-    const destinationImage = 'discussions/' + discussionID + '/messages/' + messageID + '/images/' + image.id
-    var newImgUrl = ''
-    
+  async uploadPicture(image, discussionID, messageID) {
+    console.log('upload image');
+    await this.setState({loader: true});
+    const destinationImage =
+      'discussions/' +
+      discussionID +
+      '/messages/' +
+      messageID +
+      '/images/' +
+      image.id;
+    var newImgUrl = '';
+
     if (image.type === 'image') {
-      var uri = await resize(image.uri)
-      newImgUrl = await uploadPictureFirebase(uri,destinationImage)
-    }
-    else if (image.type ==='video') {
-      // var uri = await resizeVideo(image.uri)
-      console.log('uri',uri)
-      // if (uri) newImgUrl = await uploadVideoFirebase({...image,uri:uri},destinationImage)
+      var uri = await resize(image.uri);
+      newImgUrl = await uploadPictureFirebase(uri, destinationImage);
+    } else if (image.type === 'video') {
+      console.log('video uplaod');
+      //var uri = await resizeVideo(image.uri);
+      var uri = '';
+      console.log('uri', image.uri);
+      // if (uri) console.log('la');
+      newImgUrl = await uploadVideoFirebase(
+        {...image, uri: image.uri},
+        destinationImage,
+      );
     }
 
-    if (newImgUrl && newImgUrl !== '')  await firebase.database().ref(destinationImage).update({
-      'uploaded':true,
-      'uri':newImgUrl
-    })
-    await this.setState({loader:false})
-    return true
+    if (newImgUrl && newImgUrl !== '')
+      await firebase
+        .database()
+        .ref(destinationImage)
+        .update({
+          uploaded: true,
+          uri: newImgUrl,
+        });
+    await this.setState({loader: false});
+    return true;
   }
   viewTopVideo(duration, play) {
     return (
@@ -107,7 +148,7 @@ export default class CardContent extends React.Component {
                   styleApp.input,
                   {color: colors.white, fontWeight: 'bold'},
                 ]}>
-                {duration ? duration.toFixed(0) + ' sec' : '2sec'}
+                {/* {duration ? duration.toFixed(0) + ' sec' : '2sec'} */}
               </Text>
             </Col>
           </Row>
@@ -116,59 +157,79 @@ export default class CardContent extends React.Component {
     );
   }
   usersContent() {
-    if (this.props.user._id === this.props.message.user._id) return true
-    return false
+    if (this.props.user._id === this.props.message.user._id) return true;
+    return false;
   }
-  displayImg(uri,type,local) {
-    if (local) return <View style={{height: '100%', width: '100%'}} />
-    if (type === 'video') return <Video rotateToFullScreen={true} url={uri} style={{height: '100%', width: '100%',backgroundColor:colors.title}}/>
+  displayImg(uri, type, local) {
+    if (local && type === 'image')
+      return <Image source={{uri}} style={{height: '100%', width: '100%'}} />;
+    if (local) return <View style={{height: '100%', width: '100%'}} />;
+    if (type === 'video')
+      return (
+        <Video
+          // rotateToFullScreen={true}
+          url={uri}
+          resizeMode={'contain'}
+          style={{height: '100%', width: '100%', backgroundColor: colors.title}}
+        />
+      );
     // return <Video source={{uri: uri}}   // Can be a URL or a local file.
     // ref={(ref) => {
     //   this.player = ref
     // }}
-    // muted={true} 
+    // muted={true}
     // paused={true}                                     // Store reference
     // // onBuffer={this.onBuffer}                // Callback when remote video is buffering
     // // onError={this.videoError}               // Callback when video cannot be loaded
     // style={{height: '100%', width: '100%',backgroundColor:colors.title}}
     // />
-    if (local) return <Image style={{height: '100%', width: '100%'}} source={{uri:uri}} />
-    return <AsyncImage style={{height: '100%', width: '100%'}} mainImage={uri} imgInitial={uri} />
+    if (local)
+      return (
+        <Image style={{height: '100%', width: '100%'}} source={{uri: uri}} />
+      );
+    return (
+      <AsyncImage
+        style={{height: '100%', width: '100%'}}
+        mainImage={uri}
+        imgInitial={uri}
+      />
+    );
   }
   cardContent(image) {
-    console.log('render content in convo', image);
-    console.log('index message',this.props.indexMessage)
-    console.log()
     return (
       <ButtonColor
         view={() => {
           return (
             <Row>
-              {image.type === 'video' && this.viewTopVideo(image.duration)}
+              {/* {image.type === 'video' && this.viewTopVideo(image.duration)} */}
 
-              {
-                this.state.loader && <View style={styles.loaderView}>
+              {this.state.loader && (
+                <View style={styles.loaderView}>
                   <Loader size={20} color={'green'} />
                 </View>
-              }
+              )}
 
-              {
-                this.usersContent() && !image.uploaded ?
-                this.displayImg(image.uri,image.type,true)
-              :
-              !image.uploaded?
-              <View style={{height:200,width:100,backgroundColor:colors.green}} />
-              :this.displayImg(image.uri,image.type,false)
-              }
-
+              {this.usersContent() && !image.uploaded ? (
+                this.displayImg(image.uri, image.type, true)
+              ) : !image.uploaded ? (
+                <View
+                  style={{
+                    height: 200,
+                    width: 100,
+                    backgroundColor: colors.green,
+                  }}
+                />
+              ) : (
+                this.displayImg(image.uri, image.type, false)
+              )}
             </Row>
           );
         }}
-        click={() =>
-          true
+        click={
+          () => true
           //this.selectImage(image)
         }
-        color="white"
+        color={colors.off}
         style={styles.viewImg}
         onPressColor={colors.off}
       />
@@ -182,8 +243,8 @@ export default class CardContent extends React.Component {
 const styles = StyleSheet.create({
   viewImg: {
     borderRadius: 5,
-    width: 210,
-    height: 160,
+    width: '100%',
+    height: 200,
     marginTop: 15,
     overflow: 'hidden',
   },
@@ -200,13 +261,13 @@ const styles = StyleSheet.create({
     borderColor: colors.grey,
     position: 'absolute',
   },
-  loaderView:{
+  loaderView: {
     ...styleApp.center,
     height: '100%',
     opacity: 0.4,
     width: '100%',
     zIndex: 20,
-    backgroundColor:colors.title,
+    backgroundColor: colors.title,
     position: 'absolute',
   },
 });

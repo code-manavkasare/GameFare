@@ -18,11 +18,13 @@ import firebase from 'react-native-firebase';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
+import {resizeVideo} from '../../functions/pictures';
 const {height, width} = Dimensions.get('screen');
 
 import AsyncImage from '../../layout/image/AsyncImage';
 import AllIcons from '../../layout/icons/AllIcons';
 import FadeInView from 'react-native-fade-in-view';
+import AllIcon from '../../layout/icons/AllIcons';
 
 export default class CardContent extends React.Component {
   constructor(props) {
@@ -40,15 +42,28 @@ export default class CardContent extends React.Component {
       <AsyncImage style={styles.roundImage} mainImage={img} imgInitial={img} />
     );
   }
-  selectImage(uri, type, newSelected, playableDuration) {
-    this.setState({selected: newSelected});
-    console.log('addPicture', playableDuration);
-    this.props.selectImage(uri, type, newSelected, playableDuration);
+  async selectImage(uri, type, playableDuration) {
+    console.log('selectim', uri, type);
+    // this.setState({selected: newSelected});
+    this.props.selectImage(
+      uri,
+      type,
+      playableDuration,
+      !this.conditionSelected(uri),
+    );
   }
   sendImage(uri, info) {}
-
+  conditionSelected(uri) {
+    console.log('conditionSelected', this.props.imagesSelected);
+    console.log('uri');
+    if (!this.props.imagesSelected) return false;
+    return (
+      Object.values(this.props.imagesSelected).filter((img) => img.uri === uri)
+        .length !== 0
+    );
+  }
   cardContent(rowData, i) {
-    const {uri, playableDuration} = rowData.node.image;
+    const {uri, playableDuration, filename} = rowData.node.image;
     const {type} = rowData.node;
     console.log('render card convo', rowData.node, i);
     return (
@@ -57,35 +72,39 @@ export default class CardContent extends React.Component {
         view={() => {
           return (
             <Row>
-              {this.state.selected && (
+              {this.conditionSelected(uri + '/' + filename) && (
                 <FadeInView
                   duration={300}
                   style={[
                     styles.voile,
                     {opacity: 1, backgroundColor: 'transparent'},
                   ]}>
-                  {/* <ButtonColor
+                  <ButtonColor
                     view={() => {
                       return (
-                        <Text style={[styleApp.text, {color: colors.white}]}>
-                          Send
-                        </Text>
+                        <AllIcon
+                          name={'check'}
+                          size={16}
+                          color={colors.white}
+                          type="mat"
+                        />
                       );
                     }}
                     click={() => this.selectPicture()}
-                    color={colors.green}
+                    color={colors.primary2}
                     style={{
-                      height: 70,
-                      width: 70,
+                      height: 25,
+                      width: 25,
                       borderRadius: 35,
                       borderColor: colors.off,
-                      borderWidth: 1,
+                      bottom: 10,
+                      right: 10,
                       opacity: 1,
                       zIndex: 50,
                       position: 'absolute',
                     }}
                     onPressColor={colors.off}
-                  /> */}
+                  />
                   <View style={styles.voile}></View>
                 </FadeInView>
               )}
@@ -96,7 +115,7 @@ export default class CardContent extends React.Component {
                       height: 35,
                       paddingLeft: 10,
                       paddingRight: 10,
-                      width: 240,
+                      width: this.props.width,
                     }}>
                     <Col style={styleApp.center2}>
                       <AllIcons
@@ -106,7 +125,7 @@ export default class CardContent extends React.Component {
                         size={13}
                       />
                     </Col>
-                    <Col style={styleApp.center3}>
+                    <Col style={[styleApp.center3, {paddingLeft: 10}]}>
                       <Text
                         style={[
                           styleApp.input,
@@ -125,9 +144,15 @@ export default class CardContent extends React.Component {
             </Row>
           );
         }}
-        click={() =>
-          this.selectImage(uri, type, !this.state.selected, playableDuration)
-        }
+        click={() => {
+          // if (type === 'video') resizeVideo(uri);
+          this.selectImage(
+            uri + '/' + filename,
+            type,
+            !this.state.selected,
+            playableDuration,
+          );
+        }}
         color="white"
         style={this.props.style}
         onPressColor={colors.off}
@@ -150,7 +175,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderColor,
   },
   voile: {
-    ...styleApp.center,
+    //...styleApp.center,
     backgroundColor: colors.title,
     height: '100%',
     width: '100%',
