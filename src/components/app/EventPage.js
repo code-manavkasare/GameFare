@@ -54,6 +54,7 @@ class EventPage extends React.Component {
       editName: '',
       editStart: '',
       editEnd: '',
+      editMaxAttendance: 0,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -319,42 +320,33 @@ class EventPage extends React.Component {
           />
         </Col>
         <Col size={20} style={styleApp.center}>
-        <ButtonColor
-        view={() => {
-          return (
-            <Text style={styleApp.text}>
-              Edit
-            </Text>
-          );
-        }}
-        click={() => 
-          this.props.navigation.navigate('Date', {
-            startDate: data.date.start,
-            endDate: data.date.end,
-            recurrence: data.date.recurrence,
-            close: () => this.props.navigation.navigate(this.props.navigation.state.routeName),
-            onGoBack: (datetime) => {
-              this.props.navigation.navigate(this.props.navigation.state.routeName);
-              this.setState({
-                editStart: datetime.startDate,
-                editEnd: datetime.endDate,
-              });
-            },
-          })
-        }
-        color="white"
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            borderRadius: 3,
-            marginBottom: 5,
-          },
-        ]}
-        onPressColor={colors.off}
-      /> 
-         </Col>
+          <ButtonColor
+            view={() => {
+              return (
+                <Text style={styleApp.text}>
+                  Edit
+                </Text>
+              );
+            }}
+            click={() => 
+              this.props.navigation.navigate('Date', {
+                startDate: data.date.start,
+                endDate: data.date.end,
+                recurrence: data.date.recurrence,
+                close: () => this.props.navigation.navigate(this.props.navigation.state.routeName),
+                onGoBack: (datetime) => {
+                  this.props.navigation.navigate(this.props.navigation.state.routeName);
+                  this.setState({
+                    editStart: datetime.startDate,
+                    editEnd: datetime.endDate,
+                  });
+                },
+              })
+            }
+            color="white"
+            onPressColor={colors.off}
+          />
+        </Col>
       </Row>
     );
   }
@@ -381,37 +373,79 @@ class EventPage extends React.Component {
           {this.title(data.location.address)}
         </Col>
         <Col size={20} style={styleApp.center}>
-        <ButtonColor
-        view={() => {
-          return (
-            <Text style={styleApp.text}>
-              Edit
-            </Text>
-          );
-        }}
-        click={() =>
-          this.props.navigation.navigate('Location', {
-            location: data.location,
-            pageFrom: this.props.navigation.state.routeName,
-            onGoBack: (location) => {
-              this.props.navigation.navigate(this.props.navigation.state.routeName);
-              this.setState({editLocation: location});
-            },
-          })
-        }
-        color="white"
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            borderRadius: 3,
-            marginBottom: 5,
-          },
-        ]}
-        onPressColor={colors.off}
-      /> 
-         </Col>
+          <ButtonColor
+            view={() => {
+              return (
+                <Text style={styleApp.text}>
+                  Edit
+                </Text>
+              );
+            }}
+            click={() =>
+              this.props.navigation.navigate('Location', {
+                location: data.location,
+                pageFrom: this.props.navigation.state.routeName,
+                onGoBack: (location) => {
+                  this.props.navigation.navigate(this.props.navigation.state.routeName);
+                  this.setState({editLocation: location});
+                },
+              })
+            }
+            color="white"
+            onPressColor={colors.off}
+          /> 
+        </Col>
+      </Row>
+    );
+  }
+  editColIcon(text, icon, clickUp, clickDown) {
+    return (
+      <Row style={[styleApp.center, {height: 90, marginTop: 0, borderRadius: 3, width: '100%'}]} size={50}>
+        <Col size={30} style={{justifyContent: 'space-around', alignItems: 'flex-end'}}>
+          <Row size={20}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name="keyboard-arrow-up"
+                    color={colors.greyDark}
+                    size={15}
+                    type="mat"
+                  />
+                );
+              }}
+              click={() => clickUp()}
+              color="white"
+              onPressColor={colors.off}
+            />
+          </Row>
+          <Row size={20}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name="keyboard-arrow-down"
+                    color={colors.greyDark}
+                    size={15}
+                    type="mat"
+                  />
+                );
+              }}
+              click={() => clickDown()}
+              color="white"
+              onPressColor={colors.off}
+            />
+          </Row>
+        </Col>
+        <Col size={100} style={styleApp.center}>
+          <AllIcons
+            name={icon}
+            size={17}
+            color={colors.title}
+            type="font"
+          />
+          <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
+        </Col>
       </Row>
     );
   }
@@ -422,17 +456,18 @@ class EventPage extends React.Component {
       ...data,
       price: {
         ...data.price,
-        joiningFee: this.state.editPrice === '' ? data.price.joiningFee : Number(this.state.editPrice)
+        joiningFee: this.state.editPrice === '' ? data.price.joiningFee : Number(this.state.editPrice),
       },
       info: {
         ...data.info,
-        name: this.state.editName === '' ? data.info.name : this.state.editName
+        name: this.state.editName === '' ? data.info.name : this.state.editName,
+        maxAttendance: this.state.editMaxAttendance === '' ? data.info.maxAttendance : this.state.editMaxAttendance,
       },
       date: {
         ...data.date,
         start: this.state.editStart === '' ? data.date.start : this.state.editStart,
         end: this.state.editEnd === '' ? data.date.end : this.state.editEnd,
-      }
+      },
     };
     // firebase update
     editEvent(newData, () => console.log('edit event failed'));
@@ -446,10 +481,14 @@ class EventPage extends React.Component {
       editName: '',
       editStart: '',
       editEnd: '',
+      editMaxAttendance: 0,
     });
     // this.setState({loader: false});
   }
   editEventInfo(data, sport, rule, league) {
+    if (this.state.editMaxAttendance === 0) {
+      this.setState({editMaxAttendance: data.info.maxAttendance});
+    }
     // eventInfo() but with input fields where the display fields are
     var level = Object.values(sport.level.list).filter(
       (level) => level.value === data.info.levelFilter,
@@ -509,45 +548,48 @@ class EventPage extends React.Component {
 
         <Row style={{height: 90, marginTop: 0}}>
           <Col>
-            {this.colIcon(
-              Number(data.info.maxAttendance) === 1
-                ? data.info.maxAttendance + ' player'
-                : data.info.maxAttendance + ' players',
+            {this.editColIcon(
+              Number(this.state.editMaxAttendance) === 1
+                ? this.state.editMaxAttendance + ' player'
+                : this.state.editMaxAttendance + ' players',
               'user-plus',
-              false,
+              () => this.setState({editMaxAttendance: this.state.editMaxAttendance + 1}),
+              () => this.setState({editMaxAttendance: this.state.editMaxAttendance - 1}),
             )}
           </Col>
           <Col>
-            {this.colIcon(
+            {this.editColIcon(
               level.value === '0' ? level.text : level.text.split('/')[0],
               'balance-scale',
-              {title: level.title, subtitle: level.subtitle},
+              () => console.log('up'),
+              () => console.log('down'),
             )}
           </Col>
         </Row>
 
         <Row style={{height: 90, marginTop: 10}}>
-  <Col>
-    {this.colIcon(
-      data.info.gender.charAt(0).toUpperCase() +
-        data.info.gender.slice(1),
-      data.info.gender === 'mixed'
-        ? 'venus-mars'
-        : data.info.gender === 'female'
-        ? 'venus'
-        : 'mars',
-      false,
-    )}
-  </Col>
-  <Col>
-    {this.colIcon(rule.text, 'puzzle-piece', {
-      title: rule.title,
-      subtitle: rule.subtitle,
-    })}
-  </Col>
-</Row>
+          <Col>
+            {this.editColIcon(
+              data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1),
+              data.info.gender === 'mixed'
+                ? 'venus-mars'
+                : data.info.gender === 'female'
+                ? 'venus'
+                : 'mars',
+              () => console.log('up'),
+              () => console.log('down'),
+            )}
+          </Col>
+          <Col>
+            {this.editColIcon(
+              rule.text,
+              'puzzle-piece',
+              () => console.log('up'),
+              () => console.log('down'),
+            )}
+          </Col>
+        </Row>
       </View>
-
     );
   }
   eventInfo(data, sport, rule, league) {
