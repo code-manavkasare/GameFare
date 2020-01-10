@@ -19,7 +19,7 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
-import CardImg from './elementsChat/CardImg'
+import CardImg from './elementsChat/CardImg';
 import AllIcons from '../../layout/icons/AllIcons';
 
 import {getParams, openUrl} from '../../database/branch';
@@ -116,10 +116,18 @@ class CardMessage extends React.Component {
     }
     return null;
   }
-  renderImages(images,message,discussionID) {
+  renderImages(images, message, discussionID) {
     if (images)
       return Object.values(images).map((image, i) => (
-        <CardImg image={image} key={i} index={i} discussionID={discussionID} indexMessage={this.props.index} user={this.props.user} message={message}/>
+        <CardImg
+          image={image}
+          key={i}
+          index={i}
+          discussionID={discussionID}
+          indexMessage={this.props.index}
+          user={this.props.user}
+          message={message}
+        />
       ));
     return null;
   }
@@ -145,21 +153,28 @@ class CardMessage extends React.Component {
                 {moment(props.currentMessage.createdAt).format('h:mm a')}
               </Text>
             </Text>
-            {
-            props.currentMessage.text !== '' &&
-            <Hyperlink
-              // linkDefault={true}
-              onPress={(url) => this.clickLink(url, this.state.viewUrl)}
-              linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
-              <Text style={[styleApp.smallText, {marginTop: 5, fontSize: 14,marginBottom:10}]}>
-                {this.state.viewUrl
-                  ? props.currentMessage.text
-                  : props.currentMessage.text}
-              </Text>
-            </Hyperlink>
-            }
+            {props.currentMessage.text !== '' && (
+              <Hyperlink
+                // linkDefault={true}
+                onPress={(url) => this.clickLink(url, this.state.viewUrl)}
+                linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
+                <Text
+                  style={[
+                    styleApp.smallText,
+                    {marginTop: 5, fontSize: 14, marginBottom: 10},
+                  ]}>
+                  {this.state.viewUrl
+                    ? props.currentMessage.text
+                    : props.currentMessage.text}
+                </Text>
+              </Hyperlink>
+            )}
 
-            {this.renderImages(props.currentMessage.images,props.currentMessage,this.props.conversation.objectID)}
+            {this.renderImages(
+              props.currentMessage.images,
+              props.currentMessage,
+              this.props.discussion.objectID,
+            )}
 
             {this.state.viewUrl ? (
               <ButtonColor

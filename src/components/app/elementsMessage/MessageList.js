@@ -24,6 +24,7 @@ import {
   indexGroups,
   indexEvents,
   getMyGroups,
+  getMyEvents,
 } from '../../database/algolia';
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
@@ -60,11 +61,23 @@ class MessageTab extends React.Component {
     // search for groups discussions
     var myGroups = await getMyGroups(userID, '');
     var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
-
     var {results} = await indexDiscussions.getObjects(groupsDiscussions);
     console.log(hits);
 
-    this.setState({loader: false, discussions: union(results, hits)});
+    // search for events discussions
+    var myEvents = await getMyEvents(userID, '');
+    var eventsDiscussions = myEvents.map((event) => event.discussions[0]);
+    var getDiscussionsEvent = await indexDiscussions.getObjects(
+      eventsDiscussions,
+    );
+    getDiscussionsEvent = getDiscussionsEvent.results;
+
+    this.setState({
+      loader: false,
+      discussions: union(results, hits, getDiscussionsEvent).filter(
+        (discussion) => discussion.firstMessageExists,
+      ),
+    });
   }
   async componentWillReceiveProps(nextProps) {
     if (
@@ -123,8 +136,8 @@ class MessageTab extends React.Component {
               <PlaceHolder />
             </View>
           ) : (
-            Object.values(this.state.discussions).map((conversation, i) => (
-              <CardConversation key={i} index={i} conversation={conversation} />
+            Object.values(this.state.discussions).map((discussion, i) => (
+              <CardConversation key={i} index={i} discussion={discussion} />
             ))
           )}
         </View>

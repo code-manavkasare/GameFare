@@ -120,8 +120,8 @@ export default class Posts extends Component {
           </Text>
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
-            {Object.values(this.state.discussions).map((conversation, i) => (
-              <CardConversation index={i} key={i} conversation={conversation} />
+            {Object.values(this.state.discussions).map((discussion, i) => (
+              <CardConversation index={i} key={i} discussion={discussion} />
             ))}
           </FadeInView>
         )}

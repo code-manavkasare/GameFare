@@ -33,11 +33,11 @@ class CardConversation extends React.Component {
   }
   async componentDidMount() {
     console.log('this.;rops.conversation');
-    console.log(this.props.conversation);
+    console.log(this.props.discussion);
 
     var lastMessage = await firebase
       .database()
-      .ref('discussions/' + this.props.conversation.objectID + '/messages')
+      .ref('discussions/' + this.props.discussion.objectID + '/messages')
       .limitToLast(1)
       .once('value');
     lastMessage = lastMessage.val();
@@ -45,7 +45,7 @@ class CardConversation extends React.Component {
     console.log(lastMessage);
     if (lastMessage === null) lastMessage = [{text: 'Write the first message'}];
     await this.props.messageAction('setConversation', {
-      ...this.props.conversation,
+      ...this.props.discussion,
       lastMessage: lastMessage,
     });
     return this.setState({lastMessage: Object.values(lastMessage)[0]});
@@ -53,7 +53,7 @@ class CardConversation extends React.Component {
   imageCard(conversation) {
     console.log('conversation');
     console.log(conversation);
-    if (this.props.conversation.type === 'group') {
+    if (this.props.discussion.type === 'group') {
       return (
         <AsyncImage
           style={styles.roundImage}
@@ -133,7 +133,7 @@ class CardConversation extends React.Component {
     );
   }
   cardConversation(conversation, i) {
-    console.log('render card convo', this.props.conversations);
+    console.log('render card convo', this.props.discussion);
     return (
       <ButtonColor
         key={i}
@@ -175,7 +175,7 @@ class CardConversation extends React.Component {
     );
   }
   render() {
-    return this.cardConversation(this.props.conversation, this.props.index);
+    return this.cardConversation(this.props.discussion, this.props.index);
   }
 }
 

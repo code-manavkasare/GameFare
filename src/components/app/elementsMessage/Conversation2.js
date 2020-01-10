@@ -82,7 +82,7 @@ export default class KeyboardInput extends Component {
     return (
       <InputMessage
         userConnected={this.props.userConnected}
-        conversation={this.props.conversation}
+        discussion={this.props.discussion}
         infoOtherMember={this.props.infoOtherMember}
         user={this.props.user}
         onRef={(ref) => (this.inputRef = ref)}
@@ -127,7 +127,7 @@ export default class KeyboardInput extends Component {
                   : null,
                 currentMessage: message,
               }}
-              conversation={this.props.conversation}
+              discussion={this.props.discussion}
               user={this.props.user}
               key={i}
               index={i}
@@ -151,13 +151,17 @@ export default class KeyboardInput extends Component {
           onItemSelected={this.onKeyboardItemSelected}
           onKeyboardResigned={this.onKeyboardResigned}
           //  revealKeyboardInteractive
-          renderCoverSafeArea = {() =><View style={{
-            backgroundColor: 'blue',
-            height: 34,
-            width,
-            // position: 'absolute',
-            bottom: 0,
-          }} />}
+          renderCoverSafeArea={() => (
+            <View
+              style={{
+                backgroundColor: 'blue',
+                height: 34,
+                width,
+                // position: 'absolute',
+                bottom: 0,
+              }}
+            />
+          )}
           requiresSameParentToManageScrollView
         />
       </View>

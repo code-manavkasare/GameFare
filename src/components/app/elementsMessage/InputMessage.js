@@ -53,9 +53,19 @@ class InputMessage extends React.Component {
 
     await this.setState({inputValue: '', images: {}});
     console.log('this.state.images', images);
+    console.log(
+      'this.props.discussion.firstMessageExists',
+      this.props.discussion.firstMessageExists,
+    );
+    console.log(this.props.discussion);
+    if (!this.props.discussion.firstMessageExists)
+      await firebase
+        .database()
+        .ref('discussions/' + this.props.discussion.objectID)
+        .update({firstMessageExists: true});
 
     await sendNewMessage(
-      this.props.conversation.objectID,
+      this.props.discussion.objectID,
       this.props.user,
       input,
       images,
@@ -74,12 +84,6 @@ class InputMessage extends React.Component {
       await this.setState({imagesUser: imagesUser});
     }
     return this.setState({showImages: !this.state.showImages});
-    // await this.textInputRef.focus();
-    return this.props.openPicturesView(val, {
-      discussionID: this.props.conversation.objectID,
-      user: this.props.user,
-      images: this.state.images,
-    });
   }
   addImage(image, val) {
     console.log('this images', this.state.images);

@@ -65,7 +65,7 @@ class MessageTab extends React.Component {
 
         console.log('set atqte messages');
         console.log(messages);
-        console.log(that.state.messages)
+        console.log(that.state.messages);
         that.setState({messages: messages, loader: false});
       });
   }
@@ -190,7 +190,7 @@ class MessageTab extends React.Component {
           )}
           messageAction={this.props.messageAction}
           userConnected={this.props.userConnected}
-          conversation={this.props.navigation.getParam('data')}
+          discussion={this.props.navigation.getParam('data')}
         />
       </View>
     );
