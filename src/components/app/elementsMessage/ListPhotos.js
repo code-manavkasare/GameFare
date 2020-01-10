@@ -62,9 +62,10 @@ export default class ListPhotos extends Component {
     );
   }
   addPicture(uri, type, selected, duration) {
+    console.log('selecteed', selected);
     this.props.addImage(
       {
-        id: generateID(),
+        id: !selected ? uri : generateID(),
         type: type,
         duration: duration,
         uploaded: false,

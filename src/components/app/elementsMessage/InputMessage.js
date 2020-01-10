@@ -83,10 +83,12 @@ class InputMessage extends React.Component {
   }
   addImage(image, val) {
     console.log('this images', this.state.images);
-    console.log(image);
+    console.log('vql', val);
     if (!val) {
       var images = this.state.images;
       delete images[image.id];
+      console.log('new imge', image);
+      console.log(images);
       return this.setState({
         images: images,
       });

@@ -44,9 +44,14 @@ export default class CardContent extends React.Component {
   }
   async selectImage(uri, type, playableDuration) {
     console.log('selectim', uri, type);
+    console.log('la', !this.conditionSelected(uri));
     // this.setState({selected: newSelected});
     this.props.selectImage(
-      uri,
+      this.conditionSelected(uri)
+        ? Object.values(this.props.imagesSelected).filter(
+            (img) => img.uri === uri,
+          )[0].id
+        : uri,
       type,
       playableDuration,
       !this.conditionSelected(uri),
