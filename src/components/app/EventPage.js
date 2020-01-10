@@ -52,6 +52,8 @@ class EventPage extends React.Component {
       editMode: false,
       editPrice: '',
       editName: '',
+      editStart: '',
+      editEnd: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -90,7 +92,7 @@ class EventPage extends React.Component {
             </Row>
           );
         }}
-        click={() => (alert != undefined ? alert() : null)}
+        click={() => (alert !== undefined ? alert() : null)}
         color="white"
         style={[
           {
@@ -271,55 +273,184 @@ class EventPage extends React.Component {
   }
   editName(data) {
     return (
-      <Row>
-        <Col style={styleApp.center2}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => this.nameInputRef.focus()}>
-            <Row>
-              <TextInput
-                style={styleApp.title}
-                placeholder={String(data.info.name)}
-                returnKeyType={'done'}
-                ref={(input) => {
-                  this.nameInputRef = input;
-                }}
-                underlineColorAndroid="rgba(0,0,0,0)"
-                autoCorrect={true}
-                onChangeText={(text) => this.setState({editName: text})}
-                value={this.state.editName}
-              />
-            </Row>
-          </TouchableOpacity>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => this.nameInputRef.focus()}>
+        <Row>
+          <TextInput
+            style={styleApp.title}
+            placeholder={String(data.info.name)}
+            returnKeyType={'done'}
+            ref={(input) => {
+              this.nameInputRef = input;
+            }}
+            underlineColorAndroid="rgba(0,0,0,0)"
+            autoCorrect={true}
+            onChangeText={(text) => this.setState({editName: text})}
+            value={this.state.editName}
+          />
+        </Row>
+      </TouchableOpacity>
+    );
+  }
+  editDateTime(data) {
+    return (
+      <Row style={[
+        {
+          paddingTop: 10,
+          paddingBottom: 10,
+          flex: 1,
+          borderRadius: 3,
+          marginBottom: 5,
+        },
+      ]}>
+        <Col size={15} style={styleApp.center}>
+          <AllIcons
+            name="calendar-alt"
+            color={colors.greyDark}
+            size={16}
+            type="font"
+          />
         </Col>
+        <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
+          <DateEvent
+            start={this.state.editStart !== '' ? this.state.editStart : data.date.start}
+            end={this.state.editEnd !== '' ? this.state.editEnd : data.date.end}
+          />
+        </Col>
+        <Col size={20} style={styleApp.center}>
+        <ButtonColor
+        view={() => {
+          return (
+            <Text style={styleApp.text}>
+              Edit
+            </Text>
+          );
+        }}
+        click={() => 
+          this.props.navigation.navigate('Date', {
+            startDate: data.date.start,
+            endDate: data.date.end,
+            recurrence: data.date.recurrence,
+            close: () => this.props.navigation.navigate(this.props.navigation.state.routeName),
+            onGoBack: (datetime) => {
+              this.props.navigation.navigate(this.props.navigation.state.routeName);
+              this.setState({
+                editStart: datetime.startDate,
+                editEnd: datetime.endDate,
+              });
+            },
+          })
+        }
+        color="white"
+        style={[
+          {
+            paddingTop: 10,
+            paddingBottom: 10,
+            flex: 1,
+            borderRadius: 3,
+            marginBottom: 5,
+          },
+        ]}
+        onPressColor={colors.off}
+      /> 
+         </Col>
+      </Row>
+    );
+  }
+  editLocation(data) {
+    return (
+      <Row style={[
+        {
+          paddingTop: 10,
+          paddingBottom: 10,
+          flex: 1,
+          borderRadius: 3,
+          marginBottom: 5,
+        },
+      ]}>
+        <Col size={15} style={styleApp.center}>
+          <AllIcons
+            name="map-marker-alt"
+            color={colors.greyDark}
+            size={16}
+            type="font"
+          />
+        </Col>
+        <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
+          {this.title(data.location.address)}
+        </Col>
+        <Col size={20} style={styleApp.center}>
+        <ButtonColor
+        view={() => {
+          return (
+            <Text style={styleApp.text}>
+              Edit
+            </Text>
+          );
+        }}
+        click={() =>
+          this.props.navigation.navigate('Location', {
+            location: data.location,
+            pageFrom: this.props.navigation.state.routeName,
+            onGoBack: (location) => {
+              this.props.navigation.navigate(this.props.navigation.state.routeName);
+              this.setState({editLocation: location});
+            },
+          })
+        }
+        color="white"
+        style={[
+          {
+            paddingTop: 10,
+            paddingBottom: 10,
+            flex: 1,
+            borderRadius: 3,
+            marginBottom: 5,
+          },
+        ]}
+        onPressColor={colors.off}
+      /> 
+         </Col>
       </Row>
     );
   }
   async saveEdits(data) {
-    this.setState({loader: true});
+    // this.setState({loader: true});
     console.log(data);
     let newData = {
       ...data,
-      price: {...data.price, joiningFee: this.state.editPrice == '' ? data.price.joiningFee : Number(this.state.editPrice)},
-      info: {...data.info, name: this.state.editName == '' ? data.info.name : this.state.editName},
-    }
-    console.log('editing event');
-    console.log('old data -------');
-    console.log(data);
-    console.log('new data -------');
-    console.log(newData);
+      price: {
+        ...data.price,
+        joiningFee: this.state.editPrice === '' ? data.price.joiningFee : Number(this.state.editPrice)
+      },
+      info: {
+        ...data.info,
+        name: this.state.editName === '' ? data.info.name : this.state.editName
+      },
+      date: {
+        ...data.date,
+        start: this.state.editStart === '' ? data.date.start : this.state.editStart,
+        end: this.state.editEnd === '' ? data.date.end : this.state.editEnd,
+      }
+    };
+    // firebase update
     editEvent(newData, () => console.log('edit event failed'));
-    console.log('-------');
+    // local update
     await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
+    // this update
     this.setState({
       ...this.state,
       editMode: false,
       editPrice: '',
       editName: '',
+      editStart: '',
+      editEnd: '',
     });
-    this.setState({loader: false});
+    // this.setState({loader: false});
   }
   editEventInfo(data, sport, rule, league) {
+    // eventInfo() but with input fields where the display fields are
     var level = Object.values(sport.level.list).filter(
       (level) => level.value === data.info.levelFilter,
     )[0];
@@ -343,14 +474,23 @@ class EventPage extends React.Component {
         </Row>
         <View style={[styleApp.divider2, {marginBottom: 20}]} />
 
+        {/* no edit of sport or league */}
         {this.rowImage(sport.icon, sport.text)}
         {this.rowImage(league.icon, league.text)}
 
-        {this.rowIcon(
-          this.dateTime(data.date.start, data.date.end),
-          'calendar-alt',
-          () => this.addCalendar(data),
-        )}
+        <Row>
+          <Col style={styleApp.center2}>
+            {this.editDateTime(data)}
+          </Col>
+        </Row>
+
+        <Row>
+          <Col style={styleApp.center2}>
+            {this.editLocation(data)}
+          </Col>
+        </Row>
+
+        {/* recurrence edited with date, instructions not edited?*/}
         {data.date.recurrence !== '' && data.date.recurrence !== undefined
           ? this.rowIcon(
               this.title(
@@ -360,9 +500,7 @@ class EventPage extends React.Component {
               'stopwatch',
             )
           : null}
-        {this.rowIcon(this.title(data.location.address), 'map-marker-alt', () =>
-          this.props.navigation.navigate('AlertAddress', {data: data.location}),
-        )}
+
         {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}

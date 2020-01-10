@@ -277,7 +277,7 @@ class Page2 extends Component {
               recurrence: this.props.step2.recurrence,
               onGoBack: (data) => this.setDate(data),
             }),
-          this.props.step2.startDate != '',
+          this.props.step2.startDate !== '',
         )}
         {this.ligneButton(
           'parking',
