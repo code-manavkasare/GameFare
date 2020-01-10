@@ -35,18 +35,23 @@ class CardConversation extends React.Component {
     console.log('this.;rops.conversation');
     console.log(this.props.discussion);
 
+    console.log(
+      'conversations',
+      this.props.conversations[this.props.discussion.objectID],
+    );
+
     var lastMessage = await firebase
       .database()
       .ref('discussions/' + this.props.discussion.objectID + '/messages')
       .limitToLast(1)
       .once('value');
     lastMessage = lastMessage.val();
-    console.log('le last message');
-    console.log(lastMessage);
+
     if (lastMessage === null) lastMessage = [{text: 'Write the first message'}];
     await this.props.messageAction('setConversation', {
       ...this.props.discussion,
       lastMessage: lastMessage,
+      lastMessageRead: false,
     });
     return this.setState({lastMessage: Object.values(lastMessage)[0]});
   }
@@ -140,34 +145,51 @@ class CardConversation extends React.Component {
         view={() => {
           return (
             <Row>
-              {/* <Col size={3} style={styleApp.center2}>
-                <Text style={[styleApp.input, {color: colors.green}]}>•</Text>
-              </Col> */}
               <Col size={20} style={styleApp.center2}>
                 {this.imageCard(conversation)}
               </Col>
-              <Col size={70} style={[styleApp.center2, {paddingLeft: 5}]}>
+              <Col size={60} style={[styleApp.center2, {paddingLeft: 5}]}>
                 <Text style={[styleApp.text, {fontSize: 18}]}>
                   {this.titleConversation(conversation)}
                 </Text>
                 {this.lastMessage()}
               </Col>
-              <Col size={10} style={styleApp.center3}>
+              <Col size={5} style={styleApp.center2}>
+                {!this.props.conversations[
+                  this.props.discussion.objectID
+                ] ? null : !this.props.conversations[
+                    this.props.discussion.objectID
+                  ].lastMessageRead ? (
+                  <View
+                    style={{
+                      backgroundColor: colors.blue,
+                      height: 15,
+                      width: 15,
+                      borderRadius: 10,
+                    }}
+                  />
+                ) : null}
+              </Col>
+              {/* <Col size={10} style={styleApp.center3}>
                 <AllIcons
                   name="keyboard-arrow-right"
                   type="mat"
                   size={20}
                   color={colors.grey}
                 />
-              </Col>
+              </Col> */}
             </Row>
           );
         }}
-        click={() =>
+        click={() => {
+          this.props.messageAction('setConversation', {
+            ...this.props.discussion,
+            lastMessageRead: true,
+          });
           NavigationService.push('Conversation', {
             data: conversation,
-          })
-        }
+          });
+        }}
         color="white"
         style={styleApp.cardConversation}
         onPressColor={colors.off}
@@ -181,7 +203,7 @@ class CardConversation extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    conversations: state.conversations,
+    conversations: state.message.conversations,
     userID: state.user.userID,
   };
 };

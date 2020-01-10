@@ -173,7 +173,7 @@ class CardEvent extends React.Component {
               </Text>
 
               {this.rowAttendees(data)}
-              {this.props.size == 'M' ? (
+              {this.props.size === 'M' ? (
                 <View
                   style={{
                     height: 0.5,

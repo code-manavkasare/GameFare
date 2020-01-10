@@ -162,7 +162,27 @@ const getEventPublic = async (
 };
 
 const getMyEvents = async (userID) => {
-  return [];
+  let filterAttendees = '';
+  filterAttendees =
+    'allAttendees:' +
+    userID +
+    ' OR allCoaches:' +
+    userID +
+    ' OR info.organizer:' +
+    userID +
+    ' AND ';
+
+  var filterDate = 'date_timestamp>' + Number(new Date());
+  indexEvents.clearCache();
+  var {hits} = await indexEvents.search({
+    query: '',
+    filters: filterAttendees + filterDate,
+  });
+  // var allEvents = hits.reduce(function(result, item) {
+  //   result[item.objectID] = item;
+  //   return result;
+  // }, {});
+  return hits;
 };
 
 module.exports = {

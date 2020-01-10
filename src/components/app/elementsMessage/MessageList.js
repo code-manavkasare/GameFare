@@ -65,7 +65,8 @@ class MessageTab extends React.Component {
     console.log(hits);
 
     // search for events discussions
-    var myEvents = await getMyEvents(userID, '');
+    var myEvents = await getMyEvents(userID);
+    console.log('myEvents', myEvents);
     var eventsDiscussions = myEvents.map((event) => event.discussions[0]);
     var getDiscussionsEvent = await indexDiscussions.getObjects(
       eventsDiscussions,
@@ -120,6 +121,9 @@ class MessageTab extends React.Component {
           <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
           {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
         </View>
+        <View
+          style={[styleApp.divider2, {marginLeft: 20, width: width - 40}]}
+        />
         <View>
           {this.state.loader ? (
             <View style={{flex: 1}}>
