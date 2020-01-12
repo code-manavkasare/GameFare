@@ -238,60 +238,61 @@ class EventPage extends React.Component {
 
   // edit event components
   editPrice(data) {
-    return (
-      <Row>
-        <Col style={styleApp.center2}>
-          {this.state.editMode ?
-            <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => this.entreeFeeInputRef.focus()}>
-              <Row>
-                <TextInput
-                  style={styleApp.eventTitle} 
-                  placeholder={String(data.price.joiningFee)}
-                  returnKeyType={'done'}
-                  keyboardType={'phone-pad'}
-                  ref={(input) => {
-                    this.entreeFeeInputRef = input;
-                  }}
-                  underlineColorAndroid="rgba(0,0,0,0)"
-                  autoCorrect={true}
-                  onChangeText={(text) => this.setState({editPrice: text})}
-                  value={this.state.editPrice}
-                />
-              </Row>
-            </TouchableOpacity> :
-            <Text style={styleApp.eventTitle}>
-              {Number(data.price.joiningFee) === 0
-                ? 'Free entry'
-                : '$' + data.price.joiningFee}
-            </Text>
-          }
-        </Col>
-      </Row>
-    );
+    if (this.state.editMode) {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => this.entreeFeeInputRef.focus()}>
+            <TextInput
+              style={styleApp.eventTitle}
+              placeholder={String(data.price.joiningFee)}
+              returnKeyType={'done'}
+              keyboardType={'phone-pad'}
+              ref={(input) => {
+                this.entreeFeeInputRef = input;
+              }}
+              underlineColorAndroid="rgba(0,0,0,0)"
+              autoCorrect={true}
+              onChangeText={(text) => this.setState({editPrice: text})}
+              value={this.state.editPrice}
+            />
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <Text style={styleApp.eventTitle}>
+          {Number(data.price.joiningFee) === 0
+            ? 'Free entry'
+            : '$' + data.price.joiningFee}
+        </Text>
+      );
+    }
   }
   editName(data) {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => this.nameInputRef.focus()}>
-        <Row>
-          <TextInput
-            style={styleApp.title}
-            placeholder={String(data.info.name)}
-            returnKeyType={'done'}
-            ref={(input) => {
-              this.nameInputRef = input;
-            }}
-            underlineColorAndroid="rgba(0,0,0,0)"
-            autoCorrect={true}
-            onChangeText={(text) => this.setState({editName: text})}
-            value={this.state.editName}
-          />
-        </Row>
-      </TouchableOpacity>
-    );
+    if (this.state.editMode) {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => this.nameInputRef.focus()}>
+            <TextInput
+              style={styleApp.title}
+              placeholder={String(data.info.name)}
+              returnKeyType={'done'}
+              ref={(input) => {
+                this.nameInputRef = input;
+              }}
+              underlineColorAndroid="rgba(0,0,0,0)"
+              autoCorrect={true}
+              onChangeText={(text) => this.setState({editName: text})}
+              value={this.state.editName}
+            />
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <Text style={styleApp.title}>{data.info.name}</Text>
+      );
+    }
   }
   editDateTime(data) {
     return (
@@ -318,34 +319,37 @@ class EventPage extends React.Component {
             end={this.state.editEnd !== '' ? this.state.editEnd : data.date.end}
           />
         </Col>
-        <Col size={20} style={styleApp.center}>
-          <ButtonColor
-            view={() => {
-              return (
-                <Text style={styleApp.text}>
-                  Edit
-                </Text>
-              );
-            }}
-            click={() => 
-              this.props.navigation.navigate('Date', {
-                startDate: data.date.start,
-                endDate: data.date.end,
-                recurrence: data.date.recurrence,
-                close: () => this.props.navigation.navigate(this.props.navigation.state.routeName),
-                onGoBack: (datetime) => {
-                  this.props.navigation.navigate(this.props.navigation.state.routeName);
-                  this.setState({
-                    editStart: datetime.startDate,
-                    editEnd: datetime.endDate,
-                  });
-                },
-              })
-            }
-            color="white"
-            onPressColor={colors.off}
-          />
-        </Col>
+        {this.state.editMode
+          ? <Col size={20} style={styleApp.center}>
+              <ButtonColor
+                view={() => {
+                  return (
+                    <Text style={styleApp.text}>
+                      Edit
+                    </Text>
+                  );
+                }}
+                click={() => 
+                  this.props.navigation.navigate('Date', {
+                    startDate: data.date.start,
+                    endDate: data.date.end,
+                    recurrence: data.date.recurrence,
+                    close: () => this.props.navigation.navigate(this.props.navigation.state.routeName),
+                    onGoBack: (datetime) => {
+                      this.props.navigation.navigate(this.props.navigation.state.routeName);
+                      this.setState({
+                        editStart: datetime.startDate,
+                        editEnd: datetime.endDate,
+                      });
+                    },
+                  })
+                }
+                color="white"
+                onPressColor={colors.off}
+              />
+            </Col>
+          : <Col size={20}/>
+        }
       </Row>
     );
   }
@@ -371,71 +375,77 @@ class EventPage extends React.Component {
         <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
           {this.title(data.location.address)}
         </Col>
-        <Col size={20} style={styleApp.center}>
-          <ButtonColor
-            view={() => {
-              return (
-                <Text style={styleApp.text}>
-                  Edit
-                </Text>
-              );
-            }}
-            click={() =>
-              this.props.navigation.navigate('Location', {
-                location: data.location,
-                pageFrom: this.props.navigation.state.routeName,
-                onGoBack: (location) => {
-                  this.props.navigation.navigate(this.props.navigation.state.routeName);
-                  this.setState({editLocation: location});
-                },
-              })
-            }
-            color="white"
-            onPressColor={colors.off}
-          /> 
-        </Col>
+        {this.state.editMode
+          ? <Col size={20} style={styleApp.center}>
+              <ButtonColor
+                view={() => {
+                  return (
+                    <Text style={styleApp.text}>
+                      Edit
+                    </Text>
+                  );
+                }}
+                click={() => 
+                  this.props.navigation.navigate('Location', {
+                    location: data.location,
+                    pageFrom: this.props.navigation.state.routeName,
+                    onGoBack: (location) => {
+                      this.props.navigation.navigate(this.props.navigation.state.routeName);
+                      this.setState({editLocation: location});
+                    },
+                  })
+                }
+                color="white"
+                onPressColor={colors.off}
+              />
+            </Col>
+          : <Col size={20}/>
+        }
       </Row>
     );
   }
   editColIcon(text, icon, clickUp, clickDown) {
     return (
       <Row style={[styleApp.center, {height: 90, marginTop: 0, borderRadius: 3, width: '100%'}]} size={50}>
-        <Col size={30} style={{justifyContent: 'space-around', alignItems: 'flex-end'}}>
-          <Row size={20}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name="keyboard-arrow-up"
-                    color={colors.greyDark}
-                    size={15}
-                    type="mat"
-                  />
-                );
-              }}
-              click={() => clickUp()}
-              color="white"
-              onPressColor={colors.off}
-            />
-          </Row>
-          <Row size={20}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name="keyboard-arrow-down"
-                    color={colors.greyDark}
-                    size={15}
-                    type="mat"
-                  />
-                );
-              }}
-              click={() => clickDown()}
-              color="white"
-              onPressColor={colors.off}
-            />
-          </Row>
-        </Col>
+        {this.state.editMode
+          ? <Col size={30} style={{justifyContent: 'space-around', alignItems: 'flex-end'}}>
+              <Row size={20}>
+                <ButtonColor
+                  view={() => {
+                    return (
+                      <AllIcons
+                        name="keyboard-arrow-up"
+                        color={colors.greyDark}
+                        size={15}
+                        type="mat"
+                      />
+                    );
+                  }}
+                  click={() => clickUp()}
+                  color="white"
+                  onPressColor={colors.off}
+                />
+              </Row>
+              <Row size={20}>
+                <ButtonColor
+                  view={() => {
+                    return (
+                      <AllIcons
+                        name="keyboard-arrow-down"
+                        color={colors.greyDark}
+                        size={15}
+                        type="mat"
+                      />
+                    );
+                  }}
+                  click={() => clickDown()}
+                  color="white"
+                  onPressColor={colors.off}
+                />
+              </Row>
+            </Col>
+          : <Col size={30}/>
+        }
         <Col size={10}></Col>
         <Col size={100} style={[styleApp.center2, {alignItems: 'flex-start'}]}>
           <View style={styleApp.center}>
@@ -487,7 +497,8 @@ class EventPage extends React.Component {
     });
     // this.setState({loader: false});
   }
-  editEventInfo(data, sport, rule, league) {
+
+  eventInfo(data, sport, rule, league) {
     if (this.state.editMaxAttendance === 0) {
       this.setState({editMaxAttendance: data.info.maxAttendance});
     }
@@ -508,6 +519,7 @@ class EventPage extends React.Component {
             {this.editPrice(data)}
           </Col>
         </Row>
+
         <Row style={{marginTop: 15}}>
           <Col style={styleApp.center2}>
             {this.editName(data)}
@@ -515,7 +527,6 @@ class EventPage extends React.Component {
         </Row>
         <View style={[styleApp.divider2, {marginBottom: 20}]} />
 
-        {/* no edit of sport or league */}
         {this.rowImage(sport.icon, sport.text)}
         {this.rowImage(league.icon, league.text)}
 
@@ -524,14 +535,6 @@ class EventPage extends React.Component {
             {this.editDateTime(data)}
           </Col>
         </Row>
-
-        <Row>
-          <Col style={styleApp.center2}>
-            {this.editLocation(data)}
-          </Col>
-        </Row>
-
-        {/* recurrence edited with date, instructions not edited?*/}
         {data.date.recurrence !== '' && data.date.recurrence !== undefined
           ? this.rowIcon(
               this.title(
@@ -542,6 +545,11 @@ class EventPage extends React.Component {
             )
           : null}
 
+        <Row>
+          <Col style={styleApp.center2}>
+            {this.editLocation(data)}
+          </Col>
+        </Row>
         {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}
@@ -589,129 +597,6 @@ class EventPage extends React.Component {
               () => console.log('up'),
               () => console.log('down'),
             )}
-          </Col>
-        </Row>
-      </View>
-    );
-  }
-  eventInfo(data, sport, rule, league) {
-    if (this.state.editMaxAttendance === 0) {
-      this.setState({editMaxAttendance: data.info.maxAttendance});
-    }
-    // eventInfo() but with input fields where the display fields are
-    var level = Object.values(sport.level.list).filter(
-      (level) => level.value === data.info.levelFilter,
-    )[0];
-    var levelOption =
-      data.info.levelOption === 'equal'
-        ? 'only'
-        : data.info.levelOption === 'min'
-        ? 'and above'
-        : 'and below';
-    return (
-      <View style={styleApp.marginView}>
-        <Row style={{marginTop: 20}}>
-          <Col style={styleApp.center2}>
-            {this.editPrice(data)}
-          </Col>
-        </Row>
-    {/* // var level = Object.values(sport.level.list).filter(
-    //   (level) => level.value === data.info.levelFilter,
-    // )[0];
-    // var levelOption =
-    //   data.info.levelOption === 'equal'
-    //     ? 'only'
-    //     : data.info.levelOption === 'min'
-    //     ? 'and above'
-    //     : 'and below';
-    // return (
-    //   <View style={styleApp.marginView}>
-    //     <Row style={{marginTop: 20}}>
-    //       <Col style={styleApp.center2}>
-    //         <Text */}
-    {/* //           style={[ */}
-    {/* //             styleApp.text,
-    //             {
-    //               color: colors.primary,
-    //               marginTop: 0,
-    //               fontFamily: 'OpenSans-Bold',
-    //               fontSize: 18,
-    //             },
-    //           ]}>
-    //           {Number(data.price.joiningFee) === 0
-    //             ? 'Free entry'
-    //             : '$' + data.price.joiningFee}
-    //         </Text>
-    //       </Col>
-    //     </Row> */}
-
-        <Text style={[styleApp.title, {marginTop: 15}]}>{data.info.name}</Text>
-
-        <View style={[styleApp.divider2, {marginBottom: 20}]} />
-
-        {this.rowImage(sport.icon, sport.text)}
-        {this.rowImage(league.icon, league.text)}
-
-        {this.rowIcon(
-          this.dateTime(data.date.start, data.date.end),
-          'calendar-alt',
-          () => this.addCalendar(data),
-        )}
-        {data.date.recurrence !== '' && data.date.recurrence !== undefined
-          ? this.rowIcon(
-              this.title(
-                data.date.recurrence.charAt(0).toUpperCase() +
-                  data.date.recurrence.slice(1),
-              ),
-              'stopwatch',
-            )
-          : null}
-        {this.rowIcon(this.title(data.location.address), 'map-marker-alt', () =>
-          this.props.navigation.navigate('AlertAddress', {data: data.location}),
-        )}
-        {data.info.instructions !== ''
-          ? this.rowIcon(this.title(data.info.instructions), 'parking')
-          : null}
-
-        <View style={[styleApp.divider2, {marginBottom: 25}]} />
-
-        <Row style={{height: 90, marginTop: 0}}>
-          <Col>
-            {this.colIcon(
-              Number(data.info.maxAttendance) === 1
-                ? data.info.maxAttendance + ' player'
-                : data.info.maxAttendance + ' players',
-              'user-plus',
-              false,
-            )}
-          </Col>
-          <Col>
-            {this.colIcon(
-              level.value === '0' ? level.text : level.text.split('/')[0],
-              'balance-scale',
-              {title: level.title, subtitle: level.subtitle},
-            )}
-          </Col>
-        </Row>
-
-        <Row style={{height: 90, marginTop: 10}}>
-          <Col>
-            {this.colIcon(
-              data.info.gender.charAt(0).toUpperCase() +
-                data.info.gender.slice(1),
-              data.info.gender === 'mixed'
-                ? 'venus-mars'
-                : data.info.gender === 'female'
-                ? 'venus'
-                : 'mars',
-              false,
-            )}
-          </Col>
-          <Col>
-            {this.colIcon(rule.text, 'puzzle-piece', {
-              title: rule.title,
-              subtitle: rule.subtitle,
-            })}
           </Col>
         </Row>
       </View>
