@@ -241,33 +241,32 @@ class EventPage extends React.Component {
     return (
       <Row>
         <Col style={styleApp.center2}>
-          <TouchableOpacity
+          {this.state.editMode ?
+            <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => this.entreeFeeInputRef.focus()}>
-            <Row>
-              <TextInput
-                style={[
-                  styleApp.input,
-                  {
-                    color: colors.primary,
-                    marginTop: 0,
-                    fontFamily: 'OpenSans-Bold',
-                    fontSize: 18,
-                  },
-                ]}
-                placeholder={String(data.price.joiningFee)}
-                returnKeyType={'done'}
-                keyboardType={'phone-pad'}
-                ref={(input) => {
-                  this.entreeFeeInputRef = input;
-                }}
-                underlineColorAndroid="rgba(0,0,0,0)"
-                autoCorrect={true}
-                onChangeText={(text) => this.setState({editPrice: text})}
-                value={this.state.editPrice}
-              />
-            </Row>
-          </TouchableOpacity>
+              <Row>
+                <TextInput
+                  style={styleApp.eventTitle} 
+                  placeholder={String(data.price.joiningFee)}
+                  returnKeyType={'done'}
+                  keyboardType={'phone-pad'}
+                  ref={(input) => {
+                    this.entreeFeeInputRef = input;
+                  }}
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  autoCorrect={true}
+                  onChangeText={(text) => this.setState({editPrice: text})}
+                  value={this.state.editPrice}
+                />
+              </Row>
+            </TouchableOpacity> :
+            <Text style={styleApp.eventTitle}>
+              {Number(data.price.joiningFee) === 0
+                ? 'Free entry'
+                : '$' + data.price.joiningFee}
+            </Text>
+          }
         </Col>
       </Row>
     );
@@ -437,14 +436,17 @@ class EventPage extends React.Component {
             />
           </Row>
         </Col>
-        <Col size={100} style={styleApp.center}>
-          <AllIcons
-            name={icon}
-            size={17}
-            color={colors.title}
-            type="font"
-          />
-          <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
+        <Col size={10}></Col>
+        <Col size={100} style={[styleApp.center2, {alignItems: 'flex-start'}]}>
+          <View style={styleApp.center}>
+            <AllIcons
+              name={icon}
+              size={17}
+              color={colors.title}
+              type="font"
+            />
+            <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
+          </View>
         </Col>
       </Row>
     );
@@ -506,7 +508,7 @@ class EventPage extends React.Component {
             {this.editPrice(data)}
           </Col>
         </Row>
-        <Row style={{marginTop: 20}}>
+        <Row style={{marginTop: 15}}>
           <Col style={styleApp.center2}>
             {this.editName(data)}
           </Col>
@@ -593,6 +595,10 @@ class EventPage extends React.Component {
     );
   }
   eventInfo(data, sport, rule, league) {
+    if (this.state.editMaxAttendance === 0) {
+      this.setState({editMaxAttendance: data.info.maxAttendance});
+    }
+    // eventInfo() but with input fields where the display fields are
     var level = Object.values(sport.level.list).filter(
       (level) => level.value === data.info.levelFilter,
     )[0];
@@ -606,22 +612,38 @@ class EventPage extends React.Component {
       <View style={styleApp.marginView}>
         <Row style={{marginTop: 20}}>
           <Col style={styleApp.center2}>
-            <Text
-              style={[
-                styleApp.text,
-                {
-                  color: colors.primary,
-                  marginTop: 0,
-                  fontFamily: 'OpenSans-Bold',
-                  fontSize: 18,
-                },
-              ]}>
-              {Number(data.price.joiningFee) === 0
-                ? 'Free entry'
-                : '$' + data.price.joiningFee}
-            </Text>
+            {this.editPrice(data)}
           </Col>
         </Row>
+    {/* // var level = Object.values(sport.level.list).filter(
+    //   (level) => level.value === data.info.levelFilter,
+    // )[0];
+    // var levelOption =
+    //   data.info.levelOption === 'equal'
+    //     ? 'only'
+    //     : data.info.levelOption === 'min'
+    //     ? 'and above'
+    //     : 'and below';
+    // return (
+    //   <View style={styleApp.marginView}>
+    //     <Row style={{marginTop: 20}}>
+    //       <Col style={styleApp.center2}>
+    //         <Text */}
+    {/* //           style={[ */}
+    {/* //             styleApp.text,
+    //             {
+    //               color: colors.primary,
+    //               marginTop: 0,
+    //               fontFamily: 'OpenSans-Bold',
+    //               fontSize: 18,
+    //             },
+    //           ]}>
+    //           {Number(data.price.joiningFee) === 0
+    //             ? 'Free entry'
+    //             : '$' + data.price.joiningFee}
+    //         </Text>
+    //       </Col>
+    //     </Row> */}
 
         <Text style={[styleApp.title, {marginTop: 15}]}>{data.info.name}</Text>
 
@@ -696,7 +718,6 @@ class EventPage extends React.Component {
     );
   }
   event(data) {
-    // return <PlaceHolder />;
     if (data === undefined || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
@@ -709,7 +730,8 @@ class EventPage extends React.Component {
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {this.state.editMode ? this.editEventInfo(data, sport, rule, league) : this.eventInfo(data, sport, rule, league)}
+        {this.eventInfo(data, sport, rule, league)}
+        {/* {this.state.editMode ? this.editEventInfo(data, sport, rule, league) : this.eventInfo(data, sport, rule, league)} */}
 
         {/* {rule.coachNeeded ? (
           <View style={styleApp.viewHome}>
@@ -819,6 +841,7 @@ class EventPage extends React.Component {
   waitlistCondition(event) {
     if (
       !this.openCondition(event) &&
+      // use userIsOrganizer, correct before end
       event.info.organizer !== this.props.userID
     ) {
       if (!event.attendees) return true;
@@ -850,6 +873,13 @@ class EventPage extends React.Component {
       return true;
     return false;
   }
+  userIsOrganizer(event) {
+    // if (!event.info.organizer) {
+    //   return false;
+    // }
+    // return event.info.organizer === this.props.userID;
+    return true;
+  }
   async refresh() {
     await this.setState({loader: true});
     return this.loadEvent(this.props.navigation.getParam('objectID'));
@@ -861,31 +891,53 @@ class EventPage extends React.Component {
     const {goBack, dismiss} = this.props.navigation;
     return (
       <View style={{flex: 1}}>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={!event ? '' : event.info.name}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          typeIcon2={'moon'}
-          sizeIcon2={17}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          iconOffset="share"
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openEventPage',
-              pageTo: 'Group',
-              objectID: event.objectID,
-              pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
-            })
-          }
-          // clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-          clickButton1={() => dismiss()}
-          clickButtonOffset={() => !this.state.editMode ? this.setState({editMode: true}) : null}
-        />
+        {this.userIsOrganizer(event)
+        ? <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={!event ? '' : event.info.name}
+            inputRange={[50, 80]}
+            initialBorderColorIcon={colors.grey}
+            initialBackgroundColor={'transparent'}
+            initialTitleOpacity={0}
+            icon1="arrow-left"
+            icon2="share"
+            typeIcon2="moon"
+            sizeIcon2={17}
+            iconOffset="share"
+            clickButton2={() =>
+              this.props.navigation.navigate('Contacts', {
+                openPageLink: 'openEventPage',
+                pageTo: 'Group',
+                objectID: event.objectID,
+                pageFrom: 'Event',
+                data: {...event, eventID: event.objectID},
+              })
+            }
+            clickButton1={() => dismiss()}
+            clickButtonOffset={() => !this.state.editMode ? this.setState({editMode: true}) : null}
+          />
+        : <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={!event ? '' : event.info.name}
+            inputRange={[50, 80]}
+            initialBorderColorIcon={colors.grey}
+            initialBackgroundColor={'transparent'}
+            typeIcon2={'moon'}
+            sizeIcon2={17}
+            initialTitleOpacity={0}
+            icon1="arrow-left"
+            icon2="share"
+            clickButton2={() =>
+              this.props.navigation.navigate('Contacts', {
+                openPageLink: 'openEventPage',
+                pageTo: 'Group',
+                objectID: event.objectID,
+                pageFrom: 'Event',
+                data: {...event, eventID: event.objectID},
+              })
+            }
+            clickButton1={() => dismiss()}
+          />}
 
         <ParalaxScrollView
           setState={(val) => this.setState(val)}
