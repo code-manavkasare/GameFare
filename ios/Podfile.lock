@@ -384,12 +384,7 @@ PODS:
     - React
   - react-native-statusbar (1.0.3):
     - React
-  - react-native-video (5.0.2):
-    - React
-    - react-native-video/Video (= 5.0.2)
   - react-native-video-helper (1.4.4):
-    - React
-  - react-native-video/Video (5.0.2):
     - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
@@ -539,7 +534,6 @@ DEPENDENCIES:
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
-  - react-native-video (from `../node_modules/react-native-video`)
   - react-native-video-helper (from `../node_modules/react-native-video-helper`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -705,8 +699,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-splash-screen"
   react-native-statusbar:
     :path: "../node_modules/@react-native-community/status-bar"
-  react-native-video:
-    :path: "../node_modules/react-native-video"
   react-native-video-helper:
     :path: "../node_modules/react-native-video-helper"
   React-RCTActionSheet:
@@ -843,7 +835,6 @@ SPEC CHECKSUMS:
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
-  react-native-video: d01ed7ff1e38fa7dcc6c15c94cf505e661b7bfd0
   react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235

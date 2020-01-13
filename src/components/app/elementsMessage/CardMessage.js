@@ -122,108 +122,85 @@ class CardMessage extends React.Component {
     return null;
   }
   renderMessage(props) {
-    if (props.currentMessage.images)
-      return (
-        <View style={styleApp.cardMessage}>
-          {this.rowDay(props)}
-          <Row>
-            <Col size={15}>
-              <AsyncImage
-                style={{width: 45, height: 45, borderRadius: 5}}
-                mainImage={props.currentMessage.user.avatar}
-                imgInitial={props.currentMessage.user.avatar}
-              />
-            </Col>
-            <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
-              <Text style={[styleApp.text, {fontSize: 16}]}>
-                {props.currentMessage.user.name}{' '}
-                <Text style={{color: colors.grey, fontSize: 12}}>
-                  {moment(props.currentMessage.createdAt).format('h:mm a')}
-                </Text>
+    return (
+      <View style={styleApp.cardMessage}>
+        {this.rowDay(props)}
+        <Row>
+          <Col size={15}>
+            <AsyncImage
+              style={{width: 45, height: 45, borderRadius: 5}}
+              mainImage={props.currentMessage.user.avatar}
+              imgInitial={props.currentMessage.user.avatar}
+            />
+          </Col>
+          <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
+            <Text style={[styleApp.text, {fontSize: 16}]}>
+              {props.currentMessage.user.name}{' '}
+              <Text style={{color: colors.grey, fontSize: 12}}>
+                {moment(props.currentMessage.createdAt).format('h:mm a')}
               </Text>
-              {props.currentMessage.text !== '' && (
-                <Hyperlink
-                  // linkDefault={true}
-                  onPress={(url) => this.clickLink(url, this.state.viewUrl)}
-                  linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
-                  <Text
-                    style={[
-                      styleApp.smallText,
-                      {marginTop: 5, fontSize: 14, marginBottom: 10},
-                    ]}>
-                    {this.state.viewUrl
-                      ? props.currentMessage.text
-                      : props.currentMessage.text}
-                  </Text>
-                </Hyperlink>
-              )}
+            </Text>
+            {props.currentMessage.text !== '' && (
+              <Hyperlink
+                // linkDefault={true}
+                onPress={(url) => this.clickLink(url, this.state.viewUrl)}
+                linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
+                <Text
+                  style={[
+                    styleApp.smallText,
+                    {marginTop: 5, fontSize: 14, marginBottom: 10},
+                  ]}>
+                  {this.state.viewUrl
+                    ? props.currentMessage.text
+                    : props.currentMessage.text}
+                </Text>
+              </Hyperlink>
+            )}
 
-              {this.renderImages(
-                props.currentMessage.images,
-                props.currentMessage,
-                this.props.discussion.objectID,
-              )}
+            {this.renderImages(
+              props.currentMessage.images,
+              props.currentMessage,
+              this.props.discussion.objectID,
+            )}
 
-              {this.state.viewUrl ? (
-                <ButtonColor
-                  view={() => {
-                    return (
-                      <View
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                        }}>
-                        <Row>
-                          <Col>
-                            <AsyncImage
-                              style={{
-                                width: '100%',
-                                height: 150,
-                                borderRadius: 5,
-                                marginBottom: 10,
-                              }}
-                              mainImage={this.state.viewUrl.$og_image_url}
-                              imgInitial={this.state.viewUrl.$og_image_url}
-                            />
-                          </Col>
-                        </Row>
+            {this.state.viewUrl ? (
+              <ButtonColor
+                view={() => {
+                  return (
+                    <View style={styleApp.fullSize}>
+                      <Row>
+                        <Col>
+                          <AsyncImage
+                            style={styles.urlImg}
+                            mainImage={this.state.viewUrl.$og_image_url}
+                            imgInitial={this.state.viewUrl.$og_image_url}
+                          />
+                        </Col>
+                      </Row>
 
-                        <Text style={styleApp.text}>
-                          {this.state.viewUrl.$og_title}
-                        </Text>
-                        <Text
-                          style={[
-                            styleApp.smallText,
-                            {marginTop: 5, color: colors.greyDark},
-                          ]}>
-                          {this.state.url}
-                        </Text>
-                      </View>
-                    );
-                  }}
-                  click={() =>
-                    this.clickLink(this.state.url, this.state.viewUrl)
-                  }
-                  color={colors.white}
-                  style={{
-                    ...styleApp.center2,
-                    marginBotttom: 10,
-                    flex: 1,
-                    width: '100%',
-                    borderLeftWidth: 3,
-                    paddingRight: 20,
-                    borderColor: colors.grey,
-                    paddingLeft: 20,
-                    paddingBottom: 10,
-                    paddingTop: 10,
-                  }}
-                  onPressColor={colors.off}
-                />
-              ) : null}
-            </Col>
-          </Row>
-        </View>
-      );
+                      <Text style={styleApp.text}>
+                        {this.state.viewUrl.$og_title}
+                      </Text>
+                      <Text
+                        style={[
+                          styleApp.smallText,
+                          {marginTop: 5, color: colors.greyDark},
+                        ]}>
+                        {this.state.url}
+                      </Text>
+                    </View>
+                  );
+                }}
+                click={() => this.clickLink(this.state.url, this.state.viewUrl)}
+                color={colors.white}
+                style={styles.buttonUrl}
+                onPressColor={colors.off}
+              />
+            ) : null}
+          </Col>
+        </Row>
+      </View>
+    );
   }
   render() {
     return this.renderMessage(this.props.message);
@@ -240,6 +217,24 @@ const styles = StyleSheet.create({
   image: {
     height: '100%',
     width: '100%',
+  },
+  urlImg: {
+    width: '100%',
+    height: 150,
+    borderRadius: 5,
+    // marginBottom: 10,
+  },
+  buttonUrl: {
+    ...styleApp.center2,
+    // marginBotttom: 10,
+    flex: 1,
+    width: '100%',
+    borderLeftWidth: 3,
+    paddingRight: 20,
+    borderColor: colors.grey,
+    paddingLeft: 20,
+    paddingBottom: 10,
+    paddingTop: 10,
   },
 });
 

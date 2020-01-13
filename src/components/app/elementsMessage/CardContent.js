@@ -91,31 +91,15 @@ export default class CardContent extends React.Component {
                     }}
                     click={() => this.selectPicture()}
                     color={colors.primary2}
-                    style={{
-                      height: 25,
-                      width: 25,
-                      borderRadius: 35,
-                      borderColor: colors.off,
-                      bottom: 10,
-                      right: 10,
-                      opacity: 1,
-                      zIndex: 50,
-                      position: 'absolute',
-                    }}
+                    style={styles.buttonSelected}
                     onPressColor={colors.off}
                   />
                   <View style={styles.voile}></View>
                 </FadeInView>
               )}
               {type === 'video' ? (
-                <View style={{position: 'absolute', zIndex: 40}}>
-                  <Row
-                    style={{
-                      height: 35,
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      width: this.props.width,
-                    }}>
+                <View style={{...styles.viewRowVideo, width: this.props.width}}>
+                  <Row style={styles.rowInfoView}>
                     <Col style={styleApp.center2}>
                       <AllIcons
                         name="video"
@@ -163,24 +147,35 @@ export default class CardContent extends React.Component {
 const styles = StyleSheet.create({
   roundImage: {
     ...styleApp.center,
-    // backgroundColor: colors.off2,
     width: 200,
     height: '100%',
     borderRadius: 5,
-    // borderWidth: 0.5,
     borderColor: colors.borderColor,
   },
   voile: {
-    //...styleApp.center,
     backgroundColor: colors.title,
     height: '100%',
     width: '100%',
-    //borderRadius: 15,
     opacity: 0.4,
-    //right: 5,
-    //top: 5,
     zIndex: 30,
     borderColor: colors.grey,
     position: 'absolute',
   },
+  buttonSelected: {
+    height: 25,
+    width: 25,
+    borderRadius: 35,
+    borderColor: colors.off,
+    bottom: 10,
+    right: 10,
+    opacity: 1,
+    zIndex: 50,
+    position: 'absolute',
+  },
+  rowInfoView: {
+    height: 35,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  viewRowVideo: {position: 'absolute', zIndex: 40},
 });

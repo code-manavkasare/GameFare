@@ -50,16 +50,6 @@ async function resize(uri) {
 }
 
 async function resizeVideo(uri) {
-  console.log('resize video', uri);
-  // RNVideoHelper.compress(uri, {
-  //   quality: 'low', // default low, can be medium or high
-  // })
-  //   .progress((value) => {
-  //     console.warn('progress', value); // Int with progress value from 0 to 1
-  //   })
-  //   .then((compressedUri) => {
-  //     console.warn('compressedUri', compressedUri); // String with path to temporary compressed video
-  //   });
   try {
     RNVideoHelper.compress(uri, {
       quality: 'low', // default low, can be medium or high

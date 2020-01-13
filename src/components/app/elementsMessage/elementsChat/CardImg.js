@@ -93,60 +93,6 @@ export default class CardContent extends React.Component {
     await this.setState({loader: false});
     return true;
   }
-  viewTopVideo(duration, play) {
-    return (
-      <View
-        style={{
-          height: '100%',
-          width: '100%',
-          position: 'absolute',
-          zIndex: 20,
-          // backgroundColor: 'red',
-        }}>
-        <View
-          style={{
-            ...styleApp.center,
-            position: 'absolute',
-            height: '100%',
-            backgroundColor: colors.title,
-            opacity: 0.1,
-            zIndex: 20,
-            width: '100%',
-          }}>
-          <AllIcons name="play" type="font" color={colors.white} size={30} />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            zIndex: 60,
-            height: 20,
-            // backgroundColor: 'blue',
-          }}>
-          <Row style={{height: 20, paddingLeft: 5, paddingRight: 5}}>
-            <Col style={styleApp.center2}>
-              <AllIcons
-                name="video"
-                type="font"
-                color={colors.white}
-                size={13}
-              />
-            </Col>
-            <Col style={styleApp.center3}>
-              <Text
-                style={[
-                  styleApp.input,
-                  {color: colors.white, fontWeight: 'bold'},
-                ]}>
-                {/* {duration ? duration.toFixed(0) + ' sec' : '2sec'} */}
-              </Text>
-            </Col>
-          </Row>
-        </View>
-      </View>
-    );
-  }
   usersContent() {
     if (this.props.user._id === this.props.message.user._id) return true;
     return false;

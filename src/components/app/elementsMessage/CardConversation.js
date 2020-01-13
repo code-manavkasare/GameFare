@@ -39,7 +39,7 @@ class CardConversation extends React.Component {
       .once('value');
     lastMessage = lastMessage.val();
 
-    if (lastMessage === null) lastMessage = [{text: 'Write the first message'}];
+    if (!lastMessage) lastMessage = [{text: 'Write the first message'}];
     await this.props.messageAction('setConversation', {
       ...this.props.discussion,
       lastMessage: lastMessage,
@@ -101,17 +101,7 @@ class CardConversation extends React.Component {
   }
   lastMessage() {
     if (!this.state.lastMessage)
-      return (
-        <View
-          style={{
-            height: 15,
-            width: '80%',
-            borderRadius: 4,
-            marginTop: 4,
-            backgroundColor: colors.off2,
-          }}
-        />
-      );
+      return <View style={styles.placeholderLastMessage} />;
 
     return (
       <Text
@@ -126,6 +116,10 @@ class CardConversation extends React.Component {
     );
   }
   checkLastMessageRead() {
+    console.log(
+      'checkLastMessageRead',
+      this.props.conversations[this.props.discussion.objectID],
+    );
     if (!this.props.conversations[this.props.discussion.objectID]) return false;
     else if (
       !this.props.conversations[this.props.discussion.objectID].lastMessageRead
@@ -152,24 +146,9 @@ class CardConversation extends React.Component {
               </Col>
               <Col size={5} style={styleApp.center2}>
                 {this.checkLastMessageRead() && (
-                  <View
-                    style={{
-                      backgroundColor: colors.blue,
-                      height: 15,
-                      width: 15,
-                      borderRadius: 10,
-                    }}
-                  />
+                  <View style={styles.dotUnread} />
                 )}
               </Col>
-              {/* <Col size={10} style={styleApp.center3}>
-                <AllIcons
-                  name="keyboard-arrow-right"
-                  type="mat"
-                  size={20}
-                  color={colors.grey}
-                />
-              </Col> */}
             </Row>
           );
         }}
@@ -209,6 +188,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0.5,
     borderColor: colors.borderColor,
+  },
+  dotUnread: {
+    backgroundColor: colors.blue,
+    height: 15,
+    width: 15,
+    borderRadius: 10,
+  },
+  placeholderLastMessage: {
+    height: 15,
+    width: '80%',
+    borderRadius: 4,
+    marginTop: 4,
+    backgroundColor: colors.off2,
   },
 });
 
