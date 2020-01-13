@@ -861,7 +861,7 @@ class EventPage extends React.Component {
         {this.userIsOrganizer(event)
         ? <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={!event ? '' : event.info.name}
+            textHeader={event.info.name}
             inputRange={[50, 80]}
             initialBorderColorIcon={colors.grey}
             initialBackgroundColor={'transparent'}
