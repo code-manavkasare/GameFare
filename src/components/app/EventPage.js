@@ -44,17 +44,26 @@ import PlaceHolder from '../placeHolders/EventPage';
 import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
+const noEdit = {
+  editMode: false,
+  editPrice: '',
+  editName: '',
+  editStart: '',
+  editEnd: '',
+  editLocation: null,
+  editGender: '',
+  editMaxAttendance: -1,
+  editLevelIndex: -1,
+  editRule: '',
+  editRuleIndex: -1,
+};
+
 class EventPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
-      editMode: false,
-      editPrice: '',
-      editName: '',
-      editStart: '',
-      editEnd: '',
-      editMaxAttendance: 0,
+      ...noEdit,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -73,6 +82,60 @@ class EventPage extends React.Component {
     await this.props.eventsAction('setAllEvents', {[objectID]: event});
     return this.setState({loader: false});
   }
+
+  nextGender(data, inc) {
+    let genders = ['mixed', 'female', 'male'];
+    let index;
+    if (this.state.editGender === '') {
+      index = genders.indexOf(data.info.gender);
+    } else {
+      index = genders.indexOf(this.state.editGender);
+    }
+    let nextIndex = (((index + inc) % genders.length) + genders.length) % genders.length; // allows for 'correct' negative mod
+    console.log('next gender: ' + nextIndex);
+    this.setState({editGender: genders[nextIndex]});
+  }
+
+  nextRule(data, inc) {
+    let nextRuleName, nextRuleIndex;
+    var sportData = this.props.sports.filter(
+      sport => sport.value === data.info.sport,
+    )[0];
+    var leagueData = Object.values(sportData.typeEvent).filter(
+      league => league.value === data.info.league,
+    )[0];
+    let rules = leagueData.rules;
+    if (this.state.editRuleIndex !== -1) {
+      nextRuleIndex = (((this.state.editRuleIndex + inc) % rules.length) + rules.length) % rules.length;
+    } else {
+      var rule = Object.values(rules).filter(
+        (rule) => rule.value === data.info.rules,
+      )[0];
+      let ruleIndex = rules.indexOf(rule);
+      nextRuleIndex = (((ruleIndex + inc) % rules.length) + rules.length) % rules.length;
+    }
+    this.setState({
+      editRuleIndex: nextRuleIndex,
+      editRule: rules[nextRuleIndex].value,
+    });
+  }
+
+  nextLevel(data, inc) {
+    let nextLevelIndex;
+    var sport = this.props.sports.filter(
+      s => s.value === data.info.sport,
+    )[0];
+    let levels = sport.level.list;
+    if (this.state.editLevelIndex !== -1) {
+      nextLevelIndex = (((this.state.editLevelIndex + inc) % levels.length) + levels.length) % levels.length;
+    } else {
+      nextLevelIndex = (((data.info.levelFilter + inc) % levels.length) + levels.length) % levels.length;
+    }
+    this.setState({
+      editLevelIndex: nextLevelIndex,
+    });
+  }
+
   rowIcon(component, icon, alert) {
     return (
       <ButtonColor
@@ -204,6 +267,8 @@ class EventPage extends React.Component {
         userConnected={this.props.userConnected}
         key={i}
         userID={this.props.userID}
+        removable={this.state.editMode}
+        removeFunc={() => this.removePlayer(user)}
       />
     );
   }
@@ -244,7 +309,7 @@ class EventPage extends React.Component {
           activeOpacity={0.7}
           onPress={() => this.entreeFeeInputRef.focus()}>
             <TextInput
-              style={styleApp.eventTitle}
+              style={styles.eventTitle}
               placeholder={String(data.price.joiningFee)}
               returnKeyType={'done'}
               keyboardType={'phone-pad'}
@@ -260,7 +325,7 @@ class EventPage extends React.Component {
       );
     } else {
       return (
-        <Text style={styleApp.eventTitle}>
+        <Text style={styles.eventTitle}>
           {Number(data.price.joiningFee) === 0
             ? 'Free entry'
             : '$' + data.price.joiningFee}
@@ -373,7 +438,7 @@ class EventPage extends React.Component {
           />
         </Col>
         <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
-          {this.title(data.location.address)}
+          {this.title(this.state.editLocation !== null ? this.state.editLocation.address : data.location.address)}
         </Col>
         {this.state.editMode
           ? <Col size={20} style={styleApp.center}>
@@ -462,8 +527,6 @@ class EventPage extends React.Component {
     );
   }
   async saveEdits(data) {
-    // this.setState({loader: true});
-    console.log(data);
     let newData = {
       ...data,
       price: {
@@ -473,38 +536,32 @@ class EventPage extends React.Component {
       info: {
         ...data.info,
         name: this.state.editName === '' ? data.info.name : this.state.editName,
-        maxAttendance: this.state.editMaxAttendance === '' ? data.info.maxAttendance : this.state.editMaxAttendance,
+        maxAttendance: this.state.editMaxAttendance === -1 ? data.info.maxAttendance : this.state.editMaxAttendance,
+        gender: this.state.editGender === '' ? data.info.gender : this.state.editGender,
+        rules: this.state.editRule === '' ? data.info.rules : this.state.editRule,
+        levelFilter : this.state.editLevelIndex === -1 ? data.info.levelFilter : this.state.editLevelIndex,
       },
       date: {
         ...data.date,
         start: this.state.editStart === '' ? data.date.start : this.state.editStart,
         end: this.state.editEnd === '' ? data.date.end : this.state.editEnd,
       },
+      location: this.state.editLocation ? this.state.editLocation : data.location,
     };
+    console.log(newData);
     // firebase update
-    editEvent(newData, () => console.log('edit event failed'));
+    await editEvent(newData, () => console.log('edit event failed'));
     // local update
     await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
     // this update
     this.setState({
       ...this.state,
-      editMode: false,
-      editPrice: '',
-      editName: '',
-      editStart: '',
-      editEnd: '',
-      editMaxAttendance: 0,
+      ...noEdit,
     });
-    // this.setState({loader: false});
   }
-
   eventInfo(data, sport, rule, league) {
-    if (this.state.editMaxAttendance === 0) {
-      this.setState({editMaxAttendance: data.info.maxAttendance});
-    }
-    // eventInfo() but with input fields where the display fields are
     var level = Object.values(sport.level.list).filter(
-      (level) => level.value === data.info.levelFilter,
+      (level) => level.value === (this.state.editLevelIndex === -1 ? data.info.levelFilter : this.state.editLevelIndex),
     )[0];
     var levelOption =
       data.info.levelOption === 'equal'
@@ -558,44 +615,66 @@ class EventPage extends React.Component {
 
         <Row style={{height: 90, marginTop: 0}}>
           <Col>
-            {this.editColIcon(
-              Number(this.state.editMaxAttendance) === 1
-                ? this.state.editMaxAttendance + ' player'
-                : this.state.editMaxAttendance + ' players',
-              'user-plus',
-              () => this.setState({editMaxAttendance: this.state.editMaxAttendance + 1}),
-              () => this.setState({editMaxAttendance: this.state.editMaxAttendance - 1}),
-            )}
+            { this.state.editMaxAttendance === -1
+                ? this.editColIcon(
+                    data.info.maxAttendance === 1
+                      ? data.info.maxAttendance + ' player'
+                      : data.info.maxAttendance + ' players',
+                    'user-plus',
+                    () => this.setState({editMaxAttendance: data.info.maxAttendance + 1}),
+                    () => this.setState({editMaxAttendance: data.info.maxAttendance - 1}),
+                  )
+                : this.editColIcon(
+                    this.state.maxAttendance === 1
+                      ? this.state.editMaxAttendance + ' player'
+                      : this.state.editMaxAttendance + ' players',
+                    'user-plus',
+                    () => this.setState({editMaxAttendance: this.state.editMaxAttendance + 1}),
+                    () => this.setState({editMaxAttendance: this.state.editMaxAttendance - 1}),
+                  )
+            }
           </Col>
           <Col>
             {this.editColIcon(
               level.value === '0' ? level.text : level.text.split('/')[0],
               'balance-scale',
-              () => console.log('up'),
-              () => console.log('down'),
+              () => this.nextLevel(data, 1),
+              () => this.nextLevel(data, -1),
             )}
           </Col>
         </Row>
 
         <Row style={{height: 90, marginTop: 10}}>
           <Col>
-            {this.editColIcon(
-              data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1),
-              data.info.gender === 'mixed'
-                ? 'venus-mars'
-                : data.info.gender === 'female'
-                ? 'venus'
-                : 'mars',
-              () => console.log('up'),
-              () => console.log('down'),
-            )}
+            { this.state.editGender === ''
+              ? this.editColIcon(
+                  data.info.gender.charAt(0).toUpperCase() + data.info.gender.slice(1),
+                  data.info.gender === 'mixed'
+                  ? 'venus-mars'
+                  : data.info.gender === 'female'
+                    ? 'venus'
+                    : 'mars',
+                  () => this.nextGender(data, 1),
+                  () => this.nextGender(data, -1),
+                )
+              : this.editColIcon(
+                  this.state.editGender.charAt(0).toUpperCase() + this.state.editGender.slice(1),
+                  this.state.editGender === 'mixed'
+                  ? 'venus-mars'
+                  : this.state.editGender === 'female'
+                    ? 'venus'
+                    : 'mars',
+                  () => this.nextGender(data, 1),
+                  () => this.nextGender(data, -1),
+                )
+            }
           </Col>
           <Col>
             {this.editColIcon(
               rule.text,
               'puzzle-piece',
-              () => console.log('up'),
-              () => console.log('down'),
+              () => this.nextRule(data, 1),
+              () => this.nextRule(data, -1),
             )}
           </Col>
         </Row>
@@ -611,12 +690,11 @@ class EventPage extends React.Component {
       (item) => item.value === data.info.league,
     )[0];
     var rule = Object.values(league.rules).filter(
-      (rule) => rule.value === data.info.rules,
+      (rule) => rule.value === (this.state.editRule === '' ? data.info.rules : this.state.editRule),
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {this.eventInfo(data, sport, rule, league)}
-        {/* {this.state.editMode ? this.editEventInfo(data, sport, rule, league) : this.eventInfo(data, sport, rule, league)} */}
 
         {/* {rule.coachNeeded ? (
           <View style={styleApp.viewHome}>
@@ -764,6 +842,10 @@ class EventPage extends React.Component {
     // }
     // return event.info.organizer === this.props.userID;
     return true;
+  }
+  removePlayer(player) {
+    console.log('removing:');
+    console.log(player);
   }
   async refresh() {
     await this.setState({loader: true});
@@ -918,6 +1000,15 @@ class EventPage extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  eventTitle: {
+    color: colors.primary,
+    marginTop: 0,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {

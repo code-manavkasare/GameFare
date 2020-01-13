@@ -34,6 +34,10 @@ export default class CardUser extends Component {
   }
   componentDidMount() {}
   async openDiscussion(user) {
+    if (this.props.removable && this.props.removeFunc) {
+      this.props.removeFunc();
+      return;
+    }
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
     if (this.props.userID === user.id) return true;
     await this.setState({loader: true});
@@ -95,16 +99,23 @@ export default class CardUser extends Component {
                 </Text>
               </Col>
               <Col size={20} style={styleApp.center3}>
-                {this.state.loader ? (
-                  <Loader size={20} color="green" />
-                ) : this.props.userID !== user.id ? (
-                  <AllIcons
-                    name="envelope"
-                    type="font"
-                    color={colors.green}
-                    size={17}
-                  />
-                ) : null}
+                {this.state.loader
+                  ? <Loader size={20} color="green" />
+                  : this.props.removable
+                  ? <AllIcons
+                      name="envelope"
+                      type="font"
+                      color={colors.red}
+                      size={17}
+                    />
+                  : this.props.userID !== user.id
+                  ? <AllIcons
+                      name="envelope"
+                      type="font"
+                      color={colors.green}
+                      size={17}
+                    />
+                  : null}
               </Col>
             </Row>
           );
