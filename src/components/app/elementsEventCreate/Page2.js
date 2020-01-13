@@ -140,8 +140,6 @@ class Page2 extends Component {
     );
   }
   async setLocation(data) {
-    console.log('set location step 2');
-    console.log(data);
     await this.props.createEventAction('setStep2', {
       location: data,
       image: 'loading',
@@ -154,8 +152,6 @@ class Page2 extends Component {
     return this.props.createEventAction('setStep2', {image: image});
   }
   async setDate(data) {
-    console.log('set date step 2');
-    console.log(data);
     await this.props.createEventAction('setStep2', {
       endDate: data.endDate,
       startDate: data.startDate,
@@ -209,7 +205,7 @@ class Page2 extends Component {
   page1() {
     return (
       <View style={{marginTop: 0, marginLeft: 0, width: width, paddingTop: 0}}>
-        {this.props.step2.image == 'loading' ? (
+        {this.props.step2.image === 'loading' ? (
           <View
             style={[
               styleApp.center,
@@ -245,7 +241,7 @@ class Page2 extends Component {
 
             <Image
               source={{uri: this.props.step2.image}}
-              style={{height: '100%', width: '100%'}}
+              style={styleApp.fullSize}
             />
           </View>
         ) : null}

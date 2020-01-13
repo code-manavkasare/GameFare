@@ -45,17 +45,10 @@ export default class Posts extends Component {
     }
   }
   async load() {
-    console.log('load discussions');
-    console.log(this.props.data.discussions);
-
-    // var posts = await firebase.database().ref('groups/' + this.props.objectID + '/posts/').once('value')
-    // posts = posts.val()
     var discussions = this.props.data.discussions;
     if (discussions === undefined) discussions = [];
     var {results} = await indexDiscussions.getObjects(discussions);
     if (results === null) results = [];
-    console.log('results ');
-    console.log(results);
     this.setState({loader: false, discussions: results});
   }
   newPost() {}
@@ -120,8 +113,8 @@ export default class Posts extends Component {
           </Text>
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
-            {Object.values(this.state.discussions).map((conversation, i) => (
-              <CardConversation index={i} key={i} conversation={conversation} />
+            {Object.values(this.state.discussions).map((discussion, i) => (
+              <CardConversation index={i} key={i} discussion={discussion} />
             ))}
           </FadeInView>
         )}

@@ -40,9 +40,7 @@ class ProfilePage extends Component {
     if (this.props.futureEvents !== nextProps.futureEvents) return false;
     return true;
   }
-  componentDidMount() {
-    console.log('checkout mount');
-  }
+  componentDidMount() {}
   dateTime(start, end) {
     return <DateEvent start={start} end={end} />;
   }
@@ -328,10 +326,6 @@ class ProfilePage extends Component {
         onGoBack: () => this.props.navigation.navigate('Checkout'),
       });
     } else if (response === 'cancel') return this.setState({loader: false});
-
-    // push usersToPush to objectID allEvents
-    console.log('le push users done');
-    console.log(message);
     await this.props.eventsAction('addFutureEvent', data.objectID);
     await this.props.eventsAction('setAllEvents', {
       [data.objectID]: {
@@ -344,97 +338,6 @@ class ProfilePage extends Component {
     });
     await this.setState({loader: false});
     return this.props.navigation.navigate('Event');
-  }
-  async payEntryFee(now, data) {
-    var cardID = '';
-
-    if (this.coach()) return {response: true, message: ''};
-    if (
-      Math.max(
-        0,
-        Number(data.price.joiningFee) - Number(this.props.totalWallet),
-      ) != 0
-    ) {
-      cardID = this.props.defaultCard.id;
-    }
-    if (
-      Math.max(
-        0,
-        Number(data.price.joiningFee) - Number(this.props.totalWallet),
-      ) != 0 &&
-      cardID == 'applePay'
-    ) {
-      try {
-        this.setState({loader: false});
-        const items = [
-          {
-            label: 'GameFare',
-            amount: Math.max(
-              0,
-              Number(data.price.joiningFee) - Number(this.props.totalWallet),
-            ).toFixed(2),
-          },
-        ];
-        const token = await stripe.paymentRequestWithApplePay(items, options);
-        var tokenCard = token.tokenId;
-
-        var url =
-          'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard';
-        const promiseAxios = await axios.get(url, {
-          params: {
-            tokenCard: tokenCard,
-            userID: this.props.userID,
-            tokenStripeCus: this.props.tokenCusStripe,
-            name:
-              this.props.infoUser.firstname +
-              ' ' +
-              this.props.infoUser.lastname,
-            email:
-              this.props.infoUser.email == undefined
-                ? ''
-                : this.props.infoUser.email,
-            brand: this.props.defaultCard.brand,
-          },
-        });
-        if (promiseAxios.data.response == false) {
-          stripe.cancelApplePayRequest();
-        } else {
-          cardID = promiseAxios.data.cardID;
-          await this.setState({loader: true});
-          await stripe.completeApplePayRequest();
-        }
-      } catch (err) {
-        console.log('error');
-        console.log(err);
-        // return  {response:false,message:err.toString()}
-        await this.setState({loader: false});
-        stripe.cancelApplePayRequest();
-        return {response: 'cancel'};
-      }
-    }
-    if (Number(this.props.navigation.getParam('data').price.joiningFee) != 0) {
-      try {
-        var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee';
-        const promiseAxios = await axios.get(url, {
-          params: {
-            cardID: cardID,
-            now: now,
-            userID: this.props.userID,
-            tokenCusStripe: this.props.tokenCusStripe,
-            currentUserWallet: Number(this.props.totalWallet),
-            amount: data.price.joiningFee,
-            eventID: data.eventID,
-          },
-        });
-
-        if (promiseAxios.data.response == false)
-          return {response: false, message: promiseAxios.data.message};
-        return {response: true, message: ''};
-      } catch (err) {
-        return {response: false, message: err.toString()};
-      }
-    }
-    return {response: true, message: ''};
   }
   conditionOn() {
     if (

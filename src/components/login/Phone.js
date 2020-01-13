@@ -16,9 +16,7 @@ export default class LoadingScreen extends React.Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
-    console.log('sign in mount');
-  }
+  componentDidMount() {}
   phone() {
     return (
       <View style={styleApp.marginView}>

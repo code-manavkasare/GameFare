@@ -34,8 +34,7 @@ export default class AsyncImage extends Component {
       await this.setState({checkToken: checkToken});
       this.setState({initialLoader: false});
     } catch (err) {
-      console.log('error image cached');
-      console.log(err);
+      console.log('error image cached', err);
     }
   }
   enterPictureInitial() {
@@ -70,13 +69,10 @@ export default class AsyncImage extends Component {
           <FastImage
             resizeMode={'cover'}
             onLoadEnd={() => {
-              console.log('end initial');
-              console.log(this.props.mainImage);
               this.enterPictureCached();
               if (this.props.mainImage !== undefined) {
                 try {
                   var tokenImg = this.props.mainImage.split('token=')[1];
-                  console.log('cest le token');
                   if (tokenImg != undefined) ls.save(tokenImg, tokenImg);
                 } catch (err) {
                   true;
@@ -112,8 +108,6 @@ export default class AsyncImage extends Component {
   imgDisplay2() {
     var tokenImg = this.props.mainImage.split('token=')[1];
     const checkToken = ls.get(tokenImg);
-    console.log('checkToken');
-    console.log(checkToken);
     return (
       <Animated.View style={[{opacity: this.opacityFastImageCached}]}>
         <FastImage

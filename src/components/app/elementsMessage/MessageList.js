@@ -24,6 +24,7 @@ import {
   indexGroups,
   indexEvents,
   getMyGroups,
+  getMyEvents,
 } from '../../database/algolia';
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
@@ -48,7 +49,6 @@ class MessageTab extends React.Component {
   }
 
   async loadDiscussions(userID) {
-    console.log('loadDiscussions');
     indexDiscussions.clearCache();
 
     // search for persnal conversations
@@ -60,11 +60,27 @@ class MessageTab extends React.Component {
     // search for groups discussions
     var myGroups = await getMyGroups(userID, '');
     var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
-
     var {results} = await indexDiscussions.getObjects(groupsDiscussions);
-    console.log(hits);
 
-    this.setState({loader: false, discussions: union(results, hits)});
+    // search for events discussions
+    var myEvents = await getMyEvents(userID);
+    var eventsDiscussions = myEvents
+      .map((event) => {
+        if (event.discussions) return event.discussions[0];
+        // return null;
+      })
+      .filter((event) => event);
+    var getDiscussionsEvent = await indexDiscussions.getObjects(
+      eventsDiscussions,
+    );
+    getDiscussionsEvent = getDiscussionsEvent.results;
+
+    this.setState({
+      loader: false,
+      discussions: union(results, hits, getDiscussionsEvent).filter(
+        (discussion) => discussion.firstMessageExists,
+      ),
+    });
   }
   async componentWillReceiveProps(nextProps) {
     if (
@@ -107,6 +123,9 @@ class MessageTab extends React.Component {
           <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
           {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
         </View>
+        <View
+          style={[styleApp.divider2, {marginLeft: 20, width: width - 40}]}
+        />
         <View>
           {this.state.loader ? (
             <View style={{flex: 1}}>
@@ -118,10 +137,13 @@ class MessageTab extends React.Component {
               <PlaceHolder />
               <PlaceHolder />
               <PlaceHolder />
+              <PlaceHolder />
+              <PlaceHolder />
+              <PlaceHolder />
             </View>
           ) : (
-            Object.values(this.state.discussions).map((conversation, i) => (
-              <CardConversation key={i} index={i} conversation={conversation} />
+            Object.values(this.state.discussions).map((discussion, i) => (
+              <CardConversation key={i} index={i} discussion={discussion} />
             ))
           )}
         </View>
@@ -152,7 +174,7 @@ class MessageTab extends React.Component {
           initialTitleOpacity={0}
           icon1={null}
           icon2={null}
-          clickButton2={() => console.log('')}
+          clickButton2={() => true}
         />
 
         <ScrollView2

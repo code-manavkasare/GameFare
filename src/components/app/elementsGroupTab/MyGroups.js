@@ -50,9 +50,6 @@ class ListEvents extends React.Component {
 
   async componentDidMount() {
     this.props.onRef(this);
-    console.log('le time stamt !!!');
-    console.log(Number(new Date()));
-    console.log(this.props.mygroups);
     return this.loadEvent(this.props.sportSelected, this.props.leagueSelected);
   }
   async reload() {
@@ -93,7 +90,7 @@ class ListEvents extends React.Component {
       result[item.objectID] = item;
       return result;
     }, {});
-    mygroups = mygroups.map(x => x.objectID);
+    mygroups = mygroups.map((x) => x.objectID);
 
     await this.props.groupsAction('setAllGroups', infoGroups);
     await this.props.groupsAction('setMygroups', mygroups);
@@ -105,8 +102,6 @@ class ListEvents extends React.Component {
     ));
   }
   ListEvent() {
-    console.log('My groups');
-    console.log(this.props.mygroups);
     if (!this.props.userConnected) return null;
     var numberFuture = '';
     if (!this.state.loader1) {
@@ -151,7 +146,7 @@ class ListEvents extends React.Component {
             }
             content={() => this.listEvents(this.props.mygroups)}
             // openEvent={(group) => this.openGroup(group)}
-            onRef={ref => (this.scrollViewRef1 = ref)}
+            onRef={(ref) => (this.scrollViewRef1 = ref)}
           />
         </Animated.View>
 
@@ -166,7 +161,7 @@ class ListEvents extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,

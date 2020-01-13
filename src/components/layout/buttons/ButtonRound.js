@@ -29,10 +29,7 @@ export default class ButtonRound extends Component {
     };
     this.componentWillMount = this.componentWillMount.bind(this);
   }
-  componentWillMount() {
-    console.log('button round mounted!');
-    console.log(this.props);
-  }
+  componentWillMount() {}
   click() {
     this.props.click();
   }
@@ -80,9 +77,7 @@ export default class ButtonRound extends Component {
           onPressOut={() => this.onPress(false)}
           //underlayColor={this.onPressColor()}
           style={[styleApp.center, {width: '100%', height: '100%'}]}
-          onPress={() =>
-            this.props.enabled ? this.props.click() : console.log('')
-          }>
+          onPress={() => (this.props.enabled ? this.props.click() : true)}>
           {this.props.loader ? (
             <LoaderWhite color="white" size={20} />
           ) : this.props.icon == 'next' ? (

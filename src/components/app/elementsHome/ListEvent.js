@@ -70,7 +70,6 @@ class ListEvents extends React.Component {
     );
   }
   async loadEvent(location, sport, league) {
-    console.log('on reload');
     await this.setState({loader: true});
     indexEvents.clearCache();
     const allEventsPublic = await getEventPublic(
@@ -81,14 +80,10 @@ class ListEvents extends React.Component {
       this.props.userID,
       this.props.radiusSearch,
     );
-    console.log('NewEventsList');
-    console.log(allEventsPublic);
 
     var allGroupsEvents = {};
     var groupsEvents = [];
 
-    console.log('public events');
-    console.log(allEventsPublic);
     var allEvents = {
       ...allEventsPublic,
       ...allGroupsEvents,
@@ -134,9 +129,6 @@ class ListEvents extends React.Component {
     const allPublicEvents = this.props.publicEvents.map(
       (event) => this.props.allEvents[event],
     );
-    console.log('allPublicEvents');
-    console.log(allPublicEvents);
-    console.log(this.props.publicEvents);
     var allGroupsEvents = this.props.groupsEvents.map(
       (event) => this.props.allEvents[event],
     );

@@ -55,9 +55,6 @@ class GroupPage extends React.Component {
     return this.setState({loader: false});
   }
   rowIcon(component, icon, alert, dataAlert, image) {
-    console.log('Alert');
-    console.log(alert);
-    console.log(dataAlert);
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
@@ -164,9 +161,6 @@ class GroupPage extends React.Component {
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
-    console.log('group page');
-    console.log(sport);
-    console.log(data);
     return (
       <View style={{width: width, marginTop: 0}}>
         {this.groupInfo(data, sport)}

@@ -45,8 +45,6 @@ class ListEvents extends React.Component {
   }
 
   async componentDidMount() {
-    console.log('le time stamt !!!');
-    console.log(this.props.groups);
     return this.loadGroups(this.props.groups);
   }
   async reload() {
@@ -61,8 +59,7 @@ class ListEvents extends React.Component {
   }
   async getGroups(groups) {
     const {results} = await indexGroups.getObjects(groups);
-    console.log('hits');
-    console.log(results);
+
     return results;
   }
   async loadGroups(groups) {
@@ -70,23 +67,10 @@ class ListEvents extends React.Component {
 
     indexGroups.clearCache();
     var groupsEvents = await this.getGroups(groups);
-    // console.log('groupsEvents');
-    // console.log(groups);
 
-    // console.log(groupsEvents);
-    // var infoGroups = groupsEvents.reduce(function(result, item) {
-    //   result[item.objectID] = item;
-    //   return result;
-    // }, {});
-    // console.log('myGroups hihaaaaa');
-    // console.log(this.props.allGroups[Object.values(infoGroups)[0].objectID]);
-    // console.log(infoGroups);
-    // await this.props.groupsAction('setAllGroups', infoGroups);
     this.setState({loader: false, groups: groupsEvents});
   }
   openGroup(objectID) {
-    console.log('click group');
-    console.log(objectID);
     return this.props.navigate('Group', {
       objectID: objectID,
     });
@@ -109,8 +93,6 @@ class ListEvents extends React.Component {
     ));
   }
   ListEvent() {
-    console.log('My groups');
-    console.log(this.state.groups);
     var numberFuture = '';
     if (!this.state.loader) {
       numberFuture = ' (' + this.state.groups.length + ')';
@@ -142,7 +124,7 @@ class ListEvents extends React.Component {
             messageNoEvent={"You haven't joined any group yet."}
             content={() => this.listEvents(this.state.groups)}
             // openEvent={(group) => this.openGroup(group)}
-            onRef={ref => (this.scrollViewRef1 = ref)}
+            onRef={(ref) => (this.scrollViewRef1 = ref)}
           />
         </Animated.View>
       </View>
@@ -153,7 +135,7 @@ class ListEvents extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     // allGroups: state.groups.allGroups,
   };

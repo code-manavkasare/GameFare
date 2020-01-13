@@ -504,8 +504,6 @@ class EventPage extends React.Component {
     var event = this.props.allEvents[
       this.props.navigation.getParam('objectID')
     ];
-    console.log('event est la ');
-    console.log(event);
     const {goBack, dismiss} = this.props.navigation;
     return (
       <View style={{flex: 1}}>

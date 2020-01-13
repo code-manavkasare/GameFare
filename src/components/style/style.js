@@ -132,13 +132,14 @@ const styles = StyleSheet.create({
   },
   buttonRoundLibray: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    height: 60,
+    bottom: 15,
+    left: 15,
+    height: 50,
     borderRadius: 30,
-    width: 60,
+    opacity: 0.8,
+    width: 50,
     zIndex: 20,
-    backgroundColor: colors.white,
+    backgroundColor: colors.title,
     borderWidth: 1,
     borderColor: colors.off,
   },
@@ -445,6 +446,10 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0,
     shadowRadius: 8,
+  },
+  fullSize: {
+    width: '100%',
+    height: '100%',
   },
 });
 

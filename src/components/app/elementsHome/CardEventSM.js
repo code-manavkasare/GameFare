@@ -22,16 +22,7 @@ class CardEvent extends React.Component {
       loader: false,
     };
   }
-  async componentDidMount() {
-    console.log('dats card event');
-    console.log(this.props.data);
-    // if (this.props.loadData) {
-    //   indexEvents.clearCache()
-    //   var group = await indexEvents.getObject(this.props.item.eventID)
-    //   return this.setState({loader:false,item:group})
-    // }
-    // return this.setState({loader:false})
-  }
+  async componentDidMount() {}
   entreeFee(entreeFee) {
     if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
@@ -173,7 +164,7 @@ class CardEvent extends React.Component {
               </Text>
 
               {this.rowAttendees(data)}
-              {this.props.size == 'M' ? (
+              {this.props.size === 'M' ? (
                 <View
                   style={{
                     height: 0.5,

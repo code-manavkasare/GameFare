@@ -54,7 +54,7 @@ class CardEvent extends React.Component {
     if (!data.members) return false;
     if (
       Object.values(data.members).filter(
-        user => user.userID === this.props.userID,
+        (user) => user.userID === this.props.userID,
       ).length === 0
     )
       return false;
@@ -64,7 +64,8 @@ class CardEvent extends React.Component {
     if (
       !data.info.public &&
       !this.props.allAccess &&
-      data.info.organizer !== this.props.userID && !this.userAlreadyJoined(data)
+      data.info.organizer !== this.props.userID &&
+      !this.userAlreadyJoined(data)
     )
       return NavigationService.navigate('Alert', {
         close: true,
@@ -156,8 +157,6 @@ class CardEvent extends React.Component {
     );
   }
   displayCard(data) {
-    console.log('data card group');
-    console.log(data);
     return (
       <ButtonColor
         view={() => {
@@ -215,7 +214,7 @@ class CardEvent extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     userID: state.user.userID,

@@ -57,8 +57,6 @@ class EventsView extends Component {
     return this.setState({events: results, loader: false});
   }
   rowEvent(event, i) {
-    console.log('events!!!');
-    console.log(event);
     return (
       <CardEvent
         userID={this.props.userID}
@@ -75,9 +73,7 @@ class EventsView extends Component {
   async newEvent() {
     if (!this.props.userConnected)
       return this.props.navigate('SignIn', {pageFrom: 'Group'});
-    console.log('userIDDD');
-    console.log(this.props.userID);
-    console.log(this.props.data);
+
     if (this.props.userID !== this.props.data.info.organizer)
       return this.props.navigate('Alert', {
         textButton: 'Got it!',
@@ -95,15 +91,11 @@ class EventsView extends Component {
     });
   }
   listEvents(events) {
-    console.log('render la list event cest la');
-    console.log(events);
     return Object.values(events)
       .reverse()
       .map((event, i) => this.rowEvent(event, i));
   }
   eventsView(data) {
-    console.log('re render events');
-    console.log(this.props.data.events);
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>

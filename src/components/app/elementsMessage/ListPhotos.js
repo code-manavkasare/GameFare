@@ -23,7 +23,7 @@ import {Col, Row} from 'react-native-easy-grid';
 import CardContent from './CardContent';
 import colors from '../../style/colors';
 
-class KeyboardView extends Component {
+export default class ListPhotos extends Component {
   static propTypes = {
     title: PropTypes.string,
   };
@@ -33,72 +33,58 @@ class KeyboardView extends Component {
       pictures: 'loading',
     };
   }
+  async componentDidMount() {}
 
-  async componentDidMount() {
-    const {edges} = await CameraRoll.getPhotos({
-      first: 80,
-      assetType: 'All',
-    });
-    this.setState({pictures: edges});
-  }
-  //ph://F784985D-461B-4212-90E1-F01594E29D77/L0/001
-  onButtonPress() {
-    KeyboardRegistry.onItemSelected('KeyboardView', {
-      message: 'item selected from KeyboardView',
-    });
-  }
   buttonImage(data, i) {
     return (
       <CardContent
         style={{
           height: '100%',
-          width: 230,
-          marginRight: 5,
-          borderRadius: 0,
+          width: 200,
+          borderRadius: 4,
+          marginRight: 10,
           borderColor: colors.grey,
           borderWidth: 0,
           overflow: 'hidden',
         }}
-        selectImage={(uri, type, selected, duration) =>
+        selectImage={(uri, type, duration, selected) =>
           this.addPicture(uri, type, selected, duration)
         }
         image={data}
+        imagesSelected={this.props.imagesSelected}
         key={i}
         index={i}
       />
     );
   }
-  async selectPicture() {
-    var picture = await pickLibrary();
-    if (picture) return this.addPicture(picture, 'image', true);
-    return true;
-  }
   addPicture(uri, type, selected, duration) {
-    KeyboardRegistry.onItemSelected('KeyboardView', {
-      image: {
-        id: generateID(),
+    this.props.addImage(
+      {
+        id: !selected ? uri : generateID(),
         type: type,
         duration: duration,
         uploaded: false,
         uri: uri,
       },
-      selected: selected,
-    });
+      selected,
+    );
   }
   render() {
     return (
       <View>
         <ScrollView
           horizontal
+          keyboardShouldPersistTaps={'always'}
           style={[styles.keyboardContainer]}
           showsHorizontalScrollIndicator={false}>
-          {this.state.pictures === 'loading' ? (
+          {this.props.images === 'loading' ? (
             <View style={{height: 100, backgroundColor: 'yellow'}}></View>
           ) : (
-            this.state.pictures.map((data, i) => this.buttonImage(data, i))
+            this.props.images.map((data, i) => this.buttonImage(data, i))
           )}
+          <View style={{width: 20}}></View>
         </ScrollView>
-        <ButtonColor
+        {/* <ButtonColor
           view={() => {
             return (
               <AllIcons
@@ -113,37 +99,8 @@ class KeyboardView extends Component {
           color={colors.title}
           style={StyleApp.buttonRoundLibray}
           onPressColor={colors.off}
-        />
+        /> */}
       </View>
-    );
-  }
-}
-
-class AnotherKeyboardView extends Component {
-  static propTypes = {
-    title: PropTypes.string,
-  };
-
-  onButtonPress() {
-    KeyboardRegistry.toggleExpandedKeyboard('AnotherKeyboardView');
-  }
-
-  render() {
-    return (
-      <ScrollView
-        contentContainerStyle={[
-          styles.keyboardContainer,
-          {backgroundColor: 'orange'},
-        ]}>
-        <Text>*** ANOTHER ONE ***</Text>
-        <Text>{this.props.title}</Text>
-        <TouchableOpacity
-          testID={'toggle-fs'}
-          style={{padding: 20, marginTop: 30, backgroundColor: 'white'}}
-          onPress={() => this.onButtonPress()}>
-          <Text>Toggle Full-Screen!</Text>
-        </TouchableOpacity>
-      </ScrollView>
     );
   }
 }
@@ -154,6 +111,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingTop: 10,
     paddingBottom: 10,
+    paddingLeft: 10,
     flexDirection: 'row',
     flexWrap: 'wrap',
     // backgroundColor: 'blue',
@@ -162,9 +120,3 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
   },
 });
-
-KeyboardRegistry.registerKeyboard('KeyboardView', () => KeyboardView);
-KeyboardRegistry.registerKeyboard(
-  'AnotherKeyboardView',
-  () => AnotherKeyboardView,
-);

@@ -25,7 +25,6 @@ import {
   
   export const createEventAction = (val,data) =>{
     return async function(dispatch){
-      console.log('setStep +' + val)
       if (val == 'setStep0') {
         await dispatch(setStep0(data))
       } else if (val == 'setStep1') {
