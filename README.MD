@@ -1,5 +1,47 @@
 # Welcome to GameFare
 
+## Node Version
+
+Our project use latest node stable version 12.14.1, and Firebase Cloud functions only work with node v8.
+
+As we work on multiple project we will use an automatic node version manager (plugin for nvm)
+We will install some paquet directly from network as brew is not managing our case well. Don't forget to have GPG singature verifier to avoid any security breach on your machine : 
+    brew install gpg
+
+As we install new things for the terminal and PATH will be updated, don't forget to reopen terminal everytime new PATH are created
+
+- Clean all node installation frol your computer (for exemple if using brew as package manager and yarn) do :
+    brew uninstall yarn node
+
+- First install nvm (https://github.com/nvm-sh/nvm#installing-and-updating), after installation close and reopen terminal
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
+
+- For this project we will use node v8 which has better stability so install it using nvm ! https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version:
+    nvm install 8.16.0 (for firebase cloud function)
+    nvm install 12.14.1 (for react-native project)
+
+- Now you should be able to see your node installation, to check it :
+    nvm list
+    node -v
+
+You should see node installation on your machine and node -v tells you which node installation is in use
+
+- Install Automatic Node Versionning (AVN : https://github.com/wbyoung/avn)
+    npm install -g avn avn-nvm avn-n
+    avn setup
+
+- Because we now use NVM for managing node package, we need to install yarn WITHOUT linking it a specific node version, and do it globally, to do that : 
+    curl -o- -L https://yarnpkg.com/install.sh | bash
+
+This will allow us to use yarn without a link to a node version and avoid reinstall it for every node version
+
+You should be now set up 
+
+Now evertime you cd in gamefare-native or playd-cloud you should see update from avn in your console like this :
+    avn activated 8.16.0 (avn-nvm v8.16.0)
+
+Note that because you reinstall yarn, you'll need to reinstall everything linked to it !
+
 ## Installation React native
 
 Install everything needed for react-native : https://facebook.github.io/react-native/docs/getting-started from React Native CLI Quickstart
@@ -13,6 +55,14 @@ Go to root folder then
     yarn ios
 
 Firt build can throw bundle url error on emulator, if so relaunch and everything should work
+
+If you have error Xcode can't find the node binary, DO not modify build configuration as it is a VERY bas practice, instead use a symlink :
+    which node (will give you your actual node repo, will look like this : /Users/YourName/.nvm/versions/node/v12.14.1/bin/node)
+
+And then simulate a clean node install to your actual used version (should be 12.14.1):
+    ln -s /Users/YourName/.nvm/versions/node/v12.14.1/bin/node /usr/local/bin/node
+
+Try yarn ios again, everything should work now.
 
 ## Xcode config for debugging
 
