@@ -169,7 +169,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
     0,
     Number(data.price.joiningFee) - Number(cardInfo.totalWallet),
   );
-  if (amountToPay != 0) {
+  if (amountToPay !== 0) {
     cardID = cardInfo.defaultCard.id;
   }
   if (amountToPay !== 0 && cardID === 'applePay') {

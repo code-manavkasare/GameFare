@@ -856,6 +856,8 @@ class EventPage extends React.Component {
   async removePlayer(player, data) {
     let newData = {...data};
     delete newData.attendees[player.id];
+    // let amountPaid = getAmountPaid(player, data);
+    // await refundPlayer(player, amountPaid);
     // await editEvent(newData, () => console.log('edit event failed'));
     await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
     console.log(JSON.stringify(newData, undefined, 2));
