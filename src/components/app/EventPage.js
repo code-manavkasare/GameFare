@@ -67,6 +67,7 @@ class EventPage extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+
   async componentDidMount() {
     if (this.props.allEvents[this.props.navigation.getParam('objectID')] === undefined) {
       this.loadEvent(this.props.navigation.getParam('objectID'));
@@ -95,7 +96,6 @@ class EventPage extends React.Component {
     console.log('next gender: ' + nextIndex);
     this.setState({editGender: genders[nextIndex]});
   }
-
   nextRule(data, inc) {
     let nextRuleName, nextRuleIndex;
     var sportData = this.props.sports.filter(
@@ -119,7 +119,6 @@ class EventPage extends React.Component {
       editRule: rules[nextRuleIndex].value,
     });
   }
-
   nextLevel(data, inc) {
     let nextLevelIndex;
     var sport = this.props.sports.filter(
@@ -268,7 +267,7 @@ class EventPage extends React.Component {
         key={i}
         userID={this.props.userID}
         removable={this.state.editMode}
-        removeFunc={() => this.removePlayer(user)}
+        removeFunc={() => this.askRemovePlayer(user, data)}
       />
     );
   }
@@ -843,9 +842,24 @@ class EventPage extends React.Component {
     // return event.info.organizer === this.props.userID;
     return true;
   }
-  removePlayer(player) {
+  askRemovePlayer(player, data) {
+    this.props.navigation.navigate('AlertYesNo', {
+      textYesButton: 'Yes',
+      textNoButton: 'No',
+      title: 'Are you sure you want to remove ' + player.info.firstname + ' ' + player.info.lastname + '?',
+      icon: undefined,
+      yesClick: () => this.removePlayer(player, data),
+      noClick: () => null,
+      onGoBack: () => this.props.navigation.navigate('Event'),
+    });
+  }
+  removePlayer(player, data) {
     console.log('removing:');
+    if (player.id === data.info.organizer) {
+      console.log('cannot remove organizer');
+    }
     console.log(player);
+    console.log(JSON.stringify(data, undefined, 2));
   }
   async refresh() {
     await this.setState({loader: true});

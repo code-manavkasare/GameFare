@@ -103,7 +103,7 @@ export default class CardUser extends Component {
                   ? <Loader size={20} color="green" />
                   : this.props.removable
                   ? <AllIcons
-                      name="envelope"
+                      name="minus"
                       type="font"
                       color={colors.red}
                       size={17}
