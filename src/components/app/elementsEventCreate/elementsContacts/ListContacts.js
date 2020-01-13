@@ -193,7 +193,7 @@ export default class ContactsComponent extends Component {
                     name="check"
                     type="mat"
                     color={colors.green}
-                    size={13}
+                    size={22}
                   />
                 ) : null}
               </Col>
@@ -263,7 +263,7 @@ export default class ContactsComponent extends Component {
   listContacts() {
     return (
       <ScrollView
-        keyboardShouldPersistTaps={true}
+        keyboardShouldPersistTaps={false}
         onScroll={this.handleScroll.bind(this)}
         style={{
           height:
