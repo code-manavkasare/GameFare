@@ -99,19 +99,17 @@ const getEventPublic = async (
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
     query: '',
-    filters: withFilters
-      ? 'info.public=1' +
-        ' AND info.sport:' +
-        sport +
-        leagueFilter +
-        filterUser +
-        ` AND date_timestamp:${timestampDaySelected} TO ${timestampDaySelected +
-          24 * 3600 * 1000}`
-      : 'info.public=1' +
-        ' AND info.sport:' +
-        sport +
-        leagueFilter +
-        filterUser,
+    filters:
+      'info.public=1' +
+      ' AND info.sport:' +
+      sport +
+      leagueFilter +
+      filterUser +
+      ` AND end_timestamp > ${Date.now()}` +
+      (withFilters
+        ? ` AND date_timestamp:${timestampDaySelected} TO ${timestampDaySelected +
+            24 * 3600 * 1000}`
+        : ''),
   });
 
   var allEventsPublic = hits.reduce(function(result, item) {

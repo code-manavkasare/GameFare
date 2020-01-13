@@ -36,7 +36,13 @@ class InitialPage extends Component {
   }
   componentDidMount() {}
   async selectSport(sport) {
-    await this.props.historicSearchAction('setSport', {value: sport});
+    // write sport to redux
+    console.log('on set league');
+    console.log(sport);
+    await this.props.historicSearchAction('setSport', {
+      value: sport,
+      league: 'all',
+    });
     this.props.navigation.navigate('LocationSelect');
   }
   isOdd(num) {
@@ -168,6 +174,8 @@ class InitialPage extends Component {
     );
   }
 }
+
+
 
 const mapStateToProps = (state) => {
   return {
