@@ -38,7 +38,6 @@ class CardMessage extends React.Component {
     this.clickLink.bind(this);
   }
   componentDidMount() {
-    console.log('csrd message mount');
     this.urlify(this.props.message.currentMessage.text);
   }
   urlify(text) {
@@ -49,16 +48,11 @@ class CardMessage extends React.Component {
     });
   }
   async getDataUrl(url) {
-    console.log('get url', url);
     var params = await getParams(url);
-    console.log('click link');
-    console.log(params);
     this.setState({viewUrl: params, url: url});
     // var doc = Jsoup.connect('http://www.google.com').get();
     // Linking.openURL(url);
     // const dataUrl = await LinkPreview.getPreview(url);
-    // console.log('data url !');
-    // console.log(dataUrl);
   }
   openPage(type, id) {
     NavigationService.push(type, {
@@ -66,8 +60,6 @@ class CardMessage extends React.Component {
     });
   }
   async clickLink(url, viewUrl) {
-    console.log('click url', url);
-    console.log(viewUrl);
     if (viewUrl && url.includes('gamefare.app.link'))
       return this.openPage(
         viewUrl.action === 'openEventPage' ? 'Event' : 'Group',
@@ -77,8 +69,7 @@ class CardMessage extends React.Component {
     if (!viewUrl) return openUrl(url);
     if (!viewUrl.id) return openUrl(url);
     var params = await getParams(url);
-    console.log('click link');
-    console.log(params);
+
     if (!params) return Linking.openURL(url);
     if (params.action === 'openEventPage') {
       return this.openPage('Event', params.eventID);
@@ -89,7 +80,6 @@ class CardMessage extends React.Component {
   }
 
   rowDay(props) {
-    console.log('props.', props);
     if (
       !props.previousMessage ||
       moment(props.currentMessage.createdAt).format('DDD') !==
@@ -133,107 +123,107 @@ class CardMessage extends React.Component {
   }
   renderMessage(props) {
     if (props.currentMessage.images)
-      console.log('render message', Object.values(props.currentMessage.images));
-
-    return (
-      <View style={styleApp.cardMessage}>
-        {this.rowDay(props)}
-        <Row>
-          <Col size={15}>
-            <AsyncImage
-              style={{width: 45, height: 45, borderRadius: 5}}
-              mainImage={props.currentMessage.user.avatar}
-              imgInitial={props.currentMessage.user.avatar}
-            />
-          </Col>
-          <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
-            <Text style={[styleApp.text, {fontSize: 16}]}>
-              {props.currentMessage.user.name}{' '}
-              <Text style={{color: colors.grey, fontSize: 12}}>
-                {moment(props.currentMessage.createdAt).format('h:mm a')}
-              </Text>
-            </Text>
-            {props.currentMessage.text !== '' && (
-              <Hyperlink
-                // linkDefault={true}
-                onPress={(url) => this.clickLink(url, this.state.viewUrl)}
-                linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
-                <Text
-                  style={[
-                    styleApp.smallText,
-                    {marginTop: 5, fontSize: 14, marginBottom: 10},
-                  ]}>
-                  {this.state.viewUrl
-                    ? props.currentMessage.text
-                    : props.currentMessage.text}
-                </Text>
-              </Hyperlink>
-            )}
-
-            {this.renderImages(
-              props.currentMessage.images,
-              props.currentMessage,
-              this.props.discussion.objectID,
-            )}
-
-            {this.state.viewUrl ? (
-              <ButtonColor
-                view={() => {
-                  return (
-                    <View
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                      }}>
-                      <Row>
-                        <Col>
-                          <AsyncImage
-                            style={{
-                              width: '100%',
-                              height: 150,
-                              borderRadius: 5,
-                              marginBottom: 10,
-                            }}
-                            mainImage={this.state.viewUrl.$og_image_url}
-                            imgInitial={this.state.viewUrl.$og_image_url}
-                          />
-                        </Col>
-                      </Row>
-
-                      <Text style={styleApp.text}>
-                        {this.state.viewUrl.$og_title}
-                      </Text>
-                      <Text
-                        style={[
-                          styleApp.smallText,
-                          {marginTop: 5, color: colors.greyDark},
-                        ]}>
-                        {this.state.url}
-                      </Text>
-                    </View>
-                  );
-                }}
-                click={() => this.clickLink(this.state.url, this.state.viewUrl)}
-                color={colors.white}
-                style={{
-                  ...styleApp.center2,
-                  marginBotttom: 10,
-                  flex: 1,
-                  width: '100%',
-                  borderLeftWidth: 3,
-                  paddingRight: 20,
-                  borderColor: colors.grey,
-                  paddingLeft: 20,
-                  paddingBottom: 10,
-                  paddingTop: 10,
-                }}
-                onPressColor={colors.off}
+      return (
+        <View style={styleApp.cardMessage}>
+          {this.rowDay(props)}
+          <Row>
+            <Col size={15}>
+              <AsyncImage
+                style={{width: 45, height: 45, borderRadius: 5}}
+                mainImage={props.currentMessage.user.avatar}
+                imgInitial={props.currentMessage.user.avatar}
               />
-            ) : null}
-          </Col>
-        </Row>
-      </View>
-    );
+            </Col>
+            <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
+              <Text style={[styleApp.text, {fontSize: 16}]}>
+                {props.currentMessage.user.name}{' '}
+                <Text style={{color: colors.grey, fontSize: 12}}>
+                  {moment(props.currentMessage.createdAt).format('h:mm a')}
+                </Text>
+              </Text>
+              {props.currentMessage.text !== '' && (
+                <Hyperlink
+                  // linkDefault={true}
+                  onPress={(url) => this.clickLink(url, this.state.viewUrl)}
+                  linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
+                  <Text
+                    style={[
+                      styleApp.smallText,
+                      {marginTop: 5, fontSize: 14, marginBottom: 10},
+                    ]}>
+                    {this.state.viewUrl
+                      ? props.currentMessage.text
+                      : props.currentMessage.text}
+                  </Text>
+                </Hyperlink>
+              )}
+
+              {this.renderImages(
+                props.currentMessage.images,
+                props.currentMessage,
+                this.props.discussion.objectID,
+              )}
+
+              {this.state.viewUrl ? (
+                <ButtonColor
+                  view={() => {
+                    return (
+                      <View
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                        }}>
+                        <Row>
+                          <Col>
+                            <AsyncImage
+                              style={{
+                                width: '100%',
+                                height: 150,
+                                borderRadius: 5,
+                                marginBottom: 10,
+                              }}
+                              mainImage={this.state.viewUrl.$og_image_url}
+                              imgInitial={this.state.viewUrl.$og_image_url}
+                            />
+                          </Col>
+                        </Row>
+
+                        <Text style={styleApp.text}>
+                          {this.state.viewUrl.$og_title}
+                        </Text>
+                        <Text
+                          style={[
+                            styleApp.smallText,
+                            {marginTop: 5, color: colors.greyDark},
+                          ]}>
+                          {this.state.url}
+                        </Text>
+                      </View>
+                    );
+                  }}
+                  click={() =>
+                    this.clickLink(this.state.url, this.state.viewUrl)
+                  }
+                  color={colors.white}
+                  style={{
+                    ...styleApp.center2,
+                    marginBotttom: 10,
+                    flex: 1,
+                    width: '100%',
+                    borderLeftWidth: 3,
+                    paddingRight: 20,
+                    borderColor: colors.grey,
+                    paddingLeft: 20,
+                    paddingBottom: 10,
+                    paddingTop: 10,
+                  }}
+                  onPressColor={colors.off}
+                />
+              ) : null}
+            </Col>
+          </Row>
+        </View>
+      );
   }
   render() {
     return this.renderMessage(this.props.message);

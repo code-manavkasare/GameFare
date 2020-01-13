@@ -87,14 +87,7 @@ export default class KeyboardInput extends Component {
         user={this.props.user}
         onRef={(ref) => (this.inputRef = ref)}
         openPicturesView={(val) => {
-          console.log('switch to other view');
           this.showKeyboardView('KeyboardView', 'FIRST - 1 (passed prop)');
-          // this.setState({
-          //   customKeyboard: {
-          //     component: 'KeyboardView',
-          //     initialProps: 'FIRST - 1 (passed prop)',
-          //   },
-          // });
         }}
       />
     );

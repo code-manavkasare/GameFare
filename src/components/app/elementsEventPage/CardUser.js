@@ -34,16 +34,12 @@ export default class CardUser extends Component {
   }
   componentDidMount() {}
   async openDiscussion(user) {
-    console.log('onclick sur le user');
-    console.log(user);
-    console.log(this.props.userID);
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
     if (this.props.userID === user.id) return true;
     await this.setState({loader: true});
     // return true;
     var discussion = await searchDiscussion([this.props.userID, user.id]);
-    console.log('discussion');
-    console.log(discussion);
+
     //return false;
     if (!discussion) {
       discussion = await createDiscussion(
@@ -69,8 +65,6 @@ export default class CardUser extends Component {
         });
       }
     }
-    console.log('elle estla la disccusions');
-    console.log(discussion);
     await NavigationService.navigate('Conversation', {data: discussion});
     await this.setState({loader: false});
   }

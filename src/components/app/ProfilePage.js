@@ -131,16 +131,13 @@ class ProfilePage extends Component {
     );
   }
   clickButton(text, page, data, type, url) {
-    console.log('type');
-    console.log(type);
-
-    if (type == 'url') {
+    if (type === 'url') {
       this.openLink(url);
-    } else if (type == 'call') {
+    } else if (type === 'call') {
       this.call();
-    } else if (type == 'email') {
+    } else if (type === 'email') {
       this.sendEmail();
-    } else if (type == 'link') {
+    } else if (type === 'link') {
       // this.sendEmail()
     } else {
       this.props.navigation.navigate(page, data);
@@ -287,8 +284,6 @@ class ProfilePage extends Component {
     );
   }
   async confirmLogout(data) {
-    console.log('close logout');
-    console.log(data);
     await this.props.userAction('logout', {userID: this.props.userID});
     this.props.navigation.navigate('Home');
   }
@@ -344,7 +339,7 @@ class ProfilePage extends Component {
           icon1={null}
           icon2={null}
           // clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
-          clickButton2={() => console.log('')}
+          clickButton2={() => true}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}

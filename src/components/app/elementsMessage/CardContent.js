@@ -43,9 +43,6 @@ export default class CardContent extends React.Component {
     );
   }
   async selectImage(uri, type, playableDuration) {
-    console.log('selectim', uri, type);
-    console.log('la', !this.conditionSelected(uri));
-    // this.setState({selected: newSelected});
     this.props.selectImage(
       this.conditionSelected(uri)
         ? Object.values(this.props.imagesSelected).filter(
@@ -59,8 +56,6 @@ export default class CardContent extends React.Component {
   }
   sendImage(uri, info) {}
   conditionSelected(uri) {
-    console.log('conditionSelected', this.props.imagesSelected);
-    console.log('uri');
     if (!this.props.imagesSelected) return false;
     return (
       Object.values(this.props.imagesSelected).filter((img) => img.uri === uri)
@@ -70,7 +65,6 @@ export default class CardContent extends React.Component {
   cardContent(rowData, i) {
     const {uri, playableDuration, filename} = rowData.node.image;
     const {type} = rowData.node;
-    console.log('render card convo', rowData.node, i);
     return (
       <ButtonColor
         key={i}

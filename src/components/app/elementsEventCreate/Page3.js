@@ -124,7 +124,7 @@ class Page3 extends Component {
             </Row>
           );
         }}
-        click={() => console.log('')}
+        click={() => true}
         color="white"
         style={[styles.rowGroup, {marginTop: 10, flex: 1}]}
         onPressColor="white"
@@ -142,8 +142,6 @@ class Page3 extends Component {
   }
 
   page2(data, sport) {
-    console.log('data page 3');
-    console.log(data);
     var league = Object.values(sport.typeEvent).filter(
       (item) => item.value == data.info.league,
     )[0];
@@ -159,7 +157,6 @@ class Page3 extends Component {
         : data.info.levelOption == 'min'
         ? 'and above'
         : 'and below';
-    console.log(levelOption);
     return (
       <View style={[styleApp.marginView, {paddingTop: 15}]}>
         <Row style={{marginBottom: 10}}>
@@ -298,12 +295,9 @@ class Page3 extends Component {
     if (data.groups.length !== 0) {
       var groups = this.props.navigation.getParam('groups');
       for (var i in groups) {
-        console.log('lunion est la !');
-        console.log(union([event.objectID], groups[i].events));
         await this.props.groupsAction('editGroup', {
           objectID: groups[i].objectID,
           events: union([event.objectID], groups[i].events),
-          // [event.objectID]:event.objectID
         });
       }
     }

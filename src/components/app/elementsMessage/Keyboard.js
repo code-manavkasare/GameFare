@@ -35,13 +35,11 @@ class KeyboardView extends Component {
   }
 
   async componentDidMount() {
-    console.log('pictures get 1');
     const {edges} = await CameraRoll.getPhotos({
       first: 80,
       assetType: 'All',
     });
     this.setState({pictures: edges});
-    console.log('pictures get', pictures);
   }
   //ph://F784985D-461B-4212-90E1-F01594E29D77/L0/001
   onButtonPress() {
@@ -50,8 +48,6 @@ class KeyboardView extends Component {
     });
   }
   buttonImage(data, i) {
-    console.log('image data', data);
-    // return null;
     return (
       <CardContent
         style={{
@@ -74,18 +70,10 @@ class KeyboardView extends Component {
   }
   async selectPicture() {
     var picture = await pickLibrary();
-    console.log('picture', picture);
     if (picture) return this.addPicture(picture, 'image', true);
     return true;
   }
   addPicture(uri, type, selected, duration) {
-    console.log('addPicture', {
-      id: generateID(),
-      type: type,
-      duration: duration,
-      uploaded: false,
-      uri: uri,
-    });
     KeyboardRegistry.onItemSelected('KeyboardView', {
       image: {
         id: generateID(),

@@ -50,11 +50,7 @@ export default class ExpandableCard extends Component {
   }
   componentWillMount() {}
   componentWillReceiveProps(nextProps) {
-    console.log('receiprops card');
-    console.log(nextProps);
-    console.log(this.props.option);
-    if (this.props.option != nextProps.option) {
-      console.log('rl');
+    if (this.props.option !== nextProps.option) {
       Animated.parallel([
         Animated.timing(this.rotateIcon, native(0, 150)),
         Animated.timing(this.state.heightDropDown, timing(55, 130)),
@@ -140,10 +136,6 @@ export default class ExpandableCard extends Component {
     });
   }
   buttonSport(spin, item, i, click) {
-    console.log('item!!!!');
-    console.log(this.props.list);
-    console.log(this.props.valueSelected);
-    console.log(item);
     return (
       <ButtonColor
         key={i}
@@ -207,7 +199,7 @@ export default class ExpandableCard extends Component {
               <Col size={10} style={[styleApp.center]}>
                 {i == 0 &&
                 this.props.list.filter(
-                  option => option.value != this.props.valueSelected,
+                  (option) => option.value != this.props.valueSelected,
                 ).length != 0 ? (
                   <AnimatedIcon
                     name="caret-down"
@@ -235,9 +227,6 @@ export default class ExpandableCard extends Component {
       inputRange: [0, 1],
       outputRange: ['0deg', '180deg'],
     });
-    console.log('listExpend');
-    console.log(this.props.list);
-    console.log(this.props.valueSelected);
     return (
       <Animated.View
         style={[
@@ -251,14 +240,14 @@ export default class ExpandableCard extends Component {
         {this.buttonSport(
           spin,
           this.props.list.filter(
-            option => option.value === this.props.valueSelected,
+            (option) => option.value === this.props.valueSelected,
           )[0],
           0,
           () => this.expand(this.props.list),
         )}
 
         {this.props.list
-          .filter(option => option.value !== this.props.valueSelected)
+          .filter((option) => option.value !== this.props.valueSelected)
           .map((option, i) =>
             this.buttonSport(spin, option, i + 1, () =>
               this.expandClose(option),

@@ -18,20 +18,16 @@ const options = {
 };
 
 async function permission(type) {
-  if (type == 'camera') {
-    if (Platform.OS == 'ios') {
+  if (type === 'camera') {
+    if (Platform.OS === 'ios') {
       var permission = await request(PERMISSIONS.IOS.CAMERA);
-      console.log('permission');
-      console.log(permission);
-      if (permission != 'granted') return false;
+      if (permission !== 'granted') return false;
       return true;
     }
-  } else if (type == 'library') {
-    if (Platform.OS == 'ios') {
+  } else if (type === 'library') {
+    if (Platform.OS === 'ios') {
       var permission = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
-      console.log('permission');
-      console.log(permission);
-      if (permission != 'granted') return false;
+      if (permission !== 'granted') return false;
       return true;
     }
   }
@@ -39,7 +35,6 @@ async function permission(type) {
 
 async function resize(uri) {
   try {
-    console.log('resizing ', uri);
     var imgResized = await ImageResizer.createResizedImage(
       uri,
       800,
@@ -49,8 +44,7 @@ async function resize(uri) {
     );
     return imgResized.uri;
   } catch (err) {
-    console.log('errrror');
-    console.log(err);
+    console.log('errrror', err);
     return false;
   }
 }
@@ -66,9 +60,7 @@ async function resizeVideo(uri) {
   //   .then((compressedUri) => {
   //     console.warn('compressedUri', compressedUri); // String with path to temporary compressed video
   //   });
-  // console.log('resizedVideo', resizedVideo);
   try {
-    console.log('uri', uri);
     RNVideoHelper.compress(uri, {
       quality: 'low', // default low, can be medium or high
       defaultOrientation: 0, // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
@@ -95,8 +87,6 @@ async function takePicture() {
   let promise = new Promise(function(resolve, reject) {
     // executor (the producing code, "singer")
     ImagePicker.launchCamera(options, (response) => {
-      console.log('image');
-      console.log(response);
       if (!response.uri) {
         resolve(false);
       }
@@ -115,8 +105,6 @@ async function pickLibrary() {
   let promise = new Promise(function(resolve, reject) {
     // executor (the producing code, "singer")
     ImagePicker.launchImageLibrary(options, (response) => {
-      console.log('image');
-      console.log(response);
       if (!response.uri) {
         resolve(false);
       }
@@ -148,7 +136,6 @@ async function uploadPictureFirebase(localUri, destination) {
 
 async function uploadVideoFirebase(image, destination) {
   try {
-    console.log('start upload video ', image);
     let imageName = 'content.mp4';
     const imageRef = firebase
       .storage()
@@ -156,12 +143,9 @@ async function uploadVideoFirebase(image, destination) {
       .child(imageName);
     await imageRef.put(image.uri, {contentType: 'video'});
     var url = await imageRef.getDownloadURL();
-    console.log('upload video', url);
-    // return false
     return url;
-  } catch (error) {
-    console.log('error upload');
-    console.log(error);
+  } catch (err) {
+    console.log('error upload', err);
     return false;
   }
 }

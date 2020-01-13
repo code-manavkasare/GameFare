@@ -39,11 +39,7 @@ class Page1 extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
-    console.log('page 1 mount');
-    console.log(this.props.sports);
-    console.log(this.state.sportsFilter);
-  }
+  componentDidMount() {}
   newContact() {
     return (
       <View style={[styleApp.marginView, {marginTop: 0}]}>

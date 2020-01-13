@@ -52,12 +52,6 @@ class InputMessage extends React.Component {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
 
     await this.setState({inputValue: '', images: {}});
-    console.log('this.state.images', images);
-    console.log(
-      'this.props.discussion.firstMessageExists',
-      this.props.discussion.firstMessageExists,
-    );
-    console.log(this.props.discussion);
     if (!this.props.discussion.firstMessageExists)
       await firebase
         .database()
@@ -74,34 +68,23 @@ class InputMessage extends React.Component {
     return true;
   }
   async openPicturesView() {
-    console.log('!this.state.showImages', !this.state.showImages);
     if (!this.state.showImages) await this.textInputRef.blur();
     //   await this.textInputRef.blur();
 
     if (!this.state.showImages) {
       const imagesUser = await getPhotoUser();
-      console.log('imagesUser', imagesUser);
       await this.setState({imagesUser: imagesUser});
     }
     return this.setState({showImages: !this.state.showImages});
   }
   addImage(image, val) {
-    console.log('this images', this.state.images);
-    console.log('vql', val);
     if (!val) {
       var images = this.state.images;
       delete images[image.id];
-      console.log('new imge', image);
-      console.log(images);
       return this.setState({
         images: images,
       });
     }
-    console.log('images set', {
-      ...this.state.images,
-      [image.id]: image,
-    });
-    console.log(image);
     return this.setState({
       images: {
         ...this.state.images,
@@ -111,7 +94,6 @@ class InputMessage extends React.Component {
   }
   async takePicture() {
     const picture = await takePicture();
-    console.log('picture taken');
     if (picture)
       return this.addImage(
         {uri: picture, type: 'image', id: generateID(), uploaded: false},
@@ -120,7 +102,6 @@ class InputMessage extends React.Component {
   }
   async selectPicture() {
     var picture = await pickLibrary();
-    console.log('picture', picture);
     if (picture)
       return this.addImage(
         {
@@ -143,10 +124,8 @@ class InputMessage extends React.Component {
     return true;
   }
   renderInput() {
-    console.log('render inoyt', this.props.infoOtherMember);
     return (
       <View style={styles.keyboardContainer}>
-        {/* <View style={{height: 50, backgroundColor: 'blue'}}></View> */}
         <AutoGrowingTextInput
           maxHeight={200}
           // minHeight={35}
@@ -162,8 +141,6 @@ class InputMessage extends React.Component {
           }
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
-          //onFocus={() => this.resetKeyboardView()}
-          // testID={'inputValue'}
         />
 
         {Object.values(this.state.images).length !== 0 ? (

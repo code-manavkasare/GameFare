@@ -36,12 +36,9 @@ class VerifyFields extends Component {
   containerProps = {style: styles.inputWrapStyle};
   colors = ['#ff595f', '#e42959'];
   componentDidMount() {
-    console.log('verify field mount');
-    // console.log(this.props.user)
     this.sendSMS();
   }
   async sendSMS() {
-    console.log('sens sms');
     this.setState({loader: true, step: 'sending'});
     var phoneNumber = this.props.params.phoneNumber;
     phoneNumber = phoneNumber.replace('-', '');
@@ -81,8 +78,6 @@ class VerifyFields extends Component {
     this.setState({step: 'verifying', loader: true});
     var url = 'https://us-central1-getplayd.cloudfunctions.net/verifyPhone';
     var phoneNumber = this.props.params.phoneNumber;
-    console.log('le phone nymberrr oupaaaaaaaaaaaaaaaaaa');
-    console.log(phoneNumber);
     phoneNumber = phoneNumber.replace('-', '');
     phoneNumber = phoneNumber.replace('(', '');
     phoneNumber = phoneNumber.replace(')', '');
@@ -116,8 +111,6 @@ class VerifyFields extends Component {
         phoneNumber: phoneNumber,
         countryCode: this.props.params.country.callingCode,
       });
-      console.log('this.props.profileCompleted');
-      console.log(profileCompleted);
       if (profileCompleted) {
         var that = this;
         setTimeout(function() {

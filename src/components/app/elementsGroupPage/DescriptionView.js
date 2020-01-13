@@ -32,8 +32,6 @@ class DescriptionView extends Component {
     return this.setState({loader: false});
   }
   async load() {
-    console.log('load dta description');
-    console.log(this.props.data);
     var description = await firebase
       .database()
       .ref('groups/' + this.props.objectID + '/info/description/')
@@ -49,17 +47,8 @@ class DescriptionView extends Component {
     await this.setState({loader: false});
     return true;
   }
-  async componentWillReceiveProps(nextProps) {
-    // if (nextProps.loader !== this.props.loader && nextProps.loader) {
-    //   console.log('llalalala');
-    //   console.log(nextProps);
-    //   await this.setState({loader: true});
-    //   return this.load();
-    // }
-  }
+  async componentWillReceiveProps(nextProps) {}
   descriptionView() {
-    console.log('render description view');
-    console.log(this.props.data);
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
@@ -95,7 +84,7 @@ class DescriptionView extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     userConnected: state.user.userConnected,
   };

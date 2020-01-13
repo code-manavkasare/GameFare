@@ -77,8 +77,6 @@ export default class ImageSelection extends Component {
         this.setState({loading: true})
         if (Platform.OS == 'ios') {
             var permission = await request(PERMISSIONS.IOS.PHOTO_LIBRARY)
-            console.log('permission')
-            console.log(permission)
             if (permission != 'granted') return this.setState({loading: false})
         } else {
           granted = await PermissionsAndroid.request(
@@ -95,8 +93,6 @@ export default class ImageSelection extends Component {
           );
         }
         ImagePicker.launchImageLibrary(options, response => {    
-            console.log('reponse')
-            console.log(response) 
             if (response.uri) {
                 this.resize(response.uri)
             } else if (response.didCancel) {
@@ -110,8 +106,6 @@ export default class ImageSelection extends Component {
         this.setState({loading: true})
         if (Platform.OS == 'ios') {
             var permission = await request(PERMISSIONS.IOS.CAMERA)
-            console.log('permission')
-            console.log(permission)
             if (permission != 'granted') return this.setState({loading: false})
         } else {
           granted = await PermissionsAndroid.request(
@@ -138,7 +132,6 @@ export default class ImageSelection extends Component {
       }
 
       addImage() {
-        console.log('add image')
         if (this.props.readOnly) {
           this.setState({
             imgDisplay:[
@@ -150,10 +143,7 @@ export default class ImageSelection extends Component {
             showImg:true
           })
         } else {
-          if (this.props.editable != false) {
-
-            if (this.state.avatarSource) console.log("picking ", this.state.avatarSource.uri)
-            
+          if (this.props.editable != false) {            
             ActionSheet.showActionSheetWithOptions({
                 options: BUTTONS,
                 cancelButtonIndex: 2,
@@ -171,10 +161,8 @@ export default class ImageSelection extends Component {
 
       async resize(uri){
         try {
-          console.log("resizing ", uri)
           var imgResized = await ImageResizer.createResizedImage(uri, 500, 500, 'JPEG', 80)
           imgResized = imgResized.uri
-          console.log("resized ", imgResized)
           this.setState({loading: false,img:imgResized})
           this.props.setImage(uri, imgResized)
         } catch (err) {

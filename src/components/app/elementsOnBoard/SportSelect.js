@@ -34,14 +34,8 @@ class InitialPage extends Component {
     };
     this.translateXText = new Animated.Value(90);
   }
-  componentDidMount() {
-    console.log('sport selected mounted');
-    console.log(this.props.sportSelected);
-  }
+  componentDidMount() {}
   async selectSport(sport) {
-    // write sport to redux
-    console.log('on set league');
-    console.log(sport);
     await this.props.historicSearchAction('setSport', {value: sport});
     this.props.navigation.navigate('LocationSelect');
   }
@@ -49,9 +43,6 @@ class InitialPage extends Component {
     return num % 2;
   }
   button(sport, i) {
-    console.log(sport);
-    console.log('sport.value');
-    // console.log(this.props.leagueSelected);
     return (
       <ButtonColor
         key={i}
@@ -163,13 +154,6 @@ class InitialPage extends Component {
     );
   }
   render() {
-    // if (this.props.sportSelected === '') return null;
-    // var sport = Object.values(this.props.sports).filter(
-    //   sport => sport.value === this.props.sportSelected,
-    // )[0];
-    // console.log('sport ici');
-    // console.log(sport);
-    // console.log(this.props.leagueAll);
     return (
       <View style={[{borderLeftWidth: 0, backgroundColor: 'white', flex: 1}]}>
         <ScrollView

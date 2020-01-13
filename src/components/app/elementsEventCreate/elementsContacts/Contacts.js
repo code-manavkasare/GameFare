@@ -85,18 +85,14 @@ export default class ContactsComponent extends Component {
   }
 
   goToSettings() {
-    console.log('go to settings !');
-    if (Platform.OS == 'ios') {
+    if (Platform.OS === 'ios') {
       Permissions.openSettings();
     } else {
       AndroidOpenSettings.appDetailsSettings();
     }
   }
   selectContact(contact, val) {
-    console.log('add contact');
-    console.log(val);
-    console.log(contact);
-    if (val == false) {
+    if (!val) {
       this.setState({
         nameNewContact: '',
         phoneNewContact: '',
@@ -284,8 +280,6 @@ export default class ContactsComponent extends Component {
   }
   addNewContact(data) {
     Keyboard.dismiss();
-    console.log('new contact');
-    console.log(data);
     var id = Math.random()
       .toString(36)
       .substring(7);
@@ -380,10 +374,7 @@ export default class ContactsComponent extends Component {
   }
   shareEvent() {
     var infoEvent = this.props.navigation.getParam('data');
-    console.log('infoEvent');
-    console.log(infoEvent);
-    console.log(this.props.navigation.getParam('openPageLink'));
-    if (this.props.navigation.getParam('openPageLink') == 'openGroupPage') {
+    if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
       var description =
         'Join my group ' + infoEvent.info.name + ' by following the link!';
       var image = infoEvent.pictures[0];
@@ -426,9 +417,7 @@ export default class ContactsComponent extends Component {
         };
         branchUniversalObject
           .showShareSheet(shareOptions, linkProperties, controlParams)
-          .then((channel, completed, error) => {
-            console.log('share open');
-          });
+          .then((channel, completed, error) => {});
       });
   }
   openShareEvent(val) {
@@ -478,11 +467,8 @@ export default class ContactsComponent extends Component {
   }
   async sendSMS() {
     var contacts = this.state.contactsSelected;
-    var that = this;
 
     var infoEvent = this.props.navigation.getParam('data');
-    console.log('infoEvent');
-    console.log(infoEvent);
     if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
       var description =
         'Join my group ' + infoEvent.info.name + ' by following the link!';
@@ -498,9 +484,6 @@ export default class ContactsComponent extends Component {
         ' by following the link!';
       var image = infoEvent.images[0];
     }
-    console.log('event id!!!!');
-    console.log(infoEvent);
-    console.log(description);
     let branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {
@@ -529,9 +512,6 @@ export default class ContactsComponent extends Component {
     var phoneNumbers = Object.values(contacts).map(
       (contact) => contact.phoneNumbers[0].number,
     );
-    console.log(url);
-    console.log(phoneNumbers);
-    console.log('phoneNumbers');
     SendSMS.send(
       {
         body: description + ' ' + url,
@@ -543,23 +523,7 @@ export default class ContactsComponent extends Component {
         if (cancelled || error) {
           return true;
         }
-        console.log(
-          'SMS Callback: completed: ' +
-            completed +
-            ' cancelled: ' +
-            cancelled +
-            'error: ' +
-            error,
-        );
-        // if (that.props.navigation.getParam('pageFrom') == 'event'){
-        //   return that.props.navigation.goBack()
-        // }
         return this.props.navigation.dismiss();
-        return this.props.navigation.navigate(
-          this.props.navigation.getParam('pageTo'),
-          {objectID: this.props.navigation.getParam('objectID')},
-        );
-        //return that.props.navigation.navigate(this.props.navigation.getParam('openPageLink')== 'openGroupPage'?'ListGroups':'ListEvents',{})
       },
     );
   }

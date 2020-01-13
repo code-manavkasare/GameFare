@@ -62,7 +62,6 @@ class PhoneFields extends Component {
     return false;
   }
   async next(phone) {
-    console.log('sign up');
     // this.firstTextInput.blur()
     this.setState({loader: true});
     var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser';
@@ -80,7 +79,6 @@ class PhoneFields extends Component {
         giftAmount: 0,
       },
     });
-    console.log('phone', phone);
     if (promiseAxios.data.response) {
       await this.setState({loader: false});
       await this.props.navigate('Verify', {
@@ -92,8 +90,6 @@ class PhoneFields extends Component {
         pageFrom: this.props.pageFrom,
       });
     } else {
-      console.log('error', promiseAxios.data);
-      // console.log()
       this.setState({error: true, loader: false});
     }
   }

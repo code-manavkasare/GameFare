@@ -33,13 +33,9 @@ export default class ListPhotos extends Component {
       pictures: 'loading',
     };
   }
-  async componentDidMount() {
-    console.log('list photo mount', this.props);
-  }
+  async componentDidMount() {}
 
   buttonImage(data, i) {
-    console.log('image data', data);
-    // return null;
     return (
       <CardContent
         style={{
@@ -62,7 +58,6 @@ export default class ListPhotos extends Component {
     );
   }
   addPicture(uri, type, selected, duration) {
-    console.log('selecteed', selected);
     this.props.addImage(
       {
         id: !selected ? uri : generateID(),

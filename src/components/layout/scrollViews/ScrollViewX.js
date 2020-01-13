@@ -130,7 +130,7 @@ export default class ScrollViewX extends PureComponent {
                 </View>
               );
             }}
-            click={() => console.log('click')}
+            click={() => true}
             color="white"
             style={[
               styleApp.center,

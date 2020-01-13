@@ -38,11 +38,6 @@ export default class CardContent extends React.Component {
     };
   }
   componentDidMount() {
-    console.log(
-      'mount card img',
-      !this.props.image.uploaded &&
-        this.props.user._id === this.props.message.user._id,
-    );
     if (
       !this.props.image.uploaded &&
       this.props.user._id === this.props.message.user._id
@@ -65,7 +60,6 @@ export default class CardContent extends React.Component {
       );
   }
   async uploadPicture(image, discussionID, messageID) {
-    console.log('upload image');
     await this.setState({loader: true});
     const destinationImage =
       'discussions/' +
@@ -80,11 +74,8 @@ export default class CardContent extends React.Component {
       var uri = await resize(image.uri);
       newImgUrl = await uploadPictureFirebase(uri, destinationImage);
     } else if (image.type === 'video') {
-      console.log('video uplaod');
-      //var uri = await resizeVideo(image.uri);
       var uri = '';
-      console.log('uri', image.uri);
-      // if (uri) console.log('la');
+
       newImgUrl = await uploadVideoFirebase(
         {...image, uri: image.uri},
         destinationImage,

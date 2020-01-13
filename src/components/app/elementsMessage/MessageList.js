@@ -49,7 +49,6 @@ class MessageTab extends React.Component {
   }
 
   async loadDiscussions(userID) {
-    console.log('loadDiscussions');
     indexDiscussions.clearCache();
 
     // search for persnal conversations
@@ -62,12 +61,15 @@ class MessageTab extends React.Component {
     var myGroups = await getMyGroups(userID, '');
     var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
     var {results} = await indexDiscussions.getObjects(groupsDiscussions);
-    console.log(hits);
 
     // search for events discussions
     var myEvents = await getMyEvents(userID);
-    console.log('myEvents', myEvents);
-    var eventsDiscussions = myEvents.map((event) => event.discussions[0]);
+    var eventsDiscussions = myEvents
+      .map((event) => {
+        if (event.discussions) return event.discussions[0];
+        // return null;
+      })
+      .filter((event) => event);
     var getDiscussionsEvent = await indexDiscussions.getObjects(
       eventsDiscussions,
     );
@@ -172,7 +174,7 @@ class MessageTab extends React.Component {
           initialTitleOpacity={0}
           icon1={null}
           icon2={null}
-          clickButton2={() => console.log('')}
+          clickButton2={() => true}
         />
 
         <ScrollView2

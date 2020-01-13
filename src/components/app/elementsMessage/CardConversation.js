@@ -32,14 +32,6 @@ class CardConversation extends React.Component {
     };
   }
   async componentDidMount() {
-    console.log('this.;rops.conversation');
-    console.log(this.props.discussion);
-
-    console.log(
-      'conversations',
-      this.props.conversations[this.props.discussion.objectID],
-    );
-
     var lastMessage = await firebase
       .database()
       .ref('discussions/' + this.props.discussion.objectID + '/messages')
@@ -51,13 +43,12 @@ class CardConversation extends React.Component {
     await this.props.messageAction('setConversation', {
       ...this.props.discussion,
       lastMessage: lastMessage,
-      lastMessageRead: false,
+      lastMessageRead: this.checkLastMessageRead(),
     });
     return this.setState({lastMessage: Object.values(lastMessage)[0]});
   }
+
   imageCard(conversation) {
-    console.log('conversation');
-    console.log(conversation);
     if (this.props.discussion.type === 'group') {
       return (
         <AsyncImage
@@ -76,8 +67,6 @@ class CardConversation extends React.Component {
         />
       );
     }
-    console.log('nggggggfgf');
-    console.log(this.infoOtherMember(conversation));
     return (
       <View style={styles.roundImage}>
         {this.infoOtherMember(conversation).firstname ? (
@@ -123,13 +112,12 @@ class CardConversation extends React.Component {
           }}
         />
       );
-    console.log('display last message');
-    console.log(this.state.lastMessage);
+
     return (
       <Text
         style={[
-          styleApp.smallText,
-          {fontSize: 13, marginTop: 2, color: colors.greyDark},
+          this.checkLastMessageRead() ? styleApp.input : styleApp.smallText,
+          {fontSize: 13, marginTop: 2, color: colors.title},
         ]}>
         {this.state.lastMessage.text === '' && this.state.lastMessage.images
           ? Object.values(this.state.lastMessage.images).length + ' file sent'
@@ -137,8 +125,16 @@ class CardConversation extends React.Component {
       </Text>
     );
   }
+  checkLastMessageRead() {
+    if (!this.props.conversations[this.props.discussion.objectID]) return false;
+    else if (
+      !this.props.conversations[this.props.discussion.objectID].lastMessageRead
+    )
+      return true;
+    return false;
+  }
+
   cardConversation(conversation, i) {
-    console.log('render card convo', this.props.discussion);
     return (
       <ButtonColor
         key={i}
@@ -155,11 +151,7 @@ class CardConversation extends React.Component {
                 {this.lastMessage()}
               </Col>
               <Col size={5} style={styleApp.center2}>
-                {!this.props.conversations[
-                  this.props.discussion.objectID
-                ] ? null : !this.props.conversations[
-                    this.props.discussion.objectID
-                  ].lastMessageRead ? (
+                {this.checkLastMessageRead() && (
                   <View
                     style={{
                       backgroundColor: colors.blue,
@@ -168,7 +160,7 @@ class CardConversation extends React.Component {
                       borderRadius: 10,
                     }}
                   />
-                ) : null}
+                )}
               </Col>
               {/* <Col size={10} style={styleApp.center3}>
                 <AllIcons

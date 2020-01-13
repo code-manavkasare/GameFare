@@ -45,17 +45,10 @@ export default class Posts extends Component {
     }
   }
   async load() {
-    console.log('load discussions');
-    console.log(this.props.data.discussions);
-
-    // var posts = await firebase.database().ref('groups/' + this.props.objectID + '/posts/').once('value')
-    // posts = posts.val()
     var discussions = this.props.data.discussions;
     if (discussions === undefined) discussions = [];
     var {results} = await indexDiscussions.getObjects(discussions);
     if (results === null) results = [];
-    console.log('results ');
-    console.log(results);
     this.setState({loader: false, discussions: results});
   }
   newPost() {}

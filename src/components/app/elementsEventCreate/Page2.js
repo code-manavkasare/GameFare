@@ -140,8 +140,6 @@ class Page2 extends Component {
     );
   }
   async setLocation(data) {
-    console.log('set location step 2');
-    console.log(data);
     await this.props.createEventAction('setStep2', {
       location: data,
       image: 'loading',
@@ -154,8 +152,6 @@ class Page2 extends Component {
     return this.props.createEventAction('setStep2', {image: image});
   }
   async setDate(data) {
-    console.log('set date step 2');
-    console.log(data);
     await this.props.createEventAction('setStep2', {
       endDate: data.endDate,
       startDate: data.startDate,

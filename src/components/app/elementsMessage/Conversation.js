@@ -43,7 +43,6 @@ class MessageTab extends React.Component {
       .on('value', function(snap) {
         var discussion = snap.val();
         var messages = discussion.messages;
-        console.log('messages', messages);
         if (!messages)
           messages = {
             0: {
@@ -62,10 +61,6 @@ class MessageTab extends React.Component {
           }))
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
-
-        console.log('set atqte messages');
-        console.log(messages);
-        console.log(that.state.messages);
         that.setState({messages: messages, loader: false});
       });
   }
@@ -75,8 +70,6 @@ class MessageTab extends React.Component {
     } else {
       var localPicture = await takePicture();
     }
-    console.log('localPicture');
-    console.log(localPicture);
     if (localPicture) {
       this.sendNewMessage(discussion, {
         _id:
@@ -143,7 +136,6 @@ class MessageTab extends React.Component {
   }
 
   render() {
-    const discussion = {};
     const user = {
       _id: this.props.userID,
       name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
@@ -151,11 +143,6 @@ class MessageTab extends React.Component {
         ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
         : this.props.infoUser.picture,
     };
-    console.log(
-      'render discussion',
-      this.infoOtherMember(this.props.navigation.getParam('data')),
-    );
-    console.log(this.props.navigation.getParam('data'));
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -177,7 +164,7 @@ class MessageTab extends React.Component {
             await this.conversationRef.dismiss();
             this.props.navigation.dismiss();
           }}
-          clickButton2={() => console.log('')}
+          clickButton2={() => true}
         />
         <View style={{height: sizes.heightHeaderHome}} />
 

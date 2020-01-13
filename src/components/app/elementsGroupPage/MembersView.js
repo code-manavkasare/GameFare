@@ -47,7 +47,6 @@ class MembersView extends Component {
     );
   }
   async joinGroup() {
-    console.log('join');
     var user = {
       userID: this.props.userID,
       id: this.props.userID,

@@ -6,23 +6,15 @@ import {Alert, Linking} from 'react-native';
 
 async function getParams(link) {
   try {
-    console.log(' get branch link', Config);
-    console.log(link);
     var checkDeepLink = link.includes('gamefare.app.link');
     var url = link;
     if (checkDeepLink)
       var url = `https://api.branch.io/v1/url?url=${link}&branch_key=${'key_live_deNF7ruAiHN7qKjWA8xlOekkAyonPxeV'}`;
 
-    console.log('url', url);
     const promiseData = await axios.get(url, {
       params: {},
     });
-    console.log('promiseData', promiseData);
-    console.log('ok', promiseData);
     return promiseData.data.data;
-    // if (response.ok) {
-    //   return response.json();
-    // }
   } catch (e) {
     return false;
   }

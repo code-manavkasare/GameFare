@@ -141,7 +141,6 @@ export default class Date extends Component {
     });
   }
   selectDay(day, date, markedDates) {
-    console.log(day);
     this.setState({
       [markedDates]: {
         [day.dateString]: {selected: true, selectedColor: colors.primary},
@@ -160,9 +159,7 @@ export default class Date extends Component {
         // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
         monthFormat={'MMMM'}
         // Handler which gets executed when visible month changes in calendar. Default = undefined
-        onMonthChange={(month) => {
-          console.log('month changed', month);
-        }}
+        onMonthChange={(month) => true}
         // Hide month navigation arrows. Default = false
         hideArrows={false}
         // Replace default arrows with custom ones (direction can be 'left' or 'right')
@@ -219,9 +216,6 @@ export default class Date extends Component {
     );
   }
   timeSelect(hour, min, part) {
-    console.log('part');
-    console.log(part);
-    console.log(this.state[part]);
     return (
       <Row style={{marginBottom: 20, height: 100}}>
         <Col size={40} style={styles.center2}>
@@ -434,7 +428,6 @@ export default class Date extends Component {
       moment(endDate).diff(moment(startDate)),
     );
     durationStartEnd = durationStartEnd._milliseconds;
-    console.log(durationStart);
     if (durationStart < 0) {
       return this.props.navigation.navigate('Alert', {
         close: true,
@@ -461,11 +454,8 @@ export default class Date extends Component {
     });
   }
   render() {
-    console.log('render location');
     return (
       <View style={styles.content}>
-        {/* {this.header()} */}
-
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
