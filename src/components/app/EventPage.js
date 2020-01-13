@@ -266,7 +266,7 @@ class EventPage extends React.Component {
         userConnected={this.props.userConnected}
         key={i}
         userID={this.props.userID}
-        removable={this.state.editMode}
+        removable={(data.info.organizer !== user.id) && this.state.editMode}
         removeFunc={() => this.askRemovePlayer(user, data)}
       />
     );
@@ -853,13 +853,12 @@ class EventPage extends React.Component {
       onGoBack: () => this.props.navigation.navigate('Event'),
     });
   }
-  removePlayer(player, data) {
-    console.log('removing:');
-    if (player.id === data.info.organizer) {
-      console.log('cannot remove organizer');
-    }
-    console.log(player);
-    console.log(JSON.stringify(data, undefined, 2));
+  async removePlayer(player, data) {
+    let newData = {...data};
+    delete newData.attendees[player.id];
+    // await editEvent(newData, () => console.log('edit event failed'));
+    await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
+    console.log(JSON.stringify(newData, undefined, 2));
   }
   async refresh() {
     await this.setState({loader: true});
