@@ -76,9 +76,6 @@ class ListEvent extends Component {
     );
   }
   row(icon, text, data) {
-    console.log('cest ici meme');
-    console.log(data);
-    console.log(this.props.defaultCard);
     return (
       <ButtonColor
         view={() => {
@@ -145,9 +142,7 @@ class ListEvent extends Component {
     }
   }
   async confirmDelete() {
-    // delete card
     this.setState({loader: true});
-    console.log(this.props.navigation.getParam('data').id);
     var url =
       'https://us-central1-getplayd.cloudfunctions.net/deleteUserCreditCard';
     const results = await axios.get(url, {
@@ -157,19 +152,14 @@ class ListEvent extends Component {
         tokenStripeCus: this.props.tokenCusStripe,
       },
     });
-    if (results.data.response == true) {
-      console.log('lllllllll');
-      console.log(this.props.cards);
-      console.log(Object.values(this.props.cards)[0]);
-      console.log(this.props.defaultCard.id);
-      console.log(this.props.navigation.getParam('data').id);
-      if (this.props.cards == undefined) {
+    if (results.data.response) {
+      if (!this.props.cards) {
         await firebase
           .database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .remove();
       } else if (
-        this.props.navigation.getParam('data').id ==
+        this.props.navigation.getParam('data').id ===
           this.props.defaultCard.id &&
         Object.values(this.props.cards).length > 0
       ) {

@@ -23,7 +23,6 @@ const addImage = (value) => ({
 export const messageAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'setConversation') {
-      console.log('setConversation', data);
       await dispatch(setConversation(data));
     } else if (val === 'setConversations') {
       await dispatch(setConversation(data));

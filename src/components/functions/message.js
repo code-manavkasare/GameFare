@@ -14,9 +14,6 @@ function discussionObj(members, nameDiscussion) {
 
 async function createDiscussion(members, nameDiscussion) {
   var newDiscussion = discussionObj(members, nameDiscussion);
-  console.log('newDiscussion');
-  console.log(newDiscussion);
-  //   return false;
   const {key} = await firebase
     .database()
     .ref('discussions/')
@@ -27,14 +24,6 @@ async function createDiscussion(members, nameDiscussion) {
 }
 
 async function sendNewMessage(discusssionID, user, text, images) {
-  console.log(discusssionID);
-  console.log('push firebase', {
-    user: user,
-    text: text,
-    images: images,
-    createdAt: new Date(),
-    timeStamp: moment().valueOf(),
-  });
   await firebase
     .database()
     .ref('discussions/' + discusssionID + '/messages')
@@ -49,11 +38,9 @@ async function sendNewMessage(discusssionID, user, text, images) {
 }
 
 async function searchDiscussion(ids) {
-  console.log('searchDiscussion');
   var filterMembers = '';
   var prefix = ' AND ';
   for (var id in ids) {
-    console.log(id);
     if (Number(id) === 0) {
       prefix = '';
     } else {
@@ -63,11 +50,9 @@ async function searchDiscussion(ids) {
       filterMembers + prefix + 'allMembers: ' + Object.values(ids)[id];
   }
 
-  console.log(filterMembers);
   const {hits} = await indexDiscussions.search({
     filters: filterMembers,
   });
-  console.log(hits);
   if (hits.length === 0) return false;
   return hits[0];
 }

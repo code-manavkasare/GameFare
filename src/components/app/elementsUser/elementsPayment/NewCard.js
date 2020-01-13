@@ -50,7 +50,6 @@ class ListEvent extends Component {
   async componentDidMount() {}
 
   doneScan(card) {
-    console.log('done Scan');
     var numberCard = card.cardNumber.toString();
     numberCard =
       numberCard.slice(0, 4) +
@@ -60,7 +59,6 @@ class ListEvent extends Component {
       numberCard.slice(8, 12) +
       ' ' +
       numberCard.slice(12, numberCard.length);
-    console.log('le number card!');
     this.changeCardNumber(numberCard, true);
     var expiryMonth = card.expiryMonth.toString();
     if (expiryMonth != 0) {
@@ -99,15 +97,11 @@ class ListEvent extends Component {
       cvc: this.state.cvv,
       address_zip: this.state.zipCode,
     };
-    console.log('objCard');
-    console.log(objCard);
     client.createToken(objCard).then((response) => {
       tokenCard = response.id;
-      console.log(response);
       if (response.error) {
         this.wrongCB(response.error.message);
       } else {
-        console.log(tokenCard);
         var url =
           'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard';
         const promiseAxios = axios.get(url, {
@@ -147,7 +141,6 @@ class ListEvent extends Component {
     var slice4 = Number(text.slice(0, 4));
     var slice2 = Number(text.slice(0, 2));
     var slice6 = Number(text.slice(0, 6));
-    console.log(slice4);
     var digitsRequired = 19;
     var lengthCVV = 3;
     var cardType = 'default';

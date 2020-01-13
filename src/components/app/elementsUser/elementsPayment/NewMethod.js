@@ -35,9 +35,6 @@ class ListEvent extends Component {
   }
   async componentDidMount() {}
   row(icon, text, page, data) {
-    console.log('cest ici meme');
-    console.log(data);
-    console.log(this.props.defaultCard);
     return (
       <ButtonColor
         view={() => {

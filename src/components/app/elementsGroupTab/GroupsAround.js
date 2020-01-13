@@ -52,16 +52,12 @@ class ListEvents extends React.Component {
     }
   }
   async getGroups(filters, location) {
-    console.log('get groups');
-    console.log(filters);
-    console.log(location);
     var groups = await indexGroups.search({
       query: '',
       aroundLatLng: location.lat + ',' + location.lng,
       filters: filters,
       aroundRadius: this.props.radiusSearch * 1000,
     });
-    console.log(groups.hits);
     return groups.hits;
   }
   async loadEvent(sport, location) {
@@ -80,8 +76,6 @@ class ListEvents extends React.Component {
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
-    console.log('click group');
-    console.log(objectID);
     return this.props.navigate('Group', {
       objectID: objectID,
       pageFrom: 'ListGroups',
@@ -100,16 +94,11 @@ class ListEvents extends React.Component {
     ]).start();
   }
   listGroups(groups) {
-    console.log('display future events');
-    console.log(groups);
-    //return null
     return Object.values(groups).map((group, i) => (
       <CardGroup key={i} data={group} allAccess={false} />
     ));
   }
   ListEvent() {
-    console.log('My groups');
-    console.log(this.state.groups);
     var numberGroups = '';
     if (!this.state.loader) {
       numberGroups = ' (' + this.state.groups.length + ')';

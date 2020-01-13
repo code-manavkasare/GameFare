@@ -44,8 +44,6 @@ class FooterContact extends Component {
         nextVal:Object.values(nextProps.contactsSelected).length,
         showNextVal:true,
       })
-      console.log(Object.values(nextProps.contactsSelected).length)
-      console.log(Object.values(this.props.contactsSelected).length)
       if (Object.values(nextProps.contactsSelected).length < this.state.val) {
         await this.translateYNext.setValue(-30)
         Animated.parallel([
@@ -57,7 +55,6 @@ class FooterContact extends Component {
         })
       } else {
         await this.translateYNext.setValue(30)
-        console.log('yepa')
         Animated.parallel([
           Animated.timing(this.translateYCurrent,native(-30,200)),
           Animated.timing(this.translateYNext,native(0,200)),
@@ -109,8 +106,6 @@ class FooterContact extends Component {
     var name = name.slice(0,5)
     name = name+ '..'
     var family = contact.familyName[0]
-    console.log('lalalala')
-    console.log(family)
     if (family == '' || family == undefined) family=''
     else family = family.toUpperCase()
     var initial = contact.givenName[0] + family

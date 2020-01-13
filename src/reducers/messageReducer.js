@@ -45,7 +45,6 @@ const messageReducer = (state = initialState, action) => {
         },
       };
     case SET_CONVERSATION:
-      console.log('SET_CONVERSATION', action.conversation);
       return {
         ...state,
         conversations: {

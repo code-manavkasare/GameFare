@@ -109,8 +109,6 @@ async function createEvent(data, userID, infoUser, level) {
   if (!pictureUri) return false;
 
   var event = await createEventObj(data, userID, infoUser, level);
-  console.log('event obj received');
-  console.log(event);
 
   event.images = [pictureUri];
   const discussionID = generateID();
@@ -208,8 +206,6 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
       }
     } catch (err) {
       stripe.cancelApplePayRequest();
-      console.log('eerrrrro');
-      console.log(err);
       return {response: 'cancel', message: 'cancel'};
     }
   }
@@ -264,9 +260,6 @@ async function joinEvent(
     coach,
     infoUser,
   );
-  console.log('{message, response}');
-  console.log({message, response});
-
   if (response === 'cancel') return {message, response};
 
   // if (!data.info.public && coach) {
@@ -283,8 +276,7 @@ async function joinEvent(
   if (coach) pushSection = 'coaches';
 
   var usersToPush = {};
-  console.log('lalalalaaaa');
-  console.log(users);
+
   for (var i in users) {
     var user = {
       ...users[i],
@@ -296,9 +288,6 @@ async function joinEvent(
       ...usersToPush,
       [user.id]: user,
     };
-    console.log('push user !!!!!');
-    console.log(pushSection);
-    console.log(users[i].id);
     await firebase
       .database()
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)

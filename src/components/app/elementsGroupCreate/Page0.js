@@ -41,30 +41,19 @@ class Page0 extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    console.log('page 1 mount');
-    console.log(this.props.createGroupData);
     if (this.props.createGroupData.info.sport === '') {
-      console.log('set balue');
       this.props.createGroupAction('setInfoCreateGroup', {
         sport: this.props.sportSelected,
       });
     }
   }
   sports() {
-    console.log('this.props.createGroupData.info.sport');
-    console.log(this.props.createGroupData.info.sport);
-    console.log(this.props.sports);
-
-    // return null
-
     return (
       <ExpandableCard
         valueSelected={this.props.createGroupData.info.sport}
         image={true}
         list={this.props.sports}
         tickFilter={(value) => {
-          console.log('ou pas val');
-          console.log(value);
           this.props.createGroupAction('setInfoCreateGroup', {
             sport: value.value,
           });
@@ -263,10 +252,6 @@ class Page0 extends Component {
       this.props.userID,
       this.props.infoUser,
     );
-    console.log('submitt group');
-    console.log(this.props.infoUser);
-    console.log(this.props.userID);
-    // var group = false
     if (!group) {
       await this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
@@ -276,12 +261,10 @@ class Page0 extends Component {
         close: true,
       });
     }
-    console.log('groupCreation done');
-    console.log(group);
+
     var newGroups = this.props.mygroups.slice(0).reverse();
     newGroups.push(group.objectID);
     newGroups = newGroups.reverse();
-    console.log(newGroups);
     await this.props.groupsAction('setAllGroups', {[group.objectID]: group});
     await this.props.groupsAction('setMygroups', newGroups);
     var that = this;

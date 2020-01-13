@@ -367,6 +367,8 @@ PODS:
     - React
   - react-native-image-resizer (1.1.0):
     - React
+  - react-native-keep-awake (4.0.0):
+    - React
   - react-native-mapbox-gl (7.0.8):
     - React
   - react-native-maps (0.26.1):
@@ -374,11 +376,15 @@ PODS:
   - react-native-mixpanel (1.1.10):
     - Mixpanel (~> 3.5.0)
     - React
+  - react-native-orientation (3.1.3):
+    - React
   - react-native-sms (1.10.0):
     - React
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-statusbar (1.0.3):
+    - React
+  - react-native-video-helper (1.4.4):
     - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
@@ -520,12 +526,15 @@ DEPENDENCIES:
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
+  - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
+  - react-native-orientation (from `../node_modules/react-native-orientation`)
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
+  - react-native-video-helper (from `../node_modules/react-native-video-helper`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -674,18 +683,24 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
     :path: "../node_modules/react-native-image-resizer"
+  react-native-keep-awake:
+    :path: "../node_modules/react-native-keep-awake"
   react-native-mapbox-gl:
     :path: "../node_modules/@react-native-mapbox-gl/maps"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-mixpanel:
     :path: "../node_modules/react-native-mixpanel"
+  react-native-orientation:
+    :path: "../node_modules/react-native-orientation"
   react-native-sms:
     :path: "../node_modules/react-native-sms"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
   react-native-statusbar:
     :path: "../node_modules/@react-native-community/status-bar"
+  react-native-video-helper:
+    :path: "../node_modules/react-native-video-helper"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -812,12 +827,15 @@ SPEC CHECKSUMS:
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b
   react-native-image-resizer: 1ffe71ec5f2596c3a24d42548c03bfbfb06fe810
+  react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-mapbox-gl: fcd88e2bf0ddea552b0209cc2770a5ac2b9c9910
   react-native-maps: 6e499eee4eabf422ba8b6f94e993cc768bf35153
   react-native-mixpanel: 513dc597c9ed239bdee91d16bdc7b9325fdcb779
+  react-native-orientation: f1caf84d65f1a4fd4511a18f2b924e634ad7a628
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
+  react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
   React-RCTBlob: d26ac0e313fbf14e7203473fd593ccaaeee8329e

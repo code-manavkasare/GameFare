@@ -30,14 +30,8 @@ class ListEvent extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  async componentDidMount() {
-    console.log('payments mount');
-    console.log(this.props.navigation.getParam());
-  }
+  async componentDidMount() {}
   row(icon, text, data) {
-    console.log('cest ici meme');
-    console.log(data);
-    console.log(this.props.defaultCard);
     return (
       <ButtonColor
         view={() => {
@@ -77,8 +71,6 @@ class ListEvent extends Component {
     );
   }
   openPage(data) {
-    console.log('openpage');
-    console.log(data);
     if (data == 'new') {
       return this.props.navigation.navigate('NewMethod', {
         pageFrom: this.props.navigation.getParam('pageFrom'),
@@ -97,9 +89,7 @@ class ListEvent extends Component {
     });
   }
   listCard() {
-    console.log('this.props.cards');
-    console.log(this.props.cards);
-    if (this.props.cards == undefined) return null;
+    if (!this.props.cards) return null;
     return Object.values(this.props.cards).map((card, i) =>
       this.row(
         cardIcon(card.brand),

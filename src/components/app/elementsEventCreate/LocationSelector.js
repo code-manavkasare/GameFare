@@ -173,15 +173,11 @@ class LocationSelector extends Component {
         return this.props.navigation.goBack();
       }
     } catch (err) {
-      console.log('errrrrrr');
-      console.log(err);
       this.setState({loader: false});
     }
   }
   async getCurrentLocation() {
     var CurrentLocation = await currentLocation();
-    console.log('currentLocation');
-    console.log(CurrentLocation);
     if (CurrentLocation.response === false) {
       this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
@@ -191,7 +187,6 @@ class LocationSelector extends Component {
         subtitle: 'Please check your settings.',
       });
     }
-    console.log('set lovation back');
 
     if (!this.props.navigation.getParam('setUserLocation')) {
       return this.props.navigation.state.params.onGoBack(CurrentLocation);

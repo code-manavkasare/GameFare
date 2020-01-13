@@ -25,6 +25,7 @@
 		172D14A0235D2FB300560A8E /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1492235D2F9500560A8E /* OpenSans-Regular.ttf */; };
 		172D14A1235D2FB300560A8E /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1494235D2F9500560A8E /* OpenSans-SemiBold.ttf */; };
 		172D14A2235D2FB300560A8E /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1495235D2F9600560A8E /* OpenSans-SemiBoldItalic.ttf */; };
+		17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */; };
 		17BC97A2235B3ABE009F0EC8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */; };
 		17C26B8A236A3B80006835E7 /* logoios.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B88236A3B80006835E7 /* logoios.png */; };
 		17C26B8C236A3BC7006835E7 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B8B236A3BC6006835E7 /* logo.png */; };
@@ -52,6 +53,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNCStatusBar;
 		};
+		17B60B5323C75D2B006B1DCF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17B60B4F23C75D2B006B1DCF /* RNVideoHelper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNVideoHelper;
+		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
@@ -60,6 +68,19 @@
 			remoteInfo = "gamefare-tvOS";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		17B60B4E23C759C4006B1DCF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -90,6 +111,13 @@
 		172D1497235D2F9600560A8E /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		172D1498235D2F9600560A8E /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		172D14A3235DA3F800560A8E /* RNCStatusBar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCStatusBar.xcodeproj; path = "../node_modules/@react-native-community/status-bar/ios/RNCStatusBar.xcodeproj"; sourceTree = "<group>"; };
+		17B60B3623C75929006B1DCF /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		17B60B3823C75931006B1DCF /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		17B60B3A23C75938006B1DCF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		17B60B3C23C7593F006B1DCF /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		17B60B3E23C75945006B1DCF /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		17B60B4F23C75D2B006B1DCF /* RNVideoHelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVideoHelper.xcodeproj; path = "../node_modules/react-native-video-helper/ios/RNVideoHelper.xcodeproj"; sourceTree = "<group>"; };
 		17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		17BC97A3235B3CB6009F0EC8 /* gamefare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = gamefare.entitlements; path = gamefare/gamefare.entitlements; sourceTree = "<group>"; };
 		17C26B88236A3B80006835E7 /* logoios.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logoios.png; sourceTree = "<group>"; };
@@ -147,6 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */,
 				864E34D7F40432278013ECFC /* libPods-gamefare.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,9 +294,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		17B60B5023C75D2B006B1DCF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				17B60B5423C75D2B006B1DCF /* libVideoHelper.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */,
+				17B60B3E23C75945006B1DCF /* QuartzCore.framework */,
+				17B60B3C23C7593F006B1DCF /* AVFoundation.framework */,
+				17B60B3A23C75938006B1DCF /* OpenGLES.framework */,
+				17B60B3823C75931006B1DCF /* CoreVideo.framework */,
+				17B60B3623C75929006B1DCF /* CoreMedia.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				3B745A4C07541F9CBAFA1F0C /* libPods-gamefare.a */,
@@ -296,6 +339,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				17B60B4F23C75D2B006B1DCF /* RNVideoHelper.xcodeproj */,
 				172D14A3235DA3F800560A8E /* RNCStatusBar.xcodeproj */,
 			);
 			name = Libraries;
@@ -363,6 +407,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */,
 				24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */,
+				17B60B4E23C759C4006B1DCF /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -427,6 +472,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = H3679W58Z6;
+						LastSwiftMigration = 1130;
 						SystemCapabilities = {
 							com.apple.ApplePay = {
 								enabled = 1;
@@ -470,6 +516,10 @@
 					ProductGroup = 172D14A4235DA3F800560A8E /* Products */;
 					ProjectRef = 172D14A3235DA3F800560A8E /* RNCStatusBar.xcodeproj */;
 				},
+				{
+					ProductGroup = 17B60B5023C75D2B006B1DCF /* Products */;
+					ProjectRef = 17B60B4F23C75D2B006B1DCF /* RNVideoHelper.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -487,6 +537,14 @@
 			fileType = archive.ar;
 			path = libRNCStatusBar.a;
 			remoteRef = 172D14A7235DA3F800560A8E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		17B60B5423C75D2B006B1DCF /* libVideoHelper.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			name = libVideoHelper.a;
+			path = libRNVideoHelper.a;
+			remoteRef = 17B60B5323C75D2B006B1DCF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -874,6 +932,7 @@
 			baseConfigurationReference = 9A939D37137AED8589A5A995 /* Pods-gamefare.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CURRENT_PROJECT_VERSION = 0.8.4;
 				DEAD_CODE_STRIPPING = NO;
@@ -888,6 +947,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = gamefare;
 				PRODUCT_NAME = gamefare;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -897,6 +958,7 @@
 			baseConfigurationReference = 0AFCFD661DCEBF4D89A565D8 /* Pods-gamefare.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CURRENT_PROJECT_VERSION = 0.8.4;
 				DEVELOPMENT_TEAM = H3679W58Z6;
@@ -910,6 +972,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = gamefare;
 				PRODUCT_NAME = gamefare;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

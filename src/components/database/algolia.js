@@ -10,7 +10,6 @@ const indexDiscussions = client.initIndex('discussionsGF');
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
   indexGroups.clearCache();
-
   var filterOrganizer = 'info.organizer:' + userID + ' OR allMembers:' + userID;
   var filters = filterOrganizer + filterSport;
   if (location) {
@@ -50,7 +49,6 @@ async function getEventsFromGroups(
     else prefix = ' AND ';
     filterIds = filterIds + prefix + 'objectID:' + Object.values(events)[j];
   }
-
   var filterUser =
     'NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   let prefix2 = ' AND ';
@@ -127,7 +125,6 @@ const getEventPublic = async (
       location,
       radiusSearch,
     );
-
     eventsMyGroups = await getEventsFromGroups(
       myGroups,
       location,
@@ -136,13 +133,31 @@ const getEventPublic = async (
       sport,
     );
   }
-
   allEventsPublic = {
     ...allEventsPublic,
     ...eventsMyGroups,
   };
-
   return allEventsPublic;
+};
+
+const getMyEvents = async (userID) => {
+  let filterAttendees = '';
+  filterAttendees =
+    'allAttendees:' +
+    userID +
+    ' OR allCoaches:' +
+    userID +
+    ' OR info.organizer:' +
+    userID +
+    ' AND ';
+
+  var filterDate = 'date_timestamp>' + Number(new Date());
+  indexEvents.clearCache();
+  var {hits} = await indexEvents.search({
+    query: '',
+    filters: filterAttendees + filterDate,
+  });
+  return hits;
 };
 
 module.exports = {
@@ -152,4 +167,5 @@ module.exports = {
   getEventPublic,
   indexDiscussions,
   getMyGroups,
+  getMyEvents,
 };

@@ -53,8 +53,6 @@ class HeaderHome extends Component {
     }
   }
   async close() {
-    console.log('close en cour');
-    // this.props.layoutAction('setEnableClickButton',{value:false})
     this.setState({enableClickButton: false});
     if (this.props.enableClickButton && this.state.enableClickButton) {
       this.props.close();
@@ -109,8 +107,6 @@ class HeaderHome extends Component {
     });
   }
   openLeague(val, league, numberElements) {
-    console.log('val');
-    console.log(val);
     if (val) {
       this.openLeagueVal = true;
       return Animated.parallel([
@@ -123,8 +119,6 @@ class HeaderHome extends Component {
         Animated.timing(this.rotateIcon, timing(1, 200)),
       ]).start();
     }
-    console.log('setLeague');
-    console.log(league);
     this.props.historicSearchAction('setLeague', league);
     this.openLeagueVal = false;
     return Animated.parallel([
@@ -296,10 +290,6 @@ class HeaderHome extends Component {
     if (league === undefined) {
       league = this.props.leagueAll;
     }
-    console.log('render  headerHome !~');
-    console.log(league);
-    console.log(this.props.leagueSelected);
-    console.log(sport.typeEvent);
     return (
       <Animated.View
         style={[

@@ -16,17 +16,9 @@ const options = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000};
 async function getPermission() {
   if (Platform.OS === 'ios') {
     var permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-    console.log('permission location');
-    console.log(permission);
-    // var permission = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
-    // if (permission !== 'granted') {
-    //   permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-    // }
   } else {
     var permission = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
   }
-  console.log('permission');
-  console.log(permission);
   if (permission !== 'granted') return false;
   return true;
 }
@@ -63,9 +55,6 @@ async function currentLocation() {
     lat: currentPosition.coords.latitude,
     lng: currentPosition.coords.longitude,
   });
-  console.log('currentPosition');
-  console.log(currentPosition);
-  console.log(geocodeLocation);
   return {
     address: geocodeLocation[0].formattedAddress,
     area: geocodeLocation[0].formattedAddress,

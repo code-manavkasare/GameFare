@@ -56,8 +56,6 @@ export default class HeaderFlow extends Component {
     this.backHandler.remove();
   }
   async close() {
-    console.log('close en cour');
-    // this.props.layoutAction('setEnableClickButton',{value:false})
     this.setState({enableClickButton: false});
     if (this.props.enableClickButton && this.state.enableClickButton) {
       this.props.close();

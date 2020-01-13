@@ -154,7 +154,7 @@ class HomeScreen extends React.Component {
             },
           ]}>
           <TouchableOpacity
-            style={{height: '100%', width: '100%'}}
+            style={styleApp.fullSize}
             onPress={() => this.buttonAddRef.close()}
           />
         </Animated.View>

@@ -40,20 +40,11 @@ class Page0 extends Component {
   }
 
   async componentDidMount() {
-    console.log('page 1 mount');
-    console.log(this.props.step0);
     if (this.props.step0.sport === '') {
       this.setSport(this.props.sports[0]);
     }
   }
   async setSport(data) {
-    console.log('ici spot');
-    console.log({
-      sport: data.value,
-      rule: data.typeEvent[0].rules[0].value,
-      level: data.level.list[0].value,
-      league: data.typeEvent[0].value,
-    });
     await this.props.createEventAction('setStep0', {
       sport: data.value,
       rule: data.typeEvent[0].rules[0].value,
@@ -64,7 +55,6 @@ class Page0 extends Component {
   }
 
   async setLeague(data) {
-    console.log('ici spot');
     await this.props.createEventAction('setStep0', {
       rule: data.rules[0].value,
       league: data.value,
@@ -73,7 +63,6 @@ class Page0 extends Component {
   }
 
   async setRule(data) {
-    console.log('ici spot');
     await this.props.createEventAction('setStep0', {
       rule: data.value,
     });
@@ -81,8 +70,6 @@ class Page0 extends Component {
   }
 
   sports() {
-    console.log('le re render !');
-    console.log(this.props.sports);
     return (
       <View style={{borderColor: colors.off, borderBottomWidth: 1}}>
         <ExpandableCard
@@ -95,7 +82,6 @@ class Page0 extends Component {
     );
   }
   leagues(sport) {
-    console.log('le re renderleagues !');
     return (
       <View style={{borderColor: colors.off, borderBottomWidth: 1}}>
         <ExpandableCard
@@ -124,7 +110,6 @@ class Page0 extends Component {
     );
   }
   async setCoach(val) {
-    console.log('setCoach ' + val);
     if (!val) {
       await this.props.createEventAction('setStep0', {
         coach: val,
@@ -342,8 +327,6 @@ class Page0 extends Component {
     );
   }
   page0(sport, league, rule) {
-    console.log('render page 0');
-    // var rule = sport.typeEvent.filter(league => league.value == this.props.step.league)[0].rules.filter(rule => rule.value == this.props.step0.rule)[0].coachNeeded
     return (
       <View>
         {this.sports()}
@@ -431,19 +414,16 @@ class Page0 extends Component {
     var sport = this.props.sports.filter(
       (sport) => sport.value === this.props.step0.sport,
     )[0];
-    console.log('le sport page 0');
-    console.log(sport.value);
+
     var league = Object.values(sport.typeEvent).filter(
       (item) => item.value === this.props.step0.league,
     )[0];
-    console.log('league');
-    console.log(league.value);
+
     // return null
     var rule = Object.values(league.rules).filter(
       (rule) => rule.value === this.props.step0.rule,
     )[0];
-    console.log('louloulouolou');
-    console.log(rule);
+
     const {dismiss} = this.props.navigation;
     // return null
     return (

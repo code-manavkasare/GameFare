@@ -115,7 +115,7 @@ class LocationSelector extends Component {
         this.setState({results: json.predictions});
       }
     } catch (err) {
-      console.log('errrrrr', err);
+      console.log('error', err);
     }
   }
   async onclickLocation(address) {
@@ -160,19 +160,16 @@ class LocationSelector extends Component {
         this.props.selectLocation({
           address: address.description,
           lat: locationObj.geometry.location.lat,
-          lng: locationObj.geometry.location.lng, 
+          lng: locationObj.geometry.location.lng,
         });
       }
     } catch (err) {
-      console.log('errrrrrr');
-      console.log(err);
+      console.log('error', err);
       this.setState({loader: false});
     }
   }
   async getCurrentLocation() {
     var CurrentLocation = await currentLocation();
-    console.log('currentLocation');
-    console.log(CurrentLocation);
     if (CurrentLocation.response === false) {
       this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
@@ -182,7 +179,6 @@ class LocationSelector extends Component {
         subtitle: 'Please check your settings.',
       });
     }
-    console.log('set lovation back');
     this.props.selectLocation(CurrentLocation);
   }
   buttonSearchAddress() {
@@ -303,7 +299,7 @@ class LocationSelector extends Component {
       <View>
         {this.buttonSearchAddress()}
 
-        {(Object.values(this.state.results).map((result, i) => (
+        {Object.values(this.state.results).map((result, i) => (
           <TouchableOpacity
             key={i}
             activeOpacity={0.8}
@@ -312,8 +308,7 @@ class LocationSelector extends Component {
             }}>
             {this.cardResult(result)}
           </TouchableOpacity>
-        ))
-        )}
+        ))}
       </View>
     );
   }

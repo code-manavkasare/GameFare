@@ -14,7 +14,9 @@ import {messageAction} from '../../../actions/messageActions';
 import firebase from 'react-native-firebase';
 import moment from 'moment';
 import {Col, Row} from 'react-native-easy-grid';
-import {takePicture} from '../../functions/pictures';
+import {takePicture, getPhotoUser, pickLibrary} from '../../functions/pictures';
+import {generateID} from '../../functions/createGroup';
+
 import {sendNewMessage} from '../../functions/message';
 
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
@@ -26,6 +28,7 @@ import colors from '../../style/colors';
 
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
+import ListPhotos from './ListPhotos';
 import NavigationService from '../../../../NavigationService';
 const {height, width} = Dimensions.get('screen');
 
@@ -35,6 +38,8 @@ class InputMessage extends React.Component {
     this.state = {
       inputValue: '',
       images: {},
+      imagesUser: [],
+      showImages: false,
     };
   }
   componentDidMount() {
@@ -43,39 +48,43 @@ class InputMessage extends React.Component {
   blur() {
     this.textInputRef.blur();
   }
-  async sendNewMessage() {
+  async sendNewMessage(user, input, images) {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
-    console.log('send new message', this.props.conversation.objectID);
-    console.log(this.props.user, this.state.inputValue, this.state.images);
-    this.setState({inputValue: '', images: {}});
+
+    await this.setState({inputValue: '', images: {}});
+    if (!this.props.discussion.firstMessageExists)
+      await firebase
+        .database()
+        .ref('discussions/' + this.props.discussion.objectID)
+        .update({firstMessageExists: true});
+
     await sendNewMessage(
-      this.props.conversation.objectID,
+      this.props.discussion.objectID,
       this.props.user,
-      this.state.inputValue,
-      this.state.images,
+      input,
+      images,
     );
 
     return true;
   }
-  async openPicturesView(val) {
-    await this.textInputRef.focus();
-    return this.props.openPicturesView(val, {
-      discussionID: this.props.conversation.objectID,
-      user: this.props.user,
-      images: this.state.images,
-    });
+  async openPicturesView() {
+    if (!this.state.showImages) await this.textInputRef.blur();
+    //   await this.textInputRef.blur();
+
+    if (!this.state.showImages) {
+      const imagesUser = await getPhotoUser();
+      await this.setState({imagesUser: imagesUser});
+    }
+    return this.setState({showImages: !this.state.showImages});
   }
   addImage(image, val) {
-    console.log('this images', this.state.images);
-    console.log(image);
-    if (!val)
+    if (!val) {
+      var images = this.state.images;
+      delete images[image.id];
       return this.setState({
-        images: {
-          ...Object.values(this.state.images).filter(
-            (img) => img.uri !== image.uri,
-          ),
-        },
+        images: images,
       });
+    }
     return this.setState({
       images: {
         ...this.state.images,
@@ -85,7 +94,26 @@ class InputMessage extends React.Component {
   }
   async takePicture() {
     const picture = await takePicture();
-    if (picture) return this.addImage(picture, true);
+    if (picture)
+      return this.addImage(
+        {uri: picture, type: 'image', id: generateID(), uploaded: false},
+        true,
+      );
+  }
+  async selectPicture() {
+    var picture = await pickLibrary();
+    if (picture)
+      return this.addImage(
+        {
+          uri: picture,
+          type: 'image',
+          id: generateID(),
+          uploaded: false,
+          duration: 0,
+        },
+        true,
+      );
+    return true;
   }
   conditionInputOn() {
     if (
@@ -96,10 +124,8 @@ class InputMessage extends React.Component {
     return true;
   }
   renderInput() {
-    console.log('render inoyt', this.props.infoOtherMember);
     return (
       <View style={styles.keyboardContainer}>
-        {/* <View style={{height: 50, backgroundColor: 'blue'}}></View> */}
         <AutoGrowingTextInput
           maxHeight={200}
           // minHeight={35}
@@ -115,8 +141,6 @@ class InputMessage extends React.Component {
           }
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
-          //onFocus={() => this.resetKeyboardView()}
-          // testID={'inputValue'}
         />
 
         {Object.values(this.state.images).length !== 0 ? (
@@ -151,7 +175,7 @@ class InputMessage extends React.Component {
             // backgroundColor: 'red',
           }}>
           <Col
-            size={10}
+            size={12}
             style={styleApp.center2}
             activeOpacity={0.7}
             onPress={() => this.takePicture()}>
@@ -163,18 +187,30 @@ class InputMessage extends React.Component {
             />
           </Col>
           <Col
-            size={10}
+            size={12}
             style={styleApp.center2}
             activeOpacity={0.7}
-            onPress={() => this.openPicturesView(true)}>
+            onPress={() => this.openPicturesView()}>
             <AllIcons
               name="collections"
-              color={colors.title}
+              color={!this.state.showImages ? colors.title : colors.primary}
               type="mat"
               size={23}
             />
           </Col>
-          <Col size={60} style={styleApp.center2}></Col>
+          <Col
+            size={12}
+            style={styleApp.center2}
+            activeOpacity={0.7}
+            onPress={() => this.selectPicture()}>
+            <AllIcons
+              name="dots-menu"
+              color={colors.title}
+              type="moon"
+              size={16}
+            />
+          </Col>
+          <Col size={35} style={styleApp.center2}></Col>
 
           <Col size={20} style={styleApp.center3}>
             <ButtonColor
@@ -195,7 +231,11 @@ class InputMessage extends React.Component {
               }}
               click={() =>
                 this.conditionInputOn() &&
-                this.sendNewMessage(this.props.user, this.state.inputValue)
+                this.sendNewMessage(
+                  this.props.user,
+                  this.state.inputValue,
+                  this.state.images,
+                )
               }
               color={!this.conditionInputOn() ? colors.white : colors.primary}
               style={[
@@ -213,6 +253,16 @@ class InputMessage extends React.Component {
             />
           </Col>
         </Row>
+
+        {this.state.showImages && (
+          <View style={{height: 120, backgroundColor: 'white'}}>
+            <ListPhotos
+              addImage={this.addImage.bind(this)}
+              images={this.state.imagesUser}
+              imagesSelected={this.state.images}
+            />
+          </View>
+        )}
       </View>
     );
   }
