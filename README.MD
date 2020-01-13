@@ -25,24 +25,24 @@ If nvm is not recognised add it to your .zshrc or .bash_profile (dpeending on wh
 
 - For this project we will use node v8 which has better stability so install it using nvm ! https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version:  
 
-    nvm install 8.16.0 (for firebase cloud function)
-    nvm install 12.14.1 (for react-native project)
+        nvm install 8.16.0 (for firebase cloud function)
+        nvm install 12.14.1 (for react-native project)
 
 - Now you should be able to see your node installation, to check it :  
 
-    nvm list  
-    node -v
+        nvm list  
+        node -v
 
 You should see node installation on your machine and node -v tells you which node installation is in use
 
 - Install Automatic Node Versionning (AVN : https://github.com/wbyoung/avn)  
 
-    npm install -g avn avn-nvm avn-n  
-    avn setup
+        npm install -g avn avn-nvm avn-n  
+        avn setup
 
 - Because we now use NVM for managing node package, we need to install yarn WITHOUT linking it a specific node version, and do it globally, to do that :  
 
-    curl -o- -L https://yarnpkg.com/install.sh | bash
+        curl -o- -L https://yarnpkg.com/install.sh | bash
 
 This will allow us to use yarn without a link to a node version and avoid reinstall it for every node version
 
