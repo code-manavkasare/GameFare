@@ -153,37 +153,20 @@ export default class CardContent extends React.Component {
   }
   displayImg(uri, type, local) {
     if (local && type === 'image')
-      return <Image source={{uri}} style={{height: '100%', width: '100%'}} />;
-    if (local) return <View style={{height: '100%', width: '100%'}} />;
+      return <Image source={{uri}} style={styleApp.fullSize} />;
+    if (local) return <View style={styleApp.fullSize} />;
     if (type === 'video')
       return (
         <Video
           // rotateToFullScreen={true}
           url={uri}
           resizeMode={'contain'}
-          style={{height: '100%', width: '100%', backgroundColor: colors.title}}
+          style={{...styleApp.fullSize, backgroundColor: colors.title}}
         />
       );
-    // return <Video source={{uri: uri}}   // Can be a URL or a local file.
-    // ref={(ref) => {
-    //   this.player = ref
-    // }}
-    // muted={true}
-    // paused={true}                                     // Store reference
-    // // onBuffer={this.onBuffer}                // Callback when remote video is buffering
-    // // onError={this.videoError}               // Callback when video cannot be loaded
-    // style={{height: '100%', width: '100%',backgroundColor:colors.title}}
-    // />
-    if (local)
-      return (
-        <Image style={{height: '100%', width: '100%'}} source={{uri: uri}} />
-      );
+    if (local) return <Image style={styleApp.fullSize} source={{uri: uri}} />;
     return (
-      <AsyncImage
-        style={{height: '100%', width: '100%'}}
-        mainImage={uri}
-        imgInitial={uri}
-      />
+      <AsyncImage style={styleApp.fullSize} mainImage={uri} imgInitial={uri} />
     );
   }
   cardContent(image) {
@@ -192,8 +175,6 @@ export default class CardContent extends React.Component {
         view={() => {
           return (
             <Row>
-              {/* {image.type === 'video' && this.viewTopVideo(image.duration)} */}
-
               {this.state.loader && (
                 <View style={styles.loaderView}>
                   <Loader size={20} color={'green'} />
@@ -205,8 +186,7 @@ export default class CardContent extends React.Component {
               ) : !image.uploaded ? (
                 <View
                   style={{
-                    height: 200,
-                    width: 100,
+                    ...styleApp.fullSize,
                     backgroundColor: colors.green,
                   }}
                 />
@@ -216,10 +196,7 @@ export default class CardContent extends React.Component {
             </Row>
           );
         }}
-        click={
-          () => true
-          //this.selectImage(image)
-        }
+        click={() => true}
         color={colors.off}
         style={styles.viewImg}
         onPressColor={colors.off}

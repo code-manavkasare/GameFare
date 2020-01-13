@@ -136,10 +136,7 @@ export default class CardContent extends React.Component {
                   </Row>
                 </View>
               ) : null}
-              <Image
-                source={{uri: uri}}
-                style={{height: '100%', width: '100%'}}
-              />
+              <Image source={{uri: uri}} style={styleApp.fullSize} />
             </Row>
           );
         }}

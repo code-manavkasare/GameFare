@@ -76,7 +76,7 @@ const getEventPublic = async (
   indexEvents.clearCache();
 
   var leagueFilter = ' AND info.league:' + league;
-  if (league === 'all' || league === '') {
+  if (league === 'all') {
     leagueFilter = '';
   }
 

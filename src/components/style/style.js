@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     left: 15,
     height: 50,
     borderRadius: 30,
-    opacity:0.8,
+    opacity: 0.8,
     width: 50,
     zIndex: 20,
     backgroundColor: colors.title,
@@ -446,6 +446,10 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0,
     shadowRadius: 8,
+  },
+  fullSize: {
+    width: '100%',
+    height: '100%',
   },
 });
 
