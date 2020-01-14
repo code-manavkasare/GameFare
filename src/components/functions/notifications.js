@@ -9,24 +9,24 @@ import firebase from 'react-native-firebase'
 async function permissions () {
   try {
     await firebase.messaging().requestPermission();
-    return true
+    return true;
   } catch (err) {
-    return false
+    return false;
   }
 }
 
 async function subscribeToTopics(topics) {
-  var permission = await permissions()
-  if (!permission) return false
+  var permission = await permissions();
+  if (!permission) return false;
   for (var i in topics) {
-    await firebase.messaging().subscribeToTopic(topics[i])
+    await firebase.messaging().subscribeToTopic(topics[i]);
   }
-  return true
+  return true;
 }
 
+async function unsubscribeUserFromTopics(user, topics) {
+  console.log(user);
+  console.log(topics);
+}
 
-
-
-
-  
-module.exports = {subscribeToTopics};
+module.exports = {subscribeToTopics, unsubscribeUserFromTopics};

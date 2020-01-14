@@ -274,6 +274,10 @@ async function joinEvent(
 
   var usersToPush = {};
 
+  // right now we support adding multiple users at once while only the signed in user pays?
+  // no components take advantage of this, only signing up single users at a time,
+  // but if anybody signs up multiple users at any point, be careful of the amountPaid field,
+  // we don't want to pay refunds to people who did not pay
   for (var i in users) {
     var user = {
       ...users[i],
