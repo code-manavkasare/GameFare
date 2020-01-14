@@ -52,11 +52,17 @@ class InputMessage extends React.Component {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
 
     await this.setState({inputValue: '', images: {}});
-    if (!this.props.discussion.firstMessageExists)
+    console.log('send new messages', this.props.discussion);
+    if (!this.props.discussion.firstMessageExists) {
+      console.log(
+        'write firstMessageExists',
+        this.props.discussion.firstMessageExists,
+      );
       await firebase
         .database()
         .ref('discussions/' + this.props.discussion.objectID)
         .update({firstMessageExists: true});
+    }
 
     await sendNewMessage(
       this.props.discussion.objectID,

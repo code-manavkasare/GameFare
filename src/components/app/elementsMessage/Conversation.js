@@ -40,7 +40,7 @@ class MessageTab extends React.Component {
     firebase
       .database()
       .ref('discussions/' + this.props.navigation.getParam('data').objectID)
-      .on('value', function(snap) {
+      .on('value', async function(snap) {
         var discussion = snap.val();
         var messages = discussion.messages;
         if (!messages)
@@ -62,7 +62,16 @@ class MessageTab extends React.Component {
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
         that.setState({messages: messages, loader: false});
+        that.setConversation({
+          objectID: that.props.navigation.getParam('data').objectID,
+          lastMessage: Object.values(messages)[0],
+          lastMessageRead: true,
+        });
       });
+  }
+  setConversation(data) {
+    console.log('setConversation 3', data);
+    this.props.messageAction('setConversation', data);
   }
   async sendPicture(val, discussion, user) {
     if (val == 'pick') {

@@ -7,12 +7,14 @@ import {
   Alert,
   Linking,
   Image,
+  Modal,
 } from 'react-native';
 
 import {connect} from 'react-redux';
 import moment from 'moment';
 import Hyperlink from 'react-native-hyperlink';
 import {Col, Row, Grid} from 'react-native-easy-grid';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 import AsyncImage from '../../layout/image/AsyncImage';
 import styleApp from '../../style/style';
@@ -34,6 +36,7 @@ class CardMessage extends React.Component {
       viewUrl: null,
       text: '',
       url: '',
+      showImage: false,
     };
     this.clickLink.bind(this);
   }
@@ -78,6 +81,9 @@ class CardMessage extends React.Component {
     }
     return openUrl(url);
   }
+  openImage() {
+    this.setState({showImage: true});
+  }
 
   rowDay(props) {
     if (
@@ -112,6 +118,7 @@ class CardMessage extends React.Component {
         <CardImg
           image={image}
           key={i}
+          openImage={this.openImage.bind(this)}
           index={i}
           discussionID={discussionID}
           indexMessage={this.props.index}
@@ -163,7 +170,7 @@ class CardMessage extends React.Component {
               this.props.discussion.objectID,
             )}
 
-            {this.state.viewUrl ? (
+            {this.state.viewUrl && (
               <ButtonColor
                 view={() => {
                   return (
@@ -196,14 +203,37 @@ class CardMessage extends React.Component {
                 style={styles.buttonUrl}
                 onPressColor={colors.off}
               />
-            ) : null}
+            )}
           </Col>
         </Row>
       </View>
     );
   }
   render() {
-    return this.renderMessage(this.props.message);
+    const images = this.props.message.currentMessage.images
+      ? Object.values(this.props.message.currentMessage.images)
+          .filter((image) => image.type === 'image')
+          .reduce(function(result, item) {
+            var image = item;
+            image.url = image.uri;
+            result[item.id] = item;
+            return result;
+          }, {})
+      : [];
+    console.log('images message', images);
+    console.log(this.props.message.currentMessage);
+    return (
+      <View>
+        {this.renderMessage(this.props.message)}
+        <Modal visible={this.state.showImage} transparent={true}>
+          <ImageViewer
+            enableSwipeDown={true}
+            imageUrls={Object.values(images)}
+            onSwipeDown={() => this.setState({showImage: false})}
+          />
+        </Modal>
+      </View>
+    );
   }
 }
 

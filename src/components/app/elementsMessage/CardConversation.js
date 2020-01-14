@@ -40,12 +40,20 @@ class CardConversation extends React.Component {
     lastMessage = lastMessage.val();
 
     if (!lastMessage) lastMessage = [{text: 'Write the first message'}];
+    else lastMessage = Object.values(lastMessage)[0];
+
     await this.props.messageAction('setConversation', {
       ...this.props.discussion,
       lastMessage: lastMessage,
-      lastMessageRead: this.checkLastMessageRead(),
+      lastMessageRead: !this.props.conversations[this.props.discussion.objectID]
+        ? false
+        : lastMessage.text ===
+          this.props.conversations[this.props.discussion.objectID].lastMessage
+            .text
+        ? true
+        : false,
     });
-    return this.setState({lastMessage: Object.values(lastMessage)[0]});
+    return this.setState({lastMessage: lastMessage});
   }
 
   imageCard(conversation) {
@@ -100,18 +108,21 @@ class CardConversation extends React.Component {
     );
   }
   lastMessage() {
-    if (!this.state.lastMessage)
-      return <View style={styles.placeholderLastMessage} />;
-
+    const discussion = this.props.conversations[this.props.discussion.objectID];
+    // return null;
+    if (!discussion) return <View style={styles.placeholderLastMessage} />;
+    console.log('discussion.lastMessage.text', discussion.lastMessage.text);
     return (
       <Text
         style={[
-          this.checkLastMessageRead() ? styleApp.input : styleApp.smallText,
+          !this.checkLastMessageRead() ? styleApp.input : styleApp.smallText,
           {fontSize: 13, marginTop: 2, color: colors.title},
         ]}>
-        {this.state.lastMessage.text === '' && this.state.lastMessage.images
-          ? Object.values(this.state.lastMessage.images).length + ' file sent'
-          : this.state.lastMessage.text}
+        {discussion.lastMessage.text === '' && discussion.lastMessage.images
+          ? Object.values(discussion.lastMessage.images).length + ' file sent'
+          : !discussion.lastMessage.text
+          ? 'Send the first message.'
+          : discussion.lastMessage.text}
       </Text>
     );
   }
@@ -121,11 +132,8 @@ class CardConversation extends React.Component {
       this.props.conversations[this.props.discussion.objectID],
     );
     if (!this.props.conversations[this.props.discussion.objectID]) return false;
-    else if (
-      !this.props.conversations[this.props.discussion.objectID].lastMessageRead
-    )
-      return true;
-    return false;
+    return this.props.conversations[this.props.discussion.objectID]
+      .lastMessageRead;
   }
 
   cardConversation(conversation, i) {
@@ -145,7 +153,7 @@ class CardConversation extends React.Component {
                 {this.lastMessage()}
               </Col>
               <Col size={5} style={styleApp.center2}>
-                {this.checkLastMessageRead() && (
+                {!this.checkLastMessageRead() && (
                   <View style={styles.dotUnread} />
                 )}
               </Col>
@@ -156,6 +164,7 @@ class CardConversation extends React.Component {
           this.props.messageAction('setConversation', {
             ...this.props.discussion,
             lastMessageRead: true,
+            lastMessage: this.state.lastMessage,
           });
           NavigationService.push('Conversation', {
             data: conversation,
