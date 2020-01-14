@@ -35,6 +35,12 @@ class MessageTab extends React.Component {
   componentDidMount() {
     this.loadMessages();
   }
+  componentWillUnmount() {
+    firebase
+      .database()
+      .ref('discussions/' + this.props.navigation.getParam('data').objectID)
+      .off();
+  }
   async loadMessages() {
     const that = this;
     firebase
