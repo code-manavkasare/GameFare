@@ -279,6 +279,7 @@ async function joinEvent(
       ...users[i],
       coach: coach,
       status: 'confirmed',
+      amountPaid: data.price.joiningFee,
       date: now,
     };
     usersToPush = {
