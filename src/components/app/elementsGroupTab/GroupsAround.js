@@ -95,7 +95,12 @@ class ListEvents extends React.Component {
   }
   listGroups(groups) {
     return Object.values(groups).map((group, i) => (
-      <CardGroup key={i} data={group} allAccess={false} />
+      <CardGroup
+        key={i}
+        data={group}
+        userConnected={this.props.userConnected}
+        allAccess={false}
+      />
     ));
   }
   ListEvent() {
@@ -163,6 +168,7 @@ class ListEvents extends React.Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    infoUser:state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     sportSelected: state.historicSearch.sport,
     //leagueSelected:state.historicSearch.league,

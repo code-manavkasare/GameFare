@@ -1,16 +1,5 @@
 import React, {Component, PureComponent} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  Animated,
-  Easing,
-  Image,
-  ScrollView,
-  View,
-} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
 import AsyncImage from '../../layout/image/AsyncImage';
@@ -19,16 +8,11 @@ import {getZone} from '../../functions/location';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import colors from '../../style/colors';
-import Icon from '../../layout/icons/icons';
-import AllIcons from '../../layout/icons/AllIcons';
 import PlacelHolder from '../../placeHolders/CardEvent.js';
 import ButtonColor from '../../layout/Views/Button';
 import styleApp from '../../style/style';
-import {indexEvents} from '../../database/algolia';
-import {timing, native} from '../../animations/animations';
 
-var {height, width} = Dimensions.get('screen');
-import {date, time, timeZone} from '../../layout/date/date';
+import {searchDiscussion, createDiscussion} from '../../functions/message';
 
 class CardEvent extends React.Component {
   constructor(props) {
@@ -38,16 +22,9 @@ class CardEvent extends React.Component {
       loader: false,
     };
   }
-  async componentDidMount() {
-    // if (this.props.loadData) {
-    //   indexEvents.clearCache()
-    //   var group = await indexEvents.getObject(this.props.item.eventID)
-    //   return this.setState({loader:false,item:group})
-    // }
-    // return this.setState({loader:false})
-  }
+  async componentDidMount() {}
   entreeFee(entreeFee) {
-    if (entreeFee == 0) return 'Free entry';
+    if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
   userAlreadyJoined(data) {
@@ -68,15 +45,36 @@ class CardEvent extends React.Component {
       !this.userAlreadyJoined(data)
     )
       return NavigationService.navigate('Alert', {
-        close: true,
-        textButton: 'Got it!',
+        textButton: 'Request to join',
         title: 'This is a private group.',
         subtitle: 'You need an invite to join.',
+        onGoBack: () => this.requestJoin(data),
       });
     return NavigationService.push('Group', {
       objectID: data.objectID,
       pageFrom: this.props.pageFrom,
     });
+  }
+  async requestJoin(data) {
+    if (!this.props.userConnected) return NavigationService.navigate('SignIn');
+    var search = await searchDiscussion([
+      this.props.userID,
+      data.info.organizer,
+    ]);
+    if (!search) search = await createDiscussion(
+      {
+        0: {
+          id: user.id,
+          info: user.info,
+        },
+        1: {
+          id: this.props.userID,
+          info: this.props.infoUser,
+        },
+      },
+      'General',
+    )
+    console.log('search dsciss', search);
   }
   card(color, data) {
     if (this.state.loader)
@@ -88,7 +86,7 @@ class CardEvent extends React.Component {
     return this.displayCard(color, data);
   }
   numberMember(data) {
-    if (data.members != undefined) return Object.values(data.members).length;
+    if (data.members) return Object.values(data.members).length;
     return 0;
   }
   cardAttendee(member, i) {
@@ -100,11 +98,7 @@ class CardEvent extends React.Component {
             ...styleApp.roundView,
             left: i * 15,
           }}>
-          <Text
-            style={[
-              styleApp.text,
-              {fontSize: 10, fontFamily: 'OpenSans-Bold'},
-            ]}>
+          <Text style={[styleApp.textBold, {fontSize: 10}]}>
             {member.info.firstname[0] + member.info.lastname[0]}
           </Text>
         </View>
@@ -117,7 +111,7 @@ class CardEvent extends React.Component {
         }}
         key={i}>
         <AsyncImage
-          style={{width: '100%', height: '100%'}}
+          style={styleApp.fullSize}
           mainImage={member.info.picture}
           imgInitial={member.info.picture}
         />
@@ -126,30 +120,26 @@ class CardEvent extends React.Component {
   }
   rowMembers(data) {
     return (
-      <Row style={{marginTop: 0, height: 50}}>
+      <Row style={{height: 50}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
           <View
             style={[
               styleApp.viewNumber,
               styleApp.center,
-              {backgroundColor: colors.primary2, borderWidth: 0},
+              {backgroundColor: colors.primary2},
             ]}>
-            <Text
-              style={[
-                styleApp.text,
-                {fontSize: 10, color: 'white', fontFamily: 'OpenSans-Bold'},
-              ]}>
+            <Text style={[styleApp.textBold, styles.numberAttendee]}>
               {this.numberMember(data)}
             </Text>
           </View>
         </Col>
-        {data.members != undefined ? (
+        {data.members && (
           <Col size={30} style={[{paddingRight: 10}, styleApp.center2]}>
             {Object.values(data.members)
               .slice(0, 3)
               .map((member, i) => this.cardAttendee(member, i))}
           </Col>
-        ) : null}
+        )}
         <Col style={styleApp.center2} size={55}>
           <Text style={[styleApp.input, {fontSize: 12}]}>Members</Text>
         </Col>
@@ -161,43 +151,23 @@ class CardEvent extends React.Component {
       <ButtonColor
         view={() => {
           return (
-            <FadeInView duration={300} style={{width: '100%', height: '100%'}}>
+            <FadeInView duration={300} style={styleApp.fullSize}>
               <Row style={{height: 115}}>
                 <AsyncImage
-                  style={{
-                    width: '100%',
-                    height: 115,
-                    borderTopLeftRadius: 7,
-                    borderTopRightRadius: 7,
-                  }}
+                  style={styles.profilePicture}
                   mainImage={data.pictures[0]}
                   imgInitial={data.pictures[0]}
                 />
               </Row>
-              <View style={{paddingLeft: 10, paddingRight: 10, marginTop: 5}}>
-                <Text
-                  style={[
-                    styleApp.input,
-                    {fontSize: 15, minHeight: 20, marginTop: 5},
-                  ]}>
+              <View style={styles.mainView}>
+                <Text style={[styleApp.input, styles.title]}>
                   {data.info.name}
                 </Text>
-                <Text
-                  style={[
-                    styleApp.subtitle,
-                    {minHeight: 20, marginTop: 5, fontSize: 11},
-                  ]}>
+                <Text style={[styleApp.subtitle, styles.subtitle]}>
                   {getZone(data.location.address)}
                 </Text>
                 {this.rowMembers(data)}
               </View>
-
-              {/* <Text style={[styleApp.input,{color:colors.primary2,fontSize:12}]}>{date(data.date.start,'ddd, Do MMM')} <Text style={{color:colors.title,fontSize:10}}>•</Text> {time(data.date.start,'h:mm a')}</Text>
-           
-            <Text style={[styles.subtitle,{marginTop:5,minHeight:35}]}>{data.location.area}</Text>
-        
-  
-            {this.rowMembers(data)} */}
             </FadeInView>
           );
         }}
@@ -213,6 +183,27 @@ class CardEvent extends React.Component {
     return this.card(this.props.data);
   }
 }
+
+const styles = StyleSheet.create({
+  profilePicture: {
+    width: '100%',
+    height: 115,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+  },
+  mainView: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginTop: 5,
+  },
+  title: {
+    fontSize: 15,
+    minHeight: 20,
+    marginTop: 5,
+  },
+  subtitle: {minHeight: 20, marginTop: 5, fontSize: 11},
+  numberAttendee: {fontSize: 10, color: 'white'},
+});
 
 const mapStateToProps = (state) => {
   return {
