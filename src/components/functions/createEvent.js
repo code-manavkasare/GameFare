@@ -146,18 +146,19 @@ async function checkUserAttendingEvent(userID, data) {
     query: data.objectID,
     filters: filterAttendees,
   });
-  if (hits.length != 0 && userID == data.info.organizer)
+  if (hits.length !== 0 && userID === data.info.organizer) {
     return {
       response: false,
       message:
         'You are the organizer of this event. You cannot attend your own event.',
     };
-  else if (hits.length != 0)
+  } else if (hits.length !== 0) {
     return {
       response: false,
       message:
         'You are already attending this event. You cannot join it again.',
     };
+  }
   return {response: true};
 }
 
@@ -274,16 +275,12 @@ async function joinEvent(
 
   var usersToPush = {};
 
-  // right now we support adding multiple users at once while only the signed in user pays?
-  // no components take advantage of this, only signing up single users at a time,
-  // but if anybody signs up multiple users at any point, be careful of the amountPaid field,
-  // we don't want to pay refunds to people who did not pay
   for (var i in users) {
     var user = {
       ...users[i],
       coach: coach,
       status: 'confirmed',
-      amountPaid: data.price.joiningFee,
+      amountPaid: coach ? 0 : data.price.joiningFee,
       date: now,
     };
     usersToPush = {
