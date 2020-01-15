@@ -191,8 +191,11 @@ class EventPage extends React.Component {
         user={user}
         infoUser={this.props.infoUser}
         userConnected={this.props.userConnected}
+        objectID={data.objectID}
         key={i}
         userID={this.props.userID}
+        type="event"
+        admin={data.info.organizer === this.props.userID}
       />
     );
   }

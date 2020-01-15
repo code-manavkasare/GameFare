@@ -3,6 +3,7 @@ import {Platform, StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
 import AsyncImage from '../../layout/image/AsyncImage';
+import firebase from 'react-native-firebase';
 import NavigationService from '../../../../NavigationService';
 import {getZone} from '../../functions/location';
 
@@ -13,6 +14,7 @@ import ButtonColor from '../../layout/Views/Button';
 import styleApp from '../../style/style';
 
 import {searchDiscussion, createDiscussion} from '../../functions/message';
+import {subscribeUserToGroup} from '../../functions/createGroup';
 
 class CardEvent extends React.Component {
   constructor(props) {
@@ -30,9 +32,8 @@ class CardEvent extends React.Component {
   userAlreadyJoined(data) {
     if (!data.members) return false;
     if (
-      Object.values(data.members).filter(
-        (user) => user.userID === this.props.userID,
-      ).length === 0
+      this.members(data).filter((user) => user.userID === this.props.userID)
+        .length === 0
     )
       return false;
     return true;
@@ -56,25 +57,49 @@ class CardEvent extends React.Component {
     });
   }
   async requestJoin(data) {
-    if (!this.props.userConnected) return NavigationService.navigate('SignIn');
-    var search = await searchDiscussion([
+    if (!this.props.userConnected) {
+      await NavigationService.goBack();
+      return NavigationService.navigate('SignIn');
+    }
+
+    var tokenNotification = await firebase.messaging().getToken();
+    if (!tokenNotification) tokenNotification = '';
+    const user = await subscribeUserToGroup(
+      data.objectID,
+      this.props.userID,
+      this.props.infoUser,
+      'pending',
+      tokenNotification,
+    );
+    await NavigationService.goBack();
+    return NavigationService.navigate('Alert', {
+      title: 'Congrats! You have joined the waitlist for ' + data.info.name,
+      subtitle: 'You can now send a personal message to the organizer.',
+      textButton: 'Chat with ' + data.organizer.info.firstname,
+      onGoBack: () => this.chatWithOrganizer(data),
+    });
+  }
+  async chatWithOrganizer(data) {
+    var discussion = await searchDiscussion([
       this.props.userID,
       data.info.organizer,
     ]);
-    if (!search) search = await createDiscussion(
-      {
-        0: {
-          id: user.id,
-          info: user.info,
+    if (!discussion)
+      discussion = await createDiscussion(
+        {
+          0: data.organizer,
+          1: {
+            id: this.props.userID,
+            info: this.props.infoUser,
+          },
         },
-        1: {
-          id: this.props.userID,
-          info: this.props.infoUser,
-        },
-      },
-      'General',
-    )
-    console.log('search dsciss', search);
+        'General',
+      );
+    console.log('search dsciss', discussion);
+    await NavigationService.goBack();
+    return NavigationService.push('Conversation', {
+      data: discussion,
+    });
   }
   card(color, data) {
     if (this.state.loader)
@@ -85,8 +110,16 @@ class CardEvent extends React.Component {
       );
     return this.displayCard(color, data);
   }
+  members(data) {
+    if (!data.members) return [];
+    else if (data.info.organizer === this.props.userID)
+      return Object.values(data.members);
+    return Object.values(data.members).filter(
+      (member) => member.status === 'confirmed',
+    );
+  }
   numberMember(data) {
-    if (data.members) return Object.values(data.members).length;
+    if (data.members) return this.members(data).length;
     return 0;
   }
   cardAttendee(member, i) {
@@ -133,9 +166,9 @@ class CardEvent extends React.Component {
             </Text>
           </View>
         </Col>
-        {data.members && (
+        {this.members(data).length !== 0 && (
           <Col size={30} style={[{paddingRight: 10}, styleApp.center2]}>
-            {Object.values(data.members)
+            {this.members(data)
               .slice(0, 3)
               .map((member, i) => this.cardAttendee(member, i))}
           </Col>

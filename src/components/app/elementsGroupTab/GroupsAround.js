@@ -99,6 +99,8 @@ class ListEvents extends React.Component {
         key={i}
         data={group}
         userConnected={this.props.userConnected}
+        userID={this.props.userID}
+        infoUser={this.props.infoUser}
         allAccess={false}
       />
     ));
