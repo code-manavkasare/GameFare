@@ -1,5 +1,8 @@
 import firebase from 'react-native-firebase';
 
+import {unsubscribeUserFromTopics} from '../functions/notifications';
+
+
 async function editEvent(updatedEvent, callback = () => {}) {
     // check to make sure edited event has valid structure?
     await firebase
@@ -19,7 +22,13 @@ async function removePlayerFromEvent(player, event) {
             console.log(err.message);
         });
     }
-    // remove player from event
+    // unsubscribe user from notifications
+    try {
+        await unsubscribeUserFromTopics(player.id, [event.objectID]);
+    } catch (error) {
+        console.log(error);
+    }
+    // remove player from database event
     for (var i in event.allAttendees) {
         if (event.allAttendees[i] === player.id) {
             delete event.allAttendees[i];
@@ -30,7 +39,7 @@ async function removePlayerFromEvent(player, event) {
     try {
         await editEvent(event);
     } catch (error) {
-        console.log('Error removing player from database: ' + error.message);
+        console.log('Error removing player from database: ' + error);
     }
 }
 

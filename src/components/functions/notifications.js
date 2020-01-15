@@ -4,7 +4,9 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
+import axios from 'axios';
+
 
 async function permissions () {
   try {
@@ -24,9 +26,29 @@ async function subscribeToTopics(topics) {
   return true;
 }
 
-async function unsubscribeUserFromTopics(user, topics) {
-  console.log(user);
-  console.log(topics);
+async function updateUserFCMToken(userID, token) {
+  console.log(userID);
+  await firebase
+  .database()
+  .ref('users/' + userID + '/')
+  .update({FCMToken: token});
 }
 
-module.exports = {subscribeToTopics, unsubscribeUserFromTopics};
+async function unsubscribeUserFromTopics(userID, topics) {
+    try {
+      var url = 'https://us-central1-getplayd.cloudfunctions.net/unsubscribeUserFromTopics';
+      const promiseAxios = await axios.get(url, {
+        params: {
+          userID: userID,
+          topic: topics,
+        },
+      });
+      if (!promiseAxios.data.response) {
+        console.log(promiseAxios.data.message);
+      }
+    } catch (err) {
+      throw err;
+    }
+}
+
+module.exports = {subscribeToTopics, unsubscribeUserFromTopics, updateUserFCMToken};
