@@ -56,6 +56,7 @@ class MessageTab extends React.Component {
       query: '',
       filters: 'allMembers:' + userID,
     });
+    console.log('personal discussion', hits);
 
     // search for groups discussions
     var myGroups = await getMyGroups(userID, '');
@@ -74,6 +75,12 @@ class MessageTab extends React.Component {
       eventsDiscussions,
     );
     getDiscussionsEvent = getDiscussionsEvent.results;
+    console.log(
+      'discussion',
+      union(results, hits, getDiscussionsEvent).filter(
+        (discussion) => discussion.firstMessageExists,
+      ),
+    );
 
     this.setState({
       loader: false,
@@ -104,7 +111,7 @@ class MessageTab extends React.Component {
             />
           </View>
           <Text style={[styleApp.text, {marginBottom: 30}]}>
-          Sign in to see or start a conversation.
+            Sign in to see or start a conversation.
           </Text>
 
           <Button

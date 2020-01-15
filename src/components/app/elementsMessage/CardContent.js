@@ -72,12 +72,7 @@ export default class CardContent extends React.Component {
           return (
             <Row>
               {this.conditionSelected(uri + '/' + filename) && (
-                <FadeInView
-                  duration={300}
-                  style={[
-                    styles.voile,
-                    {opacity: 1, backgroundColor: 'transparent'},
-                  ]}>
+                <FadeInView duration={300} style={styles.voile1}>
                   <ButtonColor
                     view={() => {
                       return (
@@ -94,10 +89,10 @@ export default class CardContent extends React.Component {
                     style={styles.buttonSelected}
                     onPressColor={colors.off}
                   />
-                  <View style={styles.voile}></View>
+                  <View style={styles.voile} />
                 </FadeInView>
               )}
-              {type === 'video' ? (
+              {type === 'video' && (
                 <View style={{...styles.viewRowVideo, width: this.props.width}}>
                   <Row style={styles.rowInfoView}>
                     <Col style={styleApp.center2}>
@@ -119,13 +114,12 @@ export default class CardContent extends React.Component {
                     </Col>
                   </Row>
                 </View>
-              ) : null}
+              )}
               <Image source={{uri: uri}} style={styleApp.fullSize} />
             </Row>
           );
         }}
         click={() => {
-          // if (type === 'video') resizeVideo(uri);
           this.selectImage(
             uri + '/' + filename,
             type,
@@ -160,6 +154,15 @@ const styles = StyleSheet.create({
     zIndex: 30,
     borderColor: colors.grey,
     position: 'absolute',
+  },
+  voile1: {
+    height: '100%',
+    width: '100%',
+    zIndex: 30,
+    borderColor: colors.grey,
+    position: 'absolute',
+    opacity: 1,
+    backgroundColor: 'transparent',
   },
   buttonSelected: {
     height: 25,
