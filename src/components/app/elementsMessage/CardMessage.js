@@ -44,14 +44,14 @@ class CardMessage extends React.Component {
     this.urlify(this.props.message.currentMessage.text);
   }
   urlify(text) {
-    var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+    const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     const that = this;
     return text.replace(urlRegex, function(url, b, c) {
       return that.getDataUrl(url);
     });
   }
   async getDataUrl(url) {
-    var params = await getParams(url);
+    const params = await getParams(url);
     this.setState({viewUrl: params, url: url});
     // var doc = Jsoup.connect('http://www.google.com').get();
     // Linking.openURL(url);
@@ -71,7 +71,7 @@ class CardMessage extends React.Component {
     // return true;
     if (!viewUrl) return openUrl(url);
     if (!viewUrl.id) return openUrl(url);
-    var params = await getParams(url);
+    const params = await getParams(url);
 
     if (!params) return Linking.openURL(url);
     if (params.action === 'openEventPage') {
@@ -214,7 +214,7 @@ class CardMessage extends React.Component {
       ? Object.values(this.props.message.currentMessage.images)
           .filter((image) => image.type === 'image')
           .reduce(function(result, item) {
-            var image = item;
+            let image = item;
             image.url = image.uri;
             result[item.id] = item;
             return result;

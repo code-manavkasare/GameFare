@@ -1,21 +1,14 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-  Keyboard,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {messageAction} from '../../../actions/messageActions';
 import firebase from 'react-native-firebase';
 import moment from 'moment';
-import Loader from '../../layout/loaders/Loader';
 import AsyncImage from '../../layout/image/AsyncImage';
 import Conversation2 from './Conversation2';
 
 import {pickLibrary, takePicture} from '../../functions/pictures';
+import {generateID} from '../../functions/createEvent';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import styleApp from '../../style/style';
@@ -47,8 +40,8 @@ class MessageTab extends React.Component {
       .database()
       .ref('discussions/' + this.props.navigation.getParam('data').objectID)
       .on('value', async function(snap) {
-        var discussion = snap.val();
-        var messages = discussion.messages;
+        const discussion = snap.val();
+        let messages = discussion.messages;
         if (!messages)
           messages = {
             0: {
@@ -80,17 +73,14 @@ class MessageTab extends React.Component {
     this.props.messageAction('setConversation', data);
   }
   async sendPicture(val, discussion, user) {
-    if (val == 'pick') {
+    if (val === 'pick') {
       var localPicture = await pickLibrary();
     } else {
       var localPicture = await takePicture();
     }
     if (localPicture) {
       this.sendNewMessage(discussion, {
-        _id:
-          Math.random()
-            .toString(36)
-            .substring(2) + Date.now().toString(36),
+        _id: generateID(),
         user: user,
         text: '',
         image: localPicture,
