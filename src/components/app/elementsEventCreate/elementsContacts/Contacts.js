@@ -3,17 +3,13 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  Image,
   TextInput,
   Keyboard,
   Dimensions,
-  Clipboard,
   View,
-  ScrollView,
   Animated,
 } from 'react-native';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import Permissions from 'react-native-permissions';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -25,7 +21,6 @@ import colors from '../../../style/colors';
 import {date} from '../../../layout/date/date';
 import AllIcons from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
-import BackButton from '../../../layout/buttons/BackButton';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import ListContacts from './ListContacts';
@@ -206,10 +201,7 @@ export default class ContactsComponent extends Component {
         ),
     });
   }
-  /*
-    
-    
-    */
+
   searchBar() {
     return (
       <ButtonColor
@@ -228,7 +220,7 @@ export default class ContactsComponent extends Component {
                 <TextInput
                   style={styleApp.input}
                   placeholder={'Search for contact...'}
-                  returnKeyType={'search'}
+                  returnKeyType={'done'}
                   blurOnSubmit={true}
                   ref={(input) => {
                     this.searchRef = input;
@@ -318,7 +310,6 @@ export default class ContactsComponent extends Component {
                     style={styles.input}
                     placeholder={'Full contact name'}
                     returnKeyType={'done'}
-                    // keyboardType={this.props.keyboardType}
                     blurOnSubmit={true}
                     underlineColorAndroid="rgba(0,0,0,0)"
                     autoCorrect={true}
@@ -392,7 +383,6 @@ export default class ContactsComponent extends Component {
 
     branch
       .createBranchUniversalObject('canonicalIdentifier', {
-        // contentTitle: description,
         contentDescription: description,
         title: infoEvent.info.name,
         contentMetadata: {
@@ -428,9 +418,6 @@ export default class ContactsComponent extends Component {
   }
   rowShare() {
     return (
-      // <Animated.View style={{height:50,borderBottomWidth:0.3,backgroundColor:'white',borderColor:colors.borderColor,transform:[{translateY:this.translateYShare}]}}>
-
-      // </Animated.View>
       <ButtonColor
         view={() => {
           return (
@@ -487,7 +474,6 @@ export default class ContactsComponent extends Component {
     let branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {
-        // contentTitle: description,
         contentDescription: description,
         title: infoEvent.info.name,
         contentMetadata: {
@@ -564,14 +550,8 @@ export default class ContactsComponent extends Component {
           icon1={this.icon1Header()}
           icon2={this.icon2Header()}
           text2="Skip"
-          // clickButton2={() => this.props.navigation.navigate(this.props.navigation.getParam('pageTo'),{objectID:this.props.navigation.getParam('objectID'),pageFrom:this.pageFromNextPage()})}
           clickButton2={() => dismiss()}
           clickButton1={() => dismiss()}
-          // clickButton1={() =>
-          //   this.props.navigation.navigate(
-          //     this.props.navigation.getParam('pageFrom'),
-          //   )
-          // }
         />
 
         <View style={{marginTop: sizes.heightHeaderHome}}>
