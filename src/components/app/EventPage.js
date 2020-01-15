@@ -855,14 +855,13 @@ class EventPage extends React.Component {
   }
   async removePlayer(player, data) {
     // refund entree fee paid
-    if (data.attendees[player.id].amountPaid !== undefined) {
-      //if (data.attendees[player.id].amountPaid !== 0) {
-        let refundResult = await refundPlayer(player, data.attendees[player.id].amountPaid);
-        if (!refundResult.response) {
-          console.log('Could not refund player! Aborting removal. message: ' + refundResult.message);
-          return;
-        }
-      //}
+    let amountPaid = data.attendees[player.id].amountPaid;
+    if (amountPaid !== undefined && amountPaid !== 0) {
+      let refundResult = await refundPlayer(player, amountPaid);
+      if (!refundResult.response) {
+        console.log('Could not refund player! Aborting removal. message: ' + refundResult.message);
+        return;
+      }
     }
     // remove player from event on database and locally
     let index;

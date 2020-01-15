@@ -7,16 +7,30 @@ async function editEvent(updatedEvent, callback = () => {}) {
     .ref('events/' + updatedEvent.objectID + '/')
     .update(updatedEvent)
     .then(() => callback)
-    .catch((error) => {throw error;});
+    .catch(err => {throw err;});
 }
 
 async function refundPlayer(player, amount, callback = () => {}) {
-    console.log('refunding player');
-    console.log(player);
-    console.log('amount');
-    console.log(amount);
-    return {response: true};
-    // await (db.ref('users/' + query.userID + '/wallet/').update({'totalWallet':0}))  
+    let walletAfterRefund;
+    await firebase
+    .database()
+    .ref('users/' + player.id + '/wallet/totalWallet')
+    .once('value')
+    .then(snapshot => {
+        if (!snapshot.exists()) {
+            throw Error('Could not access value of ' + player.id + '/wallet/totalWallet');
+        }
+        walletAfterRefund = snapshot.val() + amount;
+    })
+    .catch(err => {throw err;});
+
+    // this update triggers no cloud functions
+    await firebase
+    .database()
+    .ref('users/' + player.id + '/wallet/')
+    .update({'totalWallet':walletAfterRefund})
+    .then()
+    .catch(err => {throw err;});
 }
 
 module.exports = {editEvent, refundPlayer};
