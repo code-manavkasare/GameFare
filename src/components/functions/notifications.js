@@ -40,7 +40,7 @@ async function unsubscribeUserFromTopics(userID, topics) {
       const promiseAxios = await axios.get(url, {
         params: {
           userID: userID,
-          topic: topics,
+          topics: topics,
         },
       });
       if (!promiseAxios.data.response) {
