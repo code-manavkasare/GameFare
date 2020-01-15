@@ -10,6 +10,30 @@ async function editEvent(updatedEvent, callback = () => {}) {
     .catch(err => {throw err;});
 }
 
+async function removePlayerFromEvent(player, event) {
+    // refund entree fee paid
+    let amountPaid = event.attendees[player.id].amountPaid;
+    if (amountPaid !== undefined && amountPaid !== 0) {
+        await refundPlayer(player, amountPaid)
+        .catch(err => {
+            console.log(err.message);
+        });
+    }
+    // remove player from event
+    for (var i in event.allAttendees) {
+        if (event.allAttendees[i] === player.id) {
+            delete event.allAttendees[i];
+            break;
+        }
+    }
+    delete event.attendees[player.id];
+    try {
+        await editEvent(event);
+    } catch (error) {
+        console.log('Error removing player from database: ' + error.message);
+    }
+}
+
 async function refundPlayer(player, amount, callback = () => {}) {
     let walletAfterRefund;
     await firebase
@@ -18,7 +42,7 @@ async function refundPlayer(player, amount, callback = () => {}) {
     .once('value')
     .then(snapshot => {
         if (!snapshot.exists()) {
-            throw Error('Could not access value of ' + player.id + '/wallet/totalWallet');
+            throw 'Could not access value of ' + player.id + '/wallet/totalWallet';
         }
         walletAfterRefund = snapshot.val() + amount;
     })
@@ -33,4 +57,4 @@ async function refundPlayer(player, amount, callback = () => {}) {
     .catch(err => {throw err;});
 }
 
-module.exports = {editEvent, refundPlayer};
+module.exports = {editEvent, removePlayerFromEvent};

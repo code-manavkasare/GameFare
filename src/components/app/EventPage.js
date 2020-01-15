@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
-import {editEvent, refundPlayer} from '../functions/editEvent';
+import {editEvent, removePlayerFromEvent} from '../functions/editEvent';
 
 
 import RNCalendarEvents from 'react-native-calendar-events';
@@ -854,29 +854,16 @@ class EventPage extends React.Component {
     });
   }
   async removePlayer(player, data) {
-    // refund entree fee paid
-    let amountPaid = data.attendees[player.id].amountPaid;
-    if (amountPaid !== undefined && amountPaid !== 0) {
-      let refundResult = await refundPlayer(player, amountPaid);
-      if (!refundResult.response) {
-        console.log('Could not refund player! Aborting removal. message: ' + refundResult.message);
-        return;
+    let newData = {...data};
+    await removePlayerFromEvent(player, newData).catch(err => {console.log(err.message);});
+    for (var i in newData.allAttendees) {
+      if (newData.allAttendees[i] === player.id) {
+        delete newData.allAttendees[i];
+        break;
       }
     }
-    // remove player from event on database and locally
-    let index;
-    for (index in data.allAttendees) {
-      if (data.allAttendees[index] === player.id) {
-        delete data.allAttendees[index];
-      }
-    }
-    delete data.attendees[player.id];
-    try {
-      await editEvent(data);
-    } catch (error) {
-      console.log('Error removing player from database: ' + error);
-    }
-    await this.props.eventsAction('setAllEvents', {[data.objectID]: data});
+    delete newData.attendees[player.id];
+    await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
   }
   async refresh() {
     await this.setState({loader: true});
