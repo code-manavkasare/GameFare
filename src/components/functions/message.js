@@ -5,7 +5,8 @@ import {indexDiscussions} from '../database/algolia';
 function discussionObj(members, nameDiscussion) {
   return {
     title: nameDiscussion,
-    allMembers: [members[0].id, members[1].id],
+    allMembers: members.map((member) => member.id),
+    numberMembers: members.length,
     members: members,
     messages: {},
     type: 'users',
@@ -14,6 +15,8 @@ function discussionObj(members, nameDiscussion) {
 
 async function createDiscussion(members, nameDiscussion) {
   var newDiscussion = discussionObj(members, nameDiscussion);
+  console.log('newDiscussion', newDiscussion);
+  // return false;
   const {key} = await firebase
     .database()
     .ref('discussions/')

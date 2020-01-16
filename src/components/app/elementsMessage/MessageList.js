@@ -128,10 +128,12 @@ class MessageTab extends React.Component {
       <View style={{paddingTop: 5, minHeight: height / 1.5}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
-          {/* <Text style={[styleApp.subtitle,{marginTop:5}]}>You have {this.state.unreadMessages} unread messages.</Text> */}
         </View>
         <View
-          style={[styleApp.divider2, {marginLeft: 20, width: width - 40}]}
+          style={[
+            styleApp.divider2,
+            {marginLeft: 20, width: width - 40, marginTop: 0},
+          ]}
         />
         <View>
           {this.state.loader ? (
@@ -168,20 +170,25 @@ class MessageTab extends React.Component {
     this.listEventsRef.setLocation(data);
   }
   render() {
+    const {navigate} = this.props.navigation;
     return (
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={this.props.userConnected ? 'Inbox' : null}
           inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
+          initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
-          typeIcon2={'mat'}
+          typeIcon2={'font'}
           sizeIcon2={17}
           initialTitleOpacity={0}
           icon1={null}
-          icon2={null}
-          clickButton2={() => true}
+          icon2={'edit'}
+          clickButton2={() =>
+            this.props.userConnected
+              ? navigate('NewConversation')
+              : navigate('SignIn')
+          }
         />
 
         <ScrollView2
