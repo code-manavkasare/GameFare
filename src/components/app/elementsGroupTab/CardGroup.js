@@ -80,10 +80,10 @@ class CardEvent extends React.Component {
     });
   }
   async chatWithOrganizer(data) {
-    var discussion = await searchDiscussion([
-      this.props.userID,
-      data.info.organizer,
-    ]);
+    var discussion = await searchDiscussion(
+      [this.props.userID, data.info.organizer],
+      2,
+    );
     if (!discussion)
       discussion = await createDiscussion(
         {
