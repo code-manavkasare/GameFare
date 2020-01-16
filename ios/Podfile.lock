@@ -415,6 +415,8 @@ PODS:
     - React
   - ReactNativeKeyboardInput (6.0.0):
     - React
+  - ReactNativeKeyboardTrackingView (5.6.1):
+    - React
   - rn-fetch-blob (0.11.2):
     - React-Core
   - RNAwesomeCardIO (0.8.2):
@@ -532,6 +534,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeAutogrowTextinput (from `../node_modules/react-native-autogrow-textinput`)
   - ReactNativeKeyboardInput (from `../node_modules/react-native-keyboard-input`)
+  - ReactNativeKeyboardTrackingView (from `../node_modules/react-native-keyboard-tracking-view`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
@@ -703,6 +706,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-autogrow-textinput"
   ReactNativeKeyboardInput:
     :path: "../node_modules/react-native-keyboard-input"
+  ReactNativeKeyboardTrackingView:
+    :path: "../node_modules/react-native-keyboard-tracking-view"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNAwesomeCardIO:
@@ -820,6 +825,7 @@ SPEC CHECKSUMS:
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   ReactNativeAutogrowTextinput: 14bd6349ec4fed9231ca141ad3f1dbadf2f63e4c
   ReactNativeKeyboardInput: c37e26821519869993b3b61844350feb9177ff37
+  ReactNativeKeyboardTrackingView: a240a6a0dba852bb107109a7ec7e98b884055977
   rn-fetch-blob: f525a73a78df9ed5d35e67ea65e79d53c15255bc
   RNAwesomeCardIO: caa47eefd8b6ae1986af25df3b86f9d8fbae9bb8
   RNCAsyncStorage: 3c304d1adfaea02ec732ac218801cb13897aa8c0
