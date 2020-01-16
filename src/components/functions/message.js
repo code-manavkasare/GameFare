@@ -6,6 +6,7 @@ function discussionObj(members, nameDiscussion) {
   return {
     title: nameDiscussion,
     allMembers: members.map((member) => member.id),
+    numberMembers: members.length,
     members: members,
     messages: {},
     type: 'users',

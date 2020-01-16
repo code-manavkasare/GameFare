@@ -11,7 +11,6 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style';
@@ -20,11 +19,10 @@ import sizes from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
 import AllIcons from '../../layout/icons/AllIcons';
 
-import concat from 'lodash/concat';
-
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import ButtonColor from '../../layout/Views/Button';
 import AsyncImage from '../../layout/image/AsyncImage';
+import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 import {createDiscussion, searchDiscussion} from '../../functions/message';
 
@@ -49,17 +47,17 @@ class NewConversation extends React.Component {
     const users = await autocompleteSearchUsers(search);
     this.setState({users: users, loader: false});
   }
-  async next() {
-    if (Object.values(this.state.selectedUsers).length === 0) return true;
+  async next(selectedUsers) {
+    if (Object.values(selectedUsers).length === 0) return true;
     await this.setState({loaderHeader: true});
-    let users = Object.values(this.state.selectedUsers).map(
+    let users = Object.values(selectedUsers).map(
       (user) => user.objectID,
     );
     users.push(this.props.userID);
     var discussion = await searchDiscussion(users);
     console.log('next', discussion);
 
-    users = Object.values(this.state.selectedUsers).map((user) => {
+    users = Object.values(selectedUsers).map((user) => {
       user.id = user.objectID;
       return user;
     });
@@ -68,8 +66,6 @@ class NewConversation extends React.Component {
       info: this.props.infoUser,
     });
 
-    console.log('users', users);
-    // return true;
     if (!discussion) {
       discussion = await createDiscussion(users, 'General');
       if (!discussion) {
@@ -86,8 +82,7 @@ class NewConversation extends React.Component {
     await this.props.navigation.navigate('Conversation', {data: discussion});
     return this.setState({loaderHeader: false});
   }
-  selectUser(select, user) {
-    let selectedUsers = this.state.selectedUsers;
+  selectUser(select, user, selectedUsers) {
     if (!select)
       selectedUsers = {
         ...selectedUsers,
@@ -119,7 +114,7 @@ class NewConversation extends React.Component {
       </View>
     );
   }
-  cardUser(user, i) {
+  cardUser(user, i, selectedUsers) {
     return (
       <ButtonColor
         key={i}
@@ -148,7 +143,7 @@ class NewConversation extends React.Component {
                 </Text>
               </Col>
               <Col size={10} style={styleApp.center}>
-                {this.state.selectedUsers[user.objectID] ? (
+                {selectedUsers[user.objectID] ? (
                   <AllIcons
                     name="check-circle"
                     type="font"
@@ -168,7 +163,7 @@ class NewConversation extends React.Component {
           );
         }}
         click={() =>
-          this.selectUser(this.state.selectedUsers[user.objectID], user)
+          this.selectUser(selectedUsers[user.objectID], user, selectedUsers)
         }
         color="white"
         style={styles.cardUser}
@@ -176,10 +171,10 @@ class NewConversation extends React.Component {
       />
     );
   }
-  newConversationPage() {
+  newConversationPage(selectedUsers) {
     return (
       <View style={{marginTop: sizes.heightHeaderHome}}>
-        {this.searchInput()}
+        {this.searchInput(selectedUsers)}
 
         <ScrollView
           keyboardShouldPersistTaps={'always'}
@@ -189,7 +184,9 @@ class NewConversation extends React.Component {
               <Loader size={25} color={'green'} />
             </View>
           ) : (
-            this.state.users.map((user, i) => this.cardUser(user, i))
+            this.state.users.map((user, i) =>
+              this.cardUser(user, i, selectedUsers),
+            )
           )}
           <View style={{height: 300}} />
         </ScrollView>
@@ -199,6 +196,7 @@ class NewConversation extends React.Component {
 
   render() {
     const {dismiss, goBack} = this.props.navigation;
+    let {selectedUsers} = this.state;
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
         <HeaderBackButton
@@ -216,11 +214,11 @@ class NewConversation extends React.Component {
           icon2={'text'}
           text2={'Next'}
           clickButton1={() => goBack()}
-          clickButton2={() => this.next()}
+          clickButton2={() => this.next(selectedUsers)}
           loader={this.state.loaderHeader}
         />
 
-        {this.newConversationPage()}
+        {this.newConversationPage(selectedUsers)}
       </View>
     );
   }
