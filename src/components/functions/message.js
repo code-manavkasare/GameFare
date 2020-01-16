@@ -15,7 +15,7 @@ function discussionObj(members, nameDiscussion) {
 async function createDiscussion(members, nameDiscussion) {
   var newDiscussion = discussionObj(members, nameDiscussion);
   console.log('newDiscussion', newDiscussion);
-  return false;
+  // return false;
   const {key} = await firebase
     .database()
     .ref('discussions/')
