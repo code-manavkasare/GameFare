@@ -39,7 +39,7 @@ export default class CardUser extends Component {
     if (this.props.userID === user.id) return true;
     await this.setState({loader: true});
     // return true;
-    var discussion = await searchDiscussion([this.props.userID, user.id]);
+    var discussion = await searchDiscussion([this.props.userID, user.id], 2);
 
     //return false;
     if (!discussion) {

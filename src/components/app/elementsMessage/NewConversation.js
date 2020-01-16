@@ -50,11 +50,9 @@ class NewConversation extends React.Component {
   async next(selectedUsers) {
     if (Object.values(selectedUsers).length === 0) return true;
     await this.setState({loaderHeader: true});
-    let users = Object.values(selectedUsers).map(
-      (user) => user.objectID,
-    );
+    let users = Object.values(selectedUsers).map((user) => user.objectID);
     users.push(this.props.userID);
-    var discussion = await searchDiscussion(users);
+    var discussion = await searchDiscussion(users, users.length);
     console.log('next', discussion);
 
     users = Object.values(selectedUsers).map((user) => {
