@@ -23,6 +23,7 @@ import PlaceHolder from '../../placeHolders/ListAttendees';
 import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
+import {subscribeUserToGroup} from '../../functions/createGroup';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -40,28 +41,28 @@ class MembersView extends Component {
       <CardUser
         user={user}
         infoUser={this.props.infoUser}
+        admin={this.props.data.info.organizer === this.props.userID}
         userConnected={this.props.userConnected}
+        objectID={this.props.data.objectID}
         key={i}
         userID={this.props.userID}
+        type="group"
       />
     );
   }
   async joinGroup() {
-    var user = {
-      userID: this.props.userID,
-      id: this.props.userID,
-      status: 'confirmed',
-      info: this.props.infoUser,
-    };
-    await firebase
-      .database()
-      .ref('groups/' + this.props.objectID + '/members/' + this.props.userID)
-      .update(user);
+    const user = await subscribeUserToGroup(
+      this.props.objectID,
+      this.props.userID,
+      this.props.infoUser,
+      'confirmed',
+    );
 
     await subscribeToTopics([this.props.userID, 'all', this.props.objectID]);
 
     var members = this.props.data.members;
     if (!members) members = {};
+
     await this.props.groupsAction('editGroup', {
       objectID: this.props.data.objectID,
       info: this.props.data.info,
@@ -81,7 +82,7 @@ class MembersView extends Component {
     if (
       Object.values(data.members).filter(
         (user) => user.userID === this.props.userID,
-      ).length != 0
+      ).length !== 0
     ) {
       return NavigationService.navigate('Alert', {
         textButton: 'Got it!',
