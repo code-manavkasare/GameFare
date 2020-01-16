@@ -212,14 +212,12 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-  conditionAdmin() {
-    if (
-      this.props.navigation.getParam('pageFrom') !== 'Home' &&
-      this.props.navigation.getParam('data').info.organizer ===
-        this.props.userID &&
-      this.props.navigation.getParam('data').info.public
-    )
-      return true;
+  conditionAdmin(data) {
+    // what are the commented out conditions for?
+    //this.props.navigation.getParam('pageFrom') !== 'Home' &&
+    //data.info.public
+
+    if (data.info.organizer === this.props.userID) return true;
     return false;
   }
   async refresh() {
@@ -241,6 +239,9 @@ class GroupPage extends React.Component {
   render() {
     const {goBack, dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
+    console.log('render data GroupPage');
+    console.log(JSON.stringify(data, undefined, 2));
+    console.log(this.conditionAdmin(data));
     // if (data != undefined) {
     //   var dots =
     //     data.info.name.slice(0, 20).length < data.info.name.length ? '...' : '';
@@ -248,35 +249,62 @@ class GroupPage extends React.Component {
 
     return (
       <View>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
-          inputRange={[20, 50]}
-          initialTitleOpacity={0}
-          initialBackgroundColor={'transparent'}
-          initialBorderColorIcon={colors.grey}
-          typeIcon2={'moon'}
-          sizeIcon2={15}
-          icon1="arrow-left"
-          icon2="share"
-          // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-          clickButton1={() => dismiss()}
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openGroupPage',
-              pageTo: 'Group',
-              objectID: data.objectID,
-              pageFrom: 'Group',
-              data: {...data, eventID: data.objectID},
-            })
+        {this.conditionAdmin(data)
+          ? <HeaderBackButton
+              AnimatedHeaderValue={this.AnimatedHeaderValue}
+              textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
+              inputRange={[20, 50]}
+              initialTitleOpacity={0}
+              initialBackgroundColor={'transparent'}
+              initialBorderColorIcon={colors.grey}
+              typeIcon2={'moon'}
+              sizeIcon2={15}
+              icon1="arrow-left"
+              icon2="share"
+              iconOffset="share"
+              // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+              clickButton1={() => dismiss()}
+              clickButton2={() =>
+                this.props.navigation.navigate('Contacts', {
+                  openPageLink: 'openGroupPage',
+                  pageTo: 'Group',
+                  objectID: data.objectID,
+                  pageFrom: 'Group',
+                  data: {...data, eventID: data.objectID},
+                })
+              }
+              clickButtonOffset={() => !this.state.editMode ? this.setState({editMode: true}) : null}
+            />
+          : <HeaderBackButton
+              AnimatedHeaderValue={this.AnimatedHeaderValue}
+              textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
+              inputRange={[20, 50]}
+              initialTitleOpacity={0}
+              initialBackgroundColor={'transparent'}
+              initialBorderColorIcon={colors.grey}
+              typeIcon2={'moon'}
+              sizeIcon2={15}
+              icon1="arrow-left"
+              icon2="share"
+              // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
+              clickButton1={() => dismiss()}
+              clickButton2={() =>
+                this.props.navigation.navigate('Contacts', {
+                  openPageLink: 'openGroupPage',
+                  pageTo: 'Group',
+                  objectID: data.objectID,
+                  pageFrom: 'Group',
+                  data: {...data, eventID: data.objectID},
+                })
+              }
+            />
           }
-        />
 
         <ParalaxScrollView
           setState={(val) => this.setState(val)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           image={
-            data != undefined ? (
+            data !== undefined ? (
               <AsyncImage
                 style={{width: '100%', height: 280, borderRadius: 0}}
                 mainImage={data.pictures[0]}
