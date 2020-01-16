@@ -21,6 +21,8 @@ import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import Loader from '../../layout/loaders/Loader';
 import InputMessage from './InputMessage';
+import Video from 'react-native-af-video-player';
+
 import './Keyboard';
 
 import {Grid, Row, Col} from 'react-native-easy-grid';
