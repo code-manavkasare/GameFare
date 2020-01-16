@@ -67,6 +67,7 @@ export default class CardUser extends Component {
     }
     await NavigationService.navigate('Conversation', {data: discussion});
     await this.setState({loader: false});
+    return true;
   }
   cardUser(user) {
     return (

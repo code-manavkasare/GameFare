@@ -6,6 +6,7 @@ const client = algoliasearch('EX9TV715SD', '36bc4371bcdde61e2e4d5f05c8a274ce');
 const indexEvents = client.initIndex('eventsGF');
 const indexPastEvents = client.initIndex('pastEventsGF');
 const indexGroups = client.initIndex('groupsGF');
+const indexUsers = client.initIndex('usersGF');
 const indexDiscussions = client.initIndex('discussionsGF');
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
@@ -164,6 +165,7 @@ module.exports = {
   indexEvents,
   indexGroups,
   indexPastEvents,
+  indexUsers,
   getEventPublic,
   indexDiscussions,
   getMyGroups,

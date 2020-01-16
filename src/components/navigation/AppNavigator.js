@@ -63,6 +63,7 @@ import LocationSelect from '../app/elementsOnBoard/LocationSelect';
 
 import MessageList from '../app/elementsMessage/MessageList';
 import Conversation from '../app/elementsMessage/Conversation';
+import NewConversation from '../app/elementsMessage/NewConversation';
 
 const CreateEventNavigator = createStackNavigator(
   {
@@ -225,7 +226,7 @@ const MainApp = createBottomTabNavigator(
                     borderTopWidth: 1.5,
                     borderColor: focused ? colors.primary : 'transparent',
                   }}>
-                  {routeName == 'MessageList' ? (
+                  {routeName === 'MessageList' ? (
                     <View style={styles.roundMessage} />
                   ) : null}
                   <Col size={10} style={[styles.center4, {paddingTop: 10}]}>
@@ -444,6 +445,12 @@ const RootStack = createStackNavigator(
     Location: LocationSelector,
     ContactNavigator: {
       screen: ContactNavigator,
+      navigationOptions: {
+        gesturesEnabled: false,
+      },
+    },
+    NewConversation: {
+      screen: NewConversation,
       navigationOptions: {
         gesturesEnabled: false,
       },
