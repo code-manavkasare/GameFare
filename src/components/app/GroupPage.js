@@ -33,12 +33,21 @@ import PostsView from './elementsGroupPage/PostsView';
 import EventsView from './elementsGroupPage/EventsView';
 import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
 
+const noEdit = {
+  editMode: false,
+  editPic: '',
+  editName: '',
+  editLocation: null,
+  editDescription: '',
+};
+
 class GroupPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       usersConfirmed: true,
       loader: false,
+      ...noEdit,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
