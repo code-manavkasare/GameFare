@@ -1,4 +1,3 @@
-import Config from 'react-native-config';
 import axios from 'axios';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import colors from '../style/colors';
