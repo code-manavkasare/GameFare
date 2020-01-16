@@ -5,7 +5,8 @@ import {indexDiscussions} from '../database/algolia';
 function discussionObj(members, nameDiscussion) {
   return {
     title: nameDiscussion,
-    allMembers: [members[0].id, members[1].id],
+    allMembers: members.map((member) => member.id),
+    numberMembers: members.length,
     members: members,
     messages: {},
     type: 'users',
@@ -13,7 +14,9 @@ function discussionObj(members, nameDiscussion) {
 }
 
 async function createDiscussion(members, nameDiscussion) {
-  var newDiscussion = discussionObj(members, nameDiscussion);
+  var newDiscussion = discussionObj(Object.values(members), nameDiscussion);
+  console.log('newDiscussion', newDiscussion);
+  // return false;
   const {key} = await firebase
     .database()
     .ref('discussions/')
@@ -37,7 +40,7 @@ async function sendNewMessage(discusssionID, user, text, images) {
   return true;
 }
 
-async function searchDiscussion(ids) {
+async function searchDiscussion(ids, numberMembers) {
   var filterMembers = '';
   var prefix = ' AND ';
   for (var id in ids) {
@@ -47,7 +50,12 @@ async function searchDiscussion(ids) {
       prefix = ' AND ';
     }
     filterMembers =
-      filterMembers + prefix + 'allMembers: ' + Object.values(ids)[id];
+      filterMembers +
+      prefix +
+      'allMembers: ' +
+      Object.values(ids)[id] +
+      ' AND numberMembers:' +
+      numberMembers;
   }
 
   const {hits} = await indexDiscussions.search({
