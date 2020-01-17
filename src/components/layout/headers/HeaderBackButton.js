@@ -148,7 +148,7 @@ export default class HeaderFlow extends Component {
             style={styles.center2}
             activeOpacity={0.4}
             onPress={() => this.close()}>
-            {this.props.icon1 != null ? (
+            {this.props.icon1 && (
               <Animated.View
                 style={[
                   {
@@ -187,7 +187,7 @@ export default class HeaderFlow extends Component {
                   onPressColor={colors.off}
                 />
               </Animated.View>
-            ) : null}
+            )}
           </Col>
           <Col size={20} style={styleApp.center}>
             {this.props.imgHeader ? this.props.imgHeader : null}
@@ -196,50 +196,52 @@ export default class HeaderFlow extends Component {
           <Col size={15} style={[styleApp.center3]}>
             {this.props.loader ? (
               <Loader color={'green'} size={24} />
-            ) : this.props.icon2 != null ? (
-              <Animated.View
-                style={[
-                  {
-                    borderColor: borderColorIcon,
-                    height: 48,
-                    width: 48,
-                    borderRadius: 23.8,
-                    borderWidth: 1,
-                    backgroundColor: 'white',
-                    overFlow: 'hidden',
-                  },
-                ]}>
-                <ButtonColor
-                  view={() => {
-                    return this.props.loader ? (
-                      <Loader size={20} color={'primary'} />
-                    ) : this.props.icon2 == 'text' ? (
-                      <Text style={styleApp.text}>{this.props.text2}</Text>
-                    ) : (
-                      <AllIcons
-                        name={this.props.icon2}
-                        color={colors.title}
-                        size={this.props.sizeIcon2}
-                        type={this.props.typeIcon2}
-                      />
-                    );
-                  }}
-                  click={() => this.props.clickButton2()}
-                  color={'white'}
+            ) : (
+              this.props.icon2 && (
+                <Animated.View
                   style={[
-                    styleApp.center,
                     {
-                      height: 46,
-                      width: 46,
-                      borderRadius: 23,
-                      borderWidth: 0,
+                      borderColor: borderColorIcon,
+                      height: 48,
+                      width: 48,
+                      borderRadius: 23.8,
+                      borderWidth: 1,
+                      backgroundColor: 'white',
                       overFlow: 'hidden',
                     },
-                  ]}
-                  onPressColor={colors.off}
-                />
-              </Animated.View>
-            ) : null}
+                  ]}>
+                  <ButtonColor
+                    view={() => {
+                      return this.props.loader ? (
+                        <Loader size={20} color={'primary'} />
+                      ) : this.props.icon2 == 'text' ? (
+                        <Text style={styleApp.text}>{this.props.text2}</Text>
+                      ) : (
+                        <AllIcons
+                          name={this.props.icon2}
+                          color={colors.title}
+                          size={this.props.sizeIcon2}
+                          type={this.props.typeIcon2}
+                        />
+                      );
+                    }}
+                    click={() => this.props.clickButton2()}
+                    color={'white'}
+                    style={[
+                      styleApp.center,
+                      {
+                        height: 46,
+                        width: 46,
+                        borderRadius: 23,
+                        borderWidth: 0,
+                        overFlow: 'hidden',
+                      },
+                    ]}
+                    onPressColor={colors.off}
+                  />
+                </Animated.View>
+              )
+            )}
           </Col>
         </Row>
       </Animated.View>

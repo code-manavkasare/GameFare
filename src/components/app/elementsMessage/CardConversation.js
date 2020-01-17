@@ -111,7 +111,8 @@ class CardConversation extends React.Component {
     const discussion = this.props.conversations[this.props.discussion.objectID];
     // return null;
     if (!discussion) return <View style={styles.placeholderLastMessage} />;
-    console.log('discussion.lastMessage.text', discussion.lastMessage.text);
+    if (!discussion.lastMessage)
+      return <View style={styles.placeholderLastMessage} />;
     return (
       <Text
         style={[

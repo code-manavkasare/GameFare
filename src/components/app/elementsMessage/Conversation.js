@@ -69,7 +69,7 @@ class MessageTab extends React.Component {
       });
   }
   setConversation(data) {
-    console.log('setConversation 3', data);
+    console.log('setConversation!!!', data);
     this.props.messageAction('setConversation', data);
   }
   async sendPicture(val, discussion, user) {
@@ -165,8 +165,6 @@ class MessageTab extends React.Component {
           icon1={'arrow-left'}
           icon2={null}
           clickButton1={async () => {
-            // await Keyboard.dismiss();
-            await this.conversationRef.dismiss();
             this.props.navigation.dismiss();
           }}
           clickButton2={() => true}

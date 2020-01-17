@@ -178,8 +178,8 @@ class NewConversation extends React.Component {
           keyboardShouldPersistTaps={'always'}
           style={styles.scrollViewUsers}>
           {this.state.loader ? (
-            <View>
-              <Loader size={25} color={'green'} />
+            <View style={[styleApp.center, {height: 200}]}>
+              <Loader size={35} color={'green'} />
             </View>
           ) : (
             this.state.users.map((user, i) =>
