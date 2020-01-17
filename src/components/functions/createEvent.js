@@ -99,6 +99,8 @@ async function pushEventToGroups(groups, eventID) {
 }
 
 async function createEvent(data, userID, infoUser, level) {
+  console.log('create event');
+  console.log(data.images);
   var pictureUri = await uploadPictureFirebase(
     data.images[0],
     'events/' + generateID(),

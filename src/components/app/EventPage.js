@@ -836,11 +836,7 @@ class EventPage extends React.Component {
     return false;
   }
   userIsOrganizer(event) {
-    // if (!event.info.organizer) {
-    //   return false;
-    // }
-    // return event.info.organizer === this.props.userID;
-    return true;
+    return event.info.organizer === this.props.userID;
   }
   askRemovePlayer(player, data) {
     this.props.navigation.navigate('AlertYesNo', {
@@ -888,7 +884,8 @@ class EventPage extends React.Component {
             icon2="share"
             typeIcon2="moon"
             sizeIcon2={17}
-            iconOffset="share"
+            iconOffset="edit"
+            typeIconOffset="font"
             clickButton2={() =>
               this.props.navigation.navigate('Contacts', {
                 openPageLink: 'openEventPage',

@@ -220,7 +220,7 @@ export default class HeaderFlow extends Component {
                         name={this.props.iconOffset}
                         color={colors.title}
                         size={this.props.sizeIcon2}
-                        type={this.props.typeIcon2}
+                        type={this.props.typeIconOffset}
                       />
                     );
                   }}
