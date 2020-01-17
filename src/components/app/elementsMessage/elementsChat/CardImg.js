@@ -6,12 +6,12 @@ import {
   Image,
   ScrollView,
   Animated,
+  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
-// import Video from 'react-native-video';
 import Video from 'react-native-af-video-player';
 
 import styleApp from '../../../style/style';
@@ -97,25 +97,45 @@ export default class CardContent extends React.Component {
     if (this.props.user._id === this.props.message.user._id) return true;
     return false;
   }
-  displayImg(uri, type, local) {
-    if (local && type === 'image')
-      return <Image source={{uri}} style={styleApp.fullSize} />;
-    if (local) return <View style={styleApp.fullSize} />;
+  picture(uri, local) {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.6}
+        style={{width: '100%', height: 130}}
+        onPress={() => this.props.openImage()}>
+        {local ? (
+          <AsyncImage
+            style={{width: '100%', height: 130}}
+            mainImage={uri}
+            imgInitial={uri}
+          />
+        ) : (
+          <Image style={{width: '100%', height: 130}} source={{uri: uri}} />
+        )}
+      </TouchableOpacity>
+    );
+  }
+  displayImg(uri, type, local, index) {
+    console.log('displayImg', uri);
+    if (local && type === 'image') return this.picture(uri, local);
+    if (local) return <View style={{width: '100%', height: 130}} />;
     if (type === 'video')
       return (
         <Video
           // rotateToFullScreen={true}
+          hideFullScreenControl={true}
           url={uri}
-          resizeMode={'contain'}
-          style={{...styleApp.fullSize, backgroundColor: colors.title}}
+          // resizeMode={'contain'}
+          style={[
+            styleApp.fullSize,
+            // {position: 'absolute', height: 100, width: 100, zIndex: index},
+          ]}
         />
       );
-    if (local) return <Image style={styleApp.fullSize} source={{uri: uri}} />;
-    return (
-      <AsyncImage style={styleApp.fullSize} mainImage={uri} imgInitial={uri} />
-    );
+    return this.picture(uri, local);
   }
-  cardContent(image) {
+  cardContent(image, index) {
+    console.log('cardContent', image);
     return (
       <ButtonColor
         view={() => {
@@ -128,7 +148,7 @@ export default class CardContent extends React.Component {
               )}
 
               {this.usersContent() && !image.uploaded ? (
-                this.displayImg(image.uri, image.type, true)
+                this.displayImg(image.uri, image.type, true, index)
               ) : !image.uploaded ? (
                 <View
                   style={{
@@ -137,20 +157,21 @@ export default class CardContent extends React.Component {
                   }}
                 />
               ) : (
-                this.displayImg(image.uri, image.type, false)
+                this.displayImg(image.uri, image.type, false, index)
               )}
             </Row>
           );
         }}
         click={() => true}
         color={colors.off}
-        style={styles.viewImg}
+        style={{flex: 1, marginTop: 10}}
+        // style={styles.viewImg}
         onPressColor={colors.off}
       />
     );
   }
   render() {
-    return this.cardContent(this.props.image);
+    return this.cardContent(this.props.image, this.props.index);
   }
 }
 

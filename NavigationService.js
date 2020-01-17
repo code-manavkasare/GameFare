@@ -33,7 +33,11 @@ function pop(number) {
 }
 
 function goBack() {
-  _navigator.dispatch(NavigationActions.goBack());
+  _navigator.dispatch(NavigationActions.back());
+}
+
+function dismiss() {
+  _navigator.dispatch(NavigationActions.dismiss());
 }
 
 // add other navigation functions that you need and export them
@@ -43,5 +47,6 @@ export default {
   push,
   setTopLevelNavigator,
   pop,
+  dismiss,
   goBack,
 };

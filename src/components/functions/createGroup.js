@@ -64,4 +64,25 @@ async function createGroup(data, userID, infoUser) {
   return group;
 }
 
-module.exports = {createGroup, generateID};
+async function subscribeUserToGroup(
+  groupID,
+  userID,
+  infoUser,
+  status,
+  tokenNotification,
+) {
+  const user = {
+    userID: userID,
+    id: userID,
+    status: status,
+    info: infoUser,
+    tokenNotification: tokenNotification,
+  };
+  await firebase
+    .database()
+    .ref('groups/' + groupID + '/members/' + userID)
+    .update(user);
+  return user;
+}
+
+module.exports = {createGroup, generateID, subscribeUserToGroup};

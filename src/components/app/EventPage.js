@@ -264,10 +264,13 @@ class EventPage extends React.Component {
         user={user}
         infoUser={this.props.infoUser}
         userConnected={this.props.userConnected}
+        objectID={data.objectID}
         key={i}
         userID={this.props.userID}
         removable={(data.info.organizer !== user.id) && this.state.editMode}
         removeFunc={() => this.askRemovePlayer(user, data)}
+        type="event"
+        admin={data.info.organizer === this.props.userID}
       />
     );
   }
