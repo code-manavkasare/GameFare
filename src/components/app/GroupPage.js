@@ -19,10 +19,12 @@ import colors from '../style/colors';
 import styleApp from '../style/style';
 import CardUser from './elementsEventPage/CardUser';
 import {Grid, Row, Col} from 'react-native-easy-grid';
+import FadeInView from 'react-native-fade-in-view';
 
 import AsyncImage from '../layout/image/AsyncImage';
 import AllIcons from '../layout/icons/AllIcons';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
+import Button2 from '../layout/buttons/Button';
 
 import {indexGroups} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
@@ -236,21 +238,54 @@ class GroupPage extends React.Component {
       />
     );
   }
+  saveGroupEdits() {
+    this.setState({editMode: false});
+    console.log('saving');
+  }
   render() {
     const {goBack, dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
-    console.log('render data GroupPage');
-    console.log(JSON.stringify(data, undefined, 2));
-    console.log(this.conditionAdmin(data));
-    // if (data != undefined) {
-    //   var dots =
-    //     data.info.name.slice(0, 20).length < data.info.name.length ? '...' : '';
-    // }
-
+    console.log('render');
+    console.log('editMode: ' + this.state.editMode);
     return (
-      <View>
+
+      <View style={{flex: 1}}>
         {this.conditionAdmin(data)
-          ? <HeaderBackButton
+        ? <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={data !== undefined ? data.info.name.slice(0, 20) : ''}
+            inputRange={[20, 50]}
+            initialTitleOpacity={0}
+            initialBackgroundColor={'transparent'}
+            initialBorderColorIcon={colors.grey}
+            typeIcon2={'moon'}
+            sizeIcon2={15}
+            icon1="arrow-left"
+            icon2="share"
+            iconOffset={this.state.editMode ? 'calendar' : 'share'}
+            clickButton1={() => dismiss()}
+            clickButton2={() =>
+              this.props.navigation.navigate('Contacts', {
+                openPageLink: 'openGroupPage',
+                pageTo: 'Group',
+                objectID: data.objectID,
+                pageFrom: 'Group',
+                data: {...data, eventID: data.objectID},
+              })
+            }
+            clickButtonOffset={() =>
+              !this.state.editMode
+              ? this.setState({editMode: true})
+              : console.log('touch')
+                // this.props.navigation.navigate(
+                //   'AlertAddImage',
+                //   { title:'Add picture',
+                //     onGoBack:(val) => console.log(val),
+                //   }
+                // );
+            }
+          />
+        : <HeaderBackButton
               AnimatedHeaderValue={this.AnimatedHeaderValue}
               textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
               inputRange={[20, 50]}
@@ -261,7 +296,6 @@ class GroupPage extends React.Component {
               sizeIcon2={15}
               icon1="arrow-left"
               icon2="share"
-              iconOffset="share"
               // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
               clickButton1={() => dismiss()}
               clickButton2={() =>
@@ -273,53 +307,44 @@ class GroupPage extends React.Component {
                   data: {...data, eventID: data.objectID},
                 })
               }
-              clickButtonOffset={() => !this.state.editMode ? this.setState({editMode: true}) : null}
             />
-          : <HeaderBackButton
-              AnimatedHeaderValue={this.AnimatedHeaderValue}
-              textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
-              inputRange={[20, 50]}
-              initialTitleOpacity={0}
-              initialBackgroundColor={'transparent'}
-              initialBorderColorIcon={colors.grey}
-              typeIcon2={'moon'}
-              sizeIcon2={15}
-              icon1="arrow-left"
-              icon2="share"
-              // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
-              clickButton1={() => dismiss()}
-              clickButton2={() =>
-                this.props.navigation.navigate('Contacts', {
-                  openPageLink: 'openGroupPage',
-                  pageTo: 'Group',
-                  objectID: data.objectID,
-                  pageFrom: 'Group',
-                  data: {...data, eventID: data.objectID},
-                })
-              }
-            />
-          }
+        }
 
         <ParalaxScrollView
           setState={(val) => this.setState(val)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           image={
-            data !== undefined ? (
-              <AsyncImage
-                style={{width: '100%', height: 280, borderRadius: 0}}
-                mainImage={data.pictures[0]}
-                imgInitial={data.pictures[0]}
-              />
-            ) : (
-              <View
-                style={{
-                  width: '100%',
-                  height: 280,
-                  borderRadius: 0,
-                  backgroundColor: colors.off,
-                }}
-              />
-            )
+            //Does not register touches. Edit button changes to edit picture button
+            <TouchableOpacity
+              activeOpacity={0.3}
+              style={{height: 280, width: '100%'}}
+              onPress={() => {
+                console.log('touch');
+                this.props.navigation.navigate(
+                  'AlertAddImage',
+                  { title:'Add picture',
+                    onGoBack:(val) => console.log(val),
+                  }
+                );
+              }}>
+                <View>
+                  {data !== undefined
+                    ? <AsyncImage
+                        style={{width: '100%', height: 280, borderRadius: 0}}
+                        mainImage={data.pictures[0]}
+                        imgInitial={data.pictures[0]}
+                      />
+                    : <View
+                        style={{
+                          width: '100%',
+                          height: 280,
+                          borderRadius: 0,
+                          backgroundColor: colors.off,
+                        }}
+                      />
+                  }
+                </View>
+            </TouchableOpacity>
           }
           refresh={() => this.refresh()}
           content={() => this.group(data)}
@@ -328,6 +353,21 @@ class GroupPage extends React.Component {
           colorRefreshControl={colors.title}
           initialColorIcon={'white'}
         />
+
+        {!this.state.editMode ? null :
+        <FadeInView duration={300} style={styleApp.footerBooking}>
+          <Button2
+          icon={'next'}
+          backgroundColor="green"
+          onPressColor={colors.greenClick}
+          styleButton={{marginLeft: 20, width: width - 40}}
+          disabled={false}
+          text="Save edits"
+          loader={false}
+          click={() => this.saveGroupEdits()}
+          />
+        </FadeInView>
+        }
       </View>
     );
   }

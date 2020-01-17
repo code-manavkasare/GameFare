@@ -44,7 +44,8 @@ export default class HeaderFlow extends Component {
     return (
       this.props.loader !== nextProps.loader ||
       this.state !== nextState ||
-      this.props.enableClickButton !== nextProps.enableClickButton
+      this.props.enableClickButton !== nextProps.enableClickButton ||
+      this.props.iconOffset !== nextProps.iconOffset
     );
   }
   handleBackPress = () => {
