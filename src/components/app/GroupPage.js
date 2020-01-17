@@ -238,6 +238,9 @@ class GroupPage extends React.Component {
       />
     );
   }
+  addPicture() {
+    console.log('add picture');
+  }
   saveGroupEdits() {
     this.setState({editMode: false});
     console.log('saving');
@@ -259,10 +262,11 @@ class GroupPage extends React.Component {
             initialBackgroundColor={'transparent'}
             initialBorderColorIcon={colors.grey}
             typeIcon2={'moon'}
+            typeIconOffset={'font'}
             sizeIcon2={15}
             icon1="arrow-left"
             icon2="share"
-            iconOffset={this.state.editMode ? 'calendar' : 'share'}
+            iconOffset={this.state.editMode ? 'camera' : 'edit'}
             clickButton1={() => dismiss()}
             clickButton2={() =>
               this.props.navigation.navigate('Contacts', {
@@ -276,13 +280,12 @@ class GroupPage extends React.Component {
             clickButtonOffset={() =>
               !this.state.editMode
               ? this.setState({editMode: true})
-              : console.log('touch')
-                // this.props.navigation.navigate(
-                //   'AlertAddImage',
-                //   { title:'Add picture',
-                //     onGoBack:(val) => console.log(val),
-                //   }
-                // );
+              : this.props.navigation.navigate(
+                  'AlertAddImage',
+                  { title:'Add picture',
+                    onGoBack:(val) => this.addPicture(),
+                  }
+                )
             }
           />
         : <HeaderBackButton
