@@ -30,7 +30,7 @@ async function editGroup(updatedGroup, callback = () => {}) {
     .catch(err => {throw err;});
 }
 
-async function removeUserFromGroup(player, group) {
+async function removeUserFromGroup(playerID, groupID) {
     // unsubscribe user from notifications
     // try {
     //     await unsubscribeUserFromTopics(player.id, [group.objectID]);
@@ -41,7 +41,7 @@ async function removeUserFromGroup(player, group) {
     // server handler should unsubscribe from group topic as well
     await firebase
     .database()
-    .ref('groups/' + group.objectID + '/members/' + player.id)
+    .ref('groups/' + groupID + '/members/' + playerID)
     .remove()
     .catch(err => {throw err;});
 }

@@ -234,6 +234,9 @@ class GroupPage extends React.Component {
           objectID={data.objectID}
           loader={this.state.loader}
           data={data}
+          editMode={this.state.editMode}
+          onChangeText={(text) => this.setState({editDescription: text})}
+          value={this.state.editDescription}
         />
 
         <MembersView
@@ -242,6 +245,8 @@ class GroupPage extends React.Component {
           userID={this.props.userID}
           loader={this.state.loader}
           infoUser={this.props.infoUser}
+          editMode={this.state.editMode}
+          onRemoveMember={(userID) => this.removeUser(data, userID)}
         />
 
         <EventsView
@@ -305,7 +310,13 @@ class GroupPage extends React.Component {
     await this.setState({editPic: uriResized});
     this.setState({loader:false});
   }
-
+  async removeUser(data, userID) {
+    try {
+      await removeUserFromgroup(userID, data.objectID);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   async saveEdits(data) {
     if (
       this.state.editPic !== noEdit.editPic ||
