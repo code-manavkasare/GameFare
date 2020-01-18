@@ -39,6 +39,7 @@ async function removeUserFromGroup(playerID, groupID) {
     // }
     // remove user from group data, sends notification to user server-side
     // server handler should unsubscribe from group topic as well
+    // remove from allMembers as well
     await firebase
     .database()
     .ref('groups/' + groupID + '/members/' + playerID)
