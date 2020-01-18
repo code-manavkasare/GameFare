@@ -35,6 +35,7 @@ import MembersView from './elementsGroupPage/MembersView';
 import PostsView from './elementsGroupPage/PostsView';
 import EventsView from './elementsGroupPage/EventsView';
 import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
+import ButtonColor from '../layout/Views/Button';
 
 import {editGroup, removeUserFromgroup} from '../functions/editGroup';
 import {takePicture,pickLibrary,resize} from '../functions/pictures';
@@ -70,7 +71,7 @@ class GroupPage extends React.Component {
     await this.props.groupsAction('editGroup', group);
     return this.setState({loader: false});
   }
-  rowIcon(component, icon, alert, dataAlert, image) {
+  rowIcon(data, component, button, icon, alert, dataAlert, image) {
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
@@ -91,6 +92,9 @@ class GroupPage extends React.Component {
           <Col size={85} style={[styleApp.center2, {paddingLeft: 10}]}>
             {component}
           </Col>
+          <Col size={20} style={styleApp.center}>
+            {button}
+          </Col>
         </Row>
       </TouchableOpacity>
     );
@@ -98,6 +102,7 @@ class GroupPage extends React.Component {
   title(text) {
     return <Text style={styleApp.text}>{text}</Text>;
   }
+
   groupInfo(data, sport) {
     return (
       <View style={{marginTop: -10}}>
@@ -136,7 +141,33 @@ class GroupPage extends React.Component {
               </Col>
             </Row>
             {this.rowIcon(
-              this.title(data.location.address),
+              data,
+              this.title(this.state.editLocation === noEdit.editLocation
+                ? data.location.address
+                : this.state.editLocation.address),
+              this.state.editMode
+                ? <ButtonColor
+                    view={() => {
+                      return (
+                        <Text style={styleApp.text}>
+                          Edit
+                        </Text>
+                      );
+                    }}
+                    click={() => 
+                      this.props.navigation.navigate('Location', {
+                        location: data.location,
+                        pageFrom: this.props.navigation.state.routeName,
+                        onGoBack: (location) => {
+                          this.props.navigation.navigate(this.props.navigation.state.routeName);
+                          this.setState({editLocation: location});
+                        },
+                      })
+                    }
+                    color="white"
+                    onPressColor={colors.off}
+                  />
+                : null,
               'map-marker-alt',
               'AlertAddress',
               data.location,
@@ -157,6 +188,7 @@ class GroupPage extends React.Component {
 
             {/* 
             {this.rowIcon(
+              data,
               this.title(data.organizer.name),
               'user-alt',
               undefined,
