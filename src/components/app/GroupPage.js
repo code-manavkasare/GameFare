@@ -37,7 +37,7 @@ import EventsView from './elementsGroupPage/EventsView';
 import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
 import ButtonColor from '../layout/Views/Button';
 
-import {editGroup, removeUserFromgroup} from '../functions/editGroup';
+import {editGroup, removeUserFromGroup} from '../functions/editGroup';
 import {takePicture,pickLibrary,resize} from '../functions/pictures';
 
 
@@ -246,7 +246,7 @@ class GroupPage extends React.Component {
           loader={this.state.loader}
           infoUser={this.props.infoUser}
           editMode={this.state.editMode}
-          onRemoveMember={(userID) => this.removeUser(data, userID)}
+          onRemoveMember={(user) => this.removeUser(data, user)}
         />
 
         <EventsView
@@ -310,12 +310,20 @@ class GroupPage extends React.Component {
     await this.setState({editPic: uriResized});
     this.setState({loader:false});
   }
-  async removeUser(data, userID) {
-    try {
-      await removeUserFromgroup(userID, data.objectID);
-    } catch (error) {
-      console.log(error.message);
-    }
+  async removeUser(data, user) {
+    console.log('remove');
+    console.log(user);
+    console.log('from');
+    console.log(data);
+    this.props.navigation.navigate('AlertYesNo', {
+      textYesButton: 'Yes',
+      textNoButton: 'No',
+      title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
+      icon: undefined,
+      yesClick: () => this.removeUserFromGroup(user.userID, data.objectID),
+      noClick: () => null,
+      onGoBack: () => this.props.navigation.navigate('Group'),
+    });
   }
   async saveEdits(data) {
     if (
@@ -352,7 +360,11 @@ class GroupPage extends React.Component {
   render() {
     const {goBack, dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
+
     console.log('render');
+    console.log(this.props.allGroups);
+    console.log(this.props.navigation.getParam('objectID'));
+    console.log(data);
     console.log('editMode: ' + this.state.editMode);
     return (
 

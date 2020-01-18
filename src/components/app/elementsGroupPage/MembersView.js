@@ -38,16 +38,34 @@ class MembersView extends Component {
   componentDidMount() {}
   rowUser(user, i, data) {
     return (
-      <CardUser
-        user={user}
-        infoUser={this.props.infoUser}
-        admin={this.props.data.info.organizer === this.props.userID}
-        userConnected={this.props.userConnected}
-        objectID={this.props.data.objectID}
-        key={i}
-        userID={this.props.userID}
-        type="group"
-      />
+      <TouchableOpacity
+        onPress={() => this.props.onRemoveMember(user)}
+      >
+        <Row style={styleApp.center2}>
+          <Col size={75} style={styleApp.center}>
+            <CardUser
+              user={user}
+              infoUser={this.props.infoUser}
+              admin={this.props.data.info.organizer === this.props.userID}
+              userConnected={this.props.userConnected}
+              objectID={this.props.data.objectID}
+              key={i}
+              userID={this.props.userID}
+              type="group"
+            />
+          </Col>
+          {this.props.editMode
+          ? <Col size={25} style={styleApp.center}>
+              <AllIcons
+                name="minus"
+                type="font"
+                color={colors.red}
+              />
+            </Col>
+          : <Col size={25}/>
+          }
+        </Row>
+      </TouchableOpacity>
     );
   }
   async joinGroup() {
@@ -119,7 +137,7 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.id ===
+              {data.organizer.id !==
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 <Row>
                   <Col size={50} style={styleApp.center}>
