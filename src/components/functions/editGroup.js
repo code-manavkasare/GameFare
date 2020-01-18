@@ -4,18 +4,21 @@ import {uploadPictureFirebase} from '../functions/pictures';
 
 
 
+// Should not be used to remove players. removeUserFromGroup(...) ensures the removed user will be notified of the event.
 async function editGroup(updatedGroup, callback = () => {}) {
     // handle uploading of new image if one selected
     let pictureURI = updatedGroup.img;
-    if (updatedGroup.img !== undefined) delete updatedGroup.img;
-    if (pictureURI !== '') {
-        pictureURI = await uploadPictureFirebase(
-            pictureURI,
-            'groups/' + updatedGroup.objectID,
-        );
-        updatedGroup = {
-            ...updatedGroup,
-            pictures: [pictureURI],
+    if (pictureURI !== undefined) {
+        delete updatedGroup.img;
+        if (pictureURI !== '') {
+            pictureURI = await uploadPictureFirebase(
+                pictureURI,
+                'groups/' + updatedGroup.objectID,
+            );
+            updatedGroup = {
+                ...updatedGroup,
+                pictures: [pictureURI],
+            };
         }
     }
     // upload to firebase

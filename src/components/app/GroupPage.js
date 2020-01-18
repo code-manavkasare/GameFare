@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Animated,
   Image,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {createEventAction} from '../../actions/createEventActions';
@@ -102,7 +103,24 @@ class GroupPage extends React.Component {
       <View style={{marginTop: -10}}>
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            <Text style={styleApp.title}>{data.info.name}</Text>
+            {this.state.editMode
+              ? <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => this.nameRef.focus()}>
+                    <TextInput
+                      style={styleApp.title}
+                      placeholder={String(data.info.name)}
+                      returnKeyType={'done'}
+                      ref={(input) => {
+                        this.nameRef = input;
+                      }}
+                      underlineColorAndroid="rgba(0,0,0,0)"
+                      autoCorrect={true}
+                      onChangeText={(text) => this.setState({editName: text})}
+                      value={this.state.editName}
+                    />
+                  </TouchableOpacity>
+              : <Text style={styleApp.title}>{data.info.name}</Text>}
 
             <View style={[styleApp.divider2, {marginBottom: 25}]} />
             <Row>
@@ -273,12 +291,14 @@ class GroupPage extends React.Component {
         },
         location: this.state.editLocation === noEdit.editLocation ? data.location : this.state.editLocation,
       };
-      console.log(newData);
       // firebase update, sends notification to group members
       editGroup(newData, () => console.log('edit group failed'));
       // // local data update
-      console.log(newData);
-      await this.props.groupsAction('setAllGroups', {[newData.objectID]: {...newData, pictures: {0: this.state.editPic}}});
+      if (this.state.editPic !== noEdit.editPic) {
+        await this.props.groupsAction('setAllGroups', {[newData.objectID]: {...newData, pictures: {0: this.state.editPic}}});
+      } else {
+        await this.props.groupsAction('setAllGroups', {[newData.objectID]: newData});
+      }
     }
     // this update
     this.setState({
