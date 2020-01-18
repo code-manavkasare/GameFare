@@ -35,6 +35,10 @@ import PostsView from './elementsGroupPage/PostsView';
 import EventsView from './elementsGroupPage/EventsView';
 import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
 
+import {editGroup, removeUserFromgroup} from '../functions/editGroup';
+import {takePicture,pickLibrary,resize} from '../functions/pictures';
+
+
 const noEdit = {
   editMode: false,
   editPic: '',
@@ -238,12 +242,49 @@ class GroupPage extends React.Component {
       />
     );
   }
-  addPicture() {
-    console.log('add picture');
+  async addPicture(val) {
+    await this.setState({loader:true});
+    if (val === 'take') {
+      var uri = await takePicture();
+    } else if (val === 'pick') {
+      var uri = await pickLibrary();
+    }
+    if (!uri) return this.setState({loader:false});
+    const uriResized = await resize(uri);
+    if (!uriResized) return this.setState({loader:false});
+    await this.setState({editPic: uriResized});
+    this.setState({loader:false});
   }
-  saveGroupEdits() {
-    this.setState({editMode: false});
-    console.log('saving');
+
+  async saveEdits(data) {
+    if (
+      this.state.editPic !== noEdit.editPic ||
+      this.state.editName !== noEdit.editName ||
+      this.state.editDescription !== noEdit.editDescription ||
+      this.state.editLocation !== noEdit.editLocation
+    ) {
+      let newData = {
+        ...data,
+        img: this.state.editPic, //will get deleted in editGroup
+        info: {
+          ...data.info,
+          name: this.state.editName === noEdit.editName ? data.info.name : this.state.editName,
+          description: this.state.editDescription === noEdit.editDescription ? data.info.description : this.state.editDescription,
+        },
+        location: this.state.editLocation === noEdit.editLocation ? data.location : this.state.editLocation,
+      };
+      console.log(newData);
+      // firebase update, sends notification to group members
+      editGroup(newData, () => console.log('edit group failed'));
+      // // local data update
+      console.log(newData);
+      await this.props.groupsAction('setAllGroups', {[newData.objectID]: {...newData, pictures: {0: this.state.editPic}}});
+    }
+    // this update
+    this.setState({
+      ...this.state,
+      ...noEdit,
+    });
   }
   render() {
     const {goBack, dismiss} = this.props.navigation;
@@ -283,7 +324,7 @@ class GroupPage extends React.Component {
               : this.props.navigation.navigate(
                   'AlertAddImage',
                   { title:'Add picture',
-                    onGoBack:(val) => this.addPicture(),
+                    onGoBack:(val) => this.addPicture(val),
                   }
                 )
             }
@@ -367,7 +408,7 @@ class GroupPage extends React.Component {
           disabled={false}
           text="Save edits"
           loader={false}
-          click={() => this.saveGroupEdits()}
+          click={() => this.saveEdits(data)}
           />
         </FadeInView>
         }
