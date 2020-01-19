@@ -137,7 +137,7 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.id !==
+              {data.organizer.id === //CHANGE THIS LINE TO ALLOW ORGANIZER TO JOIN EVENT FOR TESTING
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 <Row>
                   <Col size={50} style={styleApp.center}>
