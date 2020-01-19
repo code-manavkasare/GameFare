@@ -320,7 +320,7 @@ class GroupPage extends React.Component {
       textNoButton: 'No',
       title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
       icon: undefined,
-      yesClick: () => this.removeUserFromGroup(user.userID, data.objectID),
+      yesClick: () => removeUserFromGroup(user.userID, data),
       noClick: () => null,
       onGoBack: () => this.props.navigation.navigate('Group'),
     });
