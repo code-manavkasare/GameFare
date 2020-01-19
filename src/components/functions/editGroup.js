@@ -45,7 +45,7 @@ async function removeUserFromGroup(playerID, group) {
     .database()
     .ref('groups/' + group.objectID + '/allMembers/' + index)
     .remove()
-    .catch(err => {/*throw err*/});
+    .catch(err => {throw err;});
 
     await firebase
     .database()

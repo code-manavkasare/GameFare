@@ -246,7 +246,7 @@ class GroupPage extends React.Component {
           loader={this.state.loader}
           infoUser={this.props.infoUser}
           editMode={this.state.editMode}
-          onRemoveMember={(user) => this.removeUser(data, user)}
+          onRemoveMember={(user) => this.askRemoveUser(data, user)}
         />
 
         <EventsView
@@ -310,20 +310,34 @@ class GroupPage extends React.Component {
     await this.setState({editPic: uriResized});
     this.setState({loader:false});
   }
-  async removeUser(data, user) {
-    console.log('remove');
+  async askRemoveUser(data, user) {
     console.log(user);
-    console.log('from');
     console.log(data);
-    this.props.navigation.navigate('AlertYesNo', {
-      textYesButton: 'Yes',
-      textNoButton: 'No',
-      title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
-      icon: undefined,
-      yesClick: () => removeUserFromGroup(user.userID, data),
-      noClick: () => null,
-      onGoBack: () => this.props.navigation.navigate('Group'),
-    });
+    this.removeUser(user.userID, data);
+    // this.props.navigation.navigate('AlertYesNo', {
+    //   textYesButton: 'Yes',
+    //   textNoButton: 'No',
+    //   title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
+    //   icon: undefined,
+    //   yesClick: () => this.removeUser(user.userID, data),
+    //   noClick: () => null,
+    //   onGoBack: () => this.props.navigation.navigate('Group'),
+    // });
+  }
+  async removeUser(playerID, group) {
+    console.log('removeUser');
+    console.log(group);
+    try {
+      removeUserFromGroup(playerID, group);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+    let index = group.allMembers.indexOf(playerID);
+    delete group.allMembers[index];
+    delete group.members[playerID];
+    console.log(group.members);
+    await this.props.groupsAction('setAllGroups', {[group.objectId]: group});
   }
   async saveEdits(data) {
     if (
