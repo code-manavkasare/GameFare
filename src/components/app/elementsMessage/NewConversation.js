@@ -44,7 +44,7 @@ class NewConversation extends React.Component {
     this.changeSearch('');
   }
   async changeSearch(search) {
-    const users = await autocompleteSearchUsers(search);
+    const users = await autocompleteSearchUsers(search,this.props.userID);
     this.setState({users: users, loader: false});
   }
   async next(selectedUsers) {
