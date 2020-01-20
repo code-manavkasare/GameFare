@@ -127,6 +127,8 @@ export default class CardUser extends Component {
     );
   }
   cardUser(user) {
+    console.log('card user mount');
+    console.log(user);
     return (
       <View>
         <ButtonColor
@@ -148,12 +150,22 @@ export default class CardUser extends Component {
                     </View>
                   )}
                 </Col>
-                <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
+                <Col size={75} style={[styleApp.center2, {paddingLeft: 10}]}>
                   <Text style={styleApp.text}>
                     {user.info.firstname} {user.info.lastname}
                   </Text>
                 </Col>
-                <Col size={20} style={styleApp.center3}>
+                <Col size={10} style={styleApp.center}>
+                  {user.status === 'declined' && (
+                    <AllIcons
+                      name="times"
+                      type="font"
+                      color={colors.red}
+                      size={17}
+                    />
+                  )}
+                </Col>
+                <Col size={10} style={styleApp.center3}>
                   {this.state.loader ? (
                     <Loader size={20} color="green" />
                   ) : this.props.userID !== user.id ? (
