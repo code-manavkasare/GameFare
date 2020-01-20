@@ -76,7 +76,7 @@ class NewConversation extends React.Component {
       }
     }
 
-    await this.props.navigation.navigate('Conversation', {data: discussion});
+    await this.props.navigation.navigate('Conversation', {data: discussion,myConversation:true});
     return this.setState({loaderHeader: false});
   }
   selectUser(select, user, selectedUsers) {

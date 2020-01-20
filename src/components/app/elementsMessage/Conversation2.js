@@ -75,28 +75,9 @@ export default class KeyboardInput extends Component {
       <InputMessage
         userConnected={this.props.userConnected}
         discussion={this.props.discussion}
-        infoOtherMember={this.props.infoOtherMember}
         user={this.props.user}
         onRef={(ref) => (this.inputRef = ref)}
-        // openPicturesView={(val) => {
-        //   this.showKeyboardView('KeyboardView', 'FIRST - 1 (passed prop)');
-        // }}
       />
-    );
-  }
-  upToDateSection() {
-    if (this.state.loader)
-      return (
-        <View style={[styleApp.center, {marginBottom: 0}]}>
-          {/* <Loader size={25} color={'green'} /> */}
-        </View>
-      );
-    return (
-      <View style={[styleApp.center, {marginBottom: 0}]}>
-        {/* <Text style={[styleApp.smallText, {color: colors.grey}]}>
-          <Text>✓</Text> You are to date
-        </Text> */}
-      </View>
     );
   }
   render() {
@@ -107,8 +88,7 @@ export default class KeyboardInput extends Component {
           style={styles.messageScrollView}
           ref={(ref) => (this.listViewRef = ref)}
           inverted>
-          {this.upToDateSection()}
-          {/* <View style={{height: 30}} /> */}
+
           {this.props.messages.map((message, i) => (
             <CardMessage
               message={{

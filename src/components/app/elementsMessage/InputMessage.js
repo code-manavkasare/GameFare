@@ -17,7 +17,10 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import {takePicture, getPhotoUser, pickLibrary} from '../../functions/pictures';
 import {generateID} from '../../functions/createGroup';
-import {sendNewMessage} from '../../functions/message';
+import {
+  sendNewMessage,
+  nameOtherMemberConversation,
+} from '../../functions/message';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -129,7 +132,11 @@ class InputMessage extends React.Component {
           enableScrollToCaret
           value={this.state.inputValue}
           placeholder={
-            'Send a message to ' + this.props.infoOtherMember.firstname
+            'Send a message to ' +
+            nameOtherMemberConversation(
+              this.props.discussion,
+              this.props.userID,
+            )
           }
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
@@ -159,13 +166,7 @@ class InputMessage extends React.Component {
           </ScrollView>
         ) : null}
 
-        <Row
-          style={{
-            paddingLeft: 20,
-            paddingRight: 20,
-            height: 50,
-            // backgroundColor: 'red',
-          }}>
+        <Row style={styles.rowUtils}>
           <Col
             size={12}
             style={styleApp.center2}
@@ -295,7 +296,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: width - 20,
     backgroundColor: 'white',
-    // sborderWidth: 0.5 / PixelRatio.get(),
     borderRadius: 18,
   },
   buttonSend: {
@@ -320,11 +320,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.white,
   },
+  rowUtils: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    height: 50,
+  },
 });
 
 const mapStateToProps = (state) => {
   return {
     input: state.message.input,
+    userID: state.user.userID,
   };
 };
 

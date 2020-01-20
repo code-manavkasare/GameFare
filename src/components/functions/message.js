@@ -112,10 +112,34 @@ function checkMessageRead(message, userID) {
   return true;
 }
 
+function nameOtherMemberConversation(conversation, userID) {
+  if (conversation.type === 'group') return conversation.title;
+  if (conversation.numberMembers > 2) return 'the group';
+  const infoMember = Object.values(conversation.members).filter(
+    (user) => user.id !== userID,
+  )[0].info;
+  return infoMember.firstname + ' ' + infoMember.lastname;
+}
+
+function titleConversation(conversation, userID) {
+  if (conversation.type === 'group') return conversation.title;
+  if (conversation.numberMembers === 2)
+    return nameOtherMemberConversation(conversation, userID);
+  let title = '';
+  for (var i in conversation.members) {
+    if (conversation.members[i].id === userID) title = title;
+    else if (i === '0') title = conversation.members[i].info.firstname;
+    else title = title + ', ' + conversation.members[i].info.firstname;
+  }
+  return title;
+}
+
 export {
   createDiscussion,
   searchDiscussion,
   sendNewMessage,
   loadMyDiscusions,
   checkMessageRead,
+  titleConversation,
+  nameOtherMemberConversation,
 };

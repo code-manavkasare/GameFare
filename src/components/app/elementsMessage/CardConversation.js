@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  Image,
-  ScrollView,
-  Animated,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
@@ -21,11 +13,8 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
 
-import AsyncImage from '../../layout/image/AsyncImage';
-import {checkMessageRead} from '../../functions/message';
-
-import Reactotron from 'reactotron-react-native';
-import Conversation from './Conversation';
+import ImageConversation from '../../layout/image/ImageConversation';
+import {checkMessageRead, titleConversation} from '../../functions/message';
 
 class CardConversation extends React.Component {
   constructor(props) {
@@ -67,39 +56,6 @@ class CardConversation extends React.Component {
         lastMessage: nextProps.discussion.lastMessage,
       });
   }
-
-  imageCard(conversation) {
-    if (conversation.type === 'group') {
-      return (
-        <AsyncImage
-          style={styles.roundImage}
-          mainImage={conversation.image}
-          imgInitial={conversation.image}
-        />
-      );
-    }
-    if (this.infoOtherMember(conversation).picture) {
-      return (
-        <AsyncImage
-          style={styles.roundImage}
-          mainImage={this.infoOtherMember(conversation).picture}
-          imgInitial={this.infoOtherMember(conversation).picture}
-        />
-      );
-    }
-    return (
-      <View style={styles.roundImage}>
-        {this.infoOtherMember(conversation).firstname ? (
-          <Text style={[styleApp.text, {fontSize: 13}]}>
-            {this.infoOtherMember(conversation).firstname[0] +
-              this.infoOtherMember(conversation).lastname[0]}
-          </Text>
-        ) : (
-          <Text style={[styleApp.text, {fontSize: 13}]}>GF</Text>
-        )}
-      </View>
-    );
-  }
   infoOtherMember(conversation) {
     if (
       Object.values(conversation.members).filter(
@@ -110,14 +66,6 @@ class CardConversation extends React.Component {
     return Object.values(conversation.members).filter(
       (user) => user.id !== this.props.userID,
     )[0].info;
-  }
-  titleConversation(conversation) {
-    if (conversation.type === 'group') return conversation.title;
-    return (
-      this.infoOtherMember(conversation).firstname +
-      ' ' +
-      this.infoOtherMember(conversation).lastname
-    );
   }
   lastMessage(lastMessage) {
     if (!lastMessage) return <View style={styles.placeholderLastMessage} />;
@@ -167,11 +115,16 @@ class CardConversation extends React.Component {
           return (
             <Row>
               <Col size={20} style={styleApp.center2}>
-                {this.imageCard(conversation)}
+                <ImageConversation
+                  conversation={conversation}
+                  userID={this.props.userID}
+                  style={styles.roundImage}
+                  sizeSmallImg={35}
+                />
               </Col>
               <Col size={60} style={[styleApp.center2, {paddingLeft: 5}]}>
                 <Text style={[styleApp.text, {fontSize: 18}]}>
-                  {this.titleConversation(conversation)}
+                  {titleConversation(conversation, this.props.userID)}
                 </Text>
                 {this.lastMessage(lastMessage)}
               </Col>
@@ -216,8 +169,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.off2,
     width: 55,
     height: 55,
-    borderRadius: 5,
-    borderWidth: 0.5,
+    borderRadius: 27.5,
+    borderWidth: 0,
     borderColor: colors.borderColor,
   },
   dotUnread: {

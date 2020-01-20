@@ -96,7 +96,7 @@ class MessageTab extends React.Component {
   messagePageView(conversations) {
     if (!this.props.userConnected) return this.logoutView();
     return (
-      <View style={{paddingTop: 5, minHeight: height / 1.5}}>
+      <View style={{paddingTop: 5, minHeight: height}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
         </View>
