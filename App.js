@@ -28,9 +28,8 @@ class App extends Component {
       this.autoSignIn();
       // onTokenRefresh seems to have lots of problems, just get the token on startup every time and update it
       //firebase.messaging().onTokenRefresh(token => updateUserFCMToken(this.props.userID, token));
-      firebase.messaging().getToken().then(token => {
-        updateUserFCMToken(this.props.userID, token);
-      });
+      const token = await firebase.messaging().getToken();
+      updateUserFCMToken(this.props.userID, token);
     }
   }
   async autoSignIn() {
