@@ -122,22 +122,11 @@ export default class HeaderFlow extends Component {
             backgroundColor: AnimateBackgroundView,
             borderBottomWidth: borderWidth,
             borderColor: borderColorView,
-            paddingLeft: 20,
-            paddingRight: 20,
             width: width,
           },
         ]}>
         <Row>
-          <View
-            style={[
-              styleApp.center,
-              {
-                height: '100%',
-                marginLeft: -20,
-                position: 'absolute',
-                width: width,
-              },
-            ]}>
+          <View style={styles.rowTextHeader}>
             <Animated.Text
               style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
               {this.props.textHeader}
@@ -151,15 +140,8 @@ export default class HeaderFlow extends Component {
             {this.props.icon1 && (
               <Animated.View
                 style={[
-                  {
-                    borderColor: borderColorIcon,
-                    height: 48,
-                    width: 48,
-                    borderRadius: 23.8,
-                    borderWidth: 1,
-                    backgroundColor: 'white',
-                    overFlow: 'hidden',
-                  },
+                  styles.animatedButtonStyle,
+                  {borderColor: borderColorIcon},
                 ]}>
                 <ButtonColor
                   view={() => {
@@ -174,16 +156,7 @@ export default class HeaderFlow extends Component {
                   }}
                   click={() => this.props.clickButton1()}
                   color={'white'}
-                  style={[
-                    styleApp.center,
-                    {
-                      height: 46,
-                      width: 46,
-                      borderRadius: 23,
-                      borderWidth: 0,
-                      overFlow: 'hidden',
-                    },
-                  ]}
+                  style={styles.buttonRight}
                   onPressColor={colors.off}
                 />
               </Animated.View>
@@ -200,15 +173,8 @@ export default class HeaderFlow extends Component {
               this.props.icon2 && (
                 <Animated.View
                   style={[
-                    {
-                      borderColor: borderColorIcon,
-                      height: 48,
-                      width: 48,
-                      borderRadius: 23.8,
-                      borderWidth: 1,
-                      backgroundColor: 'white',
-                      overFlow: 'hidden',
-                    },
+                    styles.animatedButtonStyle,
+                    {borderColor: borderColorIcon},
                   ]}>
                   <ButtonColor
                     view={() => {
@@ -227,16 +193,7 @@ export default class HeaderFlow extends Component {
                     }}
                     click={() => this.props.clickButton2()}
                     color={'white'}
-                    style={[
-                      styleApp.center,
-                      {
-                        height: 46,
-                        width: 46,
-                        borderRadius: 23,
-                        borderWidth: 0,
-                        overFlow: 'hidden',
-                      },
-                    ]}
+                    style={styles.buttonRight}
                     onPressColor={colors.off}
                   />
                 </Animated.View>
@@ -260,18 +217,11 @@ const styles = StyleSheet.create({
   header: {
     height: sizes.heightHeaderHome,
     paddingTop: sizes.marginTopHeader - 5,
+    paddingLeft: 20,
+    paddingRight: 20,
     borderBottomWidth: 1,
     position: 'absolute',
     zIndex: 10,
-  },
-  viewTitleHeader: {
-    position: 'absolute',
-    height: '100%',
-    width: width,
-    // backgroundColor:'red',
-    zIndex: -1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 15,
@@ -281,5 +231,27 @@ const styles = StyleSheet.create({
   textTitleHeader: {
     color: colors.title,
     fontSize: 17,
+  },
+  buttonRight: {
+    ...styleApp.center,
+    height: 46,
+    width: 46,
+    borderRadius: 23,
+    borderWidth: 0,
+    overFlow: 'hidden',
+  },
+  animatedButtonStyle: {
+    height: 48,
+    width: 48,
+    borderRadius: 23.8,
+    borderWidth: 1,
+    backgroundColor: 'white',
+    overFlow: 'hidden',
+  },
+  rowTextHeader: {
+    height: '100%',
+    marginLeft: -20,
+    position: 'absolute',
+    width: width,
   },
 });

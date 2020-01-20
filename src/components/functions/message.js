@@ -70,10 +70,9 @@ async function searchDiscussion(ids, numberMembers) {
 
 async function loadMyDiscusions(userID) {
   indexDiscussions.clearCache();
-  console.log('loadMyDiscusions 2');
 
   // search for persnal conversations
-  var {hits} = await indexDiscussions.search({
+  const {hits} = await indexDiscussions.search({
     query: '',
     filters: 'allMembers:' + userID,
   });

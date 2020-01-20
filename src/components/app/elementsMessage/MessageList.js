@@ -131,23 +131,21 @@ class MessageTab extends React.Component {
   }
   render() {
     const {navigate} = this.props.navigation;
-    const {conversations} = this.props;
+    const {conversations, userConnected} = this.props;
     return (
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={this.props.userConnected && 'Inbox'}
+          textHeader={userConnected && 'Inbox'}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
           typeIcon2={'font'}
           sizeIcon2={17}
           initialTitleOpacity={0}
-          icon2={this.props.userConnected ? 'edit' : null}
+          icon2={userConnected ? 'edit' : null}
           clickButton2={() =>
-            this.props.userConnected
-              ? navigate('NewConversation')
-              : navigate('SignIn')
+            userConnected ? navigate('NewConversation') : navigate('SignIn')
           }
         />
 
