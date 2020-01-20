@@ -26,6 +26,7 @@ import AllIcons from '../../layout/icons/AllIcons';
 
 import {getParams, openUrl} from '../../database/branch';
 import NavigationService from '../../../../NavigationService';
+import AllIcon from '../../layout/icons/AllIcons';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -228,6 +229,33 @@ class CardMessage extends React.Component {
         <Modal visible={this.state.showImage} transparent={true}>
           <ImageViewer
             enableSwipeDown={true}
+            renderHeader={(index) => {
+              return (
+                <Row
+                  style={{
+                    height: 55,
+                    width: width,
+                    // backgroundColor: 'red',
+                    position: 'absolute',
+                    marginTop: 30,
+                    zIndex: 100,
+                  }}>
+                  <Col
+                    size={15}
+                    style={styleApp.center}
+                    activeOpacity={0.6}
+                    onPress={() => this.setState({showImage: false})}>
+                    <AllIcon
+                      size={24}
+                      name={'times'}
+                      type="font"
+                      color={colors.white}
+                    />
+                  </Col>
+                  <Col size={85}></Col>
+                </Row>
+              );
+            }}
             imageUrls={Object.values(images)}
             onSwipeDown={() => this.setState({showImage: false})}
           />

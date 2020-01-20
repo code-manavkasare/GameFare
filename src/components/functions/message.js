@@ -36,6 +36,9 @@ async function sendNewMessage(discusssionID, user, text, images) {
       images: images,
       createdAt: new Date(),
       timeStamp: moment().valueOf(),
+      usersRead: {
+        [user._id]: true,
+      },
     });
   return true;
 }
@@ -102,4 +105,17 @@ async function loadMyDiscusions(userID) {
   return discussions;
 }
 
-export {createDiscussion, searchDiscussion, sendNewMessage, loadMyDiscusions};
+function checkMessageRead(message, userID) {
+  if (!message) return false;
+  if (!message.usersRead) return false;
+  if (!message.usersRead[userID]) return false;
+  return true;
+}
+
+export {
+  createDiscussion,
+  searchDiscussion,
+  sendNewMessage,
+  loadMyDiscusions,
+  checkMessageRead,
+};

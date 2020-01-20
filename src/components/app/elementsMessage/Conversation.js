@@ -26,7 +26,10 @@ class MessageTab extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    this.loadMessages();
+    this.loadMessages(
+      this.props.navigation.getParam('data'),
+      this.props.navigation.getParam('myConversation'),
+    );
   }
   componentWillUnmount() {
     firebase
@@ -34,20 +37,19 @@ class MessageTab extends React.Component {
       .ref('discussions/' + this.props.navigation.getParam('data').objectID)
       .off();
   }
-  async loadMessages() {
+  async loadMessages(conversation, myConversation) {
     const that = this;
     firebase
       .database()
-      .ref('discussions/' + this.props.navigation.getParam('data').objectID)
+      .ref('discussions/' + conversation.objectID)
       .on('value', async function(snap) {
         const discussion = snap.val();
         let messages = discussion.messages;
         if (!messages)
           messages = {
-            0: {
+            noMessage: {
               user: that.props.gamefareUser,
-              text:
-                'No messages have been sent in this conversation. Write the first one!',
+              text: 'Write the first message.',
               createdAt: new Date(),
               timeStamp: moment().valueOf(),
             },
@@ -61,11 +63,21 @@ class MessageTab extends React.Component {
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
         that.setState({messages: messages, loader: false});
-        that.setConversation({
-          objectID: that.props.navigation.getParam('data').objectID,
-          lastMessage: Object.values(messages)[0],
-          lastMessageRead: true,
-        });
+
+        let lastMessage = Object.values(messages)[0];
+        let usersRead = lastMessage.usersRead;
+        if (!usersRead) usersRead = {};
+        usersRead = {
+          ...usersRead,
+          [this.props.userID]: true,
+        };
+        lastMessage.usersRead = usersRead;
+        if (myConversation || lastMessage.user._id === that.props.userID) {
+          that.setConversation({
+            ...conversation,
+            lastMessage: lastMessage,
+          });
+        }
       });
   }
   setConversation(data) {

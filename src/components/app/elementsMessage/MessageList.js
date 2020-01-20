@@ -111,7 +111,12 @@ class MessageTab extends React.Component {
           {this.state.loader
             ? this.placeHolder()
             : Object.values(conversations).map((discussion, i) => (
-                <CardConversation key={i} index={i} discussion={discussion} />
+                <CardConversation
+                  key={i}
+                  index={i}
+                  discussion={discussion}
+                  myConversation={true}
+                />
               ))}
         </View>
       </View>
@@ -139,7 +144,7 @@ class MessageTab extends React.Component {
           typeIcon2={'font'}
           sizeIcon2={17}
           initialTitleOpacity={0}
-          icon2={this.props.userConnected && 'edit'}
+          icon2={this.props.userConnected ? 'edit' : null}
           clickButton2={() =>
             this.props.userConnected
               ? navigate('NewConversation')

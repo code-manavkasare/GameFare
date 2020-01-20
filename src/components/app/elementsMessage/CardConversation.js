@@ -9,18 +9,23 @@ import {
   StyleSheet,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {Col, Row, Grid} from 'react-native-easy-grid';
+import firebase from 'react-native-firebase';
+import isEqual from 'lodash.isequal';
+
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
-import {Col, Row, Grid} from 'react-native-easy-grid';
 import NavigationService from '../../../../NavigationService';
-import firebase from 'react-native-firebase';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
 
 import AsyncImage from '../../layout/image/AsyncImage';
-import AllIcons from '../../layout/icons/AllIcons';
+import {checkMessageRead} from '../../functions/message';
+
+import Reactotron from 'reactotron-react-native';
+import Conversation from './Conversation';
 
 class CardConversation extends React.Component {
   constructor(props) {
@@ -32,32 +37,39 @@ class CardConversation extends React.Component {
     };
   }
   async componentDidMount() {
-    var lastMessage = await firebase
+    let lastMessage = await firebase
       .database()
       .ref('discussions/' + this.props.discussion.objectID + '/messages')
       .limitToLast(1)
       .once('value');
+
     lastMessage = lastMessage.val();
+    if (!lastMessage)
+      lastMessage = {noMessage: {text: 'Write the first message.'}};
 
-    if (!lastMessage) lastMessage = [{text: 'Write the first message'}];
-    else lastMessage = Object.values(lastMessage)[0];
+    let idLastMessage = Object.keys(lastMessage)[0];
+    lastMessage = Object.values(lastMessage)[0];
+    lastMessage._id = idLastMessage;
 
-    await this.props.messageAction('setConversation', {
-      ...this.props.discussion,
-      lastMessage: lastMessage,
-      lastMessageRead: !this.props.conversations[this.props.discussion.objectID]
-        ? false
-        : lastMessage.text ===
-          this.props.conversations[this.props.discussion.objectID].lastMessage
-            .text
-        ? true
-        : false,
-    });
+    if (this.props.myConversation) {
+      await this.props.messageAction('setConversation', {
+        ...this.props.discussion,
+        lastMessage: lastMessage,
+      });
+    }
+
     return this.setState({lastMessage: lastMessage});
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps);
+    if (!isEqual(this.props.discussion !== nextProps.discussion))
+      return this.setState({
+        lastMessage: nextProps.discussion.lastMessage,
+      });
   }
 
   imageCard(conversation) {
-    if (this.props.discussion.type === 'group') {
+    if (conversation.type === 'group') {
       return (
         <AsyncImage
           style={styles.roundImage}
@@ -107,37 +119,47 @@ class CardConversation extends React.Component {
       this.infoOtherMember(conversation).lastname
     );
   }
-  lastMessage() {
-    const discussion = this.props.conversations[this.props.discussion.objectID];
-    // return null;
-    if (!discussion) return <View style={styles.placeholderLastMessage} />;
-    if (!discussion.lastMessage)
+  lastMessage(lastMessage) {
+    if (!lastMessage) return <View style={styles.placeholderLastMessage} />;
+    else if (!lastMessage)
       return <View style={styles.placeholderLastMessage} />;
+
     return (
       <Text
         style={[
-          !this.checkLastMessageRead() ? styleApp.input : styleApp.smallText,
-          {fontSize: 13, marginTop: 2, color: colors.title},
+          !checkMessageRead(lastMessage, this.props.userID)
+            ? styleApp.input
+            : styleApp.smallText,
+          styles.textUnread,
         ]}>
-        {discussion.lastMessage.text === '' && discussion.lastMessage.images
-          ? Object.values(discussion.lastMessage.images).length + ' file sent'
-          : !discussion.lastMessage.text
+        {lastMessage.text === '' && lastMessage.images
+          ? Object.values(lastMessage.images).length + ' file sent'
+          : !lastMessage.text
           ? 'Send the first message.'
-          : discussion.lastMessage.text}
+          : lastMessage.text}
       </Text>
     );
   }
-  checkLastMessageRead() {
-    console.log(
-      'checkLastMessageRead',
-      this.props.conversations[this.props.discussion.objectID],
-    );
-    if (!this.props.conversations[this.props.discussion.objectID]) return false;
-    return this.props.conversations[this.props.discussion.objectID]
-      .lastMessageRead;
-  }
 
-  cardConversation(conversation, i) {
+  async clickCard(conversation, lastMessage) {
+    if (!this.props.myConversation || lastMessage._id !== 'noMessage') {
+      await firebase
+        .database()
+        .ref(
+          'discussions/' +
+            conversation.objectID +
+            '/messages/' +
+            lastMessage._id +
+            '/usersRead/',
+        )
+        .update({[this.props.userID]: true});
+    }
+    NavigationService.push('Conversation', {
+      data: conversation,
+      myConversation: this.props.myConversation,
+    });
+  }
+  cardConversation(conversation, lastMessage, i) {
     return (
       <ButtonColor
         key={i}
@@ -151,26 +173,17 @@ class CardConversation extends React.Component {
                 <Text style={[styleApp.text, {fontSize: 18}]}>
                   {this.titleConversation(conversation)}
                 </Text>
-                {this.lastMessage()}
+                {this.lastMessage(lastMessage)}
               </Col>
               <Col size={5} style={styleApp.center2}>
-                {!this.checkLastMessageRead() && (
+                {!checkMessageRead(lastMessage, this.props.userID) && (
                   <View style={styles.dotUnread} />
                 )}
               </Col>
             </Row>
           );
         }}
-        click={() => {
-          this.props.messageAction('setConversation', {
-            ...this.props.discussion,
-            lastMessageRead: true,
-            lastMessage: this.state.lastMessage,
-          });
-          NavigationService.push('Conversation', {
-            data: conversation,
-          });
-        }}
+        click={() => this.clickCard(conversation, lastMessage)}
         color="white"
         style={styleApp.cardConversation}
         onPressColor={colors.off}
@@ -178,7 +191,15 @@ class CardConversation extends React.Component {
     );
   }
   render() {
-    return this.cardConversation(this.props.discussion, this.props.index);
+    const conversation = this.props.conversations[
+      this.props.discussion.objectID
+    ];
+    const {lastMessage} = this.state;
+    return this.cardConversation(
+      conversation ? conversation : this.props.discussion,
+      lastMessage,
+      this.props.index,
+    );
   }
 }
 
@@ -212,6 +233,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     backgroundColor: colors.off2,
   },
+  textUnread: {fontSize: 13, marginTop: 2, color: colors.title},
 });
 
 export default connect(mapStateToProps, {historicSearchAction, messageAction})(
