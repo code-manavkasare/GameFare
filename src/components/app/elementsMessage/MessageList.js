@@ -38,8 +38,9 @@ class MessageTab extends React.Component {
   }
 
   async loadDiscussions(userID) {
-    await this.props.messageAction('loadConversations', {userID: userID});
-    this.setState({loader: false});
+    const discussions = await loadMyDiscusions(userID);
+    // await this.props.messageAction('loadConversations', {userID: userID});
+    this.setState({discussions: discussions, loader: false});
   }
   async componentWillReceiveProps(nextProps) {
     if (
@@ -131,7 +132,8 @@ class MessageTab extends React.Component {
   }
   render() {
     const {navigate} = this.props.navigation;
-    const {conversations, userConnected} = this.props;
+    const {discussions} = this.state;
+    const {userConnected} = this.props;
     return (
       <View>
         <HeaderBackButton
@@ -151,7 +153,7 @@ class MessageTab extends React.Component {
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.messagePageView(conversations)}
+          contentScrollView={() => this.messagePageView(discussions)}
           keyboardAvoidDisable={true}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -171,7 +173,7 @@ class MessageTab extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    conversations: state.message.conversations,
+    // conversations: state.message.conversations,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
   };

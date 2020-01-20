@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
+import moment from 'moment';
 import firebase from 'react-native-firebase';
 import isEqual from 'lodash.isequal';
 
@@ -31,41 +32,41 @@ class CardConversation extends React.Component {
       .ref('discussions/' + this.props.discussion.objectID + '/messages')
       .limitToLast(1)
       .once('value');
-
+    const {gamefareUser} = this.props;
     lastMessage = lastMessage.val();
     if (!lastMessage)
-      lastMessage = {noMessage: {text: 'Write the first message.'}};
+      lastMessage = {
+        noMessage: {
+          user: gamefareUser,
+          text: 'Write the first message.',
+          createdAt: new Date(),
+          timeStamp: moment().valueOf(),
+        },
+      };
 
     let idLastMessage = Object.keys(lastMessage)[0];
     lastMessage = Object.values(lastMessage)[0];
     lastMessage._id = idLastMessage;
-
+    console.log('mount card convo', lastMessage);
     if (this.props.myConversation) {
       await this.props.messageAction('setConversation', {
         ...this.props.discussion,
         lastMessage: lastMessage,
       });
     }
-
     return this.setState({lastMessage: lastMessage});
   }
   componentWillReceiveProps(nextProps) {
     console.log('nextProps', nextProps);
-    if (!isEqual(this.props.discussion !== nextProps.discussion))
+    const conversation = this.props.conversations[
+      this.props.discussion.objectID
+    ];
+    const conversationNext =
+      nextProps.conversations[nextProps.discussion.objectID];
+    if (!isEqual(conversation, conversationNext))
       return this.setState({
-        lastMessage: nextProps.discussion.lastMessage,
+        lastMessage: conversationNext.lastMessage,
       });
-  }
-  infoOtherMember(conversation) {
-    if (
-      Object.values(conversation.members).filter(
-        (user) => user.id !== this.props.userID,
-      ).length === 0
-    )
-      return Object.values(conversation.members)[0].info;
-    return Object.values(conversation.members).filter(
-      (user) => user.id !== this.props.userID,
-    )[0].info;
   }
   lastMessage(lastMessage) {
     if (!lastMessage) return <View style={styles.placeholderLastMessage} />;
@@ -90,7 +91,9 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
-    if (!this.props.myConversation || lastMessage._id !== 'noMessage') {
+    console.log('click card', lastMessage);
+
+    if (this.props.myConversation) {
       await firebase
         .database()
         .ref(
@@ -160,6 +163,7 @@ const mapStateToProps = (state) => {
   return {
     conversations: state.message.conversations,
     userID: state.user.userID,
+    gamefareUser: state.message.gamefareUser,
   };
 };
 

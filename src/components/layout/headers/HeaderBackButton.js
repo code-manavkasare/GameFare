@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
     width: 46,
     borderRadius: 23,
     borderWidth: 0,
-    overFlow: 'hidden',
   },
   animatedButtonStyle: {
     height: 48,
@@ -246,9 +245,10 @@ const styles = StyleSheet.create({
     borderRadius: 23.8,
     borderWidth: 1,
     backgroundColor: 'white',
-    overFlow: 'hidden',
+    // overFlow: 'hidden',
   },
   rowTextHeader: {
+    ...styleApp.center,
     height: '100%',
     marginLeft: -20,
     position: 'absolute',
