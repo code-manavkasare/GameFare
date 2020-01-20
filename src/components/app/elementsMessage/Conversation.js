@@ -39,6 +39,7 @@ class MessageTab extends React.Component {
       .off();
   }
   async loadMessages(conversation, myConversation, userID) {
+    const {gamefareUser} = this.props
     const that = this;
     firebase
       .database()
@@ -49,7 +50,7 @@ class MessageTab extends React.Component {
         if (!messages)
           messages = {
             noMessage: {
-              user: that.props.gamefareUser,
+              user: gamefareUser,
               text: 'Write the first message.',
               createdAt: new Date(),
               timeStamp: moment().valueOf(),
