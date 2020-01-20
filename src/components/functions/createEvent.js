@@ -7,7 +7,7 @@ import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import stripe from 'tipsi-stripe';
-import Date from '../app/elementsEventCreate/DateSelector';
+// import Date from '../app/elementsEventCreate/DateSelector';
 import moment from 'moment';
 
 stripe.setOptions({

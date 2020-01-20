@@ -4,10 +4,16 @@ import {
   SET_INPUT,
   ADD_IMAGE,
 } from './types';
+import {loadMyDiscusions} from '../components/functions/message';
 
 const setConversation = (value) => ({
   type: SET_CONVERSATION,
   conversation: value,
+});
+
+const setConversations = (value) => ({
+  type: SET_CONVERSATIONS,
+  conversations: value,
 });
 
 const setInput = (value) => ({
@@ -25,7 +31,10 @@ export const messageAction = (val, data) => {
     if (val === 'setConversation') {
       await dispatch(setConversation(data));
     } else if (val === 'setConversations') {
-      await dispatch(setConversation(data));
+      await dispatch(setConversations(data));
+    } else if (val === 'loadConversations') {
+      const discussions = await loadMyDiscusions(data.userID);
+      await dispatch(setConversations(discussions));
     } else if (val === 'setInput') {
       await dispatch(setInput(data));
     } else if (val === 'addImage') {

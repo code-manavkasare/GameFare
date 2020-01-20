@@ -95,7 +95,6 @@ class CardEvent extends React.Component {
         },
         'General',
       );
-    console.log('search dsciss', discussion);
     await NavigationService.goBack();
     return NavigationService.push('Conversation', {
       data: discussion,

@@ -44,7 +44,7 @@ class NewConversation extends React.Component {
     this.changeSearch('');
   }
   async changeSearch(search) {
-    const users = await autocompleteSearchUsers(search);
+    const users = await autocompleteSearchUsers(search,this.props.userID);
     this.setState({users: users, loader: false});
   }
   async next(selectedUsers) {
@@ -53,7 +53,6 @@ class NewConversation extends React.Component {
     let users = Object.values(selectedUsers).map((user) => user.objectID);
     users.push(this.props.userID);
     var discussion = await searchDiscussion(users, users.length);
-    console.log('next', discussion);
 
     users = Object.values(selectedUsers).map((user) => {
       user.id = user.objectID;
@@ -77,7 +76,7 @@ class NewConversation extends React.Component {
       }
     }
 
-    await this.props.navigation.navigate('Conversation', {data: discussion});
+    await this.props.navigation.navigate('Conversation', {data: discussion,myConversation:true});
     return this.setState({loaderHeader: false});
   }
   selectUser(select, user, selectedUsers) {
@@ -178,8 +177,8 @@ class NewConversation extends React.Component {
           keyboardShouldPersistTaps={'always'}
           style={styles.scrollViewUsers}>
           {this.state.loader ? (
-            <View>
-              <Loader size={25} color={'green'} />
+            <View style={[styleApp.center, {height: 200}]}>
+              <Loader size={35} color={'green'} />
             </View>
           ) : (
             this.state.users.map((user, i) =>
