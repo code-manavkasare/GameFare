@@ -5,31 +5,24 @@ import {
   View,
   Dimensions,
   Platform,
+  ScrollView,
   TouchableOpacity,
 } from 'react-native';
-
 import PropTypes from 'prop-types';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
-
 import {
   KeyboardAccessoryView,
   KeyboardUtils,
 } from 'react-native-keyboard-input';
 const {height, width} = Dimensions.get('screen');
+
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import Loader from '../../layout/loaders/Loader';
 import InputMessage from './InputMessage';
-import Video from 'react-native-af-video-player';
-
 import './Keyboard';
-
-import {Grid, Row, Col} from 'react-native-easy-grid';
 import CardMessage from './CardMessage';
-
-const IsIOS = Platform.OS === 'ios';
-const TrackInteractive = true;
 
 export default class KeyboardInput extends Component {
   static propTypes = {
@@ -53,9 +46,6 @@ export default class KeyboardInput extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
-  }
-  dismiss() {
-    this.inputRef.blur();
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.messages !== this.props.messages)
@@ -85,12 +75,8 @@ export default class KeyboardInput extends Component {
       <InputMessage
         userConnected={this.props.userConnected}
         discussion={this.props.discussion}
-        infoOtherMember={this.props.infoOtherMember}
         user={this.props.user}
         onRef={(ref) => (this.inputRef = ref)}
-        openPicturesView={(val) => {
-          this.showKeyboardView('KeyboardView', 'FIRST - 1 (passed prop)');
-        }}
       />
     );
   }
@@ -99,21 +85,10 @@ export default class KeyboardInput extends Component {
       <View style={styles.container}>
         <InvertibleScrollView
           keyboardDismissMode="interactive"
+          style={styles.messageScrollView}
           ref={(ref) => (this.listViewRef = ref)}
           inverted>
-          {this.state.loader ? (
-            <View style={[styleApp.center, {marginBottom: 20}]}>
-              <Loader size={25} color={'green'} />
-            </View>
-          ) : (
-            <View style={[styleApp.center, {marginBottom: -30}]}>
-              <Text style={[styleApp.smallText, {color: colors.grey}]}>
-                <Text>✓</Text> You are to date
-              </Text>
-            </View>
-          )}
 
-          <View style={{height: 20}} />
           {this.props.messages.map((message, i) => (
             <CardMessage
               message={{
@@ -134,29 +109,12 @@ export default class KeyboardInput extends Component {
         <KeyboardAccessoryView
           renderContent={this.renderContent}
           addBottomView={true}
-          onHeightChanged={
-            IsIOS
-              ? (height) => this.setState({keyboardAccessoryViewHeight: height})
-              : undefined
-          }
-          trackInteractive={TrackInteractive}
+          trackInteractive={true}
           kbInputRef={this.inputRef}
           kbComponent={this.state.customKeyboard.component}
           kbInitialProps={this.state.customKeyboard.initialProps}
           onItemSelected={this.onKeyboardItemSelected}
           onKeyboardResigned={this.onKeyboardResigned}
-          //  revealKeyboardInteractive
-          renderCoverSafeArea={() => (
-            <View
-              style={{
-                backgroundColor: 'blue',
-                height: 34,
-                width,
-                // position: 'absolute',
-                bottom: 0,
-              }}
-            />
-          )}
           requiresSameParentToManageScrollView
         />
       </View>
@@ -169,4 +127,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  messageScrollView: {paddingBottom: 20, paddingTop: 30, flex: 1},
 });

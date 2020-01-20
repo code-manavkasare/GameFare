@@ -10,18 +10,17 @@ import {
   Image,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {messageAction} from '../../../actions/messageActions';
-import firebase from 'react-native-firebase';
-import moment from 'moment';
-import {Col, Row} from 'react-native-easy-grid';
-import {takePicture, getPhotoUser, pickLibrary} from '../../functions/pictures';
-import {generateID} from '../../functions/createGroup';
-
-import {sendNewMessage} from '../../functions/message';
-
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import FadeInView from 'react-native-fade-in-view';
-import union from 'lodash/union';
+import firebase from 'react-native-firebase';
+import {Col, Row} from 'react-native-easy-grid';
+
+import {takePicture, getPhotoUser, pickLibrary} from '../../functions/pictures';
+import {generateID} from '../../functions/createGroup';
+import {
+  sendNewMessage,
+  nameOtherMemberConversation,
+} from '../../functions/message';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -45,19 +44,12 @@ class InputMessage extends React.Component {
   componentDidMount() {
     this.props.onRef(this);
   }
-  blur() {
-    this.textInputRef.blur();
-  }
   async sendNewMessage(user, input, images) {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
 
     await this.setState({inputValue: '', images: {}});
-    console.log('send new messages', this.props.discussion);
+
     if (!this.props.discussion.firstMessageExists) {
-      console.log(
-        'write firstMessageExists',
-        this.props.discussion.firstMessageExists,
-      );
       await firebase
         .database()
         .ref('discussions/' + this.props.discussion.objectID)
@@ -74,10 +66,8 @@ class InputMessage extends React.Component {
     return true;
   }
   async openPicturesView() {
-    if (!this.state.showImages) await this.textInputRef.blur();
-    //   await this.textInputRef.blur();
-
     if (!this.state.showImages) {
+      await this.textInputRef.blur();
       const imagesUser = await getPhotoUser();
       await this.setState({imagesUser: imagesUser});
     }
@@ -105,6 +95,7 @@ class InputMessage extends React.Component {
         {uri: picture, type: 'image', id: generateID(), uploaded: false},
         true,
       );
+    return true;
   }
   async selectPicture() {
     var picture = await pickLibrary();
@@ -134,16 +125,18 @@ class InputMessage extends React.Component {
       <View style={styles.keyboardContainer}>
         <AutoGrowingTextInput
           maxHeight={200}
-          // minHeight={35}
           style={styles.textInput}
           ref={(r) => {
             this.textInputRef = r;
           }}
           enableScrollToCaret
           value={this.state.inputValue}
-          // onFocus={() => this.focusInput()}
           placeholder={
-            'Send a message to ' + this.props.infoOtherMember.firstname
+            'Send a message to ' +
+            nameOtherMemberConversation(
+              this.props.discussion,
+              this.props.userID,
+            )
           }
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
@@ -173,13 +166,7 @@ class InputMessage extends React.Component {
           </ScrollView>
         ) : null}
 
-        <Row
-          style={{
-            paddingLeft: 20,
-            paddingRight: 20,
-            height: 50,
-            // backgroundColor: 'red',
-          }}>
+        <Row style={styles.rowUtils}>
           <Col
             size={12}
             style={styleApp.center2}
@@ -309,7 +296,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: width - 20,
     backgroundColor: 'white',
-    // sborderWidth: 0.5 / PixelRatio.get(),
     borderRadius: 18,
   },
   buttonSend: {
@@ -334,11 +320,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.white,
   },
+  rowUtils: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    height: 50,
+  },
 });
 
 const mapStateToProps = (state) => {
   return {
     input: state.message.input,
+    userID: state.user.userID,
   };
 };
 
