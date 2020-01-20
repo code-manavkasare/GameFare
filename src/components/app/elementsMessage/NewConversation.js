@@ -53,7 +53,6 @@ class NewConversation extends React.Component {
     let users = Object.values(selectedUsers).map((user) => user.objectID);
     users.push(this.props.userID);
     var discussion = await searchDiscussion(users, users.length);
-    console.log('next', discussion);
 
     users = Object.values(selectedUsers).map((user) => {
       user.id = user.objectID;

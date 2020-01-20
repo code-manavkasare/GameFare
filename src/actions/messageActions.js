@@ -33,9 +33,7 @@ export const messageAction = (val, data) => {
     } else if (val === 'setConversations') {
       await dispatch(setConversations(data));
     } else if (val === 'loadConversations') {
-      console.log('loadConversations', data.userID);
       const discussions = await loadMyDiscusions(data.userID);
-      console.log('discussions', discussions);
       await dispatch(setConversations(discussions));
     } else if (val === 'setInput') {
       await dispatch(setInput(data));

@@ -94,7 +94,6 @@ class MessageTab extends React.Component {
     );
   }
   messagePageView(conversations) {
-    console.log('conversations render', conversations);
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height / 1.5}}>

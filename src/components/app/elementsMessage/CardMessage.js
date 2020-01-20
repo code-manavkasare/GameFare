@@ -221,8 +221,6 @@ class CardMessage extends React.Component {
             return result;
           }, {})
       : [];
-    console.log('images message', images);
-    console.log(this.props.message.currentMessage);
     return (
       <View>
         {this.renderMessage(this.props.message)}

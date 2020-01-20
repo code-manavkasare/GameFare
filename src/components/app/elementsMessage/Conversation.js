@@ -81,7 +81,6 @@ class MessageTab extends React.Component {
       });
   }
   setConversation(data) {
-    console.log('setConversation!!!', data);
     this.props.messageAction('setConversation', data);
   }
   async sendPicture(val, discussion, user) {
