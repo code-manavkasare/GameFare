@@ -529,7 +529,8 @@ class EventPage extends React.Component {
     );
   }
   async saveEdits(data) {
-    let newData = {
+    // update event data
+    let editedEvent = {
       ...data,
       price: {
         ...data.price,
@@ -550,12 +551,6 @@ class EventPage extends React.Component {
       },
       location: this.state.editLocation ? this.state.editLocation : data.location,
     };
-    console.log(newData);
-    // firebase update
-    await editEvent(newData, () => console.log('edit event failed'));
-    // local update
-    await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
-    // this update
     this.setState({
       ...this.state,
       ...noEdit,
@@ -624,7 +619,9 @@ class EventPage extends React.Component {
                       : data.info.maxAttendance + ' players',
                     'user-plus',
                     () => this.setState({editMaxAttendance: data.info.maxAttendance + 1}),
-                    () => this.setState({editMaxAttendance: data.info.maxAttendance - 1}),
+                    () => data.info.maxAttendance === 1
+                      ? null
+                      : this.setState({editMaxAttendance: data.info.maxAttendance - 1}),
                   )
                 : this.editColIcon(
                     this.state.maxAttendance === 1
@@ -632,7 +629,9 @@ class EventPage extends React.Component {
                       : this.state.editMaxAttendance + ' players',
                     'user-plus',
                     () => this.setState({editMaxAttendance: this.state.editMaxAttendance + 1}),
-                    () => this.setState({editMaxAttendance: this.state.editMaxAttendance - 1}),
+                    () => this.state.editMaxAttendance === 1
+                      ? null
+                      : this.setState({editMaxAttendance: this.state.editMaxAttendance - 1}),
                   )
             }
           </Col>
