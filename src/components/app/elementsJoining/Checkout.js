@@ -267,6 +267,7 @@ class ProfilePage extends Component {
       },
       this.props.navigation.getParam('coach'),
       this.props.navigation.getParam('users'),
+      waitlist
     );
     if (!response) {
       await this.setState({loader: false});

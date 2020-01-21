@@ -239,6 +239,7 @@ async function joinEvent(
   cardInfo,
   coach,
   users,
+  waitlist,
 ) {
   if (data.date_timestamp < Number(new Date()))
     return {
@@ -259,26 +260,14 @@ async function joinEvent(
   );
   if (response === 'cancel') return {message, response};
 
-  // if (!data.info.public && coach) {
-  //   var newLevel = data.info.levelFilter
-  //   if (data.info.levelOption == 'max' || newLevel == 0) {
-  //     newLevel = 1
-  //   }
-  //   await firebase.database().ref('users/' + userID + '/level/').update({
-  //     [data.info.sport]:newLevel
-  //   })
-  // }
-
-  var pushSection = 'attendees';
-  if (coach) pushSection = 'coaches';
-
-  var usersToPush = {};
+  let pushSection = 'attendees';
+  let usersToPush = {};
 
   for (var i in users) {
     var user = {
       ...users[i],
       coach: coach,
-      status: 'confirmed',
+      status: waitlist ? 'pending' : 'confirmed',
       date: now,
     };
     usersToPush = {
