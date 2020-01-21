@@ -135,6 +135,96 @@ class EventPage extends React.Component {
     });
   }
 
+  header(event, showOffset) {
+    const {goBack, dismiss} = this.props.navigation;
+    if (showOffset) {
+      if (this.state.editMode) {
+        return (
+          <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={event.info.name}
+            inputRange={[50, 80]}
+            initialBorderColorIcon={colors.grey}
+            initialBackgroundColor={'transparent'}
+            initialTitleOpacity={0}
+            icon1="arrow-left"
+            icon2="share"
+            typeIcon2="moon"
+            sizeIcon2={17}
+            iconOffset="pen"
+            colorIconOffset={colors.blue}
+            typeIconOffset="font"
+            clickButton2={() =>
+              this.props.navigation.navigate('Contacts', {
+                openPageLink: 'openEventPage',
+                pageTo: 'Group',
+                objectID: event.objectID,
+                pageFrom: 'Event',
+                data: {...event, eventID: event.objectID},
+              })
+            }
+            clickButton1={() => dismiss()}
+            clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
+          />
+        );
+      } else {
+        return (
+          <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={event.info.name}
+            inputRange={[50, 80]}
+            initialBorderColorIcon={colors.grey}
+            initialBackgroundColor={'transparent'}
+            initialTitleOpacity={0}
+            icon1="arrow-left"
+            icon2="share"
+            typeIcon2="moon"
+            sizeIcon2={17}
+            iconOffset="pen"
+            colorIconOffset="white"
+            typeIconOffset="font"
+            clickButton2={() =>
+              this.props.navigation.navigate('Contacts', {
+                openPageLink: 'openEventPage',
+                pageTo: 'Group',
+                objectID: event.objectID,
+                pageFrom: 'Event',
+                data: {...event, eventID: event.objectID},
+              })
+            }
+            clickButton1={() => dismiss()}
+            clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
+          />
+        );
+      }
+    } else {
+      return (
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={event.info.name}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="arrow-left"
+          icon2="share"
+          typeIcon2="moon"
+          sizeIcon2={17}
+          clickButton2={() =>
+            this.props.navigation.navigate('Contacts', {
+              openPageLink: 'openEventPage',
+              pageTo: 'Group',
+              objectID: event.objectID,
+              pageFrom: 'Event',
+              data: {...event, eventID: event.objectID},
+            })
+          }
+          clickButton1={() => dismiss()}
+        />
+      );
+    }
+
+  }
   rowIcon(component, icon, alert) {
     return (
       <ButtonColor
@@ -530,7 +620,7 @@ class EventPage extends React.Component {
   }
   async saveEdits(data) {
     // update event data
-    let editedEvent = {
+    let newData = {
       ...data,
       price: {
         ...data.price,
@@ -551,6 +641,10 @@ class EventPage extends React.Component {
       },
       location: this.state.editLocation ? this.state.editLocation : data.location,
     };
+    // firebase update
+    await editEvent(newData, () => console.log('edit event failed'));
+    // local update
+    await this.props.eventsAction('setAllEvents', {[newData.objectID]: newData});
     this.setState({
       ...this.state,
       ...noEdit,
@@ -838,6 +932,7 @@ class EventPage extends React.Component {
     return false;
   }
   userIsOrganizer(event) {
+    return true;
     return event.info.organizer === this.props.userID;
   }
   askRemovePlayer(player, data) {
@@ -874,55 +969,7 @@ class EventPage extends React.Component {
     const {goBack, dismiss} = this.props.navigation;
     return (
       <View style={{flex: 1}}>
-        {this.userIsOrganizer(event)
-        ? <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={event.info.name}
-            inputRange={[50, 80]}
-            initialBorderColorIcon={colors.grey}
-            initialBackgroundColor={'transparent'}
-            initialTitleOpacity={0}
-            icon1="arrow-left"
-            icon2="share"
-            typeIcon2="moon"
-            sizeIcon2={17}
-            iconOffset="edit"
-            typeIconOffset="font"
-            clickButton2={() =>
-              this.props.navigation.navigate('Contacts', {
-                openPageLink: 'openEventPage',
-                pageTo: 'Group',
-                objectID: event.objectID,
-                pageFrom: 'Event',
-                data: {...event, eventID: event.objectID},
-              })
-            }
-            clickButton1={() => dismiss()}
-            clickButtonOffset={() => !this.state.editMode ? this.setState({editMode: true}) : null}
-          />
-        : <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={!event ? '' : event.info.name}
-            inputRange={[50, 80]}
-            initialBorderColorIcon={colors.grey}
-            initialBackgroundColor={'transparent'}
-            typeIcon2={'moon'}
-            sizeIcon2={17}
-            initialTitleOpacity={0}
-            icon1="arrow-left"
-            icon2="share"
-            clickButton2={() =>
-              this.props.navigation.navigate('Contacts', {
-                openPageLink: 'openEventPage',
-                pageTo: 'Group',
-                objectID: event.objectID,
-                pageFrom: 'Event',
-                data: {...event, eventID: event.objectID},
-              })
-            }
-            clickButton1={() => dismiss()}
-          />}
-
+        {this.header(event, this.userIsOrganizer(event))}
         <ParalaxScrollView
           setState={(val) => this.setState(val)}
           image={

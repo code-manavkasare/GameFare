@@ -44,7 +44,8 @@ export default class HeaderFlow extends Component {
     return (
       this.props.loader !== nextProps.loader ||
       this.state !== nextState ||
-      this.props.enableClickButton !== nextProps.enableClickButton
+      this.props.enableClickButton !== nextProps.enableClickButton ||
+      this.props.colorIconOffset !== nextProps.colorIconOffset
     );
   }
   handleBackPress = () => {
@@ -114,6 +115,8 @@ export default class HeaderFlow extends Component {
       ],
       extrapolate: 'clamp',
     });
+    console.log('COLORCOLORCOLOR');
+    console.log(this.props.colorIconOffset);
     return (
       <Animated.View
         style={[
@@ -225,7 +228,7 @@ export default class HeaderFlow extends Component {
                     );
                   }}
                   click={() => this.props.clickButtonOffset()}
-                  color={'white'}
+                  color={this.props.colorIconOffset}
                   style={[
                     styleApp.center,
                     {
