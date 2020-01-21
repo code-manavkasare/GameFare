@@ -230,12 +230,6 @@ class EventPage extends React.Component {
     var level = Object.values(sport.level.list).filter(
       (level) => level.value === data.info.levelFilter,
     )[0];
-    var levelOption =
-      data.info.levelOption === 'equal'
-        ? 'only'
-        : data.info.levelOption === 'min'
-        ? 'and above'
-        : 'and below';
     return (
       <View style={styleApp.marginView}>
         <Row style={{marginTop: 20}}>
@@ -283,7 +277,7 @@ class EventPage extends React.Component {
           'calendar-alt',
           () => this.addCalendar(data),
         )}
-        {data.date.recurrence != '' && data.date.recurrence != undefined
+        {data.date.recurrence !== '' && data.date.recurrence != undefined
           ? this.rowIcon(
               this.title(
                 data.date.recurrence.charAt(0).toUpperCase() +
@@ -295,7 +289,7 @@ class EventPage extends React.Component {
         {this.rowIcon(this.title(data.location.address), 'map-marker-alt', () =>
           this.props.navigation.navigate('AlertAddress', {data: data.location}),
         )}
-        {data.info.instructions != ''
+        {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}
 
@@ -445,24 +439,19 @@ class EventPage extends React.Component {
       },
     });
   }
-  async joinWaitlist(event) {
-    if (!this.props.userConnected)
-      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
-    await firebase
-      .database()
-      .ref('events/' + event.objectID + '/waitlist')
-      .push({
-        userID: this.props.userID,
-        date: new Date().toString(),
-        nameUser:
-          this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-        nameEvent: event.info.name,
-      });
-    return this.props.navigation.navigate('Alert', {
-      textButton: 'Got it!',
-      title:
-        'You are now waitlisted for the event. We will notify you if a spot becomes available.',
-      close: true,
+  async joinWaitlist(data) {
+    if (!this.props.userConnected) return NavigationService.navigate('SignIn');
+    return this.props.navigation.navigate('Checkout', {
+      data: {...data},
+      coach: false,
+      waitlist: true,
+      users: {
+        [this.props.userID]: {
+          id: this.props.userID,
+          userID: this.props.userID,
+          info: this.props.infoUser,
+        },
+      },
     });
   }
   waitlistCondition(event) {
