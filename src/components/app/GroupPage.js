@@ -396,7 +396,7 @@ class GroupPage extends React.Component {
             sizeIcon2={15}
             icon1="arrow-left"
             icon2="share"
-            iconOffset={this.state.editMode ? 'camera' : 'edit'}
+            iconOffset={this.state.editMode ? 'camera' : 'pen'}
             clickButton1={() => dismiss()}
             clickButton2={() =>
               this.props.navigation.navigate('Contacts', {
