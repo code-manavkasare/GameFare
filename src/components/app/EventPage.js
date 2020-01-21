@@ -138,65 +138,34 @@ class EventPage extends React.Component {
   header(event, showOffset) {
     const {goBack, dismiss} = this.props.navigation;
     if (showOffset) {
-      if (this.state.editMode) {
-        return (
-          <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={event.info.name}
-            inputRange={[50, 80]}
-            initialBorderColorIcon={colors.grey}
-            initialBackgroundColor={'transparent'}
-            initialTitleOpacity={0}
-            icon1="arrow-left"
-            icon2="share"
-            typeIcon2="moon"
-            sizeIcon2={17}
-            iconOffset="pen"
-            colorIconOffset={colors.blue}
-            typeIconOffset="font"
-            clickButton2={() =>
-              this.props.navigation.navigate('Contacts', {
-                openPageLink: 'openEventPage',
-                pageTo: 'Group',
-                objectID: event.objectID,
-                pageFrom: 'Event',
-                data: {...event, eventID: event.objectID},
-              })
-            }
-            clickButton1={() => dismiss()}
-            clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
-          />
-        );
-      } else {
-        return (
-          <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={event.info.name}
-            inputRange={[50, 80]}
-            initialBorderColorIcon={colors.grey}
-            initialBackgroundColor={'transparent'}
-            initialTitleOpacity={0}
-            icon1="arrow-left"
-            icon2="share"
-            typeIcon2="moon"
-            sizeIcon2={17}
-            iconOffset="pen"
-            colorIconOffset="white"
-            typeIconOffset="font"
-            clickButton2={() =>
-              this.props.navigation.navigate('Contacts', {
-                openPageLink: 'openEventPage',
-                pageTo: 'Group',
-                objectID: event.objectID,
-                pageFrom: 'Event',
-                data: {...event, eventID: event.objectID},
-              })
-            }
-            clickButton1={() => dismiss()}
-            clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
-          />
-        );
-      }
+      return (
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={event.info.name}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="arrow-left"
+          icon2="share"
+          typeIcon2="moon"
+          sizeIcon2={17}
+          iconOffset="pen"
+          colorIconOffset={this.state.editMode ? colors.blue : 'white'}
+          typeIconOffset="font"
+          clickButton2={() =>
+            this.props.navigation.navigate('Contacts', {
+              openPageLink: 'openEventPage',
+              pageTo: 'Group',
+              objectID: event.objectID,
+              pageFrom: 'Event',
+              data: {...event, eventID: event.objectID},
+            })
+          }
+          clickButton1={() => dismiss()}
+          clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
+        />
+      );
     } else {
       return (
         <HeaderBackButton
