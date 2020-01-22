@@ -224,9 +224,21 @@ class GroupPage extends React.Component {
       this.state.group.info.public
     );
   }
+
+  goToShareGroup = (data) => {
+    if (!this.props.userConnected) {
+      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+    }
+    this.props.navigation.navigate('Contacts', {
+      openPageLink: 'openGroupPage',
+      pageTo: 'Group',
+      objectID: data.objectID,
+      pageFrom: 'Group',
+      data: {...data, eventID: data.objectID},
+    });
+  };
+
   render() {
-    console.log('render');
-    console.log(this.state);
     const {goBack, dismiss} = this.props.navigation;
     return (
       <View>
@@ -242,17 +254,7 @@ class GroupPage extends React.Component {
           icon1="arrow-left"
           icon2="share"
           clickButton1={() => dismiss()}
-          clickButton2={() => {
-            if (this.state.group !== null) {
-              this.props.navigation.navigate('Contacts', {
-                openPageLink: 'openGroupPage',
-                pageTo: 'Group',
-                objectID: this.state.group.objectID,
-                pageFrom: 'Group',
-                data: {...this.state.group, eventID: this.state.group.objectID},
-              });
-            }
-          }}
+          clickButton2={() => this.goToShareGroup(this.state.group)}
         />
         <ParallaxScrollView
           style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}

@@ -44,7 +44,8 @@ export default class HeaderFlow extends Component {
     return (
       this.props.loader !== nextProps.loader ||
       this.state !== nextState ||
-      this.props.enableClickButton !== nextProps.enableClickButton
+      this.props.enableClickButton !== nextProps.enableClickButton ||
+      this.props.colorIconOffset !== nextProps.colorIconOffset
     );
   }
   handleBackPress = () => {
@@ -114,6 +115,8 @@ export default class HeaderFlow extends Component {
       ],
       extrapolate: 'clamp',
     });
+    console.log('COLORCOLORCOLOR');
+    console.log(this.props.colorIconOffset);
     return (
       <Animated.View
         style={[
@@ -165,7 +168,56 @@ export default class HeaderFlow extends Component {
           <Col size={20} style={styleApp.center}>
             {this.props.imgHeader ? this.props.imgHeader : null}
           </Col>
-          <Col size={70} style={styles.center}></Col>
+          <Col size={50} style={styles.center} />
+          <Col size={15} style={[styleApp.center3]}>
+            {this.props.loader ? (
+              null
+            ) : this.props.iconOffset != null ? (
+              <Animated.View
+                style={[
+                  {
+                    borderColor: borderColorIcon,
+                    height: 48,
+                    width: 48,
+                    borderRadius: 23.8,
+                    borderWidth: 1,
+                    backgroundColor: 'white',
+                    overFlow: 'hidden',
+                  },
+                ]}>
+                <ButtonColor
+                  view={() => {
+                    return this.props.loader ? (
+                      <Loader size={20} color={'primary'} />
+                    ) : this.props.iconOffset === 'text' ? (
+                      <Text style={styleApp.text}>{this.props.textOffset}</Text>
+                    ) : (
+                      <AllIcons
+                        name={this.props.iconOffset}
+                        color={colors.title}
+                        size={this.props.sizeIcon2}
+                        type={this.props.typeIconOffset}
+                      />
+                    );
+                  }}
+                  click={() => this.props.clickButtonOffset()}
+                  color={this.props.colorIconOffset}
+                  style={[
+                    styleApp.center,
+                    {
+                      height: 46,
+                      width: 46,
+                      borderRadius: 23,
+                      borderWidth: 0,
+                      overFlow: 'hidden',
+                    },
+                  ]}
+                  onPressColor={colors.off}
+                />
+              </Animated.View>
+            ) : null}
+          </Col>
+          <Col size={5} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
             {this.props.loader ? (
               <Loader color={'green'} size={24} />

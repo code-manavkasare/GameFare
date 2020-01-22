@@ -33,7 +33,6 @@ import CreateEvent0 from '../app/elementsEventCreate/Page0';
 import CreateEvent1 from '../app/elementsEventCreate/Page1';
 import CreateEvent2 from '../app/elementsEventCreate/Page2';
 import CreateEvent3 from '../app/elementsEventCreate/Page3';
-import AddGroups from '../app/elementsEventCreate/elementsAddGroups/AddGroups';
 import Contacts from '../app/elementsEventCreate/elementsContacts/Contacts';
 import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact';
 
@@ -56,6 +55,7 @@ import AlertAddress from '../layout/alerts/AlertAddress';
 import AlertCall from '../layout/alerts/AlertCall';
 import AlertAddImage from '../layout/alerts/AlertAddImage';
 import AlertAddUsers from '../layout/alerts/AlertAddUsers';
+import AlertYesNo from '../layout/alerts/AlertYesNo';
 
 import InitialPage from '../app/elementsOnBoard/InitialPage';
 import SportSelect from '../app/elementsOnBoard/SportSelect';
@@ -71,7 +71,6 @@ const CreateEventNavigator = createStackNavigator(
     CreateEvent1: CreateEvent1,
     CreateEvent2: CreateEvent2,
     CreateEvent3: CreateEvent3,
-    AddGroups: AddGroups,
   },
   {
     initialRouteName: 'CreateEvent0',
@@ -429,6 +428,13 @@ const RootStack = createStackNavigator(
     AlertAddImage: AlertAddImage,
     AlertAddUsers: {
       screen: AlertAddUsers,
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: false,
+      },
+    },
+    AlertYesNo: {
+      screen: AlertYesNo,
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,

@@ -2,13 +2,14 @@ import React from 'react';
 import {StyleSheet, Text, Dimensions, View} from 'react-native';
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
-import NavigationService from '../../../../NavigationService';
-
 import {Col, Row} from 'react-native-easy-grid';
+
+import NavigationService from '../../../../NavigationService';
 import colors from '../../style/colors';
 import AsyncImage from '../../layout/image/AsyncImage';
 
-import PlacelHolder from '../../placeHolders/CardEvent.js';
+import PlacelHolder from '../../placeHolders/CardEvent';
+import {arrayAttendees} from '../../functions/createEvent';
 import ButtonColor from '../../layout/Views/Button';
 import styleApp from '../../style/style';
 import {stylesMapPage} from './MapPage';
@@ -36,10 +37,8 @@ class CardEvent extends React.Component {
       );
     return this.displayCard(color, data);
   }
-  numberMember(data) {
-    if (data.attendees != undefined)
-      return Object.values(data.attendees).length;
-    return 0;
+  numberMember(attendees) {
+    return attendees.length;
   }
   cardAttendee(member, i) {
     if (!member.info.picture)
@@ -74,7 +73,7 @@ class CardEvent extends React.Component {
       </View>
     );
   }
-  rowAttendees(data) {
+  rowAttendees(attendees) {
     return (
       <Row style={{marginTop: 15}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
@@ -89,32 +88,30 @@ class CardEvent extends React.Component {
                 styleApp.text,
                 {fontSize: 10, color: 'white', fontFamily: 'OpenSans-Bold'},
               ]}>
-              {this.numberMember(data)}
+              {this.numberMember(attendees)}
             </Text>
           </View>
         </Col>
-        {data.attendees ? (
+        {attendees.length !== 0 && (
           <Col
             size={this.props.size === 'SM' ? 40 : 20}
             style={styleApp.center2}>
-            {Object.values(data.attendees)
+            {attendees
               .slice(0, 3)
               .map((member, i) => this.cardAttendee(member, i))}
           </Col>
-        ) : null}
+        )}
         <Col size={this.props.size === 'SM' ? 55 : 65} style={styleApp.center2}>
           <Text style={[styleApp.text, {fontSize: 11}]}>
             Player
-            {this.numberMember(data) === 0 || this.numberMember(data) === 1
-              ? null
-              : 's'}{' '}
+            {attendees.length === 0 || attendees.length === 1 ? null : 's'}{' '}
             coming
           </Text>
         </Col>
       </Row>
     );
   }
-  displayCard(data) {
+  displayCard(data, attendees) {
     var sport = Object.values(this.props.sports).filter(
       (sport) => sport.value === data.info.sport,
     )[0];
@@ -122,26 +119,20 @@ class CardEvent extends React.Component {
       .filter((item) => item)
       .filter((item) => item.value === data.info.league)[0];
     if (!league) return null;
+
     return (
       <ButtonColor
         key={this.props.index}
         view={() => {
           return (
-            <FadeInView duration={300} style={{width: '100%', height: '100%'}}>
-              {this.props.league == 'all' ? (
+            <FadeInView duration={300} style={styleApp.fullSize}>
+              {this.props.league === 'all' && (
                 <AsyncImage
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 14,
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                  }}
+                  style={styles.logoLeague}
                   mainImage={league.icon}
                   imgInitial={league.icon}
                 />
-              ) : null}
+              )}
 
               <Text
                 style={[
@@ -163,17 +154,9 @@ class CardEvent extends React.Component {
                 {data.location.address}
               </Text>
 
-              {this.rowAttendees(data)}
-              {this.props.size === 'M' ? (
-                <View
-                  style={{
-                    height: 0.5,
-                    borderTopWidth: 0.5,
-                    borderColor: colors.grey,
-                    marginTop: 15,
-                  }}
-                />
-              ) : null}
+              {this.rowAttendees(attendees)}
+
+              {this.props.size === 'M' && <View style={styles.dividerBottom} />}
             </FadeInView>
           );
         }}
@@ -194,16 +177,34 @@ class CardEvent extends React.Component {
   }
 
   render() {
-    return this.card(this.props.data);
+    const {data, userID} = this.props;
+    const attendees = arrayAttendees(data, userID);
+    return this.card(data, attendees);
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  dividerBottom: {
+    height: 0.5,
+    borderTopWidth: 0.5,
+    borderColor: colors.grey,
+    marginTop: 15,
+  },
+  logoLeague: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     league: state.historicSearch.league,
+    userID: state.user.userID,
   };
 };
 

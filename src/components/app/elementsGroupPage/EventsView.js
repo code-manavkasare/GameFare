@@ -14,6 +14,7 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {indexEvents} from '../../database/algolia';
 import isEqual from 'lodash.isequal';
+import {keys} from 'ramda';
 
 import ButtonColor from '../../layout/Views/Button';
 import FadeInView from 'react-native-fade-in-view';
@@ -51,7 +52,7 @@ class EventsView extends Component {
     }
   }
   async load() {
-    var events = this.props.data.events;
+    let events = keys(this.props.data.events);
     if (!events) events = [];
     var {results} = await indexEvents.getObjects(events.reverse());
     return this.setState({events: results, loader: false});
