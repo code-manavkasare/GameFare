@@ -33,7 +33,6 @@ import CreateEvent0 from '../app/elementsEventCreate/Page0';
 import CreateEvent1 from '../app/elementsEventCreate/Page1';
 import CreateEvent2 from '../app/elementsEventCreate/Page2';
 import CreateEvent3 from '../app/elementsEventCreate/Page3';
-import AddGroups from '../app/elementsEventCreate/elementsAddGroups/AddGroups';
 import Contacts from '../app/elementsEventCreate/elementsContacts/Contacts';
 import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact';
 
@@ -71,7 +70,6 @@ const CreateEventNavigator = createStackNavigator(
     CreateEvent1: CreateEvent1,
     CreateEvent2: CreateEvent2,
     CreateEvent3: CreateEvent3,
-    AddGroups: AddGroups,
   },
   {
     initialRouteName: 'CreateEvent0',

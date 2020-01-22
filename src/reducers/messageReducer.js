@@ -6,7 +6,7 @@ import {
 } from '../actions/types';
 import union from 'lodash/union';
 
-const initialState = {
+export const initialState = {
   gamefareUser: {
     _id: 'dfjkfgdgkfkgkdjfgjkdf',
     name: 'GameFare',
