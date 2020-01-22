@@ -85,26 +85,25 @@ class EventPage extends React.Component {
   }
 
   nextGender(data, inc) {
-    let genders = ['mixed', 'female', 'male'];
+    const genders = ['mixed', 'female', 'male'];
     let index;
     if (this.state.editGender === '') {
       index = genders.indexOf(data.info.gender);
     } else {
       index = genders.indexOf(this.state.editGender);
     }
-    let nextIndex = (((index + inc) % genders.length) + genders.length) % genders.length; // allows for 'correct' negative mod
-    console.log('next gender: ' + nextIndex);
+    const nextIndex = (((index + inc) % genders.length) + genders.length) % genders.length; // allows for 'correct' negative mod
     this.setState({editGender: genders[nextIndex]});
   }
   nextRule(data, inc) {
-    let nextRuleName, nextRuleIndex;
-    var sportData = this.props.sports.filter(
+    let nextRuleIndex;
+    const sportData = this.props.sports.filter(
       sport => sport.value === data.info.sport,
     )[0];
-    var leagueData = Object.values(sportData.typeEvent).filter(
+    const leagueData = Object.values(sportData.typeEvent).filter(
       league => league.value === data.info.league,
     )[0];
-    let rules = leagueData.rules;
+    const rules = leagueData.rules;
     if (this.state.editRuleIndex !== -1) {
       nextRuleIndex = (((this.state.editRuleIndex + inc) % rules.length) + rules.length) % rules.length;
     } else {
