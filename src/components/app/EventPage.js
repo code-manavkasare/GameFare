@@ -68,8 +68,8 @@ class EventPage extends React.Component {
       .ref('events/' + objectID)
       .on('value', async function(snap) {
         const event = snap.val();
-        if (event.allAttendees.includes(this.props.userID)) {
-          await this.props.eventsAction('setAllEvents', {[objectID]: event});
+        if (event.allAttendees.includes(that.props.userID)) {
+          await that.props.eventsAction('setAllEvents', {[objectID]: event});
         }
         that.setState({event: event, loader: false});
       });
@@ -540,7 +540,6 @@ class EventPage extends React.Component {
           clickButton1={() => dismiss()}
         />
 
-        { this.state.event === null ? null :
             <ParallaxScrollView
               style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}
               showsVerticalScrollIndicator={false}
@@ -602,7 +601,6 @@ class EventPage extends React.Component {
 
               {this.event(this.state.event)}
             </ParallaxScrollView>
-          }
           
         {this.state.event === null ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
