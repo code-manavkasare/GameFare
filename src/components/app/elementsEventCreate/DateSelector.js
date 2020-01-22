@@ -377,7 +377,8 @@ export default class Date extends Component {
   }
   async close() {
     await Keyboard.dismiss();
-    this.props.close();
+    let c = this.props.navigation.getParam('close');
+    c();
   }
   async submit() {
     var now = moment();
@@ -465,12 +466,13 @@ export default class Date extends Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           icon1={
-            this.props.navigation.getParam('pageFrom') == 'LocationSelect'
+            this.props.navigation.getParam('pageFrom') === 'LocationSelect'
               ? 'arrow-left'
               : 'times'
           }
           icon2={null}
-          clickButton1={() => this.props.navigation.navigate('CreateEvent2')}
+          clickButton1={() => this.close()}
+          // clickButton1={() => this.props.navigation.navigate('CreateEvent2')}
         />
 
         <ScrollView

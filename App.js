@@ -11,19 +11,25 @@ import SplashScreen from 'react-native-splash-screen';
 import StatusBar from '@react-native-community/status-bar';
 import {connect} from 'react-redux';
 
-import axios from 'axios'
-import {globaleVariablesAction} from './src/actions/globaleVariablesActions'
-import {userAction} from './src/actions/userActions'
-const AppContainer = createAppContainer(AppSwitchNavigator)
+import firebase from 'react-native-firebase';
+import axios from 'axios';
+import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
+import {userAction} from './src/actions/userActions';
+import {updateUserFCMToken} from './src/components/functions/notifications';
+const AppContainer = createAppContainer(AppSwitchNavigator);
 
 class App extends Component {
   async componentDidMount() { 
-    SplashScreen.hide()
+    SplashScreen.hide();
 
-    StatusBar.setHidden(true, "slide")
-    StatusBar.setBarStyle('light-content',true)
-    if (this.props.userID != '') {
-      this.autoSignIn()
+    StatusBar.setHidden(true, 'slide');
+    StatusBar.setBarStyle('light-content',true);
+    if (this.props.userID !== '') {
+      this.autoSignIn();
+      // onTokenRefresh seems to have lots of problems, just get the token on startup every time and update it
+      //firebase.messaging().onTokenRefresh(token => updateUserFCMToken(this.props.userID, token));
+      const token = await firebase.messaging().getToken();
+      updateUserFCMToken(this.props.userID, token);
     }
   }
   async autoSignIn() {
@@ -31,10 +37,10 @@ class App extends Component {
     const promiseAxios = await axios.get(url, {
       params: {
         phone: this.props.phoneNumber,
-        countryCode:'+'+this.props.countryCode,
-        giftAmount: 0
-      }
-    })
+        countryCode:'+' + this.props.countryCode,
+        giftAmount: 0,
+      },
+    });
 
     if (promiseAxios.data.response != false) {    
       await this.props.userAction('signIn',{

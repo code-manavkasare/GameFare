@@ -1,6 +1,3 @@
-import React, {Component} from 'react';
-import {Platform, PermissionsAndroid} from 'react-native';
-
 import {uploadPictureFirebase} from '../functions/pictures';
 import {subscribeToTopics} from '../functions/notifications';
 import {indexEvents} from '../database/algolia';
@@ -99,6 +96,8 @@ async function pushEventToGroups(groups, eventID) {
 }
 
 async function createEvent(data, userID, infoUser, level) {
+  console.log('create event');
+  console.log(data.images);
   var pictureUri = await uploadPictureFirebase(
     data.images[0],
     'events/' + generateID(),
@@ -146,18 +145,19 @@ async function checkUserAttendingEvent(userID, data) {
     query: data.objectID,
     filters: filterAttendees,
   });
-  if (hits.length != 0 && userID == data.info.organizer)
+  if (hits.length !== 0 && userID === data.info.organizer) {
     return {
       response: false,
       message:
         'You are the organizer of this event. You cannot attend your own event.',
     };
-  else if (hits.length != 0)
+  } else if (hits.length !== 0) {
     return {
       response: false,
       message:
         'You are already attending this event. You cannot join it again.',
     };
+  }
   return {response: true};
 }
 
@@ -169,7 +169,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
     0,
     Number(data.price.joiningFee) - Number(cardInfo.totalWallet),
   );
-  if (amountToPay != 0) {
+  if (amountToPay !== 0) {
     cardID = cardInfo.defaultCard.id;
   }
   if (amountToPay !== 0 && cardID === 'applePay') {
@@ -268,6 +268,7 @@ async function joinEvent(
       ...users[i],
       coach: coach,
       status: waitlist ? 'pending' : 'confirmed',
+      amountPaid: coach ? 0 : data.price.joiningFee,
       date: now,
     };
     usersToPush = {
