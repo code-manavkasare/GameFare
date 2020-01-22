@@ -125,22 +125,11 @@ export default class HeaderFlow extends Component {
             backgroundColor: AnimateBackgroundView,
             borderBottomWidth: borderWidth,
             borderColor: borderColorView,
-            paddingLeft: 20,
-            paddingRight: 20,
             width: width,
           },
         ]}>
         <Row>
-          <View
-            style={[
-              styleApp.center,
-              {
-                height: '100%',
-                marginLeft: -20,
-                position: 'absolute',
-                width: width,
-              },
-            ]}>
+          <View style={styles.rowTextHeader}>
             <Animated.Text
               style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
               {this.props.textHeader}
@@ -151,18 +140,11 @@ export default class HeaderFlow extends Component {
             style={styles.center2}
             activeOpacity={0.4}
             onPress={() => this.close()}>
-            {this.props.icon1 != null ? (
+            {this.props.icon1 && (
               <Animated.View
                 style={[
-                  {
-                    borderColor: borderColorIcon,
-                    height: 48,
-                    width: 48,
-                    borderRadius: 23.8,
-                    borderWidth: 1,
-                    backgroundColor: 'white',
-                    overFlow: 'hidden',
-                  },
+                  styles.animatedButtonStyle,
+                  {borderColor: borderColorIcon},
                 ]}>
                 <ButtonColor
                   view={() => {
@@ -177,20 +159,11 @@ export default class HeaderFlow extends Component {
                   }}
                   click={() => this.props.clickButton1()}
                   color={'white'}
-                  style={[
-                    styleApp.center,
-                    {
-                      height: 46,
-                      width: 46,
-                      borderRadius: 23,
-                      borderWidth: 0,
-                      overFlow: 'hidden',
-                    },
-                  ]}
+                  style={styles.buttonRight}
                   onPressColor={colors.off}
                 />
               </Animated.View>
-            ) : null}
+            )}
           </Col>
           <Col size={20} style={styleApp.center}>
             {this.props.imgHeader ? this.props.imgHeader : null}
@@ -248,50 +221,36 @@ export default class HeaderFlow extends Component {
           <Col size={15} style={[styleApp.center3]}>
             {this.props.loader ? (
               <Loader color={'green'} size={24} />
-            ) : this.props.icon2 != null ? (
-              <Animated.View
-                style={[
-                  {
-                    borderColor: borderColorIcon,
-                    height: 48,
-                    width: 48,
-                    borderRadius: 23.8,
-                    borderWidth: 1,
-                    backgroundColor: 'white',
-                    overFlow: 'hidden',
-                  },
-                ]}>
-                <ButtonColor
-                  view={() => {
-                    return this.props.loader ? (
-                      <Loader size={20} color={'primary'} />
-                    ) : this.props.icon2 == 'text' ? (
-                      <Text style={styleApp.text}>{this.props.text2}</Text>
-                    ) : (
-                      <AllIcons
-                        name={this.props.icon2}
-                        color={colors.title}
-                        size={this.props.sizeIcon2}
-                        type={this.props.typeIcon2}
-                      />
-                    );
-                  }}
-                  click={() => this.props.clickButton2()}
-                  color={'white'}
+            ) : (
+              this.props.icon2 && (
+                <Animated.View
                   style={[
-                    styleApp.center,
-                    {
-                      height: 46,
-                      width: 46,
-                      borderRadius: 23,
-                      borderWidth: 0,
-                      overFlow: 'hidden',
-                    },
-                  ]}
-                  onPressColor={colors.off}
-                />
-              </Animated.View>
-            ) : null}
+                    styles.animatedButtonStyle,
+                    {borderColor: borderColorIcon},
+                  ]}>
+                  <ButtonColor
+                    view={() => {
+                      return this.props.loader ? (
+                        <Loader size={20} color={'primary'} />
+                      ) : this.props.icon2 == 'text' ? (
+                        <Text style={styleApp.text}>{this.props.text2}</Text>
+                      ) : (
+                        <AllIcons
+                          name={this.props.icon2}
+                          color={colors.title}
+                          size={this.props.sizeIcon2}
+                          type={this.props.typeIcon2}
+                        />
+                      );
+                    }}
+                    click={() => this.props.clickButton2()}
+                    color={'white'}
+                    style={styles.buttonRight}
+                    onPressColor={colors.off}
+                  />
+                </Animated.View>
+              )
+            )}
           </Col>
         </Row>
       </Animated.View>
@@ -310,18 +269,11 @@ const styles = StyleSheet.create({
   header: {
     height: sizes.heightHeaderHome,
     paddingTop: sizes.marginTopHeader - 5,
+    paddingLeft: 20,
+    paddingRight: 20,
     borderBottomWidth: 1,
     position: 'absolute',
     zIndex: 10,
-  },
-  viewTitleHeader: {
-    position: 'absolute',
-    height: '100%',
-    width: width,
-    // backgroundColor:'red',
-    zIndex: -1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 15,
@@ -331,5 +283,27 @@ const styles = StyleSheet.create({
   textTitleHeader: {
     color: colors.title,
     fontSize: 17,
+  },
+  buttonRight: {
+    ...styleApp.center,
+    height: 46,
+    width: 46,
+    borderRadius: 23,
+    borderWidth: 0,
+  },
+  animatedButtonStyle: {
+    height: 48,
+    width: 48,
+    borderRadius: 23.8,
+    borderWidth: 1,
+    backgroundColor: 'white',
+    // overFlow: 'hidden',
+  },
+  rowTextHeader: {
+    ...styleApp.center,
+    height: '100%',
+    marginLeft: -20,
+    position: 'absolute',
+    width: width,
   },
 });

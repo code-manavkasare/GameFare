@@ -1,11 +1,13 @@
 import firebase from 'react-native-firebase';
 import moment from 'moment';
-import {indexDiscussions} from '../database/algolia';
+import {indexDiscussions, getMyGroups, getMyEvents} from '../database/algolia';
+import union from 'lodash/union';
 
 function discussionObj(members, nameDiscussion) {
   return {
     title: nameDiscussion,
-    allMembers: [members[0].id, members[1].id],
+    allMembers: members.map((member) => member.id),
+    numberMembers: members.length,
     members: members,
     messages: {},
     type: 'users',
@@ -13,7 +15,8 @@ function discussionObj(members, nameDiscussion) {
 }
 
 async function createDiscussion(members, nameDiscussion) {
-  var newDiscussion = discussionObj(members, nameDiscussion);
+  var newDiscussion = discussionObj(Object.values(members), nameDiscussion);
+
   const {key} = await firebase
     .database()
     .ref('discussions/')
@@ -33,11 +36,14 @@ async function sendNewMessage(discusssionID, user, text, images) {
       images: images,
       createdAt: new Date(),
       timeStamp: moment().valueOf(),
+      usersRead: {
+        [user._id]: true,
+      },
     });
   return true;
 }
 
-async function searchDiscussion(ids) {
+async function searchDiscussion(ids, numberMembers) {
   var filterMembers = '';
   var prefix = ' AND ';
   for (var id in ids) {
@@ -47,7 +53,12 @@ async function searchDiscussion(ids) {
       prefix = ' AND ';
     }
     filterMembers =
-      filterMembers + prefix + 'allMembers: ' + Object.values(ids)[id];
+      filterMembers +
+      prefix +
+      'allMembers: ' +
+      Object.values(ids)[id] +
+      ' AND numberMembers:' +
+      numberMembers;
   }
 
   const {hits} = await indexDiscussions.search({
@@ -57,4 +68,79 @@ async function searchDiscussion(ids) {
   return hits[0];
 }
 
-export {createDiscussion, searchDiscussion, sendNewMessage};
+async function loadMyDiscusions(userID) {
+  indexDiscussions.clearCache();
+
+  // search for persnal conversations
+  const {hits} = await indexDiscussions.search({
+    query: '',
+    filters: 'allMembers:' + userID,
+  });
+
+  // search for groups discussions
+  var myGroups = await getMyGroups(userID, '');
+  var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
+  var {results} = await indexDiscussions.getObjects(groupsDiscussions);
+
+  // search for events discussions
+  var myEvents = await getMyEvents(userID);
+  var eventsDiscussions = myEvents
+    .map((event) => {
+      if (event.discussions) return event.discussions[0];
+    })
+    .filter((event) => event);
+  var getDiscussionsEvent = await indexDiscussions.getObjects(
+    eventsDiscussions,
+  );
+  getDiscussionsEvent = getDiscussionsEvent.results;
+
+  let discussions = union(results, hits, getDiscussionsEvent).filter(
+    (discussion) => discussion.firstMessageExists,
+  );
+  discussions = discussions.reduce(function(result, item) {
+    result[item.objectID] = item;
+    return result;
+  }, {});
+  return discussions;
+}
+
+function checkMessageRead(message, userID) {
+  if (!message) return false;
+  if (!message.usersRead) return false;
+  if (!message.usersRead[userID]) return false;
+  return true;
+}
+
+function nameOtherMemberConversation(conversation, userID) {
+  if (conversation.type === 'group') return conversation.title;
+  if (conversation.numberMembers > 2) return 'the group';
+  const infoMember = Object.values(conversation.members).filter(
+    (user) => user.id !== userID,
+  )[0].info;
+  return infoMember.firstname + ' ' + infoMember.lastname;
+}
+
+function titleConversation(conversation, userID) {
+  if (conversation.type === 'group') return conversation.title;
+  if (conversation.numberMembers === 2)
+    return nameOtherMemberConversation(conversation, userID);
+  let title = '';
+  const members = Object.values(conversation.members).filter(
+    (member) => member.id !== userID,
+  );
+  for (var i in members) {
+    if (i === '0') title = members[i].info.firstname;
+    else title = title + ', ' + members[i].info.firstname;
+  }
+  return title;
+}
+
+export {
+  createDiscussion,
+  searchDiscussion,
+  sendNewMessage,
+  loadMyDiscusions,
+  checkMessageRead,
+  titleConversation,
+  nameOtherMemberConversation,
+};

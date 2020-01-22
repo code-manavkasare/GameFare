@@ -6,7 +6,7 @@ import {
 } from '../actions/types';
 import union from 'lodash/union';
 
-const initialState = {
+export const initialState = {
   gamefareUser: {
     _id: 'dfjkfgdgkfkgkdjfgjkdf',
     name: 'GameFare',
@@ -14,6 +14,7 @@ const initialState = {
       'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/logos%2Flogoios.png?alt=media&token=536ba87c-20e7-4be9-848e-86d8e7d21f2c',
   },
   conversations: {},
+  myDiscussions: {},
   messages: {},
   input: {
     textInput: '',
@@ -26,7 +27,9 @@ const messageReducer = (state = initialState, action) => {
     case SET_CONVERSATIONS:
       return {
         ...state,
-        ...action.conversations,
+        conversations: {
+          ...action.conversations,
+        },
       };
     case ADD_IMAGE:
       return {

@@ -1,37 +1,17 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  Image,
-  TextInput,
-  ScrollView,
-} from 'react-native';
-import firebase from 'react-native-firebase';
+import {View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import {groupsAction} from '../../../actions/groupsActions';
-import isEqual from 'lodash.isequal';
 
-const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 
+import {groupsAction} from '../../../actions/groupsActions';
 import CardGroup from '../elementsGroupTab/CardGroup';
-import {timing, native} from '../../animations/animations';
-import {
-  indexGroups,
-  indexEvents,
-  indexPastEvents,
-} from '../../database/algolia';
-
+import {native} from '../../animations/animations';
+import {indexGroups} from '../../database/algolia';
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
+const {height, width} = Dimensions.get('screen');
 class ListEvents extends React.Component {
   constructor(props) {
     super(props);
@@ -64,7 +44,6 @@ class ListEvents extends React.Component {
   }
   async loadGroups(groups) {
     await this.setState({loader: true});
-
     indexGroups.clearCache();
     var groupsEvents = await this.getGroups(groups);
 
@@ -131,6 +110,7 @@ class ListEvents extends React.Component {
     );
   }
   render() {
+    console.log(this.state.groups);
     return this.ListEvent();
   }
 }
