@@ -127,8 +127,6 @@ export default class CardUser extends Component {
     );
   }
   cardUser(user) {
-    console.log('card user mount');
-    console.log(user);
     return (
       <View>
         <ButtonColor
@@ -173,6 +171,13 @@ export default class CardUser extends Component {
                       name="envelope"
                       type="font"
                       color={colors.green}
+                      size={17}
+                    />
+                  ) : user.status === 'pending' ? (
+                    <AllIcons
+                      name="redo-alt"
+                      type="font"
+                      color={colors.secondary}
                       size={17}
                     />
                   ) : null}

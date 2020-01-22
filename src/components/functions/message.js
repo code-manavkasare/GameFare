@@ -125,10 +125,12 @@ function titleConversation(conversation, userID) {
   if (conversation.numberMembers === 2)
     return nameOtherMemberConversation(conversation, userID);
   let title = '';
-  for (var i in conversation.members) {
-    if (conversation.members[i].id === userID) title = title;
-    else if (i === '0') title = conversation.members[i].info.firstname;
-    else title = title + ', ' + conversation.members[i].info.firstname;
+  const members = Object.values(conversation.members).filter(
+    (member) => member.id !== userID,
+  );
+  for (var i in members) {
+    if (i === '0') title = members[i].info.firstname;
+    else title = title + ', ' + members[i].info.firstname;
   }
   return title;
 }
