@@ -3,6 +3,11 @@ import {Platform, PermissionsAndroid, Dimensions} from 'react-native';
 const {height, width} = Dimensions.get('screen');
 
 import Geolocation from '@react-native-community/geolocation';
+const configLocation = {
+  authorizationLevel: 'whenInUse',
+};
+Geolocation.setRNConfiguration(configLocation);
+
 import Geocoder from 'react-native-geocoder';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
@@ -14,10 +19,11 @@ MapboxGL.setAccessToken(
 const options = {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000};
 
 async function getPermission() {
+  let permission;
   if (Platform.OS === 'ios') {
-    var permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+    permission = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
   } else {
-    var permission = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+    permission = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
   }
   if (permission !== 'granted') return false;
   return true;
@@ -42,16 +48,17 @@ async function getCurrentPosition() {
 }
 
 async function currentLocation() {
-  var permission = await getPermission();
+  let permission = await getPermission();
   if (!permission)
     return {
       message:
         "We don't have access to your location. Please go to your settings and set it.",
       response: false,
     };
-  var currentPosition = await getCurrentPosition();
+
+  let currentPosition = await getCurrentPosition();
   if (currentPosition.name === 'PositionError') return currentPosition;
-  var geocodeLocation = await Geocoder.geocodePosition({
+  const geocodeLocation = await Geocoder.geocodePosition({
     lat: currentPosition.coords.latitude,
     lng: currentPosition.coords.longitude,
   });

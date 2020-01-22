@@ -86,8 +86,6 @@
 	<string>We need to access your contacts for you to invite your friends.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationUsageDescription</key>
