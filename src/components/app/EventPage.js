@@ -357,7 +357,7 @@ class EventPage extends React.Component {
   }
   event(data) {
     // return <PlaceHolder />;
-    if (data === undefined || this.state.loader) return <PlaceHolder />;
+    if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
@@ -564,20 +564,20 @@ class EventPage extends React.Component {
                       });
                     }}
                   >
-                    {this.state.event === null
-                    ? <View
-                        style={{
-                          width: '100%',
-                          height: 300,
-                          borderRadius: 0,
-                          backgroundColor: colors.off,
-                        }}
-                      />
-                    : <AsyncImage
-                        style={{width: '100%', height: 320, borderRadius: 0}}
-                        mainImage={this.state.event.images[0]}
-                        imgInitial={this.state.event.images[0]}
-                      />
+                    {!this.state.event ?
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 300,
+                        borderRadius: 0,
+                        backgroundColor: colors.off,
+                      }}
+                    /> :
+                    <AsyncImage
+                      style={{width: '100%', height: 320, borderRadius: 0}}
+                      mainImage={this.state.event.images[0]}
+                      imgInitial={this.state.event.images[0]}
+                    />
                     }
                     <View
                       style={{
@@ -602,7 +602,7 @@ class EventPage extends React.Component {
               {this.event(this.state.event)}
             </ParallaxScrollView>
           
-        {this.state.event === null ? null : (
+        {!this.state.event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
             {this.waitlistCondition(this.state.event) ? (
               <Button2
