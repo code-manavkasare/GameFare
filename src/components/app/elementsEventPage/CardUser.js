@@ -34,9 +34,13 @@ export default class CardUser extends Component {
     };
   }
   componentDidMount() {}
-  async openDiscussion(user) {
-    if (this.props.removable && this.props.removeFunc) {
-      this.props.removeFunc();
+  async onClick(user) {
+    // poor solution for the need to remove players from group/event
+    // good target for split of UI/logic into different components
+    // same for discussions
+    if (this.props.removable) {
+      const {removeFunc} = this.props;
+      removeFunc();
       return;
     }
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
@@ -231,7 +235,7 @@ export default class CardUser extends Component {
               </Row>
             );
           }}
-          click={() => this.openDiscussion(user)}
+          click={() => this.onClick(user)}
           color="white"
           style={{width: width, height: 55, paddingLeft: 20, paddingRight: 20}}
           onPressColor={colors.off}

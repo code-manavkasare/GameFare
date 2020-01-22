@@ -16,7 +16,7 @@ async function editEvent(updatedEvent, callback = () => {}) {
 async function removePlayerFromEvent(player, event) {
     // refund entree fee paid
     const amountPaid = event.attendees[player.id].amountPaid;
-    if (amountPaid !== undefined && amountPaid !== 0) {
+    if (amountPaid !== (undefined && 0)) {
         await refundPlayer(player, amountPaid)
         .catch(err => {
             console.log(err.message);
