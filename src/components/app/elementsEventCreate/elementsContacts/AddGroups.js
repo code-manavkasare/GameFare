@@ -1,156 +1,116 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  InputAccessoryView,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import BackButton from '../../../layout/buttons/BackButton';
+import firebase from 'react-native-firebase';
+import ramda from 'ramda';
+import Toast from 'react-native-easy-toast';
+import PropTypes from 'prop-types';
+
+import {Col, Row} from 'react-native-easy-grid';
 import Button from '../../../layout/buttons/Button';
 import ButtonColor from '../../../layout/Views/Button';
 import LinearGradient from 'react-native-linear-gradient';
-import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import ExpandableCard from '../../../layout/cards/ExpandableCard';
-import Switch from '../../../layout/switch/Switch';
 import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
-import PlaceHolder from '../../../placeHolders/CardEvent';
 import {indexGroups} from '../../../database/algolia';
+import SearchBarContact from './SearchBarContact';
+import Loader from '../../../layout/loaders/Loader';
 
-import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 
-export default class AddGroups extends Component {
+const {height, width} = Dimensions.get('screen');
+
+class AddGroups extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listGroups: [],
-      groups: {},
-      search: '',
-      loader: true,
+      selectedGroups: {},
+      searchInputGroups: this.props.searchString,
+      loaderSearchCall: true,
+      loaderDatabaseUpdate: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: 'Add groups',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton
-          name="keyboard-arrow-left"
-          color={colors.title}
-          type="mat"
-          click={() => navigation.goBack()}
-        />
-      ),
-    };
-  };
+
   componentDidMount() {
     this.initiaLoad();
   }
-  async initiaLoad() {
-    var groups = this.props.navigation.getParam('groups');
+  initiaLoad = async () => {
+    const {userID, eventID} = this.props;
+
     indexGroups.clearCache();
-    var listGroups = await indexGroups.search({
-      filters: 'info.organizer:' + this.props.navigation.getParam('userID'),
+    const listGroups = await indexGroups.search({
+      filters: 'info.organizer:' + userID,
       query: '',
     });
+    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, eventID);
+    //Will work when Algolia update accordingly with firebase
+
     await this.setState({
-      loader: false,
+      loaderSearchCall: false,
       listGroups: listGroups.hits,
-      groups: groups,
+      selectedGroups,
     });
     return true;
-  }
-  async searchGroups(text) {
+  };
+
+  checkIfGroupHasEvent = (listGroups, eventID) => {
+    let groupsHasEvent = {};
+    listGroups.forEach((group) => {
+      if (group.events && group.events[eventID]) {
+        groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
+      }
+    });
+
+    return groupsHasEvent;
+  };
+
+  searchGroups = async (text) => {
+    this.props.changeSearchGroups(text);
+    await this.setState({loaderSearchCall: true});
     indexGroups.clearCache();
-    var listGroups = await indexGroups.search({
-      filters: 'info.organizer:' + this.props.navigation.getParam('userID'),
+
+    let listGroups = await indexGroups.search({
+      filters: 'info.organizer:' + this.props.userID,
       query: text,
     });
-    await this.setState({listGroups: listGroups.hits, search: text});
-    return true;
-  }
-  searchBar() {
-    return (
-      <TouchableOpacity
-        style={[
-          {
-            borderBottomWidth: 0.3,
-            borderColor: colors.borderColor,
-            paddingTop: 20,
-            paddingBottom: 20,
-            backgroundColor: 'white',
-          },
-        ]}
-        activeOpacity={0.7}
-        onPress={() => this.inputRef.focus()}>
-        <Row>
-          <Col size={15} style={styleApp.center}>
-            <AllIcons name="search" type="mat" size={20} color={colors.title} />
-          </Col>
-          <Col size={70} style={styleApp.center2}>
-            <TextInput
-              style={styleApp.input}
-              placeholder={'Search for a group'}
-              returnKeyType={'done'}
-              blurOnSubmit={true}
-              autoFocus={false}
-              ref={(input) => {
-                this.inputRef = input;
-              }}
-              underlineColorAndroid="rgba(0,0,0,0)"
-              autoCorrect={true}
-              inputAccessoryViewID={'text'}
-              onChangeText={(text) => this.searchGroups(text)}
-              // value={this.state.search}
-            />
-          </Col>
-          <Col
-            size={15}
-            style={styleApp.center}
-            activeOpacity={0.7}
-            onPress={() => this.searchGroups('')}>
-            {this.state.search != '' ? (
-              <AllIcons
-                name="times-circle"
-                type="font"
-                size={13}
-                color={colors.titles}
-              />
-            ) : null}
-          </Col>
-        </Row>
-      </TouchableOpacity>
-    );
-  }
+
+    await this.setState({
+      listGroups: listGroups.hits,
+      searchInputGroups: text,
+      loaderSearchCall: false,
+    });
+  };
+
   selectGroup(group) {
-    var groups = this.state.groups;
+    var selectedGroups = this.state.selectedGroups;
     if (
-      Object.values(groups).filter(
+      Object.values(selectedGroups).filter(
         (group1) => group1.objectID === group.objectID,
       ).length == 0
     ) {
-      groups = {
-        ...groups,
+      selectedGroups = {
+        ...selectedGroups,
         [group.objectID]: group,
       };
     } else {
-      delete groups[group.objectID];
+      delete selectedGroups[group.objectID];
     }
-    this.setState({groups: groups});
+    this.setState({selectedGroups: selectedGroups});
   }
+
+  showToast(text) {
+    this.refs.toast.show(
+      <View>
+        <Text>{text}</Text>
+      </View>,
+    );
+  }
+
   placeHolder() {
     return (
       <View style={[styles.rowGroup, {flex: 1}]}>
@@ -184,6 +144,7 @@ export default class AddGroups extends Component {
   rowGroup(group, i) {
     return (
       <ButtonColor
+        key={i}
         view={() => {
           return (
             <Row
@@ -208,7 +169,7 @@ export default class AddGroups extends Component {
                 </Text>
               </Col>
               <Col size={10} style={styleApp.center3}>
-                {Object.values(this.state.groups).filter(
+                {Object.values(this.state.selectedGroups).filter(
                   (group1) => group1.objectID == group.objectID,
                 ).length != 0 ? (
                   <AllIcons
@@ -230,15 +191,10 @@ export default class AddGroups extends Component {
     );
   }
   listGroupPage() {
-    return (
-      <View>
-        {this.searchBar()}
-        {this.listGroups()}
-      </View>
-    );
+    return <View>{this.listGroups()}</View>;
   }
   listGroups() {
-    if (this.state.loader)
+    if (this.state.loaderSearchCall)
       return (
         <View>
           {this.placeHolder()}
@@ -249,9 +205,9 @@ export default class AddGroups extends Component {
           {this.placeHolder()}
         </View>
       );
-    if (this.state.listGroups.length == 0)
+    if (this.state.listGroups.length === 0)
       return (
-        <Text style={[styleApp.text, {marginTop: 20, paddingLeft: 20}]}>
+        <Text style={[styleApp.text, {marginTop: 20, paddingHorizontal: 20}]}>
           You haven't created any groups yet. Please create one first.
         </Text>
       );
@@ -261,43 +217,78 @@ export default class AddGroups extends Component {
       </View>
     );
   }
-  submit() {
-    return this.props.navigation.state.params.onGoBack(this.state.groups);
-  }
+
+  submit = async () => {
+    await this.setState({loaderDatabaseUpdate: true});
+    const {eventID} = this.props;
+    const {selectedGroups} = this.state;
+
+    this.state.listGroups.forEach(async (group) => {
+      const hasGroup = ramda.has(group.objectID);
+      let updatesGroup = {};
+      let updatesEvent = {};
+
+      if (hasGroup(selectedGroups)) {
+        updatesGroup['/events/' + eventID] = true;
+        updatesEvent['/groups/' + group.objectID] = true;
+
+        await firebase
+          .database()
+          .ref('groups/' + group.objectID)
+          .update(updatesGroup);
+
+        await firebase
+          .database()
+          .ref('events/' + eventID)
+          .update(updatesEvent);
+      } else if (!hasGroup(selectedGroups)) {
+        await firebase
+          .database()
+          .ref('groups/' + group.objectID + '/events/' + eventID)
+          .remove();
+
+        await firebase
+          .database()
+          .ref('events/' + eventID + '/groups/' + group.objectID)
+          .remove();
+      }
+    });
+
+    this.showToast('Event has been updated !');
+    await this.setState({loaderDatabaseUpdate: false});
+  };
+
   textButton() {
-    if (
-      Object.values(this.state.groups).length == 1 ||
-      Object.values(this.state.groups).length == 0
-    )
-      return 'Add ' + Object.values(this.state.groups).length + ' group';
-    return 'Add ' + Object.values(this.state.groups).length + ' groups';
+    const {loaderDatabaseUpdate} = this.state;
+    const groupLength = Object.values(this.state.selectedGroups).length;
+
+    if (loaderDatabaseUpdate) return <Loader color="white" size={30} />;
+    if (groupLength == 1 || groupLength == 0)
+      return 'Add ' + groupLength + ' group';
+    return 'Add ' + groupLength + ' groups';
   }
   render() {
+    const {searchInputGroups} = this.state;
     return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          flex: 1,
-          borderLeftWidth: 1,
-          borderColor: colors.off,
-        }}>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[5, 10]}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
-          initialTitleOpacity={1}
-          icon1="arrow-left"
-          icon2={null}
-          clickButton1={() => this.props.navigation.goBack()}
+      <View style={styles.mainView}>
+        <Toast
+          ref="toast"
+          style={styles.toast}
+          position="center"
+          fadeInDuration={750}
+          fadeOutDuration={1000}
+          opacity={0.8}
+          textStyle={{color: 'white'}}
         />
-
+        <SearchBarContact
+          placeHolderMessage={'Search for GameFare Groups...'}
+          updateSearch={this.searchGroups}
+          searchString={searchInputGroups}
+        />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.listGroupPage.bind(this)}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
@@ -319,10 +310,30 @@ export default class AddGroups extends Component {
 }
 
 const styles = StyleSheet.create({
+  mainView: {
+    height: '94%',
+  },
   rowGroup: {
     paddingTop: 10,
     paddingBottom: 10,
     borderBottomWidth: 0.3,
     borderColor: colors.borderColor,
   },
+  toast: {
+    backgroundColor: colors.green,
+  },
 });
+
+AddGroups.PropTypes = {
+  searchString: PropTypes.string.isRequired,
+  eventID: PropTypes.string.isRequired,
+  changeSearchGroups: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userID,
+  };
+};
+
+export default connect(mapStateToProps)(AddGroups);

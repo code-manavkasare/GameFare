@@ -1,31 +1,19 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {createEventAction} from '../../../actions/createEventActions';
 
 const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import Button from '../../layout/buttons/Button';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
-import Header from '../../layout/headers/HeaderButton';
-import ButtonRound from '../../layout/buttons/ButtonRound';
 import ButtonColor from '../../layout/Views/Button';
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import ExpandableCard from '../../layout/cards/ExpandableCard';
 import Switch from '../../layout/switch/Switch';
 import AllIcons from '../../layout/icons/AllIcons';
 import AsyncImage from '../../layout/image/AsyncImage';
-import DateEvent from './DateEvent';
-import {date} from '../../layout/date/date';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -159,17 +147,7 @@ class Page1 extends Component {
     await this.props.createEventAction('setStep1', {groups: groups});
     this.props.navigation.navigate('CreateEvent1');
   }
-  openAddGroups() {
-    if (!this.props.userConnected)
-      return this.props.navigation.navigate('SignIn', {
-        pageFrom: 'CreateEvent1',
-      });
-    return this.props.navigation.navigate('AddGroups', {
-      userID: this.props.userID,
-      groups: this.props.step1.groups,
-      onGoBack: (groups) => this.setGroups(groups),
-    });
-  }
+
   rowGroup(group, i) {
     return (
       <ButtonColor
@@ -234,39 +212,6 @@ class Page1 extends Component {
               this.rowGroup(group, i),
             )
           : null}
-
-        <ButtonColor
-          view={() => {
-            return (
-              <Row style={{paddingLeft: 20, paddingRight: 20}}>
-                <Col size={90} style={[styleApp.center2]}>
-                  <Text style={styleApp.input}>Add groups</Text>
-                </Col>
-                <Col size={10} style={styleApp.center}>
-                  <AllIcons
-                    name={'plus'}
-                    color={colors.title}
-                    size={15}
-                    type="font"
-                  />
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => this.openAddGroups()}
-          color="white"
-          style={[
-            {
-              borderColor: colors.off,
-              height: 60,
-              width: '100%',
-              borderRadius: 0,
-              borderBottomWidth: 1,
-              marginTop: 0,
-            },
-          ]}
-          onPressColor={colors.off}
-        />
       </View>
     );
   }

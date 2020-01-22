@@ -251,19 +251,12 @@ export default class ContactsComponent extends Component {
   }
 
   handleScroll(event) {
-    // this.setAnimation((event.nativeEvent.contentOffset.y > 64));
-    // this.setState({ isNavBarHidden: !this.state.isNavBarHidden });
-    // if (event.nativeEvent.contentOffset.y > this.scrollViewY) {
-    //   this.props.openShareEvent(true)
-    // } else {
-    //   this.props.openShareEvent(false)
-    // }
-    // return this.scrollViewY = event.nativeEvent.contentOffset.y
+    Keyboard.dismiss();
   }
   listContacts() {
     return (
       <ScrollView
-        keyboardShouldPersistTaps={false}
+        keyboardShouldPersistTaps={'always'}
         onScroll={this.handleScroll.bind(this)}
         style={{
           height:
