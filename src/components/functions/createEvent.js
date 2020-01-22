@@ -4,7 +4,7 @@ import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import stripe from 'tipsi-stripe';
-import Date from '../app/elementsEventCreate/DateSelector';
+// import Date from '../app/elementsEventCreate/DateSelector';
 import moment from 'moment';
 
 stripe.setOptions({
@@ -239,6 +239,7 @@ async function joinEvent(
   cardInfo,
   coach,
   users,
+  waitlist,
 ) {
   if (data.date_timestamp < Number(new Date()))
     return {
@@ -259,26 +260,14 @@ async function joinEvent(
   );
   if (response === 'cancel') return {message, response};
 
-  // if (!data.info.public && coach) {
-  //   var newLevel = data.info.levelFilter
-  //   if (data.info.levelOption == 'max' || newLevel == 0) {
-  //     newLevel = 1
-  //   }
-  //   await firebase.database().ref('users/' + userID + '/level/').update({
-  //     [data.info.sport]:newLevel
-  //   })
-  // }
-
-  var pushSection = 'attendees';
-  if (coach) pushSection = 'coaches';
-
-  var usersToPush = {};
+  let pushSection = 'attendees';
+  let usersToPush = {};
 
   for (var i in users) {
     var user = {
       ...users[i],
       coach: coach,
-      status: 'confirmed',
+      status: waitlist ? 'pending' : 'confirmed',
       amountPaid: coach ? 0 : data.price.joiningFee,
       date: now,
     };
@@ -291,12 +280,21 @@ async function joinEvent(
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)
       .update(user);
   }
+  if (user.status === 'confirmed')
+    await subscribeToTopics([userID, 'all', data.objectID]);
 
-  await subscribeToTopics([userID, 'all', data.objectID]);
   return {
     response: true,
     message: {usersToPush: usersToPush, pushSection: pushSection},
   };
 }
 
-module.exports = {createEvent, joinEvent};
+function arrayAttendees(event, userID) {
+  if (!event.attendees) return [];
+  if (event.info.organizer === userID) return Object.values(event.attendees);
+  return Object.values(event.attendees).filter(
+    (attendee) => attendee.status === 'confirmed' || attendee.id === userID,
+  );
+}
+
+module.exports = {createEvent, joinEvent, arrayAttendees};

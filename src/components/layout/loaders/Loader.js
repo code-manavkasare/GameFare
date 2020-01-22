@@ -7,7 +7,6 @@ import {
   Easing,
   TouchableOpacity,
 } from 'react-native';
-import {native} from '../../animations/animations';
 
 export default class Loader extends Component {
   constructor(props) {

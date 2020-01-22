@@ -43,7 +43,7 @@ export default class CardUser extends Component {
     if (this.props.userID === user.id) return true;
     await this.setState({loader: true});
     // return true;
-    var discussion = await searchDiscussion([this.props.userID, user.id]);
+    var discussion = await searchDiscussion([this.props.userID, user.id], 2);
 
     //return false;
     if (!discussion) {
@@ -72,6 +72,7 @@ export default class CardUser extends Component {
     }
     await NavigationService.navigate('Conversation', {data: discussion});
     await this.setState({loader: false});
+    return true;
   }
   button(method, text, color) {
     return (
@@ -193,12 +194,22 @@ export default class CardUser extends Component {
                     </View>
                   )}
                 </Col>
-                <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
+                <Col size={75} style={[styleApp.center2, {paddingLeft: 10}]}>
                   <Text style={styleApp.text}>
                     {user.info.firstname} {user.info.lastname}
                   </Text>
                 </Col>
-                <Col size={20} style={styleApp.center3}>
+                <Col size={10} style={styleApp.center}>
+                  {user.status === 'declined' && (
+                    <AllIcons
+                      name="times"
+                      type="font"
+                      color={colors.red}
+                      size={17}
+                    />
+                  )}
+                </Col>
+                <Col size={10} style={styleApp.center3}>
                   {this.state.loader ? (
                     <Loader size={20} color="green" />
                   ) : this.props.userID !== user.id ? (
@@ -206,6 +217,13 @@ export default class CardUser extends Component {
                       name="envelope"
                       type="font"
                       color={colors.green}
+                      size={17}
+                    />
+                  ) : user.status === 'pending' ? (
+                    <AllIcons
+                      name="redo-alt"
+                      type="font"
+                      color={colors.secondary}
                       size={17}
                     />
                   ) : null}

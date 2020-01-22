@@ -130,18 +130,6 @@ class MyEvents extends React.Component {
       />
     );
   }
-  translateViews(val) {
-    if (val) {
-      return Animated.parallel([
-        Animated.spring(this.translateXView1, native(-width)),
-        Animated.spring(this.translateXView2, native(0)),
-      ]).start();
-    }
-    return Animated.parallel([
-      Animated.spring(this.translateXView1, native(0)),
-      Animated.spring(this.translateXView2, native(width)),
-    ]).start();
-  }
   listEvents(events) {
     return events.map((event, i) => (
       <CardEvent
@@ -216,7 +204,7 @@ class MyEvents extends React.Component {
               events={futureEvents}
               height={180}
               imageNoEvent="group"
-              messageNoEvent={"You don’t have any upcoming events."}
+              messageNoEvent={'You don’t have any upcoming events.'}
               content={(events) => this.listEvents(events)}
               openEvent={(objectID) => this.openEvent(objectID)}
               onRef={(ref) => (this.scrollViewRef1 = ref)}

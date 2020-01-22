@@ -374,7 +374,12 @@ PODS:
     - React
   - react-native-statusbar (1.0.3):
     - React
+  - react-native-video (5.0.2):
+    - React
+    - react-native-video/Video (= 5.0.2)
   - react-native-video-helper (1.4.4):
+    - React
+  - react-native-video/Video (5.0.2):
     - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
@@ -414,6 +419,8 @@ PODS:
   - ReactNativeAutogrowTextinput (5.3.0):
     - React
   - ReactNativeKeyboardInput (6.0.0):
+    - React
+  - ReactNativeKeyboardTrackingView (5.6.1):
     - React
   - rn-fetch-blob (0.11.2):
     - React-Core
@@ -518,6 +525,7 @@ DEPENDENCIES:
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
+  - react-native-video (from `../node_modules/react-native-video`)
   - react-native-video-helper (from `../node_modules/react-native-video-helper`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -532,6 +540,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeAutogrowTextinput (from `../node_modules/react-native-autogrow-textinput`)
   - ReactNativeKeyboardInput (from `../node_modules/react-native-keyboard-input`)
+  - ReactNativeKeyboardTrackingView (from `../node_modules/react-native-keyboard-tracking-view`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
@@ -677,6 +686,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-splash-screen"
   react-native-statusbar:
     :path: "../node_modules/@react-native-community/status-bar"
+  react-native-video:
+    :path: "../node_modules/react-native-video"
   react-native-video-helper:
     :path: "../node_modules/react-native-video-helper"
   React-RCTActionSheet:
@@ -703,6 +714,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-autogrow-textinput"
   ReactNativeKeyboardInput:
     :path: "../node_modules/react-native-keyboard-input"
+  ReactNativeKeyboardTrackingView:
+    :path: "../node_modules/react-native-keyboard-tracking-view"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNAwesomeCardIO:
@@ -807,6 +820,7 @@ SPEC CHECKSUMS:
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
+  react-native-video: d01ed7ff1e38fa7dcc6c15c94cf505e661b7bfd0
   react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
@@ -820,6 +834,7 @@ SPEC CHECKSUMS:
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   ReactNativeAutogrowTextinput: 14bd6349ec4fed9231ca141ad3f1dbadf2f63e4c
   ReactNativeKeyboardInput: c37e26821519869993b3b61844350feb9177ff37
+  ReactNativeKeyboardTrackingView: a240a6a0dba852bb107109a7ec7e98b884055977
   rn-fetch-blob: f525a73a78df9ed5d35e67ea65e79d53c15255bc
   RNAwesomeCardIO: caa47eefd8b6ae1986af25df3b86f9d8fbae9bb8
   RNCAsyncStorage: 3c304d1adfaea02ec732ac218801cb13897aa8c0
