@@ -107,10 +107,10 @@ class EventPage extends React.Component {
     if (this.state.editRuleIndex !== -1) {
       nextRuleIndex = (((this.state.editRuleIndex + inc) % rules.length) + rules.length) % rules.length;
     } else {
-      var rule = Object.values(rules).filter(
-        (rule) => rule.value === data.info.rules,
+      const rule = Object.values(rules).filter(
+        rule => rule.value === data.info.rules,
       )[0];
-      let ruleIndex = rules.indexOf(rule);
+      const ruleIndex = rules.indexOf(rule);
       nextRuleIndex = (((ruleIndex + inc) % rules.length) + rules.length) % rules.length;
     }
     this.setState({
@@ -120,10 +120,10 @@ class EventPage extends React.Component {
   }
   nextLevel(data, inc) {
     let nextLevelIndex;
-    var sport = this.props.sports.filter(
+    const sport = this.props.sports.filter(
       s => s.value === data.info.sport,
     )[0];
-    let levels = sport.level.list;
+    const levels = sport.level.list;
     if (this.state.editLevelIndex !== -1) {
       nextLevelIndex = (((this.state.editLevelIndex + inc) % levels.length) + levels.length) % levels.length;
     } else {
@@ -577,7 +577,7 @@ class EventPage extends React.Component {
   }
   async saveEdits(data) {
     // update event data
-    let newData = {
+    const newData = {
       ...data,
       price: {
         ...data.price,

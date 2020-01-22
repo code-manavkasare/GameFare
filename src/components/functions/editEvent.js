@@ -15,7 +15,7 @@ async function editEvent(updatedEvent, callback = () => {}) {
 
 async function removePlayerFromEvent(player, event) {
     // refund entree fee paid
-    let amountPaid = event.attendees[player.id].amountPaid;
+    const amountPaid = event.attendees[player.id].amountPaid;
     if (amountPaid !== undefined && amountPaid !== 0) {
         await refundPlayer(player, amountPaid)
         .catch(err => {
@@ -57,12 +57,10 @@ async function refundPlayer(player, amount, callback = () => {}) {
     })
     .catch(err => {throw err;});
 
-    // this update triggers no cloud functions
     await firebase
     .database()
     .ref('users/' + player.id + '/wallet/')
     .update({'totalWallet':walletAfterRefund})
-    .then()
     .catch(err => {throw err;});
 }
 
