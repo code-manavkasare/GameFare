@@ -34,7 +34,7 @@ import GroupsEvent from './elementsGroupPage/GroupsEvent';
 import PostsView from './elementsGroupPage/PostsView';
 
 import CardUser from './elementsEventPage/CardUser';
-
+import {arrayAttendees} from '../functions/createEvent';
 import {indexEvents} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
 
@@ -160,17 +160,6 @@ class EventPage extends React.Component {
         size={18}
       />
     );
-  }
-  alertCoach(coach, name, icon) {
-    var text = coach ? 'instructor.' : 'player.';
-    var title = name + ' joined the event as a ' + text;
-    this.props.navigation.navigate('Alert', {
-      textButton: 'Close',
-      icon: icon,
-      title: title,
-      close: true,
-      onGoBack: () => this.props.navigation.navigate('Event'),
-    });
   }
   openAlert(title, icon) {
     this.props.navigation.navigate('Alert', {
@@ -319,9 +308,9 @@ class EventPage extends React.Component {
             {this.colIcon(
               data.info.gender.charAt(0).toUpperCase() +
                 data.info.gender.slice(1),
-              data.info.gender == 'mixed'
+              data.info.gender === 'mixed'
                 ? 'venus-mars'
-                : data.info.gender == 'female'
+                : data.info.gender === 'female'
                 ? 'venus'
                 : 'mars',
               false,
@@ -337,9 +326,9 @@ class EventPage extends React.Component {
       </View>
     );
   }
-  event(data) {
-    // return <PlaceHolder />;
-    if (data === undefined || this.state.loader) return <PlaceHolder />;
+  event(data, attendees) {
+    if (!data || this.state.loader) return <PlaceHolder />;
+
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
@@ -351,33 +340,7 @@ class EventPage extends React.Component {
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {/* {this.imageMap(data)} */}
         {this.eventInfo(data, sport, rule, league)}
-
-        {/* {rule.coachNeeded ? (
-          <View style={styleApp.viewHome}>
-            <View style={styleApp.marginView}>
-              <View style={[styleApp.divider2, {marginTop: 0}]} />
-              <Text style={styleApp.text}>Instructor</Text>
-
-              {this.state.loader ? (
-                <FadeInView duration={300} style={{paddingTop: 10}}>
-                  <PlaceHolder />
-                </FadeInView>
-              ) : data.coaches == undefined ? (
-                <Text style={[styleApp.smallText, {marginTop: 5}]}>
-                  No instructor has joined the event yet.
-                </Text>
-              ) : (
-                <FadeInView duration={300} style={{marginTop: 10}}>
-                  {Object.values(data.coaches).map((user, i) =>
-                    this.rowUser(user, i, data),
-                  )}
-                </FadeInView>
-              )}
-            </View>
-          </View>
-        ) : null} */}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Text style={styleApp.text}>Players</Text>
@@ -391,25 +354,21 @@ class EventPage extends React.Component {
             <PlaceHolder />
             <PlaceHolder />
           </FadeInView>
-        ) : !data.attendees ? (
+        ) : attendees.length === 0 ? (
           <Text style={[styleApp.smallText, {marginTop: 10}]}>
             No players has joined the event yet.
           </Text>
         ) : (
-          <FadeInView duration={300} style={{marginTop: 0}}>
-            {Object.values(data.attendees).map((user, i) =>
-              this.rowUser(user, i, data),
-            )}
-          </FadeInView>
+          attendees.map((user, i) => this.rowUser(user, i, data))
         )}
 
-        {data.groups != undefined ? (
+        {data.groups && (
           <View style={{marginTop: 35}}>
             <GroupsEvent groups={data.groups} />
           </View>
-        ) : null}
+        )}
 
-        {data.discussions ? (
+        {data.discussions && (
           <PostsView
             objectID={data.objectID}
             data={data}
@@ -417,7 +376,7 @@ class EventPage extends React.Component {
             loader={this.state.loader}
             infoUser={this.props.infoUser}
           />
-        ) : null}
+        )}
 
         <View style={{height: sizes.heightFooterBooking + 50}} />
       </View>
@@ -496,7 +455,10 @@ class EventPage extends React.Component {
     var event = this.props.allEvents[
       this.props.navigation.getParam('objectID')
     ];
+    const {userID} = this.props;
     const {goBack, dismiss} = this.props.navigation;
+
+    const attendees = arrayAttendees(event, userID);
     return (
       <View style={{flex: 1}}>
         <HeaderBackButton
@@ -519,7 +481,6 @@ class EventPage extends React.Component {
               data: {...event, eventID: event.objectID},
             })
           }
-          // clickButton1={() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
           clickButton1={() => dismiss()}
         />
 
@@ -565,7 +526,7 @@ class EventPage extends React.Component {
               </View>
             </TouchableOpacity>
           }
-          content={() => this.event(event)}
+          content={() => this.event(event, attendees)}
           header={false}
           refresh={() => this.refresh()}
           AnimatedHeaderValue={this.AnimatedHeaderValue}

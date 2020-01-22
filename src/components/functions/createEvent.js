@@ -279,12 +279,21 @@ async function joinEvent(
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)
       .update(user);
   }
+  if (user.status === 'confirmed')
+    await subscribeToTopics([userID, 'all', data.objectID]);
 
-  await subscribeToTopics([userID, 'all', data.objectID]);
   return {
     response: true,
     message: {usersToPush: usersToPush, pushSection: pushSection},
   };
 }
 
-module.exports = {createEvent, joinEvent};
+function arrayAttendees(event, userID) {
+  if (!event.attendees) return [];
+  if (event.info.organizer === userID) return Object.values(event.attendees);
+  return Object.values(event.attendees).filter(
+    (attendee) => attendee.status === 'confirmed' || attendee.id === userID,
+  );
+}
+
+module.exports = {createEvent, joinEvent, arrayAttendees};
