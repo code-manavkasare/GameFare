@@ -451,6 +451,21 @@ class EventPage extends React.Component {
     await this.setState({loader: true});
     return this.loadEvent(this.props.navigation.getParam('objectID'));
   }
+
+  goToShareEvent = (event) => {
+    if (!this.props.userConnected) {
+      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+    }
+
+    return this.props.navigation.navigate('Contacts', {
+      openPageLink: 'openEventPage',
+      pageTo: 'Group',
+      objectID: event.objectID,
+      pageFrom: 'Event',
+      data: {...event, eventID: event.objectID},
+    });
+  };
+
   render() {
     var event = this.props.allEvents[
       this.props.navigation.getParam('objectID')
@@ -472,15 +487,7 @@ class EventPage extends React.Component {
           initialTitleOpacity={0}
           icon1="arrow-left"
           icon2="share"
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openEventPage',
-              pageTo: 'Group',
-              objectID: event.objectID,
-              pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
-            })
-          }
+          clickButton2={() => this.goToShareEvent(event)}
           clickButton1={() => dismiss()}
         />
 
