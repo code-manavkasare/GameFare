@@ -39,7 +39,7 @@ class MessageTab extends React.Component {
       .off();
   }
   async loadMessages(conversation, myConversation, userID) {
-    const {gamefareUser} = this.props;
+    const {gamefareUser} = this.props
     const that = this;
     firebase
       .database()
