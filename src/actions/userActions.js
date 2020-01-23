@@ -1,4 +1,4 @@
-import {SET_USER_INFO, RESET_USER_INFO} from './types';
+import {SET_USER_INFO, RESET_USER_INFO, RESET_USER_MESSAGES} from './types';
 
 import firebase from 'react-native-firebase';
 import Mixpanel from 'react-native-mixpanel';
@@ -13,6 +13,10 @@ const setUserInfo = (value) => ({
 
 const resetUserInfo = () => ({
   type: RESET_USER_INFO,
+});
+
+const resetMessages = () => ({
+  type: RESET_USER_MESSAGES,
 });
 
 var infoUserToPushSaved = '';
@@ -62,6 +66,7 @@ export const userAction = (val, data) => {
         .ref('users/' + data.userID)
         .off('value');
       await dispatch(resetUserInfo());
+      await dispatch(resetMessages());
       return true;
     }
     return true;

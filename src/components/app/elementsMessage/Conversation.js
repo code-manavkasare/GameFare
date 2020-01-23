@@ -8,6 +8,7 @@ import {messageAction} from '../../../actions/messageActions';
 import Conversation2 from './Conversation2';
 
 import {titleConversation} from '../../functions/message';
+import {userObject} from '../../functions/users';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import styleApp from '../../style/style';
@@ -39,7 +40,7 @@ class MessageTab extends React.Component {
       .off();
   }
   async loadMessages(conversation, myConversation, userID) {
-    const {gamefareUser} = this.props
+    const {gamefareUser} = this.props;
     const that = this;
     firebase
       .database()
@@ -90,23 +91,19 @@ class MessageTab extends React.Component {
     this.props.messageAction('setConversation', data);
   }
   render() {
-    const user = {
-      _id: this.props.userID,
-      name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-      avatar: !this.props.infoUser.picture
-        ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
-        : this.props.infoUser.picture,
-    };
+    const {infoUser, userID, userConnected} = this.props;
+    const user = userObject(infoUser, userID);
     const conversation = this.props.navigation.getParam('data');
+
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={titleConversation(conversation, this.props.userID)}
+          textHeader={titleConversation(conversation, userID)}
           imgHeader={
             <ImageConversation
               conversation={conversation}
-              userID={this.props.userID}
+              userID={userID}
               style={styleApp.roundView2}
               sizeSmallImg={25}
             />
@@ -133,7 +130,7 @@ class MessageTab extends React.Component {
           user={user}
           onRef={(ref) => (this.conversationRef = ref)}
           messageAction={this.props.messageAction}
-          userConnected={this.props.userConnected}
+          userConnected={userConnected}
           discussion={conversation}
         />
       </View>

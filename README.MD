@@ -97,3 +97,7 @@ We use material and font awesome : https://fontawesome.com/icons?d=gallery
 
 We simply follow Airbnb Guideline : https://github.com/airbnb/javascript
 And the guide for React work also for React Native: https://github.com/airbnb/javascript/tree/master/react
+
+## Reset cache of debugger
+rm -rf ~/Library/Application\ Support/React\ Native\ Debugger/
+

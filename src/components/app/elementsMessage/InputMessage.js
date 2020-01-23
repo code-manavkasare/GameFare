@@ -49,13 +49,6 @@ class InputMessage extends React.Component {
 
     await this.setState({inputValue: '', images: {}});
 
-    if (!this.props.discussion.firstMessageExists) {
-      await firebase
-        .database()
-        .ref('discussions/' + this.props.discussion.objectID)
-        .update({firstMessageExists: true});
-    }
-
     await sendNewMessage(
       this.props.discussion.objectID,
       this.props.user,
