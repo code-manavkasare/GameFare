@@ -511,7 +511,7 @@ export default class ContactsComponent extends Component {
             options={[
               {label: 'Contacts', value: 'contacts'},
               {label: 'Gamefare', value: 'gamefareUsers'},
-              {label: 'Groups', value: 'groups'},
+              // {label: 'Groups', value: 'groups'},
             ]}
           />
         </View>

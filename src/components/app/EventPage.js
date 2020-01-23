@@ -40,7 +40,7 @@ import {arrayAttendees} from '../functions/createEvent';
 import {indexEvents} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
 
-import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
+import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
 const noEdit = {
@@ -62,30 +62,38 @@ class EventPage extends React.Component {
     super(props);
     this.state = {
       loader: false,
+      event: null,
       ...noEdit,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   async componentDidMount() {
-    if (
-      this.props.allEvents[this.props.navigation.getParam('objectID')] ===
-      undefined
-    ) {
-      this.loadEvent(this.props.navigation.getParam('objectID'));
+    this.loadEvent(this.props.navigation.getParam('objectID'));
+  }
+  async componentDidUpdate() {}
+  async componentWillUnmount() {
+    if (this.state.event !== null) {
+      firebase
+        .database()
+        .ref('events/' + this.state.data.objectID)
+        .off();
     }
   }
-  async componentDidUpdate() {
-    console.log('EventPage: componentDidUpdate');
-    console.log(this.state);
-  }
   async loadEvent(objectID) {
-    indexEvents.clearCache();
-    var event = await indexEvents.getObject(objectID);
-    await this.props.eventsAction('setAllEvents', {[objectID]: event});
-    return this.setState({loader: false});
+    const that = this;
+    firebase
+      .database()
+      .ref('events/' + objectID)
+      .on('value', async function(snap) {
+        let event = snap.val();
+        event.objectID = objectID;
+        if (event.allAttendees.includes(that.props.userID)) {
+          await that.props.eventsAction('setAllEvents', {[objectID]: event});
+        }
+        that.setState({event: event, loader: false});
+      });
   }
-
   nextGender(data, inc) {
     const genders = ['mixed', 'female', 'male'];
     let index;
@@ -144,13 +152,31 @@ class EventPage extends React.Component {
     });
   }
 
-  header(event, showOffset) {
-    const {goBack, dismiss} = this.props.navigation;
-    if (showOffset) {
+  header() {
+    const {dismiss} = this.props.navigation;
+    if (!this.state.event) {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event.info.name}
+          textHeader={''}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="arrow-left"
+          icon2="share"
+          typeIcon2="moon"
+          sizeIcon2={17}
+          clickButton2={() => {}}
+          clickButton1={() => dismiss()}
+        />
+      );
+    }
+    if (this.userIsOrganizer()) {
+      return (
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={this.state.event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -166,9 +192,9 @@ class EventPage extends React.Component {
             this.props.navigation.navigate('Contacts', {
               openPageLink: 'openEventPage',
               pageTo: 'Group',
-              objectID: event.objectID,
+              objectID: this.state.event.objectID,
               pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
+              data: {...this.state.event, eventID: this.state.event.objectID},
             })
           }
           clickButton1={() => dismiss()}
@@ -181,7 +207,7 @@ class EventPage extends React.Component {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event.info.name}
+          textHeader={this.state.event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -194,9 +220,9 @@ class EventPage extends React.Component {
             this.props.navigation.navigate('Contacts', {
               openPageLink: 'openEventPage',
               pageTo: 'Group',
-              objectID: event.objectID,
+              objectID: this.state.event.objectID,
               pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
+              data: {...this.state.event, eventID: this.state.event.objectID},
             })
           }
           clickButton1={() => dismiss()}
@@ -784,22 +810,25 @@ class EventPage extends React.Component {
       </View>
     );
   }
-  event(data, attendees) {
-    if (data === undefined || this.state.loader) return <PlaceHolder />;
+  event() {
+    if (!this.state.event || this.state.loader) return <PlaceHolder />;
+    const attendees = arrayAttendees(this.state.event, this.props.userID);
     var sport = this.props.sports.filter(
-      (sport) => sport.value === data.info.sport,
+      (sport) => sport.value === this.state.event.info.sport,
     )[0];
     var league = Object.values(sport.typeEvent).filter(
-      (item) => item.value === data.info.league,
+      (item) => item.value === this.state.event.info.league,
     )[0];
     var rule = Object.values(league.rules).filter(
       (rule) =>
         rule.value ===
-        (this.state.editRule === '' ? data.info.rules : this.state.editRule),
+        (this.state.editRule === ''
+          ? this.state.event.info.rules
+          : this.state.editRule),
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {this.eventInfo(data, sport, rule, league)}
+        {this.eventInfo(this.state.event, sport, rule, league)}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Text style={styleApp.text}>Players</Text>
@@ -814,23 +843,27 @@ class EventPage extends React.Component {
             <PlaceHolder />
           </FadeInView>
         ) : attendees.length === 0 ? (
-          <Text style={[styleApp.smallText, {marginTop: 10}]}>
+          <Text
+            style={[
+              styleApp.smallText,
+              {marginTop: 10, marginLeft: 20, width: width - 40},
+            ]}>
             No players has joined the event yet.
           </Text>
         ) : (
-          attendees.map((user, i) => this.rowUser(user, i, data))
+          attendees.map((user, i) => this.rowUser(user, i, this.state.event))
         )}
 
-        {data.groups && (
+        {this.state.event.groups && (
           <View style={{marginTop: 35}}>
-            <GroupsEvent groups={data.groups} />
+            <GroupsEvent groups={this.state.event.groups} />
           </View>
         )}
 
-        {data.discussions && (
+        {this.state.event.discussions && (
           <PostsView
-            objectID={data.objectID}
-            data={data}
+            objectID={this.state.event.objectID}
+            data={this.state.event}
             type="event"
             loader={this.state.loader}
             infoUser={this.props.infoUser}
@@ -907,9 +940,11 @@ class EventPage extends React.Component {
       return true;
     return false;
   }
-  userIsOrganizer(event) {
-    return true;
-    return event.info.organizer === this.props.userID;
+  userIsOrganizer() {
+    if (!this.state.event) {
+      return false;
+    }
+    return this.state.event === this.props.userID;
   }
   askRemovePlayer(player, data) {
     this.props.navigation.navigate('AlertYesNo', {
@@ -963,67 +998,74 @@ class EventPage extends React.Component {
   };
 
   render() {
-    var event = this.props.allEvents[
-      this.props.navigation.getParam('objectID')
-    ];
-    const {userID} = this.props;
-    const {goBack, dismiss} = this.props.navigation;
-
-    const attendees = arrayAttendees(event, userID);
+    console.log('rendering');
     return (
       <View style={{flex: 1}}>
-        {this.header(event, this.userIsOrganizer(event))}
-        <ParalaxScrollView
-          setState={(val) => this.setState(val)}
-          image={
-            <TouchableOpacity
-              activeOpacity={0.3}
-              style={{height: 280, width: '100%'}}
-              onPress={() => {
-                this.props.navigation.navigate('AlertAddress', {
-                  data: event.location,
-                });
-              }}>
-              {event === undefined ? (
+        {this.header()}
+        <ParallaxScrollView
+          style={{
+            height: height,
+            backgroundColor: 'white',
+            overflow: 'hidden',
+            position: 'absolute',
+          }}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderHeight={100}
+          outputScaleValue={6}
+          fadeOutForeground={true}
+          backgroundScrollSpeed={2}
+          backgroundColor={'white'}
+          onScroll={Animated.event([
+            {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
+          ])}
+          renderBackground={() => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.3}
+                style={{height: 280, width: '100%'}}
+                onPress={() => {
+                  this.props.navigation.navigate('AlertAddress', {
+                    data: this.state.event.location,
+                  });
+                }}>
+                {!this.state.event ? (
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 300,
+                      borderRadius: 0,
+                      backgroundColor: colors.off,
+                    }}
+                  />
+                ) : (
+                  <AsyncImage
+                    style={{width: '100%', height: 320, borderRadius: 0}}
+                    mainImage={this.state.event.images[0]}
+                    imgInitial={this.state.event.images[0]}
+                  />
+                )}
                 <View
                   style={{
-                    width: '100%',
-                    height: 300,
-                    borderRadius: 0,
-                    backgroundColor: colors.off,
-                  }}
-                />
-              ) : (
-                <AsyncImage
-                  style={{width: '100%', height: 320, borderRadius: 0}}
-                  mainImage={event.images[0]}
-                  imgInitial={event.images[0]}
-                />
-              )}
-              <View
-                style={{
-                  position: 'absolute',
-                  left: width / 2 - 15,
-                  top: 280 / 2 - 5,
-                }}>
-                <AllIcons
-                  name="map-marker-alt"
-                  type="font"
-                  size={28}
-                  color={colors.blue}
-                />
-              </View>
-            </TouchableOpacity>
-          }
-          content={() => this.event(event, attendees)}
-          header={false}
-          refresh={() => this.refresh()}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          initialColorIcon={colors.title}
-          colorRefreshControl={colors.title}
-        />
+                    position: 'absolute',
+                    left: width / 2 - 15,
+                    top: 280 / 2 - 5,
+                  }}>
+                  <AllIcons
+                    name="map-marker-alt"
+                    type="font"
+                    size={28}
+                    color={colors.blue}
+                  />
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          renderFixedHeader={null}
+          parallaxHeaderHeight={280}>
+          {this.event()}
+        </ParallaxScrollView>
 
-        {!event ? null : (
+        {!this.state.event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
             {this.state.editMode ? (
               <Button2
@@ -1034,9 +1076,9 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Save edits"
                 loader={false}
-                click={() => this.saveEdits(event)}
+                click={() => this.saveEdits(this.state.event)}
               />
-            ) : this.waitlistCondition(event) ? (
+            ) : this.waitlistCondition(this.state.event) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
@@ -1045,11 +1087,11 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Join the waitlist"
                 loader={false}
-                click={() => this.joinWaitlist(event)}
+                click={() => this.joinWaitlist(this.state.event)}
               />
-            ) : this.openCondition(event) &&
-              this.userAlreadySubscribed(event.attendees) &&
-              this.coachAlreadySubscribed(event.coaches) ? (
+            ) : this.openCondition(this.state.event) &&
+              this.userAlreadySubscribed(this.state.event.attendees) &&
+              this.coachAlreadySubscribed(this.state.event.coaches) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
@@ -1058,7 +1100,7 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Join the event"
                 loader={false}
-                click={() => this.next(event)}
+                click={() => this.next(this.state.event)}
               />
             ) : null}
           </FadeInView>
