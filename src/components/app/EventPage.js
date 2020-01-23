@@ -151,13 +151,31 @@ class EventPage extends React.Component {
     });
   }
 
-  header(event, showOffset) {
-    const {goBack, dismiss} = this.props.navigation;
-    if (showOffset) {
+  header() {
+    const {dismiss} = this.props.navigation;
+    if (!this.state.event) {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event.info.name}
+          textHeader={''}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="arrow-left"
+          icon2="share"
+          typeIcon2="moon"
+          sizeIcon2={17}
+          clickButton2={() => {}}
+          clickButton1={() => dismiss()}
+        />
+      );
+    }
+    if (this.userIsOrganizer()) {
+      return (
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={this.state.event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -173,9 +191,9 @@ class EventPage extends React.Component {
             this.props.navigation.navigate('Contacts', {
               openPageLink: 'openEventPage',
               pageTo: 'Group',
-              objectID: event.objectID,
+              objectID: this.state.event.objectID,
               pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
+              data: {...this.state.event, eventID: this.state.event.objectID},
             })
           }
           clickButton1={() => dismiss()}
@@ -188,7 +206,7 @@ class EventPage extends React.Component {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event.info.name}
+          textHeader={this.state.event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -201,9 +219,9 @@ class EventPage extends React.Component {
             this.props.navigation.navigate('Contacts', {
               openPageLink: 'openEventPage',
               pageTo: 'Group',
-              objectID: event.objectID,
+              objectID: this.state.event.objectID,
               pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
+              data: {...this.state.event, eventID: this.state.event.objectID},
             })
           }
           clickButton1={() => dismiss()}
@@ -791,22 +809,23 @@ class EventPage extends React.Component {
       </View>
     );
   }
-  event(data, attendees) {
-    if (!data || this.state.loader) return <PlaceHolder />;
+  event() {
+    if (!this.state.event || this.state.loader) return <PlaceHolder />;
+    const attendees = arrayAttendees(this.state.event, this.props.userID);
     var sport = this.props.sports.filter(
-      (sport) => sport.value === data.info.sport,
+      (sport) => sport.value === this.state.event.info.sport,
     )[0];
     var league = Object.values(sport.typeEvent).filter(
-      (item) => item.value === data.info.league,
+      (item) => item.value === this.state.event.info.league,
     )[0];
     var rule = Object.values(league.rules).filter(
       (rule) =>
         rule.value ===
-        (this.state.editRule === '' ? data.info.rules : this.state.editRule),
+        (this.state.editRule === '' ? this.state.event.info.rules : this.state.editRule),
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {this.eventInfo(data, sport, rule, league)}
+        {this.eventInfo(this.state.event, sport, rule, league)}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Text style={styleApp.text}>Players</Text>
@@ -825,19 +844,19 @@ class EventPage extends React.Component {
             No players has joined the event yet.
           </Text>
         ) : (
-          attendees.map((user, i) => this.rowUser(user, i, data))
+          attendees.map((user, i) => this.rowUser(user, i, this.state.event))
         )}
 
-        {data.groups && (
+        {this.state.event.groups && (
           <View style={{marginTop: 35}}>
-            <GroupsEvent groups={data.groups} />
+            <GroupsEvent groups={this.state.event.groups} />
           </View>
         )}
 
-        {data.discussions && (
+        {this.state.event.discussions && (
           <PostsView
-            objectID={data.objectID}
-            data={data}
+            objectID={this.state.event.objectID}
+            data={this.state.event}
             type="event"
             loader={this.state.loader}
             infoUser={this.props.infoUser}
@@ -914,9 +933,11 @@ class EventPage extends React.Component {
       return true;
     return false;
   }
-  userIsOrganizer(event) {
-    return true;
-    return event.info.organizer === this.props.userID;
+  userIsOrganizer() {
+    if (!this.state.event) {
+      return false;
+    }
+    return this.state.event === this.props.userID;
   }
   askRemovePlayer(player, data) {
     this.props.navigation.navigate('AlertYesNo', {
@@ -970,77 +991,70 @@ class EventPage extends React.Component {
   };
 
   render() {
-    var event = this.props.allEvents[
-      this.props.navigation.getParam('objectID')
-    ];
-    const {userID} = this.props;
-    const {goBack, dismiss} = this.props.navigation;
-
-    const attendees = arrayAttendees(event, userID);
     return (
       <View style={{flex: 1}}>
-        {this.header(this.state.event, this.userIsOrganizer(event))}
-            <ParallaxScrollView
-              style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}
-              showsVerticalScrollIndicator={false}
-              stickyHeaderHeight={100}
-              outputScaleValue={6}
-              fadeOutForeground={true}
-              backgroundScrollSpeed={2}
-              backgroundColor={'white'}
-              onScroll={
-                Animated.event(
-                  [{ nativeEvent: { contentOffset: { y: this.AnimatedHeaderValue }}}]
-                )
-              }
-              renderBackground={() => {
-                return (
-                  <TouchableOpacity
-                    activeOpacity={0.3}
-                    style={{height: 280, width: '100%'}}
-                    onPress={() => {
-                      this.props.navigation.navigate('AlertAddress', {
-                        data: this.state.event.location,
-                      });
-                    }}
-                  >
-                    {!this.state.event ?
-                    <View
-                      style={{
-                        width: '100%',
-                        height: 300,
-                        borderRadius: 0,
-                        backgroundColor: colors.off,
-                      }}
-                    /> :
-                    <AsyncImage
-                      style={{width: '100%', height: 320, borderRadius: 0}}
-                      mainImage={this.state.event.images[0]}
-                      imgInitial={this.state.event.images[0]}
-                    />
-                    }
-                    <View
-                      style={{
-                        position: 'absolute',
-                        left: width / 2 - 15,
-                        top: 280 / 2 - 5,
-                      }}
-                    >
-                      <AllIcons
-                        name="map-marker-alt"
-                        type="font"
-                        size={28}
-                        color={colors.blue}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                );
-              }}
-              renderFixedHeader={null}
-              parallaxHeaderHeight={ 280 }
-            >
-              {this.event(this.state.event)}
-            </ParallaxScrollView>
+        {this.header()}
+        <ParallaxScrollView
+          style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderHeight={100}
+          outputScaleValue={6}
+          fadeOutForeground={true}
+          backgroundScrollSpeed={2}
+          backgroundColor={'white'}
+          onScroll={
+            Animated.event(
+              [{ nativeEvent: { contentOffset: { y: this.AnimatedHeaderValue }}}]
+            )
+          }
+          renderBackground={() => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.3}
+                style={{height: 280, width: '100%'}}
+                onPress={() => {
+                  this.props.navigation.navigate('AlertAddress', {
+                    data: this.state.event.location,
+                  });
+                }}
+              >
+                {!this.state.event ?
+                <View
+                  style={{
+                    width: '100%',
+                    height: 300,
+                    borderRadius: 0,
+                    backgroundColor: colors.off,
+                  }}
+                /> :
+                <AsyncImage
+                  style={{width: '100%', height: 320, borderRadius: 0}}
+                  mainImage={this.state.event.images[0]}
+                  imgInitial={this.state.event.images[0]}
+                />
+                }
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: width / 2 - 15,
+                    top: 280 / 2 - 5,
+                  }}
+                >
+                  <AllIcons
+                    name="map-marker-alt"
+                    type="font"
+                    size={28}
+                    color={colors.blue}
+                  />
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          renderFixedHeader={null}
+          parallaxHeaderHeight={ 280 }
+        >
+          {this.event()}
+        </ParallaxScrollView>
           
         {!this.state.event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
