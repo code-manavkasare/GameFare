@@ -42,7 +42,7 @@ class CardMessage extends React.Component {
     this.clickLink.bind(this);
   }
   componentDidMount() {
-    this.urlify(this.props.message.currentMessage.text);
+    //this.urlify(this.props.message.currentMessage.text);
   }
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
@@ -59,16 +59,23 @@ class CardMessage extends React.Component {
     // const dataUrl = await LinkPreview.getPreview(url);
   }
   openPage(type, id) {
+    console.log('open oage', type);
+    console.log(id);
+    // return true;
     NavigationService.push(type, {
       objectID: id,
     });
   }
   async clickLink(url, viewUrl) {
-    if (viewUrl && url.includes('gamefare.app.link'))
+    if (url.includes('gamefare.app.link')) {
+      const params = await getParams(url);
+      console.log('open link gamefare', params);
       return this.openPage(
-        viewUrl.action === 'openEventPage' ? 'Event' : 'Group',
-        viewUrl.eventID,
+        params.action === 'openEventPage' ? 'Event' : 'Group',
+        params.eventID,
       );
+    }
+
     // return true;
     if (!viewUrl) return openUrl(url);
     if (!viewUrl.id) return openUrl(url);
@@ -130,6 +137,9 @@ class CardMessage extends React.Component {
     return null;
   }
   renderMessage(props) {
+    console.log('current message', props.currentMessage.text);
+    console.log(props.currentMessage.user.avatar);
+    console.log('disccussion', this.props);
     return (
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}

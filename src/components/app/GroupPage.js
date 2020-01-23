@@ -53,7 +53,8 @@ class GroupPage extends React.Component {
       .database()
       .ref('groups/' + objectID)
       .on('value', async function(snap) {
-        const group = snap.val();
+        let group = snap.val();
+        group.objectID = objectID;
         console.log(group);
         if (group.allMembers !== undefined) {
           if (group.allMembers.includes(that.props.userID)) {
@@ -130,29 +131,6 @@ class GroupPage extends React.Component {
                 />
               </View>,
             )}
-
-            {/* 
-            {this.rowIcon(
-              this.title(data.organizer.name),
-              'user-alt',
-              undefined,
-              undefined,
-              <View
-                style={[
-                  styleApp.viewNumber,
-                  styleApp.center,
-                  {backgroundColor: colors.grey},
-                ]}>
-                <Text
-                  style={[
-                    styleApp.text,
-                    {fontSize: 10, color: 'white', fontFamily: 'OpenSans-Bold'},
-                  ]}>
-                  {data.organizer.name.split(' ')[0][0] +
-                    data.organizer.name.split(' ')[1][0]}
-                </Text>
-              </View>,
-            )} */}
           </View>
         </View>
 
@@ -161,6 +139,7 @@ class GroupPage extends React.Component {
           infoUser={this.props.infoUser}
           userConnected={this.props.userConnected}
           userID={this.props.userID}
+          objectID={data.objectID}
         />
       </View>
     );
@@ -264,7 +243,9 @@ class GroupPage extends React.Component {
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={!this.state.group ? '' : this.state.group.info.name.slice(0, 20)}
+          textHeader={
+            !this.state.group ? '' : this.state.group.info.name.slice(0, 20)
+          }
           inputRange={[20, 50]}
           initialTitleOpacity={0}
           initialBackgroundColor={'transparent'}
@@ -279,18 +260,21 @@ class GroupPage extends React.Component {
         />
 
         <ParallaxScrollView
-          style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}
+          style={{
+            height: height,
+            backgroundColor: 'white',
+            overflow: 'hidden',
+            position: 'absolute',
+          }}
           showsVerticalScrollIndicator={false}
           stickyHeaderHeight={100}
           outputScaleValue={6}
           fadeOutForeground={true}
           backgroundScrollSpeed={2}
           backgroundColor={'white'}
-          onScroll={
-            Animated.event(
-              [{ nativeEvent: { contentOffset: { y: this.AnimatedHeaderValue }}}]
-            )
-          }
+          onScroll={Animated.event([
+            {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
+          ])}
           renderBackground={() => {
             if (this.state.group) {
               return (
@@ -303,8 +287,7 @@ class GroupPage extends React.Component {
             }
           }}
           renderFixedHeader={null}
-          parallaxHeaderHeight={ 280 }
-        >
+          parallaxHeaderHeight={280}>
           {this.group(this.state.group)}
         </ParallaxScrollView>
       </View>

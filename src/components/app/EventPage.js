@@ -75,28 +75,23 @@ class EventPage extends React.Component {
   async componentWillUnmount() {
     if (this.state.event !== null) {
       firebase
-      .database()
-      .ref('events/' + this.state.data.objectID)
-      .off();
+        .database()
+        .ref('events/' + this.state.data.objectID)
+        .off();
     }
   }
   async loadEvent(objectID) {
-    console.log("loading");
-    console.log(objectID);
-    console.log(this.props.userID);
     const that = this;
     firebase
       .database()
       .ref('events/' + objectID)
       .on('value', async function(snap) {
-        console.log("got event");
-        const event = snap.val();
-        console.log(event);
+        let event = snap.val();
+        event.objectID = objectID;
         if (event.allAttendees.includes(that.props.userID)) {
           await that.props.eventsAction('setAllEvents', {[objectID]: event});
         }
         that.setState({event: event, loader: false});
-        console.log("set state");
       });
   }
   nextGender(data, inc) {
@@ -827,7 +822,9 @@ class EventPage extends React.Component {
     var rule = Object.values(league.rules).filter(
       (rule) =>
         rule.value ===
-        (this.state.editRule === '' ? this.state.event.info.rules : this.state.editRule),
+        (this.state.editRule === ''
+          ? this.state.event.info.rules
+          : this.state.editRule),
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
@@ -846,7 +843,11 @@ class EventPage extends React.Component {
             <PlaceHolder />
           </FadeInView>
         ) : attendees.length === 0 ? (
-          <Text style={[styleApp.smallText, {marginTop: 10}]}>
+          <Text
+            style={[
+              styleApp.smallText,
+              {marginTop: 10, marginLeft: 20, width: width - 40},
+            ]}>
             No players has joined the event yet.
           </Text>
         ) : (
@@ -997,23 +998,26 @@ class EventPage extends React.Component {
   };
 
   render() {
-    console.log("rendering");
+    console.log('rendering');
     return (
       <View style={{flex: 1}}>
         {this.header()}
         <ParallaxScrollView
-          style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}
+          style={{
+            height: height,
+            backgroundColor: 'white',
+            overflow: 'hidden',
+            position: 'absolute',
+          }}
           showsVerticalScrollIndicator={false}
           stickyHeaderHeight={100}
           outputScaleValue={6}
           fadeOutForeground={true}
           backgroundScrollSpeed={2}
           backgroundColor={'white'}
-          onScroll={
-            Animated.event(
-              [{ nativeEvent: { contentOffset: { y: this.AnimatedHeaderValue }}}]
-            )
-          }
+          onScroll={Animated.event([
+            {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
+          ])}
           renderBackground={() => {
             return (
               <TouchableOpacity
@@ -1023,30 +1027,29 @@ class EventPage extends React.Component {
                   this.props.navigation.navigate('AlertAddress', {
                     data: this.state.event.location,
                   });
-                }}
-              >
-                {!this.state.event ?
-                <View
-                  style={{
-                    width: '100%',
-                    height: 300,
-                    borderRadius: 0,
-                    backgroundColor: colors.off,
-                  }}
-                /> :
-                <AsyncImage
-                  style={{width: '100%', height: 320, borderRadius: 0}}
-                  mainImage={this.state.event.images[0]}
-                  imgInitial={this.state.event.images[0]}
-                />
-                }
+                }}>
+                {!this.state.event ? (
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 300,
+                      borderRadius: 0,
+                      backgroundColor: colors.off,
+                    }}
+                  />
+                ) : (
+                  <AsyncImage
+                    style={{width: '100%', height: 320, borderRadius: 0}}
+                    mainImage={this.state.event.images[0]}
+                    imgInitial={this.state.event.images[0]}
+                  />
+                )}
                 <View
                   style={{
                     position: 'absolute',
                     left: width / 2 - 15,
                     top: 280 / 2 - 5,
-                  }}
-                >
+                  }}>
                   <AllIcons
                     name="map-marker-alt"
                     type="font"
@@ -1058,11 +1061,10 @@ class EventPage extends React.Component {
             );
           }}
           renderFixedHeader={null}
-          parallaxHeaderHeight={ 280 }
-        >
+          parallaxHeaderHeight={280}>
           {this.event()}
         </ParallaxScrollView>
-          
+
         {!this.state.event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
             {this.state.editMode ? (

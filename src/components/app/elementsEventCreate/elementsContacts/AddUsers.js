@@ -17,6 +17,7 @@ import {autocompleteSearchUsers} from '../../../functions/users';
 import UsersSelectableList from '../../elementsMessage/UsersSelectableList';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
+import {userObject} from '../../../functions/users';
 import {initialState} from '../../../../reducers/messageReducer';
 
 const {height, width} = Dimensions.get('screen');
@@ -43,7 +44,10 @@ class AddUsers extends Component {
     this.setState({loader: true, searchInputGameFareUsers: search});
     this.props.changeSearchGameFareUsers(search);
 
-    const gamefareUsersResults = await autocompleteSearchUsers(search);
+    const gamefareUsersResults = await autocompleteSearchUsers(
+      search,
+      this.props.userID,
+    );
 
     this.setState({loader: false, usersList: gamefareUsersResults});
   };
@@ -57,8 +61,10 @@ class AddUsers extends Component {
   };
 
   sendInvitationGamefareUsers = async () => {
-    const {user, userID} = this.props;
+    const {userID} = this.props;
     const {selectedUsersWithId} = this.state;
+    const user = userObject(this.props.infoUser, this.props.userID);
+    console.log('usersssss', user);
 
     let usersIDArray = keys(selectedUsersWithId);
     usersIDArray.push(userID);
@@ -68,34 +74,27 @@ class AddUsers extends Component {
       [userID]: {...user, id: userID},
     };
 
+    
+
     let discussion = await searchDiscussion(usersIDArray, usersIDArray.length);
     if (!discussion) {
       discussion = await createDiscussion(
         selectedUsersWithIdAndHost,
         'General',
+        true,
       );
     }
 
     const {url, description} = await this.props.createBranchMessage();
 
-    await sendNewMessage(
-      discussion.objectID,
-      this.props.user,
-      `${description} ${url}`,
-    );
-
-    await firebase
-      .database()
-      .ref('discussions/' + discussion.objectID)
-      .update({firstMessageExists: true});
-
+    await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
     this.showToast('Invitations sent !');
   };
 
   showToast(text) {
     this.refs.toast.show(
       <View>
-        <Text>{text}</Text>
+        <Text style={[styleApp.textBold, {color: colors.white}]}>{text}</Text>
       </View>,
     );
   }
@@ -166,7 +165,7 @@ AddUsers.PropTypes = {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    user: state.user,
+    infoUser: state.user.infoUser.userInfo,
   };
 };
 

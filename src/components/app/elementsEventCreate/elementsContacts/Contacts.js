@@ -499,7 +499,8 @@ export default class ContactsComponent extends Component {
           <SwitchSelector
             initial={0}
             onPress={(value) => this.translateXView(value)}
-            textStyle={styleApp.textBold}
+            textStyle={[styleApp.textBold, {color: colors.greyDark}]}
+            selectedTextStyle={[styleApp.textBold, {color: colors.white}]}
             textColor={colors.borderColor}
             selectedColor={colors.white}
             buttonColor={colors.green}
@@ -510,7 +511,7 @@ export default class ContactsComponent extends Component {
             options={[
               {label: 'Contacts', value: 'contacts'},
               {label: 'Gamefare', value: 'gamefareUsers'},
-              {label: 'Groups', value: 'groups'},
+              // {label: 'Groups', value: 'groups'},
             ]}
           />
         </View>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
+import {keys} from 'ramda';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
@@ -45,7 +46,8 @@ class ListEvents extends React.Component {
   async loadGroups(groups) {
     await this.setState({loader: true});
     indexGroups.clearCache();
-    var groupsEvents = await this.getGroups(groups);
+    console.log('getgroups', groups);
+    var groupsEvents = await this.getGroups(keys(groups));
 
     this.setState({loader: false, groups: groupsEvents});
   }

@@ -115,8 +115,6 @@ export default class HeaderFlow extends Component {
       ],
       extrapolate: 'clamp',
     });
-    console.log('COLORCOLORCOLOR');
-    console.log(this.props.colorIconOffset);
     return (
       <Animated.View
         style={[
@@ -170,9 +168,7 @@ export default class HeaderFlow extends Component {
           </Col>
           <Col size={50} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
-            {this.props.loader ? (
-              null
-            ) : this.props.iconOffset != null ? (
+            {this.props.loader ? null : this.props.iconOffset != null ? (
               <Animated.View
                 style={[
                   {

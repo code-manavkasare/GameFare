@@ -3,6 +3,7 @@ import {
   SET_CONVERSATIONS,
   SET_INPUT,
   ADD_IMAGE,
+  RESET_USER_MESSAGES,
 } from '../actions/types';
 import union from 'lodash/union';
 
@@ -58,6 +59,8 @@ const messageReducer = (state = initialState, action) => {
           },
         },
       };
+    case RESET_USER_MESSAGES:
+      return initialState;
     default:
       return state;
   }
