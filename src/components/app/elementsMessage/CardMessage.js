@@ -59,6 +59,9 @@ class CardMessage extends React.Component {
     // const dataUrl = await LinkPreview.getPreview(url);
   }
   openPage(type, id) {
+    console.log('open oage', type);
+    console.log(type);
+    return true;
     NavigationService.push(type, {
       objectID: id,
     });
@@ -67,7 +70,6 @@ class CardMessage extends React.Component {
     if (url.includes('gamefare.app.link')) {
       const params = await getParams(url);
       console.log('open link gamefare', params);
-      // return true;
       return this.openPage(
         params.action === 'openEventPage' ? 'Event' : 'Group',
         params.eventID,
