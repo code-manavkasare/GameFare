@@ -40,7 +40,7 @@ import {arrayAttendees} from '../functions/createEvent';
 import {indexEvents} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
 
-import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
+import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
 const noEdit = {
@@ -62,28 +62,35 @@ class EventPage extends React.Component {
     super(props);
     this.state = {
       loader: false,
+      event: null,
       ...noEdit,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   async componentDidMount() {
-    if (
-      this.props.allEvents[this.props.navigation.getParam('objectID')] ===
-      undefined
-    ) {
-      this.loadEvent(this.props.navigation.getParam('objectID'));
+    this.loadEvent(this.props.navigation.getParam('objectID'));
+  }
+  async componentWillUnmount() {
+    if (this.state.event !== null) {
+      firebase
+      .database()
+      .ref('events/' + this.state.data.objectID)
+      .off();
     }
   }
-  async componentDidUpdate() {
-    console.log('EventPage: componentDidUpdate');
-    console.log(this.state);
-  }
   async loadEvent(objectID) {
-    indexEvents.clearCache();
-    var event = await indexEvents.getObject(objectID);
-    await this.props.eventsAction('setAllEvents', {[objectID]: event});
-    return this.setState({loader: false});
+    const that = this;
+    firebase
+      .database()
+      .ref('events/' + objectID)
+      .on('value', async function(snap) {
+        const event = snap.val();
+        if (event.allAttendees.includes(that.props.userID)) {
+          await that.props.eventsAction('setAllEvents', {[objectID]: event});
+        }
+        that.setState({event: event, loader: false});
+      });
   }
 
   nextGender(data, inc) {
@@ -785,7 +792,7 @@ class EventPage extends React.Component {
     );
   }
   event(data, attendees) {
-    if (data === undefined || this.state.loader) return <PlaceHolder />;
+    if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
@@ -972,58 +979,70 @@ class EventPage extends React.Component {
     const attendees = arrayAttendees(event, userID);
     return (
       <View style={{flex: 1}}>
-        {this.header(event, this.userIsOrganizer(event))}
-        <ParalaxScrollView
-          setState={(val) => this.setState(val)}
-          image={
-            <TouchableOpacity
-              activeOpacity={0.3}
-              style={{height: 280, width: '100%'}}
-              onPress={() => {
-                this.props.navigation.navigate('AlertAddress', {
-                  data: event.location,
-                });
-              }}>
-              {event === undefined ? (
-                <View
-                  style={{
-                    width: '100%',
-                    height: 300,
-                    borderRadius: 0,
-                    backgroundColor: colors.off,
-                  }}
-                />
-              ) : (
-                <AsyncImage
-                  style={{width: '100%', height: 320, borderRadius: 0}}
-                  mainImage={event.images[0]}
-                  imgInitial={event.images[0]}
-                />
-              )}
-              <View
-                style={{
-                  position: 'absolute',
-                  left: width / 2 - 15,
-                  top: 280 / 2 - 5,
-                }}>
-                <AllIcons
-                  name="map-marker-alt"
-                  type="font"
-                  size={28}
-                  color={colors.blue}
-                />
-              </View>
-            </TouchableOpacity>
-          }
-          content={() => this.event(event, attendees)}
-          header={false}
-          refresh={() => this.refresh()}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          initialColorIcon={colors.title}
-          colorRefreshControl={colors.title}
-        />
-
-        {!event ? null : (
+        {this.header(this.state.event, this.userIsOrganizer(event))}
+            <ParallaxScrollView
+              style={{ height:height, backgroundColor: 'white', overflow: 'hidden' ,position:'absolute'}}
+              showsVerticalScrollIndicator={false}
+              stickyHeaderHeight={100}
+              outputScaleValue={6}
+              fadeOutForeground={true}
+              backgroundScrollSpeed={2}
+              backgroundColor={'white'}
+              onScroll={
+                Animated.event(
+                  [{ nativeEvent: { contentOffset: { y: this.AnimatedHeaderValue }}}]
+                )
+              }
+              renderBackground={() => {
+                return (
+                  <TouchableOpacity
+                    activeOpacity={0.3}
+                    style={{height: 280, width: '100%'}}
+                    onPress={() => {
+                      this.props.navigation.navigate('AlertAddress', {
+                        data: this.state.event.location,
+                      });
+                    }}
+                  >
+                    {!this.state.event ?
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 300,
+                        borderRadius: 0,
+                        backgroundColor: colors.off,
+                      }}
+                    /> :
+                    <AsyncImage
+                      style={{width: '100%', height: 320, borderRadius: 0}}
+                      mainImage={this.state.event.images[0]}
+                      imgInitial={this.state.event.images[0]}
+                    />
+                    }
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: width / 2 - 15,
+                        top: 280 / 2 - 5,
+                      }}
+                    >
+                      <AllIcons
+                        name="map-marker-alt"
+                        type="font"
+                        size={28}
+                        color={colors.blue}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+              renderFixedHeader={null}
+              parallaxHeaderHeight={ 280 }
+            >
+              {this.event(this.state.event)}
+            </ParallaxScrollView>
+          
+        {!this.state.event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
             {this.state.editMode ? (
               <Button2
@@ -1034,9 +1053,9 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Save edits"
                 loader={false}
-                click={() => this.saveEdits(event)}
+                click={() => this.saveEdits(this.state.event)}
               />
-            ) : this.waitlistCondition(event) ? (
+            ) : this.waitlistCondition(this.state.event) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
@@ -1045,11 +1064,11 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Join the waitlist"
                 loader={false}
-                click={() => this.joinWaitlist(event)}
+                click={() => this.joinWaitlist(this.state.event)}
               />
-            ) : this.openCondition(event) &&
-              this.userAlreadySubscribed(event.attendees) &&
-              this.coachAlreadySubscribed(event.coaches) ? (
+            ) : this.openCondition(this.state.event) &&
+              this.userAlreadySubscribed(this.state.event.attendees) &&
+              this.coachAlreadySubscribed(this.state.event.coaches) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
@@ -1058,7 +1077,7 @@ class EventPage extends React.Component {
                 disabled={false}
                 text="Join the event"
                 loader={false}
-                click={() => this.next(event)}
+                click={() => this.next(this.state.event)}
               />
             ) : null}
           </FadeInView>
