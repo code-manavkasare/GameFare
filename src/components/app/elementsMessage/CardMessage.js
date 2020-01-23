@@ -60,8 +60,8 @@ class CardMessage extends React.Component {
   }
   openPage(type, id) {
     console.log('open oage', type);
-    console.log(type);
-    return true;
+    console.log(id);
+    // return true;
     NavigationService.push(type, {
       objectID: id,
     });
@@ -137,6 +137,9 @@ class CardMessage extends React.Component {
     return null;
   }
   renderMessage(props) {
+    console.log('current message', props.currentMessage.text);
+    console.log(props.currentMessage.user.avatar);
+    console.log('disccussion', this.props);
     return (
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}
