@@ -451,6 +451,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  eventTitle: {
+    color: colors.primary,
+    marginTop: 0,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+  },
 });
 
 export default styles;

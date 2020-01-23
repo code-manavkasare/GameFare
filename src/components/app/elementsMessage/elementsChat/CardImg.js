@@ -116,7 +116,6 @@ export default class CardContent extends React.Component {
     );
   }
   displayImg(uri, type, local, index) {
-    console.log('displayImg', uri);
     if (local && type === 'image') return this.picture(uri, local);
     if (local) return <View style={{width: '100%', height: 130}} />;
     if (type === 'video')
@@ -135,7 +134,6 @@ export default class CardContent extends React.Component {
     return this.picture(uri, local);
   }
   cardContent(image, index) {
-    console.log('cardContent', image);
     return (
       <ButtonColor
         view={() => {

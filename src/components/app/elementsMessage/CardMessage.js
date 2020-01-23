@@ -26,6 +26,7 @@ import AllIcons from '../../layout/icons/AllIcons';
 
 import {getParams, openUrl} from '../../database/branch';
 import NavigationService from '../../../../NavigationService';
+import AllIcon from '../../layout/icons/AllIcons';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -41,7 +42,7 @@ class CardMessage extends React.Component {
     this.clickLink.bind(this);
   }
   componentDidMount() {
-    this.urlify(this.props.message.currentMessage.text);
+    //this.urlify(this.props.message.currentMessage.text);
   }
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
@@ -58,16 +59,23 @@ class CardMessage extends React.Component {
     // const dataUrl = await LinkPreview.getPreview(url);
   }
   openPage(type, id) {
+    console.log('open oage', type);
+    console.log(id);
+    // return true;
     NavigationService.push(type, {
       objectID: id,
     });
   }
   async clickLink(url, viewUrl) {
-    if (viewUrl && url.includes('gamefare.app.link'))
+    if (url.includes('gamefare.app.link')) {
+      const params = await getParams(url);
+      console.log('open link gamefare', params);
       return this.openPage(
-        viewUrl.action === 'openEventPage' ? 'Event' : 'Group',
-        viewUrl.eventID,
+        params.action === 'openEventPage' ? 'Event' : 'Group',
+        params.eventID,
       );
+    }
+
     // return true;
     if (!viewUrl) return openUrl(url);
     if (!viewUrl.id) return openUrl(url);
@@ -129,6 +137,9 @@ class CardMessage extends React.Component {
     return null;
   }
   renderMessage(props) {
+    console.log('current message', props.currentMessage.text);
+    console.log(props.currentMessage.user.avatar);
+    console.log('disccussion', this.props);
     return (
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}
@@ -220,14 +231,39 @@ class CardMessage extends React.Component {
             return result;
           }, {})
       : [];
-    console.log('images message', images);
-    console.log(this.props.message.currentMessage);
     return (
       <View>
         {this.renderMessage(this.props.message)}
         <Modal visible={this.state.showImage} transparent={true}>
           <ImageViewer
             enableSwipeDown={true}
+            renderHeader={(index) => {
+              return (
+                <Row
+                  style={{
+                    height: 55,
+                    width: width,
+                    // backgroundColor: 'red',
+                    position: 'absolute',
+                    marginTop: 30,
+                    zIndex: 100,
+                  }}>
+                  <Col
+                    size={15}
+                    style={styleApp.center}
+                    activeOpacity={0.6}
+                    onPress={() => this.setState({showImage: false})}>
+                    <AllIcon
+                      size={24}
+                      name={'times'}
+                      type="font"
+                      color={colors.white}
+                    />
+                  </Col>
+                  <Col size={85}></Col>
+                </Row>
+              );
+            }}
             imageUrls={Object.values(images)}
             onSwipeDown={() => this.setState({showImage: false})}
           />

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -10,11 +9,12 @@ import {
   Animated,
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
-import Permissions from 'react-native-permissions';
-import AndroidOpenSettings from 'react-native-android-open-settings';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import branch from 'react-native-branch';
 import SendSMS from 'react-native-sms';
+import SwitchSelector from 'react-native-switch-selector';
+import Reactotron from 'reactotron-react-native';
+import FadeInView from 'react-native-fade-in-view';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -23,10 +23,15 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
+import AddGroups from './AddGroups';
+import AddUsers from './AddUsers';
 import ListContacts from './ListContacts';
-import {timing} from '../../../animations/animations';
+import {native, timing} from '../../../animations/animations';
 import FooterContact from './FooterContact';
 import sizes from '../../../style/sizes';
+import SearchBarContact from './SearchBarContact';
+import {autocompleteSearchUsers} from '../../../functions/users';
+
 const {height, width} = Dimensions.get('screen');
 
 export default class ContactsComponent extends Component {
@@ -38,7 +43,9 @@ export default class ContactsComponent extends Component {
       showShareIcons: true,
       copied: false,
       contactsSelected: {},
-      search: '',
+      searchInputContacts: '',
+      searchInputGameFareUsers: '',
+      searchInputGroups: '',
       alphabeth: [
         '',
         'A',
@@ -68,25 +75,20 @@ export default class ContactsComponent extends Component {
         'Y',
         'Z',
       ],
+      activeView: 'contacts',
+      fadeInDuration: 500,
     };
     this.counter = 0;
-    this.componentDidMount = this.componentDidMount.bind(this);
     this.translateYShare = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {}
+
   getContactSelected() {
     return this.state.contactsSelected;
   }
 
-  goToSettings() {
-    if (Platform.OS === 'ios') {
-      Permissions.openSettings();
-    } else {
-      AndroidOpenSettings.appDetailsSettings();
-    }
-  }
   selectContact(contact, val) {
+    Keyboard.dismiss();
     if (!val) {
       this.setState({
         nameNewContact: '',
@@ -132,7 +134,7 @@ export default class ContactsComponent extends Component {
           width: this.widthCard(contact.givenName + ' ' + contact.familyName),
         }}>
         <Row style={styles.cardContactSelected}>
-          <Col size={75} style={styles.center}>
+          <Col size={75} style={styleApp.center}>
             <Text
               style={[
                 styles.text,
@@ -143,7 +145,7 @@ export default class ContactsComponent extends Component {
           </Col>
           <Col
             size={30}
-            style={styles.center}
+            style={styleApp.center}
             activeOpacity={0.7}
             onPress={() => {
               this.deleteContact(contact);
@@ -172,19 +174,9 @@ export default class ContactsComponent extends Component {
       />
     );
   }
-  listContactsSelected() {
-    if (Object.values(this.state.contactsSelected).length == 0) return null;
-    return (
-      <Row style={styles.rowContactSelected}>
-        {Object.values(this.state.contactsSelected).map((contact, i) =>
-          this.cardContactSelected(contact, i),
-        )}
-      </Row>
-    );
-  }
 
-  changeSearch(search) {
-    this.setState({search: search});
+  changeSearch = (search) => {
+    this.setState({searchInputContacts: search});
     if (search.toLowerCase() == '') {
       return this.listContactRef.setState({
         contacts: this.listContactRef.getContacts(),
@@ -200,76 +192,15 @@ export default class ContactsComponent extends Component {
             contact.familyName.toLowerCase().search(search.toLowerCase()) != -1,
         ),
     });
-  }
+  };
+  changeSearchGameFareUsers = async (search) => {
+    this.setState({searchInputGameFareUsers: search});
+  };
 
-  searchBar() {
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            <Row>
-              <Col size={15} style={styles.center}>
-                <AllIcons
-                  name="search"
-                  type="font"
-                  color={colors.grey}
-                  size={16}
-                />
-              </Col>
-              <Col size={55} style={[styles.center2, {paddingLeft: 15}]}>
-                <TextInput
-                  style={styleApp.input}
-                  placeholder={'Search for contact...'}
-                  returnKeyType={'done'}
-                  blurOnSubmit={true}
-                  ref={(input) => {
-                    this.searchRef = input;
-                  }}
-                  underlineColorAndroid="rgba(0,0,0,0)"
-                  autoCorrect={true}
-                  onChangeText={(text) => this.changeSearch(text)}
-                  value={this.state.search}
-                />
-              </Col>
-              {this.state.search != '' ? (
-                <Col
-                  size={15}
-                  activeOpacity={0.7}
-                  style={styles.center}
-                  onPress={() => this.changeSearch('')}>
-                  <FontIcon name="times-circle" color={'#eaeaea'} size={12} />
-                </Col>
-              ) : (
-                <Col size={15}></Col>
-              )}
-              <Col
-                size={15}
-                activeOpacity={0.7}
-                style={styles.center}
-                onPress={() =>
-                  this.props.navigation.navigate('NewContact', {
-                    onGoBack: (data) => this.addNewContact(data),
-                  })
-                }>
-                <FontIcon name={'user-plus'} color={colors.green} size={14} />
-              </Col>
-            </Row>
-          );
-        }}
-        click={() => {
-          this.searchRef.focus();
-        }}
-        color="white"
-        style={{
-          height: 55,
-          width: width,
-          borderBottomWidth: 0.5,
-          borderColor: colors.off,
-        }}
-        onPressColor={colors.off}
-      />
-    );
-  }
+  changeSearchGroups = (search) => {
+    this.setState({searchInputGroups: search});
+  };
+
   addNewContact(data) {
     Keyboard.dismiss();
     var id = Math.random()
@@ -295,7 +226,7 @@ export default class ContactsComponent extends Component {
       return (
         <View style={{width: width, marginLeft: -20}}>
           <Row style={{borderBottomWidth: 1, borderColor: '#eaeaea'}}>
-            <Col size={15} style={styles.center}>
+            <Col size={15} style={styleApp.center}>
               <AllIcons
                 name="user-alt"
                 type="font"
@@ -303,9 +234,9 @@ export default class ContactsComponent extends Component {
                 size={16}
               />
             </Col>
-            <Col size={70} style={[styles.center2, {paddingLeft: 15}]}>
+            <Col size={70} style={[styleApp.center2, {paddingLeft: 15}]}>
               <Row style={{height: 40}}>
-                <Col style={styles.center2}>
+                <Col style={styleApp.center2}>
                   <TextInput
                     style={styles.input}
                     placeholder={'Full contact name'}
@@ -321,7 +252,7 @@ export default class ContactsComponent extends Component {
                 </Col>
               </Row>
               <Row style={{height: 40}}>
-                <Col style={styles.center2}>
+                <Col style={styleApp.center2}>
                   <TextInput
                     style={styles.input}
                     placeholder={'Phone number'}
@@ -340,13 +271,13 @@ export default class ContactsComponent extends Component {
             </Col>
             {this.state.nameNewContact == '' ||
             this.state.phoneNewContact == '' ? (
-              <Col size={15} style={styles.center}>
+              <Col size={15} style={styleApp.center}>
                 <Text style={[styles.text, {color: '#eaeaea'}]}>Add</Text>
               </Col>
             ) : (
               <Col
                 size={15}
-                style={styles.center}
+                style={styleApp.center}
                 activeOpacity={0.7}
                 onPress={() =>
                   this.addNewContact(
@@ -364,6 +295,7 @@ export default class ContactsComponent extends Component {
     return null;
   }
   shareEvent() {
+    //TODO Refactor with createBrancheMessage
     var infoEvent = this.props.navigation.getParam('data');
     if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
       var description =
@@ -452,10 +384,9 @@ export default class ContactsComponent extends Component {
       />
     );
   }
-  async sendSMS() {
-    var contacts = this.state.contactsSelected;
 
-    var infoEvent = this.props.navigation.getParam('data');
+  createBranchMessage = async () => {
+    const infoEvent = this.props.navigation.getParam('data');
     if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
       var description =
         'Join my group ' + infoEvent.info.name + ' by following the link!';
@@ -495,7 +426,15 @@ export default class ContactsComponent extends Component {
       controlParams,
     );
 
-    var phoneNumbers = Object.values(contacts).map(
+    return {url, description};
+  };
+
+  async sendSMS() {
+    const contacts = this.state.contactsSelected;
+
+    const {url, description} = await this.createBranchMessage();
+
+    const phoneNumbers = Object.values(contacts).map(
       (contact) => contact.phoneNumbers[0].number,
     );
     SendSMS.send(
@@ -513,22 +452,7 @@ export default class ContactsComponent extends Component {
       },
     );
   }
-  icon1Header() {
-    if (
-      this.props.navigation.getParam('pageFrom') == 'CreateEvent3' ||
-      this.props.navigation.getParam('pageFrom') == 'CreateGroup1'
-    )
-      return null;
-    return 'times';
-  }
-  icon2Header() {
-    if (
-      this.props.navigation.getParam('pageFrom') == 'CreateEvent3' ||
-      this.props.navigation.getParam('pageFrom') == 'CreateGroup1'
-    )
-      return 'text';
-    return null;
-  }
+
   pageFromNextPage() {
     if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3')
       return 'Home';
@@ -536,8 +460,25 @@ export default class ContactsComponent extends Component {
       return 'LstGroups';
     return 'Home';
   }
+
+  translateXView = (value) => {
+    this.setState({activeView: value});
+    Animated.parallel(0, native(width));
+  };
+
   render() {
-    const {dismiss} = this.props.navigation;
+    const {navigation} = this.props;
+    const {dismiss} = navigation;
+    const eventID = navigation.getParam('objectID');
+    const {
+      fadeInDuration,
+      searchInputContacts,
+      contactsSelected,
+      searchInputGroups,
+      searchInputGameFareUsers,
+    } = this.state;
+    Reactotron.log(this.props);
+
     return (
       <View style={{height: height}}>
         <HeaderBackButton
@@ -547,67 +488,90 @@ export default class ContactsComponent extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1={this.icon1Header()}
-          icon2={this.icon2Header()}
+          icon1={'times'}
           text2="Skip"
           clickButton2={() => dismiss()}
           clickButton1={() => dismiss()}
         />
 
-        <View style={{marginTop: sizes.heightHeaderHome}}>
-          {this.rowShare()}
-          {this.searchBar()}
-
-          {this.listContacts()}
+        <View
+          style={[{marginTop: sizes.heightHeaderHome, marginHorizontal: 10}]}>
+          <SwitchSelector
+            initial={0}
+            onPress={(value) => this.translateXView(value)}
+            textStyle={[styleApp.textBold, {color: colors.greyDark}]}
+            selectedTextStyle={[styleApp.textBold, {color: colors.white}]}
+            textColor={colors.borderColor}
+            selectedColor={colors.white}
+            buttonColor={colors.green}
+            borderColor={colors.borderColor}
+            borderRadius={7}
+            height={50}
+            animationDuration={220}
+            options={[
+              {label: 'Contacts', value: 'contacts'},
+              {label: 'Gamefare', value: 'gamefareUsers'},
+              // {label: 'Groups', value: 'groups'},
+            ]}
+          />
         </View>
 
-        <FooterContact
-          sendSMS={this.sendSMS.bind(this)}
-          deleteContact={this.deleteContact.bind(this)}
-          contactsSelected={this.state.contactsSelected}
-        />
+        <View>
+          {this.state.activeView === 'contacts' && (
+            <FadeInView duration={fadeInDuration}>
+              {this.rowShare()}
+              <SearchBarContact
+                navigation={this.props.navigation}
+                placeHolderMessage={'Search for contact...'}
+                updateSearch={this.changeSearch}
+                showAddContact={true}
+                addNewContact={this.addContact}
+                searchString={searchInputContacts}
+              />
+              {this.listContacts()}
+
+              <FooterContact
+                sendSMS={this.sendSMS.bind(this)}
+                deleteContact={this.deleteContact.bind(this)}
+                contactsSelected={contactsSelected}
+              />
+            </FadeInView>
+          )}
+          {this.state.activeView === 'gamefareUsers' && (
+            <FadeInView duration={fadeInDuration}>
+              <AddUsers
+                searchString={searchInputGameFareUsers}
+                eventID={eventID}
+                changeSearchGameFareUsers={this.changeSearchGameFareUsers}
+                createBranchMessage={this.createBranchMessage}
+              />
+            </FadeInView>
+          )}
+          {this.state.activeView === 'groups' && (
+            <FadeInView duration={fadeInDuration}>
+              <AddGroups
+                searchString={searchInputGroups}
+                eventID={eventID}
+                changeSearchGroups={this.changeSearchGroups}
+              />
+            </FadeInView>
+          )}
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    width: '100%',
-    marginBottom: 10,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rowContactSelected: {
-    width: width,
-    flexDirection: 'row',
-    marginLeft: -20,
-    borderBottomWidth: 0.3,
-    borderColor: colors.borderColor,
-    flexWrap: 'wrap',
-    backgroundColor: 'white',
-  },
   cardContactSelected: {
     backgroundColor: '#89DB87',
     margin: 5,
     borderRadius: 5,
   },
-  center2: {
-    justifyContent: 'center',
-  },
   input: {
     color: colors.title,
     fontSize: 16,
     fontFamily: 'OpenSans-Regular',
-  },
-  roundView: {
-    height: 50,
-    width: 50,
-    borderRadius: 25,
-    backgroundColor: colors.off,
   },
   text: {
     color: colors.title,

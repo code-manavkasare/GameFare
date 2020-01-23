@@ -255,7 +255,7 @@ class Page2 extends Component {
               pageFrom: 'CreateEvent2',
               onGoBack: (data) => this.setLocation(data),
             }),
-          this.props.step2.location.address != '',
+          this.props.step2.location.address !== '',
         )}
 
         {this.ligneButton(
@@ -263,7 +263,7 @@ class Page2 extends Component {
           this.inputName(),
           'plus',
           () => this.nameInput.focus(),
-          this.props.step2.name != '',
+          this.props.step2.name !== '',
         )}
 
         {this.ligneButton(
@@ -275,9 +275,10 @@ class Page2 extends Component {
               startDate: this.props.step2.startDate,
               endDate: this.props.step2.endDate,
               recurrence: this.props.step2.recurrence,
+              close: () => this.props.navigation.navigate('CreateEvent2'),
               onGoBack: (data) => this.setDate(data),
             }),
-          this.props.step2.startDate != '',
+          this.props.step2.startDate !== '',
         )}
         {this.ligneButton(
           'parking',

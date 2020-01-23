@@ -37,6 +37,7 @@ class MembersView extends Component {
   }
   componentDidMount() {}
   rowUser(user, i, data) {
+    console.log('row user', data);
     return (
       <TouchableOpacity
         onPress={() => this.props.onRemoveMember(user)}

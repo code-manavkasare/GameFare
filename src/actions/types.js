@@ -36,3 +36,4 @@ export const SET_CONVERSATIONS = 'SET_CONVERSATIONS';
 export const SET_MESSAGES = 'SET_MESSAGES';
 export const SET_INPUT = 'SET_INPUT';
 export const ADD_IMAGE = 'ADD_IMAGE';
+export const RESET_USER_MESSAGES = 'RESET_USER_MESSAGES';
