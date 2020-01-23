@@ -403,22 +403,23 @@ class GroupPage extends React.Component {
             initialTitleOpacity={0}
             initialBackgroundColor={'transparent'}
             initialBorderColorIcon={colors.grey}
-            typeIcon2={'moon'}
+            typeIcon2={this.state.editMode ? 'font' : 'moon'}
             typeIconOffset={'font'}
+            colorIconOffset={this.state.editMode ? colors.blue : 'white'}
             sizeIcon2={15}
             icon1="arrow-left"
-            icon2="share"
-            iconOffset={this.state.editMode ? 'camera' : 'pen'}
+            icon2={this.state.editMode ? 'camera' : 'share'}
+            iconOffset="pen"
             clickButton1={() => dismiss()}
-            clickButton2={() => this.goToShareGroup(this.state.group)}
-            clickButtonOffset={() =>
+            clickButton2={() =>
               !this.state.editMode
-                ? this.setState({editMode: true})
-                : this.props.navigation.navigate('AlertAddImage', {
-                    title: 'Add picture',
-                    onGoBack: (val) => this.addPicture(val),
-                  })
+              ? this.goToShareGroup(this.state.group)
+              : this.props.navigation.navigate('AlertAddImage', {
+                  title: 'Add picture',
+                  onGoBack: (val) => this.addPicture(val),
+                })
             }
+            clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
           />
         ) : (
           <HeaderBackButton
