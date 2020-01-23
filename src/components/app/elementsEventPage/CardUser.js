@@ -93,8 +93,6 @@ export default class CardUser extends Component {
   }
 
   accept(user, status, verb, textButton) {
-    console.log('accept !!', user);
-    console.log(this.props.type);
     NavigationService.navigate('Alert', {
       title:
         'Do you want to ' + verb + ' ' + user.info.firstname + "'s request?",
@@ -103,9 +101,6 @@ export default class CardUser extends Component {
     });
   }
   async confirmAccept(user, status) {
-    console.log('accept user confirm', user);
-    console.log('accept user confirm1', status);
-    console.log(this.props.objectID);
     if (this.props.type === 'group') {
       await firebase
         .database()
@@ -219,7 +214,6 @@ export default class CardUser extends Component {
   }
 
   render() {
-    console.log('lalalalalall card uer', this.props);
     return this.cardUser(this.props.user, this.props.userID);
   }
 }

@@ -71,7 +71,6 @@ class GroupPage extends React.Component {
       .on('value', async function(snap) {
         let group = snap.val();
         group.objectID = objectID;
-        console.log(group);
         if (group.allMembers !== undefined) {
           if (group.allMembers.includes(that.props.userID)) {
             await that.props.groupsAction('setAllGroups', {[objectID]: group});
@@ -260,12 +259,14 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
+    console.log('PageFrom');
+    console.log(this.props.navigation.getParam('pageFrom'));
     if (!this.state.group) {
       return false;
     } else if (
-      this.props.navigation.getParam('pageFrom') !== 'Home' &&
-      this.state.group.info.organizer === this.props.userID &&
-      this.this.state.group.info.public
+      //this.props.navigation.getParam('pageFrom') !== 'Home' &&
+      this.state.group.info.organizer === this.props.userID// &&
+      //this.state.group.info.public
     ) {
       return true;
     } else {
@@ -299,22 +300,17 @@ class GroupPage extends React.Component {
     this.setState({loader:false});
   }
   async askRemoveUser(data, user) {
-    console.log(user);
-    console.log(data);
-    this.removeUser(user.userID, data);
-    // this.props.navigation.navigate('AlertYesNo', {
-    //   textYesButton: 'Yes',
-    //   textNoButton: 'No',
-    //   title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
-    //   icon: undefined,
-    //   yesClick: () => this.removeUser(user.userID, data),
-    //   noClick: () => null,
-    //   onGoBack: () => this.props.navigation.navigate('Group'),
-    // });
+    this.props.navigation.navigate('AlertYesNo', {
+      textYesButton: 'Yes',
+      textNoButton: 'No',
+      title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
+      icon: undefined,
+      yesClick: () => this.removeUser(user.userID, data),
+      noClick: () => null,
+      onGoBack: () => this.props.navigation.navigate('Group'),
+    });
   }
   async removeUser(playerID, group) {
-    console.log('removeUser');
-    console.log(group);
     try {
       removeUserFromGroup(playerID, group);
     } catch (err) {
@@ -324,7 +320,6 @@ class GroupPage extends React.Component {
     let index = group.allMembers.indexOf(playerID);
     delete group.allMembers[index];
     delete group.members[playerID];
-    console.log(group.members);
     await this.props.groupsAction('setAllGroups', {[group.objectId]: group});
   }
   async saveEdits(data) {
