@@ -290,8 +290,11 @@ async function joinEvent(
 }
 
 function arrayAttendees(event, userID) {
+  if (!event) return [];
   if (!event.attendees) return [];
   if (event.info.organizer === userID) return Object.values(event.attendees);
+  console.log('event arrau atendees', event);
+  return [];
   return Object.values(event.attendees).filter(
     (attendee) => attendee.status === 'confirmed' || attendee.id === userID,
   );
