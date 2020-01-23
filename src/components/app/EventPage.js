@@ -944,7 +944,7 @@ class EventPage extends React.Component {
     if (!this.state.event) {
       return false;
     }
-    return this.state.event === this.props.userID;
+    return this.state.event.info.organizer === this.props.userID;
   }
   askRemovePlayer(player, data) {
     this.props.navigation.navigate('AlertYesNo', {
