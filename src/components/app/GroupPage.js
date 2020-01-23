@@ -259,19 +259,22 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
-    console.log('PageFrom');
-    console.log(this.props.navigation.getParam('pageFrom'));
     if (!this.state.group) {
       return false;
-    } else if (
-      //this.props.navigation.getParam('pageFrom') !== 'Home' &&
-      this.state.group.info.organizer === this.props.userID// &&
-      //this.state.group.info.public
-    ) {
-      return true;
     } else {
-      return false;
+      return (this.state.group.info.organizer === this.props.userID);
     }
+    // *** getParam('pageFrom') returning undefined in some cases
+    // *** are these conditions necessary?
+    // else if (
+    //   this.props.navigation.getParam('pageFrom') !== 'Home' &&
+    //   this.state.group.info.organizer === this.props.userID &&
+    //   this.state.group.info.public
+    // ) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   refreshControl() {
@@ -412,7 +415,7 @@ class GroupPage extends React.Component {
               sizeIcon2={15}
               icon1="arrow-left"
               icon2="share"
-              clickButton1={() => dismiss()}
+              close={() => dismiss()}
               clickButton2={() => this.goToShareGroup(this.state.group)}
             />
         }
@@ -436,11 +439,16 @@ class GroupPage extends React.Component {
           renderBackground={() => {
             if (this.state.group) {
               return (
+                <TouchableOpacity
+                  style={{zIndex: 100}}
+                  onPress={() => {console.log('press');}}
+                >
                 <AsyncImage
                   style={{width: '100%', height: 280, borderRadius: 0}}
                   mainImage={this.state.group.pictures[0]}
                   imgInitial={this.state.group.pictures[0]}
                 />
+                </TouchableOpacity>
               );
             }
           }}

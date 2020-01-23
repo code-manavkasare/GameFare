@@ -139,7 +139,7 @@ export default class HeaderFlow extends Component {
             size={15}
             style={styles.center2}
             activeOpacity={0.4}
-            onPress={() => this.close()}>
+          >
             {this.props.icon1 && (
               <Animated.View
                 style={[
