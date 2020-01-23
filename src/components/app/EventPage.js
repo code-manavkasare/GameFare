@@ -71,6 +71,7 @@ class EventPage extends React.Component {
   async componentDidMount() {
     this.loadEvent(this.props.navigation.getParam('objectID'));
   }
+  async componentDidUpdate() {}
   async componentWillUnmount() {
     if (this.state.event !== null) {
       firebase
@@ -80,19 +81,24 @@ class EventPage extends React.Component {
     }
   }
   async loadEvent(objectID) {
+    console.log("loading");
+    console.log(objectID);
+    console.log(this.props.userID);
     const that = this;
     firebase
       .database()
       .ref('events/' + objectID)
       .on('value', async function(snap) {
+        console.log("got event");
         const event = snap.val();
+        console.log(event);
         if (event.allAttendees.includes(that.props.userID)) {
           await that.props.eventsAction('setAllEvents', {[objectID]: event});
         }
         that.setState({event: event, loader: false});
+        console.log("set state");
       });
   }
-
   nextGender(data, inc) {
     const genders = ['mixed', 'female', 'male'];
     let index;
@@ -991,6 +997,7 @@ class EventPage extends React.Component {
   };
 
   render() {
+    console.log("rendering");
     return (
       <View style={{flex: 1}}>
         {this.header()}
