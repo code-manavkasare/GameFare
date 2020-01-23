@@ -44,7 +44,7 @@ class NewConversation extends React.Component {
     this.changeSearch('');
   }
   async changeSearch(search) {
-    const users = await autocompleteSearchUsers(search,this.props.userID);
+    const users = await autocompleteSearchUsers(search, this.props.userID);
     this.setState({users: users, loader: false});
   }
   async next(selectedUsers) {
@@ -64,7 +64,7 @@ class NewConversation extends React.Component {
     });
 
     if (!discussion) {
-      discussion = await createDiscussion(users, 'General');
+      discussion = await createDiscussion(users, 'General', false);
       if (!discussion) {
         await this.setState({loaderHeader: false});
         return this.props.navigation.navigate('Alert', {
@@ -76,7 +76,10 @@ class NewConversation extends React.Component {
       }
     }
 
-    await this.props.navigation.navigate('Conversation', {data: discussion,myConversation:true});
+    await this.props.navigation.navigate('Conversation', {
+      data: discussion,
+      myConversation: true,
+    });
     return this.setState({loaderHeader: false});
   }
   selectUser(select, user, selectedUsers) {

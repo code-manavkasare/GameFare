@@ -55,6 +55,7 @@ import AlertAddress from '../layout/alerts/AlertAddress';
 import AlertCall from '../layout/alerts/AlertCall';
 import AlertAddImage from '../layout/alerts/AlertAddImage';
 import AlertAddUsers from '../layout/alerts/AlertAddUsers';
+import AlertYesNo from '../layout/alerts/AlertYesNo';
 
 import InitialPage from '../app/elementsOnBoard/InitialPage';
 import SportSelect from '../app/elementsOnBoard/SportSelect';
@@ -427,6 +428,13 @@ const RootStack = createStackNavigator(
     AlertAddImage: AlertAddImage,
     AlertAddUsers: {
       screen: AlertAddUsers,
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: false,
+      },
+    },
+    AlertYesNo: {
+      screen: AlertYesNo,
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,

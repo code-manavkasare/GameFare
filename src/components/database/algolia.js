@@ -1,6 +1,7 @@
 import algoliasearch from 'algoliasearch/reactnative';
 import equal from 'fast-deep-equal';
 import union from 'lodash/union';
+import moment from 'moment';
 
 const client = algoliasearch('EX9TV715SD', '36bc4371bcdde61e2e4d5f05c8a274ce');
 const indexEvents = client.initIndex('eventsGF');
@@ -54,11 +55,12 @@ async function getEventsFromGroups(
     'NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   let prefix2 = ' AND ';
   if (filterIds === '') prefix2 = '';
-  const {hits} = await indexEvents.search({
+  let {hits} = await indexEvents.search({
     filters: filterIds + prefix2 + filterUser + ' AND info.sport:' + sport,
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
   });
+  hits = hits.filter((event) => event.end_timestamp > moment().valueOf());
   const eventsMyGroups = hits.reduce(function(result, item) {
     result[item.objectID] = item;
     return result;
@@ -134,10 +136,15 @@ const getEventPublic = async (
       sport,
     );
   }
+
+  console.log('load public events', allEventsPublic);
+  console.log(eventsMyGroups);
+
   allEventsPublic = {
     ...allEventsPublic,
     ...eventsMyGroups,
   };
+
   return allEventsPublic;
 };
 

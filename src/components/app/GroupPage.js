@@ -10,6 +10,7 @@ import {
   Animated,
   Image,
 } from 'react-native';
+import firebase from 'react-native-firebase';
 import {connect} from 'react-redux';
 import {createEventAction} from '../../actions/createEventActions';
 import {groupsAction} from '../../actions/groupsActions';
@@ -31,28 +32,37 @@ import DescriptionView from './elementsGroupPage/DescriptionView';
 import MembersView from './elementsGroupPage/MembersView';
 import PostsView from './elementsGroupPage/PostsView';
 import EventsView from './elementsGroupPage/EventsView';
-import ParalaxScrollView from '../layout/scrollViews/ParalaxScrollView';
+import ParallaxScrollView from 'react-native-parallax-scroll-view';
 
 class GroupPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       usersConfirmed: true,
-      loader: false,
+      loader: true,
+      group: null,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    if (!this.props.allGroups[this.props.navigation.getParam('objectID')]) {
-      await this.setState({loader: true});
-      this.loadGroup(this.props.navigation.getParam('objectID'));
-    }
+    this.loadGroup(this.props.navigation.getParam('objectID'));
   }
   async loadGroup(objectID) {
-    indexGroups.clearCache();
-    var group = await indexGroups.getObject(objectID);
-    await this.props.groupsAction('editGroup', group);
-    return this.setState({loader: false});
+    const that = this;
+    firebase
+      .database()
+      .ref('groups/' + objectID)
+      .on('value', async function(snap) {
+        let group = snap.val();
+        group.objectID = objectID;
+        console.log(group);
+        if (group.allMembers !== undefined) {
+          if (group.allMembers.includes(that.props.userID)) {
+            await that.props.groupsAction('setAllGroups', {[objectID]: group});
+          }
+        }
+        that.setState({group: group, loader: false});
+      });
   }
   rowIcon(component, icon, alert, dataAlert, image) {
     return (
@@ -121,29 +131,6 @@ class GroupPage extends React.Component {
                 />
               </View>,
             )}
-
-            {/* 
-            {this.rowIcon(
-              this.title(data.organizer.name),
-              'user-alt',
-              undefined,
-              undefined,
-              <View
-                style={[
-                  styleApp.viewNumber,
-                  styleApp.center,
-                  {backgroundColor: colors.grey},
-                ]}>
-                <Text
-                  style={[
-                    styleApp.text,
-                    {fontSize: 10, color: 'white', fontFamily: 'OpenSans-Bold'},
-                  ]}>
-                  {data.organizer.name.split(' ')[0][0] +
-                    data.organizer.name.split(' ')[1][0]}
-                </Text>
-              </View>,
-            )} */}
           </View>
         </View>
 
@@ -152,6 +139,7 @@ class GroupPage extends React.Component {
           infoUser={this.props.infoUser}
           userConnected={this.props.userConnected}
           userID={this.props.userID}
+          objectID={data.objectID}
         />
       </View>
     );
@@ -204,19 +192,19 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
-    if (
+    if (!this.state.group) {
+      return false;
+    } else if (
       this.props.navigation.getParam('pageFrom') !== 'Home' &&
-      this.props.navigation.getParam('data').info.organizer ===
-        this.props.userID &&
-      this.props.navigation.getParam('data').info.public
-    )
+      this.state.group.info.organizer === this.props.userID &&
+      this.this.state.group.info.public
+    ) {
       return true;
-    return false;
+    } else {
+      return false;
+    }
   }
-  async refresh() {
-    await this.setState({loader: true});
-    return this.loadGroup(this.props.navigation.getParam('objectID'));
-  }
+
   refreshControl() {
     return (
       <RefreshControl
@@ -229,6 +217,20 @@ class GroupPage extends React.Component {
       />
     );
   }
+
+  goToShareGroup = (data) => {
+    if (!this.props.userConnected) {
+      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+    }
+    this.props.navigation.navigate('Contacts', {
+      openPageLink: 'openGroupPage',
+      pageTo: 'Group',
+      objectID: data.objectID,
+      pageFrom: 'Group',
+      data: {...data, eventID: data.objectID},
+    });
+  };
+
   render() {
     const {goBack, dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
@@ -241,7 +243,9 @@ class GroupPage extends React.Component {
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
+          textHeader={
+            !this.state.group ? '' : this.state.group.info.name.slice(0, 20)
+          }
           inputRange={[20, 50]}
           initialTitleOpacity={0}
           initialBackgroundColor={'transparent'}
@@ -252,45 +256,40 @@ class GroupPage extends React.Component {
           icon2="share"
           // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
           clickButton1={() => dismiss()}
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openGroupPage',
-              pageTo: 'Group',
-              objectID: data.objectID,
-              pageFrom: 'Group',
-              data: {...data, eventID: data.objectID},
-            })
-          }
+          clickButton2={() => this.goToShareGroup(this.state.group)}
         />
 
-        <ParalaxScrollView
-          setState={(val) => this.setState(val)}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          image={
-            data != undefined ? (
-              <AsyncImage
-                style={{width: '100%', height: 280, borderRadius: 0}}
-                mainImage={data.pictures[0]}
-                imgInitial={data.pictures[0]}
-              />
-            ) : (
-              <View
-                style={{
-                  width: '100%',
-                  height: 280,
-                  borderRadius: 0,
-                  backgroundColor: colors.off,
-                }}
-              />
-            )
-          }
-          refresh={() => this.refresh()}
-          content={() => this.group(data)}
-          icon1="arrow-left"
-          icon2="share"
-          colorRefreshControl={colors.title}
-          initialColorIcon={'white'}
-        />
+        <ParallaxScrollView
+          style={{
+            height: height,
+            backgroundColor: 'white',
+            overflow: 'hidden',
+            position: 'absolute',
+          }}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderHeight={100}
+          outputScaleValue={6}
+          fadeOutForeground={true}
+          backgroundScrollSpeed={2}
+          backgroundColor={'white'}
+          onScroll={Animated.event([
+            {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
+          ])}
+          renderBackground={() => {
+            if (this.state.group) {
+              return (
+                <AsyncImage
+                  style={{width: '100%', height: 280, borderRadius: 0}}
+                  mainImage={this.state.group.pictures[0]}
+                  imgInitial={this.state.group.pictures[0]}
+                />
+              );
+            }
+          }}
+          renderFixedHeader={null}
+          parallaxHeaderHeight={280}>
+          {this.group(this.state.group)}
+        </ParallaxScrollView>
       </View>
     );
   }

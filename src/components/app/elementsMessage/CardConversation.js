@@ -47,7 +47,6 @@ class CardConversation extends React.Component {
     let idLastMessage = Object.keys(lastMessage)[0];
     lastMessage = Object.values(lastMessage)[0];
     lastMessage._id = idLastMessage;
-    console.log('mount card convo', lastMessage);
     if (this.props.myConversation) {
       await this.props.messageAction('setConversation', {
         ...this.props.discussion,
@@ -57,7 +56,6 @@ class CardConversation extends React.Component {
     return this.setState({lastMessage: lastMessage});
   }
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps);
     const conversation = this.props.conversations[
       this.props.discussion.objectID
     ];
@@ -111,6 +109,8 @@ class CardConversation extends React.Component {
     });
   }
   cardConversation(conversation, lastMessage, i) {
+    console.log('conversation', conversation);
+    console.log(titleConversation(conversation, this.props.userID));
     return (
       <ButtonColor
         key={i}
@@ -151,6 +151,8 @@ class CardConversation extends React.Component {
       this.props.discussion.objectID
     ];
     const {lastMessage} = this.state;
+    console.log('conversation', conversation);
+
     return this.cardConversation(
       conversation ? conversation : this.props.discussion,
       lastMessage,

@@ -3,19 +3,24 @@ import moment from 'moment';
 import {indexDiscussions, getMyGroups, getMyEvents} from '../database/algolia';
 import union from 'lodash/union';
 
-function discussionObj(members, nameDiscussion) {
+function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
     title: nameDiscussion,
     allMembers: members.map((member) => member.id),
     numberMembers: members.length,
+    firstMessageExists: firstMessageExists,
     members: members,
     messages: {},
     type: 'users',
   };
 }
 
-async function createDiscussion(members, nameDiscussion) {
-  var newDiscussion = discussionObj(Object.values(members), nameDiscussion);
+async function createDiscussion(members, nameDiscussion, firstMessageExists) {
+  var newDiscussion = discussionObj(
+    Object.values(members),
+    nameDiscussion,
+    firstMessageExists,
+  );
 
   const {key} = await firebase
     .database()
@@ -65,6 +70,7 @@ async function searchDiscussion(ids, numberMembers) {
     filters: filterMembers,
   });
   if (hits.length === 0) return false;
+  console.log('search discussions', hits);
   return hits[0];
 }
 
@@ -117,6 +123,7 @@ function nameOtherMemberConversation(conversation, userID) {
   const infoMember = Object.values(conversation.members).filter(
     (user) => user.id !== userID,
   )[0].info;
+  if (!infoMember) return 'None';
   return infoMember.firstname + ' ' + infoMember.lastname;
 }
 

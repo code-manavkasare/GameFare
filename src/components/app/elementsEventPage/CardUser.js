@@ -34,7 +34,15 @@ export default class CardUser extends Component {
     };
   }
   componentDidMount() {}
-  async openDiscussion(user) {
+  async onClick(user) {
+    // poor solution for the need to remove players from group/event
+    // good target for split of UI/logic into different components
+    // same for discussions
+    if (this.props.removable) {
+      const {removeFunc} = this.props;
+      removeFunc();
+      return;
+    }
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
     if (this.props.userID === user.id) return true;
     await this.setState({loader: true});
@@ -83,7 +91,10 @@ export default class CardUser extends Component {
       />
     );
   }
+
   accept(user, status, verb, textButton) {
+    console.log('accept !!', user);
+    console.log(this.props.type);
     NavigationService.navigate('Alert', {
       title:
         'Do you want to ' + verb + ' ' + user.info.firstname + "'s request?",
@@ -92,12 +103,16 @@ export default class CardUser extends Component {
     });
   }
   async confirmAccept(user, status) {
+    console.log('accept user confirm', user);
+    console.log('accept user confirm1', status);
+    console.log(this.props.objectID);
     if (this.props.type === 'group') {
       await firebase
         .database()
         .ref('groups/' + this.props.objectID + '/members/' + user.id)
         .update({status: status});
     } else {
+      return true;
       await firebase
         .database()
         .ref('events/' + this.props.objectID + '/attendees/' + user.id)
@@ -185,9 +200,15 @@ export default class CardUser extends Component {
               </Row>
             );
           }}
-          click={() => this.openDiscussion(user)}
+          click={() => this.onClick(user)}
           color="white"
-          style={{width: width, height: 55, paddingLeft: 20, paddingRight: 20}}
+          style={{
+            width: width,
+            height: 55,
+            paddingLeft: 20,
+            paddingRight: 20,
+            marginTop: 5,
+          }}
           onPressColor={colors.off}
         />
         {this.props.admin &&
@@ -198,6 +219,7 @@ export default class CardUser extends Component {
   }
 
   render() {
+    console.log('lalalalalall card uer', this.props);
     return this.cardUser(this.props.user, this.props.userID);
   }
 }

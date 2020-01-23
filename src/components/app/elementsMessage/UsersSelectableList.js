@@ -105,7 +105,7 @@ export default class UsersSelectableList extends React.Component {
           ) : (
             usersList.map((user, i) => this.cardUser(user, i, selectedUsers))
           )}
-          <View style={{height: 300}} />
+          <View style={{height: 350}} />
         </ScrollView>
       </View>
     );

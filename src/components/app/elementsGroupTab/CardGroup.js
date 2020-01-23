@@ -94,6 +94,7 @@ class CardEvent extends React.Component {
           },
         },
         'General',
+        false,
       );
     await NavigationService.goBack();
     return NavigationService.push('Conversation', {

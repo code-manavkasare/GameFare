@@ -37,13 +37,14 @@ class MembersView extends Component {
   }
   componentDidMount() {}
   rowUser(user, i, data) {
+    console.log('row user', data);
     return (
       <CardUser
         user={user}
         infoUser={this.props.infoUser}
-        admin={this.props.data.info.organizer === this.props.userID}
+        admin={data.info.organizer === this.props.userID}
         userConnected={this.props.userConnected}
-        objectID={this.props.data.objectID}
+        objectID={data.objectID}
         key={i}
         userID={this.props.userID}
         type="group"
