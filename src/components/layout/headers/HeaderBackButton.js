@@ -135,11 +135,7 @@ export default class HeaderFlow extends Component {
               {this.props.textHeader}
             </Animated.Text>
           </View>
-          <Col
-            size={15}
-            style={styles.center2}
-            activeOpacity={0.4}
-          >
+          <Col size={15} style={styles.center2} activeOpacity={0.4}>
             {this.props.icon1 && (
               <Animated.View
                 style={[

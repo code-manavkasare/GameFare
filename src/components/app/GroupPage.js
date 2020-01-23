@@ -38,8 +38,7 @@ import EventsView from './elementsGroupPage/EventsView';
 import ButtonColor from '../layout/Views/Button';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import {editGroup, removeUserFromGroup} from '../functions/editGroup';
-import {takePicture,pickLibrary,resize} from '../functions/pictures';
-
+import {takePicture, pickLibrary, resize} from '../functions/pictures';
 
 const noEdit = {
   editMode: false,
@@ -116,24 +115,26 @@ class GroupPage extends React.Component {
       <View style={{marginTop: -10}}>
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            {this.state.editMode
-              ? <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => this.nameRef.focus()}>
-                    <TextInput
-                      style={styleApp.title}
-                      placeholder={String(data.info.name)}
-                      returnKeyType={'done'}
-                      ref={(input) => {
-                        this.nameRef = input;
-                      }}
-                      underlineColorAndroid="rgba(0,0,0,0)"
-                      autoCorrect={true}
-                      onChangeText={(text) => this.setState({editName: text})}
-                      value={this.state.editName}
-                    />
-                  </TouchableOpacity>
-              : <Text style={styleApp.title}>{data.info.name}</Text>}
+            {this.state.editMode ? (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => this.nameRef.focus()}>
+                <TextInput
+                  style={styleApp.title}
+                  placeholder={String(data.info.name)}
+                  returnKeyType={'done'}
+                  ref={(input) => {
+                    this.nameRef = input;
+                  }}
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  autoCorrect={true}
+                  onChangeText={(text) => this.setState({editName: text})}
+                  value={this.state.editName}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Text style={styleApp.title}>{data.info.name}</Text>
+            )}
 
             <View style={[styleApp.divider2, {marginBottom: 25}]} />
             <Row>
@@ -150,32 +151,32 @@ class GroupPage extends React.Component {
             </Row>
             {this.rowIcon(
               data,
-              this.title(this.state.editLocation === noEdit.editLocation
-                ? data.location.address
-                : this.state.editLocation.address),
-              this.state.editMode
-                ? <ButtonColor
-                    view={() => {
-                      return (
-                        <Text style={styleApp.text}>
-                          Edit
-                        </Text>
-                      );
-                    }}
-                    click={() => 
-                      this.props.navigation.navigate('Location', {
-                        location: data.location,
-                        pageFrom: this.props.navigation.state.routeName,
-                        onGoBack: (location) => {
-                          this.props.navigation.navigate(this.props.navigation.state.routeName);
-                          this.setState({editLocation: location});
-                        },
-                      })
-                    }
-                    color="white"
-                    onPressColor={colors.off}
-                  />
-                : null,
+              this.title(
+                this.state.editLocation === noEdit.editLocation
+                  ? data.location.address
+                  : this.state.editLocation.address,
+              ),
+              this.state.editMode ? (
+                <ButtonColor
+                  view={() => {
+                    return <Text style={styleApp.text}>Edit</Text>;
+                  }}
+                  click={() =>
+                    this.props.navigation.navigate('Location', {
+                      location: data.location,
+                      pageFrom: this.props.navigation.state.routeName,
+                      onGoBack: (location) => {
+                        this.props.navigation.navigate(
+                          this.props.navigation.state.routeName,
+                        );
+                        this.setState({editLocation: location});
+                      },
+                    })
+                  }
+                  color="white"
+                  onPressColor={colors.off}
+                />
+              ) : null,
               'map-marker-alt',
               'AlertAddress',
               data.location,
@@ -262,7 +263,7 @@ class GroupPage extends React.Component {
     if (!this.state.group) {
       return false;
     } else {
-      return (this.state.group.info.organizer === this.props.userID);
+      return this.state.group.info.organizer === this.props.userID;
     }
     // *** getParam('pageFrom') returning undefined in some cases
     // *** are these conditions necessary?
@@ -290,23 +291,28 @@ class GroupPage extends React.Component {
     );
   }
   async addPicture(val) {
-    await this.setState({loader:true});
+    await this.setState({loader: true});
     if (val === 'take') {
       var uri = await takePicture();
     } else if (val === 'pick') {
       var uri = await pickLibrary();
     }
-    if (!uri) return this.setState({loader:false});
+    if (!uri) return this.setState({loader: false});
     const uriResized = await resize(uri);
-    if (!uriResized) return this.setState({loader:false});
+    if (!uriResized) return this.setState({loader: false});
     await this.setState({editPic: uriResized});
-    this.setState({loader:false});
+    this.setState({loader: false});
   }
   async askRemoveUser(data, user) {
     this.props.navigation.navigate('AlertYesNo', {
       textYesButton: 'Yes',
       textNoButton: 'No',
-      title: 'Are you sure you want to remove ' + user.info.firstname + ' ' + user.info.lastname + '?',
+      title:
+        'Are you sure you want to remove ' +
+        user.info.firstname +
+        ' ' +
+        user.info.lastname +
+        '?',
       icon: undefined,
       yesClick: () => this.removeUser(user.userID, data),
       noClick: () => null,
@@ -337,18 +343,31 @@ class GroupPage extends React.Component {
         img: this.state.editPic, //will get deleted in editGroup
         info: {
           ...data.info,
-          name: this.state.editName === noEdit.editName ? data.info.name : this.state.editName,
-          description: this.state.editDescription === noEdit.editDescription ? data.info.description : this.state.editDescription,
+          name:
+            this.state.editName === noEdit.editName
+              ? data.info.name
+              : this.state.editName,
+          description:
+            this.state.editDescription === noEdit.editDescription
+              ? data.info.description
+              : this.state.editDescription,
         },
-        location: this.state.editLocation === noEdit.editLocation ? data.location : this.state.editLocation,
+        location:
+          this.state.editLocation === noEdit.editLocation
+            ? data.location
+            : this.state.editLocation,
       };
       // firebase update, sends notification to group members
       editGroup(newData, () => console.log('edit group failed'));
       // // local data update
       if (this.state.editPic !== noEdit.editPic) {
-        await this.props.groupsAction('setAllGroups', {[newData.objectID]: {...newData, pictures: {0: this.state.editPic}}});
+        await this.props.groupsAction('setAllGroups', {
+          [newData.objectID]: {...newData, pictures: {0: this.state.editPic}},
+        });
       } else {
-        await this.props.groupsAction('setAllGroups', {[newData.objectID]: newData});
+        await this.props.groupsAction('setAllGroups', {
+          [newData.objectID]: newData,
+        });
       }
     }
     // this update
@@ -375,10 +394,9 @@ class GroupPage extends React.Component {
     const {dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
     return (
-
       <View style={{flex: 1}}>
-        {this.conditionAdmin(data)
-        ? <HeaderBackButton
+        {this.conditionAdmin(data) ? (
+          <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             textHeader={data !== undefined ? data.info.name.slice(0, 20) : ''}
             inputRange={[20, 50]}
@@ -395,30 +413,29 @@ class GroupPage extends React.Component {
             clickButton2={() => this.goToShareGroup(this.state.group)}
             clickButtonOffset={() =>
               !this.state.editMode
-              ? this.setState({editMode: true})
-              : this.props.navigation.navigate(
-                  'AlertAddImage',
-                  { title:'Add picture',
-                    onGoBack:(val) => this.addPicture(val),
-                  }
-                )
+                ? this.setState({editMode: true})
+                : this.props.navigation.navigate('AlertAddImage', {
+                    title: 'Add picture',
+                    onGoBack: (val) => this.addPicture(val),
+                  })
             }
           />
-        : <HeaderBackButton
-              AnimatedHeaderValue={this.AnimatedHeaderValue}
-              textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
-              inputRange={[20, 50]}
-              initialTitleOpacity={0}
-              initialBackgroundColor={'transparent'}
-              initialBorderColorIcon={colors.grey}
-              typeIcon2={'moon'}
-              sizeIcon2={15}
-              icon1="arrow-left"
-              icon2="share"
-              close={() => dismiss()}
-              clickButton2={() => this.goToShareGroup(this.state.group)}
-            />
-        }
+        ) : (
+          <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
+            inputRange={[20, 50]}
+            initialTitleOpacity={0}
+            initialBackgroundColor={'transparent'}
+            initialBorderColorIcon={colors.grey}
+            typeIcon2={'moon'}
+            sizeIcon2={15}
+            icon1="arrow-left"
+            icon2="share"
+            close={() => dismiss()}
+            clickButton2={() => this.goToShareGroup(this.state.group)}
+          />
+        )}
 
         <ParallaxScrollView
           style={{
@@ -441,13 +458,14 @@ class GroupPage extends React.Component {
               return (
                 <TouchableOpacity
                   style={{zIndex: 100}}
-                  onPress={() => {console.log('press');}}
-                >
-                <AsyncImage
-                  style={{width: '100%', height: 280, borderRadius: 0}}
-                  mainImage={this.state.group.pictures[0]}
-                  imgInitial={this.state.group.pictures[0]}
-                />
+                  onPress={() => {
+                    console.log('press');
+                  }}>
+                  <AsyncImage
+                    style={{width: '100%', height: 280, borderRadius: 0}}
+                    mainImage={this.state.group.pictures[0]}
+                    imgInitial={this.state.group.pictures[0]}
+                  />
                 </TouchableOpacity>
               );
             }
@@ -457,20 +475,20 @@ class GroupPage extends React.Component {
           {this.group(this.state.group)}
         </ParallaxScrollView>
 
-        {!this.state.editMode ? null :
-        <FadeInView duration={300} style={styleApp.footerBooking}>
-          <Button2
-          icon={'next'}
-          backgroundColor="green"
-          onPressColor={colors.greenClick}
-          styleButton={{marginLeft: 20, width: width - 40}}
-          disabled={false}
-          text="Save edits"
-          loader={false}
-          click={() => this.saveEdits(data)}
-          />
-        </FadeInView>
-        }
+        {!this.state.editMode ? null : (
+          <FadeInView duration={300} style={styleApp.footerBooking}>
+            <Button2
+              icon={'next'}
+              backgroundColor="green"
+              onPressColor={colors.greenClick}
+              styleButton={{marginLeft: 20, width: width - 40}}
+              disabled={false}
+              text="Save edits"
+              loader={false}
+              click={() => this.saveEdits(data)}
+            />
+          </FadeInView>
+        )}
       </View>
     );
   }
