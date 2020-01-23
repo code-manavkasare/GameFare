@@ -48,7 +48,7 @@ export default class AlertYesNo extends Component {
     return <Text style={[styleApp.title,{fontSize:18,fontFamily:'OpenSans-SemiBold'}]}>{this.props.navigation.getParam('title')}</Text>
   }
   subtitle() {
-    if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.text,{marginTop:20,fontFamily:'OpenSans-Regular',fontSize:15}]}>{this.props.navigation.getParam('subtitle')}</Text>
+    if (this.props.navigation.getParam('subtitle')) return <Text style={[styleApp.text,{marginTop:20,fontFamily:'OpenSans-Regular',fontSize:15}]}>{this.props.navigation.getParam('subtitle')}</Text>
     return null
   }
   yesClick() {
@@ -77,7 +77,7 @@ export default class AlertYesNo extends Component {
           </TouchableOpacity>
 
           {
-            this.props.navigation.getParam('icon') != undefined?
+            this.props.navigation.getParam('icon')?
             <View style={styles.viewIcon}>
             {this.props.navigation.getParam('icon')}
             </View>

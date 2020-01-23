@@ -287,7 +287,7 @@ class HeaderHome extends Component {
     var league = Object.values(sport.typeEvent)
       .filter((league) => league)
       .filter((league) => league.value === this.props.leagueSelected)[0];
-    if (league === undefined) {
+    if (!league) {
       league = this.props.leagueAll;
     }
     return (

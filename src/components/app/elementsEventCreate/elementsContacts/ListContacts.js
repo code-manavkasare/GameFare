@@ -244,7 +244,7 @@ export default class ContactsComponent extends Component {
   contact(contact, i) {
     return (
       <View key={i}>
-        {contact.header != undefined ? this.headerLetter(contact.header) : null}
+        {contact.header ? this.headerLetter(contact.header) : null}
         {this.rowContact(contact, i)}
       </View>
     );

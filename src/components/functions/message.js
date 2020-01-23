@@ -70,7 +70,6 @@ async function searchDiscussion(ids, numberMembers) {
     filters: filterMembers,
   });
   if (hits.length === 0) return false;
-  console.log('search discussions', hits);
   return hits[0];
 }
 

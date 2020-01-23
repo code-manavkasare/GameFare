@@ -38,11 +38,8 @@ class MessageTab extends React.Component {
   }
 
   async loadDiscussions(userID) {
-    console.log('loadDiscussions', userID);
     const discussions = await loadMyDiscusions(userID);
-    console.log(discussions);
     await this.props.messageAction('setConversations', discussions);
-    // await this.props.messageAction('loadConversations', {userID: userID});
     this.setState({discussions: discussions, loader: false});
   }
   async componentWillReceiveProps(nextProps) {
@@ -52,7 +49,6 @@ class MessageTab extends React.Component {
     ) {
       var that = this;
       setTimeout(function() {
-        console.log('load discussions!!!!!!');
         that.loadDiscussions(nextProps.userID);
       }, 800);
     } else if (
@@ -143,8 +139,6 @@ class MessageTab extends React.Component {
     const {navigate} = this.props.navigation;
     const {discussions} = this.state;
     const {userConnected} = this.props;
-    console.log('render message list', userConnected);
-    console.log(discussions);
     return (
       <View>
         <HeaderBackButton

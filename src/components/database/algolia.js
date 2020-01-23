@@ -137,9 +137,6 @@ const getEventPublic = async (
     );
   }
 
-  console.log('load public events', allEventsPublic);
-  console.log(eventsMyGroups);
-
   allEventsPublic = {
     ...allEventsPublic,
     ...eventsMyGroups,

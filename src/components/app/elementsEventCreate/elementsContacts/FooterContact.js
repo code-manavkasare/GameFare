@@ -137,7 +137,7 @@ class FooterContact extends Component {
     var name = name.slice(0, 5);
     name = name + '..';
     var family = contact.familyName[0];
-    if (family == '' || family == undefined) family = '';
+    if (family === '' || !family) family = '';
     else family = family.toUpperCase();
     var initial = contact.givenName[0] + family;
 
