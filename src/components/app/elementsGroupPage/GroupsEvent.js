@@ -69,6 +69,8 @@ class ListEvents extends React.Component {
     ]).start();
   }
   listEvents(events) {
+    console.log("GroupsEvents");
+    console.log(events);
     return Object.values(events).map((event, i) => (
       <CardGroup key={i} data={event} />
     ));

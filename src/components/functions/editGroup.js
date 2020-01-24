@@ -28,11 +28,11 @@ async function editGroup(updatedGroup, callback = () => {}) {
 
 async function removeUserFromGroup(playerID, group) {
     // unsubscribe user from notifications
-    // try {
-    //     await unsubscribeUserFromTopics(player.id, [group.objectID]);
-    // } catch (error) {
-    //     console.log(error);
-    // }
+    try {
+        await unsubscribeUserFromTopics(playerID, [group.objectID]);
+    } catch (error) {
+        console.log(error);
+    }
     if (group.allMembers) {
         let index = group.allMembers.indexOf(playerID);
         if (index) {

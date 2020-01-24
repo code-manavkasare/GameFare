@@ -86,6 +86,9 @@ class ListEvents extends React.Component {
 
     // var filterDate =' AND date_timestamp>' + Number(new Date())
     var mygroups = await this.getGroups(filters);
+    console.log("MYGROUPS");
+    console.log(mygroups);
+    console.log("ENDMYGROUPS");
     var infoGroups = mygroups.reduce(function(result, item) {
       result[item.objectID] = item;
       return result;

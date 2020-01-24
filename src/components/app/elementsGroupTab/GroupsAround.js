@@ -94,6 +94,8 @@ class ListEvents extends React.Component {
     ]).start();
   }
   listGroups(groups) {
+    console.log("GroupsAround");
+    console.log(groups);
     return Object.values(groups).map((group, i) => (
       <CardGroup
         key={i}
