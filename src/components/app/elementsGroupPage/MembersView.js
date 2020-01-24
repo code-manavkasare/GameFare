@@ -37,13 +37,9 @@ class MembersView extends Component {
   }
   componentDidMount() {}
   rowUser(user, i, data) {
-    console.log('row user', data);
     return (
-      <TouchableOpacity
-        onPress={() => this.props.onRemoveMember(user)}
-      >
         <Row style={styleApp.center2}>
-          <Col size={75} style={styleApp.center}>
+          <Col style={styleApp.center}>
             <CardUser
               user={user}
               infoUser={this.props.infoUser}
@@ -52,21 +48,12 @@ class MembersView extends Component {
               objectID={this.props.data.objectID}
               key={i}
               userID={this.props.userID}
+              removable={this.props.editMode}
+              removeFunc={() => this.props.onRemoveMember(user)}
               type="group"
             />
           </Col>
-          {this.props.editMode
-          ? <Col size={25} style={styleApp.center}>
-              <AllIcons
-                name="minus"
-                type="font"
-                color={colors.red}
-              />
-            </Col>
-          : <Col size={25}/>
-          }
         </Row>
-      </TouchableOpacity>
     );
   }
   async joinGroup() {
@@ -138,8 +125,7 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.id === //CHANGE THIS LINE TO ALLOW ORGANIZER TO JOIN EVENT FOR TESTING
-              this.props.userID ? null : this.userAlreadyJoined(data) ? (
+              {data.organizer.id !== this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 <Row>
                   <Col size={50} style={styleApp.center}>
                     <AllIcons

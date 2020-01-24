@@ -97,6 +97,7 @@ class ListEvents extends React.Component {
     this.setState({loader1: false});
   }
   listEvents(events) {
+    console.log(this.props.allGroups);
     return Object.values(events).map((event, i) => (
       <CardGroup key={i} allAccess={true} data={this.props.allGroups[event]} />
     ));

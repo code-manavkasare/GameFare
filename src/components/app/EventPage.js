@@ -999,6 +999,7 @@ class EventPage extends React.Component {
 
   render() {
     console.log('rendering');
+    console.log(this.state.event);
     return (
       <View style={{flex: 1}}>
         {this.header()}

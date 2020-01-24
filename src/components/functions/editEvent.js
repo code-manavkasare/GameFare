@@ -1,9 +1,19 @@
 import firebase from 'react-native-firebase';
+import moment from 'moment';
+
 
 import {unsubscribeUserFromTopics} from '../functions/notifications';
 
 async function editEvent(updatedEvent, callback = () => {}) {
-  // check to make sure edited event has valid structure?
+  updatedEvent = {
+    ...updatedEvent,
+    _geoloc: {
+      lat: updatedEvent.location.lat,
+      lng: updatedEvent.location.lng,
+    },
+    date_timestamp: moment(updatedEvent.date.start).valueOf(),
+    end_timestamp: moment(updatedEvent.date.end).valueOf(),
+  };
   await firebase
     .database()
     .ref('events/' + updatedEvent.objectID + '/')
@@ -12,6 +22,7 @@ async function editEvent(updatedEvent, callback = () => {}) {
     .catch((err) => {
       throw err;
     });
+  // TODO send notification to subscribed players
 }
 
 async function removePlayerFromEvent(player, event) {

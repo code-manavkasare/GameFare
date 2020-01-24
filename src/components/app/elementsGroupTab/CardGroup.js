@@ -180,6 +180,8 @@ class CardEvent extends React.Component {
     );
   }
   displayCard(data) {
+    console.log("DISPLAY CARD");
+    console.log(data);
     return (
       <ButtonColor
         view={() => {

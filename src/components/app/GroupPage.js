@@ -60,6 +60,7 @@ class GroupPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
+    console.log("GroupPage did mount");
     this.loadGroup(this.props.navigation.getParam('objectID'));
   }
   async loadGroup(objectID) {
@@ -260,6 +261,7 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
+    return true;
     if (!this.state.group) {
       return false;
     } else {
@@ -340,7 +342,7 @@ class GroupPage extends React.Component {
     ) {
       let newData = {
         ...data,
-        img: this.state.editPic, //will get deleted in editGroup
+        img: this.state.editPic ? this.state.editPic : undefined, // gets deleted in editGroup
         info: {
           ...data.info,
           name:
@@ -413,18 +415,20 @@ class GroupPage extends React.Component {
             clickButton1={() => dismiss()}
             clickButton2={() =>
               !this.state.editMode
-              ? this.goToShareGroup(this.state.group)
-              : this.props.navigation.navigate('AlertAddImage', {
-                  title: 'Add picture',
-                  onGoBack: (val) => this.addPicture(val),
-                })
+                ? this.goToShareGroup(this.state.group)
+                : this.props.navigation.navigate('AlertAddImage', {
+                    title: 'Add picture',
+                    onGoBack: (val) => this.addPicture(val),
+                  })
             }
-            clickButtonOffset={() => this.setState({editMode: !this.state.editMode})}
+            clickButtonOffset={() =>
+              this.setState({editMode: !this.state.editMode})
+            }
           />
         ) : (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={data != undefined ? data.info.name.slice(0, 20) : ''}
+            textHeader={data ? data.info.name.slice(0, 20) : ''}
             inputRange={[20, 50]}
             initialTitleOpacity={0}
             initialBackgroundColor={'transparent'}
@@ -433,7 +437,7 @@ class GroupPage extends React.Component {
             sizeIcon2={15}
             icon1="arrow-left"
             icon2="share"
-            close={() => dismiss()}
+            clickButton1={() => dismiss()}
             clickButton2={() => this.goToShareGroup(this.state.group)}
           />
         )}
@@ -458,7 +462,6 @@ class GroupPage extends React.Component {
             if (this.state.group) {
               return (
                 <TouchableOpacity
-                  style={{zIndex: 100}}
                   onPress={() => {
                     console.log('press');
                   }}>

@@ -7,21 +7,17 @@ import {uploadPictureFirebase} from '../functions/pictures';
 // Should not be used to remove players. removeUserFromGroup(...) ensures the removed user will be notified of the event.
 async function editGroup(updatedGroup, callback = () => {}) {
     // handle uploading of new image if one selected
-    let pictureURI = updatedGroup.img;
-    if (pictureURI !== undefined) {
+    if (updatedGroup.img) {
+        let uri = await uploadPictureFirebase(
+            uri,
+            'groups/' + updatedGroup.objectID,
+        );
         delete updatedGroup.img;
-        if (pictureURI !== '') {
-            pictureURI = await uploadPictureFirebase(
-                pictureURI,
-                'groups/' + updatedGroup.objectID,
-            );
-            updatedGroup = {
-                ...updatedGroup,
-                pictures: [pictureURI],
-            };
-        }
+        updatedGroup = {
+            ...updatedGroup,
+            pictures: [uri],
+        };
     }
-    // upload to firebase
     await firebase
     .database()
     .ref('groups/' + updatedGroup.objectID + '/')
@@ -37,16 +33,16 @@ async function removeUserFromGroup(playerID, group) {
     // } catch (error) {
     //     console.log(error);
     // }
-    // remove user from group data, sends notification to user server-side
-    // server handler should unsubscribe from group topic as well
-    // would like better way to do this.
-    let index = group.allMembers.indexOf(playerID);
-    await firebase
-    .database()
-    .ref('groups/' + group.objectID + '/allMembers/' + index)
-    .remove()
-    .catch(err => {throw err;});
-
+    if (group.allMembers) {
+        let index = group.allMembers.indexOf(playerID);
+        if (index) {
+            await firebase
+            .database()
+            .ref('groups/' + group.objectID + '/allMembers/' + index)
+            .remove()
+            .catch(err => {throw err;});
+        }
+    }
     await firebase
     .database()
     .ref('groups/' + group.objectID + '/members/' + playerID)
