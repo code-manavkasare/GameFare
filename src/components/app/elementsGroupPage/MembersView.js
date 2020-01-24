@@ -125,7 +125,7 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.id !== this.props.userID ? null : this.userAlreadyJoined(data) ? (
+              {data.organizer.id === this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 <Row>
                   <Col size={50} style={styleApp.center}>
                     <AllIcons

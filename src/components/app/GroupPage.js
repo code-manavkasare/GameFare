@@ -261,7 +261,6 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
-    return true;
     if (!this.state.group) {
       return false;
     } else {
