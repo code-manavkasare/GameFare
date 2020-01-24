@@ -86,6 +86,8 @@ class ListEvents extends React.Component {
 
     // var filterDate =' AND date_timestamp>' + Number(new Date())
     var mygroups = await this.getGroups(filters);
+    // REMOVE THE LINE BELOW THIS REMOVE THE LINE BELOW THIS
+    mygroups = mygroups.filter(group => group.objectID !== "-LzI3bAQjfCPKtb4tcuQ");
     console.log("MYGROUPS");
     console.log(mygroups);
     console.log("ENDMYGROUPS");
