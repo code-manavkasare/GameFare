@@ -17,6 +17,10 @@ async function permissions () {
   }
 }
 
+async function sendNotificationToTopic(notification, topic) {
+  await firebase.messaging.sendToTopic(topic, notification);
+}
+
 async function subscribeToTopics(topics) {
   var permission = await permissions();
   if (!permission) return false;
@@ -51,4 +55,4 @@ async function unsubscribeUserFromTopics(userID, topics) {
     }
 }
 
-module.exports = {subscribeToTopics, unsubscribeUserFromTopics, updateUserFCMToken};
+module.exports = {subscribeToTopics, unsubscribeUserFromTopics, updateUserFCMToken, sendNotificationToTopic};

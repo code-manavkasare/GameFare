@@ -2,7 +2,7 @@ import firebase from 'react-native-firebase';
 import moment from 'moment';
 
 
-import {unsubscribeUserFromTopics} from '../functions/notifications';
+import {unsubscribeUserFromTopics, sendNotificationToTopic} from '../functions/notifications';
 
 async function editEvent(updatedEvent, callback = () => {}) {
   updatedEvent = {
@@ -22,7 +22,23 @@ async function editEvent(updatedEvent, callback = () => {}) {
     .catch((err) => {
       throw err;
     });
-  // TODO send notification to subscribed players
+    try {
+      var editNotif = {
+        notification: {
+          title: 'The event organizer has edited the event details of ' + updatedEvent.info.name,
+          body: '',
+          sound: 'default',
+        },
+        data: {
+          action: 'openEventPage',
+          objectID: updatedEvent.objectID,
+        },
+      };
+      var topicEvent = '/topics/' + updatedEvent.objectID;
+      await sendNotificationToTopic(topicEvent, editNotif);
+    } catch (err) {
+      console.log(err.message);
+    }
 }
 
 async function removePlayerFromEvent(player, event) {
