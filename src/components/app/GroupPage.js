@@ -189,7 +189,7 @@ class GroupPage extends React.Component {
   }
   goToShareGroup = (data) => {
     if (!this.props.userConnected) {
-      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+      return this.props.navigation.navigate('SignIn');
     }
     this.props.navigation.navigate('Contacts', {
       openPageLink: 'openGroupPage',

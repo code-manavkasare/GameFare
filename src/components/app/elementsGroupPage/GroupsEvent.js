@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {keys} from 'ramda';
+import isEqual from 'lodash.isequal';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
@@ -33,7 +34,7 @@ class ListEvents extends React.Component {
     return this.loadGroups(this.props.groups);
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.loader !== nextProps.loader) {
+    if (!isEqual(this.props.groups, nextProps.groups)) {
       await this.setState({loader: true});
       this.loadGroups(nextProps.groups);
     }

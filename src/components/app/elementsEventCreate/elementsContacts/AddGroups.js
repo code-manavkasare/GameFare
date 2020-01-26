@@ -106,7 +106,7 @@ class AddGroups extends Component {
   showToast(text) {
     this.refs.toast.show(
       <View>
-        <Text>{text}</Text>
+        <Text style={[styleApp.text, {color: colors.white}]}>{text}</Text>
       </View>,
     );
   }

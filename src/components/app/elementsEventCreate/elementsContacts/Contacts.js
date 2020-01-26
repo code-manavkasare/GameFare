@@ -452,15 +452,6 @@ export default class ContactsComponent extends Component {
       },
     );
   }
-
-  pageFromNextPage() {
-    if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3')
-      return 'Home';
-    else if (this.props.navigation.getParam('pageFrom') == 'CreateGroup1')
-      return 'LstGroups';
-    return 'Home';
-  }
-
   translateXView = (value) => {
     this.setState({activeView: value});
     Animated.parallel(0, native(width));
@@ -470,6 +461,7 @@ export default class ContactsComponent extends Component {
     const {navigation} = this.props;
     const {dismiss} = navigation;
     const eventID = navigation.getParam('objectID');
+    const pageFrom = navigation.getParam('pageFrom');
     const {
       fadeInDuration,
       searchInputContacts,
@@ -507,11 +499,18 @@ export default class ContactsComponent extends Component {
             borderRadius={7}
             height={50}
             animationDuration={220}
-            options={[
-              {label: 'Contacts', value: 'contacts'},
-              {label: 'Gamefare', value: 'gamefareUsers'},
-              // {label: 'Groups', value: 'groups'},
-            ]}
+            options={
+              pageFrom === 'Event'
+                ? [
+                    {label: 'Contacts', value: 'contacts'},
+                    {label: 'Gamefare', value: 'gamefareUsers'},
+                    {label: 'Groups', value: 'groups'},
+                  ]
+                : [
+                    {label: 'Contacts', value: 'contacts'},
+                    {label: 'Gamefare', value: 'gamefareUsers'},
+                  ]
+            }
           />
         </View>
 
