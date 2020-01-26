@@ -27,6 +27,7 @@ export default class HeaderButton extends Component {
   }
 
   render() {
+    const {icon,iconRight} = this.props
     return (
       <Animated.View style={styleApp.headerBooking}>
         <Row
@@ -40,9 +41,9 @@ export default class HeaderButton extends Component {
             style={[styleApp.center2, {paddingLeft: 10}]}
             activeOpacity={0.4}
             onPress={() => this.close()}>
-            {this.props.icon != '' ? (
-              <FontIcon size={27} name={this.props.icon} color={'white'} />
-            ) : null}
+            {icon != '' && (
+              <FontIcon size={27} name={icon} color={'white'} />
+            )}
           </Col>
           <Col size={70} style={styleApp.center}>
             <Text style={styles.text}>{this.props.title}</Text>
@@ -55,20 +56,20 @@ export default class HeaderButton extends Component {
             ]}
             activeOpacity={0.7}
             onPress={() => {
-              if (this.props.iconRight != undefined) {
+              if (iconRight) {
                 return this.props.clickIconRight();
               }
             }}>
             {this.props.loader ? (
               <Loader size={20} color="white" />
-            ) : this.props.iconRight != undefined ? (
+            ) : iconRight && (
               <AllIcons
                 size={20}
-                name={this.props.iconRight}
+                name={iconRight}
                 color={'white'}
                 type={this.props.typeIconRight}
               />
-            ) : null}
+            )}
           </Col>
         </Row>
       </Animated.View>

@@ -107,7 +107,6 @@ async function pickLibrary() {
 }
 
 async function uploadPictureFirebase(localUri, destination) {
-  console.log('start upload picture');
   try {
     let imageName = 'groupPicture';
     const imageRef = firebase
@@ -118,8 +117,7 @@ async function uploadPictureFirebase(localUri, destination) {
     var url = imageRef.getDownloadURL();
     return url;
   } catch (error) {
-    console.log('error upload');
-    console.log(error);
+    console.log('error upload',error);
     return false;
   }
 }

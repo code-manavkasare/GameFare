@@ -59,9 +59,6 @@ class CardMessage extends React.Component {
     // const dataUrl = await LinkPreview.getPreview(url);
   }
   openPage(type, id) {
-    console.log('open oage', type);
-    console.log(id);
-    // return true;
     NavigationService.push(type, {
       objectID: id,
     });
@@ -69,7 +66,6 @@ class CardMessage extends React.Component {
   async clickLink(url, viewUrl) {
     if (url.includes('gamefare.app.link')) {
       const params = await getParams(url);
-      console.log('open link gamefare', params);
       return this.openPage(
         params.action === 'openEventPage' ? 'Event' : 'Group',
         params.eventID,
@@ -137,9 +133,6 @@ class CardMessage extends React.Component {
     return null;
   }
   renderMessage(props) {
-    console.log('current message', props.currentMessage.text);
-    console.log(props.currentMessage.user.avatar);
-    console.log('disccussion', this.props);
     return (
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}

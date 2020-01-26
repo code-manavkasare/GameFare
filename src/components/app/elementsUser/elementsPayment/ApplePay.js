@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  Platform,
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -42,12 +43,12 @@ class ListEvent extends Component {
   async componentDidMount() {
     const deviceSupportsApplePay = await stripe.deviceSupportsApplePay();
     var message = '';
-    if (deviceSupportsApplePay == false) {
+    if (!deviceSupportsApplePay) {
       message = 'Your device does not support apple pay.';
     } else {
       const canMakeApplePayPayments = await stripe.canMakeApplePayPayments();
-      if (canMakeApplePayPayments == false) {
-        if (Platform.OS == 'ios') {
+      if (!canMakeApplePayPayments) {
+        if (Platform.OS === 'ios') {
           message =
             'Apple Pay is not configured yet on this device. Please go to your Wallet app and configure it.';
         } else {
@@ -55,7 +56,7 @@ class ListEvent extends Component {
             'Google Pay is set up and ready for use. You can book your appointments with Google Pay.';
         }
       } else {
-        if (Platform.OS == 'ios') {
+        if (Platform.OS === 'ios') {
           message =
             'Apple Pay is set up and ready for use. You can now use it to join your favourite events.';
           this.setState({message: message});
@@ -81,10 +82,10 @@ class ListEvent extends Component {
       .database()
       .ref('users/' + this.props.userID + '/wallet/defaultCard/')
       .update(card);
-    if (this.props.cards != undefined) {
+    if (this.props.cards) {
       if (
         Object.values(this.props.cards).filter(
-          (card) => card.brand == 'applePay',
+          (card) => card.brand === 'applePay',
         ).length == 0
       ) {
         firebase

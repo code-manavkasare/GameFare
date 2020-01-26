@@ -96,8 +96,6 @@ async function pushEventToGroups(groups, eventID) {
 }
 
 async function createEvent(data, userID, infoUser, level) {
-  console.log('create event');
-  console.log(data.images);
   var pictureUri = await uploadPictureFirebase(
     data.images[0],
     'events/' + generateID(),
@@ -293,8 +291,6 @@ function arrayAttendees(event, userID) {
   if (!event) return [];
   if (!event.attendees) return [];
   if (event.info.organizer === userID) return Object.values(event.attendees);
-  console.log('event arrau atendees', event);
-  return [];
   return Object.values(event.attendees).filter(
     (attendee) => attendee.status === 'confirmed' || attendee.id === userID,
   );

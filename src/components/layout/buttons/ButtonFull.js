@@ -26,16 +26,16 @@ export default class Button extends Component {
     this.props.click()
   }
   widthButton() {
-    if(this.props.width !== undefined) return this.props.width
+    if(this.props.width) return this.props.width
     return width-40
   }
   styleButton() {
     if (!this.props.enable) return {...styles.buttonSubmit,backgroundColor:'white'}
-    else if (this.props.styleButton != undefined) return {...styles.buttonSubmit,...this.props.styleButton,backgroundColor:colors[this.props.backgroundColor]}
+    else if (this.props.styleButton) return {...styles.buttonSubmit,...this.props.styleButton,backgroundColor:colors[this.props.backgroundColor]}
     return {...styles.buttonSubmit,backgroundColor:colors[this.props.backgroundColor]}
   }
   onPressColor() {
-    if (this.props.onPressColor != undefined) return this.props.onPressColor
+    if (this.props.onPressColor) return this.props.onPressColor
     return colors.primary2
   }
   styleText () {

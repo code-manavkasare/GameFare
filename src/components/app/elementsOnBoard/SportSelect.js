@@ -71,7 +71,7 @@ class InitialPage extends Component {
                 mainImage={sport.card.img.imgSM}
                 imgInitial={sport.card.img.imgXS}
               />
-              {sport.card.img.icon !== undefined ? (
+              {sport.card.img.icon? (
                 <AsyncImage
                   style={{
                     position: 'absolute',

@@ -22,9 +22,9 @@ export default class AsyncImage extends Component {
 
   async componentDidMount() {
     try {
-      if (this.props.mainImage !== undefined) {
+      if (this.props.mainImage) {
         var tokenImg = this.props.mainImage.split('token=')[1];
-        if (tokenImg != undefined) {
+        if (tokenImg) {
           var checkToken = await ls.get(tokenImg);
           if (checkToken == null) checkToken = 'null';
         }
@@ -54,7 +54,7 @@ export default class AsyncImage extends Component {
     }).start();
   }
   getMainImage() {
-    if (this.props.mainImage == undefined) return this.props.image;
+    if (!this.props.mainImage) return this.props.image;
     return this.props.mainImage;
   }
   imgDisplay() {
@@ -70,10 +70,10 @@ export default class AsyncImage extends Component {
             resizeMode={'cover'}
             onLoadEnd={() => {
               this.enterPictureCached();
-              if (this.props.mainImage !== undefined) {
+              if (this.props.mainImage) {
                 try {
                   var tokenImg = this.props.mainImage.split('token=')[1];
-                  if (tokenImg != undefined) ls.save(tokenImg, tokenImg);
+                  if (tokenImg) ls.save(tokenImg, tokenImg);
                 } catch (err) {
                   true;
                 }
