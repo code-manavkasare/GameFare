@@ -250,7 +250,7 @@ class EventPage extends React.Component {
             </Row>
           );
         }}
-        click={() => (alert !== undefined ? alert() : null)}
+        click={() => (alert ? alert() : null)}
         color="white"
         style={[
           {
@@ -707,7 +707,7 @@ class EventPage extends React.Component {
         <Row>
           <Col style={styleApp.center2}>{this.editDateTime(data)}</Col>
         </Row>
-        {data.date.recurrence !== '' && data.date.recurrence !== undefined
+        {data.date.recurrence !== '' && data.date.recurrence
           ? this.rowIcon(
               this.title(
                 data.date.recurrence.charAt(0).toUpperCase() +
@@ -998,17 +998,11 @@ class EventPage extends React.Component {
   };
 
   render() {
-    console.log('rendering');
     return (
       <View style={{flex: 1}}>
         {this.header()}
         <ParallaxScrollView
-          style={{
-            height: height,
-            backgroundColor: 'white',
-            overflow: 'hidden',
-            position: 'absolute',
-          }}
+          style={styles.paralaxView}
           showsVerticalScrollIndicator={false}
           stickyHeaderHeight={100}
           outputScaleValue={6}
@@ -1111,6 +1105,12 @@ class EventPage extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  paralaxView:{
+    height: height,
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    position: 'absolute',
+  },
   eventTitle: {
     color: colors.primary,
     marginTop: 0,

@@ -64,7 +64,6 @@ class AddUsers extends Component {
     const {userID} = this.props;
     const {selectedUsersWithId} = this.state;
     const user = userObject(this.props.infoUser, this.props.userID);
-    console.log('usersssss', user);
 
     let usersIDArray = keys(selectedUsersWithId);
     usersIDArray.push(userID);

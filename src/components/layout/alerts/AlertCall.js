@@ -84,7 +84,7 @@ export default class Alert extends Component {
           </TouchableOpacity>
 
           {
-            this.props.navigation.getParam('icon') != undefined?
+            this.props.navigation.getParam('icon')?
             <View style={styles.viewIcon}>
             {this.props.navigation.getParam('icon')}
             </View>

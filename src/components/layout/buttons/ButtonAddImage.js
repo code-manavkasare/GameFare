@@ -35,10 +35,9 @@ export default class Button extends Component {
   }
   async click(val) {
     await this.setState({loader:true})
-    console.log('loader set')
-    if (val == 'take') {
+    if (val === 'take') {
       var uri = await takePicture()
-    } else if (val == 'pick') {
+    } else if (val === 'pick') {
       var uri = await pickLibrary()
     }
     if (!uri) return this.setState({loader:false})

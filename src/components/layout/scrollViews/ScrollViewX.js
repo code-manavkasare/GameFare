@@ -100,7 +100,7 @@ export default class ScrollViewX extends PureComponent {
             <View
               key={i}
               style={[
-                this.props.placeHolder != undefined
+                this.props.placeHolder
                   ? this.props.placeHolder
                   : styleApp.cardEventSM,
                 {backgroundColor: 'white'},

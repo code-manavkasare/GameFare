@@ -104,7 +104,7 @@ export default class ContactsComponent extends Component {
     }
   }
   setFreeContact(contact) {
-    if (this.state.freeContacts[contact] == undefined) {
+    if (!this.state.freeContacts[contact]) {
       this.setState({
         freeContacts: {...this.state.freeContacts, [contact]: true},
       });
@@ -477,7 +477,6 @@ export default class ContactsComponent extends Component {
       searchInputGroups,
       searchInputGameFareUsers,
     } = this.state;
-    Reactotron.log(this.props);
 
     return (
       <View style={{height: height}}>

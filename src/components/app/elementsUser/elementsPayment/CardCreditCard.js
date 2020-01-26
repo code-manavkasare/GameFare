@@ -33,17 +33,17 @@ class CardCreditCard extends Component {
   }
   async componentDidMount() {}
   brand() {
-    if (this.props.cards == undefined) {
+    if (!this.props.cards) {
       return 'default';
     }
     return this.props.defaultCard.brand;
   }
   textCard() {
-    if (this.props.cards == undefined) {
+    if (!this.props.cards) {
       return 'Add payment method';
     }
-    if (this.props.defaultCard.brand == 'applePay') return 'Apple Pay';
-    if (this.props.defaultCard.brand == 'googlePay') return 'Google Pay';
+    if (this.props.defaultCard.brand === 'applePay') return 'Apple Pay';
+    if (this.props.defaultCard.brand === 'googlePay') return 'Google Pay';
     return '•••• ' + this.props.defaultCard.last4;
   }
 

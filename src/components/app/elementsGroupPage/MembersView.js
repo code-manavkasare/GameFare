@@ -37,7 +37,6 @@ class MembersView extends Component {
   }
   componentDidMount() {}
   rowUser(user, i, data) {
-    console.log('row user', data);
     return (
       <CardUser
         user={user}
@@ -172,13 +171,13 @@ class MembersView extends Component {
             <PlaceHolder />
             <PlaceHolder />
           </FadeInView>
-        ) : this.props.data.members == undefined ? (
+        ) : !data.members ? (
           <Text style={[styleApp.smallText, {marginTop: 10, marginLeft: 20}]}>
             No one has joined the group yet.
           </Text>
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
-            {Object.values(this.props.data.members).map((user, i) =>
+            {Object.values(data.members).map((user, i) =>
               this.rowUser(user, i, data),
             )}
           </FadeInView>

@@ -41,7 +41,7 @@ export default class ScrollViewPage extends PureComponent {
     return {
       marginTop: this.props.marginTop,
       marginBottom:
-        this.props.marginBottomScrollView != undefined
+        this.props.marginBottomScrollView
           ? this.props.marginBottomScrollView
           : 0,
     };
@@ -60,7 +60,7 @@ export default class ScrollViewPage extends PureComponent {
       return (
         <RefreshControl
           tintColor={
-            this.props.colorRefresh != undefined
+            this.props.colorRefresh
               ? this.props.colorRefresh
               : colors.title
           }
@@ -90,7 +90,7 @@ export default class ScrollViewPage extends PureComponent {
     });
     return (
       <View>
-        {this.props.header != undefined ? (
+        {this.props.header ? (
           <Animated.View
             style={[
               styleApp.center,

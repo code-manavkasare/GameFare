@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
   Button,
-  RefreshControl,
   Animated,
   Image,
 } from 'react-native';
@@ -55,8 +54,7 @@ class GroupPage extends React.Component {
       .on('value', async function(snap) {
         let group = snap.val();
         group.objectID = objectID;
-        console.log(group);
-        if (group.allMembers !== undefined) {
+        if (group.allMembers) {
           if (group.allMembers.includes(that.props.userID)) {
             await that.props.groupsAction('setAllGroups', {[objectID]: group});
           }
@@ -68,15 +66,13 @@ class GroupPage extends React.Component {
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
-        activeOpacity={alert !== undefined ? 0.7 : 1}
+        activeOpacity={alert? 0.7 : 1}
         onPress={() =>
-          alert != undefined
-            ? this.props.navigation.navigate('AlertAddress', {data: dataAlert})
-            : null
+          alert && this.props.navigation.navigate('AlertAddress', {data: dataAlert})
         }>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            {image != undefined ? (
+            {image ? (
               image
             ) : (
               <AllIcons name={icon} color={colors.grey} size={18} type="font" />
@@ -191,33 +187,6 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-  conditionAdmin() {
-    if (!this.state.group) {
-      return false;
-    } else if (
-      this.props.navigation.getParam('pageFrom') !== 'Home' &&
-      this.state.group.info.organizer === this.props.userID &&
-      this.this.state.group.info.public
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  refreshControl() {
-    return (
-      <RefreshControl
-        refreshing={this.state.loader}
-        colors={['white']}
-        progressBackgroundColor={'white'}
-        tintColor="white"
-        onRefresh={() => this.refresh()}
-        size={'small'}
-      />
-    );
-  }
-
   goToShareGroup = (data) => {
     if (!this.props.userConnected) {
       return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
@@ -234,17 +203,13 @@ class GroupPage extends React.Component {
   render() {
     const {goBack, dismiss} = this.props.navigation;
     var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
-    // if (data != undefined) {
-    //   var dots =
-    //     data.info.name.slice(0, 20).length < data.info.name.length ? '...' : '';
-    // }
-
+    const {group} = this.state
     return (
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={
-            !this.state.group ? '' : this.state.group.info.name.slice(0, 20)
+            !group ? '' : group.info.name.slice(0, 20)
           }
           inputRange={[20, 50]}
           initialTitleOpacity={0}
@@ -256,7 +221,7 @@ class GroupPage extends React.Component {
           icon2="share"
           // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
           clickButton1={() => dismiss()}
-          clickButton2={() => this.goToShareGroup(this.state.group)}
+          clickButton2={() => this.goToShareGroup(group)}
         />
 
         <ParallaxScrollView
@@ -276,19 +241,19 @@ class GroupPage extends React.Component {
             {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
           ])}
           renderBackground={() => {
-            if (this.state.group) {
+            if (group) {
               return (
                 <AsyncImage
                   style={{width: '100%', height: 280, borderRadius: 0}}
-                  mainImage={this.state.group.pictures[0]}
-                  imgInitial={this.state.group.pictures[0]}
+                  mainImage={group.pictures[0]}
+                  imgInitial={group.pictures[0]}
                 />
               );
             }
           }}
           renderFixedHeader={null}
           parallaxHeaderHeight={280}>
-          {this.group(this.state.group)}
+          {this.group(group)}
         </ParallaxScrollView>
       </View>
     );
