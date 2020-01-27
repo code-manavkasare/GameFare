@@ -317,9 +317,8 @@ class Page3 extends Component {
 
     return this.props.navigation.navigate('Contacts', {
       data: event,
-      pageFrom: 'CreateEvent3',
+      pageFrom: 'Event',
       openPageLink: 'openEventPage',
-      pageTo: 'Event',
       objectID: event.objectID,
     });
   }

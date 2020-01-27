@@ -188,15 +188,7 @@ class EventPage extends React.Component {
           iconOffset="pen"
           colorIconOffset={this.state.editMode ? colors.blue : 'white'}
           typeIconOffset="font"
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openEventPage',
-              pageTo: 'Group',
-              objectID: this.state.event.objectID,
-              pageFrom: 'Event',
-              data: {...this.state.event, eventID: this.state.event.objectID},
-            })
-          }
+          clickButton2={() => this.goToShareEvent(this.state.event)}
           clickButton1={() => dismiss()}
           clickButtonOffset={() =>
             this.setState({editMode: !this.state.editMode})
@@ -985,12 +977,10 @@ class EventPage extends React.Component {
 
   goToShareEvent = (event) => {
     if (!this.props.userConnected) {
-      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+      return this.props.navigation.navigate('SignIn');
     }
-
     return this.props.navigation.navigate('Contacts', {
       openPageLink: 'openEventPage',
-      pageTo: 'Group',
       objectID: event.objectID,
       pageFrom: 'Event',
       data: {...event, eventID: event.objectID},
@@ -1105,7 +1095,7 @@ class EventPage extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  paralaxView:{
+  paralaxView: {
     height: height,
     backgroundColor: 'white',
     overflow: 'hidden',

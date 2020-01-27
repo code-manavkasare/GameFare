@@ -8,6 +8,7 @@ import {
   View,
   Animated,
 } from 'react-native';
+import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import branch from 'react-native-branch';
@@ -34,7 +35,7 @@ import {autocompleteSearchUsers} from '../../../functions/users';
 
 const {height, width} = Dimensions.get('screen');
 
-export default class ContactsComponent extends Component {
+class Contacts extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -452,15 +453,6 @@ export default class ContactsComponent extends Component {
       },
     );
   }
-
-  pageFromNextPage() {
-    if (this.props.navigation.getParam('pageFrom') == 'CreateEvent3')
-      return 'Home';
-    else if (this.props.navigation.getParam('pageFrom') == 'CreateGroup1')
-      return 'LstGroups';
-    return 'Home';
-  }
-
   translateXView = (value) => {
     this.setState({activeView: value});
     Animated.parallel(0, native(width));
@@ -469,7 +461,9 @@ export default class ContactsComponent extends Component {
   render() {
     const {navigation} = this.props;
     const {dismiss} = navigation;
-    const eventID = navigation.getParam('objectID');
+    const objectID = navigation.getParam('objectID');
+    const pageFrom = navigation.getParam('pageFrom');
+    const data = navigation.getParam('data');
     const {
       fadeInDuration,
       searchInputContacts,
@@ -507,11 +501,18 @@ export default class ContactsComponent extends Component {
             borderRadius={7}
             height={50}
             animationDuration={220}
-            options={[
-              {label: 'Contacts', value: 'contacts'},
-              {label: 'Gamefare', value: 'gamefareUsers'},
-              // {label: 'Groups', value: 'groups'},
-            ]}
+            options={
+              this.props.userID === data.info.organizer
+                ? [
+                    {label: 'Contacts', value: 'contacts'},
+                    {label: 'Gamefare', value: 'gamefareUsers'},
+                    {label: 'Groups', value: 'groups'},
+                  ]
+                : [
+                    {label: 'Contacts', value: 'contacts'},
+                    {label: 'Gamefare', value: 'gamefareUsers'},
+                  ]
+            }
           />
         </View>
 
@@ -540,7 +541,7 @@ export default class ContactsComponent extends Component {
             <FadeInView duration={fadeInDuration}>
               <AddUsers
                 searchString={searchInputGameFareUsers}
-                eventID={eventID}
+                objectID={objectID}
                 changeSearchGameFareUsers={this.changeSearchGameFareUsers}
                 createBranchMessage={this.createBranchMessage}
               />
@@ -550,7 +551,8 @@ export default class ContactsComponent extends Component {
             <FadeInView duration={fadeInDuration}>
               <AddGroups
                 searchString={searchInputGroups}
-                eventID={eventID}
+                objectID={objectID}
+                pageFrom={pageFrom}
                 changeSearchGroups={this.changeSearchGroups}
               />
             </FadeInView>
@@ -578,3 +580,11 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userID,
+  };
+};
+
+export default connect(mapStateToProps)(Contacts);

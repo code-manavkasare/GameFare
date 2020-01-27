@@ -163,13 +163,28 @@ export default class CardUser extends Component {
                   </Text>
                 </Col>
                 <Col size={10} style={styleApp.center}>
-                  {user.status === 'declined' && (
-                    <AllIcons
-                      name="times"
-                      type="font"
-                      color={colors.red}
-                      size={17}
-                    />
+                  {user.status === 'declined' ? (
+                    <Col
+                      size={10}
+                      style={styleApp.center}
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        NavigationService.navigate('Alert', {
+                          close: true,
+                          textButton: 'Got it!',
+                          title:
+                            'You have declined this player’s joining request.',
+                        })
+                      }>
+                      <AllIcons
+                        name="stop-circle"
+                        type="font"
+                        color={colors.red}
+                        size={17}
+                      />
+                    </Col>
+                  ) : (
+                    <Col size={10} />
                   )}
                 </Col>
                 <Col size={10} style={styleApp.center3}>

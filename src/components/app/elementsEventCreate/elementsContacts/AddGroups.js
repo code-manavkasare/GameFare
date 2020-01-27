@@ -40,14 +40,14 @@ class AddGroups extends Component {
     this.initiaLoad();
   }
   initiaLoad = async () => {
-    const {userID, eventID} = this.props;
+    const {userID, objectID} = this.props;
 
     indexGroups.clearCache();
     const listGroups = await indexGroups.search({
-      filters: 'info.organizer:' + userID,
+      filters: 'info.organizer:' + userID + ' AND NOT objectID:' + objectID,
       query: '',
     });
-    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, eventID);
+    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, objectID);
     //Will work when Algolia update accordingly with firebase
 
     await this.setState({
@@ -106,7 +106,7 @@ class AddGroups extends Component {
   showToast(text) {
     this.refs.toast.show(
       <View>
-        <Text>{text}</Text>
+        <Text style={[styleApp.text, {color: colors.white}]}>{text}</Text>
       </View>,
     );
   }
@@ -218,43 +218,46 @@ class AddGroups extends Component {
     );
   }
 
-  submit = async () => {
+  submit = async (pageFrom) => {
     await this.setState({loaderDatabaseUpdate: true});
-    const {eventID} = this.props;
+    const {objectID} = this.props;
     const {selectedGroups} = this.state;
 
     this.state.listGroups.forEach(async (group) => {
       const hasGroup = ramda.has(group.objectID);
       let updatesGroup = {};
       let updatesEvent = {};
+      if (pageFrom === 'events') {
+        if (hasGroup(selectedGroups)) {
+          updatesGroup['/events/' + objectID] = true;
+          updatesEvent['/groups/' + group.objectID] = true;
 
-      if (hasGroup(selectedGroups)) {
-        updatesGroup['/events/' + eventID] = true;
-        updatesEvent['/groups/' + group.objectID] = true;
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID)
+            .update(updatesGroup);
 
-        await firebase
-          .database()
-          .ref('groups/' + group.objectID)
-          .update(updatesGroup);
+          await firebase
+            .database()
+            .ref('events/' + objectID)
+            .update(updatesEvent);
+        } else if (!hasGroup(selectedGroups)) {
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID + '/events/' + objectID)
+            .remove();
 
-        await firebase
-          .database()
-          .ref('events/' + eventID)
-          .update(updatesEvent);
-      } else if (!hasGroup(selectedGroups)) {
-        await firebase
-          .database()
-          .ref('groups/' + group.objectID + '/events/' + eventID)
-          .remove();
-
-        await firebase
-          .database()
-          .ref('events/' + eventID + '/groups/' + group.objectID)
-          .remove();
+          await firebase
+            .database()
+            .ref('events/' + objectID + '/groups/' + group.objectID)
+            .remove();
+        }
+        this.showToast('The event has been updated !');
+      } else {
+        this.showToast('Add groups to groups coming soon');
       }
     });
 
-    this.showToast('Event has been updated !');
     await this.setState({loaderDatabaseUpdate: false});
   };
 
@@ -263,12 +266,13 @@ class AddGroups extends Component {
     const groupLength = Object.values(this.state.selectedGroups).length;
 
     if (loaderDatabaseUpdate) return <Loader color="white" size={30} />;
-    if (groupLength == 1 || groupLength == 0)
+    if (groupLength === 1 || groupLength === 0)
       return 'Add ' + groupLength + ' group';
     return 'Add ' + groupLength + ' groups';
   }
   render() {
     const {searchInputGroups} = this.state;
+    const {pageFrom} = this.props;
     return (
       <View style={styles.mainView}>
         <Toast
@@ -300,7 +304,7 @@ class AddGroups extends Component {
               backgroundColor={'green'}
               onPressColor={colors.greenClick}
               text={this.textButton()}
-              click={() => this.submit()}
+              click={() => this.submit(pageFrom)}
             />
           </View>
         </View>
