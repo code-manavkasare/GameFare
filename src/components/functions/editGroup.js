@@ -41,18 +41,14 @@ async function editGroup(updatedGroup, callback = () => {}) {
       } catch (err) {
         console.log(err.message);
       }
+    return true;
 }
 
 async function removeUserFromGroup(playerID, group) {
-    // unsubscribe user from notifications
-    try {
-        await unsubscribeUserFromTopics(playerID, [group.objectID]);
-    } catch (error) {
-        console.log(error);
-    }
+    unsubscribeUserFromTopics(playerID, [group.objectID]);
     if (group.allMembers) {
         let index = group.allMembers.indexOf(playerID);
-        if (index) {
+        if (index !== -1) {
             await firebase
             .database()
             .ref('groups/' + group.objectID + '/allMembers/' + index)
@@ -65,6 +61,7 @@ async function removeUserFromGroup(playerID, group) {
     .ref('groups/' + group.objectID + '/members/' + playerID)
     .remove()
     .catch(err => {throw err;});
+    return true;
 }
 
 module.exports = {editGroup, removeUserFromGroup};

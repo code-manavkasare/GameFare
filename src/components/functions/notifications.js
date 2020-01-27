@@ -36,6 +36,7 @@ async function updateUserFCMToken(userID, token) {
   .database()
   .ref('users/' + userID + '/')
   .update({FCMToken: token});
+  return true;
 }
 
 async function unsubscribeUserFromTopics(userID, topics) {
@@ -51,8 +52,10 @@ async function unsubscribeUserFromTopics(userID, topics) {
         console.log(promiseAxios.data.message);
       }
     } catch (err) {
-      throw err;
+      console.log(err.message);
+      return false;
     }
+    return true;
 }
 
 module.exports = {subscribeToTopics, unsubscribeUserFromTopics, updateUserFCMToken, sendNotificationToTopic};
