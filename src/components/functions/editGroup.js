@@ -1,11 +1,6 @@
 import firebase from 'react-native-firebase';
-import {
-  unsubscribeUserFromTopics,
-  sendNotificationToTopic,
-} from '../functions/notifications';
 import {uploadPictureFirebase} from '../functions/pictures';
 
-// Should not be used to remove players. removeUserFromGroup(...) ensures the removed user will be notified of the event.
 async function editGroup(updatedGroup, callback = () => {}) {
   // handle uploading of new image if one selected
   if (updatedGroup.img) {
@@ -41,7 +36,7 @@ async function editGroup(updatedGroup, callback = () => {}) {
       },
     };
     var topicGroup = '/topics/' + updatedGroup.objectID;
-    await sendNotificationToTopic(topicGroup, editNotif);
+    await firebase.messaging.sendToTopic(topicGroup, editNotif);
   } catch (err) {
     console.log(err.message);
   }

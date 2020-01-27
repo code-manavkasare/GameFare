@@ -1,9 +1,6 @@
 import firebase from 'react-native-firebase';
 import moment from 'moment';
 
-
-import {unsubscribeUserFromTopics, sendNotificationToTopic} from '../functions/notifications';
-
 async function editEvent(updatedEvent, callback = () => {}) {
   updatedEvent = {
     ...updatedEvent,
@@ -35,22 +32,17 @@ async function editEvent(updatedEvent, callback = () => {}) {
         },
       };
       var topicEvent = '/topics/' + updatedEvent.objectID;
-      await sendNotificationToTopic(topicEvent, editNotif);
+      await firebase.messaging.sendToTopic(topicEvent, editNotif);
     } catch (err) {
       console.log(err.message);
     }
+    return true;
 }
 
 async function removePlayerFromEvent(player, event) {
-  // unsubscribe user from notifications
-  try {
-    await unsubscribeUserFromTopics(player.id, [event.objectID]);
-  } catch (error) {
-    console.log(error);
-  }
   if (event.allAttendees) {
     let index = event.allAttendees.indexOf(player.id);
-    if (index) {
+    if (index !== -1) {
         await firebase
         .database()
         .ref('events/' + event.objectID + '/allAttendees/' + index)

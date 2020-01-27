@@ -17,10 +17,6 @@ async function permissions () {
   }
 }
 
-async function sendNotificationToTopic(notification, topic) {
-  await firebase.messaging.sendToTopic(topic, notification);
-}
-
 async function subscribeToTopics(topics) {
   var permission = await permissions();
   if (!permission) return false;
@@ -39,23 +35,5 @@ async function updateUserFCMToken(userID, token) {
   return true;
 }
 
-async function unsubscribeUserFromTopics(userID, topics) {
-    try {
-      var url = 'https://us-central1-getplayd.cloudfunctions.net/unsubscribeUserFromTopics';
-      const promiseAxios = await axios.get(url, {
-        params: {
-          userID: userID,
-          topics: topics,
-        },
-      });
-      if (!promiseAxios.data.response) {
-        console.log(promiseAxios.data.message);
-      }
-    } catch (err) {
-      console.log(err.message);
-      return false;
-    }
-    return true;
-}
 
-module.exports = {subscribeToTopics, unsubscribeUserFromTopics, updateUserFCMToken, sendNotificationToTopic};
+module.exports = {subscribeToTopics, updateUserFCMToken};
