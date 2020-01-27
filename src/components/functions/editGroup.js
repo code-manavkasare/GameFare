@@ -49,27 +49,6 @@ async function editGroup(updatedGroup, callback = () => {}) {
 }
 
 async function removeUserFromGroup(playerID, group) {
-  let res = await unsubscribeUserFromTopics(playerID, [group.objectID]);
-  if (!res) {
-    console.log(
-      'Could not unsubscribe user :' +
-        playerID +
-        ' from group: ' +
-        group.objectID,
-    );
-  }
-  if (group.allMembers) {
-    let index = group.allMembers.indexOf(playerID);
-    if (index !== -1) {
-      await firebase
-        .database()
-        .ref('groups/' + group.objectID + '/allMembers/' + index)
-        .remove()
-        .catch((err) => {
-          throw err;
-        });
-    }
-  }
   await firebase
     .database()
     .ref('groups/' + group.objectID + '/members/' + playerID)
