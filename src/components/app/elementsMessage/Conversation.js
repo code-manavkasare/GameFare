@@ -76,10 +76,6 @@ class MessageTab extends React.Component {
         };
         lastMessage.usersRead = usersRead;
         if (myConversation || lastMessage.user.id === userID) {
-          console.log('oui on save la conversation', {
-            ...conversation,
-            lastMessage: lastMessage,
-          });
           that.setConversation({
             ...conversation,
             lastMessage: lastMessage,

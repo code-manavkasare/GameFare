@@ -46,9 +46,7 @@ class ListEvents extends React.Component {
   async loadGroups(groups) {
     await this.setState({loader: true});
     indexGroups.clearCache();
-    console.log('getgroups', groups);
-    var groupsEvents = await this.getGroups(keys(groups));
-
+    const groupsEvents = await this.getGroups(keys(groups));
     this.setState({loader: false, groups: groupsEvents});
   }
   openGroup(objectID) {
@@ -114,7 +112,6 @@ class ListEvents extends React.Component {
     );
   }
   render() {
-    console.log(this.state.groups);
     return this.ListEvent();
   }
 }

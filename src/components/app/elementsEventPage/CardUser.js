@@ -104,7 +104,6 @@ export default class CardUser extends Component {
         .ref('groups/' + this.props.objectID + '/members/' + user.id)
         .update({status: status});
     } else {
-      return true;
       await firebase
         .database()
         .ref('events/' + this.props.objectID + '/attendees/' + user.id)

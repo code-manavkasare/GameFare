@@ -184,9 +184,9 @@ export default class ExpandableCard extends Component {
                 style={styleApp.center}
                 activeOpacity={item.title != undefined ? 0.7 : 1}
                 onPress={() =>
-                  item.title != undefined ? this.openAlert(item) : null
+                  item.title ? this.openAlert(item) : null
                 }>
-                {item.title != undefined ? (
+                {item.title ? (
                   <AllIcons
                     type={'font'}
                     name={'info-circle'}

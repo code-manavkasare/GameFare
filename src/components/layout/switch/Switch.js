@@ -10,7 +10,6 @@ import {
   Easing,
 } from 'react-native';
 import {Grid, Row, Col} from 'react-native-easy-grid';
-import Reactotron from 'reactotron-react-native';
 
 import colors from '../../style/colors';
 import {timing, native} from '../../animations/animations';
@@ -48,8 +47,7 @@ export default class Switch extends Component {
     var check = await this.props.setState(newVal);
     if (!check) return true;
     if (newVal) {
-      if (this.props.translateXComponent0 != undefined) {
-        Reactotron.log(this.props.translateXComponent0);
+      if (this.props.translateXComponent0) {
 
         return Animated.parallel([
           Animated.spring(
@@ -71,7 +69,7 @@ export default class Switch extends Component {
         Animated.spring(this.state.colorAnim0, timing(0)),
       ]).start();
     } else {
-      if (this.props.translateXComponent0 != undefined) {
+      if (this.props.translateXComponent0) {
         return Animated.parallel([
           Animated.spring(
             this.translateXBorder,
@@ -97,8 +95,8 @@ export default class Switch extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.state != this.props.state) this.changeValue(nextProps.state);
   }
-  styleButton() {
-    if (this.props.color != undefined)
+  styleButton(color) {
+    if (color)
       return {...styles.button, backgroundColor: colors.green};
     return styles.button;
   }
@@ -107,37 +105,39 @@ export default class Switch extends Component {
     return {borderTopRightRadius: 7, borderBottomRightRadius: 7};
   }
   render() {
+    const {color,textOn,textOff} = this.props;
+    const heightView = this.props.height;
     var colorText1 = this.state.colorAnim1.interpolate({
       inputRange: [0, 1],
       outputRange: [
-        this.props.color != undefined ? colors.off : '#C7C7CC',
-        this.props.color != undefined ? 'white' : colors.green,
+        color ? colors.off : '#C7C7CC',
+        color ? 'white' : colors.green,
       ],
       extrapolate: 'clamp',
     });
     var colorText0 = this.state.colorAnim0.interpolate({
       inputRange: [0, 1],
       outputRange: [
-        this.props.color != undefined ? colors.off : '#C7C7CC',
-        this.props.color != undefined ? 'white' : colors.green,
+        color ? colors.off : '#C7C7CC',
+        color ? 'white' : colors.green,
       ],
       extrapolate: 'clamp',
     });
     return (
-      <View style={{height: this.props.height, width: '100%'}}>
+      <View style={{height: heightView, width: '100%'}}>
         <Row style={{borderRadius: 7}}>
           <Col style={styles.center}>
             <ButtonColor
               view={() => {
                 return (
                   <Animated.Text style={[styles.text, {color: colorText0}]}>
-                    {this.props.textOn}
+                    {textOn}
                   </Animated.Text>
                 );
               }}
               click={() => this.changeValue(false)}
               color={colors.white}
-              style={[this.styleButton(), this.borderStyle(false)]}
+              style={[this.styleButton(color), this.borderStyle(false)]}
               onPressColor={colors.off}
             />
           </Col>
@@ -146,13 +146,13 @@ export default class Switch extends Component {
               view={() => {
                 return (
                   <Animated.Text style={[styles.text, {color: colorText1}]}>
-                    {this.props.textOff}
+                    {textOff}
                   </Animated.Text>
                 );
               }}
               click={() => this.changeValue(true)}
               color={colors.white}
-              style={[this.styleButton(), this.borderStyle(true)]}
+              style={[this.styleButton(color), this.borderStyle(true)]}
               onPressColor={colors.off}
             />
           </Col>
@@ -160,17 +160,8 @@ export default class Switch extends Component {
 
         <Animated.View
           style={[
-            styleApp.center,
-            {
-              height: '100%',
-              position: 'absolute',
-              borderWidth: 1,
-              bottom: 0,
-              width: '50%',
-              backgroundColor: colors.green,
-              borderColor:
-                this.props.color != undefined ? 'white' : colors.green,
-            },
+            styleApp.center,styles.animatedRectangle,
+            {borderColor:color ? 'white' : colors.green},
             {transform: [{translateX: this.translateXBorder}]},
             this.borderStyle(this.props.state),
           ]}>
@@ -204,10 +195,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.grey,
-    // borderRadius:7,
-    // borderColor:colors.primary,
-    //backgroundColor:'yellow',
-    // borderWidth:0,
+  },
+  animatedRectangle:{
+    height: '100%',
+    position: 'absolute',
+    borderWidth: 1,
+    bottom: 0,
+    width: '50%',
+    backgroundColor: colors.green
   },
   text: {
     //color:colors.title,

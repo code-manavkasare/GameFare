@@ -35,7 +35,7 @@ export default class ButtonRound extends Component {
   }
   stylesButton() {
     if (this.props.buttonRound2) return styleApp.buttonRound2;
-    if (this.props.styleButton != undefined)
+    if (this.props.styleButton)
       return {...styleApp.buttonRound, ...this.props.styleButton};
     return styleApp.buttonRound;
   }
@@ -46,7 +46,7 @@ export default class ButtonRound extends Component {
   }
   onPressColor() {
     if (!this.props.enabled) return 'white';
-    else if (this.props.onPressColor != undefined)
+    else if (this.props.onPressColor)
       return this.props.onPressColor;
     return colors.green;
   }

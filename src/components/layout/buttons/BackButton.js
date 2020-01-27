@@ -30,14 +30,14 @@ export default class Button extends Component {
       // backgroundColor:'blue'
     }
   }
-  render() {  
+  render() { 
     return (
       <TouchableOpacity
         activeOpacity={0.4} 
         style={this.styleButton()} 
         onPress={() => this.props.click()} 
       >
-          <AllIcons name={this.props.name} color={this.props.color?this.props.color:'white'} type={this.props.type} size={this.props.size!=undefined?this.props.size:25} />
+          <AllIcons name={this.props.name} color={this.props.color?this.props.color:'white'} type={this.props.type} size={this.props.size?this.props.size:25} />
       </TouchableOpacity> 
     );
   }

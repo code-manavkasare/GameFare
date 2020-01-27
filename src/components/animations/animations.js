@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 function timing(toValue,duration) {
-  if (duration == undefined) {
+  if (!duration) {
     duration = 250
   }
   return {

@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
   Button,
-  RefreshControl,
   Animated,
   Image,
   TextInput,
@@ -71,7 +70,7 @@ class GroupPage extends React.Component {
       .on('value', async function(snap) {
         let group = snap.val();
         group.objectID = objectID;
-        if (group.allMembers !== undefined) {
+        if (group.allMembers) {
           if (group.allMembers.includes(that.props.userID)) {
             await that.props.groupsAction('setAllGroups', {[objectID]: group});
           }
@@ -83,15 +82,13 @@ class GroupPage extends React.Component {
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
-        activeOpacity={alert !== undefined ? 0.7 : 1}
+        activeOpacity={alert? 0.7 : 1}
         onPress={() =>
-          alert != undefined
-            ? this.props.navigation.navigate('AlertAddress', {data: dataAlert})
-            : null
+          alert && this.props.navigation.navigate('AlertAddress', {data: dataAlert})
         }>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            {image != undefined ? (
+            {image ? (
               image
             ) : (
               <AllIcons name={icon} color={colors.grey} size={18} type="font" />
@@ -260,6 +257,7 @@ class GroupPage extends React.Component {
       </View>
     );
   }
+<<<<<<< src/components/app/GroupPage.js
   conditionAdmin() {
     if (!this.state.group) {
       return false;
@@ -277,19 +275,6 @@ class GroupPage extends React.Component {
     // } else {
     //   return false;
     // }
-  }
-
-  refreshControl() {
-    return (
-      <RefreshControl
-        refreshing={this.state.loader}
-        colors={['white']}
-        progressBackgroundColor={'white'}
-        tintColor="white"
-        onRefresh={() => this.refresh()}
-        size={'small'}
-      />
-    );
   }
   async addPicture(val) {
     await this.setState({loader: true});
@@ -377,7 +362,6 @@ class GroupPage extends React.Component {
       ...noEdit,
     });
   }
-
   goToShareGroup = (data) => {
     if (!this.props.userConnected) {
       return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
@@ -393,13 +377,13 @@ class GroupPage extends React.Component {
 
   render() {
     const {dismiss} = this.props.navigation;
-    var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
+    const {group} = this.state
     return (
       <View style={{flex: 1}}>
-        {this.conditionAdmin(data) ? (
+        {this.conditionAdmin() ? (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={data !== undefined ? data.info.name.slice(0, 20) : ''}
+            textHeader={group ? group.info.name.slice(0, 20) : ''}
             inputRange={[20, 50]}
             initialTitleOpacity={0}
             initialBackgroundColor={'transparent'}
@@ -414,7 +398,7 @@ class GroupPage extends React.Component {
             clickButton1={() => dismiss()}
             clickButton2={() =>
               !this.state.editMode
-                ? this.goToShareGroup(this.state.group)
+                ? this.goToShareGroup(group)
                 : this.props.navigation.navigate('AlertAddImage', {
                     title: 'Add picture',
                     onGoBack: (val) => this.addPicture(val),
@@ -437,10 +421,9 @@ class GroupPage extends React.Component {
             icon1="arrow-left"
             icon2="share"
             clickButton1={() => dismiss()}
-            clickButton2={() => this.goToShareGroup(this.state.group)}
+            clickButton2={() => this.goToShareGroup(group)}
           />
         )}
-
         <ParallaxScrollView
           style={{
             height: height,
@@ -458,7 +441,7 @@ class GroupPage extends React.Component {
             {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
           ])}
           renderBackground={() => {
-            if (this.state.group) {
+            if (group) {
               return (
                 <TouchableOpacity
                   onPress={() => {
@@ -475,7 +458,7 @@ class GroupPage extends React.Component {
           }}
           renderFixedHeader={null}
           parallaxHeaderHeight={280}>
-          {this.group(this.state.group)}
+          {this.group(group)}
         </ParallaxScrollView>
 
         {!this.state.editMode ? null : (
