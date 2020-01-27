@@ -257,7 +257,6 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-<<<<<<< src/components/app/GroupPage.js
   conditionAdmin() {
     if (!this.state.group) {
       return false;
@@ -317,7 +316,8 @@ class GroupPage extends React.Component {
     delete group.members[playerID];
     await this.props.groupsAction('setAllGroups', {[group.objectId]: group});
   }
-  async saveEdits(data) {
+  async saveEdits() {
+    const {group} = this.state;
     if (
       this.state.editPic !== noEdit.editPic ||
       this.state.editName !== noEdit.editName ||
@@ -325,22 +325,22 @@ class GroupPage extends React.Component {
       this.state.editLocation !== noEdit.editLocation
     ) {
       let newData = {
-        ...data,
+        ...group,
         img: this.state.editPic ? this.state.editPic : undefined, // gets deleted in editGroup
         info: {
-          ...data.info,
+          ...group.info,
           name:
             this.state.editName === noEdit.editName
-              ? data.info.name
+              ? group.info.name
               : this.state.editName,
           description:
             this.state.editDescription === noEdit.editDescription
-              ? data.info.description
+              ? group.info.description
               : this.state.editDescription,
         },
         location:
           this.state.editLocation === noEdit.editLocation
-            ? data.location
+            ? group.location
             : this.state.editLocation,
       };
       // firebase update, sends notification to group members
@@ -411,7 +411,7 @@ class GroupPage extends React.Component {
         ) : (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={data ? data.info.name.slice(0, 20) : ''}
+            textHeader={group ? group.info.name.slice(0, 20) : ''}
             inputRange={[20, 50]}
             initialTitleOpacity={0}
             initialBackgroundColor={'transparent'}
@@ -471,7 +471,7 @@ class GroupPage extends React.Component {
               disabled={false}
               text="Save edits"
               loader={false}
-              click={() => this.saveEdits(data)}
+              click={() => this.saveEdits()}
             />
           </FadeInView>
         )}
