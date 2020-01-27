@@ -30,13 +30,17 @@ async function getMyGroups(userID, filterSport, location, radiusSearch) {
 
   return hits;
 }
-
+function filterLeagueEventsFromGroups(event, league) {
+  if (league === 'all') return true;
+  return event.info === league;
+}
 async function getEventsFromGroups(
   groups,
   location,
   radiusSearch,
   userID,
   sport,
+  league,
 ) {
   var events = [];
   for (var i in groups) {
@@ -60,7 +64,12 @@ async function getEventsFromGroups(
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
   });
-  hits = hits.filter((event) => event.end_timestamp > moment().valueOf());
+
+  hits = hits.filter(
+    (event) =>
+      event.end_timestamp > moment().valueOf() &&
+      filterLeagueEventsFromGroups(event, league),
+  );
   const eventsMyGroups = hits.reduce(function(result, item) {
     result[item.objectID] = item;
     return result;
@@ -77,7 +86,7 @@ const getEventPublic = async (
   radiusSearch,
 ) => {
   indexEvents.clearCache();
-
+  console.log('search for events around', league);
   var leagueFilter = ' AND info.league:' + league;
   if (league === 'all') {
     leagueFilter = '';
@@ -97,7 +106,7 @@ const getEventPublic = async (
   var filterUser =
     ' AND NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   if (userID === '') filterUser = '';
-
+  console.log('league filter', allEventsPublic);
   var {hits} = await indexEvents.search({
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
@@ -134,6 +143,7 @@ const getEventPublic = async (
       radiusSearch,
       userID,
       sport,
+      league,
     );
   }
 
@@ -141,7 +151,7 @@ const getEventPublic = async (
     ...allEventsPublic,
     ...eventsMyGroups,
   };
-
+  console.log('seatch done', allEventsPublic);
   return allEventsPublic;
 };
 
