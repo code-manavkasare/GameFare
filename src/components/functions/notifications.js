@@ -7,7 +7,6 @@ import {
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 
-
 async function permissions () {
   try {
     await firebase.messaging().requestPermission();
@@ -19,21 +18,21 @@ async function permissions () {
 
 async function subscribeToTopics(topics) {
   var permission = await permissions();
-  if (!permission) return false;
+  if (!permission) {return false;}
   for (var i in topics) {
     await firebase.messaging().subscribeToTopic(topics[i]);
   }
   return true;
 }
 
-async function updateUserFCMToken(userID, token) {
-  console.log(userID);
+async function refreshTokenOnDatabase(userID) {
+  const token = await firebase.messaging().getToken();
   await firebase
-  .database()
-  .ref('users/' + userID + '/')
-  .update({FCMToken: token});
+    .database()
+    .ref('users/' + userID + '/')
+    .update({FCMToken: token});
   return true;
 }
 
 
-module.exports = {subscribeToTopics, updateUserFCMToken};
+module.exports = {subscribeToTopics, unsubscribeUserFromTopics, refreshTokenOnDatabase};
