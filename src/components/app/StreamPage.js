@@ -18,7 +18,7 @@ import colors from '../style/colors';
 import sizes from '../style/sizes';
 
 import ScrollView2 from '../layout/scrollViews/ScrollView';
-import CardEvent from './elementsHome/CardEventSM';
+import CardEvent from './elementsStreaming/CardEvent';
 
 import PlaceHolder from '../placeHolders/CardConversation';
 import Button from '../layout/buttons/Button';
@@ -34,7 +34,9 @@ class StreamPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    if (this.props.userConnected) { this.loadEvents(this.props.userID); }
+    if (this.props.userConnected) {
+      this.loadEvents(this.props.userID);
+    }
   }
 
   async loadEvents(userID) {
@@ -95,19 +97,18 @@ class StreamPage extends React.Component {
         <View
           style={[
             styleApp.divider2,
-            {marginLeft: 20, width: width - 40, marginTop: 0},
+            {paddingLeft: 20, width: width - 40, marginTop: 0},
           ]}
         />
-          {this.state.loader
-            ? this.placeHolder()
-            : Object.values(events).map((event, i) => (
-                <CardEvent
-                  key={i}
-                  index={i}
-                  data={event}
-                  userID={this.props.userID}
-                />
-              ))}
+        {this.state.loader
+          ? this.placeHolder()
+          : Object.values(events).map((event, i) => (
+              <CardEvent
+                index={i}
+                eventTitle={event.info.name}
+                start={event.date.start}
+              />
+            ))}
       </View>
     );
   }
@@ -153,6 +154,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(
-  StreamPage,
-);
+export default connect(mapStateToProps, {historicSearchAction})(StreamPage);
