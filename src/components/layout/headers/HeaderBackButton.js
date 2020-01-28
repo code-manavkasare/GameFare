@@ -45,6 +45,7 @@ export default class HeaderFlow extends Component {
       this.props.loader !== nextProps.loader ||
       this.state !== nextState ||
       this.props.enableClickButton !== nextProps.enableClickButton ||
+      this.props.iconOffset !== nextProps.iconOffset ||
       this.props.colorIconOffset !== nextProps.colorIconOffset
     );
   }
@@ -134,11 +135,7 @@ export default class HeaderFlow extends Component {
               {this.props.textHeader}
             </Animated.Text>
           </View>
-          <Col
-            size={15}
-            style={styles.center2}
-            activeOpacity={0.4}
-            onPress={() => this.close()}>
+          <Col size={15} style={styles.center2} activeOpacity={0.4}>
             {this.props.icon1 && (
               <Animated.View
                 style={[
@@ -164,10 +161,10 @@ export default class HeaderFlow extends Component {
               </Animated.View>
             )}
           </Col>
-          <Col size={20} style={styleApp.center}>
+          <Col size={50} style={styleApp.center}>
             {this.props.imgHeader ? this.props.imgHeader : null}
           </Col>
-          <Col size={50} style={styles.center} />
+          <Col size={5} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
             {this.props.loader ? null : this.props.iconOffset != null ? (
               <Animated.View
@@ -214,7 +211,7 @@ export default class HeaderFlow extends Component {
               </Animated.View>
             ) : null}
           </Col>
-          <Col size={5} style={styles.center} />
+          <Col size={2} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
             {this.props.loader ? (
               <Loader color={'green'} size={24} />

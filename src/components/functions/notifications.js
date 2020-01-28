@@ -32,23 +32,8 @@ async function updateUserFCMToken(userID, token) {
   .database()
   .ref('users/' + userID + '/')
   .update({FCMToken: token});
+  return true;
 }
 
-async function unsubscribeUserFromTopics(userID, topics) {
-    try {
-      var url = 'https://us-central1-getplayd.cloudfunctions.net/unsubscribeUserFromTopics';
-      const promiseAxios = await axios.get(url, {
-        params: {
-          userID: userID,
-          topics: topics,
-        },
-      });
-      if (!promiseAxios.data.response) {
-        console.log(promiseAxios.data.message);
-      }
-    } catch (err) {
-      throw err;
-    }
-}
 
-module.exports = {subscribeToTopics, unsubscribeUserFromTopics, updateUserFCMToken};
+module.exports = {subscribeToTopics, updateUserFCMToken};

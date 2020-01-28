@@ -25,6 +25,7 @@ import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
+import colors from '../../style/colors';
 
 class EventsView extends Component {
   constructor(props) {

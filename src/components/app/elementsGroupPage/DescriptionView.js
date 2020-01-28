@@ -25,6 +25,7 @@ class DescriptionView extends Component {
     this.state = {
       loader: true,
       description: '',
+      initFocus: false,
     };
   }
   componentDidMount() {
@@ -68,13 +69,31 @@ class DescriptionView extends Component {
                 marginLeft: 0,
               }}
             />
-          ) : (
-            <FadeInView duration={300} style={{marginTop: 5}}>
-              <Text style={styleApp.smallText}>
-                {this.props.data.info.description}
-              </Text>
-            </FadeInView>
-          )}
+          ) : !this.props.editMode
+              ? <FadeInView duration={300} style={{marginTop: 5}}>
+                  <Text style={styleApp.smallText}>
+                    {this.props.data.info.description}
+                  </Text>
+                </FadeInView>
+              : <TouchableOpacity
+                  style={{marginTop: 5}}
+                  activeOpacity={0.7}
+                  onPress={() => this.descRef.focus()}>
+                  <TextInput
+                    style={styleApp.smallText}
+                    multiline={true}
+                    placeholder={String(this.props.data.info.description)}
+                    returnKeyType={'done'}
+                    ref={(input) => {
+                      this.descRef = input;
+                    }}
+                    underlineColorAndroid="rgba(0,0,0,0)"
+                    autoCorrect={true}
+                    onChangeText={(text) => this.props.onChangeText(text)}
+                    value={this.props.value}
+                  />
+                </TouchableOpacity>
+          }
         </View>
       </View>
     );

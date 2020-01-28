@@ -86,6 +86,11 @@ class ListEvents extends React.Component {
 
     // var filterDate =' AND date_timestamp>' + Number(new Date())
     var mygroups = await this.getGroups(filters);
+    // REMOVE THE LINE BELOW THIS REMOVE THE LINE BELOW THIS
+    mygroups = mygroups.filter(group => group.objectID !== "-LzI3bAQjfCPKtb4tcuQ");
+    console.log("MYGROUPS");
+    console.log(mygroups);
+    console.log("ENDMYGROUPS");
     var infoGroups = mygroups.reduce(function(result, item) {
       result[item.objectID] = item;
       return result;
@@ -97,6 +102,7 @@ class ListEvents extends React.Component {
     this.setState({loader1: false});
   }
   listEvents(events) {
+    console.log(this.props.allGroups);
     return Object.values(events).map((event, i) => (
       <CardGroup key={i} allAccess={true} data={this.props.allGroups[event]} />
     ));

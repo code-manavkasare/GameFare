@@ -36,12 +36,9 @@ export default class CardUser extends Component {
   }
   componentDidMount() {}
   async onClick(user) {
-    // poor solution for the need to remove players from group/event
-    // good target for split of UI/logic into different components
-    // same for discussions
     if (this.props.removable) {
       const {removeFunc} = this.props;
-      removeFunc();
+      removeFunc(user);
       return;
     }
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
@@ -189,6 +186,13 @@ export default class CardUser extends Component {
                 <Col size={10} style={styleApp.center3}>
                   {this.state.loader ? (
                     <Loader size={20} color="green" />
+                  ) : this.props.removable ? (
+                    <AllIcons
+                      name="minus"
+                      type="font"
+                      color={colors.red}
+                      size={17}
+                    />
                   ) : this.props.userID !== user.id ? (
                     <AllIcons
                       name="envelope"

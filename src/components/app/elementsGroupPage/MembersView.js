@@ -39,16 +39,22 @@ class MembersView extends Component {
   componentDidMount() {}
   rowUser(user, i, data) {
     return (
-      <CardUser
-        user={user}
-        infoUser={this.props.infoUser}
-        admin={data.info.organizer === this.props.userID}
-        userConnected={this.props.userConnected}
-        objectID={data.objectID}
-        key={i}
-        userID={this.props.userID}
-        type="group"
-      />
+        <Row style={styleApp.center2}>
+          <Col style={styleApp.center}>
+            <CardUser
+              user={user}
+              infoUser={this.props.infoUser}
+              admin={this.props.data.info.organizer === this.props.userID}
+              userConnected={this.props.userConnected}
+              objectID={this.props.data.objectID}
+              key={i}
+              userID={this.props.userID}
+              removable={this.props.editMode}
+              removeFunc={() => this.props.onRemoveMember(user)}
+              type="group"
+            />
+          </Col>
+        </Row>
     );
   }
   async joinGroup() {
@@ -120,8 +126,7 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.id ===
-              this.props.userID ? null : this.userAlreadyJoined(data) ? (
+              {data.organizer.id === this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 <Row>
                   <Col size={50} style={styleApp.center}>
                     <AllIcons
