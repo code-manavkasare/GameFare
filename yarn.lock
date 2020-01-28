@@ -6455,6 +6455,13 @@ react-native-keep-awake@^4.0.0:
   resolved "https://registry.yarnpkg.com/react-native-keep-awake/-/react-native-keep-awake-4.0.0.tgz#d89fdc3fb60b3cffa979ef37dc5816196df998a2"
   integrity sha512-0Fotox+eLXQooeibVs3P60yASYUWjtRw9MZNmbuHt5UZQrgUrAKsE4jm7gTr4tPU1m1RkwGzcgUFpcOkh/ec7g==
 
+react-native-keyboard-aware-parallax-scroll-view@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-aware-parallax-scroll-view/-/react-native-keyboard-aware-parallax-scroll-view-0.0.4.tgz#2deef5e347fe12b806e1295ce6f85726f7ee2296"
+  integrity sha1-Le7140f+ErgG4Slc5vhXJvfuIpY=
+  dependencies:
+    react-native-keyboard-aware-scroll-view dejakob/react-native-keyboard-aware-scroll-view#master
+
 react-native-keyboard-aware-scroll-view@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.9.1.tgz#9e54b565a5f19b30bed12221d48921781f7630af"
@@ -6462,6 +6469,12 @@ react-native-keyboard-aware-scroll-view@^0.9.1:
   dependencies:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
+
+"react-native-keyboard-aware-scroll-view@github:dejakob/react-native-keyboard-aware-scroll-view#master":
+  version "0.2.9"
+  resolved "https://codeload.github.com/dejakob/react-native-keyboard-aware-scroll-view/tar.gz/781e33336048aec9b89f2aa327a580779b2d3f60"
+  dependencies:
+    react-timer-mixin "^0.13.3"
 
 react-native-keyboard-input@^6.0.0:
   version "6.0.0"
@@ -6733,6 +6746,11 @@ react-test-renderer@16.9.0:
     prop-types "^15.6.2"
     react-is "^16.9.0"
     scheduler "^0.15.0"
+
+react-timer-mixin@^0.13.3:
+  version "0.13.4"
+  resolved "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz#75a00c3c94c13abe29b43d63b4c65a88fc8264d3"
+  integrity sha512-4+ow23tp/Tv7hBM5Az5/Be/eKKF7DIvJ09voz5LyHGQaqqz9WV8YMs31eFvcYQs7d451LSg7kDJV70XYN/Ug/Q==
 
 react-transform-hmr@^1.0.4:
   version "1.0.4"

@@ -177,7 +177,7 @@ class EventPage extends React.Component {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event.info.name}
+          textHeader={''}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -200,7 +200,7 @@ class EventPage extends React.Component {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={event.info.name}
+          textHeader={''}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Button,
+  KeyboardAvoidingView,
   Animated,
   Image,
   TextInput,
@@ -14,6 +15,8 @@ import firebase from 'react-native-firebase';
 import {connect} from 'react-redux';
 import {createEventAction} from '../../actions/createEventActions';
 import {groupsAction} from '../../actions/groupsActions';
+import ParallaxScrollView from 'react-native-parallax-scroll-view';
+// import ParallaxKeyboardAwareScrollView from 'react-native-keyboard-aware-parallax-scroll-view';
 
 const {height, width} = Dimensions.get('screen');
 import colors from '../style/colors';
@@ -35,7 +38,7 @@ import MembersView from './elementsGroupPage/MembersView';
 import PostsView from './elementsGroupPage/PostsView';
 import EventsView from './elementsGroupPage/EventsView';
 import ButtonColor from '../layout/Views/Button';
-import ParallaxScrollView from 'react-native-parallax-scroll-view';
+
 import {editGroup, removeUserFromGroup} from '../functions/editGroup';
 import {takePicture, pickLibrary, resize} from '../functions/pictures';
 
@@ -59,7 +62,7 @@ class GroupPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    console.log("GroupPage did mount");
+    console.log('GroupPage did mount');
     this.loadGroup(this.props.navigation.getParam('objectID'));
   }
   async loadGroup(objectID) {
@@ -207,7 +210,6 @@ class GroupPage extends React.Component {
     );
   }
   userAlreadyMember(members, userID) {
-    console.log('userAlreadyMember', members);
     if (!members) return false;
     return (
       !Object.values(members).filter((user) => user.id === userID).length === 0
@@ -234,7 +236,7 @@ class GroupPage extends React.Component {
         <MembersView
           data={data}
           objectID={data.objectID}
-          userID={this.props.userID}
+          userID={userID}
           loader={this.state.loader}
           infoUser={this.props.infoUser}
           editMode={this.state.editMode}
@@ -244,7 +246,7 @@ class GroupPage extends React.Component {
         <EventsView
           data={data}
           objectID={data.objectID}
-          userID={this.props.userID}
+          userID={userID}
           loader={this.state.loader}
           createEventAction={(val, data) =>
             this.props.createEventAction(val, data)
@@ -387,13 +389,14 @@ class GroupPage extends React.Component {
 
   render() {
     const {dismiss} = this.props.navigation;
-    const {group} = this.state
+    const {group} = this.state;
+    const {userID} = this.props;
     return (
       <View style={{flex: 1}}>
         {this.conditionAdmin() ? (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={group ? group.info.name.slice(0, 20) : ''}
+            textHeader={''}
             inputRange={[20, 50]}
             initialTitleOpacity={0}
             initialBackgroundColor={'transparent'}
@@ -421,7 +424,7 @@ class GroupPage extends React.Component {
         ) : (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={group ? group.info.name.slice(0, 20) : ''}
+            textHeader={''}
             inputRange={[20, 50]}
             initialTitleOpacity={0}
             initialBackgroundColor={'transparent'}
@@ -457,6 +460,9 @@ class GroupPage extends React.Component {
             }
           }}
           parallaxHeaderHeight={280}>
+            <KeyboardAvoidingView>
+              
+            </KeyboardAvoidingView>
           {this.group(group, userID)}
         </ParallaxScrollView>
 

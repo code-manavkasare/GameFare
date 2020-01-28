@@ -1,13 +1,10 @@
-import React, { Component } from 'react';
-import {
-  Platform,
-  PermissionsAndroid,
-} from 'react-native';
+import React, {Component} from 'react';
+import {Platform, PermissionsAndroid} from 'react-native';
 
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 
-async function permissions () {
+async function permissions() {
   try {
     await firebase.messaging().requestPermission();
     return true;
@@ -18,7 +15,9 @@ async function permissions () {
 
 async function subscribeToTopics(topics) {
   var permission = await permissions();
-  if (!permission) {return false;}
+  if (!permission) {
+    return false;
+  }
   for (var i in topics) {
     await firebase.messaging().subscribeToTopic(topics[i]);
   }
@@ -34,5 +33,4 @@ async function refreshTokenOnDatabase(userID) {
   return true;
 }
 
-
-module.exports = {subscribeToTopics, unsubscribeUserFromTopics, refreshTokenOnDatabase};
+module.exports = {subscribeToTopics, refreshTokenOnDatabase};
