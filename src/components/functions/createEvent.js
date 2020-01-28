@@ -1,5 +1,5 @@
 import {uploadPictureFirebase} from '../functions/pictures';
-import {subscribeToTopics} from '../functions/notifications';
+import {subscribeToTopics, refreshTokenOnDatabase} from '../functions/notifications';
 import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
@@ -126,6 +126,8 @@ async function createEvent(data, userID, infoUser, level) {
 
   await pushEventToGroups(data.groups, key);
   await subscribeToTopics([userID, 'all', key]);
+  refreshTokenOnDatabase(userID);
+
 
   return event;
 }
@@ -280,6 +282,7 @@ async function joinEvent(
   }
   if (user.status === 'confirmed')
     await subscribeToTopics([userID, 'all', data.objectID]);
+    refreshTokenOnDatabase(userID);
 
   return {
     response: true,

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, PermissionsAndroid} from 'react-native';
 
 import {uploadPictureFirebase} from '../functions/pictures';
-import {subscribeToTopics} from '../functions/notifications';
+import {subscribeToTopics, refreshTokenOnDatabase} from '../functions/notifications';
 import firebase from 'react-native-firebase';
 
 function generateID() {
@@ -59,7 +59,7 @@ async function createGroup(data, userID, infoUser) {
     .ref('discussions/' + discussionID)
     .update(newDiscussion(discussionID, key, pictureUri, group.info.name));
   group.objectID = key;
-
+  refreshTokenOnDatabase(userID);
   await subscribeToTopics([userID, 'all', key]);
   return group;
 }
@@ -78,6 +78,7 @@ async function subscribeUserToGroup(
     info: infoUser,
     tokenNotification: tokenNotification,
   };
+  refreshTokenOnDatabase(userID);
   await firebase
     .database()
     .ref('groups/' + groupID + '/members/' + userID)
