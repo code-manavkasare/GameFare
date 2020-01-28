@@ -215,6 +215,9 @@ class GroupPage extends React.Component {
       !Object.values(members).filter((user) => user.id === userID).length === 0
     );
   }
+  scrollToDescription () {
+    this.scrollRef.scrollTo({y:200})
+  }
   group(data, userID) {
     if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
@@ -228,6 +231,7 @@ class GroupPage extends React.Component {
           objectID={data.objectID}
           loader={this.state.loader}
           data={data}
+          scrollToDescription={() => this.scrollToDescription()}
           editMode={this.state.editMode}
           onChangeText={(text) => this.setState({editDescription: text})}
           value={this.state.editDescription}
@@ -392,7 +396,9 @@ class GroupPage extends React.Component {
     const {group} = this.state;
     const {userID} = this.props;
     return (
-      <View style={{flex: 1}}>
+      <View
+      style={{ flex: 1 }}
+  >
         {this.conditionAdmin() ? (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -448,6 +454,10 @@ class GroupPage extends React.Component {
           onScroll={Animated.event([
             {nativeEvent: {contentOffset: {y: this.AnimatedHeaderValue}}},
           ])}
+          scrollToOverflowEnabled={true}
+          ref={(ref) => {
+            this.scrollRef = ref;
+          }}
           renderBackground={() => {
             if (group) {
               return (
@@ -460,9 +470,6 @@ class GroupPage extends React.Component {
             }
           }}
           parallaxHeaderHeight={280}>
-            <KeyboardAvoidingView>
-              
-            </KeyboardAvoidingView>
           {this.group(group, userID)}
         </ParallaxScrollView>
 
