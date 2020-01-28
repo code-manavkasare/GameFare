@@ -384,8 +384,6 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				CEB97FA75466E4A51918FF10 /* [CP] Embed Pods Frameworks */,
-				B525DDA74CC827EA89AD911A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -430,8 +428,6 @@
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
 				2D02E4791E0B4A5D006451C7 /* Resources */,
 				2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */,
-				CD7B307C8686A20D294CA44E /* [CP] Embed Pods Frameworks */,
-				A705DAC1AF650C46090EF5C9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -450,8 +446,6 @@
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
-				B9157C40A8D23FEC55A352EA /* [CP] Embed Pods Frameworks */,
-				A9F63B647663BAE435E82855 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -625,7 +619,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh",
 				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft.png",
 				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft@2x.png",
 				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight.png",
@@ -700,7 +694,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
@@ -771,127 +765,13 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A705DAC1AF650C46090EF5C9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A9F63B647663BAE435E82855 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B525DDA74CC827EA89AD911A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B9157C40A8D23FEC55A352EA /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CD7B307C8686A20D294CA44E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CEB97FA75466E4A51918FF10 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh",
 				"${PODS_ROOT}/../../node_modules/@react-native-mapbox-gl/maps/ios/Mapbox.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -900,7 +780,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E742025DA3EC3DA4E1C967C7 /* [CP] Check Pods Manifest.lock */ = {
@@ -1054,12 +934,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
-				CURRENT_PROJECT_VERSION = 0.9.8;
+				CURRENT_PROJECT_VERSION = 0.9.9;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = H3679W58Z6;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.9.8;
+				MARKETING_VERSION = 0.9.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1080,11 +960,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
-				CURRENT_PROJECT_VERSION = 0.9.8;
+				CURRENT_PROJECT_VERSION = 0.9.9;
 				DEVELOPMENT_TEAM = H3679W58Z6;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.9.8;
+				MARKETING_VERSION = 0.9.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
