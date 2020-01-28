@@ -13,6 +13,7 @@ import AllIcons from '../layout/icons/AllIcons';
 import Button from '../layout/Views/Button';
 
 import HomePage from '../app/HomePage';
+import StreamPage from '../app/StreamPage';
 import ProfilePage from '../app/ProfilePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
@@ -207,6 +208,7 @@ const MainApp = createBottomTabNavigator(
   {
     Home: HomePage,
     ListGroups: ListGroups,
+    Stream: StreamPage,
     MessageList: MessageList,
     Profile: ProfileNavigator,
   },
@@ -235,6 +237,8 @@ const MainApp = createBottomTabNavigator(
                           ? 'calendar2'
                           : routeName === 'ListGroups'
                           ? 'profileFooter'
+                          : routeName === 'Stream'
+                          ? 'speech'
                           : routeName === 'MessageList'
                           ? 'speech'
                           : routeName === 'Profile'
