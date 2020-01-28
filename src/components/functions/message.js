@@ -98,6 +98,7 @@ async function loadMyDiscusions(userID) {
     eventsDiscussions,
   );
   getDiscussionsEvent = getDiscussionsEvent.results;
+  console.log('ouhou discussion events', getDiscussionsEvent);
 
   let discussions = union(results, hits, getDiscussionsEvent).filter(
     (discussion) => discussion.firstMessageExists,
@@ -122,7 +123,11 @@ function nameOtherMemberConversation(conversation, userID) {
   const infoMember = Object.values(conversation.members).filter(
     (user) => user.id !== userID,
   )[0].info;
-  if (!infoMember) return 'None';
+
+  if (!infoMember) {
+    console.log('nnoneeee', conversation);
+    return 'None';
+  }
   return infoMember.firstname + ' ' + infoMember.lastname;
 }
 
@@ -138,6 +143,7 @@ function titleConversation(conversation, userID) {
     if (i === '0') title = members[i].info.firstname;
     else title = title + ', ' + members[i].info.firstname;
   }
+  if (title.length > 23) title = title.slice(0, 23) + '...';
   return title;
 }
 

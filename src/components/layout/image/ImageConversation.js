@@ -64,6 +64,8 @@ export default class ImageConversation extends Component {
     );
   }
   image(conversation, userID, style, sizeSmallImg) {
+    console.log('conversation image', conversation.type);
+
     if (conversation.type === 'group')
       return (
         <AsyncImage
@@ -72,6 +74,7 @@ export default class ImageConversation extends Component {
           imgInitial={conversation.image}
         />
       );
+
     if (conversation.numberMembers === 2)
       return this.imageMember(
         Object.values(conversation.members).filter(

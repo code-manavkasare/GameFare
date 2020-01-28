@@ -82,9 +82,10 @@ class GroupPage extends React.Component {
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
-        activeOpacity={alert? 0.7 : 1}
+        activeOpacity={alert ? 0.7 : 1}
         onPress={() =>
-          alert && this.props.navigation.navigate('AlertAddress', {data: dataAlert})
+          alert &&
+          this.props.navigation.navigate('AlertAddress', {data: dataAlert})
         }>
         <Row>
           <Col size={15} style={styleApp.center2}>
@@ -205,13 +206,20 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-  group(data) {
+  userAlreadyMember(members, userID) {
+    console.log('userAlreadyMember', members);
+    if (!members) return false;
+    return (
+      !Object.values(members).filter((user) => user.id === userID).length === 0
+    );
+  }
+  group(data, userID) {
     if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
     return (
-      <View style={{width: width, marginTop: 0}}>
+      <View style={{width: width}}>
         {this.groupInfo(data, sport)}
 
         <DescriptionView
@@ -246,12 +254,14 @@ class GroupPage extends React.Component {
           push={(val, data) => this.props.navigation.push(val, data)}
         />
 
-        <PostsView
-          objectID={data.objectID}
-          data={data}
-          loader={this.state.loader}
-          infoUser={this.props.infoUser}
-        />
+        {this.userAlreadyMember(data.members, userID) && (
+          <PostsView
+            objectID={data.objectID}
+            data={data}
+            loader={this.state.loader}
+            infoUser={this.props.infoUser}
+          />
+        )}
 
         <View style={{height: 100}} />
       </View>
@@ -364,7 +374,7 @@ class GroupPage extends React.Component {
   }
   goToShareGroup = (data) => {
     if (!this.props.userConnected) {
-      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+      return this.props.navigation.navigate('SignIn');
     }
     this.props.navigation.navigate('Contacts', {
       openPageLink: 'openGroupPage',
@@ -425,12 +435,7 @@ class GroupPage extends React.Component {
           />
         )}
         <ParallaxScrollView
-          style={{
-            height: height,
-            backgroundColor: 'white',
-            overflow: 'hidden',
-            position: 'absolute',
-          }}
+          style={styles.parallaxScrollView}
           showsVerticalScrollIndicator={false}
           stickyHeaderHeight={100}
           outputScaleValue={6}
@@ -443,22 +448,16 @@ class GroupPage extends React.Component {
           renderBackground={() => {
             if (group) {
               return (
-                <TouchableOpacity
-                  onPress={() => {
-                    console.log('press');
-                  }}>
-                  <AsyncImage
-                    style={{width: '100%', height: 280, borderRadius: 0}}
-                    mainImage={this.state.group.pictures[0]}
-                    imgInitial={this.state.group.pictures[0]}
-                  />
-                </TouchableOpacity>
+                <AsyncImage
+                  style={styles.mainImg}
+                  mainImage={group.pictures[0]}
+                  imgInitial={group.pictures[0]}
+                />
               );
             }
           }}
-          renderFixedHeader={null}
           parallaxHeaderHeight={280}>
-          {this.group(group)}
+          {this.group(group, userID)}
         </ParallaxScrollView>
 
         {!this.state.editMode ? null : (
@@ -479,6 +478,16 @@ class GroupPage extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  parallaxScrollView: {
+    height: height,
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    position: 'absolute',
+  },
+  mainImg: {width: '100%', height: 280},
+});
 
 const mapStateToProps = (state) => {
   return {

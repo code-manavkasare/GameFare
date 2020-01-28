@@ -25,6 +25,7 @@ import CardImg from './elementsChat/CardImg';
 import AllIcons from '../../layout/icons/AllIcons';
 
 import {getParams, openUrl} from '../../database/branch';
+import {messageAvatar, messageName} from '../../functions/users';
 import NavigationService from '../../../../NavigationService';
 import AllIcon from '../../layout/icons/AllIcons';
 
@@ -140,13 +141,13 @@ class CardMessage extends React.Component {
           <Col size={15}>
             <AsyncImage
               style={{width: 45, height: 45, borderRadius: 5}}
-              mainImage={props.currentMessage.user.avatar}
-              imgInitial={props.currentMessage.user.avatar}
+              mainImage={messageAvatar(props.currentMessage.user.info)}
+              imgInitial={messageAvatar(props.currentMessage.user.info)}
             />
           </Col>
           <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
             <Text style={[styleApp.text, {fontSize: 16}]}>
-              {props.currentMessage.user.name}{' '}
+              {messageName(props.currentMessage.user.info)}{' '}
               <Text style={{color: colors.grey, fontSize: 12}}>
                 {moment(props.currentMessage.createdAt).format('h:mm a')}
               </Text>

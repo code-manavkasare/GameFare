@@ -73,6 +73,7 @@ class ListEvents extends React.Component {
       'info.sport:' + sport + userFilter,
       location,
     );
+    console.log('groups arounds loaded', groups);
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
@@ -172,7 +173,7 @@ class ListEvents extends React.Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    infoUser:state.user.infoUser.userInfo,
+    infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     sportSelected: state.historicSearch.sport,
     //leagueSelected:state.historicSearch.league,
