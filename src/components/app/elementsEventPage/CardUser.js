@@ -25,6 +25,7 @@ import colors from '../../style/colors';
 import styleApp from '../../style/style';
 
 import {createDiscussion, searchDiscussion} from '../../functions/message';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export default class CardUser extends Component {
   constructor(props) {
@@ -196,12 +197,23 @@ export default class CardUser extends Component {
                       size={17}
                     />
                   ) : user.status === 'pending' ? (
-                    <AllIcons
-                      name="redo-alt"
-                      type="font"
-                      color={colors.secondary}
-                      size={17}
-                    />
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        NavigationService.navigate('Alert', {
+                          close: true,
+                          textButton: 'Got it!',
+                          title:
+                            'Your joining request is pending admin approval.',
+                        })
+                      }>
+                      <AllIcons
+                        name="redo-alt"
+                        type="font"
+                        color={colors.secondary}
+                        size={17}
+                      />
+                    </TouchableOpacity>
                   ) : null}
                 </Col>
               </Row>

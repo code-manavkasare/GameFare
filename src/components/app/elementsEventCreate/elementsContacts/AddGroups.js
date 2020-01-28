@@ -227,7 +227,8 @@ class AddGroups extends Component {
       const hasGroup = ramda.has(group.objectID);
       let updatesGroup = {};
       let updatesEvent = {};
-      if (pageFrom === 'events') {
+      console.log('pageFrom!!', pageFrom);
+      if (pageFrom === 'Event') {
         if (hasGroup(selectedGroups)) {
           updatesGroup['/events/' + objectID] = true;
           updatesEvent['/groups/' + group.objectID] = true;
