@@ -76,7 +76,11 @@ class CardEvent extends React.Component {
   render() {
     return (
       <ButtonColor
+        style={styles.cardEvent}
         key={this.props.index}
+        click={() => {}}
+        color={'white'}
+        onPressColor={colors.off}
         view={() => {
           return (
             <Col style={styles.fullWidth}>
@@ -94,16 +98,22 @@ class CardEvent extends React.Component {
             </Col>
           );
         }}
-        click={() => {}}
-        color={'white'}
-        style={styleApp.cardEvent}
-        onPressColor={colors.off}
       />
     );
   }
 }
 
 const styles = StyleSheet.create({
+  cardEvent: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: 'white',
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 5,
+    paddingBottom: 5,
+    borderColor: colors.borderColor,
+  },
   row: {
     width: '100%',
     justifyContent: 'flex-start',
@@ -111,26 +121,6 @@ const styles = StyleSheet.create({
   },
   fullWidth: {
     width: '100%',
-  },
-  outerRow: {
-    ...styleApp.center2,
-    flex: 1,
-    paddingRight: 10,
-    paddingLeft: 10,
-  },
-  dividerBottom: {
-    height: 0.5,
-    borderTopWidth: 0.5,
-    borderColor: colors.grey,
-    marginTop: 15,
-  },
-  logoLeague: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    position: 'absolute',
-    right: 0,
-    top: 0,
   },
 });
 

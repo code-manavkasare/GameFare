@@ -78,12 +78,6 @@ class StreamPage extends React.Component {
         <PlaceHolder />
         <PlaceHolder />
         <PlaceHolder />
-        <PlaceHolder />
-        <PlaceHolder />
-        <PlaceHolder />
-        <PlaceHolder />
-        <PlaceHolder />
-        <PlaceHolder />
       </View>
     );
   }
