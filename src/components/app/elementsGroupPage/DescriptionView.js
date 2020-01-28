@@ -84,6 +84,8 @@ class DescriptionView extends Component {
                     multiline={true}
                     placeholder={String(this.props.data.info.description)}
                     returnKeyType={'done'}
+                    blurOnSubmit={true}
+                    onFocus={() => this.props.scrollToDescription()}
                     ref={(input) => {
                       this.descRef = input;
                     }}
