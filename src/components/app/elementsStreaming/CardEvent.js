@@ -79,21 +79,19 @@ class CardEvent extends React.Component {
         key={this.props.index}
         view={() => {
           return (
-            <Row style={styles.outerRow}>
-              <Col style={styles.center2}>
-                <Row style={styles.center2}>
-                  <Text>{this.props.eventTitle}</Text>
-                </Row>
-                <Row style={styles.center2}>
-                  <Text
-                    style={[styleApp.input, {color: colors.primary2, fontSize: 12}]}>
-                    {date(this.props.start, 'ddd, Do MMM')}{' '}
-                    <Text style={{color: colors.title, fontSize: 10}}>•</Text>{' '}
-                    {time(this.props.start, 'h:mm a')}
-                  </Text>
-                </Row>
-              </Col>
-            </Row>
+            <Col style={styles.fullWidth}>
+              <Row style={styles.row}>
+                <Text style={styleApp.title}>{this.props.eventTitle}</Text>
+              </Row>
+              <Row style={styles.row}>
+                <Text
+                  style={[styleApp.input, {color: colors.primary2, fontSize: 12}]}>
+                  {date(this.props.start, 'ddd, Do MMM')}{' '}
+                  <Text style={{color: colors.title, fontSize: 12}}>•</Text>{' '}
+                  {time(this.props.start, 'h:mm a')}
+                </Text>
+              </Row>
+            </Col>
           );
         }}
         click={() => {}}
@@ -106,8 +104,17 @@ class CardEvent extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  row: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  fullWidth: {
+    width: '100%',
+  },
   outerRow: {
     ...styleApp.center2,
+    flex: 1,
     paddingRight: 10,
     paddingLeft: 10,
   },

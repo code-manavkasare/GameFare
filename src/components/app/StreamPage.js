@@ -90,7 +90,7 @@ class StreamPage extends React.Component {
   streamPageView(events) {
     if (!this.props.userConnected) return this.logoutView();
     return (
-      <View style={{paddingTop: 5, minHeight: height}}>
+      <View style={{paddingTop: 5}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={[styleApp.title, {fontSize: 27}]}>Events</Text>
         </View>

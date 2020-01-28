@@ -233,12 +233,12 @@ const MainApp = createBottomTabNavigator(
                   <Col size={10} style={[styles.center4, {paddingTop: 10}]}>
                     <AllIcons
                       name={
-                        routeName == 'Home'
+                        routeName === 'Home'
                           ? 'calendar2'
                           : routeName === 'ListGroups'
                           ? 'profileFooter'
                           : routeName === 'Stream'
-                          ? 'speech'
+                          ? 'camera'
                           : routeName === 'MessageList'
                           ? 'speech'
                           : routeName === 'Profile'
@@ -246,9 +246,13 @@ const MainApp = createBottomTabNavigator(
                           : null
                       }
                       size={16}
-                      color={tintColor}
+                      color={tintColor} // color red for stream button?
                       style={styles.iconFooter}
-                      type="moon"
+                      type={
+                        routeName === 'Stream'
+                          ? 'font'
+                          : 'moon'
+                      }
                     />
                     <Text
                       style={[
@@ -264,6 +268,8 @@ const MainApp = createBottomTabNavigator(
                         ? 'Events'
                         : routeName === 'ListGroups'
                         ? 'Groups'
+                        : routeName === 'Stream'
+                        ? 'Go Live'
                         : routeName === 'MessageList'
                         ? 'Message'
                         : routeName === 'Profile'
