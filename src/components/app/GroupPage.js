@@ -66,9 +66,10 @@ class GroupPage extends React.Component {
     return (
       <TouchableOpacity
         style={{marginTop: 20}}
-        activeOpacity={alert? 0.7 : 1}
+        activeOpacity={alert ? 0.7 : 1}
         onPress={() =>
-          alert && this.props.navigation.navigate('AlertAddress', {data: dataAlert})
+          alert &&
+          this.props.navigation.navigate('AlertAddress', {data: dataAlert})
         }>
         <Row>
           <Col size={15} style={styleApp.center2}>
@@ -140,13 +141,20 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-  group(data) {
+  userAlreadyMember(members, userID) {
+    console.log('userAlreadyMember', members);
+    if (!members) return false;
+    return (
+      !Object.values(members).filter((user) => user.id === userID).length === 0
+    );
+  }
+  group(data, userID) {
     if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
     return (
-      <View style={{width: width, marginTop: 0}}>
+      <View style={{width: width}}>
         {this.groupInfo(data, sport)}
 
         <DescriptionView
@@ -176,12 +184,14 @@ class GroupPage extends React.Component {
           push={(val, data) => this.props.navigation.push(val, data)}
         />
 
-        <PostsView
-          objectID={data.objectID}
-          data={data}
-          loader={this.state.loader}
-          infoUser={this.props.infoUser}
-        />
+        {this.userAlreadyMember(data.members, userID) && (
+          <PostsView
+            objectID={data.objectID}
+            data={data}
+            loader={this.state.loader}
+            infoUser={this.props.infoUser}
+          />
+        )}
 
         <View style={{height: 100}} />
       </View>
@@ -201,16 +211,15 @@ class GroupPage extends React.Component {
   };
 
   render() {
-    const {goBack, dismiss} = this.props.navigation;
-    var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
-    const {group} = this.state
+    const {dismiss} = this.props.navigation;
+    // var data = this.props.allGroups[this.props.navigation.getParam('objectID')];
+    const {group} = this.state;
+    const {userID} = this.props;
     return (
       <View>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={
-            !group ? '' : group.info.name.slice(0, 20)
-          }
+          textHeader={!group ? '' : group.info.name.slice(0, 20)}
           inputRange={[20, 50]}
           initialTitleOpacity={0}
           initialBackgroundColor={'transparent'}
@@ -219,18 +228,12 @@ class GroupPage extends React.Component {
           sizeIcon2={15}
           icon1="arrow-left"
           icon2="share"
-          // clickButton1 = {() => this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'))}
           clickButton1={() => dismiss()}
           clickButton2={() => this.goToShareGroup(group)}
         />
 
         <ParallaxScrollView
-          style={{
-            height: height,
-            backgroundColor: 'white',
-            overflow: 'hidden',
-            position: 'absolute',
-          }}
+          style={styles.parallaxScrollView}
           showsVerticalScrollIndicator={false}
           stickyHeaderHeight={100}
           outputScaleValue={6}
@@ -244,21 +247,30 @@ class GroupPage extends React.Component {
             if (group) {
               return (
                 <AsyncImage
-                  style={{width: '100%', height: 280, borderRadius: 0}}
+                  style={styles.mainImg}
                   mainImage={group.pictures[0]}
                   imgInitial={group.pictures[0]}
                 />
               );
             }
           }}
-          renderFixedHeader={null}
           parallaxHeaderHeight={280}>
-          {this.group(group)}
+          {this.group(group, userID)}
         </ParallaxScrollView>
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  parallaxScrollView: {
+    height: height,
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    position: 'absolute',
+  },
+  mainImg: {width: '100%', height: 280},
+});
 
 const mapStateToProps = (state) => {
   return {

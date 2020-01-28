@@ -24,6 +24,7 @@ import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 import {subscribeUserToGroup} from '../../functions/createGroup';
+import {arrayAttendees} from '../../functions/createEvent';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -110,7 +111,7 @@ class MembersView extends Component {
       return false;
     return true;
   }
-  membersView(data) {
+  membersView(data, members) {
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
@@ -171,22 +172,22 @@ class MembersView extends Component {
             <PlaceHolder />
             <PlaceHolder />
           </FadeInView>
-        ) : !data.members ? (
+        ) : members.length === 0 ? (
           <Text style={[styleApp.smallText, {marginTop: 10, marginLeft: 20}]}>
             No one has joined the group yet.
           </Text>
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
-            {Object.values(data.members).map((user, i) =>
-              this.rowUser(user, i, data),
-            )}
+            {members.map((user, i) => this.rowUser(user, i, data))}
           </FadeInView>
         )}
       </View>
     );
   }
   render() {
-    return this.membersView(this.props.data);
+    const {data, userID} = this.props;
+    const members = arrayAttendees(data.members, userID, data.info.organizer);
+    return this.membersView(data, members);
   }
 }
 

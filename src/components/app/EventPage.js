@@ -66,6 +66,7 @@ class EventPage extends React.Component {
       ...noEdit,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.event = this.event.bind(this);
   }
 
   async componentDidMount() {
@@ -73,7 +74,7 @@ class EventPage extends React.Component {
   }
   async componentDidUpdate() {}
   async componentWillUnmount() {
-    if (this.state.event !== null) {
+    if (this.state.event) {
       firebase
         .database()
         .ref('events/' + this.state.data.objectID)
@@ -152,9 +153,9 @@ class EventPage extends React.Component {
     });
   }
 
-  header() {
+  header(event) {
     const {dismiss} = this.props.navigation;
-    if (!this.state.event) {
+    if (!event) {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -172,11 +173,11 @@ class EventPage extends React.Component {
         />
       );
     }
-    if (this.userIsOrganizer()) {
+    if (this.userIsOrganizer(event)) {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={this.state.event.info.name}
+          textHeader={event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -188,7 +189,7 @@ class EventPage extends React.Component {
           iconOffset="pen"
           colorIconOffset={this.state.editMode ? colors.blue : 'white'}
           typeIconOffset="font"
-          clickButton2={() => this.goToShareEvent(this.state.event)}
+          clickButton2={() => this.goToShareEvent(event)}
           clickButton1={() => dismiss()}
           clickButtonOffset={() =>
             this.setState({editMode: !this.state.editMode})
@@ -199,7 +200,7 @@ class EventPage extends React.Component {
       return (
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={this.state.event.info.name}
+          textHeader={event.info.name}
           inputRange={[50, 80]}
           initialBorderColorIcon={colors.grey}
           initialBackgroundColor={'transparent'}
@@ -212,9 +213,9 @@ class EventPage extends React.Component {
             this.props.navigation.navigate('Contacts', {
               openPageLink: 'openEventPage',
               pageTo: 'Group',
-              objectID: this.state.event.objectID,
+              objectID: event.objectID,
               pageFrom: 'Event',
-              data: {...this.state.event, eventID: this.state.event.objectID},
+              data: {...event, eventID: event.objectID},
             })
           }
           clickButton1={() => dismiss()}
@@ -802,25 +803,27 @@ class EventPage extends React.Component {
       </View>
     );
   }
-  event() {
-    if (!this.state.event || this.state.loader) return <PlaceHolder />;
-    const attendees = arrayAttendees(this.state.event, this.props.userID);
-    var sport = this.props.sports.filter(
-      (sport) => sport.value === this.state.event.info.sport,
+  event(event, loader, userID) {
+    if (!event || loader) return <PlaceHolder />;
+    const attendees = arrayAttendees(
+      event.attendees,
+      userID,
+      event.info.organizer,
+    );
+    const sport = this.props.sports.filter(
+      (sport) => sport.value === event.info.sport,
     )[0];
-    var league = Object.values(sport.typeEvent).filter(
-      (item) => item.value === this.state.event.info.league,
+    const league = Object.values(sport.typeEvent).filter(
+      (item) => item.value === event.info.league,
     )[0];
-    var rule = Object.values(league.rules).filter(
+    const rule = Object.values(league.rules).filter(
       (rule) =>
         rule.value ===
-        (this.state.editRule === ''
-          ? this.state.event.info.rules
-          : this.state.editRule),
+        (this.state.editRule === '' ? event.info.rules : this.state.editRule),
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {this.eventInfo(this.state.event, sport, rule, league)}
+        {this.eventInfo(event, sport, rule, league)}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Text style={styleApp.text}>Players</Text>
@@ -828,7 +831,7 @@ class EventPage extends React.Component {
             style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
           />
         </View>
-        {this.state.loader ? (
+        {loader ? (
           <FadeInView duration={300} style={{paddingTop: 10}}>
             <PlaceHolder />
             <PlaceHolder />
@@ -843,21 +846,21 @@ class EventPage extends React.Component {
             No players has joined the event yet.
           </Text>
         ) : (
-          attendees.map((user, i) => this.rowUser(user, i, this.state.event))
+          attendees.map((user, i) => this.rowUser(user, i, event))
         )}
 
-        {this.state.event.groups && (
+        {event.groups && (
           <View style={{marginTop: 35}}>
-            <GroupsEvent groups={this.state.event.groups} />
+            <GroupsEvent groups={event.groups} />
           </View>
         )}
 
-        {this.state.event.discussions && (
+        {event.discussions && this.userAlreadySubscribed(event.attendees) && (
           <PostsView
-            objectID={this.state.event.objectID}
-            data={this.state.event}
+            objectID={event.objectID}
+            data={event}
             type="event"
-            loader={this.state.loader}
+            loader={loader}
             infoUser={this.props.infoUser}
           />
         )}
@@ -900,7 +903,6 @@ class EventPage extends React.Component {
   waitlistCondition(event) {
     if (
       !this.openCondition(event) &&
-      // use userIsOrganizer, correct before end
       event.info.organizer !== this.props.userID
     ) {
       if (!event.attendees) return true;
@@ -914,29 +916,20 @@ class EventPage extends React.Component {
     return false;
   }
   userAlreadySubscribed(attendees) {
-    if (!attendees) return true;
+    if (!attendees) return false;
     if (
       Object.values(attendees).filter(
         (user) => user.userID === this.props.userID,
       ).length === 0
     )
-      return true;
-    return false;
+      return false;
+    return true;
   }
-  coachAlreadySubscribed(coaches) {
-    if (!coaches) return true;
-    if (
-      Object.values(coaches).filter((user) => user.userID === this.props.userID)
-        .length === 0
-    )
-      return true;
-    return false;
-  }
-  userIsOrganizer() {
-    if (!this.state.event) {
+  userIsOrganizer(event) {
+    if (!event) {
       return false;
     }
-    return this.state.event.info.organizer === this.props.userID;
+    return event.info.organizer === this.props.userID;
   }
   askRemovePlayer(player, data) {
     this.props.navigation.navigate('AlertYesNo', {
@@ -988,9 +981,11 @@ class EventPage extends React.Component {
   };
 
   render() {
+    const {event, editMode, loader} = this.state;
+    const {userID} = this.props;
     return (
       <View style={{flex: 1}}>
-        {this.header()}
+        {this.header(event)}
         <ParallaxScrollView
           style={styles.paralaxView}
           showsVerticalScrollIndicator={false}
@@ -1004,36 +999,17 @@ class EventPage extends React.Component {
           ])}
           renderBackground={() => {
             return (
-              <TouchableOpacity
-                activeOpacity={0.3}
-                style={{height: 280, width: '100%'}}
-                onPress={() => {
-                  this.props.navigation.navigate('AlertAddress', {
-                    data: this.state.event.location,
-                  });
-                }}>
-                {!this.state.event ? (
-                  <View
-                    style={{
-                      width: '100%',
-                      height: 300,
-                      borderRadius: 0,
-                      backgroundColor: colors.off,
-                    }}
-                  />
+              <View style={styles.viewMainImg}>
+                {!event ? (
+                  <View style={styles.viewImage} />
                 ) : (
                   <AsyncImage
-                    style={{width: '100%', height: 320, borderRadius: 0}}
-                    mainImage={this.state.event.images[0]}
-                    imgInitial={this.state.event.images[0]}
+                    style={styles.mainImg}
+                    mainImage={event.images[0]}
+                    imgInitial={event.images[0]}
                   />
                 )}
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: width / 2 - 15,
-                    top: 280 / 2 - 5,
-                  }}>
+                <View style={styles.iconMap}>
                   <AllIcons
                     name="map-marker-alt"
                     type="font"
@@ -1041,50 +1017,48 @@ class EventPage extends React.Component {
                     color={colors.blue}
                   />
                 </View>
-              </TouchableOpacity>
+              </View>
             );
           }}
-          renderFixedHeader={null}
           parallaxHeaderHeight={280}>
-          {this.event()}
+          {this.event(event, loader, userID)}
         </ParallaxScrollView>
 
-        {!this.state.event ? null : (
+        {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {this.state.editMode ? (
+            {editMode ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
                 onPressColor={colors.greenClick}
-                styleButton={{marginLeft: 20, width: width - 40}}
+                styleButton={styles.buttonBottom}
                 disabled={false}
                 text="Save edits"
                 loader={false}
-                click={() => this.saveEdits(this.state.event)}
+                click={() => this.saveEdits(event)}
               />
-            ) : this.waitlistCondition(this.state.event) ? (
+            ) : this.waitlistCondition(event) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
                 onPressColor={colors.greenClick}
-                styleButton={{marginLeft: 20, width: width - 40}}
+                styleButton={styles.buttonBottom}
                 disabled={false}
                 text="Join the waitlist"
                 loader={false}
-                click={() => this.joinWaitlist(this.state.event)}
+                click={() => this.joinWaitlist(event)}
               />
-            ) : this.openCondition(this.state.event) &&
-              this.userAlreadySubscribed(this.state.event.attendees) &&
-              this.coachAlreadySubscribed(this.state.event.coaches) ? (
+            ) : this.openCondition(event) &&
+              !this.userAlreadySubscribed(event.attendees) ? (
               <Button2
                 icon={'next'}
                 backgroundColor="green"
                 onPressColor={colors.greenClick}
-                styleButton={{marginLeft: 20, width: width - 40}}
+                styleButton={styles.buttonBottom}
                 disabled={false}
                 text="Join the event"
                 loader={false}
-                click={() => this.next(this.state.event)}
+                click={() => this.next(event)}
               />
             ) : null}
           </FadeInView>
@@ -1107,6 +1081,20 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 18,
   },
+  iconMap: {
+    position: 'absolute',
+    left: width / 2 - 15,
+    top: 280 / 2 - 5,
+  },
+  viewMainImg: {height: 280, width: '100%'},
+  viewImage: {
+    width: '100%',
+    height: 300,
+    borderRadius: 0,
+    backgroundColor: colors.off,
+  },
+  mainImg: {width: '100%', height: 320},
+  buttonBottom: {marginLeft: 20, width: width - 40},
 });
 
 const mapStateToProps = (state) => {
