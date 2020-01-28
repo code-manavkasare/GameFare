@@ -287,11 +287,10 @@ async function joinEvent(
   };
 }
 
-function arrayAttendees(event, userID) {
-  if (!event) return [];
-  if (!event.attendees) return [];
-  if (event.info.organizer === userID) return Object.values(event.attendees);
-  return Object.values(event.attendees).filter(
+function arrayAttendees(members, userID, organizer) {
+  if (!members) return [];
+  if (organizer === userID) return Object.values(members);
+  return Object.values(members).filter(
     (attendee) => attendee.status === 'confirmed' || attendee.id === userID,
   );
 }

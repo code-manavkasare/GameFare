@@ -176,11 +176,9 @@ export default class CardUser extends Component {
                             'You have declined this player’s joining request.',
                         })
                       }>
-                      <AllIcons
-                        name="stop-circle"
-                        type="font"
-                        color={colors.red}
-                        size={17}
+                      <Image
+                        source={require('../../../img/icons/traffic.png')}
+                        style={{width: 17, height: 17}}
                       />
                     </Col>
                   ) : (

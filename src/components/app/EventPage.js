@@ -804,7 +804,11 @@ class EventPage extends React.Component {
   }
   event() {
     if (!this.state.event || this.state.loader) return <PlaceHolder />;
-    const attendees = arrayAttendees(this.state.event, this.props.userID);
+    const attendees = arrayAttendees(
+      this.state.event.attendees,
+      this.props.userID,
+      this.state.event.info.organizer,
+    );
     var sport = this.props.sports.filter(
       (sport) => sport.value === this.state.event.info.sport,
     )[0];
