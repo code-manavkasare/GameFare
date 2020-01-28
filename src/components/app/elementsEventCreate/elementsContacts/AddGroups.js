@@ -255,7 +255,31 @@ class AddGroups extends Component {
         }
         this.showToast('The event has been updated !');
       } else {
-        this.showToast('Add groups to groups coming soon');
+        if (hasGroup(selectedGroups)) {
+          updatesGroup['/groups/' + objectID] = true;
+          updatesEvent['/groups/' + group.objectID] = true;
+
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID)
+            .update(updatesGroup);
+
+          await firebase
+            .database()
+            .ref('groups/' + objectID)
+            .update(updatesEvent);
+        } else if (!hasGroup(selectedGroups)) {
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID + '/events/' + objectID)
+            .remove();
+
+          await firebase
+            .database()
+            .ref('groups/' + objectID + '/groups/' + group.objectID)
+            .remove();
+        }
+        this.showToast('The group has been updated !');
       }
     });
 

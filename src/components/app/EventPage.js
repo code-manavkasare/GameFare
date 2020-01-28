@@ -33,6 +33,7 @@ import DateEvent from './elementsEventCreate/DateEvent';
 import Button2 from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
+
 import PostsView from './elementsGroupPage/PostsView';
 
 import CardUser from './elementsEventPage/CardUser';
