@@ -1,5 +1,8 @@
 import {uploadPictureFirebase} from '../functions/pictures';
-import {subscribeToTopics, refreshTokenOnDatabase} from '../functions/notifications';
+import {
+  subscribeToTopics,
+  refreshTokenOnDatabase,
+} from '../functions/notifications';
 import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
@@ -38,45 +41,31 @@ function newDiscussion(discussionID, groupID, image, nameGroup) {
 }
 
 async function createEventObj(data, userID, infoUser, level, groups) {
-  var event = {
+  let event = {
     ...data,
     info: {
       ...data.info,
       organizer: userID,
     },
-    /// date_timestamp: Number(new Date(data.date.start)),
   };
-  var attendees = {};
-  var coaches = {};
-  var user = {
+  let attendees = {};
+  let user = {
     info: infoUser,
     id: userID,
     status: 'confirmed',
     userID: userID,
   };
-  if (!event.info.coach) {
-    user.coach = false;
-    attendees = {
-      [userID]: user,
-    };
-  } else {
-    user.coach = true;
-    coaches = {
-      [userID]: user,
-    };
-  }
+  user.coach = false;
+  attendees = {
+    [userID]: user,
+  };
   var allAttendees = Object.values(attendees).map((user) => {
-    return user.userID;
-  });
-  var allCoaches = Object.values(coaches).map((user) => {
     return user.userID;
   });
   return {
     ...event,
     date_timestamp: moment(event.date.start).valueOf(),
     end_timestamp: moment(event.date.end).valueOf(),
-    coaches: coaches,
-    allCoaches: allCoaches,
     attendees: attendees,
     allAttendees: allAttendees,
   };
@@ -88,9 +77,7 @@ async function pushEventToGroups(groups, eventID) {
       .database()
       .ref('groups/' + groups[i] + '/events')
       .update({
-        [eventID]: {
-          eventID: eventID,
-        },
+        [eventID]: true,
       });
   }
 }
@@ -127,7 +114,6 @@ async function createEvent(data, userID, infoUser, level) {
   await pushEventToGroups(data.groups, key);
   await subscribeToTopics([userID, 'all', key]);
   refreshTokenOnDatabase(userID);
-
 
   return event;
 }
@@ -282,7 +268,7 @@ async function joinEvent(
   }
   if (user.status === 'confirmed')
     await subscribeToTopics([userID, 'all', data.objectID]);
-    refreshTokenOnDatabase(userID);
+  refreshTokenOnDatabase(userID);
 
   return {
     response: true,

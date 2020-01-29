@@ -175,14 +175,15 @@ class CardEvent extends React.Component {
       />
     );
   }
-
+  members(data) {
+    if (!data.attendees) return [];
+    return Object.values(data.attendees).filter(
+      (member) => member.status === 'confirmed',
+    );
+  }
   render() {
     const {data, userID} = this.props;
-    const attendees = arrayAttendees(
-      data.attendees,
-      userID,
-      data.info.organizer,
-    );
+    const attendees = this.members(data);
     return this.card(data, attendees);
   }
 }

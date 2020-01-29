@@ -112,8 +112,6 @@ class CardGroup extends React.Component {
   }
   members(data) {
     if (!data.members) return [];
-    else if (data.info.organizer === this.props.userID)
-      return Object.values(data.members);
     return Object.values(data.members).filter(
       (member) => member.status === 'confirmed',
     );
