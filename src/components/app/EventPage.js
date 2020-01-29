@@ -47,6 +47,7 @@ import HeaderBackButton from '../layout/headers/HeaderBackButton';
 const noEdit = {
   editMode: false,
   editPrice: '',
+  editPriceClicked: false,
   editName: '',
   editStart: '',
   editEnd: '',
@@ -394,23 +395,22 @@ class EventPage extends React.Component {
   editPrice(data) {
     if (this.state.editMode) {
       return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => this.entreeFeeInputRef.focus()}>
-          <TextInput
-            style={styles.eventTitle}
-            placeholder={data.price.joiningFee === 0 ? 'Free entry' : 'coucou'}
-            returnKeyType={'done'}
-            keyboardType={'phone-pad'}
-            ref={(input) => {
-              this.entreeFeeInputRef = input;
-            }}
-            underlineColorAndroid="rgba(0,0,0,0)"
-            autoCorrect={true}
-            onChangeText={(text) => this.setState({editPrice: text})}
-            value={this.state.editPrice}
-          />
-        </TouchableOpacity>
+        <TextInput
+          style={styles.eventTitle}
+          placeholder={'Entry Fee: $' + data.price.joiningFee}
+          returnKeyType={'done'}
+          keyboardType={'phone-pad'}
+          underlineColorAndroid="rgba(0,0,0,0)"
+          autoCorrect={true}
+          onChangeText={(text) => this.setState({editPrice: text.split('$')[1]})}
+          onFocus={() => {
+            this.setState({editPriceClicked: true});
+          }}
+          value={this.state.editPriceClicked
+            ? 'Entry Fee: $' + this.state.editPrice
+            : ''
+          }
+        />
       );
     } else {
       return (
