@@ -124,6 +124,7 @@ class MessageTab extends React.Component {
                 />
               ))}
         </View>
+        <View style={{height: 30}} />
       </View>
     );
   }

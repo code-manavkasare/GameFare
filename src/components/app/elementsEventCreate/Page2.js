@@ -26,6 +26,7 @@ import DateEvent from './DateEvent';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
 import sizes from '../../style/sizes';
+import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import AllIcon from '../../layout/icons/AllIcons';
 
@@ -174,7 +175,7 @@ class Page2 extends Component {
     );
   }
   date() {
-    if (this.props.step2.startDate == '')
+    if (this.props.step2.startDate === '')
       return (
         <Text style={[styleApp.input, {color: colors.grey}]}>
           Add date and time
@@ -292,9 +293,9 @@ class Page2 extends Component {
   }
   conditionOn() {
     if (
-      this.props.step2.location.address == '' ||
-      this.props.step2.startDate == '' ||
-      this.props.step2.name == ''
+      this.props.step2.location.address === '' ||
+      this.props.step2.startDate === '' ||
+      this.props.step2.name === ''
     )
       return false;
     return true;
