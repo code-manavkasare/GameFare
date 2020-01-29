@@ -65,6 +65,8 @@ import MessageList from '../app/elementsMessage/MessageList';
 import Conversation from '../app/elementsMessage/Conversation';
 import NewConversation from '../app/elementsMessage/NewConversation';
 
+import LiveStream from '../app/elementsStreaming/LiveStream';
+
 const CreateEventNavigator = createStackNavigator(
   {
     CreateEvent0: CreateEvent0,
@@ -203,6 +205,19 @@ const PaymentsNavigator = createStackNavigator(
   },
 );
 
+const StreamNavigator = createStackNavigator(
+  {
+    LiveStream: LiveStream,
+  },
+  {
+    initialRouteName: 'LiveStream',
+    headerMode: 'none',
+    mode: 'card',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: true,
+  },
+);
+
 const MainApp = createBottomTabNavigator(
   {
     Home: HomePage,
@@ -224,23 +239,7 @@ const MainApp = createBottomTabNavigator(
           />
         );
       },
-      tabBarLabel: ({focused, tintColor}) => {
-        const {routeName} = navigation.state;
-        if (routeName === 'Home')
-          return <Text style={[styles.input, {color: tintColor}]}>Events</Text>;
-        if (routeName === 'ListGroups')
-          return (
-            <Text style={[styles.footerText, {color: tintColor}]}>GROUPS</Text>
-          );
-        if (routeName === 'MessageList')
-          return (
-            <Text style={[styles.footerText, {color: tintColor}]}>GROUPS</Text>
-          );
-        if (routeName === 'Profile')
-          return (
-            <Text style={[styles.footerText, {color: tintColor}]}>PROFILE</Text>
-          );
-      },
+
     }),
     tabBarOptions: {
       activeTintColor: colors.primary2,
@@ -322,6 +321,7 @@ const MainStack = createStackNavigator(
     Event: JoinNavigator,
     Conversation: MessageNavigator,
     Group: JoinGroupNavigator,
+    LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
   },

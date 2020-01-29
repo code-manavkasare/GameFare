@@ -77,8 +77,7 @@ class CardEvent extends React.Component {
     return (
       <ButtonColor
         style={styles.cardEvent}
-        key={this.props.index}
-        click={() => {}}
+        click={() => this.props.click(this.props.index)}
         color={'white'}
         onPressColor={colors.off}
         view={() => {
