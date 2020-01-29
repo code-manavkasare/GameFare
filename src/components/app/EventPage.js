@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
-import {editEvent, removePlayerFromEvent} from '../functions/editEvent';
+import {editEvent, removePlayerFromEvent, nextGender, nextRule} from '../functions/editEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar} from '../functions/date';
@@ -55,7 +55,6 @@ const noEdit = {
   editMaxAttendance: -1,
   editLevelIndex: -1,
   editRule: '',
-  editRuleIndex: -1,
 };
 
 class EventPage extends React.Component {
@@ -97,43 +96,34 @@ class EventPage extends React.Component {
         that.setState({event: event, loader: false});
       });
   }
+  getSportLeagueRule(event) {
+    const sport = this.props.sports.filter(
+      s => s.value === event.info.sport,
+    )[0];
+    const league = Object.values(sport.typeEvent).filter(
+      l => l.value === event.info.league,
+    )[0];
+    const rule = Object.values(league.rules).filter(
+      r =>
+        r.value ===
+        (this.state.editRule === noEdit.editRule ? event.info.rules : this.state.editRule),
+    )[0];
+    return {sport: sport, league: league, rule: rule};
+  }
   nextGender(data, inc) {
-    const genders = ['mixed', 'female', 'male'];
-    let index;
-    if (this.state.editGender === '') {
-      index = genders.indexOf(data.info.gender);
+    if (this.state.editGender === noEdit.editGender) {
+      this.setState({editGender: nextGender(data.info.gender, inc)});
     } else {
-      index = genders.indexOf(this.state.editGender);
+      this.setState({editGender: nextGender(this.state.editGender, inc)});
     }
-    const nextIndex =
-      (((index + inc) % genders.length) + genders.length) % genders.length; // allows for 'correct' negative mod
-    this.setState({editGender: genders[nextIndex]});
   }
   nextRule(data, inc) {
-    let nextRuleIndex;
-    const sportData = this.props.sports.filter(
-      (sport) => sport.value === data.info.sport,
-    )[0];
-    const leagueData = Object.values(sportData.typeEvent).filter(
-      (league) => league.value === data.info.league,
-    )[0];
-    const rules = leagueData.rules;
-    if (this.state.editRuleIndex !== -1) {
-      nextRuleIndex =
-        (((this.state.editRuleIndex + inc) % rules.length) + rules.length) %
-        rules.length;
+    const {league} = this.getSportLeagueRule(data);
+    if (this.state.editRule === noEdit.editRule) {
+      this.setState({editRule: nextRule(data.info.rules, league, inc)});
     } else {
-      const rule = Object.values(rules).filter(
-        (rule) => rule.value === data.info.rules,
-      )[0];
-      const ruleIndex = rules.indexOf(rule);
-      nextRuleIndex =
-        (((ruleIndex + inc) % rules.length) + rules.length) % rules.length;
+      this.setState({editRule: nextRule(this.state.editRule, league, inc)});
     }
-    this.setState({
-      editRuleIndex: nextRuleIndex,
-      editRule: rules[nextRuleIndex].value,
-    });
   }
   nextLevel(data, inc) {
     let nextLevelIndex;
@@ -157,73 +147,32 @@ class EventPage extends React.Component {
 
   header(event) {
     const {dismiss} = this.props.navigation;
-    if (!event) {
-      return (
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          typeIcon2="moon"
-          sizeIcon2={17}
-          clickButton2={() => {}}
-          clickButton1={() => dismiss()}
-        />
-      );
-    }
-    if (this.userIsOrganizer(event)) {
-      return (
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          typeIcon2="moon"
-          sizeIcon2={17}
-          iconOffset="pen"
-          colorIconOffset={this.state.editMode ? colors.blue : 'white'}
-          typeIconOffset="font"
-          clickButton2={() => this.goToShareEvent(event)}
-          clickButton1={() => dismiss()}
-          clickButtonOffset={() =>
-            this.setState({editMode: !this.state.editMode})
-          }
-        />
-      );
-    } else {
-      return (
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          typeIcon2="moon"
-          sizeIcon2={17}
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openEventPage',
-              pageTo: 'Group',
-              objectID: event.objectID,
-              pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
-            })
-          }
-          clickButton1={() => dismiss()}
-        />
-      );
-    }
+    return (
+      <HeaderBackButton
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={''}
+        inputRange={[50, 80]}
+        initialBorderColorIcon={colors.grey}
+        initialBackgroundColor={'transparent'}
+        initialTitleOpacity={0}
+        icon1="arrow-left"
+        icon2="share"
+        typeIcon2="moon"
+        sizeIcon2={17}
+        iconOffset="pen"
+        colorIconOffset={this.state.editMode ? colors.blue : 'white'}
+        typeIconOffset="font"
+        clickButton2={() => this.goToShareEvent(event)}
+        clickButton1={() => dismiss()}
+        clickButtonOffset={this.userIsOrganizer(event)
+          ? () =>
+            this.state.editMode
+            ? this.setState({...noEdit})
+            : this.setState({editMode: true})
+          : undefined
+        }
+      />
+    );
   }
   rowIcon(component, icon, alert) {
     return (
@@ -791,17 +740,7 @@ class EventPage extends React.Component {
       userID,
       event.info.organizer,
     );
-    const sport = this.props.sports.filter(
-      (sport) => sport.value === event.info.sport,
-    )[0];
-    const league = Object.values(sport.typeEvent).filter(
-      (item) => item.value === event.info.league,
-    )[0];
-    const rule = Object.values(league.rules).filter(
-      (rule) =>
-        rule.value ===
-        (this.state.editRule === '' ? event.info.rules : this.state.editRule),
-    )[0];
+    const {sport, league, rule} = this.getSportLeagueRule(event);
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {this.eventInfo(event, sport, rule, league)}
@@ -950,6 +889,7 @@ class EventPage extends React.Component {
   }
 
   goToShareEvent = (event) => {
+    if (!event) {return;}
     if (!this.props.userConnected) {
       return this.props.navigation.navigate('SignIn');
     }
@@ -1022,14 +962,20 @@ class EventPage extends React.Component {
 
         {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {editMode ? (
-              this.bottomActionButton('Save edits', () => this.saveEdits(event))
-            ) : this.waitlistCondition(event) ? (
-              this.bottomActionButton('Join the waitlist', () => this.joinWaitlist(event))
-            ) : this.openCondition(event) &&
-              !this.userAlreadySubscribed(event.attendees) ? (
-              this.bottomActionButton('Join the event', () => this.next(event))
-            ) : null}
+            {editMode
+              ? this.bottomActionButton('Save edits', () =>
+                  this.saveEdits(event),
+                )
+              : this.waitlistCondition(event)
+              ? this.bottomActionButton('Join the waitlist', () =>
+                  this.joinWaitlist(event),
+                )
+              : this.openCondition(event) &&
+                !this.userAlreadySubscribed(event.attendees)
+              ? this.bottomActionButton('Join the event', () =>
+                  this.next(event),
+                )
+              : null}
           </FadeInView>
         )}
       </View>

@@ -1,6 +1,31 @@
 import firebase from 'react-native-firebase';
 import moment from 'moment';
 
+// helpers for EventPage in edit mode
+function nextGender(currentGender, inc) {
+  const genders = ['mixed', 'female', 'male'];
+  let index = genders.indexOf(currentGender);
+  const nextIndex =
+    (((index + inc) % genders.length) + genders.length) % genders.length; // allows for 'correct' negative mod
+  return genders[nextIndex];
+}
+
+function nextRule(currentRule, league, inc) {
+  const rules = league.rules;
+  const rule = Object.values(rules).filter(
+    r => r.value === currentRule,
+  )[0];
+  const i = rules.indexOf(rule);
+  const next = (((i + inc) % rules.length) + rules.length) % rules.length;
+  console.log('next rule: ' + rules[next].value);
+  return rules[next].value;
+}
+
+
+
+// end helpers
+
+
 async function editEvent(updatedEvent, callback = () => {}) {
   updatedEvent = {
     ...updatedEvent,
@@ -57,4 +82,4 @@ async function removePlayerFromEvent(player, event) {
   .catch(err => {throw err;});
 }
 
-module.exports = {editEvent, removePlayerFromEvent};
+module.exports = {editEvent, removePlayerFromEvent, nextGender, nextRule};
