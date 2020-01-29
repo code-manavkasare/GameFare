@@ -398,11 +398,7 @@ class EventPage extends React.Component {
           onPress={() => this.entreeFeeInputRef.focus()}>
           <TextInput
             style={styles.eventTitle}
-            placeholder={
-              data.price.joingingFee === 0
-                ? 'Free entry'
-                : String(data.price.joiningFee)
-            }
+            placeholder={data.price.joiningFee === 0 ? 'Free entry' : 'coucou'}
             returnKeyType={'done'}
             keyboardType={'phone-pad'}
             ref={(input) => {
