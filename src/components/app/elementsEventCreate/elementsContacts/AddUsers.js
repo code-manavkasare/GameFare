@@ -15,6 +15,9 @@ import {
 } from '../../../functions/message';
 import {autocompleteSearchUsers} from '../../../functions/users';
 import UsersSelectableList from '../../elementsMessage/UsersSelectableList';
+import {messageAction} from '../../../../actions/messageActions';
+import NavigationService from '../../../../../NavigationService';
+
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {userObject} from '../../../functions/users';
@@ -27,6 +30,7 @@ class AddUsers extends Component {
     super(props);
     this.state = {
       loader: true,
+      loaderButton: false,
       usersList: [],
       selectedUsersWithId: {},
       searchInputGameFareUsers: this.props.searchString,
@@ -61,6 +65,7 @@ class AddUsers extends Component {
   };
 
   sendInvitationGamefareUsers = async () => {
+    await this.setState({loaderButton: true});
     const {userID} = this.props;
     const {selectedUsersWithId} = this.state;
     const user = userObject(this.props.infoUser, this.props.userID);
@@ -73,8 +78,6 @@ class AddUsers extends Component {
       [userID]: {...user, id: userID},
     };
 
-    
-
     let discussion = await searchDiscussion(usersIDArray, usersIDArray.length);
     if (!discussion) {
       discussion = await createDiscussion(
@@ -85,9 +88,18 @@ class AddUsers extends Component {
     }
 
     const {url, description} = await this.props.createBranchMessage();
+    await this.props.messageAction('setConversation', discussion);
 
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
-    this.showToast('Invitations sent !');
+    await this.setState({loaderButton: false});
+    await this.userListRef.reset();
+    NavigationService.navigate('Alert', {
+      close: true,
+      title: 'Confirmation popup',
+      subtitle: 'Coming soon',
+      textButton: 'Got it!',
+    });
+    // this.showToast('Invitations sent !');
   };
 
   showToast(text) {
@@ -99,7 +111,12 @@ class AddUsers extends Component {
   }
 
   render() {
-    const {searchInputGameFareUsers, usersList, loader} = this.state;
+    const {
+      searchInputGameFareUsers,
+      usersList,
+      loader,
+      loaderButton,
+    } = this.state;
 
     return (
       <View style={styles.mainView}>
@@ -121,6 +138,10 @@ class AddUsers extends Component {
         <UsersSelectableList
           usersList={usersList}
           loader={loader}
+          // ref={(ref) => {
+          //   this.userListRef = ref;
+          // }}
+          onRef={(ref) => (this.userListRef = ref)}
           getSelectedUsers={this.getSelectedUsers}
         />
 
@@ -130,6 +151,7 @@ class AddUsers extends Component {
               backgroundColor={'green'}
               onPressColor={colors.greenClick}
               text={'Send invitation'}
+              loader={loaderButton}
               click={() => this.sendInvitationGamefareUsers()}
             />
           </View>
@@ -168,4 +190,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(AddUsers);
+export default connect(mapStateToProps, {messageAction})(AddUsers);

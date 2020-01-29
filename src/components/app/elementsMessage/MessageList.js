@@ -138,7 +138,7 @@ class MessageTab extends React.Component {
   }
   render() {
     const {navigate} = this.props.navigation;
-    const {discussions} = this.state;
+    const {discussions} = this.props;
     const {userConnected} = this.props;
     return (
       <View>
@@ -179,7 +179,7 @@ class MessageTab extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    // conversations: state.message.conversations,
+    discussions: state.message.conversations,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
   };

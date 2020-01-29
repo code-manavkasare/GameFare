@@ -453,13 +453,14 @@ class Contacts extends Component {
       },
     );
   }
-  translateXView = (value) => {
+  translateXView = (value, userConnected) => {
+    if (!userConnected && (value === 'gamefareUsers' || value === 'groups'))
+      return this.props.navigation.navigate('SignIn');
     this.setState({activeView: value});
-    Animated.parallel(0, native(width));
   };
 
   render() {
-    const {navigation} = this.props;
+    const {navigation, userConnected} = this.props;
     const {dismiss} = navigation;
     const objectID = navigation.getParam('objectID');
     const pageFrom = navigation.getParam('pageFrom');
@@ -491,16 +492,16 @@ class Contacts extends Component {
           style={[{marginTop: sizes.heightHeaderHome, marginHorizontal: 10}]}>
           <SwitchSelector
             initial={0}
-            onPress={(value) => this.translateXView(value)}
+            onPress={(value) => this.translateXView(value, userConnected)}
             textStyle={[styleApp.textBold, {color: colors.greyDark}]}
             selectedTextStyle={[styleApp.textBold, {color: colors.white}]}
             textColor={colors.borderColor}
             selectedColor={colors.white}
-            buttonColor={colors.green}
+            buttonColor={colors.primary}
             borderColor={colors.borderColor}
             borderRadius={7}
             height={50}
-            animationDuration={220}
+            animationDuration={190}
             options={
               this.props.userID === data.info.organizer
                 ? [
@@ -584,6 +585,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 
