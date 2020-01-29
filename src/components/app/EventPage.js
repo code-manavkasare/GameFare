@@ -276,62 +276,11 @@ class EventPage extends React.Component {
       </Row>
     );
   }
-  colIcon(text, icon, click) {
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            <View style={styleApp.center} size={50}>
-              <AllIcons
-                name={icon}
-                size={17}
-                color={colors.title}
-                type="font"
-              />
-              <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
-            </View>
-          );
-        }}
-        click={() =>
-          click
-            ? this.props.navigation.navigate('Alert', {
-                close: true,
-                title: click.title,
-                subtitle: click.subtitle,
-                textButton: 'Close',
-              })
-            : null
-        }
-        color="white"
-        style={[{height: 90, marginTop: 0, borderRadius: 3, width: '100%'}]}
-        onPressColor={colors.off}
-      />
-    );
-  }
   title(text) {
     return <Text style={styleApp.input}>{text}</Text>;
   }
   dateTime(start, end) {
     return <DateEvent start={start} end={end} />;
-  }
-  openView(data) {
-    return (
-      <AllIcons
-        name={this.openCondition(data) ? 'lock-open' : 'lock'}
-        type="font"
-        color={this.openCondition(data) ? colors.green : colors.primary}
-        size={18}
-      />
-    );
-  }
-  openAlert(title, icon) {
-    this.props.navigation.navigate('Alert', {
-      textButton: 'Close',
-      title: title,
-      icon: icon,
-      close: true,
-      onGoBack: () => this.props.navigation.navigate('Event'),
-    });
   }
   allowCall(user, data) {
     if (user.coach || user.userID === data.info.organizer) return true;
@@ -567,7 +516,7 @@ class EventPage extends React.Component {
       </Row>
     );
   }
-  editColIcon(text, icon, clickUp, clickDown) {
+  editColIcon(text, icon, clickUp, clickDown, clickIcon) {
     return (
       <Row
         style={[
@@ -577,7 +526,7 @@ class EventPage extends React.Component {
         size={50}>
         {this.state.editMode ? (
           <Col
-            size={30}
+            size={15}
             style={{justifyContent: 'space-around', alignItems: 'flex-end'}}>
             <Row size={20}>
               <ButtonColor
@@ -615,15 +564,39 @@ class EventPage extends React.Component {
             </Row>
           </Col>
         ) : (
-          <Col size={30} />
+          <Col size={15} />
         )}
-        <Col size={10}></Col>
-        <Col size={100} style={[styleApp.center2, {alignItems: 'flex-start'}]}>
-          <View style={styleApp.center}>
-            <AllIcons name={icon} size={17} color={colors.title} type="font" />
-            <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
-          </View>
+        <Col size={100} style={[styleApp.center, {alignItems: 'flex-start'}]}>
+          <ButtonColor
+            color="white"
+            style={[{height: 90, marginTop: 0, borderRadius: 3, width: '100%'}]}
+            onPressColor={colors.off}
+            view={() => {
+              return (
+                <View style={styleApp.center}>
+                  <AllIcons
+                    name={icon}
+                    size={17}
+                    color={colors.title}
+                    type="font"
+                  />
+                  <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
+                </View>
+              );
+            }}
+            click={() =>
+              clickIcon
+                ? this.props.navigation.navigate('Alert', {
+                    close: true,
+                    title: clickIcon.title,
+                    subtitle: clickIcon.subtitle,
+                    textButton: 'Close',
+                  })
+                : null
+            }
+          />
         </Col>
+        <Col size={30} />
       </Row>
     );
   }
@@ -739,6 +712,7 @@ class EventPage extends React.Component {
                       : this.setState({
                           editMaxAttendance: data.info.maxAttendance - 1,
                         }),
+                  false,
                 )
               : this.editColIcon(
                   this.state.maxAttendance === 1
@@ -755,6 +729,7 @@ class EventPage extends React.Component {
                       : this.setState({
                           editMaxAttendance: this.state.editMaxAttendance - 1,
                         }),
+                  false,
                 )}
           </Col>
           <Col>
@@ -763,6 +738,7 @@ class EventPage extends React.Component {
               'balance-scale',
               () => this.nextLevel(data, 1),
               () => this.nextLevel(data, -1),
+              {title: level.title, subtitle: level.subtitle},
             )}
           </Col>
         </Row>
@@ -780,6 +756,7 @@ class EventPage extends React.Component {
                     : 'mars',
                   () => this.nextGender(data, 1),
                   () => this.nextGender(data, -1),
+                  false,
                 )
               : this.editColIcon(
                   this.state.editGender.charAt(0).toUpperCase() +
@@ -791,6 +768,7 @@ class EventPage extends React.Component {
                     : 'mars',
                   () => this.nextGender(data, 1),
                   () => this.nextGender(data, -1),
+                  false,
                 )}
           </Col>
           <Col>
@@ -799,6 +777,7 @@ class EventPage extends React.Component {
               'puzzle-piece',
               () => this.nextRule(data, 1),
               () => this.nextRule(data, -1),
+              {title: rule.title, subtitle: rule.subtitle},
             )}
           </Col>
         </Row>
