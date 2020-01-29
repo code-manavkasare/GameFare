@@ -40,14 +40,18 @@ class AddGroups extends Component {
     this.initiaLoad();
   }
   initiaLoad = async () => {
-    const {userID, objectID,pageFrom} = this.props;
+    const {userID, objectID, pageFrom} = this.props;
 
     indexGroups.clearCache();
     const listGroups = await indexGroups.search({
       filters: 'info.organizer:' + userID + ' AND NOT objectID:' + objectID,
       query: '',
     });
-    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, objectID,pageFrom);
+    const selectedGroups = this.checkIfGroupHasEvent(
+      listGroups.hits,
+      objectID,
+      pageFrom,
+    );
     //Will work when Algolia update accordingly with firebase
 
     await this.setState({
@@ -58,8 +62,8 @@ class AddGroups extends Component {
     return true;
   };
 
-  checkIfGroupHasEvent = (listGroups, eventID,pageFrom) => {
-    console.log('listGroups',listGroups)
+  checkIfGroupHasEvent = (listGroups, eventID, pageFrom) => {
+    console.log('listGroups', listGroups);
     let groupsHasEvent = {};
     if (pageFrom === 'Events') {
       listGroups.forEach((group) => {
@@ -74,7 +78,7 @@ class AddGroups extends Component {
         }
       });
     }
-    console.log('groupsHasEvent',groupsHasEvent)
+    console.log('groupsHasEvent', groupsHasEvent);
 
     return groupsHasEvent;
   };
@@ -281,7 +285,7 @@ class AddGroups extends Component {
         } else if (!hasGroup(selectedGroups)) {
           await firebase
             .database()
-            .ref('groups/' + group.objectID + '/events/' + objectID)
+            .ref('groups/' + group.objectID + '/groups/' + objectID)
             .remove();
 
           await firebase
