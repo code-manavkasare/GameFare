@@ -40,14 +40,14 @@ class AddGroups extends Component {
     this.initiaLoad();
   }
   initiaLoad = async () => {
-    const {userID, objectID} = this.props;
+    const {userID, objectID,pageFrom} = this.props;
 
     indexGroups.clearCache();
     const listGroups = await indexGroups.search({
       filters: 'info.organizer:' + userID + ' AND NOT objectID:' + objectID,
       query: '',
     });
-    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, objectID);
+    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, objectID,pageFrom);
     //Will work when Algolia update accordingly with firebase
 
     await this.setState({
@@ -58,13 +58,23 @@ class AddGroups extends Component {
     return true;
   };
 
-  checkIfGroupHasEvent = (listGroups, eventID) => {
+  checkIfGroupHasEvent = (listGroups, eventID,pageFrom) => {
+    console.log('listGroups',listGroups)
     let groupsHasEvent = {};
-    listGroups.forEach((group) => {
-      if (group.events && group.events[eventID]) {
-        groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
-      }
-    });
+    if (pageFrom === 'Events') {
+      listGroups.forEach((group) => {
+        if (group.events && group.events[eventID]) {
+          groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
+        }
+      });
+    } else {
+      listGroups.forEach((group) => {
+        if (group.groups && group.groups[eventID]) {
+          groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
+        }
+      });
+    }
+    console.log('groupsHasEvent',groupsHasEvent)
 
     return groupsHasEvent;
   };
@@ -255,7 +265,31 @@ class AddGroups extends Component {
         }
         this.showToast('The event has been updated !');
       } else {
-        this.showToast('Add groups to groups coming soon');
+        if (hasGroup(selectedGroups)) {
+          updatesGroup['/groups/' + objectID] = true;
+          updatesEvent['/groups/' + group.objectID] = true;
+
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID)
+            .update(updatesGroup);
+
+          await firebase
+            .database()
+            .ref('groups/' + objectID)
+            .update(updatesEvent);
+        } else if (!hasGroup(selectedGroups)) {
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID + '/events/' + objectID)
+            .remove();
+
+          await firebase
+            .database()
+            .ref('groups/' + objectID + '/groups/' + group.objectID)
+            .remove();
+        }
+        this.showToast('The group has been updated !');
       }
     });
 
