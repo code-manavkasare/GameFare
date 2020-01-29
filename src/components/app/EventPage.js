@@ -71,6 +71,7 @@ class EventPage extends React.Component {
   }
 
   async componentDidMount() {
+    console.log('eventpageload', this.props.navigation.getParam('objectID'));
     this.loadEvent(this.props.navigation.getParam('objectID'));
   }
   async componentDidUpdate() {}
