@@ -42,7 +42,7 @@ async function sendNewMessage(discusssionID, user, text, images) {
       createdAt: new Date(),
       timeStamp: moment().valueOf(),
       usersRead: {
-        [user._id]: true,
+        [user.id]: true,
       },
     });
   return true;
