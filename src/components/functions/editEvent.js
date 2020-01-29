@@ -21,6 +21,10 @@ function nextRule(currentRule, league, inc) {
   return rules[next].value;
 }
 
+function nextLevelIndex(currentIndex, levels, inc) {
+  return (((currentIndex + inc) % levels.length) + levels.length) % levels.length;
+}
+
 
 
 // end helpers
@@ -57,7 +61,7 @@ async function editEvent(updatedEvent, callback = () => {}) {
         },
       };
       var topicEvent = '/topics/' + updatedEvent.objectID;
-      await firebase.messaging.sendToTopic(topicEvent, editNotif);
+      await firebase.messaging().sendToTopic(topicEvent, editNotif);
     } catch (err) {
       console.log(err.message);
     }
@@ -82,4 +86,4 @@ async function removePlayerFromEvent(player, event) {
   .catch(err => {throw err;});
 }
 
-module.exports = {editEvent, removePlayerFromEvent, nextGender, nextRule};
+module.exports = {editEvent, removePlayerFromEvent, nextGender, nextRule, nextLevelIndex};

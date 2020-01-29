@@ -13,7 +13,13 @@ import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
-import {editEvent, removePlayerFromEvent, nextGender, nextRule} from '../functions/editEvent';
+import {
+  editEvent,
+  removePlayerFromEvent,
+  nextGender,
+  nextRule,
+  nextLevelIndex,
+} from '../functions/editEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar} from '../functions/date';
@@ -38,7 +44,6 @@ import PostsView from './elementsGroupPage/PostsView';
 
 import CardUser from './elementsEventPage/CardUser';
 import {arrayAttendees} from '../functions/createEvent';
-import {indexEvents} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -68,12 +73,10 @@ class EventPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.event = this.event.bind(this);
   }
-
   async componentDidMount() {
     console.log('eventpageload', this.props.navigation.getParam('objectID'));
     this.loadEvent(this.props.navigation.getParam('objectID'));
   }
-  async componentDidUpdate() {}
   async componentWillUnmount() {
     if (this.state.event) {
       firebase
@@ -98,15 +101,17 @@ class EventPage extends React.Component {
   }
   getSportLeagueRule(event) {
     const sport = this.props.sports.filter(
-      s => s.value === event.info.sport,
+      (s) => s.value === event.info.sport,
     )[0];
     const league = Object.values(sport.typeEvent).filter(
-      l => l.value === event.info.league,
+      (l) => l.value === event.info.league,
     )[0];
     const rule = Object.values(league.rules).filter(
-      r =>
+      (r) =>
         r.value ===
-        (this.state.editRule === noEdit.editRule ? event.info.rules : this.state.editRule),
+        (this.state.editRule === noEdit.editRule
+          ? event.info.rules
+          : this.state.editRule),
     )[0];
     return {sport: sport, league: league, rule: rule};
   }
@@ -126,23 +131,17 @@ class EventPage extends React.Component {
     }
   }
   nextLevel(data, inc) {
-    let nextLevelIndex;
-    const sport = this.props.sports.filter(
-      (s) => s.value === data.info.sport,
-    )[0];
+    const {sport} = this.getSportLeagueRule(data);
     const levels = sport.level.list;
-    if (this.state.editLevelIndex !== -1) {
-      nextLevelIndex =
-        (((this.state.editLevelIndex + inc) % levels.length) + levels.length) %
-        levels.length;
+    if (this.state.editLevelIndex !== noEdit.editLevelIndex) {
+      this.setState({
+        editLevelIndex: nextLevelIndex(this.state.editLevelIndex, levels, inc),
+      });
     } else {
-      nextLevelIndex =
-        (((data.info.levelFilter + inc) % levels.length) + levels.length) %
-        levels.length;
+      this.setState({
+        editLevelIndex: nextLevelIndex(data.info.levelFilter, levels, inc),
+      });
     }
-    this.setState({
-      editLevelIndex: nextLevelIndex,
-    });
   }
 
   header(event) {
@@ -164,12 +163,13 @@ class EventPage extends React.Component {
         typeIconOffset="font"
         clickButton2={() => this.goToShareEvent(event)}
         clickButton1={() => dismiss()}
-        clickButtonOffset={this.userIsOrganizer(event)
-          ? () =>
-            this.state.editMode
-            ? this.setState({...noEdit})
-            : this.setState({editMode: true})
-          : undefined
+        clickButtonOffset={
+          this.userIsOrganizer(event)
+            ? () =>
+                this.state.editMode
+                  ? this.setState({...noEdit})
+                  : this.setState({editMode: true})
+            : undefined
         }
       />
     );
@@ -889,7 +889,9 @@ class EventPage extends React.Component {
   }
 
   goToShareEvent = (event) => {
-    if (!event) {return;}
+    if (!event) {
+      return;
+    }
     if (!this.props.userConnected) {
       return this.props.navigation.navigate('SignIn');
     }

@@ -36,7 +36,7 @@ async function editGroup(updatedGroup, callback = () => {}) {
       },
     };
     var topicGroup = '/topics/' + updatedGroup.objectID;
-    await firebase.messaging.sendToTopic(topicGroup, editNotif);
+    await firebase.messaging().sendToTopic(topicGroup, editNotif);
   } catch (err) {
     console.log(err.message);
   }
