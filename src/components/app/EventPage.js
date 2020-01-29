@@ -961,6 +961,21 @@ class EventPage extends React.Component {
     });
   };
 
+  bottomActionButton(title, click) {
+    return (
+      <Button2
+        icon={'next'}
+        backgroundColor="green"
+        onPressColor={colors.greenClick}
+        styleButton={styles.buttonBottom}
+        disabled={false}
+        text={title}
+        loader={false}
+        click={() => click()}
+      />
+    );
+  }
+
   render() {
     const {event, editMode, loader} = this.state;
     const {userID} = this.props;
@@ -1008,39 +1023,12 @@ class EventPage extends React.Component {
         {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
             {editMode ? (
-              <Button2
-                icon={'next'}
-                backgroundColor="green"
-                onPressColor={colors.greenClick}
-                styleButton={styles.buttonBottom}
-                disabled={false}
-                text="Save edits"
-                loader={false}
-                click={() => this.saveEdits(event)}
-              />
+              this.bottomActionButton('Save edits', () => this.saveEdits(event))
             ) : this.waitlistCondition(event) ? (
-              <Button2
-                icon={'next'}
-                backgroundColor="green"
-                onPressColor={colors.greenClick}
-                styleButton={styles.buttonBottom}
-                disabled={false}
-                text="Join the waitlist"
-                loader={false}
-                click={() => this.joinWaitlist(event)}
-              />
+              this.bottomActionButton('Join the waitlist', () => this.joinWaitlist(event))
             ) : this.openCondition(event) &&
               !this.userAlreadySubscribed(event.attendees) ? (
-              <Button2
-                icon={'next'}
-                backgroundColor="green"
-                onPressColor={colors.greenClick}
-                styleButton={styles.buttonBottom}
-                disabled={false}
-                text="Join the event"
-                loader={false}
-                click={() => this.next(event)}
-              />
+              this.bottomActionButton('Join the event', () => this.next(event))
             ) : null}
           </FadeInView>
         )}
