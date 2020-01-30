@@ -18,7 +18,10 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import ButtonColor from '../../layout/Views/Button';
+import AllIcons from '../../layout/icons/AllIcons';
+
+import LiveStreamHeader from './LiveStreamHeader';
 
 const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
 const MUX_TOKEN_SECRET =
@@ -31,6 +34,9 @@ class LiveStream extends React.Component {
       outputUrl: 'rtmp://live.mux.com/app/',
       loading: true,
       streaming: false,
+      streamKey: '',
+      playbackId: '',
+      assetId: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -60,16 +66,43 @@ class LiveStream extends React.Component {
     this.setState({
       outputUrl: this.state.outputUrl + response.data.data.stream_key,
       loading: false,
+      streamKey: response.data.data.stream_key,
+      playbackId: response.data.data.playback_ids.id,
+      assetId: response.data.data.id,
     });
   }
 
   mainButtonClick() {
-    if(this.state.streaming) {
-      this.vb.stop();
+    if (this.state.streaming) {
+      this.stopStream();
     } else {
-      this.setState({streaming: true});
-      this.vb.start();
+      this.startStream();
     }
+  }
+
+  startStream() {
+    this.setState({streaming: true});
+    this.vb.start();
+  }
+
+  stopStream() {
+    this.vb.stop();
+    this.setState({streaming: false});
+  }
+
+  async componentWillUnmount() {
+    if (!this.state.assetId) {return;}
+    var url = 'https://api.mux.com/video/v1/assets/' + this.state.assetId;
+    const response = await axios.delete(
+      url,
+      {},
+      { auth: {
+          username: MUX_TOKEN_ID,
+          password: MUX_TOKEN_SECRET,
+        },
+      },
+    );
+    console.log(response);
   }
 
   render() {
@@ -94,7 +127,7 @@ class LiveStream extends React.Component {
           }}
           autopreview={true}
         />
-        <HeaderBackButton
+        <LiveStreamHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
           inputRange={[5, 10]}
@@ -107,11 +140,24 @@ class LiveStream extends React.Component {
           clickButton1={() => navigation.navigate('TabsApp')}
         />
         <View style={styles.toolbar}>
-          <Button
-            onPress={() => this.mainButtonClick()}
-            title={'Title prop'}
-            color="black"
-          />
+          <Col style={styleApp.center2}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name={'times'}
+                    color={colors.title}
+                    size={15}
+                    type="font"
+                  />
+                );
+              }}
+              click={() => this.props.clickButton1()}
+              color={'white'}
+              style={styles.buttonRight}
+              onPressColor={colors.off}
+            />
+          </Col>
         </View>
       </View>
     );
@@ -136,6 +182,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
+  recordButton: {
+    ...styleApp.center2,
+
+  }
 });
 const mapStateToProps = (state) => {
   return {
