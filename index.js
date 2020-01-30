@@ -9,6 +9,16 @@ import {Provider} from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './reduxStore';
 
+// Need to import globally in react native
+// for axios authenticated POST to work properly
+import {decode, encode} from 'base-64';
+if (!global.btoa) {
+    global.btoa = encode;
+}
+if (!global.atob) {
+    global.atob = decode;
+}
+
 console.disableYellowBox = true;
 
 const AppContainer = () =>
