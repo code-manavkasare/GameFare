@@ -38,12 +38,11 @@ class StreamPage extends React.Component {
       this.loadEvents(this.props.userID);
     }
   }
-
   async loadEvents(userID) {
     console.log('LOAD EVENTS');
     const events = await getMyEvents(userID);
     console.log(events);
-    //await this.props.eventsAction('setMyEvents', events);
+    //await this.props.eventsAction('setMyEvents', events); something like this?
     this.setState({events: events, loader: false});
   }
   logoutView() {
@@ -84,7 +83,7 @@ class StreamPage extends React.Component {
   streamPageView(events) {
     if (!this.props.userConnected) return this.logoutView();
     return (
-      <View style={{paddingTop: 5}}>
+      <View style={{paddingTop: 5, height: '100%'}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={[styleApp.title, {fontSize: 27}]}>Events</Text>
         </View>
