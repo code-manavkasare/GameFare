@@ -63,11 +63,6 @@ export default class LiveStreamHeader extends Component {
     return 70;
   }
   render() {
-    const borderColorIcon = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [this.props.initialBorderColorIcon, 'white'],
-      extrapolate: 'clamp',
-    });
     return (
       <View
         style={styles.header}>

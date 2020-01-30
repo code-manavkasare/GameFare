@@ -30,6 +30,7 @@ class StreamPage extends React.Component {
     this.state = {
       events: [],
       loader: true,
+      wasLoggedOut: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -46,6 +47,7 @@ class StreamPage extends React.Component {
     this.setState({events: events, loader: false});
   }
   logoutView() {
+    this.setState({wasLoggedOut: true});
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
         <View style={styleApp.center}>
@@ -113,6 +115,9 @@ class StreamPage extends React.Component {
     const {navigate} = this.props.navigation;
     const {events} = this.state;
     const {userConnected} = this.props;
+    if (this.state.wasLoggedOut) {
+      this.loadEvents();
+    }
     return (
       <View>
         <HeaderBackButton

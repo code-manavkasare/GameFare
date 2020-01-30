@@ -38,6 +38,7 @@
     "react-native-branch": "^3.1.1",
     "react-native-calendar-events": "^1.7.3",
     "react-native-calendars": "^1.212.0",
+    "react-native-camera": "^3.16.0",
     "react-native-communications": "^2.2.1",
     "react-native-confirmation-code-field": "^4.1.0",
     "react-native-contacts": "^5.0.4",

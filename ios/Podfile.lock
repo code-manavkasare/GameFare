@@ -343,6 +343,14 @@ PODS:
     - React
   - react-native-calendar-events (1.7.3):
     - React
+  - react-native-camera (3.16.0):
+    - React
+    - react-native-camera/RCT (= 3.16.0)
+    - react-native-camera/RN (= 3.16.0)
+  - react-native-camera/RCT (3.16.0):
+    - React
+  - react-native-camera/RN (3.16.0):
+    - React
   - react-native-cameraroll (1.3.0):
     - React
   - react-native-contacts (5.0.4):
@@ -518,6 +526,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fcm (from `../node_modules/react-native-fcm`)
@@ -666,6 +675,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-branch"
   react-native-calendar-events:
     :path: "../node_modules/react-native-calendar-events"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
   react-native-cameraroll:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-contacts:
@@ -818,6 +829,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 111d7d342b07a904c400592e02a2b958f1098b60
   react-native-branch: b95430177fc90d4a5d414b33c6bc7b1e8e3a2ea5
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
+  react-native-camera: 705c7e9412436957b4dc894a1af61f43830787e2
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-contacts: 7d0b7ccd5f00df82ceca035935fc9d6e63af5aec
   react-native-fcm: fcbafc64ed69bd681fceba7405145d6bfbb6af53

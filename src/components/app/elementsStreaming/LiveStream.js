@@ -12,6 +12,7 @@ import axios from 'axios';
 
 const {height, width} = Dimensions.get('screen');
 import {NodeCameraView} from 'react-native-nodemediaclient';
+import {RNCamera} from 'react-native-camera';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style';
@@ -36,6 +37,7 @@ class LiveStream extends React.Component {
       streaming: false,
       streamKey: '',
       playbackId: '',
+      netline: null,
       assetId: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -43,6 +45,21 @@ class LiveStream extends React.Component {
 
   async componentDidMount() {
     await this.createStream();
+  }
+
+  async componentWillUnmount() {
+    if (!this.state.assetId) {return;}
+    var url = 'https://api.mux.com/video/v1/assets/' + this.state.assetId;
+    const response = await axios.delete(
+      url,
+      {},
+      { auth: {
+          username: MUX_TOKEN_ID,
+          password: MUX_TOKEN_SECRET,
+        },
+      },
+    );
+    console.log(response);
   }
 
   async createStream() {
@@ -73,60 +90,46 @@ class LiveStream extends React.Component {
   }
 
   mainButtonClick() {
-    if (this.state.streaming) {
-      this.stopStream();
-    } else {
-      this.startStream();
+    this.setState({netline: {id: 1}});
+    // return;
+    // if (this.state.streaming) {
+    //   this.stopStream();
+    // } else {
+    //   this.startStream();
+    // }
+  }
+
+  async takeCalibrationPhoto() {
+    if (this.camera) {
+      const data = await this.camera.capture();
+      const uri = data.path;
+      console.log(uri);
+      await this.uploadNetlinePhoto(uri);
     }
+  }
+
+  async uploadNetlinePhoto(uri) {
+    // uploadPictureFirebase('streams/' + this.state.assetId + '/netlinePhoto/', uri)
   }
 
   startStream() {
     this.setState({streaming: true});
-    this.vb.start();
+    this.nodeCameraView.start();
   }
 
   stopStream() {
-    this.vb.stop();
+    this.nodeCameraView.stop();
     this.setState({streaming: false});
   }
 
-  async componentWillUnmount() {
-    if (!this.state.assetId) {return;}
-    var url = 'https://api.mux.com/video/v1/assets/' + this.state.assetId;
-    const response = await axios.delete(
-      url,
-      {},
-      { auth: {
-          username: MUX_TOKEN_ID,
-          password: MUX_TOKEN_SECRET,
-        },
-      },
-    );
-    console.log(response);
-  }
+
 
   render() {
     console.log('RENDER OF LIVESTREAM');
     const {navigation} = this.props;
+    // note to self, don't show "align camera" msg and "take photo" button until stream created on firebase
     return (
       <View style={styles.container}>
-        <NodeCameraView
-          style={styles.nodeCameraView}
-          ref={(vb) => {
-            this.vb = vb;
-          }}
-          outputUrl={this.state.loading ? null : this.state.outputUrl}
-          camera={{cameraId: 1, cameraFrontMirror: true}}
-          audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
-          video={{
-            preset: 12,
-            bitrate: 400000,
-            profile: 1,
-            fps: 15,
-            videoFrontMirror: false,
-          }}
-          autopreview={true}
-        />
         <LiveStreamHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
@@ -139,22 +142,84 @@ class LiveStream extends React.Component {
           icon2={null}
           clickButton1={() => navigation.navigate('TabsApp')}
         />
-        <View style={styles.toolbar}>
-          <Col style={styleApp.center2}>
+        {!this.state.netline
+        // this camera takes a calibration photo
+        ? <RNCamera
+            ref={ref => {
+              this.camera = ref;
+            }}
+            style={styles.nodeCameraView}
+            type={RNCamera.Constants.Type.front}
+            flashMode={RNCamera.Constants.FlashMode.on}
+            androidCameraPermissionOptions={{
+              title: 'Permission to use camera',
+              message: 'We need your permission to use your camera',
+              buttonPositive: 'Ok',
+              buttonNegative: 'Cancel',
+            }}
+            androidRecordAudioPermissionOptions={{
+              title: 'Permission to use audio recording',
+              message: 'We need your permission to use your audio',
+              buttonPositive: 'Ok',
+              buttonNegative: 'Cancel',
+            }}
+          />
+        // this camera streams live video
+        : <NodeCameraView
+            style={styles.nodeCameraView}
+            ref={(nodeCameraView) => {
+              this.nodeCameraView = nodeCameraView;
+            }}
+            outputUrl={this.state.loading ? null : this.state.outputUrl}
+            camera={{cameraId: 1, cameraFrontMirror: true}}
+            audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
+            video={{
+              preset: 12,
+              bitrate: 400000,
+              profile: 1,
+              fps: 15,
+              videoFrontMirror: false,
+            }}
+            autopreview={true}
+          />
+        }
+        <View style={styles.smallCol}>
+          <Row style={styleApp.center2}>
+            <Text>
+              Please position the camera correctly
+            </Text>
+          </Row>
+          <Row style={styleApp.center2}>
             <ButtonColor
               view={() => {
                 return (
-                  <AllIcons
-                    name={'times'}
-                    color={colors.title}
-                    size={15}
-                    type="font"
+                  <View>
+                    <Text>
+                      Done
+                    </Text>
+                  </View>
+                );
+              }}
+              click={() => this.takeCalibrationPhoto()}
+              color={'white'}
+              style={styles.calibrationButton}
+              onPressColor={colors.off}
+            />
+          </Row>
+        </View>
+        <View style={styles.toolbar}>
+          <Col style={[styleApp.center2, {paddingBottom: 5}]}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <View
+
                   />
                 );
               }}
-              click={() => this.props.clickButton1()}
-              color={'white'}
-              style={styles.buttonRight}
+              click={() => this.mainButtonClick()}
+              color={'red'}
+              style={styles.recordButton}
               onPressColor={colors.off}
             />
           </Col>
@@ -167,6 +232,12 @@ class LiveStream extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+  },
+  smallRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   nodeCameraView: {
@@ -182,10 +253,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
+  calibrationButton: {
+    ...styleApp.center2,
+    width: 60,
+    height: 40,
+  },
   recordButton: {
     ...styleApp.center2,
-
-  }
+    width: 48,
+    height: 48,
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: 'black',
+  },
 });
 const mapStateToProps = (state) => {
   return {
