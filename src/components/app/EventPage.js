@@ -287,8 +287,6 @@ class EventPage extends React.Component {
       title: data.info.name + ' has been added to your personnal calendar.',
     });
   }
-
-  // edit event components
   editPrice(data) {
     if (this.state.editMode) {
       return (
@@ -353,11 +351,11 @@ class EventPage extends React.Component {
             onPressColor={colors.off}
             click={() => (alert !== undefined ? alert() : null)}
             style={{
-                paddingTop: 10,
-                paddingBottom: 10,
-                flex: 1,
-                borderRadius: 3,
-                marginBottom: 5,
+              paddingTop: 10,
+              paddingBottom: 10,
+              flex: 1,
+              borderRadius: 3,
+              marginBottom: 5,
             }}
             view={() => {
               return (
@@ -571,7 +569,7 @@ class EventPage extends React.Component {
                   editEnd: datetime.endDate,
                 });
               },
-            })
+            }),
         )}
 
         {/* <Row>
@@ -590,7 +588,10 @@ class EventPage extends React.Component {
         {this.editRowIcon(
           this.title(data.location.address),
           'map-marker-alt',
-          () => this.props.navigation.navigate('AlertAddress', {data: data.location}),
+          () =>
+            this.props.navigation.navigate('AlertAddress', {
+              data: data.location,
+            }),
           () =>
             this.props.navigation.navigate('Location', {
               location: data.location,
@@ -601,7 +602,7 @@ class EventPage extends React.Component {
                 );
                 this.setState({editLocation: location});
               },
-            })
+            }),
         )}
         {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
