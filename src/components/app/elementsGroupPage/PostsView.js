@@ -114,7 +114,7 @@ export default class Posts extends Component {
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
             {Object.values(this.state.discussions).map((discussion, i) => (
-              <CardConversation index={i} key={i} discussion={discussion} />
+              <CardConversation index={i} key={i} discussion={discussion} discussionID={discussion.objectID} />
             ))}
           </FadeInView>
         )}

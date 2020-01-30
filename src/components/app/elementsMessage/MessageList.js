@@ -39,7 +39,15 @@ class MessageTab extends React.Component {
 
   async loadDiscussions(userID) {
     const discussions = await loadMyDiscusions(userID);
+    console.log('discussions',discussions)
+    const myDiscussions = Object.values(discussions).reduce(function(result, item) {
+      result[item.objectID] = true;
+      return result;
+    }, {});
+    console.log('myDiscussions',myDiscussions)
+    
     await this.props.messageAction('setConversations', discussions);
+    await this.props.messageAction('setMyConversations', myDiscussions);
     this.setState({discussions: discussions, loader: false});
   }
   async componentWillReceiveProps(nextProps) {
@@ -99,7 +107,8 @@ class MessageTab extends React.Component {
       </View>
     );
   }
-  messagePageView(conversations) {
+  messagePageView(myConversations) {
+    console.log('myConversations display',myConversations)
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -115,11 +124,11 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader
             ? this.placeHolder()
-            : Object.values(conversations).map((discussion, i) => (
+            : Object.keys(myConversations).map((discussion, i) => (
                 <CardConversation
                   key={i}
                   index={i}
-                  discussion={discussion}
+                  discussionID={discussion}
                   myConversation={true}
                 />
               ))}
@@ -138,8 +147,9 @@ class MessageTab extends React.Component {
   }
   render() {
     const {navigate} = this.props.navigation;
-    const {discussions} = this.props;
+    const {myConversations} = this.props;
     const {userConnected} = this.props;
+    console.log('discussions render!!!',myConversations)
     return (
       <View>
         <HeaderBackButton
@@ -159,7 +169,7 @@ class MessageTab extends React.Component {
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.messagePageView(discussions)}
+          contentScrollView={() => this.messagePageView(myConversations)}
           keyboardAvoidDisable={true}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -179,7 +189,7 @@ class MessageTab extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    discussions: state.message.conversations,
+    myConversations: state.message.myDiscussions,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
   };
