@@ -344,123 +344,51 @@ class EventPage extends React.Component {
       return <Text style={styleApp.title}>{data.info.name}</Text>;
     }
   }
-  editDateTime(data) {
+  editRowIcon(component, icon, alert, edit) {
     return (
-      <Row
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            borderRadius: 3,
-            marginBottom: 5,
-          },
-        ]}>
-        <Col size={15} style={styleApp.center}>
-          <AllIcons
-            name="calendar-alt"
-            color={colors.greyDark}
-            size={16}
-            type="font"
-          />
-        </Col>
-        <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
-          <DateEvent
-            start={
-              this.state.editStart !== ''
-                ? this.state.editStart
-                : data.date.start
-            }
-            end={this.state.editEnd !== '' ? this.state.editEnd : data.date.end}
+      <Row>
+        <Col size={85}>
+          <ButtonColor
+            color="white"
+            onPressColor={colors.off}
+            click={() => (alert !== undefined ? alert() : null)}
+            style={{
+                paddingTop: 10,
+                paddingBottom: 10,
+                flex: 1,
+                borderRadius: 3,
+                marginBottom: 5,
+            }}
+            view={() => {
+              return (
+                <Row>
+                  <Col size={15} style={styleApp.center}>
+                    <AllIcons
+                      name={icon}
+                      color={colors.greyDark}
+                      size={16}
+                      type="font"
+                    />
+                  </Col>
+                  <Col size={85} style={[styleApp.center2, {paddingLeft: 10}]}>
+                    {component}
+                  </Col>
+                </Row>
+              );
+            }}
           />
         </Col>
         {this.state.editMode ? (
-          <Col size={20} style={styleApp.center}>
+          <Col size={15} style={styleApp.center}>
             <ButtonColor
               view={() => {
                 return <Text style={styleApp.text}>Edit</Text>;
               }}
-              click={() =>
-                this.props.navigation.navigate('Date', {
-                  startDate: data.date.start,
-                  endDate: data.date.end,
-                  recurrence: data.date.recurrence,
-                  close: () =>
-                    this.props.navigation.navigate(
-                      this.props.navigation.state.routeName,
-                    ),
-                  onGoBack: (datetime) => {
-                    this.props.navigation.navigate(
-                      this.props.navigation.state.routeName,
-                    );
-                    this.setState({
-                      editStart: datetime.startDate,
-                      editEnd: datetime.endDate,
-                    });
-                  },
-                })
-              }
-              color="white"
-              onPressColor={colors.off}
+              click={() => edit()}
             />
           </Col>
         ) : (
-          <Col size={20} />
-        )}
-      </Row>
-    );
-  }
-  editLocation(data) {
-    return (
-      <Row
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            borderRadius: 3,
-            marginBottom: 5,
-          },
-        ]}>
-        <Col size={15} style={styleApp.center}>
-          <AllIcons
-            name="map-marker-alt"
-            color={colors.greyDark}
-            size={16}
-            type="font"
-          />
-        </Col>
-        <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
-          {this.title(
-            this.state.editLocation !== null
-              ? this.state.editLocation.address
-              : data.location.address,
-          )}
-        </Col>
-        {this.state.editMode ? (
-          <Col size={20} style={styleApp.center}>
-            <ButtonColor
-              view={() => {
-                return <Text style={styleApp.text}>Edit</Text>;
-              }}
-              click={() =>
-                this.props.navigation.navigate('Location', {
-                  location: data.location,
-                  pageFrom: this.props.navigation.state.routeName,
-                  onGoBack: (location) => {
-                    this.props.navigation.navigate(
-                      this.props.navigation.state.routeName,
-                    );
-                    this.setState({editLocation: location});
-                  },
-                })
-              }
-              color="white"
-              onPressColor={colors.off}
-            />
-          </Col>
-        ) : (
-          <Col size={20} />
+          <Col size={15} />
         )}
       </Row>
     );
@@ -621,9 +549,34 @@ class EventPage extends React.Component {
         {this.rowImage(sport.icon, sport.text)}
         {this.rowImage(league.icon, league.text)}
 
-        <Row>
+        {this.editRowIcon(
+          this.dateTime(data.date.start, data.date.end),
+          'calendar-alt',
+          () => this.addCalendar(data),
+          () =>
+            this.props.navigation.navigate('Date', {
+              startDate: data.date.start,
+              endDate: data.date.end,
+              recurrence: data.date.recurrence,
+              close: () =>
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                ),
+              onGoBack: (datetime) => {
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                );
+                this.setState({
+                  editStart: datetime.startDate,
+                  editEnd: datetime.endDate,
+                });
+              },
+            })
+        )}
+
+        {/* <Row>
           <Col style={styleApp.center2}>{this.editDateTime(data)}</Col>
-        </Row>
+        </Row> */}
         {data.date.recurrence !== '' && data.date.recurrence
           ? this.rowIcon(
               this.title(
@@ -634,9 +587,22 @@ class EventPage extends React.Component {
             )
           : null}
 
-        <Row>
-          <Col style={styleApp.center2}>{this.editLocation(data)}</Col>
-        </Row>
+        {this.editRowIcon(
+          this.title(data.location.address),
+          'map-marker-alt',
+          () => this.props.navigation.navigate('AlertAddress', {data: data.location}),
+          () =>
+            this.props.navigation.navigate('Location', {
+              location: data.location,
+              pageFrom: this.props.navigation.state.routeName,
+              onGoBack: (location) => {
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                );
+                this.setState({editLocation: location});
+              },
+            })
+        )}
         {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}
