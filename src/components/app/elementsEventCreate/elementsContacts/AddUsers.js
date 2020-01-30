@@ -22,6 +22,7 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {userObject} from '../../../functions/users';
 import {initialState} from '../../../../reducers/messageReducer';
+import AllIcon from '../../../layout/icons/AllIcons';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -66,7 +67,7 @@ class AddUsers extends Component {
 
   sendInvitationGamefareUsers = async () => {
     await this.setState({loaderButton: true});
-    const {userID} = this.props;
+    const {userID,nameEvent} = this.props;
     const {selectedUsersWithId} = this.state;
     const user = userObject(this.props.infoUser, this.props.userID);
 
@@ -93,12 +94,21 @@ class AddUsers extends Component {
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
     await this.setState({loaderButton: false});
     await this.userListRef.reset();
-    NavigationService.navigate('Alert', {
+    NavigationService.navigate('AlertAddUsers', {
       close: true,
-      title: 'Confirmation popup',
-      subtitle: 'Coming soon',
+      title: 'Congrats, you have invited new players to ' + nameEvent,
+      users: selectedUsersWithId,
       textButton: 'Got it!',
+      icon: (
+        <AllIcon
+          name="check-circle"
+          color={colors.green}
+          size={20}
+          type="font"
+        />
+      ),
     });
+
     // this.showToast('Invitations sent !');
   };
 
@@ -138,9 +148,6 @@ class AddUsers extends Component {
         <UsersSelectableList
           usersList={usersList}
           loader={loader}
-          // ref={(ref) => {
-          //   this.userListRef = ref;
-          // }}
           onRef={(ref) => (this.userListRef = ref)}
           getSelectedUsers={this.getSelectedUsers}
         />
