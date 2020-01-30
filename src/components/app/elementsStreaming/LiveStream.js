@@ -21,49 +21,68 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 class LiveStream extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      outputUrl: '',
+      loading: '',
+    };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   render() {
     console.log('RENDER OF LIVESTREAM');
+    const {navigation} = this.props;
     return (
-      <View>
-        {/* <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Select an event to stream'}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.white}
-          initialBackgroundColor={'white'}
-          initialTitleOpacity={0}
-        /> */}
-
+      <View style={styles.container}>
         <NodeCameraView 
           style={styles.nodeCameraView}
           ref={(vb) => { this.vb = vb }}
-          outputUrl = {""}
+          outputUrl = {this.state.outputUrl}
           camera={{ cameraId: 1, cameraFrontMirror: true }}
           audio={{ bitrate: 32000, profile: 1, samplerate: 44100 }}
           video={{ preset: 12, bitrate: 400000, profile: 1, fps: 15, videoFrontMirror: false }}
           autopreview={true}
         />
-        <Button
-          onPress={() => console.log('press')}
-          title={'Title prop'}
-          color="#841584"
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={''}
+          inputRange={[5, 10]}
+          loader={this.state.loader}
+          initialBorderColorIcon={'white'}
+          initialBackgroundColor={'white'}
+          initialTitleOpacity={0}
+          icon1={'times'}
+          icon2={null}
+          clickButton1={() => navigation.navigate('TabsApp')}
         />
-
-
-
-
+        <View style={styles.toolbar}>
+          <Button
+            onPress={() => console.log('press')}
+            title={'Title prop'}
+            color="black"
+          />
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
   nodeCameraView: {
-    height: '90%',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  toolbar: {
+    flex: 1,
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 0,
   },
 });
 const mapStateToProps = (state) => {
