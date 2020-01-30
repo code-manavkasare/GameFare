@@ -543,6 +543,7 @@ class Contacts extends Component {
               <AddUsers
                 searchString={searchInputGameFareUsers}
                 objectID={objectID}
+                nameEvent={data.info.name}
                 changeSearchGameFareUsers={this.changeSearchGameFareUsers}
                 createBranchMessage={this.createBranchMessage}
               />
@@ -554,6 +555,7 @@ class Contacts extends Component {
                 searchString={searchInputGroups}
                 objectID={objectID}
                 pageFrom={pageFrom}
+                nameEvent={data.info.name}
                 changeSearchGroups={this.changeSearchGroups}
               />
             </FadeInView>

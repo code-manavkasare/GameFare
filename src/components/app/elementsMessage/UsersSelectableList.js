@@ -10,6 +10,7 @@ import AllIcons from '../../layout/icons/AllIcons';
 
 import ButtonColor from '../../layout/Views/Button';
 import AsyncImage from '../../layout/image/AsyncImage';
+import CardUserSelect from '../../layout/cards/CardUserSelect';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -36,65 +37,6 @@ export default class UsersSelectableList extends React.Component {
     await this.setState({selectedUsers: selectedUsers});
     this.props.getSelectedUsers(this.state.selectedUsers);
   };
-
-  cardUser(user, i, selectedUsers) {
-    return (
-      <ButtonColor
-        key={i}
-        view={() => {
-          return (
-            <Row>
-              <Col size={15} style={styleApp.center2}>
-                {user.info.picture ? (
-                  <AsyncImage
-                    style={styles.imgUser}
-                    mainImage={user.info.picture}
-                    imgInitial={user.info.picture}
-                  />
-                ) : (
-                  <AllIcons
-                    name="user-circle"
-                    type="font"
-                    size={40}
-                    color={colors.greyDark}
-                  />
-                )}
-              </Col>
-              <Col size={80} style={styleApp.center2}>
-                <Text style={styleApp.text}>
-                  {user.info.firstname} {user.info.lastname}
-                </Text>
-              </Col>
-              <Col size={10} style={styleApp.center}>
-                {selectedUsers[user.objectID] ? (
-                  <AllIcons
-                    name="check-circle"
-                    type="font"
-                    size={23}
-                    color={colors.primary}
-                  />
-                ) : (
-                  <AllIcons
-                    name="circle"
-                    type="font"
-                    size={23}
-                    color={colors.greyDark}
-                  />
-                )}
-              </Col>
-            </Row>
-          );
-        }}
-        click={() =>
-          this.selectUser(selectedUsers[user.objectID], user, selectedUsers)
-        }
-        color="white"
-        style={styles.cardUser}
-        onPressColor={colors.off}
-      />
-    );
-  }
-
   render() {
     let {selectedUsers} = this.state;
     const {usersList, loader} = this.props;
@@ -108,7 +50,14 @@ export default class UsersSelectableList extends React.Component {
               <Loader size={35} color={'green'} />
             </View>
           ) : (
-            usersList.map((user, i) => this.cardUser(user, i, selectedUsers))
+            usersList.map((user, i) => (
+              <CardUserSelect
+                user={user}
+                key={i}
+                selectUser={this.selectUser.bind(this)}
+                selectedUsers={selectedUsers}
+              />
+            ))
           )}
           <View style={{height: 350}} />
         </ScrollView>
@@ -122,12 +71,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     minHeight: height,
   },
-  cardUser: {
-    height: 55,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  imgUser: {width: 40, height: 40, borderRadius: 20},
 });
 
 UsersSelectableList.PropTypes = {
