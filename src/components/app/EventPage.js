@@ -349,7 +349,7 @@ class EventPage extends React.Component {
           <ButtonColor
             color="white"
             onPressColor={colors.off}
-            click={() => (alert !== undefined ? alert() : null)}
+            click={() => (alert ? alert() : null)}
             style={{
               paddingTop: 10,
               paddingBottom: 10,
@@ -376,7 +376,7 @@ class EventPage extends React.Component {
             }}
           />
         </Col>
-        {this.state.editMode ? (
+        {this.state.editMode && edit ? (
           <Col size={15} style={styleApp.center}>
             <ButtonColor
               view={() => {
