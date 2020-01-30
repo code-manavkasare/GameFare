@@ -6506,6 +6506,11 @@ react-native-mixpanel@^1.1.4:
   resolved "https://registry.yarnpkg.com/react-native-mixpanel/-/react-native-mixpanel-1.1.10.tgz#e8dede59b50500779d91d4f5fa44119e672b8cff"
   integrity sha512-I/4kihdHXC3oneq8lmULDOfpQE0D8xVjXZzBs3W7DtnjdGnhQC+UknnzzRAK7WBEnvdD5pUPp1Bku6nCn24FjA==
 
+react-native-nodemediaclient@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-nodemediaclient/-/react-native-nodemediaclient-0.1.5.tgz#b1be8aa7e656de7b49a720a6f40487cf53b804fd"
+  integrity sha512-hgUSD45QwwUsxTCYK1L7XSQscBalJPo2f/BvuSEOEetKZ5qXZ8NslFkS/0xn7UJ4bWwDjX1iZLNjppakMsqJVw==
+
 react-native-open-maps@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/react-native-open-maps/-/react-native-open-maps-0.3.4.tgz#c63fa82ca162b1584a6ce38b9a0e2421e5086074"
