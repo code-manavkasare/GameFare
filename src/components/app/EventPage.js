@@ -285,7 +285,7 @@ class EventPage extends React.Component {
     return this.props.navigation.navigate('Alert', {
       close: true,
       textButton: 'Got it!',
-      title: data.info.name + ' has been added to your personnal calendar.',
+      title: data.info.name + ' has been added to your calendar.',
     });
   }
   editPrice(data) {

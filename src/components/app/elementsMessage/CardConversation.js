@@ -29,7 +29,7 @@ class CardConversation extends React.Component {
   async componentDidMount() {
     let lastMessage = await firebase
       .database()
-      .ref('discussions/' + this.props.discussion.objectID + '/messages')
+      .ref('discussions/' + this.props.discussionID + '/messages')
       .limitToLast(1)
       .once('value');
     const {gamefareUser} = this.props;
@@ -57,10 +57,10 @@ class CardConversation extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const conversation = this.props.conversations[
-      this.props.discussion.objectID
+      this.props.discussionID
     ];
     const conversationNext =
-      nextProps.conversations[nextProps.discussion.objectID];
+      nextProps.conversations[nextProps.discussionID];
     if (!isEqual(conversation, conversationNext))
       return this.setState({
         lastMessage: conversationNext.lastMessage,
@@ -144,9 +144,11 @@ class CardConversation extends React.Component {
   }
   render() {
     const conversation = this.props.conversations[
-      this.props.discussion.objectID
+      this.props.discussionID
     ];
+    console.log('discussionID',conversation)
     const {lastMessage} = this.state;
+    // return null
     return this.cardConversation(
       conversation ? conversation : this.props.discussion,
       lastMessage,
