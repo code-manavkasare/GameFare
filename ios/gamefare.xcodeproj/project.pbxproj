@@ -468,10 +468,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = GDMG8R7UAQ;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = H3679W58Z6;
+						DevelopmentTeam = GDMG8R7UAQ;
 						LastSwiftMigration = 1130;
 						SystemCapabilities = {
 							com.apple.ApplePay = {
@@ -772,10 +773,12 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh",
+				"${PODS_ROOT}/NodeMediaClient/NodeMediaClient/NodeMediaClient.framework",
 				"${PODS_ROOT}/../../node_modules/@react-native-mapbox-gl/maps/ios/Mapbox.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NodeMediaClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -889,6 +892,7 @@
 			baseConfigurationReference = 7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -913,6 +917,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefareTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -936,7 +941,7 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = H3679W58Z6;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.0;
@@ -945,7 +950,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gamefare;
+				PRODUCT_BUNDLE_IDENTIFIER = gamefare.ethan;
 				PRODUCT_NAME = gamefare;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -961,7 +966,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CURRENT_PROJECT_VERSION = 1.0.0;
-				DEVELOPMENT_TEAM = H3679W58Z6;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.0;
@@ -970,7 +975,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gamefare;
+				PRODUCT_BUNDLE_IDENTIFIER = gamefare.ethan;
 				PRODUCT_NAME = gamefare;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
