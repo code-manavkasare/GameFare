@@ -13,7 +13,13 @@ import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
-import {editEvent, removePlayerFromEvent} from '../functions/editEvent';
+import {
+  editEvent,
+  removePlayerFromEvent,
+  nextGender,
+  nextRule,
+  nextLevelIndex,
+} from '../functions/editEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar} from '../functions/date';
@@ -38,7 +44,6 @@ import PostsView from './elementsGroupPage/PostsView';
 
 import CardUser from './elementsEventPage/CardUser';
 import {arrayAttendees} from '../functions/createEvent';
-import {indexEvents} from '../database/algolia';
 import PlaceHolder from '../placeHolders/EventPage';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -56,7 +61,6 @@ const noEdit = {
   editMaxAttendance: -1,
   editLevelIndex: -1,
   editRule: '',
-  editRuleIndex: -1,
 };
 
 class EventPage extends React.Component {
@@ -70,12 +74,10 @@ class EventPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.event = this.event.bind(this);
   }
-
   async componentDidMount() {
     console.log('eventpageload', this.props.navigation.getParam('objectID'));
     this.loadEvent(this.props.navigation.getParam('objectID'));
   }
-  async componentDidUpdate() {}
   async componentWillUnmount() {
     if (this.state.event) {
       firebase
@@ -98,133 +100,80 @@ class EventPage extends React.Component {
         that.setState({event: event, loader: false});
       });
   }
+  getSportLeagueRule(event) {
+    const sport = this.props.sports.filter(
+      (s) => s.value === event.info.sport,
+    )[0];
+    const league = Object.values(sport.typeEvent).filter(
+      (l) => l.value === event.info.league,
+    )[0];
+    const rule = Object.values(league.rules).filter(
+      (r) =>
+        r.value ===
+        (this.state.editRule === noEdit.editRule
+          ? event.info.rules
+          : this.state.editRule),
+    )[0];
+    return {sport: sport, league: league, rule: rule};
+  }
   nextGender(data, inc) {
-    const genders = ['mixed', 'female', 'male'];
-    let index;
-    if (this.state.editGender === '') {
-      index = genders.indexOf(data.info.gender);
+    if (this.state.editGender === noEdit.editGender) {
+      this.setState({editGender: nextGender(data.info.gender, inc)});
     } else {
-      index = genders.indexOf(this.state.editGender);
+      this.setState({editGender: nextGender(this.state.editGender, inc)});
     }
-    const nextIndex =
-      (((index + inc) % genders.length) + genders.length) % genders.length; // allows for 'correct' negative mod
-    this.setState({editGender: genders[nextIndex]});
   }
   nextRule(data, inc) {
-    let nextRuleIndex;
-    const sportData = this.props.sports.filter(
-      (sport) => sport.value === data.info.sport,
-    )[0];
-    const leagueData = Object.values(sportData.typeEvent).filter(
-      (league) => league.value === data.info.league,
-    )[0];
-    const rules = leagueData.rules;
-    if (this.state.editRuleIndex !== -1) {
-      nextRuleIndex =
-        (((this.state.editRuleIndex + inc) % rules.length) + rules.length) %
-        rules.length;
+    const {league} = this.getSportLeagueRule(data);
+    if (this.state.editRule === noEdit.editRule) {
+      this.setState({editRule: nextRule(data.info.rules, league, inc)});
     } else {
-      const rule = Object.values(rules).filter(
-        (rule) => rule.value === data.info.rules,
-      )[0];
-      const ruleIndex = rules.indexOf(rule);
-      nextRuleIndex =
-        (((ruleIndex + inc) % rules.length) + rules.length) % rules.length;
+      this.setState({editRule: nextRule(this.state.editRule, league, inc)});
     }
-    this.setState({
-      editRuleIndex: nextRuleIndex,
-      editRule: rules[nextRuleIndex].value,
-    });
   }
   nextLevel(data, inc) {
-    let nextLevelIndex;
-    const sport = this.props.sports.filter(
-      (s) => s.value === data.info.sport,
-    )[0];
+    const {sport} = this.getSportLeagueRule(data);
     const levels = sport.level.list;
-    if (this.state.editLevelIndex !== -1) {
-      nextLevelIndex =
-        (((this.state.editLevelIndex + inc) % levels.length) + levels.length) %
-        levels.length;
+    if (this.state.editLevelIndex !== noEdit.editLevelIndex) {
+      this.setState({
+        editLevelIndex: nextLevelIndex(this.state.editLevelIndex, levels, inc),
+      });
     } else {
-      nextLevelIndex =
-        (((data.info.levelFilter + inc) % levels.length) + levels.length) %
-        levels.length;
+      this.setState({
+        editLevelIndex: nextLevelIndex(data.info.levelFilter, levels, inc),
+      });
     }
-    this.setState({
-      editLevelIndex: nextLevelIndex,
-    });
   }
 
   header(event) {
     const {dismiss} = this.props.navigation;
-    if (!event) {
-      return (
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          typeIcon2="moon"
-          sizeIcon2={17}
-          clickButton2={() => {}}
-          clickButton1={() => dismiss()}
-        />
-      );
-    }
-    if (this.userIsOrganizer(event)) {
-      return (
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          typeIcon2="moon"
-          sizeIcon2={17}
-          iconOffset="pen"
-          colorIconOffset={this.state.editMode ? colors.blue : 'white'}
-          typeIconOffset="font"
-          clickButton2={() => this.goToShareEvent(event)}
-          clickButton1={() => dismiss()}
-          clickButtonOffset={() =>
-            this.setState({editMode: !this.state.editMode})
-          }
-        />
-      );
-    } else {
-      return (
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'transparent'}
-          initialTitleOpacity={0}
-          icon1="arrow-left"
-          icon2="share"
-          typeIcon2="moon"
-          sizeIcon2={17}
-          clickButton2={() =>
-            this.props.navigation.navigate('Contacts', {
-              openPageLink: 'openEventPage',
-              pageTo: 'Group',
-              objectID: event.objectID,
-              pageFrom: 'Event',
-              data: {...event, eventID: event.objectID},
-            })
-          }
-          clickButton1={() => dismiss()}
-        />
-      );
-    }
+    return (
+      <HeaderBackButton
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={''}
+        inputRange={[50, 80]}
+        initialBorderColorIcon={colors.grey}
+        initialBackgroundColor={'transparent'}
+        initialTitleOpacity={0}
+        icon1="arrow-left"
+        icon2="share"
+        typeIcon2="moon"
+        sizeIcon2={17}
+        iconOffset="pen"
+        colorIconOffset={this.state.editMode ? colors.blue : 'white'}
+        typeIconOffset="font"
+        clickButton2={() => this.goToShareEvent(event)}
+        clickButton1={() => dismiss()}
+        clickButtonOffset={
+          this.userIsOrganizer(event)
+            ? () =>
+                this.state.editMode
+                  ? this.setState({...noEdit})
+                  : this.setState({editMode: true})
+            : undefined
+        }
+      />
+    );
   }
   rowIcon(component, icon, alert) {
     return (
@@ -277,62 +226,11 @@ class EventPage extends React.Component {
       </Row>
     );
   }
-  colIcon(text, icon, click) {
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            <View style={styleApp.center} size={50}>
-              <AllIcons
-                name={icon}
-                size={17}
-                color={colors.title}
-                type="font"
-              />
-              <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
-            </View>
-          );
-        }}
-        click={() =>
-          click
-            ? this.props.navigation.navigate('Alert', {
-                close: true,
-                title: click.title,
-                subtitle: click.subtitle,
-                textButton: 'Close',
-              })
-            : null
-        }
-        color="white"
-        style={[{height: 90, marginTop: 0, borderRadius: 3, width: '100%'}]}
-        onPressColor={colors.off}
-      />
-    );
-  }
   title(text) {
     return <Text style={styleApp.input}>{text}</Text>;
   }
   dateTime(start, end) {
     return <DateEvent start={start} end={end} />;
-  }
-  openView(data) {
-    return (
-      <AllIcons
-        name={this.openCondition(data) ? 'lock-open' : 'lock'}
-        type="font"
-        color={this.openCondition(data) ? colors.green : colors.primary}
-        size={18}
-      />
-    );
-  }
-  openAlert(title, icon) {
-    this.props.navigation.navigate('Alert', {
-      textButton: 'Close',
-      title: title,
-      icon: icon,
-      close: true,
-      onGoBack: () => this.props.navigation.navigate('Event'),
-    });
   }
   allowCall(user, data) {
     if (user.coach || user.userID === data.info.organizer) return true;
@@ -390,8 +288,6 @@ class EventPage extends React.Component {
       title: data.info.name + ' has been added to your personnal calendar.',
     });
   }
-
-  // edit event components
   editPrice(data) {
     if (this.state.editMode) {
       return (
@@ -446,128 +342,55 @@ class EventPage extends React.Component {
       return <Text style={styleApp.title}>{data.info.name}</Text>;
     }
   }
-  editDateTime(data) {
+  editRowIcon(component, icon, alert, edit) {
     return (
-      <Row
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            borderRadius: 3,
-            marginBottom: 5,
-          },
-        ]}>
-        <Col size={15} style={styleApp.center}>
-          <AllIcons
-            name="calendar-alt"
-            color={colors.greyDark}
-            size={16}
-            type="font"
+      <Row>
+        <Col size={85}>
+          <ButtonColor
+            color="white"
+            onPressColor={colors.off}
+            click={() => (alert ? alert() : null)}
+            style={{
+              paddingTop: 10,
+              paddingBottom: 10,
+              flex: 1,
+              width: '100%',
+              borderRadius: 3,
+              marginBottom: 5,
+            }}
+            view={() => {
+              return (
+                <Row>
+                  <Col size={15} style={styleApp.center}>
+                    <AllIcons
+                      name={icon}
+                      color={colors.greyDark}
+                      size={16}
+                      type="font"
+                    />
+                  </Col>
+                  <Col size={85} style={[styleApp.center2, {paddingLeft: 10}]}>
+                    {component}
+                  </Col>
+                </Row>
+              );
+            }}
           />
         </Col>
-        <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
-          <DateEvent
-            start={
-              this.state.editStart !== ''
-                ? this.state.editStart
-                : data.date.start
-            }
-            end={this.state.editEnd !== '' ? this.state.editEnd : data.date.end}
-          />
-        </Col>
-        {this.state.editMode ? (
-          <Col size={20} style={styleApp.center}>
+        {this.state.editMode && edit && (
+          <Col size={15} style={styleApp.center}>
             <ButtonColor
               view={() => {
                 return <Text style={styleApp.text}>Edit</Text>;
               }}
-              click={() =>
-                this.props.navigation.navigate('Date', {
-                  startDate: data.date.start,
-                  endDate: data.date.end,
-                  recurrence: data.date.recurrence,
-                  close: () =>
-                    this.props.navigation.navigate(
-                      this.props.navigation.state.routeName,
-                    ),
-                  onGoBack: (datetime) => {
-                    this.props.navigation.navigate(
-                      this.props.navigation.state.routeName,
-                    );
-                    this.setState({
-                      editStart: datetime.startDate,
-                      editEnd: datetime.endDate,
-                    });
-                  },
-                })
-              }
-              color="white"
-              onPressColor={colors.off}
+              click={() => edit()}
             />
           </Col>
-        ) : (
-          <Col size={20} />
         )}
       </Row>
     );
   }
-  editLocation(data) {
-    return (
-      <Row
-        style={[
-          {
-            paddingTop: 10,
-            paddingBottom: 10,
-            flex: 1,
-            borderRadius: 3,
-            marginBottom: 5,
-          },
-        ]}>
-        <Col size={15} style={styleApp.center}>
-          <AllIcons
-            name="map-marker-alt"
-            color={colors.greyDark}
-            size={16}
-            type="font"
-          />
-        </Col>
-        <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
-          {this.title(
-            this.state.editLocation !== null
-              ? this.state.editLocation.address
-              : data.location.address,
-          )}
-        </Col>
-        {this.state.editMode ? (
-          <Col size={20} style={styleApp.center}>
-            <ButtonColor
-              view={() => {
-                return <Text style={styleApp.text}>Edit</Text>;
-              }}
-              click={() =>
-                this.props.navigation.navigate('Location', {
-                  location: data.location,
-                  pageFrom: this.props.navigation.state.routeName,
-                  onGoBack: (location) => {
-                    this.props.navigation.navigate(
-                      this.props.navigation.state.routeName,
-                    );
-                    this.setState({editLocation: location});
-                  },
-                })
-              }
-              color="white"
-              onPressColor={colors.off}
-            />
-          </Col>
-        ) : (
-          <Col size={20} />
-        )}
-      </Row>
-    );
-  }
-  editColIcon(text, icon, clickUp, clickDown) {
+  editColIcon(text, icon, clickUp, clickDown, clickIcon) {
     return (
       <Row
         style={[
@@ -577,7 +400,7 @@ class EventPage extends React.Component {
         size={50}>
         {this.state.editMode ? (
           <Col
-            size={30}
+            size={15}
             style={{justifyContent: 'space-around', alignItems: 'flex-end'}}>
             <Row size={20}>
               <ButtonColor
@@ -615,15 +438,39 @@ class EventPage extends React.Component {
             </Row>
           </Col>
         ) : (
-          <Col size={30} />
+          <Col size={15} />
         )}
-        <Col size={10}></Col>
-        <Col size={100} style={[styleApp.center2, {alignItems: 'flex-start'}]}>
-          <View style={styleApp.center}>
-            <AllIcons name={icon} size={17} color={colors.title} type="font" />
-            <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
-          </View>
+        <Col size={100} style={[styleApp.center, {alignItems: 'flex-start'}]}>
+          <ButtonColor
+            color="white"
+            style={[{height: 90, marginTop: 0, borderRadius: 3, width: '100%'}]}
+            onPressColor={colors.off}
+            view={() => {
+              return (
+                <View style={styleApp.center}>
+                  <AllIcons
+                    name={icon}
+                    size={17}
+                    color={colors.title}
+                    type="font"
+                  />
+                  <Text style={[styleApp.text, {marginTop: 10}]}>{text}</Text>
+                </View>
+              );
+            }}
+            click={() =>
+              clickIcon
+                ? this.props.navigation.navigate('Alert', {
+                    close: true,
+                    title: clickIcon.title,
+                    subtitle: clickIcon.subtitle,
+                    textButton: 'Close',
+                  })
+                : null
+            }
+          />
         </Col>
+        <Col size={30} />
       </Row>
     );
   }
@@ -699,9 +546,30 @@ class EventPage extends React.Component {
         {this.rowImage(sport.icon, sport.text)}
         {this.rowImage(league.icon, league.text)}
 
-        <Row>
-          <Col style={styleApp.center2}>{this.editDateTime(data)}</Col>
-        </Row>
+        {this.editRowIcon(
+          this.dateTime(data.date.start, data.date.end),
+          'calendar-alt',
+          () => this.addCalendar(data),
+          () =>
+            this.props.navigation.navigate('Date', {
+              startDate: data.date.start,
+              endDate: data.date.end,
+              recurrence: data.date.recurrence,
+              close: () =>
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                ),
+              onGoBack: (datetime) => {
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                );
+                this.setState({
+                  editStart: datetime.startDate,
+                  editEnd: datetime.endDate,
+                });
+              },
+            }),
+        )}
         {data.date.recurrence !== '' && data.date.recurrence
           ? this.rowIcon(
               this.title(
@@ -712,9 +580,25 @@ class EventPage extends React.Component {
             )
           : null}
 
-        <Row>
-          <Col style={styleApp.center2}>{this.editLocation(data)}</Col>
-        </Row>
+        {this.editRowIcon(
+          this.title(data.location.address),
+          'map-marker-alt',
+          () =>
+            this.props.navigation.navigate('AlertAddress', {
+              data: data.location,
+            }),
+          () =>
+            this.props.navigation.navigate('Location', {
+              location: data.location,
+              pageFrom: this.props.navigation.state.routeName,
+              onGoBack: (location) => {
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                );
+                this.setState({editLocation: location});
+              },
+            }),
+        )}
         {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}
@@ -739,6 +623,7 @@ class EventPage extends React.Component {
                       : this.setState({
                           editMaxAttendance: data.info.maxAttendance - 1,
                         }),
+                  false,
                 )
               : this.editColIcon(
                   this.state.maxAttendance === 1
@@ -755,6 +640,7 @@ class EventPage extends React.Component {
                       : this.setState({
                           editMaxAttendance: this.state.editMaxAttendance - 1,
                         }),
+                  false,
                 )}
           </Col>
           <Col>
@@ -763,6 +649,7 @@ class EventPage extends React.Component {
               'balance-scale',
               () => this.nextLevel(data, 1),
               () => this.nextLevel(data, -1),
+              {title: level.title, subtitle: level.subtitle},
             )}
           </Col>
         </Row>
@@ -780,6 +667,7 @@ class EventPage extends React.Component {
                     : 'mars',
                   () => this.nextGender(data, 1),
                   () => this.nextGender(data, -1),
+                  false,
                 )
               : this.editColIcon(
                   this.state.editGender.charAt(0).toUpperCase() +
@@ -791,6 +679,7 @@ class EventPage extends React.Component {
                     : 'mars',
                   () => this.nextGender(data, 1),
                   () => this.nextGender(data, -1),
+                  false,
                 )}
           </Col>
           <Col>
@@ -799,6 +688,7 @@ class EventPage extends React.Component {
               'puzzle-piece',
               () => this.nextRule(data, 1),
               () => this.nextRule(data, -1),
+              {title: rule.title, subtitle: rule.subtitle},
             )}
           </Col>
         </Row>
@@ -812,17 +702,7 @@ class EventPage extends React.Component {
       userID,
       event.info.organizer,
     );
-    const sport = this.props.sports.filter(
-      (sport) => sport.value === event.info.sport,
-    )[0];
-    const league = Object.values(sport.typeEvent).filter(
-      (item) => item.value === event.info.league,
-    )[0];
-    const rule = Object.values(league.rules).filter(
-      (rule) =>
-        rule.value ===
-        (this.state.editRule === '' ? event.info.rules : this.state.editRule),
-    )[0];
+    const {sport, league, rule} = this.getSportLeagueRule(event);
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {this.eventInfo(event, sport, rule, league)}
@@ -971,6 +851,9 @@ class EventPage extends React.Component {
   }
 
   goToShareEvent = (event) => {
+    if (!event) {
+      return;
+    }
     if (!this.props.userConnected) {
       return this.props.navigation.navigate('SignIn');
     }
@@ -981,6 +864,21 @@ class EventPage extends React.Component {
       data: {...event, eventID: event.objectID},
     });
   };
+
+  bottomActionButton(title, click) {
+    return (
+      <Button2
+        icon={'next'}
+        backgroundColor="green"
+        onPressColor={colors.greenClick}
+        styleButton={styles.buttonBottom}
+        disabled={false}
+        text={title}
+        loader={false}
+        click={() => click()}
+      />
+    );
+  }
 
   render() {
     const {event, editMode, loader} = this.state;
@@ -1028,41 +926,20 @@ class EventPage extends React.Component {
 
         {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {editMode ? (
-              <Button2
-                icon={'next'}
-                backgroundColor="green"
-                onPressColor={colors.greenClick}
-                styleButton={styles.buttonBottom}
-                disabled={false}
-                text="Save edits"
-                loader={false}
-                click={() => this.saveEdits(event)}
-              />
-            ) : this.waitlistCondition(event) ? (
-              <Button2
-                icon={'next'}
-                backgroundColor="green"
-                onPressColor={colors.greenClick}
-                styleButton={styles.buttonBottom}
-                disabled={false}
-                text="Join the waitlist"
-                loader={false}
-                click={() => this.joinWaitlist(event)}
-              />
-            ) : this.openCondition(event) &&
-              !this.userAlreadySubscribed(event.attendees) ? (
-              <Button2
-                icon={'next'}
-                backgroundColor="green"
-                onPressColor={colors.greenClick}
-                styleButton={styles.buttonBottom}
-                disabled={false}
-                text="Join the event"
-                loader={false}
-                click={() => this.next(event)}
-              />
-            ) : null}
+            {editMode
+              ? this.bottomActionButton('Save edits', () =>
+                  this.saveEdits(event),
+                )
+              : this.waitlistCondition(event)
+              ? this.bottomActionButton('Join the waitlist', () =>
+                  this.joinWaitlist(event),
+                )
+              : this.openCondition(event) &&
+                !this.userAlreadySubscribed(event.attendees)
+              ? this.bottomActionButton('Join the event', () =>
+                  this.next(event),
+                )
+              : null}
           </FadeInView>
         )}
       </View>
