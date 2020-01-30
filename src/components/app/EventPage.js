@@ -571,10 +571,6 @@ class EventPage extends React.Component {
               },
             }),
         )}
-
-        {/* <Row>
-          <Col style={styleApp.center2}>{this.editDateTime(data)}</Col>
-        </Row> */}
         {data.date.recurrence !== '' && data.date.recurrence
           ? this.rowIcon(
               this.title(
