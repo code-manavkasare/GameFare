@@ -80,7 +80,8 @@ class EventsView extends Component {
       return this.props.navigate('Alert', {
         textButton: 'Got it!',
         close: true,
-        title: 'You need to be admin of this groups in order to add events.',
+        title: 'You need to be the group admin to set up a new event.',
+        subtitle: 'Please message them to request assistance.',
       });
     await this.props.createEventAction('setStep1', {groups: [this.props.data]});
     await this.props.createEventAction('setStep0', {

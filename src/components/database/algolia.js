@@ -2,6 +2,7 @@ import algoliasearch from 'algoliasearch/reactnative';
 import equal from 'fast-deep-equal';
 import union from 'lodash/union';
 import moment from 'moment';
+import {keys} from 'ramda';
 
 const client = algoliasearch('EX9TV715SD', '36bc4371bcdde61e2e4d5f05c8a274ce');
 const indexEvents = client.initIndex('eventsGF');
@@ -43,13 +44,15 @@ async function getEventsFromGroups(
   league,
 ) {
   var events = [];
+  console.log('groups', groups);
   for (var i in groups) {
     if (groups[i].events) {
-      events = union(events, groups[i], groups[i].events);
+      events = union(events, groups[i].events);
     }
   }
   let filterIds = '';
   let prefix = ' AND ';
+  console.log('events', events);
   for (var j in events) {
     if (Number(j) === 0) prefix = '';
     else prefix = ' AND ';
@@ -59,12 +62,16 @@ async function getEventsFromGroups(
     'NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   let prefix2 = ' AND ';
   if (filterIds === '') prefix2 = '';
+
+  const filters = filterIds + prefix2 + filterUser + ' AND info.sport:' + sport;
+  console.log('filters', filters);
   let {hits} = await indexEvents.search({
-    filters: filterIds + prefix2 + filterUser + ' AND info.sport:' + sport,
+    filters: filters,
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
   });
-
+  console.log('hits', hits);
+  if (filterIds === '') hits = [];
   hits = hits.filter(
     (event) =>
       event.end_timestamp > moment().valueOf() &&
@@ -152,6 +159,7 @@ const getEventPublic = async (
     ...eventsMyGroups,
   };
   console.log('seatch done', allEventsPublic);
+  console.log(eventsMyGroups);
   return allEventsPublic;
 };
 

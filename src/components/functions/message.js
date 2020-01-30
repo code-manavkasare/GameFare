@@ -42,7 +42,7 @@ async function sendNewMessage(discusssionID, user, text, images) {
       createdAt: new Date(),
       timeStamp: moment().valueOf(),
       usersRead: {
-        [user._id]: true,
+        [user.id]: true,
       },
     });
   return true;
@@ -132,18 +132,21 @@ function nameOtherMemberConversation(conversation, userID) {
 }
 
 function titleConversation(conversation, userID) {
-  if (conversation.type === 'group') return conversation.title;
-  if (conversation.numberMembers === 2)
-    return nameOtherMemberConversation(conversation, userID);
   let title = '';
-  const members = Object.values(conversation.members).filter(
-    (member) => member.id !== userID,
-  );
-  for (var i in members) {
-    if (i === '0') title = members[i].info.firstname;
-    else title = title + ', ' + members[i].info.firstname;
+  if (conversation.type === 'group') title = conversation.title;
+  else if (conversation.numberMembers === 2)
+    title = nameOtherMemberConversation(conversation, userID);
+  else {
+    const members = Object.values(conversation.members).filter(
+      (member) => member.id !== userID,
+    );
+    for (var i in members) {
+      if (i === '0') title = members[i].info.firstname;
+      else title = title + ', ' + members[i].info.firstname;
+    }
   }
-  if (title.length > 23) title = title.slice(0, 23) + '...';
+
+  if (title.length > 20) title = title.slice(0, 20) + '...';
   return title;
 }
 

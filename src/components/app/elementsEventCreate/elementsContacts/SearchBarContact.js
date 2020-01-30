@@ -62,7 +62,11 @@ export default class SearchBarContact extends Component {
                   activeOpacity={0.7}
                   style={styles.center}
                   onPress={() => this.onSearchChange('')}>
-                  <FontIcon name="times-circle" color={'#eaeaea'} size={12} />
+                  <FontIcon
+                    name="times-circle"
+                    color={colors.greyDark}
+                    size={15}
+                  />
                 </Col>
               ) : (
                 <Col size={15}></Col>

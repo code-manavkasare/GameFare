@@ -38,6 +38,8 @@ import MembersView from './elementsGroupPage/MembersView';
 import PostsView from './elementsGroupPage/PostsView';
 import EventsView from './elementsGroupPage/EventsView';
 import ButtonColor from '../layout/Views/Button';
+import GroupsEvent from './elementsGroupPage/GroupsEvent';
+
 
 import {editGroup, removeUserFromGroup} from '../functions/editGroup';
 import {takePicture, pickLibrary, resize} from '../functions/pictures';
@@ -267,6 +269,12 @@ class GroupPage extends React.Component {
             loader={this.state.loader}
             infoUser={this.props.infoUser}
           />
+        )}
+
+        {data.groups && (
+          <View style={{marginTop: 35}}>
+            <GroupsEvent groups={data.groups} />
+          </View>
         )}
 
         <View style={{height: 100}} />

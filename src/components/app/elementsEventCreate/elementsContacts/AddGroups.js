@@ -10,6 +10,7 @@ import {Col, Row} from 'react-native-easy-grid';
 import Button from '../../../layout/buttons/Button';
 import ButtonColor from '../../../layout/Views/Button';
 import LinearGradient from 'react-native-linear-gradient';
+import NavigationService from '../../../../../NavigationService';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -32,6 +33,7 @@ class AddGroups extends Component {
       searchInputGroups: this.props.searchString,
       loaderSearchCall: true,
       loaderDatabaseUpdate: false,
+      loaderButton: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -40,14 +42,18 @@ class AddGroups extends Component {
     this.initiaLoad();
   }
   initiaLoad = async () => {
-    const {userID, objectID} = this.props;
+    const {userID, objectID, pageFrom} = this.props;
 
     indexGroups.clearCache();
     const listGroups = await indexGroups.search({
       filters: 'info.organizer:' + userID + ' AND NOT objectID:' + objectID,
       query: '',
     });
-    const selectedGroups = this.checkIfGroupHasEvent(listGroups.hits, objectID);
+    const selectedGroups = this.checkIfGroupHasEvent(
+      listGroups.hits,
+      objectID,
+      pageFrom,
+    );
     //Will work when Algolia update accordingly with firebase
 
     await this.setState({
@@ -58,13 +64,23 @@ class AddGroups extends Component {
     return true;
   };
 
-  checkIfGroupHasEvent = (listGroups, eventID) => {
+  checkIfGroupHasEvent = (listGroups, eventID, pageFrom) => {
+    console.log('listGroups', listGroups);
     let groupsHasEvent = {};
-    listGroups.forEach((group) => {
-      if (group.events && group.events[eventID]) {
-        groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
-      }
-    });
+    if (pageFrom === 'Events') {
+      listGroups.forEach((group) => {
+        if (group.events && group.events[eventID]) {
+          groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
+        }
+      });
+    } else {
+      listGroups.forEach((group) => {
+        if (group.groups && group.groups[eventID]) {
+          groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
+        }
+      });
+    }
+    console.log('groupsHasEvent', groupsHasEvent);
 
     return groupsHasEvent;
   };
@@ -101,14 +117,6 @@ class AddGroups extends Component {
       delete selectedGroups[group.objectID];
     }
     this.setState({selectedGroups: selectedGroups});
-  }
-
-  showToast(text) {
-    this.refs.toast.show(
-      <View>
-        <Text style={[styleApp.text, {color: colors.white}]}>{text}</Text>
-      </View>,
-    );
   }
 
   placeHolder() {
@@ -150,8 +158,6 @@ class AddGroups extends Component {
             <Row
               style={{
                 paddingTop: 10,
-                paddingLeft: 20,
-                paddingRight: 20,
                 paddingBottom: 10,
               }}>
               <Col size={15} style={styleApp.center2}>
@@ -161,24 +167,31 @@ class AddGroups extends Component {
                   imgInitial={group.pictures[0]}
                 />
               </Col>
-              <Col size={75} style={[styleApp.center2, {paddingLeft: 15}]}>
+              <Col size={80} style={[styleApp.center2, {paddingLeft: 15}]}>
                 <Text style={styleApp.text}>{group.info.name}</Text>
                 <Text style={[styleApp.smallText, {fontSize: 12}]}>
                   {group.info.sport.charAt(0).toUpperCase() +
                     group.info.sport.slice(1)}
                 </Text>
               </Col>
-              <Col size={10} style={styleApp.center3}>
+              <Col size={10} style={styleApp.center}>
                 {Object.values(this.state.selectedGroups).filter(
-                  (group1) => group1.objectID == group.objectID,
+                  (group1) => group1.objectID === group.objectID,
                 ).length != 0 ? (
                   <AllIcons
-                    name="check"
-                    type="mat"
-                    size={20}
-                    color={colors.green}
+                    name="check-circle"
+                    type="font"
+                    size={23}
+                    color={colors.primary}
                   />
-                ) : null}
+                ) : (
+                  <AllIcons
+                    name="circle"
+                    type="font"
+                    size={23}
+                    color={colors.greyDark}
+                  />
+                )}
               </Col>
             </Row>
           );
@@ -217,12 +230,51 @@ class AddGroups extends Component {
       </View>
     );
   }
+  alertDone(val, nameEvent, selectedGroups) {
+    console.log('alert done', val);
+    if (!val)
+      return NavigationService.navigate('Alert', {
+        close: true,
+        title: 'Congrats, ' + nameEvent + ' has been successfully updated.',
+        textButton: 'Got it!',
+        icon: (
+          <AllIcons
+            name="check-circle"
+            color={colors.green}
+            size={20}
+            type="font"
+          />
+        ),
+      });
 
-  submit = async (pageFrom) => {
-    await this.setState({loaderDatabaseUpdate: true});
-    const {objectID} = this.props;
+    const groupsAlert = Object.values(selectedGroups).map((group) => {
+      return {
+        info: {
+          firstname: group.info.name,
+          picture: group.pictures[0],
+        },
+      };
+    });
+    return NavigationService.navigate('AlertAddUsers', {
+      close: true,
+      title: 'Congrats, you have added group(s) to ' + nameEvent + '.',
+      users: groupsAlert,
+      textButton: 'Got it!',
+      icon: (
+        <AllIcons
+          name="check-circle"
+          color={colors.green}
+          size={20}
+          type="font"
+        />
+      ),
+    });
+  }
+  async submit(pageFrom) {
+    await this.setState({loaderButton: true});
+    const {objectID, nameEvent} = this.props;
     const {selectedGroups} = this.state;
-
+    let valueAlert = Object.values(selectedGroups).length !== 0;
     this.state.listGroups.forEach(async (group) => {
       const hasGroup = ramda.has(group.objectID);
       let updatesGroup = {};
@@ -253,26 +305,44 @@ class AddGroups extends Component {
             .ref('events/' + objectID + '/groups/' + group.objectID)
             .remove();
         }
-        this.showToast('The event has been updated !');
       } else {
-        this.showToast('Add groups to groups coming soon');
+        if (hasGroup(selectedGroups)) {
+          updatesGroup['/groups/' + objectID] = true;
+          updatesEvent['/groups/' + group.objectID] = true;
+
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID)
+            .update(updatesGroup);
+
+          await firebase
+            .database()
+            .ref('groups/' + objectID)
+            .update(updatesEvent);
+        } else if (!hasGroup(selectedGroups)) {
+          await firebase
+            .database()
+            .ref('groups/' + group.objectID + '/groups/' + objectID)
+            .remove();
+          await firebase
+            .database()
+            .ref('groups/' + objectID + '/groups/' + group.objectID)
+            .remove();
+        }
       }
     });
-
-    await this.setState({loaderDatabaseUpdate: false});
-  };
+    this.alertDone(valueAlert, nameEvent, selectedGroups);
+    await this.setState({loaderButton: false});
+  }
 
   textButton() {
-    const {loaderDatabaseUpdate} = this.state;
     const groupLength = Object.values(this.state.selectedGroups).length;
-
-    if (loaderDatabaseUpdate) return <Loader color="white" size={30} />;
     if (groupLength === 1 || groupLength === 0)
       return 'Add ' + groupLength + ' group';
     return 'Add ' + groupLength + ' groups';
   }
   render() {
-    const {searchInputGroups} = this.state;
+    const {searchInputGroups, loaderButton} = this.state;
     const {pageFrom} = this.props;
     return (
       <View style={styles.mainView}>
@@ -305,6 +375,7 @@ class AddGroups extends Component {
               backgroundColor={'green'}
               onPressColor={colors.greenClick}
               text={this.textButton()}
+              loader={this.state.loaderButton}
               click={() => this.submit(pageFrom)}
             />
           </View>
@@ -321,8 +392,10 @@ const styles = StyleSheet.create({
   rowGroup: {
     paddingTop: 10,
     paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
     borderBottomWidth: 0.3,
-    borderColor: colors.borderColor,
+    borderColor: colors.grey,
   },
   toast: {
     backgroundColor: colors.green,
