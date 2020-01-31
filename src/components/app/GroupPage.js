@@ -212,6 +212,8 @@ class GroupPage extends React.Component {
     );
   }
   userAlreadyMember(members, userID,organizer) {
+    console.log('members')
+    if (organizer === userID) return true
     if (!members) return false;
     return (members[userID] !== undefined || organizer === userID);
   }
@@ -223,6 +225,7 @@ class GroupPage extends React.Component {
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
+    // console.log('render group page',this.userAlreadyMember(data.members, userID,data.info.organizer))
     return (
       <View style={{width: width}}>
         {this.groupInfo(data, sport)}

@@ -41,7 +41,7 @@ export default class HomeScreen extends React.Component {
     this.removeNotificationListener = firebase.notifications().onNotification((notification) => {
       console.log('open notification  when app in background');
       const {data} = notification;
-      this.openPageFromNotification(data.page,data);
+      this.openPageFromNotification(data.action,data);
     });
   }
   async appOpenFistNotification() {
@@ -49,7 +49,7 @@ export default class HomeScreen extends React.Component {
     console.log('notificationOpen',notificationOpen);
     if (notificationOpen) {
       const {data} = notificationOpen;
-      this.openPageFromNotification(data.page,data);
+      this.openPageFromNotification(data.action,data);
     }
   }
   openPageFromNotification(page,data) {
