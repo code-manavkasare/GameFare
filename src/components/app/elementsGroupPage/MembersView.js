@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
+import {messageAction} from '../../../actions/messageActions'
 import {subscribeToTopics} from '../../functions/notifications';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -25,6 +26,7 @@ import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 import {subscribeUserToGroup} from '../../functions/createGroup';
 import {arrayAttendees} from '../../functions/createEvent';
+import {indexDiscussions} from '../../database/algolia'
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -58,28 +60,36 @@ class MembersView extends Component {
     );
   }
   async joinGroup() {
+    const {data,infoUser,userID,objectID} = this.props
     const user = await subscribeUserToGroup(
-      this.props.objectID,
-      this.props.userID,
-      this.props.infoUser,
+      objectID,
+      userID,
+      infoUser,
       'confirmed',
     );
 
-    await subscribeToTopics([this.props.userID, 'all', this.props.objectID]);
+    await subscribeToTopics([userID, 'all', objectID]);
 
-    var members = this.props.data.members;
+    var members = data.members;
     if (!members) members = {};
 
     await this.props.groupsAction('editGroup', {
-      objectID: this.props.data.objectID,
-      info: this.props.data.info,
+      objectID: objectID,
+      info: data.info,
       members: {
         ...members,
-        [this.props.userID]: user,
+        [userID]: user,
       },
     });
-    await this.props.groupsAction('addMyGroup', this.props.data.objectID);
+    await this.props.groupsAction('addMyGroup', objectID);
+    const conversation = await indexDiscussions.getObject(data.discussions[0]);
+    await this.setConversation(conversation);
     return NavigationService.navigate('Group');
+  }
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
+    await this.props.messageAction('setMyConversations', {[data.objectID]:true});
+    return true
   }
   join(data) {
     if (!this.props.userConnected)
@@ -155,13 +165,7 @@ class MembersView extends Component {
                   color={colors.green}
                   style={[
                     styleApp.center,
-                    {
-                      borderColor: colors.off,
-                      height: 40,
-                      width: 90,
-                      borderRadius: 20,
-                      borderWidth: 1,
-                    },
+                    styles.buttonJoin,
                   ]}
                   onPressColor={colors.greenClick}
                 />
@@ -196,6 +200,16 @@ class MembersView extends Component {
   }
 }
 
+const styles = StyleSheet.create({
+  buttonJoin:{
+    borderColor: colors.off,
+    height: 40,
+    width: 90,
+    borderRadius: 20,
+    borderWidth: 1,
+  }
+})
+
 const mapStateToProps = (state) => {
   return {
     userConnected: state.user.userConnected,
@@ -204,4 +218,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction})(MembersView);
+export default connect(mapStateToProps, {groupsAction,messageAction})(MembersView);

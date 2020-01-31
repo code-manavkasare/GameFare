@@ -83,8 +83,10 @@ class MessageTab extends React.Component {
         }
       });
   }
-  setConversation(data) {
-    this.props.messageAction('setConversation', data);
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
+    await this.props.messageAction('setMyConversations', {[data.objectID]:true});
+    return true
   }
   render() {
     const {infoUser, userID, userConnected} = this.props;
