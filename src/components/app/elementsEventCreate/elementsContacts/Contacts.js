@@ -555,6 +555,7 @@ class Contacts extends Component {
                 searchString={searchInputGroups}
                 objectID={objectID}
                 pageFrom={pageFrom}
+                data={data}
                 nameEvent={data.info.name}
                 changeSearchGroups={this.changeSearchGroups}
               />

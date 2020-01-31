@@ -39,7 +39,7 @@ class AddGroups extends Component {
   }
 
   componentDidMount() {
-    this.initiaLoad();
+    this.initiaLoad(); 
   }
   initiaLoad = async () => {
     const {userID, objectID, pageFrom} = this.props;
@@ -65,9 +65,8 @@ class AddGroups extends Component {
   };
 
   checkIfGroupHasEvent = (listGroups, eventID, pageFrom) => {
-    console.log('listGroups', listGroups);
     let groupsHasEvent = {};
-    if (pageFrom === 'Events') {
+    if (pageFrom === 'Event') {
       listGroups.forEach((group) => {
         if (group.events && group.events[eventID]) {
           groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
@@ -80,8 +79,6 @@ class AddGroups extends Component {
         }
       });
     }
-    console.log('groupsHasEvent', groupsHasEvent);
-
     return groupsHasEvent;
   };
 

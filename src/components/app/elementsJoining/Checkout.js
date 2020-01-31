@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
+import {messageAction} from '../../../actions/messageActions'
 import {joinEvent} from '../../functions/createEvent';
+import {indexDiscussions} from '../../database/algolia'
 
 const {height, width} = Dimensions.get('screen');
 
@@ -289,8 +291,16 @@ class ProfilePage extends Component {
         },
       },
     });
+    const conversation = await indexDiscussions.getObject(data.discussions[0]);
+    await this.setConversation(conversation);
+
     await this.setState({loader: false});
     return this.props.navigation.navigate('Event');
+  }
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
+    await this.props.messageAction('setMyConversations', {[data.objectID]:true});
+    return true
   }
   conditionOn(creditCardCharge, defaultCard) {
     if (creditCardCharge !== 0 && !defaultCard) return false;
@@ -385,6 +395,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction, eventsAction})(
+export default connect(mapStateToProps, {userAction, eventsAction,messageAction})(
   ProfilePage,
 );

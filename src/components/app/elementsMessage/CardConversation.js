@@ -86,7 +86,7 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
-    if (this.props.myConversation) {
+    if (this.props.myConversation && lastMessage._id !== 'noMessage') {
       await firebase
         .database()
         .ref(
