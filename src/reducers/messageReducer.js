@@ -10,10 +10,12 @@ import union from 'lodash/union';
 
 export const initialState = {
   gamefareUser: {
-    _id: 'dfjkfgdgkfkgkdjfgjkdf',
-    name: 'GameFare',
-    avatar:
-      'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/logos%2Flogoios.png?alt=media&token=536ba87c-20e7-4be9-848e-86d8e7d21f2c',
+    id: 'dfjkfgdgkfkgkdjfgjkdf',
+    info:{
+      firstname:'GameFare',
+      lastname:'',
+      picture:'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/logos%2Flogoios.png?alt=media&token=536ba87c-20e7-4be9-848e-86d8e7d21f2c',
+    },
   },
   conversations: {},
   myDiscussions: {},

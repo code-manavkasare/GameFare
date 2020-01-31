@@ -211,16 +211,14 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-  userAlreadyMember(members, userID) {
+  userAlreadyMember(members, userID,organizer) {
     if (!members) return false;
-    return (
-      !Object.values(members).filter((user) => user.id === userID).length === 0
-    );
+    return (members[userID] !== undefined || organizer === userID);
   }
   scrollToDescription () {
     this.scrollRef.scrollTo({y:200})
   }
-  group(data, userID) {
+  group(data, userID,userConnected) {
     if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
@@ -249,6 +247,15 @@ class GroupPage extends React.Component {
           onRemoveMember={(user) => this.askRemoveUser(data, user)}
         />
 
+        {this.userAlreadyMember(data.members, userID,data.info.organizer) && userConnected && (
+          <PostsView
+            objectID={data.objectID}
+            data={data}
+            loader={this.state.loader}
+            infoUser={this.props.infoUser}
+          />
+        )}
+
         <EventsView
           data={data}
           objectID={data.objectID}
@@ -262,14 +269,8 @@ class GroupPage extends React.Component {
           push={(val, data) => this.props.navigation.push(val, data)}
         />
 
-        {this.userAlreadyMember(data.members, userID) && (
-          <PostsView
-            objectID={data.objectID}
-            data={data}
-            loader={this.state.loader}
-            infoUser={this.props.infoUser}
-          />
-        )}
+        
+        
 
         {data.groups && (
           <View style={{marginTop: 35}}>
@@ -402,7 +403,7 @@ class GroupPage extends React.Component {
   render() {
     const {dismiss} = this.props.navigation;
     const {group} = this.state;
-    const {userID} = this.props;
+    const {userID,userConnected} = this.props;
     return (
       <View
       style={{ flex: 1 }}
@@ -478,7 +479,7 @@ class GroupPage extends React.Component {
             }
           }}
           parallaxHeaderHeight={280}>
-          {this.group(group, userID)}
+          {this.group(group, userID,userConnected)}
         </ParallaxScrollView>
 
         {!this.state.editMode ? null : (
