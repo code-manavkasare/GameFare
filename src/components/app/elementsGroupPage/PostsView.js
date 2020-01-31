@@ -62,33 +62,6 @@ export default class Posts extends Component {
                 {this.props.type === 'event' ? 'Event' : 'Group'} chat
               </Text>
             </Col>
-            <Col style={styleApp.center3} size={20}>
-              {/* <ButtonColor
-                view={() => {
-                  return (
-                    <AllIcons
-                      name="comment-alt"
-                      color={colors.title}
-                      size={14}
-                      type="font"
-                    />
-                  );
-                }}
-                click={() => this.newPost()}
-                color="white"
-                style={[
-                  styleApp.center,
-                  {
-                    borderColor: colors.off,
-                    height: 40,
-                    width: 40,
-                    borderRadius: 20,
-                    borderWidth: 1,
-                  },
-                ]}
-                onPressColor={colors.off}
-              /> */}
-            </Col>
           </Row>
 
           <View style={[styleApp.divider2, {marginBottom: 10}]} />
@@ -99,13 +72,7 @@ export default class Posts extends Component {
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             colors={[colors.placeHolder1, colors.placeHolder2]}
-            style={{
-              height: 20,
-              borderRadius: 7,
-              marginRight: 80,
-              marginTop: 10,
-              marginLeft: 0,
-            }}
+            style={styles.loader}
           />
         ) : Object.values(this.state.discussions).length == 0 ? (
           <Text style={[styleApp.smallText, {marginTop: 10}]}>
@@ -126,4 +93,12 @@ export default class Posts extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  loader:{
+    height: 20,
+    borderRadius: 7,
+    marginRight: 80,
+    marginTop: 10,
+    marginLeft: 20,
+  }
+});

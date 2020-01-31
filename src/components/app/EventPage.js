@@ -731,12 +731,6 @@ class EventPage extends React.Component {
           attendees.map((user, i) => this.rowUser(user, i, event))
         )}
 
-        {event.groups && (
-          <View style={{marginTop: 35}}>
-            <GroupsEvent groups={event.groups} />
-          </View>
-        )}
-
         {event.discussions && this.userAlreadySubscribed(event.attendees) && (
           <PostsView
             objectID={event.objectID}
@@ -746,6 +740,14 @@ class EventPage extends React.Component {
             infoUser={this.props.infoUser}
           />
         )}
+
+        {event.groups && (
+          <View style={{marginTop: 35}}>
+            <GroupsEvent groups={event.groups} />
+          </View>
+        )}
+
+        
 
         <View style={{height: sizes.heightFooterBooking + 50}} />
       </View>
