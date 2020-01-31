@@ -56,11 +56,8 @@ class CardConversation extends React.Component {
     return this.setState({lastMessage: lastMessage});
   }
   componentWillReceiveProps(nextProps) {
-    const conversation = this.props.conversations[
-      this.props.discussionID
-    ];
-    const conversationNext =
-      nextProps.conversations[nextProps.discussionID];
+    const conversation = this.props.conversations[this.props.discussionID];
+    const conversationNext = nextProps.conversations[nextProps.discussionID];
     if (!isEqual(conversation, conversationNext))
       return this.setState({
         lastMessage: conversationNext.lastMessage,
@@ -101,6 +98,7 @@ class CardConversation extends React.Component {
         )
         .update({[this.props.userID]: true});
     }
+    console.log('click convo', conversation);
     NavigationService.push('Conversation', {
       data: conversation,
       myConversation: this.props.myConversation,
@@ -143,10 +141,8 @@ class CardConversation extends React.Component {
     );
   }
   render() {
-    const conversation = this.props.conversations[
-      this.props.discussionID
-    ];
-    console.log('discussionID',conversation)
+    const conversation = this.props.conversations[this.props.discussionID];
+    console.log('discussionID', conversation);
     const {lastMessage} = this.state;
     // return null
     return this.cardConversation(
