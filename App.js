@@ -15,7 +15,7 @@ import firebase from 'react-native-firebase';
 import axios from 'axios';
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
-import {updateUserFCMToken} from './src/components/functions/notifications';
+import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 const AppContainer = createAppContainer(AppSwitchNavigator);
 
 class App extends Component {
@@ -26,10 +26,7 @@ class App extends Component {
     StatusBar.setBarStyle('light-content',true);
     if (this.props.userID !== '') {
       this.autoSignIn();
-      // onTokenRefresh seems to have lots of problems, just get the token on startup every time and update it
-      //firebase.messaging().onTokenRefresh(token => updateUserFCMToken(this.props.userID, token));
-      const token = await firebase.messaging().getToken();
-      updateUserFCMToken(this.props.userID, token);
+      refreshTokenOnDatabase(this.props.userID);
     }
   }
   async autoSignIn() {
