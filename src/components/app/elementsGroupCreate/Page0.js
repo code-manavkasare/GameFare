@@ -247,7 +247,7 @@ class Page0 extends Component {
   }
   async submit(data) {
     await this.setState({loader: true});
-    var group = await createGroup(
+    const group = await createGroup(
       this.props.createGroupData,
       this.props.userID,
       this.props.infoUser,
@@ -267,10 +267,16 @@ class Page0 extends Component {
     newGroups = newGroups.reverse();
     await this.props.groupsAction('setAllGroups', {[group.objectID]: group});
     await this.props.groupsAction('setMygroups', newGroups);
-    var that = this;
+    const that = this;
     return setTimeout(async function() {
       await that.props.navigation.dismiss();
-      return that.props.createGroupAction('reset');
+      await  that.props.createGroupAction('reset');
+      return that.props.navigation.navigate('Contacts',{
+        data: group,
+        pageFrom: 'Group',
+        openPageLink: 'openGroupPage',
+        objectID: group.objectID
+      })
     }, 700);
 
     // return this.props.navigation.navigate('Group', {
@@ -279,7 +285,7 @@ class Page0 extends Component {
     // });
   }
   render() {
-    if (this.props.createGroupData.info.sport == '') return null;
+    if (this.props.createGroupData.info.sport === '') return null;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
