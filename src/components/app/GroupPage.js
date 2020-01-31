@@ -225,7 +225,6 @@ class GroupPage extends React.Component {
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
     )[0];
-    // console.log('render group page',this.userAlreadyMember(data.members, userID,data.info.organizer))
     return (
       <View style={{width: width}}>
         {this.groupInfo(data, sport)}
