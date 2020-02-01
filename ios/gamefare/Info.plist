@@ -80,8 +80,6 @@
 	<string>test</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>This is so we can display your booked appointments on your calendar.</string>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>We need access to the microphone if you would like to live stream your matches</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera if you would like to take a photo for your profile picture, or live stream a match.</string>
 	<key>NSContactsUsageDescription</key>
@@ -94,6 +92,8 @@
 	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need to access your location to show events in your area.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to the microphone if you would like to live stream your matches</string>
 	<key>NSMotionUsageDescription</key>
 	<string>test</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -146,6 +146,8 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
