@@ -7,6 +7,8 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 
+import {lockedPortrait, lockedLandscape} from '../hoc/orientation';
+
 import colors from '../style/colors';
 import styles from '../style/style';
 import MainTabIcon from './navigationElements/MainTabIcon.js';
@@ -69,10 +71,10 @@ import LiveStream from '../app/elementsStreaming/LiveStream';
 
 const CreateEventNavigator = createStackNavigator(
   {
-    CreateEvent0: CreateEvent0,
-    CreateEvent1: CreateEvent1,
-    CreateEvent2: CreateEvent2,
-    CreateEvent3: CreateEvent3,
+    CreateEvent0: lockedPortrait(CreateEvent0),
+    CreateEvent1: lockedPortrait(CreateEvent1),
+    CreateEvent2: lockedPortrait(CreateEvent2),
+    CreateEvent3: lockedPortrait(CreateEvent3),
   },
   {
     initialRouteName: 'CreateEvent0',
@@ -85,7 +87,7 @@ const CreateEventNavigator = createStackNavigator(
 
 const CreateGroupNavigator = createStackNavigator(
   {
-    CreateGroup0: CreateGroup0,
+    CreateGroup0: lockedPortrait(CreateGroup0),
   },
   {
     initialRouteName: 'CreateGroup0',
@@ -99,13 +101,13 @@ const CreateGroupNavigator = createStackNavigator(
 const ContactNavigator = createStackNavigator(
   {
     Contacts: {
-      screen: Contacts,
+      screen: lockedPortrait(Contacts),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: true,
       },
     },
-    NewContact: NewContact,
+    NewContact: lockedPortrait(NewContact),
   },
   {
     initialRouteName: 'Contacts',
@@ -118,9 +120,9 @@ const ContactNavigator = createStackNavigator(
 
 const JoinNavigator = createStackNavigator(
   {
-    Checkout: Checkout,
-    Event: EventPage,
-    Coach: Coach,
+    Checkout: lockedPortrait(Checkout),
+    Event: lockedPortrait(EventPage),
+    Coach: lockedPortrait(Coach),
   },
   {
     initialRouteName: 'Event',
@@ -133,7 +135,7 @@ const JoinNavigator = createStackNavigator(
 
 const JoinGroupNavigator = createStackNavigator(
   {
-    Group: GroupPage,
+    Group: lockedPortrait(GroupPage),
   },
   {
     initialRouteName: 'Group',
@@ -146,7 +148,7 @@ const JoinGroupNavigator = createStackNavigator(
 
 const MessageNavigator = createStackNavigator(
   {
-    Conversation: Conversation,
+    Conversation: lockedPortrait(Conversation),
   },
   {
     initialRouteName: 'Conversation',
@@ -159,9 +161,9 @@ const MessageNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator(
   {
-    Profile: ProfilePage,
-    Wallet: Wallet,
-    Settings: Settings,
+    Profile: lockedPortrait(ProfilePage),
+    Wallet: lockedPortrait(Wallet),
+    Settings: lockedPortrait(Settings),
   },
   {
     initialRouteName: 'Profile',
@@ -174,9 +176,9 @@ const ProfileNavigator = createStackNavigator(
 
 const LoginNavigator = createStackNavigator(
   {
-    Phone: Phone,
-    Verify: Verify,
-    Complete: Complete,
+    Phone: lockedPortrait(Phone),
+    Verify: lockedPortrait(Verify),
+    Complete: lockedPortrait(Complete),
   },
   {
     initialRouteName: 'Phone',
@@ -189,12 +191,12 @@ const LoginNavigator = createStackNavigator(
 
 const PaymentsNavigator = createStackNavigator(
   {
-    Payments: Payments,
-    NewCard: NewCard,
-    ApplePay: ApplePay,
-    NewMethod: NewMethod,
-    DetailCard: DetailCard,
-    Scan: Scan,
+    Payments: lockedPortrait(Payments),
+    NewCard: lockedPortrait(NewCard),
+    ApplePay: lockedPortrait(ApplePay),
+    NewMethod: lockedPortrait(NewMethod),
+    DetailCard: lockedPortrait(DetailCard),
+    Scan: lockedPortrait(Scan),
   },
   {
     initialRouteName: 'Payments',
@@ -207,7 +209,7 @@ const PaymentsNavigator = createStackNavigator(
 
 const StreamNavigator = createStackNavigator(
   {
-    LiveStream: LiveStream,
+    LiveStream: lockedLandscape(LiveStream), // ONLY LOCKED LANDSCAPE COMPONENT
   },
   {
     initialRouteName: 'LiveStream',
@@ -220,10 +222,10 @@ const StreamNavigator = createStackNavigator(
 
 const MainApp = createBottomTabNavigator(
   {
-    Home: HomePage,
-    ListGroups: ListGroups,
-    Stream: StreamPage,
-    MessageList: MessageList,
+    Home: lockedPortrait(HomePage),
+    ListGroups: lockedPortrait(ListGroups),
+    Stream: lockedPortrait(StreamPage),
+    MessageList: lockedPortrait(MessageList),
     Profile: ProfileNavigator,
   },
   {
@@ -269,23 +271,23 @@ const MainApp = createBottomTabNavigator(
 
 const InitialPageNavigator = createStackNavigator(
   {
-    InitialPage: InitialPage,
+    InitialPage: lockedPortrait(InitialPage),
     LocationSelect: {
-      screen: LocationSelect,
+      screen: lockedPortrait(LocationSelect),
       navigationOptions: {
         gesturesEnabled: true,
         cardShadowEnabled: true,
       },
     },
     SportSelect: {
-      screen: SportSelect,
+      screen: lockedPortrait(SportSelect),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
       },
     },
     LocationOnBoard: {
-      screen: LocationSelector,
+      screen: lockedPortrait(LocationSelector),
       navigationOptions: {
         gesturesEnabled: true,
         cardShadowEnabled: true,
@@ -312,7 +314,7 @@ const MainStack = createStackNavigator(
       },
     },
     MapPage: {
-      screen: MapPage,
+      screen: lockedPortrait(MapPage),
       navigationOptions: {
         gesturesEnabled: true,
         cardShadowEnabled: false,
@@ -336,42 +338,42 @@ const RootStack = createStackNavigator(
     MainStack: MainStack,
     SignIn: LoginNavigator,
     ListCountry: {
-      screen: ListCountry,
+      screen: lockedPortrait(ListCountry),
       navigationOptions: {
         gesturesEnabled: false,
       },
     },
     Alert: {
-      screen: Alert,
+      screen: lockedPortrait(Alert),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
       },
     },
     AlertAddress: {
-      screen: AlertAddress,
+      screen: lockedPortrait(AlertAddress),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
       },
     },
     AlertCall: {
-      screen: AlertCall,
+      screen: lockedPortrait(AlertCall),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
       },
     },
-    AlertAddImage: AlertAddImage,
+    AlertAddImage: lockedPortrait(AlertAddImage),
     AlertAddUsers: {
-      screen: AlertAddUsers,
+      screen: lockedPortrait(AlertAddUsers),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
       },
     },
     AlertYesNo: {
-      screen: AlertYesNo,
+      screen: lockedPortrait(AlertYesNo),
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
@@ -384,8 +386,8 @@ const RootStack = createStackNavigator(
         cardShadowEnabled: true,
       },
     },
-    Date: DateSelector,
-    Location: LocationSelector,
+    Date: lockedPortrait(DateSelector),
+    Location: lockedPortrait(LocationSelector),
     ContactNavigator: {
       screen: ContactNavigator,
       navigationOptions: {
@@ -393,12 +395,12 @@ const RootStack = createStackNavigator(
       },
     },
     NewConversation: {
-      screen: NewConversation,
+      screen: lockedPortrait(NewConversation),
       navigationOptions: {
         gesturesEnabled: false,
       },
     },
-    MapFiltersModals: MapFiltersModals,
+    MapFiltersModals: lockedPortrait(MapFiltersModals),
   },
   {
     initialRouteName: 'MainStack',
