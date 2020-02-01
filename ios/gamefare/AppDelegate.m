@@ -20,6 +20,7 @@
 #import "RNSplashScreen.h"
 #import <Crashlytics/Crashlytics.h>
 #import "RNBranch.h"
+#import "Orientation.h"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -93,6 +94,11 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
   Mixpanel *mixpanel = [Mixpanel sharedInstance];
   [mixpanel.people addPushDeviceToken:deviceToken];
+}
+
+// Orientation library
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+  return [Orientation getOrientation];
 }
 
 @end
