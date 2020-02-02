@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
 import StatusBar from '@react-native-community/status-bar';
+import firebase from 'react-native-firebase';
 
 import ListEvents from './elementsHome/ListEvent';
 import HeaderHome from '../layout/headers/HeaderHome';
@@ -30,9 +31,32 @@ export default class HomeScreen extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.opacityVoile = new Animated.Value(0.3);
   }
-  async componentDidMount() {
+  componentDidMount() {
     StatusBar.setHidden(false, 'slide');
     StatusBar.setBarStyle('dark-content', true);
+    this.appBackgroundNotificationListenner();
+    this.appOpenFistNotification();
+  } 
+  appBackgroundNotificationListenner() {
+    this.removeNotificationListener = firebase.notifications().onNotification((notification) => {
+      console.log('open notification  when app in background');
+      const {data} = notification;
+      this.openPageFromNotification(data.action,data);
+    });
+  }
+  async appOpenFistNotification() {
+    const notificationOpen = await firebase.notifications().getInitialNotification();
+    console.log('notificationOpen',notificationOpen);
+    if (notificationOpen) {
+      const {data} = notificationOpen;
+      this.openPageFromNotification(data.action,data);
+    }
+  }
+  openPageFromNotification(page,data) {
+    this.props.navigation.navigate(page,data)
+  }
+  componentWillUnmount() {
+    this.removeNotificationListener();
   }
   navigate(val, data) {
     this.props.navigation.push(val, data);

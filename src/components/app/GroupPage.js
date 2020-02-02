@@ -212,6 +212,8 @@ class GroupPage extends React.Component {
     );
   }
   userAlreadyMember(members, userID,organizer) {
+    console.log('members')
+    if (organizer === userID) return true
     if (!members) return false;
     return (members[userID] !== undefined || organizer === userID);
   }
