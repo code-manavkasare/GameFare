@@ -10,10 +10,12 @@ import {
 import {connect} from 'react-redux';
 import axios from 'axios';
 
-const {height, width} = Dimensions.get('screen');
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import {RNCamera} from 'react-native-camera';
 import {Grid, Row, Col} from 'react-native-easy-grid';
+import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
+
+const {height, width} = Dimensions.get('screen');
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -23,6 +25,7 @@ import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
 import LiveStreamHeader from './LiveStreamHeader';
+import { has } from 'ramda';
 
 const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
 const MUX_TOKEN_SECRET =
@@ -33,23 +36,96 @@ class LiveStream extends React.Component {
     super(props);
     this.state = {
       outputUrl: 'rtmp://live.mux.com/app/',
+      waitingPermissions: true,
       loading: true,
       streaming: false,
+      assetID: '',
       streamKey: '',
-      playbackId: '',
+      playbackID: '',
       netline: null,
-      assetId: '',
     };
+    this._willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      async () => {
+        if (this.state.waitingPermissions) {
+          const hasPermission = await this.checkPermissions();
+          if (hasPermission) {
+            this.createStream();
+          } else {
+            this.getPermission();
+          }
+        }
+      },
+    );
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
+  async checkPermission(request) {
+    const permission = await Permissions.check(request);
+    return (permission === RESULTS.GRANTED);
+  }
+
+  async askPermission(request) {
+    const permission = await Permissions.request(request);
+    return (permission === RESULTS.GRANTED);
+  }
+
+  async getPermissions(request) {
+    let permission = await Permissions.request(request);
+    switch (permission) {
+      case RESULTS.GRANTED:
+        return true;
+      case RESULTS.DENIED:
+      case RESULTS.BLOCKED:
+
+        return false;
+      case RESULTS.UNAVAILABLE:
+        return false;
+    }
+  }
+  async permissions() {
+    let camPermission = await Permissions.check(PERMISSIONS.IOS.CAMERA);
+    let micPermission = await Permissions.check(PERMISSIONS.IOS.MICROPHONE);
+    if (camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED) {
+      return true;
+    } else if (camPermission === RESULTS.UNAVAILABLE || micPermission === RESULTS.UNAVAILABLE) {
+      return false;
+    } else if (camPermission === RESULTS.BLOCKED || micPermission === RESULTS.BLOCKED) {
+      this.props.navigation.navigate('AlertYesNo', {
+        textYesButton: 'Open Settings',
+        textNoButton: 'Quit Stream',
+        title:
+          'gamefare needs camera/microphone access to livestream events',
+        yesClick: () => Permissions.openSettings(),
+        noClick: () => {this.props.navigation.navigate('TabsApp');},
+      });
+      return true;
+    }
+
+    if (camPermission === RESULTS.DENIED) {
+      camPermission = await Permissions.request(PERMISSIONS.IOS.CAMERA);
+    }
+    if (micPermission === RESULTS.DENIED) {
+      micPermission = await Permissions.request(PERMISSIONS.IOS.MICROPHONE);
+    }
+    return (camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED);
+  }
+
   async componentDidMount() {
-    await this.createStream();
+    const permission = await this.permissions();
+    if (!permission) { // camera or microphone unavailable, leave live stream
+      this.props.navigation.navigate('TabsApp');
+    }
+    if (!this.state.waitingPermissions) { // creates stream on firebase, locally, and shows camera
+      this.createStream();
+    }
+    console.log('LiveStream componentDidMount');
   }
 
   async componentWillUnmount() {
-    if (!this.state.assetId) {return;}
-    var url = 'https://api.mux.com/video/v1/assets/' + this.state.assetId;
+    this._willFocusSubscription.remove();
+    if (!this.state.assetID) {return;}
+    var url = 'https://api.mux.com/video/v1/assets/' + this.state.assetID;
     const response = await axios.delete(
       url,
       {},
@@ -84,9 +160,10 @@ class LiveStream extends React.Component {
       outputUrl: this.state.outputUrl + response.data.data.stream_key,
       loading: false,
       streamKey: response.data.data.stream_key,
-      playbackId: response.data.data.playback_ids.id,
-      assetId: response.data.data.id,
+      playbackID: response.data.data.playback_ids.id,
+      assetID: response.data.data.id,
     });
+    return true;
   }
 
   mainButtonClick() {
@@ -109,7 +186,7 @@ class LiveStream extends React.Component {
   }
 
   async uploadNetlinePhoto(uri) {
-    // uploadPictureFirebase('streams/' + this.state.assetId + '/netlinePhoto/', uri)
+    // uploadPictureFirebase('streams/' + this.state.assetID + '/netlinePhoto/', uri)
   }
 
   startStream() {
@@ -151,18 +228,6 @@ class LiveStream extends React.Component {
             style={styles.nodeCameraView}
             type={RNCamera.Constants.Type.front}
             flashMode={RNCamera.Constants.FlashMode.on}
-            androidCameraPermissionOptions={{
-              title: 'Permission to use camera',
-              message: 'We need your permission to use your camera',
-              buttonPositive: 'Ok',
-              buttonNegative: 'Cancel',
-            }}
-            androidRecordAudioPermissionOptions={{
-              title: 'Permission to use audio recording',
-              message: 'We need your permission to use your audio',
-              buttonPositive: 'Ok',
-              buttonNegative: 'Cancel',
-            }}
           />
         // this camera streams live video
         : <NodeCameraView

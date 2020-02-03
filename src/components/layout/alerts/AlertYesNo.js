@@ -37,7 +37,6 @@ export default class AlertYesNo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      step:1,
       loader: false
     };
     this.componentWillMount = this.componentWillMount.bind(this);
@@ -60,14 +59,6 @@ export default class AlertYesNo extends Component {
     let click = this.props.navigation.getParam('noClick');
     click();
     this.props.navigation.goBack();
-  }
-  click(){
-    if (this.props.navigation.getParam('close') != true) {
-      this.setState({loader:true})
-      this.props.navigation.state.params.onGoBack()
-    } else {
-      this.props.navigation.goBack()
-    }
   }
   render() {  
     return (

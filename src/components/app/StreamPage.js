@@ -8,6 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+
 const {height, width} = Dimensions.get('screen');
 
 import {historicSearchAction} from '../../actions/historicSearchActions';
@@ -22,7 +23,6 @@ import CardEvent from './elementsStreaming/CardEvent';
 
 import PlaceHolder from '../placeHolders/CardConversation';
 import Button from '../layout/buttons/Button';
-import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
 class StreamPage extends React.Component {
   constructor(props) {

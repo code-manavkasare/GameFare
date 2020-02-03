@@ -373,7 +373,7 @@ const RootStack = createStackNavigator(
       },
     },
     AlertYesNo: {
-      screen: lockedPortrait(AlertYesNo),
+      screen: AlertYesNo,
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,
