@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
-import {messageAction} from '../../../actions/messageActions'
+import {messageAction} from '../../../actions/messageActions';
 import {subscribeToTopics} from '../../functions/notifications';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -26,7 +26,7 @@ import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 import {subscribeUserToGroup} from '../../functions/createGroup';
 import {arrayAttendees} from '../../functions/createEvent';
-import {indexDiscussions} from '../../database/algolia'
+import {indexDiscussions} from '../../database/algolia';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -41,26 +41,26 @@ class MembersView extends Component {
   componentDidMount() {}
   rowUser(user, i, data) {
     return (
-        <Row style={styleApp.center2}>
-          <Col style={styleApp.center}>
-            <CardUser
-              user={user}
-              infoUser={this.props.infoUser}
-              admin={this.props.data.info.organizer === this.props.userID}
-              userConnected={this.props.userConnected}
-              objectID={this.props.data.objectID}
-              key={i}
-              userID={this.props.userID}
-              removable={this.props.editMode}
-              removeFunc={() => this.props.onRemoveMember(user)}
-              type="group"
-            />
-          </Col>
-        </Row>
+      <Row style={styleApp.center2}>
+        <Col style={styleApp.center}>
+          <CardUser
+            user={user}
+            infoUser={this.props.infoUser}
+            admin={this.props.data.info.organizer === this.props.userID}
+            userConnected={this.props.userConnected}
+            objectID={this.props.data.objectID}
+            key={i}
+            userID={this.props.userID}
+            removable={this.props.editMode}
+            removeFunc={() => this.props.onRemoveMember(user)}
+            type="group"
+          />
+        </Col>
+      </Row>
     );
   }
   async joinGroup() {
-    const {data,infoUser,userID,objectID} = this.props
+    const {data, infoUser, userID, objectID} = this.props;
     const user = await subscribeUserToGroup(
       objectID,
       userID,
@@ -88,8 +88,10 @@ class MembersView extends Component {
   }
   async setConversation(data) {
     await this.props.messageAction('setConversation', data);
-    await this.props.messageAction('setMyConversations', {[data.objectID]:true});
-    return true
+    await this.props.messageAction('setMyConversations', {
+      [data.objectID]: true,
+    });
+    return true;
   }
   join(data) {
     if (!this.props.userConnected)
@@ -127,6 +129,35 @@ class MembersView extends Component {
       return false;
     return true;
   }
+  buttonLeave() {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={40} style={styleApp.center}>
+                <AllIcons
+                  name="sign-out-alt"
+                  type="font"
+                  color={colors.white}
+                  size={17}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={[styleApp.text, {color: colors.white}]}>
+                  Leave
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => true}
+        color={colors.primary}
+        style={styles.buttonLeave}
+        onPressColor={colors.primary2}
+      />
+    );
+  }
   membersView(data, members) {
     return (
       <View style={styleApp.viewHome}>
@@ -136,22 +167,9 @@ class MembersView extends Component {
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
             <Col style={styleApp.center3} size={30}>
-              {data.organizer.id === this.props.userID ? null : this.userAlreadyJoined(data) ? (
-                <Row>
-                  <Col size={50} style={styleApp.center}>
-                    <AllIcons
-                      name="check"
-                      type="font"
-                      color={colors.green}
-                      size={17}
-                    />
-                  </Col>
-                  <Col size={50} style={styleApp.center2}>
-                    <Text style={[styleApp.text, {color: colors.green}]}>
-                      Joined
-                    </Text>
-                  </Col>
-                </Row>
+              {data.organizer.id ===
+              this.props.userID ? null : this.userAlreadyJoined(data) ? (
+                this.buttonLeave()
               ) : (
                 <ButtonColor
                   view={() => {
@@ -163,10 +181,7 @@ class MembersView extends Component {
                   }}
                   click={() => this.join(data)}
                   color={colors.green}
-                  style={[
-                    styleApp.center,
-                    styles.buttonJoin,
-                  ]}
+                  style={[styleApp.center, styles.buttonJoin]}
                   onPressColor={colors.greenClick}
                 />
               )}
@@ -201,14 +216,21 @@ class MembersView extends Component {
 }
 
 const styles = StyleSheet.create({
-  buttonJoin:{
+  buttonJoin: {
     borderColor: colors.off,
     height: 40,
     width: 90,
     borderRadius: 20,
     borderWidth: 1,
-  }
-})
+  },
+  buttonLeave: {
+    borderColor: colors.off,
+    height: 40,
+    width: 100,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {
@@ -218,4 +240,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction,messageAction})(MembersView);
+export default connect(mapStateToProps, {groupsAction, messageAction})(
+  MembersView,
+);
