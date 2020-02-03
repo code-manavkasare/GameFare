@@ -60,6 +60,8 @@ class LiveStream extends React.Component {
     }
   }
   async componentWillUnmount() {
+    console.log('will unmount');
+    console.log(this.state);
     if (this.state.assetID) {
       destroyStream(this.state.assetID);
     }
@@ -93,7 +95,10 @@ class LiveStream extends React.Component {
     return (camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED);
   }
   async createStream() {
-    const stream = createStream(this.navigation.getParams('eventID'));
+    const eventID = this.props.navigation.getParam('eventID', 'noID');
+    const stream = await createStream(eventID);
+    console.log('made stream');
+    console.log(stream);
     this.setState({
       loading: false,
       outputUrl: this.state.outputUrl + stream.streamKey,
