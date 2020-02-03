@@ -28,7 +28,7 @@ import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
 import LiveStreamHeader from './LiveStreamHeader';
-import { has } from 'ramda';
+import {has} from 'ramda';
 
 const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
 const MUX_TOKEN_SECRET =
@@ -52,10 +52,12 @@ class LiveStream extends React.Component {
   }
   async componentDidMount() {
     const permission = await this.permissions();
-    if (!permission) { // camera or microphone unavailable, leave live stream
+    if (!permission) {
+      // camera or microphone unavailable, leave live stream
       this.props.navigation.navigate('TabsApp');
     }
-    if (!this.state.waitingPermissions) { // creates stream on firebase, locally, and shows camera
+    if (!this.state.waitingPermissions) {
+      // creates stream on firebase, locally, and shows camera
       this.createStream();
     }
   }
@@ -69,19 +71,29 @@ class LiveStream extends React.Component {
   async permissions() {
     let camPermission = await Permissions.check(PERMISSIONS.IOS.CAMERA);
     let micPermission = await Permissions.check(PERMISSIONS.IOS.MICROPHONE);
-    if (camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED) {
+    if (
+      camPermission === RESULTS.GRANTED &&
+      micPermission === RESULTS.GRANTED
+    ) {
       return true;
-    } else if (camPermission === RESULTS.UNAVAILABLE || micPermission === RESULTS.UNAVAILABLE) {
+    } else if (
+      camPermission === RESULTS.UNAVAILABLE ||
+      micPermission === RESULTS.UNAVAILABLE
+    ) {
       return false;
-    } else if (camPermission === RESULTS.BLOCKED || micPermission === RESULTS.BLOCKED) {
+    } else if (
+      camPermission === RESULTS.BLOCKED ||
+      micPermission === RESULTS.BLOCKED
+    ) {
       await this.setState({waitingPermissions: true});
       this.props.navigation.navigate('AlertYesNo', {
         textYesButton: 'Open Settings',
         textNoButton: 'Quit Stream',
-        title:
-          'gamefare needs camera/microphone access to livestream events',
+        title: 'gamefare needs camera/microphone access to livestream events',
         yesClick: () => Permissions.openSettings(),
-        noClick: () => {this.props.navigation.navigate('TabsApp');},
+        noClick: () => {
+          this.props.navigation.navigate('TabsApp');
+        },
       });
       return true;
     }
@@ -92,7 +104,9 @@ class LiveStream extends React.Component {
     if (micPermission === RESULTS.DENIED) {
       micPermission = await Permissions.request(PERMISSIONS.IOS.MICROPHONE);
     }
-    return (camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED);
+    return (
+      camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED
+    );
   }
   async createStream() {
     const eventID = this.props.navigation.getParam('eventID', 'noID');
@@ -143,8 +157,6 @@ class LiveStream extends React.Component {
     this.setState({streaming: false});
   }
 
-
-
   render() {
     console.log('RENDER OF LIVESTREAM');
     const {navigation} = this.props;
@@ -160,18 +172,19 @@ class LiveStream extends React.Component {
           initialBackgroundColor={'white'}
           click={() => navigation.navigate('TabsApp')}
         />
-        {!this.state.netline
-        // this camera takes a calibration photo
-        ? <RNCamera
-            ref={ref => {
+        {!this.state.netline ? (
+          // this camera takes a calibration photo
+          <RNCamera
+            ref={(ref) => {
               this.camera = ref;
             }}
             style={styles.nodeCameraView}
             type={RNCamera.Constants.Type.front}
             flashMode={RNCamera.Constants.FlashMode.off}
           />
-        // this camera streams live video
-        : <NodeCameraView
+        ) : (
+          // this camera streams live video
+          <NodeCameraView
             style={styles.nodeCameraView}
             ref={(nodeCameraView) => {
               this.nodeCameraView = nodeCameraView;
@@ -188,7 +201,7 @@ class LiveStream extends React.Component {
             }}
             autopreview={true}
           />
-        }
+        )}
         <View style={styles.smallCol}>
           <Row style={styleApp.center2}>
             <Text style={styleApp.textBold}>
@@ -199,9 +212,7 @@ class LiveStream extends React.Component {
         <Col size={50} style={styles.toolbar}>
           <ButtonColor
             view={() => {
-              return (
-                <View/>
-              );
+              return <View />;
             }}
             click={() => this.mainButtonClick()}
             color={'red'}

@@ -109,10 +109,9 @@ class StreamPage extends React.Component {
                 eventTitle={event.info.name}
                 start={event.date.start}
                 click={(index) => {
-                  this.props.navigation.navigate(
-                    'LiveStream',
-                    {eventID: events[index].objectID},
-                  );
+                  this.props.navigation.navigate('LiveStream', {
+                    eventID: events[index].objectID,
+                  });
                 }}
               />
             ))}
