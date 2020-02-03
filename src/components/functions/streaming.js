@@ -11,13 +11,10 @@ async function createStreamFirebase(stream, eventID) {
   const firebaseStream = {
     ...stream,
     eventID: eventID,
-    finished: false,
-    netlineResults: null,
-    netlinePicture: null,
   };
   await firebase
     .database()
-    .ref('streams/' + firebaseStream.id + '/finished/')
+    .ref('streams/' + firebaseStream.id + '/')
     .set(firebaseStream);
 }
 
