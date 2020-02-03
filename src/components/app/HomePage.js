@@ -37,11 +37,9 @@ export default class HomeScreen extends React.Component {
     this.notificationHandler();
   }
   async notificationHandler() {
-    const enabled = await firebase.messaging().hasPermission();
-    if (enabled) {
-      this.appBackgroundNotificationListenner();
-      this.appOpenFistNotification();
-    }
+    // const enabled = await firebase.messaging().hasPermission();
+    this.appBackgroundNotificationListenner();
+    this.appOpenFistNotification();
   }
   appBackgroundNotificationListenner() {
     this.removeNotificationListener = firebase
