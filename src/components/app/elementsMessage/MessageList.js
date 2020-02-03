@@ -39,13 +39,10 @@ class MessageTab extends React.Component {
 
   async loadDiscussions(userID) {
     const discussions = await loadMyDiscusions(userID);
-    console.log('discussions',discussions)
     const myDiscussions = Object.values(discussions).reduce(function(result, item) {
       result[item.objectID] = true;
       return result;
-    }, {});
-    console.log('myDiscussions',myDiscussions)
-    
+    }, {});    
     await this.props.messageAction('setConversations', discussions);
     await this.props.messageAction('setMyConversations', myDiscussions);
     this.setState({discussions: discussions, loader: false});
@@ -124,7 +121,7 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader
             ? this.placeHolder()
-            : Object.keys(myConversations).map((discussion, i) => (
+            : Object.keys(myConversations).reverse().map((discussion, i) => (
                 <CardConversation
                   key={i}
                   index={i}

@@ -75,14 +75,13 @@ class EventPage extends React.Component {
     this.event = this.event.bind(this);
   }
   async componentDidMount() {
-    console.log('eventpageload', this.props.navigation.getParam('objectID'));
     this.loadEvent(this.props.navigation.getParam('objectID'));
   }
-  async componentWillUnmount() {
+  componentWillUnmount() {
     if (this.state.event) {
       firebase
         .database()
-        .ref('events/' + this.state.data.objectID)
+        .ref('events/' + this.state.event.objectID)
         .off();
     }
   }
@@ -298,13 +297,16 @@ class EventPage extends React.Component {
           keyboardType={'phone-pad'}
           underlineColorAndroid="rgba(0,0,0,0)"
           autoCorrect={true}
-          onChangeText={(text) => this.setState({editPrice: text.split('$')[1]})}
+          onChangeText={(text) =>
+            this.setState({editPrice: text.split('$')[1]})
+          }
           onFocus={() => {
             this.setState({editPriceClicked: true});
           }}
-          value={this.state.editPriceClicked
-            ? 'Entry Fee: $' + this.state.editPrice
-            : ''
+          value={
+            this.state.editPriceClicked
+              ? 'Entry Fee: $' + this.state.editPrice
+              : ''
           }
         />
       );
@@ -747,8 +749,6 @@ class EventPage extends React.Component {
           </View>
         )}
 
-        
-
         <View style={{height: sizes.heightFooterBooking + 50}} />
       </View>
     );
@@ -928,20 +928,18 @@ class EventPage extends React.Component {
 
         {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {editMode
-              ? this.bottomActionButton('Save edits', () =>
-                  this.saveEdits(event),
-                )
-              : this.waitlistCondition(event)
-              ? this.bottomActionButton('Join the waitlist', () =>
-                  this.joinWaitlist(event),
-                )
-              : this.openCondition(event) &&
-                !this.userAlreadySubscribed(event.attendees)
-              ? this.bottomActionButton('Join the event', () =>
-                  this.next(event),
-                )
-              : null}
+            {editMode ? (
+              this.bottomActionButton('Save edits', () => this.saveEdits(event))
+            ) : this.waitlistCondition(event) ? (
+              this.bottomActionButton('Join the waitlist', () =>
+                this.joinWaitlist(event),
+              )
+            ) : this.openCondition(event) &&
+              !this.userAlreadySubscribed(event.attendees) ? (
+              this.bottomActionButton('Join the event', () => this.next(event))
+            ) : (
+              <View />
+            )}
           </FadeInView>
         )}
       </View>
