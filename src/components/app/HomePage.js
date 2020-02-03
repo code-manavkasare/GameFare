@@ -34,26 +34,34 @@ export default class HomeScreen extends React.Component {
   componentDidMount() {
     StatusBar.setHidden(false, 'slide');
     StatusBar.setBarStyle('dark-content', true);
-    this.appBackgroundNotificationListenner();
-    this.appOpenFistNotification();
-  } 
-  appBackgroundNotificationListenner() {
-    this.removeNotificationListener = firebase.notifications().onNotification((notification) => {
-      console.log('open notification  when app in background');
-      const {data} = notification;
-      this.openPageFromNotification(data.action,data);
-    });
+    this.notificationHandler();
   }
-  async appOpenFistNotification() {
-    const notificationOpen = await firebase.notifications().getInitialNotification();
-    console.log('notificationOpen',notificationOpen);
-    if (notificationOpen) {
-      const {data} = notificationOpen;
-      this.openPageFromNotification(data.action,data);
+  async notificationHandler() {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      this.appBackgroundNotificationListenner();
+      this.appOpenFistNotification();
     }
   }
-  openPageFromNotification(page,data) {
-    this.props.navigation.navigate(page,data)
+  appBackgroundNotificationListenner() {
+    this.removeNotificationListener = firebase
+      .notifications()
+      .onNotificationOpened((notification) => {
+        const {data} = notification.notification;
+        this.openPageFromNotification(data.action, data);
+      });
+  }
+  async appOpenFistNotification() {
+    const notificationOpen = await firebase
+      .notifications()
+      .getInitialNotification();
+    if (notificationOpen) {
+      const {data} = notificationOpen.notification;
+      this.openPageFromNotification(data.action, data);
+    }
+  }
+  openPageFromNotification(page, data) {
+    this.props.navigation.push(page, data);
   }
   componentWillUnmount() {
     this.removeNotificationListener();
