@@ -60,6 +60,7 @@ export default class Alert extends Component {
     }
   }
   render() {  
+    const colorButton = this.props.navigation.getParam('colorButton')
     return (
       <View style={styles.viewModal}>
           <TouchableOpacity style={styles.buttonClose} activeOpacity={0.5} onPress={() => {this.props.navigation.goBack()}}>
@@ -82,7 +83,7 @@ export default class Alert extends Component {
          </Row>
 
           <View style={styles.viewButton}>
-            <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.click()} loader={this.state.loader}/>
+            <Button backgroundColor={colorButton?colorButton:'green'} disabled={false} onPressColor={colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.click()} loader={this.state.loader}/>
           </View>
       </View>  
     );
