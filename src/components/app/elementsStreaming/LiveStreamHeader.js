@@ -21,10 +21,10 @@ export default class LiveStreamHeader extends Component {
     this.state = {
       enableClickButton: true,
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
     this.handleBackPress = this.handleBackPress.bind(this);
   }
-  componentWillMount() {
+  componentDidMount() {
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -58,73 +58,47 @@ export default class LiveStreamHeader extends Component {
       }, 1500);
     }
   }
-  sizeColTitle() {
-    if (this.props.headerType) return 25;
-    return 70;
-  }
   render() {
     return (
-      <View
-        style={styles.header}>
-        <Row>
-          <Col size={15} style={styles.center2} activeOpacity={0.4}>
-            {this.props.icon1 && (
-              <View
-                style={styles.buttonStyle}>
-                <ButtonColor
-                  view={() => {
-                    return (
-                      <AllIcons
-                        name={this.props.icon1}
-                        color={colors.title}
-                        size={15}
-                        type="font"
-                      />
-                    );
-                  }}
-                  click={() => this.props.clickButton1()}
-                  color={'white'}
-                  style={styles.buttonRight}
-                  onPressColor={colors.off}
+      <Col style={styles.header}>
+        <View
+          style={styles.buttonStyle}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="times"
+                  color={colors.title}
+                  size={15}
+                  type="font"
                 />
-              </View>
-            )}
-          </Col>
-          <Col size={85} />
-        </Row>
-      </View>
+              );
+            }}
+            click={() => this.props.click()}
+            color={'white'}
+            style={styles.button}
+            onPressColor={colors.off}
+          />
+        </View>
+      </Col>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
   header: {
-    height: sizes.heightHeaderHome,
-    width: width,
+    justifyContent: 'flex-start',
+    height: '100%',
+    width: sizes.heightHeaderHome,
+    paddingRight: sizes.marginTopHeader - 5,
+    paddingBottom: 20,
+    paddingTop: 20,
     backgroundColor: 'rgba(0,0,0,0)',
-    paddingTop: sizes.marginTopHeader - 5,
-    paddingLeft: 20,
-    paddingRight: 20,
     position: 'absolute',
+    right: 0,
     zIndex: 10,
   },
-  title: {
-    fontSize: 15,
-    paddingLeft: 7,
-    color: '#4B4B4B',
-  },
-  textTitleHeader: {
-    color: colors.title,
-    fontSize: 17,
-  },
-  buttonRight: {
+  button: {
     ...styleApp.center,
     height: 46,
     width: 46,
@@ -134,12 +108,5 @@ const styles = StyleSheet.create({
   buttonStyle: {
     height: 48,
     width: 48,
-  },
-  rowTextHeader: {
-    ...styleApp.center,
-    height: '100%',
-    marginLeft: -20,
-    position: 'absolute',
-    width: width,
   },
 });

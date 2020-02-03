@@ -17,6 +17,9 @@ import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 const {height, width} = Dimensions.get('screen');
 
+import {uploadPictureFirebase} from '../../functions/pictures';
+import {createStream, destroyStream} from '../../functions/streaming';
+
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
@@ -36,7 +39,8 @@ class LiveStream extends React.Component {
     super(props);
     this.state = {
       outputUrl: 'rtmp://live.mux.com/app/',
-      waitingPermissions: true,
+      waitingPermissions: false,
+      waitingNetline: false,
       loading: true,
       streaming: false,
       assetID: '',
@@ -44,43 +48,20 @@ class LiveStream extends React.Component {
       playbackID: '',
       netline: null,
     };
-    this._willFocusSubscription = this.props.navigation.addListener(
-      'willFocus',
-      async () => {
-        if (this.state.waitingPermissions) {
-          const hasPermission = await this.checkPermissions();
-          if (hasPermission) {
-            this.createStream();
-          } else {
-            this.getPermission();
-          }
-        }
-      },
-    );
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-
-  async checkPermission(request) {
-    const permission = await Permissions.check(request);
-    return (permission === RESULTS.GRANTED);
+  async componentDidMount() {
+    const permission = await this.permissions();
+    if (!permission) { // camera or microphone unavailable, leave live stream
+      this.props.navigation.navigate('TabsApp');
+    }
+    if (!this.state.waitingPermissions) { // creates stream on firebase, locally, and shows camera
+      this.createStream();
+    }
   }
-
-  async askPermission(request) {
-    const permission = await Permissions.request(request);
-    return (permission === RESULTS.GRANTED);
-  }
-
-  async getPermissions(request) {
-    let permission = await Permissions.request(request);
-    switch (permission) {
-      case RESULTS.GRANTED:
-        return true;
-      case RESULTS.DENIED:
-      case RESULTS.BLOCKED:
-
-        return false;
-      case RESULTS.UNAVAILABLE:
-        return false;
+  async componentWillUnmount() {
+    if (this.state.assetID) {
+      destroyStream(this.state.assetID);
     }
   }
   async permissions() {
@@ -91,6 +72,7 @@ class LiveStream extends React.Component {
     } else if (camPermission === RESULTS.UNAVAILABLE || micPermission === RESULTS.UNAVAILABLE) {
       return false;
     } else if (camPermission === RESULTS.BLOCKED || micPermission === RESULTS.BLOCKED) {
+      await this.setState({waitingPermissions: true});
       this.props.navigation.navigate('AlertYesNo', {
         textYesButton: 'Open Settings',
         textNoButton: 'Quit Stream',
@@ -110,90 +92,47 @@ class LiveStream extends React.Component {
     }
     return (camPermission === RESULTS.GRANTED && micPermission === RESULTS.GRANTED);
   }
-
-  async componentDidMount() {
-    const permission = await this.permissions();
-    if (!permission) { // camera or microphone unavailable, leave live stream
-      this.props.navigation.navigate('TabsApp');
-    }
-    if (!this.state.waitingPermissions) { // creates stream on firebase, locally, and shows camera
-      this.createStream();
-    }
-    console.log('LiveStream componentDidMount');
-  }
-
-  async componentWillUnmount() {
-    this._willFocusSubscription.remove();
-    if (!this.state.assetID) {return;}
-    var url = 'https://api.mux.com/video/v1/assets/' + this.state.assetID;
-    const response = await axios.delete(
-      url,
-      {},
-      { auth: {
-          username: MUX_TOKEN_ID,
-          password: MUX_TOKEN_SECRET,
-        },
-      },
-    );
-    console.log(response);
-  }
-
   async createStream() {
-    var url = 'https://api.mux.com/video/v1/live-streams';
-    const response = await axios.post(
-      url,
-      {
-        playback_policy: ['public'],
-        new_asset_settings: {
-          playback_policy: ['public'],
-        },
-      },
-      {
-        auth: {
-          username: MUX_TOKEN_ID,
-          password: MUX_TOKEN_SECRET,
-        },
-      },
-    );
-    console.log(JSON.stringify(response.data, null, 2));
+    const stream = createStream(this.navigation.getParams('eventID'));
     this.setState({
-      outputUrl: this.state.outputUrl + response.data.data.stream_key,
       loading: false,
-      streamKey: response.data.data.stream_key,
-      playbackID: response.data.data.playback_ids.id,
-      assetID: response.data.data.id,
+      outputUrl: this.state.outputUrl + stream.streamKey,
+      streamKey: stream.streamKey,
+      playbackID: stream.playbackID,
+      assetID: stream.id,
     });
-    return true;
   }
-
   mainButtonClick() {
-    this.setState({netline: {id: 1}});
-    // return;
-    // if (this.state.streaming) {
-    //   this.stopStream();
-    // } else {
-    //   this.startStream();
-    // }
+    if (!this.state.netline) {
+      this.takeCalibrationPhoto();
+    } else {
+      if (this.state.streaming) {
+        this.stopStream();
+      } else {
+        this.startStream();
+      }
+    }
   }
-
   async takeCalibrationPhoto() {
     if (this.camera) {
       const data = await this.camera.capture();
       const uri = data.path;
       console.log(uri);
-      await this.uploadNetlinePhoto(uri);
+      const res = await this.uploadNetlinePhoto(uri);
+      console.log(res);
     }
   }
-
   async uploadNetlinePhoto(uri) {
-    // uploadPictureFirebase('streams/' + this.state.assetID + '/netlinePhoto/', uri)
+    const pictureUri = await uploadPictureFirebase(
+      uri,
+      'streams/' + this.state.assetID + '/netlinePhoto/',
+    );
+    return pictureUri;
   }
-
   startStream() {
     this.setState({streaming: true});
     this.nodeCameraView.start();
   }
-
   stopStream() {
     this.nodeCameraView.stop();
     this.setState({streaming: false});
@@ -214,10 +153,7 @@ class LiveStream extends React.Component {
           loader={this.state.loader}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
-          initialTitleOpacity={0}
-          icon1={'times'}
-          icon2={null}
-          clickButton1={() => navigation.navigate('TabsApp')}
+          click={() => navigation.navigate('TabsApp')}
         />
         {!this.state.netline
         // this camera takes a calibration photo
@@ -227,7 +163,7 @@ class LiveStream extends React.Component {
             }}
             style={styles.nodeCameraView}
             type={RNCamera.Constants.Type.front}
-            flashMode={RNCamera.Constants.FlashMode.on}
+            flashMode={RNCamera.Constants.FlashMode.off}
           />
         // this camera streams live video
         : <NodeCameraView
@@ -250,45 +186,24 @@ class LiveStream extends React.Component {
         }
         <View style={styles.smallCol}>
           <Row style={styleApp.center2}>
-            <Text>
-              Please position the camera correctly
+            <Text style={styleApp.textBold}>
+              Please position the camera correctly and take a photo
             </Text>
           </Row>
-          <Row style={styleApp.center2}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <View>
-                    <Text>
-                      Done
-                    </Text>
-                  </View>
-                );
-              }}
-              click={() => this.takeCalibrationPhoto()}
-              color={'white'}
-              style={styles.calibrationButton}
-              onPressColor={colors.off}
-            />
-          </Row>
         </View>
-        <View style={styles.toolbar}>
-          <Col style={[styleApp.center2, {paddingBottom: 5}]}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <View
-
-                  />
-                );
-              }}
-              click={() => this.mainButtonClick()}
-              color={'red'}
-              style={styles.recordButton}
-              onPressColor={colors.off}
-            />
-          </Col>
-        </View>
+        <Col size={50} style={styles.toolbar}>
+          <ButtonColor
+            view={() => {
+              return (
+                <View/>
+              );
+            }}
+            click={() => this.mainButtonClick()}
+            color={'red'}
+            style={styles.recordButton}
+            onPressColor={colors.off}
+          />
+        </Col>
       </View>
     );
   }
@@ -314,14 +229,11 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     flex: 1,
+    height: '100%',
+    paddingLeft: 10,
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 0,
-  },
-  calibrationButton: {
-    ...styleApp.center2,
-    width: 60,
-    height: 40,
+    left: 0,
   },
   recordButton: {
     ...styleApp.center2,
