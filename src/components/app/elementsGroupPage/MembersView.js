@@ -157,6 +157,7 @@ class MembersView extends Component {
           icon:<AllIcons name='sign-out-alt' color={colors.primary} type='font' size={22} />,
           title: 'Are you sure you want to leave this group?',
           colorButton:'primary',
+          onPressColor:colors.primaryLight,
         })}
         color={colors.primary}
         style={styles.buttonLeave}
@@ -165,6 +166,7 @@ class MembersView extends Component {
     );
   }
   async confirmLeaveGroup(data) {
+    if (data.discussions) await this.props.messageAction('deleteMyConversation',data.discussions[0])
     await firebase.database().ref('groups/' + data.objectID + '/members/' + this.props.userID).update({'action':'unsubscribed'});
     await firebase.database().ref('groups/' + data.objectID + '/members/' + this.props.userID).remove();
     await NavigationService.goBack()

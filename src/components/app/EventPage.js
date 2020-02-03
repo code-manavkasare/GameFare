@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
+import {messageAction} from '../../actions/messageActions'
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
 import {
@@ -697,6 +698,51 @@ class EventPage extends React.Component {
       </View>
     );
   }
+  buttonLeave(data) {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={40} style={styleApp.center}>
+                <AllIcons
+                  name="sign-out-alt"
+                  type="font"
+                  color={colors.white}
+                  size={15}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={[styleApp.text, {color: colors.white}]}>
+                  Cancel
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => NavigationService.navigate('Alert', {
+          textButton: 'Cancel attendance',
+          onGoBack: () => this.confirmLeaveEvent(data),
+          icon:<AllIcons name='sign-out-alt' color={colors.primary} type='font' size={22} />,
+          title: 'Are you sure you want to cancel your attendance?',
+          subtitle:Number(data.price.joiningFee) !== 0 && 'Your registration fee will not be refunded unless specifically authorized by the event host.',
+          colorButton:'primary',
+          onPressColor:colors.primaryLight,
+        })}
+        color={colors.primary}
+        style={styles.buttonLeave}
+        onPressColor={colors.primaryLight}
+      />
+    );
+  }
+  async confirmLeaveEvent(data) {
+    if (data.discussions) await this.props.messageAction('deleteMyConversation',data.discussions[0])
+    
+    await firebase.database().ref('events/' + data.objectID + '/attendees/' + this.props.userID).update({'action':'unsubscribed'});
+    await firebase.database().ref('events/' + data.objectID + '/attendees/' + this.props.userID).remove();
+    await NavigationService.goBack();
+    return true
+  }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;
     const attendees = arrayAttendees(
@@ -710,7 +756,15 @@ class EventPage extends React.Component {
         {this.eventInfo(event, sport, rule, league)}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
-          <Text style={styleApp.text}>Players</Text>
+          <Row>
+            <Col size={60} style={styleApp.center2}>
+              <Text style={styleApp.text}>Players</Text>
+            </Col>
+            <Col size={40} style={styleApp.center3}>
+              {this.userAlreadySubscribed(event.attendees) && this.props.userID !== event.info.organizer && this.buttonLeave(event)}
+            </Col>
+          </Row>
+          
           <View
             style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
           />
@@ -974,6 +1028,13 @@ const styles = StyleSheet.create({
   },
   mainImg: {width: '100%', height: 320},
   buttonBottom: {marginLeft: 20, width: width - 40},
+  buttonLeave: {
+    borderColor: colors.off,
+    height: 40,
+    width: 110,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -986,4 +1047,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {eventsAction})(EventPage);
+export default connect(mapStateToProps, {eventsAction,messageAction})(EventPage);
