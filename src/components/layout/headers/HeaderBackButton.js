@@ -36,18 +36,9 @@ export default class HeaderFlow extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
-    if (this.props.loaderOn == true) {
+    if (this.props.loaderOn) {
       this.props.onRef(this);
     }
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.loader !== nextProps.loader ||
-      this.state !== nextState ||
-      this.props.enableClickButton !== nextProps.enableClickButton ||
-      this.props.iconOffset !== nextProps.iconOffset ||
-      this.props.colorIconOffset !== nextProps.colorIconOffset
-    );
   }
   handleBackPress = () => {
     if (this.props.enableClickButton && this.state.enableClickButton) {

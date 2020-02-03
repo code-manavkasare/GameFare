@@ -98,7 +98,6 @@ class CardConversation extends React.Component {
         )
         .update({[this.props.userID]: true});
     }
-    console.log('click convo', conversation);
     NavigationService.push('Conversation', {
       data: conversation,
       myConversation: this.props.myConversation,
@@ -141,10 +140,11 @@ class CardConversation extends React.Component {
     );
   }
   render() {
-    const conversation = this.props.conversations[this.props.discussionID];
-    console.log('discussionID', conversation);
+    let conversation = this.props.conversations[this.props.discussionID];
+
+    if (!conversation) conversation = this.props.discussion;
+    if (!conversation) return null;
     const {lastMessage} = this.state;
-    // return null
     return this.cardConversation(
       conversation ? conversation : this.props.discussion,
       lastMessage,

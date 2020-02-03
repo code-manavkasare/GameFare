@@ -39,10 +39,14 @@ class MessageTab extends React.Component {
 
   async loadDiscussions(userID) {
     const discussions = await loadMyDiscusions(userID);
-    const myDiscussions = Object.values(discussions).reduce(function(result, item) {
+    const myDiscussions = Object.values(discussions).reduce(function(
+      result,
+      item,
+    ) {
       result[item.objectID] = true;
       return result;
-    }, {});    
+    },
+    {});
     await this.props.messageAction('setConversations', discussions);
     await this.props.messageAction('setMyConversations', myDiscussions);
     this.setState({discussions: discussions, loader: false});
@@ -105,7 +109,6 @@ class MessageTab extends React.Component {
     );
   }
   messagePageView(myConversations) {
-    console.log('myConversations display',myConversations)
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -121,14 +124,16 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader
             ? this.placeHolder()
-            : Object.keys(myConversations).reverse().map((discussion, i) => (
-                <CardConversation
-                  key={i}
-                  index={i}
-                  discussionID={discussion}
-                  myConversation={true}
-                />
-              ))}
+            : Object.keys(myConversations)
+                .reverse()
+                .map((discussion, i) => (
+                  <CardConversation
+                    key={i}
+                    index={i}
+                    discussionID={discussion}
+                    myConversation={true}
+                  />
+                ))}
         </View>
         <View style={{height: 30}} />
       </View>
@@ -146,7 +151,6 @@ class MessageTab extends React.Component {
     const {navigate} = this.props.navigation;
     const {myConversations} = this.props;
     const {userConnected} = this.props;
-    console.log('discussions render!!!',myConversations)
     return (
       <View>
         <HeaderBackButton
@@ -158,7 +162,7 @@ class MessageTab extends React.Component {
           typeIcon2={'font'}
           sizeIcon2={17}
           initialTitleOpacity={0}
-          icon2={userConnected ? 'edit' : null}
+          icon2={userConnected && 'edit'}
           clickButton2={() =>
             userConnected ? navigate('NewConversation') : navigate('SignIn')
           }
