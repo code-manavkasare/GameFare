@@ -40,7 +40,6 @@ class StreamPage extends React.Component {
     }
   }
   async loadEvents() {
-    console.log('StreamPage loadEvents');
     if (!this.props.userConnected) {
       return false;
     }
@@ -50,7 +49,6 @@ class StreamPage extends React.Component {
     return true;
   }
   logoutView() {
-    console.log('StreamPage logoutView');
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
         <View style={styleApp.center}>
@@ -86,7 +84,6 @@ class StreamPage extends React.Component {
     );
   }
   streamPageView(events) {
-    console.log('StreamPage streamPageView');
     if (!this.props.userConnected) {
       if (!this.state.wasLoggedOut) {
         this.setState({wasLoggedOut: true, events: []});
@@ -101,12 +98,12 @@ class StreamPage extends React.Component {
         <View
           style={[
             styleApp.divider2,
-            {paddingLeft: 20, width: width - 40, marginTop: 0},
+            {marginLeft: 20, width: width - 40, marginTop: 0},
           ]}
         />
         {this.state.loader
           ? this.placeHolder()
-          : Object.values(events).map((event, i) => (
+          : events.map((event, i) => (
               <CardEvent
                 index={i}
                 eventTitle={event.info.name}
@@ -121,39 +118,25 @@ class StreamPage extends React.Component {
   }
 
   render() {
-    console.log('StreamPage render');
-    console.log('userConnected ' + this.props.userConnected);
-    console.log('wasLoggedOut ' + this.state.wasLoggedOut);
     const {events} = this.state;
     if (this.props.userConnected && this.state.wasLoggedOut) {
       this.loadEvents();
     }
     return (
-      <View>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Select an event to stream'}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.white}
-          initialBackgroundColor={'white'}
-          initialTitleOpacity={0}
-        />
-
-        <ScrollView2
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.streamPageView(events)}
-          keyboardAvoidDisable={true}
-          marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottom={0}
-          colorRefresh={colors.title}
-          stickyHeaderIndices={[3]}
-          refreshControl={false}
-          offsetBottom={10}
-          showsVerticalScrollIndicator={true}
-        />
-      </View>
+      <ScrollView2
+        onRef={(ref) => (this.scrollViewRef = ref)}
+        contentScrollView={() => this.streamPageView(events)}
+        keyboardAvoidDisable={true}
+        marginBottomScrollView={0}
+        marginTop={sizes.heightHeaderHome}
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        marginBottom={0}
+        colorRefresh={colors.title}
+        stickyHeaderIndices={[3]}
+        refreshControl={false}
+        offsetBottom={10}
+        showsVerticalScrollIndicator={true}
+      />
     );
   }
 }
