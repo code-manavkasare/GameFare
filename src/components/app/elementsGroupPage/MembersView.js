@@ -129,7 +129,7 @@ class MembersView extends Component {
       return false;
     return true;
   }
-  buttonLeave() {
+  buttonLeave(data) {
     return (
       <ButtonColor
         view={() => {
@@ -140,7 +140,7 @@ class MembersView extends Component {
                   name="sign-out-alt"
                   type="font"
                   color={colors.white}
-                  size={17}
+                  size={15}
                 />
               </Col>
               <Col size={60} style={styleApp.center2}>
@@ -151,12 +151,24 @@ class MembersView extends Component {
             </Row>
           );
         }}
-        click={() => true}
+        click={() => NavigationService.navigate('Alert', {
+          textButton: 'Leave',
+          onGoBack: () => this.confirmLeaveGroup(data),
+          icon:<AllIcons name='sign-out-alt' color={colors.primary} type='font' size={22} />,
+          title: 'Are you sure you want to leave this group?',
+          colorButton:'primary',
+        })}
         color={colors.primary}
         style={styles.buttonLeave}
-        onPressColor={colors.primary2}
+        onPressColor={colors.primaryLight}
       />
     );
+  }
+  async confirmLeaveGroup(data) {
+    await firebase.database().ref('groups/' + data.objectID + '/members/' + this.props.userID).update({'action':'unsubscribed'});
+    await firebase.database().ref('groups/' + data.objectID + '/members/' + this.props.userID).remove();
+    await NavigationService.goBack()
+    return true
   }
   membersView(data, members) {
     return (
@@ -169,7 +181,7 @@ class MembersView extends Component {
             <Col style={styleApp.center3} size={30}>
               {data.organizer.id ===
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
-                this.buttonLeave()
+                this.buttonLeave(data)
               ) : (
                 <ButtonColor
                   view={() => {
