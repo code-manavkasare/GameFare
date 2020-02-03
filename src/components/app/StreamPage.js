@@ -36,18 +36,21 @@ class StreamPage extends React.Component {
   }
   componentDidMount() {
     if (this.props.userConnected) {
-      this.loadEvents(this.props.userID);
+      this.loadEvents();
     }
   }
-  async loadEvents(userID) {
-    console.log('LOAD EVENTS');
-    const events = await getMyEvents(userID);
-    console.log(events);
+  async loadEvents() {
+    console.log('StreamPage loadEvents');
+    if (!this.props.userConnected) {
+      return false;
+    }
+    const events = await getMyEvents(this.props.userID);
     //await this.props.eventsAction('setMyEvents', events); something like this?
-    this.setState({events: events, loader: false});
+    this.setState({events: events, loader: false, wasLoggedOut: false});
+    return true;
   }
   logoutView() {
-    this.setState({wasLoggedOut: true});
+    console.log('StreamPage logoutView');
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
         <View style={styleApp.center}>
@@ -83,7 +86,13 @@ class StreamPage extends React.Component {
     );
   }
   streamPageView(events) {
-    if (!this.props.userConnected) return this.logoutView();
+    console.log('StreamPage streamPageView');
+    if (!this.props.userConnected) {
+      if (!this.state.wasLoggedOut) {
+        this.setState({wasLoggedOut: true, events: []});
+      }
+      return this.logoutView();
+    }
     return (
       <View style={{paddingTop: 5, height: '100%'}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
@@ -112,10 +121,11 @@ class StreamPage extends React.Component {
   }
 
   render() {
-    const {navigate} = this.props.navigation;
+    console.log('StreamPage render');
+    console.log('userConnected ' + this.props.userConnected);
+    console.log('wasLoggedOut ' + this.state.wasLoggedOut);
     const {events} = this.state;
-    const {userConnected} = this.props;
-    if (this.state.wasLoggedOut) {
+    if (this.props.userConnected && this.state.wasLoggedOut) {
       this.loadEvents();
     }
     return (
