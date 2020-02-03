@@ -311,16 +311,21 @@ class Page3 extends Component {
     });
 
     await this.props.createEventAction('reset');
-    await this.setState({loader: false});
 
-    await dismiss();
+    const that = this
+    return setTimeout(async function() {
+      await that.setState({loader: false});
 
-    return this.props.navigation.navigate('Contacts', {
-      data: event,
-      pageFrom: 'Event',
-      openPageLink: 'openEventPage',
-      objectID: event.objectID,
-    });
+      await dismiss();
+
+      return that.props.navigation.navigate('Contacts', {
+        data: event,
+        pageFrom: 'Event',
+        openPageLink: 'openEventPage',
+        objectID: event.objectID,
+      });
+    }, 1000)
+    
   }
   render() {
     return (
