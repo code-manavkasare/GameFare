@@ -76,7 +76,7 @@ class Contacts extends Component {
         'Y',
         'Z',
       ],
-      activeView: 'contacts',
+      activeView: 'gamefareUsers',
       fadeInDuration: 500,
     };
     this.counter = 0;
@@ -505,13 +505,13 @@ class Contacts extends Component {
             options={
               this.props.userID === data.info.organizer
                 ? [
-                    {label: 'Contacts', value: 'contacts'},
-                    {label: 'Gamefare', value: 'gamefareUsers'},
+                    {label: 'GameFare', value: 'gamefareUsers'},
                     {label: 'Groups', value: 'groups'},
+                    {label: 'Contacts', value: 'contacts'},
                   ]
                 : [
+                    {label: 'GameFare', value: 'gamefareUsers'},
                     {label: 'Contacts', value: 'contacts'},
-                    {label: 'Gamefare', value: 'gamefareUsers'},
                   ]
             }
           />
