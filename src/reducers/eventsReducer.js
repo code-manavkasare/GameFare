@@ -12,7 +12,7 @@ import {
 import union from 'lodash/union';
 
 const initialState = {
-  futureUserEvents: {},
+  futureUserEvents: [],
   pastUserEvents: [],
   publicEvents: [],
   groupsEvents: [],
@@ -32,13 +32,16 @@ const eventsReducer = (state = initialState, action) => {
     case SET_GROUPS_EVENTS:
       return {...state, groupsEvents: action.groupsEvents};
     case DELETE_MY_EVENT:
-      let futureEvents = {...state.futureUserEvents};
-      delete futureEvents[action.objectID];
-      return {...state, futureUserEvents: futureEvents};
+      return {
+        ...state,
+        futureUserEvents: state.futureUserEvents.filter(
+          (event) => event !== action.objectID,
+        ),
+      };
     case ADD_FUTURE_EVENT:
       return {
         ...state,
-        futureUserEvents: {...state.futureUserEvents, [action.eventID]: true},
+        futureUserEvents: union([action.eventID], state.futureUserEvents),
       };
     default:
       return state;

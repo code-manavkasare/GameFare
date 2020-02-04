@@ -86,10 +86,6 @@ class MyEvents extends React.Component {
       result[item.objectID] = item;
       return result;
     }, {});
-    futureEvents = futureEvents.reduce(function(result, item) {
-      result[item.objectID] = true;
-      return result;
-    }, {});
 
     filterDate = 'date_timestamp<' + Number(new Date());
     var pastEvents = await this.getEvents(filters + filterDate);
@@ -104,7 +100,10 @@ class MyEvents extends React.Component {
       ...allEventsPast,
     };
     await this.props.eventsAction('setAllEvents', allEvents);
-    await this.props.eventsAction('setFutureUserEvents', futureEvents);
+    await this.props.eventsAction(
+      'setFutureUserEvents',
+      Object.values(futureEvents).map((event) => event.objectID),
+    );
     await this.props.eventsAction('setPastUserEvents', pastEvents);
 
     this.setState({loader: false});
@@ -153,7 +152,7 @@ class MyEvents extends React.Component {
   ListEvent() {
     if (!this.props.userConnected) return null;
 
-    const AllFutureEvents = Object.keys(this.props.futureEvents).map(
+    const AllFutureEvents = this.props.futureEvents.map(
       (event) => this.props.allEvents[event],
     );
     const AllPastEvents = this.props.pastEvents.map(
