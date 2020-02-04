@@ -4,6 +4,7 @@ import firebase from 'react-native-firebase';
 import Mixpanel from 'react-native-mixpanel';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
 import NavigationService from '../../NavigationService';
+import {subscribeToTopics} from '../components/functions/notifications'
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 const setUserInfo = (value) => ({
@@ -24,12 +25,15 @@ var infoUserToPushSaved = '';
 export const userAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'signIn') {
-      var user = await firebase
+      const user = await firebase
         .auth()
         .signInWithCustomToken(data.firebaseSignInToken);
-      var userID = user.user.uid;
+      const userID = user.user.uid;
+      await subscribeToTopics([userID]);
+
       Mixpanel.identify(userID);
       Mixpanel.set({userID: userID});
+
       return firebase
         .database()
         .ref('users/' + userID)
