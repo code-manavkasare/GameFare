@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import axios from 'axios';
+import firebase from 'react-native-firebase';
 
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import {RNCamera} from 'react-native-camera';
@@ -17,8 +18,7 @@ import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 const {height, width} = Dimensions.get('screen');
 
-import {uploadPictureFirebase} from '../../functions/pictures';
-import {createStream, destroyStream} from '../../functions/streaming';
+import {createStream, destroyStream, uploadNetlinePhoto} from '../../functions/streaming';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -62,9 +62,11 @@ class LiveStream extends React.Component {
     }
   }
   async componentWillUnmount() {
-    console.log('will unmount');
-    console.log(this.state);
     if (this.state.assetID) {
+      firebase
+        .database()
+        .ref('streams/' + this.state.assetID + '/netlineResults/')
+        .off();
       destroyStream(this.state.assetID);
     }
   }
@@ -120,6 +122,20 @@ class LiveStream extends React.Component {
       playbackID: stream.playbackID,
       assetID: stream.id,
     });
+    this.addNetlineListener();
+  }
+  async addNetlineListener() {
+    firebase
+    .database()
+    .ref('streams/' + this.state.assetID + '/netlineResults/')
+    .on('value', async function(snap) {
+      let netlineResults = snap.val();
+      if (netlineResults) {
+        this.setState({netline: netlineResults});
+      }
+      console.log('netlineResults');
+      console.log(netlineResults);
+    });
   }
   mainButtonClick() {
     if (!this.state.netline) {
@@ -134,20 +150,12 @@ class LiveStream extends React.Component {
   }
   async takeCalibrationPhoto() {
     if (this.camera) {
-      const data = await this.camera.capture();
-      const uri = data.path;
-      console.log(uri);
-      const res = await this.uploadNetlinePhoto(uri);
-      console.log(res);
+      const options = { quality: 0.5, base64: true };
+      const data = await this.camera.takePictureAsync(options);
+      await uploadNetlinePhoto(this.state.assetID, data.uri);
     }
   }
-  async uploadNetlinePhoto(uri) {
-    const pictureUri = await uploadPictureFirebase(
-      uri,
-      'streams/' + this.state.assetID + '/netlinePhoto/',
-    );
-    return pictureUri;
-  }
+
   startStream() {
     this.setState({streaming: true});
     this.nodeCameraView.start();
