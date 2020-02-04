@@ -23,7 +23,7 @@ import {
 } from '../functions/editEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
-import {getPermissionCalendar} from '../functions/date';
+import {getPermissionCalendar, isDatePast} from '../functions/date';
 import moment from 'moment';
 
 const {height, width} = Dimensions.get('screen');
@@ -750,7 +750,10 @@ class EventPage extends React.Component {
     );
   }
   buttonCancelEvent(data) {
-    if (data.info.organizer === this.props.userID)
+    if (
+      data.info.organizer === this.props.userID &&
+      !isDatePast(data.date.start)
+    )
       return (
         <ButtonColor
           view={() => {
@@ -787,7 +790,15 @@ class EventPage extends React.Component {
     return null;
   }
   async confirmCancelEvent(data) {
-    const {goBack, dismiss} = this.props.navigation;
+    const {goBack, dismiss, navigate} = this.props.navigation;
+    if (isDatePast(data.date.start)) {
+      await navigate('Event');
+      return navigate('Alert', {
+        close: true,
+        title: 'You cannot cancel a past event.',
+        textButton: 'Got it!',
+      });
+    }
     await this.props.eventsAction('deleteMyEvent', data.objectID);
     await firebase
       .database()
