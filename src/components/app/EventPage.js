@@ -23,7 +23,7 @@ import {
 } from '../functions/editEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
-import {getPermissionCalendar} from '../functions/date';
+import {getPermissionCalendar, isDatePast} from '../functions/date';
 import moment from 'moment';
 
 const {height, width} = Dimensions.get('screen');
@@ -93,6 +93,7 @@ class EventPage extends React.Component {
       .ref('events/' + objectID)
       .on('value', async function(snap) {
         let event = snap.val();
+        if (!event) return null;
         event.objectID = objectID;
         if (event.allAttendees.includes(that.props.userID)) {
           await that.props.eventsAction('setAllEvents', {[objectID]: event});
@@ -748,6 +749,69 @@ class EventPage extends React.Component {
       />
     );
   }
+  buttonCancelEvent(data) {
+    if (
+      data.info.organizer === this.props.userID &&
+      !isDatePast(data.date.start)
+    )
+      return (
+        <ButtonColor
+          view={() => {
+            return (
+              <Row>
+                <Col style={styleApp.center}>
+                  <Text style={styleApp.text}>Cancel the event</Text>
+                </Col>
+              </Row>
+            );
+          }}
+          click={() =>
+            NavigationService.navigate('Alert', {
+              textButton: 'Cancel the event',
+              onGoBack: () => this.confirmCancelEvent(data),
+              icon: (
+                <AllIcons
+                  name="ban"
+                  color={colors.title}
+                  type="font"
+                  size={22}
+                />
+              ),
+              title: 'Are you sure you want to cancel the event?',
+              colorButton: 'red',
+              onPressColor: colors.red,
+            })
+          }
+          color={colors.white}
+          style={styles.buttonCancel}
+          onPressColor={colors.off}
+        />
+      );
+    return null;
+  }
+  async confirmCancelEvent(data) {
+    const {goBack, dismiss, navigate} = this.props.navigation;
+    if (isDatePast(data.date.start)) {
+      await navigate('Event');
+      return navigate('Alert', {
+        close: true,
+        title: 'You cannot cancel a past event.',
+        textButton: 'Got it!',
+      });
+    }
+    await this.props.eventsAction('deleteMyEvent', data.objectID);
+    await firebase
+      .database()
+      .ref('cancelledEvents/' + data.objectID)
+      .update({...data, status: 'onDelete'});
+    await firebase
+      .database()
+      .ref('events/' + data.objectID)
+      .remove();
+    await goBack();
+    await dismiss();
+    return true;
+  }
   async confirmLeaveEvent(data) {
     if (data.discussions)
       await this.props.messageAction(
@@ -827,6 +891,8 @@ class EventPage extends React.Component {
             <GroupsEvent groups={event.groups} />
           </View>
         )}
+
+        {this.buttonCancelEvent(event)}
 
         <View style={{height: sizes.heightFooterBooking + 50}} />
       </View>
@@ -1059,6 +1125,13 @@ const styles = StyleSheet.create({
     width: 110,
     borderRadius: 20,
     borderWidth: 1,
+  },
+  buttonCancel: {
+    height: 55,
+    borderTopWidth: 0.4,
+    borderBottomWidth: 0.4,
+    marginTop: 40,
+    borderColor: colors.grey,
   },
 });
 

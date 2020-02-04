@@ -46,8 +46,8 @@ class MyEvents extends React.Component {
   }
   async componentWillReceiveProps(nextProps) {
     if (
-      this.props.userConnected != nextProps.userConnected &&
-      nextProps.userConnected == true
+      this.props.userConnected !== nextProps.userConnected &&
+      nextProps.userConnected
     ) {
       this.loadEvent(
         this.state.past,
@@ -86,7 +86,6 @@ class MyEvents extends React.Component {
       result[item.objectID] = item;
       return result;
     }, {});
-    futureEvents = futureEvents.map((x) => x.objectID);
 
     filterDate = 'date_timestamp<' + Number(new Date());
     var pastEvents = await this.getEvents(filters + filterDate);
@@ -101,16 +100,16 @@ class MyEvents extends React.Component {
       ...allEventsPast,
     };
     await this.props.eventsAction('setAllEvents', allEvents);
-    await this.props.eventsAction('setFutureUserEvents', futureEvents);
+    await this.props.eventsAction(
+      'setFutureUserEvents',
+      Object.values(futureEvents).map((event) => event.objectID),
+    );
     await this.props.eventsAction('setPastUserEvents', pastEvents);
 
     this.setState({loader: false});
   }
   openEvent(objectID) {
-    // if (!event.info.public) {
-    //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
-    // }
-    return this.props.navigate('Event', {objectID: objectID, pageFrom: 'Home'});
+    return this.props.navigate('Event', {objectID: objectID});
   }
   async setSwitch(state, val) {
     await this.setState({[state]: val});
@@ -147,8 +146,8 @@ class MyEvents extends React.Component {
     ));
   }
   leagueFilter(league) {
-    if (this.props.leagueSelected == 'all') return true;
-    return league == this.props.leagueSelected;
+    if (this.props.leagueSelected === 'all') return true;
+    return league === this.props.leagueSelected;
   }
   ListEvent() {
     if (!this.props.userConnected) return null;
@@ -162,12 +161,12 @@ class MyEvents extends React.Component {
 
     var futureEvents = AllFutureEvents.filter(
       (event) =>
-        event.info.sport == this.props.sportSelected &&
+        event.info.sport === this.props.sportSelected &&
         this.leagueFilter(event.info.league),
     );
     var pastEvents = AllPastEvents.filter(
       (event) =>
-        event.info.sport == this.props.sportSelected &&
+        event.info.sport === this.props.sportSelected &&
         this.leagueFilter(event.info.league),
     );
 
@@ -179,26 +178,21 @@ class MyEvents extends React.Component {
     }
     return (
       <View style={{marginTop: 20}}>
-        <View style={[styleApp.marginView, {marginBottom: 15}]}>
-          <Text
-            style={[
-              styleApp.input,
-              {marginBottom: 15, marginLeft: 0, fontSize: 22},
-            ]}>
+        <View style={[styleApp.marginView, {marginBottom: 20}]}>
+          <Text style={[styleApp.input, {marginBottom: 15, fontSize: 22}]}>
             My events
           </Text>
           {this.switch('Upcoming' + numberFuture, 'Past' + numberPast)}
         </View>
 
-        <View style={{flex: 1, marginTop: -5}}>
+        <View style={{flex: 1}}>
           <Animated.View
-            style={{
-              height: 225,
-              paddingTop: 15,
-              borderRightWidth: 0,
-              borderColor: colors.grey,
-              transform: [{translateX: this.translateXView1}],
-            }}>
+            style={[
+              styles.viewFutureEvents,
+              {
+                transform: [{translateX: this.translateXView1}],
+              },
+            ]}>
             <ScrollViewX
               loader={this.state.loader}
               events={futureEvents}
@@ -212,13 +206,12 @@ class MyEvents extends React.Component {
           </Animated.View>
 
           <Animated.View
-            style={{
-              height: 200,
-              backgroundColor: 'white',
-              position: 'absolute',
-              top: 0,
-              transform: [{translateX: this.translateXView2}],
-            }}>
+            style={[
+              styles.viewPastEvents,
+              {
+                transform: [{translateX: this.translateXView2}],
+              },
+            ]}>
             <ScrollViewX
               height={180}
               loader={this.state.loader}
@@ -256,6 +249,18 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: colors.borderColor,
     width: 220,
+  },
+  viewFutureEvents: {
+    height: 225,
+    paddingTop: 15,
+    borderRightWidth: 0,
+    borderColor: colors.grey,
+  },
+  viewPastEvents: {
+    height: 200,
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 0,
   },
 });
 
