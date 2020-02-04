@@ -16,9 +16,15 @@ import {RNCamera} from 'react-native-camera';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 
+import Loader from '../../layout/loaders/Loader';
+
 const {height, width} = Dimensions.get('screen');
 
-import {createStream, destroyStream, uploadNetlinePhoto} from '../../functions/streaming';
+import {
+  createStream,
+  destroyStream,
+  uploadNetlinePhoto,
+} from '../../functions/streaming';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -113,8 +119,6 @@ class LiveStream extends React.Component {
   async createStream() {
     const eventID = this.props.navigation.getParam('eventID', 'noID');
     const stream = await createStream(eventID);
-    console.log('made stream');
-    console.log(stream);
     this.setState({
       loading: false,
       outputUrl: this.state.outputUrl + stream.streamKey,
@@ -124,35 +128,37 @@ class LiveStream extends React.Component {
     });
     this.addNetlineListener();
   }
-  async addNetlineListener() {
+  addNetlineListener() {
+    const that = this;
     firebase
-    .database()
-    .ref('streams/' + this.state.assetID + '/netlineResults/')
-    .on('value', async function(snap) {
-      let netlineResults = snap.val();
-      if (netlineResults) {
-        this.setState({netline: netlineResults});
-      }
-      console.log('netlineResults');
-      console.log(netlineResults);
-    });
+      .database()
+      .ref('streams/' + this.state.assetID + '/netlineResults/')
+      .on('value', async function(snap) {
+        let netlineResults = snap.val();
+        if (netlineResults) {
+          await that.setState({netline: netlineResults, waitingNetline: false});
+        }
+      });
   }
   mainButtonClick() {
-    if (!this.state.netline) {
-      this.takeCalibrationPhoto();
-    } else {
-      if (this.state.streaming) {
-        this.stopStream();
+    if (!this.state.waitingNetline) {
+      if (!this.state.netline) {
+        this.takeCalibrationPhoto();
       } else {
-        this.startStream();
+        if (this.state.streaming) {
+          this.stopStream();
+        } else {
+          this.startStream();
+        }
       }
     }
   }
   async takeCalibrationPhoto() {
     if (this.camera) {
-      const options = { quality: 0.5, base64: true };
+      const options = {quality: 0.5, base64: true};
       const data = await this.camera.takePictureAsync(options);
       await uploadNetlinePhoto(this.state.assetID, data.uri);
+      await this.setState({waitingNetline: true});
     }
   }
 
@@ -166,7 +172,6 @@ class LiveStream extends React.Component {
   }
 
   render() {
-    console.log('RENDER OF LIVESTREAM');
     const {navigation} = this.props;
     // note to self, don't show "align camera" msg and "take photo" button until stream created on firebase
     return (
@@ -180,7 +185,7 @@ class LiveStream extends React.Component {
           initialBackgroundColor={'white'}
           click={() => navigation.navigate('TabsApp')}
         />
-        {!this.state.netline ? (
+        {!this.state.netline && !this.state.waitingNetline ? (
           // this camera takes a calibration photo
           <RNCamera
             ref={(ref) => {
@@ -210,14 +215,16 @@ class LiveStream extends React.Component {
             autopreview={true}
           />
         )}
-        <View style={styles.smallCol}>
-          <Row style={styleApp.center2}>
-            <Text style={styleApp.textBold}>
-              Please position the camera correctly and take a photo
-            </Text>
-          </Row>
-        </View>
-        <Col size={50} style={styles.toolbar}>
+        <Row style={styleApp.center2}>
+          <Text style={styleApp.textBold}>
+            Please position the camera correctly and take a photo
+          </Text>
+        </Row>
+        {this.state.waitingNetline ? (
+          <Loader style={styles.nodeCameraView} color="white" size={60} />
+        ) : null}
+
+        <Col style={styles.toolbar}>
           <ButtonColor
             view={() => {
               return <View />;

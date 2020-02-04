@@ -18,7 +18,6 @@ async function createStreamFirebase(stream, eventID) {
 }
 
 async function createStream(eventID) {
-  console.log('createStream: ' + eventID);
   var url = 'https://api.mux.com/video/v1/live-streams';
   const response = await axios.post(
     url,
@@ -45,7 +44,6 @@ async function createStream(eventID) {
 }
 
 async function destroyStream(streamID) {
-  console.log('destroyStream');
   var url = 'https://api.mux.com/video/v1/live-streams/' + streamID;
   await axios.delete(url, {
     auth: {
