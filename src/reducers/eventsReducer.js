@@ -6,12 +6,13 @@ import {
   SET_ALL_EVENTS,
   ADD_FUTURE_EVENT,
   SET_PUBLIC_EVENTS,
+  DELETE_MY_EVENT,
 } from '../actions/types';
 
 import union from 'lodash/union';
 
 const initialState = {
-  futureUserEvents: [],
+  futureUserEvents: {},
   pastUserEvents: [],
   publicEvents: [],
   groupsEvents: [],
@@ -30,10 +31,14 @@ const eventsReducer = (state = initialState, action) => {
       return {...state, pastUserEvents: action.pastUserEvents};
     case SET_GROUPS_EVENTS:
       return {...state, groupsEvents: action.groupsEvents};
+    case DELETE_MY_EVENT:
+      let futureEvents = {...state.futureUserEvents};
+      delete futureEvents[action.objectID];
+      return {...state, futureUserEvents: futureEvents};
     case ADD_FUTURE_EVENT:
       return {
         ...state,
-        futureUserEvents: union([action.eventID], state.futureUserEvents),
+        futureUserEvents: {...state.futureUserEvents, [action.eventID]: true},
       };
     default:
       return state;
