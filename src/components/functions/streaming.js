@@ -64,8 +64,8 @@ async function uploadNetlinePhoto(streamID, uri) {
   );
   await firebase
     .database()
-    .ref('streams/' + streamID + '/netlinePhoto/')
-    .set(pictureUri);
+    .ref('streams/' + streamID + '/')
+    .update({netlinePhoto: pictureUri});
 }
 
 module.exports = {createStream, destroyStream, uploadNetlinePhoto};
