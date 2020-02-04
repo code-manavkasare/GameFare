@@ -469,6 +469,8 @@ PODS:
     - React
   - RNScreens (2.0.0-alpha.19):
     - React
+  - RNSVG (11.0.1):
+    - React
   - RNVectorIcons (6.6.0):
     - React
   - SDWebImage (5.4.0):
@@ -570,6 +572,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
@@ -761,6 +764,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   tipsi-stripe:
@@ -872,6 +877,7 @@ SPEC CHECKSUMS:
   RNPermissions: 923c1506d0bde387fbcfc18a8f87945806d03c19
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 62284de159bbddba268edd282337afdb8771aaed
+  RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   SDWebImage: 5bf6aec6481ae2a062bdc59f9d6c1d1e552090e0
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987

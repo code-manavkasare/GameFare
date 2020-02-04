@@ -10,6 +10,7 @@ import {
 import {connect} from 'react-redux';
 import axios from 'axios';
 import firebase from 'react-native-firebase';
+import Svg, {Line} from 'react-native-svg';
 
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import {RNCamera} from 'react-native-camera';
@@ -224,6 +225,19 @@ class LiveStream extends React.Component {
           <Loader style={styles.nodeCameraView} color="white" size={60} />
         ) : null}
 
+        {this.state.netline && !this.state.waitingNetline ? (
+          <Svg height="100%" width="100%" style={styles.nodeCameraView}>
+            <Line
+              x1={this.state.netline.start.x * height}
+              y1={this.state.netline.start.y * width}
+              x2={this.state.netline.end.x * height}
+              y2={this.state.netline.end.y * width}
+              stroke="red"
+              strokeWidth="2"
+            />
+          </Svg>
+        ) : null}
+
         <Col style={styles.toolbar}>
           <ButtonColor
             view={() => {
@@ -244,6 +258,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+  },
+  netlineContainer: {
+    flex: 1,
   },
   smallRow: {
     flex: 1,
