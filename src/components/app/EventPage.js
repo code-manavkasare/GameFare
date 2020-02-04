@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
-import {messageAction} from '../../actions/messageActions'
+import {messageAction} from '../../actions/messageActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
 import {
@@ -260,7 +260,9 @@ class EventPage extends React.Component {
       return true;
     }
     if (
-      Object.values(data.attendees).length < Number(data.info.maxAttendance)
+      Object.values(data.attendees).filter(
+        (user) => user.status === ('confirmed' || 'pending'),
+      ).length < Number(data.info.maxAttendance)
     ) {
       return true;
     }
@@ -720,15 +722,26 @@ class EventPage extends React.Component {
             </Row>
           );
         }}
-        click={() => NavigationService.navigate('Alert', {
-          textButton: 'Cancel attendance',
-          onGoBack: () => this.confirmLeaveEvent(data),
-          icon:<AllIcons name='sign-out-alt' color={colors.primary} type='font' size={22} />,
-          title: 'Are you sure you want to cancel your attendance?',
-          subtitle:Number(data.price.joiningFee) !== 0 && 'Your registration fee will not be refunded unless specifically authorized by the event host.',
-          colorButton:'primary',
-          onPressColor:colors.primaryLight,
-        })}
+        click={() =>
+          NavigationService.navigate('Alert', {
+            textButton: 'Cancel attendance',
+            onGoBack: () => this.confirmLeaveEvent(data),
+            icon: (
+              <AllIcons
+                name="sign-out-alt"
+                color={colors.primary}
+                type="font"
+                size={22}
+              />
+            ),
+            title: 'Are you sure you want to cancel your attendance?',
+            subtitle:
+              Number(data.price.joiningFee) !== 0 &&
+              'Your registration fee will not be refunded unless specifically authorized by the event host.',
+            colorButton: 'primary',
+            onPressColor: colors.primaryLight,
+          })
+        }
         color={colors.primary}
         style={styles.buttonLeave}
         onPressColor={colors.primaryLight}
@@ -736,12 +749,22 @@ class EventPage extends React.Component {
     );
   }
   async confirmLeaveEvent(data) {
-    if (data.discussions) await this.props.messageAction('deleteMyConversation',data.discussions[0])
-    
-    await firebase.database().ref('events/' + data.objectID + '/attendees/' + this.props.userID).update({'action':'unsubscribed'});
-    await firebase.database().ref('events/' + data.objectID + '/attendees/' + this.props.userID).remove();
+    if (data.discussions)
+      await this.props.messageAction(
+        'deleteMyConversation',
+        data.discussions[0],
+      );
+
+    await firebase
+      .database()
+      .ref('events/' + data.objectID + '/attendees/' + this.props.userID)
+      .update({action: 'unsubscribed'});
+    await firebase
+      .database()
+      .ref('events/' + data.objectID + '/attendees/' + this.props.userID)
+      .remove();
     await NavigationService.goBack();
-    return true
+    return true;
   }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;
@@ -761,10 +784,12 @@ class EventPage extends React.Component {
               <Text style={styleApp.text}>Players</Text>
             </Col>
             <Col size={40} style={styleApp.center3}>
-              {this.userAlreadySubscribed(event.attendees) && this.props.userID !== event.info.organizer && this.buttonLeave(event)}
+              {this.userAlreadySubscribed(event.attendees) &&
+                this.props.userID !== event.info.organizer &&
+                this.buttonLeave(event)}
             </Col>
           </Row>
-          
+
           <View
             style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
           />
@@ -1047,4 +1072,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {eventsAction,messageAction})(EventPage);
+export default connect(mapStateToProps, {eventsAction, messageAction})(
+  EventPage,
+);
