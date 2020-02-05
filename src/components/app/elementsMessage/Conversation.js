@@ -66,7 +66,6 @@ class MessageTab extends React.Component {
               timeStamp: moment().valueOf(),
             },
           };
-        console.log('whouoooohoo messages', messages);
         messages = Object.keys(messages)
           .map((_id) => ({
             _id,

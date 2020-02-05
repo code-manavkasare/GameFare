@@ -98,7 +98,6 @@ async function loadMyDiscusions(userID) {
     eventsDiscussions,
   );
   getDiscussionsEvent = getDiscussionsEvent.results;
-  console.log('ouhou discussion events', getDiscussionsEvent);
 
   let discussions = union(results, hits, getDiscussionsEvent).filter(
     (discussion) => discussion.firstMessageExists,
@@ -125,8 +124,7 @@ function nameOtherMemberConversation(conversation, userID) {
   )[0].info;
 
   if (!infoMember) {
-    console.log('nnoneeee', conversation);
-    return 'None';
+\    return 'None';
   }
   return infoMember.firstname + ' ' + infoMember.lastname;
 }

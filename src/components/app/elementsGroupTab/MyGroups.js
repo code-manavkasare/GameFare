@@ -27,6 +27,7 @@ import CardGroup from './CardGroup';
 import {timing, native} from '../../animations/animations';
 import {
   indexGroups,
+  getMyGroups,
   indexEvents,
   indexPastEvents,
 } from '../../database/algolia';
@@ -74,35 +75,21 @@ class ListEvents extends React.Component {
   }
   async loadEvent(sport, league) {
     await this.setState({loader1: true});
-
-    indexGroups.clearCache();
     var filterSport = ' AND info.sport:' + sport;
-    var filterOrganizer =
-      'info.organizer:' +
-      this.props.userID +
-      ' OR allMembers:' +
-      this.props.userID;
-    var filters = filterOrganizer + filterSport;
+    const {userID} = this.props;
+    let myGroups = await getMyGroups(userID,filterSport);
 
-    // var filterDate =' AND date_timestamp>' + Number(new Date())
-    var mygroups = await this.getGroups(filters);
-    // REMOVE THE LINE BELOW THIS REMOVE THE LINE BELOW THIS
-    mygroups = mygroups.filter(group => group.objectID !== "-LzI3bAQjfCPKtb4tcuQ");
-    console.log("MYGROUPS");
-    console.log(mygroups);
-    console.log("ENDMYGROUPS");
-    var infoGroups = mygroups.reduce(function(result, item) {
+    var infoGroups = myGroups.reduce(function(result, item) {
       result[item.objectID] = item;
       return result;
     }, {});
-    mygroups = mygroups.map((x) => x.objectID);
+    const myGroupsIDs = myGroups.map((x) => x.objectID);
 
     await this.props.groupsAction('setAllGroups', infoGroups);
-    await this.props.groupsAction('setMygroups', mygroups);
+    await this.props.groupsAction('setMygroups', myGroupsIDs);
     this.setState({loader1: false});
   }
   listEvents(events) {
-    console.log(this.props.allGroups);
     return Object.values(events).map((event, i) => (
       <CardGroup key={i} allAccess={true} data={this.props.allGroups[event]} />
     ));

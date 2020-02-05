@@ -134,7 +134,6 @@ class CardMessage extends React.Component {
     return null;
   }
   renderMessage(props) {
-    console.log('renderMessage!!!',props.currentMessage)
     return (
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}

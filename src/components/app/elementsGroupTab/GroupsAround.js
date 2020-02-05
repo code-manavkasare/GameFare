@@ -73,7 +73,6 @@ class ListEvents extends React.Component {
       'info.sport:' + sport + userFilter,
       location,
     );
-    console.log('groups arounds loaded', groups);
     this.setState({loader: false, groups: groups});
   }
   openGroup(objectID) {
@@ -95,8 +94,6 @@ class ListEvents extends React.Component {
     ]).start();
   }
   listGroups(groups) {
-    console.log("GroupsAround");
-    console.log(groups);
     return Object.values(groups).map((group, i) => (
       <CardGroup
         key={i}

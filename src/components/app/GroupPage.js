@@ -63,7 +63,6 @@ class GroupPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    console.log('GroupPage did mount');
     this.loadGroup(this.props.navigation.getParam('objectID'));
   }
   async loadGroup(objectID) {
@@ -219,7 +218,6 @@ class GroupPage extends React.Component {
     );
   }
   userAlreadyMember(members, userID, organizer) {
-    console.log('members');
     if (organizer === userID) return true;
     if (!members) return false;
     return members[userID] !== undefined || organizer === userID;

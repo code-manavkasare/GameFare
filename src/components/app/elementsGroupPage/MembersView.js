@@ -61,6 +61,12 @@ class MembersView extends Component {
   }
   async joinGroup() {
     const {data, infoUser, userID, objectID} = this.props;
+
+    const conversation = await indexDiscussions.getObject(data.discussions[0]);
+    await this.setConversation(conversation);
+
+    await subscribeToTopics([userID, 'all', objectID]);
+
     const user = await subscribeUserToGroup(
       objectID,
       userID,
@@ -68,22 +74,19 @@ class MembersView extends Component {
       'confirmed',
     );
 
-    await subscribeToTopics([userID, 'all', objectID]);
-
     var members = data.members;
     if (!members) members = {};
 
     await this.props.groupsAction('editGroup', {
       objectID: objectID,
-      info: data.info,
+      ...data,
       members: {
         ...members,
         [userID]: user,
       },
     });
     await this.props.groupsAction('addMyGroup', objectID);
-    const conversation = await indexDiscussions.getObject(data.discussions[0]);
-    await this.setConversation(conversation);
+    
     return NavigationService.navigate('Group');
   }
   async setConversation(data) {

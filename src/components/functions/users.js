@@ -26,7 +26,6 @@ function messageAvatar(infoUser) {
 
 function messageName(infoUser) {
   if (!infoUser) return 'User old data';
-  console.log('infoUser', infoUser);
   return infoUser.firstname + ' ' + infoUser.lastname;
 }
 

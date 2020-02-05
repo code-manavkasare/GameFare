@@ -81,7 +81,6 @@ export default class AlertAddUsers extends Component {
   }
   render() {
     const users = this.props.navigation.getParam('users');
-    console.log('userssss alert', users);
     return (
       <View style={styles.viewModal}>
         <TouchableOpacity
