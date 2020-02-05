@@ -1,40 +1,18 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  Image,
-  TextInput,
-  ScrollView,
-} from 'react-native';
-import firebase from 'react-native-firebase';
+import {AppState, View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
-import isEqual from 'lodash.isequal';
 
 const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
-import Switch from '../../layout/switch/Switch';
 
 import CardGroup from './CardGroup';
-import {timing, native} from '../../animations/animations';
-import {
-  indexGroups,
-  getMyGroups,
-  indexEvents,
-  indexPastEvents,
-} from '../../database/algolia';
+import {indexGroups, getMyGroups} from '../../database/algolia';
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
-class ListEvents extends React.Component {
+class MyGroups extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,6 +21,7 @@ class ListEvents extends React.Component {
       loader1: true,
       loader2: false,
       past: false,
+      appState: AppState.currentState,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.translateXView1 = new Animated.Value(0);
@@ -50,11 +29,27 @@ class ListEvents extends React.Component {
   }
 
   async componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
     this.props.onRef(this);
-    return this.loadEvent(this.props.sportSelected, this.props.leagueSelected);
+    return this.loadEvent(this.props.sportSelected);
   }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.loadEvent(this.props.sportSelected);
+    }
+    this.setState({appState: nextAppState});
+  };
+
   async reload() {
-    return this.loadEvent(this.props.sportSelected, this.props.leagueSelected);
+    return this.loadEvent(this.props.sportSelected);
   }
   async componentWillReceiveProps(nextProps) {
     if (
@@ -63,7 +58,7 @@ class ListEvents extends React.Component {
       this.props.sportSelected !== nextProps.sportSelected ||
       this.props.leagueSelected !== nextProps.leagueSelected
     ) {
-      this.loadEvent(nextProps.sportSelected, nextProps.leagueSelected);
+      this.loadEvent(nextProps.sportSelected);
     }
   }
   async getGroups(filters) {
@@ -73,11 +68,11 @@ class ListEvents extends React.Component {
     });
     return mygroups.hits;
   }
-  async loadEvent(sport, league) {
+  async loadEvent(sport) {
     await this.setState({loader1: true});
     var filterSport = ' AND info.sport:' + sport;
     const {userID} = this.props;
-    let myGroups = await getMyGroups(userID,filterSport);
+    let myGroups = await getMyGroups(userID, filterSport);
 
     var infoGroups = myGroups.reduce(function(result, item) {
       result[item.objectID] = item;
@@ -165,4 +160,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction})(ListEvents);
+export default connect(mapStateToProps, {groupsAction})(MyGroups);
