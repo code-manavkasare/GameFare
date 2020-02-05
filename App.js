@@ -3,6 +3,7 @@ import {createAppContainer} from 'react-navigation';
 import StatusBar from '@react-native-community/status-bar';
 import {connect} from 'react-redux';
 import axios from 'axios';
+import SplashScreen from 'react-native-splash-screen';
 
 import AppSwitchNavigator from './src/components/navigation/AppNavigator';
 import NavigationService from './NavigationService';
@@ -18,6 +19,7 @@ const AppContainer = createAppContainer(AppSwitchNavigator);
 
 class App extends Component {
   async componentDidMount() {
+    SplashScreen.hide();
     StatusBar.setHidden(true, 'slide');
     StatusBar.setBarStyle('light-content', true);
     if (this.props.userID !== '') {
