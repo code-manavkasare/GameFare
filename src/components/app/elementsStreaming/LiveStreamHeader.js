@@ -20,6 +20,7 @@ export default class LiveStreamHeader extends Component {
     super(props);
     this.state = {
       enableClickButton: true,
+      errClicked: false,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleBackPress = this.handleBackPress.bind(this);
@@ -80,6 +81,29 @@ export default class LiveStreamHeader extends Component {
             onPressColor={colors.off}
           />
         </View>
+
+        <View
+          style={styles.buttonStyle}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="exclamation-triangle"
+                  color={'rgb(255, 0, 0)'}
+                  size={15}
+                  type="font"
+                />
+              );
+            }}
+            click={() => {
+              this.setState({errClicked: true});
+              this.props.clickErr();
+            }}
+            color={this.state.errClicked ? 'red' : 'white'}
+            style={styles.button}
+            onPressColor={colors.off}
+          />
+        </View>
       </Col>
     );
   }
@@ -87,7 +111,7 @@ export default class LiveStreamHeader extends Component {
 
 const styles = StyleSheet.create({
   header: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     height: '100%',
     width: sizes.heightHeaderHome,
     paddingRight: sizes.marginTopHeader - 5,

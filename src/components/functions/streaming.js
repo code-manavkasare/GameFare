@@ -43,7 +43,7 @@ async function createStream(eventID) {
   return stream;
 }
 
-async function destroyStream(streamID) {
+async function destroyStream(streamID, error) {
   var url = 'https://api.mux.com/video/v1/live-streams/' + streamID;
   await axios.delete(url, {
     auth: {
@@ -51,10 +51,13 @@ async function destroyStream(streamID) {
       password: MUX_TOKEN_SECRET,
     },
   });
-  await firebase
+  if (!error) {
+    await firebase
     .database()
     .ref('streams/' + streamID + '/')
     .remove();
+  }
+
 }
 
 async function uploadNetlinePhoto(streamID, uri) {

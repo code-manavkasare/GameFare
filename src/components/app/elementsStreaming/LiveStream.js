@@ -46,6 +46,7 @@ class LiveStream extends React.Component {
     super(props);
     this.state = {
       outputUrl: 'rtmp://live.mux.com/app/',
+      error: false,
       waitingPermissions: false,
       waitingNetline: false,
       loading: true,
@@ -74,7 +75,7 @@ class LiveStream extends React.Component {
         .database()
         .ref('streams/' + this.state.assetID + '/netlineResults/')
         .off();
-      destroyStream(this.state.assetID);
+      destroyStream(this.state.assetID, this.state.error);
     }
   }
   async permissions() {
@@ -137,7 +138,8 @@ class LiveStream extends React.Component {
       .on('value', async function(snap) {
         let netlineResults = snap.val();
         if (netlineResults) {
-          await that.setState({netline: netlineResults, waitingNetline: false});
+          console.log(netlineResults);
+          await that.setState({netline: netlineResults.optimalNetLine, waitingNetline: false});
         }
       });
   }
@@ -156,10 +158,10 @@ class LiveStream extends React.Component {
   }
   async takeCalibrationPhoto() {
     if (this.camera) {
-      const options = {quality: 0.5, base64: true};
+      const options = {quality: 0.1, base64: true};
       const data = await this.camera.takePictureAsync(options);
-      await uploadNetlinePhoto(this.state.assetID, data.uri);
       await this.setState({waitingNetline: true});
+      await uploadNetlinePhoto(this.state.assetID, data.uri);
     }
   }
 
@@ -174,6 +176,7 @@ class LiveStream extends React.Component {
 
   render() {
     const {navigation} = this.props;
+    console.log(this.state);
     // note to self, don't show "align camera" msg and "take photo" button until stream created on firebase
     return (
       <View style={styles.container}>
@@ -185,6 +188,7 @@ class LiveStream extends React.Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           click={() => navigation.navigate('TabsApp')}
+          clickErr={() => this.setState({error: !this.state.error})}
         />
         {!this.state.netline && !this.state.waitingNetline ? (
           // this camera takes a calibration photo
@@ -228,10 +232,10 @@ class LiveStream extends React.Component {
         {this.state.netline && !this.state.waitingNetline ? (
           <Svg height="100%" width="100%" style={styles.nodeCameraView}>
             <Line
-              x1={this.state.netline.start.x * height}
-              y1={this.state.netline.start.y * width}
-              x2={this.state.netline.end.x * height}
-              y2={this.state.netline.end.y * width}
+              x1={this.state.netline.origin.x * width}
+              y1={this.state.netline.origin.y * height}
+              x2={this.state.netline.destination.x * width}
+              y2={this.state.netline.destination.y * height}
               stroke="red"
               strokeWidth="2"
             />
