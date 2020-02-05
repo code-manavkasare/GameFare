@@ -195,7 +195,10 @@ class LiveStream extends React.Component {
     }
     console.log('cycling');
     console.log(this.state.netline);
-    if (this.state.netline.index === Object.keys(this.state.netline.candidates[0]).length - 1) {
+    if (
+      this.state.netline.index ===
+      Object.keys(this.state.netline.candidates[0]).length - 1
+    ) {
       await this.setState({netline: {...this.state.netline, index: -1}});
     } else {
       await this.setState({
@@ -228,7 +231,7 @@ class LiveStream extends React.Component {
               this.camera = ref;
             }}
             style={styles.nodeCameraView}
-            type={RNCamera.Constants.Type.back}
+            type={RNCamera.Constants.Type.front}
             flashMode={RNCamera.Constants.FlashMode.off}
           />
         ) : (
@@ -283,29 +286,33 @@ class LiveStream extends React.Component {
                   }
                   y2={this.state.netline.optimalNetline.destination.y * height}
                   stroke="red"
-                  strokeWidth="2"
+                  strokeWidth="4"
                 />
               ) : (
                 <Line
                   x1={
                     (1 -
-                      this.state.netline.candidates[0]['candidate_00'].origin
-                        .x) *
+                      this.state.netline.candidates[0][
+                        'candidate_0' + this.state.netline.index
+                      ].origin.x) *
                     width
                   }
                   y1={
-                    this.state.netline.candidates[0]['candidate_00'].origin.y *
-                    height
+                    this.state.netline.candidates[0][
+                      'candidate_0' + this.state.netline.index
+                    ].origin.y * height
                   }
                   x2={
                     (1 -
-                      this.state.netline.candidates[0]['candidate_00']
-                        .destination.x) *
+                      this.state.netline.candidates[0][
+                        'candidate_0' + this.state.netline.index
+                      ].destination.x) *
                     width
                   }
                   y2={
-                    this.state.netline.candidates[0]['candidate_00'].destination
-                      .y * height
+                    this.state.netline.candidates[0][
+                      'candidate_0' + this.state.netline.index
+                    ].destination.y * height
                   }
                   stroke="red"
                   strokeWidth="4"
