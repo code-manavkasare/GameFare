@@ -235,10 +235,10 @@ class LiveStream extends React.Component {
         {this.state.netline && !this.state.waitingNetline ? (
           <Svg height="100%" width="100%" style={styles.nodeCameraView}>
             <Line
-              x1={this.state.netline.origin.x * width}
-              y1={this.state.netline.origin.y * height}
-              x2={this.state.netline.destination.x * width}
-              y2={this.state.netline.destination.y * height}
+              x1={(1-this.state.netline.origin.x) * height}
+              y1={this.state.netline.origin.y * width}
+              x2={(1-this.state.netline.destination.x) * height}
+              y2={this.state.netline.destination.y * width}
               stroke="red"
               strokeWidth="2"
             />
