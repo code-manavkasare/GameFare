@@ -99,7 +99,7 @@ export default class LiveStreamHeader extends Component {
               this.setState({errClicked: true});
               this.props.clickErr();
             }}
-            color={this.state.errClicked ? 'red' : 'white'}
+            color={this.state.errClicked ? 'black' : 'white'}
             style={styles.button}
             onPressColor={colors.off}
           />

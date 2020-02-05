@@ -220,13 +220,16 @@ class LiveStream extends React.Component {
             autopreview={true}
           />
         )}
+        {!this.state.waitingNetline && !this.state.netline ?
         <Row style={styleApp.center2}>
           <Text style={styleApp.textBold}>
             Please position the camera correctly and take a photo
           </Text>
-        </Row>
+        </Row> : null}
         {this.state.waitingNetline ? (
-          <Loader style={styles.nodeCameraView} color="white" size={60} />
+          <View style={[styles.nodeCameraView, styles.smallRow]}>
+            <Loader color="white" size={60} />
+          </View>
         ) : null}
 
         {this.state.netline && !this.state.waitingNetline ? (
