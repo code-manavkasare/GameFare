@@ -7,6 +7,7 @@ import moment from 'moment';
 import {messageAction} from '../../../actions/messageActions';
 import Conversation2 from './Conversation2';
 
+import {indexDiscussions} from '../../database/algolia';
 import {titleConversation} from '../../functions/message';
 import {userObject} from '../../functions/users';
 
@@ -22,6 +23,11 @@ class MessageTab extends React.Component {
     this.state = {
       loader: true,
       messages: [],
+      conversation:{
+        title:'',
+        type:'group',
+        picture:'',
+      }
     };
     this.inputValue = '';
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -40,7 +46,10 @@ class MessageTab extends React.Component {
       .off();
   }
   async loadMessages(conversation, myConversation, userID) {
-    const {gamefareUser} = this.props
+    if (!conversation.objectID) {
+      conversation = await indexDiscussions.getObject(conversation);
+    }
+    const {gamefareUser} = this.props;
     const that = this;
     firebase
       .database()
@@ -57,7 +66,6 @@ class MessageTab extends React.Component {
               timeStamp: moment().valueOf(),
             },
           };
-
         messages = Object.keys(messages)
           .map((_id) => ({
             _id,
@@ -65,7 +73,7 @@ class MessageTab extends React.Component {
           }))
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
-        that.setState({messages: messages, loader: false});
+        that.setState({messages: messages, loader: false,conversation:conversation});
 
         let lastMessage = Object.values(messages)[0];
         let usersRead = lastMessage.usersRead;
@@ -83,14 +91,18 @@ class MessageTab extends React.Component {
         }
       });
   }
-  setConversation(data) {
-    this.props.messageAction('setConversation', data);
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
+    await this.props.messageAction('setMyConversations', {
+      [data.objectID]: true,
+    });
+    return true;
   }
   render() {
     const {infoUser, userID, userConnected} = this.props;
     const user = userObject(infoUser, userID);
-    const conversation = this.props.navigation.getParam('data');
-
+    let conversation = this.props.navigation.getParam('data');
+    if (!conversation.objectID) conversation = this.state.conversation;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton

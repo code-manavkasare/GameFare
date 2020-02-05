@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Image,
-  Animated,
-} from 'react-native';
+import {AppState, View, Text, Dimensions, Image, Animated} from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 
@@ -30,18 +23,45 @@ class MessageTab extends React.Component {
       events: [],
       loader: true,
       discussions: [],
+      appState: AppState.currentState,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     if (this.props.userConnected) this.loadDiscussions(this.props.userID);
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      if (this.props.userConnected) this.loadDiscussions(this.props.userID);
+    }
+    this.setState({appState: nextAppState});
+  };
+
   async loadDiscussions(userID) {
+    this.setState({loader: true});
     const discussions = await loadMyDiscusions(userID);
+    const myDiscussions = Object.values(discussions).reduce(function(
+      result,
+      item,
+    ) {
+      result[item.objectID] = true;
+      return result;
+    },
+    {});
     await this.props.messageAction('setConversations', discussions);
+    await this.props.messageAction('setMyConversations', myDiscussions);
     this.setState({discussions: discussions, loader: false});
   }
+
   async componentWillReceiveProps(nextProps) {
     if (
       this.props.userConnected !== nextProps.userConnected &&
@@ -58,6 +78,7 @@ class MessageTab extends React.Component {
       this.setState({discussions: [], loader: true});
     }
   }
+
   logoutView() {
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
@@ -82,6 +103,7 @@ class MessageTab extends React.Component {
       </View>
     );
   }
+
   placeHolder() {
     return (
       <View style={{flex: 1}}>
@@ -99,7 +121,8 @@ class MessageTab extends React.Component {
       </View>
     );
   }
-  messagePageView(conversations) {
+
+  messagePageView(myConversations) {
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -115,30 +138,35 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader
             ? this.placeHolder()
-            : Object.values(conversations).map((discussion, i) => (
-                <CardConversation
-                  key={i}
-                  index={i}
-                  discussion={discussion}
-                  myConversation={true}
-                />
-              ))}
+            : Object.keys(myConversations)
+                .reverse()
+                .map((discussion, i) => (
+                  <CardConversation
+                    key={i}
+                    index={i}
+                    discussionID={discussion}
+                    myConversation={true}
+                  />
+                ))}
         </View>
         <View style={{height: 30}} />
       </View>
     );
   }
+
   async refresh() {
     await this.setState({loader: true});
     this.loadDiscussions(this.props.userID);
     return true;
   }
+
   async setLocation(data) {
     this.listEventsRef.setLocation(data);
   }
+
   render() {
     const {navigate} = this.props.navigation;
-    const {discussions} = this.props;
+    const {myConversations} = this.props;
     const {userConnected} = this.props;
     return (
       <View>
@@ -151,7 +179,7 @@ class MessageTab extends React.Component {
           typeIcon2={'font'}
           sizeIcon2={17}
           initialTitleOpacity={0}
-          icon2={userConnected ? 'edit' : null}
+          icon2={userConnected && 'edit'}
           clickButton2={() =>
             userConnected ? navigate('NewConversation') : navigate('SignIn')
           }
@@ -159,7 +187,7 @@ class MessageTab extends React.Component {
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.messagePageView(discussions)}
+          contentScrollView={() => this.messagePageView(myConversations)}
           keyboardAvoidDisable={true}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -179,7 +207,7 @@ class MessageTab extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    discussions: state.message.conversations,
+    myConversations: state.message.myDiscussions,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
   };

@@ -11,7 +11,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RNFIRMessaging.h"
+//#import "RNFIRMessaging.h"
+#import <Firebase.h>
+
 #import "RNFirebaseNotifications.h"
 #import "RNFirebaseMessaging.h"
 
@@ -49,10 +51,11 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  [FIRApp configure];
-  [RNFirebaseNotifications configure];
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
+//  [RNFirebaseNotifications configure];
   [Fabric with:@[[Crashlytics class]]];
-  
   [RNSplashScreen show];
   return YES;
 }
@@ -70,14 +73,14 @@
 //  [RNFIRMessaging didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 //}
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
-fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
-  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-}
-
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
-}
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
+//fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
+//  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+//}
+//
+//- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+//  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
+//}
 
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {

@@ -39,7 +39,7 @@ class AddGroups extends Component {
   }
 
   componentDidMount() {
-    this.initiaLoad();
+    this.initiaLoad(); 
   }
   initiaLoad = async () => {
     const {userID, objectID, pageFrom} = this.props;
@@ -65,9 +65,8 @@ class AddGroups extends Component {
   };
 
   checkIfGroupHasEvent = (listGroups, eventID, pageFrom) => {
-    console.log('listGroups', listGroups);
     let groupsHasEvent = {};
-    if (pageFrom === 'Events') {
+    if (pageFrom === 'Event') {
       listGroups.forEach((group) => {
         if (group.events && group.events[eventID]) {
           groupsHasEvent = ramda.assoc(group.objectID, group, groupsHasEvent);
@@ -80,8 +79,6 @@ class AddGroups extends Component {
         }
       });
     }
-    console.log('groupsHasEvent', groupsHasEvent);
-
     return groupsHasEvent;
   };
 
@@ -231,7 +228,6 @@ class AddGroups extends Component {
     );
   }
   alertDone(val, nameEvent, selectedGroups) {
-    console.log('alert done', val);
     if (!val)
       return NavigationService.navigate('Alert', {
         close: true,
@@ -279,7 +275,6 @@ class AddGroups extends Component {
       const hasGroup = ramda.has(group.objectID);
       let updatesGroup = {};
       let updatesEvent = {};
-      console.log('pageFrom!!', pageFrom);
       if (pageFrom === 'Event') {
         if (hasGroup(selectedGroups)) {
           updatesGroup['/events/' + objectID] = true;

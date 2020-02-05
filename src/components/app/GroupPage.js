@@ -40,7 +40,6 @@ import EventsView from './elementsGroupPage/EventsView';
 import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
 
-
 import {editGroup, removeUserFromGroup} from '../functions/editGroup';
 import {takePicture, pickLibrary, resize} from '../functions/pictures';
 
@@ -64,7 +63,6 @@ class GroupPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    console.log('GroupPage did mount');
     this.loadGroup(this.props.navigation.getParam('objectID'));
   }
   async loadGroup(objectID) {
@@ -82,6 +80,14 @@ class GroupPage extends React.Component {
         }
         that.setState({group: group, loader: false});
       });
+  }
+  componentWillUnmount() {
+    if (this.state.group) {
+      firebase
+        .database()
+        .ref('groups/' + this.state.group.objectID)
+        .off();
+    }
   }
   rowIcon(data, component, button, icon, alert, dataAlert, image) {
     return (
@@ -211,16 +217,15 @@ class GroupPage extends React.Component {
       </View>
     );
   }
-  userAlreadyMember(members, userID) {
+  userAlreadyMember(members, userID, organizer) {
+    if (organizer === userID) return true;
     if (!members) return false;
-    return (
-      !Object.values(members).filter((user) => user.id === userID).length === 0
-    );
+    return members[userID] !== undefined || organizer === userID;
   }
-  scrollToDescription () {
-    this.scrollRef.scrollTo({y:200})
+  scrollToDescription() {
+    this.scrollRef.scrollTo({y: 200});
   }
-  group(data, userID) {
+  group(data, userID, userConnected) {
     if (!data || this.state.loader) return <PlaceHolder />;
     var sport = this.props.sports.filter(
       (sport) => sport.value === data.info.sport,
@@ -249,6 +254,16 @@ class GroupPage extends React.Component {
           onRemoveMember={(user) => this.askRemoveUser(data, user)}
         />
 
+        {this.userAlreadyMember(data.members, userID, data.info.organizer) &&
+          userConnected && (
+            <PostsView
+              objectID={data.objectID}
+              data={data}
+              loader={this.state.loader}
+              infoUser={this.props.infoUser}
+            />
+          )}
+
         <EventsView
           data={data}
           objectID={data.objectID}
@@ -261,15 +276,6 @@ class GroupPage extends React.Component {
           navigate={(val, data) => this.props.navigation.navigate(val, data)}
           push={(val, data) => this.props.navigation.push(val, data)}
         />
-
-        {this.userAlreadyMember(data.members, userID) && (
-          <PostsView
-            objectID={data.objectID}
-            data={data}
-            loader={this.state.loader}
-            infoUser={this.props.infoUser}
-          />
-        )}
 
         {data.groups && (
           <View style={{marginTop: 35}}>
@@ -402,11 +408,9 @@ class GroupPage extends React.Component {
   render() {
     const {dismiss} = this.props.navigation;
     const {group} = this.state;
-    const {userID} = this.props;
+    const {userID, userConnected} = this.props;
     return (
-      <View
-      style={{ flex: 1 }}
-  >
+      <View style={{flex: 1}}>
         {this.conditionAdmin() ? (
           <HeaderBackButton
             AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -478,7 +482,7 @@ class GroupPage extends React.Component {
             }
           }}
           parallaxHeaderHeight={280}>
-          {this.group(group, userID)}
+          {this.group(group, userID, userConnected)}
         </ParallaxScrollView>
 
         {!this.state.editMode ? null : (

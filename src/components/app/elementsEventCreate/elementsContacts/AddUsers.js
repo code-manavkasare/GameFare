@@ -89,7 +89,9 @@ class AddUsers extends Component {
     }
 
     const {url, description} = await this.props.createBranchMessage();
+    
     await this.props.messageAction('setConversation', discussion);
+    await this.props.messageAction('setMyConversations', {[discussion.objectID]:true});
 
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
     await this.setState({loaderButton: false});

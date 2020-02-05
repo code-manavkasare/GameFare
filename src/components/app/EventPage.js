@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../actions/eventsActions';
+import {messageAction} from '../../actions/messageActions';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
 import {
@@ -22,7 +23,7 @@ import {
 } from '../functions/editEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
-import {getPermissionCalendar} from '../functions/date';
+import {getPermissionCalendar, isDatePast} from '../functions/date';
 import moment from 'moment';
 
 const {height, width} = Dimensions.get('screen');
@@ -75,14 +76,13 @@ class EventPage extends React.Component {
     this.event = this.event.bind(this);
   }
   async componentDidMount() {
-    console.log('eventpageload', this.props.navigation.getParam('objectID'));
     this.loadEvent(this.props.navigation.getParam('objectID'));
   }
-  async componentWillUnmount() {
+  componentWillUnmount() {
     if (this.state.event) {
       firebase
         .database()
-        .ref('events/' + this.state.data.objectID)
+        .ref('events/' + this.state.event.objectID)
         .off();
     }
   }
@@ -93,6 +93,7 @@ class EventPage extends React.Component {
       .ref('events/' + objectID)
       .on('value', async function(snap) {
         let event = snap.val();
+        if (!event) return null;
         event.objectID = objectID;
         if (event.allAttendees.includes(that.props.userID)) {
           await that.props.eventsAction('setAllEvents', {[objectID]: event});
@@ -260,7 +261,9 @@ class EventPage extends React.Component {
       return true;
     }
     if (
-      Object.values(data.attendees).length < Number(data.info.maxAttendance)
+      Object.values(data.attendees).filter(
+        (user) => user.status === ('confirmed' || 'pending'),
+      ).length < Number(data.info.maxAttendance)
     ) {
       return true;
     }
@@ -285,7 +288,7 @@ class EventPage extends React.Component {
     return this.props.navigation.navigate('Alert', {
       close: true,
       textButton: 'Got it!',
-      title: data.info.name + ' has been added to your personnal calendar.',
+      title: data.info.name + ' has been added to your calendar.',
     });
   }
   editPrice(data) {
@@ -298,13 +301,16 @@ class EventPage extends React.Component {
           keyboardType={'phone-pad'}
           underlineColorAndroid="rgba(0,0,0,0)"
           autoCorrect={true}
-          onChangeText={(text) => this.setState({editPrice: text.split('$')[1]})}
+          onChangeText={(text) =>
+            this.setState({editPrice: text.split('$')[1]})
+          }
           onFocus={() => {
             this.setState({editPriceClicked: true});
           }}
-          value={this.state.editPriceClicked
-            ? 'Entry Fee: $' + this.state.editPrice
-            : ''
+          value={
+            this.state.editPriceClicked
+              ? 'Entry Fee: $' + this.state.editPrice
+              : ''
           }
         />
       );
@@ -695,6 +701,135 @@ class EventPage extends React.Component {
       </View>
     );
   }
+  buttonLeave(data) {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={40} style={styleApp.center}>
+                <AllIcons
+                  name="sign-out-alt"
+                  type="font"
+                  color={colors.white}
+                  size={15}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={[styleApp.text, {color: colors.white}]}>
+                  Cancel
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() =>
+          NavigationService.navigate('Alert', {
+            textButton: 'Cancel attendance',
+            onGoBack: () => this.confirmLeaveEvent(data),
+            icon: (
+              <AllIcons
+                name="sign-out-alt"
+                color={colors.primary}
+                type="font"
+                size={22}
+              />
+            ),
+            title: 'Are you sure you want to cancel your attendance?',
+            subtitle:
+              Number(data.price.joiningFee) !== 0 &&
+              'Your registration fee will not be refunded unless specifically authorized by the event host.',
+            colorButton: 'primary',
+            onPressColor: colors.primaryLight,
+          })
+        }
+        color={colors.primary}
+        style={styles.buttonLeave}
+        onPressColor={colors.primaryLight}
+      />
+    );
+  }
+  buttonCancelEvent(data) {
+    if (
+      data.info.organizer === this.props.userID &&
+      !isDatePast(data.date.start)
+    )
+      return (
+        <ButtonColor
+          view={() => {
+            return (
+              <Row>
+                <Col style={styleApp.center}>
+                  <Text style={styleApp.text}>Cancel the event</Text>
+                </Col>
+              </Row>
+            );
+          }}
+          click={() =>
+            NavigationService.navigate('Alert', {
+              textButton: 'Cancel the event',
+              onGoBack: () => this.confirmCancelEvent(data),
+              icon: (
+                <AllIcons
+                  name="ban"
+                  color={colors.title}
+                  type="font"
+                  size={22}
+                />
+              ),
+              title: 'Are you sure you want to cancel the event?',
+              colorButton: 'red',
+              onPressColor: colors.red,
+            })
+          }
+          color={colors.white}
+          style={styles.buttonCancel}
+          onPressColor={colors.off}
+        />
+      );
+    return null;
+  }
+  async confirmCancelEvent(data) {
+    const {goBack, dismiss, navigate} = this.props.navigation;
+    if (isDatePast(data.date.start)) {
+      await navigate('Event');
+      return navigate('Alert', {
+        close: true,
+        title: 'You cannot cancel a past event.',
+        textButton: 'Got it!',
+      });
+    }
+    await this.props.eventsAction('deleteMyEvent', data.objectID);
+    await firebase
+      .database()
+      .ref('cancelledEvents/' + data.objectID)
+      .update({...data, status: 'onDelete'});
+    await firebase
+      .database()
+      .ref('events/' + data.objectID)
+      .remove();
+    await goBack();
+    await dismiss();
+    return true;
+  }
+  async confirmLeaveEvent(data) {
+    if (data.discussions)
+      await this.props.messageAction(
+        'deleteMyConversation',
+        data.discussions[0],
+      );
+
+    await firebase
+      .database()
+      .ref('events/' + data.objectID + '/attendees/' + this.props.userID)
+      .update({action: 'unsubscribed'});
+    await firebase
+      .database()
+      .ref('events/' + data.objectID + '/attendees/' + this.props.userID)
+      .remove();
+    await NavigationService.goBack();
+    return true;
+  }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;
     const attendees = arrayAttendees(
@@ -708,7 +843,17 @@ class EventPage extends React.Component {
         {this.eventInfo(event, sport, rule, league)}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
-          <Text style={styleApp.text}>Players</Text>
+          <Row>
+            <Col size={60} style={styleApp.center2}>
+              <Text style={styleApp.text}>Players</Text>
+            </Col>
+            <Col size={40} style={styleApp.center3}>
+              {this.userAlreadySubscribed(event.attendees) &&
+                this.props.userID !== event.info.organizer &&
+                this.buttonLeave(event)}
+            </Col>
+          </Row>
+
           <View
             style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
           />
@@ -731,12 +876,6 @@ class EventPage extends React.Component {
           attendees.map((user, i) => this.rowUser(user, i, event))
         )}
 
-        {event.groups && (
-          <View style={{marginTop: 35}}>
-            <GroupsEvent groups={event.groups} />
-          </View>
-        )}
-
         {event.discussions && this.userAlreadySubscribed(event.attendees) && (
           <PostsView
             objectID={event.objectID}
@@ -746,6 +885,14 @@ class EventPage extends React.Component {
             infoUser={this.props.infoUser}
           />
         )}
+
+        {event.groups && (
+          <View style={{marginTop: 35}}>
+            <GroupsEvent groups={event.groups} />
+          </View>
+        )}
+
+        {this.buttonCancelEvent(event)}
 
         <View style={{height: sizes.heightFooterBooking + 50}} />
       </View>
@@ -926,20 +1073,18 @@ class EventPage extends React.Component {
 
         {!event ? null : (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {editMode
-              ? this.bottomActionButton('Save edits', () =>
-                  this.saveEdits(event),
-                )
-              : this.waitlistCondition(event)
-              ? this.bottomActionButton('Join the waitlist', () =>
-                  this.joinWaitlist(event),
-                )
-              : this.openCondition(event) &&
-                !this.userAlreadySubscribed(event.attendees)
-              ? this.bottomActionButton('Join the event', () =>
-                  this.next(event),
-                )
-              : null}
+            {editMode ? (
+              this.bottomActionButton('Save edits', () => this.saveEdits(event))
+            ) : this.waitlistCondition(event) ? (
+              this.bottomActionButton('Join the waitlist', () =>
+                this.joinWaitlist(event),
+              )
+            ) : this.openCondition(event) &&
+              !this.userAlreadySubscribed(event.attendees) ? (
+              this.bottomActionButton('Join the event', () => this.next(event))
+            ) : (
+              <View />
+            )}
           </FadeInView>
         )}
       </View>
@@ -974,6 +1119,20 @@ const styles = StyleSheet.create({
   },
   mainImg: {width: '100%', height: 320},
   buttonBottom: {marginLeft: 20, width: width - 40},
+  buttonLeave: {
+    borderColor: colors.off,
+    height: 40,
+    width: 110,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  buttonCancel: {
+    height: 55,
+    borderTopWidth: 0.4,
+    borderBottomWidth: 0.4,
+    marginTop: 40,
+    borderColor: colors.grey,
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -986,4 +1145,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {eventsAction})(EventPage);
+export default connect(mapStateToProps, {eventsAction, messageAction})(
+  EventPage,
+);

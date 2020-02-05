@@ -355,9 +355,6 @@ PODS:
     - React
   - react-native-contacts (5.0.4):
     - React
-  - react-native-fcm (16.2.4):
-    - Firebase/Messaging
-    - React
   - react-native-geocoder (0.5.0):
     - React
   - react-native-geolocation (2.0.2):
@@ -531,7 +528,6 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-contacts (from `../node_modules/react-native-contacts`)
-  - react-native-fcm (from `../node_modules/react-native-fcm`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -684,8 +680,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-contacts:
     :path: "../node_modules/react-native-contacts"
-  react-native-fcm:
-    :path: "../node_modules/react-native-fcm"
   react-native-geocoder:
     :path: "../node_modules/react-native-geocoder"
   react-native-geolocation:
@@ -837,7 +831,6 @@ SPEC CHECKSUMS:
   react-native-camera: 705c7e9412436957b4dc894a1af61f43830787e2
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-contacts: 7d0b7ccd5f00df82ceca035935fc9d6e63af5aec
-  react-native-fcm: fcbafc64ed69bd681fceba7405145d6bfbb6af53
   react-native-geocoder: 757427682892bb256f3b3745858cc90eba148a8e
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b
@@ -885,6 +878,6 @@ SPEC CHECKSUMS:
   tipsi-stripe: 61c247493a58d7e8e0bf6ee6b014271f473d2b11
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 22f0938d001ae9f76315edcc05dd7902b823d869
+PODFILE CHECKSUM: b21c90053f4dcd5407bb47e9e9a834fc19d9df79
 
 COCOAPODS: 1.8.4

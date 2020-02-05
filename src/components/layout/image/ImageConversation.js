@@ -64,8 +64,6 @@ export default class ImageConversation extends Component {
     );
   }
   image(conversation, userID, style, sizeSmallImg) {
-    console.log('conversation image', conversation.type);
-
     if (conversation.type === 'group')
       return (
         <AsyncImage

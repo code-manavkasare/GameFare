@@ -39,9 +39,7 @@ target 'gamefare' do
 
   pod 'Fabric'
   pod 'Crashlytics'
-
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-
   pod 'Stripe'
   pod ‘Firebase/Messaging’ 
   pod 'Firebase/Database'

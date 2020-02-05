@@ -3,6 +3,8 @@ import {
   SET_CONVERSATIONS,
   SET_INPUT,
   ADD_IMAGE,
+  SET_MY_CONVERSATION,
+  DELETE_MY_CONVERSATION,
 } from './types';
 import {loadMyDiscusions} from '../components/functions/message';
 
@@ -26,6 +28,16 @@ const addImage = (value) => ({
   image: value,
 });
 
+const setMyConversations = (value) => ({
+  type: SET_MY_CONVERSATION,
+  myDiscussions: value,
+});
+
+const deleteMyConversation = (value) => ({
+  type: DELETE_MY_CONVERSATION,
+  objectID: value,
+});
+
 export const messageAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'setConversation') {
@@ -39,6 +51,10 @@ export const messageAction = (val, data) => {
       await dispatch(setInput(data));
     } else if (val === 'addImage') {
       await dispatch(addImage(data));
+    } else if (val === 'setMyConversations') {
+      await dispatch(setMyConversations(data));
+    } else if (val === 'deleteMyConversation') {
+      await dispatch(deleteMyConversation(data));
     }
     return true;
   };
