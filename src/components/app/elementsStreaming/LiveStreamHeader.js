@@ -81,7 +81,27 @@ export default class LiveStreamHeader extends Component {
             onPressColor={colors.off}
           />
         </View>
-
+        <View
+          style={styles.buttonStyle}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="arrow-right"
+                  color={'colors.title'}
+                  size={15}
+                  type="font"
+                />
+              );
+            }}
+            click={() => {
+              this.props.clickMid();
+            }}
+            color={'white'}
+            style={styles.button}
+            onPressColor={colors.off}
+          />
+        </View>
         <View
           style={styles.buttonStyle}>
           <ButtonColor

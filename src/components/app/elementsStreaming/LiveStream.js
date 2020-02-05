@@ -19,8 +19,6 @@ import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 import Loader from '../../layout/loaders/Loader';
 
-const {height, width} = Dimensions.get('screen');
-
 import {
   createStream,
   destroyStream,
@@ -139,20 +137,30 @@ class LiveStream extends React.Component {
         let netlineResults = snap.val();
         if (netlineResults) {
           console.log(netlineResults);
-          await that.setState({
-            netline: {
-              optimalNetline: netlineResults[0].optimalNetLine,
-              doublesLine: netlineResults[1].doublesLine,
-              candidates: netlineResults.slice(2),
-            },
-            waitingNetline: false,
-          });
+          if (netlineResults.error) {
+            await that.setState({
+              waitingNetline: false,
+              netline: {
+                error: true,
+              },
+            });
+          } else {
+            await that.setState({
+              netline: {
+                index: -1,
+                optimalNetline: netlineResults[0].optimalNetLine,
+                doublesLine: netlineResults[1].doublesLine,
+                candidates: netlineResults.slice(2),
+              },
+              waitingNetline: false,
+            });
+          }
         }
       });
   }
   mainButtonClick() {
     if (!this.state.waitingNetline) {
-      if (!this.state.netline) {
+      if (!this.state.netline || this.state.netline.error) {
         this.takeCalibrationPhoto();
       } else {
         if (this.state.streaming) {
@@ -165,9 +173,9 @@ class LiveStream extends React.Component {
   }
   async takeCalibrationPhoto() {
     if (this.camera) {
-      const options = {quality: 0.1, base64: true};
+      const options = {width: 720, quality: 0.5, base64: true};
       const data = await this.camera.takePictureAsync(options);
-      await this.setState({waitingNetline: true});
+      await this.setState({waitingNetline: true, netline: null});
       await uploadNetlinePhoto(this.state.assetID, data.uri);
     }
   }
@@ -181,10 +189,27 @@ class LiveStream extends React.Component {
     this.setState({streaming: false});
   }
 
+  async cycleNetlineCandidates() {
+    if (!this.state.netline || this.state.netline.error) {
+      return;
+    }
+    console.log('cycling');
+    console.log(this.state.netline);
+    if (this.state.netline.index === Object.keys(this.state.netline.candidates[0]).length - 1) {
+      await this.setState({netline: {...this.state.netline, index: -1}});
+    } else {
+      await this.setState({
+        netline: {...this.state.netline, index: this.state.netline.index + 1},
+      });
+    }
+    console.log(this.state.netline);
+  }
+
   render() {
+    const {height, width} = Dimensions.get('screen');
     const {navigation} = this.props;
+    console.log('state');
     console.log(this.state);
-    // note to self, don't show "align camera" msg and "take photo" button until stream created on firebase
     return (
       <View style={styles.container}>
         <LiveStreamHeader
@@ -192,9 +217,8 @@ class LiveStream extends React.Component {
           textHeader={''}
           inputRange={[5, 10]}
           loader={this.state.loader}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
           click={() => navigation.navigate('TabsApp')}
+          clickMid={() => this.cycleNetlineCandidates()}
           clickErr={() => this.setState({error: !this.state.error})}
         />
         {!this.state.netline && !this.state.waitingNetline ? (
@@ -204,7 +228,7 @@ class LiveStream extends React.Component {
               this.camera = ref;
             }}
             style={styles.nodeCameraView}
-            type={RNCamera.Constants.Type.front}
+            type={RNCamera.Constants.Type.back}
             flashMode={RNCamera.Constants.FlashMode.off}
           />
         ) : (
@@ -218,7 +242,7 @@ class LiveStream extends React.Component {
             camera={{cameraId: 1, cameraFrontMirror: true}}
             audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
             video={{
-              preset: 12,
+              preset: 1,
               bitrate: 400000,
               profile: 1,
               fps: 15,
@@ -241,32 +265,63 @@ class LiveStream extends React.Component {
         ) : null}
 
         {this.state.netline && !this.state.waitingNetline ? (
-          <View style={[styles.nodeCameraView, styles.smallRow]}>
-            <Svg height="100%" width="100%">
+          this.state.netline.error ? (
+            <Row style={styleApp.center2}>
+              <Text style={styleApp.textBold}>
+                Could not find net or base lines. Exit stream and try again.
+              </Text>
+            </Row>
+          ) : (
+            <Svg style={styles.nodeCameraView} height="100%" width="100%">
+              {this.state.netline.index === -1 ? (
+                <Line
+                  x1={(1 - this.state.netline.optimalNetline.origin.x) * width}
+                  y1={this.state.netline.optimalNetline.origin.y * height}
+                  x2={
+                    (1 - this.state.netline.optimalNetline.destination.x) *
+                    width
+                  }
+                  y2={this.state.netline.optimalNetline.destination.y * height}
+                  stroke="red"
+                  strokeWidth="2"
+                />
+              ) : (
+                <Line
+                  x1={
+                    (1 -
+                      this.state.netline.candidates[0]['candidate_00'].origin
+                        .x) *
+                    width
+                  }
+                  y1={
+                    this.state.netline.candidates[0]['candidate_00'].origin.y *
+                    height
+                  }
+                  x2={
+                    (1 -
+                      this.state.netline.candidates[0]['candidate_00']
+                        .destination.x) *
+                    width
+                  }
+                  y2={
+                    this.state.netline.candidates[0]['candidate_00'].destination
+                      .y * height
+                  }
+                  stroke="red"
+                  strokeWidth="4"
+                />
+              )}
               <Line
-                x1={this.state.netline.optimalNetline.origin.x * width}
-                y1={this.state.netline.optimalNetline.origin.y * height}
-                x2={this.state.netline.optimalNetline.destination.x * width}
-                y2={this.state.netline.optimalNetline.destination.y * height}
-                stroke="red"
-                strokeWidth="2"
+                x1={(1 - this.state.netline.doublesLine.origin.x) * width}
+                y1={this.state.netline.doublesLine.origin.y * height}
+                x2={(1 - this.state.netline.doublesLine.destination.x) * width}
+                y2={this.state.netline.doublesLine.destination.y * height}
+                stroke="green"
+                strokeWidth="4"
               />
             </Svg>
-          </View>
+          )
         ) : null}
-
-        {/* {this.state.netline && !this.state.waitingNetline ? (
-          <Svg height="100%" width="100%" style={styles.nodeCameraView}>
-            <Line
-              x1={(1-this.state.netline.doublesLine.origin.x) * height}
-              y1={this.state.netline.doublesLine.origin.y * width}
-              x2={(1-this.state.netline.doublesLine.destination.x) * height}
-              y2={this.state.netline.doublesLine.destination.y * width}
-              stroke="red"
-              strokeWidth="2"
-            />
-          </Svg>
-        ) : null} */}
 
         <Col style={styles.toolbar}>
           <ButtonColor
