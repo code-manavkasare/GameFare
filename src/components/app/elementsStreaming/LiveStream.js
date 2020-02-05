@@ -139,7 +139,14 @@ class LiveStream extends React.Component {
         let netlineResults = snap.val();
         if (netlineResults) {
           console.log(netlineResults);
-          await that.setState({netline: netlineResults.optimalNetLine, waitingNetline: false});
+          await that.setState({
+            netline: {
+              optimalNetline: netlineResults[0].optimalNetLine,
+              doublesLine: netlineResults[1].doublesLine,
+              candidates: netlineResults.slice(2),
+            },
+            waitingNetline: false,
+          });
         }
       });
   }
@@ -220,12 +227,13 @@ class LiveStream extends React.Component {
             autopreview={true}
           />
         )}
-        {!this.state.waitingNetline && !this.state.netline ?
-        <Row style={styleApp.center2}>
-          <Text style={styleApp.textBold}>
-            Please position the camera correctly and take a photo
-          </Text>
-        </Row> : null}
+        {!this.state.waitingNetline && !this.state.netline ? (
+          <Row style={styleApp.center2}>
+            <Text style={styleApp.textBold}>
+              Please position the camera correctly and take a photo
+            </Text>
+          </Row>
+        ) : null}
         {this.state.waitingNetline ? (
           <View style={[styles.nodeCameraView, styles.smallRow]}>
             <Loader color="white" size={60} />
@@ -233,17 +241,32 @@ class LiveStream extends React.Component {
         ) : null}
 
         {this.state.netline && !this.state.waitingNetline ? (
+          <View style={[styles.nodeCameraView, styles.smallRow]}>
+            <Svg height="100%" width="100%">
+              <Line
+                x1={this.state.netline.optimalNetline.origin.x * width}
+                y1={this.state.netline.optimalNetline.origin.y * height}
+                x2={this.state.netline.optimalNetline.destination.x * width}
+                y2={this.state.netline.optimalNetline.destination.y * height}
+                stroke="red"
+                strokeWidth="2"
+              />
+            </Svg>
+          </View>
+        ) : null}
+
+        {/* {this.state.netline && !this.state.waitingNetline ? (
           <Svg height="100%" width="100%" style={styles.nodeCameraView}>
             <Line
-              x1={(1-this.state.netline.origin.x) * height}
-              y1={this.state.netline.origin.y * width}
-              x2={(1-this.state.netline.destination.x) * height}
-              y2={this.state.netline.destination.y * width}
+              x1={(1-this.state.netline.doublesLine.origin.x) * height}
+              y1={this.state.netline.doublesLine.origin.y * width}
+              x2={(1-this.state.netline.doublesLine.destination.x) * height}
+              y2={this.state.netline.doublesLine.destination.y * width}
               stroke="red"
               strokeWidth="2"
             />
           </Svg>
-        ) : null}
+        ) : null} */}
 
         <Col style={styles.toolbar}>
           <ButtonColor
