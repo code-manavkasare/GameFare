@@ -88,8 +88,8 @@ async function loadMyDiscusions(userID) {
   var {results} = await indexDiscussions.getObjects(groupsDiscussions);
 
   // search for events discussions
-  var myEvents = await getMyEvents(userID);
-  var eventsDiscussions = myEvents
+  const myEvents = await getMyEvents(userID,'future');
+  const eventsDiscussions = Object.values(myEvents)
     .map((event) => {
       if (event.discussions) return event.discussions[0];
     })

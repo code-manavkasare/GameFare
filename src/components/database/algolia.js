@@ -152,7 +152,7 @@ const getEventPublic = async (
   return allEventsPublic;
 };
 
-const getMyEvents = async (userID) => {
+const getMyEvents = async (userID,filterDateName) => {
   let filterAttendees = '';
   filterAttendees =
     'allAttendees:' +
@@ -163,13 +163,18 @@ const getMyEvents = async (userID) => {
     userID +
     ' AND ';
 
-  var filterDate = 'date_timestamp>' + Number(new Date());
+  let filterDate = 'date_timestamp>' + Number(new Date());
+  if (filterDateName === 'past') filterDate = 'date_timestamp<' + Number(new Date());
   indexEvents.clearCache();
   var {hits} = await indexEvents.search({
     query: '',
     filters: filterAttendees + filterDate,
   });
-  return hits;
+  const events = hits.reduce(function(result, item) {
+    result[item.objectID] = item;
+    return result;
+  }, {});
+  return events;
 };
 
 module.exports = {

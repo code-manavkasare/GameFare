@@ -141,6 +141,7 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - NodeMediaClient (2.6.0)
   - Permission-BluetoothPeripheral (2.0.8):
     - RNPermissions
   - Permission-Calendars (2.0.8):
@@ -342,6 +343,14 @@ PODS:
     - React
   - react-native-calendar-events (1.7.3):
     - React
+  - react-native-camera (3.16.0):
+    - React
+    - react-native-camera/RCT (= 3.16.0)
+    - react-native-camera/RN (= 3.16.0)
+  - react-native-camera/RCT (3.16.0):
+    - React
+  - react-native-camera/RN (3.16.0):
+    - React
   - react-native-cameraroll (1.3.0):
     - React
   - react-native-contacts (5.0.4):
@@ -363,7 +372,14 @@ PODS:
   - react-native-mixpanel (1.1.10):
     - Mixpanel (~> 3.5.0)
     - React
-  - react-native-orientation (3.1.3):
+  - react-native-nodemediaclient (0.1.5):
+    - NodeMediaClient (= 2.6.0)
+    - React
+    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.1.5)
+  - react-native-nodemediaclient/RCTNodeMediaClient (0.1.5):
+    - NodeMediaClient (= 2.6.0)
+    - React
+  - react-native-orientation-locker (1.1.8):
     - React
   - react-native-sms (1.10.0):
     - React
@@ -450,6 +466,8 @@ PODS:
     - React
   - RNScreens (2.0.0-alpha.19):
     - React
+  - RNSVG (11.0.1):
+    - React
   - RNVectorIcons (6.6.0):
     - React
   - SDWebImage (5.4.0):
@@ -507,6 +525,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
@@ -517,7 +536,8 @@ DEPENDENCIES:
   - react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
-  - react-native-orientation (from `../node_modules/react-native-orientation`)
+  - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
+  - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)
@@ -548,6 +568,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
@@ -620,6 +641,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-branch
   react-native-calendar-events:
     :path: ../node_modules/react-native-calendar-events
+  react-native-camera:
+    :path: ../node_modules/react-native-camera
   react-native-cameraroll:
     :path: ../node_modules/@react-native-community/cameraroll
   react-native-contacts:
@@ -640,8 +663,10 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-maps
   react-native-mixpanel:
     :path: ../node_modules/react-native-mixpanel
-  react-native-orientation:
-    :path: ../node_modules/react-native-orientation
+  react-native-nodemediaclient:
+    :path: ../node_modules/react-native-nodemediaclient
+  react-native-orientation-locker:
+    :path: ../node_modules/react-native-orientation-locker
   react-native-sms:
     :path: ../node_modules/react-native-sms
   react-native-splash-screen:
@@ -700,6 +725,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-reanimated
   RNScreens:
     :path: ../node_modules/react-native-screens
+  RNSVG:
+    :path: ../node_modules/react-native-svg
   RNVectorIcons:
     :path: ../node_modules/react-native-vector-icons
   tipsi-stripe:
@@ -739,6 +766,7 @@ SPEC CHECKSUMS:
   libwebp: 057912d6d0abfb6357d8bb05c0ea470301f5d61e
   Mixpanel: 399997670f5452de026449f9e9ecd52eccbb9ff7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  NodeMediaClient: abfa3d21e314e6577c6adbed0a7c5395d47c9f55
   Permission-BluetoothPeripheral: d277013fe7f5d1c3f17094786f74535cca04d23b
   Permission-Calendars: 84882884d0ed6452d35b761cbb724bdc37bba5cf
   Permission-Camera: edf691d05c6a37d588c1245a62bb53cdbed5f6ca
@@ -767,6 +795,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 044105eea064aec81adc5e4d777a8f6589e7d094
   react-native-branch: 0bef2ccf15612df52b8103cb1b2b7af6b213b8dc
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
+  react-native-camera: 9c50d7def800895e7991ccda6203929553ceec9c
   react-native-cameraroll: a0817e9d2e054f166500e3ca1c70f2e7c615c66a
   react-native-contacts: 37359cc1f95ef1eab1c3bd541845a95a0b7b8ea6
   react-native-geocoder: 33b16a5929aa868fef37acb4f7ee10a428cd5fff
@@ -777,7 +806,8 @@ SPEC CHECKSUMS:
   react-native-mapbox-gl: 099d223de88d75815e3a5a0a04b64c970b929105
   react-native-maps: bb480348a3fe1e5a811fed1ba3387b329161c5cc
   react-native-mixpanel: 54620bfd812d25ab4828c2935458e6cd85367056
-  react-native-orientation: 3d9a0a8273d18260f7528414093a6a36491382b6
+  react-native-nodemediaclient: bd26aa8bc61811715e4a3319b58a66f1201e923b
+  react-native-orientation-locker: 43c5da4c23f4ff38e7482db80083f0e682259d6a
   react-native-sms: d11ae42d9e7b9de59d7e778d43c6a5983710f95a
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
   react-native-statusbar: e5562dc498ae684a62fe96f35aaaf2051a51115a
@@ -807,6 +837,7 @@ SPEC CHECKSUMS:
   RNPermissions: 09451e563764b938c2bbc945ca430f758044f0dd
   RNReanimated: 438b025d37de68a20188ead653ad5a5050b65990
   RNScreens: cbad3ccd2798bd19cc9ca5070e95e31c950b50ac
+  RNSVG: 2e097b92aaa6d4e0f354fd7c49cbf3b17f8b3920
   RNVectorIcons: 66af4d5c8ff4f584c7b7cd9c4b0780920f27fce2
   SDWebImage: 5bf6aec6481ae2a062bdc59f9d6c1d1e552090e0
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987

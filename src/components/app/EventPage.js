@@ -818,6 +818,8 @@ class EventPage extends React.Component {
         'deleteMyConversation',
         data.discussions[0],
       );
+    
+    await this.props.eventsAction('deleteMyEvent', data.objectID);
 
     await firebase
       .database()
