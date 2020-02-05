@@ -36,11 +36,17 @@ export default class HomeScreen extends React.Component {
     StatusBar.setBarStyle('dark-content', true);
     this.notificationHandler();
   }
+
+  componentWillUnmount() {
+    this.removeNotificationListener();
+  }
+
   async notificationHandler() {
     // const enabled = await firebase.messaging().hasPermission();
     this.appBackgroundNotificationListenner();
     this.appOpenFistNotification();
   }
+
   appBackgroundNotificationListenner() {
     this.removeNotificationListener = firebase
       .notifications()
@@ -49,6 +55,7 @@ export default class HomeScreen extends React.Component {
         this.openPageFromNotification(data.action, data);
       });
   }
+
   async appOpenFistNotification() {
     const notificationOpen = await firebase
       .notifications()
@@ -58,12 +65,11 @@ export default class HomeScreen extends React.Component {
       this.openPageFromNotification(data.action, data);
     }
   }
+
   openPageFromNotification(page, data) {
     this.props.navigation.push(page, data);
   }
-  componentWillUnmount() {
-    this.removeNotificationListener();
-  }
+
   navigate(val, data) {
     this.props.navigation.push(val, data);
   }

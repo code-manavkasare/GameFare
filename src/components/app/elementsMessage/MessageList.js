@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Image,
-  Animated,
-} from 'react-native';
+import {AppState, View, Text, Dimensions, Image, Animated} from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 
@@ -30,14 +23,31 @@ class MessageTab extends React.Component {
       events: [],
       loader: true,
       discussions: [],
+      appState: AppState.currentState,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     if (this.props.userConnected) this.loadDiscussions(this.props.userID);
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      if (this.props.userConnected) this.loadDiscussions(this.props.userID);
+    }
+    this.setState({appState: nextAppState});
+  };
+
   async loadDiscussions(userID) {
+    this.setState({loader: true});
     const discussions = await loadMyDiscusions(userID);
     const myDiscussions = Object.values(discussions).reduce(function(
       result,
@@ -51,6 +61,7 @@ class MessageTab extends React.Component {
     await this.props.messageAction('setMyConversations', myDiscussions);
     this.setState({discussions: discussions, loader: false});
   }
+
   async componentWillReceiveProps(nextProps) {
     if (
       this.props.userConnected !== nextProps.userConnected &&
@@ -67,6 +78,7 @@ class MessageTab extends React.Component {
       this.setState({discussions: [], loader: true});
     }
   }
+
   logoutView() {
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
@@ -91,6 +103,7 @@ class MessageTab extends React.Component {
       </View>
     );
   }
+
   placeHolder() {
     return (
       <View style={{flex: 1}}>
@@ -108,6 +121,7 @@ class MessageTab extends React.Component {
       </View>
     );
   }
+
   messagePageView(myConversations) {
     if (!this.props.userConnected) return this.logoutView();
     return (
@@ -139,14 +153,17 @@ class MessageTab extends React.Component {
       </View>
     );
   }
+
   async refresh() {
     await this.setState({loader: true});
     this.loadDiscussions(this.props.userID);
     return true;
   }
+
   async setLocation(data) {
     this.listEventsRef.setLocation(data);
   }
+
   render() {
     const {navigate} = this.props.navigation;
     const {myConversations} = this.props;

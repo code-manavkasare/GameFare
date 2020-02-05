@@ -19,7 +19,6 @@
 
 #import <Fabric/Fabric.h>
 #import "Mixpanel.h"
-#import "RNSplashScreen.h"
 #import <Crashlytics/Crashlytics.h>
 #import "RNBranch.h"
 @implementation AppDelegate
@@ -56,7 +55,6 @@
 //  [RNFirebaseNotifications configure];
   [Fabric with:@[[Crashlytics class]]];
   
-  [RNSplashScreen show];
   return YES;
 }
 

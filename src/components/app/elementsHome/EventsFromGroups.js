@@ -1,18 +1,24 @@
 import React from 'react';
-import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {
+  AppState,
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Animated,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
 
-const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import Switch from '../../layout/switch/Switch';
 
 import CardEvent from './CardEventSM';
-import {timing, native} from '../../animations/animations';
 import {indexEvents} from '../../database/algolia';
-
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
+
+const {height, width} = Dimensions.get('screen');
 
 class MyEvents extends React.Component {
   constructor(props) {
@@ -23,6 +29,7 @@ class MyEvents extends React.Component {
       loader: true,
       loader2: false,
       past: false,
+      appState: AppState.currentState,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.translateXView1 = new Animated.Value(0);
@@ -30,30 +37,36 @@ class MyEvents extends React.Component {
   }
 
   async componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+
     this.props.onRef(this);
-    return this.loadEvent(
-      this.state.past,
-      this.props.sportSelected,
-      this.props.leagueSelected,
-    );
+    return this.loadEvent();
   }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.loadEvent();
+    }
+    this.setState({appState: nextAppState});
+  };
+
   async reload() {
-    return this.loadEvent(
-      this.state.past,
-      this.props.sportSelected,
-      this.props.leagueSelected,
-    );
+    return this.loadEvent();
   }
+
   async componentWillReceiveProps(nextProps) {
     if (
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
     ) {
-      this.loadEvent(
-        this.state.past,
-        nextProps.sportSelected,
-        nextProps.leagueSelected,
-      );
+      this.loadEvent();
     }
   }
   async getEvents(filters) {
@@ -64,7 +77,7 @@ class MyEvents extends React.Component {
     });
     return futureEvents.hits;
   }
-  async loadEvent(past, sport, league) {
+  async loadEvent() {
     await this.setState({loader: true});
 
     let filterAttendees = '';

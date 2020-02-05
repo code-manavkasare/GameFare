@@ -367,8 +367,6 @@ PODS:
     - React
   - react-native-sms (1.10.0):
     - React
-  - react-native-splash-screen (3.2.0):
-    - React
   - react-native-statusbar (1.0.3):
     - React
   - react-native-video (5.0.2):
@@ -519,7 +517,6 @@ DEPENDENCIES:
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-orientation (from `../node_modules/react-native-orientation`)
   - react-native-sms (from `../node_modules/react-native-sms`)
-  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
   - react-native-video (from `../node_modules/react-native-video`)
   - react-native-video-helper (from `../node_modules/react-native-video-helper`)
@@ -676,8 +673,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-orientation"
   react-native-sms:
     :path: "../node_modules/react-native-sms"
-  react-native-splash-screen:
-    :path: "../node_modules/react-native-splash-screen"
   react-native-statusbar:
     :path: "../node_modules/@react-native-community/status-bar"
   react-native-video:
@@ -811,7 +806,6 @@ SPEC CHECKSUMS:
   react-native-mixpanel: 513dc597c9ed239bdee91d16bdc7b9325fdcb779
   react-native-orientation: f1caf84d65f1a4fd4511a18f2b924e634ad7a628
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
-  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
   react-native-video: d01ed7ff1e38fa7dcc6c15c94cf505e661b7bfd0
   react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
@@ -846,6 +840,6 @@ SPEC CHECKSUMS:
   tipsi-stripe: 61c247493a58d7e8e0bf6ee6b014271f473d2b11
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 22f0938d001ae9f76315edcc05dd7902b823d869
+PODFILE CHECKSUM: 7a1ef92df2730c98582ff16b8a7eb8c4e468017d
 
 COCOAPODS: 1.8.4
