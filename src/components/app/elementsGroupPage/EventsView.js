@@ -55,7 +55,10 @@ class EventsView extends Component {
   async load() {
     let events = keys(this.props.data.events);
     if (!events) events = [];
-    var {results} = await indexEvents.getObjects(events.reverse());
+    await indexEvents.clearCache();
+    var {results} = await indexEvents.getObjects(events);
+    console.log('on get les events after creating events',results);
+    if (results.filter(event => !event).length !== 0) return this.load();
     return this.setState({events: results, loader: false});
   }
   rowEvent(event, i) {

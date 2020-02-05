@@ -45,10 +45,11 @@ export default class Posts extends Component {
     }
   }
   async load() {
-    var discussions = this.props.data.discussions;
-    if (discussions === undefined) discussions = [];
-    var {results} = await indexDiscussions.getObjects(discussions);
-    if (results === null) results = [];
+    let discussions = this.props.data.discussions;
+    if (!discussions) discussions = [];
+    let {results} = await indexDiscussions.getObjects(discussions);
+    if (!results) results = [];
+    if (results.filter(convo => !convo).length !== 0) return this.load()
     this.setState({loader: false, discussions: results});
   }
   newPost() {}

@@ -184,6 +184,7 @@ class CardEvent extends React.Component {
   render() {
     const {data, userID} = this.props;
     const attendees = this.members(data);
+    console.log('attendees',attendees)
     return this.card(data, attendees);
   }
 }
