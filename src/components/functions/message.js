@@ -124,7 +124,7 @@ function nameOtherMemberConversation(conversation, userID) {
   )[0].info;
 
   if (!infoMember) {
-\    return 'None';
+    return 'None';
   }
   return infoMember.firstname + ' ' + infoMember.lastname;
 }
