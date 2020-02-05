@@ -25,6 +25,8 @@ import {
   uploadNetlinePhoto,
 } from '../../functions/streaming';
 
+import {pickLibrary} from '../../functions/pictures';
+
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
@@ -154,6 +156,9 @@ class LiveStream extends React.Component {
               },
               waitingNetline: false,
             });
+            console.log("GOT NETLINE RESULTS");
+            console.log(this.state.netline.optimalNetline);
+            console.log(this.state.netline.doublesLine);
           }
         }
       });
@@ -173,10 +178,12 @@ class LiveStream extends React.Component {
   }
   async takeCalibrationPhoto() {
     if (this.camera) {
-      const options = {width: 720, quality: 0.5, base64: true};
-      const data = await this.camera.takePictureAsync(options);
-      await this.setState({waitingNetline: true, netline: null});
-      await uploadNetlinePhoto(this.state.assetID, data.uri);
+      // const options = {width: 720, quality: 0.5, base64: true};
+      // const data = await this.camera.takePictureAsync(options);
+      // await this.setState({waitingNetline: true, netline: null});
+      // await uploadNetlinePhoto(this.state.assetID, data.uri);
+      const uri = await pickLibrary();
+      await uploadNetlinePhoto(this.state.assetID, uri);
     }
   }
 
@@ -193,8 +200,6 @@ class LiveStream extends React.Component {
     if (!this.state.netline || this.state.netline.error) {
       return;
     }
-    console.log('cycling');
-    console.log(this.state.netline);
     if (
       this.state.netline.index ===
       Object.keys(this.state.netline.candidates[0]).length - 1
@@ -205,14 +210,12 @@ class LiveStream extends React.Component {
         netline: {...this.state.netline, index: this.state.netline.index + 1},
       });
     }
-    console.log(this.state.netline);
   }
 
   render() {
     const {height, width} = Dimensions.get('screen');
     const {navigation} = this.props;
     console.log('state');
-    console.log(this.state);
     return (
       <View style={styles.container}>
         <LiveStreamHeader
