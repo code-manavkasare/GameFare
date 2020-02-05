@@ -228,7 +228,6 @@ class AddGroups extends Component {
     );
   }
   alertDone(val, nameEvent, selectedGroups) {
-    console.log('alert done', val);
     if (!val)
       return NavigationService.navigate('Alert', {
         close: true,
@@ -276,7 +275,6 @@ class AddGroups extends Component {
       const hasGroup = ramda.has(group.objectID);
       let updatesGroup = {};
       let updatesEvent = {};
-      console.log('pageFrom!!', pageFrom);
       if (pageFrom === 'Event') {
         if (hasGroup(selectedGroups)) {
           updatesGroup['/events/' + objectID] = true;

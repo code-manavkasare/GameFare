@@ -178,6 +178,7 @@ class CardGroup extends React.Component {
     );
   }
   displayCard(data) {
+    if (!data) return null
     const picture = data.pictures[0];
     return (
       <ButtonColor
@@ -212,7 +213,8 @@ class CardGroup extends React.Component {
   }
 
   render() {
-    return this.card(this.props.data);
+    const {data} = this.props;
+    return this.card(data);
   }
 }
 

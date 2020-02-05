@@ -63,7 +63,6 @@ export default class HeaderFlow extends Component {
     return 70;
   }
   render() {
-    console.log('headerBackbutton', this.props.iconOffset);
     const AnimateOpacityTitle = this.props.AnimatedHeaderValue.interpolate({
       inputRange: [
         this.props.inputRange[1] + 20,

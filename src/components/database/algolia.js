@@ -12,23 +12,20 @@ const indexUsers = client.initIndex('usersGF');
 const indexDiscussions = client.initIndex('discussionsGF');
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
-  indexGroups.clearCache();
-  var filterOrganizer = 'info.organizer:' + userID + ' OR allMembers:' + userID;
-  var filters = filterOrganizer + filterSport;
+  await indexGroups.clearCache();
+  const filterOrganizer = 'info.organizer:' + userID + ' OR allMembers:' + userID;
+  const filters = filterOrganizer + filterSport;
   if (location) {
     var {hits} = await indexGroups.search({
-      query: '',
       filters: filters,
       aroundLatLng: location ? location.lat + ',' + location.lng : '',
       aroundRadius: radiusSearch * 1000,
     });
   } else {
     var {hits} = await indexGroups.search({
-      query: '',
       filters: filters,
     });
   }
-
   return hits;
 }
 function filterLeagueEventsFromGroups(event, league) {
@@ -44,7 +41,6 @@ async function getEventsFromGroups(
   league,
 ) {
   var events = [];
-  console.log('groups', groups);
   for (var i in groups) {
     if (groups[i].events) {
       events = union(events, groups[i].events);
@@ -52,7 +48,6 @@ async function getEventsFromGroups(
   }
   let filterIds = '';
   let prefix = ' AND ';
-  console.log('events', events);
   for (var j in events) {
     if (Number(j) === 0) prefix = '';
     else prefix = ' AND ';
@@ -64,13 +59,11 @@ async function getEventsFromGroups(
   if (filterIds === '') prefix2 = '';
 
   const filters = filterIds + prefix2 + filterUser + ' AND info.sport:' + sport;
-  console.log('filters', filters);
   let {hits} = await indexEvents.search({
     filters: filters,
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
   });
-  console.log('hits', hits);
   if (filterIds === '') hits = [];
   hits = hits.filter(
     (event) =>
@@ -93,7 +86,6 @@ const getEventPublic = async (
   radiusSearch,
 ) => {
   indexEvents.clearCache();
-  console.log('search for events around', league);
   var leagueFilter = ' AND info.league:' + league;
   if (league === 'all') {
     leagueFilter = '';
@@ -113,7 +105,6 @@ const getEventPublic = async (
   var filterUser =
     ' AND NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   if (userID === '') filterUser = '';
-  console.log('league filter', allEventsPublic);
   var {hits} = await indexEvents.search({
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
@@ -158,8 +149,6 @@ const getEventPublic = async (
     ...allEventsPublic,
     ...eventsMyGroups,
   };
-  console.log('seatch done', allEventsPublic);
-  console.log(eventsMyGroups);
   return allEventsPublic;
 };
 
