@@ -89,6 +89,22 @@ Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration 
 We use Reactotron for debugging please install the software from github page : https://github.com/infinitered/reactotron/releases
 We also use ESLint, be sure to have it installed on your VSCode extension
 
+## Deploying
+
+We use Fastlane for automatized deployment on Testflight. To use it first install it
+
+    xcode-select --install
+    brew install fastlane
+
+Now fastlane should be installed ! To use it go to /ios repository of gamefare app and type :
+
+    cd ios
+    fastlane beta
+
+If you are asked for an app password try this : seez-cjpi-nrep-gpfi
+Thsi will push a new build of the current defined version. No need to always update version ! For versionning information : https://semver.org/
+The build version is the lastest build version pushed to appstore +1
+
 ## Font
 
 We use material and font awesome : https://fontawesome.com/icons?d=gallery
