@@ -47,10 +47,10 @@ async function getEventsFromGroups(
     }
   }
   let filterIds = '';
-  let prefix = ' AND ';
+  let prefix = ' OR ';
   for (var j in events) {
     if (Number(j) === 0) prefix = '';
-    else prefix = ' AND ';
+    else prefix = ' OR ';
     filterIds = filterIds + prefix + 'objectID:' + Object.values(events)[j];
   }
   var filterUser =
@@ -59,6 +59,7 @@ async function getEventsFromGroups(
   if (filterIds === '') prefix2 = '';
 
   const filters = filterIds + prefix2 + filterUser + ' AND info.sport:' + sport;
+  await indexEvents.clearCache();
   let {hits} = await indexEvents.search({
     filters: filters,
     aroundLatLng: location.lat + ',' + location.lng,
@@ -149,11 +150,11 @@ const getEventPublic = async (
     ...allEventsPublic,
     ...eventsMyGroups,
   };
+
   return allEventsPublic;
 };
 
 const getMyEvents = async (userID,filterDateName) => {
-  console.log('getMyEvents',userID)
   let filterAttendees =
     'allAttendees:' +
     userID +
