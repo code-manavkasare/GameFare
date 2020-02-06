@@ -156,7 +156,7 @@ class LiveStream extends React.Component {
               },
               waitingNetline: false,
             });
-            console.log("GOT NETLINE RESULTS");
+            console.log('GOT NETLINE RESULTS');
             console.log(this.state.netline.optimalNetline);
             console.log(this.state.netline.doublesLine);
           }
@@ -279,12 +279,9 @@ class LiveStream extends React.Component {
             <Svg style={styles.nodeCameraView} height="100%" width="100%">
               {this.state.netline.index === -1 ? (
                 <Line
-                  x1={(1 - this.state.netline.optimalNetline.origin.x) * width}
+                  x1={this.state.netline.optimalNetline.origin.x * width}
                   y1={this.state.netline.optimalNetline.origin.y * height}
-                  x2={
-                    (1 - this.state.netline.optimalNetline.destination.x) *
-                    width
-                  }
+                  x2={this.state.netline.optimalNetline.destination.x * width}
                   y2={this.state.netline.optimalNetline.destination.y * height}
                   stroke="red"
                   strokeWidth="4"
@@ -292,11 +289,9 @@ class LiveStream extends React.Component {
               ) : (
                 <Line
                   x1={
-                    (1 -
-                      this.state.netline.candidates[0][
-                        'candidate_0' + this.state.netline.index
-                      ].origin.x) *
-                    width
+                    this.state.netline.candidates[0][
+                      'candidate_0' + this.state.netline.index
+                    ].origin.x * width
                   }
                   y1={
                     this.state.netline.candidates[0][
@@ -304,11 +299,9 @@ class LiveStream extends React.Component {
                     ].origin.y * height
                   }
                   x2={
-                    (1 -
-                      this.state.netline.candidates[0][
-                        'candidate_0' + this.state.netline.index
-                      ].destination.x) *
-                    width
+                    this.state.netline.candidates[0][
+                      'candidate_0' + this.state.netline.index
+                    ].destination.x * width
                   }
                   y2={
                     this.state.netline.candidates[0][
@@ -320,9 +313,9 @@ class LiveStream extends React.Component {
                 />
               )}
               <Line
-                x1={(1 - this.state.netline.doublesLine.origin.x) * width}
+                x1={this.state.netline.doublesLine.origin.x * width}
                 y1={this.state.netline.doublesLine.origin.y * height}
-                x2={(1 - this.state.netline.doublesLine.destination.x) * width}
+                x2={this.state.netline.doublesLine.destination.x * width}
                 y2={this.state.netline.doublesLine.destination.y * height}
                 stroke="green"
                 strokeWidth="4"

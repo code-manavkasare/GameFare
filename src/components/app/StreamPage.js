@@ -43,7 +43,8 @@ class StreamPage extends React.Component {
     if (!this.props.userConnected) {
       return false;
     }
-    const events = await getMyEvents(this.props.userID);
+    let events = await getMyEvents(this.props.userID);
+    events = Object.values(events);
     //await this.props.eventsAction('setMyEvents', events); something like this?
     this.setState({events: events, loader: false, wasLoggedOut: false});
     return true;
