@@ -4,6 +4,7 @@ import {
   SET_GROUPS_AROUND,
   EDIT_GROUP,
   ADD_MY_GROUP,
+  DELETE_MY_GROUP,
 } from '../actions/types';
 import union from 'lodash/union';
 
@@ -43,6 +44,11 @@ const eventsReducer = (state = initialState, action) => {
       };
     case ADD_MY_GROUP:
       return {...state, mygroups: union([action.objectID], state.mygroups)};
+    case DELETE_MY_GROUP:
+      return {
+        ...state,
+        mygroups: state.mygroups.filter((group) => group !== action.objectID),
+      };
     case SET_ALL_GROUPS:
       return {
         ...state,

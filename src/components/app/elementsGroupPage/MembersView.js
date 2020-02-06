@@ -86,7 +86,7 @@ class MembersView extends Component {
       },
     });
     await this.props.groupsAction('addMyGroup', objectID);
-    
+
     return NavigationService.navigate('Group');
   }
   async setConversation(data) {
@@ -154,14 +154,23 @@ class MembersView extends Component {
             </Row>
           );
         }}
-        click={() => NavigationService.navigate('Alert', {
-          textButton: 'Leave',
-          onGoBack: () => this.confirmLeaveGroup(data),
-          icon:<AllIcons name='sign-out-alt' color={colors.primary} type='font' size={22} />,
-          title: 'Are you sure you want to leave this group?',
-          colorButton:'primary',
-          onPressColor:colors.primaryLight,
-        })}
+        click={() =>
+          NavigationService.navigate('Alert', {
+            textButton: 'Leave',
+            onGoBack: () => this.confirmLeaveGroup(data),
+            icon: (
+              <AllIcons
+                name="sign-out-alt"
+                color={colors.primary}
+                type="font"
+                size={22}
+              />
+            ),
+            title: 'Are you sure you want to leave this group?',
+            colorButton: 'primary',
+            onPressColor: colors.primaryLight,
+          })
+        }
         color={colors.primary}
         style={styles.buttonLeave}
         onPressColor={colors.primaryLight}
@@ -169,11 +178,22 @@ class MembersView extends Component {
     );
   }
   async confirmLeaveGroup(data) {
-    if (data.discussions) await this.props.messageAction('deleteMyConversation',data.discussions[0])
-    await firebase.database().ref('groups/' + data.objectID + '/members/' + this.props.userID).update({'action':'unsubscribed'});
-    await firebase.database().ref('groups/' + data.objectID + '/members/' + this.props.userID).remove();
-    await NavigationService.goBack()
-    return true
+    if (data.discussions)
+      await this.props.messageAction(
+        'deleteMyConversation',
+        data.discussions[0],
+      );
+    await this.props.groupsAction('deleteMyGroup', data.objectID);
+    await firebase
+      .database()
+      .ref('groups/' + data.objectID + '/members/' + this.props.userID)
+      .update({action: 'unsubscribed'});
+    await firebase
+      .database()
+      .ref('groups/' + data.objectID + '/members/' + this.props.userID)
+      .remove();
+    await NavigationService.goBack();
+    return true;
   }
   membersView(data, members) {
     return (
