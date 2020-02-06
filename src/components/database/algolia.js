@@ -1,6 +1,7 @@
 import algoliasearch from 'algoliasearch/reactnative';
 import equal from 'fast-deep-equal';
 import union from 'lodash/union';
+import {keys} from 'ramda'
 import moment from 'moment';
 
 const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3');
@@ -43,7 +44,7 @@ async function getEventsFromGroups(
   var events = [];
   for (var i in groups) {
     if (groups[i].events) {
-      events = union(events, groups[i].events);
+      events = union(events, keys(groups[i].events));
     }
   }
   let filterIds = '';
