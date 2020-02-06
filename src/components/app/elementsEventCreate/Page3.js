@@ -101,6 +101,7 @@ class Page3 extends Component {
   rowGroup(group, i) {
     return (
       <ButtonColor
+        key={i}
         view={() => {
           return (
             <Row>
@@ -302,6 +303,7 @@ class Page3 extends Component {
       }
     }
 
+
     await this.props.eventsAction('setAllEvents', {[event.objectID]: event});
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
@@ -311,25 +313,21 @@ class Page3 extends Component {
     });
 
     await this.props.createEventAction('reset');
+    await this.setState({loader: false});
 
-    const that = this
-    return setTimeout(async function() {
-      await that.setState({loader: false});
+    await dismiss();
 
-      await dismiss();
-
-      return that.props.navigation.navigate('Contacts', {
-        data: event,
-        pageFrom: 'Event',
-        openPageLink: 'openEventPage',
-        objectID: event.objectID,
-      });
-    }, 1000)
+    return this.props.navigation.navigate('Contacts', {
+      data: event,
+      pageFrom: 'Event',
+      openPageLink: 'openEventPage',
+      objectID: event.objectID,
+    });
     
   }
   render() {
     return (
-      <View style={[styleApp.stylePage, {borderLeftWidth: 1}]}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}

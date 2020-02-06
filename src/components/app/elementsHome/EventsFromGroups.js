@@ -8,6 +8,8 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {keys} from 'ramda';
+
 import {eventsAction} from '../../../actions/eventsActions';
 
 import colors from '../../style/colors';
@@ -15,7 +17,7 @@ import styleApp from '../../style/style';
 import Switch from '../../layout/switch/Switch';
 
 import CardEvent from './CardEventSM';
-import {indexEvents} from '../../database/algolia';
+import {indexEvents,getMyEvents} from '../../database/algolia';
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
 const {height, width} = Dimensions.get('screen');
@@ -40,7 +42,7 @@ class MyEvents extends React.Component {
     AppState.addEventListener('change', this._handleAppStateChange);
 
     this.props.onRef(this);
-    return this.loadEvent();
+    return this.loadEvent(this.props.userID);
   }
 
   componentWillUnmount() {
@@ -52,13 +54,13 @@ class MyEvents extends React.Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.loadEvent();
+      this.loadEvent(this.props.userID);
     }
     this.setState({appState: nextAppState});
   };
 
   async reload() {
-    return this.loadEvent();
+    return this.loadEvent(this.props.userID);
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -66,58 +68,21 @@ class MyEvents extends React.Component {
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
     ) {
-      this.loadEvent();
+      this.loadEvent(nextProps.userID);
     }
   }
-  async getEvents(filters) {
-    indexEvents.clearCache();
-    var futureEvents = await indexEvents.search({
-      query: '',
-      filters: filters,
-    });
-    return futureEvents.hits;
-  }
-  async loadEvent() {
+  async loadEvent(userID) {
     await this.setState({loader: true});
 
-    let filterAttendees = '';
-    if (this.props.userID) {
-      filterAttendees =
-        'allAttendees:' +
-        this.props.userID +
-        ' OR allCoaches:' +
-        this.props.userID +
-        ' OR info.organizer:' +
-        this.props.userID +
-        ' AND ';
-    }
-    var filters = filterAttendees;
+    const futureEvents = await getMyEvents(userID,'future');
+    const pastEvents = await getMyEvents(userID,'past');
 
-    var filterDate = 'date_timestamp>' + Number(new Date());
-    var futureEvents = await this.getEvents(filters + filterDate);
-    var allEvents = futureEvents.reduce(function(result, item) {
-      result[item.objectID] = item;
-      return result;
-    }, {});
-
-    filterDate = 'date_timestamp<' + Number(new Date());
-    var pastEvents = await this.getEvents(filters + filterDate);
-    var allEventsPast = pastEvents.reduce(function(result, item) {
-      result[item.objectID] = item;
-      return result;
-    }, {});
-    pastEvents = pastEvents.map((x) => x.objectID);
-
-    allEvents = {
-      ...allEvents,
-      ...allEventsPast,
-    };
-    await this.props.eventsAction('setAllEvents', allEvents);
-    await this.props.eventsAction(
-      'setFutureUserEvents',
-      Object.values(futureEvents).map((event) => event.objectID),
-    );
-    await this.props.eventsAction('setPastUserEvents', pastEvents);
+    await this.props.eventsAction('setAllEvents', {
+      ...futureEvents,
+      ...pastEvents,
+    });
+    await this.props.eventsAction('setFutureUserEvents',keys(futureEvents));
+    await this.props.eventsAction('setPastUserEvents', keys(pastEvents));
 
     this.setState({loader: false});
   }
@@ -189,6 +154,7 @@ class MyEvents extends React.Component {
       numberFuture = ' (' + futureEvents.length + ')';
       numberPast = ' (' + pastEvents.length + ')';
     }
+    console.log('les futures events renderrrr',futureEvents)
     return (
       <View style={{marginTop: 20}}>
         <View style={[styleApp.marginView, {marginBottom: 20}]}>
