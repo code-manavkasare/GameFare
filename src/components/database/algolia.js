@@ -2,18 +2,18 @@ import algoliasearch from 'algoliasearch/reactnative';
 import equal from 'fast-deep-equal';
 import union from 'lodash/union';
 import moment from 'moment';
-import {keys} from 'ramda';
 
-const client = algoliasearch('EX9TV715SD', '36bc4371bcdde61e2e4d5f05c8a274ce');
-const indexEvents = client.initIndex('eventsGF');
-const indexPastEvents = client.initIndex('pastEventsGF');
-const indexGroups = client.initIndex('groupsGF');
-const indexUsers = client.initIndex('usersGF');
-const indexDiscussions = client.initIndex('discussionsGF');
+const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3');
+const indexEvents = client.initIndex('events');
+const indexPastEvents = client.initIndex('pastEvents');
+const indexGroups = client.initIndex('groups');
+const indexUsers = client.initIndex('users');
+const indexDiscussions = client.initIndex('discussions');
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
   await indexGroups.clearCache();
-  const filterOrganizer = 'info.organizer:' + userID + ' OR allMembers:' + userID;
+  const filterOrganizer =
+    'info.organizer:' + userID + ' OR allMembers:' + userID;
   const filters = filterOrganizer + filterSport;
   if (location) {
     var {hits} = await indexGroups.search({
@@ -154,7 +154,7 @@ const getEventPublic = async (
   return allEventsPublic;
 };
 
-const getMyEvents = async (userID,filterDateName) => {
+const getMyEvents = async (userID, filterDateName) => {
   let filterAttendees =
     'allAttendees:' +
     userID +
@@ -165,7 +165,8 @@ const getMyEvents = async (userID,filterDateName) => {
     ' AND ';
 
   let filterDate = 'date_timestamp>' + Number(new Date());
-  if (filterDateName === 'past') filterDate = 'date_timestamp<' + Number(new Date());
+  if (filterDateName === 'past')
+    filterDate = 'date_timestamp<' + Number(new Date());
   indexEvents.clearCache();
   var {hits} = await indexEvents.search({
     query: '',
