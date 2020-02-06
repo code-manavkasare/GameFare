@@ -178,12 +178,10 @@ class LiveStream extends React.Component {
   }
   async takeCalibrationPhoto() {
     if (this.camera) {
-      // const options = {width: 720, quality: 0.5, base64: true};
-      // const data = await this.camera.takePictureAsync(options);
-      // await this.setState({waitingNetline: true, netline: null});
-      // await uploadNetlinePhoto(this.state.assetID, data.uri);
-      const uri = await pickLibrary();
-      await uploadNetlinePhoto(this.state.assetID, uri);
+      const options = {width: 720, quality: 0.5, base64: true};
+      const data = await this.camera.takePictureAsync(options);
+      await this.setState({waitingNetline: true, netline: null});
+      await uploadNetlinePhoto(this.state.assetID, data.uri);
     }
   }
 
