@@ -153,8 +153,8 @@ const getEventPublic = async (
 };
 
 const getMyEvents = async (userID,filterDateName) => {
-  let filterAttendees = '';
-  filterAttendees =
+  console.log('getMyEvents',userID)
+  let filterAttendees =
     'allAttendees:' +
     userID +
     ' OR allCoaches:' +

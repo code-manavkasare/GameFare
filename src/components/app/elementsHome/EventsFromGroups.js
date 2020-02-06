@@ -42,7 +42,7 @@ class MyEvents extends React.Component {
     AppState.addEventListener('change', this._handleAppStateChange);
 
     this.props.onRef(this);
-    return this.loadEvent();
+    return this.loadEvent(this.props.userID);
   }
 
   componentWillUnmount() {
@@ -54,13 +54,13 @@ class MyEvents extends React.Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.loadEvent();
+      this.loadEvent(this.props.userID);
     }
     this.setState({appState: nextAppState});
   };
 
   async reload() {
-    return this.loadEvent();
+    return this.loadEvent(this.props.userID);
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -68,19 +68,10 @@ class MyEvents extends React.Component {
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
     ) {
-      this.loadEvent();
+      this.loadEvent(nextProps.userID);
     }
   }
-  async getEvents(filters) {
-    indexEvents.clearCache();
-    var futureEvents = await indexEvents.search({
-      query: '',
-      filters: filters,
-    });
-    return futureEvents.hits;
-  }
-  async loadEvent() {
-    const {userID} = this.props;
+  async loadEvent(userID) {
     await this.setState({loader: true});
 
     const futureEvents = await getMyEvents(userID,'future');
