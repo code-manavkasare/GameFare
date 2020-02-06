@@ -4,25 +4,20 @@ import {
   StyleSheet,
   Text,
   Animated,
-  Easing,
   Dimensions,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {createEventAction} from '../../../actions/createEventActions';
-
 import {Grid, Row, Col} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-const AnimatedIcon = Animated.createAnimatedComponent(FontIcon);
 
 import sizes from '../../style/sizes';
-import Loader from '../loaders/Loader';
 import colors from '../../style/colors';
 import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
 import styleApp from '../../style/style';
-import AllIcon from '../icons/AllIcons';
 import {native, timing} from '../../animations/animations';
 import AsyncImage from '../image/AsyncImage';
 const {height, width} = Dimensions.get('screen');
@@ -40,17 +35,17 @@ class HeaderHome extends Component {
       openLeague: false,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.voile = this.voile.bind(this);
     this.rotateIcon = new Animated.Value(0);
     this.borderWidthButtonLeague = new Animated.Value(0);
     this.borderWidthButtonSport = new Animated.Value(0);
+    this.opacityVoile = new Animated.Value(0);
+    this.translateXVoile = new Animated.Value(width);
     this.openLeagueVal = false;
   }
 
   componentDidMount() {
     this.setupEventCreateSport({value: this.props.sportSelected});
-    if (this.props.loaderOn === true) {
-      this.props.onRef(this);
-    }
   }
   async close() {
     this.setState({enableClickButton: false});
@@ -78,14 +73,16 @@ class HeaderHome extends Component {
     });
   }
 
-  openSport(val, sport) {
+  async openSport(val, sport) {
     if (val) {
+      await this.translateXVoile.setValue(0);
       return Animated.parallel([
         Animated.timing(
           this.state.heightButtonSport,
           timing(Object.values(this.props.sports).length * 50, 200),
         ),
         Animated.timing(this.borderWidthButtonSport, timing(1, 200)),
+        Animated.timing(this.opacityVoile, timing(0.65, 200)),
         Animated.timing(this.state.widthButtonSport, timing(150, 200)),
         Animated.timing(this.rotateIcon, timing(1, 200)),
       ]).start(() => {
@@ -100,21 +97,25 @@ class HeaderHome extends Component {
     return Animated.parallel([
       Animated.timing(this.state.heightButtonSport, timing(50, 200)),
       Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
+      Animated.timing(this.opacityVoile, timing(0, 200)),
       Animated.timing(this.state.widthButtonSport, timing(51, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {
       this.setState({openSport: false});
+      this.translateXVoile.setValue(width);
     });
   }
-  openLeague(val, league, numberElements) {
+  async openLeague(val, league, numberElements) {
     if (val) {
       this.openLeagueVal = true;
+      await this.translateXVoile.setValue(0);
       return Animated.parallel([
         Animated.timing(
           this.state.heightButtonLeague,
           timing(numberElements * 50, 200),
         ),
         Animated.timing(this.borderWidthButtonLeague, timing(1, 200)),
+        Animated.timing(this.opacityVoile, timing(0.65, 200)),
         Animated.timing(this.state.widthButtonLeague, timing(150, 200)),
         Animated.timing(this.rotateIcon, timing(1, 200)),
       ]).start();
@@ -124,9 +125,25 @@ class HeaderHome extends Component {
     return Animated.parallel([
       Animated.timing(this.state.heightButtonLeague, timing(50, 200)),
       Animated.timing(this.borderWidthButtonLeague, timing(0, 200)),
+      Animated.timing(this.opacityVoile, timing(0, 200)),
       Animated.timing(this.state.widthButtonLeague, timing(45, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {});
+  }
+  closeAll() {
+    Animated.parallel([
+      Animated.timing(this.state.heightButtonSport, timing(50, 200)),
+      Animated.timing(this.state.heightButtonLeague, timing(50, 200)),
+      Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
+      Animated.timing(this.borderWidthButtonLeague, timing(0, 200)),
+      Animated.timing(this.opacityVoile, timing(0, 200)),
+      Animated.timing(this.state.widthButtonSport, timing(51, 200)),
+      Animated.timing(this.state.widthButtonLeague, timing(45, 200)),
+      Animated.timing(this.rotateIcon, timing(0, 200)),
+    ]).start(() => {
+      this.setState({openSport: false});
+      this.translateXVoile.setValue(width);
+    });
   }
   buttonSport(sport, i) {
     return (
@@ -136,31 +153,15 @@ class HeaderHome extends Component {
           return (
             <Row style={{height: 45}}>
               <Col size={35} style={[styleApp.center2, {paddingLeft: 5}]}>
-                {/* <View style={{overflow:'hidden',height:40,width:40,borderWidth:1,borderColor:colors.off,borderRadius:20,}}>
-                 
-              </View> */}
                 <AsyncImage
                   style={{height: 37, width: 37, borderRadius: 20}}
                   mainImage={sport.card.img.imgSM}
                   imgInitial={sport.card.img.imgXS}
                 />
               </Col>
-              {/* <Col size={10} style={[styleApp.center]}>
-              {
-                i==0?
-                <AnimatedIcon name='caret-right' color={colors.title} style={{transform: [{rotate: spin}]}} size={15} />
-                :null
-              } 
-            </Col> */}
+
               <Col size={75} style={[styleApp.center2, {paddingLeft: 10}]}>
-                <Text
-                  style={[
-                    {
-                      fontFamily: 'OpenSans-Bold',
-                      fontSize: 15,
-                      color: colors.title,
-                    },
-                  ]}>
+                <Text style={styleApp.text}>
                   {sport.text.charAt(0).toUpperCase() + sport.text.slice(1)}
                 </Text>
               </Col>
@@ -169,16 +170,7 @@ class HeaderHome extends Component {
         }}
         click={() => this.openSport(!this.state.openSport, sport)}
         color={'white'}
-        style={[
-          styleApp.center,
-          {
-            height: 50,
-            width: 150,
-            borderRadius: 0,
-            borderWidth: 0,
-            overFlow: 'hidden',
-          },
-        ]}
+        style={[styleApp.center, styles.buttonSport]}
         onPressColor={colors.off}
       />
     );
@@ -214,20 +206,31 @@ class HeaderHome extends Component {
           )
         }
         color={'white'}
-        style={[{height: 50, width: 190, paddingLeft: 5, paddingRight: 5}]}
+        style={styles.buttonLeague}
         onPressColor={colors.off}
       />
     );
   }
+  voile() {
+    return (
+      <Animated.View
+        style={[
+          styleApp.voile,
+          {
+            zIndex: -2,
+            opacity: this.opacityVoile,
+            transform: [{translateX: this.translateXVoile}],
+          },
+        ]}>
+        <TouchableOpacity
+          style={[styleApp.fullSize]}
+          activeOpacity={1}
+          onPress={() => this.closeAll()}
+        />
+      </Animated.View>
+    );
+  }
   render() {
-    const AnimateOpacityTitle = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: [
-        this.props.inputRange[1] + 20,
-        this.props.inputRange[1] + 30,
-      ],
-      outputRange: [this.props.initialTitleOpacity, 1],
-      extrapolate: 'clamp',
-    });
     const AnimateBackgroundView = this.props.AnimatedHeaderValue.interpolate({
       inputRange: [0, 100],
       outputRange: [this.props.initialBackgroundColor, 'white'],
@@ -236,11 +239,6 @@ class HeaderHome extends Component {
     const borderWidth = this.props.AnimatedHeaderValue.interpolate({
       inputRange: [0, 10],
       outputRange: [0, 0.5],
-      extrapolate: 'clamp',
-    });
-    const AnimateColorIcon = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [colors.title, colors.title],
       extrapolate: 'clamp',
     });
     const borderColorButton = this.borderWidthButtonLeague.interpolate({
@@ -265,17 +263,8 @@ class HeaderHome extends Component {
     });
     const translateYHeader = this.props.AnimatedHeaderValue.interpolate({
       inputRange: this.props.inputRange,
-      outputRange: [0, -10],
+      outputRange: [-10, -10],
       extrapolate: 'clamp',
-    });
-    const heightHeaderFilter = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [sizes.heightHeaderFilter, sizes.heightHeaderFilter - 20],
-      extrapolate: 'clamp',
-    });
-    const scaleIcon = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [35, 20],
     });
     const shadeOpacityHeader = this.props.AnimatedHeaderValue.interpolate({
       inputRange: this.props.inputRange,
@@ -297,29 +286,18 @@ class HeaderHome extends Component {
           {
             backgroundColor: AnimateBackgroundView,
             borderBottomWidth: borderWidth,
-            height: heightHeaderFilter,
+            height: sizes.heightHeaderHome,
             borderColor: borderColorView,
             shadowOpacity: shadeOpacityHeader,
           },
         ]}>
-        <Row
-          style={{
-            width: width,
-            paddingLeft: 20,
-            paddingRight: 20,
-            marginTop: 15,
-          }}>
+        <Row style={styles.rowHeader}>
           <Animated.View
             style={[
               {
+                ...styles.viewButtonSport,
                 height: this.state.heightButtonSport,
                 width: this.state.widthButtonSport,
-                overflow: 'hidden',
-                position: 'absolute',
-                zIndex: 40,
-                left: 20,
-                borderWidth: 1,
-                borderRadius: 10,
                 borderColor: borderColorButtonSport,
                 transform: [{translateY: translateYHeader}],
               },
@@ -327,20 +305,15 @@ class HeaderHome extends Component {
             {this.buttonSport(sport, 0)}
 
             {Object.values(this.props.sports)
-              .filter((item) => item && item.value != sport.value)
+              .filter((item) => item && item.value !== sport.value)
               .map((sportIn, i) => this.buttonSport(sportIn, i + 1))}
           </Animated.View>
           <Animated.View
             style={[
               {
+                ...styles.viewButtonLeague,
                 height: this.state.heightButtonLeague,
-                width: 190,
-                overflow: 'hidden',
-                borderWidth: 1,
-                position: 'absolute',
-                left: 90,
                 borderColor: borderColorButton,
-                borderRadius: 10,
                 transform: [{translateY: translateYHeader}],
               },
             ]}>
@@ -367,13 +340,8 @@ class HeaderHome extends Component {
             color={'white'}
             style={[
               styleApp.center,
+              styles.button2,
               {
-                height: 45,
-                width: 45,
-                position: 'absolute',
-                right: 20,
-                borderRadius: 25,
-                borderWidth: 1,
                 borderColor: borderColorIcon,
                 transform: [{translateY: translateYHeader}],
               },
@@ -381,33 +349,48 @@ class HeaderHome extends Component {
             onPressColor={colors.off}
           />
         </Row>
+
+        {this.voile()}
       </Animated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
-  icon: {
-    height: 48,
-    width: 48,
-    borderRadius: 23.8,
-    borderWidth: 1,
-    backgroundColor: 'white',
-    // overFlow:'hidden',
-  },
   header: {
     height: sizes.heightHeaderFilter,
     paddingTop: sizes.marginTopHeader - 5,
     borderBottomWidth: 1,
     position: 'absolute',
     zIndex: 10,
+  },
+  voile: {
+    height: height,
+    width: width,
+    position: 'absolute',
+    backgroundColor: 'red',
+  },
+  rowHeader: {
+    width: width,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginTop: 15,
+  },
+  viewButtonLeague: {
+    width: 190,
+    overflow: 'hidden',
+    // borderWidth: 1,
+    position: 'absolute',
+    left: 90,
+    borderRadius: 10,
+  },
+  viewButtonSport: {
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: 40,
+    left: 20,
+    borderWidth: 1,
+    borderRadius: 10,
   },
   imgBackground: {
     height: '100%',
@@ -418,19 +401,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: '100%',
     width: width,
-    // backgroundColor:'red',
     zIndex: -1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 15,
-    paddingLeft: 7,
-    color: '#4B4B4B',
+  buttonLeague: {height: 50, width: 190, paddingLeft: 5, paddingRight: 5},
+  buttonSport: {
+    height: 50,
+    width: 150,
   },
-  textTitleHeader: {
-    color: colors.title,
-    fontSize: 17,
+  button2: {
+    height: 45,
+    width: 45,
+    position: 'absolute',
+    right: 20,
+    borderRadius: 25,
+    borderWidth: 1,
   },
 });
 
