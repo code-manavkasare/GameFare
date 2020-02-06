@@ -4,11 +4,11 @@ import union from 'lodash/union';
 import moment from 'moment';
 
 const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3');
-const indexEvents = client.initIndex('events');
-const indexPastEvents = client.initIndex('pastEvents');
-const indexGroups = client.initIndex('groups');
-const indexUsers = client.initIndex('users');
-const indexDiscussions = client.initIndex('discussions');
+const indexEvents = client.initIndex('prod_events');
+const indexPastEvents = client.initIndex('prod_pastEvents');
+const indexGroups = client.initIndex('prod_groups');
+const indexUsers = client.initIndex('prod_users');
+const indexDiscussions = client.initIndex('prod_discussions');
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
   await indexGroups.clearCache();
