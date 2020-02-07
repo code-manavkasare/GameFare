@@ -14,7 +14,6 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import branch from 'react-native-branch';
 import SendSMS from 'react-native-sms';
 import SwitchSelector from 'react-native-switch-selector';
-import Reactotron from 'reactotron-react-native';
 import FadeInView from 'react-native-fade-in-view';
 
 import styleApp from '../../../style/style';
@@ -31,7 +30,6 @@ import {native, timing} from '../../../animations/animations';
 import FooterContact from './FooterContact';
 import sizes from '../../../style/sizes';
 import SearchBarContact from './SearchBarContact';
-import {autocompleteSearchUsers} from '../../../functions/users';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -375,12 +373,7 @@ class Contacts extends Component {
           this.shareEvent();
         }}
         color="white"
-        style={{
-          height: 55,
-          width: width,
-          borderBottomWidth: 0.5,
-          borderColor: colors.off,
-        }}
+        style={[styles.shareSocials]}
         onPressColor={colors.off}
       />
     );
@@ -490,6 +483,7 @@ class Contacts extends Component {
 
         <View
           style={[{marginTop: sizes.heightHeaderHome, marginHorizontal: 10}]}>
+          {this.rowShare()}
           <SwitchSelector
             initial={0}
             onPress={(value) => this.translateXView(value, userConnected)}
@@ -500,7 +494,7 @@ class Contacts extends Component {
             buttonColor={colors.primary}
             borderColor={colors.borderColor}
             borderRadius={7}
-            height={50}
+            height={heightSwitch}
             animationDuration={190}
             options={
               this.props.userID === data.info.organizer
@@ -520,7 +514,6 @@ class Contacts extends Component {
         <View>
           {this.state.activeView === 'contacts' && (
             <FadeInView duration={fadeInDuration}>
-              {this.rowShare()}
               <SearchBarContact
                 navigation={this.props.navigation}
                 placeHolderMessage={'Search for contact...'}
@@ -566,6 +559,8 @@ class Contacts extends Component {
     );
   }
 }
+export const heightSwitch = 50;
+export const heightShareEventSocials = 55;
 
 const styles = StyleSheet.create({
   cardContactSelected: {
@@ -582,6 +577,12 @@ const styles = StyleSheet.create({
     color: colors.title,
     fontSize: 15,
     fontFamily: 'OpenSans-Regular',
+  },
+  shareSocials: {
+    height: heightShareEventSocials,
+    width: width,
+    borderBottomWidth: 0.5,
+    borderColor: colors.off,
   },
 });
 

@@ -17,10 +17,11 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import {indexGroups} from '../../../database/algolia';
 import SearchBarContact from './SearchBarContact';
-import Loader from '../../../layout/loaders/Loader';
 
+import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
+import {heightSwitch, heightShareEventSocials} from './Contacts';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -39,7 +40,7 @@ class AddGroups extends Component {
   }
 
   componentDidMount() {
-    this.initiaLoad(); 
+    this.initiaLoad();
   }
   initiaLoad = async () => {
     const {userID, objectID, pageFrom} = this.props;
@@ -337,7 +338,7 @@ class AddGroups extends Component {
     return 'Add ' + groupLength + ' groups';
   }
   render() {
-    const {searchInputGroups, loaderButton} = this.state;
+    const {searchInputGroups} = this.state;
     const {pageFrom} = this.props;
     return (
       <View style={styles.mainView}>
@@ -382,7 +383,8 @@ class AddGroups extends Component {
 
 const styles = StyleSheet.create({
   mainView: {
-    height: '94%',
+    height:
+      height - sizes.heightHeaderHome - heightSwitch - heightShareEventSocials,
   },
   rowGroup: {
     paddingTop: 10,

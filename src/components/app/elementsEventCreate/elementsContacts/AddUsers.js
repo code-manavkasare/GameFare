@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import Toast from 'react-native-easy-toast';
-import firebase from 'react-native-firebase';
 import PropTypes from 'prop-types';
 import {keys} from 'ramda';
 
@@ -21,8 +20,9 @@ import NavigationService from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {userObject} from '../../../functions/users';
-import {initialState} from '../../../../reducers/messageReducer';
 import AllIcon from '../../../layout/icons/AllIcons';
+import sizes from '../../../style/sizes';
+import {heightSwitch, heightShareEventSocials} from './Contacts';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -67,7 +67,7 @@ class AddUsers extends Component {
 
   sendInvitationGamefareUsers = async () => {
     await this.setState({loaderButton: true});
-    const {userID,nameEvent} = this.props;
+    const {userID, nameEvent} = this.props;
     const {selectedUsersWithId} = this.state;
     const user = userObject(this.props.infoUser, this.props.userID);
 
@@ -89,9 +89,11 @@ class AddUsers extends Component {
     }
 
     const {url, description} = await this.props.createBranchMessage();
-    
+
     await this.props.messageAction('setConversation', discussion);
-    await this.props.messageAction('setMyConversations', {[discussion.objectID]:true});
+    await this.props.messageAction('setMyConversations', {
+      [discussion.objectID]: true,
+    });
 
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
     await this.setState({loaderButton: false});
@@ -146,7 +148,6 @@ class AddUsers extends Component {
           updateSearch={this.searchGameFareUsers}
           searchString={searchInputGameFareUsers}
         />
-
         <UsersSelectableList
           usersList={usersList}
           loader={loader}
@@ -172,7 +173,8 @@ class AddUsers extends Component {
 
 const styles = StyleSheet.create({
   mainView: {
-    height: '94%',
+    height:
+      height - sizes.heightHeaderHome - heightSwitch - heightShareEventSocials,
   },
   rowGroup: {
     paddingTop: 10,
