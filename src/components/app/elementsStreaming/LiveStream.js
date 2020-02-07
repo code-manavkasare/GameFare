@@ -50,6 +50,7 @@ class LiveStream extends React.Component {
       waitingPermissions: false,
       waitingNetline: false,
       loading: true,
+      streamReady: false,
       streaming: false,
       assetID: '',
       streamKey: '',
@@ -210,10 +211,15 @@ class LiveStream extends React.Component {
     }
   }
 
+  lockNetline() {
+    this.setState({streamReady: true});
+  }
+
   render() {
     const {height, width} = Dimensions.get('screen');
     const {navigation} = this.props;
     console.log('state');
+    console.log(JSON.stringify(this.state, undefined, 2));
     return (
       <View style={styles.container}>
         <LiveStreamHeader
@@ -221,11 +227,14 @@ class LiveStream extends React.Component {
           textHeader={''}
           inputRange={[5, 10]}
           loader={this.state.loader}
-          click={() => navigation.navigate('TabsApp')}
-          clickMid={() => this.cycleNetlineCandidates()}
+          click1={() => navigation.navigate('TabsApp')}
+          click2={() => this.cycleNetlineCandidates()}
+          vis2={this.state.netline !== null && !this.state.streamReady}
+          click3={() => this.lockNetline()}
+          vis3={this.state.netline !== null && !this.state.streamReady}
           clickErr={() => this.setState({error: !this.state.error})}
         />
-        {!this.state.netline && !this.state.waitingNetline ? (
+        {!this.state.streamReady ? (
           // this camera takes a calibration photo
           <RNCamera
             ref={(ref) => {
@@ -268,7 +277,7 @@ class LiveStream extends React.Component {
           </View>
         ) : null}
 
-        {this.state.netline && !this.state.waitingNetline ? (
+        {!this.state.streamLive && this.state.netline && !this.state.waitingNetline ? (
           this.state.netline.error ? (
             <Row style={styleApp.center2}>
               <Text style={styleApp.textBold}>
