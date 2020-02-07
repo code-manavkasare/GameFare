@@ -32,7 +32,7 @@ const setAllUserEvents = (value) => ({
 
 const addFutureEvent = (value) => ({
   type: ADD_FUTURE_EVENT,
-  eventID: value,
+  objectID: value,
 });
 
 const setPublicEvents = (value) => ({
