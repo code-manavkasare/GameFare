@@ -60,10 +60,10 @@ export default class LiveStreamHeader extends Component {
     }
   }
   render() {
+    console.log(this.props);
     return (
       <Col style={styles.header}>
-        <View
-          style={styles.buttonStyle}>
+        <View style={styles.buttonStyle}>
           <ButtonColor
             view={() => {
               return (
@@ -75,35 +75,57 @@ export default class LiveStreamHeader extends Component {
                 />
               );
             }}
-            click={() => this.props.click()}
+            click={() => this.props.click1()}
             color={'white'}
             style={styles.button}
             onPressColor={colors.off}
           />
         </View>
-        <View
-          style={styles.buttonStyle}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  name="arrow-right"
-                  color={'colors.title'}
-                  size={15}
-                  type="font"
-                />
-              );
-            }}
-            click={() => {
-              this.props.clickMid();
-            }}
-            color={'white'}
-            style={styles.button}
-            onPressColor={colors.off}
-          />
-        </View>
-        <View
-          style={styles.buttonStyle}>
+        {this.props.vis2 ? (
+          <View style={styles.buttonStyle}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name="arrow-right"
+                    color={'colors.title'}
+                    size={15}
+                    type="font"
+                  />
+                );
+              }}
+              click={() => {
+                this.props.click2();
+              }}
+              color={'white'}
+              style={styles.button}
+              onPressColor={colors.off}
+            />
+          </View>
+        ) : null}
+        {this.props.vis3 ? (
+          <View style={styles.buttonStyle}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name="check"
+                    color={'colors.title'}
+                    size={15}
+                    type="font"
+                  />
+                );
+              }}
+              click={() => {
+                this.props.click3();
+              }}
+              color={'white'}
+              style={styles.button}
+              onPressColor={colors.off}
+            />
+          </View>
+        ) : null}
+        <View style={styles.buttonStyle}>
           <ButtonColor
             view={() => {
               return (
