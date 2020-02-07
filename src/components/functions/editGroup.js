@@ -22,24 +22,6 @@ async function editGroup(updatedGroup, callback = () => {}) {
     .catch((err) => {
       throw err;
     });
-  try {
-    var editNotif = {
-      notification: {
-        title:
-          'The group admin has edited the details of ' + updatedGroup.info.name,
-        body: '',
-        sound: 'default',
-      },
-      data: {
-        action: 'openGroupPage',
-        objectID: updatedGroup.objectID,
-      },
-    };
-    var topicGroup = '/topics/' + updatedGroup.objectID;
-    await firebase.messaging().sendToTopic(topicGroup, editNotif);
-  } catch (err) {
-    console.log(err.message);
-  }
   return true;
 }
 
