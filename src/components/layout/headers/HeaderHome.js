@@ -83,7 +83,7 @@ class HeaderHome extends Component {
         ),
         Animated.timing(this.borderWidthButtonSport, timing(1, 200)),
         Animated.timing(this.opacityVoile, timing(0.65, 200)),
-        Animated.timing(this.state.widthButtonSport, timing(150, 200)),
+        Animated.timing(this.state.widthButtonSport, timing(170, 200)),
         Animated.timing(this.rotateIcon, timing(1, 200)),
       ]).start(() => {
         this.setState({openSport: true});
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   buttonLeague: {height: 50, width: 190, paddingLeft: 5, paddingRight: 5},
   buttonSport: {
     height: 50,
-    width: 150,
+    width: 170,
   },
   button2: {
     height: 45,
