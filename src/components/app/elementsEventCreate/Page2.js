@@ -301,10 +301,14 @@ class Page2 extends Component {
     return true;
   }
   async next() {
-    const groups =  Object.values(this.props.step1.groups).reduce(function(result, item) {
-      result[item.objectID] = true;
+    const groups = Object.values(this.props.step1.groups).reduce(function(
+      result,
+      item,
+    ) {
+      result[item.objectID] = false;
       return result;
-    }, {});
+    },
+    {});
     return this.props.navigation.navigate('CreateEvent3', {
       data: {
         date: {

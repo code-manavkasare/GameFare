@@ -34,10 +34,7 @@ class Page0 extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    console.log('component did mount page 0ß',this.props.step0.league )
-
     if (this.props.step0.sport === '' || this.props.step0.league === '') {
-      console.log('on set le sport')
       this.setSport(this.props.sports[0]);
     }
   }
@@ -405,10 +402,8 @@ class Page0 extends Component {
   }
   render() {
     if (this.props.step0.sport === '' || this.props.step0.league === '') {
-      // return a component saying no sport or league has been selected?
       return null;
     }
-    console.log('oupa step 0',this.props.step0)
     var sport = this.props.sports.filter(
       (sport) => sport.value === this.props.step0.sport,
     )[0];
