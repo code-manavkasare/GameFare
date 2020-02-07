@@ -281,7 +281,7 @@ class ProfilePage extends Component {
         onGoBack: () => this.props.navigation.navigate('Checkout'),
       });
     } else if (response === 'cancel') return this.setState({loader: false});
-    await this.props.eventsAction('addFutureEvent', data.objectID);
+    
     await this.props.eventsAction('setAllEvents', {
       [data.objectID]: {
         ...data,
@@ -291,6 +291,7 @@ class ProfilePage extends Component {
         },
       },
     });
+    await this.props.eventsAction('addFutureEvent', data.objectID);
     const conversation = await indexDiscussions.getObject(data.discussions[0]);
     await this.setConversation(conversation);
 

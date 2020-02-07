@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {createEventAction} from '../../../actions/createEventActions'
 import NavigationService from '../../../../NavigationService';
 
 import colors from '../../style/colors';
@@ -19,7 +20,7 @@ import {timing, native} from '../../animations/animations';
 
 var {height, width} = Dimensions.get('screen');
 
-export default class ButtonAdd extends Component {
+class ButtonAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,6 +49,11 @@ export default class ButtonAdd extends Component {
         Animated.timing(this.translateYButton2, native(-130, 200)),
         Animated.timing(this.props.opacityVoile, native(0.4, 200)),
       ]).start(() => this.setState({open: true}));
+    }
+    if (to === 'CreateEvent0') {
+      await this.props.createEventAction('setStep1', {
+        groups: [],
+      });
     }
     return Animated.parallel([
       Animated.timing(this.rotateButton, native(0, 200)),
@@ -187,3 +193,12 @@ const styles = StyleSheet.create({
     right: 20,
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+  };
+};
+
+export default connect(mapStateToProps, {createEventAction})(
+  ButtonAdd,
+);

@@ -17,7 +17,7 @@ import styleApp from '../../style/style';
 import Switch from '../../layout/switch/Switch';
 
 import CardEvent from './CardEventSM';
-import {indexEvents,getMyEvents} from '../../database/algolia';
+import {indexEvents, getMyEvents} from '../../database/algolia';
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
 const {height, width} = Dimensions.get('screen');
@@ -74,14 +74,14 @@ class MyEvents extends React.Component {
   async loadEvent(userID) {
     await this.setState({loader: true});
 
-    const futureEvents = await getMyEvents(userID,'future');
-    const pastEvents = await getMyEvents(userID,'past');
+    const futureEvents = await getMyEvents(userID, 'future');
+    const pastEvents = await getMyEvents(userID, 'past');
 
     await this.props.eventsAction('setAllEvents', {
       ...futureEvents,
       ...pastEvents,
     });
-    await this.props.eventsAction('setFutureUserEvents',keys(futureEvents));
+    await this.props.eventsAction('setFutureUserEvents', keys(futureEvents));
     await this.props.eventsAction('setPastUserEvents', keys(pastEvents));
 
     this.setState({loader: false});
@@ -154,7 +154,6 @@ class MyEvents extends React.Component {
       numberFuture = ' (' + futureEvents.length + ')';
       numberPast = ' (' + pastEvents.length + ')';
     }
-    console.log('les futures events renderrrr',futureEvents)
     return (
       <View style={{marginTop: 20}}>
         <View style={[styleApp.marginView, {marginBottom: 20}]}>

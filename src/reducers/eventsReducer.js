@@ -41,7 +41,7 @@ const eventsReducer = (state = initialState, action) => {
     case ADD_FUTURE_EVENT:
       return {
         ...state,
-        futureUserEvents: union([action.eventID], state.futureUserEvents),
+        futureUserEvents: union([action.objectID], state.futureUserEvents),
       };
     default:
       return state;

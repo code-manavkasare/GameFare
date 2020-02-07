@@ -323,7 +323,6 @@ class Page3 extends Component {
       openPageLink: 'openEventPage',
       objectID: event.objectID,
     });
-    
   }
   render() {
     return (

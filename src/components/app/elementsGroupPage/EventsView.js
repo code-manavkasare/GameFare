@@ -57,8 +57,7 @@ class EventsView extends Component {
     if (!events) events = [];
     await indexEvents.clearCache();
     var {results} = await indexEvents.getObjects(events);
-    console.log('on get les events after creating events',results);
-    if (results.filter(event => !event).length !== 0) return this.load();
+    if (results.filter((event) => !event).length !== 0) return this.load();
     return this.setState({events: results, loader: false});
   }
   rowEvent(event, i) {
@@ -86,9 +85,14 @@ class EventsView extends Component {
         title: 'You need to be the group admin to set up a new event.',
         subtitle: 'Please message them to request assistance.',
       });
+    const sport = this.props.sports.filter(
+      (sport) => sport.value === this.props.data.info.sport,
+    )[0];
     await this.props.createEventAction('setStep1', {groups: [this.props.data]});
     await this.props.createEventAction('setStep0', {
       sport: this.props.data.info.sport,
+      league: sport.typeEvent[0].value,
+      rule: sport.typeEvent[0].rules[0].value,
     });
     return this.props.navigate('CreateEvent0', {
       pageFrom: 'Group',
@@ -162,6 +166,7 @@ const mapStateToProps = (state) => {
     allEvents: state.events.allEvents,
     userConnected: state.user.userConnected,
     userID: state.user.userID,
+    sports: state.globaleVariables.sports.list,
   };
 };
 
