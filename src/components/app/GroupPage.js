@@ -288,7 +288,7 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
-    if (!this.state.group) {
+    if (!this.state.group || !this.props.userConnected) {
       return false;
     } else {
       return this.state.group.info.organizer === this.props.userID;
@@ -411,50 +411,35 @@ class GroupPage extends React.Component {
     const {userID, userConnected} = this.props;
     return (
       <View style={{flex: 1}}>
-        {this.conditionAdmin() ? (
-          <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={''}
-            inputRange={[20, 50]}
-            initialTitleOpacity={0}
-            initialBackgroundColor={'transparent'}
-            initialBorderColorIcon={colors.grey}
-            typeIcon2={this.state.editMode ? 'font' : 'moon'}
-            typeIconOffset={'font'}
-            colorIconOffset={this.state.editMode ? colors.blue : 'white'}
-            sizeIcon2={15}
-            icon1="arrow-left"
-            icon2={this.state.editMode ? 'camera' : 'share'}
-            iconOffset="pen"
-            clickButton1={() => dismiss()}
-            clickButton2={() =>
-              !this.state.editMode
-                ? this.goToShareGroup(group)
-                : this.props.navigation.navigate('AlertAddImage', {
-                    title: 'Add picture',
-                    onGoBack: (val) => this.addPicture(val),
-                  })
-            }
-            clickButtonOffset={() =>
-              this.setState({editMode: !this.state.editMode})
-            }
-          />
-        ) : (
-          <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={''}
-            inputRange={[20, 50]}
-            initialTitleOpacity={0}
-            initialBackgroundColor={'transparent'}
-            initialBorderColorIcon={colors.grey}
-            typeIcon2={'moon'}
-            sizeIcon2={15}
-            icon1="arrow-left"
-            icon2="share"
-            clickButton1={() => dismiss()}
-            clickButton2={() => this.goToShareGroup(group)}
-          />
-        )}
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={''}
+          inputRange={[20, 50]}
+          initialTitleOpacity={0}
+          initialBackgroundColor={'transparent'}
+          initialBorderColorIcon={colors.grey}
+          typeIcon2={this.state.editMode ? 'font' : 'moon'}
+          typeIconOffset={'font'}
+          colorIconOffset={this.state.editMode ? colors.blue : 'white'}
+          sizeIcon2={15}
+          icon1="arrow-left"
+          icon2={this.state.editMode ? 'camera' : 'share'}
+          iconOffset="pen"
+          clickButton1={() => dismiss()}
+          clickButton2={() =>
+            !this.state.editMode
+              ? this.goToShareGroup(group)
+              : this.props.navigation.navigate('AlertAddImage', {
+                  title: 'Add picture',
+                  onGoBack: (val) => this.addPicture(val),
+                })
+          }
+          clickButtonOffset={
+            this.conditionAdmin()
+              ? () => this.setState({editMode: !this.state.editMode})
+              : null
+          }
+        />
         <ParallaxScrollView
           style={styles.parallaxScrollView}
           showsVerticalScrollIndicator={false}

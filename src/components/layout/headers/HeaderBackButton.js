@@ -156,7 +156,7 @@ export default class HeaderFlow extends Component {
           </Col>
           <Col size={35} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
-            {this.props.loader ? null : this.props.iconOffset != null ? (
+            {this.props.loader ? null : this.props.clickButtonOffset ? (
               <Animated.View
                 style={[
                   {

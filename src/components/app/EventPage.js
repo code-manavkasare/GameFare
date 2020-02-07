@@ -95,8 +95,10 @@ class EventPage extends React.Component {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
-        if (event.allAttendees.includes(that.props.userID)) {
-          await that.props.eventsAction('setAllEvents', {[objectID]: event});
+        if (that.props.userConnected) {
+          if (event.allAttendees.includes(that.props.userID)) {
+            await that.props.eventsAction('setAllEvents', {[objectID]: event});
+          }
         }
         that.setState({event: event, loader: false});
       });
@@ -171,7 +173,7 @@ class EventPage extends React.Component {
                 this.state.editMode
                   ? this.setState({...noEdit})
                   : this.setState({editMode: true})
-            : undefined
+            : null
         }
       />
     );
@@ -957,7 +959,7 @@ class EventPage extends React.Component {
     return true;
   }
   userIsOrganizer(event) {
-    if (!event) {
+    if (!event || !this.props.userConnected) {
       return false;
     }
     return event.info.organizer === this.props.userID;
