@@ -21,7 +21,6 @@ import SearchBarContact from './SearchBarContact';
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {heightSwitch, heightShareEventSocials} from './Contacts';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -383,8 +382,7 @@ class AddGroups extends Component {
 
 const styles = StyleSheet.create({
   mainView: {
-    height:
-      height - sizes.heightHeaderHome - heightSwitch - heightShareEventSocials,
+    height: height - sizes.heightHeaderHome - 105,
   },
   rowGroup: {
     paddingTop: 10,
