@@ -356,6 +356,8 @@ class GroupPage extends React.Component {
     ) {
       let newData = {
         ...group,
+        sendEditNotification:
+          this.state.editLocation !== noEdit.editLocation ? true : false,
         img: this.state.editPic ? this.state.editPic : undefined, // gets deleted in editGroup
         info: {
           ...group.info,

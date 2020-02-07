@@ -484,6 +484,12 @@ class EventPage extends React.Component {
     // update event data
     const newData = {
       ...data,
+      sendEditNotification:
+        this.state.editDate !== noEdit.editDate ||
+        this.state.editLocation !== noEdit.editLocation ||
+        this.state.editInfo !== noEdit.editInfo
+          ? true
+          : false,
       price: {
         ...data.price,
         joiningFee:
@@ -818,7 +824,7 @@ class EventPage extends React.Component {
         'deleteMyConversation',
         data.discussions[0],
       );
-    
+
     await this.props.eventsAction('deleteMyEvent', data.objectID);
 
     await firebase

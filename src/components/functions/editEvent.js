@@ -48,23 +48,6 @@ async function editEvent(updatedEvent, callback = () => {}) {
     .catch((err) => {
       throw err;
     });
-    try {
-      var editNotif = {
-        notification: {
-          title: 'The event organizer has edited the event details of ' + updatedEvent.info.name,
-          body: '',
-          sound: 'default',
-        },
-        data: {
-          action: 'openEventPage',
-          objectID: updatedEvent.objectID,
-        },
-      };
-      var topicEvent = '/topics/' + updatedEvent.objectID;
-      await firebase.messaging().sendToTopic(topicEvent, editNotif);
-    } catch (err) {
-      console.log(err.message);
-    }
     return true;
 }
 
