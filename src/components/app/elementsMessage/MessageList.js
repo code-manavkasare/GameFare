@@ -15,6 +15,7 @@ import {loadMyDiscusions} from '../../functions/message';
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
 import sizes from '../../style/sizes';
 import CardConversation from './CardConversation';
+import isEqual from 'lodash.isequal';
 
 class MessageTab extends React.Component {
   constructor(props) {
@@ -64,14 +65,19 @@ class MessageTab extends React.Component {
 
   async componentWillReceiveProps(nextProps) {
     if (
-      this.props.userConnected !== nextProps.userConnected &&
-      nextProps.userConnected
+      (this.props.userConnected !== nextProps.userConnected &&
+      nextProps.userConnected)
     ) {
       var that = this;
+      await this.setState({loader: true});
       setTimeout(function() {
         that.loadDiscussions(nextProps.userID);
       }, 800);
-    } else if (
+    } else if ( (!isEqual(this.props.myConversations,nextProps.myConversations &&
+      nextProps.userConnected))) {
+        await this.setState({loader:true})
+        return this.setState({loader:false})
+      } else if (
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
     ) {
