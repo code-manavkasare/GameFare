@@ -7,6 +7,7 @@ import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import stripe from 'tipsi-stripe';
+import {keys} from 'ramda'
 // import Date from '../app/elementsEventCreate/DateSelector';
 import moment from 'moment';
 
@@ -72,10 +73,10 @@ async function createEventObj(data, userID, infoUser, level, groups) {
 }
 
 async function pushEventToGroups(groups, eventID) {
-  for (var i in groups) {
+  for (var i in keys(groups)) {
     await firebase
       .database()
-      .ref('groups/' + groups[i] + '/events')
+      .ref('groups/' + keys(groups)[i] + '/events')
       .update({
         [eventID]: true,
       });
@@ -83,10 +84,12 @@ async function pushEventToGroups(groups, eventID) {
 }
 
 async function createEvent(data, userID, infoUser, level) {
+  console.log('data.images[0]',data)
   var pictureUri = await uploadPictureFirebase(
     data.images[0],
     'events/' + generateID(),
   );
+  console.log('pictureUri',pictureUri)
   if (!pictureUri) return false;
 
   var event = await createEventObj(data, userID, infoUser, level);

@@ -42,6 +42,7 @@ class Page0 extends Component {
   }
   componentDidMount() {
     if (this.props.createGroupData.info.sport === '') {
+      console.log('setInfoCreateGroup')
       this.props.createGroupAction('setInfoCreateGroup', {
         sport: this.props.sportSelected,
       });

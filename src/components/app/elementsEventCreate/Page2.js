@@ -301,9 +301,10 @@ class Page2 extends Component {
     return true;
   }
   async next() {
-    var groups = Object.values(this.props.step1.groups).map(
-      (group) => group.objectID,
-    );
+    const groups =  Object.values(this.props.step1.groups).reduce(function(result, item) {
+      result[item.objectID] = true;
+      return result;
+    }, {});
     return this.props.navigation.navigate('CreateEvent3', {
       data: {
         date: {

@@ -196,11 +196,11 @@ class Page1 extends Component {
 
         {this.plusMinus(step1, 'numberPlayers', 200, 1, 1, 'user-check')}
         {this.gender()}
-
+{/* 
         {Object.values(step1.groups).length !== 0 &&
           Object.values(step1.groups).map((group, i) =>
             this.rowGroup(group, i, Object.values(step1.groups)),
-          )}
+          )} */}
       </View>
     );
   }
