@@ -22,7 +22,6 @@ import colors from '../../../style/colors';
 import {userObject} from '../../../functions/users';
 import AllIcon from '../../../layout/icons/AllIcons';
 import sizes from '../../../style/sizes';
-import {heightSwitch, heightShareEventSocials} from './Contacts';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -173,8 +172,7 @@ class AddUsers extends Component {
 
 const styles = StyleSheet.create({
   mainView: {
-    height:
-      height - sizes.heightHeaderHome - heightSwitch - heightShareEventSocials,
+    height: height - sizes.heightHeaderHome - 105,
   },
   rowGroup: {
     paddingTop: 10,
