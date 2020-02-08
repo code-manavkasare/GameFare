@@ -40,7 +40,9 @@ class HeaderHome extends Component {
     this.borderWidthButtonLeague = new Animated.Value(0);
     this.borderWidthButtonSport = new Animated.Value(0);
     this.opacityVoile = new Animated.Value(0);
+    this.opacityVoileSport = new Animated.Value(0);
     this.translateXVoile = new Animated.Value(width);
+    this.translateXVoileSport = new Animated.Value(width);
     this.openLeagueVal = false;
   }
 
@@ -75,14 +77,14 @@ class HeaderHome extends Component {
 
   async openSport(val, sport) {
     if (val) {
-      await this.translateXVoile.setValue(0);
+      await this.translateXVoileSport.setValue(0);
       return Animated.parallel([
         Animated.timing(
           this.state.heightButtonSport,
           timing(Object.values(this.props.sports).length * 50, 200),
         ),
         Animated.timing(this.borderWidthButtonSport, timing(1, 200)),
-        Animated.timing(this.opacityVoile, timing(0.65, 200)),
+        Animated.timing(this.opacityVoileSport, timing(0.65, 200)),
         Animated.timing(this.state.widthButtonSport, timing(170, 200)),
         Animated.timing(this.rotateIcon, timing(1, 200)),
       ]).start(() => {
@@ -97,12 +99,12 @@ class HeaderHome extends Component {
     return Animated.parallel([
       Animated.timing(this.state.heightButtonSport, timing(50, 200)),
       Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
-      Animated.timing(this.opacityVoile, timing(0, 200)),
+      Animated.timing(this.opacityVoileSport, timing(0, 200)),
       Animated.timing(this.state.widthButtonSport, timing(51, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {
       this.setState({openSport: false});
-      this.translateXVoile.setValue(width);
+      this.translateXVoileSport.setValue(width);
     });
   }
   async openLeague(val, league, numberElements) {
@@ -137,12 +139,26 @@ class HeaderHome extends Component {
       Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
       Animated.timing(this.borderWidthButtonLeague, timing(0, 200)),
       Animated.timing(this.opacityVoile, timing(0, 200)),
+      Animated.timing(this.opacityVoileSport, timing(0, 200)),
       Animated.timing(this.state.widthButtonSport, timing(51, 200)),
       Animated.timing(this.state.widthButtonLeague, timing(45, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {
+      this.openLeagueVal = false;
       this.setState({openSport: false});
-      this.translateXVoile.setValue(width);
+      this.translateXVoileSport.setValue(width);
+    });
+  }
+  closeVoileSport() {
+    Animated.parallel([
+      Animated.timing(this.state.heightButtonSport, timing(50, 200)),
+      Animated.timing(this.borderWidthButtonSport, timing(0, 200)),
+      Animated.timing(this.opacityVoileSport, timing(0, 200)),
+      Animated.timing(this.state.widthButtonSport, timing(51, 200)),
+      Animated.timing(this.rotateIcon, timing(0, 200)),
+    ]).start(() => {
+      this.setState({openSport: false});
+      this.translateXVoileSport.setValue(width);
     });
   }
   buttonSport(sport, i) {
@@ -230,6 +246,26 @@ class HeaderHome extends Component {
       </Animated.View>
     );
   }
+  voileSport () {
+    return (
+      <Animated.View
+        style={[
+          styleApp.voile,
+          {
+            zIndex: 13,
+            opacity: this.opacityVoileSport,
+            marginTop:-100,
+            transform: [{translateX: this.translateXVoileSport}],
+          },
+        ]}>
+        <TouchableOpacity
+          style={[styleApp.fullSize]}
+          activeOpacity={1}
+          onPress={() => this.closeVoileSport()}
+        />
+      </Animated.View>
+    );
+  }
   render() {
     const AnimateBackgroundView = this.props.AnimatedHeaderValue.interpolate({
       inputRange: [0, 100],
@@ -284,14 +320,16 @@ class HeaderHome extends Component {
         style={[
           styles.header,
           {
-            backgroundColor: AnimateBackgroundView,
+            // backgroundColor: 'blue',
             borderBottomWidth: borderWidth,
             height: sizes.heightHeaderHome,
             borderColor: borderColorView,
             shadowOpacity: shadeOpacityHeader,
           },
         ]}>
+         
         <Row style={styles.rowHeader}>
+          {this.voileSport()}
           <Animated.View
             style={[
               {
@@ -308,6 +346,7 @@ class HeaderHome extends Component {
               .filter((item) => item && item.value !== sport.value)
               .map((sportIn, i) => this.buttonSport(sportIn, i + 1))}
           </Animated.View>
+          
           <Animated.View
             style={[
               {
@@ -382,6 +421,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     position: 'absolute',
     left: 90,
+    zIndex:0,
     borderRadius: 10,
   },
   viewButtonSport: {
