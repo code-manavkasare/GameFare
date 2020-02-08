@@ -489,7 +489,8 @@ class EventPage extends React.Component {
       sendEditNotification:
         this.state.editDate !== noEdit.editDate ||
         this.state.editLocation !== noEdit.editLocation ||
-        this.state.editInfo !== noEdit.editInfo
+        this.state.editRule !== noEdit.editRule ||
+        this.state.editLevelIndex !== noEdit.editLevelIndex
           ? true
           : false,
       price: {
