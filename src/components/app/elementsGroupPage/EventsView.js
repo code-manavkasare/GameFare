@@ -68,7 +68,6 @@ class EventsView extends Component {
         size={'SM'}
         groupPage={true}
         marginTop={25}
-        // navigate={(val, data) => this.props.navigate(val, data)}
         data={event}
         loadData={true}
       />
