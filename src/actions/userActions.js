@@ -4,7 +4,7 @@ import firebase from 'react-native-firebase';
 import Mixpanel from 'react-native-mixpanel';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
 import NavigationService from '../../NavigationService';
-import {subscribeToTopics} from '../components/functions/notifications'
+import {subscribeToTopics} from '../components/functions/notifications';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 const setUserInfo = (value) => ({
@@ -65,6 +65,7 @@ export const userAction = (val, data) => {
           return userConnected;
         });
     } else if (val === 'logout') {
+      await firebase.messaging().unsubscribeFromTopic(data.userID);
       await firebase
         .database()
         .ref('users/' + data.userID)

@@ -82,9 +82,7 @@ class AddUsers extends Component {
     };
 
     let discussion = await searchDiscussion(usersIDArray, usersIDArray.length);
-    console.log('discussion', discussion);
-    // console.log(selectedUsersWithId);
-    // return true;
+
     if (!discussion) {
       discussion = await createDiscussion(
         selectedUsersWithIdAndHost,
