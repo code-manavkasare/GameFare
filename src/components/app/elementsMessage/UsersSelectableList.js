@@ -69,7 +69,7 @@ export default class UsersSelectableList extends React.Component {
 const styles = StyleSheet.create({
   scrollViewUsers: {
     paddingTop: 10,
-    minHeight: height,
+    //minHeight: height,
   },
 });
 

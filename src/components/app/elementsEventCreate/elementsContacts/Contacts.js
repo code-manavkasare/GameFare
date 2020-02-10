@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
   shareSocials: {
     height: heightShareEventSocials,
     width: width,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0,
     borderColor: colors.off,
   },
 });
