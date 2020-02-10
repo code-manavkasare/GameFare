@@ -19,10 +19,10 @@ import NavigationService from '../../../../NavigationService';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import axios from 'axios';
+import Config from 'react-native-config';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import Button from '../../layout/buttons/Button';
 import Loader from '../../layout/loaders/Loader';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
@@ -64,7 +64,7 @@ class PhoneFields extends Component {
   async next(phone) {
     // this.firstTextInput.blur()
     this.setState({loader: true});
-    var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser';
+    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
     var phoneNumber = phone;
     phoneNumber = phoneNumber.replace('-', '');
     phoneNumber = phoneNumber.replace(')', '');

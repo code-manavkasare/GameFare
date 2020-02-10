@@ -1,15 +1,23 @@
 import algoliasearch from 'algoliasearch/reactnative';
 import equal from 'fast-deep-equal';
 import union from 'lodash/union';
-import {keys} from 'ramda'
+import {keys} from 'ramda';
 import moment from 'moment';
+import Config from 'react-native-config';
 
 const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3');
-const indexEvents = client.initIndex('prod_events');
-const indexPastEvents = client.initIndex('prod_pastEvents');
-const indexGroups = client.initIndex('prod_groups');
-const indexUsers = client.initIndex('prod_users');
-const indexDiscussions = client.initIndex('prod_discussions');
+
+let indexEvents = client.initIndex('prod_events');
+let indexGroups = client.initIndex('prod_groups');
+let indexUsers = client.initIndex('prod_users');
+let indexDiscussions = client.initIndex('prod_discussions');
+
+if (Config.ENV === 'dev') {
+  indexEvents = client.initIndex('dev_events');
+  indexGroups = client.initIndex('dev_groups');
+  indexUsers = client.initIndex('dev_users');
+  indexDiscussions = client.initIndex('dev_discussions');
+}
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
   await indexGroups.clearCache();
@@ -183,7 +191,6 @@ const getMyEvents = async (userID, filterDateName) => {
 module.exports = {
   indexEvents,
   indexGroups,
-  indexPastEvents,
   indexUsers,
   getEventPublic,
   indexDiscussions,

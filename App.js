@@ -4,6 +4,7 @@ import StatusBar from '@react-native-community/status-bar';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
+import Config from 'react-native-config';
 
 import AppSwitchNavigator from './src/components/navigation/AppNavigator';
 import NavigationService from './NavigationService';
@@ -29,7 +30,7 @@ class App extends Component {
   }
 
   async autoSignIn() {
-    var url = 'https://us-central1-getplayd.cloudfunctions.net/signUpUser';
+    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
     const promiseAxios = await axios.get(url, {
       params: {
         phone: this.props.phoneNumber,
