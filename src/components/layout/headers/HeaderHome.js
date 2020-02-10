@@ -130,7 +130,9 @@ class HeaderHome extends Component {
       Animated.timing(this.opacityVoile, timing(0, 200)),
       Animated.timing(this.state.widthButtonLeague, timing(45, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
-    ]).start(() => {});
+    ]).start(() => {
+      this.translateXVoile.setValue(width);
+    });
   }
   closeAll() {
     Animated.parallel([
@@ -326,7 +328,6 @@ class HeaderHome extends Component {
             borderBottomWidth: borderWidth,
             height: sizes.heightHeaderHome,
             borderColor: borderColorView,
-            shadowOpacity: shadeOpacityHeader,
           },
         ]}>
         <Row style={styles.rowHeader}>

@@ -65,9 +65,12 @@ class AddUsers extends Component {
   };
 
   sendInvitationGamefareUsers = async () => {
+    const {selectedUsersWithId} = this.state;
+
+    if (Object.values(selectedUsersWithId).length === 0) return true;
     await this.setState({loaderButton: true});
     const {userID, nameEvent} = this.props;
-    const {selectedUsersWithId} = this.state;
+
     const user = userObject(this.props.infoUser, this.props.userID);
 
     let usersIDArray = keys(selectedUsersWithId);
@@ -79,6 +82,9 @@ class AddUsers extends Component {
     };
 
     let discussion = await searchDiscussion(usersIDArray, usersIDArray.length);
+    console.log('discussion', discussion);
+    // console.log(selectedUsersWithId);
+    // return true;
     if (!discussion) {
       discussion = await createDiscussion(
         selectedUsersWithIdAndHost,
