@@ -11,11 +11,12 @@ import {
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import firebase from 'react-native-firebase';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
+import axios from 'axios';
+import Config from 'react-native-config';
+
 import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import BackButton from '../../../layout/buttons/BackButton';
 import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
@@ -23,7 +24,6 @@ import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
-import axios from 'axios';
 
 class ListEvent extends Component {
   constructor(props) {
@@ -143,8 +143,7 @@ class ListEvent extends Component {
   }
   async confirmDelete() {
     this.setState({loader: true});
-    var url =
-      'https://us-central1-getplayd.cloudfunctions.net/deleteUserCreditCard';
+    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}deleteUserCreditCard`;
     const results = await axios.get(url, {
       params: {
         CardID: this.props.navigation.getParam('data').id,

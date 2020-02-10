@@ -12,11 +12,7 @@ import {getZone} from '../../functions/location';
 import CardGroup from './CardGroup';
 import {timing, native} from '../../animations/animations';
 
-import {
-  indexGroups,
-  indexEvents,
-  indexPastEvents,
-} from '../../database/algolia';
+import {indexGroups} from '../../database/algolia';
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 

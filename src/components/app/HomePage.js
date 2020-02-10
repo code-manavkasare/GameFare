@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
 import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase';
+import {Col, Row} from 'react-native-easy-grid';
 
 import ListEvents from './elementsHome/ListEvent';
 import HeaderHome from '../layout/headers/HeaderHome';
@@ -14,7 +15,6 @@ import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
 import ButtonAdd from './elementsHome/ButtonAdd';
 import AllIcons from '../layout/icons/AllIcons';
-import {Col, Row} from 'react-native-easy-grid';
 
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal';
