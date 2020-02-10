@@ -82,7 +82,13 @@ Try yarn ios again, everything should work now.
 
 Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration put Debug instead of Release, then run
 
-    yarn ios
+    yarn ios-dev 
+
+for developper environment or 
+
+    yarn ios-prod
+
+for prod environment
 
 ## Debugging
 
@@ -90,6 +96,7 @@ We use Reactotron for debugging please install the software from github page : h
 We also use ESLint, be sure to have it installed on your VSCode extension
 
 ## Deploying
+TODO: when apple user change rewrite deployment on testflight with fastlane to dev environment 
 
 We use Fastlane for automatized deployment on Testflight. To use it first install it
 

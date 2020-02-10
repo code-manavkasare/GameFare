@@ -12,12 +12,11 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
+import Config from 'react-native-config';
+
 import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import BackButton from '../../../layout/buttons/BackButton';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import sizes from '../../../style/sizes';
@@ -102,8 +101,7 @@ class ListEvent extends Component {
       if (response.error) {
         this.wrongCB(response.error.message);
       } else {
-        var url =
-          'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard';
+        var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addUserCreditCard`;
         const promiseAxios = axios.get(url, {
           params: {
             tokenCard: tokenCard,

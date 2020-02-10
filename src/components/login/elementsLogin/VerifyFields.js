@@ -7,16 +7,16 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-
 import CodeFiled from 'react-native-confirmation-code-field';
-import Loader from '../../layout/loaders/Loader';
-import styleApp from '../../style/style';
-import colors from '../../style/colors';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import {connect} from 'react-redux';
+import Config from 'react-native-config';
 
+import Loader from '../../layout/loaders/Loader';
+import styleApp from '../../style/style';
+import colors from '../../style/colors';
 import {userAction} from '../../../actions/userActions';
 const {height, width} = Dimensions.get('screen');
 
@@ -46,8 +46,7 @@ class VerifyFields extends Component {
     phoneNumber = phoneNumber.replace(')', '');
     phoneNumber = phoneNumber.replace(/ /g, '');
 
-    var url =
-      'https://us-central1-getplayd.cloudfunctions.net/sendSMSVerification';
+    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}sendSMSVerification`;
     const promiseAxios = await axios.get(url, {
       params: {
         phoneNumber: phoneNumber,
@@ -76,7 +75,7 @@ class VerifyFields extends Component {
   };
   async verifPhone(code) {
     this.setState({step: 'verifying', loader: true});
-    var url = 'https://us-central1-getplayd.cloudfunctions.net/verifyPhone';
+    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}verifyPhone`;
     var phoneNumber = this.props.params.phoneNumber;
     phoneNumber = phoneNumber.replace('-', '');
     phoneNumber = phoneNumber.replace('(', '');

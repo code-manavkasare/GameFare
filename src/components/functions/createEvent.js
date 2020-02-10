@@ -10,6 +10,7 @@ import stripe from 'tipsi-stripe';
 import {keys} from 'ramda';
 // import Date from '../app/elementsEventCreate/DateSelector';
 import moment from 'moment';
+import Config from 'react-native-config';
 
 stripe.setOptions({
   publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
@@ -172,8 +173,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
       const token = await stripe.paymentRequestWithApplePay(items, options);
       var tokenCard = token.tokenId;
 
-      var url =
-        'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard';
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addUserCreditCard`;
       const promiseAxios = await axios.get(url, {
         params: {
           tokenCard: tokenCard,
@@ -197,7 +197,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
   }
   if (Number(data.price.joiningFee) !== 0) {
     try {
-      var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee';
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}payEntryFee`;
       const promiseAxios = await axios.get(url, {
         params: {
           cardID: cardID,
