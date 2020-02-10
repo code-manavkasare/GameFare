@@ -134,7 +134,7 @@ class HeaderHome extends Component {
       this.translateXVoile.setValue(width);
     });
   }
-  closeAll() {
+  closeVoileLeague() {
     Animated.parallel([
       Animated.timing(this.state.heightButtonSport, timing(50, 200)),
       Animated.timing(this.state.heightButtonLeague, timing(50, 200)),
@@ -149,7 +149,6 @@ class HeaderHome extends Component {
       this.openLeagueVal = false;
       this.setState({openSport: false});
       this.translateXVoile.setValue(width);
-      this.translateXVoileSport.setValue(width);
     });
   }
   closeVoileSport() {
@@ -161,7 +160,6 @@ class HeaderHome extends Component {
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {
       this.setState({openSport: false});
-      this.translateXVoile.setValue(width);
       this.translateXVoileSport.setValue(width);
     });
   }
@@ -245,7 +243,7 @@ class HeaderHome extends Component {
         <TouchableOpacity
           style={[styleApp.fullSize]}
           activeOpacity={1}
-          onPress={() => this.closeAll()}
+          onPress={() => this.closeVoileLeague()}
         />
       </Animated.View>
     );
