@@ -487,7 +487,8 @@ class EventPage extends React.Component {
     const newData = {
       ...data,
       sendEditNotification:
-        this.state.editDate !== noEdit.editDate ||
+        this.state.editStart !== noEdit.editStart ||
+        this.state.editEnd !== noEdit.editEnd ||
         this.state.editLocation !== noEdit.editLocation ||
         this.state.editRule !== noEdit.editRule ||
         this.state.editLevelIndex !== noEdit.editLevelIndex
