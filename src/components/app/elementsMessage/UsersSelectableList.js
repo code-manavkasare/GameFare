@@ -59,6 +59,7 @@ export default class UsersSelectableList extends React.Component {
               />
             ))
           )}
+
           <View style={{height: 350}} />
         </ScrollView>
       </View>

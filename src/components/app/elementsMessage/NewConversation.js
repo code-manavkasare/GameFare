@@ -17,11 +17,9 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
-import AllIcons from '../../layout/icons/AllIcons';
-
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
-import ButtonColor from '../../layout/Views/Button';
-import AsyncImage from '../../layout/image/AsyncImage';
+import CardUserSelect from '../../layout/cards/CardUserSelect';
+
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 import {createDiscussion, searchDiscussion} from '../../functions/message';
@@ -116,58 +114,11 @@ class NewConversation extends React.Component {
   }
   cardUser(user, i, selectedUsers) {
     return (
-      <ButtonColor
+      <CardUserSelect
+        user={user}
         key={i}
-        view={() => {
-          return (
-            <Row>
-              <Col size={15} style={styleApp.center2}>
-                {user.info.picture ? (
-                  <AsyncImage
-                    style={styles.imgUser}
-                    mainImage={user.info.picture}
-                    imgInitial={user.info.picture}
-                  />
-                ) : (
-                  <AllIcons
-                    name="user-circle"
-                    type="font"
-                    size={40}
-                    color={colors.greyDark}
-                  />
-                )}
-              </Col>
-              <Col size={80} style={styleApp.center2}>
-                <Text style={styleApp.text}>
-                  {user.info.firstname} {user.info.lastname}
-                </Text>
-              </Col>
-              <Col size={10} style={styleApp.center}>
-                {selectedUsers[user.objectID] ? (
-                  <AllIcons
-                    name="check-circle"
-                    type="font"
-                    size={23}
-                    color={colors.primary}
-                  />
-                ) : (
-                  <AllIcons
-                    name="circle"
-                    type="font"
-                    size={23}
-                    color={colors.greyDark}
-                  />
-                )}
-              </Col>
-            </Row>
-          );
-        }}
-        click={() =>
-          this.selectUser(selectedUsers[user.objectID], user, selectedUsers)
-        }
-        color="white"
-        style={styles.cardUser}
-        onPressColor={colors.off}
+        selectUser={this.selectUser.bind(this)}
+        selectedUsers={selectedUsers}
       />
     );
   }
