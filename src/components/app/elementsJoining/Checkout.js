@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
-import {messageAction} from '../../../actions/messageActions'
+import {messageAction} from '../../../actions/messageActions';
 import {joinEvent} from '../../functions/createEvent';
-import {indexDiscussions} from '../../database/algolia'
+import {indexDiscussions} from '../../database/algolia';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -228,8 +228,8 @@ class ProfilePage extends Component {
                 We will charge the entry fee at the point of joining the event.
                 No refunds unless your spot can be filled with an alternate
                 player. {'\n'}
-                {'\n'} If the organizer declines your request, we will refund
-                the charge on your wallet.
+                {'\n'}If the organizer declines your request, we will refund the
+                charge on your wallet.
               </Text>
             </Text>
           ) : creditCardCharge !== 0 ? (
@@ -269,7 +269,7 @@ class ProfilePage extends Component {
       },
       this.props.navigation.getParam('coach'),
       this.props.navigation.getParam('users'),
-      waitlist
+      waitlist,
     );
     if (!response) {
       await this.setState({loader: false});
@@ -281,7 +281,7 @@ class ProfilePage extends Component {
         onGoBack: () => this.props.navigation.navigate('Checkout'),
       });
     } else if (response === 'cancel') return this.setState({loader: false});
-    
+
     await this.props.eventsAction('setAllEvents', {
       [data.objectID]: {
         ...data,
@@ -300,8 +300,10 @@ class ProfilePage extends Component {
   }
   async setConversation(data) {
     await this.props.messageAction('setConversation', data);
-    await this.props.messageAction('setMyConversations', {[data.objectID]:true});
-    return true
+    await this.props.messageAction('setMyConversations', {
+      [data.objectID]: true,
+    });
+    return true;
   }
   conditionOn(creditCardCharge, defaultCard) {
     if (creditCardCharge !== 0 && !defaultCard) return false;
@@ -396,6 +398,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction, eventsAction,messageAction})(
-  ProfilePage,
-);
+export default connect(mapStateToProps, {
+  userAction,
+  eventsAction,
+  messageAction,
+})(ProfilePage);

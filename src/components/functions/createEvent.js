@@ -7,7 +7,7 @@ import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import stripe from 'tipsi-stripe';
-import {keys} from 'ramda'
+import {keys} from 'ramda';
 // import Date from '../app/elementsEventCreate/DateSelector';
 import moment from 'moment';
 
@@ -84,12 +84,12 @@ async function pushEventToGroups(groups, eventID) {
 }
 
 async function createEvent(data, userID, infoUser, level) {
-  console.log('data.images[0]',data)
+  console.log('data.images[0]', data);
   var pictureUri = await uploadPictureFirebase(
     data.images[0],
     'events/' + generateID(),
   );
-  console.log('pictureUri',pictureUri)
+  console.log('pictureUri', pictureUri);
   if (!pictureUri) return false;
 
   var event = await createEventObj(data, userID, infoUser, level);
@@ -230,10 +230,10 @@ async function joinEvent(
   users,
   waitlist,
 ) {
-  if (data.date_timestamp < Number(new Date()))
+  if (data.end_timestamp < Number(new Date()))
     return {
       response: false,
-      message: 'This event is now past. You cannot join it anymore.',
+      message: 'The event has finished. You can no longer sign up.',
     };
   var {response, message} = await checkUserAttendingEvent(userID, data);
   if (!response) return {response, message};

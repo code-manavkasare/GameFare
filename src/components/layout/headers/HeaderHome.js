@@ -130,7 +130,9 @@ class HeaderHome extends Component {
       Animated.timing(this.opacityVoile, timing(0, 200)),
       Animated.timing(this.state.widthButtonLeague, timing(45, 200)),
       Animated.timing(this.rotateIcon, timing(0, 200)),
-    ]).start(() => {});
+    ]).start(() => {
+      this.translateXVoile.setValue(width);
+    });
   }
   closeAll() {
     Animated.parallel([
@@ -146,6 +148,7 @@ class HeaderHome extends Component {
     ]).start(() => {
       this.openLeagueVal = false;
       this.setState({openSport: false});
+      this.translateXVoile.setValue(width);
       this.translateXVoileSport.setValue(width);
     });
   }
@@ -158,6 +161,7 @@ class HeaderHome extends Component {
       Animated.timing(this.rotateIcon, timing(0, 200)),
     ]).start(() => {
       this.setState({openSport: false});
+      this.translateXVoile.setValue(width);
       this.translateXVoileSport.setValue(width);
     });
   }
@@ -246,7 +250,7 @@ class HeaderHome extends Component {
       </Animated.View>
     );
   }
-  voileSport () {
+  voileSport() {
     return (
       <Animated.View
         style={[
@@ -254,7 +258,7 @@ class HeaderHome extends Component {
           {
             zIndex: 13,
             opacity: this.opacityVoileSport,
-            marginTop:-100,
+            marginTop: -100,
             transform: [{translateX: this.translateXVoileSport}],
           },
         ]}>
@@ -324,10 +328,8 @@ class HeaderHome extends Component {
             borderBottomWidth: borderWidth,
             height: sizes.heightHeaderHome,
             borderColor: borderColorView,
-            shadowOpacity: shadeOpacityHeader,
           },
         ]}>
-         
         <Row style={styles.rowHeader}>
           {this.voileSport()}
           <Animated.View
@@ -346,7 +348,7 @@ class HeaderHome extends Component {
               .filter((item) => item && item.value !== sport.value)
               .map((sportIn, i) => this.buttonSport(sportIn, i + 1))}
           </Animated.View>
-          
+
           <Animated.View
             style={[
               {
@@ -421,7 +423,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     position: 'absolute',
     left: 90,
-    zIndex:0,
+    zIndex: 0,
     borderRadius: 10,
   },
   viewButtonSport: {

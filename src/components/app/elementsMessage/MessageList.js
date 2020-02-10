@@ -65,19 +65,23 @@ class MessageTab extends React.Component {
 
   async componentWillReceiveProps(nextProps) {
     if (
-      (this.props.userConnected !== nextProps.userConnected &&
-      nextProps.userConnected)
+      this.props.userConnected !== nextProps.userConnected &&
+      nextProps.userConnected
     ) {
       var that = this;
       await this.setState({loader: true});
       setTimeout(function() {
         that.loadDiscussions(nextProps.userID);
       }, 800);
-    } else if ( (!isEqual(this.props.myConversations,nextProps.myConversations &&
-      nextProps.userConnected))) {
-        await this.setState({loader:true})
-        return this.setState({loader:false})
-      } else if (
+    } else if (
+      !isEqual(
+        this.props.myConversations,
+        nextProps.myConversations && nextProps.userConnected,
+      )
+    ) {
+      await this.setState({loader: true});
+      return this.setState({loader: false});
+    } else if (
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
     ) {
@@ -142,18 +146,24 @@ class MessageTab extends React.Component {
           ]}
         />
         <View>
-          {this.state.loader
-            ? this.placeHolder()
-            : Object.keys(myConversations)
-                .reverse()
-                .map((discussion, i) => (
-                  <CardConversation
-                    key={i}
-                    index={i}
-                    discussionID={discussion}
-                    myConversation={true}
-                  />
-                ))}
+          {this.state.loader ? (
+            this.placeHolder()
+          ) : Object.keys(myConversations).length === 0 ? (
+            <Text style={[styleApp.text, {marginTop: 10, marginLeft: 20}]}>
+              You don’t have any messages yet.
+            </Text>
+          ) : (
+            Object.keys(myConversations)
+              .reverse()
+              .map((discussion, i) => (
+                <CardConversation
+                  key={i}
+                  index={i}
+                  discussionID={discussion}
+                  myConversation={true}
+                />
+              ))
+          )}
         </View>
         <View style={{height: 30}} />
       </View>

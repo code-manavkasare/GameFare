@@ -959,7 +959,8 @@ class EventPage extends React.Component {
     if (!attendees) return false;
     if (
       Object.values(attendees).filter(
-        (user) => user.userID === this.props.userID,
+        (user) =>
+          user.userID === this.props.userID && user.status === 'confirmed',
       ).length === 0
     )
       return false;
