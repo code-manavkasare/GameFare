@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1022232395517-labsq7c8jsmp74sk8fm3q1s829g42a13.apps.googleusercontent.com</string>
+	<string>1022232395517-64m5ng9tpia39oqqme48im4q2bcbgkrj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1022232395517-labsq7c8jsmp74sk8fm3q1s829g42a13</string>
+	<string>com.googleusercontent.apps.1022232395517-64m5ng9tpia39oqqme48im4q2bcbgkrj</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDhYhLRznDvY2fYLUxFtYzYIs8QaCdn9_I</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>gamefare</string>
+	<string>gamefareInc</string>
 	<key>PROJECT_ID</key>
 	<string>getplayd</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1022232395517:ios:b45338b3616f226177c894</string>
+	<string>1:1022232395517:ios:5ebd60032028105777c894</string>
 	<key>DATABASE_URL</key>
 	<string>https://getplayd.firebaseio.com</string>
 </dict>

@@ -1,26 +1,16 @@
+import firebase from 'react-native-firebase';
+import axios from 'axios';
+import {keys} from 'ramda';
+import moment from 'moment';
+import Config from 'react-native-config';
+
 import {uploadPictureFirebase} from '../functions/pictures';
 import {
   subscribeToTopics,
   refreshTokenOnDatabase,
 } from '../functions/notifications';
 import {indexEvents} from '../database/algolia';
-import firebase from 'react-native-firebase';
-import axios from 'axios';
-import stripe from 'tipsi-stripe';
-import {keys} from 'ramda';
-// import Date from '../app/elementsEventCreate/DateSelector';
-import moment from 'moment';
-import Config from 'react-native-config';
-
-stripe.setOptions({
-  publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
-  merchantId: 'merchant.gamefare',
-  androidPayMode: 'test',
-  requiredBillingAddressFields: ['all'],
-});
-var options = {
-  requiredBillingAddressFields: ['postal_address'],
-};
+import {options, stripe} from '../functions/stripe';
 
 function generateID() {
   return (
@@ -170,6 +160,8 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
           amount: amountToPay.toFixed(2),
         },
       ];
+      const applePay = await stripe.canMakeApplePayPayments();
+      console.log('applePay', applePay);
       const token = await stripe.paymentRequestWithApplePay(items, options);
       var tokenCard = token.tokenId;
 
@@ -191,6 +183,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
         await stripe.completeApplePayRequest();
       }
     } catch (err) {
+      console.log('errr', err);
       stripe.cancelApplePayRequest();
       return {response: 'cancel', message: 'cancel'};
     }

@@ -422,6 +422,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 90,
     zIndex: 0,
+    top: -5,
     borderRadius: 10,
   },
   viewButtonSport: {
@@ -429,6 +430,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 40,
     left: 20,
+    top: -5,
     borderWidth: 1,
     borderRadius: 10,
   },
@@ -455,6 +457,7 @@ const styles = StyleSheet.create({
     width: 45,
     position: 'absolute',
     right: 20,
+    top: -5,
     borderRadius: 25,
     borderWidth: 1,
   },
