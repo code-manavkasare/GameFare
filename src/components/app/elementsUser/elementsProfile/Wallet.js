@@ -13,7 +13,7 @@ const {height, width} = Dimensions.get('screen');
 import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
+import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 
 import sizes from '../../../style/sizes';
@@ -25,48 +25,54 @@ class ListEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialLoader: true,
+      loader: true,
       events: [],
     };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: 'My wallet',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton
-          color={colors.title}
-          name="keyboard-arrow-left"
-          type="mat"
-          click={() => navigation.navigate(navigation.getParam('pageFrom'))}
-        />
-      ),
-    };
-  };
-  async componentDidMount() {}
-  settings() {
+  async componentDidMount() {
+    let listTransfert = await firebase
+      .database()
+      .ref('usersTransfers/' + this.props.userID)
+      .once('value');
+    listTransfert = listTransfert.val();
+  }
+  listWallet() {
     return (
       <View style={{marginTop: 0}}>
+        <View style={{height: 700, backgroundColor: 'white'}} />
         {/* <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text> */}
       </View>
     );
   }
+
   render() {
+    const {dismiss, goBack} = this.props.navigation;
+    const {wallet} = this.props;
     return (
       <View
         style={{
           backgroundColor: 'white',
           flex: 1,
-          borderLeftWidth: 1,
-          borderColor: colors.off,
-          showOpacity: 0,
         }}>
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={'Wallet: $' + wallet.totalWallet}
+          inputRange={[5, 10]}
+          initialBorderColorIcon={'white'}
+          initialBackgroundColor={'white'}
+          initialTitleOpacity={1}
+          typeIcon2={'font'}
+          sizeIcon2={17}
+          icon1={'arrow-left'}
+          clickButton1={() => goBack()}
+        />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.settings.bind(this)}
+          contentScrollView={this.listWallet.bind(this)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={sizes.heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />
@@ -75,27 +81,12 @@ class ListEvent extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  defaultView: {
-    backgroundColor: colors.greenLight,
-    borderRadius: 12.5,
-    height: 25,
-    width: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textDefault: {
-    color: colors.greenStrong,
-    fontSize: 12,
-    fontFamily: 'OpenSans-Bold',
-  },
-});
+const styles = StyleSheet.create({});
 
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    defaultCard: state.user.infoUser.wallet.defaultCard,
-    cards: state.user.infoUser.wallet.cards,
+    wallet: state.user.infoUser.wallet,
   };
 };
 
