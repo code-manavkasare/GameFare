@@ -72,16 +72,9 @@ class ListEvent extends Component {
   }
   openPage(data) {
     if (data == 'new') {
-      return this.props.navigation.navigate('NewMethod', {
-        pageFrom: this.props.navigation.getParam('pageFrom'),
-      });
-    } else if (data == 'bank') {
-      return this.props.navigation.navigate('Alert', {
-        textButton: 'Close',
-        title: 'Coming soon!',
-        close: true,
-        onGoBack: () => this.props.navigation.navigate('Payments'),
-      });
+      return this.props.navigation.navigate('NewMethod');
+    } else if (data === 'bank') {
+      return this.props.navigation.navigate('NewBankAccount');
     }
     return this.props.navigation.navigate('DetailCard', {
       pageFrom: this.props.navigation.getParam('pageFrom'),

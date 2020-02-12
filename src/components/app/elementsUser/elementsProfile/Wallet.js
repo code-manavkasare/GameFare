@@ -32,6 +32,9 @@ class ListEvent extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
+    this.loadTransfers();
+  }
+  async loadTransfers() {
     let listTransfers = await firebase
       .database()
       .ref('usersTransfers/' + this.props.userID)
@@ -72,7 +75,13 @@ class ListEvent extends Component {
       </View>
     );
   }
-
+  async refresh() {
+    await this.setState({loader: true});
+    return this.loadTransfers();
+  }
+  widthdraw(wallet) {
+    if (!wallet.accounts) return this.props.navigation.navigate('Payments');
+  }
   render() {
     const {dismiss, goBack} = this.props.navigation;
     const {wallet} = this.props;
@@ -88,17 +97,24 @@ class ListEvent extends Component {
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
+          initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
+          initialBorderWidth={0.3}
           typeIcon2={'font'}
           sizeIcon2={17}
           icon1={'arrow-left'}
+          icon2={'text'}
+          text2={'Get'}
           clickButton1={() => goBack()}
+          clickButton2={() => this.widthdraw(wallet)}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.listWallet.bind(this)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
+          refreshControl={true}
+          refresh={() => this.refresh()}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
