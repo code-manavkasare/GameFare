@@ -41,15 +41,14 @@ class MembersView extends Component {
   componentDidMount() {}
   rowUser(user, i, data) {
     return (
-      <Row style={styleApp.center2}>
-        <Col style={styleApp.center}>
+      <Row key={i} style={styleApp.center2}>
+        <Col  style={styleApp.center}>
           <CardUser
             user={user}
             infoUser={this.props.infoUser}
             admin={this.props.data.info.organizer === this.props.userID}
             userConnected={this.props.userConnected}
             objectID={this.props.data.objectID}
-            key={i}
             userID={this.props.userID}
             removable={this.props.editMode}
             removeFunc={() => this.props.onRemoveMember(user)}
