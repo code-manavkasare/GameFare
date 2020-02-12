@@ -150,16 +150,12 @@ class LiveStream extends React.Component {
           } else {
             await that.setState({
               netline: {
-                index: -1,
-                optimalNetline: netlineResults[0].optimalNetLine,
-                doublesLine: netlineResults[1].doublesLine,
-                candidates: netlineResults.slice(2),
+                optimalNetline: netlineResults.optimalNetLine,
+                doublesLine: netlineResults.doublesLine,
+                baseLine: netlineResults.baseLine,
               },
               waitingNetline: false,
             });
-            console.log('GOT NETLINE RESULTS');
-            console.log(this.state.netline.optimalNetline);
-            console.log(this.state.netline.doublesLine);
           }
         }
       });
@@ -195,22 +191,6 @@ class LiveStream extends React.Component {
     this.setState({streaming: false});
   }
 
-  async cycleNetlineCandidates() {
-    if (!this.state.netline || this.state.netline.error) {
-      return;
-    }
-    if (
-      this.state.netline.index ===
-      Object.keys(this.state.netline.candidates[0]).length - 1
-    ) {
-      await this.setState({netline: {...this.state.netline, index: -1}});
-    } else {
-      await this.setState({
-        netline: {...this.state.netline, index: this.state.netline.index + 1},
-      });
-    }
-  }
-
   lockNetline() {
     this.setState({streamReady: true});
   }
@@ -228,8 +208,8 @@ class LiveStream extends React.Component {
           inputRange={[5, 10]}
           loader={this.state.loader}
           click1={() => navigation.navigate('TabsApp')}
-          click2={() => this.cycleNetlineCandidates()}
-          vis2={this.state.netline !== null && !this.state.streamReady}
+          click2={() => null}
+          vis2={false}
           click3={() => this.lockNetline()}
           vis3={this.state.netline !== null && !this.state.streamReady}
           clickErr={() => this.setState({error: !this.state.error})}
@@ -286,47 +266,28 @@ class LiveStream extends React.Component {
             </Row>
           ) : (
             <Svg style={styles.nodeCameraView} height="100%" width="100%">
-              {this.state.netline.index === -1 ? (
-                <Line
-                  x1={this.state.netline.optimalNetline.origin.x * width}
-                  y1={this.state.netline.optimalNetline.origin.y * height}
-                  x2={this.state.netline.optimalNetline.destination.x * width}
-                  y2={this.state.netline.optimalNetline.destination.y * height}
-                  stroke="red"
-                  strokeWidth="4"
-                />
-              ) : (
-                <Line
-                  x1={
-                    this.state.netline.candidates[0][
-                      'candidate_0' + this.state.netline.index
-                    ].origin.x * width
-                  }
-                  y1={
-                    this.state.netline.candidates[0][
-                      'candidate_0' + this.state.netline.index
-                    ].origin.y * height
-                  }
-                  x2={
-                    this.state.netline.candidates[0][
-                      'candidate_0' + this.state.netline.index
-                    ].destination.x * width
-                  }
-                  y2={
-                    this.state.netline.candidates[0][
-                      'candidate_0' + this.state.netline.index
-                    ].destination.y * height
-                  }
-                  stroke="red"
-                  strokeWidth="4"
-                />
-              )}
+              <Line
+                x1={this.state.netline.optimalNetline.origin.x * width}
+                y1={this.state.netline.optimalNetline.origin.y * height}
+                x2={this.state.netline.optimalNetline.destination.x * width}
+                y2={this.state.netline.optimalNetline.destination.y * height}
+                stroke="red"
+                strokeWidth="4"
+              />
               <Line
                 x1={this.state.netline.doublesLine.origin.x * width}
                 y1={this.state.netline.doublesLine.origin.y * height}
                 x2={this.state.netline.doublesLine.destination.x * width}
                 y2={this.state.netline.doublesLine.destination.y * height}
                 stroke="green"
+                strokeWidth="4"
+              />
+              <Line
+                x1={this.state.netline.baseLine.origin.x * width}
+                y1={this.state.netline.baseLine.origin.y * height}
+                x2={this.state.netline.baseLine.destination.x * width}
+                y2={this.state.netline.baseLine.destination.y * height}
+                stroke="blue"
                 strokeWidth="4"
               />
             </Svg>
