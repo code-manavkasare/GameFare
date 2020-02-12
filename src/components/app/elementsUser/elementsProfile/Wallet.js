@@ -15,33 +15,60 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import AllIcons from '../../../layout/icons/AllIcons';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
+import PlaceHolder from '../../../placeHolders/CardConversation';
 
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import BackButton from '../../../layout/buttons/BackButton';
+import CardTransfer from './CardTransfer';
 
 class ListEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: true,
-      events: [],
+      listTransfers: [],
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    let listTransfert = await firebase
+    let listTransfers = await firebase
       .database()
       .ref('usersTransfers/' + this.props.userID)
       .once('value');
-    listTransfert = listTransfert.val();
+    listTransfers = listTransfers.val();
+    if (!listTransfers) listTransfers = [];
+    return this.setState({
+      loader: false,
+      listTransfers: Object.values(listTransfers),
+    });
   }
-  listWallet() {
+  placehoder() {
     return (
-      <View style={{marginTop: 0}}>
-        <View style={{height: 700, backgroundColor: 'white'}} />
-        {/* <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text> */}
+      <View>
+        <PlaceHolder />
+        <PlaceHolder />
+        <PlaceHolder />
+        <PlaceHolder />
+        <PlaceHolder />
+        <PlaceHolder />
+      </View>
+    );
+  }
+  cardTransfer(transfer, i) {}
+  listWallet() {
+    const {loader, listTransfers} = this.state;
+    return (
+      <View style={{marginTop: 10}}>
+        {loader ? (
+          this.placehoder()
+        ) : listTransfers.length === 0 ? (
+          <Text style={styleApp.text}>You don't have any transfer yet.</Text>
+        ) : (
+          listTransfers.map((transfer, i) => (
+            <CardTransfer key={i} transfer={transfer} />
+          ))
+        )}
       </View>
     );
   }

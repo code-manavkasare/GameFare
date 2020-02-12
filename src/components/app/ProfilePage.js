@@ -94,8 +94,8 @@ class ProfilePage extends Component {
                   <AllIcons
                     type="font"
                     size={17}
-                    name={icon == 'logout' ? 'bicycle' : icon}
-                    color={icon == 'logout' ? colors.green : colors.title}
+                    name={icon === 'logout' ? 'bicycle' : icon}
+                    color={icon === 'logout' ? colors.green : colors.title}
                   />
                 </Col>
               ) : null}
@@ -137,14 +137,19 @@ class ProfilePage extends Component {
     );
   }
   clickButton(page, type, url) {
+    console.log('type', type);
     if (type === 'url') {
       this.openLink(url);
     } else if (type === 'call') {
       this.call();
     } else if (type === 'email') {
       this.sendEmail();
-    } else if (type === 'link') {
-      // this.sendEmail()
+    } else if (type === 'logout') {
+      this.props.navigation.navigate('Alert', {
+        textButton: 'Logout',
+        title: 'Do you want to log out?',
+        onGoBack: (data) => this.confirmLogout(data),
+      });
     } else {
       this.props.navigation.navigate(page);
     }
@@ -271,19 +276,14 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            {this.props.userConnected
-              ? this.button('logout', 'Logout', 'Alert', {
-                  textButton: 'Logout',
-                  title: 'Do you want to log out?',
-                  onGoBack: (data) => this.confirmLogout(data),
-                })
-              : null}
+            {this.props.userConnected &&
+              this.button('logout', 'Logout', 'Alert', 'logout')}
           </View>
         </View>
       </View>
     );
   }
-  async confirmLogout(data) {
+  async confirmLogout() {
     await this.props.userAction('logout', {userID: this.props.userID});
     this.props.navigation.navigate('Home');
   }
