@@ -161,12 +161,12 @@ const MessageNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator(
   {
-    Profile: lockedPortrait(ProfilePage),
+    More: lockedPortrait(ProfilePage),
     Wallet: lockedPortrait(Wallet),
     Settings: lockedPortrait(Settings),
   },
   {
-    initialRouteName: 'Profile',
+    initialRouteName: 'More',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
@@ -226,7 +226,7 @@ const MainApp = createBottomTabNavigator(
     ListGroups: lockedPortrait(ListGroups),
     Stream: lockedPortrait(StreamPage),
     MessageList: lockedPortrait(MessageList),
-    Profile: ProfileNavigator,
+    More: ProfileNavigator,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
@@ -236,12 +236,12 @@ const MainApp = createBottomTabNavigator(
           <MainTabIcon
             navigation={navigation}
             focused={focused}
-            tintColor={tintColor}s
+            tintColor={tintColor}
+            s
             routeName={routeName}
           />
         );
       },
-
     }),
     tabBarOptions: {
       activeTintColor: colors.primary2,

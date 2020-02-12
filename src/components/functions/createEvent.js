@@ -231,7 +231,7 @@ async function joinEvent(
   var {response, message} = await checkUserAttendingEvent(userID, data);
   if (!response) return {response, message};
 
-  var now = new Date();
+  var now = new Date().toString();
   var {message, response} = await payEntryFee(
     now,
     data,

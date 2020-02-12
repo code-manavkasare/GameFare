@@ -38,7 +38,7 @@ class MainTabIcon extends React.Component {
                       ? 'video-camera'
                       : routeName === 'MessageList'
                       ? 'speech'
-                      : routeName === 'Profile'
+                      : routeName === 'More'
                       ? 'menu'
                       : null
                   }
@@ -56,8 +56,8 @@ class MainTabIcon extends React.Component {
                     ? 'Go Live'
                     : routeName === 'MessageList'
                     ? 'Message'
-                    : routeName === 'Profile'
-                    ? 'Profile'
+                    : routeName === 'More'
+                    ? 'More'
                     : null}
                 </Text>
               </Col>

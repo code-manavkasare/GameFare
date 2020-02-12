@@ -83,7 +83,7 @@ class ProfilePage extends Component {
   
       
   */
-  button(icon, text, page, data, type, url) {
+  button(icon, text, page, type, url) {
     return (
       <ButtonColor
         view={() => {
@@ -94,53 +94,64 @@ class ProfilePage extends Component {
                   <AllIcons
                     type="font"
                     size={17}
-                    name={icon == 'logout' ? 'bicycle' : icon}
-                    color={icon == 'logout' ? colors.green : colors.title}
+                    name={icon === 'logout' ? 'bicycle' : icon}
+                    color={icon === 'logout' ? colors.green : colors.title}
                   />
                 </Col>
               ) : null}
-              <Col size={80} style={[styleApp.center2, {paddingLeft: 0}]}>
+              <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
                 <Text
                   style={[
-                    styleApp.title,
+                    styleApp.input,
                     {
                       fontSize: 14,
-                      fontFamily: 'OpenSans-SemiBold',
-                      color: text == 'Logout' ? colors.green : colors.title,
+                      color: text === 'Logout' ? colors.green : colors.title,
                     },
                   ]}>
                   {text}
                 </Text>
+              </Col>
+              <Col size={20} style={styleApp.center3}>
+                {page === 'Wallet' && (
+                  <Text style={[styleApp.text, {color: colors.primary}]}>
+                    ${this.props.wallet.totalWallet}
+                  </Text>
+                )}
               </Col>
               <Col size={10} style={styleApp.center3}>
                 <AllIcons
                   type="mat"
                   size={20}
                   name={'keyboard-arrow-right'}
-                  color={icon == 'logout' ? colors.green : colors.grey}
+                  color={icon === 'logout' ? colors.green : colors.grey}
                 />
               </Col>
             </Row>
           );
         }}
-        click={() => this.clickButton(text, page, data, type, url)}
+        click={() => this.clickButton(page, type, url)}
         color="white"
         style={styles.button}
         onPressColor={colors.off}
       />
     );
   }
-  clickButton(text, page, data, type, url) {
+  clickButton(page, type, url) {
+    console.log('type', type);
     if (type === 'url') {
       this.openLink(url);
     } else if (type === 'call') {
       this.call();
     } else if (type === 'email') {
       this.sendEmail();
-    } else if (type === 'link') {
-      // this.sendEmail()
+    } else if (type === 'logout') {
+      this.props.navigation.navigate('Alert', {
+        textButton: 'Logout',
+        title: 'Do you want to log out?',
+        onGoBack: (data) => this.confirmLogout(data),
+      });
     } else {
-      this.props.navigation.navigate(page, data);
+      this.props.navigation.navigate(page);
     }
   }
   async openLink(url) {
@@ -176,7 +187,6 @@ class ProfilePage extends Component {
           },
           waitForRedirectDelay: 0,
         });
-        Alert.alert(JSON.stringify(result));
       } else Linking.openURL(url);
     } catch (error) {
       Alert.alert(error.message);
@@ -203,7 +213,6 @@ class ProfilePage extends Component {
                   ' ' +
                   this.props.infoUser.lastname}
               </Text>
-              {/* <Text style={[styleApp.subtitle,{marginTop:5,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text> */}
 
               <Text style={styleApp.smallText}>
                 {this.props.userConnected
@@ -213,9 +222,8 @@ class ProfilePage extends Component {
               <View
                 style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]}
               />
-              {this.button('credit-card', 'Payment', 'Payments', {
-                pageFrom: 'Profile',
-              })}
+              {this.button('credit-card', 'Payment', 'Payments')}
+              {this.button('wallet', 'Wallet', 'Wallet')}
               {/* {this.button('shopping-bag','My wallet','Wallet',{pageFrom:'Profile'})} */}
             </View>
           ) : null}
@@ -225,8 +233,8 @@ class ProfilePage extends Component {
           <Text style={styleApp.text}>Assistance</Text>
 
           <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]} />
-          {this.button('envelope', 'Email', 'Alert', {}, 'email')}
-          {this.button('phone', 'Call', 'Alert', {}, 'call')}
+          {this.button('envelope', 'Email', 'Alert', 'email')}
+          {this.button('phone', 'Call', 'Alert', 'call')}
         </View>
 
         <View style={styleApp.viewHome}>
@@ -238,7 +246,6 @@ class ProfilePage extends Component {
               'instagram',
               'Visit us on Instagram',
               'Alert',
-              {},
               'url',
               'https://www.instagram.com/getgamefare',
             )}
@@ -254,7 +261,6 @@ class ProfilePage extends Component {
               false,
               'Privacy policy',
               'Alert',
-              {},
               'url',
               'https://www.getgamefare.com/privacy',
             )}
@@ -262,7 +268,6 @@ class ProfilePage extends Component {
               false,
               'Terms of service',
               'Alert',
-              {},
               'url',
               'https://www.getgamefare.com/terms',
             )}
@@ -271,19 +276,14 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            {this.props.userConnected
-              ? this.button('logout', 'Logout', 'Alert', {
-                  textButton: 'Logout',
-                  title: 'Do you want to log out?',
-                  onGoBack: (data) => this.confirmLogout(data),
-                })
-              : null}
+            {this.props.userConnected &&
+              this.button('logout', 'Logout', 'Alert', 'logout')}
           </View>
         </View>
       </View>
     );
   }
-  async confirmLogout(data) {
+  async confirmLogout() {
     await this.props.userAction('logout', {userID: this.props.userID});
     this.props.navigation.navigate('Home');
   }
@@ -327,7 +327,7 @@ class ProfilePage extends Component {
   render() {
     return (
       <View style={{height: '100%'}}>
-        <HeaderBackButton
+        {/* <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Profile'}
           inputRange={[50, 80]}
@@ -340,13 +340,13 @@ class ProfilePage extends Component {
           icon2={null}
           // clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
           clickButton2={() => true}
-        />
+        /> */}
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.marginTopApp + 30}
           offsetBottom={90}
           showsVerticalScrollIndicator={true}
         />
@@ -389,6 +389,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
+    wallet: state.user.infoUser.wallet,
     userConnected: state.user.userConnected,
   };
 };
