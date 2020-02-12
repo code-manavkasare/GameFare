@@ -41,21 +41,22 @@ const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
 const MUX_TOKEN_SECRET =
   'pH0xdGK3b7qCA/kH8PSNspLqyLa+BJnsjnY4OBtHzECpDg6efuho2RdFsRgKkDqutbCkzAHS9Q1';
 
-class LiveStream extends React.Component {
+class Calibration extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      outputUrl: 'rtmp://live.mux.com/app/',
-      error: false,
       waitingPermissions: false,
-      waitingNetline: false,
-      loading: true,
-      streamReady: false,
-      streaming: false,
-      assetID: '',
-      streamKey: '',
-      playbackID: '',
-      netline: null,
+      calibrationInfo: {
+        error: false,
+        waiting: false,
+        lines: null,
+        correct: false,
+      },
+      streamInfo: {
+        assetID: '',
+        streamKey: '',
+        playbackID: '',
+      },
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
