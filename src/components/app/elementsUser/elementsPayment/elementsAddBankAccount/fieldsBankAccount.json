@@ -1,0 +1,36 @@
+[
+    {
+        "code":"AU",
+        "fields":[
+            {
+                "name":"BSB",
+                "id":"bsb",
+                "keyboardType":"number-pad",
+                "maxLength":6
+            },
+            {
+                "name":"Account number",
+                "id":"accNumber",
+                "keyboardType":"number-pad",
+                "maxLength":9
+            }
+        ]
+    },
+    {
+        "code":"AU",
+        "fields":[
+            {
+                "name":"BSB",
+                "id":"bsb",
+                "keyboardType":"number-pad",
+                "maxLength":6
+            },
+            {
+                "name":"Account number",
+                "id":"accNumber",
+                "keyboardType":"number-pad",
+                "maxLength":9
+            }
+        ]
+    }
+]

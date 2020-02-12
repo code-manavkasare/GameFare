@@ -103,7 +103,7 @@ export default class HeaderFlow extends Component {
         this.props.initialBorderColorHeader
           ? this.props.initialBorderColorHeader
           : 'white',
-        colors.borderColor,
+        colors.grey,
       ],
       extrapolate: 'clamp',
     });
