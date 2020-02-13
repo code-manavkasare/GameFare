@@ -41,6 +41,9 @@ class ListEvent extends Component {
       .once('value');
     listTransfers = listTransfers.val();
     if (!listTransfers) listTransfers = [];
+    listTransfers = Object.values(listTransfers).sort(function(a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
     return this.setState({
       loader: false,
       listTransfers: Object.values(listTransfers),
@@ -116,7 +119,7 @@ class ListEvent extends Component {
           refreshControl={true}
           refresh={() => this.refresh()}
           marginTop={sizes.heightHeaderHome}
-          offsetBottom={90 + 60}
+          offsetBottom={40}
           showsVerticalScrollIndicator={true}
         />
       </View>

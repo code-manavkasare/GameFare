@@ -106,11 +106,11 @@ class EventsView extends Component {
   }
   eventsView(data) {
     return (
-      <View style={styleApp.viewHome}>
+      <View style={{marginTop: 10}}>
         <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
-              <Text style={styleApp.text}>Events</Text>
+              <Text style={styleApp.text}>Member events</Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
               <ButtonColor
@@ -136,7 +136,7 @@ class EventsView extends Component {
           <View style={styleApp.divider2} />
         </View>
 
-        <View style={{height: 230}}>
+        <View style={{height: 250}}>
           <ScrollViewX
             loader={this.state.loader}
             events={this.state.events}

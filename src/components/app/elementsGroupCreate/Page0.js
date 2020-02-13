@@ -11,6 +11,8 @@ import {
 import {connect} from 'react-redux';
 import {createGroupAction} from '../../../actions/createGroupActions';
 import {groupsAction} from '../../../actions/groupsActions';
+import {historicSearchAction} from '../../../actions/historicSearchActions';
+
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
@@ -265,16 +267,21 @@ class Page0 extends Component {
     var newGroups = this.props.mygroups.slice(0).reverse();
     newGroups.push(group.objectID);
     newGroups = newGroups.reverse();
+
+    await this.props.historicSearchAction('setSport', {
+      value: group.info.sport,
+    });
+
     await this.props.groupsAction('setAllGroups', {[group.objectID]: group});
     await this.props.groupsAction('setMygroups', newGroups);
     await this.props.navigation.dismiss();
-    await  this.props.createGroupAction('reset');
-    return this.props.navigation.navigate('Contacts',{
+    await this.props.createGroupAction('reset');
+    return this.props.navigation.navigate('Contacts', {
       data: group,
       pageFrom: 'Group',
       openPageLink: 'openGroupPage',
       objectID: group.objectID,
-    })
+    });
   }
   render() {
     if (this.props.createGroupData.info.sport === '') return null;
@@ -359,6 +366,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {createGroupAction, groupsAction})(
-  Page0,
-);
+export default connect(mapStateToProps, {
+  createGroupAction,
+  groupsAction,
+  historicSearchAction,
+})(Page0);
