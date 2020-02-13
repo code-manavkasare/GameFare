@@ -106,11 +106,11 @@ class EventsView extends Component {
   }
   eventsView(data) {
     return (
-      <View>
+      <View style={{marginTop: 10}}>
         <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
-              <Text style={styleApp.text}>Events</Text>
+              <Text style={styleApp.text}>Member events</Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
               <ButtonColor

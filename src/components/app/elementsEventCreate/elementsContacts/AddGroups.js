@@ -29,7 +29,7 @@ class AddGroups extends Component {
     super(props);
     this.state = {
       listGroups: [],
-      selectedGroups: {},
+      selectedGroups: this.props.data.groups ? {...this.props.data.groups} : {},
       searchInputGroups: this.props.searchString,
       loaderSearchCall: true,
       loaderDatabaseUpdate: false,
@@ -42,24 +42,17 @@ class AddGroups extends Component {
     this.initiaLoad();
   }
   initiaLoad = async () => {
-    const {userID, objectID, pageFrom} = this.props;
+    const {userID, objectID} = this.props;
 
     indexGroups.clearCache();
     const listGroups = await indexGroups.search({
       filters: 'info.organizer:' + userID + ' AND NOT objectID:' + objectID,
       query: '',
     });
-    const selectedGroups = this.checkIfGroupHasEvent(
-      listGroups.hits,
-      objectID,
-      pageFrom,
-    );
-    //Will work when Algolia update accordingly with firebase
 
     await this.setState({
       loaderSearchCall: false,
       listGroups: listGroups.hits,
-      selectedGroups,
     });
     return true;
   };
@@ -79,6 +72,8 @@ class AddGroups extends Component {
         }
       });
     }
+    console.log('groupsHasEvent', groupsHasEvent);
+    console.log(this.state.selectedGroups);
     return groupsHasEvent;
   };
 
@@ -100,12 +95,8 @@ class AddGroups extends Component {
   };
 
   selectGroup(group) {
-    var selectedGroups = this.state.selectedGroups;
-    if (
-      Object.values(selectedGroups).filter(
-        (group1) => group1.objectID === group.objectID,
-      ).length == 0
-    ) {
+    let selectedGroups = this.state.selectedGroups;
+    if (!selectedGroups[group.objectID]) {
       selectedGroups = {
         ...selectedGroups,
         [group.objectID]: group,
@@ -172,9 +163,7 @@ class AddGroups extends Component {
                 </Text>
               </Col>
               <Col size={10} style={styleApp.center}>
-                {Object.values(this.state.selectedGroups).filter(
-                  (group1) => group1.objectID === group.objectID,
-                ).length != 0 ? (
+                {this.state.selectedGroups[group.objectID] ? (
                   <AllIcons
                     name="check-circle"
                     type="font"
@@ -243,7 +232,11 @@ class AddGroups extends Component {
         ),
       });
 
-    const groupsAlert = Object.values(selectedGroups).map((group) => {
+    const groupsAlert = ramda.keys(selectedGroups).map((groupID) => {
+      const group = this.state.listGroups.filter(
+        (group1) => group1.objectID === groupID,
+      )[0];
+      console.log('group', group);
       return {
         info: {
           firstname: group.info.name,
@@ -305,20 +298,20 @@ class AddGroups extends Component {
           updatesGroup['/groups/' + objectID] = true;
           updatesEvent['/groups/' + group.objectID] = true;
 
-          await firebase
-            .database()
-            .ref('groups/' + group.objectID)
-            .update(updatesGroup);
+          // await firebase
+          //   .database()
+          //   .ref('groups/' + group.objectID)
+          //   .update(updatesGroup);
 
           await firebase
             .database()
             .ref('groups/' + objectID)
             .update(updatesEvent);
         } else if (!hasGroup(selectedGroups)) {
-          await firebase
-            .database()
-            .ref('groups/' + group.objectID + '/groups/' + objectID)
-            .remove();
+          // await firebase
+          //   .database()
+          //   .ref('groups/' + group.objectID + '/groups/' + objectID)
+          //   .remove();
           await firebase
             .database()
             .ref('groups/' + objectID + '/groups/' + group.objectID)
