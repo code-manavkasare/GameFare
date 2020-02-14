@@ -41,7 +41,12 @@ import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
 
 import {editGroup, removeUserFromGroup} from '../functions/editGroup';
-import {takePicture, pickLibrary, resize} from '../functions/pictures';
+import {
+  takePicture,
+  pickLibrary,
+  resize,
+  uploadPictureFirebase,
+} from '../functions/pictures';
 
 const noEdit = {
   editMode: false,
@@ -57,6 +62,7 @@ class GroupPage extends React.Component {
     this.state = {
       usersConfirmed: true,
       loader: true,
+      loaderButtonEdit: false,
       group: null,
       ...noEdit,
     };
@@ -315,7 +321,11 @@ class GroupPage extends React.Component {
     if (!uri) return this.setState({loader: false});
     const uriResized = await resize(uri);
     if (!uriResized) return this.setState({loader: false});
-    await this.setState({editPic: uriResized});
+    console.log('editPic', uriResized);
+    await this.setState({
+      editPic: uriResized,
+      group: {...this.state.group, pictures: [uriResized]},
+    });
     this.setState({loader: false});
   }
   async askRemoveUser(data, user) {
@@ -348,6 +358,14 @@ class GroupPage extends React.Component {
   }
   async saveEdits() {
     const {group} = this.state;
+    await this.setState({loaderButtonEdit: true});
+    let newGroupPicture = group.pictures[0];
+    if (this.state.editPic) {
+      newGroupPicture = await uploadPictureFirebase(
+        this.state.editPic,
+        'groups/' + group.objectID,
+      );
+    }
     if (
       this.state.editPic !== noEdit.editPic ||
       this.state.editName !== noEdit.editName ||
@@ -358,7 +376,7 @@ class GroupPage extends React.Component {
         ...group,
         sendEditNotification:
           this.state.editLocation !== noEdit.editLocation ? true : false,
-        img: this.state.editPic ? this.state.editPic : undefined, // gets deleted in editGroup
+        pictures: [newGroupPicture], // gets deleted in editGroup
         info: {
           ...group.info,
           name:
@@ -375,6 +393,8 @@ class GroupPage extends React.Component {
             ? group.location
             : this.state.editLocation,
       };
+      console.log('newData', newData);
+      // return true;
       // firebase update, sends notification to group members
       editGroup(newData, () => console.log('edit group failed'));
       // // local data update
@@ -392,6 +412,7 @@ class GroupPage extends React.Component {
     this.setState({
       ...this.state,
       ...noEdit,
+      loaderButtonEdit: false,
     });
   }
   goToShareGroup = (data) => {
@@ -409,7 +430,7 @@ class GroupPage extends React.Component {
 
   render() {
     const {dismiss} = this.props.navigation;
-    const {group} = this.state;
+    const {group, loaderButtonEdit} = this.state;
     const {userID, userConnected} = this.props;
     return (
       <View style={{flex: 1}}>
@@ -481,7 +502,7 @@ class GroupPage extends React.Component {
               styleButton={{marginLeft: 20, width: width - 40}}
               disabled={false}
               text="Save edits"
-              loader={false}
+              loader={loaderButtonEdit}
               click={() => this.saveEdits()}
             />
           </FadeInView>

@@ -132,6 +132,7 @@ class MessageTab extends React.Component {
   }
 
   messagePageView(myConversations) {
+    console.log('myConversations', myConversations);
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -147,7 +148,7 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader ? (
             this.placeHolder()
-          ) : Object.keys(myConversations).length === 0 ? (
+          ) : Object.keys(myConversations).length === 0 || !myConversations ? (
             <Text style={[styleApp.text, {marginTop: 10, marginLeft: 20}]}>
               You don’t have any messages yet.
             </Text>

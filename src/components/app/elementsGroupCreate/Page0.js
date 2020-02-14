@@ -43,11 +43,9 @@ class Page0 extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    if (this.props.createGroupData.info.sport === '') {
-      this.props.createGroupAction('setInfoCreateGroup', {
-        sport: this.props.sportSelected,
-      });
-    }
+    this.props.createGroupAction('setInfoCreateGroup', {
+      sport: this.props.sportSelected,
+    });
   }
   sports() {
     return (

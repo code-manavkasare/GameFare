@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {createEventAction} from '../../../actions/createEventActions'
+import {createEventAction} from '../../../actions/createEventActions';
+import {createGroupAction} from '../../../actions/createGroupActions';
 import NavigationService from '../../../../NavigationService';
 
 import colors from '../../style/colors';
@@ -195,10 +196,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  return {
-  };
+  return {};
 };
 
-export default connect(mapStateToProps, {createEventAction})(
-  ButtonAdd,
-);
+export default connect(mapStateToProps, {createEventAction,createGroupAction})(ButtonAdd);
