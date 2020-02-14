@@ -21,6 +21,7 @@ import {
   nextRule,
   nextLevelIndex,
 } from '../functions/editEvent';
+import {addMemberDiscussion} from '../functions/createEvent'
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar, isDatePast} from '../functions/date';
@@ -801,6 +802,7 @@ class EventPage extends React.Component {
   }
   async confirmCancelEvent(data) {
     const {goBack, dismiss, navigate} = this.props.navigation;
+
     if (isDatePast(data.date.start)) {
       await navigate('Event');
       return navigate('Alert', {
@@ -823,6 +825,7 @@ class EventPage extends React.Component {
     return true;
   }
   async confirmLeaveEvent(data) {
+    const {userID} = this.props;
     if (data.discussions)
       await this.props.messageAction(
         'deleteMyConversation',
@@ -833,12 +836,13 @@ class EventPage extends React.Component {
 
     await firebase
       .database()
-      .ref('events/' + data.objectID + '/attendees/' + this.props.userID)
+      .ref('events/' + data.objectID + '/attendees/' + userID)
       .update({action: 'unsubscribed'});
     await firebase
       .database()
-      .ref('events/' + data.objectID + '/attendees/' + this.props.userID)
+      .ref('events/' + data.objectID + '/attendees/' + userID)
       .remove();
+    await addMemberDiscussion(data.discussions[0], userID);
     await NavigationService.goBack();
     return true;
   }

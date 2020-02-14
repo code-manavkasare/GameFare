@@ -9,6 +9,7 @@ import {
   TextInput,
   Animated,
   Platform,
+  Image,
   Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -19,29 +20,37 @@ import Config from 'react-native-config';
 import AllIcons from '../../../layout/icons/AllIcons';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+const countriesBankAccount = require('./elementsAddBankAccount/fieldsBankAccount.json');
+const ListCountry = require('../../../login/elementsFlags/country.json');
 
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
+import ButtonColor from '../../../layout/Views/Button';
 import axios from 'axios';
 
 class ListEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: '',
+      loader: false,
       routingNumber: '',
       accountNumber: '',
-      ssnNumber: '',
+      country: 'US',
       bankName: '',
-      name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
+      account_holder_name:
+        this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.focusNextField = this.focusNextField.bind(this);
+    this.inputs = {};
   }
   async componentDidMount() {}
-
+  focusNextField(id) {
+    this.inputs[id].focus();
+  }
   async submit() {
     this.setState({loader: true, error: false});
     if (Platform.OS === 'android') {
@@ -71,105 +80,105 @@ class ListEvent extends Component {
   wrongCB(message) {
     this.setState({loader: false, error: true, errorMessage: message});
   }
-  newBankAccount() {
+  countrySelect(country, countryBankAccount) {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={15} style={styleApp.center2}>
+                <Image
+                  source={{
+                    uri: country.flag,
+                  }}
+                  style={{width: 27, height: 21, borderRadius: 3}}
+                />
+              </Col>
+              <Col size={70} style={styleApp.center2}>
+                <Text style={styleApp.input}>
+                  {country.name} ({countryBankAccount.currency})
+                </Text>
+              </Col>
+              <Col size={15} style={styleApp.center}>
+                <AllIcons
+                  name="keyboard-arrow-down"
+                  type="mat"
+                  size={20}
+                  color={colors.title}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        color={'white'}
+        style={[styleApp.inputForm, {borderBottomWidth: 1}]}
+        click={() => true}
+        onPressColor={colors.off}
+      />
+    );
+  }
+  field(field, icon) {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              {icon && (
+                <Col size={15} style={styleApp.center2}>
+                  <AllIcons
+                    name={icon}
+                    type="font"
+                    size={20}
+                    color={colors.title}
+                  />
+                </Col>
+              )}
+              <Col size={85} style={styleApp.center2}>
+                <TextInput
+                  placeholder={field.name}
+                  style={styleApp.input}
+                  onChangeText={(text) => this.setState({[field.id]: text})}
+                  autoFocus={field.autofocus}
+                  keyboardType={field.keyboardType}
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  inputAccessoryViewID={field.id}
+                  ref={(input) => {
+                    this.inputs[field.id] = input;
+                  }}
+                  value={this.state[field.id]}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        color={'white'}
+        style={[styleApp.inputForm, {borderBottomWidth: 1}]}
+        click={() => this.focusNextField(field.id)}
+        onPressColor={colors.off}
+      />
+    );
+  }
+  fieldsBankAccount(fields) {
+    return fields.map((field, i) => this.field(field));
+  }
+  newBankAccount(country, countryBankAccount) {
     return (
       <View style={styleApp.marginView}>
-        <TouchableOpacity
-          style={[styleApp.inputForm, {borderBottomWidth: 1}]}
-          activeOpacity={0.7}
-          onPress={() => this.numberTextInput.focus()}>
-          <Row>
-            <Col size={15} style={styleApp.center2}>
-              {cardIcon(this.state.cardType)}
-            </Col>
-            <Col size={70} style={styleApp.center2}>
-              <TextInput
-                placeholder="Bank Name"
-                style={styleApp.input}
-                onChangeText={(text) => this.setState({bankName: text})}
-                autoFocus={true}
-                underlineColorAndroid="rgba(0,0,0,0)"
-                inputAccessoryViewID={'bankName'}
-                ref={(input) => {
-                  this.numberTextInput = input;
-                }}
-                value={this.state.bankName}
-                
-              />
-            </Col>
-          </Row>
-        </TouchableOpacity>
+        <Text style={[styleApp.title, {marginBottom: 10, marginTop: 10}]}>
+          Link your bank account
+        </Text>
+        {this.countrySelect(country, countryBankAccount)}
 
-        <Row style={{height: 55, marginTop: 5, marginBottom: 10}}>
-          <Col>
-            <TouchableOpacity
-              style={[styleApp.inputForm, styleApp.center2]}
-              activeOpacity={0.8}
-              onPress={() => {
-                this.dateTextInput.focus();
-              }}>
-              <TextInput
-                placeholder="Routing number"
-                style={styleApp.input}
-                onChangeText={(text) => this.setState({routingNumber: text})}
-                keyboardType="number-pad"
-                underlineColorAndroid="rgba(0,0,0,0)"
-                inputAccessoryViewID={'cardNumber'}
-                ref={(input) => {
-                  this.dateTextInput = input;
-                }}
-                value={this.state.routingNumber}
-              />
-            </TouchableOpacity>
-          </Col>
-        </Row>
+        {/* {this.field ("Bank Name",'bankName','university') } */}
 
-        <Row style={{height: 55, marginTop: 5, marginBottom: 10}}>
-          <Col>
-            <TouchableOpacity
-              style={[styleApp.inputForm, styleApp.center2]}
-              activeOpacity={0.8}
-              onPress={() => {
-                this.dateTextInput.focus();
-              }}>
-              <TextInput
-                placeholder="Account number"
-                style={styleApp.input}
-                onChangeText={(text) => this.setState({accountNumber: text})}
-                keyboardType="number-pad"
-                underlineColorAndroid="rgba(0,0,0,0)"
-                inputAccessoryViewID={'cardNumber'}
-                ref={(input) => {
-                  this.dateTextInput = input;
-                }}
-                value={this.state.accountNumber}
-              />
-            </TouchableOpacity>
-          </Col>
-        </Row>
+        {this.fieldsBankAccount(countryBankAccount.fields)}
 
-        <Row style={{height: 55, marginTop: 5, marginBottom: 10}}>
-          <Col>
-            <TouchableOpacity
-              style={[styleApp.inputForm, styleApp.center2]}
-              activeOpacity={0.8}
-              onPress={() => {
-                this.dateTextInput.focus();
-              }}>
-              <TextInput
-                placeholder="Account number"
-                style={styleApp.input}
-                onChangeText={(text) => this.setState({name: text})}
-                underlineColorAndroid="rgba(0,0,0,0)"
-                inputAccessoryViewID={'cardNumber'}
-                ref={(input) => {
-                  this.dateTextInput = input;
-                }}
-                value={this.state.name}
-              />
-            </TouchableOpacity>
-          </Col>
-        </Row>
+        {this.field({
+          name: 'Account holder name',
+          id: 'account_holder_name',
+          keyboardType: 'default',
+          autofocus: false,
+        })}
 
         {this.state.error && (
           <Text style={[styleApp.subtitle, {marginTop: 20, fontSize: 14}]}>
@@ -180,6 +189,14 @@ class ListEvent extends Component {
     );
   }
   render() {
+    const codeCountry = this.state.country;
+    const country = ListCountry.filter(
+      (country) => country.code === codeCountry,
+    )[0];
+    console.log('newBankAccount', country);
+    const countryBankAccount = countriesBankAccount.filter(
+      (country) => country.code === codeCountry,
+    )[0];
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
@@ -195,7 +212,9 @@ class ListEvent extends Component {
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={this.newBankAccount.bind(this)}
+          contentScrollView={() =>
+            this.newBankAccount(country, countryBankAccount)
+          }
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={90 + 60}
@@ -206,11 +225,7 @@ class ListEvent extends Component {
           <ButtonFull
             backgroundColor={'green'}
             onPressColor={colors.greenClick}
-            enable={
-              !(
-                this.state.routingNumber === ''
-              )
-            }
+            enable={!(this.state.routingNumber === '')}
             text="Confirm"
             click={() => this.submit()}
             loader={this.state.loader}

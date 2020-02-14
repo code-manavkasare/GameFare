@@ -27,26 +27,30 @@ class CardConversation extends React.Component {
     };
   }
   async componentDidMount() {
-    let lastMessage = await firebase
-      .database()
-      .ref('discussions/' + this.props.discussionID + '/messages')
-      .limitToLast(1)
-      .once('value');
+    // let lastMessage = await firebase
+    //   .database()
+    //   .ref('discussions/' + this.props.discussionID + '/messages')
+    //   .limitToLast(1)
+    //   .once('value');
+    // lastMessage = lastMessage.val();
+    let conversation = this.props.conversations[this.props.discussionID];
+    console.log('lalala ', conversation);
+    if (!conversation) conversation = this.props.discussion;
     const {gamefareUser} = this.props;
-    lastMessage = lastMessage.val();
+    console.log('discussion', conversation);
+    console.log(this.props);
+    let {lastMessage} = conversation;
+    console.log('lastMessage', lastMessage);
+    // return true;
     if (!lastMessage)
       lastMessage = {
-        noMessage: {
-          user: gamefareUser,
-          text: 'Write the first message.',
-          createdAt: new Date(),
-          timeStamp: moment().valueOf(),
-        },
+        user: gamefareUser,
+        text: 'Write the first message.',
+        createdAt: new Date(),
+        id: 'noMessage',
+        timeStamp: moment().valueOf(),
       };
 
-    let idLastMessage = Object.keys(lastMessage)[0];
-    lastMessage = Object.values(lastMessage)[0];
-    lastMessage._id = idLastMessage;
     if (this.props.myConversation) {
       await this.props.messageAction('setConversation', {
         ...this.props.discussion,
@@ -86,14 +90,19 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
-    if (this.props.myConversation && lastMessage._id !== 'noMessage') {
+    console.log('clickCard', conversation);
+    console.log(lastMessage);
+    console.log(this.props.myConversation && lastMessage.id !== 'noMessage');
+    console.log(lastMessage.id);
+    //  return true;
+    if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await firebase
         .database()
         .ref(
           'discussions/' +
             conversation.objectID +
             '/messages/' +
-            lastMessage._id +
+            lastMessage.id +
             '/usersRead/',
         )
         .update({[this.props.userID]: true});
@@ -104,6 +113,7 @@ class CardConversation extends React.Component {
     });
   }
   cardConversation(conversation, lastMessage, i) {
+    console.log('cardConversation', lastMessage);
     return (
       <ButtonColor
         key={i}

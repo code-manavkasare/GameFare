@@ -23,11 +23,11 @@ class MessageTab extends React.Component {
     this.state = {
       loader: true,
       messages: [],
-      conversation:{
-        title:'',
-        type:'group',
-        picture:'',
-      }
+      conversation: {
+        title: '',
+        type: 'group',
+        picture: '',
+      },
     };
     this.inputValue = '';
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -63,17 +63,22 @@ class MessageTab extends React.Component {
               user: gamefareUser,
               text: 'Write the first message.',
               createdAt: new Date(),
+              id: 'noMessage',
               timeStamp: moment().valueOf(),
             },
           };
         messages = Object.keys(messages)
-          .map((_id) => ({
-            _id,
-            ...messages[_id],
+          .map((id) => ({
+            id,
+            ...messages[id],
           }))
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
-        that.setState({messages: messages, loader: false,conversation:conversation});
+        that.setState({
+          messages: messages,
+          loader: false,
+          conversation: conversation,
+        });
 
         let lastMessage = Object.values(messages)[0];
         let usersRead = lastMessage.usersRead;

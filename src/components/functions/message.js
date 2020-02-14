@@ -79,35 +79,23 @@ async function loadMyDiscusions(userID) {
   indexDiscussions.clearCache();
 
   // search for persnal conversations
-  const {hits} = await indexDiscussions.search({
+  let {hits} = await indexDiscussions.search({
     query: '',
-    filters: 'allMembers:' + userID,
+    filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
   });
-
-  // search for groups discussions
-  var myGroups = await getMyGroups(userID, '');
-  var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
-  var {results} = await indexDiscussions.getObjects(groupsDiscussions);
-
-  // search for events discussions
-  const myEvents = await getMyEvents(userID, 'future');
-  const eventsDiscussions = Object.values(myEvents)
-    .map((event) => {
-      if (event.discussions) return event.discussions[0];
-    })
-    .filter((event) => event);
-  var getDiscussionsEvent = await indexDiscussions.getObjects(
-    eventsDiscussions,
-  );
-  getDiscussionsEvent = getDiscussionsEvent.results;
-
-  let discussions = union(results, hits, getDiscussionsEvent).filter(
-    (discussion) => discussion.firstMessageExists,
-  );
-  discussions = discussions.reduce(function(result, item) {
+  console.log('hitttasdfss', hits);
+  // hits = hits.sort(function(a, b) {
+  //   return (
+  //     new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
+  //   );
+  //   // return b.lastMessage.timeStamp - a.lastMessage.timeStamp;
+  // });
+  console.log(hits);
+  let discussions = hits.reduce(function(result, item) {
     result[item.objectID] = item;
     return result;
   }, {});
+
   return discussions;
 }
 
