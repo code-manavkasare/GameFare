@@ -128,7 +128,9 @@ class CardConversation extends React.Component {
                   sizeSmallImg={35}
                 />
               </Col>
-              <Col size={60} style={[styleApp.center2, {paddingLeft: 5}]}>
+              <Col
+                size={60}
+                style={[styleApp.center2, {paddingLeft: 5, paddingRight: 5}]}>
                 <Text style={[styleApp.text, {fontSize: 18}]}>
                   {titleConversation(conversation, this.props.userID)}
                 </Text>

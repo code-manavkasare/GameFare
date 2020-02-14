@@ -95,7 +95,9 @@ async function subscribeUserToGroup(
     .database()
     .ref('groups/' + groupID + '/members/' + userID)
     .update(user);
-  await addMemberDiscussion(discussionID, user);
+  if (user.status === 'confirmed') {
+    await addMemberDiscussion(discussionID, user);
+  }
   return user;
 }
 
