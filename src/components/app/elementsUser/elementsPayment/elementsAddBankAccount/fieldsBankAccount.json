@@ -17,19 +17,22 @@
         ]
     },
     {
-        "code":"AU",
+        "code":"US",
+        "currency":"USD",
         "fields":[
             {
-                "name":"BSB",
-                "id":"bsb",
+                "name":"Routing number",
+                "id":"routing_number",
                 "keyboardType":"number-pad",
+                "autofocus":true,
                 "maxLength":6
             },
             {
                 "name":"Account number",
-                "id":"accNumber",
+                "id":"account_number",
                 "keyboardType":"number-pad",
-                "maxLength":9
+                "autofocus":false,
+                "maxLength":100
             }
         ]
     }
