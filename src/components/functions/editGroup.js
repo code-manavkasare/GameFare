@@ -1,19 +1,7 @@
 import firebase from 'react-native-firebase';
-import {uploadPictureFirebase} from '../functions/pictures';
 
 async function editGroup(updatedGroup, callback = () => {}) {
   // handle uploading of new image if one selected
-  if (updatedGroup.img) {
-    let uri = await uploadPictureFirebase(
-      uri,
-      'groups/' + updatedGroup.objectID,
-    );
-    delete updatedGroup.img;
-    updatedGroup = {
-      ...updatedGroup,
-      pictures: [uri],
-    };
-  }
   await firebase
     .database()
     .ref('groups/' + updatedGroup.objectID + '/')

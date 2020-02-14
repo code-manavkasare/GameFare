@@ -21,7 +21,7 @@ import {
   nextRule,
   nextLevelIndex,
 } from '../functions/editEvent';
-import {addMemberDiscussion} from '../functions/createEvent'
+import {addMemberDiscussion,removeMemberDiscussion} from '../functions/createEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar, isDatePast} from '../functions/date';
@@ -75,6 +75,7 @@ class EventPage extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.event = this.event.bind(this);
+    this.confirmLeaveEvent = this.confirmLeaveEvent.bind(this);
   }
   async componentDidMount() {
     this.loadEvent(this.props.navigation.getParam('objectID'));
@@ -842,7 +843,8 @@ class EventPage extends React.Component {
       .database()
       .ref('events/' + data.objectID + '/attendees/' + userID)
       .remove();
-    await addMemberDiscussion(data.discussions[0], userID);
+    console.log('data.discussions[0]', data.discussions[0]);
+    await removeMemberDiscussion(data.discussions[0], userID);
     await NavigationService.goBack();
     return true;
   }

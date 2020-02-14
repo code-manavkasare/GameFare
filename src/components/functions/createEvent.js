@@ -284,7 +284,9 @@ async function joinEvent(
       .database()
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)
       .update(user);
-    await addMemberDiscussion(data.discussions[0], user);
+    if (user.status === 'confirmed') {
+      await addMemberDiscussion(data.discussions[0], user);
+    }
   }
   if (user.status === 'confirmed')
     await subscribeToTopics([userID, 'all', data.objectID]);

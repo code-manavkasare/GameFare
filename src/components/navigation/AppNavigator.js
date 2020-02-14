@@ -226,7 +226,7 @@ const MainApp = createBottomTabNavigator(
   {
     Home: lockedPortrait(HomePage),
     ListGroups: lockedPortrait(ListGroups),
-    Stream: lockedPortrait(StreamPage),
+    // Stream: lockedPortrait(StreamPage),
     MessageList: lockedPortrait(MessageList),
     More: ProfileNavigator,
   },
@@ -325,7 +325,7 @@ const MainStack = createStackNavigator(
     Event: JoinNavigator,
     Conversation: MessageNavigator,
     Group: JoinGroupNavigator,
-    LiveStream: StreamNavigator,
+    // LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
   },
