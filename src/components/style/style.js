@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     width: 9,
     borderRadius: 4.5,
     top: 8.5,
-    left: width / 5 - 37,
+    left: width / 4 - 37,
     position: 'absolute',
     zIndex: 30,
     borderWidth: 1,

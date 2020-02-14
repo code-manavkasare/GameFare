@@ -2,7 +2,11 @@ import React, {Component} from 'react';
 import {Platform, PermissionsAndroid} from 'react-native';
 
 import {uploadPictureFirebase} from '../functions/pictures';
-import {subscribeToTopics, refreshTokenOnDatabase} from '../functions/notifications';
+import {addMemberDiscussion} from './createEvent';
+import {
+  subscribeToTopics,
+  refreshTokenOnDatabase,
+} from '../functions/notifications';
 import firebase from 'react-native-firebase';
 
 function generateID() {
@@ -16,11 +20,13 @@ function generateID() {
   );
 }
 
-function newDiscussion(discussionID, groupID, image, nameGroup) {
+function newDiscussion(discussionID, groupID, image, nameGroup, initialMember) {
   return {
     id: discussionID,
     title: nameGroup,
-    members: {},
+    members: {
+      [initialMember.id]: initialMember,
+    },
     messages: {},
     type: 'group',
     groupID: groupID,
@@ -57,7 +63,12 @@ async function createGroup(data, userID, infoUser) {
   await firebase
     .database()
     .ref('discussions/' + discussionID)
-    .update(newDiscussion(discussionID, key, pictureUri, group.info.name));
+    .update(
+      newDiscussion(discussionID, key, pictureUri, group.info.name, {
+        id: userID,
+        info: infoUser,
+      }),
+    );
   group.objectID = key;
   refreshTokenOnDatabase(userID);
   await subscribeToTopics([userID, 'all', key]);
@@ -70,6 +81,7 @@ async function subscribeUserToGroup(
   infoUser,
   status,
   tokenNotification,
+  discussionID,
 ) {
   const user = {
     userID: userID,
@@ -83,6 +95,9 @@ async function subscribeUserToGroup(
     .database()
     .ref('groups/' + groupID + '/members/' + userID)
     .update(user);
+  if (user.status === 'confirmed') {
+    await addMemberDiscussion(discussionID, user);
+  }
   return user;
 }
 

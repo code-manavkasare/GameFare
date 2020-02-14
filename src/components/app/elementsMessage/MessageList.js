@@ -50,6 +50,8 @@ class MessageTab extends React.Component {
   async loadDiscussions(userID) {
     this.setState({loader: true});
     const discussions = await loadMyDiscusions(userID);
+    console.log('discussions~', discussions);
+    //return true;
     const myDiscussions = Object.values(discussions).reduce(function(
       result,
       item,
@@ -68,11 +70,8 @@ class MessageTab extends React.Component {
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
     ) {
-      var that = this;
       await this.setState({loader: true});
-      setTimeout(function() {
-        that.loadDiscussions(nextProps.userID);
-      }, 800);
+      this.loadDiscussions(nextProps.userID);
     } else if (
       !isEqual(
         this.props.myConversations,
@@ -133,6 +132,7 @@ class MessageTab extends React.Component {
   }
 
   messagePageView(myConversations) {
+    console.log('myConversations', myConversations);
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -148,7 +148,7 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader ? (
             this.placeHolder()
-          ) : Object.keys(myConversations).length === 0 ? (
+          ) : Object.keys(myConversations).length === 0 || !myConversations ? (
             <Text style={[styleApp.text, {marginTop: 10, marginLeft: 20}]}>
               You don’t have any messages yet.
             </Text>
@@ -183,6 +183,7 @@ class MessageTab extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
     const {myConversations} = this.props;
+    console.log('myConversations', myConversations.length);
     const {userConnected} = this.props;
     return (
       <View>

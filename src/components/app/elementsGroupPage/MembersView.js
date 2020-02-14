@@ -25,6 +25,7 @@ import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 import {subscribeUserToGroup} from '../../functions/createGroup';
+import {removeMemberDiscussion} from '../../functions/createEvent';
 import {arrayAttendees} from '../../functions/createEvent';
 import {indexDiscussions} from '../../database/algolia';
 
@@ -41,7 +42,7 @@ class MembersView extends Component {
   componentDidMount() {}
   rowUser(user, i, data) {
     return (
-      <Row style={styleApp.center2}>
+      <Row key={i} style={styleApp.center2}>
         <Col style={styleApp.center}>
           <CardUser
             user={user}
@@ -49,7 +50,6 @@ class MembersView extends Component {
             admin={this.props.data.info.organizer === this.props.userID}
             userConnected={this.props.userConnected}
             objectID={this.props.data.objectID}
-            key={i}
             userID={this.props.userID}
             removable={this.props.editMode}
             removeFunc={() => this.props.onRemoveMember(user)}
@@ -72,6 +72,8 @@ class MembersView extends Component {
       userID,
       infoUser,
       'confirmed',
+      '',
+      data.discussions[0],
     );
 
     var members = data.members;
@@ -192,6 +194,7 @@ class MembersView extends Component {
       .database()
       .ref('groups/' + data.objectID + '/members/' + this.props.userID)
       .remove();
+    await removeMemberDiscussion(data.discussions[0], this.props.userID);
     await NavigationService.goBack();
     return true;
   }

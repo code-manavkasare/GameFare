@@ -20,16 +20,34 @@ function generateID() {
   );
 }
 
-function newDiscussion(discussionID, groupID, image, nameGroup) {
+function newDiscussion(discussionID, groupID, image, nameGroup, initialMember) {
   return {
     id: discussionID,
     title: nameGroup,
-    members: {},
+    members: {
+      [initialMember.id]: initialMember,
+    },
     messages: {},
     type: 'group',
     groupID: groupID,
     image: image,
   };
+}
+
+async function addMemberDiscussion(discussionID, member) {
+  await firebase
+    .database()
+    .ref('discussions/' + discussionID + '/members/' + member.id)
+    .update(member);
+  return true;
+}
+
+async function removeMemberDiscussion(discussionID, userID) {
+  await firebase
+    .database()
+    .ref('discussions/' + discussionID + '/members/' + userID)
+    .remove();
+  return true;
 }
 
 async function createEventObj(data, userID, infoUser, level, groups) {
@@ -103,7 +121,12 @@ async function createEvent(data, userID, infoUser, level) {
   await firebase
     .database()
     .ref('discussions/' + discussionID)
-    .update(newDiscussion(discussionID, key, pictureUri, event.info.name));
+    .update(
+      newDiscussion(discussionID, key, pictureUri, event.info.name, {
+        id: userID,
+        info: infoUser,
+      }),
+    );
 
   await pushEventToGroups(data.groups, key);
   await subscribeToTopics([userID, 'all', key]);
@@ -261,6 +284,9 @@ async function joinEvent(
       .database()
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)
       .update(user);
+    if (user.status === 'confirmed') {
+      await addMemberDiscussion(data.discussions[0], user);
+    }
   }
   if (user.status === 'confirmed')
     await subscribeToTopics([userID, 'all', data.objectID]);
@@ -280,4 +306,10 @@ function arrayAttendees(members, userID, organizer) {
   );
 }
 
-module.exports = {createEvent, joinEvent, arrayAttendees};
+module.exports = {
+  createEvent,
+  joinEvent,
+  arrayAttendees,
+  addMemberDiscussion,
+  removeMemberDiscussion,
+};

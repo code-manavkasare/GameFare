@@ -163,10 +163,6 @@ export default class HomeScreen extends React.Component {
           refreshControl={true}
           refresh={() => this.refresh()}
           initialColorIcon={colors.title}
-          icon1={'plus'}
-          clickButton1={() =>
-            this.props.navigation.navigate('CreateEvent0', {pageFrom: 'Home'})
-          }
           offsetBottom={100}
           showsVerticalScrollIndicator={false}
         />

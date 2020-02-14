@@ -82,7 +82,7 @@ class ListEvents extends React.Component {
     return (
       <View style={{marginTop: 10}}>
         <View style={[styleApp.marginView, {marginBottom: 10}]}>
-          <Text style={styleApp.input}>Groups related {numberFuture}</Text>
+          <Text style={styleApp.input}>Member groups {numberFuture}</Text>
           <View style={[styleApp.divider2, {marginTop: 20}]} />
         </View>
 
