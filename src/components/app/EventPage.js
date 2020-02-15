@@ -21,7 +21,10 @@ import {
   nextRule,
   nextLevelIndex,
 } from '../functions/editEvent';
-import {addMemberDiscussion,removeMemberDiscussion} from '../functions/createEvent';
+import {
+  addMemberDiscussion,
+  removeMemberDiscussion,
+} from '../functions/createEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar, isDatePast} from '../functions/date';

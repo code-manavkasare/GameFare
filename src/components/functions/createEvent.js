@@ -27,6 +27,7 @@ function newDiscussion(discussionID, groupID, image, nameGroup, initialMember) {
     members: {
       [initialMember.id]: initialMember,
     },
+    allMembers: [initialMember.id],
     messages: {},
     type: 'group',
     groupID: groupID,
