@@ -15,11 +15,16 @@ async function createStreamFirebase(stream, eventID) {
   await firebase
     .database()
     .ref('streams/' + firebaseStream.id + '/')
-    .set(firebaseStream);
+    .set(firebaseStream)
+    .catch((error) => {
+      console.log(
+        'ERROR: destroyStreamFirebase: ' + error.message,
+      );
+    });
 }
 
 async function createStreamMux() {
-  const url = Config.MUX_LIVE_STREAM_URL;
+  const url = `${Config.MUX_LIVE_STREAM_URL}`;
   axios.post(
     url,
     {
