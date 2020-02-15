@@ -7,6 +7,15 @@ import Config from 'react-native-config';
 // const MUX_TOKEN_SECRET =
 //   'pH0xdGK3b7qCA/kH8PSNspLqyLa+BJnsjnY4OBtHzECpDg6efuho2RdFsRgKkDqutbCkzAHS9Q1';
 
+
+
+async function createStream(eventID) {
+  const stream = await createStreamMux();
+  if (stream) {
+    await createStreamFirebase(stream, eventID);
+  }
+  return stream;
+}
 async function createStreamFirebase(stream, eventID) {
   const firebaseStream = {
     ...stream,
@@ -22,7 +31,6 @@ async function createStreamFirebase(stream, eventID) {
       );
     });
 }
-
 async function createStreamMux() {
   const url = `${Config.MUX_LIVE_STREAM_URL}`;
   axios.post(
@@ -65,14 +73,13 @@ async function createStreamMux() {
 
 }
 
-async function createStream(eventID) {
-  const stream = await createStreamMux();
-  if (stream) {
-    await createStreamFirebase(stream, eventID);
-  }
-  return stream;
-}
 
+async function destroyStream(streamID, saveFirebase) {
+  await destroyStreamMux(streamID);
+  if (!saveFirebase) {
+    destroyStreamFirebase(streamID);
+  }
+}
 async function destroyStreamFirebase(streamID) {
   await firebase
     .database()
@@ -106,13 +113,6 @@ async function destroyStreamMux(streamID) {
       }
       console.log(error.config);
     });
-}
-
-async function destroyStream(streamID, saveFirebase) {
-  await destroyStreamMux(streamID);
-  if (!saveFirebase) {
-    destroyStreamFirebase(streamID);
-  }
 }
 
 async function uploadNetlinePhoto(streamID, uri) {

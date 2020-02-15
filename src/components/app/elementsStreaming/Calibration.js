@@ -34,24 +34,26 @@ import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
-import LiveStreamHeader from './LiveStreamHeader';
+import CalibrationHeader from './LiveStreamHeader';
 import {has} from 'ramda';
 
 const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
 const MUX_TOKEN_SECRET =
   'pH0xdGK3b7qCA/kH8PSNspLqyLa+BJnsjnY4OBtHzECpDg6efuho2RdFsRgKkDqutbCkzAHS9Q1';
+const steps = {
+  PROMPT: 'prompt',
+  ERROR: 'error',
+  WAITING: 'waiting',
+  SHOW_LINES: 'show_lines',
+  CORRECT: 'correct',
+}
 
 class Calibration extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       waitingPermissions: false,
-      calibrationInfo: {
-        error: false,
-        waiting: false,
-        lines: null,
-        correct: false,
-      },
+      step: steps.PROMPT,
       streamInfo: {
         assetID: '',
         streamKey: '',
@@ -64,11 +66,15 @@ class Calibration extends React.Component {
     const permission = await this.permissions();
     if (!permission) {
       // camera or microphone unavailable, leave live stream
+      // probably add an alert to the user here before deploying to users
       this.props.navigation.navigate('TabsApp');
     }
     if (!this.state.waitingPermissions) {
       // creates stream on firebase, locally, and shows camera
-      this.createStream();
+      const success = this.createStream();
+      if (!success) {
+        this.props.navigation.navigate('TabsApp');
+      }
     }
   }
   async componentWillUnmount() {
@@ -121,16 +127,22 @@ class Calibration extends React.Component {
     );
   }
   async createStream() {
-    const eventID = this.props.navigation.getParam('eventID', 'noID');
-    const stream = await createStream(eventID);
-    this.setState({
-      loading: false,
-      outputUrl: this.state.outputUrl + stream.streamKey,
-      streamKey: stream.streamKey,
-      playbackID: stream.playbackID,
-      assetID: stream.id,
-    });
-    this.addNetlineListener();
+    const eventID = this.props.navigation.getParam('eventID', null);
+    if (eventID) {
+      const stream = await createStream(eventID);
+      if (stream) {
+        await this.setState({
+          loading: false,
+          outputUrl: this.state.outputUrl + stream.streamKey,
+          streamKey: stream.streamKey,
+          playbackID: stream.playbackID,
+          assetID: stream.id,
+        });
+        this.addNetlineListener();
+        return true;
+      }
+    }
+    return false;
   }
   addNetlineListener() {
     const that = this;
@@ -144,9 +156,7 @@ class Calibration extends React.Component {
           if (netlineResults.error) {
             await that.setState({
               waitingNetline: false,
-              netline: {
-                error: true,
-              },
+              netline: netlineResults,
             });
           } else {
             await that.setState({
@@ -162,16 +172,11 @@ class Calibration extends React.Component {
       });
   }
   mainButtonClick() {
-    if (!this.state.waitingNetline) {
-      if (!this.state.netline || this.state.netline.error) {
-        this.takeCalibrationPhoto();
-      } else {
-        if (this.state.streaming) {
-          this.stopStream();
-        } else {
-          this.startStream();
-        }
-      }
+    if (this.state.step === steps.PROMPT) {
+      this.takeCalibrationPhoto();
+    } else if (this.state.step === steps.ERROR) {
+      // clear netlline state
+      // take calibration photo
     }
   }
   async takeCalibrationPhoto() {
@@ -203,7 +208,7 @@ class Calibration extends React.Component {
     console.log(JSON.stringify(this.state, undefined, 2));
     return (
       <View style={styles.container}>
-        <LiveStreamHeader
+        <CalibrationHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
           inputRange={[5, 10]}
@@ -215,84 +220,57 @@ class Calibration extends React.Component {
           vis3={this.state.netline !== null && !this.state.streamReady}
           clickErr={() => this.setState({error: !this.state.error})}
         />
-        {!this.state.streamReady ? (
-          // this camera takes a calibration photo
-          <RNCamera
-            ref={(ref) => {
-              this.camera = ref;
-            }}
-            style={styles.nodeCameraView}
-            type={RNCamera.Constants.Type.back}
-            flashMode={RNCamera.Constants.FlashMode.off}
-          />
-        ) : (
-          // this camera streams live video
-          <NodeCameraView
-            style={styles.nodeCameraView}
-            ref={(nodeCameraView) => {
-              this.nodeCameraView = nodeCameraView;
-            }}
-            outputUrl={this.state.loading ? null : this.state.outputUrl}
-            camera={{cameraId: 1, cameraFrontMirror: true}}
-            audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
-            video={{
-              preset: 1,
-              bitrate: 400000,
-              profile: 1,
-              fps: 15,
-              videoFrontMirror: false,
-            }}
-            autopreview={true}
-          />
-        )}
-        {!this.state.waitingNetline && !this.state.netline ? (
+        <RNCamera
+          ref={(ref) => {
+            this.camera = ref;
+          }}
+          style={styles.nodeCameraView}
+          type={RNCamera.Constants.Type.back}
+          flashMode={RNCamera.Constants.FlashMode.off}
+        />
+        {this.state.step === steps.PROMPT ? (
           <Row style={styleApp.center2}>
             <Text style={styleApp.textBold}>
               Please position the camera correctly and take a photo
             </Text>
           </Row>
-        ) : null}
-        {this.state.waitingNetline ? (
+        ) : this.state.step === steps.WAITING ? (
           <View style={[styles.nodeCameraView, styles.smallRow]}>
             <Loader color="white" size={60} />
           </View>
-        ) : null}
-
-        {!this.state.streamLive && this.state.netline && !this.state.waitingNetline ? (
-          this.state.netline.error ? (
-            <Row style={styleApp.center2}>
-              <Text style={styleApp.textBold}>
-                Could not find net or base lines. Exit stream and try again.
-              </Text>
-            </Row>
-          ) : (
-            <Svg style={styles.nodeCameraView} height="100%" width="100%">
-              <Line
-                x1={this.state.netline.optimalNetline.origin.x * width}
-                y1={this.state.netline.optimalNetline.origin.y * height}
-                x2={this.state.netline.optimalNetline.destination.x * width}
-                y2={this.state.netline.optimalNetline.destination.y * height}
-                stroke="red"
-                strokeWidth="4"
-              />
-              <Line
-                x1={this.state.netline.doublesLine.origin.x * width}
-                y1={this.state.netline.doublesLine.origin.y * height}
-                x2={this.state.netline.doublesLine.destination.x * width}
-                y2={this.state.netline.doublesLine.destination.y * height}
-                stroke="green"
-                strokeWidth="4"
-              />
-              <Line
-                x1={this.state.netline.baseLine.origin.x * width}
-                y1={this.state.netline.baseLine.origin.y * height}
-                x2={this.state.netline.baseLine.destination.x * width}
-                y2={this.state.netline.baseLine.destination.y * height}
-                stroke="blue"
-                strokeWidth="4"
-              />
-            </Svg>
-          )
+        ) : this.state.step == steps.ERROR ? (
+          <Row style={styleApp.center2}>
+            <Text style={styleApp.textBold}>
+              Could not find net or base lines. Exit stream and try again.
+            </Text>
+          </Row>
+        ) : this.state.step == steps.SHOW_LINES ? (
+          <Svg style={styles.nodeCameraView} height="100%" width="100%">
+            <Line
+              x1={this.state.netline.optimalNetline.origin.x * width}
+              y1={this.state.netline.optimalNetline.origin.y * height}
+              x2={this.state.netline.optimalNetline.destination.x * width}
+              y2={this.state.netline.optimalNetline.destination.y * height}
+              stroke="red"
+              strokeWidth="4"
+            />
+            <Line
+              x1={this.state.netline.doublesLine.origin.x * width}
+              y1={this.state.netline.doublesLine.origin.y * height}
+              x2={this.state.netline.doublesLine.destination.x * width}
+              y2={this.state.netline.doublesLine.destination.y * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={this.state.netline.baseLine.origin.x * width}
+              y1={this.state.netline.baseLine.origin.y * height}
+              x2={this.state.netline.baseLine.destination.x * width}
+              y2={this.state.netline.baseLine.destination.y * height}
+              stroke="blue"
+              strokeWidth="4"
+            />
+          </Svg>
         ) : null}
 
         <Col style={styles.toolbar}>
