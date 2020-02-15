@@ -7,7 +7,7 @@ function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
     title: nameDiscussion,
     allMembers: Object.values(members).map((member) => member.id),
-    numberMembers: members.length,
+    numberMembers: Object.values(members).length,
     firstMessageExists: firstMessageExists,
     members: members,
     messages: {},
