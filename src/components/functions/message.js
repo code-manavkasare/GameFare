@@ -6,7 +6,7 @@ import union from 'lodash/union';
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
     title: nameDiscussion,
-    allMembers: members.map((member) => member.id),
+    allMembers: Object.values(members).map((member) => member.id),
     numberMembers: members.length,
     firstMessageExists: firstMessageExists,
     members: members,
@@ -16,8 +16,12 @@ function discussionObj(members, nameDiscussion, firstMessageExists) {
 }
 
 async function createDiscussion(members, nameDiscussion, firstMessageExists) {
+  const membersObj = Object.values(members).reduce(function(result, item) {
+    result[item.id] = item;
+    return result;
+  }, {});
   var newDiscussion = discussionObj(
-    Object.values(members),
+    membersObj,
     nameDiscussion,
     firstMessageExists,
   );
