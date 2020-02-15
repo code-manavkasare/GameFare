@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* gamefareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* gamefareTests.m */; };
-		050B78E623F16CF200F91B6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 054C59B323EDA0E9006D67F4 /* GoogleService-Info.plist */; };
 		050B790323F1A85100F91B6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 050B790223F1A85100F91B6B /* GoogleService-Info.plist */; };
+		050B796423F858C300F91B6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 050B796323F858C300F91B6B /* GoogleService-Info.plist */; };
 		054C599323EDA04F006D67F4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		054C599423EDA04F006D67F4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		054C599623EDA04F006D67F4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */; };
@@ -119,9 +119,9 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* gamefareTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gamefareTests.m; sourceTree = "<group>"; };
 		050B790223F1A85100F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "GoogleService-Info.plist"; path = "gamefare/GoogleProd/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		050B796323F858C300F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		054C59B123EDA04F006D67F4 /* GameFare-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameFare-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		054C59B223EDA04F006D67F4 /* gamefare-dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gamefare-dev-Info.plist"; path = "/Users/raf/Documents/gamefare-native/ios/gamefare-dev-Info.plist"; sourceTree = "<absolute>"; };
-		054C59B323EDA0E9006D67F4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "gamefare/GoogleDev/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		05B34DCC23A397CD001B955A /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icomoon.ttf; path = ../assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
 		0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.debug.xcconfig"; sourceTree = "<group>"; };
 		0E75EAC3BEE0426BBEE4E246 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
@@ -274,7 +274,7 @@
 		054C598E23ED9F61006D67F4 /* GoogleDev */ = {
 			isa = PBXGroup;
 			children = (
-				054C59B323EDA0E9006D67F4 /* GoogleService-Info.plist */,
+				050B796323F858C300F91B6B /* GoogleService-Info.plist */,
 			);
 			name = GoogleDev;
 			sourceTree = "<group>";
@@ -672,7 +672,7 @@
 				054C59A223EDA04F006D67F4 /* OpenSans-Regular.ttf in Resources */,
 				054C59A323EDA04F006D67F4 /* OpenSans-SemiBold.ttf in Resources */,
 				054C59A423EDA04F006D67F4 /* logoios.png in Resources */,
-				050B78E623F16CF200F91B6B /* GoogleService-Info.plist in Resources */,
+				050B796423F858C300F91B6B /* GoogleService-Info.plist in Resources */,
 				054C59A523EDA04F006D67F4 /* OpenSans-SemiBoldItalic.ttf in Resources */,
 				054C59A623EDA04F006D67F4 /* splashImage.png in Resources */,
 				054C59A723EDA04F006D67F4 /* Images.xcassets in Resources */,
