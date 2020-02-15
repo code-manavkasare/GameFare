@@ -92,31 +92,31 @@ class AddUsers extends Component {
     }
 
     const {url, description} = await this.props.createBranchMessage();
-
-    await this.props.messageAction('setConversation', discussion);
-    await this.props.messageAction('setMyConversations', {
-      [discussion.objectID]: true,
-    });
-
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
-    await this.setState({loaderButton: false});
-    await this.userListRef.reset();
-    NavigationService.navigate('AlertAddUsers', {
-      close: true,
-      title: 'Congrats, you have invited new players to ' + nameEvent,
-      users: selectedUsersWithId,
-      textButton: 'Got it!',
-      icon: (
-        <AllIcon
-          name="check-circle"
-          color={colors.green}
-          size={20}
-          type="font"
-        />
-      ),
-    });
 
-    // this.showToast('Invitations sent !');
+    var that = this;
+    setTimeout(async function() {
+      await that.props.messageAction('setConversation', discussion);
+      await that.props.messageAction('setMyConversations', {
+        [discussion.objectID]: true,
+      });
+      await that.setState({loaderButton: false});
+      await that.userListRef.reset();
+      NavigationService.navigate('AlertAddUsers', {
+        close: true,
+        title: 'Congrats, you have invited new players to ' + nameEvent,
+        users: selectedUsersWithId,
+        textButton: 'Got it!',
+        icon: (
+          <AllIcon
+            name="check-circle"
+            color={colors.green}
+            size={20}
+            type="font"
+          />
+        ),
+      });
+    }, 700);
   };
 
   showToast(text) {
