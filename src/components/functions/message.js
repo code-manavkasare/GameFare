@@ -80,7 +80,6 @@ async function loadMyDiscusions(userID) {
 
   // search for persnal conversations
   let {hits} = await indexDiscussions.search({
-    query: '',
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
   });
   console.log('hitttasdfss', hits);
