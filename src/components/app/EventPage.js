@@ -816,6 +816,7 @@ class EventPage extends React.Component {
       });
     }
     await this.props.eventsAction('deleteMyEvent', data.objectID);
+    await this.props.messageAction('deleteMyConversation', data.discussions[0]);
     await firebase
       .database()
       .ref('cancelledEvents/' + data.objectID)
