@@ -51,7 +51,7 @@ class CardConversation extends React.Component {
   componentWillReceiveProps(nextProps) {
     const conversation = this.props.conversations[this.props.discussionID];
     const conversationNext = nextProps.conversations[nextProps.discussionID];
-    if (!isEqual(conversation, conversationNext))
+    if (!isEqual(conversation, conversationNext) && conversationNext.lastMessage)
       return this.setState({
         lastMessage: conversationNext.lastMessage,
       });
