@@ -96,7 +96,6 @@ We use Reactotron for debugging please install the software from github page : h
 We also use ESLint, be sure to have it installed on your VSCode extension
 
 ## Deploying
-TODO: when apple user change rewrite deployment on testflight with fastlane to dev environment 
 
 We use Fastlane for automatized deployment on Testflight. To use it first install it
 
@@ -106,9 +105,16 @@ We use Fastlane for automatized deployment on Testflight. To use it first instal
 Now fastlane should be installed ! To use it go to /ios repository of gamefare app and type :
 
     cd ios
-    fastlane beta
+    fastlane match appstore
+    fastlane match development
 
-If you are asked for an app password try this : seez-cjpi-nrep-gpfi
+You now have all working certification in order to push the app on the store.
+
+    fastlane ios dev 
+    fastlane ios prod
+
+With dev and prod two different environment, dev will build and ship GameFare-dev, and prod will build the prod app GameFare
+
 Thsi will push a new build of the current defined version. No need to always update version ! For versionning information : https://semver.org/
 The build version is the lastest build version pushed to appstore +1
 
