@@ -61,9 +61,6 @@ export default class CardContent extends React.Component {
   }
   async uploadPicture(image, discussionID, messageID) {
     await this.setState({loader: true});
-    console.log('messageID', messageID);
-    console.log(discussionID);
-    // return true;
     const destinationImage =
       'discussions/' +
       discussionID +

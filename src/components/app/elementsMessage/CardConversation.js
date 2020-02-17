@@ -51,7 +51,10 @@ class CardConversation extends React.Component {
   componentWillReceiveProps(nextProps) {
     const conversation = this.props.conversations[this.props.discussionID];
     const conversationNext = nextProps.conversations[nextProps.discussionID];
-    if (!isEqual(conversation, conversationNext))
+    if (
+      !isEqual(conversation, conversationNext) &&
+      conversationNext.lastMessage
+    )
       return this.setState({
         lastMessage: conversationNext.lastMessage,
       });
@@ -79,7 +82,6 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
-    console.log('clickCard', conversation);
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await firebase
         .database()
@@ -98,7 +100,6 @@ class CardConversation extends React.Component {
     });
   }
   cardConversation(conversation, lastMessage, i) {
-    console.log('cardConversation', lastMessage);
     return (
       <ButtonColor
         key={i}

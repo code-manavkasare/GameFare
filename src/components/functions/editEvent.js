@@ -12,23 +12,19 @@ function nextGender(currentGender, inc) {
 
 function nextRule(currentRule, league, inc) {
   const rules = league.rules;
-  const rule = Object.values(rules).filter(
-    r => r.value === currentRule,
-  )[0];
+  const rule = Object.values(rules).filter((r) => r.value === currentRule)[0];
   const i = rules.indexOf(rule);
   const next = (((i + inc) % rules.length) + rules.length) % rules.length;
-  console.log('next rule: ' + rules[next].value);
   return rules[next].value;
 }
 
 function nextLevelIndex(currentIndex, levels, inc) {
-  return (((currentIndex + inc) % levels.length) + levels.length) % levels.length;
+  return (
+    (((currentIndex + inc) % levels.length) + levels.length) % levels.length
+  );
 }
 
-
-
 // end helpers
-
 
 async function editEvent(updatedEvent, callback = () => {}) {
   updatedEvent = {
@@ -48,25 +44,35 @@ async function editEvent(updatedEvent, callback = () => {}) {
     .catch((err) => {
       throw err;
     });
-    return true;
+  return true;
 }
 
 async function removePlayerFromEvent(player, event) {
   if (event.allAttendees) {
     let index = event.allAttendees.indexOf(player.id);
     if (index !== -1) {
-        await firebase
+      await firebase
         .database()
         .ref('events/' + event.objectID + '/allAttendees/' + index)
         .remove()
-        .catch(err => {throw err;});
+        .catch((err) => {
+          throw err;
+        });
     }
   }
   await firebase
-  .database()
-  .ref('events/' + event.objectID + '/attendees/' + player.id)
-  .remove()
-  .catch(err => {throw err;});
+    .database()
+    .ref('events/' + event.objectID + '/attendees/' + player.id)
+    .remove()
+    .catch((err) => {
+      throw err;
+    });
 }
 
-module.exports = {editEvent, removePlayerFromEvent, nextGender, nextRule, nextLevelIndex};
+module.exports = {
+  editEvent,
+  removePlayerFromEvent,
+  nextGender,
+  nextRule,
+  nextLevelIndex,
+};

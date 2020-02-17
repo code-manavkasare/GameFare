@@ -256,7 +256,6 @@ class ProfilePage extends Component {
   }
 
   async submit(data, waitlist) {
-    console.log('submit attendace!');
     await this.setState({loader: true});
     var {response, message} = await joinEvent(
       data,
@@ -272,7 +271,6 @@ class ProfilePage extends Component {
       this.props.navigation.getParam('users'),
       waitlist,
     );
-    console.log('response', response);
     if (!response) {
       await this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
