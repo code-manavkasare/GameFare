@@ -49,6 +49,7 @@ import Payments from '../app/elementsUser/elementsPayment/Payments';
 import NewCard from '../app/elementsUser/elementsPayment/NewCard';
 import NewMethod from '../app/elementsUser/elementsPayment/NewMethod';
 import NewBankAccount from '../app/elementsUser/elementsPayment/NewBankAccount';
+import CreateConnectAccount from '../app/elementsUser/elementsPayment/CreateConnectAccount';
 import DetailCard from '../app/elementsUser/elementsPayment/DetailCard';
 import Scan from '../app/elementsUser/elementsPayment/Scan';
 import ApplePay from '../app/elementsUser/elementsPayment/ApplePay';
@@ -197,6 +198,7 @@ const PaymentsNavigator = createStackNavigator(
     ApplePay: lockedPortrait(ApplePay),
     NewMethod: lockedPortrait(NewMethod),
     NewBankAccount: lockedPortrait(NewBankAccount),
+    CreateConnectAccount: lockedPortrait(CreateConnectAccount),
     DetailCard: lockedPortrait(DetailCard),
     Scan: lockedPortrait(Scan),
   },

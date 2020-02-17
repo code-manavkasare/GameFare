@@ -17,6 +17,7 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 import AllIcons from '../../../layout/icons/AllIcons';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
@@ -37,13 +38,10 @@ class ListEvent extends Component {
     super(props);
     this.state = {
       loader: false,
-      routingNumber: '',
-      accountNumber: '',
-      country: 'US',
-      currency: 'usd',
-      bankName: '',
-      account_holder_name:
-        this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
+      ssnNumber: '',
+      address: {},
+      birthdate: '',
+      isDateTimePickerVisible: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.focusNextField = this.focusNextField.bind(this);
@@ -110,6 +108,13 @@ class ListEvent extends Component {
   wrongCB(message) {
     this.setState({loader: false, error: true, errorMessage: message});
   }
+  hideDateTimePicker() {
+    this.setState({isDateTimePickerVisible: false});
+  }
+  handleDatePicked(date) {
+    var strDate = date.toString();
+    this.setState({birthdate: strDate, isDateTimePickerVisible: false});
+  }
   countrySelect(country, countryBankAccount) {
     return (
       <ButtonColor
@@ -125,9 +130,7 @@ class ListEvent extends Component {
                 />
               </Col>
               <Col size={70} style={styleApp.center2}>
-                <Text style={styleApp.input}>
-                  {country.name} ({countryBankAccount.currency})
-                </Text>
+                <Text style={styleApp.input}>{country.name}</Text>
               </Col>
               <Col size={15} style={styleApp.center}>
                 <AllIcons
@@ -188,20 +191,15 @@ class ListEvent extends Component {
       />
     );
   }
-  fieldsBankAccount(fields) {
-    return fields.map((field, i) => this.field(field));
-  }
-  newBankAccount(country, countryBankAccount) {
+  newBankAccount(country) {
     return (
       <View style={styleApp.marginView}>
         <Text style={[styleApp.title, {marginBottom: 10, marginTop: 10}]}>
-          Link your bank account
+          Personal information
         </Text>
-        {this.countrySelect(country, countryBankAccount)}
+        {this.countrySelect(country)}
 
-        {/* {this.field ("Bank Name",'bankName','university') } */}
-
-        {this.fieldsBankAccount(countryBankAccount.fields)}
+        
 
         {this.field({
           name: 'Account holder name',
@@ -220,15 +218,9 @@ class ListEvent extends Component {
   }
   buttonActive(countryBankAccount) {
     const state = this.state;
-    if (state.account_holder_name === '') return false;
-    for (var i in countryBankAccount.fields) {
-      console.log('countryBankAccount', countryBankAccount.fields[i].id);
-      if (
-        state[countryBankAccount.fields[i].id] === '' ||
-        !state[countryBankAccount.fields[i].id]
-      )
-        return false;
-    }
+    if (state.birthdate === '' || state.ssnNumber === '' || !state.address.lat)
+      return false;
+
     return true;
   }
   render() {
@@ -237,16 +229,13 @@ class ListEvent extends Component {
       (country) => country.code === codeCountry,
     )[0];
     console.log('newBankAccount', country);
-    const countryBankAccount = countriesBankAccount.filter(
-      (country) => country.code === codeCountry,
-    )[0];
-    const buttonActive = this.buttonActive(countryBankAccount);
+    const buttonActive = this.buttonActive();
     console.log('buttonActive', buttonActive);
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Bank account'}
+          textHeader={'Personal information'}
           inputRange={[20, 50]}
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
@@ -258,7 +247,7 @@ class ListEvent extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() =>
-            this.newBankAccount(country, countryBankAccount)
+            this.newBankAccount(country)
           }
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -276,6 +265,14 @@ class ListEvent extends Component {
             loader={this.state.loader}
           />
         </InputAccessoryView>
+
+        <DateTimePicker
+          titleIOS="Pick your date of birth"
+          isVisible={this.state.isDateTimePickerVisible}
+          onConfirm={this.handleDatePicked}
+          onCancel={this.hideDateTimePicker}
+          style={{color: 'white'}}
+        />
       </View>
     );
   }

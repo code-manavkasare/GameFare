@@ -74,6 +74,8 @@ class ListEvent extends Component {
     if (data == 'new') {
       return this.props.navigation.navigate('NewMethod');
     } else if (data === 'bank') {
+      if (!this.props.connectAccountToken)
+        return this.props.navigation.navigate('CreateConnectAccount');
       return this.props.navigation.navigate('NewBankAccount');
     }
     return this.props.navigation.navigate('DetailCard', {
@@ -191,6 +193,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     defaultCard: state.user.infoUser.wallet.defaultCard,
     cards: state.user.infoUser.wallet.cards,
+    connectAccountToken: state.user.infoUser.wallet.connectAccountToken,
   };
 };
 
