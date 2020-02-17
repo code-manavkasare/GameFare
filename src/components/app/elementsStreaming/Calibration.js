@@ -49,6 +49,7 @@ class Calibration extends React.Component {
       waitingPermissions: false,
       step: steps.PROMPT,
       stream: null, // streamKey, playbackID, id
+      mirrorFront: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -177,8 +178,6 @@ class Calibration extends React.Component {
   render() {
     const {height, width} = Dimensions.get('screen');
     const {navigation} = this.props;
-    console.log('step');
-    console.log(this.state.step)
     return (
       <View style={styles.container}>
         <CalibrationHeader
@@ -187,8 +186,8 @@ class Calibration extends React.Component {
           inputRange={[5, 10]}
           loader={this.state.loader}
           click1={() => navigation.navigate('TabsApp')}
-          click2={() => null}
-          vis2={false}
+          click2={() => this.setState({mirrorFront: !this.state.mirrorFront})}
+          vis2={true}
           click3={() => this.lockNetline()}
           vis3={this.state.step === steps.SHOW_LINES || this.state.step === steps.PROMPT}
           clickErr={() => this.setState({error: !this.state.error})}
@@ -198,7 +197,7 @@ class Calibration extends React.Component {
             this.camera = ref;
           }}
           style={styles.nodeCameraView}
-          type={RNCamera.Constants.Type.back}
+          type={RNCamera.Constants.Type.front}
           flashMode={RNCamera.Constants.FlashMode.off}
         />
         {this.state.step === steps.PROMPT ? (

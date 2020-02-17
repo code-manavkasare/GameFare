@@ -75,63 +75,18 @@ export default class LiveStreamHeader extends Component {
                 />
               );
             }}
-            click={() => this.props.click1()}
+            click={() => this.props.click()}
             color={'white'}
             style={styles.button}
             onPressColor={colors.off}
           />
         </View>
-        {this.props.vis2 ? (
-          <View style={styles.buttonStyle}>
-            <AllIcons
-              name="dot"
-              color={'red'}
-              size={3}
-              type="font"
-            />
-          </View>
-        ) : null}
-        {this.props.vis3 ? (
-          <View style={styles.buttonStyle}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name="check"
-                    color={'colors.title'}
-                    size={15}
-                    type="font"
-                  />
-                );
-              }}
-              click={() => {
-                this.props.click3();
-              }}
-              color={'white'}
-              style={styles.button}
-              onPressColor={colors.off}
-            />
-          </View>
-        ) : null}
         <View style={styles.buttonStyle}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  name="exclamation-triangle"
-                  color={'rgb(255, 0, 0)'}
-                  size={15}
-                  type="font"
-                />
-              );
-            }}
-            click={() => {
-              this.setState({errClicked: true});
-              this.props.clickErr();
-            }}
-            color={this.state.errClicked ? 'black' : 'white'}
-            style={styles.button}
-            onPressColor={colors.off}
+          <AllIcons
+            name=""
+            type="font"
+            color={colors.red}
+            size={15}
           />
         </View>
       </Col>

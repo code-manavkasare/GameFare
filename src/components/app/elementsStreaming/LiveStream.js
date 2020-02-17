@@ -8,12 +8,9 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import Svg, {Line} from 'react-native-svg';
 
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import {Grid, Row, Col} from 'react-native-easy-grid';
-
-import Loader from '../../layout/loaders/Loader';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -31,10 +28,6 @@ class LiveStream extends React.Component {
       outputUrl: 'rtmp://live.mux.com/app/',
       error: false,
       streaming: false,
-      assetID: '',
-      streamKey: '',
-      playbackID: '',
-      netline: null,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -64,12 +57,7 @@ class LiveStream extends React.Component {
           inputRange={[5, 10]}
           loader={this.state.loader}
           streaming={this.state.streaming}
-          click1={() => navigation.navigate('TabsApp')}
-          click2={() => null}
-          vis2={false}
-          click3={() => null}
-          vis3={false}
-          clickErr={() => this.setState({error: !this.state.error})}
+          click={() => navigation.navigate('TabsApp')}
         />
         <NodeCameraView
           style={styles.nodeCameraView}
@@ -77,7 +65,7 @@ class LiveStream extends React.Component {
             this.nodeCameraView = nodeCameraView;
           }}
           outputUrl={stream ? this.state.outputUrl + stream.streamKey : ''}
-          camera={{cameraId: 1, cameraFrontMirror: true}}
+          camera={{cameraId: 1, cameraFrontMirror: false}}
           audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
           video={{
             preset: 1,
