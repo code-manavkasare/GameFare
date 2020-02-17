@@ -28,6 +28,9 @@ class MessageTab extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  shouldComponentUpdate(nextProps) {
+    return true;
+  }
   componentDidMount() {
     if (this.props.userConnected) this.loadDiscussions(this.props.userID);
     AppState.addEventListener('change', this._handleAppStateChange);
@@ -66,6 +69,7 @@ class MessageTab extends React.Component {
   }
 
   async componentWillReceiveProps(nextProps) {
+    console.log('message oist receive props!~');
     if (
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
@@ -78,8 +82,8 @@ class MessageTab extends React.Component {
         nextProps.myConversations && nextProps.userConnected,
       )
     ) {
-      await this.setState({loader: true});
-      return this.setState({loader: false});
+      // await this.setState({loader: true});
+      // return this.setState({loader: false});
     } else if (
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
@@ -183,7 +187,7 @@ class MessageTab extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
     const {myConversations} = this.props;
-    console.log('myConversations', myConversations.length);
+    console.log(' render myConversations', myConversations);
     const {userConnected} = this.props;
     return (
       <View>
