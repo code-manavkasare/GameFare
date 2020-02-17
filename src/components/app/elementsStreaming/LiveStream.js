@@ -257,7 +257,9 @@ class LiveStream extends React.Component {
           </View>
         ) : null}
 
-        {!this.state.streamLive && this.state.netline && !this.state.waitingNetline ? (
+        {!this.state.streamLive &&
+        this.state.netline &&
+        !this.state.waitingNetline ? (
           this.state.netline.error ? (
             <Row style={styleApp.center2}>
               <Text style={styleApp.textBold}>
