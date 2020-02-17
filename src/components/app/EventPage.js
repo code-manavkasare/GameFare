@@ -849,7 +849,6 @@ class EventPage extends React.Component {
       .database()
       .ref('events/' + data.objectID + '/attendees/' + userID)
       .remove();
-    console.log('data.discussions[0]', data.discussions[0]);
     await removeMemberDiscussion(data.discussions[0], userID);
     await NavigationService.goBack();
     return true;
@@ -1048,9 +1047,7 @@ class EventPage extends React.Component {
     const amountPaidAllUsers = Object.values(members)
       .filter((member) => member.status === 'confirmed' && member.amountPaid)
       .map((member) => member.amountPaid);
-    console.log('amountPaidAllUsers', amountPaidAllUsers);
     const payout = ramda.sum(amountPaidAllUsers);
-    // const payout = numberConfirmedMembers * Number(event.price.joiningFee);
     return this.props.navigation.navigate('Alert', {
       title: 'Are you ready to check out?',
       subtitle: '$' + payout + ' will be transferred to your wallet.',

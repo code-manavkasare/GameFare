@@ -321,7 +321,6 @@ class GroupPage extends React.Component {
     if (!uri) return this.setState({loader: false});
     const uriResized = await resize(uri);
     if (!uriResized) return this.setState({loader: false});
-    console.log('editPic', uriResized);
     await this.setState({
       editPic: uriResized,
       group: {...this.state.group, pictures: [uriResized]},

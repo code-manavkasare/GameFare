@@ -53,8 +53,6 @@ class MessageTab extends React.Component {
   async loadDiscussions(userID) {
     this.setState({loader: true});
     const discussions = await loadMyDiscusions(userID);
-    console.log('discussions~', discussions);
-    //return true;
     const myDiscussions = Object.values(discussions).reduce(function(
       result,
       item,
@@ -69,7 +67,6 @@ class MessageTab extends React.Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    console.log('message oist receive props!~');
     if (
       this.props.userConnected !== nextProps.userConnected &&
       nextProps.userConnected
@@ -136,7 +133,6 @@ class MessageTab extends React.Component {
   }
 
   messagePageView(myConversations) {
-    console.log('myConversations', myConversations);
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -187,7 +183,6 @@ class MessageTab extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
     const {myConversations} = this.props;
-    console.log(' render myConversations', myConversations);
     const {userConnected} = this.props;
     return (
       <View>
