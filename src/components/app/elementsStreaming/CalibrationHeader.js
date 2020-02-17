@@ -34,13 +34,6 @@ export default class CalibrationHeader extends Component {
       this.props.onRef(this);
     }
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.loader !== nextProps.loader ||
-      this.state !== nextState ||
-      this.props.enableClickButton !== nextProps.enableClickButton
-    );
-  }
   handleBackPress = () => {
     if (this.props.enableClickButton && this.state.enableClickButton) {
       this.close();

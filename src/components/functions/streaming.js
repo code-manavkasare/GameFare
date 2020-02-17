@@ -86,7 +86,9 @@ async function destroyStreamFirebase(streamID) {
 }
 
 async function destroyStreamMux(streamID) {
-  const url = `${Config.MUX_LIVE_STREAM_URL}streamID`;
+  const url = `${Config.MUX_LIVE_STREAM_URL}/` + streamID;
+  console.log('destroyStreamMux');
+  console.log(url);
   await axios
     .delete(url, {
       auth: {

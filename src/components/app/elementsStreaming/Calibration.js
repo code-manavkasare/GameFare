@@ -177,6 +177,8 @@ class Calibration extends React.Component {
   render() {
     const {height, width} = Dimensions.get('screen');
     const {navigation} = this.props;
+    console.log('step');
+    console.log(this.state.step)
     return (
       <View style={styles.container}>
         <CalibrationHeader
@@ -188,7 +190,7 @@ class Calibration extends React.Component {
           click2={() => null}
           vis2={false}
           click3={() => this.lockNetline()}
-          vis3={this.state.step === steps.SHOW_LINES}
+          vis3={this.state.step === steps.SHOW_LINES || this.state.step === steps.PROMPT}
           clickErr={() => this.setState({error: !this.state.error})}
         />
         <RNCamera
