@@ -8,11 +8,9 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import axios from 'axios';
 import firebase from 'react-native-firebase';
 import Svg, {Line} from 'react-native-svg';
 
-import {NodeCameraView} from 'react-native-nodemediaclient';
 import {RNCamera} from 'react-native-camera';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
@@ -35,18 +33,14 @@ import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
 import CalibrationHeader from './LiveStreamHeader';
-import {has} from 'ramda';
 
-const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
-const MUX_TOKEN_SECRET =
-  'pH0xdGK3b7qCA/kH8PSNspLqyLa+BJnsjnY4OBtHzECpDg6efuho2RdFsRgKkDqutbCkzAHS9Q1';
 const steps = {
   PROMPT: 'prompt',
   ERROR: 'error',
   WAITING: 'waiting',
   SHOW_LINES: 'show_lines',
   CORRECT: 'correct',
-}
+};
 
 class Calibration extends React.Component {
   constructor(props) {
@@ -155,11 +149,12 @@ class Calibration extends React.Component {
           console.log(netlineResults);
           if (netlineResults.error) {
             await that.setState({
-              waitingNetline: false,
+              step: steps.ERROR,
               netline: netlineResults,
             });
           } else {
             await that.setState({
+              step: steps.SHOW_LINES,
               netline: {
                 optimalNetline: netlineResults.optimalNetLine,
                 doublesLine: netlineResults.doublesLine,
@@ -171,30 +166,16 @@ class Calibration extends React.Component {
         }
       });
   }
-  mainButtonClick() {
-    if (this.state.step === steps.PROMPT) {
+  async mainButtonClick() {
+    if (this.state.step === steps.PROMPT || this.state.step === steps.ERROR) {
+      await this.setState({step: steps.WAITING, netline: null});
       this.takeCalibrationPhoto();
-    } else if (this.state.step === steps.ERROR) {
-      // clear netlline state
-      // take calibration photo
     }
   }
   async takeCalibrationPhoto() {
-    if (this.camera) {
-      const options = {width: 720, quality: 0.5, base64: true};
-      const data = await this.camera.takePictureAsync(options);
-      await this.setState({waitingNetline: true, netline: null});
-      await uploadNetlinePhoto(this.state.assetID, data.uri);
-    }
-  }
-
-  startStream() {
-    this.setState({streaming: true});
-    this.nodeCameraView.start();
-  }
-  stopStream() {
-    this.nodeCameraView.stop();
-    this.setState({streaming: false});
+    const options = {width: 720, quality: 0.5, base64: true};
+    const data = await this.camera.takePictureAsync(options);
+    await uploadNetlinePhoto(this.state.assetID, data.uri); // needs to delete the old netline photo?
   }
 
   lockNetline() {
@@ -216,7 +197,7 @@ class Calibration extends React.Component {
           click1={() => navigation.navigate('TabsApp')}
           click2={() => null}
           vis2={false}
-          click3={() => this.lockNetline()}
+          click3={() => this.setState({step: steps.CORRECT})}
           vis3={this.state.netline !== null && !this.state.streamReady}
           clickErr={() => this.setState({error: !this.state.error})}
         />
@@ -334,4 +315,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(LiveStream);
+export default connect(mapStateToProps, {})(Calibration);
