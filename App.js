@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
+import DeviceInfo from 'react-native-device-info';
 
 import AppSwitchNavigator from './src/components/navigation/AppNavigator';
 import NavigationService from './NavigationService';
@@ -13,6 +14,17 @@ import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 
+import * as Sentry from '@sentry/react-native';
+
+const configureSentry = () => {
+  Sentry.init({
+    dsn: 'https://edb7dcfee75b46ad9ad45bc0193f6c0d@sentry.io/2469968',
+    attachStacktrace: true,
+  });
+  Sentry.setDist(DeviceInfo.getBuildNumber());
+  Sentry.setRelease(`${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`);
+};
+
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
@@ -20,6 +32,7 @@ const AppContainer = createAppContainer(AppSwitchNavigator);
 
 class App extends Component {
   async componentDidMount() {
+    configureSentry();
     SplashScreen.hide();
     StatusBar.setHidden(true, 'slide');
     StatusBar.setBarStyle('light-content', true);
