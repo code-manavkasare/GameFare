@@ -3,12 +3,6 @@ import firebase from 'react-native-firebase';
 import axios from 'axios';
 import Config from 'react-native-config';
 
-// const MUX_TOKEN_ID = 'cbc3b201-74d4-42ce-9296-a516a1c0d11d';
-// const MUX_TOKEN_SECRET =
-//   'pH0xdGK3b7qCA/kH8PSNspLqyLa+BJnsjnY4OBtHzECpDg6efuho2RdFsRgKkDqutbCkzAHS9Q1';
-
-
-
 async function createStream(eventID) {
   const stream = await createStreamMux();
   if (stream) {
@@ -32,8 +26,9 @@ async function createStreamFirebase(stream, eventID) {
     });
 }
 async function createStreamMux() {
+  let stream = null;
   const url = `${Config.MUX_LIVE_STREAM_URL}`;
-  axios.post(
+  await axios.post(
     url,
     {
       playback_policy: ['public'],
@@ -49,12 +44,11 @@ async function createStreamMux() {
     },
   )
   .then((response) => {
-    const stream = {
+    stream = {
       streamKey: response.data.data.stream_key,
       playbackID: response.data.data.playback_ids[0].id,
       id: response.data.data.id,
     };
-    return stream;
   })
   .catch((error) => {
     if (error.response) {
@@ -69,8 +63,7 @@ async function createStreamMux() {
     console.log(error.config);
     return false;
   });
-
-
+  return stream;
 }
 
 

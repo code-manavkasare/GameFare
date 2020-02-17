@@ -47,11 +47,8 @@ class LiveStream extends React.Component {
     this.state = {
       outputUrl: 'rtmp://live.mux.com/app/',
       error: false,
-      waitingPermissions: false,
-      waitingNetline: false,
-      loading: true,
       streamReady: false,
-      streaming: false,
+      live: false,
       assetID: '',
       streamKey: '',
       playbackID: '',
@@ -60,15 +57,6 @@ class LiveStream extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    const permission = await this.permissions();
-    if (!permission) {
-      // camera or microphone unavailable, leave live stream
-      this.props.navigation.navigate('TabsApp');
-    }
-    if (!this.state.waitingPermissions) {
-      // creates stream on firebase, locally, and shows camera
-      this.createStream();
-    }
   }
   async componentWillUnmount() {
     if (this.state.assetID) {

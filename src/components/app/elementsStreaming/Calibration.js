@@ -32,7 +32,7 @@ import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
-import CalibrationHeader from './LiveStreamHeader';
+import CalibrationHeader from './CalibrationHeader';
 
 const steps = {
   PROMPT: 'prompt',
@@ -48,11 +48,7 @@ class Calibration extends React.Component {
     this.state = {
       waitingPermissions: false,
       step: steps.PROMPT,
-      streamInfo: {
-        assetID: '',
-        streamKey: '',
-        playbackID: '',
-      },
+      stream: null, // streamKey, playbackID, id
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -72,12 +68,12 @@ class Calibration extends React.Component {
     }
   }
   async componentWillUnmount() {
-    if (this.state.assetID) {
+    if (this.state.stream) {
       firebase
         .database()
-        .ref('streams/' + this.state.assetID + '/netlineResults/')
+        .ref('streams/' + this.state.stream.id + '/netlineResults/')
         .off();
-      destroyStream(this.state.assetID, this.state.error);
+      destroyStream(this.state.stream.id, this.state.error);
     }
   }
   async permissions() {
@@ -128,9 +124,7 @@ class Calibration extends React.Component {
         await this.setState({
           loading: false,
           outputUrl: this.state.outputUrl + stream.streamKey,
-          streamKey: stream.streamKey,
-          playbackID: stream.playbackID,
-          assetID: stream.id,
+          stream: stream, //streamKey, playbackID, id
         });
         this.addNetlineListener();
         return true;
@@ -142,11 +136,10 @@ class Calibration extends React.Component {
     const that = this;
     firebase
       .database()
-      .ref('streams/' + this.state.assetID + '/netlineResults/')
+      .ref('streams/' + this.state.stream.id + '/netlineResults/')
       .on('value', async function(snap) {
         let netlineResults = snap.val();
         if (netlineResults) {
-          console.log(netlineResults);
           if (netlineResults.error) {
             await that.setState({
               step: steps.ERROR,
@@ -160,7 +153,6 @@ class Calibration extends React.Component {
                 doublesLine: netlineResults.doublesLine,
                 baseLine: netlineResults.baseLine,
               },
-              waitingNetline: false,
             });
           }
         }
@@ -175,18 +167,16 @@ class Calibration extends React.Component {
   async takeCalibrationPhoto() {
     const options = {width: 720, quality: 0.5, base64: true};
     const data = await this.camera.takePictureAsync(options);
-    await uploadNetlinePhoto(this.state.assetID, data.uri); // needs to delete the old netline photo?
+    await uploadNetlinePhoto(this.state.stream.id, data.uri); // needs to delete the old netline photo?
   }
 
   lockNetline() {
-    this.setState({streamReady: true});
+    this.props.navigation.navigate('LiveStream', {stream: this.state.stream});
   }
 
   render() {
     const {height, width} = Dimensions.get('screen');
     const {navigation} = this.props;
-    console.log('state');
-    console.log(JSON.stringify(this.state, undefined, 2));
     return (
       <View style={styles.container}>
         <CalibrationHeader
@@ -197,8 +187,8 @@ class Calibration extends React.Component {
           click1={() => navigation.navigate('TabsApp')}
           click2={() => null}
           vis2={false}
-          click3={() => this.setState({step: steps.CORRECT})}
-          vis3={this.state.netline !== null && !this.state.streamReady}
+          click3={() => this.lockNetline()}
+          vis3={this.state.step === steps.SHOW_LINES}
           clickErr={() => this.setState({error: !this.state.error})}
         />
         <RNCamera
@@ -219,13 +209,13 @@ class Calibration extends React.Component {
           <View style={[styles.nodeCameraView, styles.smallRow]}>
             <Loader color="white" size={60} />
           </View>
-        ) : this.state.step == steps.ERROR ? (
+        ) : this.state.step === steps.ERROR ? (
           <Row style={styleApp.center2}>
             <Text style={styleApp.textBold}>
               Could not find net or base lines. Exit stream and try again.
             </Text>
           </Row>
-        ) : this.state.step == steps.SHOW_LINES ? (
+        ) : this.state.step === steps.SHOW_LINES ? (
           <Svg style={styles.nodeCameraView} height="100%" width="100%">
             <Line
               x1={this.state.netline.optimalNetline.origin.x * width}

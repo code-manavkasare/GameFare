@@ -212,7 +212,7 @@ const PaymentsNavigator = createStackNavigator(
 
 const StreamNavigator = createStackNavigator(
   {
-    LiveStream: lockedLandscape(LiveStream), // ONLY LOCKED LANDSCAPE COMPONENT
+    LiveStream: lockedLandscape(LiveStream),
     Calibration: lockedLandscape(Calibration),
   },
   {
