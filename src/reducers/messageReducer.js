@@ -4,7 +4,6 @@ import {
   SET_INPUT,
   ADD_IMAGE,
   RESET_USER_MESSAGES,
-  SET_MY_CONVERSATION,
   DELETE_MY_CONVERSATION,
 } from '../actions/types';
 import union from 'lodash/union';
@@ -62,14 +61,6 @@ const messageReducer = (state = initialState, action) => {
             ...state[action.conversation.objectID],
             ...action.conversation,
           },
-        },
-      };
-    case SET_MY_CONVERSATION:
-      return {
-        ...state,
-        myDiscussions: {
-          ...state.myDiscussions,
-          ...action.myDiscussions,
         },
       };
     case DELETE_MY_CONVERSATION:
