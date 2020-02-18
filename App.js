@@ -32,7 +32,9 @@ const AppContainer = createAppContainer(AppSwitchNavigator);
 
 class App extends Component {
   async componentDidMount() {
-    configureSentry();
+    if (!__DEV__) {
+      configureSentry();
+    }
     SplashScreen.hide();
     StatusBar.setHidden(true, 'slide');
     StatusBar.setBarStyle('light-content', true);
