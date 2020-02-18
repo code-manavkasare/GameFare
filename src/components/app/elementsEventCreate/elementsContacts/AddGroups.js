@@ -72,8 +72,6 @@ class AddGroups extends Component {
         }
       });
     }
-    console.log('groupsHasEvent', groupsHasEvent);
-    console.log(this.state.selectedGroups);
     return groupsHasEvent;
   };
 
@@ -236,7 +234,6 @@ class AddGroups extends Component {
       const group = this.state.listGroups.filter(
         (group1) => group1.objectID === groupID,
       )[0];
-      console.log('group', group);
       return {
         info: {
           firstname: group.info.name,

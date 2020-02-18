@@ -21,11 +21,15 @@ import {
   nextRule,
   nextLevelIndex,
 } from '../functions/editEvent';
-import {addMemberDiscussion,removeMemberDiscussion} from '../functions/createEvent';
+import {
+  addMemberDiscussion,
+  removeMemberDiscussion,
+} from '../functions/createEvent';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar, isDatePast} from '../functions/date';
 import moment from 'moment';
+import ramda from 'ramda';
 
 const {height, width} = Dimensions.get('screen');
 import colors from '../style/colors';
@@ -812,7 +816,9 @@ class EventPage extends React.Component {
         textButton: 'Got it!',
       });
     }
+    await this.props.messageAction('deleteMyConversation', data.discussions[0]);
     await this.props.eventsAction('deleteMyEvent', data.objectID);
+
     await firebase
       .database()
       .ref('cancelledEvents/' + data.objectID)
@@ -843,7 +849,6 @@ class EventPage extends React.Component {
       .database()
       .ref('events/' + data.objectID + '/attendees/' + userID)
       .remove();
-    console.log('data.discussions[0]', data.discussions[0]);
     await removeMemberDiscussion(data.discussions[0], userID);
     await NavigationService.goBack();
     return true;
@@ -1030,7 +1035,59 @@ class EventPage extends React.Component {
       data: {...event, eventID: event.objectID},
     });
   };
-
+  checkout(event) {
+    if (isDatePast(event.date.end))
+      return this.props.navigation.navigate('Alert', {
+        close: true,
+        title: 'You cannot checkout before the event ends.',
+        textButton: 'Got it!',
+      });
+    let members = event.attendees;
+    if (!members) members = [];
+    const amountPaidAllUsers = Object.values(members)
+      .filter((member) => member.status === 'confirmed' && member.amountPaid)
+      .map((member) => member.amountPaid);
+    const payout = ramda.sum(amountPaidAllUsers);
+    return this.props.navigation.navigate('Alert', {
+      title: 'Are you ready to check out?',
+      subtitle: '$' + payout + ' will be transferred to your wallet.',
+      textButton: 'Checkout',
+      onGoBack: () => this.confirmCheckout(event, payout),
+    });
+  }
+  async confirmCheckout(event, payout) {
+    const {wallet, userID} = this.props;
+    await firebase
+      .database()
+      .ref('events/' + event.objectID)
+      .update({checkoutDone: true});
+    const newUserWallet = Number(wallet.totalWallet) + payout;
+    const transferCharge = {
+      invoice: {
+        totalPrice: payout,
+        credits: newUserWallet,
+      },
+      title: 'Event fees',
+      type: 'plus',
+      date: new Date().toString(),
+    };
+    await firebase
+      .database()
+      .ref('users/' + userID + '/wallet/')
+      .update({totalWallet: newUserWallet});
+    await firebase
+      .database()
+      .ref('usersTransfers/' + userID)
+      .push(transferCharge);
+    // await this.props.navigation.goBack();
+    await NavigationService.goBack();
+    return this.props.navigation.navigate('Alert', {
+      close: true,
+      title: 'Congrats!',
+      subtitle: '$' + payout + ' has been transferred to your wallet.',
+      textButton: 'Ok',
+    });
+  }
   bottomActionButton(title, click) {
     return (
       <Button2
@@ -1101,6 +1158,10 @@ class EventPage extends React.Component {
             ) : this.openCondition(event) &&
               !this.userAlreadySubscribed(event.attendees) ? (
               this.bottomActionButton('Join the event', () => this.next(event))
+            ) : userID === event.info.organizer &&
+              Number(event.price.joiningFee) !== 0 &&
+              !event.checkoutDone ? (
+              this.bottomActionButton('Checkout', () => this.checkout(event))
             ) : (
               <View />
             )}
@@ -1161,6 +1222,7 @@ const mapStateToProps = (state) => {
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     allEvents: state.events.allEvents,
+    wallet: state.user.infoUser.wallet,
   };
 };
 
