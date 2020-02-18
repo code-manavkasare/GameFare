@@ -20,6 +20,7 @@ const configureSentry = () => {
   Sentry.init({
     dsn: 'https://edb7dcfee75b46ad9ad45bc0193f6c0d@sentry.io/2469968',
     attachStacktrace: true,
+    environment: Config.ENV,
   });
   Sentry.setDist(DeviceInfo.getBuildNumber());
   Sentry.setRelease(`${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`);
