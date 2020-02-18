@@ -93,9 +93,6 @@ class MembersView extends Component {
   }
   async setConversation(data) {
     await this.props.messageAction('setConversation', data);
-    await this.props.messageAction('setMyConversations', {
-      [data.objectID]: true,
-    });
     return true;
   }
   join(data) {
