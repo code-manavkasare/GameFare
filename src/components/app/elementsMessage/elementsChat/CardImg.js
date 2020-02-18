@@ -40,23 +40,23 @@ export default class CardContent extends React.Component {
   componentDidMount() {
     if (
       !this.props.image.uploaded &&
-      this.props.user._id === this.props.message.user._id
+      this.props.user.id === this.props.message.user.id
     )
       this.uploadPicture(
         this.props.image,
         this.props.discussionID,
-        this.props.message._id,
+        this.props.message.id,
       );
   }
   componentWillReceiveProps(nextProps) {
     if (
       !nextProps.image.uploaded &&
-      nextProps.user._id === nextProps.message.user._id
+      nextProps.user.id === nextProps.message.user.id
     )
       this.uploadPicture(
         nextProps.image,
         nextProps.discussionID,
-        nextProps.message._id,
+        nextProps.message.id,
       );
   }
   async uploadPicture(image, discussionID, messageID) {
@@ -94,7 +94,7 @@ export default class CardContent extends React.Component {
     return true;
   }
   usersContent() {
-    if (this.props.user._id === this.props.message.user._id) return true;
+    if (this.props.user.id === this.props.message.user.id) return true;
     return false;
   }
   picture(uri, local) {
@@ -121,14 +121,9 @@ export default class CardContent extends React.Component {
     if (type === 'video')
       return (
         <Video
-          // rotateToFullScreen={true}
           hideFullScreenControl={true}
           url={uri}
-          // resizeMode={'contain'}
-          style={[
-            styleApp.fullSize,
-            // {position: 'absolute', height: 100, width: 100, zIndex: index},
-          ]}
+          style={[styleApp.fullSize]}
         />
       );
     return this.picture(uri, local);

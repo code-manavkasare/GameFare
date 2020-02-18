@@ -69,7 +69,9 @@ class ListEvent extends Component {
         {loader ? (
           this.placehoder()
         ) : listTransfers.length === 0 ? (
-          <Text style={styleApp.text}>You don't have any transfer yet.</Text>
+          <Text style={[styleApp.text, {marginLeft: 20, marginTop: 10}]}>
+            You don't have any transfer yet.
+          </Text>
         ) : (
           listTransfers.map((transfer, i) => (
             <CardTransfer key={i} transfer={transfer} />

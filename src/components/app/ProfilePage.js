@@ -137,7 +137,6 @@ class ProfilePage extends Component {
     );
   }
   clickButton(page, type, url) {
-    console.log('type', type);
     if (type === 'url') {
       this.openLink(url);
     } else if (type === 'call') {

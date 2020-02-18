@@ -6,8 +6,8 @@ import union from 'lodash/union';
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
     title: nameDiscussion,
-    allMembers: members.map((member) => member.id),
-    numberMembers: members.length,
+    allMembers: Object.values(members).map((member) => member.id),
+    numberMembers: Object.values(members).length,
     firstMessageExists: firstMessageExists,
     members: members,
     messages: {},
@@ -16,8 +16,12 @@ function discussionObj(members, nameDiscussion, firstMessageExists) {
 }
 
 async function createDiscussion(members, nameDiscussion, firstMessageExists) {
+  const membersObj = Object.values(members).reduce(function(result, item) {
+    result[item.id] = item;
+    return result;
+  }, {});
   var newDiscussion = discussionObj(
-    Object.values(members),
+    membersObj,
     nameDiscussion,
     firstMessageExists,
   );
@@ -80,7 +84,6 @@ async function loadMyDiscusions(userID) {
 
   // search for persnal conversations
   let {hits} = await indexDiscussions.search({
-    query: '',
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
   });
   console.log('hitttasdfss', hits);

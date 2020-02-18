@@ -73,7 +73,7 @@ export default class ImageConversation extends Component {
         />
       );
 
-    if (conversation.numberMembers === 2)
+    if (conversation.allMembers.length === 2)
       return this.imageMember(
         Object.values(conversation.members).filter(
           (member) => member.id !== userID,

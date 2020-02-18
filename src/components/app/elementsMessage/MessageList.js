@@ -28,6 +28,9 @@ class MessageTab extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  shouldComponentUpdate(nextProps) {
+    return true;
+  }
   componentDidMount() {
     if (this.props.userConnected) this.loadDiscussions(this.props.userID);
     AppState.addEventListener('change', this._handleAppStateChange);
@@ -50,8 +53,6 @@ class MessageTab extends React.Component {
   async loadDiscussions(userID) {
     this.setState({loader: true});
     const discussions = await loadMyDiscusions(userID);
-    console.log('discussions~', discussions);
-    //return true;
     const myDiscussions = Object.values(discussions).reduce(function(
       result,
       item,
@@ -78,8 +79,8 @@ class MessageTab extends React.Component {
         nextProps.myConversations && nextProps.userConnected,
       )
     ) {
-      await this.setState({loader: true});
-      return this.setState({loader: false});
+      // await this.setState({loader: true});
+      // return this.setState({loader: false});
     } else if (
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
@@ -132,7 +133,6 @@ class MessageTab extends React.Component {
   }
 
   messagePageView(myConversations) {
-    console.log('myConversations', myConversations);
     if (!this.props.userConnected) return this.logoutView();
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
@@ -183,7 +183,6 @@ class MessageTab extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
     const {myConversations} = this.props;
-    console.log('myConversations', myConversations.length);
     const {userConnected} = this.props;
     return (
       <View>

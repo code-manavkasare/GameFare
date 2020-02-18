@@ -51,7 +51,6 @@ class NewConversation extends React.Component {
     let users = Object.values(selectedUsers).map((user) => user.objectID);
     users.push(this.props.userID);
     var discussion = await searchDiscussion(users, users.length);
-    console.log('on search discussion', discussion);
     users = Object.values(selectedUsers).map((user) => {
       user.id = user.objectID;
       return user;
@@ -63,7 +62,6 @@ class NewConversation extends React.Component {
 
     if (!discussion) {
       discussion = await createDiscussion(users, 'General', false);
-      console.log('discussion', discussion);
       if (!discussion) {
         await this.setState({loaderHeader: false});
         return this.props.navigation.navigate('Alert', {
