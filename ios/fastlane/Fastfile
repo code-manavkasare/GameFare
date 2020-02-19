@@ -18,6 +18,7 @@ platform :ios do
   desc "Push a new beta build of dev-app to TestFlight"
   lane :dev do
     match(type: "appstore", app_identifier: "gamefareInc-dev", readonly: is_ci, git_url: "https://gitlab.com/gamefare/gamefare-appstore-certificate")
+    enable_automatic_code_signing
     increment_build_number({
       build_number: latest_testflight_build_number + 1
     })
@@ -30,6 +31,7 @@ platform :ios do
   desc "Push a new beta build of app to TestFlight"
   lane :prod do
     match(type: "appstore", app_identifier: "gamefareInc", readonly: is_ci, git_url: "https://gitlab.com/gamefare/gamefare-appstore-certificate")
+    enable_automatic_code_signing
     increment_build_number({
       build_number: latest_testflight_build_number + 1
     })
