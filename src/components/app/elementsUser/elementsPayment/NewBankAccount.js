@@ -37,11 +37,11 @@ class ListEvent extends Component {
     super(props);
     this.state = {
       loader: false,
-      routingNumber: '',
-      accountNumber: '',
+      routing_number: '',
+      account_number: '',
       country: 'US',
       currency: 'usd',
-      bankName: '',
+      ///bankName: '',
       account_holder_name:
         this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
     };
@@ -60,13 +60,18 @@ class ListEvent extends Component {
       Keyboard.dismiss();
     }
     const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createBankAccountToken`;
+    let state = this.state;
+    delete state['loader'];
+    delete state['error'];
+    delete state['errorMessage'];
+    // delete state['loader'];
     let dataCreateToken = await axios.get(urlCreateToken, {
       params: this.state,
     });
     dataCreateToken = dataCreateToken.data;
     if (dataCreateToken.error)
       return this.wrongCB(dataCreateToken.error.message);
-
+    console.log('dataCreateToken', dataCreateToken);
     const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addBankAccountToUser`;
     let responseCreateConnectAccount = await axios.get(
       urlCreateUserConnectAccount,
@@ -81,7 +86,7 @@ class ListEvent extends Component {
     responseCreateConnectAccount = responseCreateConnectAccount.data;
     if (responseCreateConnectAccount.error)
       return this.wrongCB(responseCreateConnectAccount.error.message);
-
+    console.log('responseCreateConnectAccount', responseCreateConnectAccount);
     await firebase
       .database()
       .ref(
@@ -91,6 +96,7 @@ class ListEvent extends Component {
           dataCreateToken.bankAccount.id,
       )
       .update(dataCreateToken.bankAccount);
+    return this.props.navigation.navigate('Payments');
   }
   wrongCB(message) {
     this.setState({loader: false, error: true, errorMessage: message});

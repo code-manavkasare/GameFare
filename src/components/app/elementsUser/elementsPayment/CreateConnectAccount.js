@@ -44,6 +44,7 @@ class ListEvent extends Component {
       country: 'US',
       currency: 'usd',
       address: {},
+      email: '',
       birthdate: '',
       account_holder_name:
         this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
@@ -62,42 +63,31 @@ class ListEvent extends Component {
   async submit() {
     this.setState({loader: true, error: false});
     const {userID, infoUser} = this.props;
-    const {birthdate, address, ssnNumber, currency, country} = this.state;
+    const {
+      birthdate,
+      address,
+      ssnNumber,
+      currency,
+      country,
+      email,
+    } = this.state;
     const {navigate} = this.props.navigation;
 
     /////// Create Strip Connect account
-    // const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserStripeAccount`;
-    // let responseCreateConnectAccount = await axios.get(
-    //   urlCreateUserConnectAccount,
-    //   {
-    //     params: {
-    //       userID: userID,
-    //       country: country,
-    //       currency: currency,
-    //       phone: infoUser.countryCode + infoUser.phoneNumber,
-    //       ssnNumber: ssnNumber.replace(' ', ''),
-    //     },
-    //   },
-    // );
-    // responseCreateConnectAccount = responseCreateConnectAccount.data;
-    // console.log('responseCreateConnectAccount', responseCreateConnectAccount);
-    // if (responseCreateConnectAccount.error)
-    //   return this.wrongCB(responseCreateConnectAccount.error.message);
-    ///////////////////////////////////////
-
-    //////// Add person to Stripe Connect account
-    const urlAddPersonStripeAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addPersonToAccountStripe`;
-    let responseAddPersonStripeAccount = await axios.get(
-      urlAddPersonStripeAccount,
+    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserStripeAccount`;
+    let responseCreateConnectAccount = await axios.get(
+      urlCreateUserConnectAccount,
       {
         params: {
           userID: userID,
-          // tokenBankAccount: responseCreateConnectAccount.token,
-          tokenBankAccount: this.props.connectAccountToken,
+          country: country,
+          currency: currency,
+          ssnNumber: ssnNumber.replace(' ', ''),
+
           birthdate: birthdate,
           firstname: infoUser.firstname,
           lastname: infoUser.lastname,
-          email: infoUser.email,
+          email: email,
           phone: infoUser.countryCode + infoUser.phoneNumber,
 
           address: address.address,
@@ -106,21 +96,48 @@ class ListEvent extends Component {
         },
       },
     );
-    responseAddPersonStripeAccount = responseAddPersonStripeAccount.data;
-    console.log(
-      'responseAddPersonStripeAccount',
-      responseAddPersonStripeAccount,
-    );
-    if (responseAddPersonStripeAccount.error)
-      return this.wrongCB(responseAddPersonStripeAccount.error.message);
+    responseCreateConnectAccount = responseCreateConnectAccount.data;
+    console.log('responseCreateConnectAccount', responseCreateConnectAccount);
+    if (responseCreateConnectAccount.error)
+      return this.wrongCB(responseCreateConnectAccount.error.message);
+    ///////////////////////////////////////
+
+    //////// Add person to Stripe Connect account
+    // const urlAddPersonStripeAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addPersonToAccountStripe`;
+    // let responseAddPersonStripeAccount = await axios.get(
+    //   urlAddPersonStripeAccount,
+    //   {
+    //     params: {
+    //       userID: userID,
+    //       tokenBankAccount: responseCreateConnectAccount.token,
+    //       // tokenBankAccount: this.props.connectAccountToken,
+    //       birthdate: birthdate,
+    //       firstname: infoUser.firstname,
+    //       lastname: infoUser.lastname,
+    //       email: infoUser.email,
+    //       phone: infoUser.countryCode + infoUser.phoneNumber,
+
+    //       address: address.address,
+    //       lat: address.lat,
+    //       lng: address.lng,
+    //     },
+    //   },
+    // );
+    // responseAddPersonStripeAccount = responseAddPersonStripeAccount.data;
+    // console.log(
+    //   'responseAddPersonStripeAccount',
+    //   responseAddPersonStripeAccount,
+    // );
+    // if (responseAddPersonStripeAccount.error)
+    //   return this.wrongCB(responseAddPersonStripeAccount.error.message);
     ///////////
 
-    // await firebase
-    //   .database()
-    //   .ref('users/' + userID + '/wallet/')
-    //   .update({
-    //     connectAccountToken: responseCreateConnectAccount.token,
-    //   });
+    await firebase
+      .database()
+      .ref('users/' + userID + '/wallet/')
+      .update({
+        connectAccountToken: responseCreateConnectAccount.token,
+      });
     return navigate('NewBankAccount');
   }
   wrongCB(message) {
@@ -287,6 +304,7 @@ class ListEvent extends Component {
                   style={styleApp.input}
                   onChangeText={(text) => this.setState({[field.id]: text})}
                   autoFocus={field.autofocus}
+                  editable={field.editable}
                   keyboardType={field.keyboardType}
                   underlineColorAndroid="rgba(0,0,0,0)"
                   inputAccessoryViewID={'bank'}
@@ -301,7 +319,7 @@ class ListEvent extends Component {
         }}
         color={'white'}
         style={[styleApp.inputForm, {borderBottomWidth: 1}]}
-        click={() => this.focusNextField(field.id)}
+        click={() => (field.editable ? this.focusNextField(field.id) : true)}
         onPressColor={colors.off}
       />
     );
@@ -317,9 +335,20 @@ class ListEvent extends Component {
         {this.field({
           name: 'Account holder name',
           id: 'account_holder_name',
+          editable: false,
           keyboardType: 'default',
           autofocus: false,
         })}
+        {this.field(
+          {
+            name: 'Email address',
+            id: 'email',
+            editable: true,
+            keyboardType: 'email-address',
+            autofocus: false,
+          },
+          'at',
+        )}
 
         {this.birthdatSelect()}
         {this.locationSelect()}
@@ -332,6 +361,7 @@ class ListEvent extends Component {
           id: 'ssnNumber',
           keyboardType: 'number-pad',
           autofocus: false,
+          editable: true,
         })}
 
         {this.state.error && (
@@ -344,7 +374,12 @@ class ListEvent extends Component {
   }
   buttonActive() {
     const state = this.state;
-    if (state.birthdate === '' || state.ssnNumber === '' || !state.address.lat)
+    if (
+      state.birthdate === '' ||
+      state.ssnNumber === '' ||
+      state.email === '' ||
+      !state.address.lat
+    )
       return false;
     return true;
   }
