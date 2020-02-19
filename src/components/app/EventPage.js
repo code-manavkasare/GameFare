@@ -154,8 +154,17 @@ class EventPage extends React.Component {
     }
   }
 
-  header(event) {
+  dismiss() {
     const {dismiss} = this.props.navigation;
+    const altDismiss = this.props.navigation.getParam('altDismiss', false);
+    if (altDismiss) {
+      altDismiss();
+    } else {
+      dismiss();
+    }
+  }
+
+  header(event) {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -172,7 +181,7 @@ class EventPage extends React.Component {
         colorIconOffset={this.state.editMode ? colors.blue : 'white'}
         typeIconOffset="font"
         clickButton2={() => this.goToShareEvent(event)}
-        clickButton1={() => dismiss()}
+        clickButton1={() => this.dismiss()}
         clickButtonOffset={
           this.userIsOrganizer(event)
             ? () =>
@@ -806,7 +815,7 @@ class EventPage extends React.Component {
     return null;
   }
   async confirmCancelEvent(data) {
-    const {goBack, dismiss, navigate} = this.props.navigation;
+    const {goBack, navigate} = this.props.navigation;
 
     if (isDatePast(data.date.start)) {
       await navigate('Event');
@@ -828,7 +837,7 @@ class EventPage extends React.Component {
       .ref('events/' + data.objectID)
       .remove();
     await goBack();
-    await dismiss();
+    await this.dismiss();
     return true;
   }
   async confirmLeaveEvent(data) {

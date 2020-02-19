@@ -56,17 +56,18 @@ class Calibration extends React.Component {
   async componentDidMount() {
     const permission = await this.permissions();
     if (!permission) {
-      // camera or microphone unavailable, leave live stream
-      // probably add an alert to the user here before deploying to users
-      this.props.navigation.navigate('TabsApp');
+      // add an alert to the user here before deploying to users
+      console.log('ERROR: Calibration: Camera or microphone unavailable');
+      return this.props.navigation.navigate('TabsApp');
     }
     if (!this.state.waitingPermissions) {
-      // creates stream on firebase, locally, and shows camera
       const success = this.createStream();
       if (!success) {
-        this.props.navigation.navigate('TabsApp');
+        console.log('ERROR: Calibration: Could not create stream');
+        return this.props.navigation.navigate('TabsApp');
       }
     }
+    return true;
   }
   async componentWillUnmount() {
     if (this.state.stream) {
@@ -74,6 +75,7 @@ class Calibration extends React.Component {
         .database()
         .ref('streams/' + this.state.stream.id + '/netlineResults/')
         .off();
+      // don't delete for now, LiveBall
       destroyStream(this.state.stream.id, this.state.error);
     }
   }
@@ -186,8 +188,8 @@ class Calibration extends React.Component {
           inputRange={[5, 10]}
           loader={this.state.loader}
           click1={() => navigation.navigate('TabsApp')}
-          click2={() => this.setState({mirrorFront: !this.state.mirrorFront})}
-          vis2={true}
+          click2={() => null}
+          vis2={false}
           click3={() => this.lockNetline()}
           vis3={this.state.step === steps.SHOW_LINES || this.state.step === steps.PROMPT}
           clickErr={() => this.setState({error: !this.state.error})}

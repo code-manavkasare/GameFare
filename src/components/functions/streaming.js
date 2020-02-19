@@ -4,21 +4,28 @@ import axios from 'axios';
 import Config from 'react-native-config';
 
 async function createStream(eventID) {
-  const stream = await createStreamMux();
+  let stream = await createStreamMux();
   if (stream) {
-    await createStreamFirebase(stream, eventID);
+    stream = {
+      ...stream,
+      eventID: eventID,
+    };
+    await createStreamFirebase(stream);
   }
   return stream;
 }
-async function createStreamFirebase(stream, eventID) {
-  const firebaseStream = {
-    ...stream,
-    eventID: eventID,
-  };
+async function createStreamFirebase(stream) {
   await firebase
     .database()
-    .ref('streams/' + firebaseStream.id + '/')
-    .set(firebaseStream)
+    .ref('streams/' + stream.id + '/')
+    .set(stream)
+    .then(() => {
+      // link event with stream on firebase
+      firebase
+        .database()
+        .ref('events/' + stream.eventID + '/streams/')
+        .push(stream.id);
+    })
     .catch((error) => {
       console.log(
         'ERROR: destroyStreamFirebase: ' + error.message,
@@ -87,8 +94,6 @@ async function destroyStreamFirebase(streamID) {
 
 async function destroyStreamMux(streamID) {
   const url = `${Config.MUX_LIVE_STREAM_URL}/` + streamID;
-  console.log('destroyStreamMux');
-  console.log(url);
   await axios
     .delete(url, {
       auth: {
