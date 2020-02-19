@@ -2,7 +2,7 @@ app_identifier("gamefareInc") # The bundle identifier of your app
 apple_id("raph@getgamefare.com") # Your Apple email address
 
 itc_team_id("118992285") # App Store Connect Team ID
-team_id("H3679W58Z6") # Developer Portal Team ID
+team_id("GDMG8R7UAQ") # Developer Portal Team ID
 
 for_platform :ios do
   for_lane :dev do
