@@ -38,6 +38,17 @@ class MessageTab extends React.Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (
+      keys(this.props.discussions).length ===
+        keys(nextProps.discussions).length &&
+      this.state.loader === false
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   _handleAppStateChange = (nextAppState) => {
     if (
       this.state.appState.match(/inactive|background/) &&
