@@ -45,6 +45,11 @@ class StreamPage extends React.Component {
     }
     let events = await getMyEvents(this.props.userID);
     events = Object.values(events);
+    const now = new Date();
+    events = events.filter(event => {
+      const end = new Date(event.date.end);
+      return now < end;
+    });
     this.setState({events: events, loader: false, wasLoggedOut: false});
     return true;
   }
@@ -83,6 +88,12 @@ class StreamPage extends React.Component {
       </View>
     );
   }
+  clickEvent(index) {
+    const {events} = this.state;
+    this.props.navigation.navigate('LiveStream', {
+      eventID: events[index].objectID,
+    });
+  }
   streamPageView(events) {
     if (!this.props.userConnected) {
       if (!this.state.wasLoggedOut) {
@@ -108,12 +119,7 @@ class StreamPage extends React.Component {
                 index={i}
                 eventTitle={event.info.name}
                 start={event.date.start}
-                click={(index) => {
-                  this.props.navigation.navigate(
-                    'LiveStream',
-                    {eventID: events[index].objectID},
-                  );
-                }}
+                click={(index) => this.clickEvent(index)}
               />
             ))}
       </View>

@@ -27,6 +27,7 @@ class LiveStream extends React.Component {
     this.state = {
       outputUrl: 'rtmp://live.mux.com/app/',
       error: false,
+      stream: null,
       streaming: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -45,6 +46,22 @@ class LiveStream extends React.Component {
   stopStream() {
     this.nodeCameraView.stop();
     this.setState({streaming: false});
+    const stream = this.props.navigation.getParam('stream');
+    const {navigation} = this.props;
+    return navigation.navigate('Alert', {
+      close: false,
+      title:
+        'Your game is being analyzed! Once complete, you will be notified!',
+      textButton: 'Got it!',
+      onGoBack: () => {
+        navigation.navigate('Event', {
+          objectID: stream.eventID,
+          altDismiss: () => {
+            navigation.navigate('TabsApp');
+          },
+        });
+      },
+    });
   }
   render() {
     const {navigation} = this.props;
@@ -82,7 +99,7 @@ class LiveStream extends React.Component {
               return <View />;
             }}
             click={() => this.mainButtonClick()}
-            color={'red'}
+            color={this.state.streaming ? 'red' : 'white'}
             style={styles.recordButton}
             onPressColor={colors.off}
           />
