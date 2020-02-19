@@ -55,7 +55,7 @@ class ListEvent extends Component {
   }
   async submit() {
     this.setState({loader: true, error: false});
-    const {userID, infoUser} = this.props;
+    const {userID, connectAccountToken} = this.props;
     if (Platform.OS === 'android') {
       Keyboard.dismiss();
     }
@@ -67,35 +67,20 @@ class ListEvent extends Component {
     if (dataCreateToken.error)
       return this.wrongCB(dataCreateToken.error.message);
 
-    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserConnectAccount`;
+    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addBankAccountToUser`;
     let responseCreateConnectAccount = await axios.get(
       urlCreateUserConnectAccount,
       {
         params: {
           userID: userID,
-          birthdate: this.props.dataUser.infoUser.birthdate,
-          firstname: infoUser.firstname,
-          lastname: infoUser.lastname,
-          email: infoUser.email,
-          phone: infoUser.countryCode + infoUser.phone,
-          ssnNumber: this.state.ssnNumber.replace(' ', ''),
-          tokenAccount: dataCreateToken.bankAccount.id,
-          address: address,
-          lat: lat,
-          lng: lng,
+          tokenBankAccount: dataCreateToken.token,
+          connectAccountToken: connectAccountToken,
         },
       },
     );
     responseCreateConnectAccount = responseCreateConnectAccount.data;
     if (responseCreateConnectAccount.error)
       return this.wrongCB(responseCreateConnectAccount.error.message);
-
-    await firebase
-      .database()
-      .ref('users/' + userID + '/wallet/')
-      .update({
-        stripeConnectToken: responseCreateConnectAccount.token,
-      });
 
     await firebase
       .database()
@@ -252,7 +237,7 @@ class ListEvent extends Component {
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
           icon1="arrow-left"
-          clickButton1={() => this.props.navigation.goBack()}
+          clickButton1={() => this.props.navigation.navigate('Payments')}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
@@ -288,6 +273,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     tokenCusStripe: state.user.infoUser.wallet.tokenCusStripe,
+    connectAccountToken: state.user.infoUser.wallet.connectAccountToken,
   };
 };
 

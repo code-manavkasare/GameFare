@@ -74,8 +74,8 @@ class ListEvent extends Component {
     if (data == 'new') {
       return this.props.navigation.navigate('NewMethod');
     } else if (data === 'bank') {
-      if (!this.props.connectAccountToken)
-        return this.props.navigation.navigate('CreateConnectAccount');
+      //if (!this.props.connectAccountToken)
+      return this.props.navigation.navigate('CreateConnectAccount');
       return this.props.navigation.navigate('NewBankAccount');
     }
     return this.props.navigation.navigate('DetailCard', {

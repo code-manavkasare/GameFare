@@ -17,6 +17,7 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
+import moment from 'moment';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -30,6 +31,7 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
+import Button from '../../../layout/buttons/Button';
 import ButtonColor from '../../../layout/Views/Button';
 import axios from 'axios';
 
@@ -39,12 +41,18 @@ class ListEvent extends Component {
     this.state = {
       loader: false,
       ssnNumber: '',
+      country: 'US',
+      currency: 'usd',
       address: {},
       birthdate: '',
+      account_holder_name:
+        this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
       isDateTimePickerVisible: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.focusNextField = this.focusNextField.bind(this);
+    this.hideDateTimePicker = this.hideDateTimePicker.bind(this);
+    this.handleDatePicked = this.handleDatePicked.bind(this);
     this.inputs = {};
   }
   async componentDidMount() {}
@@ -54,56 +62,66 @@ class ListEvent extends Component {
   async submit() {
     this.setState({loader: true, error: false});
     const {userID, infoUser} = this.props;
-    if (Platform.OS === 'android') {
-      Keyboard.dismiss();
-    }
-    const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createBankAccountToken`;
-    let dataCreateToken = await axios.get(urlCreateToken, {
-      params: this.state,
-    });
-    dataCreateToken = dataCreateToken.data;
-    if (dataCreateToken.error)
-      return this.wrongCB(dataCreateToken.error.message);
+    const {birthdate, address, ssnNumber, currency, country} = this.state;
+    const {navigate} = this.props.navigation;
 
-    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserConnectAccount`;
-    let responseCreateConnectAccount = await axios.get(
-      urlCreateUserConnectAccount,
+    /////// Create Strip Connect account
+    // const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserStripeAccount`;
+    // let responseCreateConnectAccount = await axios.get(
+    //   urlCreateUserConnectAccount,
+    //   {
+    //     params: {
+    //       userID: userID,
+    //       country: country,
+    //       currency: currency,
+    //       phone: infoUser.countryCode + infoUser.phoneNumber,
+    //       ssnNumber: ssnNumber.replace(' ', ''),
+    //     },
+    //   },
+    // );
+    // responseCreateConnectAccount = responseCreateConnectAccount.data;
+    // console.log('responseCreateConnectAccount', responseCreateConnectAccount);
+    // if (responseCreateConnectAccount.error)
+    //   return this.wrongCB(responseCreateConnectAccount.error.message);
+    ///////////////////////////////////////
+
+    //////// Add person to Stripe Connect account
+    const urlAddPersonStripeAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addPersonToAccountStripe`;
+    let responseAddPersonStripeAccount = await axios.get(
+      urlAddPersonStripeAccount,
       {
         params: {
           userID: userID,
-          birthdate: this.props.dataUser.infoUser.birthdate,
+          // tokenBankAccount: responseCreateConnectAccount.token,
+          tokenBankAccount: this.props.connectAccountToken,
+          birthdate: birthdate,
           firstname: infoUser.firstname,
           lastname: infoUser.lastname,
           email: infoUser.email,
-          phone: infoUser.countryCode + infoUser.phone,
-          ssnNumber: this.state.ssnNumber.replace(' ', ''),
-          tokenAccount: dataCreateToken.bankAccount.id,
-          address: address,
-          lat: lat,
-          lng: lng,
+          phone: infoUser.countryCode + infoUser.phoneNumber,
+
+          address: address.address,
+          lat: address.lat,
+          lng: address.lng,
         },
       },
     );
-    responseCreateConnectAccount = responseCreateConnectAccount.data;
-    if (responseCreateConnectAccount.error)
-      return this.wrongCB(responseCreateConnectAccount.error.message);
+    responseAddPersonStripeAccount = responseAddPersonStripeAccount.data;
+    console.log(
+      'responseAddPersonStripeAccount',
+      responseAddPersonStripeAccount,
+    );
+    if (responseAddPersonStripeAccount.error)
+      return this.wrongCB(responseAddPersonStripeAccount.error.message);
+    ///////////
 
-    await firebase
-      .database()
-      .ref('users/' + userID + '/wallet/')
-      .update({
-        stripeConnectToken: responseCreateConnectAccount.token,
-      });
-
-    await firebase
-      .database()
-      .ref(
-        'users/' +
-          userID +
-          '/wallet/bankAccounts/' +
-          dataCreateToken.bankAccount.id,
-      )
-      .update(dataCreateToken.bankAccount);
+    // await firebase
+    //   .database()
+    //   .ref('users/' + userID + '/wallet/')
+    //   .update({
+    //     connectAccountToken: responseCreateConnectAccount.token,
+    //   });
+    return navigate('NewBankAccount');
   }
   wrongCB(message) {
     this.setState({loader: false, error: true, errorMessage: message});
@@ -115,7 +133,7 @@ class ListEvent extends Component {
     var strDate = date.toString();
     this.setState({birthdate: strDate, isDateTimePickerVisible: false});
   }
-  countrySelect(country, countryBankAccount) {
+  countrySelect(country) {
     return (
       <ButtonColor
         view={() => {
@@ -146,6 +164,103 @@ class ListEvent extends Component {
         color={'white'}
         style={[styleApp.inputForm, {borderBottomWidth: 1}]}
         click={() => true}
+        onPressColor={colors.off}
+      />
+    );
+  }
+  birthdatSelect() {
+    const birthDateSelected = this.state.birthdate !== '';
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={15} style={styleApp.center2}>
+                <AllIcons
+                  name="birthday-cake"
+                  type="font"
+                  size={20}
+                  color={colors.title}
+                />
+              </Col>
+              <Col size={70} style={styleApp.center2}>
+                <Text
+                  style={[
+                    styleApp.input,
+                    {color: birthDateSelected ? colors.title : colors.inputOff},
+                  ]}>
+                  {birthDateSelected
+                    ? moment(this.state.birthdate).format('d/MM/YYYY')
+                    : 'Date of birth'}
+                </Text>
+              </Col>
+              <Col size={15} style={styleApp.center}>
+                <AllIcons
+                  name="keyboard-arrow-down"
+                  type="mat"
+                  size={20}
+                  color={colors.title}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        color={'white'}
+        style={[styleApp.inputForm, {borderBottomWidth: 1}]}
+        click={() => this.setState({isDateTimePickerVisible: true})}
+        onPressColor={colors.off}
+      />
+    );
+  }
+  async setLocation(data) {
+    await this.setState({address: data});
+    return this.props.navigation.navigate('CreateConnectAccount');
+  }
+  locationSelect() {
+    const locationSelected = this.state.address.lat ? true : false;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={15} style={styleApp.center2}>
+                <AllIcons
+                  name="location-arrow"
+                  type="font"
+                  size={20}
+                  color={colors.title}
+                />
+              </Col>
+              <Col size={70} style={styleApp.center2}>
+                <Text
+                  style={[
+                    styleApp.input,
+                    {color: locationSelected ? colors.title : colors.inputOff},
+                  ]}>
+                  {locationSelected
+                    ? this.state.address.address
+                    : 'Billing address'}
+                </Text>
+              </Col>
+              <Col size={15} style={styleApp.center}>
+                <AllIcons
+                  name="keyboard-arrow-down"
+                  type="mat"
+                  size={20}
+                  color={colors.title}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        color={'white'}
+        style={[styleApp.inputForm, {borderBottomWidth: 1}]}
+        click={() =>
+          this.props.navigation.navigate('Location', {
+            setUniqueLocation: true,
+            onGoBack: (data) => this.setLocation(data),
+          })
+        }
         onPressColor={colors.off}
       />
     );
@@ -199,12 +314,23 @@ class ListEvent extends Component {
         </Text>
         {this.countrySelect(country)}
 
-        
-
         {this.field({
           name: 'Account holder name',
           id: 'account_holder_name',
           keyboardType: 'default',
+          autofocus: false,
+        })}
+
+        {this.birthdatSelect()}
+        {this.locationSelect()}
+
+        <Text style={[styleApp.title, {marginBottom: 10, marginTop: 25}]}>
+          Social security number
+        </Text>
+        {this.field({
+          name: 'Last 4 digits',
+          id: 'ssnNumber',
+          keyboardType: 'number-pad',
           autofocus: false,
         })}
 
@@ -216,11 +342,10 @@ class ListEvent extends Component {
       </View>
     );
   }
-  buttonActive(countryBankAccount) {
+  buttonActive() {
     const state = this.state;
     if (state.birthdate === '' || state.ssnNumber === '' || !state.address.lat)
       return false;
-
     return true;
   }
   render() {
@@ -228,9 +353,7 @@ class ListEvent extends Component {
     const country = ListCountry.filter(
       (country) => country.code === codeCountry,
     )[0];
-    console.log('newBankAccount', country);
     const buttonActive = this.buttonActive();
-    console.log('buttonActive', buttonActive);
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
@@ -246,28 +369,28 @@ class ListEvent extends Component {
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={() =>
-            this.newBankAccount(country)
-          }
+          contentScrollView={() => this.newBankAccount(country)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={90 + 60}
           showsVerticalScrollIndicator={true}
         />
 
-        <InputAccessoryView nativeID={'bank'}>
-          <ButtonFull
-            backgroundColor={'green'}
-            onPressColor={colors.greenClick}
-            enable={buttonActive}
-            text="Confirm"
-            click={() => this.submit()}
-            loader={this.state.loader}
-          />
-        </InputAccessoryView>
+        <View style={styleApp.footerBooking}>
+          <View style={{marginLeft: 20, width: width - 40}}>
+            <Button
+              backgroundColor={'green'}
+              onPressColor={colors.greenClick}
+              text={'Next'}
+              disabled={!buttonActive}
+              loader={this.state.loader}
+              click={() => this.submit()}
+            />
+          </View>
+        </View>
 
         <DateTimePicker
-          titleIOS="Pick your date of birth"
+          headerTextIOS="Pick your date of birth"
           isVisible={this.state.isDateTimePickerVisible}
           onConfirm={this.handleDatePicked}
           onCancel={this.hideDateTimePicker}
@@ -285,6 +408,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     tokenCusStripe: state.user.infoUser.wallet.tokenCusStripe,
+    connectAccountToken: state.user.infoUser.wallet.connectAccountToken,
   };
 };
 

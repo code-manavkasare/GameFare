@@ -36,6 +36,8 @@ export default class Button extends Component {
       return {
         ...styles.buttonSubmit,
         backgroundColor: 'white',
+        borderColor: colors.off,
+        borderWidth: 1,
         ...this.props.styleButton,
       };
     if (this.props.styleButton)
