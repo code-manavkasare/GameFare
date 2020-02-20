@@ -76,7 +76,7 @@ class Calibration extends React.Component {
         .ref('streams/' + this.state.stream.id + '/netlineResults/')
         .off();
       // don't delete for now, LiveBall
-      destroyStream(this.state.stream.id, this.state.error);
+      //destroyStream(this.state.stream.id, this.state.error);
     }
   }
   async permissions() {

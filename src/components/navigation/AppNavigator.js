@@ -72,6 +72,10 @@ import NewConversation from '../app/elementsMessage/NewConversation';
 import LiveStream from '../app/elementsStreaming/LiveStream';
 import Calibration from '../app/elementsStreaming/Calibration';
 
+import AddPlayers from '../app/elementsStreamResults/AddPlayers';
+import MatchPictures from '../app/elementsStreamResults/MatchPictures';
+import StreamResults from '../app/elementsStreamResults/StreamResults';
+
 const CreateEventNavigator = createStackNavigator(
   {
     CreateEvent0: lockedPortrait(CreateEvent0),
@@ -226,6 +230,21 @@ const StreamNavigator = createStackNavigator(
   },
 );
 
+const StreamResultsNavigator = createStackNavigator(
+  {
+    AddPlayers: lockedPortrait(AddPlayers),
+    MatchPictures: lockedPortrait(MatchPictures),
+    StreamResults: lockedPortrait(StreamResults),
+  },
+  {
+    initialRouteName: 'AddPlayers',
+    headerMode: 'none',
+    mode: 'card',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: true,
+  }
+);
+
 const MainApp = createBottomTabNavigator(
   {
     Home: lockedPortrait(HomePage),
@@ -243,7 +262,6 @@ const MainApp = createBottomTabNavigator(
             navigation={navigation}
             focused={focused}
             tintColor={tintColor}
-            s
             routeName={routeName}
           />
         );
@@ -332,6 +350,14 @@ const MainStack = createStackNavigator(
     LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
+    StreamResults: {
+      screen: lockedPortrait(StreamResults),
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: false,
+      },
+    },
+    OrganizeStreamResults: StreamResultsNavigator,
   },
   {
     initialRouteName: 'InitialPage',

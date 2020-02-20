@@ -49,6 +49,7 @@ import GroupsEvent from './elementsGroupPage/GroupsEvent';
 import PostsView from './elementsGroupPage/PostsView';
 
 import CardUser from './elementsEventPage/CardUser';
+import CardStream from './elementsEventPage/CardStream';
 import {arrayAttendees} from '../functions/createEvent';
 import PlaceHolder from '../placeHolders/EventPage';
 
@@ -73,7 +74,7 @@ class EventPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: false,
+      loader: true,
       event: null,
       ...noEdit,
     };
@@ -267,6 +268,16 @@ class EventPage extends React.Component {
         removeFunc={() => this.askRemovePlayer(user, data)}
         type="event"
         admin={data.info.organizer === this.props.userID}
+      />
+    );
+  }
+  rowStream(event, stream, i) {
+    return (
+      <CardStream
+        streamID={stream}
+        key={i}
+        name={i}
+        userIsOrganizer={this.userIsOrganizer(event)}
       />
     );
   }
@@ -862,6 +873,45 @@ class EventPage extends React.Component {
     await NavigationService.goBack();
     return true;
   }
+
+  eventResults(event, loader) {
+    if (!event.streams) {
+      return null;
+    } else {
+      const streams = Object.values(event.streams);
+      return (
+        <View>
+          <View style={[styleApp.marginView, {marginTop: 30}]}>
+            <Row>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={styleApp.text}>Results</Text>
+              </Col>
+            </Row>
+            <View style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}/>
+          </View>
+          {loader ? (
+            <FadeInView duration={300} style={{paddingTop: 10}}>
+              <PlaceHolder />
+              <PlaceHolder />
+              <PlaceHolder />
+            </FadeInView>
+          ) : streams.length === 0 ? (
+            <Text
+              style={[
+                styleApp.smallText,
+                {marginTop: 10, marginLeft: 20, width: width - 40},
+              ]}>
+              Stream event to get results!
+            </Text>
+          ) : (
+            streams.map((stream, i) => this.rowStream(event, stream, i))
+          )}
+        </View>
+
+      );
+    }
+
+  }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;
     const attendees = arrayAttendees(
@@ -873,7 +923,7 @@ class EventPage extends React.Component {
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {this.eventInfo(event, sport, rule, league)}
-
+        {this.eventResults(event, loader)}
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Row>
             <Col size={60} style={styleApp.center2}>
