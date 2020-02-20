@@ -48,6 +48,7 @@
     "react-native-confirmation-code-field": "^4.1.0",
     "react-native-contacts": "^5.0.4",
     "react-native-country-list": "^1.0.10",
+    "react-native-device-info": "^5.5.3",
     "react-native-easy-grid": "^0.2.2",
     "react-native-easy-toast": "^1.2.0",
     "react-native-fade-in-view": "^1.0.5",
