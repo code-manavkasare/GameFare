@@ -16,6 +16,8 @@ import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
+import firebase from 'react-native-firebase';
+import axios from 'axios';
 
 import AllIcons from '../../../layout/icons/AllIcons';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
@@ -29,17 +31,17 @@ import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
 import ButtonColor from '../../../layout/Views/Button';
-import axios from 'axios';
 
 class ListEvent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
-      routingNumber: '',
-      accountNumber: '',
+      routing_number: '',
+      account_number: '',
       country: 'US',
-      bankName: '',
+      currency: 'usd',
+      ///bankName: '',
       account_holder_name:
         this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
     };
@@ -53,29 +55,43 @@ class ListEvent extends Component {
   }
   async submit() {
     this.setState({loader: true, error: false});
+    const {userID, connectAccountToken} = this.props;
     if (Platform.OS === 'android') {
       Keyboard.dismiss();
     }
-    var expiry = this.state.expDate;
-    expiry = expiry.split('/');
-    const monthExpiry = expiry[0];
-    const yearExpiry = expiry[1];
-
-    const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createTokenCard`;
-    let response = await axios.get(urlCreateToken, {
-      params: {
-        number: this.state.cardNumber,
-        exp_month: monthExpiry,
-        exp_year: yearExpiry,
-        cvc: this.state.cvv,
-        address_zip: this.state.zipCode,
-      },
+    const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createBankAccountToken`;
+    let state = this.state;
+    delete state['loader'];
+    delete state['error'];
+    delete state['errorMessage'];
+    // delete state['loader'];
+    let dataCreateToken = await axios.get(urlCreateToken, {
+      params: this.state,
     });
-    response = response.data;
-    if (response.error) {
-      this.wrongCB(response.error.message);
-    } else {
-    }
+    dataCreateToken = dataCreateToken.data;
+    if (dataCreateToken.error)
+      return this.wrongCB(dataCreateToken.error.message);
+    console.log('dataCreateToken', dataCreateToken);
+    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addBankAccountToUser`;
+    let responseCreateConnectAccount = await axios.get(
+      urlCreateUserConnectAccount,
+      {
+        params: {
+          userID: userID,
+          tokenBankAccount: dataCreateToken.token,
+          connectAccountToken: connectAccountToken,
+        },
+      },
+    );
+    responseCreateConnectAccount = responseCreateConnectAccount.data;
+    if (responseCreateConnectAccount.error)
+      return this.wrongCB(responseCreateConnectAccount.error.message);
+    console.log('responseCreateConnectAccount', responseCreateConnectAccount);
+    await firebase
+      .database()
+      .ref('users/' + userID + '/wallet/bankAccount/')
+      .update(dataCreateToken.bankAccount);
+    return this.props.navigation.navigate('Payments');
   }
   wrongCB(message) {
     this.setState({loader: false, error: true, errorMessage: message});
@@ -141,7 +157,7 @@ class ListEvent extends Component {
                   autoFocus={field.autofocus}
                   keyboardType={field.keyboardType}
                   underlineColorAndroid="rgba(0,0,0,0)"
-                  inputAccessoryViewID={field.id}
+                  inputAccessoryViewID={'bank'}
                   ref={(input) => {
                     this.inputs[field.id] = input;
                   }}
@@ -188,15 +204,27 @@ class ListEvent extends Component {
       </View>
     );
   }
+  buttonActive(countryBankAccount) {
+    const state = this.state;
+    if (state.account_holder_name === '') return false;
+    for (var i in countryBankAccount.fields) {
+      if (
+        state[countryBankAccount.fields[i].id] === '' ||
+        !state[countryBankAccount.fields[i].id]
+      )
+        return false;
+    }
+    return true;
+  }
   render() {
     const codeCountry = this.state.country;
     const country = ListCountry.filter(
       (country) => country.code === codeCountry,
     )[0];
-    console.log('newBankAccount', country);
     const countryBankAccount = countriesBankAccount.filter(
       (country) => country.code === codeCountry,
     )[0];
+    const buttonActive = this.buttonActive(countryBankAccount);
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
@@ -207,7 +235,7 @@ class ListEvent extends Component {
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
           icon1="arrow-left"
-          clickButton1={() => this.props.navigation.goBack()}
+          clickButton1={() => this.props.navigation.navigate('Payments')}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
@@ -221,11 +249,11 @@ class ListEvent extends Component {
           showsVerticalScrollIndicator={true}
         />
 
-        <InputAccessoryView nativeID={'cardNumber'}>
+        <InputAccessoryView nativeID={'bank'}>
           <ButtonFull
             backgroundColor={'green'}
             onPressColor={colors.greenClick}
-            enable={!(this.state.routingNumber === '')}
+            enable={buttonActive}
             text="Confirm"
             click={() => this.submit()}
             loader={this.state.loader}
@@ -243,6 +271,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     tokenCusStripe: state.user.infoUser.wallet.tokenCusStripe,
+    connectAccountToken: state.user.infoUser.wallet.connectAccountToken,
   };
 };
 

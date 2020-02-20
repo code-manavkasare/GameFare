@@ -29,6 +29,7 @@ export default colors = {
   off: '#eaeaea',
   off2: '#FAFAFA',
   white: 'white',
+  inputOff: '#C4C4C6',
 
   borderColor: '#A7A7AA',
   grey: '#D8D8D8',

@@ -122,10 +122,10 @@ class LocationSelector extends Component {
     Keyboard.dismiss();
     this.setState({loader: true});
     try {
-      if (address.type == 'currentLocation' && this.state.loader == false)
+      if (address.type === 'currentLocation' && !this.state.loader)
         return this.getCurrentLocation();
 
-      if (this.state.loader == false) {
+      if (!this.state.loader) {
         var url2 =
           'https://maps.googleapis.com/maps/api/geocode/json?new_forward_geocoder=true&place_id=' +
           address.place_id +
@@ -135,7 +135,7 @@ class LocationSelector extends Component {
         var locationObj = json.results[0];
 
         var currentHistoricSearchLocation = this.props.historicSearchLocation;
-        if (Object.values(currentHistoricSearchLocation) == 0) {
+        if (Object.values(currentHistoricSearchLocation) === 0) {
           var add = address;
           add.type = 'past';
           currentHistoricSearchLocation = {
@@ -146,7 +146,7 @@ class LocationSelector extends Component {
             'setHistoricLocationSearch',
             currentHistoricSearchLocation,
           );
-        } else if (currentHistoricSearchLocation[address.id] == undefined) {
+        } else if (!currentHistoricSearchLocation[address.id]) {
           var add = address;
           add.type = 'past';
           currentHistoricSearchLocation = {
@@ -165,11 +165,14 @@ class LocationSelector extends Component {
             lng: locationObj.geometry.location.lng,
           });
         }
-        await this.props.historicSearchAction('setLocationSearch', {
-          address: address.description,
-          lat: locationObj.geometry.location.lat,
-          lng: locationObj.geometry.location.lng,
-        });
+        if (!this.props.navigation.getParam('setUniqueLocation')) {
+          await this.props.historicSearchAction('setLocationSearch', {
+            address: address.description,
+            lat: locationObj.geometry.location.lat,
+            lng: locationObj.geometry.location.lng,
+          });
+        }
+        console.log('done set location');
         return this.props.navigation.goBack();
       }
     } catch (err) {
@@ -191,7 +194,12 @@ class LocationSelector extends Component {
     if (!this.props.navigation.getParam('setUserLocation')) {
       return this.props.navigation.state.params.onGoBack(CurrentLocation);
     }
-    await this.props.historicSearchAction('setLocationSearch', CurrentLocation);
+    if (!this.props.navigation.getParam('setUniqueLocation')) {
+      await this.props.historicSearchAction(
+        'setLocationSearch',
+        CurrentLocation,
+      );
+    }
     return this.props.navigation.goBack();
   }
   buttonSearchAddress() {
@@ -350,16 +358,12 @@ class LocationSelector extends Component {
     );
   }
   render() {
+    const {dismiss, goBack} = this.props.navigation;
     return (
       //
       <View style={styles.content}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
           textHeader={''}
           inputRange={[5, 10]}
           loader={this.state.loader}
@@ -372,11 +376,7 @@ class LocationSelector extends Component {
               : 'times'
           }
           icon2={null}
-          clickButton1={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
+          clickButton1={() => goBack()}
         />
 
         <ScrollView

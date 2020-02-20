@@ -75,14 +75,6 @@ class MessageTab extends React.Component {
       await this.setState({loader: true});
       this.loadDiscussions(nextProps.userID);
     } else if (
-      !isEqual(
-        this.props.discussions,
-        nextProps.discussions && nextProps.userConnected,
-      )
-    ) {
-      // await this.setState({loader: true});
-      // return this.setState({loader: false});
-    } else if (
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
     ) {
