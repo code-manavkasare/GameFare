@@ -97,9 +97,6 @@ class AddUsers extends Component {
     var that = this;
     setTimeout(async function() {
       await that.props.messageAction('setConversation', discussion);
-      await that.props.messageAction('setMyConversations', {
-        [discussion.objectID]: true,
-      });
       await that.setState({loaderButton: false});
       await that.userListRef.reset();
       NavigationService.navigate('AlertAddUsers', {

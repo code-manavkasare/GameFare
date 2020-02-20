@@ -31,6 +31,7 @@ class CardConversation extends React.Component {
     if (!conversation) conversation = this.props.discussion;
     const {gamefareUser} = this.props;
     let {lastMessage} = conversation;
+
     if (!lastMessage)
       lastMessage = {
         user: gamefareUser,
@@ -40,12 +41,6 @@ class CardConversation extends React.Component {
         timeStamp: moment().valueOf(),
       };
 
-    if (this.props.myConversation) {
-      await this.props.messageAction('setConversation', {
-        ...this.props.discussion,
-        lastMessage: lastMessage,
-      });
-    }
     return this.setState({lastMessage: lastMessage});
   }
   componentWillReceiveProps(nextProps) {

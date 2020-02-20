@@ -98,9 +98,6 @@ class MessageTab extends React.Component {
   }
   async setConversation(data) {
     await this.props.messageAction('setConversation', data);
-    await this.props.messageAction('setMyConversations', {
-      [data.objectID]: true,
-    });
     return true;
   }
   render() {

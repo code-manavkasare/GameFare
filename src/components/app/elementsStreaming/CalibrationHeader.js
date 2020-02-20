@@ -15,7 +15,7 @@ import AllIcons from '../../layout/icons/AllIcons';
 import styleApp from '../../style/style';
 const {width} = Dimensions.get('screen');
 
-export default class LiveStreamHeader extends Component {
+export default class CalibrationHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,13 +33,6 @@ export default class LiveStreamHeader extends Component {
     if (this.props.loaderOn === true) {
       this.props.onRef(this);
     }
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.loader !== nextProps.loader ||
-      this.state !== nextState ||
-      this.props.enableClickButton !== nextProps.enableClickButton
-    );
   }
   handleBackPress = () => {
     if (this.props.enableClickButton && this.state.enableClickButton) {
@@ -75,18 +68,75 @@ export default class LiveStreamHeader extends Component {
                 />
               );
             }}
-            click={() => this.props.click()}
+            click={() => this.props.click1()}
             color={'white'}
             style={styles.button}
             onPressColor={colors.off}
           />
         </View>
+        {this.props.vis2 ? (
+          <View style={styles.buttonStyle}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name="arrow-right"
+                    color={'colors.title'}
+                    size={15}
+                    type="font"
+                  />
+                );
+              }}
+              click={() => {
+                this.props.click2();
+              }}
+              color={'white'}
+              style={styles.button}
+              onPressColor={colors.off}
+            />
+          </View>
+        ) : null}
+        {this.props.vis3 ? (
+          <View style={styles.buttonStyle}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name="check"
+                    color={'colors.title'}
+                    size={15}
+                    type="font"
+                  />
+                );
+              }}
+              click={() => {
+                this.props.click3();
+              }}
+              color={'white'}
+              style={styles.button}
+              onPressColor={colors.off}
+            />
+          </View>
+        ) : null}
         <View style={styles.buttonStyle}>
-          <AllIcons
-            name=""
-            type="font"
-            color={colors.red}
-            size={15}
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="exclamation-triangle"
+                  color={'rgb(255, 0, 0)'}
+                  size={15}
+                  type="font"
+                />
+              );
+            }}
+            click={() => {
+              this.setState({errClicked: true});
+              this.props.clickErr();
+            }}
+            color={this.state.errClicked ? 'black' : 'white'}
+            style={styles.button}
+            onPressColor={colors.off}
           />
         </View>
       </Col>

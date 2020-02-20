@@ -10,14 +10,28 @@
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
+update_fastlane
 
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new beta build to TestFlight"
-  lane :beta do
+  desc "Push a new beta build of dev-app to TestFlight"
+  lane :dev do
+    match(type: "appstore", app_identifier: "gamefareInc-dev", readonly: is_ci, git_url: "https://gitlab.com/gamefare/gamefare-appstore-certificate")
+    enable_automatic_code_signing
+    increment_build_number({
+      build_number: latest_testflight_build_number + 1
+    })
+    build_app(workspace: "gamefare.xcworkspace", scheme: "gamefare-dev")
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+end
+
+platform :ios do
+  desc "Push a new beta build of app to TestFlight"
+  lane :prod do
+    match(type: "appstore", app_identifier: "gamefareInc", readonly: is_ci, git_url: "https://gitlab.com/gamefare/gamefare-appstore-certificate")
+    enable_automatic_code_signing
     increment_build_number({
       build_number: latest_testflight_build_number + 1
     })

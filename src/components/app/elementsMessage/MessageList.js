@@ -1,7 +1,8 @@
 import React from 'react';
 import {AppState, View, Text, Dimensions, Image, Animated} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
+import isEqual from 'lodash.isequal';
+import {keys} from 'ramda';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
@@ -15,7 +16,8 @@ import {loadMyDiscusions} from '../../functions/message';
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
 import sizes from '../../style/sizes';
 import CardConversation from './CardConversation';
-import isEqual from 'lodash.isequal';
+
+const {height, width} = Dimensions.get('screen');
 
 class MessageTab extends React.Component {
   constructor(props) {
@@ -23,13 +25,9 @@ class MessageTab extends React.Component {
     this.state = {
       events: [],
       loader: true,
-      discussions: [],
       appState: AppState.currentState,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
-  }
-  shouldComponentUpdate(nextProps) {
-    return true;
   }
   componentDidMount() {
     if (this.props.userConnected) this.loadDiscussions(this.props.userID);
@@ -38,6 +36,17 @@ class MessageTab extends React.Component {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (
+      keys(this.props.discussions).length ===
+        keys(nextProps.discussions).length &&
+      this.state.loader === false
+    ) {
+      return false;
+    }
+    return true;
   }
 
   _handleAppStateChange = (nextAppState) => {
@@ -53,17 +62,9 @@ class MessageTab extends React.Component {
   async loadDiscussions(userID) {
     this.setState({loader: true});
     const discussions = await loadMyDiscusions(userID);
-    const myDiscussions = Object.values(discussions).reduce(function(
-      result,
-      item,
-    ) {
-      result[item.objectID] = true;
-      return result;
-    },
-    {});
+    console.log(discussions);
     await this.props.messageAction('setConversations', discussions);
-    await this.props.messageAction('setMyConversations', myDiscussions);
-    this.setState({discussions: discussions, loader: false});
+    this.setState({loader: false});
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -77,7 +78,7 @@ class MessageTab extends React.Component {
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
     ) {
-      this.setState({discussions: [], loader: true});
+      this.setState({loader: true});
     }
   }
 
@@ -124,8 +125,10 @@ class MessageTab extends React.Component {
     );
   }
 
-  messagePageView(myConversations) {
-    if (!this.props.userConnected) return this.logoutView();
+  messagePageView() {
+    const {discussions, userConnected} = this.props;
+    if (!userConnected) return this.logoutView();
+    console.log('discussions', discussions);
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
@@ -140,21 +143,19 @@ class MessageTab extends React.Component {
         <View>
           {this.state.loader ? (
             this.placeHolder()
-          ) : Object.keys(myConversations).length === 0 || !myConversations ? (
+          ) : Object.keys(discussions).length === 0 || !discussions ? (
             <Text style={[styleApp.text, {marginTop: 10, marginLeft: 20}]}>
               You don’t have any messages yet.
             </Text>
           ) : (
-            Object.keys(myConversations)
-              .reverse()
-              .map((discussion, i) => (
-                <CardConversation
-                  key={i}
-                  index={i}
-                  discussionID={discussion}
-                  myConversation={true}
-                />
-              ))
+            keys(discussions).map((discussion, i) => (
+              <CardConversation
+                key={i}
+                index={i}
+                discussionID={discussion}
+                myConversation={true}
+              />
+            ))
           )}
         </View>
         <View style={{height: 30}} />
@@ -174,7 +175,6 @@ class MessageTab extends React.Component {
 
   render() {
     const {navigate} = this.props.navigation;
-    const {myConversations} = this.props;
     const {userConnected} = this.props;
     return (
       <View>
@@ -195,7 +195,7 @@ class MessageTab extends React.Component {
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.messagePageView(myConversations)}
+          contentScrollView={() => this.messagePageView()}
           keyboardAvoidDisable={true}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -214,10 +214,11 @@ class MessageTab extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state);
   return {
-    myConversations: state.message.myDiscussions,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
+    discussions: state.message.conversations,
   };
 };
 

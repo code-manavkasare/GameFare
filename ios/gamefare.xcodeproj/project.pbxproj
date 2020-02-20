@@ -31,6 +31,7 @@
 		054C59A823EDA04F006D67F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 172D1482235C7B8F00560A8E /* LaunchScreen.storyboard */; };
 		05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 05B34DCC23A397CD001B955A /* icomoon.ttf */; };
 		067A36C1D3A3166B17C94454 /* libPods-gamefare-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */; };
+		09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 036926E988D44753AF801E89 /* libz.tbd */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -118,6 +119,7 @@
 		00E356EE1AD99517003FC87E /* gamefareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = gamefareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* gamefareTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gamefareTests.m; sourceTree = "<group>"; };
+		036926E988D44753AF801E89 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		050B790223F1A85100F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "GoogleService-Info.plist"; path = "gamefare/GoogleProd/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		050B796323F858C300F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		054C59B123EDA04F006D67F4 /* GameFare-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameFare-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -224,6 +226,7 @@
 			files = (
 				17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */,
 				864E34D7F40432278013ECFC /* libPods-gamefare.a in Frameworks */,
+				09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +387,7 @@
 				B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */,
 				FFF75B81AA2E6168A1DB0245 /* libPods-gamefareTests.a */,
 				7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */,
+				036926E988D44753AF801E89 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -502,6 +506,7 @@
 				DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */,
 				24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */,
 				17B60B4E23C759C4006B1DCF /* Embed Frameworks */,
+				2A0641BC3F344866A8C4CF4E /* Upload Debug Symbols to Sentry */,
 				40FF1BEABA4EFB10CE2593A8 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
@@ -565,9 +570,6 @@
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = GDMG8R7UAQ;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
-					};
-					054C598F23EDA04F006D67F4 = {
-						DevelopmentTeam = H3679W58Z6;
 					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1130;
@@ -734,7 +736,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		054C599123EDA04F006D67F4 /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -763,7 +765,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -782,6 +784,20 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		2A0641BC3F344866A8C4CF4E /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
+		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -794,7 +810,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
 		40FF1BEABA4EFB10CE2593A8 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1113,21 +1129,21 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = H3679W58Z6;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "gamefare-dev";
+				PRODUCT_BUNDLE_IDENTIFIER = "gamefareInc-dev";
 				PRODUCT_NAME = "GameFare-dev";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1142,20 +1158,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
-				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = H3679W58Z6;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "gamefare-dev";
+				PRODUCT_BUNDLE_IDENTIFIER = "gamefareInc-dev";
 				PRODUCT_NAME = "GameFare-dev";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1170,7 +1186,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
@@ -1178,7 +1194,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1202,14 +1218,14 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefareRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
