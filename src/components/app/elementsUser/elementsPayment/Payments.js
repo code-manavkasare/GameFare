@@ -88,7 +88,7 @@ class ListEvent extends Component {
     return Object.values(this.props.cards).map((card, i) =>
       this.row(
         cardIcon(card.brand),
-        card.brand == 'applePay' ? 'Apple Pay' : '•••• ' + card.last4,
+        card.brand === 'applePay' ? 'Apple Pay' : '•••• ' + card.last4,
         card,
       ),
     );
@@ -109,14 +109,6 @@ class ListEvent extends Component {
           />
         </View>
 
-        <View
-          style={{
-            height: 0,
-            backgroundColor: colors.borderColor,
-            width: width - 40,
-            marginLeft: 20,
-          }}
-        />
         {this.listCard()}
         {this.row(cardIcon('default'), 'New payment method', 'new')}
 
@@ -126,22 +118,18 @@ class ListEvent extends Component {
               styleApp.title,
               {marginBottom: 20, fontSize: 19, marginLeft: 0},
             ]}>
-            Bank Accounts
+            Bank Account
           </Text>
           <View
             style={[styleApp.divider2, {marginTop: 10, marginBottom: 10}]}
           />
         </View>
 
-        <View
-          style={{
-            height: 0,
-            backgroundColor: colors.borderColor,
-            width: width - 40,
-            marginLeft: 20,
-          }}
-        />
         {this.row(cardIcon('bank'), 'Link bank account', 'bank')}
+
+        {this.props.connectAccountToken
+          ? this.row(cardIcon('bank'), 'Link bank account', 'bank')
+          : this.row(cardIcon('bank'), 'Link bank account', 'bank')}
       </View>
     );
   }

@@ -233,7 +233,7 @@ class ProfilePage extends Component {
 
           <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]} />
           {this.button('envelope', 'Email', 'Alert', 'email')}
-          {this.button('phone', 'Call', 'Alert', 'call')}
+          {/* {this.button('phone', 'Call', 'Alert', 'call')} */}
         </View>
 
         <View style={styleApp.viewHome}>
