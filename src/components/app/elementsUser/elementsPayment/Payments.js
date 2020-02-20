@@ -9,6 +9,7 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import firebase from 'react-native-firebase';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -82,7 +83,7 @@ class ListEvent extends Component {
                   {bankAccount.account_holder_name}
                 </Text>
                 <Text style={[styleApp.subtitle, {marginTop: 4}]}>
-                  {bankAccount.routing_number} {bankAccount.last4}
+                  {bankAccount.routing_number} ••••{bankAccount.last4}
                 </Text>
               </Col>
               <Col size={10} style={styleApp.center}>
@@ -103,7 +104,22 @@ class ListEvent extends Component {
       />
     );
   }
-  openBankAccount(bankAccount) {}
+  openBankAccount(bankAccount) {
+    return this.props.navigation.navigate('Alert', {
+      title: 'Do you want to remove this bank account?',
+      subtitle: bankAccount.routing_number + ' ••••' + bankAccount.last4,
+      textButton: 'Remove',
+      onGoBack: () => this.confirmDeleteBankAccount(),
+    });
+  }
+  async confirmDeleteBankAccount() {
+    const {userID} = this.props;
+    await firebase
+      .database()
+      .ref('users/' + userID + '/wallet/bankAccount')
+      .remove();
+    return this.props.navigation.navigate('Payments');
+  }
   openPage(data) {
     if (data === 'new') {
       return this.props.navigation.navigate('NewMethod');
