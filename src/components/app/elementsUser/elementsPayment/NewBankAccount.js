@@ -158,6 +158,7 @@ class ListEvent extends Component {
                   keyboardType={field.keyboardType}
                   underlineColorAndroid="rgba(0,0,0,0)"
                   inputAccessoryViewID={'bank'}
+                  returnKeyType={'done'}
                   ref={(input) => {
                     this.inputs[field.id] = input;
                   }}

@@ -1095,7 +1095,7 @@ class EventPage extends React.Component {
     });
   };
   checkout(event) {
-    if (isDatePast(event.date.end))
+    if (!isDatePast(event.date.end))
       return this.props.navigation.navigate('Alert', {
         close: true,
         title: 'You cannot checkout before the event ends.',
@@ -1120,24 +1120,27 @@ class EventPage extends React.Component {
       .database()
       .ref('events/' + event.objectID)
       .update({checkoutDone: true});
-    const newUserWallet = Number(wallet.totalWallet) + payout;
-    const transferCharge = {
-      invoice: {
-        totalPrice: payout,
-        credits: newUserWallet,
-      },
-      title: 'Event fees',
-      type: 'plus',
-      date: new Date().toString(),
-    };
-    await firebase
-      .database()
-      .ref('users/' + userID + '/wallet/')
-      .update({totalWallet: newUserWallet});
-    await firebase
-      .database()
-      .ref('usersTransfers/' + userID)
-      .push(transferCharge);
+    if (payout !== 0) {
+      const newUserWallet = Number(wallet.totalWallet) + payout;
+      const transferCharge = {
+        invoice: {
+          totalPrice: payout,
+          credits: newUserWallet,
+        },
+        title: 'Event fees',
+        type: 'plus',
+        date: new Date().toString(),
+      };
+      await firebase
+        .database()
+        .ref('users/' + userID + '/wallet/')
+        .update({totalWallet: newUserWallet});
+      await firebase
+        .database()
+        .ref('usersTransfers/' + userID)
+        .push(transferCharge);
+    }
+
     // await this.props.navigation.goBack();
     await NavigationService.goBack();
     return this.props.navigation.navigate('Alert', {
