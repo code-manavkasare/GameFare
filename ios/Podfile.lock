@@ -395,6 +395,8 @@ PODS:
     - React
   - react-native-image-resizer (1.1.0):
     - React
+  - react-native-in-app-message (1.0.31):
+    - React
   - react-native-keep-awake (4.0.0):
     - React
   - react-native-mapbox-gl (7.0.8):
@@ -573,6 +575,7 @@ DEPENDENCIES:
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
+  - react-native-in-app-message (from `../node_modules/react-native-in-app-message`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -738,6 +741,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
     :path: "../node_modules/react-native-image-resizer"
+  react-native-in-app-message:
+    :path: "../node_modules/react-native-in-app-message"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
   react-native-mapbox-gl:
@@ -896,6 +901,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b
   react-native-image-resizer: 1ffe71ec5f2596c3a24d42548c03bfbfb06fe810
+  react-native-in-app-message: ed398c7ae5efb1f15cecba2fef2ecbdd10ee6e81
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-mapbox-gl: fcd88e2bf0ddea552b0209cc2770a5ac2b9c9910
   react-native-maps: 6e499eee4eabf422ba8b6f94e993cc768bf35153
