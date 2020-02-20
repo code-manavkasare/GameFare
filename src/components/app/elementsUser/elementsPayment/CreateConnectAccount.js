@@ -60,6 +60,9 @@ class ListEvent extends Component {
   focusNextField(id) {
     this.inputs[id].focus();
   }
+  unfocusNextField(id) {
+    this.inputs[id].blur();
+  }
   async submit() {
     this.setState({loader: true, error: false});
     const {userID, infoUser} = this.props;
@@ -276,7 +279,15 @@ class ListEvent extends Component {
                   editable={field.editable}
                   keyboardType={field.keyboardType}
                   underlineColorAndroid="rgba(0,0,0,0)"
-                  inputAccessoryViewID={'bank'}
+                  inputAccessoryViewID={field.id}
+                  returnKeyType={'done'}
+                  textContentType={
+                    field.textContentType ? field.textContentType : null
+                  }
+                  maxLength={field.maxLength ? field.maxLength : null}
+                  autoCompleteType={
+                    field.autoCompleteType ? field.textContentType : null
+                  }
                   ref={(input) => {
                     this.inputs[field.id] = input;
                   }}
@@ -315,6 +326,8 @@ class ListEvent extends Component {
             editable: true,
             keyboardType: 'email-address',
             autofocus: false,
+            textContentType: 'emailAddress',
+            autoCompleteType: 'email',
           },
           'at',
         )}
@@ -330,6 +343,7 @@ class ListEvent extends Component {
           id: 'ssnNumber',
           keyboardType: 'number-pad',
           autofocus: false,
+          maxLength: 4,
           editable: true,
         })}
 
@@ -400,6 +414,17 @@ class ListEvent extends Component {
           onCancel={this.hideDateTimePicker}
           style={{color: 'white'}}
         />
+
+        <InputAccessoryView nativeID={'ssnNumber'}>
+          <ButtonFull
+            backgroundColor={'green'}
+            onPressColor={colors.greenClick}
+            enable={true}
+            text="Done"
+            click={() => this.unfocusNextField('ssnNumber')}
+            loader={this.state.loader}
+          />
+        </InputAccessoryView>
       </View>
     );
   }
