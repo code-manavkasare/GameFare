@@ -73,7 +73,7 @@ class ListEvent extends Component {
     } = this.state;
     const {navigate} = this.props.navigation;
 
-    /////// Create Strip Connect account
+    //////////////// Create Strip Connect account /////////////////
     const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserStripeAccount`;
     let responseCreateConnectAccount = await axios.get(
       urlCreateUserConnectAccount,
@@ -97,40 +97,9 @@ class ListEvent extends Component {
       },
     );
     responseCreateConnectAccount = responseCreateConnectAccount.data;
-    console.log('responseCreateConnectAccount', responseCreateConnectAccount);
     if (responseCreateConnectAccount.error)
       return this.wrongCB(responseCreateConnectAccount.error.message);
-    ///////////////////////////////////////
-
-    //////// Add person to Stripe Connect account
-    // const urlAddPersonStripeAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addPersonToAccountStripe`;
-    // let responseAddPersonStripeAccount = await axios.get(
-    //   urlAddPersonStripeAccount,
-    //   {
-    //     params: {
-    //       userID: userID,
-    //       tokenBankAccount: responseCreateConnectAccount.token,
-    //       // tokenBankAccount: this.props.connectAccountToken,
-    //       birthdate: birthdate,
-    //       firstname: infoUser.firstname,
-    //       lastname: infoUser.lastname,
-    //       email: infoUser.email,
-    //       phone: infoUser.countryCode + infoUser.phoneNumber,
-
-    //       address: address.address,
-    //       lat: address.lat,
-    //       lng: address.lng,
-    //     },
-    //   },
-    // );
-    // responseAddPersonStripeAccount = responseAddPersonStripeAccount.data;
-    // console.log(
-    //   'responseAddPersonStripeAccount',
-    //   responseAddPersonStripeAccount,
-    // );
-    // if (responseAddPersonStripeAccount.error)
-    //   return this.wrongCB(responseAddPersonStripeAccount.error.message);
-    ///////////
+    /////////////////////////////////////////////////////////////////////
 
     await firebase
       .database()

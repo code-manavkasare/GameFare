@@ -46,11 +46,11 @@ export default class CompleteFields extends Component {
       .database()
       .ref('users/' + this.props.params.userID)
       .update({profileCompleted: true});
-    await this.secondTextInput.blur();
-    Keyboard.dismiss();
+    // await this.secondTextInput.blur();
+    await Keyboard.dismiss();
     var that = this;
     setTimeout(function() {
-      NavigationService.navigate(that.props.pageFrom);
+      that.props.dismiss();
     }, 550);
   }
   render() {
@@ -113,7 +113,7 @@ export default class CompleteFields extends Component {
             onPressColor={colors.greenClick}
             loader={this.state.loader}
             click={() => this.secondTextInput.focus()}
-            enable={this.state.firstname != ''}
+            enable={this.state.firstname !== ''}
             text={'Next'}
           />
         </InputAccessoryView>
@@ -124,7 +124,7 @@ export default class CompleteFields extends Component {
             onPressColor={colors.greenClick}
             loader={this.state.loader}
             click={() => this.confirm()}
-            enable={this.state.firstname != '' && this.state.lastname != ''}
+            enable={this.state.firstname !== '' && this.state.lastname !== ''}
             text={'Complete profile'}
           />
         </InputAccessoryView>

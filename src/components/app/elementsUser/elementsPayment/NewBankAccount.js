@@ -17,6 +17,7 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
+import axios from 'axios';
 
 import AllIcons from '../../../layout/icons/AllIcons';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
@@ -30,7 +31,6 @@ import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
 import ButtonColor from '../../../layout/Views/Button';
-import axios from 'axios';
 
 class ListEvent extends Component {
   constructor(props) {
@@ -89,12 +89,7 @@ class ListEvent extends Component {
     console.log('responseCreateConnectAccount', responseCreateConnectAccount);
     await firebase
       .database()
-      .ref(
-        'users/' +
-          userID +
-          '/wallet/bankAccounts/' +
-          dataCreateToken.bankAccount.id,
-      )
+      .ref('users/' + userID + '/wallet/bankAccount/')
       .update(dataCreateToken.bankAccount);
     return this.props.navigation.navigate('Payments');
   }
@@ -213,7 +208,6 @@ class ListEvent extends Component {
     const state = this.state;
     if (state.account_holder_name === '') return false;
     for (var i in countryBankAccount.fields) {
-      console.log('countryBankAccount', countryBankAccount.fields[i].id);
       if (
         state[countryBankAccount.fields[i].id] === '' ||
         !state[countryBankAccount.fields[i].id]
@@ -227,12 +221,10 @@ class ListEvent extends Component {
     const country = ListCountry.filter(
       (country) => country.code === codeCountry,
     )[0];
-    console.log('newBankAccount', country);
     const countryBankAccount = countriesBankAccount.filter(
       (country) => country.code === codeCountry,
     )[0];
     const buttonActive = this.buttonActive(countryBankAccount);
-    console.log('buttonActive', buttonActive);
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton

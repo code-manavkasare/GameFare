@@ -27,7 +27,6 @@ import HeaderBackButton from '../layout/headers/HeaderBackButton';
 import {userAction} from '../../actions/userActions';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
-import SwiperLogout from './elementsUser/elementsProfile/SwiperLogout';
 const {height, width} = Dimensions.get('screen');
 
 class ProfilePage extends Component {
@@ -302,25 +301,6 @@ class ProfilePage extends Component {
           </Text>
         </Col>
       </Row>
-    );
-  }
-  profileLogout() {
-    return (
-      <View style={[styleApp.viewHome]}>
-        <View style={styleApp.marginView}>
-          <SwiperLogout type={'profile'} />
-
-          <View style={{height: 20}} />
-          <Button
-            text="Sign in"
-            click={() =>
-              this.props.navigation.navigate('Phone', {pageFrom: 'Profile'})
-            }
-            backgroundColor={'green'}
-            onPressColor={colors.greenClick}
-          />
-        </View>
-      </View>
     );
   }
   render() {

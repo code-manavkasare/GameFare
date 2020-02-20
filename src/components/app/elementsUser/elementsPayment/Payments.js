@@ -56,26 +56,60 @@ class ListEvent extends Component {
         }}
         click={() => this.openPage(data)}
         color="white"
-        style={[
-          {
-            borderColor: colors.off,
-            height: 60,
-            width: '100%',
-            borderRadius: 0,
-            borderBottomWidth: 0,
-            marginTop: 0,
-          },
-        ]}
+        style={styles.buttonRow}
         onPressColor={colors.off}
       />
     );
   }
+  rowBankAccount() {
+    const {bankAccount} = this.props;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row style={{paddingLeft: 20, paddingRight: 20}}>
+              <Col size={15} style={styleApp.center2}>
+                <AllIcons
+                  name="university"
+                  size={20}
+                  color={colors.title}
+                  type="font"
+                />
+              </Col>
+              <Col size={75} style={[styleApp.center2]}>
+                <Text style={styleApp.title}>{bankAccount.bank_name}</Text>
+                <Text style={styleApp.subtitle}>
+                  {bankAccount.account_holder_name}
+                </Text>
+                <Text style={[styleApp.subtitle, {marginTop: 4}]}>
+                  {bankAccount.routing_number} {bankAccount.last4}
+                </Text>
+              </Col>
+              <Col size={10} style={styleApp.center}>
+                <AllIcons
+                  name="keyboard-arrow-right"
+                  size={20}
+                  color={colors.grey}
+                  type="mat"
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => this.openBankAccount(bankAccount)}
+        color="white"
+        style={{flex: 1, marginTop: 10, paddingTop: 5, paddingBottom: 5}}
+        onPressColor={colors.off}
+      />
+    );
+  }
+  openBankAccount(bankAccount) {}
   openPage(data) {
-    if (data == 'new') {
+    if (data === 'new') {
       return this.props.navigation.navigate('NewMethod');
     } else if (data === 'bank') {
-      //if (!this.props.connectAccountToken)
-      return this.props.navigation.navigate('CreateConnectAccount');
+      if (!this.props.connectAccountToken)
+        return this.props.navigation.navigate('CreateConnectAccount');
       return this.props.navigation.navigate('NewBankAccount');
     }
     return this.props.navigation.navigate('DetailCard', {
@@ -125,10 +159,8 @@ class ListEvent extends Component {
           />
         </View>
 
-        {this.row(cardIcon('bank'), 'Link bank account', 'bank')}
-
-        {this.props.connectAccountToken
-          ? this.row(cardIcon('bank'), 'Link bank account', 'bank')
+        {this.props.bankAccount
+          ? this.rowBankAccount()
           : this.row(cardIcon('bank'), 'Link bank account', 'bank')}
       </View>
     );
@@ -174,6 +206,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'OpenSans-Bold',
   },
+  buttonRow: {
+    borderColor: colors.off,
+    height: 60,
+    width: '100%',
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -182,6 +219,7 @@ const mapStateToProps = (state) => {
     defaultCard: state.user.infoUser.wallet.defaultCard,
     cards: state.user.infoUser.wallet.cards,
     connectAccountToken: state.user.infoUser.wallet.connectAccountToken,
+    bankAccount: state.user.infoUser.wallet.bankAccount,
   };
 };
 
