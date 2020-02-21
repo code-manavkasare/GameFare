@@ -7,9 +7,9 @@ import {
   Dimensions,
   View,
 } from 'react-native';
-
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
+
 import Button from '../buttons/Button';
 import ButtonColor from '../Views/Button';
 import colors from '../../style/colors';
@@ -120,7 +120,11 @@ export default class Alert extends Component {
             disabled={false}
             onPressColor={colors.greenClick}
             text={'Close'}
-            click={() => this.props.navigation.goBack()}
+            click={() => {
+              closeButton
+                ? this.props.navigation.state.params.closeButton()
+                : this.props.navigation.goBack();
+            }}
             loader={this.state.loader}
           />
         </View>
