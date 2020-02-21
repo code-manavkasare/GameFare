@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   inputForm: {
-    height: 50,
+    height: 45,
     marginTop: 10,
     width: '100%',
     borderBottomWidth: 1,

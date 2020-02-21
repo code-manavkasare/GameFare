@@ -22,6 +22,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import Button from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
+import AsyncImage from '../layout/image/AsyncImage';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
 import {userAction} from '../../actions/userActions';
@@ -200,26 +201,31 @@ class ProfilePage extends Component {
     Communications.email([email1], null, null, subject, '');
   }
   profile() {
+    const {infoUser, userConnected} = this.props;
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        <View style={[styleApp.marginView, {marginTop: 0}]}>
-          {this.props.userConnected ? (
+        <View style={styleApp.marginView}>
+          {userConnected ? (
             <View>
-              <Text style={[styleApp.title, {marginBottom: 30}]}>
-                {'Hi, ' +
-                  this.props.infoUser.firstname +
-                  ' ' +
-                  this.props.infoUser.lastname}
-              </Text>
+              <Row style={{marginBottom: 20}}>
+                <Col size={30} style={styleApp.center2}>
+                  <AsyncImage
+                    style={styles.asyncImage}
+                    mainImage={infoUser.picture}
+                  />
+                </Col>
+                <Col size={70} style={styleApp.center2}>
+                  <Text style={styleApp.title}>
+                    {infoUser.firstname + ' ' + infoUser.lastname}
+                  </Text>
+                  <Text style={styleApp.subtitle}>
+                    {infoUser.countryCode + ' ' + infoUser.phoneNumber}
+                  </Text>
+                </Col>
+              </Row>
 
-              <Text style={styleApp.smallText}>
-                {this.props.userConnected
-                  ? 'Account parameters'
-                  : 'Sign in to GameFare'}
-              </Text>
-              <View
-                style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]}
-              />
+              <Text style={styleApp.text}>Account parameters</Text>
+              <View style={[styleApp.divider2, {marginTop: 15}]} />
               {this.button('credit-card', 'Payment', 'Payments')}
               {this.button('wallet', 'Wallet', 'Wallet')}
               {/* {this.button('shopping-bag','My wallet','Wallet',{pageFrom:'Profile'})} */}
@@ -361,6 +367,12 @@ const styles = StyleSheet.create({
     borderColor: colors.borderColor,
     backgroundColor: 'white',
     borderBottomWidth: 0,
+  },
+  asyncImage: {
+    width: 90,
+    height: 90,
+    borderColor: colors.off,
+    borderRadius: 45,
   },
 });
 

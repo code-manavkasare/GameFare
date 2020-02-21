@@ -6,6 +6,7 @@ import {
   Keyboard,
   Dimensions,
   InputAccessoryView,
+  ActivityIndicator,
   View,
 } from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -23,6 +24,7 @@ import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import AllIcons from '../../layout/icons/AllIcons';
+import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import ButtonFull from '../../layout/buttons/ButtonFull';
 
@@ -79,12 +81,20 @@ export default class CompleteFields extends Component {
     } else if (val === 'pick') {
       var uri = await pickLibrary();
     }
+    console.log('uri', uri);
+    if (!uri) {
+      await this.setState({
+        loader: false,
+      });
+      return this.focusOnText();
+    }
+
     const uriResized = await resize(uri);
     await this.setState({
       pictureUri: uriResized,
       loader: false,
     });
-    this.focusOnText();
+    return this.focusOnText();
   }
 
   focusOnText = () => {
@@ -92,115 +102,116 @@ export default class CompleteFields extends Component {
     if (firstname === '' && lastname === '') this.firstnameInput.focus();
     if (firstname !== '') this.lastnameInput.focus();
   };
-
+  async closeAddImage() {
+    await NavigationService.goBack();
+    return this.focusOnText();
+  }
+  buttonPicture(pictureUri, loader) {
+    return (
+      <ButtonColor
+        color={colors.white}
+        onPressColor={colors.white}
+        click={() =>
+          NavigationService.navigate('AlertAddImage', {
+            title: 'Add picture',
+            closeButton: () => this.closeAddImage(),
+            onGoBack: (val) => {
+              this.addPicture(val);
+            },
+          })
+        }
+        style={[styles.buttonRound]}
+        view={() => {
+          return pictureUri === '' ? (
+            <View style={styleApp.center}>
+              <AllIcons
+                name={'image'}
+                color={colors.title}
+                size={40}
+                type="font"
+              />
+              <Text style={styleApp.text}>Add profile</Text>
+              <Text style={styleApp.text}>picture</Text>
+              {loader && (
+                <View style={{position: 'absolute', zIndex: 30}}>
+                  <ActivityIndicator />
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={styleApp.center}>
+              <AsyncImage style={styles.asyncImage} mainImage={pictureUri} />
+              {loader && (
+                <View style={{position: 'absolute', zIndex: 30}}>
+                  <ActivityIndicator />
+                </View>
+              )}
+            </View>
+          );
+        }}
+      />
+    );
+  }
   render() {
     const {firstname, lastname, loader, pictureUri} = this.state;
 
     return (
       <View style={styles.content}>
-        <Text style={[styleApp.title, {marginBottom: 20, fontSize: 21}]}>
+        <Text style={[styleApp.title, {marginBottom: 30, fontSize: 21}]}>
           Complete your profile
         </Text>
 
-        <Text style={[styleApp.title, {marginBottom: 0, fontSize: 16}]}>
-          First name
-        </Text>
-        <Row style={styleApp.inputForm}>
-          <Col style={styleApp.center2}>
-            <TextInput
-              style={styleApp.input}
-              placeholder="First name"
-              autoFocus={true}
-              autoCorrect={true}
-              underlineColorAndroid="rgba(0,0,0,0)"
-              blurOnSubmit={false}
-              returnKeyType={'done'}
-              ref={(input) => {
-                this.firstnameInput = input;
-              }}
-              inputAccessoryViewID={'firstname'}
-              onChangeText={(text) => this.setState({firstname: text})}
-              value={firstname}
-            />
-          </Col>
-        </Row>
-
-        <Text style={[styleApp.title, {marginTop: 20, fontSize: 16}]}>
-          Last name
-        </Text>
-        <Row style={[styleApp.inputForm, {marginTop: 10}]}>
-          <Col style={styleApp.center2}>
-            <TextInput
-              style={styleApp.input}
-              placeholder="Last name"
-              returnKeyType={'done'}
-              underlineColorAndroid="rgba(0,0,0,0)"
-              autoCorrect={true}
-              ref={(input) => {
-                this.lastnameInput = input;
-              }}
-              inputAccessoryViewID={'lastname'}
-              onFocus={() => {
-                this.setState({step: 'last'});
-              }}
-              onChangeText={(text) => this.setState({lastname: text})}
-              value={lastname}
-            />
-          </Col>
-        </Row>
         <Row>
-          <Col style={styleApp.center}>
-            {pictureUri === '' ? (
-              <ButtonColor
-                color={colors.grey}
-                onPressColor={colors.off}
-                click={() =>
-                  NavigationService.navigate('AlertAddImage', {
-                    title: 'Add picture',
-                    onGoBack: (val) => {
-                      this.addPicture(val);
-                    },
-                  })
-                }
-                style={[styles.buttonRound]}
-                view={() => {
-                  return (
-                    <View style={styleApp.center}>
-                      <AllIcons
-                        name={'image'}
-                        color={colors.green}
-                        size={50}
-                        type="font"
-                      />
-                      <Text style={styles.textButton}>Add Profil Picture</Text>
-                      <Text style={styles.textButton}>(optionnal)</Text>
-                    </View>
-                  );
-                }}
-              />
-            ) : (
-              <ButtonColor
-                color={colors.grey}
-                onPressColor={colors.off}
-                click={() =>
-                  NavigationService.navigate('AlertAddImage', {
-                    title: 'Add picture',
-                    onGoBack: (val) => {
-                      this.addPicture(val);
-                    },
-                  })
-                }
-                style={[styles.buttonRound]}
-                view={() => {
-                  return (
-                    <AsyncImage
-                      style={styles.asyncImage}
-                      mainImage={pictureUri}
-                    />
-                  );
-                }}
-              />
-            )}
+          <Col size={20} style={styleApp.center2}>
+            {this.buttonPicture(pictureUri, loader)}
+          </Col>
+          <Col size={40}>
+            <Text style={[styleApp.title, {marginBottom: 0, fontSize: 16}]}>
+              First name
+            </Text>
+            <Row style={styleApp.inputForm}>
+              <Col style={styleApp.center2}>
+                <TextInput
+                  style={styleApp.input}
+                  placeholder="First name"
+                  autoFocus={true}
+                  autoCorrect={true}
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  blurOnSubmit={false}
+                  returnKeyType={'done'}
+                  ref={(input) => {
+                    this.firstnameInput = input;
+                  }}
+                  inputAccessoryViewID={'firstname'}
+                  onChangeText={(text) => this.setState({firstname: text})}
+                  value={firstname}
+                />
+              </Col>
+            </Row>
+            <Text style={[styleApp.title, {marginTop: 20, fontSize: 16}]}>
+              Last name
+            </Text>
+            <Row style={styleApp.inputForm}>
+              <Col style={styleApp.center2}>
+                <TextInput
+                  style={styleApp.input}
+                  placeholder="Last name"
+                  returnKeyType={'done'}
+                  underlineColorAndroid="rgba(0,0,0,0)"
+                  autoCorrect={true}
+                  blurOnSubmit={false}
+                  ref={(input) => {
+                    this.lastnameInput = input;
+                  }}
+                  inputAccessoryViewID={'lastname'}
+                  onFocus={() => {
+                    this.setState({step: 'last'});
+                  }}
+                  onChangeText={(text) => this.setState({lastname: text})}
+                  value={lastname}
+                />
+              </Col>
+            </Row>
           </Col>
         </Row>
 
@@ -215,13 +226,26 @@ export default class CompleteFields extends Component {
           />
         </InputAccessoryView>
 
+        {/* <View style={styleApp.footerBooking}>
+          <View style={{marginLeft: 20, width: width - 40}}>
+            <Button
+              backgroundColor={'green'}
+              onPressColor={colors.greenClick}
+              text={'Next'}
+              disabled={!true}
+              loader={this.state.loader}
+              click={() => this.submit()}
+            />
+          </View>
+        </View> */}
+
         <InputAccessoryView nativeID={'lastname'}>
           <ButtonFull
             backgroundColor={'green'}
             onPressColor={colors.greenClick}
             loader={loader}
             click={() => this.confirm()}
-            enable={firstname !== '' && lastname !== ''}
+            enable={firstname !== '' && lastname !== '' && pictureUri !== ''}
             text={'Complete profile'}
             ref={(input) => {
               this.inputLastname = input;
@@ -241,19 +265,16 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   buttonRound: {
-    width: 200,
-    height: 200,
-    borderRadius: 200,
-    marginTop: 80,
+    width: '90%',
+    height: 120,
+    borderRadius: 10,
   },
   asyncImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 200,
-    zIndex: 9,
-  },
-  textButton: {
-    color: colors.green,
-    fontSize: 18,
+    width: 90,
+    height: 90,
+    borderColor: colors.off,
+    borderRadius: 45,
+    position: 'absolute',
+    zIndex: 0,
   },
 });
