@@ -12,15 +12,14 @@ import {
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import HeaderHome from '../../layout/headers/HeaderHome';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import MyGroups from './MyGroups';
 import GroupsAround from './GroupsAround';
+import MyEvents from '../elementsHome/MyEvents'
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
-import AllIcons from '../../layout/icons/AllIcons';
 const {height, width} = Dimensions.get('screen');
 import StatusBar from '@react-native-community/status-bar';
 import ButtonAdd from '../../app/elementsHome/ButtonAdd';
@@ -66,21 +65,27 @@ class HomeScreen extends React.Component {
   getAnimateHeader() {
     return this.scrollViewRef.getAnimateHeader();
   }
-  messagePageView() {
+  ActivityTab() {
     return (
-      <View style={{paddingTop: 30, minHeight: height / 1.5}}>
-        <MyGroups
+      <View style={{paddingTop: 10, minHeight: height / 1.5}}>
+       
+  
+        <MyEvents
+          location={this.state.location}
+          search={this.state.search}
+          key={2}
+          onRef={(ref) => (this.listEventsRef = ref)}
+          setState={(data) => this.setState(data)}
+          loader={this.state.loader}
+          navigate={this.navigate.bind(this)}
+          navigate1={(val, data) => this.props.navigation.navigate(val, data)}
+        />
+
+      <MyGroups
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
           loader={this.state.loader}
           onRef={(ref) => (this.myGroupsRef = ref)}
-        />
-
-        <GroupsAround
-          navigate={this.navigate.bind(this)}
-          navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-          loader={this.state.loader}
-          onRef={(ref) => (this.groupsAroundRef = ref)}
         />
       </View>
     );
@@ -88,7 +93,7 @@ class HomeScreen extends React.Component {
   async refresh() {
     // this.eventGroupsRef.reload()
     this.myGroupsRef.reload();
-    this.groupsAroundRef.reload();
+    this.listEventsRef.reload();
     return true;
   }
   setLocation(location) {
@@ -100,11 +105,6 @@ class HomeScreen extends React.Component {
       <View style={styleApp.stylePage}>
         <HeaderHome
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
           textHeader={'Organize your event'}
           inputRange={[0, sizes.heightHeaderHome + 0]}
           initialBorderColorIcon={colors.off}
@@ -132,7 +132,7 @@ class HomeScreen extends React.Component {
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.messagePageView()}
+          contentScrollView={() => this.ActivityTab()}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderFilter - 30}
           AnimatedHeaderValue={this.AnimatedHeaderValue}

@@ -43,7 +43,7 @@ import CreateGroup0 from '../app/elementsGroupCreate/Page0';
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
 import DateSelector from '../app/elementsEventCreate/DateSelector';
 
-import ListGroups from '../app/elementsGroupTab/GroupList';
+import Activity from '../app/elementsActivity/Activity';
 
 import Payments from '../app/elementsUser/elementsPayment/Payments';
 import NewCard from '../app/elementsUser/elementsPayment/NewCard';
@@ -248,7 +248,7 @@ const StreamResultsNavigator = createStackNavigator(
 const MainApp = createBottomTabNavigator(
   {
     Home: lockedPortrait(HomePage),
-    ListGroups: lockedPortrait(ListGroups),
+    Activity: lockedPortrait(Activity),
     Stream: lockedPortrait(StreamPage),
     MessageList: lockedPortrait(MessageList),
     More: ProfileNavigator,

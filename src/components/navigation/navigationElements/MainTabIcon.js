@@ -31,9 +31,9 @@ class MainTabIcon extends React.Component {
                 <AllIcons
                   name={
                     routeName === 'Home'
+                      ? 'menu'
+                      : routeName === 'Activity'
                       ? 'calendar2'
-                      : routeName === 'ListGroups'
-                      ? 'profileFooter'
                       : routeName === 'Stream'
                       ? 'video-camera'
                       : routeName === 'MessageList'
@@ -49,9 +49,9 @@ class MainTabIcon extends React.Component {
                 />
                 <Text style={[styles.textButton, {color: tintColor}]}>
                   {routeName === 'Home'
-                    ? 'Events'
-                    : routeName === 'ListGroups'
-                    ? 'Groups'
+                    ? 'Browse'
+                    : routeName === 'Activity'
+                    ? 'Activity'
                     : routeName === 'Stream'
                     ? 'Go Live'
                     : routeName === 'MessageList'

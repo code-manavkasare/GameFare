@@ -8,7 +8,7 @@ import colors from '../../style/colors';
 import styleApp from '../../style/style';
 
 import {groupsAction} from '../../../actions/groupsActions';
-import CardGroup from '../elementsGroupTab/CardGroup';
+import CardGroup from '../elementsActivity/CardGroup';
 import {native} from '../../animations/animations';
 import {indexGroups} from '../../database/algolia';
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
