@@ -15,6 +15,27 @@ function discussionObj(members, nameDiscussion, firstMessageExists) {
   };
 }
 
+const createDiscussionEventGroup = (
+  discussionID,
+  groupID,
+  image,
+  nameGroup,
+  initialMember,
+) => {
+  return {
+    id: discussionID,
+    title: nameGroup,
+    members: {
+      [initialMember.id]: initialMember,
+    },
+    allMembers: [initialMember.id],
+    messages: {},
+    type: 'group',
+    groupID: groupID,
+    image: image,
+  };
+};
+
 async function createDiscussion(members, nameDiscussion, firstMessageExists) {
   const membersObj = Object.values(members).reduce(function(result, item) {
     result[item.id] = item;
@@ -143,6 +164,7 @@ function titleConversation(conversation, userID) {
 
 export {
   createDiscussion,
+  createDiscussionEventGroup,
   searchDiscussion,
   sendNewMessage,
   loadMyDiscusions,

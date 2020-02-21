@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, PermissionsAndroid} from 'react-native';
+import firebase from 'react-native-firebase';
 
 import {uploadPictureFirebase} from '../functions/pictures';
 import {addMemberDiscussion} from './createEvent';
@@ -7,7 +8,7 @@ import {
   subscribeToTopics,
   refreshTokenOnDatabase,
 } from '../functions/notifications';
-import firebase from 'react-native-firebase';
+import {createDiscussionEventGroup} from '../functions/message';
 
 function generateID() {
   return (
@@ -18,21 +19,6 @@ function generateID() {
       .toString(36)
       .substring(2, 15)
   );
-}
-
-function newDiscussion(discussionID, groupID, image, nameGroup, initialMember) {
-  return {
-    id: discussionID,
-    title: nameGroup,
-    members: {
-      [initialMember.id]: initialMember,
-    },
-    allMembers: [initialMember.id],
-    messages: {},
-    type: 'group',
-    groupID: groupID,
-    image: image,
-  };
 }
 
 async function createGroup(data, userID, infoUser) {
@@ -65,10 +51,16 @@ async function createGroup(data, userID, infoUser) {
     .database()
     .ref('discussions/' + discussionID)
     .update(
-      newDiscussion(discussionID, key, pictureUri, group.info.name, {
-        id: userID,
-        info: infoUser,
-      }),
+      createDiscussionEventGroup(
+        discussionID,
+        key,
+        pictureUri,
+        group.info.name,
+        {
+          id: userID,
+          info: infoUser,
+        },
+      ),
     );
   group.objectID = key;
   refreshTokenOnDatabase(userID);
