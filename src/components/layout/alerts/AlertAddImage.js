@@ -92,13 +92,16 @@ export default class Alert extends Component {
   }
   render() {
     // this.button('copy','Copy the address',<Image style={{width:23,height:23,}} source={require('../../../img/map/document.png')} />)
+    const closeButton = this.props.navigation.getParam('closeButton');
     return (
       <View style={styles.viewModal}>
         <TouchableOpacity
           style={styles.buttonClose}
           activeOpacity={0.5}
           onPress={() => {
-            this.props.navigation.goBack();
+            closeButton
+              ? this.props.navigation.state.params.closeButton()
+              : this.props.navigation.goBack();
           }}>
           <MatIcon name="close" color={'#4a4a4a'} size={24} />
         </TouchableOpacity>
