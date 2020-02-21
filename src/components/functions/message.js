@@ -95,26 +95,16 @@ async function searchDiscussion(ids, numberMembers) {
   const {hits} = await indexDiscussions.search({
     filters: filterMembers,
   });
-  console.log('la searcj est doscissopm', hits);
   if (hits.length === 0) return false;
   return hits[0];
 }
 
-async function loadMyDiscusions(userID) {
+async function loadMyDiscusions(userID, searchInput) {
   indexDiscussions.clearCache();
 
-  // search for persnal conversations
-  let {hits} = await indexDiscussions.search({
+  let {hits} = await indexDiscussions.search(searchInput, {
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
   });
-  console.log('hitttasdfss', hits);
-  // hits = hits.sort(function(a, b) {
-  //   return (
-  //     new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
-  //   );
-  //   // return b.lastMessage.timeStamp - a.lastMessage.timeStamp;
-  // });
-  console.log(hits);
   let discussions = hits.reduce(function(result, item) {
     result[item.objectID] = item;
     return result;
