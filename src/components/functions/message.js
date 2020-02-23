@@ -104,6 +104,7 @@ async function loadMyDiscusions(userID, searchInput) {
 
   let {hits} = await indexDiscussions.search(searchInput, {
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
+    hitsPerPage: 10000,
   });
   let discussions = hits.reduce(function(result, item) {
     result[item.objectID] = item;
