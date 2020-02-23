@@ -17,12 +17,13 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import MyGroups from './MyGroups';
 import GroupsAround from './GroupsAround';
-import MyEvents from '../elementsHome/MyEvents'
+import MyEvents from '../elementsHome/MyEvents';
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
 const {height, width} = Dimensions.get('screen');
 import StatusBar from '@react-native-community/status-bar';
 import ButtonAdd from '../../app/elementsHome/ButtonAdd';
+import Button from '../../layout/buttons/Button';
 
 import sizes from '../../style/sizes';
 import isEqual from 'lodash.isequal';
@@ -65,28 +66,36 @@ class HomeScreen extends React.Component {
   getAnimateHeader() {
     return this.scrollViewRef.getAnimateHeader();
   }
-  ActivityTab() {
+  ActivityTab(userConnected) {
     return (
-      <View style={{paddingTop: 10, minHeight: height / 1.5}}>
-       
-  
-        <MyEvents
-          location={this.state.location}
-          search={this.state.search}
-          key={2}
-          onRef={(ref) => (this.listEventsRef = ref)}
-          setState={(data) => this.setState(data)}
-          loader={this.state.loader}
-          navigate={this.navigate.bind(this)}
-          navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-        />
+      <View style={{paddingTop: 0, minHeight: height / 1.5}}>
+        {userConnected ? (
+          <View>
+            <MyEvents
+              location={this.state.location}
+              search={this.state.search}
+              key={2}
+              onRef={(ref) => (this.listEventsRef = ref)}
+              setState={(data) => this.setState(data)}
+              loader={this.state.loader}
+              navigate={this.navigate.bind(this)}
+              navigate1={(val, data) =>
+                this.props.navigation.navigate(val, data)
+              }
+            />
 
-      <MyGroups
-          navigate={this.navigate.bind(this)}
-          navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-          loader={this.state.loader}
-          onRef={(ref) => (this.myGroupsRef = ref)}
-        />
+            <MyGroups
+              navigate={this.navigate.bind(this)}
+              navigate1={(val, data) =>
+                this.props.navigation.navigate(val, data)
+              }
+              loader={this.state.loader}
+              onRef={(ref) => (this.myGroupsRef = ref)}
+            />
+          </View>
+        ) : (
+          this.logoutView()
+        )}
       </View>
     );
   }
@@ -100,39 +109,64 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('ListGroups');
     this.props.historicSearchAction('setLocationSearch', location);
   }
+  logoutView() {
+    return (
+      <View style={[styleApp.marginView, {marginTop: 30}]}>
+        <View style={styleApp.center}>
+          <Image
+            style={{height: 85, width: 85, marginBottom: 30}}
+            source={require('../../../img/images/juice.png')}
+          />
+          <Text style={[styleApp.text, {marginBottom: 30}]}>
+            Sign in to see your activity.
+          </Text>
+        </View>
+
+        <Button
+          text="Sign in"
+          click={() => this.props.navigation.navigate('SignIn')}
+          backgroundColor={'green'}
+          onPressColor={colors.greenClick}
+        />
+      </View>
+    );
+  }
   render() {
+    const {userConnected} = this.props;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderHome
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Organize your event'}
-          inputRange={[0, sizes.heightHeaderHome + 0]}
-          initialBorderColorIcon={colors.off}
-          initialBackgroundColor={'white'}
-          initialTitleOpacity={1}
-          icon1="arrow-left"
-          league={false}
-          sportSelected={this.props.sportSelected}
-          sports={this.props.sports}
-          icon2={'map-marker-alt'}
-          sizeIcon2={20}
-          typeIcon2={'font'}
-          clickButton2={() =>
-            this.props.navigation.navigate('Location', {
-              pageFrom: 'ListGroups',
-              onGoBack: (data) => this.setLocation(data),
-            })
-          }
-          clickButton1={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
-        />
+        {userConnected && (
+          <HeaderHome
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={'Organize your event'}
+            inputRange={[0, sizes.heightHeaderHome + 0]}
+            initialBorderColorIcon={colors.off}
+            initialBackgroundColor={'white'}
+            initialTitleOpacity={1}
+            icon1="arrow-left"
+            league={false}
+            sportSelected={this.props.sportSelected}
+            sports={this.props.sports}
+            icon2={'map-marker-alt'}
+            sizeIcon2={20}
+            typeIcon2={'font'}
+            clickButton2={() =>
+              this.props.navigation.navigate('Location', {
+                pageFrom: 'ListGroups',
+                onGoBack: (data) => this.setLocation(data),
+              })
+            }
+            clickButton1={() =>
+              this.props.navigation.navigate(
+                this.props.navigation.getParam('pageFrom'),
+              )
+            }
+          />
+        )}
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.ActivityTab()}
+          contentScrollView={() => this.ActivityTab(userConnected)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderFilter - 30}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -192,6 +226,7 @@ const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
     sportSelected: state.historicSearch.sport,
+    userConnected: state.user.userConnected,
   };
 };
 

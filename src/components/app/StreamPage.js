@@ -46,7 +46,7 @@ class StreamPage extends React.Component {
     let events = await getMyEvents(this.props.userID);
     events = Object.values(events);
     const now = new Date();
-    events = events.filter(event => {
+    events = events.filter((event) => {
       const end = new Date(event.date.end);
       return now < end;
     });
@@ -59,7 +59,7 @@ class StreamPage extends React.Component {
         <View style={styleApp.center}>
           <Image
             style={{height: 85, width: 85, marginBottom: 30}}
-            source={require('../../img/images/smartphone.png')}
+            source={require('../../img/images/list.png')}
           />
           <Text style={[styleApp.text, {marginBottom: 30}]}>
             Sign in to stream events.

@@ -108,7 +108,7 @@ class ListEvents extends React.Component {
     }
 
     return (
-      <View style={{marginTop: 0}}>
+      <View style={{marginTop: 20}}>
         <View style={[styleApp.marginView, {marginBottom: 10, paddingTop: 10}]}>
           <Text
             style={[

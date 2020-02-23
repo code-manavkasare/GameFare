@@ -31,7 +31,7 @@ class MainTabIcon extends React.Component {
                 <AllIcons
                   name={
                     routeName === 'Home'
-                      ? 'menu'
+                      ? 'searchFooter'
                       : routeName === 'Activity'
                       ? 'calendar2'
                       : routeName === 'Stream'

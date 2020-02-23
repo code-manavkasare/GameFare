@@ -6,14 +6,13 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import HeaderHome from '../layout/headers/HeaderHome';
 import NewEvents from './elementsHome/NewEvents';
-import GroupsAround from './elementsActivity/GroupsAround'
+import GroupsAround from './elementsActivity/GroupsAround';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 
 import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
-import ButtonAdd from './elementsHome/ButtonAdd';
 import AllIcons from '../layout/icons/AllIcons';
 
 import sizes from '../style/sizes';
@@ -117,8 +116,6 @@ export default class HomeScreen extends React.Component {
           loader={this.state.loader}
           onRef={(ref) => (this.groupsAroundRef = ref)}
         />
-
-        
       </View>
     );
   }
@@ -190,13 +187,6 @@ export default class HomeScreen extends React.Component {
           />
         </Animated.View>
 
-        <ButtonAdd
-          translateXVoile={this.translateXVoile}
-          typeButton={'event'}
-          pageTo="CreateEvent0"
-          onRef={(ref) => (this.buttonAddRef = ref)}
-          opacityVoile={this.opacityVoile}
-        />
         <ButtonColor
           view={() => {
             return (
