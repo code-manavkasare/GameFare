@@ -257,6 +257,7 @@ class GroupPage extends React.Component {
           loader={this.state.loader}
           infoUser={this.props.infoUser}
           editMode={this.state.editMode}
+          goToShareGroup={() => this.goToShareGroup(data)}
           onRemoveMember={(user) => this.askRemoveUser(data, user)}
         />
 

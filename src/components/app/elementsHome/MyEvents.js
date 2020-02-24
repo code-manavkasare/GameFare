@@ -65,8 +65,10 @@ class MyEvents extends React.Component {
 
   async componentWillReceiveProps(nextProps) {
     if (
-      this.props.userConnected !== nextProps.userConnected &&
-      nextProps.userConnected
+      (this.props.userConnected !== nextProps.userConnected &&
+        nextProps.userConnected) ||
+      (nextProps.userConnected &&
+        nextProps.leagueSelected !== this.props.leagueSelected)
     ) {
       this.loadEvent(nextProps.userID);
     }

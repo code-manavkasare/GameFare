@@ -144,7 +144,7 @@ class HomeScreen extends React.Component {
             initialBackgroundColor={'white'}
             initialTitleOpacity={1}
             icon1="arrow-left"
-            league={false}
+            league={true}
             sportSelected={this.props.sportSelected}
             sports={this.props.sports}
             icon2={'map-marker-alt'}

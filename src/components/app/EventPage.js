@@ -887,7 +887,9 @@ class EventPage extends React.Component {
                 <Text style={styleApp.text}>Results</Text>
               </Col>
             </Row>
-            <View style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}/>
+            <View
+              style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
+            />
           </View>
           {loader ? (
             <FadeInView duration={300} style={{paddingTop: 10}}>
@@ -907,10 +909,8 @@ class EventPage extends React.Component {
             streams.map((stream, i) => this.rowStream(event, stream, i))
           )}
         </View>
-
       );
     }
-
   }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;
@@ -926,10 +926,19 @@ class EventPage extends React.Component {
         {this.eventResults(event, loader)}
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Row>
-            <Col size={60} style={styleApp.center2}>
+            <Col size={25} style={styleApp.center2}>
               <Text style={styleApp.text}>Players</Text>
             </Col>
-            <Col size={40} style={styleApp.center3}>
+            <Col
+              size={15}
+              style={styleApp.center2}
+              activeOpacity={1}
+              onPress={() => this.goToShareEvent(event)}>
+              <Text style={[styleApp.text, {color: colors.primary}]}>
+                Invite
+              </Text>
+            </Col>
+            <Col size={60} style={styleApp.center3}>
               {this.userAlreadySubscribed(event.attendees) &&
                 this.props.userID !== event.info.organizer &&
                 this.buttonLeave(event)}
