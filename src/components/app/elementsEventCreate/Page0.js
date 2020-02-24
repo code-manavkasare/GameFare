@@ -25,6 +25,8 @@ import Communications from 'react-native-communications';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
+import colors from '../../style/colors';
+
 import isEqual from 'lodash.isequal';
 
 class Page0 extends Component {

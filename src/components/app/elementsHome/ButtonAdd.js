@@ -127,7 +127,7 @@ class ButtonAdd extends Component {
                 />
               );
             }}
-            click={() => this.open(!this.state.open, 'CreateEvent0')}
+            click={() => this.open(!this.state.open, 'CreateChallenge')}
             color={'white'}
             style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.off}

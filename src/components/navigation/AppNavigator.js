@@ -40,6 +40,10 @@ import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact';
 
 import CreateGroup0 from '../app/elementsGroupCreate/Page0';
 
+import PickMembers from '../app/elementsCreateChallenge/PickMembers';
+import PickInfos from '../app/elementsCreateChallenge/PickInfos';
+import PickAddress from '../app/elementsCreateChallenge/PickAddress';
+
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
 import DateSelector from '../app/elementsEventCreate/DateSelector';
 
@@ -98,6 +102,21 @@ const CreateGroupNavigator = createStackNavigator(
   },
   {
     initialRouteName: 'CreateGroup0',
+    headerMode: 'none',
+    mode: 'card',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: true,
+  },
+);
+
+const CreateChallengeNavigator = createStackNavigator(
+  {
+    PickMembers: lockedPortrait(PickMembers),
+    PickInfos: lockedPortrait(PickInfos),
+    PickAddress: lockedPortrait(PickAddress),
+  },
+  {
+    initialRouteName: 'PickMembers',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
@@ -242,7 +261,7 @@ const StreamResultsNavigator = createStackNavigator(
     mode: 'card',
     cardOverlayEnabled: false,
     cardShadowEnabled: true,
-  }
+  },
 );
 
 const MainApp = createBottomTabNavigator(
@@ -350,6 +369,7 @@ const MainStack = createStackNavigator(
     LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
+    CreateChallenge: CreateChallengeNavigator,
     StreamResults: {
       screen: lockedPortrait(StreamResults),
       navigationOptions: {

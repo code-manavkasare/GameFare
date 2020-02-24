@@ -1,6 +1,7 @@
 import {indexUsers} from '../database/algolia';
 
 async function autocompleteSearchUsers(search, userID) {
+  await indexUsers.clearCache();
   const {hits} = await indexUsers.search({
     query: search,
     hitsPerPage: 500,

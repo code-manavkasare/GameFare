@@ -10,7 +10,7 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {createEventAction} from '../../../actions/createEventActions';
+import {createChallengeAction} from '../../../actions/createChallengeActions';
 
 const {height, width} = Dimensions.get('screen');
 import {loadImageMap} from '../../functions/location';
@@ -18,11 +18,10 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import ButtonColor from '../../layout/Views/Button';
 import Button from '../../layout/buttons/Button';
 
-import TextField from '../../layout/textField/TextField';
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import AllIcons from '../../layout/icons/AllIcons';
 import Loader from '../../layout/loaders/Loader';
-import DateEvent from './DateEvent';
+import DateEvent from '../elementsEventCreate/DateEvent';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
 import sizes from '../../style/sizes';
@@ -30,7 +29,7 @@ import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import AllIcon from '../../layout/icons/AllIcons';
 
-class Page2 extends Component {
+class PickAddress extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -85,11 +84,10 @@ class Page2 extends Component {
     );
   }
   inputName() {
-    //this.props.createEventAction('setStep2',{instructions:text})
     return (
       <TextInput
         style={styleApp.input}
-        placeholder="Add event name"
+        placeholder="Add challenge name"
         returnKeyType={'done'}
         ref={(input) => {
           this.nameInput = input;
@@ -98,9 +96,9 @@ class Page2 extends Component {
         autoCorrect={true}
         placeholderTextColor={colors.grey}
         onChangeText={(text) =>
-          this.props.createEventAction('setStep2', {name: text})
+          this.props.createChallengeAction('setInfo', {name: text})
         }
-        value={this.props.step2.name}
+        value={this.props.createChallengeData.info.name}
       />
     );
   }
@@ -120,54 +118,54 @@ class Page2 extends Component {
         blurOnSubmit={true}
         placeholderTextColor={colors.grey}
         onChangeText={(text) =>
-          this.props.createEventAction('setStep2', {instructions: text})
+          this.props.createChallengeAction('setInfo', {instructions: text})
         }
-        value={this.props.step2.instructions}
+        value={this.props.createChallengeData.info.instructions}
       />
     );
   }
-  locationText() {
+  locationText(location) {
     return (
       <Text
         style={
-          this.props.step2.location.address == ''
+          !location.address
             ? {...styleApp.input, color: colors.grey}
             : styleApp.input
         }>
-        {this.props.step2.location.address == ''
-          ? 'Add event address'
-          : this.props.step2.location.address}
+        {!location.address ? 'Add challenge address' : location.address}
       </Text>
     );
   }
   async setLocation(data) {
-    await this.props.createEventAction('setStep2', {
-      location: data,
-      image: 'loading',
-    });
-    await this.props.navigation.navigate('CreateEvent2');
+    await this.props.createChallengeAction('setLocation', data);
+    await this.props.createChallengeAction('setInfo', {image: 'loading'});
+    await this.props.navigation.navigate('PickAddress');
     return this.loadImage(data);
   }
   async loadImage(location) {
     var image = await loadImageMap(location);
-    return this.props.createEventAction('setStep2', {image: image});
+    return this.props.createChallengeAction('setInfo', {image: image});
   }
   async setDate(data) {
-    await this.props.createEventAction('setStep2', {
-      endDate: data.endDate,
-      startDate: data.startDate,
+    console.log('setDate', {
+      end: data.endDate,
+      start: data.startDate,
       recurrence: data.recurrence,
     });
-    return this.props.navigation.navigate('CreateEvent2');
+    await this.props.createChallengeAction('setDate', {
+      end: data.endDate,
+      start: data.startDate,
+      recurrence: data.recurrence,
+    });
+    return this.props.navigation.navigate('PickAddress');
   }
-  dateTime(start, end) {
+  dateTime(start, end, recurrence) {
     return (
       <View>
         <DateEvent start={start} end={end} />
-        {this.props.step2.recurrence !== '' ? (
+        {recurrence !== '' ? (
           <Text style={[styleApp.smallText, {marginTop: 10}]}>
-            {this.props.step2.recurrence.charAt(0).toUpperCase() +
-              this.props.step2.recurrence.slice(1)}{' '}
+            {recurrence.charAt(0).toUpperCase() + recurrence.slice(1)}{' '}
             recurrence
           </Text>
         ) : null}
@@ -175,62 +173,26 @@ class Page2 extends Component {
     );
   }
   date() {
-    if (this.props.step2.startDate === '')
+    const {date} = this.props.createChallengeData;
+    if (date.start === '')
       return (
         <Text style={[styleApp.input, {color: colors.grey}]}>
           Add date and time
         </Text>
       );
-    return this.dateTime(
-      this.props.step2.startDate,
-      this.props.step2.endDate,
-      this.props.step2.recurrence,
-    );
+    return this.dateTime(date.start, date.end, date.recurrence);
   }
-  textField(state, placeHolder, heightField, multiline, keyboardType, icon) {
-    return (
-      <TextField
-        state={this.props.step2[state]}
-        placeHolder={placeHolder}
-        heightField={heightField}
-        multiline={multiline}
-        setState={(val) =>
-          this.props.createEventAction('setStep2', {[state]: val})
-        }
-        keyboardType={keyboardType}
-        icon={icon}
-        typeIcon={'font'}
-      />
-    );
-  }
-  page1() {
+  pickAddress() {
+    const {info, location, date} = this.props.createChallengeData;
     return (
       <View style={{marginTop: 0, marginLeft: 0, width: width, paddingTop: 0}}>
-        {this.props.step2.image === 'loading' ? (
-          <View
-            style={[
-              styleApp.center,
-              {
-                height: 120,
-                backgroundColor: colors.off2,
-                borderBottomWidth: 1,
-                borderColor: colors.off,
-              },
-            ]}>
+        {info.image === 'loading' ? (
+          <View style={[styleApp.center, styles.placeHolderImage]}>
             <Loader color={'green'} size={20} />
           </View>
-        ) : this.props.step2.image != '' ? (
+        ) : info.image !== '' ? (
           <View style={[{height: 120}]}>
-            <View
-              style={[
-                styleApp.center,
-                {
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  zIndex: 20,
-                },
-              ]}>
+            <View style={[styleApp.center, styles.viewImage]}>
               <AllIcon
                 name="map-marker-alt"
                 color={colors.green}
@@ -240,23 +202,20 @@ class Page2 extends Component {
               />
             </View>
 
-            <Image
-              source={{uri: this.props.step2.image}}
-              style={styleApp.fullSize}
-            />
+            <Image source={{uri: info.image}} style={styleApp.fullSize} />
           </View>
         ) : null}
         {this.ligneButton(
           'map-marker-alt',
-          this.locationText(),
+          this.locationText(location),
           'plus',
           () =>
             this.props.navigation.navigate('Location', {
-              location: this.props.step2.location,
-              pageFrom: 'CreateEvent2',
+              location: location,
+              pageFrom: 'PickAddress',
               onGoBack: (data) => this.setLocation(data),
             }),
-          this.props.step2.location.address !== '',
+          location.address,
         )}
 
         {this.ligneButton(
@@ -264,7 +223,7 @@ class Page2 extends Component {
           this.inputName(),
           'plus',
           () => this.nameInput.focus(),
-          this.props.step2.name !== '',
+          info.name !== '',
         )}
 
         {this.ligneButton(
@@ -273,29 +232,29 @@ class Page2 extends Component {
           'plus',
           () =>
             this.props.navigation.navigate('Date', {
-              startDate: this.props.step2.startDate,
-              endDate: this.props.step2.endDate,
-              recurrence: this.props.step2.recurrence,
-              close: () => this.props.navigation.navigate('CreateEvent2'),
+              startDate: date.start,
+              endDate: date.end,
+              recurrence: '',
+              close: () => this.props.navigation.navigate('PickAddress'),
               onGoBack: (data) => this.setDate(data),
             }),
-          this.props.step2.startDate !== '',
+          date.start !== '',
         )}
         {this.ligneButton(
           'parking',
           this.inputInstruction(),
           'plus',
           () => this.instructionInput.focus(),
-          this.props.step2.instructions != '',
+          info.instructions !== '',
         )}
       </View>
     );
   }
   conditionOn() {
     if (
-      this.props.step2.location.address === '' ||
-      this.props.step2.startDate === '' ||
-      this.props.step2.name === ''
+      !this.props.createChallengeData.location.address ||
+      this.props.createChallengeData.date.start === '' ||
+      this.props.createChallengeData.info.name === ''
     )
       return false;
     return true;
@@ -348,7 +307,7 @@ class Page2 extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Event information'}
+          textHeader={'Challenge information'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
@@ -360,7 +319,7 @@ class Page2 extends Component {
 
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.page1.bind(this)}
+          contentScrollView={this.pickAddress.bind(this)}
           marginBottomScrollView={0}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginTop={sizes.heightHeaderHome}
@@ -395,15 +354,26 @@ class Page2 extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  placeHolderImage: {
+    height: 120,
+    backgroundColor: colors.off2,
+    borderBottomWidth: 1,
+    borderColor: colors.off,
+  },
+  viewImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 20,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
-    step0: state.createEventData.step0,
-    step1: state.createEventData.step1,
-    step2: state.createEventData.step2,
+    createChallengeData: state.createChallengeData,
   };
 };
 
-export default connect(mapStateToProps, {createEventAction})(Page2);
+export default connect(mapStateToProps, {createChallengeAction})(PickAddress);
