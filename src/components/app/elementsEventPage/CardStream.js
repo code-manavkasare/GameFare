@@ -1,9 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-} from 'react-native';
+import {View, Text, Dimensions} from 'react-native';
 import firebase from 'react-native-firebase';
 import PropTypes from 'prop-types';
 import {Col, Row} from 'react-native-easy-grid';
@@ -31,6 +27,7 @@ export default class CardStream extends Component {
     this.loadStream(this.props.streamID);
   }
   componentWillUnmount() {
+    console.log('CARD STREAM UNMOUNT');
     if (this.state.event) {
       firebase
         .database()
@@ -53,11 +50,13 @@ export default class CardStream extends Component {
   async onClick() {
     if (!this.state.loader) {
       const {stream} = this.state;
+      const {event} = this.props;
       if (stream.liveballResults && stream.liveballResults.organized) {
-        NavigationService.navigate('StreamResults', {stream: stream});
+        NavigationService.navigate('StreamResults', {stream: stream, event: event, matches: stream.liveballResults.matches});
       } else if (stream.liveballResults && this.props.userIsOrganizer) {
         NavigationService.navigate('OrganizeStreamResults', {
           stream: stream,
+          event: event,
         });
       } else if (stream.liveballResults) {
         return NavigationService.navigate('Alert', {
@@ -139,6 +138,7 @@ export default class CardStream extends Component {
 
 CardStream.PropTypes = {
   streamID: PropTypes.string.isRequired,
+  event: PropTypes.object.isRequired,
   key: PropTypes.number.isRequired,
   name: PropTypes.number.isRequired, // change to string when give streams proper names
   userIsOrganizer: PropTypes.bool.isRequired,

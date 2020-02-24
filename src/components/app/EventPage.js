@@ -275,6 +275,7 @@ class EventPage extends React.Component {
     return (
       <CardStream
         streamID={stream}
+        event={event}
         key={i}
         name={i}
         userIsOrganizer={this.userIsOrganizer(event)}

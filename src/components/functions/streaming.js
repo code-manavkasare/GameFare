@@ -27,52 +27,80 @@ async function createStreamFirebase(stream) {
         .push(stream.id);
     })
     .catch((error) => {
-      console.log(
-        'ERROR: destroyStreamFirebase: ' + error.message,
-      );
+      console.log('ERROR: destroyStreamFirebase: ' + error.message);
+    });
+}
+
+async function startAnalytics(stream) {
+  const streamID = stream.id;
+  setTimeout(async () => {
+    console.log('analytics');
+    console.log(streamID);
+    const netlineUrl = 'https://liveball-api-7gv7jag7wq-uc.a.run.app/execute';
+    const requestUrl = netlineUrl + '?stream_id=' + streamID;
+    await axios
+      .get(requestUrl)
+      .then((response) => {
+        console.log('analytics response');
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+  }, 45000);
+}
+
+async function saveStreamResultsMatches(stream, matches, done) {
+  await firebase
+    .database()
+    .ref('streams/' + stream.id + '/liveballResults')
+    .update({matches: matches, organized: done})
+    .catch((error) => {
+      console.log('ERROR: saveStreamResultsMatches: ' + error.message);
     });
 }
 async function createStreamMux() {
   let stream = null;
   const url = `${Config.MUX_LIVE_STREAM_URL}`;
-  await axios.post(
-    url,
-    {
-      playback_policy: ['public'],
-      new_asset_settings: {
+  await axios
+    .post(
+      url,
+      {
         playback_policy: ['public'],
+        new_asset_settings: {
+          playback_policy: ['public'],
+        },
       },
-    },
-    {
-      auth: {
-        username: `${Config.MUX_TOKEN_ID}`,
-        password: `${Config.MUX_TOKEN_SECRET}`,
+      {
+        auth: {
+          username: `${Config.MUX_TOKEN_ID}`,
+          password: `${Config.MUX_TOKEN_SECRET}`,
+        },
       },
-    },
-  )
-  .then((response) => {
-    stream = {
-      streamKey: response.data.data.stream_key,
-      playbackID: response.data.data.playback_ids[0].id,
-      id: response.data.data.id,
-    };
-  })
-  .catch((error) => {
-    if (error.response) {
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      console.log(error.request);
-    } else {
-      console.log('ERROR: createStreamMux: ', error.message);
-    }
-    console.log(error.config);
-    return false;
-  });
+    )
+    .then((response) => {
+      stream = {
+        streamKey: response.data.data.stream_key,
+        playbackID: response.data.data.playback_ids[0].id,
+        id: response.data.data.id,
+      };
+    })
+    .catch((error) => {
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('ERROR: createStreamMux: ', error.message);
+      }
+      console.log(error.config);
+      return false;
+    });
   return stream;
 }
-
 
 async function destroyStream(streamID, saveFirebase) {
   await destroyStreamMux(streamID);
@@ -86,9 +114,7 @@ async function destroyStreamFirebase(streamID) {
     .ref('streams/' + streamID + '/')
     .remove()
     .catch(function(error) {
-      console.log(
-        'ERROR: destroyStreamFirebase: ' + error.message,
-      );
+      console.log('ERROR: destroyStreamFirebase: ' + error.message);
     });
 }
 
@@ -126,4 +152,10 @@ async function uploadNetlinePhoto(streamID, uri) {
     .update({netlinePhoto: pictureUri});
 }
 
-module.exports = {createStream, destroyStream, uploadNetlinePhoto};
+module.exports = {
+  createStream,
+  destroyStream,
+  uploadNetlinePhoto,
+  startAnalytics,
+  saveStreamResultsMatches,
+};
