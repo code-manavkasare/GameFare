@@ -2,32 +2,28 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   Linking,
-  Image,
   Alert,
   Animated,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {Col, Row, Grid} from 'react-native-easy-grid';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
+import Communications from 'react-native-communications';
 
-import Header from '../layout/headers/HeaderButton';
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome';
 import Button from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
 import AsyncImage from '../layout/image/AsyncImage';
-import HeaderBackButton from '../layout/headers/HeaderBackButton';
 
 import {userAction} from '../../actions/userActions';
-import InAppBrowser from 'react-native-inappbrowser-reborn';
-import Communications from 'react-native-communications';
 const {height, width} = Dimensions.get('screen');
 
 class ProfilePage extends Component {
@@ -38,7 +34,7 @@ class ProfilePage extends Component {
   }
   title(text) {
     return (
-      <Row style={{marginBottom: 5, marginTop: 20, marginBottom: 10}}>
+      <Row style={{marginTop: 20, marginBottom: 10}}>
         <Col style={styleApp.center2}>
           <Text
             style={[
@@ -200,6 +196,12 @@ class ProfilePage extends Component {
       this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname;
     Communications.email([email1], null, null, subject, '');
   }
+
+  goToEditProfile = () => {
+    // alert('test');
+    this.props.navigation.navigate('EditProfilePage');
+  };
+
   profile() {
     const {infoUser, userConnected} = this.props;
     return (
@@ -207,22 +209,37 @@ class ProfilePage extends Component {
         <View style={styleApp.marginView}>
           {userConnected ? (
             <View>
-              <Row style={{marginBottom: 20}}>
-                <Col size={30} style={styleApp.center2}>
-                  <AsyncImage
-                    style={styles.asyncImage}
-                    mainImage={infoUser.picture}
-                  />
-                </Col>
-                <Col size={70} style={styleApp.center2}>
-                  <Text style={styleApp.title}>
-                    {infoUser.firstname + ' ' + infoUser.lastname}
-                  </Text>
-                  <Text style={styleApp.subtitle}>
-                    {infoUser.countryCode + ' ' + infoUser.phoneNumber}
-                  </Text>
-                </Col>
-              </Row>
+              <TouchableOpacity onPress={() => this.goToEditProfile()}>
+                <Row style={{marginBottom: 20}}>
+                  <Col size={30} style={styleApp.center2}>
+                    {infoUser.picture ? (
+                      <AsyncImage
+                        style={styles.asyncImage}
+                        mainImage={infoUser.picture}
+                      />
+                    ) : (
+                      <View
+                        style={[
+                          styles.asyncImage,
+                          styleApp.center,
+                          {backgroundColor: colors.off},
+                        ]}>
+                        <Text style={[styleApp.input, {fontSize: 20}]}>
+                          {infoUser.firstname[0] + infoUser.lastname[0]}
+                        </Text>
+                      </View>
+                    )}
+                  </Col>
+                  <Col size={70} style={styleApp.center2}>
+                    <Text style={styleApp.title}>
+                      {infoUser.firstname + ' ' + infoUser.lastname}
+                    </Text>
+                    <Text style={styleApp.subtitle}>
+                      {infoUser.countryCode + ' ' + infoUser.phoneNumber}
+                    </Text>
+                  </Col>
+                </Row>
+              </TouchableOpacity>
 
               <Text style={styleApp.text}>Account parameters</Text>
               <View style={[styleApp.divider2, {marginTop: 15}]} />

@@ -29,6 +29,7 @@ import Coach from '../app/elementsJoining/Coach';
 import Phone from '../login/Phone';
 import Verify from '../login/Verify';
 import Complete from '../login/Complete';
+import EditProfilePage from '../app/elementsUser/elementsProfile/EditProfilePage';
 import ListCountry from '../login/elementsFlags/ListCountry';
 
 import CreateEvent0 from '../app/elementsEventCreate/Page0';
@@ -242,7 +243,7 @@ const StreamResultsNavigator = createStackNavigator(
     mode: 'card',
     cardOverlayEnabled: false,
     cardShadowEnabled: true,
-  }
+  },
 );
 
 const MainApp = createBottomTabNavigator(
@@ -350,6 +351,7 @@ const MainStack = createStackNavigator(
     LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
+    EditProfilePage: {screen: lockedPortrait(EditProfilePage)},
     StreamResults: {
       screen: lockedPortrait(StreamResults),
       navigationOptions: {
