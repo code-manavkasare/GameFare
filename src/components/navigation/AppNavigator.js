@@ -237,7 +237,7 @@ const StreamResultsNavigator = createStackNavigator(
     StreamResults: lockedPortrait(StreamResults),
   },
   {
-    initialRouteName: 'AddPlayers',
+    initialRouteName: 'MatchPictures',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,

@@ -19,6 +19,7 @@ import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
+import {startAnalytics} from '../../functions/streaming';
 import LiveStreamHeader from './LiveStreamHeader';
 
 class LiveStream extends React.Component {
@@ -27,7 +28,6 @@ class LiveStream extends React.Component {
     this.state = {
       outputUrl: 'rtmp://live.mux.com/app/',
       error: false,
-      stream: null,
       streaming: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -40,7 +40,10 @@ class LiveStream extends React.Component {
     }
   }
   async startStream() {
+    const stream = this.props.navigation.getParam('stream', null);
     await this.setState({streaming: true});
+    console.log('startStream');
+    startAnalytics(stream);
     this.nodeCameraView.start();
   }
   stopStream() {
