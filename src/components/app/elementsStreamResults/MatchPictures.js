@@ -52,9 +52,8 @@ class MatchPictures extends React.Component {
   next() {
     const stream = this.props.navigation.getParam('stream');
     const event = this.props.navigation.getParam('event');
-    let numPlayers = Object.values(stream.liveballResults).length;
-    if (this.state.playerIndex === numPlayers - 2) {
-      console.log('end');
+    let numPlayers = Object.values(stream.liveballResults.players).length;
+    if (this.state.playerIndex === numPlayers - 1) {
       saveStreamResultsMatches(stream, this.state.matches, true);
       this.goToResults(event, stream);
     } else {
@@ -112,7 +111,7 @@ class MatchPictures extends React.Component {
   }
 
   content(stream, event) {
-    const players = Object.values(stream.liveballResults);
+    const players = Object.values(stream.liveballResults.players);
     const numPlayers = players.length;
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
@@ -122,7 +121,7 @@ class MatchPictures extends React.Component {
               (this.state.playerIndex +
               1) +
               '/' +
-              (numPlayers-1) +
+              (numPlayers) +
               ')'}
           </Text>
         </Row>
@@ -150,8 +149,6 @@ class MatchPictures extends React.Component {
   }
 
   render() {
-    console.log('match render');
-    console.log(this.state.matches);
     const {dismiss, goBack, navigate} = this.props.navigation;
     const stream = this.props.navigation.getParam('stream');
     const event = this.props.navigation.getParam('event');

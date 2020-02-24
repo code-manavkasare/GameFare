@@ -34,51 +34,10 @@ class StreamResults extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
-  async componentDidMount() {
-    const stream = this.props.navigation.getParam('stream');
-    // there are partial matches completed for this stream
-    if (stream.liveballResults && stream.liveballResults.matches) {
-      await this.setState({matches: stream.liveballResults.matches});
-    }
-  }
-
-  next() {
-    const stream = this.props.navigation.getParam('stream');
-    const event = this.props.navigation.getParam('event');
-
-    let numPlayers = Object.values(stream.liveballResults).length;
-    if (this.state.playerIndex === numPlayers - 1) {
-      console.log('end');
-      this.goToResults(stream, event);
-    } else {
-      this.setState({playerIndex: this.state.playerIndex + 1});
-    }
-  }
-
-  matchCurrentImage(userID) {
-    let matches = {};
-    if (!this.state.matches) {
-      matches[userID] = [this.state.playerIndex];
-    } else {
-      matches = Object.assign(this.state.matches);
-      let current = matches[userID];
-      if (!current) {
-        matches[userID] = [this.state.playerIndex];
-      } else {
-        current.push(this.state.playerIndex);
-        matches[userID] = current;
-      }
-    }
-
-    this.setState({matches: matches});
-    this.next();
-  }
-
   totalTimePlayer(stream, matches, id) {
     const sections = matches[id];
     let winningTime = 0;
     for (const section of sections) {
-      console.log(section);
       winningTime += parseFloat(stream.liveballResults[section].winningTime);
     }
     return winningTime;
@@ -113,7 +72,7 @@ class StreamResults extends React.Component {
   }
 
   content(event, stream, matches) {
-    const players = Object.values(stream.liveballResults);
+    const players = Object.values(stream.liveballResults.players);
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         <Row style={styleApp.center}>
@@ -128,22 +87,11 @@ class StreamResults extends React.Component {
     );
   }
 
-  goToResults(event, stream) {
-    this.props.navigation.navigate('StreamResults', {
-      event: event,
-      stream: stream,
-      matches: this.state.matches,
-    });
-  }
-
   render() {
     const {dismiss, goBack, navigate} = this.props.navigation;
     const stream = this.props.navigation.getParam('stream');
     const event = this.props.navigation.getParam('event');
     const matches = this.props.navigation.getParam('matches');
-    console.log('STREAM' + stream);
-    console.log('EVENT' + event);
-    console.log('MATCHES' + matches);
     return (
       <View style={{flex: 1}}>
         <HeaderBackButton
