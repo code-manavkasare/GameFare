@@ -11,7 +11,10 @@ const options = {
   requiredBillingAddressFields: ['postal_address'],
 };
 
+const chargeUser = async (amount, wallet, userID) => {};
+
 module.exports = {
   stripe,
   options,
+  chargeUser,
 };

@@ -75,7 +75,7 @@ class CardEvent extends React.Component {
   }
   rowAttendees(attendees) {
     return (
-      <Row style={{marginTop: 15}}>
+      <Row style={{marginTop: 5}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
           <View
             style={[
@@ -150,9 +150,23 @@ class CardEvent extends React.Component {
                 ]}>
                 {data.info.name}
               </Text>
-              <Text style={[styleApp.subtitle, {marginTop: 5, minHeight: 35}]}>
-                {data.location.address}
-              </Text>
+              <Row style={{marginTop: 5}}>
+                <Col size={15} style={styleApp.center2}>
+                  <AsyncImage
+                    style={{width: 30, height: 30, borderRadius: 15}}
+                    mainImage={data.images[0]}
+                    imgInitial={data.images[0]}
+                  />
+                </Col>
+                <Col
+                  size={this.props.size === 'SM' ? 60 : 85}
+                  style={styleApp.center2}>
+                  <Text
+                    style={[styleApp.subtitle, {marginTop: 5, minHeight: 35}]}>
+                    {data.location.address}
+                  </Text>
+                </Col>
+              </Row>
 
               {this.rowAttendees(attendees)}
 

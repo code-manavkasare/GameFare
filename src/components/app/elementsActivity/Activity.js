@@ -156,11 +156,6 @@ class HomeScreen extends React.Component {
                 onGoBack: (data) => this.setLocation(data),
               })
             }
-            clickButton1={() =>
-              this.props.navigation.navigate(
-                this.props.navigation.getParam('pageFrom'),
-              )
-            }
           />
         )}
 

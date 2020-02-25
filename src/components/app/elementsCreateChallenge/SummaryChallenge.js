@@ -15,14 +15,14 @@ import {historicSearchAction} from '../../../actions/historicSearchActions';
 import union from 'lodash/union';
 
 import {createEvent} from '../../functions/createEvent';
+import {payEntryFee} from '../../functions/createEvent';
 const {height, width} = Dimensions.get('screen');
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import TextField from '../../layout/textField/TextField';
 
 import Button from '../../layout/buttons/Button';
-import ButtonColor from '../../layout/Views/Button';
 import DateEvent from '../elementsEventCreate/DateEvent';
-import firebase from 'react-native-firebase';
+
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
 import CardUser from '../elementsEventPage/CardUser';
@@ -256,9 +256,30 @@ class SummaryChallenge extends Component {
       </View>
     );
   }
-  async submit(data) {
+  async submit(challenge) {
     this.setState({loader: true});
     const {dismiss} = this.props.navigation;
+    const {
+      userID,
+      infoUser,
+      tokenCusStripe,
+      defaultCard,
+      totalWallet,
+    } = this.props;
+
+    const payEntryFee = await payEntryFee(challenge.price.amount, userID);
+    await payEntryFee(
+      new Date().toString(),
+      challenge.price.amount,
+      userID,
+      {
+        tokenCusStripe: tokenCusStripe,
+        defaultCard: defaultCard,
+        totalWallet: totalWallet,
+      },
+      infoUser,
+    );
+    return true;
     var event = await createEvent(
       data,
       this.props.userID,
@@ -371,7 +392,10 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     createChallengeData: state.createChallengeData,
+
     totalWallet: state.user.infoUser.wallet.totalWallet,
+    defaultCard: state.user.infoUser.wallet.defaultCard,
+    tokenCusStripe: state.user.infoUser.wallet.tokenCusStripe,
   };
 };
 

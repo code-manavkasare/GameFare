@@ -11,12 +11,14 @@ let indexEvents = client.initIndex('prod_events');
 let indexGroups = client.initIndex('prod_groups');
 let indexUsers = client.initIndex('prod_users');
 let indexDiscussions = client.initIndex('prod_discussions');
+let indexChallenges = client.initIndex('prod_challenges');
 
 if (Config.ENV === 'dev') {
   indexEvents = client.initIndex('dev_events');
   indexGroups = client.initIndex('dev_groups');
   indexUsers = client.initIndex('dev_users');
   indexDiscussions = client.initIndex('dev_discussions');
+  indexChallenges = client.initIndex('dev_challenges');
 }
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
@@ -195,6 +197,7 @@ module.exports = {
   indexUsers,
   getEventPublic,
   indexDiscussions,
+  indexChallenges,
   getMyGroups,
   getMyEvents,
 };

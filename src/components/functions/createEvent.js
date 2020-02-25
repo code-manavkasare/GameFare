@@ -165,14 +165,10 @@ async function checkUserAttendingEvent(userID, data) {
   return {response: true};
 }
 
-async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
+async function payEntryFee(now, amount, userID, cardInfo, infoUser, objectID) {
   var cardID = '';
-  if (coach) return {response: true};
 
-  var amountToPay = Math.max(
-    0,
-    Number(data.price.joiningFee) - Number(cardInfo.totalWallet),
-  );
+  var amountToPay = Math.max(0, Number(amount) - Number(cardInfo.totalWallet));
   if (amountToPay !== 0) {
     cardID = cardInfo.defaultCard.id;
   }
@@ -212,7 +208,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
       return {response: 'cancel', message: 'cancel'};
     }
   }
-  if (Number(data.price.joiningFee) !== 0) {
+  if (Number(amount) !== 0) {
     try {
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}payEntryFee`;
       const promiseAxios = await axios.get(url, {
@@ -222,8 +218,8 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
           userID: userID,
           tokenCusStripe: cardInfo.tokenCusStripe,
           currentUserWallet: Number(cardInfo.totalWallet),
-          amount: data.price.joiningFee,
-          eventID: data.objectID,
+          amount: amount,
+          eventID: objectID ? objectID : '',
         },
       });
 
@@ -258,11 +254,11 @@ async function joinEvent(
   var now = new Date().toString();
   var {message, response} = await payEntryFee(
     now,
-    data,
+    data.price.joiningFee,
     userID,
     cardInfo,
-    coach,
     infoUser,
+    data.objectID,
   );
   if (response === 'cancel') return {message, response};
 
@@ -313,4 +309,5 @@ module.exports = {
   arrayAttendees,
   addMemberDiscussion,
   removeMemberDiscussion,
+  payEntryFee,
 };
