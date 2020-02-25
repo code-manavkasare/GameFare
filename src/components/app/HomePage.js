@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
 import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase';
@@ -19,7 +20,7 @@ import AllIcons from '../layout/icons/AllIcons';
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +56,8 @@ export default class HomeScreen extends React.Component {
           .setBody(notification1._body)
           .setData(notification1._data);
         console.log('message received', notification);
-        firebase.notifications().displayNotification(notification);
+        if (this.props.userID !== notification.data.senderID)
+          firebase.notifications().displayNotification(notification);
       });
   }
 
@@ -228,3 +230,11 @@ export default class HomeScreen extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userIDSaved,
+  };
+};
+
+export default connect(mapStateToProps)(HomeScreen);
