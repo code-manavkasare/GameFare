@@ -2,6 +2,8 @@ import {uploadPictureFirebase} from '../functions/pictures';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import Config from 'react-native-config';
+import {subscribeToTopics} from './notifications';
+
 
 async function createStream(eventID) {
   let stream = await createStreamMux();
@@ -29,6 +31,7 @@ async function createStreamFirebase(stream) {
     .catch((error) => {
       console.log('ERROR: destroyStreamFirebase: ' + error.message);
     });
+  await subscribeToTopics([stream.id]);
 }
 
 async function startAnalytics(stream) {
