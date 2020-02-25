@@ -21,7 +21,7 @@ import TextField from '../../layout/textField/TextField';
 
 import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
-import DateEvent from './DateEvent';
+import DateEvent from '../elementsEventCreate/DateEvent';
 import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
@@ -33,27 +33,17 @@ import styleApp from '../../style/style';
 import sizes from '../../style/sizes';
 import colors from '../../style/colors';
 
-class Page3 extends Component {
+class SummaryChallenge extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
     };
-    this.translateYFooter = new Animated.Value(0);
-    this.translateXFooter = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.futureEvents != nextProps.futureEvents) return false;
-    return true;
-  }
   async componentDidMount() {}
-  dateTime(data) {
-    return (
-      <View>
-        <DateEvent start={data.date.start} end={data.date.end} />
-      </View>
-    );
+  dateTime(date) {
+    return <DateEvent start={date.start} end={date.end} />;
   }
   sport(sport) {
     return (
@@ -141,137 +131,58 @@ class Page3 extends Component {
       </View>
     );
   }
+  rowPlusMinus() {}
 
-  page2(data, sport) {
-    var league = Object.values(sport.typeEvent).filter(
-      (item) => item.value == data.info.league,
+  summary(challenge) {
+    console.log('summary', challenge);
+    const {info, date, location} = challenge;
+    console.log('infooooo', info);
+    const sport = this.props.sports.filter(
+      (sport) => sport.value === info.sport,
     )[0];
-    var level = Object.values(sport.level.list).filter(
-      (level) => level.value == data.info.levelFilter,
+
+    const format = Object.values(sport.formats).filter(
+      (format) => format.value === info.format,
     )[0];
-    var rule = Object.values(league.rules).filter(
-      (rule) => rule.value == data.info.rules,
-    )[0];
-    var levelOption =
-      data.info.levelOption == 'equal'
-        ? 'only'
-        : data.info.levelOption == 'min'
-        ? 'and above'
-        : 'and below';
-    console.log('page3', data);
+
+    console.log('format', format);
+
     return (
       <View style={[styleApp.marginView, {paddingTop: 15}]}>
-        <Row style={{marginBottom: 10}}>
-          <Col size={10} style={styleApp.center2}>
-            <AllIcons
-              name={data.info.public ? 'lock-open' : 'lock'}
-              size={18}
-              type={'font'}
-              color={colors.blue}
-            />
-          </Col>
-          <Col size={65} style={styleApp.center3}>
-            <Text
-              style={[
-                styleApp.text,
-                {
-                  color: colors.primary,
-                  marginTop: 10,
-                  fontFamily: 'OpenSans-Bold',
-                  fontSize: 18,
-                },
-              ]}>
-              {Number(data.price.joiningFee) == 0
-                ? 'Free entry'
-                : '$' + data.price.joiningFee}
-            </Text>
-          </Col>
-        </Row>
-        <Text style={[styleApp.title, {fontSize: 20}]}>{data.info.name}</Text>
+        <Text style={[styleApp.title, {fontSize: 20}]}>{info.name}</Text>
         <View style={[styleApp.divider2, {marginBottom: 10}]} />
 
         {this.rowIcon(sport.icon, this.title(sport.text), 'font', true)}
-        {this.rowIcon(league.icon, this.title(league.text), 'font', true)}
-        {this.rowIcon('extension', this.title(rule.text), 'mat')}
-
-        <View style={[styleApp.divider2, {marginBottom: 10}]} />
-        {this.rowIcon(
-          data.images[0],
-          this.title(data.location.address),
-          'font',
-          true,
-        )}
-        {this.rowIcon('calendar-alt', this.dateTime(data), 'font')}
-        {data.date.recurrence != ''
-          ? this.rowIcon(
-              'stopwatch',
-              this.title(
-                data.date.recurrence.charAt(0).toUpperCase() +
-                  data.date.recurrence.slice(1) +
-                  ' recurrence',
-              ),
-              'font',
-            )
-          : null}
-
+        {this.rowIcon(info.image, this.title(location.address), 'font', true)}
         <View style={{height: 5}} />
-        {data.info.instructions != ''
-          ? this.rowIcon('parking', this.title(data.info.instructions), 'font')
-          : null}
-
-        <View style={{height: 25}} />
-        {this.rowIcon(
-          'user-plus',
-          this.title(
-            Number(data.info.maxAttendance) == 1
-              ? data.info.maxAttendance + ' player'
-              : data.info.maxAttendance + ' players',
-          ),
-          'font',
-        )}
-        <View style={{height: 5}} />
-        {this.rowIcon(
-          'balance-scale',
-          this.title(
-            level.value == '0' ? level.text : level.text + ' ' + levelOption,
-          ),
-          'font',
-        )}
-        <View style={{height: 5}} />
-
-        {this.rowIcon(
-          data.info.gender == 'mixed'
-            ? 'venus-mars'
-            : data.info.gender == 'female'
-            ? 'venus'
-            : 'mars',
-          this.title(
-            data.info.gender.charAt(0).toUpperCase() +
-              data.info.gender.slice(1),
-          ),
-          'font',
-        )}
-
-        {this.listGroups(this.props.navigation.getParam('groups'))}
+        {this.rowIcon(format.icon, this.title(format.text), 'font')}
 
         <View style={[styleApp.divider2, {marginBottom: 10}]} />
 
-        {data.info.player ? (
-          <Text style={[styleApp.title, {fontSize: 13}]}>
-            Reminder •{' '}
-            <Text style={{fontFamily: 'OpenSans-Regular'}}>
-              As a host you will get to play for free!
-            </Text>
+        {this.rowIcon('calendar-alt', this.dateTime(date), 'font')}
+        {date.recurrence !== '' &&
+          this.rowIcon(
+            'stopwatch',
+            this.title(
+              date.recurrence.charAt(0).toUpperCase() +
+                date.recurrence.slice(1) +
+                ' recurrence',
+            ),
+            'font',
+          )}
+
+        <View style={{height: 5}} />
+        {info.instructions !== '' &&
+          this.rowIcon('parking', this.title(info.instructions), 'font')}
+
+        <View style={[styleApp.divider2, {marginBottom: 20}]} />
+
+        <Text style={[styleApp.title, {fontSize: 13}]}>
+          Reminder •{' '}
+          <Text style={{fontFamily: 'OpenSans-Regular'}}>
+            Your challengee will be notified once you create
           </Text>
-        ) : Number(data.price.joiningFee) !== 0 ? (
-          <Text style={[styleApp.title, {fontSize: 13}]}>
-            Reminder •{' '}
-            <Text style={{fontFamily: 'OpenSans-Regular'}}>
-              Players will be charged when they register for the event. You’ll
-              get paid once the session is over.
-            </Text>
-          </Text>
-        ) : null}
+        </Text>
       </View>
     );
   }
@@ -326,6 +237,7 @@ class Page3 extends Component {
     });
   }
   render() {
+    const {createChallengeData} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -342,12 +254,7 @@ class Page3 extends Component {
 
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() =>
-            this.page2(
-              this.props.navigation.getParam('data'),
-              this.props.navigation.getParam('sport'),
-            )
-          }
+          contentScrollView={() => this.summary(createChallengeData)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -364,23 +271,19 @@ class Page3 extends Component {
               styleButton={{marginLeft: 20, width: width - 40}}
               enabled={true}
               disabled={false}
-              text={'Create event'}
+              text={'Create challenge'}
               loader={this.state.loader}
-              click={() => this.submit(this.props.navigation.getParam('data'))}
+              click={() => this.submit(createChallengeData)}
             />
           ) : (
             <Button
               backgroundColor="green"
               onPressColor={colors.greenLight}
-              styleButton={{marginLeft: 20, width: width - 40}}
+              styleButton={styleApp.marginView}
               enabled={true}
               text="Sign in to proceed"
               loader={false}
-              click={() =>
-                this.props.navigation.navigate('SignIn', {
-                  pageFrom: 'CreateEvent3',
-                })
-              }
+              click={() => this.props.navigation.navigate('SignIn')}
             />
           )}
         </View>
@@ -397,9 +300,7 @@ const mapStateToProps = (state) => {
     userConnected: state.user.userConnected,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    level: state.user.infoUser.level,
-
-    futureEvents: state.events.futureUserEvents,
+    createChallengeData: state.createChallengeData,
   };
 };
 
@@ -408,4 +309,4 @@ export default connect(mapStateToProps, {
   createEventAction,
   historicSearchAction,
   groupsAction,
-})(Page3);
+})(SummaryChallenge);

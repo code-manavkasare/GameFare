@@ -326,6 +326,7 @@ class EventPage extends React.Component {
           style={styles.eventTitle}
           placeholder={'Entry Fee: $' + data.price.joiningFee}
           returnKeyType={'done'}
+          
           keyboardType={'phone-pad'}
           underlineColorAndroid="rgba(0,0,0,0)"
           autoCorrect={true}

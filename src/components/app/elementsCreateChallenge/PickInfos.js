@@ -10,13 +10,16 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {createChallengeAction} from '../../../actions/createChallengeActions';
+import Slider from '@react-native-community/slider';
 
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import Switch from '../../layout/switch/Switch';
 import Button from '../../layout/buttons/Button';
+import ButtonColor from '../../layout/Views/Button';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import RowPlusMinus from '../../layout/rows/RowPlusMinus';
 
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import ExpandableCard from '../../layout/cards/ExpandableCard';
@@ -110,35 +113,59 @@ class PickInfos extends Component {
       />
     );
   }
-  pickInfos(sport, format) {
+  amountPicker(price, sport) {
+    return (
+      <RowPlusMinus
+        title="Amount"
+        alert={sport.challenge.amount.alert}
+        add={(value) =>
+          this.props.createChallengeAction('setPrice', {
+            amount: Number(value),
+          })
+        }
+        value={price.amount}
+        textValue={'$' + price.amount}
+        increment={sport.challenge.amount.increment}
+      />
+    );
+  }
+  amountOdds(price, sport) {
+    return (
+      <RowPlusMinus
+        title="Odds"
+        alert={sport.challenge.odds.alert}
+        add={(value) =>
+          this.props.createChallengeAction('setPrice', {
+            odds: Number(value.toFixed(1)),
+          })
+        }
+        value={price.odds}
+        textValue={price.odds}
+        increment={sport.challenge.odds.increment}
+      />
+    );
+  }
+  pickInfos(sport, format, price) {
     return (
       <View>
         {this.sports()}
         {this.formats(sport)}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
-          <Row style>
-            <Col size={80} style={styleApp.center2}>
-              <Text style={[styleApp.title]}>Challenge</Text>
-            </Col>
-            <Col
-              size={10}
-              style={styleApp.center3}
-              activeOpacity={0.7}
-              onPress={() =>
-                this.openAlertInfo(
-                  'Entry fee per player.',
-                  sport.fee.entryFeeInfo,
-                )
-              }>
-              <AllIcons
-                type={'font'}
-                name={'info-circle'}
-                color={colors.secondary}
-                size={17}
-              />
-            </Col>
-          </Row>
+          <Text style={styleApp.title}>Challenge</Text>
+
+          {this.amountPicker(price, sport)}
+          {this.amountOdds(price, sport)}
+
+          <Text style={[styleApp.title, {marginTop: 20}]}>Payout</Text>
+          <Text style={[styleApp.text, {marginTop: 10}]}>
+            You will receive{' '}
+            <Text style={{color: colors.primary, fontSize: 20}}>
+              {' '}
+              ${(price.amount * price.odds).toFixed(1)}{' '}
+            </Text>{' '}
+            if you win the challenge.
+          </Text>
         </View>
       </View>
     );
@@ -156,8 +183,7 @@ class PickInfos extends Component {
     });
   }
   render() {
-    const {info} = this.props;
-    console.log('render pick infos', info);
+    const {info, price} = this.props;
     if (info.sport === '') return null;
     var sport = this.props.sports.filter(
       (sport) => sport.value === info.sport,
@@ -185,7 +211,7 @@ class PickInfos extends Component {
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={() => this.pickInfos(sport, format)}
+          contentScrollView={() => this.pickInfos(sport, format, price)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={180}
@@ -226,6 +252,7 @@ const mapStateToProps = (state) => {
     sports: state.globaleVariables.sports.list,
     infoUser: state.user.infoUser.userInfo,
     info: state.createChallengeData.info,
+    price: state.createChallengeData.price,
   };
 };
 

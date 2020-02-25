@@ -43,6 +43,7 @@ import CreateGroup0 from '../app/elementsGroupCreate/Page0';
 import PickMembers from '../app/elementsCreateChallenge/PickMembers';
 import PickInfos from '../app/elementsCreateChallenge/PickInfos';
 import PickAddress from '../app/elementsCreateChallenge/PickAddress';
+import SummaryChallenge from '../app/elementsCreateChallenge/SummaryChallenge';
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
 import DateSelector from '../app/elementsEventCreate/DateSelector';
@@ -114,6 +115,7 @@ const CreateChallengeNavigator = createStackNavigator(
     PickMembers: lockedPortrait(PickMembers),
     PickInfos: lockedPortrait(PickInfos),
     PickAddress: lockedPortrait(PickAddress),
+    SummaryChallenge: lockedPortrait(SummaryChallenge),
   },
   {
     initialRouteName: 'PickMembers',

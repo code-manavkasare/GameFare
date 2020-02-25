@@ -52,7 +52,6 @@ class NewConversation extends React.Component {
   selectUser(select, user, selectedUsers) {
     if (!select)
       selectedUsers = {
-        ...selectedUsers,
         [user.objectID]: user,
       };
     else delete selectedUsers[user.objectID];
@@ -125,7 +124,7 @@ class NewConversation extends React.Component {
       <View style={{backgroundColor: colors.white, height: height}}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Add participants' + addonTextHeader}
+          textHeader={'Add participant'}
           inputRange={[0, 0]}
           initialBorderColorIcon={colors.white}
           initialBorderColorHeader={colors.borderColor}
@@ -133,6 +132,7 @@ class NewConversation extends React.Component {
           initialBackgroundColor={'white'}
           typeIcon2={'font'}
           sizeIcon2={17}
+          text2Off={numberUsersSelected === 0}
           initialTitleOpacity={1}
           icon1={'arrow-left'}
           icon2={'text'}

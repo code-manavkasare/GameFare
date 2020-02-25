@@ -4,6 +4,7 @@ import {
   SET_INFO_CHALLENGE,
   SET_LOCATION_CHALLENGE,
   SET_DATE_CHALLENGE,
+  SET_PRICE_CHALLENGE,
 } from './types';
 
 const setMembers = (value) => ({
@@ -26,6 +27,11 @@ const setDate = (value) => ({
   date: value,
 });
 
+const setPrice = (value) => ({
+  type: SET_PRICE_CHALLENGE,
+  price: value,
+});
+
 const reset = () => ({
   type: RESET_CHALLENGECREATE_DATA,
 });
@@ -40,6 +46,8 @@ export const createChallengeAction = (val, data) => {
       await dispatch(setLocation(data));
     } else if (val === 'setDate') {
       await dispatch(setDate(data));
+    } else if (val === 'setPrice') {
+      await dispatch(setPrice(data));
     } else if (val === 'reset') {
       await dispatch(reset());
     }

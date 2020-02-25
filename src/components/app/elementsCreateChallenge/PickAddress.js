@@ -147,11 +147,6 @@ class PickAddress extends Component {
     return this.props.createChallengeAction('setInfo', {image: image});
   }
   async setDate(data) {
-    console.log('setDate', {
-      end: data.endDate,
-      start: data.startDate,
-      recurrence: data.recurrence,
-    });
     await this.props.createChallengeAction('setDate', {
       end: data.endDate,
       start: data.startDate,
@@ -254,55 +249,14 @@ class PickAddress extends Component {
     if (
       !this.props.createChallengeData.location.address ||
       this.props.createChallengeData.date.start === '' ||
-      this.props.createChallengeData.info.name === ''
+      this.props.createChallengeData.info.name === '' ||
+      this.props.createChallengeData.info.image === ''
     )
       return false;
     return true;
   }
-  async next() {
-    const groups = Object.values(this.props.step1.groups).reduce(function(
-      result,
-      item,
-    ) {
-      result[item.objectID] = false;
-      return result;
-    },
-    {});
-    return this.props.navigation.navigate('CreateEvent3', {
-      data: {
-        date: {
-          end: this.props.step2.endDate,
-          start: this.props.step2.startDate,
-          recurrence: this.props.step2.recurrence,
-        },
-        info: {
-          commission: 0,
-          displayInApp: true,
-          sport: this.props.step0.sport,
-          public: !this.props.step1.private,
-          maxAttendance: this.props.step1.numberPlayers,
-          name: this.props.step2.name,
-          levelFilter: this.props.step1.level,
-          levelOption: this.props.step1.levelOption,
-          coachNeeded: this.props.step0.coachNeeded,
-          gender: this.props.step1.gender,
-          instructions: this.props.step2.instructions,
-          league: this.props.step0.league,
-          rules: this.props.step0.rule,
-        },
-        images: [this.props.step2.image],
-        groups: groups,
-        location: this.props.step2.location,
-        price: {
-          joiningFee: Number(this.props.step0.joiningFee),
-        },
-        subscribtionOpen: true,
-      },
-      groups: this.props.step1.groups,
-      sport: this.props.navigation.getParam('sport'),
-    });
-  }
   render() {
+    const {navigate} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -335,7 +289,7 @@ class PickAddress extends Component {
               onPressColor={colors.greenLight}
               enabled={this.conditionOn()}
               loader={this.state.loader}
-              click={() => this.next()}
+              click={() => navigate('SummaryChallenge')}
             />
           ) : (
             <Button
