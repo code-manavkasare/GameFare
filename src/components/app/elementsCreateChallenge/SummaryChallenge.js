@@ -25,6 +25,8 @@ import DateEvent from '../elementsEventCreate/DateEvent';
 import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
+import CardUser from '../elementsEventPage/CardUser';
+import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
 import AllIcons from '../../layout/icons/AllIcons';
@@ -88,50 +90,55 @@ class SummaryChallenge extends Component {
   title(text) {
     return <Text style={[styleApp.input]}>{text}</Text>;
   }
-  rowGroup(group, i) {
+  listMembers(members) {
+    if (Object.values(members).length == 0) return null;
     return (
-      <ButtonColor
-        key={i}
-        view={() => {
-          return (
-            <Row>
-              <Col size={15} style={styleApp.center2}>
-                <AsyncImage
-                  style={{width: '100%', height: 40, borderRadius: 6}}
-                  mainImage={group.pictures[0]}
-                  imgInitial={group.pictures[0]}
-                />
-              </Col>
-              <Col size={85} style={[styleApp.center2, {paddingLeft: 15}]}>
-                <Text style={styleApp.text}>{group.info.name}</Text>
-                <Text style={[styleApp.smallText, {fontSize: 12}]}>
-                  {group.info.sport.charAt(0).toUpperCase() +
-                    group.info.sport.slice(1)}
-                </Text>
-              </Col>
-              <Col size={10} style={styleApp.center3}>
-                {/* <AllIcons name='check' type='mat' size={20} color={colors.green} /> */}
-              </Col>
-            </Row>
-          );
-        }}
-        click={() => true}
-        color="white"
-        style={[styles.rowGroup, {marginTop: 10, flex: 1}]}
-        onPressColor="white"
-      />
-    );
-  }
-  listGroups(groups) {
-    if (Object.values(groups).length == 0) return null;
-    return (
-      <View>
-        <View style={[styleApp.divider2, {marginBottom: 10}]} />
-        {Object.values(groups).map((group, i) => this.rowGroup(group, i))}
+      <View style={{marginLeft: -20, width: width, marginBottom: 0}}>
+        {Object.values(members).map((user, i) => this.rowUser(user, i))}
       </View>
     );
   }
-  rowPlusMinus() {}
+  rowUser(user, i) {
+    const {infoUser, userConnected, userID} = this.props;
+    return (
+      <CardUser
+        user={user}
+        infoUser={infoUser}
+        userConnected={userConnected}
+        // objectID={data.objectID}
+        key={i}
+        userID={userID}
+        // removable={false}
+        // removeFunc={() => this.askRemovePlayer(user, data)}
+        type="event"
+        admin={false}
+      />
+    );
+  }
+  rowText(text, colorText, fontFamily, val) {
+    return (
+      <Row style={{height: 35}}>
+        <Col style={styleApp.center2} size={80}>
+          <Text
+            style={[
+              styleApp.text,
+              {fontSize: 16, color: colorText, fontFamily: fontFamily},
+            ]}>
+            {text}
+          </Text>
+        </Col>
+        <Col style={styleApp.center3} size={20}>
+          <Text
+            style={[
+              styleApp.text,
+              {fontSize: 16, color: colorText, fontFamily: fontFamily},
+            ]}>
+            {val}
+          </Text>
+        </Col>
+      </Row>
+    );
+  }
 
   summary(challenge) {
     console.log('summary', challenge);
@@ -144,7 +151,7 @@ class SummaryChallenge extends Component {
     const format = Object.values(sport.formats).filter(
       (format) => format.value === info.format,
     )[0];
-
+    const creditCardCharge = challenge.price.amount;
     console.log('format', format);
 
     return (
@@ -156,9 +163,7 @@ class SummaryChallenge extends Component {
         {this.rowIcon(info.image, this.title(location.address), 'font', true)}
         <View style={{height: 5}} />
         {this.rowIcon(format.icon, this.title(format.text), 'font')}
-
-        <View style={[styleApp.divider2, {marginBottom: 10}]} />
-
+        <View style={{height: 5}} />
         {this.rowIcon('calendar-alt', this.dateTime(date), 'font')}
         {date.recurrence !== '' &&
           this.rowIcon(
@@ -175,12 +180,77 @@ class SummaryChallenge extends Component {
         {info.instructions !== '' &&
           this.rowIcon('parking', this.title(info.instructions), 'font')}
 
-        <View style={[styleApp.divider2, {marginBottom: 20}]} />
+        <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} />
+
+        {this.listMembers(challenge.members)}
+        <View style={[styleApp.divider2, {marginBottom: 10, marginTop: 5}]} />
+
+        {this.rowText(
+          'Challenge entry fee',
+          colors.title,
+          'OpenSans-SemiBold',
+          Number(challenge.price.amount) === 0
+            ? 'Free'
+            : '$' + challenge.price.amount,
+        )}
+
+        {this.props.userConnected &&
+          Number(challenge.price.amount) !== 0 &&
+          this.rowText(
+            'Credits',
+            colors.green,
+            'OpenSans-SemiBold',
+            '$' + Number(Number(this.props.totalWallet).toFixed(2)),
+          )}
+
+        {creditCardCharge === 0 ? null : this.props.userConnected ? (
+          <View>
+            {this.rowText(
+              'Pay now',
+              colors.title,
+              'OpenSans-SemiBold',
+              '$' + Number(creditCardCharge.toFixed(2)),
+            )}
+          </View>
+        ) : (
+          <View>
+            {this.rowText(
+              'Pay now',
+              colors.title,
+              'OpenSans-SemiBold',
+              '$' + Number(creditCardCharge.toFixed(2)),
+            )}
+          </View>
+        )}
+
+        <View style={{height: 10}} />
+
+        {this.props.userConnected && creditCardCharge !== 0 && (
+          <CardCreditCard
+            navigate={(val, data) => this.props.navigation.navigate(val, data)}
+          />
+        )}
+
+        <View style={{height: 15}} />
 
         <Text style={[styleApp.title, {fontSize: 13}]}>
           Reminder •{' '}
           <Text style={{fontFamily: 'OpenSans-Regular'}}>
-            Your challengee will be notified once you create
+            We will charge the challenge entry fee at the point of creating the
+            challenge. You will be able to cancel and get refunded until your
+            oponent confirms the challenge.{'\n'}
+            {'\n'}
+            You will receive{' '}
+            <Text style={styleApp.textBold}>
+              ${(challenge.price.amount * challenge.price.odds).toFixed(1)}
+            </Text>{' '}
+            if you win the challenge. Your oponent will pay{' '}
+            <Text style={styleApp.textBold}>
+              $
+              {challenge.price.amount *
+                Math.max(0, challenge.price.odds - 1).toFixed(1)}
+            </Text>{' '}
+            to accept the challenge.
           </Text>
         </Text>
       </View>
@@ -301,6 +371,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     createChallengeData: state.createChallengeData,
+    totalWallet: state.user.infoUser.wallet.totalWallet,
   };
 };
 

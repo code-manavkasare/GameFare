@@ -188,7 +188,7 @@ class ProfilePage extends Component {
                 'Credits',
                 colors.green,
                 'OpenSans-SemiBold',
-                '$' + Number(this.props.totalWallet).toFixed(2),
+                '$' + Number(Number(this.props.totalWallet).toFixed(2)),
               )}
 
             {Number(data.price.joiningFee) === 0 ? null : this.props
@@ -198,7 +198,7 @@ class ProfilePage extends Component {
                   'Charge amount',
                   colors.title,
                   'OpenSans-SemiBold',
-                  '$' + creditCardCharge.toFixed(2),
+                  '$' + Number(creditCardCharge.toFixed(2)),
                 )}
                 <View style={[styleApp.divider2, {marginBottom: 10}]} />
               </View>

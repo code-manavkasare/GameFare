@@ -2,10 +2,12 @@ import {indexUsers} from '../database/algolia';
 
 async function autocompleteSearchUsers(search, userID) {
   await indexUsers.clearCache();
+  let filters = 'NOT objectID:' + userID
+  if (!userID || userID == '') filters = ''
   const {hits} = await indexUsers.search({
     query: search,
     hitsPerPage: 500,
-    filters: 'NOT objectID:' + userID,
+    filters: filters,
   });
   const users = hits.filter((user) => user.info.firstname);
   return users;

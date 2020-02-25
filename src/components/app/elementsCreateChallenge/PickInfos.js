@@ -160,11 +160,16 @@ class PickInfos extends Component {
           <Text style={[styleApp.title, {marginTop: 20}]}>Payout</Text>
           <Text style={[styleApp.text, {marginTop: 10}]}>
             You will receive{' '}
-            <Text style={{color: colors.primary, fontSize: 20}}>
+            <Text style={{color: colors.green, fontSize: 20}}>
               {' '}
               ${(price.amount * price.odds).toFixed(1)}{' '}
             </Text>{' '}
-            if you win the challenge.
+            if you win the challenge. Your oponent will pay{' '}
+            <Text style={{color: colors.primary, fontSize: 20}}>
+              {' '}
+              ${price.amount * Math.max(0, price.odds - 1).toFixed(1)}{' '}
+            </Text>{' '}
+            to accept the challenge.
           </Text>
         </View>
       </View>
