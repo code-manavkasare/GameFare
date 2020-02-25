@@ -31,10 +31,12 @@ async function getMyGroups(userID, filterSport, location, radiusSearch) {
       filters: filters,
       aroundLatLng: location ? location.lat + ',' + location.lng : '',
       aroundRadius: radiusSearch * 1000,
+      hitsPerPage: 1000,
     });
   } else {
     var {hits} = await indexGroups.search({
       filters: filters,
+      hitsPerPage: 1000,
     });
   }
   return hits;
@@ -76,6 +78,7 @@ async function getEventsFromGroups(
     filters: filters,
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
+    hitsPerPage: 1000,
   });
   if (filterIds === '') hits = [];
   hits = hits.filter(
@@ -121,7 +124,7 @@ const getEventPublic = async (
   var {hits} = await indexEvents.search({
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
-    query: '',
+    hitsPerPage: 1000,
     filters:
       'info.public=1' +
       ' AND info.sport:' +
@@ -182,6 +185,7 @@ const getMyEvents = async (userID, filterDateName) => {
   indexEvents.clearCache();
   var {hits} = await indexEvents.search({
     query: '',
+    hitsPerPage: 1000,
     filters: filterAttendees + filterDate,
   });
   const events = hits.reduce(function(result, item) {

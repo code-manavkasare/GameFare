@@ -11,6 +11,7 @@ import {
 } from '../functions/notifications';
 import {indexEvents} from '../database/algolia';
 import {options, stripe} from '../functions/stripe';
+import {createDiscussionEventGroup} from '../functions/message';
 
 function generateID() {
   return (
@@ -18,21 +19,6 @@ function generateID() {
       .toString(36)
       .substring(2) + Date.now().toString(36)
   );
-}
-
-function newDiscussion(discussionID, groupID, image, nameGroup, initialMember) {
-  return {
-    id: discussionID,
-    title: nameGroup,
-    members: {
-      [initialMember.id]: initialMember,
-    },
-    allMembers: [initialMember.id],
-    messages: {},
-    type: 'group',
-    groupID: groupID,
-    image: image,
-  };
 }
 
 async function addMemberDiscussion(discussionID, member) {
@@ -94,12 +80,11 @@ async function pushEventToGroups(groups, eventID) {
 }
 
 async function createEvent(data, userID, infoUser, level) {
-  console.log('data.images[0]', data);
   var pictureUri = await uploadPictureFirebase(
     data.images[0],
     'events/' + generateID(),
   );
-  console.log('pictureUri', pictureUri);
+
   if (!pictureUri) return false;
 
   var event = await createEventObj(data, userID, infoUser, level);
@@ -123,10 +108,16 @@ async function createEvent(data, userID, infoUser, level) {
     .database()
     .ref('discussions/' + discussionID)
     .update(
-      newDiscussion(discussionID, key, pictureUri, event.info.name, {
-        id: userID,
-        info: infoUser,
-      }),
+      createDiscussionEventGroup(
+        discussionID,
+        key,
+        pictureUri,
+        event.info.name,
+        {
+          id: userID,
+          info: infoUser,
+        },
+      ),
     );
 
   await pushEventToGroups(data.groups, key);
@@ -181,7 +172,7 @@ async function payEntryFee(now, amount, userID, cardInfo, infoUser, objectID) {
         },
       ];
       const applePay = await stripe.canMakeApplePayPayments();
-      console.log('applePay', applePay);
+
       const token = await stripe.paymentRequestWithApplePay(items, options);
       var tokenCard = token.tokenId;
 
@@ -203,7 +194,6 @@ async function payEntryFee(now, amount, userID, cardInfo, infoUser, objectID) {
         await stripe.completeApplePayRequest();
       }
     } catch (err) {
-      console.log('errr', err);
       stripe.cancelApplePayRequest();
       return {response: 'cancel', message: 'cancel'};
     }

@@ -1,7 +1,6 @@
 import React from 'react';
 import {AppState, View, Text, Dimensions, Image, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 import {keys} from 'ramda';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
@@ -12,6 +11,7 @@ import colors from '../../style/colors';
 import Button from '../../layout/buttons/Button';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import {loadMyDiscusions} from '../../functions/message';
+import SearchBarContact from '../elementsEventCreate/elementsContacts/SearchBarContact';
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
 import sizes from '../../style/sizes';
@@ -26,11 +26,12 @@ class MessageTab extends React.Component {
       events: [],
       loader: true,
       appState: AppState.currentState,
+      searchInput: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    if (this.props.userConnected) this.loadDiscussions(this.props.userID);
+    if (this.props.userConnected) this.loadDiscussions();
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
@@ -38,7 +39,11 @@ class MessageTab extends React.Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.state.loader !== nextState.loader) {
+      return true;
+    }
+
     if (
       keys(this.props.discussions).length ===
         keys(nextProps.discussions).length &&
@@ -54,18 +59,25 @@ class MessageTab extends React.Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      if (this.props.userConnected) this.loadDiscussions(this.props.userID);
+      if (this.props.userConnected) this.loadDiscussions();
     }
     this.setState({appState: nextAppState});
   };
 
-  async loadDiscussions(userID) {
-    this.setState({loader: true});
-    const discussions = await loadMyDiscusions(userID);
-    console.log(discussions);
+  updateSearchField = async (searchInput) => {
+    this.setState({searchInput});
+    this.loadDiscussions();
+  };
+
+  loadDiscussions = async () => {
+    await this.setState({loader: true});
+    const discussions = await loadMyDiscusions(
+      this.props.userID,
+      this.state.searchInput,
+    );
     await this.props.messageAction('setConversations', discussions);
     this.setState({loader: false});
-  }
+  };
 
   async componentWillReceiveProps(nextProps) {
     if (
@@ -73,7 +85,7 @@ class MessageTab extends React.Component {
       nextProps.userConnected
     ) {
       await this.setState({loader: true});
-      this.loadDiscussions(nextProps.userID);
+      this.loadDiscussions();
     } else if (
       this.props.userConnected !== nextProps.userConnected &&
       !nextProps.userConnected
@@ -127,13 +139,19 @@ class MessageTab extends React.Component {
 
   messagePageView() {
     const {discussions, userConnected} = this.props;
+    const {searchInput} = this.state;
+
     if (!userConnected) return this.logoutView();
-    console.log('discussions', discussions);
     return (
       <View style={{paddingTop: 5, minHeight: height}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
         </View>
+        <SearchBarContact
+          placeHolderMessage={'Search your messages...'}
+          updateSearch={(searchInput) => this.updateSearchField(searchInput)}
+          searchString={searchInput}
+        />
         <View
           style={[
             styleApp.divider2,
@@ -163,12 +181,6 @@ class MessageTab extends React.Component {
     );
   }
 
-  async refresh() {
-    await this.setState({loader: true});
-    this.loadDiscussions(this.props.userID);
-    return true;
-  }
-
   async setLocation(data) {
     this.listEventsRef.setLocation(data);
   }
@@ -176,6 +188,7 @@ class MessageTab extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
     const {userConnected} = this.props;
+    const {searchInput} = this.state;
     return (
       <View>
         <HeaderBackButton
@@ -204,7 +217,7 @@ class MessageTab extends React.Component {
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}
-          refresh={() => this.refresh()}
+          refresh={() => this.loadDiscussions()}
           offsetBottom={10}
           showsVerticalScrollIndicator={true}
         />
@@ -214,7 +227,6 @@ class MessageTab extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,

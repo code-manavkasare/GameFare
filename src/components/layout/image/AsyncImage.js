@@ -21,21 +21,23 @@ export default class AsyncImage extends Component {
   }
 
   async componentDidMount() {
-    try {
-      if (this.props.mainImage) {
-        var tokenImg = this.props.mainImage.split('token=')[1];
-        if (tokenImg) {
-          var checkToken = await ls.get(tokenImg);
-          if (checkToken == null) checkToken = 'null';
-        }
-      } else {
-        var checkToken = 'null';
-      }
-      await this.setState({checkToken: checkToken});
-      this.setState({initialLoader: false});
-    } catch (err) {
-      console.log('error image cached', err);
-    }
+    // TODO restructure component
+    // try {
+    //   if (this.props.mainImage) {
+    //     var tokenImg = this.props.mainImage.split('token=')[1];
+    //     if (tokenImg) {
+    //       var checkToken = await ls.get(tokenImg);
+    //       if (checkToken == null) checkToken = 'null';
+    //     }
+    //   } else {
+    //     var checkToken = 'null';
+    //   }
+    //   await this.setState({checkToken: checkToken});
+    //   this.setState({initialLoader: false});
+    // } catch (err) {
+    //   console.log('error image cached', err);
+    // }
+    this.setState({checkToken: true, initialLoader: false});
   }
   enterPictureInitial() {
     Animated.timing(this.AnimatedValue, {
@@ -72,14 +74,14 @@ export default class AsyncImage extends Component {
             resizeMode={'cover'}
             onLoadEnd={() => {
               this.enterPictureCached();
-              if (mainImage) {
-                try {
-                  var tokenImg = mainImage.split('token=')[1];
-                  if (tokenImg) ls.save(tokenImg, tokenImg);
-                } catch (err) {
-                  true;
-                }
-              }
+              // if (mainImage) {
+              //   try {
+              //     var tokenImg = mainImage.split('token=')[1];
+              //     if (tokenImg) ls.save(tokenImg, tokenImg);
+              //   } catch (err) {
+              //     true;
+              //   }
+              // }
             }}
             style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
             source={{
@@ -91,14 +93,14 @@ export default class AsyncImage extends Component {
     } else {
       return (
         <FastImage
-          resizeMode={'cover'}
+          source={{
+            cache: FastImage.cacheControl.web,
+            uri: this.getMainImage(),
+          }}
           onLoadEnd={() => {
             // this.enterPictureCached()
           }}
           style={[style, {zIndex: this.state.zIndexInitial}]}
-          source={{
-            uri: this.getMainImage(),
-          }}
         />
       );
     }

@@ -27,6 +27,8 @@ class AddPlayers extends React.Component {
 
   render() {
     const {dismiss, navigate} = this.props.navigation;
+    const stream = this.props.navigation.getParam('stream');
+    const event = this.props.navigation.getParam('event');
     return (
       <View style={{flex: 1}}>
         <HeaderBackButton
@@ -40,29 +42,33 @@ class AddPlayers extends React.Component {
           icon2="check"
           typeIcon2="font"
           sizeIcon2={17}
-          clickButton2={() => navigate('MatchPictures', {stream: this.props.stream})}
+          clickButton2={() =>
+            navigate('MatchPictures', {stream: stream, event: event})
+          }
           clickButton1={() => dismiss()}
         />
-        <View style={styles.container}><Text>Add Players</Text></View>
+
+
+        <View style={styles.container}>
+          <Text>Add Players</Text>
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-    container: {
-      height: height,
-      backgroundColor: 'white',
-      overflow: 'hidden',
-      position: 'absolute',
-      paddingLeft: 10,
-      paddingTop: sizes.heightHeaderHome,
-    },
+  container: {
+    height: height,
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    position: 'absolute',
+    paddingLeft: 10,
+    paddingTop: sizes.heightHeaderHome,
+  },
 });
 
-AddPlayers.PropTypes = {
-    stream: PropTypes.object.isRequired,
-}
+AddPlayers.PropTypes = {};
 
 const mapStateToProps = (state) => {
   return {

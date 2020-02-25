@@ -29,6 +29,7 @@ import Coach from '../app/elementsJoining/Coach';
 import Phone from '../login/Phone';
 import Verify from '../login/Verify';
 import Complete from '../login/Complete';
+import EditProfilePage from '../app/elementsUser/elementsProfile/EditProfilePage';
 import ListCountry from '../login/elementsFlags/ListCountry';
 
 import CreateEvent0 from '../app/elementsEventCreate/Page0';
@@ -258,7 +259,7 @@ const StreamResultsNavigator = createStackNavigator(
     StreamResults: lockedPortrait(StreamResults),
   },
   {
-    initialRouteName: 'AddPlayers',
+    initialRouteName: 'MatchPictures',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
@@ -372,6 +373,7 @@ const MainStack = createStackNavigator(
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
     CreateChallenge: CreateChallengeNavigator,
+    EditProfilePage: {screen: lockedPortrait(EditProfilePage)},
     StreamResults: {
       screen: lockedPortrait(StreamResults),
       navigationOptions: {
