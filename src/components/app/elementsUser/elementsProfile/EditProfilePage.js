@@ -184,7 +184,7 @@ class EditProfilePage extends Component {
                     placeholder="First name"
                     autoCorrect={true}
                     underlineColorAndroid="rgba(0,0,0,0)"
-                    blurOnSubmit={false}
+                    blurOnSubmit={true}
                     returnKeyType={'done'}
                     onChangeText={(text) => this.setState({firstname: text})}
                     value={firstname}
@@ -202,7 +202,7 @@ class EditProfilePage extends Component {
                     returnKeyType={'done'}
                     underlineColorAndroid="rgba(0,0,0,0)"
                     autoCorrect={true}
-                    blurOnSubmit={false}
+                    blurOnSubmit={true}
                     onChangeText={(text) => this.setState({lastname: text})}
                     value={lastname}
                   />
