@@ -2,32 +2,28 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   Linking,
-  Image,
   Alert,
   Animated,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {Col, Row, Grid} from 'react-native-easy-grid';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
+import Communications from 'react-native-communications';
 
-import Header from '../layout/headers/HeaderButton';
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome';
 import Button from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
-import HeaderBackButton from '../layout/headers/HeaderBackButton';
+import AsyncImage from '../layout/image/AsyncImage';
 
 import {userAction} from '../../actions/userActions';
-import InAppBrowser from 'react-native-inappbrowser-reborn';
-import Communications from 'react-native-communications';
-import SwiperLogout from './elementsUser/elementsProfile/SwiperLogout';
 const {height, width} = Dimensions.get('screen');
 
 class ProfilePage extends Component {
@@ -38,7 +34,7 @@ class ProfilePage extends Component {
   }
   title(text) {
     return (
-      <Row style={{marginBottom: 5, marginTop: 20, marginBottom: 10}}>
+      <Row style={{marginTop: 20, marginBottom: 10}}>
         <Col style={styleApp.center2}>
           <Text
             style={[
@@ -83,7 +79,7 @@ class ProfilePage extends Component {
   
       
   */
-  button(icon, text, page, data, type, url) {
+  button(icon, text, page, type, url) {
     return (
       <ButtonColor
         view={() => {
@@ -94,53 +90,63 @@ class ProfilePage extends Component {
                   <AllIcons
                     type="font"
                     size={17}
-                    name={icon == 'logout' ? 'bicycle' : icon}
-                    color={icon == 'logout' ? colors.green : colors.title}
+                    name={icon === 'logout' ? 'bicycle' : icon}
+                    color={icon === 'logout' ? colors.green : colors.title}
                   />
                 </Col>
               ) : null}
-              <Col size={80} style={[styleApp.center2, {paddingLeft: 0}]}>
+              <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
                 <Text
                   style={[
-                    styleApp.title,
+                    styleApp.input,
                     {
                       fontSize: 14,
-                      fontFamily: 'OpenSans-SemiBold',
-                      color: text == 'Logout' ? colors.green : colors.title,
+                      color: text === 'Logout' ? colors.green : colors.title,
                     },
                   ]}>
                   {text}
                 </Text>
+              </Col>
+              <Col size={20} style={styleApp.center3}>
+                {page === 'Wallet' && (
+                  <Text style={[styleApp.text, {color: colors.primary}]}>
+                    ${this.props.wallet.totalWallet}
+                  </Text>
+                )}
               </Col>
               <Col size={10} style={styleApp.center3}>
                 <AllIcons
                   type="mat"
                   size={20}
                   name={'keyboard-arrow-right'}
-                  color={icon == 'logout' ? colors.green : colors.grey}
+                  color={icon === 'logout' ? colors.green : colors.grey}
                 />
               </Col>
             </Row>
           );
         }}
-        click={() => this.clickButton(text, page, data, type, url)}
+        click={() => this.clickButton(page, type, url)}
         color="white"
         style={styles.button}
         onPressColor={colors.off}
       />
     );
   }
-  clickButton(text, page, data, type, url) {
+  clickButton(page, type, url) {
     if (type === 'url') {
       this.openLink(url);
     } else if (type === 'call') {
       this.call();
     } else if (type === 'email') {
       this.sendEmail();
-    } else if (type === 'link') {
-      // this.sendEmail()
+    } else if (type === 'logout') {
+      this.props.navigation.navigate('Alert', {
+        textButton: 'Logout',
+        title: 'Do you want to log out?',
+        onGoBack: (data) => this.confirmLogout(data),
+      });
     } else {
-      this.props.navigation.navigate(page, data);
+      this.props.navigation.navigate(page);
     }
   }
   async openLink(url) {
@@ -176,7 +182,6 @@ class ProfilePage extends Component {
           },
           waitForRedirectDelay: 0,
         });
-        Alert.alert(JSON.stringify(result));
       } else Linking.openURL(url);
     } catch (error) {
       Alert.alert(error.message);
@@ -191,31 +196,55 @@ class ProfilePage extends Component {
       this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname;
     Communications.email([email1], null, null, subject, '');
   }
+
+  goToEditProfile = () => {
+    // alert('test');
+    this.props.navigation.navigate('EditProfilePage');
+  };
+
   profile() {
+    const {infoUser, userConnected} = this.props;
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        <View style={[styleApp.marginView, {marginTop: 0}]}>
-          {this.props.userConnected ? (
+        <View style={styleApp.marginView}>
+          {userConnected ? (
             <View>
-              <Text style={[styleApp.title, {marginBottom: 30}]}>
-                {'Hi, ' +
-                  this.props.infoUser.firstname +
-                  ' ' +
-                  this.props.infoUser.lastname}
-              </Text>
-              {/* <Text style={[styleApp.subtitle,{marginTop:5,marginBottom:30}]}>{this.props.infoUser.countryCode + ' ' +this.props.infoUser.phoneNumber}</Text> */}
+              <TouchableOpacity onPress={() => this.goToEditProfile()}>
+                <Row style={{marginBottom: 20}}>
+                  <Col size={30} style={styleApp.center2}>
+                    {infoUser.picture ? (
+                      <AsyncImage
+                        style={styles.asyncImage}
+                        mainImage={infoUser.picture}
+                      />
+                    ) : (
+                      <View
+                        style={[
+                          styles.asyncImage,
+                          styleApp.center,
+                          {backgroundColor: colors.off},
+                        ]}>
+                        <Text style={[styleApp.input, {fontSize: 20}]}>
+                          {infoUser.firstname[0] + infoUser.lastname[0]}
+                        </Text>
+                      </View>
+                    )}
+                  </Col>
+                  <Col size={70} style={styleApp.center2}>
+                    <Text style={styleApp.title}>
+                      {infoUser.firstname + ' ' + infoUser.lastname}
+                    </Text>
+                    <Text style={styleApp.subtitle}>
+                      {infoUser.countryCode + ' ' + infoUser.phoneNumber}
+                    </Text>
+                  </Col>
+                </Row>
+              </TouchableOpacity>
 
-              <Text style={styleApp.smallText}>
-                {this.props.userConnected
-                  ? 'Account parameters'
-                  : 'Sign in to GameFare'}
-              </Text>
-              <View
-                style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]}
-              />
-              {this.button('credit-card', 'Payment', 'Payments', {
-                pageFrom: 'Profile',
-              })}
+              <Text style={styleApp.text}>Account parameters</Text>
+              <View style={[styleApp.divider2, {marginTop: 15}]} />
+              {this.button('credit-card', 'Payment', 'Payments')}
+              {this.button('wallet', 'Wallet', 'Wallet')}
               {/* {this.button('shopping-bag','My wallet','Wallet',{pageFrom:'Profile'})} */}
             </View>
           ) : null}
@@ -225,8 +254,8 @@ class ProfilePage extends Component {
           <Text style={styleApp.text}>Assistance</Text>
 
           <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]} />
-          {this.button('envelope', 'Email', 'Alert', {}, 'email')}
-          {this.button('phone', 'Call', 'Alert', {}, 'call')}
+          {this.button('envelope', 'Email', 'Alert', 'email')}
+          {/* {this.button('phone', 'Call', 'Alert', 'call')} */}
         </View>
 
         <View style={styleApp.viewHome}>
@@ -238,7 +267,6 @@ class ProfilePage extends Component {
               'instagram',
               'Visit us on Instagram',
               'Alert',
-              {},
               'url',
               'https://www.instagram.com/getgamefare',
             )}
@@ -254,7 +282,6 @@ class ProfilePage extends Component {
               false,
               'Privacy policy',
               'Alert',
-              {},
               'url',
               'https://www.getgamefare.com/privacy',
             )}
@@ -262,7 +289,6 @@ class ProfilePage extends Component {
               false,
               'Terms of service',
               'Alert',
-              {},
               'url',
               'https://www.getgamefare.com/terms',
             )}
@@ -271,19 +297,14 @@ class ProfilePage extends Component {
 
         <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
-            {this.props.userConnected
-              ? this.button('logout', 'Logout', 'Alert', {
-                  textButton: 'Logout',
-                  title: 'Do you want to log out?',
-                  onGoBack: (data) => this.confirmLogout(data),
-                })
-              : null}
+            {this.props.userConnected &&
+              this.button('logout', 'Logout', 'Alert', 'logout')}
           </View>
         </View>
       </View>
     );
   }
-  async confirmLogout(data) {
+  async confirmLogout() {
     await this.props.userAction('logout', {userID: this.props.userID});
     this.props.navigation.navigate('Home');
   }
@@ -305,29 +326,10 @@ class ProfilePage extends Component {
       </Row>
     );
   }
-  profileLogout() {
-    return (
-      <View style={[styleApp.viewHome]}>
-        <View style={styleApp.marginView}>
-          <SwiperLogout type={'profile'} />
-
-          <View style={{height: 20}} />
-          <Button
-            text="Sign in"
-            click={() =>
-              this.props.navigation.navigate('Phone', {pageFrom: 'Profile'})
-            }
-            backgroundColor={'green'}
-            onPressColor={colors.greenClick}
-          />
-        </View>
-      </View>
-    );
-  }
   render() {
     return (
       <View style={{height: '100%'}}>
-        <HeaderBackButton
+        {/* <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Profile'}
           inputRange={[50, 80]}
@@ -340,13 +342,13 @@ class ProfilePage extends Component {
           icon2={null}
           // clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
           clickButton2={() => true}
-        />
+        /> */}
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.marginTopApp + 30}
           offsetBottom={90}
           showsVerticalScrollIndicator={true}
         />
@@ -383,12 +385,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderBottomWidth: 0,
   },
+  asyncImage: {
+    width: 90,
+    height: 90,
+    borderColor: colors.off,
+    borderRadius: 45,
+  },
 });
 
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
+    wallet: state.user.infoUser.wallet,
     userConnected: state.user.userConnected,
   };
 };

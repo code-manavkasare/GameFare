@@ -3,15 +3,20 @@ import {
   SET_CONVERSATIONS,
   SET_INPUT,
   ADD_IMAGE,
+  RESET_USER_MESSAGES,
+  DELETE_MY_CONVERSATION,
 } from '../actions/types';
 import union from 'lodash/union';
 
-const initialState = {
+export const initialState = {
   gamefareUser: {
-    _id: 'dfjkfgdgkfkgkdjfgjkdf',
-    name: 'GameFare',
-    avatar:
-      'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/logos%2Flogoios.png?alt=media&token=536ba87c-20e7-4be9-848e-86d8e7d21f2c',
+    id: 'dfjkfgdgkfkgkdjfgjkdf',
+    info: {
+      firstname: 'GameFare',
+      lastname: '',
+      picture:
+        'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/logos%2Flogoios.png?alt=media&token=536ba87c-20e7-4be9-848e-86d8e7d21f2c',
+    },
   },
   conversations: {},
   myDiscussions: {},
@@ -58,6 +63,17 @@ const messageReducer = (state = initialState, action) => {
           },
         },
       };
+    case DELETE_MY_CONVERSATION:
+      let test = Object.keys(state.myDiscussions).filter(
+        (discussion) => discussion !== action.objectID,
+      );
+      test = test.reduce(function(result, item) {
+        result[item] = true;
+        return result;
+      }, {});
+      return {...state, myDiscussions: test};
+    case RESET_USER_MESSAGES:
+      return initialState;
     default:
       return state;
   }

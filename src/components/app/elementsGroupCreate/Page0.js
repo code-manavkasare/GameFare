@@ -11,6 +11,8 @@ import {
 import {connect} from 'react-redux';
 import {createGroupAction} from '../../../actions/createGroupActions';
 import {groupsAction} from '../../../actions/groupsActions';
+import {historicSearchAction} from '../../../actions/historicSearchActions';
+
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
@@ -41,11 +43,9 @@ class Page0 extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    if (this.props.createGroupData.info.sport === '') {
-      this.props.createGroupAction('setInfoCreateGroup', {
-        sport: this.props.sportSelected,
-      });
-    }
+    this.props.createGroupAction('setInfoCreateGroup', {
+      sport: this.props.sportSelected,
+    });
   }
   sports() {
     return (
@@ -247,7 +247,7 @@ class Page0 extends Component {
   }
   async submit(data) {
     await this.setState({loader: true});
-    var group = await createGroup(
+    const group = await createGroup(
       this.props.createGroupData,
       this.props.userID,
       this.props.infoUser,
@@ -265,21 +265,24 @@ class Page0 extends Component {
     var newGroups = this.props.mygroups.slice(0).reverse();
     newGroups.push(group.objectID);
     newGroups = newGroups.reverse();
+
+    await this.props.historicSearchAction('setSport', {
+      value: group.info.sport,
+    });
+
     await this.props.groupsAction('setAllGroups', {[group.objectID]: group});
     await this.props.groupsAction('setMygroups', newGroups);
-    var that = this;
-    return setTimeout(async function() {
-      await that.props.navigation.dismiss();
-      return that.props.createGroupAction('reset');
-    }, 700);
-
-    // return this.props.navigation.navigate('Group', {
-    //   objectID: group.objectID,
-    //   pageFrom: 'ListGroups',
-    // });
+    await this.props.navigation.dismiss();
+    await this.props.createGroupAction('reset');
+    return this.props.navigation.navigate('Contacts', {
+      data: group,
+      pageFrom: 'Group',
+      openPageLink: 'openGroupPage',
+      objectID: group.objectID,
+    });
   }
   render() {
-    if (this.props.createGroupData.info.sport == '') return null;
+    if (this.props.createGroupData.info.sport === '') return null;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -361,6 +364,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {createGroupAction, groupsAction})(
-  Page0,
-);
+export default connect(mapStateToProps, {
+  createGroupAction,
+  groupsAction,
+  historicSearchAction,
+})(Page0);

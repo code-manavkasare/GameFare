@@ -12,7 +12,6 @@ import {
 import {connect} from 'react-redux';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import FadeInView from 'react-native-fade-in-view';
-import firebase from 'react-native-firebase';
 import {Col, Row} from 'react-native-easy-grid';
 
 import {takePicture, getPhotoUser, pickLibrary} from '../../functions/pictures';
@@ -48,13 +47,6 @@ class InputMessage extends React.Component {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
 
     await this.setState({inputValue: '', images: {}});
-
-    if (!this.props.discussion.firstMessageExists) {
-      await firebase
-        .database()
-        .ref('discussions/' + this.props.discussion.objectID)
-        .update({firstMessageExists: true});
-    }
 
     await sendNewMessage(
       this.props.discussion.objectID,

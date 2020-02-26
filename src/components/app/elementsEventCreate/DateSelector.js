@@ -154,11 +154,8 @@ export default class Date extends Component {
       <Calendar
         minDate={new Date()}
         markedDates={this.state[markedDates]}
-        // Handler which gets executed on day press. Default = undefined
         onDayPress={(day) => this.selectDay(day, date, markedDates)}
-        // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
         monthFormat={'MMMM'}
-        // Handler which gets executed when visible month changes in calendar. Default = undefined
         onMonthChange={(month) => true}
         // Hide month navigation arrows. Default = false
         hideArrows={false}
@@ -172,10 +169,6 @@ export default class Date extends Component {
         hideDayNames={false}
         // Show week numbers to the left. Default = false
         showWeekNumbers={false}
-        // Handler which gets executed when press arrow icon left. It receive a callback can go back month
-        //onPressArrowLeft={substractMonth => substractMonth()}
-        // Handler which gets executed when press arrow icon left. It receive a callback can go next month
-        //onPressArrowRight={addMonth => addMonth()}
         style={{height: 340, marginLeft: -5}}
         theme={{
           base: {width: 20, height: 10, justifyContent: 'center'},
@@ -377,7 +370,8 @@ export default class Date extends Component {
   }
   async close() {
     await Keyboard.dismiss();
-    this.props.close();
+    let c = this.props.navigation.getParam('close');
+    c();
   }
   async submit() {
     var now = moment();
@@ -465,12 +459,13 @@ export default class Date extends Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           icon1={
-            this.props.navigation.getParam('pageFrom') == 'LocationSelect'
+            this.props.navigation.getParam('pageFrom') === 'LocationSelect'
               ? 'arrow-left'
               : 'times'
           }
           icon2={null}
-          clickButton1={() => this.props.navigation.navigate('CreateEvent2')}
+          clickButton1={() => this.close()}
+          // clickButton1={() => this.props.navigation.navigate('CreateEvent2')}
         />
 
         <ScrollView

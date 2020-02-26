@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import {View, ActivityIndicator, Image, Animated, Easing} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import ls from 'react-native-local-storage';
-import colors from '../../style/colors';
 
 export default class AsyncImage extends Component {
   constructor(props) {
@@ -21,21 +21,23 @@ export default class AsyncImage extends Component {
   }
 
   async componentDidMount() {
-    try {
-      if (this.props.mainImage !== undefined) {
-        var tokenImg = this.props.mainImage.split('token=')[1];
-        if (tokenImg != undefined) {
-          var checkToken = await ls.get(tokenImg);
-          if (checkToken == null) checkToken = 'null';
-        }
-      } else {
-        var checkToken = 'null';
-      }
-      await this.setState({checkToken: checkToken});
-      this.setState({initialLoader: false});
-    } catch (err) {
-      console.log('error image cached', err);
-    }
+    // TODO restructure component
+    // try {
+    //   if (this.props.mainImage) {
+    //     var tokenImg = this.props.mainImage.split('token=')[1];
+    //     if (tokenImg) {
+    //       var checkToken = await ls.get(tokenImg);
+    //       if (checkToken == null) checkToken = 'null';
+    //     }
+    //   } else {
+    //     var checkToken = 'null';
+    //   }
+    //   await this.setState({checkToken: checkToken});
+    //   this.setState({initialLoader: false});
+    // } catch (err) {
+    //   console.log('error image cached', err);
+    // }
+    this.setState({checkToken: true, initialLoader: false});
   }
   enterPictureInitial() {
     Animated.timing(this.AnimatedValue, {
@@ -54,35 +56,34 @@ export default class AsyncImage extends Component {
     }).start();
   }
   getMainImage() {
-    if (this.props.mainImage == undefined) return this.props.image;
-    return this.props.mainImage;
+    const {mainImage, image} = this.props;
+    if (!mainImage) return image;
+    return mainImage;
   }
   imgDisplay() {
+    const {style, mainImage} = this.props;
     if (this.state.checkToken == 'null') {
       return (
         <Animated.View
           style={{
             opacity: this.opacityFastImageCached,
-            height: this.props.style.height,
-            width: this.props.style.width,
+            height: style.height,
+            width: style.width,
           }}>
           <FastImage
             resizeMode={'cover'}
             onLoadEnd={() => {
               this.enterPictureCached();
-              if (this.props.mainImage !== undefined) {
-                try {
-                  var tokenImg = this.props.mainImage.split('token=')[1];
-                  if (tokenImg != undefined) ls.save(tokenImg, tokenImg);
-                } catch (err) {
-                  true;
-                }
-              }
+              // if (mainImage) {
+              //   try {
+              //     var tokenImg = mainImage.split('token=')[1];
+              //     if (tokenImg) ls.save(tokenImg, tokenImg);
+              //   } catch (err) {
+              //     true;
+              //   }
+              // }
             }}
-            style={[
-              this.props.style,
-              {zIndex: 10, position: 'absolute', top: 0},
-            ]}
+            style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
             source={{
               uri: this.getMainImage(),
             }}
@@ -92,41 +93,23 @@ export default class AsyncImage extends Component {
     } else {
       return (
         <FastImage
-          resizeMode={'cover'}
+          source={{
+            cache: FastImage.cacheControl.web,
+            uri: this.getMainImage(),
+          }}
           onLoadEnd={() => {
             // this.enterPictureCached()
           }}
-          style={[this.props.style, {zIndex: this.state.zIndexInitial}]}
-          source={{
-            uri: this.getMainImage(),
-          }}
+          style={[style, {zIndex: this.state.zIndexInitial}]}
         />
       );
     }
-  }
-
-  imgDisplay2() {
-    var tokenImg = this.props.mainImage.split('token=')[1];
-    const checkToken = ls.get(tokenImg);
-    return (
-      <Animated.View style={[{opacity: this.opacityFastImageCached}]}>
-        <FastImage
-          resizeMode={'cover'}
-          onLoadEnd={() => this.enterPictureCached()}
-          style={[this.props.style, {zIndex: this.state.zIndexInitial}]}
-          source={{
-            uri: this.props.mainImage,
-          }}
-        />
-      </Animated.View>
-    );
   }
 
   componentWillReceiveProps(props) {
     this.props = props;
   }
 
-  styleImg() {}
   render() {
     return (
       <View style={[this.props.style]}>
@@ -135,3 +118,8 @@ export default class AsyncImage extends Component {
     );
   }
 }
+
+AsyncImage.PropTypes = {
+  mainImage: PropTypes.string.isRequired,
+  style: PropTypes.object,
+};

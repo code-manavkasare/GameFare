@@ -9,8 +9,9 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import firebase from 'react-native-firebase';
+import {keys} from 'ramda'
 import {connect} from 'react-redux';
+
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {eventsAction} from '../../../actions/eventsActions';
@@ -27,10 +28,6 @@ import {indexEvents, getEventPublic} from '../../database/algolia';
 import FadeInView from 'react-native-fade-in-view';
 import PlaceHolder from '../../placeHolders/CardEvent';
 import CardEvent from './CardEventSM';
-import ScrollView from '../../layout/scrollViews/ScrollView';
-import Button from '../../layout/Views/Button';
-
-import AllIcons from '../../layout/icons/AllIcons';
 import NavigationService from '../../../../NavigationService';
 
 class ListEvents extends React.Component {
@@ -70,6 +67,7 @@ class ListEvents extends React.Component {
     );
   }
   async loadEvent(location, sport, league) {
+    const {userID,radiusSearch} = this.props;
     await this.setState({loader: true});
     indexEvents.clearCache();
     const allEventsPublic = await getEventPublic(
@@ -77,29 +75,15 @@ class ListEvents extends React.Component {
       sport,
       league,
       {},
-      this.props.userID,
-      this.props.radiusSearch,
+      userID,
+      radiusSearch,
     );
 
-    var allGroupsEvents = {};
-    var groupsEvents = [];
-
-    var allEvents = {
-      ...allEventsPublic,
-      ...allGroupsEvents,
-    };
-    await this.props.eventsAction('setAllEvents', allEvents);
-    await this.props.eventsAction(
-      'setPublicEvents',
-      Object.values(allEventsPublic).map((x) => x.objectID),
-    );
-    await this.props.eventsAction('setGroupsEvents', groupsEvents);
+    await this.props.eventsAction('setAllEvents', allEventsPublic);
+    await this.props.eventsAction('setPublicEvents',keys(allEventsPublic));
     return this.setState({loader: false});
   }
   openEvent(objectID) {
-    // if (!event.info.public) {
-    //   return this.props.navigate('Alert',{close:true,title:'The event is private.',subtitle:'You need to receive an invitation in order to join it.',pageFrom:'Home',textButton:'Got it!',icon:<AllIcons name='lock' color={colors.blue} size={21} type='mat' />})
-    // }
     return this.props.navigate('Event', {objectID: objectID, pageFrom: 'Home'});
   }
   async setLocation(location) {
@@ -108,7 +92,6 @@ class ListEvents extends React.Component {
   }
   async setSwitch(state, val) {
     await this.setState({[state]: val});
-    // await this.translateViews(val)
     return true;
   }
   switch(textOn, textOff, state, translateXComponent0, translateXComponent1) {
@@ -129,14 +112,9 @@ class ListEvents extends React.Component {
     const allPublicEvents = this.props.publicEvents.map(
       (event) => this.props.allEvents[event],
     );
-    var allGroupsEvents = this.props.groupsEvents.map(
-      (event) => this.props.allEvents[event],
-    );
     var numberPublic = ' (' + allPublicEvents.length + ')';
-    var numberGroups = ' (' + allGroupsEvents.length + ')';
     if (this.state.loader) {
       numberPublic = '';
-      numberGroups = '';
     }
 
     return (
@@ -154,22 +132,8 @@ class ListEvents extends React.Component {
               {getZone(this.props.searchLocation.address)}
             </Text>
           </Col>
-          <Col size={15} style={styleApp.center3}></Col>
+          <Col size={15} />
         </Row>
-
-        {/* <View
-          style={{
-            marginLeft: 20,
-            marginTop: 0,
-            width: width - 40,
-            marginBottom: 15,
-          }}>
-          {this.switch(
-            'Public' + numberPublic,
-            'My groups' + numberGroups,
-            'public',
-          )}
-        </View> */}
 
         {this.state.loader ? (
           <View>
@@ -179,19 +143,14 @@ class ListEvents extends React.Component {
             <PlaceHolder />
             <PlaceHolder />
           </View>
-        ) : !this.state.public ? (
+        ) : (
           <FadeInView duration={350}>
             {allPublicEvents.length === 0 ? (
               <View
                 style={[
                   styleApp.center,
                   styleApp.marginView,
-                  {
-                    marginTop: 35,
-                    marginBottom: 20,
-                    borderBottomWidth: 0.5,
-                    borderColor: colors.grey,
-                  },
+                  styles.viewNoGroups,
                 ]}>
                 <Image
                   source={require('../../../img/images/location.png')}
@@ -201,63 +160,10 @@ class ListEvents extends React.Component {
                   style={[styleApp.text, {marginTop: 10, marginBottom: 20}]}>
                   No {this.props.sportSelected} events found
                 </Text>
-                <View
-                  style={{
-                    height: 6.5,
-                    borderTopWidth: 0.5,
-                    borderColor: colors.grey,
-                    marginTop: 0,
-                  }}
-                />
+                <View style={styles.divider} />
               </View>
             ) : (
               allPublicEvents.map((event, i) => (
-                <CardEvent
-                  size={'M'}
-                  userCard={false}
-                  key={i}
-                  homePage={true}
-                  marginTop={25}
-                  openEvent={(objectID) => this.openEvent(objectID)}
-                  item={event}
-                  data={event}
-                />
-              ))
-            )}
-          </FadeInView>
-        ) : (
-          <FadeInView duration={350}>
-            {allGroupsEvents.length === 0 ? (
-              <View
-                style={[
-                  styleApp.center,
-                  styleApp.marginView,
-                  {
-                    marginTop: 35,
-                    marginBottom: 20,
-                    borderBottomWidth: 0.5,
-                    borderColor: colors.grey,
-                  },
-                ]}>
-                <Image
-                  source={require('../../../img/images/location.png')}
-                  style={{width: 65, height: 65}}
-                />
-                <Text
-                  style={[styleApp.text, {marginTop: 10, marginBottom: 20}]}>
-                  No groups events found
-                </Text>
-                <View
-                  style={{
-                    height: 6.5,
-                    borderTopWidth: 0.5,
-                    borderColor: colors.grey,
-                    marginTop: 0,
-                  }}
-                />
-              </View>
-            ) : (
-              allGroupsEvents.map((event, i) => (
                 <CardEvent
                   size={'M'}
                   userCard={false}
@@ -280,6 +186,22 @@ class ListEvents extends React.Component {
   }
 }
 
+const styles = StyleSheet.create({
+  divider:{
+    height: 6.5,
+    borderTopWidth: 0.5,
+    borderColor: colors.grey,
+    marginTop: 0,
+  },
+  viewNoGroups:{
+    marginTop: 35,
+    marginBottom: 20,
+    borderBottomWidth: 0.5,
+    borderColor: colors.grey,
+  },
+
+})
+
 const mapStateToProps = (state) => {
   return {
     globaleVariables: state.globaleVariables,
@@ -288,7 +210,6 @@ const mapStateToProps = (state) => {
     leagueSelected: state.historicSearch.league,
     radiusSearch: state.globaleVariables.radiusSearch,
     publicEvents: state.events.publicEvents,
-    groupsEvents: state.events.groupsEvents,
     allEvents: state.events.allEvents,
     userID: state.user.userID,
     userConnected: state.user.userConnected,

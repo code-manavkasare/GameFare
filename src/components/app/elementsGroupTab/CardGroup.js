@@ -16,7 +16,7 @@ import styleApp from '../../style/style';
 import {searchDiscussion, createDiscussion} from '../../functions/message';
 import {subscribeUserToGroup} from '../../functions/createGroup';
 
-class CardEvent extends React.Component {
+class CardGroup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -94,6 +94,7 @@ class CardEvent extends React.Component {
           },
         },
         'General',
+        false,
       );
     await NavigationService.goBack();
     return NavigationService.push('Conversation', {
@@ -111,8 +112,6 @@ class CardEvent extends React.Component {
   }
   members(data) {
     if (!data.members) return [];
-    else if (data.info.organizer === this.props.userID)
-      return Object.values(data.members);
     return Object.values(data.members).filter(
       (member) => member.status === 'confirmed',
     );
@@ -179,6 +178,8 @@ class CardEvent extends React.Component {
     );
   }
   displayCard(data) {
+    if (!data) return null
+    const picture = data.pictures[0];
     return (
       <ButtonColor
         view={() => {
@@ -187,8 +188,8 @@ class CardEvent extends React.Component {
               <Row style={{height: 115}}>
                 <AsyncImage
                   style={styles.profilePicture}
-                  mainImage={data.pictures[0]}
-                  imgInitial={data.pictures[0]}
+                  mainImage={picture}
+                  imgInitial={picture}
                 />
               </Row>
               <View style={styles.mainView}>
@@ -212,7 +213,8 @@ class CardEvent extends React.Component {
   }
 
   render() {
-    return this.card(this.props.data);
+    const {data} = this.props;
+    return this.card(data);
   }
 }
 
@@ -244,4 +246,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(CardEvent);
+export default connect(mapStateToProps, {})(CardGroup);

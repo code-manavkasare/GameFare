@@ -3,13 +3,35 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* gamefareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* gamefareTests.m */; };
+		050B790323F1A85100F91B6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 050B790223F1A85100F91B6B /* GoogleService-Info.plist */; };
+		050B796423F858C300F91B6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 050B796323F858C300F91B6B /* GoogleService-Info.plist */; };
+		054C599323EDA04F006D67F4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		054C599423EDA04F006D67F4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		054C599623EDA04F006D67F4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */; };
+		054C599923EDA04F006D67F4 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 05B34DCC23A397CD001B955A /* icomoon.ttf */; };
+		054C599A23EDA04F006D67F4 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1498235D2F9600560A8E /* OpenSans-Bold.ttf */; };
+		054C599B23EDA04F006D67F4 /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1496235D2F9600560A8E /* OpenSans-BoldItalic.ttf */; };
+		054C599C23EDA04F006D67F4 /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1491235D2F9500560A8E /* OpenSans-ExtraBold.ttf */; };
+		054C599D23EDA04F006D67F4 /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1497235D2F9600560A8E /* OpenSans-ExtraBoldItalic.ttf */; };
+		054C599E23EDA04F006D67F4 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B8B236A3BC6006835E7 /* logo.png */; };
+		054C599F23EDA04F006D67F4 /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D148F235D2F9500560A8E /* OpenSans-Italic.ttf */; };
+		054C59A023EDA04F006D67F4 /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1490235D2F9500560A8E /* OpenSans-Light.ttf */; };
+		054C59A123EDA04F006D67F4 /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1493235D2F9500560A8E /* OpenSans-LightItalic.ttf */; };
+		054C59A223EDA04F006D67F4 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1492235D2F9500560A8E /* OpenSans-Regular.ttf */; };
+		054C59A323EDA04F006D67F4 /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1494235D2F9500560A8E /* OpenSans-SemiBold.ttf */; };
+		054C59A423EDA04F006D67F4 /* logoios.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B88236A3B80006835E7 /* logoios.png */; };
+		054C59A523EDA04F006D67F4 /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1495235D2F9600560A8E /* OpenSans-SemiBoldItalic.ttf */; };
+		054C59A623EDA04F006D67F4 /* splashImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D1479235C22FB00560A8E /* splashImage.png */; };
+		054C59A723EDA04F006D67F4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		054C59A823EDA04F006D67F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 172D1482235C7B8F00560A8E /* LaunchScreen.storyboard */; };
 		05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 05B34DCC23A397CD001B955A /* icomoon.ttf */; };
 		067A36C1D3A3166B17C94454 /* libPods-gamefare-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */; };
+		09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 036926E988D44753AF801E89 /* libz.tbd */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -26,7 +48,6 @@
 		172D14A1235D2FB300560A8E /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1494235D2F9500560A8E /* OpenSans-SemiBold.ttf */; };
 		172D14A2235D2FB300560A8E /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1495235D2F9600560A8E /* OpenSans-SemiBoldItalic.ttf */; };
 		17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */; };
-		17BC97A2235B3ABE009F0EC8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */; };
 		17C26B8A236A3B80006835E7 /* logoios.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B88236A3B80006835E7 /* logoios.png */; };
 		17C26B8C236A3BC7006835E7 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B8B236A3BC6006835E7 /* logo.png */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -34,6 +55,7 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* gamefareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* gamefareTests.m */; };
 		50DF24BB2463DD1788DC259F /* libPods-gamefareTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFF75B81AA2E6168A1DB0245 /* libPods-gamefareTests.a */; };
+		541093B5DEABA747478ACB61 /* libPods-gamefare-dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */; };
 		864E34D7F40432278013ECFC /* libPods-gamefare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B745A4C07541F9CBAFA1F0C /* libPods-gamefare.a */; };
 		D8F2CC22EF887C97321F0E5D /* libPods-gamefare-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D6CFBCFD742119D5C2951D7 /* libPods-gamefare-tvOS.a */; };
 /* End PBXBuildFile section */
@@ -70,6 +92,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		054C59AD23EDA04F006D67F4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17B60B4E23C759C4006B1DCF /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -87,8 +119,13 @@
 		00E356EE1AD99517003FC87E /* gamefareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = gamefareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* gamefareTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gamefareTests.m; sourceTree = "<group>"; };
+		036926E988D44753AF801E89 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		050B790223F1A85100F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "GoogleService-Info.plist"; path = "gamefare/GoogleProd/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		050B796323F858C300F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		054C59B123EDA04F006D67F4 /* GameFare-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameFare-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		054C59B223EDA04F006D67F4 /* gamefare-dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gamefare-dev-Info.plist"; path = "/Users/raf/Documents/gamefare-native/ios/gamefare-dev-Info.plist"; sourceTree = "<absolute>"; };
 		05B34DCC23A397CD001B955A /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icomoon.ttf; path = ../assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
-		0AFCFD661DCEBF4D89A565D8 /* Pods-gamefare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.release.xcconfig"; sourceTree = "<group>"; };
+		0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.debug.xcconfig"; sourceTree = "<group>"; };
 		0E75EAC3BEE0426BBEE4E246 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		10C51D15B39B5041A9EFBB64 /* Pods-gamefare-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* gamefare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gamefare.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,10 +155,10 @@
 		17B60B3E23C75945006B1DCF /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		17B60B4F23C75D2B006B1DCF /* RNVideoHelper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVideoHelper.xcodeproj; path = "../node_modules/react-native-video-helper/ios/RNVideoHelper.xcodeproj"; sourceTree = "<group>"; };
-		17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		17BC97A3235B3CB6009F0EC8 /* gamefare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = gamefare.entitlements; path = gamefare/gamefare.entitlements; sourceTree = "<group>"; };
 		17C26B88236A3B80006835E7 /* logoios.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logoios.png; sourceTree = "<group>"; };
 		17C26B8B236A3BC6006835E7 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
+		17D8C96923F22CC400D90107 /* gamefareRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = gamefareRelease.entitlements; path = gamefare/gamefareRelease.entitlements; sourceTree = "<group>"; };
 		27D32A13B60F443294A3DEE3 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* gamefare-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gamefare-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* gamefare-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "gamefare-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,10 +175,11 @@
 		6DCBA4307A2C0027452B5AEA /* Pods-gamefare-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E0D832D1BF34CC385F95319 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefareTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests.debug.xcconfig"; sourceTree = "<group>"; };
+		77E774DC8F6750C028FDBB95 /* Pods-gamefare-dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.release.xcconfig"; sourceTree = "<group>"; };
+		7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8859FC59E8664096BDDB5BC4 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		961B59F205894159992FB65F /* OpenSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBoldItalic.ttf"; path = "../assets/fonts/OpenSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		98F3F432646740D5B7AF42B0 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
-		9A939D37137AED8589A5A995 /* Pods-gamefare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.debug.xcconfig"; sourceTree = "<group>"; };
 		9B66F3956D9C48EDA58E93A0 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		A5E5F29CBD8D465EA8C92991 /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBoldItalic.ttf"; path = "../assets/fonts/OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		A7CA9426255744A2AA3C5EEF /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-BoldItalic.ttf"; path = "../assets/fonts/OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
@@ -149,11 +187,13 @@
 		B5FC607B14FE4F3BA0A13665 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		B66E5C516F714933BD8350A9 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B75ADB7C50F669749B3DC3C4 /* Pods-gamefare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.debug.xcconfig"; sourceTree = "<group>"; };
 		B82B9A5B51F94954A43B8307 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		BA311D58DE4C42AE9AD2C3AB /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		BE0DAE674B794C5087F79B0D /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		C55B45C32DD5061FAE91C251 /* Pods-gamefare-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DB28E714C5A2483483B0536B /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		E54B3A2D2A4961086529BCC4 /* Pods-gamefare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		EE005D1612A642969E598D2D /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -171,12 +211,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		054C599523EDA04F006D67F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054C599623EDA04F006D67F4 /* MobileCoreServices.framework in Frameworks */,
+				541093B5DEABA747478ACB61 /* libPods-gamefare-dev.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */,
 				864E34D7F40432278013ECFC /* libPods-gamefare.a in Frameworks */,
+				09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +266,22 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		054C598B23ED9F43006D67F4 /* GoogleProd */ = {
+			isa = PBXGroup;
+			children = (
+				050B790223F1A85100F91B6B /* GoogleService-Info.plist */,
+			);
+			path = GoogleProd;
+			sourceTree = "<group>";
+		};
+		054C598E23ED9F61006D67F4 /* GoogleDev */ = {
+			isa = PBXGroup;
+			children = (
+				050B796323F858C300F91B6B /* GoogleService-Info.plist */,
+			);
+			name = GoogleDev;
+			sourceTree = "<group>";
+		};
 		0E5EB86E236842468BEB826B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +319,9 @@
 		13B07FAE1A68108700A75B9A /* gamefare */ = {
 			isa = PBXGroup;
 			children = (
+				17D8C96923F22CC400D90107 /* gamefareRelease.entitlements */,
+				054C598E23ED9F61006D67F4 /* GoogleDev */,
+				054C598B23ED9F43006D67F4 /* GoogleProd */,
 				17C26B8B236A3BC6006835E7 /* logo.png */,
 				17C26B88236A3B80006835E7 /* logoios.png */,
 				172D1479235C22FB00560A8E /* splashImage.png */,
@@ -261,10 +330,10 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				17BC97A1235B3ABE009F0EC8 /* GoogleService-Info.plist */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				172D1482235C7B8F00560A8E /* LaunchScreen.storyboard */,
+				054C59B223EDA04F006D67F4 /* gamefare-dev-Info.plist */,
 			);
 			name = gamefare;
 			sourceTree = "<group>";
@@ -317,6 +386,8 @@
 				6D6CFBCFD742119D5C2951D7 /* libPods-gamefare-tvOS.a */,
 				B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */,
 				FFF75B81AA2E6168A1DB0245 /* libPods-gamefareTests.a */,
+				7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */,
+				036926E988D44753AF801E89 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -324,14 +395,16 @@
 		7759C388EDC5AD569FBE2C46 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9A939D37137AED8589A5A995 /* Pods-gamefare.debug.xcconfig */,
-				0AFCFD661DCEBF4D89A565D8 /* Pods-gamefare.release.xcconfig */,
 				F70406560E5EF2EA51CAC662 /* Pods-gamefare-tvOS.debug.xcconfig */,
 				10C51D15B39B5041A9EFBB64 /* Pods-gamefare-tvOS.release.xcconfig */,
 				C55B45C32DD5061FAE91C251 /* Pods-gamefare-tvOSTests.debug.xcconfig */,
 				6DCBA4307A2C0027452B5AEA /* Pods-gamefare-tvOSTests.release.xcconfig */,
 				7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */,
 				50250E1A822B6C4C09DD3082 /* Pods-gamefareTests.release.xcconfig */,
+				B75ADB7C50F669749B3DC3C4 /* Pods-gamefare.debug.xcconfig */,
+				E54B3A2D2A4961086529BCC4 /* Pods-gamefare.release.xcconfig */,
+				0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */,
+				77E774DC8F6750C028FDBB95 /* Pods-gamefare-dev.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -369,6 +442,7 @@
 				00E356EE1AD99517003FC87E /* gamefareTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* gamefare-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* gamefare-tvOSTests.xctest */,
+				054C59B123EDA04F006D67F4 /* GameFare-dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -395,6 +469,30 @@
 			productReference = 00E356EE1AD99517003FC87E /* gamefareTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		054C598F23EDA04F006D67F4 /* gamefare-dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 054C59AE23EDA04F006D67F4 /* Build configuration list for PBXNativeTarget "gamefare-dev" */;
+			buildPhases = (
+				EFE08F4345F5B2F373FD2DD4 /* [CP] Check Pods Manifest.lock */,
+				054C599123EDA04F006D67F4 /* Start Packager */,
+				054C599223EDA04F006D67F4 /* Sources */,
+				054C599523EDA04F006D67F4 /* Frameworks */,
+				054C599823EDA04F006D67F4 /* Resources */,
+				054C59AA23EDA04F006D67F4 /* Bundle React Native code and images */,
+				C8D248C5C6042959B08B060B /* [CP] Embed Pods Frameworks */,
+				9B67D99DDFE2501F8A4D614B /* [CP] Copy Pods Resources */,
+				054C59AD23EDA04F006D67F4 /* Embed Frameworks */,
+				D1B9326885CC4604BDCAA966 /* [CP-User] [RNFB] Core Configuration */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "gamefare-dev";
+			productName = gamefare;
+			productReference = 054C59B123EDA04F006D67F4 /* GameFare-dev.app */;
+			productType = "com.apple.product-type.application";
+		};
 		13B07F861A680F5B00A75B9A /* gamefare */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "gamefare" */;
@@ -408,6 +506,8 @@
 				DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */,
 				24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */,
 				17B60B4E23C759C4006B1DCF /* Embed Frameworks */,
+				2A0641BC3F344866A8C4CF4E /* Upload Debug Symbols to Sentry */,
+				40FF1BEABA4EFB10CE2593A8 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -463,16 +563,23 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 940;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = GDMG8R7UAQ;
+						ProvisioningStyle = Automatic;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
+					054C598F23EDA04F006D67F4 = {
+						DevelopmentTeam = GDMG8R7UAQ;
+						ProvisioningStyle = Automatic;
+					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = H3679W58Z6;
+						DevelopmentTeam = GDMG8R7UAQ;
 						LastSwiftMigration = 1130;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplePay = {
 								enabled = 1;
@@ -490,10 +597,12 @@
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = GDMG8R7UAQ;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E48F1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = GDMG8R7UAQ;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
@@ -527,6 +636,7 @@
 				00E356ED1AD99517003FC87E /* gamefareTests */,
 				2D02E47A1E0B4A5D006451C7 /* gamefare-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* gamefare-tvOSTests */,
+				054C598F23EDA04F006D67F4 /* gamefare-dev */,
 			);
 		};
 /* End PBXProject section */
@@ -557,6 +667,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		054C599823EDA04F006D67F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054C599923EDA04F006D67F4 /* icomoon.ttf in Resources */,
+				054C599A23EDA04F006D67F4 /* OpenSans-Bold.ttf in Resources */,
+				054C599B23EDA04F006D67F4 /* OpenSans-BoldItalic.ttf in Resources */,
+				054C599C23EDA04F006D67F4 /* OpenSans-ExtraBold.ttf in Resources */,
+				054C599D23EDA04F006D67F4 /* OpenSans-ExtraBoldItalic.ttf in Resources */,
+				054C599E23EDA04F006D67F4 /* logo.png in Resources */,
+				054C599F23EDA04F006D67F4 /* OpenSans-Italic.ttf in Resources */,
+				054C59A023EDA04F006D67F4 /* OpenSans-Light.ttf in Resources */,
+				054C59A123EDA04F006D67F4 /* OpenSans-LightItalic.ttf in Resources */,
+				054C59A223EDA04F006D67F4 /* OpenSans-Regular.ttf in Resources */,
+				054C59A323EDA04F006D67F4 /* OpenSans-SemiBold.ttf in Resources */,
+				054C59A423EDA04F006D67F4 /* logoios.png in Resources */,
+				050B796423F858C300F91B6B /* GoogleService-Info.plist in Resources */,
+				054C59A523EDA04F006D67F4 /* OpenSans-SemiBoldItalic.ttf in Resources */,
+				054C59A623EDA04F006D67F4 /* splashImage.png in Resources */,
+				054C59A723EDA04F006D67F4 /* Images.xcassets in Resources */,
+				054C59A823EDA04F006D67F4 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -573,11 +707,11 @@
 				172D14A0235D2FB300560A8E /* OpenSans-Regular.ttf in Resources */,
 				172D14A1235D2FB300560A8E /* OpenSans-SemiBold.ttf in Resources */,
 				17C26B8A236A3B80006835E7 /* logoios.png in Resources */,
+				050B790323F1A85100F91B6B /* GoogleService-Info.plist in Resources */,
 				172D14A2235D2FB300560A8E /* OpenSans-SemiBoldItalic.ttf in Resources */,
 				172D147A235C22FB00560A8E /* splashImage.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				172D1483235C7B8F00560A8E /* LaunchScreen.storyboard in Resources */,
-				17BC97A2235B3ABE009F0EC8 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,91 +745,67 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		054C599123EDA04F006D67F4 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		054C59AA23EDA04F006D67F4 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCheckmark@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPCloseButton@3x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPDismissKeyboard@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPLogo@2x.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/placeholder-image.png",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~ipad.xib",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphonelandscape.xib",
-				"${PODS_ROOT}/Mixpanel/Mixpanel/MPTakeoverNotificationViewController~iphoneportrait.xib",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
-				"${PODS_CONFIGURATION_BUILD_DIR}/Stripe/Stripe.bundle",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowLeft.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowLeft@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowRight.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPArrowRight@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCheckmark.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCheckmark@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton@3x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPDismissKeyboard.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPDismissKeyboard@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPLogo.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPLogo@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/placeholder-image.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPTakeoverNotificationViewController~ipad.nib",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPTakeoverNotificationViewController~iphonelandscape.nib",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPTakeoverNotificationViewController~iphoneportrait.nib",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Stripe.bundle",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		2A0641BC3F344866A8C4CF4E /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -709,7 +819,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		40FF1BEABA4EFB10CE2593A8 /* [CP-User] [RNFB] Core Configuration */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "[CP-User] [RNFB] Core Configuration";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    _JSON_OUTPUT_BASE64=$(python -c 'import json,sys,base64;print(base64.b64encode(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"').read())['${_JSON_ROOT}'])))' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes usful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"firebase_crashlytics_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\n\n  # config.admob_delay_app_measurement_init\n  _ADMOB_DELAY_APP_MEASUREMENT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_delay_app_measurement_init\")\n  if [[ $_ADMOB_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.admob_ios_app_id\n  _ADMOB_IOS_APP_ID=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_ios_app_id\")\n  if [[ $_ADMOB_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_ADMOB_IOS_APP_ID\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally \n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n\n";
 		};
 		6B53CA98BBF9883C28E64518 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -765,18 +885,61 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		9B67D99DDFE2501F8A4D614B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C8D248C5C6042959B08B060B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D1B9326885CC4604BDCAA966 /* [CP-User] [RNFB] Core Configuration */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "[CP-User] [RNFB] Core Configuration";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    _JSON_OUTPUT_BASE64=$(python -c 'import json,sys,base64;print(base64.b64encode(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"').read())['${_JSON_ROOT}'])))' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes usful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"firebase_crashlytics_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\n\n  # config.admob_delay_app_measurement_init\n  _ADMOB_DELAY_APP_MEASUREMENT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_delay_app_measurement_init\")\n  if [[ $_ADMOB_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.admob_ios_app_id\n  _ADMOB_IOS_APP_ID=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_ios_app_id\")\n  if [[ $_ADMOB_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_ADMOB_IOS_APP_ID\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally \n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n\n";
+		};
 		DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh",
-				"${PODS_ROOT}/../../node_modules/@react-native-mapbox-gl/maps/ios/Mapbox.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -795,6 +958,28 @@
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-gamefare-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EFE08F4345F5B2F373FD2DD4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-gamefare-dev-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -839,6 +1024,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* gamefareTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		054C599223EDA04F006D67F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054C599323EDA04F006D67F4 /* AppDelegate.m in Sources */,
+				054C599423EDA04F006D67F4 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -889,13 +1083,19 @@
 			baseConfigurationReference = 7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = gamefareTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -912,10 +1112,16 @@
 			baseConfigurationReference = 50250E1A822B6C4C09DD3082 /* Pods-gamefareTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefareTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -927,26 +1133,90 @@
 			};
 			name = Release;
 		};
-		13B07F941A680F5B00A75B9A /* Debug */ = {
+		054C59AF23EDA04F006D67F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9A939D37137AED8589A5A995 /* Pods-gamefare.debug.xcconfig */;
+			baseConfigurationReference = 0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
-				CURRENT_PROJECT_VERSION = 0.8.9;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = H3679W58Z6;
-				INFOPLIST_FILE = gamefare/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.8.9;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
+				INFOPLIST_FILE = "gamefare-dev-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gamefare;
+				PRODUCT_BUNDLE_IDENTIFIER = "gamefareInc-dev";
+				PRODUCT_NAME = "GameFare-dev";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		054C59B023EDA04F006D67F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 77E774DC8F6750C028FDBB95 /* Pods-gamefare-dev.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
+				INFOPLIST_FILE = "gamefare-dev-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "gamefareInc-dev";
+				PRODUCT_NAME = "GameFare-dev";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B75ADB7C50F669749B3DC3C4 /* Pods-gamefare.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
+				INFOPLIST_FILE = gamefare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = gamefareInc;
 				PRODUCT_NAME = gamefare;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -955,23 +1225,29 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0AFCFD661DCEBF4D89A565D8 /* Pods-gamefare.release.xcconfig */;
+			baseConfigurationReference = E54B3A2D2A4961086529BCC4 /* Pods-gamefare.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
-				CURRENT_PROJECT_VERSION = 0.8.9;
-				DEVELOPMENT_TEAM = H3679W58Z6;
+				CODE_SIGN_ENTITLEMENTS = gamefare/gamefareRelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.8.9;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gamefare;
+				PRODUCT_BUNDLE_IDENTIFIER = gamefareInc;
 				PRODUCT_NAME = gamefare;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -987,11 +1263,16 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "gamefare-tvOS/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1015,11 +1296,16 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "gamefare-tvOS/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1042,11 +1328,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "gamefare-tvOSTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1069,11 +1361,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "gamefare-tvOSTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1091,6 +1389,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1133,7 +1432,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1144,6 +1443,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1179,7 +1479,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -1196,7 +1496,16 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
+		};
+		054C59AE23EDA04F006D67F4 /* Build configuration list for PBXNativeTarget "gamefare-dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				054C59AF23EDA04F006D67F4 /* Debug */,
+				054C59B023EDA04F006D67F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "gamefare" */ = {
 			isa = XCConfigurationList;
@@ -1205,7 +1514,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "gamefare-tvOS" */ = {
 			isa = XCConfigurationList;
@@ -1214,7 +1523,7 @@
 				2D02E4981E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "gamefare-tvOSTests" */ = {
 			isa = XCConfigurationList;
@@ -1223,7 +1532,7 @@
 				2D02E49A1E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "gamefare" */ = {
 			isa = XCConfigurationList;
@@ -1232,7 +1541,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

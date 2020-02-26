@@ -28,7 +28,7 @@ export default class Button extends Component {
     this.props.click();
   }
   widthButton() {
-    if (this.props.width !== undefined) return this.props.width;
+    if (this.props.width) return this.props.width;
     return width - 40;
   }
   styleButton() {
@@ -36,9 +36,11 @@ export default class Button extends Component {
       return {
         ...styles.buttonSubmit,
         backgroundColor: 'white',
+        borderColor: colors.off,
+        borderWidth: 1,
         ...this.props.styleButton,
       };
-    if (this.props.styleButton != undefined)
+    if (this.props.styleButton)
       return {
         ...styles.buttonSubmit,
         ...this.props.styleButton,
@@ -50,7 +52,7 @@ export default class Button extends Component {
     };
   }
   onPressColor() {
-    if (this.props.onPressColor != undefined) return this.props.onPressColor;
+    if (this.props.onPressColor) return this.props.onPressColor;
     return colors.primary2;
   }
   styleText() {
@@ -60,7 +62,7 @@ export default class Button extends Component {
         ...this.props.styleText,
         color: colors[this.props.backgroundColor],
       };
-    if (this.props.textButton != undefined)
+    if (this.props.textButton)
       return {...styles.textButtonOn, ...this.props.textButton};
     return styles.textButtonOn;
   }

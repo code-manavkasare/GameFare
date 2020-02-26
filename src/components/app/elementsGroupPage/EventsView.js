@@ -14,6 +14,7 @@ const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {indexEvents} from '../../database/algolia';
 import isEqual from 'lodash.isequal';
+import {keys} from 'ramda';
 
 import ButtonColor from '../../layout/Views/Button';
 import FadeInView from 'react-native-fade-in-view';
@@ -24,6 +25,7 @@ import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
+import colors from '../../style/colors';
 
 class EventsView extends Component {
   constructor(props) {
@@ -51,9 +53,11 @@ class EventsView extends Component {
     }
   }
   async load() {
-    var events = this.props.data.events;
+    let events = keys(this.props.data.events);
     if (!events) events = [];
-    var {results} = await indexEvents.getObjects(events.reverse());
+    await indexEvents.clearCache();
+    var {results} = await indexEvents.getObjects(events);
+    if (results.filter((event) => !event).length !== 0) return this.load();
     return this.setState({events: results, loader: false});
   }
   rowEvent(event, i) {
@@ -64,7 +68,6 @@ class EventsView extends Component {
         size={'SM'}
         groupPage={true}
         marginTop={25}
-        // navigate={(val, data) => this.props.navigate(val, data)}
         data={event}
         loadData={true}
       />
@@ -78,11 +81,17 @@ class EventsView extends Component {
       return this.props.navigate('Alert', {
         textButton: 'Got it!',
         close: true,
-        title: 'You need to be admin of this groups in order to add events.',
+        title: 'You need to be the group admin to set up a new event.',
+        subtitle: 'Please message them to request assistance.',
       });
+    const sport = this.props.sports.filter(
+      (sport) => sport.value === this.props.data.info.sport,
+    )[0];
     await this.props.createEventAction('setStep1', {groups: [this.props.data]});
     await this.props.createEventAction('setStep0', {
       sport: this.props.data.info.sport,
+      league: sport.typeEvent[0].value,
+      rule: sport.typeEvent[0].rules[0].value,
     });
     return this.props.navigate('CreateEvent0', {
       pageFrom: 'Group',
@@ -97,11 +106,11 @@ class EventsView extends Component {
   }
   eventsView(data) {
     return (
-      <View style={styleApp.viewHome}>
+      <View style={{marginTop: 10}}>
         <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
-              <Text style={styleApp.text}>Events</Text>
+              <Text style={styleApp.text}>Member events</Text>
             </Col>
             <Col style={styleApp.center3} size={20}>
               <ButtonColor
@@ -127,7 +136,7 @@ class EventsView extends Component {
           <View style={styleApp.divider2} />
         </View>
 
-        <View style={{height: 230}}>
+        <View style={{height: 250}}>
           <ScrollViewX
             loader={this.state.loader}
             events={this.state.events}
@@ -156,6 +165,7 @@ const mapStateToProps = (state) => {
     allEvents: state.events.allEvents,
     userConnected: state.user.userConnected,
     userID: state.user.userID,
+    sports: state.globaleVariables.sports.list,
   };
 };
 

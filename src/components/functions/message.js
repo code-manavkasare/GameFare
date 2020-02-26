@@ -3,19 +3,49 @@ import moment from 'moment';
 import {indexDiscussions, getMyGroups, getMyEvents} from '../database/algolia';
 import union from 'lodash/union';
 
-function discussionObj(members, nameDiscussion) {
+function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
     title: nameDiscussion,
-    allMembers: members.map((member) => member.id),
-    numberMembers: members.length,
+    allMembers: Object.values(members).map((member) => member.id),
+    numberMembers: Object.values(members).length,
+    firstMessageExists: firstMessageExists,
     members: members,
     messages: {},
     type: 'users',
   };
 }
 
-async function createDiscussion(members, nameDiscussion) {
-  var newDiscussion = discussionObj(Object.values(members), nameDiscussion);
+const createDiscussionEventGroup = (
+  discussionID,
+  groupID,
+  image,
+  nameGroup,
+  initialMember,
+) => {
+  return {
+    id: discussionID,
+    title: nameGroup,
+    members: {
+      [initialMember.id]: initialMember,
+    },
+    allMembers: [initialMember.id],
+    messages: {},
+    type: 'group',
+    groupID: groupID,
+    image: image,
+  };
+};
+
+async function createDiscussion(members, nameDiscussion, firstMessageExists) {
+  const membersObj = Object.values(members).reduce(function(result, item) {
+    result[item.id] = item;
+    return result;
+  }, {});
+  var newDiscussion = discussionObj(
+    membersObj,
+    nameDiscussion,
+    firstMessageExists,
+  );
 
   const {key} = await firebase
     .database()
@@ -37,13 +67,14 @@ async function sendNewMessage(discusssionID, user, text, images) {
       createdAt: new Date(),
       timeStamp: moment().valueOf(),
       usersRead: {
-        [user._id]: true,
+        [user.id]: true,
       },
     });
   return true;
 }
 
 async function searchDiscussion(ids, numberMembers) {
+  await indexDiscussions.clearCache();
   var filterMembers = '';
   var prefix = ' AND ';
   for (var id in ids) {
@@ -68,39 +99,18 @@ async function searchDiscussion(ids, numberMembers) {
   return hits[0];
 }
 
-async function loadMyDiscusions(userID) {
+async function loadMyDiscusions(userID, searchInput) {
   indexDiscussions.clearCache();
 
-  // search for persnal conversations
-  const {hits} = await indexDiscussions.search({
-    query: '',
-    filters: 'allMembers:' + userID,
+  let {hits} = await indexDiscussions.search(searchInput, {
+    filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
+    hitsPerPage: 10000,
   });
-
-  // search for groups discussions
-  var myGroups = await getMyGroups(userID, '');
-  var groupsDiscussions = myGroups.map((group) => group.discussions[0]);
-  var {results} = await indexDiscussions.getObjects(groupsDiscussions);
-
-  // search for events discussions
-  var myEvents = await getMyEvents(userID);
-  var eventsDiscussions = myEvents
-    .map((event) => {
-      if (event.discussions) return event.discussions[0];
-    })
-    .filter((event) => event);
-  var getDiscussionsEvent = await indexDiscussions.getObjects(
-    eventsDiscussions,
-  );
-  getDiscussionsEvent = getDiscussionsEvent.results;
-
-  let discussions = union(results, hits, getDiscussionsEvent).filter(
-    (discussion) => discussion.firstMessageExists,
-  );
-  discussions = discussions.reduce(function(result, item) {
+  let discussions = hits.reduce(function(result, item) {
     result[item.objectID] = item;
     return result;
   }, {});
+
   return discussions;
 }
 
@@ -117,24 +127,35 @@ function nameOtherMemberConversation(conversation, userID) {
   const infoMember = Object.values(conversation.members).filter(
     (user) => user.id !== userID,
   )[0].info;
+
+  if (!infoMember) {
+    return 'None';
+  }
   return infoMember.firstname + ' ' + infoMember.lastname;
 }
 
 function titleConversation(conversation, userID) {
-  if (conversation.type === 'group') return conversation.title;
-  if (conversation.numberMembers === 2)
-    return nameOtherMemberConversation(conversation, userID);
   let title = '';
-  for (var i in conversation.members) {
-    if (conversation.members[i].id === userID) title = title;
-    else if (i === '0') title = conversation.members[i].info.firstname;
-    else title = title + ', ' + conversation.members[i].info.firstname;
+  if (conversation.type === 'group') title = conversation.title;
+  else if (conversation.numberMembers === 2)
+    title = nameOtherMemberConversation(conversation, userID);
+  else {
+    const members = Object.values(conversation.members).filter(
+      (member) => member.id !== userID,
+    );
+    for (var i in members) {
+      if (i === '0') title = members[i].info.firstname;
+      else title = title + ', ' + members[i].info.firstname;
+    }
   }
+
+  if (title.length > 20) title = title.slice(0, 20) + '...';
   return title;
 }
 
 export {
   createDiscussion,
+  createDiscussionEventGroup,
   searchDiscussion,
   sendNewMessage,
   loadMyDiscusions,

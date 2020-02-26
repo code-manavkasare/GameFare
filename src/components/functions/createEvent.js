@@ -1,24 +1,17 @@
-import React, {Component} from 'react';
-import {Platform, PermissionsAndroid} from 'react-native';
-
-import {uploadPictureFirebase} from '../functions/pictures';
-import {subscribeToTopics} from '../functions/notifications';
-import {indexEvents} from '../database/algolia';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
-import stripe from 'tipsi-stripe';
-// import Date from '../app/elementsEventCreate/DateSelector';
+import {keys} from 'ramda';
 import moment from 'moment';
+import Config from 'react-native-config';
 
-stripe.setOptions({
-  publishableKey: 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki',
-  merchantId: 'merchant.gamefare',
-  androidPayMode: 'test',
-  requiredBillingAddressFields: ['all'],
-});
-var options = {
-  requiredBillingAddressFields: ['postal_address'],
-};
+import {uploadPictureFirebase} from '../functions/pictures';
+import {
+  subscribeToTopics,
+  refreshTokenOnDatabase,
+} from '../functions/notifications';
+import {indexEvents} from '../database/algolia';
+import {options, stripe} from '../functions/stripe';
+import {createDiscussionEventGroup} from '../functions/message';
 
 function generateID() {
   return (
@@ -28,72 +21,60 @@ function generateID() {
   );
 }
 
-function newDiscussion(discussionID, groupID, image, nameGroup) {
-  return {
-    id: discussionID,
-    title: nameGroup,
-    members: {},
-    messages: {},
-    type: 'group',
-    groupID: groupID,
-    image: image,
-  };
+async function addMemberDiscussion(discussionID, member) {
+  await firebase
+    .database()
+    .ref('discussions/' + discussionID + '/members/' + member.id)
+    .update(member);
+  return true;
+}
+
+async function removeMemberDiscussion(discussionID, userID) {
+  await firebase
+    .database()
+    .ref('discussions/' + discussionID + '/members/' + userID)
+    .remove();
+  return true;
 }
 
 async function createEventObj(data, userID, infoUser, level, groups) {
-  var event = {
+  let event = {
     ...data,
     info: {
       ...data.info,
       organizer: userID,
     },
-    /// date_timestamp: Number(new Date(data.date.start)),
   };
-  var attendees = {};
-  var coaches = {};
-  var user = {
+  let attendees = {};
+  let user = {
     info: infoUser,
     id: userID,
     status: 'confirmed',
     userID: userID,
   };
-  if (!event.info.coach) {
-    user.coach = false;
-    attendees = {
-      [userID]: user,
-    };
-  } else {
-    user.coach = true;
-    coaches = {
-      [userID]: user,
-    };
-  }
+  user.coach = false;
+  attendees = {
+    [userID]: user,
+  };
   var allAttendees = Object.values(attendees).map((user) => {
-    return user.userID;
-  });
-  var allCoaches = Object.values(coaches).map((user) => {
     return user.userID;
   });
   return {
     ...event,
     date_timestamp: moment(event.date.start).valueOf(),
     end_timestamp: moment(event.date.end).valueOf(),
-    coaches: coaches,
-    allCoaches: allCoaches,
     attendees: attendees,
     allAttendees: allAttendees,
   };
 }
 
 async function pushEventToGroups(groups, eventID) {
-  for (var i in groups) {
+  for (var i in keys(groups)) {
     await firebase
       .database()
-      .ref('groups/' + groups[i] + '/events')
+      .ref('groups/' + keys(groups)[i] + '/events')
       .update({
-        [eventID]: {
-          eventID: eventID,
-        },
+        [eventID]: true,
       });
   }
 }
@@ -103,6 +84,7 @@ async function createEvent(data, userID, infoUser, level) {
     data.images[0],
     'events/' + generateID(),
   );
+
   if (!pictureUri) return false;
 
   var event = await createEventObj(data, userID, infoUser, level);
@@ -125,10 +107,22 @@ async function createEvent(data, userID, infoUser, level) {
   await firebase
     .database()
     .ref('discussions/' + discussionID)
-    .update(newDiscussion(discussionID, key, pictureUri, event.info.name));
+    .update(
+      createDiscussionEventGroup(
+        discussionID,
+        key,
+        pictureUri,
+        event.info.name,
+        {
+          id: userID,
+          info: infoUser,
+        },
+      ),
+    );
 
   await pushEventToGroups(data.groups, key);
   await subscribeToTopics([userID, 'all', key]);
+  refreshTokenOnDatabase(userID);
 
   return event;
 }
@@ -146,18 +140,19 @@ async function checkUserAttendingEvent(userID, data) {
     query: data.objectID,
     filters: filterAttendees,
   });
-  if (hits.length != 0 && userID == data.info.organizer)
+  if (hits.length !== 0 && userID === data.info.organizer) {
     return {
       response: false,
       message:
         'You are the organizer of this event. You cannot attend your own event.',
     };
-  else if (hits.length != 0)
+  } else if (hits.length !== 0) {
     return {
       response: false,
       message:
         'You are already attending this event. You cannot join it again.',
     };
+  }
   return {response: true};
 }
 
@@ -169,7 +164,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
     0,
     Number(data.price.joiningFee) - Number(cardInfo.totalWallet),
   );
-  if (amountToPay != 0) {
+  if (amountToPay !== 0) {
     cardID = cardInfo.defaultCard.id;
   }
   if (amountToPay !== 0 && cardID === 'applePay') {
@@ -180,11 +175,12 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
           amount: amountToPay.toFixed(2),
         },
       ];
+      const applePay = await stripe.canMakeApplePayPayments();
+
       const token = await stripe.paymentRequestWithApplePay(items, options);
       var tokenCard = token.tokenId;
 
-      var url =
-        'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard';
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addUserCreditCard`;
       const promiseAxios = await axios.get(url, {
         params: {
           tokenCard: tokenCard,
@@ -208,7 +204,7 @@ async function payEntryFee(now, data, userID, cardInfo, coach, infoUser) {
   }
   if (Number(data.price.joiningFee) !== 0) {
     try {
-      var url = 'https://us-central1-getplayd.cloudfunctions.net/payEntryFee';
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}payEntryFee`;
       const promiseAxios = await axios.get(url, {
         params: {
           cardID: cardID,
@@ -239,16 +235,17 @@ async function joinEvent(
   cardInfo,
   coach,
   users,
+  waitlist,
 ) {
-  if (data.date_timestamp < Number(new Date()))
+  if (data.end_timestamp < Number(new Date()))
     return {
       response: false,
-      message: 'This event is now past. You cannot join it anymore.',
+      message: 'The event has finished. You can no longer sign up.',
     };
   var {response, message} = await checkUserAttendingEvent(userID, data);
   if (!response) return {response, message};
 
-  var now = new Date();
+  var now = new Date().toString();
   var {message, response} = await payEntryFee(
     now,
     data,
@@ -259,26 +256,15 @@ async function joinEvent(
   );
   if (response === 'cancel') return {message, response};
 
-  // if (!data.info.public && coach) {
-  //   var newLevel = data.info.levelFilter
-  //   if (data.info.levelOption == 'max' || newLevel == 0) {
-  //     newLevel = 1
-  //   }
-  //   await firebase.database().ref('users/' + userID + '/level/').update({
-  //     [data.info.sport]:newLevel
-  //   })
-  // }
-
-  var pushSection = 'attendees';
-  if (coach) pushSection = 'coaches';
-
-  var usersToPush = {};
+  let pushSection = 'attendees';
+  let usersToPush = {};
 
   for (var i in users) {
     var user = {
       ...users[i],
       coach: coach,
-      status: 'confirmed',
+      status: waitlist ? 'pending' : 'confirmed',
+      amountPaid: coach ? 0 : data.price.joiningFee,
       date: now,
     };
     usersToPush = {
@@ -289,13 +275,32 @@ async function joinEvent(
       .database()
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)
       .update(user);
+    if (user.status === 'confirmed') {
+      await addMemberDiscussion(data.discussions[0], user);
+    }
   }
+  if (user.status === 'confirmed')
+    await subscribeToTopics([userID, 'all', data.objectID]);
+  refreshTokenOnDatabase(userID);
 
-  await subscribeToTopics([userID, 'all', data.objectID]);
   return {
     response: true,
     message: {usersToPush: usersToPush, pushSection: pushSection},
   };
 }
 
-module.exports = {createEvent, joinEvent};
+function arrayAttendees(members, userID, organizer) {
+  if (!members) return [];
+  if (organizer === userID) return Object.values(members);
+  return Object.values(members).filter(
+    (attendee) => attendee.status === 'confirmed' || attendee.id === userID,
+  );
+}
+
+module.exports = {
+  createEvent,
+  joinEvent,
+  arrayAttendees,
+  addMemberDiscussion,
+  removeMemberDiscussion,
+};

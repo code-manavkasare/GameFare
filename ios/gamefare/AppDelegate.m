@@ -11,7 +11,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RNFIRMessaging.h"
+//#import "RNFIRMessaging.h"
+#import <Firebase.h>
+
 #import "RNFirebaseNotifications.h"
 #import "RNFirebaseMessaging.h"
 
@@ -20,6 +22,7 @@
 #import "RNSplashScreen.h"
 #import <Crashlytics/Crashlytics.h>
 #import "RNBranch.h"
+#import "Orientation.h"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -48,10 +51,11 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  [FIRApp configure];
-  [RNFirebaseNotifications configure];
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
+//  [RNFirebaseNotifications configure];
   [Fabric with:@[[Crashlytics class]]];
-  
   [RNSplashScreen show];
   return YES;
 }
@@ -69,14 +73,14 @@
 //  [RNFIRMessaging didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 //}
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
-fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
-  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-}
-
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
-}
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
+//fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
+//  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+//}
+//
+//- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+//  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
+//}
 
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
@@ -93,6 +97,11 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
   Mixpanel *mixpanel = [Mixpanel sharedInstance];
   [mixpanel.people addPushDeviceToken:deviceToken];
+}
+
+// Orientation library
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+  return [Orientation getOrientation];
 }
 
 @end

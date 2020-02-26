@@ -1,37 +1,19 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  Image,
-  TextInput,
-  ScrollView,
-} from 'react-native';
-import firebase from 'react-native-firebase';
+import {View, Text, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import {groupsAction} from '../../../actions/groupsActions';
+import {keys} from 'ramda';
 import isEqual from 'lodash.isequal';
 
-const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 
+import {groupsAction} from '../../../actions/groupsActions';
 import CardGroup from '../elementsGroupTab/CardGroup';
-import {timing, native} from '../../animations/animations';
-import {
-  indexGroups,
-  indexEvents,
-  indexPastEvents,
-} from '../../database/algolia';
-
+import {native} from '../../animations/animations';
+import {indexGroups} from '../../database/algolia';
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
+const {height, width} = Dimensions.get('screen');
 class ListEvents extends React.Component {
   constructor(props) {
     super(props);
@@ -52,23 +34,22 @@ class ListEvents extends React.Component {
     return this.loadGroups(this.props.groups);
   }
   async componentWillReceiveProps(nextProps) {
-    if (this.props.loader !== nextProps.loader) {
+    if (!isEqual(this.props.groups, nextProps.groups)) {
       await this.setState({loader: true});
       this.loadGroups(nextProps.groups);
     }
   }
   async getGroups(groups) {
     const {results} = await indexGroups.getObjects(groups);
-
     return results;
   }
   async loadGroups(groups) {
     await this.setState({loader: true});
-
     indexGroups.clearCache();
-    var groupsEvents = await this.getGroups(groups);
-
-    this.setState({loader: false, groups: groupsEvents});
+    const groupsEvents = await this.getGroups(keys(groups));
+    if (groupsEvents.filter((group) => !group).length !== 0)
+      return this.loadGroups(groups);
+    return this.setState({loader: false, groups: groupsEvents});
   }
   openGroup(objectID) {
     return this.props.navigate('Group', {
@@ -101,7 +82,7 @@ class ListEvents extends React.Component {
     return (
       <View style={{marginTop: 10}}>
         <View style={[styleApp.marginView, {marginBottom: 10}]}>
-          <Text style={styleApp.input}>Groups related {numberFuture}</Text>
+          <Text style={styleApp.input}>Member groups {numberFuture}</Text>
           <View style={[styleApp.divider2, {marginTop: 20}]} />
         </View>
 

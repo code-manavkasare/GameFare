@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, PermissionsAndroid, Dimensions} from 'react-native';
-
+import moment from 'moment';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
 async function getPermissionCalendar() {
@@ -13,4 +13,8 @@ async function getPermissionCalendar() {
   return true;
 }
 
-module.exports = {getPermissionCalendar};
+function isDatePast(date) {
+  return moment().valueOf() > moment(date).valueOf();
+}
+
+module.exports = {getPermissionCalendar, isDatePast};

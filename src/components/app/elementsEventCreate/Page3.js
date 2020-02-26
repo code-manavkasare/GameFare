@@ -101,6 +101,7 @@ class Page3 extends Component {
   rowGroup(group, i) {
     return (
       <ButtonColor
+        key={i}
         view={() => {
           return (
             <Row>
@@ -302,6 +303,7 @@ class Page3 extends Component {
       }
     }
 
+
     await this.props.eventsAction('setAllEvents', {[event.objectID]: event});
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
@@ -317,15 +319,14 @@ class Page3 extends Component {
 
     return this.props.navigation.navigate('Contacts', {
       data: event,
-      pageFrom: 'CreateEvent3',
+      pageFrom: 'Event',
       openPageLink: 'openEventPage',
-      pageTo: 'Event',
       objectID: event.objectID,
     });
   }
   render() {
     return (
-      <View style={[styleApp.stylePage, {borderLeftWidth: 1}]}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}

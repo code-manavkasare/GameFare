@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
+import {messageAction} from '../../../actions/messageActions';
 import {joinEvent} from '../../functions/createEvent';
+import {indexDiscussions} from '../../database/algolia';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -134,12 +136,12 @@ class ProfilePage extends Component {
       </View>
     );
   }
-  checkout(data) {
+  checkout(data, waitlist, creditCardCharge) {
     var sport = this.props.sports.filter(
-      (sport) => sport.value == data.info.sport,
+      (sport) => sport.value === data.info.sport,
     )[0];
     var league = Object.values(sport.typeEvent).filter(
-      (item) => item.value == data.info.league,
+      (item) => item.value === data.info.league,
     )[0];
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
@@ -172,60 +174,31 @@ class ProfilePage extends Component {
         <View style={[styleApp.viewHome, {paddingTop: 15}]}>
           <View style={styleApp.marginView}>
             {this.rowText(
-              this.coach() ? 'Price per player' : 'Entry fee',
+              'Entry fee',
               colors.title,
               'OpenSans-SemiBold',
-              Number(data.price.joiningFee) == 0
+              Number(data.price.joiningFee) === 0
                 ? 'Free'
                 : '$' + data.price.joiningFee,
             )}
-            {this.coach()
-              ? this.rowText(
-                  'Attendance',
-                  colors.title,
-                  'OpenSans-SemiBold',
-                  data.info.maxAttendance,
-                )
-              : null}
-            {this.coach() ? (
-              <View
-                style={[styleApp.divider, {marginBottom: 10, marginTop: 10}]}
-              />
-            ) : null}
-            {this.coach()
-              ? this.rowText(
-                  'Get',
-                  colors.title,
-                  'OpenSans-SemiBold',
-                  '$' +
-                    Number(data.price.joiningFee) *
-                      Number(data.info.maxAttendance),
-                )
-              : null}
-            {!this.coach() &&
-            this.props.userConnected &&
-            Number(data.price.joiningFee) != 0
-              ? this.rowText(
-                  'Credits',
-                  colors.green,
-                  'OpenSans-SemiBold',
-                  '$' + Number(this.props.totalWallet).toFixed(2),
-                )
-              : null}
 
-            {this.coach() || Number(data.price.joiningFee) == 0 ? null : this
-                .props.userConnected ? (
+            {this.props.userConnected &&
+              Number(data.price.joiningFee) !== 0 &&
+              this.rowText(
+                'Credits',
+                colors.green,
+                'OpenSans-SemiBold',
+                '$' + Number(this.props.totalWallet).toFixed(2),
+              )}
+
+            {Number(data.price.joiningFee) === 0 ? null : this.props
+                .userConnected ? (
               <View>
                 {this.rowText(
                   'Charge amount',
                   colors.title,
                   'OpenSans-SemiBold',
-                  '$' +
-                    Math.max(
-                      0,
-                      Number(data.price.joiningFee) -
-                        Number(this.props.totalWallet),
-                    ).toFixed(2),
+                  '$' + creditCardCharge.toFixed(2),
                 )}
                 <View style={[styleApp.divider2, {marginBottom: 10}]} />
               </View>
@@ -241,67 +214,48 @@ class ProfilePage extends Component {
               </View>
             )}
 
-            {!this.coach() &&
-            this.props.userConnected &&
-            Math.max(
-              0,
-              Number(data.price.joiningFee) - Number(this.props.totalWallet),
-            ) != 0
-              ? this.creditCard()
-              : null}
+            {this.props.userConnected &&
+              creditCardCharge !== 0 &&
+              this.creditCard()}
           </View>
         </View>
 
-        {this.coach() ||
-        Math.max(
-          0,
-          Number(data.price.joiningFee) - Number(this.props.totalWallet),
-        ) != 0 ? (
-          <View style={styleApp.marginView}>
-            {this.coach() ? (
-              <Text style={[styleApp.title, {fontSize: 13}]}>
-                Reminder •{' '}
-                <Text style={{fontFamily: 'OpenSans-Regular'}}>
-                  Your payment for this session will be number of players
-                  entered multiplied by fee per player. You will be paid after
-                  the session takes place.
-                </Text>
+        <View style={styleApp.marginView}>
+          {creditCardCharge !== 0 && waitlist ? (
+            <Text style={styles.textReminder}>
+              Reminder •{' '}
+              <Text style={styles.smallText}>
+                We will charge the entry fee at the point of joining the event.
+                No refunds unless your spot can be filled with an alternate
+                player. {'\n'}
+                {'\n'}If the organizer declines your request, we will refund the
+                charge on your wallet.
               </Text>
-            ) : Math.max(
-                0,
-                Number(data.price.joiningFee) - Number(this.props.totalWallet),
-              ) != 0 ? (
-              <Text style={[styleApp.title, {fontSize: 13}]}>
-                Reminder •{' '}
-                <Text style={{fontFamily: 'OpenSans-Regular'}}>
-                  We will charge the entry fee at the point of joining the
-                  event. No refunds unless your spot can be filled with an
-                  alternate player.
-                </Text>
+            </Text>
+          ) : creditCardCharge !== 0 ? (
+            <Text style={styles.textReminder}>
+              Reminder •{' '}
+              <Text style={styles.smallText}>
+                We will charge the entry fee at the point of joining the event.
+                No refunds unless your spot can be filled with an alternate
+                player.
               </Text>
-            ) : null}
-          </View>
-        ) : null}
+            </Text>
+          ) : waitlist ? (
+            <Text style={styles.textReminder}>
+              Reminder •{' '}
+              <Text style={styles.smallText}>
+                We will notify you once the organizer accepts or declines your
+                request.
+              </Text>
+            </Text>
+          ) : null}
+        </View>
       </View>
     );
   }
-  textButtonConfirm(data) {
-    if (this.coach()) return 'Confirm attendance';
-    if (
-      Math.max(
-        0,
-        Number(data.price.joiningFee) - Number(this.props.totalWallet),
-      ) == 0
-    )
-      return 'Confirm attendance';
-    return 'Pay & Confirm attendance';
-  }
 
-  coach() {
-    return this.props.navigation.getParam('coach').coach;
-  }
-
-  async submit(data) {
+  async submit(data, waitlist) {
     await this.setState({loader: true});
     var {response, message} = await joinEvent(
       data,
@@ -315,6 +269,7 @@ class ProfilePage extends Component {
       },
       this.props.navigation.getParam('coach'),
       this.props.navigation.getParam('users'),
+      waitlist,
     );
     if (!response) {
       await this.setState({loader: false});
@@ -326,7 +281,7 @@ class ProfilePage extends Component {
         onGoBack: () => this.props.navigation.navigate('Checkout'),
       });
     } else if (response === 'cancel') return this.setState({loader: false});
-    await this.props.eventsAction('addFutureEvent', data.objectID);
+
     await this.props.eventsAction('setAllEvents', {
       [data.objectID]: {
         ...data,
@@ -336,24 +291,37 @@ class ProfilePage extends Component {
         },
       },
     });
+    await this.props.eventsAction('addFutureEvent', data.objectID);
+    const conversation = await indexDiscussions.getObject(data.discussions[0]);
+    await this.setConversation(conversation);
+
     await this.setState({loader: false});
     return this.props.navigation.navigate('Event');
   }
-  conditionOn() {
-    if (
-      Math.max(
-        0,
-        Number(this.props.navigation.getParam('data').price.joiningFee) -
-          Number(this.props.totalWallet),
-      ) != 0 &&
-      this.props.defaultCard == undefined
-    )
-      return false;
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
     return true;
   }
+  conditionOn(creditCardCharge, defaultCard) {
+    if (creditCardCharge !== 0 && !defaultCard) return false;
+    return true;
+  }
+  textButtonConfirm(creditCardCharge, waitlist) {
+    if (waitlist && creditCardCharge === 0) return 'Join the waitlist';
+    if (waitlist) return 'Pay & join the waitlist';
+    if (creditCardCharge === 0) return 'Confirm attendance';
+    return 'Pay & Confirm attendance';
+  }
   render() {
+    const waitlist = this.props.navigation.getParam('waitlist');
+    const event = this.props.navigation.getParam('data');
+    const creditCardCharge = Math.max(
+      0,
+      Number(event.price.joiningFee) - Number(this.props.totalWallet),
+    );
+    const {defaultCard} = this.props;
     return (
-      <View style={[styleApp.stylePage, {borderLeftWidth: 1}]}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
@@ -370,7 +338,7 @@ class ProfilePage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() =>
-            this.checkout(this.props.navigation.getParam('data'))
+            this.checkout(event, waitlist, creditCardCharge)
           }
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -383,27 +351,23 @@ class ProfilePage extends Component {
               icon={'next'}
               backgroundColor="green"
               onPressColor={colors.greenClick}
-              styleButton={{marginLeft: 20, width: width - 40}}
+              styleButton={styleApp.marginView}
               enabled={true}
-              disabled={!this.conditionOn()}
-              text={this.textButtonConfirm(
-                this.props.navigation.getParam('data'),
-              )}
+              disabled={!this.conditionOn(creditCardCharge, defaultCard)}
+              text={this.textButtonConfirm(creditCardCharge, waitlist)}
               loader={this.state.loader}
-              click={() => this.submit(this.props.navigation.getParam('data'))}
+              click={() => this.submit(event, waitlist)}
             />
           ) : (
             <Button
               icon={'next'}
               backgroundColor="green"
               onPressColor={colors.greenClick}
-              styleButton={{marginLeft: 20, width: width - 40}}
+              styleButton={styleApp.marginView}
               enabled={true}
               text="Sign in to proceed"
               loader={false}
-              click={() =>
-                this.props.navigation.navigate('SignIn', {pageFrom: 'Checkout'})
-              }
+              click={() => this.props.navigation.navigate('SignIn')}
             />
           )}
         </View>
@@ -412,7 +376,10 @@ class ProfilePage extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  textReminder: {...styleApp.title, fontSize: 13},
+  smallText: {fontWeight: 'normal'},
+});
 
 const mapStateToProps = (state) => {
   return {
@@ -428,6 +395,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction, eventsAction})(
-  ProfilePage,
-);
+export default connect(mapStateToProps, {
+  userAction,
+  eventsAction,
+  messageAction,
+})(ProfilePage);

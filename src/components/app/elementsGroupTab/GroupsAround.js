@@ -12,11 +12,7 @@ import {getZone} from '../../functions/location';
 import CardGroup from './CardGroup';
 import {timing, native} from '../../animations/animations';
 
-import {
-  indexGroups,
-  indexEvents,
-  indexPastEvents,
-} from '../../database/algolia';
+import {indexGroups} from '../../database/algolia';
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
@@ -170,7 +166,7 @@ class ListEvents extends React.Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    infoUser:state.user.infoUser.userInfo,
+    infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     sportSelected: state.historicSearch.sport,
     //leagueSelected:state.historicSearch.league,

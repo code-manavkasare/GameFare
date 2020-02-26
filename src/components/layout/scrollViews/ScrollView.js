@@ -76,7 +76,7 @@ export default class ScrollViewPage extends PureComponent {
             nativeEvent: {
               contentOffset: {
                 y:
-                  this.props.AnimatedHeaderValue === undefined
+                  !this.props.AnimatedHeaderValue
                     ? this.AnimatedHeaderValue
                     : this.props.AnimatedHeaderValue,
               },

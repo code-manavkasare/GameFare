@@ -48,11 +48,11 @@ export default class Alert extends Component {
     return <Text style={[styleApp.title,{fontSize:18,fontFamily:'OpenSans-SemiBold'}]}>{this.props.navigation.getParam('title')}</Text>
   }
   subtitle() {
-    if (this.props.navigation.getParam('subtitle') != undefined) return <Text style={[styleApp.text,{marginTop:20,fontFamily:'OpenSans-Regular',fontSize:15}]}>{this.props.navigation.getParam('subtitle')}</Text>
+    if (this.props.navigation.getParam('subtitle')) return <Text style={[styleApp.text,{marginTop:20,fontFamily:'OpenSans-Regular',fontSize:15}]}>{this.props.navigation.getParam('subtitle')}</Text>
     return null
   }
   click(){
-    if (this.props.navigation.getParam('close') != true) {
+    if (this.props.navigation.getParam('close') !== true) {
       this.setState({loader:true})
       this.props.navigation.state.params.onGoBack()
     } else {
@@ -60,6 +60,8 @@ export default class Alert extends Component {
     }
   }
   render() {  
+    const colorButton = this.props.navigation.getParam('colorButton')
+    const onPressColor = this.props.navigation.getParam('onPressColor')
     return (
       <View style={styles.viewModal}>
           <TouchableOpacity style={styles.buttonClose} activeOpacity={0.5} onPress={() => {this.props.navigation.goBack()}}>
@@ -67,7 +69,7 @@ export default class Alert extends Component {
           </TouchableOpacity>
 
           {
-            this.props.navigation.getParam('icon') != undefined?
+            this.props.navigation.getParam('icon')?
             <View style={styles.viewIcon}>
             {this.props.navigation.getParam('icon')}
             </View>
@@ -82,7 +84,7 @@ export default class Alert extends Component {
          </Row>
 
           <View style={styles.viewButton}>
-            <Button backgroundColor={'green'} disabled={false} onPressColor={colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.click()} loader={this.state.loader}/>
+            <Button backgroundColor={colorButton?colorButton:'green'} disabled={false} onPressColor={onPressColor?onPressColor:colors.greenClick}  text={this.props.navigation.getParam('textButton')} click={() => this.click()} loader={this.state.loader}/>
           </View>
       </View>  
     );

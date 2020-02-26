@@ -7,7 +7,9 @@ import moment from 'moment';
 import {messageAction} from '../../../actions/messageActions';
 import Conversation2 from './Conversation2';
 
+import {indexDiscussions} from '../../database/algolia';
 import {titleConversation} from '../../functions/message';
+import {userObject} from '../../functions/users';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import styleApp from '../../style/style';
@@ -21,6 +23,11 @@ class MessageTab extends React.Component {
     this.state = {
       loader: true,
       messages: [],
+      conversation: {
+        title: '',
+        type: 'group',
+        picture: '',
+      },
     };
     this.inputValue = '';
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -39,7 +46,10 @@ class MessageTab extends React.Component {
       .off();
   }
   async loadMessages(conversation, myConversation, userID) {
-    const {gamefareUser} = this.props
+    if (!conversation.objectID) {
+      conversation = await indexDiscussions.getObject(conversation);
+    }
+    const {gamefareUser} = this.props;
     const that = this;
     firebase
       .database()
@@ -53,18 +63,22 @@ class MessageTab extends React.Component {
               user: gamefareUser,
               text: 'Write the first message.',
               createdAt: new Date(),
+              id: 'noMessage',
               timeStamp: moment().valueOf(),
             },
           };
-
         messages = Object.keys(messages)
-          .map((_id) => ({
-            _id,
-            ...messages[_id],
+          .map((id) => ({
+            id,
+            ...messages[id],
           }))
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
-        that.setState({messages: messages, loader: false});
+        that.setState({
+          messages: messages,
+          loader: false,
+          conversation: conversation,
+        });
 
         let lastMessage = Object.values(messages)[0];
         let usersRead = lastMessage.usersRead;
@@ -75,10 +89,6 @@ class MessageTab extends React.Component {
         };
         lastMessage.usersRead = usersRead;
         if (myConversation || lastMessage.user.id === userID) {
-          console.log('oui on save la conversation', {
-            ...conversation,
-            lastMessage: lastMessage,
-          });
           that.setConversation({
             ...conversation,
             lastMessage: lastMessage,
@@ -86,27 +96,24 @@ class MessageTab extends React.Component {
         }
       });
   }
-  setConversation(data) {
-    this.props.messageAction('setConversation', data);
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
+    return true;
   }
   render() {
-    const user = {
-      _id: this.props.userID,
-      name: this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
-      avatar: !this.props.infoUser.picture
-        ? 'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/icons%2Favatar.png?alt=media&token=290242a0-659a-4585-86c7-c775aac04271'
-        : this.props.infoUser.picture,
-    };
-    const conversation = this.props.navigation.getParam('data');
+    const {infoUser, userID, userConnected} = this.props;
+    const user = userObject(infoUser, userID);
+    let conversation = this.props.navigation.getParam('data');
+    if (!conversation.objectID) conversation = this.state.conversation;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={titleConversation(conversation, this.props.userID)}
+          textHeader={titleConversation(conversation, userID)}
           imgHeader={
             <ImageConversation
               conversation={conversation}
-              userID={this.props.userID}
+              userID={userID}
               style={styleApp.roundView2}
               sizeSmallImg={25}
             />
@@ -133,7 +140,7 @@ class MessageTab extends React.Component {
           user={user}
           onRef={(ref) => (this.conversationRef = ref)}
           messageAction={this.props.messageAction}
-          userConnected={this.props.userConnected}
+          userConnected={userConnected}
           discussion={conversation}
         />
       </View>

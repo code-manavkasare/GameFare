@@ -313,20 +313,12 @@ const styles = StyleSheet.create({
     opacity: 0.65,
     // zIndex:220,
   },
-  roundMessageView: {
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'blue',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   roundMessage: {
     height: 9,
     width: 9,
     borderRadius: 4.5,
     top: 8.5,
-    left: width / 4 - 43,
+    left: width / 4 - 37,
     position: 'absolute',
     zIndex: 30,
     borderWidth: 1,
@@ -334,7 +326,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   inputForm: {
-    height: 50,
+    height: 45,
     marginTop: 10,
     width: '100%',
     borderBottomWidth: 1,
@@ -450,6 +442,12 @@ const styles = StyleSheet.create({
   fullSize: {
     width: '100%',
     height: '100%',
+  },
+  eventTitle: {
+    color: colors.primary,
+    marginTop: 0,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
   },
 });
 

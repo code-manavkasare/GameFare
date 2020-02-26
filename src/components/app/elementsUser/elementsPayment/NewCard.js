@@ -8,16 +8,16 @@ import {
   Dimensions,
   TextInput,
   Animated,
+  Platform,
   Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
+import Config from 'react-native-config';
+
 import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import BackButton from '../../../layout/buttons/BackButton';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import sizes from '../../../style/sizes';
@@ -25,8 +25,6 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
-import Stripe from 'react-native-stripe-api';
-var stripeToken = 'pk_live_wO7jPfXmsYwXwe6BQ2q5rm6B00wx0PM4ki';
 import axios from 'axios';
 
 class ListEvent extends Component {
@@ -77,63 +75,54 @@ class ListEvent extends Component {
     }
     this.props.navigation.navigate('NewCard');
   }
-  submit() {
-    const client = new Stripe(stripeToken);
+  async submit() {
     this.setState({loader: true, error: false});
     if (Platform.OS === 'android') {
       Keyboard.dismiss();
     }
-
     var expiry = this.state.expDate;
     expiry = expiry.split('/');
-    var monthExpiry = expiry[0];
-    var yearExpiry = expiry[1];
-    // yearExpiry = '20'+yearExpiry
+    const monthExpiry = expiry[0];
+    const yearExpiry = expiry[1];
 
-    var objCard = {
-      number: this.state.cardNumber,
-      exp_month: monthExpiry,
-      exp_year: yearExpiry,
-      cvc: this.state.cvv,
-      address_zip: this.state.zipCode,
-    };
-    client.createToken(objCard).then((response) => {
-      tokenCard = response.id;
-      if (response.error) {
-        this.wrongCB(response.error.message);
-      } else {
-        var url =
-          'https://us-central1-getplayd.cloudfunctions.net/addUserCreditCard';
-        const promiseAxios = axios.get(url, {
-          params: {
-            tokenCard: tokenCard,
-            userID: this.props.userID,
-            name:
-              this.props.infoUser.firstname +
-              ' ' +
-              this.props.infoUser.lastname,
-            email:
-              this.props.infoUser.email != undefined
-                ? this.props.infoUser.email
-                : '',
-            tokenStripeCus: this.props.tokenCusStripe,
-            brand: response.brand,
-          },
-        });
-        return Promise.all([promiseAxios]).then((results) => {
-          if (results[0].data.response == true) {
-            Keyboard.dismiss();
-            this.props.navigation.dismiss();
-          } else {
-            if (results[0].data.message != undefined) {
-              this.wrongCB(results[0].data.message);
-            } else {
-              this.wrongCB('An error has occured. Please verify your entry.');
-            }
-          }
-        });
-      }
+    const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createTokenCard`;
+    let response = await axios.get(urlCreateToken, {
+      params: {
+        number: this.state.cardNumber,
+        exp_month: monthExpiry,
+        exp_year: yearExpiry,
+        cvc: this.state.cvv,
+        address_zip: this.state.zipCode,
+      },
     });
+    response = response.data;
+    if (response.error) {
+      this.wrongCB(response.error.message);
+    } else {
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addUserCreditCard`;
+      let promiseAddCreditCard = await axios.get(url, {
+        params: {
+          tokenCard: response.token,
+          userID: this.props.userID,
+          name:
+            this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname,
+          email: this.props.infoUser.email ? this.props.infoUser.email : '',
+          tokenStripeCus: this.props.tokenCusStripe,
+          brand: response.brand,
+        },
+      });
+      promiseAddCreditCard = promiseAddCreditCard.data;
+      if (promiseAddCreditCard.response) {
+        Keyboard.dismiss();
+        this.props.navigation.dismiss();
+      } else {
+        if (promiseAddCreditCard.message) {
+          this.wrongCB(promiseAddCreditCard.message);
+        } else {
+          this.wrongCB('An error has occured. Please verify your entry.');
+        }
+      }
+    }
   }
   changeCardNumber(rawText, auto) {
     var currentText = this.state.cardNumber;

@@ -25,6 +25,7 @@ import colors from '../../style/colors';
 import styleApp from '../../style/style';
 
 import {createDiscussion, searchDiscussion} from '../../functions/message';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export default class CardUser extends Component {
   constructor(props) {
@@ -34,7 +35,12 @@ export default class CardUser extends Component {
     };
   }
   componentDidMount() {}
-  async openDiscussion(user) {
+  async onClick(user) {
+    if (this.props.removable) {
+      const {removeFunc} = this.props;
+      removeFunc(user);
+      return;
+    }
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
     if (this.props.userID === user.id) return true;
     await this.setState({loader: true});
@@ -83,6 +89,7 @@ export default class CardUser extends Component {
       />
     );
   }
+
   accept(user, status, verb, textButton) {
     NavigationService.navigate('Alert', {
       title:
@@ -148,14 +155,44 @@ export default class CardUser extends Component {
                     </View>
                   )}
                 </Col>
-                <Col size={65} style={[styleApp.center2, {paddingLeft: 10}]}>
+                <Col size={75} style={[styleApp.center2, {paddingLeft: 10}]}>
                   <Text style={styleApp.text}>
                     {user.info.firstname} {user.info.lastname}
                   </Text>
                 </Col>
-                <Col size={20} style={styleApp.center3}>
+                <Col size={10} style={styleApp.center}>
+                  {user.status === 'declined' ? (
+                    <Col
+                      size={10}
+                      style={styleApp.center}
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        NavigationService.navigate('Alert', {
+                          close: true,
+                          textButton: 'Got it!',
+                          title:
+                            'You have declined this player’s joining request.',
+                        })
+                      }>
+                      <Image
+                        source={require('../../../img/icons/traffic.png')}
+                        style={{width: 17, height: 17}}
+                      />
+                    </Col>
+                  ) : (
+                    <Col size={10} />
+                  )}
+                </Col>
+                <Col size={10} style={styleApp.center3}>
                   {this.state.loader ? (
                     <Loader size={20} color="green" />
+                  ) : this.props.removable ? (
+                    <AllIcons
+                      name="minus"
+                      type="font"
+                      color={colors.red}
+                      size={17}
+                    />
                   ) : this.props.userID !== user.id ? (
                     <AllIcons
                       name="envelope"
@@ -163,14 +200,38 @@ export default class CardUser extends Component {
                       color={colors.green}
                       size={17}
                     />
+                  ) : user.status === 'pending' ? (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        NavigationService.navigate('Alert', {
+                          close: true,
+                          textButton: 'Got it!',
+                          title:
+                            'Your joining request is pending admin approval.',
+                        })
+                      }>
+                      <AllIcons
+                        name="redo-alt"
+                        type="font"
+                        color={colors.secondary}
+                        size={17}
+                      />
+                    </TouchableOpacity>
                   ) : null}
                 </Col>
               </Row>
             );
           }}
-          click={() => this.openDiscussion(user)}
+          click={() => this.onClick(user)}
           color="white"
-          style={{width: width, height: 55, paddingLeft: 20, paddingRight: 20}}
+          style={{
+            width: width,
+            height: 55,
+            paddingLeft: 20,
+            paddingRight: 20,
+            marginTop: 5,
+          }}
           onPressColor={colors.off}
         />
         {this.props.admin &&

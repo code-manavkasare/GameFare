@@ -10,6 +10,15 @@ export default class ImageConversation extends Component {
     this.state = {};
   }
   imageMember(member, style) {
+    //TODO remove when no more wrong conversation
+    if (!member) {
+      return (
+        <View style={[style, styleApp.center, {backgroundColor: colors.off}]}>
+          <Text style={[styleApp.input, {fontSize: 11}]}></Text>
+        </View>
+      );
+    }
+    //End TODO
     if (member.info.picture)
       return (
         <AsyncImage
@@ -63,7 +72,8 @@ export default class ImageConversation extends Component {
           imgInitial={conversation.image}
         />
       );
-    if (conversation.numberMembers === 2)
+
+    if (conversation.allMembers.length === 2)
       return this.imageMember(
         Object.values(conversation.members).filter(
           (member) => member.id !== userID,

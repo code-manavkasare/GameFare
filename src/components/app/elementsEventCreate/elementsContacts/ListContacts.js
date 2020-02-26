@@ -30,6 +30,13 @@ import Button from '../../../layout/buttons/Button';
 import ButtonColor from '../../../layout/Views/Button';
 
 const {height, width} = Dimensions.get('screen');
+const heightScrollView =
+  height -
+  sizes.heightHeaderHome -
+  50 -
+  sizes.heightFooterBooking -
+  sizes.marginTopApp -
+  25;
 
 export default class ContactsComponent extends Component {
   constructor(props) {
@@ -108,10 +115,10 @@ export default class ContactsComponent extends Component {
           initialLoader: false,
         });
       }
-      var Contacts = contacts.filter(
-        (contact) => contact.phoneNumbers.length != 0,
+      let Contacts = contacts.filter(
+        (contact) => contact.phoneNumbers.length !== 0,
       );
-      var Contacts = Contacts.sort(function(a, b) {
+      Contacts = Contacts.sort(function(a, b) {
         var textA = a.givenName.toUpperCase();
         var textB = b.givenName.toUpperCase();
         return textA < textB ? -1 : textA > textB ? 1 : 0;
@@ -123,7 +130,7 @@ export default class ContactsComponent extends Component {
         contact.index = i;
         if (i == 0) {
           contact.header = contact.givenName[0];
-        } else if (Contacts[i - 1].givenName[0] != Contacts[i].givenName[0]) {
+        } else if (Contacts[i - 1].givenName[0] !== Contacts[i].givenName[0]) {
           contact.header = contact.givenName[0];
         }
         return contact;
@@ -204,7 +211,7 @@ export default class ContactsComponent extends Component {
           this.props.selectContact(
             contact,
             Object.values(this.props.contactsSelected).filter(
-              (contact1) => contact1.recordID == contact.recordID,
+              (contact1) => contact1.recordID === contact.recordID,
             ).length != 0,
           )
         }
@@ -244,39 +251,34 @@ export default class ContactsComponent extends Component {
   contact(contact, i) {
     return (
       <View key={i}>
-        {contact.header != undefined ? this.headerLetter(contact.header) : null}
+        {contact.header ? this.headerLetter(contact.header) : null}
         {this.rowContact(contact, i)}
       </View>
     );
   }
 
   handleScroll(event) {
-    // this.setAnimation((event.nativeEvent.contentOffset.y > 64));
-    // this.setState({ isNavBarHidden: !this.state.isNavBarHidden });
-    // if (event.nativeEvent.contentOffset.y > this.scrollViewY) {
-    //   this.props.openShareEvent(true)
-    // } else {
-    //   this.props.openShareEvent(false)
-    // }
-    // return this.scrollViewY = event.nativeEvent.contentOffset.y
+    Keyboard.dismiss();
   }
   listContacts() {
     return (
       <ScrollView
-        keyboardShouldPersistTaps={false}
+        keyboardShouldPersistTaps={'always'}
         onScroll={this.handleScroll.bind(this)}
         style={{
-          height:
-            height -
-            sizes.heightHeaderHome -
-            50 -
-            sizes.heightFooterBooking -
-            sizes.marginTopApp -
-            25,
+          height: heightScrollView,
           marginBottom: sizes.heightFooterBooking,
         }}
         stickyHeaderIndices={this.state.stickyHeader}>
-        {this.state.contacts.map((contact, i) => this.contact(contact, i))}
+        {this.state.initialLoader ? (
+          <View style={[styleApp.center4, {paddingTop: 130}]}>
+            <Loader color="green" size={35} />
+          </View>
+        ) : !this.state.authorizedContact ? (
+          this.viewNotAuthorized()
+        ) : (
+          this.state.contacts.map((contact, i) => this.contact(contact, i))
+        )}
         <View style={{height: 70}} />
       </ScrollView>
     );
@@ -320,13 +322,6 @@ export default class ContactsComponent extends Component {
     );
   }
   listContactsComponent() {
-    if (this.state.initialLoader)
-      return (
-        <View style={[styleApp.center, {marginTop: 130}]}>
-          <Loader color="primary" size={20} />
-        </View>
-      );
-    if (!this.state.authorizedContact) return this.viewNotAuthorized();
     return this.listContacts();
   }
   render() {

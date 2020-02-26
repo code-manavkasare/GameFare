@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>gamefare</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -25,6 +25,10 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>io.branch.sdk</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>gamefare</string>
@@ -81,19 +85,19 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>This is so we can display your booked appointments on your calendar.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera if you would like to take a photo for your profile picture.</string>
+	<string>We need access to your camera if you would like to take a photo for your profile picture, or live stream a match.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>We need to access your contacts for you to invite your friends.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>We need to access your location to show events in your area.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need to access your location to show events in your area.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to the microphone if you would like to live stream your matches</string>
 	<key>NSMotionUsageDescription</key>
 	<string>test</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -133,6 +137,10 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -146,11 +154,13 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>branch_app_domain</key>
-	<string>vitab.app.link</string>
+	<string>gamefare.app.link</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>

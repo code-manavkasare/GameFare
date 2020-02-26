@@ -82,12 +82,41 @@ Try yarn ios again, everything should work now.
 
 Run Xcode Product>Scheme>EditScheme, then into Run click on Build configuration put Debug instead of Release, then run
 
-    yarn ios
+    yarn ios-dev 
+
+for developper environment or 
+
+    yarn ios-prod
+
+for prod environment
 
 ## Debugging
 
 We use Reactotron for debugging please install the software from github page : https://github.com/infinitered/reactotron/releases
 We also use ESLint, be sure to have it installed on your VSCode extension
+
+## Deploying
+
+We use Fastlane for automatized deployment on Testflight. To use it first install it
+
+    xcode-select --install
+    brew install fastlane
+
+Now fastlane should be installed ! To use it go to /ios repository of gamefare app and type :
+
+    cd ios
+    fastlane match appstore
+    fastlane match development
+
+You now have all working certification in order to push the app on the store.
+
+    fastlane ios dev 
+    fastlane ios prod
+
+With dev and prod two different environment, dev will build and ship GameFare-dev, and prod will build the prod app GameFare
+
+Thsi will push a new build of the current defined version. No need to always update version ! For versionning information : https://semver.org/
+The build version is the lastest build version pushed to appstore +1
 
 ## Font
 
@@ -97,3 +126,7 @@ We use material and font awesome : https://fontawesome.com/icons?d=gallery
 
 We simply follow Airbnb Guideline : https://github.com/airbnb/javascript
 And the guide for React work also for React Native: https://github.com/airbnb/javascript/tree/master/react
+
+## Reset cache of debugger
+rm -rf ~/Library/Application\ Support/React\ Native\ Debugger/
+

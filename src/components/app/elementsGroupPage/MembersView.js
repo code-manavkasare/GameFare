@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
+import {messageAction} from '../../../actions/messageActions';
 import {subscribeToTopics} from '../../functions/notifications';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -24,6 +25,9 @@ import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 import {subscribeUserToGroup} from '../../functions/createGroup';
+import {removeMemberDiscussion} from '../../functions/createEvent';
+import {arrayAttendees} from '../../functions/createEvent';
+import {indexDiscussions} from '../../database/algolia';
 
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -38,41 +42,58 @@ class MembersView extends Component {
   componentDidMount() {}
   rowUser(user, i, data) {
     return (
-      <CardUser
-        user={user}
-        infoUser={this.props.infoUser}
-        admin={this.props.data.info.organizer === this.props.userID}
-        userConnected={this.props.userConnected}
-        objectID={this.props.data.objectID}
-        key={i}
-        userID={this.props.userID}
-        type="group"
-      />
+      <Row key={i} style={styleApp.center2}>
+        <Col style={styleApp.center}>
+          <CardUser
+            user={user}
+            infoUser={this.props.infoUser}
+            admin={this.props.data.info.organizer === this.props.userID}
+            userConnected={this.props.userConnected}
+            objectID={this.props.data.objectID}
+            userID={this.props.userID}
+            removable={this.props.editMode}
+            removeFunc={() => this.props.onRemoveMember(user)}
+            type="group"
+          />
+        </Col>
+      </Row>
     );
   }
   async joinGroup() {
+    const {data, infoUser, userID, objectID} = this.props;
+
+    const conversation = await indexDiscussions.getObject(data.discussions[0]);
+    await this.setConversation(conversation);
+
+    await subscribeToTopics([userID, 'all', objectID]);
+
     const user = await subscribeUserToGroup(
-      this.props.objectID,
-      this.props.userID,
-      this.props.infoUser,
+      objectID,
+      userID,
+      infoUser,
       'confirmed',
+      '',
+      data.discussions[0],
     );
 
-    await subscribeToTopics([this.props.userID, 'all', this.props.objectID]);
-
-    var members = this.props.data.members;
+    var members = data.members;
     if (!members) members = {};
 
     await this.props.groupsAction('editGroup', {
-      objectID: this.props.data.objectID,
-      info: this.props.data.info,
+      objectID: objectID,
+      ...data,
       members: {
         ...members,
-        [this.props.userID]: user,
+        [userID]: user,
       },
     });
-    await this.props.groupsAction('addMyGroup', this.props.data.objectID);
+    await this.props.groupsAction('addMyGroup', objectID);
+
     return NavigationService.navigate('Group');
+  }
+  async setConversation(data) {
+    await this.props.messageAction('setConversation', data);
+    return true;
   }
   join(data) {
     if (!this.props.userConnected)
@@ -110,7 +131,71 @@ class MembersView extends Component {
       return false;
     return true;
   }
-  membersView(data) {
+  buttonLeave(data) {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={40} style={styleApp.center}>
+                <AllIcons
+                  name="sign-out-alt"
+                  type="font"
+                  color={colors.white}
+                  size={15}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={[styleApp.text, {color: colors.white}]}>
+                  Leave
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() =>
+          NavigationService.navigate('Alert', {
+            textButton: 'Leave',
+            onGoBack: () => this.confirmLeaveGroup(data),
+            icon: (
+              <AllIcons
+                name="sign-out-alt"
+                color={colors.primary}
+                type="font"
+                size={22}
+              />
+            ),
+            title: 'Are you sure you want to leave this group?',
+            colorButton: 'primary',
+            onPressColor: colors.primaryLight,
+          })
+        }
+        color={colors.primary}
+        style={styles.buttonLeave}
+        onPressColor={colors.primaryLight}
+      />
+    );
+  }
+  async confirmLeaveGroup(data) {
+    if (data.discussions)
+      await this.props.messageAction(
+        'deleteMyConversation',
+        data.discussions[0],
+      );
+    await this.props.groupsAction('deleteMyGroup', data.objectID);
+    await firebase
+      .database()
+      .ref('groups/' + data.objectID + '/members/' + this.props.userID)
+      .update({action: 'unsubscribed'});
+    await firebase
+      .database()
+      .ref('groups/' + data.objectID + '/members/' + this.props.userID)
+      .remove();
+    await removeMemberDiscussion(data.discussions[0], this.props.userID);
+    await NavigationService.goBack();
+    return true;
+  }
+  membersView(data, members) {
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
@@ -121,21 +206,7 @@ class MembersView extends Component {
             <Col style={styleApp.center3} size={30}>
               {data.organizer.id ===
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
-                <Row>
-                  <Col size={50} style={styleApp.center}>
-                    <AllIcons
-                      name="check"
-                      type="font"
-                      color={colors.green}
-                      size={17}
-                    />
-                  </Col>
-                  <Col size={50} style={styleApp.center2}>
-                    <Text style={[styleApp.text, {color: colors.green}]}>
-                      Joined
-                    </Text>
-                  </Col>
-                </Row>
+                this.buttonLeave(data)
               ) : (
                 <ButtonColor
                   view={() => {
@@ -147,16 +218,7 @@ class MembersView extends Component {
                   }}
                   click={() => this.join(data)}
                   color={colors.green}
-                  style={[
-                    styleApp.center,
-                    {
-                      borderColor: colors.off,
-                      height: 40,
-                      width: 90,
-                      borderRadius: 20,
-                      borderWidth: 1,
-                    },
-                  ]}
+                  style={[styleApp.center, styles.buttonJoin]}
                   onPressColor={colors.greenClick}
                 />
               )}
@@ -171,24 +233,41 @@ class MembersView extends Component {
             <PlaceHolder />
             <PlaceHolder />
           </FadeInView>
-        ) : this.props.data.members == undefined ? (
+        ) : members.length === 0 ? (
           <Text style={[styleApp.smallText, {marginTop: 10, marginLeft: 20}]}>
             No one has joined the group yet.
           </Text>
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
-            {Object.values(this.props.data.members).map((user, i) =>
-              this.rowUser(user, i, data),
-            )}
+            {members.map((user, i) => this.rowUser(user, i, data))}
           </FadeInView>
         )}
       </View>
     );
   }
   render() {
-    return this.membersView(this.props.data);
+    const {data, userID} = this.props;
+    const members = arrayAttendees(data.members, userID, data.info.organizer);
+    return this.membersView(data, members);
   }
 }
+
+const styles = StyleSheet.create({
+  buttonJoin: {
+    borderColor: colors.off,
+    height: 40,
+    width: 90,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  buttonLeave: {
+    borderColor: colors.off,
+    height: 40,
+    width: 100,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {
@@ -198,4 +277,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction})(MembersView);
+export default connect(mapStateToProps, {groupsAction, messageAction})(
+  MembersView,
+);
