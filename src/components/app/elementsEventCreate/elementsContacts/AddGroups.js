@@ -44,7 +44,7 @@ class AddGroups extends Component {
   initiaLoad = async () => {
     const {userID, objectID} = this.props;
 
-    indexGroups.clearCache();
+    //indexGroups.clearCache();
     const listGroups = await indexGroups.search({
       filters: 'info.organizer:' + userID + ' AND NOT objectID:' + objectID,
       query: '',
@@ -78,7 +78,7 @@ class AddGroups extends Component {
   searchGroups = async (text) => {
     this.props.changeSearchGroups(text);
     await this.setState({loaderSearchCall: true});
-    indexGroups.clearCache();
+    //indexGroups.clearCache();
 
     let listGroups = await indexGroups.search({
       filters: 'info.organizer:' + this.props.userID,

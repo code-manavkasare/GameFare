@@ -39,15 +39,12 @@ class PickInfos extends Component {
   }
   async componentDidMount() {
     if (this.props.info.sport === '') {
+      console.log('le setsport ', this.props.sports);
       this.setSport(this.props.sports[0]);
     }
   }
   async setSport(data) {
-    console.log('setSport', data);
-    console.log({
-      sport: data.value,
-      format: data.formats[0].value,
-    });
+    console.log('setSport la', data);
     await this.props.createChallengeAction('setInfo', {
       sport: data.value,
       format: data.formats[0].value,
@@ -132,7 +129,7 @@ class PickInfos extends Component {
   amountOdds(price, sport) {
     return (
       <RowPlusMinus
-        title="Odds"
+        title="Money multiple"
         alert={sport.challenge.odds.alert}
         add={(value) =>
           this.props.createChallengeAction('setPrice', {
@@ -176,19 +173,11 @@ class PickInfos extends Component {
     );
   }
   conditionOn() {
-    // if (this.props.step0.joiningFee === '') return false;
     return true;
-  }
-  close() {
-    this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'));
-  }
-  next(sport) {
-    this.props.navigation.navigate('PickAddress', {
-      sport: sport,
-    });
   }
   render() {
     const {info, price} = this.props;
+    console.log('render pickinfo', info);
     if (info.sport === '') return null;
     var sport = this.props.sports.filter(
       (sport) => sport.value === info.sport,
@@ -197,6 +186,7 @@ class PickInfos extends Component {
     const format = Object.values(sport.formats).filter(
       (format) => format.value === info.format,
     )[0];
+
     const {dismiss, goBack} = this.props.navigation;
 
     return (
@@ -231,7 +221,11 @@ class PickInfos extends Component {
               onPressColor={colors.greenLight}
               enabled={this.conditionOn()}
               loader={this.state.loader}
-              click={() => this.next(sport)}
+              click={() =>
+                this.props.navigation.navigate('PickAddress', {
+                  sport: sport,
+                })
+              }
             />
           ) : (
             <Button

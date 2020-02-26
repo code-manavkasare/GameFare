@@ -1,5 +1,5 @@
 import {
-  SET_MEMBERS_CHALLENGE,
+  SET_CAPTAINS_CHALLENGE,
   RESET_CHALLENGECREATE_DATA,
   SET_INFO_CHALLENGE,
   SET_LOCATION_CHALLENGE,
@@ -8,7 +8,7 @@ import {
 } from '../actions/types';
 
 const initialState = {
-  members: {},
+  captains: {},
   info: {
     sport: '',
     format: '',
@@ -29,8 +29,8 @@ const initialState = {
 
 const createChallengeReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SET_MEMBERS_CHALLENGE:
-      return {...state, members: action.members};
+    case SET_CAPTAINS_CHALLENGE:
+      return {...state, captains: action.captains};
     case SET_LOCATION_CHALLENGE:
       return {...state, location: {...state.location, ...action.location}};
     case SET_DATE_CHALLENGE:

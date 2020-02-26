@@ -275,10 +275,16 @@ class Page0 extends Component {
     await this.props.navigation.dismiss();
     await this.props.createGroupAction('reset');
     return this.props.navigation.navigate('Contacts', {
-      data: group,
-      pageFrom: 'Group',
-      openPageLink: 'openGroupPage',
-      objectID: group.objectID,
+      objectID: data.objectID,
+      description: '',
+      url: {
+        description:
+          'Join my group ' + data.info.name + ' by following the link!',
+        image: data.pictures[0],
+        title: data.info.name,
+      },
+      action: 'Group',
+      data: {...data, eventID: data.objectID},
     });
   }
   render() {

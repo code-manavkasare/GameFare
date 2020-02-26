@@ -1,5 +1,5 @@
 import {
-  SET_MEMBERS_CHALLENGE,
+  SET_CAPTAINS_CHALLENGE,
   RESET_CHALLENGECREATE_DATA,
   SET_INFO_CHALLENGE,
   SET_LOCATION_CHALLENGE,
@@ -7,9 +7,9 @@ import {
   SET_PRICE_CHALLENGE,
 } from './types';
 
-const setMembers = (value) => ({
-  type: SET_MEMBERS_CHALLENGE,
-  members: value,
+const setCaptains = (value) => ({
+  type: SET_CAPTAINS_CHALLENGE,
+  captains: value,
 });
 
 const setInfo = (value) => ({
@@ -38,8 +38,8 @@ const reset = () => ({
 
 export const createChallengeAction = (val, data) => {
   return async function(dispatch) {
-    if (val === 'setMembers') {
-      await dispatch(setMembers(data));
+    if (val === 'setCaptains') {
+      await dispatch(setCaptains(data));
     } else if (val === 'setInfo') {
       await dispatch(setInfo(data));
     } else if (val === 'setLocation') {

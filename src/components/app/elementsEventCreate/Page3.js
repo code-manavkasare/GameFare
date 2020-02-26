@@ -22,6 +22,7 @@ import TextField from '../../layout/textField/TextField';
 import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import DateEvent from './DateEvent';
+import {date} from '../../layout/date/date';
 import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
@@ -319,10 +320,22 @@ class Page3 extends Component {
     await dismiss();
 
     return this.props.navigation.navigate('Contacts', {
-      data: event,
-      pageFrom: 'Event',
-      openPageLink: 'openEventPage',
       objectID: event.objectID,
+      description: '',
+      url: {
+        description:
+          'Join my event ' +
+          event.info.name +
+          ' on ' +
+          date(event.date.start, 'ddd, MMM D') +
+          ' at ' +
+          date(event.date.start, 'h:mm a') +
+          ' by following the link!',
+        image: event.pictures[0],
+        title: event.info.name,
+      },
+      action: 'Event',
+      data: {...event, eventID: event.objectID},
     });
   }
   render() {

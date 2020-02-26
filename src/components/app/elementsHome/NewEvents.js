@@ -69,7 +69,7 @@ class ListEvents extends React.Component {
   async loadEvent(location, sport, league) {
     const {userID,radiusSearch} = this.props;
     await this.setState({loader: true});
-    indexEvents.clearCache();
+    //indexEvents.clearCache();
     const allEventsPublic = await getEventPublic(
       location,
       sport,

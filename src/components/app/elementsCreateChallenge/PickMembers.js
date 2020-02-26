@@ -52,10 +52,10 @@ class NewConversation extends React.Component {
   selectUser(select, user, selectedUsers) {
     if (!select)
       selectedUsers = {
-        [user.objectID]: user,
+        [user.objectID]: {...user, id: user.objectID},
       };
     else delete selectedUsers[user.objectID];
-    this.props.createChallengeAction('setMembers', selectedUsers);
+    this.props.createChallengeAction('setCaptains', selectedUsers);
   }
   searchInput() {
     return (
@@ -115,8 +115,8 @@ class NewConversation extends React.Component {
 
   render() {
     const {dismiss, goBack} = this.props.navigation;
-    let {members} = this.props;
-    const numberUsersSelected = Object.keys(members).length;
+    let {captains} = this.props;
+    const numberUsersSelected = Object.keys(captains).length;
     let addonTextHeader = '';
     if (numberUsersSelected !== 0)
       addonTextHeader = ' (' + numberUsersSelected + ')';
@@ -138,11 +138,11 @@ class NewConversation extends React.Component {
           icon2={'text'}
           text2={'Next'}
           clickButton1={() => dismiss()}
-          clickButton2={() => this.next(members)}
+          clickButton2={() => this.next(captains)}
           loader={this.state.loaderHeader}
         />
 
-        {this.newConversationPage(members)}
+        {this.newConversationPage(captains)}
       </View>
     );
   }
@@ -180,7 +180,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    members: state.createChallengeData.members,
+    captains: state.createChallengeData.captains,
   };
 };
 

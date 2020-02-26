@@ -47,9 +47,10 @@ export default class Posts extends Component {
   async load() {
     let discussions = this.props.data.discussions;
     if (!discussions) discussions = [];
+    console.log('getdiscussions', discussions);
     let {results} = await indexDiscussions.getObjects(discussions);
     if (!results) results = [];
-    if (results.filter(convo => !convo).length !== 0) return this.load()
+    if (results.filter((convo) => !convo).length !== 0) return this.load();
     this.setState({loader: false, discussions: results});
   }
   newPost() {}
@@ -82,7 +83,12 @@ export default class Posts extends Component {
         ) : (
           <FadeInView duration={300} style={{marginTop: 5}}>
             {Object.values(this.state.discussions).map((discussion, i) => (
-              <CardConversation index={i} key={i} discussion={discussion} discussionID={discussion.objectID} />
+              <CardConversation
+                index={i}
+                key={i}
+                discussion={discussion}
+                discussionID={discussion.objectID}
+              />
             ))}
           </FadeInView>
         )}
@@ -95,11 +101,11 @@ export default class Posts extends Component {
 }
 
 const styles = StyleSheet.create({
-  loader:{
+  loader: {
     height: 20,
     borderRadius: 7,
     marginRight: 80,
     marginTop: 10,
     marginLeft: 20,
-  }
+  },
 });

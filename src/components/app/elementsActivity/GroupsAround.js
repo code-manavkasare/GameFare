@@ -48,8 +48,7 @@ class ListEvents extends React.Component {
     }
   }
   async getGroups(filters, location) {
-    var groups = await indexGroups.search({
-      query: '',
+    var groups = await indexGroups.search('', {
       aroundLatLng: location.lat + ',' + location.lng,
       filters: filters,
       aroundRadius: this.props.radiusSearch * 1000,
@@ -58,7 +57,7 @@ class ListEvents extends React.Component {
   }
   async loadEvent(sport, location) {
     //
-    indexGroups.clearCache();
+    // indexGroups.clearCache();
     var userFilter =
       ' AND NOT info.organizer:' +
       this.props.userID +

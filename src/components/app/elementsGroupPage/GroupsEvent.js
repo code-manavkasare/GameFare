@@ -45,7 +45,7 @@ class ListEvents extends React.Component {
   }
   async loadGroups(groups) {
     await this.setState({loader: true});
-    indexGroups.clearCache();
+    //indexGroups.clearCache();
     const groupsEvents = await this.getGroups(keys(groups));
     if (groupsEvents.filter((group) => !group).length !== 0)
       return this.loadGroups(groups);

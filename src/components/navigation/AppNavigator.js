@@ -19,6 +19,7 @@ import ProfilePage from '../app/ProfilePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
 import EventPage from '../app/EventPage';
+import ChallengePage from '../app/ChallengePage';
 import MapPage from '../app/elementsHome/MapPage';
 import MapFiltersModals from '../app/elementsHome/MapFiltersModal';
 
@@ -155,6 +156,19 @@ const JoinNavigator = createStackNavigator(
   },
   {
     initialRouteName: 'Event',
+    headerMode: 'none',
+    mode: 'card',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: true,
+  },
+);
+
+const JoinChallengeNavigator = createStackNavigator(
+  {
+    Challenge: lockedPortrait(ChallengePage),
+  },
+  {
+    initialRouteName: 'Challenge',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
@@ -367,6 +381,7 @@ const MainStack = createStackNavigator(
       },
     },
     Event: JoinNavigator,
+    Challenge: JoinChallengeNavigator,
     Conversation: MessageNavigator,
     Group: JoinGroupNavigator,
     LiveStream: StreamNavigator,

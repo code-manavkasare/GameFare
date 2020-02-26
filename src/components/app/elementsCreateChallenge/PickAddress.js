@@ -257,6 +257,8 @@ class PickAddress extends Component {
   }
   render() {
     const {navigate} = this.props.navigation;
+    const {createChallengeData} = this.props;
+    console.log('render pick address', createChallengeData);
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -289,7 +291,9 @@ class PickAddress extends Component {
               onPressColor={colors.greenLight}
               enabled={this.conditionOn()}
               loader={this.state.loader}
-              click={() => navigate('SummaryChallenge')}
+              click={() =>
+                navigate('SummaryChallenge', {challenge: createChallengeData})
+              }
             />
           ) : (
             <Button

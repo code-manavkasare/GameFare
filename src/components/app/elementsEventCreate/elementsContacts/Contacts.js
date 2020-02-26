@@ -294,32 +294,30 @@ class Contacts extends Component {
     return null;
   }
   shareEvent() {
-    //TODO Refactor with createBrancheMessage
-    var infoEvent = this.props.navigation.getParam('data');
-    if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
-      var description =
-        'Join my group ' + infoEvent.info.name + ' by following the link!';
-      var image = infoEvent.pictures[0];
-    } else {
-      var description =
-        'Join my event ' +
-        infoEvent.info.name +
-        ' on ' +
-        date(infoEvent.date.start, 'ddd, MMM D') +
-        ' at ' +
-        date(infoEvent.date.start, 'h:mm a') +
-        ' by following the link!';
-      var image = infoEvent.images[0];
-    }
-
+    const {description, title, image} = this.props.navigation.getParam('url');
+    const action = this.props.navigation.getParam('action');
+    const objectID = this.props.navigation.getParam('objectID');
+    console.log('create branch', {description, title, image});
+    console.log({
+      contentDescription: description,
+      title: title,
+      contentMetadata: {
+        customMetadata: {
+          objectID: objectID,
+          action: action,
+          $uri_redirect_mode: '1',
+          $og_image_url: image,
+        },
+      },
+    });
     branch
       .createBranchUniversalObject('canonicalIdentifier', {
         contentDescription: description,
-        title: infoEvent.info.name,
+        title: title,
         contentMetadata: {
           customMetadata: {
-            eventID: infoEvent.objectID,
-            action: this.props.navigation.getParam('openPageLink'),
+            objectID: objectID,
+            action: action,
             $uri_redirect_mode: '1',
             $og_image_url: image,
           },
@@ -338,7 +336,9 @@ class Contacts extends Component {
         };
         branchUniversalObject
           .showShareSheet(shareOptions, linkProperties, controlParams)
-          .then((channel, completed, error) => {});
+          .then((channel, completed, error) => {
+            console.log('completed', channel);
+          });
       });
   }
   openShareEvent(val) {
@@ -380,31 +380,22 @@ class Contacts extends Component {
   }
 
   createBranchMessage = async () => {
-    const infoEvent = this.props.navigation.getParam('data');
-    if (this.props.navigation.getParam('openPageLink') === 'openGroupPage') {
-      var description =
-        'Join my group ' + infoEvent.info.name + ' by following the link!';
-      var image = infoEvent.pictures[0];
-    } else {
-      var description =
-        'Join my event ' +
-        infoEvent.info.name +
-        ' on ' +
-        date(infoEvent.date.start, 'ddd, MMM D') +
-        ' at ' +
-        date(infoEvent.date.start, 'h:mm a') +
-        ' by following the link!';
-      var image = infoEvent.images[0];
-    }
+    const {
+      description,
+      title,
+      image,
+      action,
+      objectID,
+    } = this.props.navigation.getParam('url');
     let branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {
         contentDescription: description,
-        title: infoEvent.info.name,
+        title: title,
         contentMetadata: {
           customMetadata: {
-            eventID: infoEvent.objectID,
-            action: this.props.navigation.getParam('openPageLink'),
+            objectID: objectID,
+            action: action,
             $uri_redirect_mode: '1',
             $og_image_url: image,
           },
@@ -458,6 +449,7 @@ class Contacts extends Component {
     const objectID = navigation.getParam('objectID');
     const pageFrom = navigation.getParam('pageFrom');
     const data = navigation.getParam('data');
+    ///const groupsTab = navigation.getParam('groupsTab');
     const {
       fadeInDuration,
       searchInputContacts,
@@ -491,9 +483,10 @@ class Contacts extends Component {
             selectedTextStyle={[styleApp.textBold, {color: colors.white}]}
             textColor={colors.borderColor}
             selectedColor={colors.white}
+            marginLeft={-10}
             buttonColor={colors.primary}
             borderColor={colors.borderColor}
-            borderRadius={7}
+            borderRadius={2}
             height={heightSwitch}
             animationDuration={190}
             options={
@@ -581,6 +574,7 @@ const styles = StyleSheet.create({
   shareSocials: {
     height: heightShareEventSocials,
     width: width,
+    marginLeft: -10,
     borderBottomWidth: 0,
     borderColor: colors.off,
   },
