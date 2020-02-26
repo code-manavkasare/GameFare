@@ -30,8 +30,8 @@
 		054C59A723EDA04F006D67F4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		054C59A823EDA04F006D67F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 172D1482235C7B8F00560A8E /* LaunchScreen.storyboard */; };
 		05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 05B34DCC23A397CD001B955A /* icomoon.ttf */; };
-		067A36C1D3A3166B17C94454 /* libPods-gamefare-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */; };
 		09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 036926E988D44753AF801E89 /* libz.tbd */; };
+		131FEA1868BF2160ED4FB9D7 /* libPods-gamefare-dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2216977E7740F6C3418FAE3E /* libPods-gamefare-dev.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -50,14 +50,14 @@
 		17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */; };
 		17C26B8A236A3B80006835E7 /* logoios.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B88236A3B80006835E7 /* logoios.png */; };
 		17C26B8C236A3BC7006835E7 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B8B236A3BC6006835E7 /* logo.png */; };
+		2699A5185B2328F1A91E4057 /* libPods-gamefare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5754A1DEE52DA7DDF1A94EC0 /* libPods-gamefare.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* gamefareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* gamefareTests.m */; };
-		50DF24BB2463DD1788DC259F /* libPods-gamefareTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFF75B81AA2E6168A1DB0245 /* libPods-gamefareTests.a */; };
-		541093B5DEABA747478ACB61 /* libPods-gamefare-dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */; };
-		864E34D7F40432278013ECFC /* libPods-gamefare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B745A4C07541F9CBAFA1F0C /* libPods-gamefare.a */; };
-		D8F2CC22EF887C97321F0E5D /* libPods-gamefare-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D6CFBCFD742119D5C2951D7 /* libPods-gamefare-tvOS.a */; };
+		520477F75B116C3AE498B54C /* libPods-gamefare-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AC55BCC74D3E654805ED94F /* libPods-gamefare-tvOS.a */; };
+		75889BADB20C4082D5521707 /* libPods-gamefare-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 61A9539B72E184F9D96DB5C4 /* libPods-gamefare-tvOSTests.a */; };
+		F4C9CA007501461EEB1CB090 /* libPods-gamefareTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D5194297FEF9C7D2748117 /* libPods-gamefareTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,9 +125,9 @@
 		054C59B123EDA04F006D67F4 /* GameFare-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameFare-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		054C59B223EDA04F006D67F4 /* gamefare-dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gamefare-dev-Info.plist"; path = "/Users/raf/Documents/gamefare-native/ios/gamefare-dev-Info.plist"; sourceTree = "<absolute>"; };
 		05B34DCC23A397CD001B955A /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icomoon.ttf; path = ../assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
-		0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.debug.xcconfig"; sourceTree = "<group>"; };
+		09E58F0D7F69D1AB98457BB9 /* Pods-gamefareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefareTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0E75EAC3BEE0426BBEE4E246 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
-		10C51D15B39B5041A9EFBB64 /* Pods-gamefare-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		1146C62DC28D875F8A44FB8B /* Pods-gamefare-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* gamefare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gamefare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = gamefare/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = gamefare/AppDelegate.m; sourceTree = "<group>"; };
@@ -159,47 +159,47 @@
 		17C26B88236A3B80006835E7 /* logoios.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logoios.png; sourceTree = "<group>"; };
 		17C26B8B236A3BC6006835E7 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		17D8C96923F22CC400D90107 /* gamefareRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = gamefareRelease.entitlements; path = gamefare/gamefareRelease.entitlements; sourceTree = "<group>"; };
+		1D3984FA11408E01C994DAEC /* Pods-gamefare-dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.debug.xcconfig"; sourceTree = "<group>"; };
+		2216977E7740F6C3418FAE3E /* libPods-gamefare-dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27D32A13B60F443294A3DEE3 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		2AC55BCC74D3E654805ED94F /* libPods-gamefare-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E47B1E0B4A5D006451C7 /* gamefare-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gamefare-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* gamefare-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "gamefare-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		395CF9050EEE495BAC94C13D /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Italic.ttf"; path = "../assets/fonts/OpenSans-Italic.ttf"; sourceTree = "<group>"; };
-		3B745A4C07541F9CBAFA1F0C /* libPods-gamefare.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA575032E7642DBA8E76E0C /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		3E2490FD729142B4BC1B692E /* OpenSans-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBold.ttf"; path = "../assets/fonts/OpenSans-ExtraBold.ttf"; sourceTree = "<group>"; };
 		4CBC61197A2B42A1BC9F674F /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
-		50250E1A822B6C4C09DD3082 /* Pods-gamefareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefareTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests.release.xcconfig"; sourceTree = "<group>"; };
 		55483D35EE464966B36268AD /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		5754A1DEE52DA7DDF1A94EC0 /* libPods-gamefare.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		61A9539B72E184F9D96DB5C4 /* libPods-gamefare-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66D5194297FEF9C7D2748117 /* libPods-gamefareTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefareTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B2AA449C3344A37B657A7D5 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; };
 		6C242551EEC4485CBE06942D /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-LightItalic.ttf"; path = "../assets/fonts/OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
-		6D6CFBCFD742119D5C2951D7 /* libPods-gamefare-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6DCBA4307A2C0027452B5AEA /* Pods-gamefare-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E0D832D1BF34CC385F95319 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefareTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests.debug.xcconfig"; sourceTree = "<group>"; };
-		77E774DC8F6750C028FDBB95 /* Pods-gamefare-dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.release.xcconfig"; sourceTree = "<group>"; };
-		7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8859FC59E8664096BDDB5BC4 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		8B05DD2D26F4B8145239DECE /* Pods-gamefare-dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-dev.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev.release.xcconfig"; sourceTree = "<group>"; };
 		961B59F205894159992FB65F /* OpenSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBoldItalic.ttf"; path = "../assets/fonts/OpenSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		98F3F432646740D5B7AF42B0 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		9B66F3956D9C48EDA58E93A0 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		A5E5F29CBD8D465EA8C92991 /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBoldItalic.ttf"; path = "../assets/fonts/OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		A7CA9426255744A2AA3C5EEF /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-BoldItalic.ttf"; path = "../assets/fonts/OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
+		A7D3BADE05B71A6055ECA5B6 /* Pods-gamefareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefareTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefareTests/Pods-gamefareTests.release.xcconfig"; sourceTree = "<group>"; };
+		ADFCD7BC6EDAA08BDEC3BFBC /* Pods-gamefare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.debug.xcconfig"; sourceTree = "<group>"; };
 		AFA13F0AB7AC4BEB9E0DF1C6 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		B42484749F8677865A4476F8 /* Pods-gamefare-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		B5FC607B14FE4F3BA0A13665 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		B66E5C516F714933BD8350A9 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefare-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B75ADB7C50F669749B3DC3C4 /* Pods-gamefare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.debug.xcconfig"; sourceTree = "<group>"; };
+		B79F5B239E5B11B549BADEB6 /* Pods-gamefare-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		B82B9A5B51F94954A43B8307 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		BA311D58DE4C42AE9AD2C3AB /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		BE0DAE674B794C5087F79B0D /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
-		C55B45C32DD5061FAE91C251 /* Pods-gamefare-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOSTests/Pods-gamefare-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		BF9F837E6EA968F296C5F53F /* Pods-gamefare-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		DB28E714C5A2483483B0536B /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
-		E54B3A2D2A4961086529BCC4 /* Pods-gamefare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		EE005D1612A642969E598D2D /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		EE543EA975C8B307DD897D41 /* Pods-gamefare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare.release.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare/Pods-gamefare.release.xcconfig"; sourceTree = "<group>"; };
 		F34AA63DA07D4B459ED8FD40 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
-		F70406560E5EF2EA51CAC662 /* Pods-gamefare-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gamefare-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-gamefare-tvOS/Pods-gamefare-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		FFF75B81AA2E6168A1DB0245 /* libPods-gamefareTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-gamefareTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,7 +207,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50DF24BB2463DD1788DC259F /* libPods-gamefareTests.a in Frameworks */,
+				F4C9CA007501461EEB1CB090 /* libPods-gamefareTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +216,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				054C599623EDA04F006D67F4 /* MobileCoreServices.framework in Frameworks */,
-				541093B5DEABA747478ACB61 /* libPods-gamefare-dev.a in Frameworks */,
+				131FEA1868BF2160ED4FB9D7 /* libPods-gamefare-dev.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,8 +225,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */,
-				864E34D7F40432278013ECFC /* libPods-gamefare.a in Frameworks */,
 				09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */,
+				2699A5185B2328F1A91E4057 /* libPods-gamefare.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,7 +234,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8F2CC22EF887C97321F0E5D /* libPods-gamefare-tvOS.a in Frameworks */,
+				520477F75B116C3AE498B54C /* libPods-gamefare-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,7 +242,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				067A36C1D3A3166B17C94454 /* libPods-gamefare-tvOSTests.a in Frameworks */,
+				75889BADB20C4082D5521707 /* libPods-gamefare-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,31 +382,14 @@
 				17B60B3623C75929006B1DCF /* CoreMedia.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				3B745A4C07541F9CBAFA1F0C /* libPods-gamefare.a */,
-				6D6CFBCFD742119D5C2951D7 /* libPods-gamefare-tvOS.a */,
-				B6C62F7A985B6FA653774457 /* libPods-gamefare-tvOSTests.a */,
-				FFF75B81AA2E6168A1DB0245 /* libPods-gamefareTests.a */,
-				7D172BADDEFDB8C938ABAC1B /* libPods-gamefare-dev.a */,
 				036926E988D44753AF801E89 /* libz.tbd */,
+				5754A1DEE52DA7DDF1A94EC0 /* libPods-gamefare.a */,
+				2216977E7740F6C3418FAE3E /* libPods-gamefare-dev.a */,
+				2AC55BCC74D3E654805ED94F /* libPods-gamefare-tvOS.a */,
+				61A9539B72E184F9D96DB5C4 /* libPods-gamefare-tvOSTests.a */,
+				66D5194297FEF9C7D2748117 /* libPods-gamefareTests.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		7759C388EDC5AD569FBE2C46 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				F70406560E5EF2EA51CAC662 /* Pods-gamefare-tvOS.debug.xcconfig */,
-				10C51D15B39B5041A9EFBB64 /* Pods-gamefare-tvOS.release.xcconfig */,
-				C55B45C32DD5061FAE91C251 /* Pods-gamefare-tvOSTests.debug.xcconfig */,
-				6DCBA4307A2C0027452B5AEA /* Pods-gamefare-tvOSTests.release.xcconfig */,
-				7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */,
-				50250E1A822B6C4C09DD3082 /* Pods-gamefareTests.release.xcconfig */,
-				B75ADB7C50F669749B3DC3C4 /* Pods-gamefare.debug.xcconfig */,
-				E54B3A2D2A4961086529BCC4 /* Pods-gamefare.release.xcconfig */,
-				0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */,
-				77E774DC8F6750C028FDBB95 /* Pods-gamefare-dev.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -427,8 +410,8 @@
 				00E356EF1AD99517003FC87E /* gamefareTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				7759C388EDC5AD569FBE2C46 /* Pods */,
 				0E5EB86E236842468BEB826B /* Resources */,
+				B721D9E8DC9331D9C79A0FAF /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -447,6 +430,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B721D9E8DC9331D9C79A0FAF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ADFCD7BC6EDAA08BDEC3BFBC /* Pods-gamefare.debug.xcconfig */,
+				EE543EA975C8B307DD897D41 /* Pods-gamefare.release.xcconfig */,
+				1D3984FA11408E01C994DAEC /* Pods-gamefare-dev.debug.xcconfig */,
+				8B05DD2D26F4B8145239DECE /* Pods-gamefare-dev.release.xcconfig */,
+				BF9F837E6EA968F296C5F53F /* Pods-gamefare-tvOS.debug.xcconfig */,
+				B79F5B239E5B11B549BADEB6 /* Pods-gamefare-tvOS.release.xcconfig */,
+				1146C62DC28D875F8A44FB8B /* Pods-gamefare-tvOSTests.debug.xcconfig */,
+				B42484749F8677865A4476F8 /* Pods-gamefare-tvOSTests.release.xcconfig */,
+				09E58F0D7F69D1AB98457BB9 /* Pods-gamefareTests.debug.xcconfig */,
+				A7D3BADE05B71A6055ECA5B6 /* Pods-gamefareTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -454,7 +454,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "gamefareTests" */;
 			buildPhases = (
-				86B0C96F191AE7A650E6A07F /* [CP] Check Pods Manifest.lock */,
+				2902782294874AA5EE98AC42 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -473,16 +473,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 054C59AE23EDA04F006D67F4 /* Build configuration list for PBXNativeTarget "gamefare-dev" */;
 			buildPhases = (
-				EFE08F4345F5B2F373FD2DD4 /* [CP] Check Pods Manifest.lock */,
+				2E107410FCB7371D55F96FC0 /* [CP] Check Pods Manifest.lock */,
 				054C599123EDA04F006D67F4 /* Start Packager */,
 				054C599223EDA04F006D67F4 /* Sources */,
 				054C599523EDA04F006D67F4 /* Frameworks */,
 				054C599823EDA04F006D67F4 /* Resources */,
 				054C59AA23EDA04F006D67F4 /* Bundle React Native code and images */,
-				C8D248C5C6042959B08B060B /* [CP] Embed Pods Frameworks */,
-				9B67D99DDFE2501F8A4D614B /* [CP] Copy Pods Resources */,
 				054C59AD23EDA04F006D67F4 /* Embed Frameworks */,
-				D1B9326885CC4604BDCAA966 /* [CP-User] [RNFB] Core Configuration */,
+				60FE8D9A2276065CB922A2F7 /* [CP] Embed Pods Frameworks */,
+				6DBE6E691D6BEE9D50CD0E3A /* [CP] Copy Pods Resources */,
+				9B5864B2FF489A8485F2BA13 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -497,17 +497,17 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "gamefare" */;
 			buildPhases = (
-				E742025DA3EC3DA4E1C967C7 /* [CP] Check Pods Manifest.lock */,
+				2394E3B9BE1D6FA18FDBD8D2 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */,
-				24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */,
 				17B60B4E23C759C4006B1DCF /* Embed Frameworks */,
 				2A0641BC3F344866A8C4CF4E /* Upload Debug Symbols to Sentry */,
-				40FF1BEABA4EFB10CE2593A8 /* [CP-User] [RNFB] Core Configuration */,
+				D06AE7C6A30EFB6DF508F0CC /* [CP] Embed Pods Frameworks */,
+				729EE35E6378D82E26DD1398 /* [CP] Copy Pods Resources */,
+				33D09646FCF6A56905363E76 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -522,7 +522,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "gamefare-tvOS" */;
 			buildPhases = (
-				908AF57084F6FBF180675B97 /* [CP] Check Pods Manifest.lock */,
+				2147AC07704C76F51C038B7A /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -542,7 +542,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "gamefare-tvOSTests" */;
 			buildPhases = (
-				6B53CA98BBF9883C28E64518 /* [CP] Check Pods Manifest.lock */,
+				D39B74DE3405FC801DC3E9C5 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -776,21 +776,70 @@
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		24DC2BC9BC2A01B1734818EC /* [CP] Copy Pods Resources */ = {
+		2147AC07704C76F51C038B7A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-gamefare-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2394E3B9BE1D6FA18FDBD8D2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-gamefare-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2902782294874AA5EE98AC42 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-gamefareTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		2A0641BC3F344866A8C4CF4E /* Upload Debug Symbols to Sentry */ = {
@@ -821,7 +870,29 @@
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		40FF1BEABA4EFB10CE2593A8 /* [CP-User] [RNFB] Core Configuration */ = {
+		2E107410FCB7371D55F96FC0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-gamefare-dev-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		33D09646FCF6A56905363E76 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -830,79 +901,9 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    _JSON_OUTPUT_BASE64=$(python -c 'import json,sys,base64;print(base64.b64encode(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"').read())['${_JSON_ROOT}'])))' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes usful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"firebase_crashlytics_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\n\n  # config.admob_delay_app_measurement_init\n  _ADMOB_DELAY_APP_MEASUREMENT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_delay_app_measurement_init\")\n  if [[ $_ADMOB_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.admob_ios_app_id\n  _ADMOB_IOS_APP_ID=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_ios_app_id\")\n  if [[ $_ADMOB_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_ADMOB_IOS_APP_ID\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally \n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n\n";
-		};
-		6B53CA98BBF9883C28E64518 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-gamefare-tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		86B0C96F191AE7A650E6A07F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-gamefareTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		908AF57084F6FBF180675B97 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-gamefare-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9B67D99DDFE2501F8A4D614B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C8D248C5C6042959B08B060B /* [CP] Embed Pods Frameworks */ = {
+		60FE8D9A2276065CB922A2F7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -919,7 +920,41 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D1B9326885CC4604BDCAA966 /* [CP-User] [RNFB] Core Configuration */ = {
+		6DBE6E691D6BEE9D50CD0E3A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare-dev/Pods-gamefare-dev-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		729EE35E6378D82E26DD1398 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9B5864B2FF489A8485F2BA13 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -928,8 +963,9 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    _JSON_OUTPUT_BASE64=$(python -c 'import json,sys,base64;print(base64.b64encode(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"').read())['${_JSON_ROOT}'])))' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes usful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"firebase_crashlytics_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\n\n  # config.admob_delay_app_measurement_init\n  _ADMOB_DELAY_APP_MEASUREMENT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_delay_app_measurement_init\")\n  if [[ $_ADMOB_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.admob_ios_app_id\n  _ADMOB_IOS_APP_ID=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_ios_app_id\")\n  if [[ $_ADMOB_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_ADMOB_IOS_APP_ID\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally \n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n\n";
+			showEnvVarsInLog = 0;
 		};
-		DA81E16AA970BF2D757A693E /* [CP] Embed Pods Frameworks */ = {
+		D06AE7C6A30EFB6DF508F0CC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -946,25 +982,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-gamefare/Pods-gamefare-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E742025DA3EC3DA4E1C967C7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-gamefare-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EFE08F4345F5B2F373FD2DD4 /* [CP] Check Pods Manifest.lock */ = {
+		D39B74DE3405FC801DC3E9C5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -979,7 +997,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-gamefare-dev-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-gamefare-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1080,7 +1098,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7325FC4ABF219F9EA0977710 /* Pods-gamefareTests.debug.xcconfig */;
+			baseConfigurationReference = 09E58F0D7F69D1AB98457BB9 /* Pods-gamefareTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1109,7 +1127,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 50250E1A822B6C4C09DD3082 /* Pods-gamefareTests.release.xcconfig */;
+			baseConfigurationReference = A7D3BADE05B71A6055ECA5B6 /* Pods-gamefareTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1135,7 +1153,7 @@
 		};
 		054C59AF23EDA04F006D67F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D28C0C7E851FAAB0D0D8091 /* Pods-gamefare-dev.debug.xcconfig */;
+			baseConfigurationReference = 1D3984FA11408E01C994DAEC /* Pods-gamefare-dev.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1165,7 +1183,7 @@
 		};
 		054C59B023EDA04F006D67F4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 77E774DC8F6750C028FDBB95 /* Pods-gamefare-dev.release.xcconfig */;
+			baseConfigurationReference = 8B05DD2D26F4B8145239DECE /* Pods-gamefare-dev.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1193,7 +1211,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B75ADB7C50F669749B3DC3C4 /* Pods-gamefare.debug.xcconfig */;
+			baseConfigurationReference = ADFCD7BC6EDAA08BDEC3BFBC /* Pods-gamefare.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1225,7 +1243,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E54B3A2D2A4961086529BCC4 /* Pods-gamefare.release.xcconfig */;
+			baseConfigurationReference = EE543EA975C8B307DD897D41 /* Pods-gamefare.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1255,7 +1273,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F70406560E5EF2EA51CAC662 /* Pods-gamefare-tvOS.debug.xcconfig */;
+			baseConfigurationReference = BF9F837E6EA968F296C5F53F /* Pods-gamefare-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1288,7 +1306,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 10C51D15B39B5041A9EFBB64 /* Pods-gamefare-tvOS.release.xcconfig */;
+			baseConfigurationReference = B79F5B239E5B11B549BADEB6 /* Pods-gamefare-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1321,7 +1339,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C55B45C32DD5061FAE91C251 /* Pods-gamefare-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 1146C62DC28D875F8A44FB8B /* Pods-gamefare-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1354,7 +1372,7 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DCBA4307A2C0027452B5AEA /* Pods-gamefare-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = B42484749F8677865A4476F8 /* Pods-gamefare-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;

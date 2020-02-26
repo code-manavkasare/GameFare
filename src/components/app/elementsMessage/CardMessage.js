@@ -60,6 +60,7 @@ class CardMessage extends React.Component {
     // const dataUrl = await LinkPreview.getPreview(url);
   }
   openPage(type, id) {
+    console.log('click message', {type, id});
     NavigationService.push(type, {
       objectID: id,
     });
@@ -67,10 +68,7 @@ class CardMessage extends React.Component {
   async clickLink(url, viewUrl) {
     if (url.includes('gamefare.app.link')) {
       const params = await getParams(url);
-      return this.openPage(
-        params.action === 'openEventPage' ? 'Event' : 'Group',
-        params.eventID,
-      );
+      return this.openPage(params.action, params.objectID);
     }
 
     // return true;
@@ -79,11 +77,7 @@ class CardMessage extends React.Component {
     const params = await getParams(url);
 
     if (!params) return Linking.openURL(url);
-    if (params.action === 'openEventPage') {
-      return this.openPage('Event', params.eventID);
-    } else if (params.action === 'openGroupPage') {
-      return this.openPage('Group', params.eventID);
-    }
+    if (params.action) return this.openPage(params.action, params.objectID);
     return openUrl(url);
   }
   openImage() {

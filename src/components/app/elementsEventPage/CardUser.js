@@ -134,6 +134,10 @@ export default class CardUser extends Component {
     );
   }
   cardUser(user) {
+    let {status} = this.props;
+    if (!status) status = user.status;
+    console.log('carfUser', user);
+    console.log(status);
     return (
       <View>
         <ButtonColor
@@ -161,7 +165,7 @@ export default class CardUser extends Component {
                   </Text>
                 </Col>
                 <Col size={10} style={styleApp.center}>
-                  {user.status === 'declined' ? (
+                  {status === 'declined' ? (
                     <Col
                       size={10}
                       style={styleApp.center}
@@ -200,7 +204,7 @@ export default class CardUser extends Component {
                       color={colors.green}
                       size={17}
                     />
-                  ) : user.status === 'pending' ? (
+                  ) : status === 'pending' ? (
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>

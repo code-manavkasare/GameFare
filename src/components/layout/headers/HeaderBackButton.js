@@ -217,7 +217,17 @@ export default class HeaderFlow extends Component {
                       return this.props.loader ? (
                         <Loader size={20} color={'primary'} />
                       ) : this.props.icon2 == 'text' ? (
-                        <Text style={styleApp.text}>{this.props.text2}</Text>
+                        <Text
+                          style={[
+                            styleApp.text,
+                            {
+                              color: this.props.text2Off
+                                ? colors.off
+                                : colors.title,
+                            },
+                          ]}>
+                          {this.props.text2}
+                        </Text>
                       ) : (
                         <AllIcons
                           name={this.props.icon2}

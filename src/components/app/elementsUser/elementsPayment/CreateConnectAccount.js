@@ -179,7 +179,7 @@ class ListEvent extends Component {
                     {color: birthDateSelected ? colors.title : colors.inputOff},
                   ]}>
                   {birthDateSelected
-                    ? moment(this.state.birthdate).format('d/MM/YYYY')
+                    ? moment(this.state.birthdate).format('MMMM D, YYYY')
                     : 'Date of birth'}
                 </Text>
               </Col>

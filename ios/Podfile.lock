@@ -413,6 +413,8 @@ PODS:
     - React
   - react-native-orientation-locker (1.1.8):
     - React
+  - react-native-slider (2.0.8):
+    - React
   - react-native-sms (1.10.0):
     - React
   - react-native-splash-screen (3.2.0):
@@ -587,6 +589,7 @@ DEPENDENCIES:
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
+  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
@@ -761,6 +764,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-nodemediaclient"
   react-native-orientation-locker:
     :path: "../node_modules/react-native-orientation-locker"
+  react-native-slider:
+    :path: "../node_modules/@react-native-community/slider"
   react-native-sms:
     :path: "../node_modules/react-native-sms"
   react-native-splash-screen:
@@ -917,6 +922,7 @@ SPEC CHECKSUMS:
   react-native-mixpanel: 513dc597c9ed239bdee91d16bdc7b9325fdcb779
   react-native-nodemediaclient: 992caea61e917bb49f374c650e3c32b6a3d79b0d
   react-native-orientation-locker: f0ca1a8e5031dab6b74bfb4ab33a17ed2c2fcb0d
+  react-native-slider: 3a1cfd00c9c31068251b536822f7192e8d1d6b6f
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5

@@ -42,6 +42,7 @@ import AsyncImage from '../layout/image/AsyncImage';
 
 import AllIcons from '../layout/icons/AllIcons';
 import DateEvent from './elementsEventCreate/DateEvent';
+import {date} from '../layout/date/date';
 import Button2 from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
@@ -50,7 +51,7 @@ import PostsView from './elementsGroupPage/PostsView';
 
 import CardUser from './elementsEventPage/CardUser';
 import CardStream from './elementsEventPage/CardStream';
-import {arrayAttendees} from '../functions/createEvent';
+import {arrayTeams} from '../functions/createChallenge';
 import PlaceHolder from '../placeHolders/EventPage';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -64,10 +65,6 @@ const noEdit = {
   editStart: '',
   editEnd: '',
   editLocation: null,
-  editGender: '',
-  editMaxAttendance: -1,
-  editLevelIndex: -1,
-  editRule: '',
 };
 
 class EventPage extends React.Component {
@@ -89,7 +86,7 @@ class EventPage extends React.Component {
     if (this.state.event) {
       firebase
         .database()
-        .ref('events/' + this.state.event.objectID)
+        .ref('challenges/' + this.state.event.objectID)
         .off();
     }
   }
@@ -97,61 +94,34 @@ class EventPage extends React.Component {
     const that = this;
     firebase
       .database()
-      .ref('events/' + objectID)
+      .ref('challenges/' + objectID)
       .on('value', async function(snap) {
         let event = snap.val();
+        console.log('challenge get !!', event);
         if (!event) return null;
         event.objectID = objectID;
         if (that.props.userConnected) {
-          if (event.allAttendees.includes(that.props.userID)) {
+          if (event.allMembers.includes(that.props.userID)) {
             await that.props.eventsAction('setAllEvents', {[objectID]: event});
           }
         }
         that.setState({event: event, loader: false});
       });
   }
-  getSportLeagueRule(event) {
+  getSportLeagueRule(challenge) {
     const sport = this.props.sports.filter(
-      (s) => s.value === event.info.sport,
+      (s) => s.value === challenge.info.sport,
     )[0];
-    const league = Object.values(sport.typeEvent).filter(
-      (l) => l.value === event.info.league,
+    const format = Object.values(sport.formats).filter(
+      (l) => l.value === challenge.info.format,
     )[0];
-    const rule = Object.values(league.rules).filter(
-      (r) =>
-        r.value ===
-        (this.state.editRule === noEdit.editRule
-          ? event.info.rules
-          : this.state.editRule),
-    )[0];
-    return {sport: sport, league: league, rule: rule};
+    return {sport: sport, format: format};
   }
   nextGender(data, inc) {
     if (this.state.editGender === noEdit.editGender) {
       this.setState({editGender: nextGender(data.info.gender, inc)});
     } else {
       this.setState({editGender: nextGender(this.state.editGender, inc)});
-    }
-  }
-  nextRule(data, inc) {
-    const {league} = this.getSportLeagueRule(data);
-    if (this.state.editRule === noEdit.editRule) {
-      this.setState({editRule: nextRule(data.info.rules, league, inc)});
-    } else {
-      this.setState({editRule: nextRule(this.state.editRule, league, inc)});
-    }
-  }
-  nextLevel(data, inc) {
-    const {sport} = this.getSportLeagueRule(data);
-    const levels = sport.level.list;
-    if (this.state.editLevelIndex !== noEdit.editLevelIndex) {
-      this.setState({
-        editLevelIndex: nextLevelIndex(this.state.editLevelIndex, levels, inc),
-      });
-    } else {
-      this.setState({
-        editLevelIndex: nextLevelIndex(data.info.levelFilter, levels, inc),
-      });
     }
   }
 
@@ -255,17 +225,20 @@ class EventPage extends React.Component {
     if (user.coach || user.userID === data.info.organizer) return true;
     return false;
   }
-  rowUser(user, i, data) {
+  rowTeam(team, i, data) {
     return (
       <CardUser
-        user={user}
+        user={team.captain}
+        status={team.status}
         infoUser={this.props.infoUser}
         userConnected={this.props.userConnected}
         objectID={data.objectID}
         key={i}
         userID={this.props.userID}
-        removable={data.info.organizer !== user.id && this.state.editMode}
-        removeFunc={() => this.askRemovePlayer(user, data)}
+        removable={
+          data.info.organizer !== team.captain.id && this.state.editMode
+        }
+        removeFunc={() => this.askRemovePlayer(team.captain, data)}
         type="event"
         admin={data.info.organizer === this.props.userID}
       />
@@ -283,19 +256,19 @@ class EventPage extends React.Component {
     );
   }
   openCondition(data) {
-    if (!data) {
-      return false;
-    }
-    if (!data.attendees) {
-      return true;
-    }
-    if (
-      Object.values(data.attendees).filter(
-        (user) => user.status === ('confirmed' || 'pending'),
-      ).length < Number(data.info.maxAttendance)
-    ) {
-      return true;
-    }
+    // if (!data) {
+    //   return false;
+    // }
+    // if (!data.attendees) {
+    //   return true;
+    // }
+    // if (
+    //   Object.values(data.attendees).filter(
+    //     (user) => user.status === ('confirmed' || 'pending'),
+    //   ).length < Number(data.info.maxAttendance)
+    // ) {
+    //   return true;
+    // }
     return false;
   }
   async addCalendar(data) {
@@ -516,11 +489,7 @@ class EventPage extends React.Component {
       sendEditNotification:
         this.state.editStart !== noEdit.editStart ||
         this.state.editEnd !== noEdit.editEnd ||
-        this.state.editLocation !== noEdit.editLocation ||
-        this.state.editRule !== noEdit.editRule ||
-        this.state.editLevelIndex !== noEdit.editLevelIndex
-          ? true
-          : false,
+        this.state.editLocation !== noEdit.editLocation,
       price: {
         ...data.price,
         joiningFee:
@@ -531,20 +500,6 @@ class EventPage extends React.Component {
       info: {
         ...data.info,
         name: this.state.editName === '' ? data.info.name : this.state.editName,
-        maxAttendance:
-          this.state.editMaxAttendance === -1
-            ? data.info.maxAttendance
-            : this.state.editMaxAttendance,
-        gender:
-          this.state.editGender === ''
-            ? data.info.gender
-            : this.state.editGender,
-        rules:
-          this.state.editRule === '' ? data.info.rules : this.state.editRule,
-        levelFilter:
-          this.state.editLevelIndex === -1
-            ? data.info.levelFilter
-            : this.state.editLevelIndex,
       },
       date: {
         ...data.date,
@@ -567,18 +522,11 @@ class EventPage extends React.Component {
       ...noEdit,
     });
   }
-  eventInfo(data, sport, rule, league) {
-    var level = Object.values(sport.level.list).filter(
-      (level) =>
-        level.value ===
-        (this.state.editLevelIndex === -1
-          ? data.info.levelFilter
-          : this.state.editLevelIndex),
-    )[0];
+  eventInfo(data, sport, format) {
     return (
       <View style={styleApp.marginView}>
         <Row style={{marginTop: 20}}>
-          <Col style={styleApp.center2}>{this.editPrice(data)}</Col>
+          {/* <Col style={styleApp.center2}>{this.editPrice(data)}</Col> */}
         </Row>
 
         <Row style={{marginTop: 15}}>
@@ -587,7 +535,7 @@ class EventPage extends React.Component {
         <View style={[styleApp.divider2, {marginBottom: 20}]} />
 
         {this.rowImage(sport.icon, sport.text)}
-        {this.rowImage(league.icon, league.text)}
+        {this.rowIcon(this.title(format.text), format.icon)}
 
         {this.editRowIcon(
           this.dateTime(data.date.start, data.date.end),
@@ -645,96 +593,6 @@ class EventPage extends React.Component {
         {data.info.instructions !== ''
           ? this.rowIcon(this.title(data.info.instructions), 'parking')
           : null}
-
-        <View style={[styleApp.divider2, {marginBottom: 25}]} />
-
-        <Row style={{height: 90, marginTop: 0}}>
-          <Col>
-            {this.state.editMaxAttendance === -1
-              ? this.editColIcon(
-                  data.info.maxAttendance === 1
-                    ? data.info.maxAttendance + ' player'
-                    : data.info.maxAttendance + ' players',
-                  'user-plus',
-                  () =>
-                    this.setState({
-                      editMaxAttendance: data.info.maxAttendance + 1,
-                    }),
-                  () =>
-                    data.info.maxAttendance === 1
-                      ? null
-                      : this.setState({
-                          editMaxAttendance: data.info.maxAttendance - 1,
-                        }),
-                  false,
-                )
-              : this.editColIcon(
-                  this.state.maxAttendance === 1
-                    ? this.state.editMaxAttendance + ' player'
-                    : this.state.editMaxAttendance + ' players',
-                  'user-plus',
-                  () =>
-                    this.setState({
-                      editMaxAttendance: this.state.editMaxAttendance + 1,
-                    }),
-                  () =>
-                    this.state.editMaxAttendance === 1
-                      ? null
-                      : this.setState({
-                          editMaxAttendance: this.state.editMaxAttendance - 1,
-                        }),
-                  false,
-                )}
-          </Col>
-          <Col>
-            {this.editColIcon(
-              level.value === '0' ? level.text : level.text.split('/')[0],
-              'balance-scale',
-              () => this.nextLevel(data, 1),
-              () => this.nextLevel(data, -1),
-              {title: level.title, subtitle: level.subtitle},
-            )}
-          </Col>
-        </Row>
-
-        <Row style={{height: 90, marginTop: 10}}>
-          <Col>
-            {this.state.editGender === ''
-              ? this.editColIcon(
-                  data.info.gender.charAt(0).toUpperCase() +
-                    data.info.gender.slice(1),
-                  data.info.gender === 'mixed'
-                    ? 'venus-mars'
-                    : data.info.gender === 'female'
-                    ? 'venus'
-                    : 'mars',
-                  () => this.nextGender(data, 1),
-                  () => this.nextGender(data, -1),
-                  false,
-                )
-              : this.editColIcon(
-                  this.state.editGender.charAt(0).toUpperCase() +
-                    this.state.editGender.slice(1),
-                  this.state.editGender === 'mixed'
-                    ? 'venus-mars'
-                    : this.state.editGender === 'female'
-                    ? 'venus'
-                    : 'mars',
-                  () => this.nextGender(data, 1),
-                  () => this.nextGender(data, -1),
-                  false,
-                )}
-          </Col>
-          <Col>
-            {this.editColIcon(
-              rule.text,
-              'puzzle-piece',
-              () => this.nextRule(data, 1),
-              () => this.nextRule(data, -1),
-              {title: rule.title, subtitle: rule.subtitle},
-            )}
-          </Col>
-        </Row>
       </View>
     );
   }
@@ -797,14 +655,14 @@ class EventPage extends React.Component {
             return (
               <Row>
                 <Col style={styleApp.center}>
-                  <Text style={styleApp.text}>Cancel the event</Text>
+                  <Text style={styleApp.text}>Cancel the challenge</Text>
                 </Col>
               </Row>
             );
           }}
           click={() =>
             NavigationService.navigate('Alert', {
-              textButton: 'Cancel the event',
+              textButton: 'Cancel the challenge',
               onGoBack: () => this.confirmCancelEvent(data),
               icon: (
                 <AllIcons
@@ -814,7 +672,7 @@ class EventPage extends React.Component {
                   size={22}
                 />
               ),
-              title: 'Are you sure you want to cancel the event?',
+              title: 'Are you sure you want to cancel the challenge?',
               colorButton: 'red',
               onPressColor: colors.red,
             })
@@ -875,56 +733,13 @@ class EventPage extends React.Component {
     return true;
   }
 
-  eventResults(event, loader) {
-    if (!event.streams) {
-      return null;
-    } else {
-      const streams = Object.values(event.streams);
-      return (
-        <View>
-          <View style={[styleApp.marginView, {marginTop: 30}]}>
-            <Row>
-              <Col size={60} style={styleApp.center2}>
-                <Text style={styleApp.text}>Results</Text>
-              </Col>
-            </Row>
-            <View
-              style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
-            />
-          </View>
-          {loader ? (
-            <FadeInView duration={300} style={{paddingTop: 10}}>
-              <PlaceHolder />
-              <PlaceHolder />
-              <PlaceHolder />
-            </FadeInView>
-          ) : streams.length === 0 ? (
-            <Text
-              style={[
-                styleApp.smallText,
-                {marginTop: 10, marginLeft: 20, width: width - 40},
-              ]}>
-              Stream event to get results!
-            </Text>
-          ) : (
-            streams.map((stream, i) => this.rowStream(event, stream, i))
-          )}
-        </View>
-      );
-    }
-  }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;
-    const attendees = arrayAttendees(
-      event.attendees,
-      userID,
-      event.info.organizer,
-    );
-    const {sport, league, rule} = this.getSportLeagueRule(event);
+    const teams = arrayTeams(event.teams, userID, event.info.organizer);
+    const {sport, format} = this.getSportLeagueRule(event);
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
-        {this.eventInfo(event, sport, rule, league)}
-        {this.eventResults(event, loader)}
+        {this.eventInfo(event, sport, format)}
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Row>
             <Col size={25} style={styleApp.center2}>
@@ -939,11 +754,11 @@ class EventPage extends React.Component {
                 Invite
               </Text>
             </Col>
-            <Col size={60} style={styleApp.center3}>
+            {/* <Col size={60} style={styleApp.center3}>
               {this.userAlreadySubscribed(event.attendees) &&
                 this.props.userID !== event.info.organizer &&
                 this.buttonLeave(event)}
-            </Col>
+            </Col> */}
           </Row>
 
           <View
@@ -956,19 +771,19 @@ class EventPage extends React.Component {
             <PlaceHolder />
             <PlaceHolder />
           </FadeInView>
-        ) : attendees.length === 0 ? (
+        ) : teams.length === 0 ? (
           <Text
             style={[
               styleApp.smallText,
               {marginTop: 10, marginLeft: 20, width: width - 40},
             ]}>
-            No players has joined the event yet.
+            No teams has joined the challenge yet.
           </Text>
         ) : (
-          attendees.map((user, i) => this.rowUser(user, i, event))
+          teams.map((team, i) => this.rowTeam(team, i, event))
         )}
 
-        {event.discussions && this.userAlreadySubscribed(event.attendees) && (
+        {event.discussions && (
           <PostsView
             objectID={event.objectID}
             data={event}
@@ -1102,18 +917,18 @@ class EventPage extends React.Component {
       description: '',
       url: {
         description:
-          'Join my event ' +
+          'Join my challenge ' +
           event.info.name +
           ' on ' +
           date(event.date.start, 'ddd, MMM D') +
           ' at ' +
           date(event.date.start, 'h:mm a') +
           ' by following the link!',
-        image: event.pictures[0],
+        image: event.images[0],
         title: event.info.name,
       },
-      action: 'Event',
-      data: {...event, eventID: event.objectID},
+      action: 'Challenge',
+      data: {...event, objectID: event.objectID},
     });
   };
   checkout(event) {
@@ -1231,9 +1046,9 @@ class EventPage extends React.Component {
           {this.event(event, loader, userID)}
         </ParallaxScrollView>
 
-        {!event ? null : (
+        {event && (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {editMode ? (
+            {/* {editMode ? (
               this.bottomActionButton('Save edits', () => this.saveEdits(event))
             ) : this.waitlistCondition(event) ? (
               this.bottomActionButton('Join the waitlist', () =>
@@ -1248,7 +1063,7 @@ class EventPage extends React.Component {
               this.bottomActionButton('Checkout', () => this.checkout(event))
             ) : (
               <View />
-            )}
+            )} */}
           </FadeInView>
         )}
       </View>

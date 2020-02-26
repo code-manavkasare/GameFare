@@ -8,7 +8,7 @@ import colors from '../../style/colors';
 import styleApp from '../../style/style';
 
 import {groupsAction} from '../../../actions/groupsActions';
-import CardGroup from '../elementsGroupTab/CardGroup';
+import CardGroup from '../elementsActivity/CardGroup';
 import {native} from '../../animations/animations';
 import {indexGroups} from '../../database/algolia';
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
@@ -45,7 +45,7 @@ class ListEvents extends React.Component {
   }
   async loadGroups(groups) {
     await this.setState({loader: true});
-    indexGroups.clearCache();
+    //indexGroups.clearCache();
     const groupsEvents = await this.getGroups(keys(groups));
     if (groupsEvents.filter((group) => !group).length !== 0)
       return this.loadGroups(groups);

@@ -40,11 +40,8 @@ class InitialPage extends Component {
 
   goToHomePageDirectlyFromRefLink = async () => {
     branch.subscribe(async ({error, params}) => {
-      if (error) {
-        console.log('Error from Branch: ' + error);
-        return;
-      }
-      const {eventID, action} = params;
+      if (error) return;
+      const {objectID, action} = params;
 
       if (params['+clicked_branch_link']) {
         if (
@@ -52,16 +49,15 @@ class InitialPage extends Component {
           this.props.leagueSelected === ''
         ) {
           await this.initialSetupFromRefLink(
-            action === 'openEventPage' ? true : false,
-            eventID,
+            action === 'Event' ? true : false,
+            objectID,
           );
         }
-        this.props.navigation.navigate('TabsApp');
-        if (action === 'openEventPage') {
-          this.props.navigation.push('Event', {objectID: eventID});
-        } else if (action === 'openGroupPage') {
-          this.props.navigation.push('Group', {objectID: eventID});
-        }
+        console.log('open link brancj', params);
+        await this.props.navigation.navigate('TabsApp');
+        if (action)
+          return this.props.navigation.push(action, {objectID: objectID});
+        return true;
       }
     });
   };

@@ -257,6 +257,7 @@ class GroupPage extends React.Component {
           loader={this.state.loader}
           infoUser={this.props.infoUser}
           editMode={this.state.editMode}
+          goToShareGroup={() => this.goToShareGroup(data)}
           onRemoveMember={(user) => this.askRemoveUser(data, user)}
         />
 
@@ -419,10 +420,14 @@ class GroupPage extends React.Component {
       return this.props.navigation.navigate('SignIn');
     }
     this.props.navigation.navigate('Contacts', {
-      openPageLink: 'openGroupPage',
-      pageTo: 'Group',
       objectID: data.objectID,
-      pageFrom: 'Group',
+      url: {
+        description:
+          'Join my group ' + data.info.name + ' by following the link!',
+        image: data.pictures[0],
+        title: data.info.name,
+      },
+      action: 'Group',
       data: {...data, eventID: data.objectID},
     });
   };

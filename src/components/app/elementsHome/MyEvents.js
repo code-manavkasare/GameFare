@@ -65,8 +65,10 @@ class MyEvents extends React.Component {
 
   async componentWillReceiveProps(nextProps) {
     if (
-      this.props.userConnected !== nextProps.userConnected &&
-      nextProps.userConnected
+      (this.props.userConnected !== nextProps.userConnected &&
+        nextProps.userConnected) ||
+      (nextProps.userConnected &&
+        nextProps.leagueSelected !== this.props.leagueSelected)
     ) {
       this.loadEvent(nextProps.userID);
     }
@@ -154,6 +156,7 @@ class MyEvents extends React.Component {
       numberFuture = ' (' + futureEvents.length + ')';
       numberPast = ' (' + pastEvents.length + ')';
     }
+    console.log('render ListEvent', futureEvents);
     return (
       <View style={{marginTop: 20}}>
         <View style={[styleApp.marginView, {marginBottom: 20}]}>
@@ -200,6 +203,10 @@ class MyEvents extends React.Component {
               onRef={(ref) => (this.scrollViewRef2 = ref)}
             />
           </Animated.View>
+        </View>
+
+        <View style={styleApp.marginView}>
+          <View style={[styleApp.divider2, {marginTop: 30}]} />
         </View>
       </View>
     );

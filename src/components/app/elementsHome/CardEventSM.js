@@ -28,15 +28,7 @@ class CardEvent extends React.Component {
     if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
-  card(color, data) {
-    if (this.state.loader)
-      return (
-        <View style={styleApp.cardEventSM}>
-          <PlacelHolder />
-        </View>
-      );
-    return this.displayCard(color, data);
-  }
+
   numberMember(attendees) {
     return attendees.length;
   }
@@ -75,7 +67,7 @@ class CardEvent extends React.Component {
   }
   rowAttendees(attendees) {
     return (
-      <Row style={{marginTop: 15}}>
+      <Row style={{marginTop: 5}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
           <View
             style={[
@@ -111,14 +103,16 @@ class CardEvent extends React.Component {
       </Row>
     );
   }
-  displayCard(data, attendees) {
-    var sport = Object.values(this.props.sports).filter(
+  displayCard(data, members) {
+    const sport = Object.values(this.props.sports).filter(
       (sport) => sport.value === data.info.sport,
     )[0];
     var league = Object.values(sport.typeEvent)
       .filter((item) => item)
       .filter((item) => item.value === data.info.league)[0];
-    if (!league) return null;
+    console.log(data.info.name);
+    console.log(data);
+    console.log('displaycard', members);
 
     return (
       <ButtonColor
@@ -126,7 +120,7 @@ class CardEvent extends React.Component {
         view={() => {
           return (
             <FadeInView duration={300} style={styleApp.fullSize}>
-              {this.props.league === 'all' && (
+              {this.props.league === 'all' && league && (
                 <AsyncImage
                   style={styles.logoLeague}
                   mainImage={league.icon}
@@ -150,17 +144,35 @@ class CardEvent extends React.Component {
                 ]}>
                 {data.info.name}
               </Text>
-              <Text style={[styleApp.subtitle, {marginTop: 5, minHeight: 35}]}>
-                {data.location.address}
-              </Text>
+              <Row style={{marginTop: 5}}>
+                <Col size={15} style={styleApp.center2}>
+                  <AsyncImage
+                    style={{width: 30, height: 30, borderRadius: 15}}
+                    mainImage={data.images[0]}
+                    imgInitial={data.images[0]}
+                  />
+                </Col>
+                <Col
+                  size={this.props.size === 'SM' ? 60 : 85}
+                  style={styleApp.center2}>
+                  <Text
+                    style={[styleApp.subtitle, {marginTop: 5, minHeight: 35}]}>
+                    {data.location.address}
+                  </Text>
+                </Col>
+              </Row>
 
-              {this.rowAttendees(attendees)}
+              {this.rowAttendees(members)}
 
               {this.props.size === 'M' && <View style={styles.dividerBottom} />}
             </FadeInView>
           );
         }}
-        click={() => NavigationService.push('Event', {objectID: data.objectID})}
+        click={() =>
+          NavigationService.push(data.challenge ? 'Challenge' : 'Event', {
+            objectID: data.objectID,
+          })
+        }
         color={'white'}
         style={[
           this.props.size === 'SM'
@@ -176,10 +188,24 @@ class CardEvent extends React.Component {
     );
   }
   members(data) {
+    if (data.challenge)
+      return Object.values(data.teams)
+        .filter((member) => member.status === 'confirmed')
+        .map((team) => team.captain);
     if (!data.attendees) return [];
+
     return Object.values(data.attendees).filter(
       (member) => member.status === 'confirmed',
     );
+  }
+  card(data, members) {
+    if (this.state.loader)
+      return (
+        <View style={styleApp.cardEventSM}>
+          <PlacelHolder />
+        </View>
+      );
+    return this.displayCard(data, members);
   }
   render() {
     const {data, userID} = this.props;

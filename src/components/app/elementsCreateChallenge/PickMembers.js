@@ -20,7 +20,7 @@ import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardUserSelect from '../../layout/cards/CardUserSelect';
 
-import {historicSearchAction} from '../../../actions/historicSearchActions';
+import {createChallengeAction} from '../../../actions/createChallengeActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 import {createDiscussion, searchDiscussion} from '../../functions/message';
 
@@ -45,48 +45,17 @@ class NewConversation extends React.Component {
     const users = await autocompleteSearchUsers(search, this.props.userID);
     this.setState({users: users, loader: false});
   }
-  async next(selectedUsers) {
+  next(selectedUsers) {
     if (Object.values(selectedUsers).length === 0) return true;
-    await this.setState({loaderHeader: true});
-    let users = Object.values(selectedUsers).map((user) => user.objectID);
-    users.push(this.props.userID);
-    var discussion = await searchDiscussion(users, users.length);
-    users = Object.values(selectedUsers).map((user) => {
-      user.id = user.objectID;
-      return user;
-    });
-    users = users.concat({
-      id: this.props.userID,
-      info: this.props.infoUser,
-    });
-
-    if (!discussion) {
-      discussion = await createDiscussion(users, 'General', false);
-      if (!discussion) {
-        await this.setState({loaderHeader: false});
-        return this.props.navigation.navigate('Alert', {
-          close: true,
-          title: 'An unexpected error has occured.',
-          subtitle: 'Please contact us.',
-          textButton: 'Got it!',
-        });
-      }
-    }
-
-    await this.props.navigation.navigate('Conversation', {
-      data: discussion,
-      myConversation: true,
-    });
-    return this.setState({loaderHeader: false});
+    return this.props.navigation.navigate('PickInfos');
   }
   selectUser(select, user, selectedUsers) {
     if (!select)
       selectedUsers = {
-        ...selectedUsers,
-        [user.objectID]: user,
+        [user.objectID]: {...user, id: user.objectID},
       };
     else delete selectedUsers[user.objectID];
-    this.setState({selectedUsers: selectedUsers});
+    this.props.createChallengeAction('setCaptains', selectedUsers);
   }
   searchInput() {
     return (
@@ -146,12 +115,16 @@ class NewConversation extends React.Component {
 
   render() {
     const {dismiss, goBack} = this.props.navigation;
-    let {selectedUsers} = this.state;
+    let {captains} = this.props;
+    const numberUsersSelected = Object.keys(captains).length;
+    let addonTextHeader = '';
+    if (numberUsersSelected !== 0)
+      addonTextHeader = ' (' + numberUsersSelected + ')';
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Add participants'}
+          textHeader={'Add participant'}
           inputRange={[0, 0]}
           initialBorderColorIcon={colors.white}
           initialBorderColorHeader={colors.borderColor}
@@ -159,16 +132,17 @@ class NewConversation extends React.Component {
           initialBackgroundColor={'white'}
           typeIcon2={'font'}
           sizeIcon2={17}
+          text2Off={numberUsersSelected === 0}
           initialTitleOpacity={1}
-          icon1={'times'}
+          icon1={'arrow-left'}
           icon2={'text'}
           text2={'Next'}
-          clickButton1={() => goBack()}
-          clickButton2={() => this.next(selectedUsers)}
+          clickButton1={() => dismiss()}
+          clickButton2={() => this.next(captains)}
           loader={this.state.loaderHeader}
         />
 
-        {this.newConversationPage(selectedUsers)}
+        {this.newConversationPage(captains)}
       </View>
     );
   }
@@ -206,9 +180,10 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
+    captains: state.createChallengeData.captains,
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(
+export default connect(mapStateToProps, {createChallengeAction})(
   NewConversation,
 );

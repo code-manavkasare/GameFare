@@ -19,6 +19,7 @@ import ProfilePage from '../app/ProfilePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
 import EventPage from '../app/EventPage';
+import ChallengePage from '../app/ChallengePage';
 import MapPage from '../app/elementsHome/MapPage';
 import MapFiltersModals from '../app/elementsHome/MapFiltersModal';
 
@@ -41,10 +42,15 @@ import NewContact from '../app/elementsEventCreate/elementsContacts/NewContact';
 
 import CreateGroup0 from '../app/elementsGroupCreate/Page0';
 
+import PickMembers from '../app/elementsCreateChallenge/PickMembers';
+import PickInfos from '../app/elementsCreateChallenge/PickInfos';
+import PickAddress from '../app/elementsCreateChallenge/PickAddress';
+import SummaryChallenge from '../app/elementsCreateChallenge/SummaryChallenge';
+
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
 import DateSelector from '../app/elementsEventCreate/DateSelector';
 
-import ListGroups from '../app/elementsGroupTab/GroupList';
+import Activity from '../app/elementsActivity/Activity';
 
 import Payments from '../app/elementsUser/elementsPayment/Payments';
 import NewCard from '../app/elementsUser/elementsPayment/NewCard';
@@ -106,6 +112,22 @@ const CreateGroupNavigator = createStackNavigator(
   },
 );
 
+const CreateChallengeNavigator = createStackNavigator(
+  {
+    PickMembers: lockedPortrait(PickMembers),
+    PickInfos: lockedPortrait(PickInfos),
+    PickAddress: lockedPortrait(PickAddress),
+    SummaryChallenge: lockedPortrait(SummaryChallenge),
+  },
+  {
+    initialRouteName: 'PickMembers',
+    headerMode: 'none',
+    mode: 'card',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: true,
+  },
+);
+
 const ContactNavigator = createStackNavigator(
   {
     Contacts: {
@@ -134,6 +156,19 @@ const JoinNavigator = createStackNavigator(
   },
   {
     initialRouteName: 'Event',
+    headerMode: 'none',
+    mode: 'card',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: true,
+  },
+);
+
+const JoinChallengeNavigator = createStackNavigator(
+  {
+    Challenge: lockedPortrait(ChallengePage),
+  },
+  {
+    initialRouteName: 'Challenge',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
@@ -249,8 +284,8 @@ const StreamResultsNavigator = createStackNavigator(
 const MainApp = createBottomTabNavigator(
   {
     Home: lockedPortrait(HomePage),
-    ListGroups: lockedPortrait(ListGroups),
-    // Stream: lockedPortrait(StreamPage),
+    Activity: lockedPortrait(Activity),
+    Stream: lockedPortrait(StreamPage),
     MessageList: lockedPortrait(MessageList),
     More: ProfileNavigator,
   },
@@ -346,11 +381,13 @@ const MainStack = createStackNavigator(
       },
     },
     Event: JoinNavigator,
+    Challenge: JoinChallengeNavigator,
     Conversation: MessageNavigator,
     Group: JoinGroupNavigator,
     LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
     CreateGroup1: CreateGroupNavigator,
+    CreateChallenge: CreateChallengeNavigator,
     EditProfilePage: {screen: lockedPortrait(EditProfilePage)},
     StreamResults: {
       screen: lockedPortrait(StreamResults),

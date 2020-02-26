@@ -176,6 +176,51 @@ class MembersView extends Component {
       />
     );
   }
+  buttonInvite() {
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={40} style={styleApp.center}>
+                <AllIcons
+                  name="sign-out-alt"
+                  type="font"
+                  color={colors.white}
+                  size={15}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={[styleApp.text, {color: colors.white}]}>
+                  Leave
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() =>
+          NavigationService.navigate('Alert', {
+            textButton: 'Leave',
+            onGoBack: () => this.confirmLeaveGroup(data),
+            icon: (
+              <AllIcons
+                name="sign-out-alt"
+                color={colors.primary}
+                type="font"
+                size={22}
+              />
+            ),
+            title: 'Are you sure you want to leave this group?',
+            colorButton: 'primary',
+            onPressColor: colors.primaryLight,
+          })
+        }
+        color={colors.primary}
+        style={styles.buttonLeave}
+        onPressColor={colors.primaryLight}
+      />
+    );
+  }
   async confirmLeaveGroup(data) {
     if (data.discussions)
       await this.props.messageAction(
@@ -200,10 +245,19 @@ class MembersView extends Component {
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
           <Row>
-            <Col style={styleApp.center2} size={70}>
+            <Col style={styleApp.center2} size={25}>
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
-            <Col style={styleApp.center3} size={30}>
+            <Col
+              size={15}
+              style={styleApp.center2}
+              activeOpacity={1}
+              onPress={() => this.props.goToShareGroup()}>
+              <Text style={[styleApp.text, {color: colors.primary}]}>
+                Invite
+              </Text>
+            </Col>
+            <Col style={styleApp.center3} size={60}>
               {data.organizer.id ===
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 this.buttonLeave(data)

@@ -5,16 +5,15 @@ import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase';
 import {Col, Row} from 'react-native-easy-grid';
 
-import ListEvents from './elementsHome/ListEvent';
 import HeaderHome from '../layout/headers/HeaderHome';
-import EventFromGroups from './elementsHome/EventsFromGroups';
+import NewEvents from './elementsHome/NewEvents';
+import GroupsAround from './elementsActivity/GroupsAround';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 
 import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
-import ButtonAdd from './elementsHome/ButtonAdd';
 import AllIcons from '../layout/icons/AllIcons';
 
 import sizes from '../style/sizes';
@@ -106,29 +105,25 @@ class HomeScreen extends React.Component {
   homePageView() {
     return (
       <View style={{paddingTop: 10, minHeight: height / 1.5}}>
-        <EventFromGroups
+        <NewEvents
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
           loader={this.state.loader}
           onRef={(ref) => (this.eventGroupsRef = ref)}
         />
 
-        <ListEvents
-          location={this.state.location}
-          search={this.state.search}
-          key={2}
-          onRef={(ref) => (this.listEventsRef = ref)}
-          setState={(data) => this.setState(data)}
-          loader={this.state.loader}
+        <GroupsAround
           navigate={this.navigate.bind(this)}
           navigate1={(val, data) => this.props.navigation.navigate(val, data)}
+          loader={this.state.loader}
+          onRef={(ref) => (this.groupsAroundRef = ref)}
         />
       </View>
     );
   }
   async refresh() {
     this.eventGroupsRef.reload();
-    this.listEventsRef.reload();
+    this.groupsAroundRef.reload();
     return true;
   }
   render() {
@@ -194,13 +189,6 @@ class HomeScreen extends React.Component {
           />
         </Animated.View>
 
-        <ButtonAdd
-          translateXVoile={this.translateXVoile}
-          typeButton={'event'}
-          pageTo="CreateEvent0"
-          onRef={(ref) => (this.buttonAddRef = ref)}
-          opacityVoile={this.opacityVoile}
-        />
         <ButtonColor
           view={() => {
             return (

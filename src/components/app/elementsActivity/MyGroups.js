@@ -55,8 +55,7 @@ class MyGroups extends React.Component {
     if (
       (this.props.userConnected !== nextProps.userConnected &&
         nextProps.userConnected === true) ||
-      this.props.sportSelected !== nextProps.sportSelected ||
-      this.props.leagueSelected !== nextProps.leagueSelected
+      this.props.sportSelected !== nextProps.sportSelected
     ) {
       this.loadEvent(nextProps.sportSelected);
     }
@@ -138,9 +137,7 @@ class MyGroups extends React.Component {
           />
         </Animated.View>
 
-        <View style={styleApp.marginView}>
-          <View style={[styleApp.divider2, {marginTop: 30}]} />
-        </View>
+        
       </View>
     );
   }

@@ -22,6 +22,7 @@ import TextField from '../../layout/textField/TextField';
 import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import DateEvent from './DateEvent';
+import {date} from '../../layout/date/date';
 import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
@@ -158,6 +159,7 @@ class Page3 extends Component {
         : data.info.levelOption == 'min'
         ? 'and above'
         : 'and below';
+    console.log('page3', data);
     return (
       <View style={[styleApp.marginView, {paddingTop: 15}]}>
         <Row style={{marginBottom: 10}}>
@@ -194,7 +196,12 @@ class Page3 extends Component {
         {this.rowIcon('extension', this.title(rule.text), 'mat')}
 
         <View style={[styleApp.divider2, {marginBottom: 10}]} />
-
+        {this.rowIcon(
+          data.images[0],
+          this.title(data.location.address),
+          'font',
+          true,
+        )}
         {this.rowIcon('calendar-alt', this.dateTime(data), 'font')}
         {data.date.recurrence != ''
           ? this.rowIcon(
@@ -207,11 +214,7 @@ class Page3 extends Component {
               'font',
             )
           : null}
-        {this.rowIcon(
-          'map-marker-alt',
-          this.title(data.location.address),
-          'font',
-        )}
+
         <View style={{height: 5}} />
         {data.info.instructions != ''
           ? this.rowIcon('parking', this.title(data.info.instructions), 'font')
@@ -303,7 +306,6 @@ class Page3 extends Component {
       }
     }
 
-
     await this.props.eventsAction('setAllEvents', {[event.objectID]: event});
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
@@ -318,10 +320,22 @@ class Page3 extends Component {
     await dismiss();
 
     return this.props.navigation.navigate('Contacts', {
-      data: event,
-      pageFrom: 'Event',
-      openPageLink: 'openEventPage',
       objectID: event.objectID,
+      description: '',
+      url: {
+        description:
+          'Join my event ' +
+          event.info.name +
+          ' on ' +
+          date(event.date.start, 'ddd, MMM D') +
+          ' at ' +
+          date(event.date.start, 'h:mm a') +
+          ' by following the link!',
+        image: event.pictures[0],
+        title: event.info.name,
+      },
+      action: 'Event',
+      data: {...event, eventID: event.objectID},
     });
   }
   render() {

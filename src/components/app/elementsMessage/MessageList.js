@@ -100,7 +100,7 @@ class MessageTab extends React.Component {
         <View style={styleApp.center}>
           <Image
             style={{height: 85, width: 85, marginBottom: 30}}
-            source={require('../../../img/images/conversation.png')}
+            source={require('../../../img/images/target.png')}
           />
           <Text style={[styleApp.text, {marginBottom: 30}]}>
             Sign in to see or start a conversation.

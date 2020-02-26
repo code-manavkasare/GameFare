@@ -32,6 +32,8 @@ class ButtonAdd extends Component {
     this.translateYButton1 = new Animated.Value(0);
     this.opacityButton2 = new Animated.Value(0);
     this.translateYButton2 = new Animated.Value(0);
+    this.opacityButton3 = new Animated.Value(0);
+    this.translateYButton3 = new Animated.Value(0);
   }
   async componentDidMount() {
     this.props.onRef(this);
@@ -42,12 +44,14 @@ class ButtonAdd extends Component {
   async open(val, to) {
     if (val) {
       await this.props.translateXVoile.setValue(0);
+      await this.opacityButton3.setValue(1);
       await this.opacityButton2.setValue(1);
       await this.opacityButton1.setValue(1);
       return Animated.parallel([
         Animated.timing(this.rotateButton, native(1, 200)),
         Animated.timing(this.translateYButton1, native(-65, 200)),
         Animated.timing(this.translateYButton2, native(-130, 200)),
+        Animated.timing(this.translateYButton3, native(-195, 200)),
         Animated.timing(this.props.opacityVoile, native(0.4, 200)),
       ]).start(() => this.setState({open: true}));
     }
@@ -60,11 +64,13 @@ class ButtonAdd extends Component {
       Animated.timing(this.rotateButton, native(0, 200)),
       Animated.timing(this.translateYButton1, native(0, 200)),
       Animated.timing(this.translateYButton2, native(0, 200)),
+      Animated.timing(this.translateYButton3, native(0, 200)),
       Animated.timing(this.props.opacityVoile, native(0, 200)),
     ]).start(() => {
       this.props.translateXVoile.setValue(width);
       this.opacityButton1.setValue(0);
       this.opacityButton2.setValue(0);
+      this.opacityButton3.setValue(0);
       this.setState({open: false});
       if (to !== undefined) {
         NavigationService.navigate(to);
@@ -88,20 +94,85 @@ class ButtonAdd extends Component {
     });
     return (
       <View>
-        {/* <Animated.View style={[styles.viewButton,{opacity:this.opacityButton2,transform: [{translateY: this.translateYButton2}]}]}>
-          <TouchableOpacity activeOpacity={1} onPress={() => this.open(!this.state.open,'group')} style={{position:'absolute',left:-104,width:100}} >
-            <Text style={[styleApp.title,styleApp.textShadowColor,{color:'white',fontSize:17,fontFamily:'OpenSans-Bold'}]}>New Group</Text>
+        <Animated.View
+          style={[
+            styles.viewButton,
+            {
+              opacity: this.opacityButton3,
+              transform: [{translateY: this.translateYButton3}],
+            },
+          ]}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => this.open(!this.state.open, 'CreateEvent0')}
+            style={{position: 'absolute', left: -134, width: 140}}>
+            <Text
+              style={[
+                styleApp.title,
+                styleApp.textShadowColor,
+                {color: 'white', fontSize: 17, fontFamily: 'OpenSans-Bold'},
+              ]}>
+              New Challenge
+            </Text>
           </TouchableOpacity>
 
-          <ButtonColor view={() => {
-                return <AllIcons name='profileFooter' color={colors.green} size={21} type='moon' />
-              }}
-              click={() => this.open(!this.state.open,'group')}
-              color={'white'}
-              style={[styleApp.center,styleApp.shade2,{borderColor:colors.off,height:60,width:60,borderRadius:30,borderWidth:1}]}
-              onPressColor={colors.off}
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="mountain"
+                  color={colors.green}
+                  size={23}
+                  type="moon"
+                />
+              );
+            }}
+            click={() => this.open(!this.state.open, 'CreateChallenge')}
+            color={'white'}
+            style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
+            onPressColor={colors.off}
           />
-        </Animated.View> */}
+        </Animated.View>
+
+        <Animated.View
+          style={[
+            styles.viewButton,
+            {
+              opacity: this.opacityButton2,
+              transform: [{translateY: this.translateYButton2}],
+            },
+          ]}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => this.open(!this.state.open, 'CreateEvent0')}
+            style={{position: 'absolute', left: -100, width: 100}}>
+            <Text
+              style={[
+                styleApp.title,
+                styleApp.textShadowColor,
+                {color: 'white', fontSize: 17, fontFamily: 'OpenSans-Bold'},
+              ]}>
+              New Event
+            </Text>
+          </TouchableOpacity>
+
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="calendar2"
+                  color={colors.green}
+                  size={21}
+                  type="moon"
+                />
+              );
+            }}
+            click={() => this.open(!this.state.open, 'CreateEvent0')}
+            color={'white'}
+            style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
+            onPressColor={colors.off}
+          />
+        </Animated.View>
 
         <Animated.View
           style={[
@@ -138,17 +209,7 @@ class ButtonAdd extends Component {
             }}
             click={() => this.open(!this.state.open, this.props.pageTo)}
             color={'white'}
-            style={[
-              styleApp.center,
-              styleApp.shade2,
-              {
-                borderColor: colors.off,
-                height: 60,
-                width: 60,
-                borderRadius: 30,
-                borderWidth: 1,
-              },
-            ]}
+            style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.off}
           />
         </Animated.View>
@@ -163,17 +224,7 @@ class ButtonAdd extends Component {
             }}
             click={() => this.open(!this.state.open)}
             color={colors.green}
-            style={[
-              styleApp.center,
-              styleApp.shade2,
-              {
-                borderColor: colors.greyDark,
-                height: 60,
-                width: 60,
-                borderRadius: 30,
-                borderWidth: 0.3,
-              },
-            ]}
+            style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.greenLight}
           />
         </Animated.View>
@@ -193,10 +244,19 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
   },
+  buttonRound: {
+    borderColor: colors.off,
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    borderWidth: 1,
+  },
 });
 
 const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {createEventAction,createGroupAction})(ButtonAdd);
+export default connect(mapStateToProps, {createEventAction, createGroupAction})(
+  ButtonAdd,
+);

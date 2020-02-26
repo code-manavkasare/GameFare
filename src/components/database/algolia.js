@@ -1,38 +1,56 @@
-import algoliasearch from 'algoliasearch/reactnative';
+import algoliasearch from 'algoliasearch';
 import equal from 'fast-deep-equal';
 import union from 'lodash/union';
 import {keys} from 'ramda';
 import moment from 'moment';
 import Config from 'react-native-config';
 
-const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3');
+const client = algoliasearch('F4SW2K5A54', '567ba66321018b3bdc5e90fc9e0e26d3', {
+  timeouts: {
+    connect: 1,
+    read: 2,
+    write: 30,
+  },
+});
 
 let indexEvents = client.initIndex('prod_events');
+let indexEventsName = 'prod_events';
 let indexGroups = client.initIndex('prod_groups');
+let indexGroupsName = 'prod_groups';
 let indexUsers = client.initIndex('prod_users');
+let indexUsersName = 'prod_users';
 let indexDiscussions = client.initIndex('prod_discussions');
+let indexDiscussionsName = 'prod_discussions';
+let indexChallenges = client.initIndex('prod_challenges');
+let indexChallengesName = 'prod_challenges';
 
 if (Config.ENV === 'dev') {
   indexEvents = client.initIndex('dev_events');
+  indexEventsName = 'dev_events';
   indexGroups = client.initIndex('dev_groups');
+  indexGroupsName = 'dev_groups';
   indexUsers = client.initIndex('dev_users');
+  indexUsersName = 'dev_users';
   indexDiscussions = client.initIndex('dev_discussions');
+  indexDiscussionsName = 'dev_discussions';
+  indexChallenges = client.initIndex('dev_challenges');
+  indexChallengesName = 'dev_challenges';
 }
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
-  await indexGroups.clearCache();
+  // await indexGroups.clearCache();
   const filterOrganizer =
     'info.organizer:' + userID + ' OR allMembers:' + userID;
   const filters = filterOrganizer + filterSport;
   if (location) {
-    var {hits} = await indexGroups.search({
+    var {hits} = await indexGroups.search('', {
       filters: filters,
       aroundLatLng: location ? location.lat + ',' + location.lng : '',
       aroundRadius: radiusSearch * 1000,
       hitsPerPage: 1000,
     });
   } else {
-    var {hits} = await indexGroups.search({
+    var {hits} = await indexGroups.search('', {
       filters: filters,
       hitsPerPage: 1000,
     });
@@ -71,8 +89,8 @@ async function getEventsFromGroups(
   if (filterIds === '') prefix2 = '';
 
   const filters = filterIds + prefix2 + filterUser + ' AND info.sport:' + sport;
-  await indexEvents.clearCache();
-  let {hits} = await indexEvents.search({
+  // await indexEvents.clearCache();
+  let {hits} = await indexEvents.search('', {
     filters: filters,
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
@@ -99,7 +117,8 @@ const getEventPublic = async (
   userID,
   radiusSearch,
 ) => {
-  indexEvents.clearCache();
+  // indexEvents.clearCache();
+  await client.clearCache();
   var leagueFilter = ' AND info.league:' + league;
   if (league === 'all') {
     leagueFilter = '';
@@ -119,7 +138,7 @@ const getEventPublic = async (
   var filterUser =
     ' AND NOT info.organizer:' + userID + ' AND NOT allAttendees:' + userID;
   if (userID === '') filterUser = '';
-  var {hits} = await indexEvents.search({
+  var {hits} = await indexEvents.search('', {
     aroundLatLng: location.lat + ',' + location.lng,
     aroundRadius: radiusSearch * 1000,
     hitsPerPage: 1000,
@@ -135,6 +154,7 @@ const getEventPublic = async (
             24 * 3600 * 1000}`
         : ''),
   });
+  console.log('results events around', hits);
 
   var allEventsPublic = hits.reduce(function(result, item) {
     result[item.objectID] = item;
@@ -168,29 +188,44 @@ const getEventPublic = async (
 };
 
 const getMyEvents = async (userID, filterDateName) => {
-  let filterAttendees =
-    'allAttendees:' +
-    userID +
-    ' OR allCoaches:' +
-    userID +
-    ' OR info.organizer:' +
-    userID +
-    ' AND ';
+  console.log('getMyEvents');
+  let filterAttendees = userID + ' OR info.organizer:' + userID + ' AND ';
 
   let filterDate = 'date_timestamp>' + Number(new Date());
   if (filterDateName === 'past')
     filterDate = 'date_timestamp<' + Number(new Date());
-  indexEvents.clearCache();
-  var {hits} = await indexEvents.search({
-    query: '',
-    hitsPerPage: 1000,
-    filters: filterAttendees + filterDate,
-  });
-  const events = hits.reduce(function(result, item) {
-    result[item.objectID] = item;
-    return result;
-  }, {});
-  return events;
+  // await client.clearCache();
+
+  const queries = [
+    {
+      indexName: indexEventsName,
+      params: {
+        hitsPerPage: 1000,
+        filters: 'allAttendees:' + filterAttendees + filterDate,
+      },
+    },
+    {
+      indexName: indexChallengesName,
+      params: {
+        hitsPerPage: 1000,
+        filters: 'allMembers:' + filterAttendees + filterDate,
+      },
+    },
+  ];
+  let {results} = await client.multipleQueries(queries);
+  let array = [];
+  results = results.map((result) => array.concat(result.hits));
+
+  var arrayResult = [].concat.apply([], results);
+  arrayResult = arrayResult
+    .sort(function(a, b) {
+      return a.date_timestamp - b.date_timestamp;
+    })
+    .reduce(function(result, item) {
+      result[item.objectID] = item;
+      return result;
+    }, {});
+  return arrayResult;
 };
 
 module.exports = {
@@ -199,6 +234,8 @@ module.exports = {
   indexUsers,
   getEventPublic,
   indexDiscussions,
+  indexChallenges,
   getMyGroups,
   getMyEvents,
+  client,
 };
