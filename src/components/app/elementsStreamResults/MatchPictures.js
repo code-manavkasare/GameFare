@@ -21,7 +21,6 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 import ButtonColor from '../../layout/Views/Button';
 import AsyncImage from '../../layout/image/AsyncImage';
-import AddPlayers from './AddPlayers';
 
 import {saveStreamResultsMatches} from '../../functions/streaming';
 
@@ -135,7 +134,30 @@ class MatchPictures extends React.Component {
           <View style={[styleApp.divider, {width: width - 20}]} />
         </Row>
 
-        {event.allAttendees.map((id) => this.rowPlayer(stream, event, id))}
+        {Object.keys(event.attendees).map((id) => this.rowPlayer(stream, event, id))}
+        <ButtonColor
+        color="white"
+        onPressColor={colors.off}
+        click={() => this.next()}
+        style={{
+          paddingTop: 10,
+          paddingBottom: 10,
+          flex: 1,
+          width: '100%',
+          height: 50,
+          borderRadius: 3,
+          marginBottom: 5,
+        }}
+        view={() => {
+          return (
+            <Col style={[styleApp.center2, {paddingLeft: 10}]}>
+              <Text style={styleApp.text}>
+                Not a player / Can't tell
+              </Text>
+            </Col>
+          );
+        }}
+      />
       </View>
     );
   }
@@ -152,7 +174,6 @@ class MatchPictures extends React.Component {
     const {dismiss, goBack, navigate} = this.props.navigation;
     const stream = this.props.navigation.getParam('stream');
     const event = this.props.navigation.getParam('event');
-
     return (
       <View style={{flex: 1}}>
         <HeaderBackButton
@@ -163,10 +184,6 @@ class MatchPictures extends React.Component {
           initialBackgroundColor={'transparent'}
           initialTitleOpacity={0}
           icon1="arrow-left"
-          // icon2="check"
-          // typeIcon2="font"
-          // sizeIcon2={17}
-          // clickButton2={() => this.goToResults()}
           clickButton1={() => dismiss()}
         />
         <ScrollView

@@ -35,10 +35,12 @@ class StreamResults extends React.Component {
   }
 
   totalTimePlayer(stream, matches, id) {
-    const sections = matches[id];
     let winningTime = 0;
-    for (const section of sections) {
-      winningTime += parseFloat(stream.liveballResults[section].winningTime);
+    const sections = matches[id];
+    if (sections) {
+      for (const section of sections) {
+        winningTime += parseFloat(stream.liveballResults.players[section].winningTime);
+      }
     }
     return winningTime;
   }
@@ -72,7 +74,6 @@ class StreamResults extends React.Component {
   }
 
   content(event, stream, matches) {
-    const players = Object.values(stream.liveballResults.players);
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         <Row style={styleApp.center}>
@@ -82,7 +83,7 @@ class StreamResults extends React.Component {
           <View style={[styleApp.divider, {width: width - 20}]} />
         </Row>
 
-        {event.allAttendees.map((id) => this.resultsPlayer(event, stream, matches, id))}
+        {Object.keys(event.attendees).map((id) => this.resultsPlayer(event, stream, matches, id))}
       </View>
     );
   }

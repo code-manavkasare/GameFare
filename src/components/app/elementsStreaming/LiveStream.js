@@ -42,8 +42,7 @@ class LiveStream extends React.Component {
   async startStream() {
     const stream = this.props.navigation.getParam('stream', null);
     await this.setState({streaming: true});
-    console.log('startStream');
-    startAnalytics(stream);
+    //startAnalytics(stream);
     this.nodeCameraView.start();
   }
   stopStream() {
@@ -69,6 +68,9 @@ class LiveStream extends React.Component {
   render() {
     const {navigation} = this.props;
     const stream = navigation.getParam('stream', null);
+    const {height, width} = Dimensions.get('window');
+    const newHeight = width * (3 / 4);
+    const heightOffset = -((newHeight - height) / 2);
     return (
       <View style={styles.container}>
         <LiveStreamHeader
@@ -80,7 +82,7 @@ class LiveStream extends React.Component {
           click={() => navigation.navigate('TabsApp')}
         />
         <NodeCameraView
-          style={styles.nodeCameraView}
+          style={[styles.nodeCameraView]}
           ref={(nodeCameraView) => {
             this.nodeCameraView = nodeCameraView;
           }}
@@ -88,7 +90,7 @@ class LiveStream extends React.Component {
           camera={{cameraId: 1, cameraFrontMirror: false}}
           audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
           video={{
-            preset: 1,
+            preset: 12,
             bitrate: 400000,
             profile: 1,
             fps: 15,

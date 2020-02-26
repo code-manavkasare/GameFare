@@ -51,8 +51,18 @@ export default class CardStream extends Component {
     if (!this.state.loader) {
       const {stream} = this.state;
       const {event} = this.props;
-      if (stream.liveballResults && stream.liveballResults.organized) {
-        NavigationService.navigate('StreamResults', {stream: stream, event: event, matches: stream.liveballResults.matches});
+      if (stream.liveballResults && !stream.liveballResults.players) {
+        return NavigationService.navigate('Alert', {
+          close: true,
+          textButton: 'Got it!',
+          title: 'Sorry! It looks like something went wrong with this stream.',
+        });
+      } else if (stream.liveballResults && stream.liveballResults.organized) {
+        NavigationService.navigate('StreamResults', {
+          stream: stream,
+          event: event,
+          matches: stream.liveballResults.matches,
+        });
       } else if (stream.liveballResults && this.props.userIsOrganizer) {
         NavigationService.navigate('OrganizeStreamResults', {
           stream: stream,
