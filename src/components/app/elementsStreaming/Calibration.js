@@ -199,7 +199,7 @@ class Calibration extends React.Component {
             this.camera = ref;
           }}
           style={styles.nodeCameraView}
-          type={RNCamera.Constants.Type.back}
+          type={RNCamera.Constants.Type.front}
           flashMode={RNCamera.Constants.FlashMode.off}
         />
         {this.state.step === steps.PROMPT ? (
