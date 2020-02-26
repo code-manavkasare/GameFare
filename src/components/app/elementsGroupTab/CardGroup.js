@@ -69,11 +69,10 @@ class CardGroup extends React.Component {
       this.props.userID,
       this.props.infoUser,
       'pending',
-      tokenNotification,
     );
     await NavigationService.goBack();
     return NavigationService.navigate('Alert', {
-      title: 'Congrats! You have joined the waitlist for ' + data.info.name,
+      title: 'Congrats! You have requested to join ' + data.info.name + '.',
       subtitle: 'You can now send a personal message to the organizer.',
       textButton: 'Chat with ' + data.organizer.info.firstname,
       onGoBack: () => this.chatWithOrganizer(data),
@@ -178,7 +177,7 @@ class CardGroup extends React.Component {
     );
   }
   displayCard(data) {
-    if (!data) return null
+    if (!data) return null;
     const picture = data.pictures[0];
     return (
       <ButtonColor

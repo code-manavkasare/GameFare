@@ -888,7 +888,9 @@ class EventPage extends React.Component {
                 <Text style={styleApp.text}>Results</Text>
               </Col>
             </Row>
-            <View style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}/>
+            <View
+              style={[styleApp.divider2, {marginTop: 20, marginBottom: 10}]}
+            />
           </View>
           {loader ? (
             <FadeInView duration={300} style={{paddingTop: 10}}>
@@ -908,10 +910,8 @@ class EventPage extends React.Component {
             streams.map((stream, i) => this.rowStream(event, stream, i))
           )}
         </View>
-
       );
     }
-
   }
   event(event, loader, userID) {
     if (!event || loader) return <PlaceHolder />;

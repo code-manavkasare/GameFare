@@ -344,14 +344,17 @@ class GroupPage extends React.Component {
     });
   }
   async removeUser(playerID, group) {
+    console.log('remove user', group);
+    console.log('playerID', playerID);
+    // return;
     try {
       removeUserFromGroup(playerID, group);
     } catch (err) {
       console.log(err);
       return;
-    }
-    let index = group.allMembers.indexOf(playerID);
-    delete group.allMembers[index];
+    } // let index = group.allMembers.indexOf(playerID);
+    // delete group.allMembers[index];
+
     delete group.members[playerID];
     await this.props.groupsAction('setAllGroups', {[group.objectId]: group});
   }

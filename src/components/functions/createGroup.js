@@ -73,7 +73,6 @@ async function subscribeUserToGroup(
   userID,
   infoUser,
   status,
-  tokenNotification,
   discussionID,
 ) {
   const user = {
@@ -81,7 +80,6 @@ async function subscribeUserToGroup(
     id: userID,
     status: status,
     info: infoUser,
-    tokenNotification: tokenNotification,
   };
   refreshTokenOnDatabase(userID);
   await firebase
