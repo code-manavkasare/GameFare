@@ -351,8 +351,6 @@ class GroupPage extends React.Component {
       console.log(err);
       return;
     }
-    let index = group.allMembers.indexOf(playerID);
-    delete group.allMembers[index];
     delete group.members[playerID];
     await this.props.groupsAction('setAllGroups', {[group.objectId]: group});
   }

@@ -70,7 +70,6 @@ async function getEventsFromGroups(
   league,
 ) {
   var events = [];
-  console.log('getEventsFromGroups', league);
   for (var i in groups) {
     if (groups[i].events) {
       events = union(events, keys(groups[i].events));
@@ -123,7 +122,6 @@ const getEventPublic = async (
   if (league === 'all') {
     leagueFilter = '';
   }
-  console.log('leagueFilter', leagueFilter);
   let timestampDaySelected = 1;
   let withFilters = false;
 

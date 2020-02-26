@@ -71,7 +71,6 @@ class ListEvent extends Component {
     dataCreateToken = dataCreateToken.data;
     if (dataCreateToken.error)
       return this.wrongCB(dataCreateToken.error.message);
-    console.log('dataCreateToken', dataCreateToken);
     const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addBankAccountToUser`;
     let responseCreateConnectAccount = await axios.get(
       urlCreateUserConnectAccount,
@@ -86,7 +85,6 @@ class ListEvent extends Component {
     responseCreateConnectAccount = responseCreateConnectAccount.data;
     if (responseCreateConnectAccount.error)
       return this.wrongCB(responseCreateConnectAccount.error.message);
-    console.log('responseCreateConnectAccount', responseCreateConnectAccount);
     await firebase
       .database()
       .ref('users/' + userID + '/wallet/bankAccount/')

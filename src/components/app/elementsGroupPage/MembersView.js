@@ -72,7 +72,6 @@ class MembersView extends Component {
       userID,
       infoUser,
       'confirmed',
-      '',
       data.discussions[0],
     );
 

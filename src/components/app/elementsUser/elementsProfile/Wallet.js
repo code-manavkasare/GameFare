@@ -125,7 +125,6 @@ class ListEvent extends Component {
         connectAccountToken: connectAccountToken,
       },
     });
-    console.log('responseCreateConnectAccount', data);
     await this.props.navigation.navigate('Wallet');
     if (data.error)
       return this.props.navigation.navigate('Alert', {
