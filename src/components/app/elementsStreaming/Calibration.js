@@ -198,7 +198,7 @@ class Calibration extends React.Component {
           ref={(ref) => {
             this.camera = ref;
           }}
-          style={styles.nodeCameraView}
+          style={[styles.nodeCameraView, {transform: [{rotateY: '180deg'}]}]}
           type={RNCamera.Constants.Type.front}
           flashMode={RNCamera.Constants.FlashMode.off}
         />
