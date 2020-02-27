@@ -55,13 +55,19 @@ export default class Posts extends Component {
   }
   newPost() {}
   postsView() {
+    const {type} = this.props;
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
           <Row>
             <Col style={styleApp.center2} size={80}>
               <Text style={styleApp.text}>
-                {this.props.type === 'event' ? 'Event' : 'Group'} chat
+                {type === 'event'
+                  ? 'Event'
+                  : type === 'challenge'
+                  ? 'Challenge'
+                  : 'Group'}{' '}
+                chat
               </Text>
             </Col>
           </Row>
