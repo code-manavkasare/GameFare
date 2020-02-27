@@ -183,6 +183,26 @@ export default class CardUser extends Component {
                         style={{width: 17, height: 17}}
                       />
                     </Col>
+                  ) : status === 'pending' ? (
+                    <Col
+                      size={10}
+                      style={styleApp.center}
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        NavigationService.navigate('Alert', {
+                          close: true,
+                          textButton: 'Got it!',
+                          title:
+                          'Your joining request is pending admin approval.',
+                        })
+                      }>
+                      <AllIcons
+                        name="redo-alt"
+                        type="font"
+                        color={colors.secondary}
+                        size={17}
+                      />
+                    </Col>
                   ) : (
                     <Col size={10} />
                   )}

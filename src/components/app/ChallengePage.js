@@ -688,7 +688,7 @@ class EventPage extends React.Component {
     const {goBack, navigate} = this.props.navigation;
 
     if (isDatePast(data.date.start)) {
-      await navigate('Event');
+      await navigate('Challenge');
       return navigate('Alert', {
         close: true,
         title: 'You cannot cancel a past event.',
@@ -700,11 +700,11 @@ class EventPage extends React.Component {
 
     await firebase
       .database()
-      .ref('cancelledEvents/' + data.objectID)
+      .ref('cancelledChallenges/' + data.objectID)
       .update({...data, status: 'onDelete'});
     await firebase
       .database()
-      .ref('events/' + data.objectID)
+      .ref('challenges/' + data.objectID)
       .remove();
     await goBack();
     await this.dismiss();
@@ -722,7 +722,7 @@ class EventPage extends React.Component {
 
     await firebase
       .database()
-      .ref('events/' + data.objectID + '/attendees/' + userID)
+      .ref('events/' + data.objectID + '/teams/' + userID)
       .update({action: 'unsubscribed'});
     await firebase
       .database()
@@ -790,10 +790,10 @@ class EventPage extends React.Component {
         )}
 
         {event.discussions && (
-          <PostsView
+        <PostsView
             objectID={event.objectID}
             data={event}
-            type="event"
+            type="challenge"
             loader={loader}
             infoUser={this.props.infoUser}
           />
@@ -813,7 +813,7 @@ class EventPage extends React.Component {
   }
   next(event) {
     if (!this.props.userConnected)
-      return this.props.navigation.navigate('SignIn', {pageFrom: 'Event'});
+      return this.props.navigation.navigate('SignIn');
 
     return this.props.navigation.navigate('Checkout', {
       data: {...event},

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>743036689460-76km3s62i9q5175d0vgo21vc7rdtlmta.apps.googleusercontent.com</string>
+	<string>743036689460-kn4en32dud7ldoe06ih3r7a22vjttetq.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.743036689460-76km3s62i9q5175d0vgo21vc7rdtlmta</string>
+	<string>com.googleusercontent.apps.743036689460-kn4en32dud7ldoe06ih3r7a22vjttetq</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAXT6Ht2eNCT9LMhfJ9b_hZ29l0LJhVtU8</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>gamefare-dev</string>
+	<string>gamefareInc-dev</string>
 	<key>PROJECT_ID</key>
 	<string>gamefare-dev-cfc88</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:743036689460:ios:e393f7345d32bea18c3e61</string>
+	<string>1:743036689460:ios:7c99b39e81a2177d8c3e61</string>
 	<key>DATABASE_URL</key>
 	<string>https://gamefare-dev-cfc88.firebaseio.com</string>
 </dict>
