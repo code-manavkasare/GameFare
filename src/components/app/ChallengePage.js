@@ -148,7 +148,7 @@ class EventPage extends React.Component {
         icon2="share"
         typeIcon2="moon"
         sizeIcon2={17}
-        iconOffset="pen"
+        iconOffset="cog"
         colorIconOffset={this.state.editMode ? colors.blue : 'white'}
         typeIconOffset="font"
         clickButton2={() => this.goToShareEvent(event)}
@@ -745,20 +745,26 @@ class EventPage extends React.Component {
             <Col size={25} style={styleApp.center2}>
               <Text style={styleApp.text}>Players</Text>
             </Col>
-            <Col
-              size={15}
-              style={styleApp.center2}
-              activeOpacity={1}
-              onPress={() => this.goToShareEvent(event)}>
-              <Text style={[styleApp.text, {color: colors.primary}]}>
-                Invite
-              </Text>
+            <Col size={25} style={styleApp.center2}>
+              <ButtonColor
+                view={() => {
+                  return (
+                    <Text style={[styleApp.text, {color: colors.white}]}>
+                      Invite
+                    </Text>
+                  );
+                }}
+                style={{width: '100%', borderRadius: 15, height: 30}}
+                click={() => this.goToShareEvent(event)}
+                color={colors.primary}
+                onPressColor={colors.primary2}
+              />
             </Col>
-            {/* <Col size={60} style={styleApp.center3}>
-              {this.userAlreadySubscribed(event.attendees) &&
+            <Col size={60} style={styleApp.center3}>
+              {/* {this.userAlreadySubscribed(event.attendees) &&
                 this.props.userID !== event.info.organizer &&
-                this.buttonLeave(event)}
-            </Col> */}
+                this.buttonLeave(event)} */}
+            </Col>
           </Row>
 
           <View

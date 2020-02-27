@@ -178,7 +178,11 @@ export default class HeaderFlow extends Component {
                     ) : (
                       <AllIcons
                         name={this.props.iconOffset}
-                        color={colors.title}
+                        color={
+                          this.props.colorIconOffset === colors.white
+                            ? colors.title
+                            : colors.white
+                        }
                         size={this.props.sizeIcon2}
                         type={this.props.typeIconOffset}
                       />
