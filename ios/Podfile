@@ -78,13 +78,3 @@ target 'gamefare-dev' do
   shared_pods
   use_native_modules!
 end
-
-target 'gamefare-tvOS' do
-  # Pods for gamefare-tvOS
-
-  target 'gamefare-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-end
