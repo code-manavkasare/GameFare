@@ -1,6 +1,11 @@
 import firebase from 'react-native-firebase';
 import moment from 'moment';
-import {indexDiscussions, getMyGroups, getMyEvents} from '../database/algolia';
+import {
+  indexDiscussions,
+  getMyGroups,
+  getMyEvents,
+  client,
+} from '../database/algolia';
 import union from 'lodash/union';
 
 function discussionObj(members, nameDiscussion, firstMessageExists) {
@@ -101,7 +106,7 @@ async function searchDiscussion(ids, numberMembers) {
 
 async function loadMyDiscusions(userID, searchInput) {
   // indexDiscussions.clearCache();
-
+  await client.clearCache();
   let {hits} = await indexDiscussions.search(searchInput, {
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
     hitsPerPage: 10000,
