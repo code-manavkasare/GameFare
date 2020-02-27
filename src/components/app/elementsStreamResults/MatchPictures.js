@@ -31,6 +31,7 @@ class MatchPictures extends React.Component {
       playerIndex: 0,
       matches: null, // matches is a dictionary of {userID: [playerInfo]}
       done: false,
+      showContext: true,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -44,7 +45,10 @@ class MatchPictures extends React.Component {
       for (const key of keys) {
         index = index + stream.liveballResults.matches[key].length;
       }
-      await this.setState({matches: stream.liveballResults.matches, playerIndex: index});
+      await this.setState({
+        matches: stream.liveballResults.matches,
+        playerIndex: index,
+      });
     }
   }
 
@@ -61,7 +65,7 @@ class MatchPictures extends React.Component {
     }
   }
 
-  matchCurrentImage(userID) {
+  async matchCurrentImage(userID) {
     let matches = {};
     if (!this.state.matches) {
       matches[userID] = [this.state.playerIndex];
@@ -75,8 +79,7 @@ class MatchPictures extends React.Component {
         matches[userID] = selected;
       }
     }
-
-    this.setState({matches: matches});
+    await this.setState({matches: matches});
     this.next();
   }
 
@@ -87,15 +90,7 @@ class MatchPictures extends React.Component {
         color="white"
         onPressColor={colors.off}
         click={() => this.matchCurrentImage(player.userID)}
-        style={{
-          paddingTop: 10,
-          paddingBottom: 10,
-          flex: 1,
-          width: '100%',
-          height: 50,
-          borderRadius: 3,
-          marginBottom: 5,
-        }}
+        style={styles.rowPlayer}
         view={() => {
           return (
             <Col style={[styleApp.center2, {paddingLeft: 10}]}>
@@ -116,48 +111,39 @@ class MatchPictures extends React.Component {
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         <Row style={styleApp.center}>
           <Text style={styleApp.title}>
-            {'Which player is this? (' +
-              (this.state.playerIndex +
-              1) +
-              '/' +
-              (numPlayers) +
-              ')'}
+            {`Which player is this? (${(this.state.playerIndex + 1)}/${numPlayers})`}
           </Text>
         </Row>
         <Row style={[styleApp.center, {padding: 5}]}>
           <AsyncImage
             style={{width: width - 40, height: width + 40, borderRadius: 5}}
-            mainImage={players[this.state.playerIndex].croppedFrame}
+            mainImage={
+              this.state.showContext
+                ? players[this.state.playerIndex].contextFrame
+                : players[this.state.playerIndex].croppedFrame
+            }
           />
         </Row>
         <Row style={styleApp.center}>
           <View style={[styleApp.divider, {width: width - 20}]} />
         </Row>
 
-        {Object.keys(event.attendees).map((id) => this.rowPlayer(stream, event, id))}
+        {Object.keys(event.attendees).map((id) =>
+          this.rowPlayer(stream, event, id),
+        )}
         <ButtonColor
-        color="white"
-        onPressColor={colors.off}
-        click={() => this.next()}
-        style={{
-          paddingTop: 10,
-          paddingBottom: 10,
-          flex: 1,
-          width: '100%',
-          height: 50,
-          borderRadius: 3,
-          marginBottom: 5,
-        }}
-        view={() => {
-          return (
-            <Col style={[styleApp.center2, {paddingLeft: 10}]}>
-              <Text style={styleApp.text}>
-                Not a player / Can't tell
-              </Text>
-            </Col>
-          );
-        }}
-      />
+          color="white"
+          onPressColor={colors.off}
+          click={() => this.next()}
+          style={styles.rowPlayer}
+          view={() => {
+            return (
+              <Col style={[styleApp.center2, {paddingLeft: 10}]}>
+                <Text style={styleApp.text}>Not a player / Can't tell</Text>
+              </Col>
+            );
+          }}
+        />
       </View>
     );
   }
@@ -184,6 +170,12 @@ class MatchPictures extends React.Component {
           initialBackgroundColor={'transparent'}
           initialTitleOpacity={0}
           icon1="arrow-left"
+          icon2="images"
+          typeIcon2="font"
+          sizeIcon2={17}
+          clickButton2={() =>
+            this.setState({showContext: !this.state.showContext})
+          }
           clickButton1={() => dismiss()}
         />
         <ScrollView
@@ -205,6 +197,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingLeft: 10,
     paddingTop: sizes.heightHeaderHome,
+  },
+  rowPlayer: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    flex: 1,
+    width: '100%',
+    height: 50,
+    borderRadius: 3,
+    marginBottom: 5,
   },
 });
 
