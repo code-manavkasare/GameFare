@@ -6,4 +6,4 @@ echo VERSION SET IS :
 node -pe "require('./package.json').version"
 echo $PACKAGE_VERSION
 plutil -replace CFBundleVersion -string $PACKAGE_VERSION $APPCENTER_SOURCE_DIRECTORY/ios/gamefare/Info.plist
-plutil -replace CFBundleVersion -string $PACKAGE_VERSION $APPCENTER_SOURCE_DIRECTORY/ios/gamefare/gamefare-dev-Info.plist
+plutil -replace CFBundleVersion -string $PACKAGE_VERSION $APPCENTER_SOURCE_DIRECTORY/ios/gamefare-dev-Info.plist
