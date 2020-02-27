@@ -247,16 +247,22 @@ class MembersView extends Component {
             <Col style={styleApp.center2} size={25}>
               <Text style={[styleApp.text, {marginBottom: 0}]}>Members</Text>
             </Col>
-            <Col
-              size={15}
-              style={styleApp.center2}
-              activeOpacity={1}
-              onPress={() => this.props.goToShareGroup()}>
-              <Text style={[styleApp.text, {color: colors.primary}]}>
-                Invite
-              </Text>
+            <Col size={25} style={styleApp.center2}>
+              <ButtonColor
+                view={() => {
+                  return (
+                    <Text style={[styleApp.text, {color: colors.white}]}>
+                      Invite
+                    </Text>
+                  );
+                }}
+                style={{width: '100%', borderRadius: 15, height: 30}}
+                click={() => this.props.goToShareGroup()}
+                color={colors.primary}
+                onPressColor={colors.primary2}
+              />
             </Col>
-            <Col style={styleApp.center3} size={60}>
+            <Col style={styleApp.center3} size={50}>
               {data.organizer.id ===
               this.props.userID ? null : this.userAlreadyJoined(data) ? (
                 this.buttonLeave(data)

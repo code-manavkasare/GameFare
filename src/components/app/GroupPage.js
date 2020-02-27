@@ -449,7 +449,7 @@ class GroupPage extends React.Component {
           sizeIcon2={15}
           icon1="arrow-left"
           icon2={this.state.editMode ? 'camera' : 'share'}
-          iconOffset="pen"
+          iconOffset="cog"
           clickButton1={() => dismiss()}
           clickButton2={() =>
             !this.state.editMode

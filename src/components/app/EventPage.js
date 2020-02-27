@@ -28,6 +28,7 @@ import {
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar, isDatePast} from '../functions/date';
+import {date} from '../layout/date/date';
 import moment from 'moment';
 import ramda from 'ramda';
 
@@ -178,7 +179,7 @@ class EventPage extends React.Component {
         icon2="share"
         typeIcon2="moon"
         sizeIcon2={17}
-        iconOffset="pen"
+        iconOffset="cog"
         colorIconOffset={this.state.editMode ? colors.blue : 'white'}
         typeIconOffset="font"
         clickButton2={() => this.goToShareEvent(event)}
@@ -930,16 +931,22 @@ class EventPage extends React.Component {
             <Col size={25} style={styleApp.center2}>
               <Text style={styleApp.text}>Players</Text>
             </Col>
-            <Col
-              size={15}
-              style={styleApp.center2}
-              activeOpacity={1}
-              onPress={() => this.goToShareEvent(event)}>
-              <Text style={[styleApp.text, {color: colors.primary}]}>
-                Invite
-              </Text>
+            <Col size={25} style={styleApp.center2}>
+              <ButtonColor
+                view={() => {
+                  return (
+                    <Text style={[styleApp.text, {color: colors.white}]}>
+                      Invite
+                    </Text>
+                  );
+                }}
+                style={{width: '100%', borderRadius: 15, height: 30}}
+                click={() => this.goToShareEvent(event)}
+                color={colors.primary}
+                onPressColor={colors.primary2}
+              />
             </Col>
-            <Col size={60} style={styleApp.center3}>
+            <Col size={50} style={styleApp.center3}>
               {this.userAlreadySubscribed(event.attendees) &&
                 this.props.userID !== event.info.organizer &&
                 this.buttonLeave(event)}
@@ -1109,7 +1116,7 @@ class EventPage extends React.Component {
           ' at ' +
           date(event.date.start, 'h:mm a') +
           ' by following the link!',
-        image: event.pictures[0],
+        image: event.images[0],
         title: event.info.name,
       },
       action: 'Event',
@@ -1285,9 +1292,9 @@ const styles = StyleSheet.create({
   buttonBottom: {marginLeft: 20, width: width - 40},
   buttonLeave: {
     borderColor: colors.off,
-    height: 40,
+    height: 30,
     width: 110,
-    borderRadius: 20,
+    borderRadius: 15,
     borderWidth: 1,
   },
   buttonCancel: {
