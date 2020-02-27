@@ -70,12 +70,14 @@ class MessageTab extends React.Component {
   };
 
   loadDiscussions = async () => {
+    console.log('loadDicussinos');
     await this.setState({loader: true});
     const discussions = await loadMyDiscusions(
       this.props.userID,
       this.state.searchInput,
     );
     await this.props.messageAction('setConversations', discussions);
+    console.log()
     this.setState({loader: false});
   };
 

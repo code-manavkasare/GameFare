@@ -96,7 +96,7 @@ export default class Alert extends Component {
                   type="mat"
                   name="keyboard-arrow-right"
                   size={20}
-                  color={colors.title}
+                  color={colors.grey}
                 />
               </Col>
             </Row>
@@ -105,8 +105,7 @@ export default class Alert extends Component {
         click={() => this.clickCar2(valClick)}
         color="white"
         style={[
-          styleApp.cardSelect,
-          {height: 55, paddingLeft: 20, paddingRight: 20},
+          {height: 55, paddingLeft: 20, paddingRight: 20, borderWidth: 0},
         ]}
         onPressColor={colors.off}
       />
@@ -140,7 +139,7 @@ export default class Alert extends Component {
         <View
           style={{
             height: 0.5,
-            borderTopWidth: 1,
+            borderTopWidth: 0,
             borderColor: colors.off,
             width: width - 0,
             marginLeft: 0,
