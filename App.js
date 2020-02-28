@@ -16,16 +16,6 @@ import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 
 import * as Sentry from '@sentry/react-native';
 
-const configureSentry = () => {
-  Sentry.init({
-    dsn: 'https://edb7dcfee75b46ad9ad45bc0193f6c0d@sentry.io/2469968',
-    attachStacktrace: true,
-    environment: Config.ENV,
-  });
-  Sentry.setDist(DeviceInfo.getBuildNumber());
-  Sentry.setRelease(`${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`);
-};
-
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
@@ -34,7 +24,7 @@ const AppContainer = createAppContainer(AppSwitchNavigator);
 class App extends Component {
   async componentDidMount() {
     if (!__DEV__) {
-      configureSentry();
+      this.configureSentry();
     }
     SplashScreen.hide();
     StatusBar.setHidden(true, 'slide');
@@ -44,6 +34,33 @@ class App extends Component {
       refreshTokenOnDatabase(this.props.userID);
     }
   }
+
+  componentDidUpdate = () => {
+    if (!__DEV__) {
+      this.configureSentry();
+    }
+  };
+
+  configureSentry = () => {
+    Sentry.init({
+      dsn: 'https://edb7dcfee75b46ad9ad45bc0193f6c0d@sentry.io/2469968',
+      attachStacktrace: true,
+      environment: Config.ENV,
+    });
+    Sentry.configureScope((scope) => {
+      if (this.props.userConnected) {
+        const {userInfo, userID} = this.props;
+        scope.setUser({
+          username: `${userInfo.firstname} ${userInfo.lastname}`,
+          id: userID,
+        });
+      } else {
+        scope.setUser({username: 'notConnected'});
+      }
+    });
+    Sentry.setDist(DeviceInfo.getBuildNumber());
+    Sentry.setRelease(`${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`);
+  };
 
   async autoSignIn() {
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
@@ -55,7 +72,7 @@ class App extends Component {
       },
     });
 
-    if (promiseAxios.data.response != false) {
+    if (promiseAxios.data.response !== false) {
       await this.props.userAction('signIn', {
         userID: this.props.userID,
         firebaseSignInToken: promiseAxios.data.firebaseSignInToken,
@@ -79,6 +96,8 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    userConnected: state.user.userConnected,
+    userInfo: state.user.infoUser.userInfo,
     userID: state.user.userIDSaved,
     phoneNumber: state.user.phoneNumber,
     countryCode: state.user.countryCode,
