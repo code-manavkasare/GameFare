@@ -25,6 +25,7 @@ import DateEvent from '../elementsEventCreate/DateEvent';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
+import firebase from 'react-native-firebase';
 import CardUser from '../elementsEventPage/CardUser';
 import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -270,7 +271,7 @@ class SummaryChallenge extends Component {
       </View>
     );
   }
-  async submit(challenge) {
+  async submit(challenge, dataCheckout) {
     this.setState({loader: true});
     const {dismiss} = this.props.navigation;
     const {
@@ -283,7 +284,7 @@ class SummaryChallenge extends Component {
 
     const payEntryChallenge = await payEntryFee(
       new Date().toString(),
-      challenge.price.amount,
+      dataCheckout.creditCardCharge,
       userID,
       {
         tokenCusStripe: tokenCusStripe,
@@ -327,6 +328,49 @@ class SummaryChallenge extends Component {
     await this.props.createChallengeAction('reset');
     await this.setState({loader: false});
     return true;
+  }
+  async submitAttendance(challenge, dataCheckout) {
+    this.setState({loader: true});
+    const {goBack} = this.props.navigation;
+
+    const {
+      userID,
+      infoUser,
+      tokenCusStripe,
+      defaultCard,
+      totalWallet,
+    } = this.props;
+
+    const payEntryChallenge = await payEntryFee(
+      new Date().toString(),
+      dataCheckout.creditCardCharge,
+      userID,
+      {
+        tokenCusStripe: tokenCusStripe,
+        defaultCard: defaultCard,
+        totalWallet: totalWallet,
+      },
+      infoUser,
+    );
+    console.log('payEntryChallenge', payEntryChallenge);
+    if (!payEntryChallenge.response) {
+      await this.setState({loader: false});
+      return this.props.navigation.navigate('Alert', {
+        close: true,
+        title: 'An error has occured.',
+        subtitle: 'Please try again.',
+        textButton: 'Got it!',
+      });
+    }
+    const teamUser = Object.values(challenge.teams).filter(
+      (team) => team.captain.id === userID,
+    )[0];
+    await firebase
+      .database()
+      .ref('challenges/' + challenge.objectID + '/teams/' + teamUser.id)
+      .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
+    await this.setState({loader: false});
+    return goBack();
   }
   reminder(challenge, subscribe, transfertWinner, creditCardCharge) {
     if (!subscribe)
@@ -388,6 +432,12 @@ class SummaryChallenge extends Component {
     );
 
     const transfertWinner = amount + amount * Math.max(0, odds - 1);
+    const dataCheckout = {
+      transfertWinner,
+      totalAmount,
+      creditCardCharge,
+      totalWallet,
+    };
     console.log('creditCardCharge', creditCardCharge);
     return (
       <View style={styleApp.stylePage}>
@@ -406,12 +456,7 @@ class SummaryChallenge extends Component {
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() =>
-            this.summary(challenge, subscribe, {
-              transfertWinner,
-              totalAmount,
-              creditCardCharge,
-              totalWallet,
-            })
+            this.summary(challenge, subscribe, dataCheckout)
           }
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
@@ -427,11 +472,10 @@ class SummaryChallenge extends Component {
               backgroundColor="green"
               onPressColor={colors.greenLight}
               styleButton={{marginLeft: 20, width: width - 40}}
-              enabled={this.conditionButtonOn(creditCardCharge, defaultCard)}
-              disabled={false}
+              disabled={!this.conditionButtonOn(creditCardCharge, defaultCard)}
               text={'Pay & Create challenge'}
               loader={this.state.loader}
-              click={() => this.submit(challenge)}
+              click={() => this.submit(challenge, dataCheckout)}
             />
           ) : this.props.userConnected && subscribe ? (
             <Button
@@ -439,7 +483,6 @@ class SummaryChallenge extends Component {
               backgroundColor="green"
               onPressColor={colors.greenLight}
               styleButton={{marginLeft: 20, width: width - 40}}
-              // enabled={this.conditionButtonOn(creditCardCharge, defaultCard)}
               disabled={!this.conditionButtonOn(creditCardCharge, defaultCard)}
               text={
                 creditCardCharge === 0
@@ -447,7 +490,7 @@ class SummaryChallenge extends Component {
                   : 'Pay & Accept challenge'
               }
               loader={this.state.loader}
-              click={() => this.submit(challenge)}
+              click={() => this.submitAttendance(challenge, dataCheckout)}
             />
           ) : (
             <Button

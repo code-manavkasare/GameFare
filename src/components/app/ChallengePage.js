@@ -238,7 +238,7 @@ class EventPage extends React.Component {
         removable={
           data.info.organizer !== team.captain.id && this.state.editMode
         }
-        removeFunc={() => this.askRemovePlayer(team.captain, data)}
+        removeFunc={() => this.askRemovePlayer(team.captain, data, team)}
         type="event"
         admin={data.info.organizer === this.props.userID}
       />
@@ -609,8 +609,7 @@ class EventPage extends React.Component {
 
         {this.rowImage(sport.icon, sport.text)}
         {this.rowIcon(this.title(format.text), format.icon)}
-
-        {this.editRowIcon(
+        {this.rowIcon(
           this.title(
             'Challenge $' +
               data.price.amount +
@@ -618,18 +617,6 @@ class EventPage extends React.Component {
               data.price.odds,
           ),
           'cogs',
-          () => true,
-          () =>
-            this.props.navigation.navigate('Location', {
-              location: data.location,
-              pageFrom: this.props.navigation.state.routeName,
-              onGoBack: (location) => {
-                this.props.navigation.navigate(
-                  this.props.navigation.state.routeName,
-                );
-                this.setState({editLocation: location});
-              },
-            }),
         )}
 
         {this.editRowIcon(
@@ -969,7 +956,7 @@ class EventPage extends React.Component {
     }
     return event.info.organizer === this.props.userID;
   }
-  askRemovePlayer(player, data) {
+  askRemovePlayer(player, data, team) {
     this.props.navigation.navigate('AlertYesNo', {
       textYesButton: 'Yes',
       textNoButton: 'No',
@@ -980,23 +967,23 @@ class EventPage extends React.Component {
         player.info.lastname +
         '?',
       icon: undefined,
-      yesClick: () => this.removePlayer(player, data),
+      yesClick: () => this.removePlayer(team, data),
       noClick: () => null,
       onGoBack: () => this.props.navigation.navigate('Event'),
     });
   }
-  async removePlayer(player, data) {
+  async removePlayer(team, data) {
     let newData = {...data};
-    await removePlayerFromEvent(player, newData).catch((err) => {
+    await removePlayerFromEvent(team, newData).catch((err) => {
       console.log(err.message);
     });
     for (var i in newData.allAttendees) {
-      if (newData.allAttendees[i] === player.id) {
+      if (newData.allAttendees[i] === team.id) {
         delete newData.allAttendees[i];
         break;
       }
     }
-    delete newData.attendees[player.id];
+    delete newData.attendees[team.id];
     await this.props.eventsAction('setAllEvents', {
       [newData.objectID]: newData,
     });
@@ -1108,6 +1095,7 @@ class EventPage extends React.Component {
   render() {
     const {event, editMode, loader} = this.state;
     const {userID} = this.props;
+    const {navigate} = this.props.navigation;
     return (
       <View style={{flex: 1}}>
         {this.header(event)}
@@ -1151,22 +1139,18 @@ class EventPage extends React.Component {
 
         {event && (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {/* {editMode ? (
+            {editMode ? (
               this.bottomActionButton('Save edits', () => this.saveEdits(event))
-            ) : this.waitlistCondition(event) ? (
-              this.bottomActionButton('Join the waitlist', () =>
-                this.joinWaitlist(event),
+            ) : !event.results &&
+              Object.values(event.teams).filter(
+                (team) => team.status === 'pending',
+              ).length === 0 ? (
+              this.bottomActionButton('Publish results', () =>
+                navigate('PublishResult', {challenge: event}),
               )
-            ) : this.openCondition(event) &&
-              !this.userAlreadySubscribed(event.attendees) ? (
-              this.bottomActionButton('Join the event', () => this.next(event))
-            ) : userID === event.info.organizer &&
-              Number(event.price.joiningFee) !== 0 &&
-              !event.checkoutDone ? (
-              this.bottomActionButton('Checkout', () => this.checkout(event))
             ) : (
               <View />
-            )} */}
+            )}
           </FadeInView>
         )}
       </View>
