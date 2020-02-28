@@ -106,7 +106,7 @@ async function searchDiscussion(ids, numberMembers) {
 async function loadMyDiscusions(userID, searchInput) {
   // indexDiscussions.clearCache();
   await client.clearCache();
-  let {hits} = await indexDiscussions.search('',searchInput, {
+  let {hits} = await indexDiscussions.search(searchInput, {
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
     hitsPerPage: 10000,
   });
