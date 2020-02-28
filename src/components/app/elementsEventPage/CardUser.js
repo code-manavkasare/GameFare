@@ -183,7 +183,7 @@ export default class CardUser extends Component {
                         style={{width: 17, height: 17}}
                       />
                     </Col>
-                  ) : status === 'pending' ? (
+                  ) : status === 'pending' && this.props.userID !== user.id ? (
                     <Col
                       size={10}
                       style={styleApp.center}
@@ -193,7 +193,7 @@ export default class CardUser extends Component {
                           close: true,
                           textButton: 'Got it!',
                           title:
-                          'Your joining request is pending admin approval.',
+                            'Your joining request is pending admin approval.',
                         })
                       }>
                       <AllIcons

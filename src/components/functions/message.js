@@ -80,6 +80,8 @@ async function sendNewMessage(discusssionID, user, text, images) {
 
 async function searchDiscussion(ids, numberMembers) {
   // await indexDiscussions.clearCache();
+  await client.clearCache();
+  console.log('searchDIscussion', {ids, numberMembers});
   var filterMembers = '';
   var prefix = ' AND ';
   for (var id in ids) {
@@ -89,17 +91,14 @@ async function searchDiscussion(ids, numberMembers) {
       prefix = ' AND ';
     }
     filterMembers =
-      filterMembers +
-      prefix +
-      'allMembers: ' +
-      Object.values(ids)[id] +
-      ' AND numberMembers:' +
-      numberMembers;
+      filterMembers + prefix + 'allMembers:' + Object.values(ids)[id];
   }
-
-  const {hits} = await indexDiscussions.search({
+  filterMembers = filterMembers + ' AND numberMembers:' + numberMembers;
+  console.log('filterMembers', filterMembers);
+  const {hits} = await indexDiscussions.search('', {
     filters: filterMembers,
   });
+  console.log('hits', hits);
   if (hits.length === 0) return false;
   return hits[0];
 }
@@ -107,7 +106,7 @@ async function searchDiscussion(ids, numberMembers) {
 async function loadMyDiscusions(userID, searchInput) {
   // indexDiscussions.clearCache();
   await client.clearCache();
-  let {hits} = await indexDiscussions.search(searchInput, {
+  let {hits} = await indexDiscussions.search('',searchInput, {
     filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
     hitsPerPage: 10000,
   });

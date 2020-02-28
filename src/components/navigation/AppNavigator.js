@@ -46,6 +46,7 @@ import PickMembers from '../app/elementsCreateChallenge/PickMembers';
 import PickInfos from '../app/elementsCreateChallenge/PickInfos';
 import PickAddress from '../app/elementsCreateChallenge/PickAddress';
 import SummaryChallenge from '../app/elementsCreateChallenge/SummaryChallenge';
+import PublishResult from '../app/elementsCreateChallenge/PublishResult';
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
 import DateSelector from '../app/elementsEventCreate/DateSelector';
@@ -166,6 +167,8 @@ const JoinNavigator = createStackNavigator(
 const JoinChallengeNavigator = createStackNavigator(
   {
     Challenge: lockedPortrait(ChallengePage),
+    SummaryChallenge: lockedPortrait(SummaryChallenge),
+    PublishResult: lockedPortrait(PublishResult),
   },
   {
     initialRouteName: 'Challenge',

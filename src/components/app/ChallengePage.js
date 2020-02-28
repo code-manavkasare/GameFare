@@ -238,7 +238,7 @@ class EventPage extends React.Component {
         removable={
           data.info.organizer !== team.captain.id && this.state.editMode
         }
-        removeFunc={() => this.askRemovePlayer(team.captain, data)}
+        removeFunc={() => this.askRemovePlayer(team.captain, data, team)}
         type="event"
         admin={data.info.organizer === this.props.userID}
       />
@@ -295,10 +295,11 @@ class EventPage extends React.Component {
   }
   editPrice(data) {
     if (this.state.editMode) {
+      console.log('edit price', data.price);
       return (
         <TextInput
           style={styles.eventTitle}
-          placeholder={'Entry Fee: $' + data.price.joiningFee}
+          placeholder={'Entry Fee: $' + data.price.amount}
           returnKeyType={'done'}
           keyboardType={'phone-pad'}
           underlineColorAndroid="rgba(0,0,0,0)"
@@ -311,7 +312,7 @@ class EventPage extends React.Component {
           }}
           value={
             this.state.editPriceClicked
-              ? 'Entry Fee: $' + this.state.editPrice
+              ? 'Challenge: $' + this.state.editPrice
               : ''
           }
         />
@@ -319,9 +320,9 @@ class EventPage extends React.Component {
     } else {
       return (
         <Text style={styles.eventTitle}>
-          {Number(data.price.joiningFee) === 0
+          {Number(data.price.amount) === 0
             ? 'Free entry'
-            : '$' + data.price.joiningFee}
+            : '$' + data.price.amount}
         </Text>
       );
     }
@@ -494,8 +495,8 @@ class EventPage extends React.Component {
         ...data.price,
         joiningFee:
           this.state.editPrice === ''
-            ? data.price.joiningFee
-            : Number(this.state.editPrice),
+            ? data.price.amount
+            : Number(this.state.amount),
       },
       info: {
         ...data.info,
@@ -522,11 +523,83 @@ class EventPage extends React.Component {
       ...noEdit,
     });
   }
+  async confirmDecline(data) {
+    const {userID} = this.props;
+
+    const teamUser = Object.values(data.teams).filter(
+      (team) => team.captain.id === userID,
+    )[0];
+    console.log('teamUser', teamUser);
+    // await firebase
+    //   .database()
+    //   .ref('challenges/' + data.objectID + '/teams/' + teamUser.id)
+    //   .update({canceller: userID});
+    await firebase
+      .database()
+      .ref('challenges/' + data.objectID + '/teams/' + teamUser.id)
+      .remove();
+    await NavigationService.goBack();
+    return true;
+  }
+  rowDeclineAcceptButton(data) {
+    const {userID} = this.props;
+    const teamUser = Object.values(data.teams).filter(
+      (team) => team.captain.id === userID,
+    );
+    console.log('dataUser', teamUser);
+    console.log('data.teams', data.teams);
+    if (teamUser.length === 0) return null;
+
+    if (teamUser[0].status !== 'pending') return null;
+    return (
+      <Row style={{marginTop: 20}}>
+        <Col size={42.5} style={styleApp.center2}>
+          <Button2
+            icon={'next'}
+            backgroundColor={'red'}
+            onPressColor={colors.red}
+            styleButton={{height: 45}}
+            disabled={false}
+            text={'Decline'}
+            loader={false}
+            click={() =>
+              NavigationService.navigate('Alert', {
+                title: 'Do you want to decline the challenge?',
+                textButton: 'Decline',
+                colorButton: 'red',
+                onPressColor: colors.red,
+                onGoBack: () => this.confirmDecline(data),
+              })
+            }
+          />
+        </Col>
+        <Col size={5} />
+        <Col size={42.5} style={styleApp.center2}>
+          <Button2
+            icon={'next'}
+            backgroundColor={'green'}
+            onPressColor={colors.greenClick}
+            styleButton={{height: 45}}
+            disabled={false}
+            text={'Accept'}
+            loader={false}
+            click={() =>
+              NavigationService.navigate('SummaryChallenge', {
+                challenge: data,
+                subscribe: true,
+              })
+            }
+          />
+        </Col>
+      </Row>
+    );
+  }
   eventInfo(data, sport, format) {
     return (
       <View style={styleApp.marginView}>
+        {this.rowDeclineAcceptButton(data)}
         <Row style={{marginTop: 20}}>
-          {/* <Col style={styleApp.center2}>{this.editPrice(data)}</Col> */}
+          <Col style={styleApp.center2}>{this.editPrice(data)}</Col>
         </Row>
 
         <Row style={{marginTop: 15}}>
@@ -536,6 +609,15 @@ class EventPage extends React.Component {
 
         {this.rowImage(sport.icon, sport.text)}
         {this.rowIcon(this.title(format.text), format.icon)}
+        {this.rowIcon(
+          this.title(
+            'Challenge $' +
+              data.price.amount +
+              ', money multiple ' +
+              data.price.odds,
+          ),
+          'cogs',
+        )}
 
         {this.editRowIcon(
           this.dateTime(data.date.start, data.date.end),
@@ -790,7 +872,7 @@ class EventPage extends React.Component {
         )}
 
         {event.discussions && (
-        <PostsView
+          <PostsView
             objectID={event.objectID}
             data={event}
             type="challenge"
@@ -874,7 +956,7 @@ class EventPage extends React.Component {
     }
     return event.info.organizer === this.props.userID;
   }
-  askRemovePlayer(player, data) {
+  askRemovePlayer(player, data, team) {
     this.props.navigation.navigate('AlertYesNo', {
       textYesButton: 'Yes',
       textNoButton: 'No',
@@ -885,23 +967,23 @@ class EventPage extends React.Component {
         player.info.lastname +
         '?',
       icon: undefined,
-      yesClick: () => this.removePlayer(player, data),
+      yesClick: () => this.removePlayer(team, data),
       noClick: () => null,
       onGoBack: () => this.props.navigation.navigate('Event'),
     });
   }
-  async removePlayer(player, data) {
+  async removePlayer(team, data) {
     let newData = {...data};
-    await removePlayerFromEvent(player, newData).catch((err) => {
+    await removePlayerFromEvent(team, newData).catch((err) => {
       console.log(err.message);
     });
     for (var i in newData.allAttendees) {
-      if (newData.allAttendees[i] === player.id) {
+      if (newData.allAttendees[i] === team.id) {
         delete newData.allAttendees[i];
         break;
       }
     }
-    delete newData.attendees[player.id];
+    delete newData.attendees[team.id];
     await this.props.eventsAction('setAllEvents', {
       [newData.objectID]: newData,
     });
@@ -932,6 +1014,8 @@ class EventPage extends React.Component {
           ' by following the link!',
         image: event.images[0],
         title: event.info.name,
+        action: 'Challenge',
+        objectID: event.objectID,
       },
       action: 'Challenge',
       data: {...event, objectID: event.objectID},
@@ -993,11 +1077,11 @@ class EventPage extends React.Component {
       textButton: 'Ok',
     });
   }
-  bottomActionButton(title, click) {
+  bottomActionButton(title, click, color) {
     return (
       <Button2
         icon={'next'}
-        backgroundColor="green"
+        backgroundColor={color ? color : 'green'}
         onPressColor={colors.greenClick}
         styleButton={styles.buttonBottom}
         disabled={false}
@@ -1011,6 +1095,7 @@ class EventPage extends React.Component {
   render() {
     const {event, editMode, loader} = this.state;
     const {userID} = this.props;
+    const {navigate} = this.props.navigation;
     return (
       <View style={{flex: 1}}>
         {this.header(event)}
@@ -1054,22 +1139,18 @@ class EventPage extends React.Component {
 
         {event && (
           <FadeInView duration={300} style={styleApp.footerBooking}>
-            {/* {editMode ? (
+            {editMode ? (
               this.bottomActionButton('Save edits', () => this.saveEdits(event))
-            ) : this.waitlistCondition(event) ? (
-              this.bottomActionButton('Join the waitlist', () =>
-                this.joinWaitlist(event),
+            ) : !event.results &&
+              Object.values(event.teams).filter(
+                (team) => team.status === 'pending',
+              ).length === 0 ? (
+              this.bottomActionButton('Publish results', () =>
+                navigate('PublishResult', {challenge: event}),
               )
-            ) : this.openCondition(event) &&
-              !this.userAlreadySubscribed(event.attendees) ? (
-              this.bottomActionButton('Join the event', () => this.next(event))
-            ) : userID === event.info.organizer &&
-              Number(event.price.joiningFee) !== 0 &&
-              !event.checkoutDone ? (
-              this.bottomActionButton('Checkout', () => this.checkout(event))
             ) : (
               <View />
-            )} */}
+            )}
           </FadeInView>
         )}
       </View>

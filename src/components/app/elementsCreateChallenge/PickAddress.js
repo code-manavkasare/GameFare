@@ -292,7 +292,7 @@ class PickAddress extends Component {
               enabled={this.conditionOn()}
               loader={this.state.loader}
               click={() =>
-                navigate('SummaryChallenge', {challenge: createChallengeData})
+                navigate('SummaryChallenge', {challenge: createChallengeData,subscribe:false})
               }
             />
           ) : (

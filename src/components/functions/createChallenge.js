@@ -20,7 +20,7 @@ function generateID() {
   );
 }
 
-function createNewTeam(captain, members, status) {
+function createNewTeam(captain, members, status, amountPaid) {
   const idNewTeam = generateID();
   delete captain['_highlightResult'];
   return {
@@ -29,6 +29,7 @@ function createNewTeam(captain, members, status) {
       id: idNewTeam,
       status: status,
       members: members,
+      amountPaid: amountPaid,
     },
   };
 }
@@ -39,7 +40,7 @@ function createTeamsFromCaptains(captains) {
     let captain = Object.values(captains)[i];
     teams = {
       ...teams,
-      ...createNewTeam(captain, {[captain.id]: captain}, 'pending'),
+      ...createNewTeam(captain, {[captain.id]: captain}, 'pending', 'pending'),
     };
   }
   return teams;
@@ -67,6 +68,7 @@ async function createChallengeObj(challenge, userID, infoUser) {
       },
     },
     'confirmed',
+    challenge.price.amount,
   );
   console.log('challenge creation', challenge);
   const teamsFromCaptains = createTeamsFromCaptains(challenge.captains);

@@ -25,6 +25,7 @@ import DateEvent from '../elementsEventCreate/DateEvent';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
+import firebase from 'react-native-firebase';
 import CardUser from '../elementsEventPage/CardUser';
 import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -140,9 +141,9 @@ class SummaryChallenge extends Component {
     );
   }
 
-  summary(challenge) {
+  summary(challenge, subscribe, dataCheckout) {
     if (challenge.info.sport === '') return null;
-    const {info, date, location} = challenge;
+    const {info, date, location, images} = challenge;
     const sport = this.props.sports.filter(
       (sport) => sport.value === info.sport,
     )[0];
@@ -150,15 +151,25 @@ class SummaryChallenge extends Component {
     const format = Object.values(sport.formats).filter(
       (format) => format.value === info.format,
     )[0];
-    const creditCardCharge = challenge.price.amount;
-
+    console.log('dataCheckout', dataCheckout);
+    const {
+      transfertWinner,
+      totalAmount,
+      creditCardCharge,
+      totalWallet,
+    } = dataCheckout;
     return (
       <View style={[styleApp.marginView, {paddingTop: 15}]}>
         <Text style={[styleApp.title, {fontSize: 20}]}>{info.name}</Text>
         <View style={[styleApp.divider2, {marginBottom: 10}]} />
 
         {this.rowIcon(sport.icon, this.title(sport.text), 'font', true)}
-        {this.rowIcon(info.image, this.title(location.address), 'font', true)}
+        {this.rowIcon(
+          subscribe ? images[0] : info.image,
+          this.title(location.address),
+          'font',
+          true,
+        )}
         <View style={{height: 5}} />
         {this.rowIcon(format.icon, this.title(format.text), 'font')}
         <View style={{height: 5}} />
@@ -185,19 +196,21 @@ class SummaryChallenge extends Component {
             'font',
           )}
 
-        <View style={{height: 5}} />
+        <View style={{height: 10}} />
         {info.instructions !== '' &&
           this.rowIcon('parking', this.title(info.instructions), 'font')}
 
-        <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} />
+        {!subscribe && (
+          <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} />
+        )}
 
-        {this.listMembers(challenge.captains)}
+        {!subscribe && this.listMembers(challenge.captains)}
         <View style={[styleApp.divider2, {marginBottom: 10, marginTop: 5}]} />
 
-        {creditCardCharge === 0 ? null : this.props.userConnected ? (
+        {totalAmount === 0 ? null : this.props.userConnected ? (
           <View>
             {this.rowText(
-              'Pay now',
+              'Total',
               colors.title,
               'OpenSans-SemiBold',
               '$' + Number(creditCardCharge.toFixed(2)),
@@ -206,11 +219,42 @@ class SummaryChallenge extends Component {
         ) : (
           <View>
             {this.rowText(
+              'Total',
+              colors.title,
+              'OpenSans-SemiBold',
+              '$' + Number(creditCardCharge.toFixed(2)),
+            )}
+          </View>
+        )}
+
+        {this.props.userConnected &&
+          totalAmount !== 0 &&
+          this.rowText(
+            'Credits',
+            colors.green,
+            'OpenSans-SemiBold',
+            '$' + Number(Number(totalWallet).toFixed(2)),
+          )}
+
+        {Number(creditCardCharge) === 0 ? null : this.props.userConnected ? (
+          <View>
+            {this.rowText(
               'Pay now',
               colors.title,
               'OpenSans-SemiBold',
               '$' + Number(creditCardCharge.toFixed(2)),
             )}
+            <View style={[styleApp.divider2, {marginBottom: 10}]} />
+          </View>
+        ) : (
+          <View>
+            {this.rowText(
+              'Pay now',
+              colors.title,
+              'OpenSans-SemiBold',
+              '$' + Number(creditCardCharge),
+            )}
+            <View style={[styleApp.divider2, {marginBottom: 10}]} />
           </View>
         )}
 
@@ -223,31 +267,11 @@ class SummaryChallenge extends Component {
         )}
 
         <View style={{height: 15}} />
-
-        <Text style={[styleApp.title, {fontSize: 13}]}>
-          Reminder •{' '}
-          <Text style={{fontFamily: 'OpenSans-Regular'}}>
-            We will charge the challenge entry fee at the point of creating the
-            challenge. You will be able to cancel and get refunded until your
-            oponent confirms the challenge.{'\n'}
-            {'\n'}
-            You will receive{' '}
-            <Text style={styleApp.textBold}>
-              ${(challenge.price.amount * challenge.price.odds).toFixed(1)}
-            </Text>{' '}
-            if you win the challenge. Your oponent will pay{' '}
-            <Text style={styleApp.textBold}>
-              $
-              {challenge.price.amount *
-                Math.max(0, challenge.price.odds - 1).toFixed(1)}
-            </Text>{' '}
-            to accept the challenge.
-          </Text>
-        </Text>
+        {this.reminder(challenge, subscribe, transfertWinner, creditCardCharge)}
       </View>
     );
   }
-  async submit(challenge) {
+  async submit(challenge, dataCheckout) {
     this.setState({loader: true});
     const {dismiss} = this.props.navigation;
     const {
@@ -260,7 +284,7 @@ class SummaryChallenge extends Component {
 
     const payEntryChallenge = await payEntryFee(
       new Date().toString(),
-      challenge.price.amount,
+      dataCheckout.creditCardCharge,
       userID,
       {
         tokenCusStripe: tokenCusStripe,
@@ -305,10 +329,116 @@ class SummaryChallenge extends Component {
     await this.setState({loader: false});
     return true;
   }
+  async submitAttendance(challenge, dataCheckout) {
+    this.setState({loader: true});
+    const {goBack} = this.props.navigation;
+
+    const {
+      userID,
+      infoUser,
+      tokenCusStripe,
+      defaultCard,
+      totalWallet,
+    } = this.props;
+
+    const payEntryChallenge = await payEntryFee(
+      new Date().toString(),
+      dataCheckout.creditCardCharge,
+      userID,
+      {
+        tokenCusStripe: tokenCusStripe,
+        defaultCard: defaultCard,
+        totalWallet: totalWallet,
+      },
+      infoUser,
+    );
+    console.log('payEntryChallenge', payEntryChallenge);
+    if (!payEntryChallenge.response) {
+      await this.setState({loader: false});
+      return this.props.navigation.navigate('Alert', {
+        close: true,
+        title: 'An error has occured.',
+        subtitle: 'Please try again.',
+        textButton: 'Got it!',
+      });
+    }
+    const teamUser = Object.values(challenge.teams).filter(
+      (team) => team.captain.id === userID,
+    )[0];
+    await firebase
+      .database()
+      .ref('challenges/' + challenge.objectID + '/teams/' + teamUser.id)
+      .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
+    await this.setState({loader: false});
+    return goBack();
+  }
+  reminder(challenge, subscribe, transfertWinner, creditCardCharge) {
+    if (!subscribe)
+      return (
+        <Text style={[styleApp.title, {fontSize: 13}]}>
+          Reminder •{' '}
+          <Text style={{fontFamily: 'OpenSans-Regular'}}>
+            We will charge the challenge entry fee at the point of creating the
+            challenge. You will be able to cancel and get refunded until your
+            oponent confirms the challenge.{'\n'}
+            {'\n'}
+            You will receive{' '}
+            <Text style={styleApp.textBold}>${transfertWinner}</Text> if you win
+            the challenge. Your oponent will pay{' '}
+            <Text style={styleApp.textBold}>
+              $
+              {challenge.price.amount *
+                Math.max(0, challenge.price.odds - 1).toFixed(1)}
+            </Text>{' '}
+            to accept the challenge.
+          </Text>
+        </Text>
+      );
+    return (
+      <Text style={[styleApp.title, {fontSize: 13}]}>
+        Reminder •{' '}
+        <Text style={{fontFamily: 'OpenSans-Regular'}}>
+          {creditCardCharge !== 0 &&
+            'We will charge the challenge entry fee at the point of accepting the challenge.' +
+              '\n' +
+              '\n'}
+          You will receive{' '}
+          <Text style={styleApp.textBold}>${transfertWinner}</Text> if you win
+          the challenge.
+        </Text>
+      </Text>
+    );
+  }
+  conditionButtonOn(creditCardCharge, defaultCard) {
+    if (creditCardCharge !== 0 && !defaultCard) return false;
+    return true;
+  }
   render() {
+    const {goBack, dismiss, navigate} = this.props.navigation;
     const challenge = this.props.navigation.getParam('challenge');
-    console.log('challenge', challenge);
-    if (!challenge) return null;
+    const subscribe = this.props.navigation.getParam('subscribe');
+    let {totalWallet, defaultCard} = this.props;
+    totalWallet = Number(totalWallet);
+
+    const {amount, odds} = challenge.price;
+    const k = amount * Math.max(0, odds - 1);
+
+    let totalAmount = amount;
+    if (subscribe) totalAmount = k;
+
+    const creditCardCharge = Math.min(
+      totalAmount,
+      Math.max(0, totalAmount - totalWallet),
+    );
+
+    const transfertWinner = amount + amount * Math.max(0, odds - 1);
+    const dataCheckout = {
+      transfertWinner,
+      totalAmount,
+      creditCardCharge,
+      totalWallet,
+    };
+    console.log('creditCardCharge', creditCardCharge);
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -320,12 +450,14 @@ class SummaryChallenge extends Component {
           initialTitleOpacity={1}
           icon1="arrow-left"
           icon2={null}
-          clickButton1={() => this.props.navigation.goBack()}
+          clickButton1={() => goBack()}
         />
 
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.summary(challenge)}
+          contentScrollView={() =>
+            this.summary(challenge, subscribe, dataCheckout)
+          }
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -334,17 +466,31 @@ class SummaryChallenge extends Component {
         />
 
         <View style={styleApp.footerBooking}>
-          {this.props.userConnected ? (
+          {this.props.userConnected && !subscribe ? (
             <Button
               icon={'next'}
               backgroundColor="green"
               onPressColor={colors.greenLight}
               styleButton={{marginLeft: 20, width: width - 40}}
-              enabled={true}
-              disabled={false}
+              disabled={!this.conditionButtonOn(creditCardCharge, defaultCard)}
               text={'Pay & Create challenge'}
               loader={this.state.loader}
-              click={() => this.submit(challenge)}
+              click={() => this.submit(challenge, dataCheckout)}
+            />
+          ) : this.props.userConnected && subscribe ? (
+            <Button
+              icon={'next'}
+              backgroundColor="green"
+              onPressColor={colors.greenLight}
+              styleButton={{marginLeft: 20, width: width - 40}}
+              disabled={!this.conditionButtonOn(creditCardCharge, defaultCard)}
+              text={
+                creditCardCharge === 0
+                  ? 'Accept challenge'
+                  : 'Pay & Accept challenge'
+              }
+              loader={this.state.loader}
+              click={() => this.submitAttendance(challenge, dataCheckout)}
             />
           ) : (
             <Button

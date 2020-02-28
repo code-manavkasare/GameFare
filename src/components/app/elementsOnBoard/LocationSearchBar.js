@@ -35,6 +35,7 @@ import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
 import ScrollView from '../../layout/scrollViews/ScrollView';
+import NavigationService from '../../../../NavigationService';
 const {height, width} = Dimensions.get('screen');
 
 class LocationSelector extends Component {
@@ -141,6 +142,7 @@ class LocationSelector extends Component {
             ...currentHistoricSearchLocation,
             [address.id]: add,
           };
+
           await this.props.historicSearchAction(
             'setHistoricLocationSearch',
             currentHistoricSearchLocation,
@@ -171,8 +173,8 @@ class LocationSelector extends Component {
   async getCurrentLocation() {
     var CurrentLocation = await currentLocation();
     if (CurrentLocation.response === false) {
-      this.setState({loader: false});
-      return this.props.navigation.navigate('Alert', {
+      await this.setState({loader: false});
+      return NavigationService.navigate('Alert', {
         close: true,
         textButton: 'Got it!',
         title: 'An error has occured.',
