@@ -166,6 +166,7 @@ const JoinNavigator = createStackNavigator(
 const JoinChallengeNavigator = createStackNavigator(
   {
     Challenge: lockedPortrait(ChallengePage),
+    SummaryChallenge: lockedPortrait(SummaryChallenge),
   },
   {
     initialRouteName: 'Challenge',

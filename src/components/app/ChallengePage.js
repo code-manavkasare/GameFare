@@ -295,10 +295,11 @@ class EventPage extends React.Component {
   }
   editPrice(data) {
     if (this.state.editMode) {
+      console.log('edit price', data.price);
       return (
         <TextInput
           style={styles.eventTitle}
-          placeholder={'Entry Fee: $' + data.price.joiningFee}
+          placeholder={'Entry Fee: $' + data.price.amount}
           returnKeyType={'done'}
           keyboardType={'phone-pad'}
           underlineColorAndroid="rgba(0,0,0,0)"
@@ -311,7 +312,7 @@ class EventPage extends React.Component {
           }}
           value={
             this.state.editPriceClicked
-              ? 'Entry Fee: $' + this.state.editPrice
+              ? 'Challenge: $' + this.state.editPrice
               : ''
           }
         />
@@ -319,9 +320,9 @@ class EventPage extends React.Component {
     } else {
       return (
         <Text style={styles.eventTitle}>
-          {Number(data.price.joiningFee) === 0
+          {Number(data.price.amount) === 0
             ? 'Free entry'
-            : '$' + data.price.joiningFee}
+            : '$' + data.price.amount}
         </Text>
       );
     }
@@ -494,8 +495,8 @@ class EventPage extends React.Component {
         ...data.price,
         joiningFee:
           this.state.editPrice === ''
-            ? data.price.joiningFee
-            : Number(this.state.editPrice),
+            ? data.price.amount
+            : Number(this.state.amount),
       },
       info: {
         ...data.info,
@@ -522,11 +523,83 @@ class EventPage extends React.Component {
       ...noEdit,
     });
   }
+  async confirmDecline(data) {
+    const {userID} = this.props;
+
+    const teamUser = Object.values(data.teams).filter(
+      (team) => team.captain.id === userID,
+    )[0];
+    console.log('teamUser', teamUser);
+    // await firebase
+    //   .database()
+    //   .ref('challenges/' + data.objectID + '/teams/' + teamUser.id)
+    //   .update({canceller: userID});
+    await firebase
+      .database()
+      .ref('challenges/' + data.objectID + '/teams/' + teamUser.id)
+      .remove();
+    await NavigationService.goBack();
+    return true;
+  }
+  rowDeclineAcceptButton(data) {
+    const {userID} = this.props;
+    const teamUser = Object.values(data.teams).filter(
+      (team) => team.captain.id === userID,
+    );
+    console.log('dataUser', teamUser);
+    console.log('data.teams', data.teams);
+    if (teamUser.length === 0) return null;
+
+    if (teamUser[0].status !== 'pending') return null;
+    return (
+      <Row style={{marginTop: 20}}>
+        <Col size={42.5} style={styleApp.center2}>
+          <Button2
+            icon={'next'}
+            backgroundColor={'red'}
+            onPressColor={colors.red}
+            styleButton={{height: 45}}
+            disabled={false}
+            text={'Decline'}
+            loader={false}
+            click={() =>
+              NavigationService.navigate('Alert', {
+                title: 'Do you want to decline the challenge?',
+                textButton: 'Decline',
+                colorButton: 'red',
+                onPressColor: colors.red,
+                onGoBack: () => this.confirmDecline(data),
+              })
+            }
+          />
+        </Col>
+        <Col size={5} />
+        <Col size={42.5} style={styleApp.center2}>
+          <Button2
+            icon={'next'}
+            backgroundColor={'green'}
+            onPressColor={colors.greenClick}
+            styleButton={{height: 45}}
+            disabled={false}
+            text={'Accept'}
+            loader={false}
+            click={() =>
+              NavigationService.navigate('SummaryChallenge', {
+                challenge: data,
+                subscribe: true,
+              })
+            }
+          />
+        </Col>
+      </Row>
+    );
+  }
   eventInfo(data, sport, format) {
     return (
       <View style={styleApp.marginView}>
+        {this.rowDeclineAcceptButton(data)}
         <Row style={{marginTop: 20}}>
-          {/* <Col style={styleApp.center2}>{this.editPrice(data)}</Col> */}
+          <Col style={styleApp.center2}>{this.editPrice(data)}</Col>
         </Row>
 
         <Row style={{marginTop: 15}}>
@@ -536,6 +609,28 @@ class EventPage extends React.Component {
 
         {this.rowImage(sport.icon, sport.text)}
         {this.rowIcon(this.title(format.text), format.icon)}
+
+        {this.editRowIcon(
+          this.title(
+            'Challenge $' +
+              data.price.amount +
+              ', money multiple ' +
+              data.price.odds,
+          ),
+          'cogs',
+          () => true,
+          () =>
+            this.props.navigation.navigate('Location', {
+              location: data.location,
+              pageFrom: this.props.navigation.state.routeName,
+              onGoBack: (location) => {
+                this.props.navigation.navigate(
+                  this.props.navigation.state.routeName,
+                );
+                this.setState({editLocation: location});
+              },
+            }),
+        )}
 
         {this.editRowIcon(
           this.dateTime(data.date.start, data.date.end),
@@ -790,7 +885,7 @@ class EventPage extends React.Component {
         )}
 
         {event.discussions && (
-        <PostsView
+          <PostsView
             objectID={event.objectID}
             data={event}
             type="challenge"
@@ -932,6 +1027,8 @@ class EventPage extends React.Component {
           ' by following the link!',
         image: event.images[0],
         title: event.info.name,
+        action: 'Challenge',
+        objectID: event.objectID,
       },
       action: 'Challenge',
       data: {...event, objectID: event.objectID},
@@ -993,11 +1090,11 @@ class EventPage extends React.Component {
       textButton: 'Ok',
     });
   }
-  bottomActionButton(title, click) {
+  bottomActionButton(title, click, color) {
     return (
       <Button2
         icon={'next'}
-        backgroundColor="green"
+        backgroundColor={color ? color : 'green'}
         onPressColor={colors.greenClick}
         styleButton={styles.buttonBottom}
         disabled={false}

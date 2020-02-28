@@ -77,6 +77,8 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
+    console.log('conversation', conversation);
+    // return;
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await firebase
         .database()

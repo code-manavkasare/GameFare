@@ -292,10 +292,12 @@ class Page2 extends Component {
     );
   }
   conditionOn() {
+    const {step2} = this.props;
     if (
-      this.props.step2.location.address === '' ||
-      this.props.step2.startDate === '' ||
-      this.props.step2.name === ''
+      step2.location.address === '' ||
+      step2.startDate === '' ||
+      step2.name === '' ||
+      step2.image === ''
     )
       return false;
     return true;

@@ -82,7 +82,8 @@ class AddUsers extends Component {
     };
 
     let discussion = await searchDiscussion(usersIDArray, usersIDArray.length);
-
+    console.log('discussion', discussion);
+    return;
     if (!discussion) {
       discussion = await createDiscussion(
         selectedUsersWithIdAndHost,
@@ -93,7 +94,6 @@ class AddUsers extends Component {
 
     const {url, description} = await this.props.createBranchMessage();
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
-
     var that = this;
     setTimeout(async function() {
       await that.props.messageAction('setConversation', discussion);

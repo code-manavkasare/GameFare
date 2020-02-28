@@ -387,6 +387,13 @@ class Contacts extends Component {
       action,
       objectID,
     } = this.props.navigation.getParam('url');
+    console.log('lets create link', {
+      description,
+      title,
+      image,
+      action,
+      objectID,
+    });
     let branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {
@@ -411,7 +418,7 @@ class Contacts extends Component {
       controlParams,
     );
 
-    return {url, description};
+    return {url, description, action, objectID};
   };
 
   async sendSMS() {
