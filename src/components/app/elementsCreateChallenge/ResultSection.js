@@ -56,18 +56,19 @@ export default class Results extends Component {
                 </Text>
               </Col>
               <Col size={20} style={styleApp.center3}>
-                <AllIcons
+                {results.status !== 'confirmed' && <AllIcons
                   name={
                     results.status === 'pending'
                       ? 'redo-alt'
                       : results.status === 'disputed'
                       ? 'redo-alt'
-                      : 'checked'
+                      : 'check'
                   }
                   color={colors.secondary}
-                  size={20}
+                  size={18}
                   type="font"
                 />
+                }
               </Col>
             </Row>
           );
