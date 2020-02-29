@@ -36,7 +36,7 @@ export default class Results extends Component {
   componentDidMount() {}
 
   async load() {}
-  rowTeam(team) {
+  rowTeam(team, results) {
     const {captain} = team;
     return (
       <ButtonColor
@@ -57,7 +57,13 @@ export default class Results extends Component {
               </Col>
               <Col size={20} style={styleApp.center3}>
                 <AllIcons
-                  name={'redo-alt'}
+                  name={
+                    results.status === 'pending'
+                      ? 'redo-alt'
+                      : results.status === 'disputed'
+                      ? 'redo-alt'
+                      : 'checked'
+                  }
                   color={colors.secondary}
                   size={20}
                   type="font"
@@ -79,7 +85,22 @@ export default class Results extends Component {
       />
     );
   }
-  rowConfirmResult() {
+  async confirmResult(status, challenge) {
+    const {userID, infoUser} = this.props;
+    await firebase
+      .database()
+      .ref('challenges/' + challenge.objectID + '/results')
+      .update({
+        status: status,
+        confirmedBy: {
+          id: userID,
+          info: infoUser,
+          date: new Date().toString(),
+        },
+      });
+    return NavigationService.goBack();
+  }
+  rowConfirmResult(challenge) {
     return (
       <Row style={{marginTop: 20}}>
         <Col size={42.5} style={styleApp.center2}>
@@ -92,11 +113,11 @@ export default class Results extends Component {
             loader={false}
             click={() =>
               NavigationService.navigate('Alert', {
-                title: 'Do you want to decline the challenge?',
-                textButton: 'Decline',
+                title: 'Do you want to dispute the result?',
+                textButton: 'Dispute',
                 colorButton: 'red',
                 onPressColor: colors.red,
-                onGoBack: () => this.confirmDecline(data),
+                onGoBack: () => this.confirmResult('disputed', challenge),
               })
             }
           />
@@ -104,17 +125,19 @@ export default class Results extends Component {
         <Col size={5} />
         <Col size={42.5} style={styleApp.center2}>
           <Button
-            icon={'next'}
             backgroundColor={'green'}
             onPressColor={colors.greenClick}
             styleButton={{height: 45}}
             disabled={false}
-            text={'Accept'}
+            text={'Confirm'}
             loader={false}
             click={() =>
-              NavigationService.navigate('SummaryChallenge', {
-                challenge: data,
-                subscribe: true,
+              NavigationService.navigate('Alert', {
+                title: 'Do you want to confirm the result?',
+                textButton: 'Confirm',
+                colorButton: 'green',
+                onPressColor: colors.green,
+                onGoBack: () => this.confirmResult('confirmed', challenge),
               })
             }
           />
@@ -147,17 +170,19 @@ export default class Results extends Component {
           <View style={[styleApp.divider2, {marginBottom: 10}]} />
         </View>
 
-        {this.rowTeam(teamWinner)}
+        {this.rowTeam(teamWinner, results)}
 
-        {checkIfUserCaptain &&
-        postedBy.id !== userID &&
-        results.status === 'pending' ? (
-          this.rowConfirmResult()
-        ) : results.status === 'pending' ? (
-          <Text style={[styleApp.text, {marginTop: 10}]}>
-            The captain of another team needs to confirm the result.
-          </Text>
-        ) : null}
+        <View style={styleApp.marginView}>
+          {checkIfUserCaptain &&
+          postedBy.id !== userID &&
+          results.status === 'pending' ? (
+            this.rowConfirmResult(challenge)
+          ) : results.status === 'pending' ? (
+            <Text style={[styleApp.smallText, {marginTop: 10}]}>
+              The captain of another team needs to confirm the result.
+            </Text>
+          ) : null}
+        </View>
       </View>
     );
   }

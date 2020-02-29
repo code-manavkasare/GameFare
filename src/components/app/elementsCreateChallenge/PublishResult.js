@@ -107,7 +107,7 @@ class PublishResult extends Component {
         winner: winnerID,
         date: new Date().toString(),
         status: 'pending',
-        postedBy: {id: userID, infoUser: infoUser},
+        postedBy: {id: userID, info: infoUser},
       });
     await this.setState({loader: false});
     return goBack();

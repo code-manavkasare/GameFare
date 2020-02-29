@@ -816,7 +816,7 @@ class EventPage extends React.Component {
     return true;
   }
 
-  event(event, loader, userID) {
+  event(event, loader, userID, infoUser) {
     if (!event || loader) return <PlaceHolder />;
     const teams = arrayTeams(event.teams, userID, event.info.organizer);
     const {sport, format} = this.getSportLeagueRule(event);
@@ -824,7 +824,13 @@ class EventPage extends React.Component {
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {this.eventInfo(event, sport, format)}
 
-        {event.results && <ResultSection challenge={event} userID={userID} />}
+        {event.results && (
+          <ResultSection
+            challenge={event}
+            userID={userID}
+            infoUser={infoUser}
+          />
+        )}
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Row>
@@ -1098,7 +1104,7 @@ class EventPage extends React.Component {
 
   render() {
     const {event, editMode, loader} = this.state;
-    const {userID} = this.props;
+    const {userID, infoUser} = this.props;
     const {navigate} = this.props.navigation;
     return (
       <View style={{flex: 1}}>
@@ -1138,7 +1144,7 @@ class EventPage extends React.Component {
             );
           }}
           parallaxHeaderHeight={280}>
-          {this.event(event, loader, userID)}
+          {this.event(event, loader, userID, infoUser)}
         </ParallaxScrollView>
 
         {event && (
