@@ -44,11 +44,11 @@ class ListEvent extends Component {
               <Col size={75} style={[styleApp.center2]}>
                 <Text style={styleApp.input}>{text}</Text>
               </Col>
-              <Col size={10} style={styleApp.center}>
+              <Col size={10} style={styleApp.center3}>
                 {this.props.defaultCard == undefined ? null : this.props
-                    .defaultCard.id == data.id ? (
+                    .defaultCard.id === data.id ? (
                   <View style={styles.defaultView}>
-                    <Text style={styles.textDefault}>D</Text>
+                    <Text style={styles.textDefault}>Default</Text>
                   </View>
                 ) : null}
               </Col>
@@ -211,9 +211,9 @@ class ListEvent extends Component {
 const styles = StyleSheet.create({
   defaultView: {
     backgroundColor: colors.greenLight,
-    borderRadius: 12.5,
+    borderRadius: 3,
     height: 25,
-    width: 25,
+    width: 75,
     alignItems: 'center',
     justifyContent: 'center',
   },

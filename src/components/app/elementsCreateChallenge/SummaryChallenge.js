@@ -213,7 +213,7 @@ class SummaryChallenge extends Component {
               'Total',
               colors.title,
               'OpenSans-SemiBold',
-              '$' + Number(creditCardCharge.toFixed(2)),
+              '$' + Number(totalAmount.toFixed(2)),
             )}
           </View>
         ) : (
@@ -222,7 +222,7 @@ class SummaryChallenge extends Component {
               'Total',
               colors.title,
               'OpenSans-SemiBold',
-              '$' + Number(creditCardCharge.toFixed(2)),
+              '$' + Number(totalAmount.toFixed(2)),
             )}
           </View>
         )}
@@ -236,27 +236,15 @@ class SummaryChallenge extends Component {
             '$' + Number(Number(totalWallet).toFixed(2)),
           )}
 
-        {Number(creditCardCharge) === 0 ? null : this.props.userConnected ? (
-          <View>
-            {this.rowText(
-              'Pay now',
-              colors.title,
-              'OpenSans-SemiBold',
-              '$' + Number(creditCardCharge.toFixed(2)),
-            )}
-            <View style={[styleApp.divider2, {marginBottom: 10}]} />
-          </View>
-        ) : (
-          <View>
-            {this.rowText(
-              'Pay now',
-              colors.title,
-              'OpenSans-SemiBold',
-              '$' + Number(creditCardCharge),
-            )}
-            <View style={[styleApp.divider2, {marginBottom: 10}]} />
-          </View>
-        )}
+        <View>
+          {this.rowText(
+            'Pay now',
+            colors.title,
+            'OpenSans-SemiBold',
+            '$' + Number(creditCardCharge),
+          )}
+          <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} />
+        </View>
 
         <View style={{height: 10}} />
 
@@ -284,7 +272,7 @@ class SummaryChallenge extends Component {
 
     const payEntryChallenge = await payEntryFee(
       new Date().toString(),
-      dataCheckout.creditCardCharge,
+      dataCheckout.totalAmount,
       userID,
       {
         tokenCusStripe: tokenCusStripe,
@@ -343,7 +331,7 @@ class SummaryChallenge extends Component {
 
     const payEntryChallenge = await payEntryFee(
       new Date().toString(),
-      dataCheckout.creditCardCharge,
+      dataCheckout.totalAmount,
       userID,
       {
         tokenCusStripe: tokenCusStripe,

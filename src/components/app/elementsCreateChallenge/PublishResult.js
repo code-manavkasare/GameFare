@@ -9,11 +9,13 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import firebase from 'react-native-firebase';
 
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import ButtonColor from '../../layout/Views/Button';
 import Button from '../../layout/buttons/Button';
+import AsyncImage from '../../layout/image/AsyncImage';
 
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import AllIcons from '../../layout/icons/AllIcons';
@@ -28,21 +30,86 @@ class PublishResult extends Component {
     super(props);
     this.state = {
       loader: false,
+      winnerID: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {}
-
+  rowTeam(team, i, winnerID) {
+    const {captain} = team;
+    return (
+      <ButtonColor
+        key={i}
+        view={() => {
+          return (
+            <Row>
+              <Col size={20} style={styleApp.center2}>
+                <AsyncImage
+                  style={{height: 35, width: 35, borderRadius: 20}}
+                  mainImage={captain.info.picture}
+                  imgInitial={captain.info.picture}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text style={styleApp.text}>
+                  {captain.info.firstname} {captain.info.lastname}
+                </Text>
+              </Col>
+              <Col size={20} style={styleApp.center3}>
+                <AllIcons
+                  name={winnerID === team.id ? 'check-circle' : 'circle'}
+                  color={winnerID === team.id ? colors.green : colors.greyDark}
+                  size={23}
+                  type="font"
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => this.setState({winnerID: team.id})}
+        color="white"
+        style={{
+          flex: 1,
+          paddingTop: 10,
+          paddingBottom: 10,
+          paddingLeft: 20,
+          paddingRight: 20,
+        }}
+        onPressColor={colors.off}
+      />
+    );
+  }
   publishResultContent(challenge) {
     const {teams} = challenge;
+    const {winnerID} = this.state;
     return (
-      <View style={{}}>
-        <Text>coucou toi</Text>
+      <View>
+        <View style={styleApp.marginView}>
+          <Text style={[styleApp.title, {marginBottom: 15}]}>
+            Who won the challenge?
+          </Text>
+        </View>
+
+        {Object.values(teams).map((team, i) => this.rowTeam(team, i, winnerID))}
       </View>
     );
   }
-  async submitResult() {
+  async submitResult(challenge) {
     const {goBack} = this.props.navigation;
+    const {userID, infoUser} = this.props;
+    const {objectID} = challenge;
+    const {winnerID} = this.state;
+    await this.setState({loader: true});
+    await firebase
+      .database()
+      .ref('challenges/' + objectID + '/results')
+      .update({
+        winner: winnerID,
+        date: new Date().toString(),
+        status: 'pending',
+        postedBy: {id: userID, info: infoUser},
+      });
+    await this.setState({loader: false});
     return goBack();
   }
   conditionOn() {
@@ -57,7 +124,7 @@ class PublishResult extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Challenge result'}
+          textHeader={''}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
@@ -82,9 +149,9 @@ class PublishResult extends Component {
             text="Confirm result"
             backgroundColor={'green'}
             onPressColor={colors.greenLight}
-            enabled={this.conditionOn()}
+            disabled={this.conditionOn()}
             loader={this.state.loader}
-            click={() => this.submitResult()}
+            click={() => this.submitResult(challenge)}
           />
         </View>
       </View>
@@ -110,6 +177,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    infoUser: state.user.infoUser.userInfo,
   };
 };
 
