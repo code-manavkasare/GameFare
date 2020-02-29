@@ -48,6 +48,7 @@ import ButtonColor from '../layout/Views/Button';
 import GroupsEvent from './elementsGroupPage/GroupsEvent';
 
 import PostsView from './elementsGroupPage/PostsView';
+import ResultSection from './elementsCreateChallenge/ResultSection';
 
 import CardUser from './elementsEventPage/CardUser';
 import CardStream from './elementsEventPage/CardStream';
@@ -822,6 +823,9 @@ class EventPage extends React.Component {
     return (
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         {this.eventInfo(event, sport, format)}
+
+        {event.results && <ResultSection challenge={event} userID={userID} />}
+
         <View style={[styleApp.marginView, {marginTop: 30}]}>
           <Row>
             <Col size={25} style={styleApp.center2}>

@@ -49,6 +49,12 @@ class MessageTab extends React.Component {
     if (!conversation.objectID) {
       conversation = await indexDiscussions.getObject(conversation);
     }
+    if (!conversation)
+      return this.loadMessages(
+        this.props.navigation.getParam('data'),
+        this.props.navigation.getParam('myConversation'),
+        this.props.userID,
+      );
     const {gamefareUser} = this.props;
     const that = this;
     firebase
