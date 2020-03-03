@@ -79,6 +79,7 @@ import NewConversation from '../app/elementsMessage/NewConversation';
 
 import LiveStream from '../app/elementsStreaming/LiveStream';
 import Calibration from '../app/elementsStreaming/Calibration';
+import DrawLines from '../app/elementsStreaming/DrawLines';
 
 import AddPlayers from '../app/elementsStreamResults/AddPlayers';
 import MatchPictures from '../app/elementsStreamResults/MatchPictures';
@@ -257,8 +258,9 @@ const PaymentsNavigator = createStackNavigator(
 
 const StreamNavigator = createStackNavigator(
   {
-    LiveStream: lockedLandscape(LiveStream),
-    Calibration: lockedLandscape(Calibration),
+    LiveStream: lockedPortrait(LiveStream),
+    Calibration: lockedPortrait(Calibration),
+    DrawLines: lockedPortrait(DrawLines),
   },
   {
     initialRouteName: 'Calibration',
