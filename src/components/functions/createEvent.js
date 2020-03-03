@@ -135,7 +135,6 @@ async function checkUserAttendingEvent(userID, data) {
     userID +
     ' OR info.organizer:' +
     userID;
-  indexEvents.clearCache();
   var {hits} = await indexEvents.search({
     query: data.objectID,
     filters: filterAttendees,
