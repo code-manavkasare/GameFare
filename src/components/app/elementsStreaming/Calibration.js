@@ -14,6 +14,7 @@ import Svg, {Line} from 'react-native-svg';
 import {RNCamera} from 'react-native-camera';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
+import KeepAwake from 'react-native-keep-awake';
 
 import Loader from '../../layout/loaders/Loader';
 
@@ -38,8 +39,6 @@ const steps = {
   PROMPT: 'prompt',
   ERROR: 'error',
   WAITING: 'waiting',
-  SHOW_LINES: 'show_lines',
-  CORRECT: 'correct',
 };
 
 class Calibration extends React.Component {
@@ -47,9 +46,8 @@ class Calibration extends React.Component {
     super(props);
     this.state = {
       waitingPermissions: false,
-      step: steps.PROMPT,
+      waitingNetline: false,
       stream: null, // streamKey, playbackID, id
-      mirrorFront: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -66,6 +64,12 @@ class Calibration extends React.Component {
         console.log('ERROR: Calibration: Could not create stream');
         return this.props.navigation.navigate('TabsApp');
       }
+      return this.props.navigation.navigate('Alert', {
+        close: true,
+        title:
+          'Set up the camera and take a photo of the court for calibration.',
+        textButton: 'Got it.',
+      });
     }
     return true;
   }
@@ -75,8 +79,6 @@ class Calibration extends React.Component {
         .database()
         .ref('streams/' + this.state.stream.id + '/netlineResults/')
         .off();
-      // don't delete for now, LiveBall
-      //destroyStream(this.state.stream.id, this.state.error);
     }
   }
   async permissions() {
@@ -143,18 +145,21 @@ class Calibration extends React.Component {
       .on('value', async function(snap) {
         let netlineResults = snap.val();
         if (netlineResults) {
+          await that.setState({waitingNetline: false});
           if (netlineResults.error) {
-            await that.setState({
-              step: steps.ERROR,
-              netline: netlineResults,
+            that.props.navigation.navigate('Alert', {
+              close: true,
+              title: 'Could not detect court. Try again.',
+              textButton: 'Got it.',
             });
           } else {
-            await that.setState({
-              step: steps.SHOW_LINES,
+            that.props.navigation.navigate('DrawLines', {
+              stream: that.state.stream,
               netline: {
                 optimalNetline: netlineResults.optimalNetLine,
                 doublesLine: netlineResults.doublesLine,
                 baseLine: netlineResults.baseLine,
+                corners: netlineResults.corners,
               },
             });
           }
@@ -162,102 +167,58 @@ class Calibration extends React.Component {
       });
   }
   async mainButtonClick() {
-    if (this.state.step === steps.PROMPT || this.state.step === steps.ERROR) {
-      await this.setState({step: steps.WAITING, netline: null});
+    if (!this.state.waitingNetline) {
+      await this.setState({waitingNetline: true, netline: null});
       this.takeCalibrationPhoto();
     }
   }
   async takeCalibrationPhoto() {
-    const options = {width: 720, quality: 0.5, base64: true};
+    const options = {width: 720, quality: 0.75, base64: true};
     const data = await this.camera.takePictureAsync(options);
     await uploadNetlinePhoto(this.state.stream.id, data.uri); // needs to delete the old netline photo?
   }
-
-  lockNetline() {
-    this.props.navigation.navigate('LiveStream', {stream: this.state.stream});
+  close() {
+    // failed calibration or gave up, delete stream from firebase
+    if (this.state.stream) {
+      destroyStream(this.state.stream.id);
+    }
+    this.props.navigation.navigate('TabsApp');
   }
-
   render() {
-    const {height, width} = Dimensions.get('screen');
-    const {navigation} = this.props;
+    console.log(this.state);
     return (
       <View style={styles.container}>
+        <KeepAwake />
         <CalibrationHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[5, 10]}
+          title={'Calibration'}
           loader={this.state.loader}
-          click1={() => navigation.navigate('TabsApp')}
-          click2={() => null}
-          vis2={false}
-          click3={() => this.lockNetline()}
-          vis3={this.state.step === steps.SHOW_LINES || this.state.step === steps.PROMPT}
-          clickErr={() => this.setState({error: !this.state.error})}
+          close={() => this.close()}
         />
         <RNCamera
           ref={(ref) => {
             this.camera = ref;
           }}
-          style={[styles.nodeCameraView, {transform: [{rotateY: '180deg'}]}]}
-          type={RNCamera.Constants.Type.front}
+          style={styles.nodeCameraView}
+          type={RNCamera.Constants.Type.back}
           flashMode={RNCamera.Constants.FlashMode.off}
         />
-        {this.state.step === steps.PROMPT ? (
-          <Row style={styleApp.center2}>
-            <Text style={styleApp.textBold}>
-              Please position the camera correctly and take a photo
-            </Text>
-          </Row>
-        ) : this.state.step === steps.WAITING ? (
+        {this.state.waitingNetline ? (
           <View style={[styles.nodeCameraView, styles.smallRow]}>
             <Loader color="white" size={60} />
           </View>
-        ) : this.state.step === steps.ERROR ? (
-          <Row style={styleApp.center2}>
-            <Text style={styleApp.textBold}>
-              Could not find net or base lines. Exit stream and try again.
-            </Text>
-          </Row>
-        ) : this.state.step === steps.SHOW_LINES ? (
-          <Svg style={styles.nodeCameraView} height="100%" width="100%">
-            <Line
-              x1={this.state.netline.optimalNetline.origin.x * width}
-              y1={this.state.netline.optimalNetline.origin.y * height}
-              x2={this.state.netline.optimalNetline.destination.x * width}
-              y2={this.state.netline.optimalNetline.destination.y * height}
-              stroke="red"
-              strokeWidth="4"
-            />
-            <Line
-              x1={this.state.netline.doublesLine.origin.x * width}
-              y1={this.state.netline.doublesLine.origin.y * height}
-              x2={this.state.netline.doublesLine.destination.x * width}
-              y2={this.state.netline.doublesLine.destination.y * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={this.state.netline.baseLine.origin.x * width}
-              y1={this.state.netline.baseLine.origin.y * height}
-              x2={this.state.netline.baseLine.destination.x * width}
-              y2={this.state.netline.baseLine.destination.y * height}
-              stroke="blue"
-              strokeWidth="4"
-            />
-          </Svg>
         ) : null}
-
-        <Col style={styles.toolbar}>
+        <Row style={styles.toolbar}>
           <ButtonColor
             view={() => {
               return <View />;
             }}
             click={() => this.mainButtonClick()}
-            color={'red'}
+            color={this.state.waitingNetline ? 'black' : 'white'}
             style={styles.recordButton}
             onPressColor={colors.off}
           />
-        </Col>
+        </Row>
       </View>
     );
   }
@@ -265,10 +226,6 @@ class Calibration extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  netlineContainer: {
     flex: 1,
   },
   smallRow: {
@@ -286,11 +243,12 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     flex: 1,
-    height: '100%',
-    paddingLeft: 10,
+    width: '100%',
+    height: '10%',
     justifyContent: 'center',
     position: 'absolute',
-    left: 0,
+    bottom: 0,
+    paddingTop: 5,
   },
   recordButton: {
     ...styleApp.center2,

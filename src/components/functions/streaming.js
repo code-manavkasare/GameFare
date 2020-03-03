@@ -4,7 +4,6 @@ import axios from 'axios';
 import Config from 'react-native-config';
 import {subscribeToTopics} from './notifications';
 
-
 async function createStream(eventID) {
   let stream = await createStreamMux();
   if (stream) {
@@ -15,53 +14,6 @@ async function createStream(eventID) {
     await createStreamFirebase(stream);
   }
   return stream;
-}
-async function createStreamFirebase(stream) {
-  await firebase
-    .database()
-    .ref('streams/' + stream.id + '/')
-    .set(stream)
-    .then(() => {
-      // link event with stream on firebase
-      firebase
-        .database()
-        .ref('events/' + stream.eventID + '/streams/')
-        .push(stream.id);
-    })
-    .catch((error) => {
-      console.log('ERROR: destroyStreamFirebase: ' + error.message);
-    });
-  await subscribeToTopics([stream.id]);
-}
-
-async function startAnalytics(stream) {
-  const streamID = stream.id;
-  setTimeout(async () => {
-    console.log('analytics');
-    console.log(streamID);
-    const netlineUrl = 'https://liveball-api-7gv7jag7wq-uc.a.run.app/execute';
-    const requestUrl = netlineUrl + '?stream_id=' + streamID;
-    await axios
-      .get(requestUrl)
-      .then((response) => {
-        console.log('analytics response');
-        console.log(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        return false;
-      });
-  }, 45000);
-}
-
-async function saveStreamResultsMatches(stream, matches, done) {
-  await firebase
-    .database()
-    .ref('streams/' + stream.id + '/liveballResults')
-    .update({matches: matches, organized: done})
-    .catch((error) => {
-      console.log('ERROR: saveStreamResultsMatches: ' + error.message);
-    });
 }
 async function createStreamMux() {
   let stream = null;
@@ -103,6 +55,46 @@ async function createStreamMux() {
       return false;
     });
   return stream;
+}
+async function createStreamFirebase(stream) {
+  await firebase
+    .database()
+    .ref('streams/' + stream.id + '/')
+    .set(stream)
+    .catch((error) => {
+      console.log('ERROR: destroyStreamFirebase: ' + error.message);
+    });
+  await subscribeToTopics([stream.id]);
+}
+
+async function startAnalytics(stream) {
+  const streamID = stream.id;
+  setTimeout(async () => {
+    console.log('analytics');
+    console.log(streamID);
+    const netlineUrl = 'https://liveball-api-7gv7jag7wq-uc.a.run.app/execute';
+    const requestUrl = netlineUrl + '?stream_id=' + streamID;
+    await axios
+      .get(requestUrl)
+      .then((response) => {
+        console.log('analytics response');
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+  }, 45000);
+}
+
+async function saveStreamResultsMatches(stream, matches, done) {
+  await firebase
+    .database()
+    .ref('streams/' + stream.id + '/liveballResults')
+    .update({matches: matches, organized: done})
+    .catch((error) => {
+      console.log('ERROR: saveStreamResultsMatches: ' + error.message);
+    });
 }
 
 async function destroyStream(streamID, saveFirebase) {

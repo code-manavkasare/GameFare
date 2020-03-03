@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 
 import {NodeCameraView} from 'react-native-nodemediaclient';
 import {Grid, Row, Col} from 'react-native-easy-grid';
+import KeepAwake from 'react-native-keep-awake';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -21,6 +22,9 @@ import AllIcons from '../../layout/icons/AllIcons';
 
 import {startAnalytics} from '../../functions/streaming';
 import LiveStreamHeader from './LiveStreamHeader';
+import CalibrationHeader from './CalibrationHeader';
+
+import {destroyStream} from '../../functions/streaming';
 
 class LiveStream extends React.Component {
   constructor(props) {
@@ -29,6 +33,7 @@ class LiveStream extends React.Component {
       outputUrl: 'rtmp://live.mux.com/app/',
       error: false,
       streaming: false,
+      streamed: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -41,7 +46,7 @@ class LiveStream extends React.Component {
   }
   async startStream() {
     const stream = this.props.navigation.getParam('stream', null);
-    await this.setState({streaming: true});
+    await this.setState({streaming: true, streamed: true});
     //startAnalytics(stream);
     this.nodeCameraView.start();
   }
@@ -65,6 +70,18 @@ class LiveStream extends React.Component {
       },
     });
   }
+  close() {
+    const {streamed, streaming} = this.state;
+    if (!streamed) {
+      const stream = this.props.navigation.getParam('stream');
+      destroyStream(stream.id);
+      return this.props.navigation.navigate('TabsApp');
+    } else if (streaming) {
+      return this.stopStream();
+    } else {
+      return this.props.navigation.navigate('TabsApp');
+    }
+  }
   render() {
     const {navigation} = this.props;
     const stream = navigation.getParam('stream', null);
@@ -73,13 +90,12 @@ class LiveStream extends React.Component {
     const heightOffset = -((newHeight - height) / 2);
     return (
       <View style={styles.container}>
-        <LiveStreamHeader
+        <KeepAwake />
+        <CalibrationHeader
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
-          inputRange={[5, 10]}
+          title={'Calibration'}
           loader={this.state.loader}
-          streaming={this.state.streaming}
-          click={() => navigation.navigate('TabsApp')}
+          close={() => this.close()}
         />
         <NodeCameraView
           style={[styles.nodeCameraView]}
@@ -87,18 +103,18 @@ class LiveStream extends React.Component {
             this.nodeCameraView = nodeCameraView;
           }}
           outputUrl={stream ? this.state.outputUrl + stream.streamKey : ''}
-          camera={{cameraId: 1, cameraFrontMirror: false}}
+          camera={{cameraId: 1, cameraFrontMirror: true}}
           audio={{bitrate: 32000, profile: 1, samplerate: 44100}}
           video={{
             preset: 12,
             bitrate: 400000,
             profile: 1,
             fps: 15,
-            videoFrontMirror: false,
+            videoFrontMirror: true,
           }}
           autopreview={true}
         />
-        <Col style={styles.toolbar}>
+        <Row style={styles.toolbar}>
           <ButtonColor
             view={() => {
               return <View />;
@@ -108,7 +124,7 @@ class LiveStream extends React.Component {
             style={styles.recordButton}
             onPressColor={colors.off}
           />
-        </Col>
+        </Row>
       </View>
     );
   }
@@ -137,11 +153,12 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     flex: 1,
-    height: '100%',
-    paddingLeft: 10,
+    width: '100%',
+    height: '10%',
     justifyContent: 'center',
     position: 'absolute',
-    left: 0,
+    bottom: 0,
+    paddingTop: 5,
   },
   recordButton: {
     ...styleApp.center2,

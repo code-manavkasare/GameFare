@@ -5,6 +5,7 @@ import {
   BackHandler,
   View,
   Dimensions,
+  Text,
 } from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
 
@@ -53,51 +54,30 @@ export default class CalibrationHeader extends Component {
     }
   }
   render() {
-    console.log(this.props);
     return (
-      <Col style={styles.header}>
-        <View style={styles.buttonStyle}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  name="times"
-                  color={colors.title}
-                  size={15}
-                  type="font"
-                />
-              );
-            }}
-            click={() => this.props.click1()}
-            color={'white'}
-            style={styles.button}
-            onPressColor={colors.off}
-          />
-        </View>
-        {this.props.vis2 ? (
-          <View style={styles.buttonStyle}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name="arrow-right"
-                    color={'colors.title'}
-                    size={15}
-                    type="font"
-                  />
-                );
-              }}
-              click={() => {
-                this.props.click2();
-              }}
-              color={'white'}
-              style={styles.button}
-              onPressColor={colors.off}
-            />
-          </View>
-        ) : null}
-        {this.props.vis3 ? (
-          <View style={styles.buttonStyle}>
+      <Row style={styles.header}>
+        <ButtonColor
+          view={() => {
+            return (
+              <AllIcons
+                name="times"
+                color={colors.title}
+                size={15}
+                type="font"
+              />
+            );
+          }}
+          click={() => this.props.close()}
+          color={'white'}
+          style={styles.button}
+          onPressColor={colors.off}
+        />
+
+        {this.props.nextVis ? (
+          <View style={[styles.buttonStyle, { transform: [{ rotate: '90deg' }] }]}>
+            {
+              // rotation of this view discriminates against left handed ppl :(
+            }
             <ButtonColor
               view={() => {
                 return (
@@ -110,7 +90,7 @@ export default class CalibrationHeader extends Component {
                 );
               }}
               click={() => {
-                this.props.click3();
+                this.props.next();
               }}
               color={'white'}
               style={styles.button}
@@ -118,28 +98,7 @@ export default class CalibrationHeader extends Component {
             />
           </View>
         ) : null}
-        <View style={styles.buttonStyle}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  name="exclamation-triangle"
-                  color={'rgb(255, 0, 0)'}
-                  size={15}
-                  type="font"
-                />
-              );
-            }}
-            click={() => {
-              this.setState({errClicked: true});
-              this.props.clickErr();
-            }}
-            color={this.state.errClicked ? 'black' : 'white'}
-            style={styles.button}
-            onPressColor={colors.off}
-          />
-        </View>
-      </Col>
+      </Row>
     );
   }
 }
@@ -147,14 +106,13 @@ export default class CalibrationHeader extends Component {
 const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-between',
-    height: '100%',
-    width: sizes.heightHeaderHome,
-    paddingRight: sizes.marginTopHeader - 5,
-    paddingBottom: 20,
-    paddingTop: 20,
+    height: sizes.heightHeaderHome,
+    width: '100%',
+    paddingTop: sizes.marginTopHeader,
+    paddingRight: 20,
+    paddingLeft: 20,
     backgroundColor: 'rgba(0,0,0,0)',
     position: 'absolute',
-    right: 0,
     zIndex: 10,
   },
   button: {
@@ -163,9 +121,5 @@ const styles = StyleSheet.create({
     width: 46,
     borderRadius: 23,
     borderWidth: 0,
-  },
-  buttonStyle: {
-    height: 48,
-    width: 48,
   },
 });
