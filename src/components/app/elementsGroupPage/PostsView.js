@@ -1,27 +1,15 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
 import CardConversation from '../elementsMessage/CardConversation';
 
-import ButtonColor from '../../layout/Views/Button';
-import AllIcons from '../../layout/icons/AllIcons';
 import colors from '../../style/colors';
 import FadeInView from 'react-native-fade-in-view';
 import {indexDiscussions} from '../../database/algolia';
 
 import LinearGradient from 'react-native-linear-gradient';
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 
 export default class Posts extends Component {
