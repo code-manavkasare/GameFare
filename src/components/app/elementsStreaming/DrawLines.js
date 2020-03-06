@@ -41,27 +41,43 @@ class DrawLines extends React.Component {
         />
         <Svg style={styles.nodeCameraView} height={height} width={width}>
           <Line
-            x1={(1 - netline.optimalNetline.origin.y) * width}
-            y1={netline.optimalNetline.origin.x * height}
-            x2={(1 - netline.optimalNetline.destination.y) * width}
-            y2={netline.optimalNetline.destination.x * height}
+            x1={(1 - netline.cornerNetline.origin.y) * width}
+            y1={netline.cornerNetline.origin.x * height}
+            x2={(1 - netline.cornerNetline.destination.y) * width}
+            y2={netline.cornerNetline.destination.x * height}
             stroke="red"
             strokeWidth="4"
           />
           <Line
-            x1={(1 - netline.doublesLine.origin.y) * width}
-            y1={netline.doublesLine.origin.x * height}
-            x2={(1 - netline.doublesLine.destination.y) * width}
-            y2={netline.doublesLine.destination.x * height}
+            x1={(1 - netline.corners.p1[1]) * width}
+            y1={netline.corners.p1[0] * height}
+            x2={(1 - netline.corners.p2[1]) * width}
+            y2={netline.corners.p2[0] * height}
             stroke="green"
             strokeWidth="4"
           />
           <Line
-            x1={(1 - netline.baseLine.origin.y) * width}
-            y1={netline.baseLine.origin.x * height}
-            x2={(1 - netline.baseLine.destination.y) * width}
-            y2={netline.baseLine.destination.x * height}
-            stroke="blue"
+            x1={(1 - netline.corners.p2[1]) * width}
+            y1={netline.corners.p2[0] * height}
+            x2={(1 - netline.corners.p3[1]) * width}
+            y2={netline.corners.p3[0] * height}
+            stroke="green"
+            strokeWidth="4"
+          />
+          <Line
+            x1={(1 - netline.corners.p3[1]) * width}
+            y1={netline.corners.p3[0] * height}
+            x2={(1 - netline.corners.p4[1]) * width}
+            y2={netline.corners.p4[0] * height}
+            stroke="green"
+            strokeWidth="4"
+          />
+          <Line
+            x1={(1 - netline.corners.p4[1]) * width}
+            y1={netline.corners.p4[0] * height}
+            x2={(1 - netline.corners.p1[1]) * width}
+            y2={netline.corners.p1[0] * height}
+            stroke="green"
             strokeWidth="4"
           />
         </Svg>
