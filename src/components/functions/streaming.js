@@ -1,4 +1,4 @@
-import {uploadPictureFirebase} from '../functions/pictures';
+import {rotateImage, uploadPictureFirebase} from '../functions/pictures';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
 import Config from 'react-native-config';
@@ -136,9 +136,10 @@ async function destroyStreamMux(streamID) {
     });
 }
 
-async function uploadNetlinePhoto(streamID, uri) {
+async function uploadNetlinePhoto(streamID, img) {
+  const rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
   const pictureUri = await uploadPictureFirebase(
-    uri,
+    rotatedImage.uri,
     'streams/' + streamID + '/',
   );
   await firebase

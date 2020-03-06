@@ -11,7 +11,7 @@ import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
 import Svg, {Line} from 'react-native-svg';
 
-import {RNCamera} from 'react-native-camera';
+import {CameraKitCamera} from 'react-native-camera-kit';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import KeepAwake from 'react-native-keep-awake';
@@ -52,6 +52,8 @@ class Calibration extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
+    // change to front camera
+    await this.camera.changeCamera();
     const permission = await this.permissions();
     if (!permission) {
       // add an alert to the user here before deploying to users
@@ -147,9 +149,10 @@ class Calibration extends React.Component {
         if (netlineResults) {
           await that.setState({waitingNetline: false});
           if (netlineResults.error) {
+            let error = 'Could not detect court. Try again. (' + netlineResults.error + ')';
             that.props.navigation.navigate('Alert', {
               close: true,
-              title: 'Could not detect court. Try again.',
+              title: error,
               textButton: 'Got it.',
             });
           } else {
@@ -157,7 +160,7 @@ class Calibration extends React.Component {
               stream: that.state.stream,
               netline: {
                 corners: netlineResults.corners,
-                cornerNetline: netlineResults.cornerNetline,
+                midline: netlineResults.midline,
               },
             });
           }
@@ -171,9 +174,8 @@ class Calibration extends React.Component {
     }
   }
   async takeCalibrationPhoto() {
-    const options = {width: 720, quality: 0.75, base64: true};
-    const data = await this.camera.takePictureAsync(options);
-    await uploadNetlinePhoto(this.state.stream.id, data.uri); // needs to delete the old netline photo?
+    const image = await this.camera.capture(false);
+    await uploadNetlinePhoto(this.state.stream.id, image);
   }
   close() {
     // failed calibration or gave up, delete stream from firebase
@@ -193,16 +195,19 @@ class Calibration extends React.Component {
           loader={this.state.loader}
           close={() => this.close()}
         />
-        <RNCamera
-          ref={(ref) => {
-            this.camera = ref;
+        <CameraKitCamera
+          ref={cam => {
+            this.camera = cam;
           }}
-          style={styles.nodeCameraView}
-          type={RNCamera.Constants.Type.front}
-          flashMode={RNCamera.Constants.FlashMode.off}
+          style={styles.cameraView}
+          cameraOptions={{
+            flashMode: 'off',
+            focusMode: 'off',
+            zoomMode: 'off',
+          }}
         />
         {this.state.waitingNetline ? (
-          <View style={[styles.nodeCameraView, styles.smallRow]}>
+          <View style={[styles.fullScreen, styles.smallRow]}>
             <Loader color="white" size={60} />
           </View>
         ) : null}
@@ -232,12 +237,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  nodeCameraView: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+  cameraView: {
+    flex: 1,
+    backgroundColor: 'white',
   },
   toolbar: {
     flex: 1,
@@ -254,7 +256,14 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 23,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: 'white',
+  },
+  fullScreen: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
 const mapStateToProps = (state) => {

@@ -49,6 +49,11 @@ async function resize(uri) {
   }
 }
 
+async function rotateImage(uri, width, height, degrees) {
+  const rotatedUri = await ImageResizer.createResizedImage(uri, height, width, 'JPEG', 100, degrees);
+  return rotatedUri;
+}
+
 async function resizeVideo(uri) {
   try {
     RNVideoHelper.compress(uri, {
@@ -151,6 +156,7 @@ module.exports = {
   pickLibrary,
   resize,
   resizeVideo,
+  rotateImage,
   uploadPictureFirebase,
   uploadVideoFirebase,
   getPhotoUser,
