@@ -1,6 +1,7 @@
 import React from 'react';
-import {StyleSheet, Text, Dimensions, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
+import firebase from 'react-native-firebase';
 import FadeInView from 'react-native-fade-in-view';
 import {Col, Row} from 'react-native-easy-grid';
 
@@ -9,7 +10,6 @@ import colors from '../../style/colors';
 import AsyncImage from '../../layout/image/AsyncImage';
 
 import PlacelHolder from '../../placeHolders/CardEvent';
-import {arrayAttendees} from '../../functions/createEvent';
 import ButtonColor from '../../layout/Views/Button';
 import styleApp from '../../style/style';
 import {stylesMapPage} from './MapPage';
@@ -21,9 +21,43 @@ class CardEvent extends React.Component {
     this.state = {
       player: false,
       loader: false,
+      loaderAttendee:
+        (this.props.data.challenge && !this.props.data.allMembers) ||
+        (!this.props.data.challenge && !this.props.data.allAttendees)
+          ? false
+          : true,
+      members: {},
     };
   }
-  async componentDidMount() {}
+  async componentDidMount() {
+    let firstAttendees = {};
+    const {data} = this.props;
+    if (data.challenge) {
+      firstAttendees = await firebase
+        .database()
+        .ref('challenges/' + data.objectID + '/teams')
+        .limitToFirst(3)
+        .once('value');
+      firstAttendees = firstAttendees.val();
+      console.log('firstAttendees', firstAttendees);
+      firstAttendees = Object.values(firstAttendees).map(
+        (member) => member.captain,
+      );
+    } else {
+      firstAttendees = await firebase
+        .database()
+        .ref('events/' + data.objectID + '/attendees')
+        .limitToFirst(3)
+        .once('value');
+      firstAttendees = firstAttendees.val();
+      console.log('firstAttendees2', firstAttendees);
+    }
+
+    return this.setState({
+      loaderAttendee: false,
+      members: Object.values(firstAttendees),
+    });
+  }
   entreeFee(entreeFee) {
     if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
@@ -33,6 +67,7 @@ class CardEvent extends React.Component {
     return attendees.length;
   }
   cardAttendee(member, i) {
+    if (!member.info) return false;
     if (!member.info.picture)
       return (
         <View
@@ -66,6 +101,8 @@ class CardEvent extends React.Component {
     );
   }
   rowAttendees(attendees) {
+    const {loaderAttendee, members} = this.state;
+
     return (
       <Row style={{marginTop: 5}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
@@ -84,14 +121,34 @@ class CardEvent extends React.Component {
             </Text>
           </View>
         </Col>
-        {attendees.length !== 0 && (
+        {loaderAttendee ? (
           <Col
             size={this.props.size === 'SM' ? 40 : 20}
             style={styleApp.center2}>
-            {attendees
-              .slice(0, 3)
-              .map((member, i) => this.cardAttendee(member, i))}
+            <View
+              style={{
+                ...styleApp.roundView,
+                left: 0,
+              }}></View>
+            <View
+              style={{
+                ...styleApp.roundView,
+                left: 15,
+              }}></View>
+            <View
+              style={{
+                ...styleApp.roundView,
+                left: 30,
+              }}></View>
           </Col>
+        ) : (
+          members.length !== 0 && (
+            <Col
+              size={this.props.size === 'SM' ? 40 : 20}
+              style={styleApp.center2}>
+              {members.map((member, i) => this.cardAttendee(member, i))}
+            </Col>
+          )
         )}
         <Col size={this.props.size === 'SM' ? 55 : 65} style={styleApp.center2}>
           <Text style={[styleApp.text, {fontSize: 11}]}>
@@ -188,15 +245,8 @@ class CardEvent extends React.Component {
     );
   }
   members(data) {
-    if (data.challenge)
-      return Object.values(data.teams)
-        .filter((member) => member.status === 'confirmed')
-        .map((team) => team.captain);
-    if (!data.attendees) return [];
-
-    return Object.values(data.attendees).filter(
-      (member) => member.status === 'confirmed',
-    );
+    if (!data.allMembers) return [];
+    return data.allMembers;
   }
   card(data, members) {
     if (this.state.loader)

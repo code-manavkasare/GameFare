@@ -146,7 +146,7 @@ export default class CardStream extends Component {
   }
 }
 
-CardStream.PropTypes = {
+CardStream.propTypes = {
   streamID: PropTypes.string.isRequired,
   event: PropTypes.object.isRequired,
   key: PropTypes.number.isRequired,

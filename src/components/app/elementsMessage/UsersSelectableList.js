@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
 });
 
-UsersSelectableList.PropTypes = {
+UsersSelectableList.propTypes = {
   usersList: PropTypes.array.isRequired,
   loader: PropTypes.bool.isRequired,
   getSelectedUsers: PropTypes.func,

@@ -70,7 +70,7 @@ class ListEvents extends React.Component {
   }
   listEvents(events) {
     return Object.values(events).map((event, i) => (
-      <CardGroup key={i} data={event} />
+      <CardGroup key={i} groupData={event} />
     ));
   }
   ListEvent() {

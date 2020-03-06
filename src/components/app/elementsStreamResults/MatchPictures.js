@@ -111,7 +111,8 @@ class MatchPictures extends React.Component {
       <View style={{marginLeft: 0, width: width, marginTop: 0}}>
         <Row style={styleApp.center}>
           <Text style={styleApp.title}>
-            {`Which player is this? (${(this.state.playerIndex + 1)}/${numPlayers})`}
+            {`Which player is this? (${this.state.playerIndex +
+              1}/${numPlayers})`}
           </Text>
         </Row>
         <Row style={[styleApp.center, {padding: 5}]}>
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
   },
 });
 
-MatchPictures.PropTypes = {};
+MatchPictures.propTypes = {};
 
 const mapStateToProps = (state) => {
   return {

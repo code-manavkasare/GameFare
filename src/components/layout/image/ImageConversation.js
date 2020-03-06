@@ -1,14 +1,38 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, View, Text} from 'react-native';
+import {connect} from 'react-redux';
+import firebase from 'react-native-firebase';
+
 import AsyncImage from './AsyncImage';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-export default class ImageConversation extends Component {
+class ImageConversation extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      members: {},
+    };
   }
+  componentDidMount = () => {
+    this.getMembers();
+  };
+
+  getMembers = async () => {
+    const {objectID: discussionID} = this.props.conversation;
+
+    const discussionMembersSnapshot = await firebase
+      .database()
+      .ref(`discussions/${discussionID}/members`)
+      .limitToFirst(3)
+      .once('value');
+
+    let discussionMembersFiltered = discussionMembersSnapshot.val();
+    delete discussionMembersFiltered[this.props.userID];
+
+    await this.setState({members: discussionMembersFiltered});
+  };
+
   imageMember(member, style) {
     //TODO remove when no more wrong conversation
     if (!member) {
@@ -35,35 +59,27 @@ export default class ImageConversation extends Component {
       </View>
     );
   }
-  multipleUserView(conversation, userID, style, sizeSmallImg) {
+  multipleUserView(style, sizeSmallImg) {
+    const {members} = this.state;
     return (
       <View
         style={{
           height: style.height,
           width: style.width,
         }}>
-        {this.imageMember(
-          Object.values(conversation.members).filter(
-            (member) => member.id !== userID,
-          )[0],
-          [
-            styles.imgSmall,
-            {bottom: 0, zIndex: 30, width: sizeSmallImg, height: sizeSmallImg},
-          ],
-        )}
-        {this.imageMember(
-          Object.values(conversation.members).filter(
-            (member) => member.id !== userID,
-          )[1],
-          [
-            styles.imgSmall,
-            {top: 0, right: 0, width: sizeSmallImg, height: sizeSmallImg},
-          ],
-        )}
+        {this.imageMember(Object.values(members)[0], [
+          styles.imgSmall,
+          {bottom: 0, zIndex: 30, width: sizeSmallImg, height: sizeSmallImg},
+        ])}
+        {this.imageMember(Object.values(members)[1], [
+          styles.imgSmall,
+          {top: 0, right: 0, width: sizeSmallImg, height: sizeSmallImg},
+        ])}
       </View>
     );
   }
-  image(conversation, userID, style, sizeSmallImg) {
+  image(conversation, style, sizeSmallImg) {
+    const {members} = this.state;
     if (conversation.type === 'group')
       return (
         <AsyncImage
@@ -74,22 +90,12 @@ export default class ImageConversation extends Component {
       );
 
     if (conversation.allMembers.length === 2)
-      return this.imageMember(
-        Object.values(conversation.members).filter(
-          (member) => member.id !== userID,
-        )[0],
-        style,
-      );
-    return this.multipleUserView(conversation, userID, style, sizeSmallImg);
+      return this.imageMember(Object.values(members)[0], style);
+    return this.multipleUserView(style, sizeSmallImg);
   }
   render() {
     const {style, sizeSmallImg} = this.props;
-    return this.image(
-      this.props.conversation,
-      this.props.userID,
-      style,
-      sizeSmallImg,
-    );
+    return this.image(this.props.conversation, style, sizeSmallImg);
   }
 }
 
@@ -103,3 +109,11 @@ const styles = StyleSheet.create({
     borderColor: colors.white,
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userID,
+  };
+};
+
+export default connect(mapStateToProps)(ImageConversation);

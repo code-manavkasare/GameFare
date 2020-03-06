@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
 });
 
-AddUsers.PropTypes = {
+AddUsers.propTypes = {
   searchString: PropTypes.string.isRequired,
   eventID: PropTypes.string.isRequired,
   changeSearchGameFareUsers: PropTypes.func.isRequired,

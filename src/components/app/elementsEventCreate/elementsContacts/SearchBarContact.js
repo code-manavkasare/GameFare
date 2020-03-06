@@ -103,7 +103,7 @@ export default class SearchBarContact extends Component {
   }
 }
 
-SearchBarContact.PropTypes = {
+SearchBarContact.propTypes = {
   placeHolderMessage: PropTypes.string,
   updateSearch: PropTypes.func.isRequired,
   showAddContact: PropTypes.bool,

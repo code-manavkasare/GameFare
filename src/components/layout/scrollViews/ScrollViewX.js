@@ -1,30 +1,22 @@
-import React, {Component, PureComponent} from 'react';
+import React, {PureComponent} from 'react';
 import {bool} from 'prop-types';
 import {
-  Platform,
   StyleSheet,
   Text,
   ScrollView,
   View,
-  Animated,
-  Easing,
   Dimensions,
   Image,
   RefreshControl,
 } from 'react-native';
-import NavigationService from '../../../../NavigationService';
 
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 
 import PlaceHolder from '../../placeHolders/CardEventSM';
-import CardEvent from '../../app/elementsHome/CardEventSM';
 import Button from '../../layout/Views/Button';
 
-const {height, width} = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 export default class ScrollViewX extends PureComponent {
   constructor(props) {
@@ -132,19 +124,7 @@ export default class ScrollViewX extends PureComponent {
             }}
             click={() => true}
             color="white"
-            style={[
-              styleApp.center,
-              {
-                backgroundColor: colors.off2,
-                borderWidth: 0,
-                borderColor: colors.borderColor,
-                width: width - 40,
-                flex: 1,
-                paddingTop: 10,
-                paddingBottom: 10,
-                borderRadius: 7,
-              },
-            ]}
+            style={[styleApp.center, styles.button]}
             onPressColor={colors.off}
           />
         ) : (
@@ -161,29 +141,14 @@ ScrollViewX.propTypes = {
 };
 
 const styles = StyleSheet.create({
-  content: {
-    height: height,
-    width: width,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
-  cardSport: {
-    backgroundColor: 'red',
-    shadowColor: '#46474B',
-    shadowOffset: {width: 2, height: 0},
-    shadowRadius: 20,
-    shadowOpacity: 0.3,
-    overflow: 'hidden',
-    height: 170,
-    marginRight: 10,
-    borderRadius: 10,
-    borderWidth: 0.3,
+  button: {
+    backgroundColor: colors.off2,
+    borderWidth: 0,
     borderColor: colors.borderColor,
-    width: 220,
+    width: width - 40,
+    flex: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 7,
   },
 });

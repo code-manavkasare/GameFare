@@ -39,7 +39,7 @@ const deleteMyGroup = (value) => ({
 
 export const groupsAction = (val, data) => {
   return async function(dispatch) {
-    if (val == 'setMygroups') {
+    if (val === 'setMygroups') {
       await dispatch(setMygroups(data));
     } else if (val === 'setAllGroups') {
       await dispatch(setAllGroups(data));

@@ -54,6 +54,7 @@ class CardConversation extends React.Component {
         lastMessage: conversationNext.lastMessage,
       });
   }
+  loadMembersPicture = () => {};
   lastMessage(lastMessage) {
     if (!lastMessage) return <View style={styles.placeholderLastMessage} />;
     else if (!lastMessage)

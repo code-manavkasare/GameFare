@@ -38,7 +38,7 @@ if (Config.ENV === 'dev') {
 }
 
 async function getMyGroups(userID, filterSport, location, radiusSearch) {
-  // await indexGroups.clearCache();
+  await client.clearCache();
   const filterOrganizer =
     'info.organizer:' + userID + ' OR allMembers:' + userID;
   const filters = filterOrganizer + filterSport;
@@ -88,7 +88,7 @@ async function getEventsFromGroups(
   if (filterIds === '') prefix2 = '';
 
   const filters = filterIds + prefix2 + filterUser + ' AND info.sport:' + sport;
-  // await indexEvents.clearCache();
+  await client.clearCache();
   let {hits} = await indexEvents.search('', {
     filters: filters,
     aroundLatLng: location.lat + ',' + location.lng,
@@ -116,7 +116,6 @@ const getEventPublic = async (
   userID,
   radiusSearch,
 ) => {
-  // indexEvents.clearCache();
   await client.clearCache();
   var leagueFilter = ' AND info.league:' + league;
   if (league === 'all') {
@@ -186,13 +185,12 @@ const getEventPublic = async (
 };
 
 const getMyEvents = async (userID, filterDateName) => {
-  console.log('getMyEvents');
   let filterAttendees = userID + ' OR info.organizer:' + userID + ' AND ';
 
   let filterDate = 'date_timestamp>' + Number(new Date());
   if (filterDateName === 'past')
     filterDate = 'date_timestamp<' + Number(new Date());
-  // await client.clearCache();
+  await client.clearCache();
 
   const queries = [
     {

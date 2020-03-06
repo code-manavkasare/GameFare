@@ -48,7 +48,6 @@ class AddPlayers extends React.Component {
           clickButton1={() => dismiss()}
         />
 
-
         <View style={styles.container}>
           <Text>Add Players</Text>
         </View>
@@ -68,7 +67,7 @@ const styles = StyleSheet.create({
   },
 });
 
-AddPlayers.PropTypes = {};
+AddPlayers.propTypes = {};
 
 const mapStateToProps = (state) => {
   return {
