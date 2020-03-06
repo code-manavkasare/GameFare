@@ -156,10 +156,8 @@ class Calibration extends React.Component {
             that.props.navigation.navigate('DrawLines', {
               stream: that.state.stream,
               netline: {
-                optimalNetline: netlineResults.optimalNetLine,
-                doublesLine: netlineResults.doublesLine,
-                baseLine: netlineResults.baseLine,
                 corners: netlineResults.corners,
+                cornerNetline: netlineResults.cornerNetline,
               },
             });
           }
