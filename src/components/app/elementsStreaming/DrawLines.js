@@ -3,7 +3,7 @@ import {View, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import Svg, {Line} from 'react-native-svg';
 import KeepAwake from 'react-native-keep-awake';
-import {RNCamera} from 'react-native-camera';
+import {CameraKitCamera} from 'react-native-camera-kit';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -16,6 +16,10 @@ class DrawLines extends React.Component {
     super(props);
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  async componentDidMount() {
+    // change to front camera
+    await this.camera.changeCamera();
   }
   lockNetline() {
     const {navigation} = this.props;
@@ -35,16 +39,26 @@ class DrawLines extends React.Component {
           next={() => this.lockNetline()}
           nextVis={true}
         />
-        <RNCamera
-          style={styles.nodeCameraView}
-          type={RNCamera.Constants.Type.front}
+        <CameraKitCamera
+          ref={(cam) => {
+            this.camera = cam;
+          }}
+          style={{
+            flex: 1,
+            backgroundColor: 'white',
+          }}
+          cameraOptions={{
+            flashMode: 'off',
+            focusMode: 'off',
+            zoomMode: 'off',
+          }}
         />
-        <Svg style={styles.nodeCameraView} height={height} width={width}>
+        <Svg style={styles.fullScreen} height={height} width={width}>
           <Line
-            x1={(1 - netline.cornerNetline.origin.y) * width}
-            y1={netline.cornerNetline.origin.x * height}
-            x2={(1 - netline.cornerNetline.destination.y) * width}
-            y2={netline.cornerNetline.destination.x * height}
+            x1={(1 - netline.midline.origin.y) * width}
+            y1={netline.midline.origin.x * height}
+            x2={(1 - netline.midline.destination.y) * width}
+            y2={netline.midline.destination.x * height}
             stroke="red"
             strokeWidth="4"
           />
@@ -90,7 +104,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  nodeCameraView: {
+  cameraView: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  fullScreen: {
     position: 'absolute',
     top: 0,
     bottom: 0,
