@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   buttonPlus: {height: 45, width: '80%', borderRadius: 22.5},
 });
 
-RowPlusMinus.PropTypes = {
+RowPlusMinus.propTypes = {
   title: PropTypes.string.isRequired,
   alert: PropTypes.object,
   add: PropTypes.func,

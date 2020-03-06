@@ -1,13 +1,15 @@
-import React, {Component, PureComponent} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
+import PropTypes from 'prop-types';
+
 import AsyncImage from '../../layout/image/AsyncImage';
 import firebase from 'react-native-firebase';
 import NavigationService from '../../../../NavigationService';
 import {getZone} from '../../functions/location';
 
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import colors from '../../style/colors';
 import PlacelHolder from '../../placeHolders/CardEvent.js';
 import ButtonColor from '../../layout/Views/Button';
@@ -22,18 +24,35 @@ class CardGroup extends React.Component {
     this.state = {
       player: false,
       loader: false,
+      members: {},
     };
   }
-  async componentDidMount() {}
+  async componentDidMount() {
+    this.getMembers();
+  }
+  getMembers = async () => {
+    const {objectID: groupID} = this.props.groupData;
+
+    const groupMembersSnapshot = await firebase
+      .database()
+      .ref(`groups/${groupID}/members`)
+      .limitToFirst(3)
+      .once('value');
+    let groupMembers = groupMembersSnapshot.val();
+
+    await this.setState({members: groupMembers});
+  };
   entreeFee(entreeFee) {
     if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
   }
-  userAlreadyJoined(data) {
-    if (!data.members) return false;
+  userAlreadyJoined() {
+    const {members} = this.state;
+    if (!members) return false;
     if (
-      this.members(data).filter((user) => user.userID === this.props.userID)
-        .length === 0
+      this.membersConfirmed(members).filter(
+        (user) => user.userID === this.props.userID,
+      ).length === 0
     )
       return false;
     return true;
@@ -43,7 +62,7 @@ class CardGroup extends React.Component {
       !data.info.public &&
       !this.props.allAccess &&
       data.info.organizer !== this.props.userID &&
-      !this.userAlreadyJoined(data)
+      !this.userAlreadyJoined()
     )
       return NavigationService.navigate('Alert', {
         textButton: 'Request to join',
@@ -64,7 +83,7 @@ class CardGroup extends React.Component {
 
     var tokenNotification = await firebase.messaging().getToken();
     if (!tokenNotification) tokenNotification = '';
-    const user = await subscribeUserToGroup(
+    await subscribeUserToGroup(
       data.objectID,
       this.props.userID,
       this.props.infoUser,
@@ -109,14 +128,14 @@ class CardGroup extends React.Component {
       );
     return this.displayCard(color, data);
   }
-  members(data) {
-    if (!data.members) return [];
-    return Object.values(data.members).filter(
+  membersConfirmed(members) {
+    if (!members) return [];
+    return Object.values(members).filter(
       (member) => member.status === 'confirmed',
     );
   }
-  numberMember(data) {
-    if (data.members) return this.members(data).length;
+  numberMember(members) {
+    if (members) return this.membersConfirmed(members).length;
     return 0;
   }
   cardAttendee(member, i) {
@@ -148,7 +167,8 @@ class CardGroup extends React.Component {
       </View>
     );
   }
-  rowMembers(data) {
+  rowMembers() {
+    const {members} = this.state;
     return (
       <Row style={{height: 50}}>
         <Col size={15} style={[{paddingRight: 10}, styleApp.center2]}>
@@ -159,13 +179,13 @@ class CardGroup extends React.Component {
               {backgroundColor: colors.primary2},
             ]}>
             <Text style={[styleApp.textBold, styles.numberAttendee]}>
-              {this.numberMember(data)}
+              {this.numberMember(members)}
             </Text>
           </View>
         </Col>
-        {this.members(data).length !== 0 && (
+        {this.membersConfirmed(members).length !== 0 && (
           <Col size={30} style={[{paddingRight: 10}, styleApp.center2]}>
-            {this.members(data)
+            {this.membersConfirmed(members)
               .slice(0, 3)
               .map((member, i) => this.cardAttendee(member, i))}
           </Col>
@@ -198,7 +218,7 @@ class CardGroup extends React.Component {
                 <Text style={[styleApp.subtitle, styles.subtitle]}>
                   {getZone(data.location.address)}
                 </Text>
-                {this.rowMembers(data)}
+                {this.rowMembers()}
               </View>
             </FadeInView>
           );
@@ -212,8 +232,8 @@ class CardGroup extends React.Component {
   }
 
   render() {
-    const {data} = this.props;
-    return this.card(data);
+    const {groupData} = this.props;
+    return this.card(groupData);
   }
 }
 
@@ -238,11 +258,18 @@ const styles = StyleSheet.create({
   numberAttendee: {fontSize: 10, color: 'white'},
 });
 
+CardGroup.propTypes = {
+  groupData: PropTypes.object.isRequired,
+  allAccess: PropTypes.bool,
+};
+
 const mapStateToProps = (state) => {
   return {
     sports: state.globaleVariables.sports.list,
+    infoUser: state.user.infoUser.userInfo,
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 
-export default connect(mapStateToProps, {})(CardGroup);
+export default connect(mapStateToProps)(CardGroup);

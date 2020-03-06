@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   },
 });
 
-AddGroups.PropTypes = {
+AddGroups.propTypes = {
   searchString: PropTypes.string.isRequired,
   eventID: PropTypes.string.isRequired,
   changeSearchGroups: PropTypes.func.isRequired,

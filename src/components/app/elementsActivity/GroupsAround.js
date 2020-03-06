@@ -90,14 +90,7 @@ class ListEvents extends React.Component {
   }
   listGroups(groups) {
     return Object.values(groups).map((group, i) => (
-      <CardGroup
-        key={i}
-        data={group}
-        userConnected={this.props.userConnected}
-        userID={this.props.userID}
-        infoUser={this.props.infoUser}
-        allAccess={false}
-      />
+      <CardGroup key={i} groupData={group} allAccess={false} />
     ));
   }
   ListEvent() {

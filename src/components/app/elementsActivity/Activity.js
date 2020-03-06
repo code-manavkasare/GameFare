@@ -75,7 +75,7 @@ class HomeScreen extends React.Component {
               location={this.state.location}
               search={this.state.search}
               key={2}
-              onRef={(ref) => (this.listEventsRef = ref)}
+              onRef={(ref) => (this.myEventsRef = ref)}
               setState={(data) => this.setState(data)}
               loader={this.state.loader}
               navigate={this.navigate.bind(this)}
@@ -100,10 +100,8 @@ class HomeScreen extends React.Component {
     );
   }
   async refresh() {
-    // this.eventGroupsRef.reload()
     this.myGroupsRef.reload();
-    this.listEventsRef.reload();
-    return true;
+    this.myEventsRef.reload();
   }
   setLocation(location) {
     this.props.navigation.navigate('ListGroups');

@@ -119,7 +119,7 @@ export default class AsyncImage extends Component {
   }
 }
 
-AsyncImage.PropTypes = {
+AsyncImage.propTypes = {
   mainImage: PropTypes.string.isRequired,
   style: PropTypes.object,
 };

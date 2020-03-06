@@ -31,7 +31,7 @@ class MyGroups extends React.Component {
   async componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
     this.props.onRef(this);
-    return this.loadEvent(this.props.sportSelected);
+    this.loadGroups(this.props.sportSelected);
   }
 
   componentWillUnmount() {
@@ -43,13 +43,13 @@ class MyGroups extends React.Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.loadEvent(this.props.sportSelected);
+      this.loadGroups(this.props.sportSelected);
     }
     this.setState({appState: nextAppState});
   };
 
   async reload() {
-    return this.loadEvent(this.props.sportSelected);
+    this.loadGroups(this.props.sportSelected);
   }
   async componentWillReceiveProps(nextProps) {
     if (
@@ -57,7 +57,7 @@ class MyGroups extends React.Component {
         nextProps.userConnected === true) ||
       this.props.sportSelected !== nextProps.sportSelected
     ) {
-      this.loadEvent(nextProps.sportSelected);
+      this.loadGroups(nextProps.sportSelected);
     }
   }
   async getGroups(filters) {
@@ -67,10 +67,11 @@ class MyGroups extends React.Component {
     });
     return mygroups.hits;
   }
-  async loadEvent(sport) {
+  async loadGroups(sport) {
     await this.setState({loader1: true});
     var filterSport = ' AND info.sport:' + sport;
     const {userID} = this.props;
+
     let myGroups = await getMyGroups(userID, filterSport);
 
     var infoGroups = myGroups.reduce(function(result, item) {
@@ -83,9 +84,13 @@ class MyGroups extends React.Component {
     await this.props.groupsAction('setMygroups', myGroupsIDs);
     this.setState({loader1: false});
   }
-  listEvents(events) {
-    return Object.values(events).map((event, i) => (
-      <CardGroup key={i} allAccess={true} data={this.props.allGroups[event]} />
+  listGroups(groups) {
+    return Object.values(groups).map((groups, i) => (
+      <CardGroup
+        key={i}
+        allAccess={true}
+        groupData={this.props.allGroups[groups]}
+      />
     ));
   }
   ListEvent() {
@@ -131,13 +136,11 @@ class MyGroups extends React.Component {
               this.props.sportSelected +
               ' group yet.'
             }
-            content={() => this.listEvents(this.props.mygroups)}
+            content={() => this.listGroups(this.props.mygroups)}
             // openEvent={(group) => this.openGroup(group)}
             onRef={(ref) => (this.scrollViewRef1 = ref)}
           />
         </Animated.View>
-
-        
       </View>
     );
   }
