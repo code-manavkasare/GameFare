@@ -35,6 +35,9 @@ import AllIcons from '../../layout/icons/AllIcons';
 
 import CalibrationHeader from './CalibrationHeader';
 
+const {width, height} = Dimensions.get('screen');
+const heightAdjust = height - ((16/9)*width);
+
 const steps = {
   PROMPT: 'prompt',
   ERROR: 'error',
@@ -202,7 +205,7 @@ class Calibration extends React.Component {
           ref={(cam) => {
             this.camera = cam;
           }}
-          style={styles.cameraView}
+          style={styles.fullScreen}
           cameraOptions={{
             flashMode: 'off',
             focusMode: 'off',
@@ -263,7 +266,7 @@ const styles = StyleSheet.create({
   },
   cameraView: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   toolbar: {
     flex: 1,
@@ -280,13 +283,15 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     borderWidth: 1,
     borderColor: 'white',
+    paddingBottom: 5,
   },
   fullScreen: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
+    top: heightAdjust / 2,
+    bottom: heightAdjust / 2,
     left: 0,
     right: 0,
+    backgroundColor: 'black',
   },
 });
 const mapStateToProps = (state) => {

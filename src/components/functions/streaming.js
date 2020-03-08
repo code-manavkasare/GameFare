@@ -137,7 +137,7 @@ async function destroyStreamMux(streamID) {
 }
 
 async function uploadNetlinePhoto(streamID, img) {
-  const rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
+  const rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
   const pictureUri = await uploadPictureFirebase(
     rotatedImage.uri,
     'streams/' + streamID + '/',
