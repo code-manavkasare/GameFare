@@ -52,8 +52,6 @@ class Calibration extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    // change to front camera
-    await this.camera.changeCamera();
     const permission = await this.permissions();
     if (!permission) {
       // add an alert to the user here before deploying to users
@@ -149,7 +147,10 @@ class Calibration extends React.Component {
         if (netlineResults) {
           await that.setState({waitingNetline: false});
           if (netlineResults.error) {
-            let error = 'Could not detect court. Try again. (' + netlineResults.error + ')';
+            let error =
+              'Could not detect court. Try again. (' +
+              netlineResults.error +
+              ')';
             that.props.navigation.navigate('Alert', {
               close: true,
               title: error,
@@ -184,8 +185,10 @@ class Calibration extends React.Component {
     }
     this.props.navigation.navigate('TabsApp');
   }
+  async switchCamera() {
+    await this.camera.changeCamera();
+  }
   render() {
-    console.log(this.state);
     return (
       <View style={styles.container}>
         <KeepAwake />
@@ -196,7 +199,7 @@ class Calibration extends React.Component {
           close={() => this.close()}
         />
         <CameraKitCamera
-          ref={cam => {
+          ref={(cam) => {
             this.camera = cam;
           }}
           style={styles.cameraView}
@@ -212,15 +215,36 @@ class Calibration extends React.Component {
           </View>
         ) : null}
         <Row style={styles.toolbar}>
-          <ButtonColor
-            view={() => {
-              return <View />;
-            }}
-            click={() => this.mainButtonClick()}
-            color={this.state.waitingNetline ? 'black' : 'white'}
-            style={styles.recordButton}
-            onPressColor={colors.off}
-          />
+          <Col size={33} />
+          <Col style={styleApp.center} size={34}>
+            <ButtonColor
+              view={() => {
+                return <View />;
+              }}
+              click={() => this.mainButtonClick()}
+              color={this.state.waitingNetline ? 'black' : 'white'}
+              style={styles.recordButton}
+              onPressColor={colors.off}
+            />
+          </Col>
+          <Col size={33} style={styleApp.center}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <AllIcons
+                    name={'random'}
+                    color={colors.greyDark}
+                    size={16}
+                    type="font"
+                  />
+                );
+              }}
+              click={() => this.switchCamera()}
+              color={'white'}
+              style={styles.recordButton}
+              onPressColor={colors.off}
+            />
+          </Col>
         </Row>
       </View>
     );
@@ -245,7 +269,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '10%',
-    justifyContent: 'center',
     position: 'absolute',
     bottom: 0,
     paddingTop: 5,
