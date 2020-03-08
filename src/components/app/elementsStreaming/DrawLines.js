@@ -11,15 +11,14 @@ import sizes from '../../style/sizes';
 
 import CalibrationHeader from './CalibrationHeader';
 
+const {width, height} = Dimensions.get('screen');
+const heightAdjust = height - ((16/9)*width);
+
 class DrawLines extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
-  }
-  async componentDidMount() {
-    // change to front camera
-    await this.camera.changeCamera();
   }
   lockNetline() {
     const {navigation} = this.props;
@@ -43,17 +42,14 @@ class DrawLines extends React.Component {
           ref={(cam) => {
             this.camera = cam;
           }}
-          style={{
-            flex: 1,
-            backgroundColor: 'white',
-          }}
+          style={styles.fullScreen}
           cameraOptions={{
             flashMode: 'off',
             focusMode: 'off',
             zoomMode: 'off',
           }}
         />
-        <Svg style={styles.fullScreen} height={height} width={width}>
+        <Svg style={styles.fullScreen} height={height-heightAdjust} width={width}>
           <Line
             x1={(1 - netline.midline.origin.y) * width}
             y1={netline.midline.origin.x * height}
@@ -106,12 +102,12 @@ const styles = StyleSheet.create({
   },
   cameraView: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   fullScreen: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
+    top: heightAdjust / 2,
+    bottom: heightAdjust / 2,
     left: 0,
     right: 0,
   },
