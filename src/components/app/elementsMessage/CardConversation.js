@@ -5,7 +5,6 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import moment from 'moment';
 import firebase from 'react-native-firebase';
 import isEqual from 'lodash.isequal';
-import equal from 'fast-deep-equal';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
@@ -26,6 +25,7 @@ class CardConversation extends React.Component {
       events: [],
       lastMessage: null,
       members: {},
+      membersFetched: false,
       title: '',
     };
   }
@@ -45,7 +45,7 @@ class CardConversation extends React.Component {
       };
     const members = await this.getMembers();
     const title = await titleConversation(conversation, userID, members);
-    this.setState({lastMessage, members, title});
+    this.setState({lastMessage, members, title, membersFetched: true});
   }
   getMembers = async () => {
     const {discussionID} = this.props;
@@ -153,11 +153,11 @@ class CardConversation extends React.Component {
   }
   render() {
     let conversation = this.props.conversations[this.props.discussionID];
-    const {lastMessage, members} = this.state;
+    const {lastMessage, membersFetched} = this.state;
 
     if (!conversation) conversation = this.props.discussion;
     if (!conversation) return null;
-    if (equal(members, {})) return <PlaceHolder />;
+    if (!membersFetched) return <PlaceHolder />;
 
     return this.cardConversation(
       conversation ? conversation : this.props.discussion,
