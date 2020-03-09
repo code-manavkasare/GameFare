@@ -9,8 +9,6 @@ import {
   Image,
   Modal,
 } from 'react-native';
-
-import {connect} from 'react-redux';
 import moment from 'moment';
 import Hyperlink from 'react-native-hyperlink';
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -19,10 +17,8 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import AsyncImage from '../../layout/image/AsyncImage';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
 import CardImg from './elementsChat/CardImg';
-import AllIcons from '../../layout/icons/AllIcons';
 
 import {getParams, openUrl} from '../../database/branch';
 import {messageAvatar, messageName} from '../../functions/users';
@@ -31,7 +27,7 @@ import AllIcon from '../../layout/icons/AllIcons';
 
 const {height, width} = Dimensions.get('screen');
 
-class CardMessage extends React.Component {
+export default class CardMessage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,9 +152,7 @@ class CardMessage extends React.Component {
                     styleApp.smallText,
                     {marginTop: 5, fontSize: 14, marginBottom: 10},
                   ]}>
-                  {this.state.viewUrl
-                    ? props.currentMessage.text
-                    : props.currentMessage.text}
+                  {props.currentMessage.text}
                 </Text>
               </Hyperlink>
             )}
@@ -268,19 +262,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderColor: colors.grey,
   },
-  image: {
-    height: '100%',
-    width: '100%',
-  },
   urlImg: {
     width: '100%',
     height: 150,
     borderRadius: 5,
-    // marginBottom: 10,
   },
   buttonUrl: {
     ...styleApp.center2,
-    // marginBotttom: 10,
     flex: 1,
     width: '100%',
     borderLeftWidth: 3,
@@ -291,9 +279,3 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(mapStateToProps, {})(CardMessage);

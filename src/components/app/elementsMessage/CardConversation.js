@@ -5,10 +5,12 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import moment from 'moment';
 import firebase from 'react-native-firebase';
 import isEqual from 'lodash.isequal';
+import equal from 'fast-deep-equal';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
 import NavigationService from '../../../../NavigationService';
+import PlaceHolder from '../../placeHolders/CardConversation';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -22,14 +24,15 @@ class CardConversation extends React.Component {
     super(props);
     this.state = {
       events: [],
-      loader: false,
       lastMessage: null,
+      members: {},
+      title: '',
     };
   }
   async componentDidMount() {
     let conversation = this.props.conversations[this.props.discussionID];
     if (!conversation) conversation = this.props.discussion;
-    const {gamefareUser} = this.props;
+    const {gamefareUser, userID} = this.props;
     let {lastMessage} = conversation;
 
     if (!lastMessage)
@@ -40,9 +43,24 @@ class CardConversation extends React.Component {
         id: 'noMessage',
         timeStamp: moment().valueOf(),
       };
-
-    return this.setState({lastMessage: lastMessage});
+    const members = await this.getMembers();
+    const title = await titleConversation(conversation, userID, members);
+    this.setState({lastMessage, members, title});
   }
+  getMembers = async () => {
+    const {discussionID} = this.props;
+
+    const discussionMembersSnapshot = await firebase
+      .database()
+      .ref(`discussions/${discussionID}/members`)
+      .limitToFirst(3)
+      .once('value');
+
+    let discussionMembersFiltered = discussionMembersSnapshot.val();
+    delete discussionMembersFiltered[this.props.userID];
+    return discussionMembersFiltered;
+  };
+
   componentWillReceiveProps(nextProps) {
     const conversation = this.props.conversations[this.props.discussionID];
     const conversationNext = nextProps.conversations[nextProps.discussionID];
@@ -54,7 +72,7 @@ class CardConversation extends React.Component {
         lastMessage: conversationNext.lastMessage,
       });
   }
-  loadMembersPicture = () => {};
+
   lastMessage(lastMessage) {
     if (!lastMessage) return <View style={styles.placeholderLastMessage} />;
     else if (!lastMessage)
@@ -78,8 +96,6 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
-    console.log('conversation', conversation);
-    // return;
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await firebase
         .database()
@@ -97,7 +113,9 @@ class CardConversation extends React.Component {
       myConversation: this.props.myConversation,
     });
   }
+
   cardConversation(conversation, lastMessage, i) {
+    const {members, title} = this.state;
     return (
       <ButtonColor
         key={i}
@@ -106,8 +124,8 @@ class CardConversation extends React.Component {
             <Row>
               <Col size={20} style={styleApp.center2}>
                 <ImageConversation
+                  members={members}
                   conversation={conversation}
-                  userID={this.props.userID}
                   style={styles.roundImage}
                   sizeSmallImg={35}
                 />
@@ -115,9 +133,7 @@ class CardConversation extends React.Component {
               <Col
                 size={60}
                 style={[styleApp.center2, {paddingLeft: 5, paddingRight: 5}]}>
-                <Text style={[styleApp.text, {fontSize: 18}]}>
-                  {titleConversation(conversation, this.props.userID)}
-                </Text>
+                <Text style={[styleApp.text, {fontSize: 18}]}>{title}</Text>
                 {this.lastMessage(lastMessage)}
               </Col>
               <Col size={5} style={styleApp.center2}>
@@ -137,10 +153,12 @@ class CardConversation extends React.Component {
   }
   render() {
     let conversation = this.props.conversations[this.props.discussionID];
+    const {lastMessage, members} = this.state;
 
     if (!conversation) conversation = this.props.discussion;
     if (!conversation) return null;
-    const {lastMessage} = this.state;
+    if (equal(members, {})) return <PlaceHolder />;
+
     return this.cardConversation(
       conversation ? conversation : this.props.discussion,
       lastMessage,

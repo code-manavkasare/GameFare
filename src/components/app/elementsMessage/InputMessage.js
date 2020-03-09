@@ -128,6 +128,7 @@ class InputMessage extends React.Component {
             nameOtherMemberConversation(
               this.props.discussion,
               this.props.userID,
+              this.props.discussion.members,
             )
           }
           onChangeText={(text) => this.setState({inputValue: text})}
@@ -271,7 +272,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 20,
-    //backgroundColor: 'red',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
@@ -323,6 +323,7 @@ const mapStateToProps = (state) => {
   return {
     input: state.message.input,
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 

@@ -21,15 +21,14 @@ class CardEvent extends React.Component {
     this.state = {
       player: false,
       loader: false,
-      loaderAttendee:
-        (this.props.data.challenge && !this.props.data.allMembers) ||
-        (!this.props.data.challenge && !this.props.data.allAttendees)
-          ? false
-          : true,
+      loaderAttendee: true,
       members: {},
     };
   }
   async componentDidMount() {
+    this.getMembers();
+  }
+  getMembers = async () => {
     let firstAttendees = {};
     const {data} = this.props;
     if (data.challenge) {
@@ -39,7 +38,7 @@ class CardEvent extends React.Component {
         .limitToFirst(3)
         .once('value');
       firstAttendees = firstAttendees.val();
-      console.log('firstAttendees', firstAttendees);
+
       firstAttendees = Object.values(firstAttendees).map(
         (member) => member.captain,
       );
@@ -50,14 +49,13 @@ class CardEvent extends React.Component {
         .limitToFirst(3)
         .once('value');
       firstAttendees = firstAttendees.val();
-      console.log('firstAttendees2', firstAttendees);
     }
 
-    return this.setState({
+    this.setState({
       loaderAttendee: false,
       members: Object.values(firstAttendees),
     });
-  }
+  };
   entreeFee(entreeFee) {
     if (entreeFee === 0) return 'Free entry';
     return '$' + entreeFee + ' entry fee';
@@ -117,7 +115,7 @@ class CardEvent extends React.Component {
                 styleApp.text,
                 {fontSize: 10, color: 'white', fontFamily: 'OpenSans-Bold'},
               ]}>
-              {this.numberMember(attendees)}
+              {this.numberMember(members)}
             </Text>
           </View>
         </Col>
@@ -167,9 +165,6 @@ class CardEvent extends React.Component {
     var league = Object.values(sport.typeEvent)
       .filter((item) => item)
       .filter((item) => item.value === data.info.league)[0];
-    console.log(data.info.name);
-    console.log(data);
-    console.log('displaycard', members);
 
     return (
       <ButtonColor
@@ -258,7 +253,7 @@ class CardEvent extends React.Component {
     return this.displayCard(data, members);
   }
   render() {
-    const {data, userID} = this.props;
+    const {data} = this.props;
     const attendees = this.members(data);
     return this.card(data, attendees);
   }

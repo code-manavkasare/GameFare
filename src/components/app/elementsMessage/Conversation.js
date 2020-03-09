@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
 import moment from 'moment';
+import equal from 'fast-deep-equal';
 
 import {messageAction} from '../../../actions/messageActions';
 import Conversation2 from './Conversation2';
@@ -12,6 +13,7 @@ import {titleConversation} from '../../functions/message';
 import {userObject} from '../../functions/users';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
@@ -23,11 +25,7 @@ class MessageTab extends React.Component {
     this.state = {
       loader: true,
       messages: [],
-      conversation: {
-        title: '',
-        type: 'group',
-        picture: '',
-      },
+      conversation: {},
     };
     this.inputValue = '';
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -61,7 +59,8 @@ class MessageTab extends React.Component {
       .database()
       .ref('discussions/' + conversation.objectID)
       .on('value', async function(snap) {
-        const discussion = snap.val();
+        let discussion = snap.val();
+        delete discussion.members[userID];
         let messages = discussion.messages;
         if (!messages)
           messages = {
@@ -80,10 +79,11 @@ class MessageTab extends React.Component {
           }))
           .sort((a, b) => a.timeStamp - b.timeStamp)
           .reverse();
+
         that.setState({
           messages: messages,
           loader: false,
-          conversation: conversation,
+          conversation: {...discussion, objectID: conversation.objectID},
         });
 
         let lastMessage = Object.values(messages)[0];
@@ -107,19 +107,30 @@ class MessageTab extends React.Component {
     return true;
   }
   render() {
-    const {infoUser, userID, userConnected} = this.props;
+    const {infoUser, userID} = this.props;
+    const {conversation} = this.state;
     const user = userObject(infoUser, userID);
-    let conversation = this.props.navigation.getParam('data');
-    if (!conversation.objectID) conversation = this.state.conversation;
+
+    if (equal(conversation, {})) {
+      return (
+        <View style={styleApp.center2}>
+          <Loader size={35} color={'green'} />
+        </View>
+      );
+    }
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={titleConversation(conversation, userID)}
+          textHeader={titleConversation(
+            conversation,
+            userID,
+            conversation.members,
+          )}
           imgHeader={
             <ImageConversation
+              members={conversation.members}
               conversation={conversation}
-              userID={userID}
               style={styleApp.roundView2}
               sizeSmallImg={25}
             />
@@ -146,7 +157,6 @@ class MessageTab extends React.Component {
           user={user}
           onRef={(ref) => (this.conversationRef = ref)}
           messageAction={this.props.messageAction}
-          userConnected={userConnected}
           discussion={conversation}
         />
       </View>
