@@ -2,36 +2,16 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
+import PropTypes from 'prop-types';
 
 import AsyncImage from './AsyncImage';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-class ImageConversation extends Component {
+export default class ImageConversation extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      members: {},
-    };
   }
-  componentDidMount = () => {
-    this.getMembers();
-  };
-
-  getMembers = async () => {
-    const {objectID: discussionID} = this.props.conversation;
-
-    const discussionMembersSnapshot = await firebase
-      .database()
-      .ref(`discussions/${discussionID}/members`)
-      .limitToFirst(3)
-      .once('value');
-
-    let discussionMembersFiltered = discussionMembersSnapshot.val();
-    delete discussionMembersFiltered[this.props.userID];
-
-    await this.setState({members: discussionMembersFiltered});
-  };
 
   imageMember(member, style) {
     //TODO remove when no more wrong conversation
@@ -60,7 +40,7 @@ class ImageConversation extends Component {
     );
   }
   multipleUserView(style, sizeSmallImg) {
-    const {members} = this.state;
+    const {members} = this.props;
     return (
       <View
         style={{
@@ -79,7 +59,7 @@ class ImageConversation extends Component {
     );
   }
   image(conversation, style, sizeSmallImg) {
-    const {members} = this.state;
+    const {members} = this.props;
     if (conversation.type === 'group')
       return (
         <AsyncImage
@@ -110,10 +90,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-  };
+ImageConversation.propTypes = {
+  members: PropTypes.object.isRequired,
 };
-
-export default connect(mapStateToProps)(ImageConversation);

@@ -125,10 +125,10 @@ function checkMessageRead(message, userID) {
   return true;
 }
 
-function nameOtherMemberConversation(conversation, userID) {
+function nameOtherMemberConversation(conversation, userID, members) {
   if (conversation.type === 'group') return conversation.title;
   if (conversation.numberMembers > 2) return 'the group';
-  const infoMember = Object.values(conversation.members).filter(
+  const infoMember = Object.values(members).filter(
     (user) => user.id !== userID,
   )[0].info;
 
@@ -138,24 +138,25 @@ function nameOtherMemberConversation(conversation, userID) {
   return infoMember.firstname + ' ' + infoMember.lastname;
 }
 
-function titleConversation(conversation, userID) {
+const titleConversation = (conversation, userID, members) => {
+  if (members === {}) return '';
   let title = '';
   if (conversation.type === 'group') title = conversation.title;
   else if (conversation.numberMembers === 2)
-    title = nameOtherMemberConversation(conversation, userID);
+    title = nameOtherMemberConversation(conversation, userID, members);
   else {
-    const members = Object.values(conversation.members).filter(
+    const membersFiltered = Object.values(members).filter(
       (member) => member.id !== userID,
     );
-    for (var i in members) {
-      if (i === '0') title = members[i].info.firstname;
-      else title = title + ', ' + members[i].info.firstname;
+    for (var i in membersFiltered) {
+      if (i === '0') title = membersFiltered[i].info.firstname;
+      else title = title + ', ' + membersFiltered[i].info.firstname;
     }
   }
 
   if (title.length > 20) title = title.slice(0, 20) + '...';
   return title;
-}
+};
 
 export {
   createDiscussion,

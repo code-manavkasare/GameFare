@@ -73,7 +73,6 @@ export default class KeyboardInput extends Component {
   renderContent() {
     return (
       <InputMessage
-        userConnected={this.props.userConnected}
         discussion={this.props.discussion}
         user={this.props.user}
         onRef={(ref) => (this.inputRef = ref)}
@@ -88,7 +87,6 @@ export default class KeyboardInput extends Component {
           style={styles.messageScrollView}
           ref={(ref) => (this.listViewRef = ref)}
           inverted>
-
           {this.props.messages.map((message, i) => (
             <CardMessage
               message={{

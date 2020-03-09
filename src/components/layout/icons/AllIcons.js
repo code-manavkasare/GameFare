@@ -47,5 +47,5 @@ AllIcon.propTypes = {
   name: PropTypes.string.isRequired,
   color: PropTypes.string,
   size: PropTypes.number,
-  font: PropTypes.string.isRequired,
+  font: PropTypes.string,
 };
