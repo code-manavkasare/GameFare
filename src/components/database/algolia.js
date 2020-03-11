@@ -224,6 +224,25 @@ const getMyEvents = async (userID, filterDateName) => {
   return arrayResult;
 };
 
+const getPublicGroups = async (
+  userID,
+  userConnected,
+  sport,
+  location,
+  radiusSearch,
+) => {
+  await client.clearCache();
+  let userFilter =
+    ' AND NOT info.organizer:' + userID + ' AND NOT allMembers:' + userID;
+  if (!userConnected) userFilter = '';
+  let {hits} = await indexGroups.search('', {
+    aroundLatLng: location.lat + ',' + location.lng,
+    filters: 'info.sport:' + sport + userFilter,
+    aroundRadius: radiusSearch * 1000,
+  });
+  return hits;
+};
+
 module.exports = {
   indexEvents,
   indexGroups,
@@ -233,5 +252,6 @@ module.exports = {
   indexChallenges,
   getMyGroups,
   getMyEvents,
+  getPublicGroups,
   client,
 };

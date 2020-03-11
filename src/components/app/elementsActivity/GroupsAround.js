@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Dimensions, Animated} from 'react-native';
+import {View, Text, Dimensions, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 
@@ -7,14 +7,11 @@ const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import {getZone} from '../../functions/location';
+import PlaceHolder from '../../placeHolders/CardEvent';
 
 import CardGroup from './CardGroup';
 import {timing, native} from '../../animations/animations';
-
-import {indexGroups} from '../../database/algolia';
-
-import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
+import {getPublicGroups} from '../../database/algolia';
 
 class ListEvents extends React.Component {
   constructor(props) {
@@ -30,10 +27,12 @@ class ListEvents extends React.Component {
 
   componentDidMount() {
     this.props.onRef(this);
+    console.log('mount groups around', this.props);
+    // if (this.props.loader)
     this.loadEvent(this.props.sportSelected, this.props.searchLocation);
   }
   async reload() {
-    await this.setState({loader: true});
+    await this.props.setState({loaderGroups: true});
     return this.loadEvent(this.props.sportSelected, this.props.searchLocation);
   }
   async componentWillReceiveProps(nextProps) {
@@ -43,32 +42,20 @@ class ListEvents extends React.Component {
       this.props.sportSelected !== nextProps.sportSelected ||
       this.props.searchLocation !== nextProps.searchLocation
     ) {
-      await this.setState({loader: true});
+      await this.props.setState({loaderGroups: true});
       this.loadEvent(nextProps.sportSelected, nextProps.searchLocation);
     }
   }
-  async getGroups(filters, location) {
-    var groups = await indexGroups.search('', {
-      aroundLatLng: location.lat + ',' + location.lng,
-      filters: filters,
-      aroundRadius: this.props.radiusSearch * 1000,
-    });
-    return groups.hits;
-  }
   async loadEvent(sport, location) {
-    //
-    // indexGroups.clearCache();
-    var userFilter =
-      ' AND NOT info.organizer:' +
-      this.props.userID +
-      ' AND NOT allMembers:' +
-      this.props.userID;
-    if (!this.props.userConnected) userFilter = '';
-    var groups = await this.getGroups(
-      'info.sport:' + sport + userFilter,
+    const {userID, userConnected, radiusSearch} = this.props;
+    const groups = await getPublicGroups(
+      userID,
+      userConnected,
+      sport,
       location,
+      radiusSearch,
     );
-    this.setState({loader: false, groups: groups});
+    this.props.setState({loaderGroups: false, listGroups: groups});
   }
   openGroup(objectID) {
     return this.props.navigate('Group', {
@@ -90,63 +77,39 @@ class ListEvents extends React.Component {
   }
   listGroups(groups) {
     return Object.values(groups).map((group, i) => (
-      <CardGroup key={i} groupData={group} allAccess={false} />
+      <CardGroup key={i} groupData={group} allAccess={false} fullWidth={true} />
     ));
   }
-  ListEvent() {
-    var numberGroups = '';
-    if (!this.state.loader) {
-      numberGroups = ' (' + this.state.groups.length + ')';
-    }
-
+  viewNoGroup(sportSelected) {
     return (
-      <View style={{marginTop: 20}}>
-        <View style={[styleApp.marginView, {marginBottom: 10, paddingTop: 10}]}>
-          <Text
-            style={[
-              styleApp.input,
-              {marginBottom: 0, marginLeft: 0, fontSize: 22},
-            ]}>
-            New groups {numberGroups}
-          </Text>
-          <Text
-            style={[
-              styleApp.subtitleXS,
-              {marginBottom: 10, marginTop: 5, fontSize: 12},
-            ]}>
-            {getZone(this.props.searchLocation.address)}
-          </Text>
-        </View>
-
-        <View style={{flex: 1, marginTop: 0}}>
-          <Animated.View
-            style={{
-              flex: 1,
-              backgroundColor: 'white',
-              borderRightWidth: 0,
-              borderColor: colors.grey,
-              transform: [{translateX: this.translateXView1}],
-            }}>
-            <ScrollViewX
-              loader={this.state.loader}
-              events={this.state.groups}
-              height={210}
-              placeHolder={[
-                styleApp.cardGroup,
-                {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
-              ]}
-              imageNoEvent="location"
-              messageNoEvent={
-                'There are no new ' +
-                this.props.sportSelected +
-                ' groups in this area.'
-              }
-              content={() => this.listGroups(this.state.groups)}
-              // openEvent={(group) => this.openGroup(group)}
-              onRef={(ref) => (this.scrollViewRef1 = ref)}
-            />
-          </Animated.View>
-        </View>
+      <View style={[styleApp.center, {paddingTop: 70}]}>
+        <Image
+          source={require('../../../img/images/location.png')}
+          style={{width: 65, height: 65}}
+        />
+        <Text style={[styleApp.text, {marginTop: 10, marginBottom: 20}]}>
+          No {sportSelected} groups found
+        </Text>
+      </View>
+    );
+  }
+  ListEvent() {
+    const {listGroups, loader, sportSelected} = this.props;
+    return (
+      <View style={[styleApp.marginView, {marginTop: 20}]}>
+        {loader ? (
+          <View style={{marginLeft: -20}}>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </View>
+        ) : listGroups.length === 0 ? (
+          this.viewNoGroup(sportSelected)
+        ) : (
+          this.listGroups(listGroups)
+        )}
       </View>
     );
   }

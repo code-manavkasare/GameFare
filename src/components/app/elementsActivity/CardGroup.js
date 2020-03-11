@@ -199,18 +199,17 @@ class CardGroup extends React.Component {
   displayCard(data) {
     if (!data) return null;
     const picture = data.pictures[0];
+    const {fullWidth} = this.props;
     return (
       <ButtonColor
         view={() => {
           return (
             <FadeInView duration={300} style={styleApp.fullSize}>
-              <Row style={{height: 115}}>
-                <AsyncImage
-                  style={styles.profilePicture}
-                  mainImage={picture}
-                  imgInitial={picture}
-                />
-              </Row>
+              <AsyncImage
+                style={styles.profilePicture}
+                mainImage={picture}
+                imgInitial={picture}
+              />
               <View style={styles.mainView}>
                 <Text style={[styleApp.input, styles.title]}>
                   {data.info.name}
@@ -225,12 +224,28 @@ class CardGroup extends React.Component {
         }}
         click={() => this.click(data)}
         color={'white'}
-        style={[styleApp.cardGroup, styleApp.shade]}
+        style={this.styleCard()}
         onPressColor={colors.off}
       />
     );
   }
-
+  styleCard() {
+    const {fullWidth} = this.props;
+    if (fullWidth)
+      return [
+        styleApp.cardGroup,
+        {
+          width: '100%',
+          flex: 1,
+          borderRadius: 0,
+          borderWidth: 0,
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+          borderBottomWidth: 1,
+        },
+      ];
+    return [styleApp.cardGroup, styleApp.shade];
+  }
   render() {
     const {groupData} = this.props;
     return this.card(groupData);
@@ -240,9 +255,9 @@ class CardGroup extends React.Component {
 const styles = StyleSheet.create({
   profilePicture: {
     width: '100%',
-    height: 115,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
+    height: 125,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
   },
   mainView: {
     paddingLeft: 10,

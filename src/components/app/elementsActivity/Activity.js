@@ -71,6 +71,15 @@ class HomeScreen extends React.Component {
       <View style={{paddingTop: 0, minHeight: height / 1.5}}>
         {userConnected ? (
           <View>
+            <MyGroups
+              navigate={this.navigate.bind(this)}
+              navigate1={(val, data) =>
+                this.props.navigation.navigate(val, data)
+              }
+              loader={this.state.loader}
+              onRef={(ref) => (this.myGroupsRef = ref)}
+            />
+
             <MyEvents
               location={this.state.location}
               search={this.state.search}
@@ -82,15 +91,6 @@ class HomeScreen extends React.Component {
               navigate1={(val, data) =>
                 this.props.navigation.navigate(val, data)
               }
-            />
-
-            <MyGroups
-              navigate={this.navigate.bind(this)}
-              navigate1={(val, data) =>
-                this.props.navigation.navigate(val, data)
-              }
-              loader={this.state.loader}
-              onRef={(ref) => (this.myGroupsRef = ref)}
             />
           </View>
         ) : (

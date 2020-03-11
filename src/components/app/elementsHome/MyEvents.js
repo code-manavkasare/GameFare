@@ -204,10 +204,6 @@ class MyEvents extends React.Component {
             />
           </Animated.View>
         </View>
-
-        <View style={styleApp.marginView}>
-          <View style={[styleApp.divider2, {marginTop: 30}]} />
-        </View>
       </View>
     );
   }
