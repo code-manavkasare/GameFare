@@ -24,7 +24,6 @@ import {
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-import {ConversationContext} from './Conversation';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import ListPhotos from './ListPhotos';
@@ -41,7 +40,6 @@ class InputMessage extends React.Component {
       showImages: false,
     };
   }
-  static contextType = ConversationContext;
   componentDidMount() {
     this.props.onRef(this);
   }
@@ -117,7 +115,7 @@ class InputMessage extends React.Component {
   placeholderInput = () => {
     const {discussion, userID} = this.props;
     let placeholderInput = '';
-    if (!this.context.loader) {
+    if (discussion.members) {
       placeholderInput = `Send a message to ${nameOtherMemberConversation(
         discussion,
         userID,
