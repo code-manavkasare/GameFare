@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
+  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {keys} from 'ramda';
@@ -15,6 +16,7 @@ import {eventsAction} from '../../../actions/eventsActions';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import Switch from '../../layout/switch/Switch';
+import PlaceHolder from '../../placeHolders/CardEvent';
 
 import CardEvent from './CardEventSM';
 import {indexEvents, getMyEvents} from '../../database/algolia';
@@ -112,7 +114,7 @@ class MyEvents extends React.Component {
   listEvents(events) {
     return events.map((event, i) => (
       <CardEvent
-        size={'SM'}
+        size={'M'}
         userCard={false}
         key={i}
         index={i}
@@ -156,54 +158,43 @@ class MyEvents extends React.Component {
       numberFuture = ' (' + futureEvents.length + ')';
       numberPast = ' (' + pastEvents.length + ')';
     }
+    const {past, loader} = this.state;
     console.log('render ListEvent', futureEvents);
     return (
       <View style={{marginTop: 20}}>
         <View style={[styleApp.marginView, {marginBottom: 20}]}>
-          <Text style={[styleApp.input, {marginBottom: 15, fontSize: 22}]}>
-            My events
-          </Text>
-          {this.switch('Upcoming' + numberFuture, 'Past' + numberPast)}
+          {this.switch('Upcoming' + numberFuture, 'Past' + numberPast, 'past')}
         </View>
 
-        <View style={{flex: 1}}>
-          <Animated.View
-            style={[
-              styles.viewFutureEvents,
-              {
-                transform: [{translateX: this.translateXView1}],
-              },
-            ]}>
-            <ScrollViewX
-              loader={this.state.loader}
-              events={futureEvents}
-              height={180}
-              imageNoEvent="group"
-              messageNoEvent={'You don’t have any upcoming events.'}
-              content={(events) => this.listEvents(events)}
-              openEvent={(objectID) => this.openEvent(objectID)}
-              onRef={(ref) => (this.scrollViewRef1 = ref)}
+        {loader ? (
+          <View>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </View>
+        ) : (past && pastEvents.length === 0) ||
+          (!past && futureEvents.length === 0) ? (
+          <View
+            style={[styleApp.center, styleApp.marginView, {paddingTop: 50}]}>
+            <Image
+              source={require('../../../img/images/shelve.png')}
+              style={{width: 65, height: 65}}
             />
-          </Animated.View>
-
-          <Animated.View
-            style={[
-              styles.viewPastEvents,
-              {
-                transform: [{translateX: this.translateXView2}],
-              },
-            ]}>
-            <ScrollViewX
-              height={180}
-              loader={this.state.loader}
-              events={pastEvents}
-              messageNoEvent={"You don't have any past events."}
-              content={(events) => this.listEvents(events)}
-              openEvent={(objectID) => this.openEvent(objectID)}
-              onRef={(ref) => (this.scrollViewRef2 = ref)}
-            />
-          </Animated.View>
-        </View>
+            <Text
+              style={[
+                styleApp.text,
+                {marginTop: 10, marginBottom: 20, fontSize: 13},
+              ]}>
+              {past
+                ? "You don't have any past events."
+                : 'You don’t have any upcoming events.'}
+            </Text>
+          </View>
+        ) : (
+          this.listEvents(past ? pastEvents : futureEvents)
+        )}
       </View>
     );
   }
@@ -212,38 +203,7 @@ class MyEvents extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  text: {
-    fontFamily: 'OpenSans-SemiBold',
-    color: colors.title,
-  },
-  cardSport: {
-    backgroundColor: 'red',
-    shadowColor: '#46474B',
-    shadowOffset: {width: 2, height: 0},
-    shadowRadius: 20,
-    shadowOpacity: 0.3,
-    overflow: 'hidden',
-    height: 170,
-    marginRight: 10,
-    borderRadius: 10,
-    borderWidth: 0.3,
-    borderColor: colors.borderColor,
-    width: 220,
-  },
-  viewFutureEvents: {
-    height: 225,
-    paddingTop: 15,
-    borderRightWidth: 0,
-    borderColor: colors.grey,
-  },
-  viewPastEvents: {
-    height: 200,
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: 0,
-  },
-});
+const styles = StyleSheet.create({});
 
 const mapStateToProps = (state) => {
   return {

@@ -271,7 +271,7 @@ class HeaderHome extends Component {
     );
   }
   render() {
-    const {searchLocation} = this.props;
+    const {searchLocation, hideButton2} = this.props;
     const AnimateBackgroundView = this.props.AnimatedHeaderValue.interpolate({
       inputRange: [0, 100],
       outputRange: [this.props.initialBackgroundColor, 'white'],
@@ -375,44 +375,48 @@ class HeaderHome extends Component {
           </Animated.View>
           {this.voile()}
 
-          <ButtonColor
-            view={() => {
-              return (
-                <Row>
-                  <Col size={70} style={[styleApp.center2, {paddingLeft: 10}]}>
-                    <Text
-                      style={[
-                        styleApp.text,
-                        {
-                          fontSize: 11,
-                        },
-                      ]}>
-                      {getZone(searchLocation.address)}
-                    </Text>
-                  </Col>
-                  <Col size={30} style={styleApp.center}>
-                    <AllIcons
-                      name={this.props.icon2}
-                      color={colors.title}
-                      size={20}
-                      type={this.props.typeIcon2}
-                    />
-                  </Col>
-                </Row>
-              );
-            }}
-            click={() => this.props.clickButton2()}
-            color={'white'}
-            style={[
-              styleApp.center,
-              styles.button2,
-              {
-                borderColor: colors.white,
-                transform: [{translateY: translateYHeader}],
-              },
-            ]}
-            onPressColor={colors.off}
-          />
+          {!hideButton2 && (
+            <ButtonColor
+              view={() => {
+                return (
+                  <Row>
+                    <Col
+                      size={70}
+                      style={[styleApp.center2, {paddingLeft: 10}]}>
+                      <Text
+                        style={[
+                          styleApp.text,
+                          {
+                            fontSize: 11,
+                          },
+                        ]}>
+                        {getZone(searchLocation.address)}
+                      </Text>
+                    </Col>
+                    <Col size={30} style={styleApp.center}>
+                      <AllIcons
+                        name={this.props.icon2}
+                        color={colors.title}
+                        size={20}
+                        type={this.props.typeIcon2}
+                      />
+                    </Col>
+                  </Row>
+                );
+              }}
+              click={() => this.props.clickButton2()}
+              color={'white'}
+              style={[
+                styleApp.center,
+                styles.button2,
+                {
+                  borderColor: colors.white,
+                  transform: [{translateY: translateYHeader}],
+                },
+              ]}
+              onPressColor={colors.off}
+            />
+          )}
         </Row>
       </Animated.View>
     );

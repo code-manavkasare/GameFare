@@ -309,34 +309,36 @@ class Page3 extends Component {
     await this.props.eventsAction('setAllEvents', {[event.objectID]: event});
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
-    await this.props.historicSearchAction('setSport', {
-      value: event.info.sport,
-      league: event.info.league,
-    });
+    var that = this;
+    setTimeout(async function() {
+      await that.props.historicSearchAction('setSport', {
+        value: event.info.sport,
+        league: event.info.league,
+      });
+      await that.props.createEventAction('reset');
+      await that.setState({loader: false});
 
-    await this.props.createEventAction('reset');
-    await this.setState({loader: false});
+      await dismiss();
+    }, 1000);
 
-    await dismiss();
-
-    return this.props.navigation.navigate('Contacts', {
-      objectID: event.objectID,
-      description: '',
-      url: {
-        description:
-          'Join my event ' +
-          event.info.name +
-          ' on ' +
-          date(event.date.start, 'ddd, MMM D') +
-          ' at ' +
-          date(event.date.start, 'h:mm a') +
-          ' by following the link!',
-        image: event.pictures[0],
-        title: event.info.name,
-      },
-      action: 'Event',
-      data: {...event, eventID: event.objectID},
-    });
+    // return this.props.navigation.navigate('Contacts', {
+    //   objectID: event.objectID,
+    //   description: '',
+    //   url: {
+    //     description:
+    //       'Join my event ' +
+    //       event.info.name +
+    //       ' on ' +
+    //       date(event.date.start, 'ddd, MMM D') +
+    //       ' at ' +
+    //       date(event.date.start, 'h:mm a') +
+    //       ' by following the link!',
+    //     image: event.pictures[0],
+    //     title: event.info.name,
+    //   },
+    //   action: 'Event',
+    //   data: {...event, eventID: event.objectID},
+    // });
   }
   render() {
     return (

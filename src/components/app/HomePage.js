@@ -12,6 +12,8 @@ import GroupsAround from './elementsActivity/GroupsAround';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import Switch from '../layout/switch/Switch';
+import {historicSearchAction} from '../../actions/historicSearchActions';
+
 
 import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
@@ -328,4 +330,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(HomeScreen);
+export default connect(mapStateToProps,{historicSearchAction})(HomeScreen);

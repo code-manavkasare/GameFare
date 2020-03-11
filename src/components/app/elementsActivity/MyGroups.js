@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppState, View, Text, Dimensions, Animated} from 'react-native';
+import {AppState, View, Text, Dimensions, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 
@@ -9,6 +9,7 @@ import styleApp from '../../style/style';
 
 import CardGroup from './CardGroup';
 import {indexGroups, getMyGroups} from '../../database/algolia';
+import PlaceHolder from '../../placeHolders/CardEvent';
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 
@@ -89,67 +90,52 @@ class MyGroups extends React.Component {
       <CardGroup
         key={i}
         allAccess={true}
+        fullWidth={true}
         groupData={this.props.allGroups[groups]}
       />
     ));
   }
-  ListEvent() {
+  ListGroupComponent() {
     if (!this.props.userConnected) return null;
-    var numberFuture = '';
-    if (!this.state.loader1) {
-      numberFuture = ' (' + this.props.mygroups.length + ')';
-    }
-
+    const {loader1} = this.state;
+    const {mygroups} = this.props;
     return (
       <View style={{marginTop: 10}}>
-        <View style={[styleApp.marginView, {marginBottom: 10}]}>
-          <Text
-            style={[
-              styleApp.input,
-              {marginBottom: 10, marginLeft: 0, fontSize: 22},
-            ]}>
-            My groups {numberFuture}
-          </Text>
-          {/* {this.switch('All' + numberFuture,'Past' + numberPast)} */}
-        </View>
-
-        <Animated.View
-          style={{
-            height: 250,
-            borderRightWidth: 0,
-            backgroundColor: 'red',
-            borderColor: colors.grey,
-            transform: [{translateX: this.translateXView1}],
-          }}>
-          <ScrollViewX
-            loader={this.state.loader1}
-            events={this.props.mygroups}
-            // height={260}
-            placeHolder={[
-              styleApp.cardGroup,
-              styleApp.shade,
-              {paddingLeft: 10, paddingRight: 10, paddingTop: 10},
-            ]}
-            imageNoEvent="group"
-            messageNoEvent={
-              "You haven't joined any " +
-              this.props.sportSelected +
-              ' group yet.'
-            }
-            content={() => this.listGroups(this.props.mygroups)}
-            // openEvent={(group) => this.openGroup(group)}
-            onRef={(ref) => (this.scrollViewRef1 = ref)}
-          />
-        </Animated.View>
-
-        <View style={styleApp.marginView}>
-          <View style={[styleApp.divider2, {marginTop: 30}]} />
-        </View>
+        {loader1 ? (
+          <View>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </View>
+        ) : mygroups.length === 0 ? (
+          <View
+            style={[styleApp.center, styleApp.marginView, {paddingTop: 50}]}>
+            <Image
+              source={require('../../../img/images/shelve.png')}
+              style={{width: 65, height: 65}}
+            />
+            <Text
+              style={[
+                styleApp.text,
+                {marginTop: 10, marginBottom: 20, fontSize: 13},
+              ]}>
+              {"You haven't joined any " +
+                this.props.sportSelected +
+                ' group yet.'}
+            </Text>
+          </View>
+        ) : (
+          <View style={[styleApp.marginView, {paddingTop: 10}]}>
+            {this.listGroups(mygroups)}
+          </View>
+        )}
       </View>
     );
   }
   render() {
-    return this.ListEvent();
+    return this.ListGroupComponent();
   }
 }
 
