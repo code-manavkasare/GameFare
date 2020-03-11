@@ -1,12 +1,6 @@
 import firebase from 'react-native-firebase';
 import moment from 'moment';
-import {
-  indexDiscussions,
-  getMyGroups,
-  getMyEvents,
-  client,
-} from '../database/algolia';
-import R from 'reactotron-react-native';
+import {indexDiscussions, client} from '../database/algolia';
 
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
@@ -126,7 +120,6 @@ function checkMessageRead(message, userID) {
 }
 
 function nameOtherMemberConversation(conversation, userID, members) {
-  R.log('members', members);
   if (conversation.type === 'group') return conversation.title;
   if (conversation.numberMembers > 2) return 'the group';
   const infoMember = Object.values(members).filter(
