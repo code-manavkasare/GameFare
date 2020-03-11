@@ -10,6 +10,10 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import FadeInView from 'react-native-fade-in-view';
+import isEqual from 'lodash.isequal';
+const {height, width} = Dimensions.get('screen');
+
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 
 import HeaderHome from '../../layout/headers/HeaderHome';
@@ -18,15 +22,15 @@ import colors from '../../style/colors';
 import MyGroups from './MyGroups';
 import GroupsAround from './GroupsAround';
 import MyEvents from '../elementsHome/MyEvents';
+import Switch from '../../layout/switch/Switch';
 
 import ScrollView2 from '../../layout/scrollViews/ScrollView';
-const {height, width} = Dimensions.get('screen');
+
 import StatusBar from '@react-native-community/status-bar';
 import ButtonAdd from '../../app/elementsHome/ButtonAdd';
 import Button from '../../layout/buttons/Button';
 
 import sizes from '../../style/sizes';
-import isEqual from 'lodash.isequal';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -34,7 +38,7 @@ class HomeScreen extends React.Component {
     this.state = {
       events: [],
       loader: false,
-      unreadMessages: 3,
+      groups: false,
     };
     this.translateXVoile = new Animated.Value(width);
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -66,32 +70,59 @@ class HomeScreen extends React.Component {
   getAnimateHeader() {
     return this.scrollViewRef.getAnimateHeader();
   }
-  ActivityTab(userConnected) {
+  switch(textOn, textOff, state, click) {
     return (
-      <View style={{paddingTop: 0, minHeight: height / 1.5}}>
+      <Switch
+        textOn={textOn}
+        textOff={textOff}
+        finalColorOn={colors.primary}
+        translateXTo={width / 2 - 20}
+        height={50}
+        state={this.state[state]}
+        setState={(val) => click(val)}
+      />
+    );
+  }
+  ActivityTab(userConnected) {
+    const {groups} = this.state;
+    return (
+      <View style={{paddingTop: 10, minHeight: height / 1.5}}>
         {userConnected ? (
           <View>
-            <MyGroups
-              navigate={this.navigate.bind(this)}
-              navigate1={(val, data) =>
-                this.props.navigation.navigate(val, data)
-              }
-              loader={this.state.loader}
-              onRef={(ref) => (this.myGroupsRef = ref)}
-            />
+            <View style={styleApp.marginView}>
+              {this.switch('My events', 'My groups', 'groups', async (val) => {
+                await this.setState({groups: val});
+                return true;
+              })}
+            </View>
 
-            <MyEvents
-              location={this.state.location}
-              search={this.state.search}
-              key={2}
-              onRef={(ref) => (this.myEventsRef = ref)}
-              setState={(data) => this.setState(data)}
-              loader={this.state.loader}
-              navigate={this.navigate.bind(this)}
-              navigate1={(val, data) =>
-                this.props.navigation.navigate(val, data)
-              }
-            />
+            {!groups ? (
+              <FadeInView duration={300}>
+                <MyEvents
+                  location={this.state.location}
+                  search={this.state.search}
+                  key={2}
+                  onRef={(ref) => (this.myEventsRef = ref)}
+                  setState={(data) => this.setState(data)}
+                  loader={this.state.loader}
+                  navigate={this.navigate.bind(this)}
+                  navigate1={(val, data) =>
+                    this.props.navigation.navigate(val, data)
+                  }
+                />
+              </FadeInView>
+            ) : (
+              <FadeInView duration={300}>
+                <MyGroups
+                  navigate={this.navigate.bind(this)}
+                  navigate1={(val, data) =>
+                    this.props.navigation.navigate(val, data)
+                  }
+                  loader={this.state.loader}
+                  onRef={(ref) => (this.myGroupsRef = ref)}
+                />
+              </FadeInView>
+            )}
           </View>
         ) : (
           this.logoutView()
@@ -100,11 +131,17 @@ class HomeScreen extends React.Component {
     );
   }
   async refresh() {
-    this.myGroupsRef.reload();
-    this.myEventsRef.reload();
+    try {
+      this.myGroupsRef.reload();
+    } catch (err) {}
+
+    try {
+      this.myEventsRef.reload();
+    } catch (err) {}
   }
   setLocation(location) {
     this.props.navigation.navigate('ListGroups');
+
     this.props.historicSearchAction('setLocationSearch', location);
   }
   logoutView() {
@@ -137,6 +174,7 @@ class HomeScreen extends React.Component {
           <HeaderHome
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             textHeader={'Organize your event'}
+            hideButton2={true}
             inputRange={[0, sizes.heightHeaderHome + 0]}
             initialBorderColorIcon={colors.off}
             initialBackgroundColor={'white'}
@@ -150,8 +188,8 @@ class HomeScreen extends React.Component {
             typeIcon2={'font'}
             clickButton2={() =>
               this.props.navigation.navigate('Location', {
-                pageFrom: 'ListGroups',
-                onGoBack: (data) => this.setLocation(data),
+                pageFrom: 'Home',
+                setUserLocation: true,
               })
             }
           />
