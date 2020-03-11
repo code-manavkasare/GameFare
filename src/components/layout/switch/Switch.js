@@ -48,7 +48,6 @@ export default class Switch extends Component {
     if (!check) return true;
     if (newVal) {
       if (this.props.translateXComponent0) {
-
         return Animated.parallel([
           Animated.spring(
             this.translateXBorder,
@@ -96,8 +95,7 @@ export default class Switch extends Component {
     if (nextProps.state != this.props.state) this.changeValue(nextProps.state);
   }
   styleButton(color) {
-    if (color)
-      return {...styles.button, backgroundColor: colors.green};
+    if (color) return {...styles.button, backgroundColor: colors.green};
     return styles.button;
   }
   borderStyle(state) {
@@ -105,13 +103,14 @@ export default class Switch extends Component {
     return {borderTopRightRadius: 7, borderBottomRightRadius: 7};
   }
   render() {
-    const {color,textOn,textOff} = this.props;
-    const heightView = this.props.height;
+    const {color, textOn, textOff, height} = this.props;
+    let {finalColorOn} = this.props;
+    if (!finalColorOn) finalColorOn = colors.green;
     var colorText1 = this.state.colorAnim1.interpolate({
       inputRange: [0, 1],
       outputRange: [
         color ? colors.off : '#C7C7CC',
-        color ? 'white' : colors.green,
+        color ? 'white' : finalColorOn,
       ],
       extrapolate: 'clamp',
     });
@@ -119,12 +118,28 @@ export default class Switch extends Component {
       inputRange: [0, 1],
       outputRange: [
         color ? colors.off : '#C7C7CC',
-        color ? 'white' : colors.green,
+        color ? 'white' : finalColorOn,
       ],
       extrapolate: 'clamp',
     });
+    console.log('this.props switch', this.props);
     return (
-      <View style={{height: heightView, width: '100%'}}>
+      <View style={{height: height, width: '100%'}}>
+        <Animated.View
+          style={[
+            styleApp.center,
+            styles.animatedRectangle,
+            {
+              borderColor: color ? 'white' : finalColorOn,
+              backgroundColor: finalColorOn,
+            },
+            {transform: [{translateX: this.translateXBorder}]},
+            this.borderStyle(this.props.state),
+          ]}>
+          <Animated.Text style={[styles.text, {color: 'white'}]}>
+            {!this.props.state ? this.props.textOn : this.props.textOff}
+          </Animated.Text>
+        </Animated.View>
         <Row style={{borderRadius: 7}}>
           <Col style={styles.center}>
             <ButtonColor
@@ -157,18 +172,6 @@ export default class Switch extends Component {
             />
           </Col>
         </Row>
-
-        <Animated.View
-          style={[
-            styleApp.center,styles.animatedRectangle,
-            {borderColor:color ? 'white' : colors.green},
-            {transform: [{translateX: this.translateXBorder}]},
-            this.borderStyle(this.props.state),
-          ]}>
-          <Animated.Text style={[styles.text, {color: 'white'}]}>
-            {!this.props.state ? this.props.textOn : this.props.textOff}
-          </Animated.Text>
-        </Animated.View>
       </View>
     );
   }
@@ -196,13 +199,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.grey,
   },
-  animatedRectangle:{
+  animatedRectangle: {
     height: '100%',
     position: 'absolute',
     borderWidth: 1,
     bottom: 0,
+    zIndex: 30,
     width: '50%',
-    backgroundColor: colors.green
   },
   text: {
     //color:colors.title,

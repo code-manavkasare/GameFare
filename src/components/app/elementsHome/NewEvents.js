@@ -9,9 +9,8 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import {keys} from 'ramda'
+import {keys} from 'ramda';
 import {connect} from 'react-redux';
-
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {eventsAction} from '../../../actions/eventsActions';
@@ -39,6 +38,7 @@ class ListEvents extends React.Component {
   };
   async componentDidMount() {
     this.props.onRef(this);
+    // if (this.props.loader)
     this.loadEvent(
       this.props.searchLocation,
       this.props.sportSelected,
@@ -67,8 +67,8 @@ class ListEvents extends React.Component {
     );
   }
   async loadEvent(location, sport, league) {
-    const {userID,radiusSearch} = this.props;
-    await this.setState({loader: true});
+    const {userID, radiusSearch} = this.props;
+    await this.props.setState({loaderEvents: true});
     //indexEvents.clearCache();
     const allEventsPublic = await getEventPublic(
       location,
@@ -80,8 +80,8 @@ class ListEvents extends React.Component {
     );
 
     await this.props.eventsAction('setAllEvents', allEventsPublic);
-    await this.props.eventsAction('setPublicEvents',keys(allEventsPublic));
-    return this.setState({loader: false});
+    await this.props.eventsAction('setPublicEvents', keys(allEventsPublic));
+    return this.props.setState({loaderEvents: false});
   }
   openEvent(objectID) {
     return this.props.navigate('Event', {objectID: objectID, pageFrom: 'Home'});
@@ -112,30 +112,10 @@ class ListEvents extends React.Component {
     const allPublicEvents = this.props.publicEvents.map(
       (event) => this.props.allEvents[event],
     );
-    var numberPublic = ' (' + allPublicEvents.length + ')';
-    if (this.state.loader) {
-      numberPublic = '';
-    }
-
+    const {loader} = this.props;
     return (
       <View style={{marginTop: 20}}>
-        <Row style={{marginLeft: 20, width: width - 40, marginBottom: 15}}>
-          <Col size={85} style={styleApp.center2}>
-            <Text style={[styleApp.title, {marginBottom: 5}]}>
-              New events {numberPublic}
-            </Text>
-            <Text
-              style={[
-                styleApp.subtitleSX,
-                {marginBottom: 10, marginLeft: 0, fontSize: 12},
-              ]}>
-              {getZone(this.props.searchLocation.address)}
-            </Text>
-          </Col>
-          <Col size={15} />
-        </Row>
-
-        {this.state.loader ? (
+        {loader ? (
           <View>
             <PlaceHolder />
             <PlaceHolder />
@@ -160,7 +140,6 @@ class ListEvents extends React.Component {
                   style={[styleApp.text, {marginTop: 10, marginBottom: 20}]}>
                   No {this.props.sportSelected} events found
                 </Text>
-                <View style={styles.divider} />
               </View>
             ) : (
               allPublicEvents.map((event, i) => (
@@ -187,20 +166,19 @@ class ListEvents extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  divider:{
+  divider: {
     height: 6.5,
     borderTopWidth: 0.5,
     borderColor: colors.grey,
     marginTop: 0,
   },
-  viewNoGroups:{
-    marginTop: 35,
+  viewNoGroups: {
+    marginTop: 70,
     marginBottom: 20,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0,
     borderColor: colors.grey,
   },
-
-})
+});
 
 const mapStateToProps = (state) => {
   return {

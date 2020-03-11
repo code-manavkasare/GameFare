@@ -141,6 +141,10 @@ class MyGroups extends React.Component {
             onRef={(ref) => (this.scrollViewRef1 = ref)}
           />
         </Animated.View>
+
+        <View style={styleApp.marginView}>
+          <View style={[styleApp.divider2, {marginTop: 30}]} />
+        </View>
       </View>
     );
   }

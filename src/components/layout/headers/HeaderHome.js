@@ -12,6 +12,7 @@ import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {createEventAction} from '../../../actions/createEventActions';
 import {Grid, Row, Col} from 'react-native-easy-grid';
+import {getZone} from '../../functions/location';
 
 import sizes from '../../style/sizes';
 import colors from '../../style/colors';
@@ -223,9 +224,9 @@ class HeaderHome extends Component {
             Object.values(sport.typeEvent).filter((item) => item).length + 1,
           )
         }
-        color={'white'}
+        color={'transparent'}
         style={styles.buttonLeague}
-        onPressColor={colors.off}
+        onPressColor={'transparent'}
       />
     );
   }
@@ -235,7 +236,8 @@ class HeaderHome extends Component {
         style={[
           styleApp.voile,
           {
-            zIndex: -2,
+            zIndex: -1,
+            marginTop: -100,
             opacity: this.opacityVoile,
             transform: [{translateX: this.translateXVoile}],
           },
@@ -269,6 +271,7 @@ class HeaderHome extends Component {
     );
   }
   render() {
+    const {searchLocation} = this.props;
     const AnimateBackgroundView = this.props.AnimatedHeaderValue.interpolate({
       inputRange: [0, 100],
       outputRange: [this.props.initialBackgroundColor, 'white'],
@@ -282,6 +285,11 @@ class HeaderHome extends Component {
     const borderColorButton = this.borderWidthButtonLeague.interpolate({
       inputRange: [0, 1],
       outputRange: ['white', colors.grey],
+      extrapolate: 'clamp',
+    });
+    const backgroundColorButton = this.borderWidthButtonLeague.interpolate({
+      inputRange: [0, 0.001],
+      outputRange: ['transparent', colors.white],
       extrapolate: 'clamp',
     });
     const borderColorButtonSport = this.borderWidthButtonSport.interpolate({
@@ -351,6 +359,7 @@ class HeaderHome extends Component {
             style={[
               {
                 ...styles.viewButtonLeague,
+                backgroundColor: backgroundColorButton,
                 height: this.state.heightButtonLeague,
                 borderColor: borderColorButton,
                 transform: [{translateY: translateYHeader}],
@@ -364,15 +373,32 @@ class HeaderHome extends Component {
 
             {this.buttonLeague(this.props.leagueAll, 9, sport)}
           </Animated.View>
+          {this.voile()}
+
           <ButtonColor
             view={() => {
               return (
-                <AllIcons
-                  name={this.props.icon2}
-                  color={colors.title}
-                  size={20}
-                  type={this.props.typeIcon2}
-                />
+                <Row>
+                  <Col size={70} style={[styleApp.center2, {paddingLeft: 10}]}>
+                    <Text
+                      style={[
+                        styleApp.text,
+                        {
+                          fontSize: 11,
+                        },
+                      ]}>
+                      {getZone(searchLocation.address)}
+                    </Text>
+                  </Col>
+                  <Col size={30} style={styleApp.center}>
+                    <AllIcons
+                      name={this.props.icon2}
+                      color={colors.title}
+                      size={20}
+                      type={this.props.typeIcon2}
+                    />
+                  </Col>
+                </Row>
               );
             }}
             click={() => this.props.clickButton2()}
@@ -381,15 +407,13 @@ class HeaderHome extends Component {
               styleApp.center,
               styles.button2,
               {
-                borderColor: borderColorIcon,
+                borderColor: colors.white,
                 transform: [{translateY: translateYHeader}],
               },
             ]}
             onPressColor={colors.off}
           />
         </Row>
-
-        {this.voile()}
       </Animated.View>
     );
   }
@@ -453,11 +477,12 @@ const styles = StyleSheet.create({
     width: 170,
   },
   button2: {
-    height: 45,
-    width: 45,
+    height: 50,
+    width: 145,
     position: 'absolute',
     right: 20,
     top: -5,
+    zIndex: -3,
     borderRadius: 25,
     borderWidth: 1,
   },
@@ -469,6 +494,7 @@ const mapStateToProps = (state) => {
     sportSelected: state.historicSearch.sport,
     leagueSelected: state.historicSearch.league,
     leagueAll: state.globaleVariables.leagueAll,
+    searchLocation: state.historicSearch.searchLocation,
   };
 };
 

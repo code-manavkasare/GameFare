@@ -4,17 +4,20 @@ import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
 import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase';
 import {Col, Row} from 'react-native-easy-grid';
+import FadeInView from 'react-native-fade-in-view';
 
 import HeaderHome from '../layout/headers/HeaderHome';
 import NewEvents from './elementsHome/NewEvents';
 import GroupsAround from './elementsActivity/GroupsAround';
 import styleApp from '../style/style';
 import colors from '../style/colors';
+import Switch from '../layout/switch/Switch';
 
 import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
 import AllIcons from '../layout/icons/AllIcons';
+import {getZone} from '../functions/location';
 
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal';
@@ -24,11 +27,18 @@ class HomeScreen extends React.Component {
     super(props);
     this.state = {
       events: [],
+      listEvents: [],
+      listGroups: [],
+      loaderEvents: true,
+      loaderGroups: true,
       loader: false,
       showMap: false,
+      groups: false,
     };
     this.translateXVoile = new Animated.Value(width);
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.translateXEvents = new Animated.Value(0);
+    this.translateXGroups = new Animated.Value(width);
     this.opacityVoile = new Animated.Value(0.3);
   }
   componentDidMount() {
@@ -102,31 +112,124 @@ class HomeScreen extends React.Component {
   getAnimateHeader() {
     return this.scrollViewRef.getAnimateHeader();
   }
+  switch(textOn, textOff, state, click) {
+    return (
+      <Switch
+        textOn={textOn}
+        textOff={textOff}
+        finalColorOn={colors.primary}
+        translateXTo={width / 2 - 20}
+        height={50}
+        state={this.state[state]}
+        setState={(val) => click(val)}
+      />
+    );
+  }
   homePageView() {
+    const {
+      groups,
+      listEvents,
+      listGroups,
+      loaderEvents,
+      loaderGroups,
+    } = this.state;
     return (
       <View style={{paddingTop: 10, minHeight: height / 1.5}}>
-        <NewEvents
-          navigate={this.navigate.bind(this)}
-          navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-          loader={this.state.loader}
-          onRef={(ref) => (this.eventGroupsRef = ref)}
-        />
+        <View style={styleApp.marginView}>
+          {this.switch('Events', 'Groups', 'groups', async (val) => {
+            await this.setState({groups: val});
+            if (val) {
+              await this.translateXEvents.setValue(-width);
+              await this.translateXGroups.setValue(0);
+            } else {
+              await this.translateXEvents.setValue(0);
+              await this.translateXGroups.setValue(width);
+            }
+            return true;
+          })}
+        </View>
 
-        <GroupsAround
-          navigate={this.navigate.bind(this)}
-          navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-          loader={this.state.loader}
-          onRef={(ref) => (this.groupsAroundRef = ref)}
-        />
+        {!groups ? (
+          <FadeInView duration={300}>
+            <NewEvents
+              navigate={this.navigate.bind(this)}
+              setState={async (state) => await this.setState(state)}
+              listEvents={listEvents}
+              loader={loaderEvents}
+              navigate1={(val, data) =>
+                this.props.navigation.navigate(val, data)
+              }
+              onRef={(ref) => (this.eventGroupsRef = ref)}
+            />
+          </FadeInView>
+        ) : (
+          <FadeInView duration={300}>
+            <GroupsAround
+              navigate={this.navigate.bind(this)}
+              setState={async (state) => await this.setState(state)}
+              listGroups={listGroups}
+              loader={loaderGroups}
+              navigate1={(val, data) =>
+                this.props.navigation.navigate(val, data)
+              }
+              onRef={(ref) => (this.groupsAroundRef = ref)}
+            />
+          </FadeInView>
+        )}
+        {/* 
+<Animated.View
+          style={[
+            {
+              // position: 'absolute',
+              flex: 1,
+              width: width,
+              // marginTop: 60,
+              transform: [{translateX: this.translateXEvents}],
+            },
+          ]}>
+          <NewEvents
+            navigate={this.navigate.bind(this)}
+            setState={async (state) => await this.setState(state)}
+            listEvents={listEvents}
+            loader={loaderEvents}
+            navigate1={(val, data) => this.props.navigation.navigate(val, data)}
+            onRef={(ref) => (this.eventGroupsRef = ref)}
+          />
+        </Animated.View>
+
+        <Animated.View
+          style={[
+            {
+              // position: 'absolute',
+              flex: 1,
+              width: width,
+              marginTop: 60,
+              transform: [{translateX: this.translateXGroups}],
+            },
+          ]}>
+          <GroupsAround
+            navigate={this.navigate.bind(this)}
+            setState={async (state) => await this.setState(state)}
+            listGroups={listGroups}
+            loader={loaderGroups}
+            navigate1={(val, data) => this.props.navigation.navigate(val, data)}
+            onRef={(ref) => (this.groupsAroundRef = ref)}
+          />
+        </Animated.View> */}
       </View>
     );
   }
   async refresh() {
-    this.eventGroupsRef.reload();
-    this.groupsAroundRef.reload();
+    try {
+      this.eventGroupsRef.reload();
+    } catch (err) {}
+    try {
+      this.groupsAroundRef.reload();
+    } catch (err) {}
     return true;
   }
   render() {
+    const {loaderEvents, loaderGroups} = this.state;
     return (
       <View style={styleApp.stylePage}>
         <HeaderHome
