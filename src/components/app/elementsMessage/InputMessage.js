@@ -24,6 +24,7 @@ import {
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
+import {ConversationContext} from './Conversation';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import ListPhotos from './ListPhotos';
@@ -40,6 +41,7 @@ class InputMessage extends React.Component {
       showImages: false,
     };
   }
+  static contextType = ConversationContext;
   componentDidMount() {
     this.props.onRef(this);
   }
@@ -112,6 +114,20 @@ class InputMessage extends React.Component {
       return false;
     return true;
   }
+  placeholderInput = () => {
+    const {discussion, userID} = this.props;
+    let placeholderInput = '';
+    if (!this.context.loader) {
+      placeholderInput = `Send a message to ${nameOtherMemberConversation(
+        discussion,
+        userID,
+        discussion.members,
+      )}`;
+    } else {
+      placeholderInput = 'Send a message';
+    }
+    return placeholderInput;
+  };
   renderInput() {
     return (
       <View style={styles.keyboardContainer}>
@@ -123,14 +139,7 @@ class InputMessage extends React.Component {
           }}
           enableScrollToCaret
           value={this.state.inputValue}
-          placeholder={
-            'Send a message to ' +
-            nameOtherMemberConversation(
-              this.props.discussion,
-              this.props.userID,
-              this.props.discussion.members,
-            )
-          }
+          placeholder={this.placeholderInput()}
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
         />

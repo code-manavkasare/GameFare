@@ -1,9 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
 import moment from 'moment';
-import equal from 'fast-deep-equal';
 
 import {messageAction} from '../../../actions/messageActions';
 import Conversation2 from './Conversation2';
@@ -13,11 +12,12 @@ import {titleConversation} from '../../functions/message';
 import {userObject} from '../../functions/users';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
-import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import ImageConversation from '../../layout/image/ImageConversation';
+
+export const ConversationContext = React.createContext();
 
 class MessageTab extends React.Component {
   constructor(props) {
@@ -97,7 +97,8 @@ class MessageTab extends React.Component {
         if (myConversation || lastMessage.user.id === userID) {
           that.setConversation({
             ...conversation,
-            lastMessage: lastMessage,
+            lastMessage:
+              lastMessage.slice(0, 50) + (lastMessage.length > 50 ? '...' : ''),
           });
         }
       });
@@ -108,58 +109,55 @@ class MessageTab extends React.Component {
   }
   render() {
     const {infoUser, userID} = this.props;
-    const {conversation} = this.state;
+    const {conversation, loader} = this.state;
     const user = userObject(infoUser, userID);
 
-    if (equal(conversation, {})) {
-      return (
-        <View style={styleApp.center2}>
-          <Loader size={35} color={'green'} />
-        </View>
-      );
-    }
     return (
-      <View style={styleApp.stylePage}>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={titleConversation(
-            conversation,
-            userID,
-            conversation.members,
-          )}
-          imgHeader={
-            <ImageConversation
-              members={conversation.members}
-              conversation={conversation}
-              style={styleApp.roundView2}
-              sizeSmallImg={25}
-            />
-          }
-          inputRange={[50, 80]}
-          initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
-          typeIcon2={'mat'}
-          initialBorderWidth={0.3}
-          initialBorderColorHeader={colors.borderColor}
-          sizeIcon2={17}
-          initialTitleOpacity={1}
-          icon1={'arrow-left'}
-          icon2={null}
-          clickButton1={async () => {
-            this.props.navigation.dismiss();
-          }}
-          clickButton2={() => true}
-        />
-        <View style={{height: sizes.heightHeaderHome}} />
+      <ConversationContext.Provider value={this.state}>
+        <View style={styleApp.stylePage}>
+          <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={
+              !loader &&
+              titleConversation(conversation, userID, conversation.members)
+            }
+            imgHeader={
+              !loader && (
+                <ImageConversation
+                  members={conversation.members}
+                  conversation={conversation}
+                  style={styleApp.roundView2}
+                  sizeSmallImg={25}
+                />
+              )
+            }
+            loader={loader}
+            inputRange={[50, 80]}
+            initialBorderColorIcon={'white'}
+            initialBackgroundColor={'white'}
+            typeIcon2={'mat'}
+            initialBorderWidth={0.3}
+            initialBorderColorHeader={colors.borderColor}
+            sizeIcon2={17}
+            initialTitleOpacity={1}
+            icon1={'arrow-left'}
+            icon2={null}
+            clickButton1={async () => {
+              this.props.navigation.dismiss();
+            }}
+            clickButton2={() => true}
+          />
+          <View style={{height: sizes.heightHeaderHome}} />
 
-        <Conversation2
-          messages={this.state.messages}
-          user={user}
-          onRef={(ref) => (this.conversationRef = ref)}
-          messageAction={this.props.messageAction}
-          discussion={conversation}
-        />
-      </View>
+          <Conversation2
+            messages={this.state.messages}
+            user={user}
+            onRef={(ref) => (this.conversationRef = ref)}
+            messageAction={this.props.messageAction}
+            discussion={conversation}
+          />
+        </View>
+      </ConversationContext.Provider>
     );
   }
 }
