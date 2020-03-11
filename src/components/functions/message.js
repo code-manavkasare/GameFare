@@ -6,7 +6,7 @@ import {
   getMyEvents,
   client,
 } from '../database/algolia';
-import union from 'lodash/union';
+import R from 'reactotron-react-native';
 
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
@@ -126,6 +126,7 @@ function checkMessageRead(message, userID) {
 }
 
 function nameOtherMemberConversation(conversation, userID, members) {
+  R.log('members', members);
   if (conversation.type === 'group') return conversation.title;
   if (conversation.numberMembers > 2) return 'the group';
   const infoMember = Object.values(members).filter(

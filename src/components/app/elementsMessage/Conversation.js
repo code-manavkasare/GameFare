@@ -17,8 +17,6 @@ import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import ImageConversation from '../../layout/image/ImageConversation';
 
-export const ConversationContext = React.createContext();
-
 class MessageTab extends React.Component {
   constructor(props) {
     super(props);
@@ -113,51 +111,49 @@ class MessageTab extends React.Component {
     const user = userObject(infoUser, userID);
 
     return (
-      <ConversationContext.Provider value={this.state}>
-        <View style={styleApp.stylePage}>
-          <HeaderBackButton
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            textHeader={
-              !loader &&
-              titleConversation(conversation, userID, conversation.members)
-            }
-            imgHeader={
-              !loader && (
-                <ImageConversation
-                  members={conversation.members}
-                  conversation={conversation}
-                  style={styleApp.roundView2}
-                  sizeSmallImg={25}
-                />
-              )
-            }
-            loader={loader}
-            inputRange={[50, 80]}
-            initialBorderColorIcon={'white'}
-            initialBackgroundColor={'white'}
-            typeIcon2={'mat'}
-            initialBorderWidth={0.3}
-            initialBorderColorHeader={colors.borderColor}
-            sizeIcon2={17}
-            initialTitleOpacity={1}
-            icon1={'arrow-left'}
-            icon2={null}
-            clickButton1={async () => {
-              this.props.navigation.dismiss();
-            }}
-            clickButton2={() => true}
-          />
-          <View style={{height: sizes.heightHeaderHome}} />
+      <View style={styleApp.stylePage}>
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={
+            !loader &&
+            titleConversation(conversation, userID, conversation.members)
+          }
+          imgHeader={
+            !loader && (
+              <ImageConversation
+                members={conversation.members}
+                conversation={conversation}
+                style={styleApp.roundView2}
+                sizeSmallImg={25}
+              />
+            )
+          }
+          loader={loader}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={'white'}
+          initialBackgroundColor={'white'}
+          typeIcon2={'mat'}
+          initialBorderWidth={0.3}
+          initialBorderColorHeader={colors.borderColor}
+          sizeIcon2={17}
+          initialTitleOpacity={1}
+          icon1={'arrow-left'}
+          icon2={null}
+          clickButton1={async () => {
+            this.props.navigation.dismiss();
+          }}
+          clickButton2={() => true}
+        />
+        <View style={{height: sizes.heightHeaderHome}} />
 
-          <Conversation2
-            messages={this.state.messages}
-            user={user}
-            onRef={(ref) => (this.conversationRef = ref)}
-            messageAction={this.props.messageAction}
-            discussion={conversation}
-          />
-        </View>
-      </ConversationContext.Provider>
+        <Conversation2
+          messages={this.state.messages}
+          user={user}
+          onRef={(ref) => (this.conversationRef = ref)}
+          messageAction={this.props.messageAction}
+          discussion={conversation}
+        />
+      </View>
     );
   }
 }
