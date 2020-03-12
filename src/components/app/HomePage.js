@@ -5,6 +5,7 @@ import StatusBar from '@react-native-community/status-bar';
 import firebase from 'react-native-firebase';
 import {Col, Row} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
+import {includes} from 'ramda';
 
 import HeaderHome from '../layout/headers/HeaderHome';
 import NewEvents from './elementsHome/NewEvents';
@@ -13,7 +14,6 @@ import styleApp from '../style/style';
 import colors from '../style/colors';
 import Switch from '../layout/switch/Switch';
 import {historicSearchAction} from '../../actions/historicSearchActions';
-
 
 import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
@@ -55,7 +55,7 @@ class HomeScreen extends React.Component {
   }
 
   async notificationHandler() {
-    // const enabled = await firebase.messaging().hasPermission();
+    const {userID, blockedUsersID} = this.props;
     this.appBackgroundNotificationListenner();
     this.appOpenFistNotification();
     this.messageListener = firebase
@@ -67,7 +67,8 @@ class HomeScreen extends React.Component {
           .setBody(notification1._body)
           .setData(notification1._data);
         console.log('message received', notification);
-        if (this.props.userID !== notification.data.senderID)
+        const {senderID} = this.notification.data;
+        if (userID !== senderID && !includes(senderID, blockedUsersID))
           firebase.notifications().displayNotification(notification);
       });
   }
@@ -327,7 +328,8 @@ class HomeScreen extends React.Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userIDSaved,
+    blockedUsersID: state.user.infoUser.blockedUsers,
   };
 };
 
-export default connect(mapStateToProps,{historicSearchAction})(HomeScreen);
+export default connect(mapStateToProps, {historicSearchAction})(HomeScreen);

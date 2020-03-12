@@ -151,7 +151,6 @@ const getEventPublic = async (
             24 * 3600 * 1000}`
         : ''),
   });
-  console.log('results events around', hits);
 
   var allEventsPublic = hits.reduce(function(result, item) {
     result[item.objectID] = item;
@@ -243,6 +242,12 @@ const getPublicGroups = async (
   return hits;
 };
 
+const getBlockedUsers = async (objectIDArray) => {
+  await client.clearCache();
+  const {results} = await indexUsers.getObjects(objectIDArray);
+  return results;
+};
+
 module.exports = {
   indexEvents,
   indexGroups,
@@ -253,5 +258,6 @@ module.exports = {
   getMyGroups,
   getMyEvents,
   getPublicGroups,
+  getBlockedUsers,
   client,
 };

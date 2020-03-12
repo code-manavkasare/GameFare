@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {Animated, StyleSheet, Text, View, ScrollView} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+
+import {blockUnblockUser} from '../../../database/firebase/users';
 
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
@@ -40,10 +41,7 @@ class ProfilePage extends Component {
   };
 
   blockUnblockUser = async (block) => {
-    await firebase
-      .database()
-      .ref(`users/${this.props.userID}/blockedUsers`)
-      .update({[this.state.userProfile.id]: block ? true : null});
+    await blockUnblockUser(block, this.props.userID, this.state.userProfile.id);
     this.setState({isBlocked: block});
   };
 

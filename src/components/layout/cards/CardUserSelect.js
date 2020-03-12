@@ -1,16 +1,7 @@
 import React, {Component} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  Easing,
-  Animated,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import ButtonColor from '../Views/Button';
 import colors from '../../style/colors';
 import AllIcons from '../../layout/icons/AllIcons';

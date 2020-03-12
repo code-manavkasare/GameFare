@@ -74,6 +74,7 @@ class MessageTab extends React.Component {
     const discussions = await loadMyDiscusions(
       this.props.userID,
       this.state.searchInput,
+      this.props.blockedUsers,
     );
     await this.props.messageAction('setConversations', discussions);
 
@@ -231,6 +232,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     discussions: state.message.conversations,
+    blockedUsers: state.user.infoUser.blockedUsers,
   };
 };
 
