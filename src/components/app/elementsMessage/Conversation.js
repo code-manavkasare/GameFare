@@ -92,21 +92,26 @@ class MessageTab extends React.Component {
           [userID]: true,
         };
         lastMessage.usersRead = usersRead;
+
+        lastMessage.length > 50 ? '...' : '';
         if (myConversation || lastMessage.user.id === userID) {
           that.setConversation({
             ...conversation,
-            lastMessage:
-              lastMessage.slice(0, 50) + (lastMessage.length > 50 ? '...' : ''),
+            lastMessage: {
+              ...lastMessage,
+              text:
+                lastMessage.text.slice(0, 50) +
+                (lastMessage.text.length > 50 ? '...' : ''),
+            },
           });
         }
       });
   }
   async setConversation(data) {
     await this.props.messageAction('setConversation', data);
-    return true;
   }
   render() {
-    const {infoUser, userID} = this.props;
+    const {infoUser, userID, navigation} = this.props;
     const {conversation, loader} = this.state;
     const user = userObject(infoUser, userID);
 
@@ -147,6 +152,7 @@ class MessageTab extends React.Component {
         <View style={{height: sizes.heightHeaderHome}} />
 
         <Conversation2
+          navigation={navigation}
           messages={this.state.messages}
           user={user}
           onRef={(ref) => (this.conversationRef = ref)}

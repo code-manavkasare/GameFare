@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Linking,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
 import {messageAction} from '../../../actions/messageActions';
@@ -21,7 +13,7 @@ import ScrollView from '../../layout/scrollViews/ScrollView';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
 import {userAction} from '../../../actions/userActions';
 import Button from '../../layout/buttons/Button';
@@ -30,7 +22,7 @@ import AllIcons from '../../layout/icons/AllIcons';
 import DateEvent from '../elementsEventCreate/DateEvent';
 import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard';
 
-class ProfilePage extends Component {
+class Checkout extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -399,4 +391,4 @@ export default connect(mapStateToProps, {
   userAction,
   eventsAction,
   messageAction,
-})(ProfilePage);
+})(Checkout);

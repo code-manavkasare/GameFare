@@ -26,7 +26,7 @@ import AsyncImage from '../layout/image/AsyncImage';
 import {userAction} from '../../actions/userActions';
 const {height, width} = Dimensions.get('screen');
 
-class ProfilePage extends Component {
+class MorePage extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -198,7 +198,6 @@ class ProfilePage extends Component {
   }
 
   goToEditProfile = () => {
-    // alert('test');
     this.props.navigation.navigate('EditProfilePage');
   };
 
@@ -329,20 +328,6 @@ class ProfilePage extends Component {
   render() {
     return (
       <View style={{height: '100%'}}>
-        {/* <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Profile'}
-          inputRange={[50, 80]}
-          initialBorderColorIcon={colors.grey}
-          initialBackgroundColor={'white'}
-          typeIcon2={'font'}
-          sizeIcon2={17}
-          initialTitleOpacity={0}
-          icon1={null}
-          icon2={null}
-          // clickButton2={() => this.props.navigation.navigate('Settings',{pageFrom:'Profile'})}
-          clickButton2={() => true}
-        /> */}
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -402,4 +387,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction})(ProfilePage);
+export default connect(mapStateToProps, {userAction})(MorePage);

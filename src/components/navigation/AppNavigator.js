@@ -1,7 +1,4 @@
-import React, {Component} from 'react';
-import {Image, Text, View, TouchableOpacity, Dimensions} from 'react-native';
-const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import React from 'react';
 
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
@@ -15,7 +12,7 @@ import MainTabIcon from './navigationElements/MainTabIcon.js';
 
 import HomePage from '../app/HomePage';
 import StreamPage from '../app/StreamPage';
-import ProfilePage from '../app/ProfilePage';
+import MorePage from '../app/MorePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
 import EventPage from '../app/EventPage';
@@ -31,6 +28,7 @@ import Phone from '../login/Phone';
 import Verify from '../login/Verify';
 import Complete from '../login/Complete';
 import EditProfilePage from '../app/elementsUser/elementsProfile/EditProfilePage';
+import ProfilePage from '../app/elementsUser/elementsProfile/ProfilePage';
 import ListCountry from '../login/elementsFlags/ListCountry';
 
 import CreateEvent0 from '../app/elementsEventCreate/Page0';
@@ -208,7 +206,7 @@ const MessageNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator(
   {
-    More: lockedPortrait(ProfilePage),
+    More: lockedPortrait(MorePage),
     Wallet: lockedPortrait(Wallet),
     Settings: lockedPortrait(Settings),
   },
@@ -388,6 +386,7 @@ const MainStack = createStackNavigator(
     Event: JoinNavigator,
     Challenge: JoinChallengeNavigator,
     Conversation: MessageNavigator,
+    ProfilePage: {screen: lockedPortrait(ProfilePage)},
     Group: JoinGroupNavigator,
     LiveStream: StreamNavigator,
     CreateEvent1: CreateEventNavigator,
