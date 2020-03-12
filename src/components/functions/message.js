@@ -1,5 +1,6 @@
 import firebase from 'react-native-firebase';
 import moment from 'moment';
+import {includes} from 'ramda';
 import {indexDiscussions, client} from '../database/algolia';
 
 function discussionObj(members, nameDiscussion, firstMessageExists) {
@@ -97,17 +98,34 @@ async function searchDiscussion(ids, numberMembers) {
   return hits[0];
 }
 
-async function loadMyDiscusions(userID, searchInput) {
-  // indexDiscussions.clearCache();
+const filterBlockedUserDiscussions = (discussions, blockedUsers) => {
+  //TODO: to clean/concat, could be easier
+  let discussionsFiltered = discussions;
+  for (let [key, discussion] of Object.entries(discussionsFiltered)) {
+    if ((discussion.allMembers.length = 2)) {
+      Object.keys(blockedUsers).map((blockedUser) => {
+        includes(blockedUser, discussion.allMembers) &&
+          delete discussionsFiltered[key];
+      });
+    }
+  }
+  return discussionsFiltered;
+};
+
+async function loadMyDiscusions(userID, searchInput, blockedUsers) {
   await client.clearCache();
   let {hits} = await indexDiscussions.search(searchInput, {
-    filters: 'allMembers:' + userID + ' AND firstMessageExists=1',
+    filters: `firstMessageExists=1 AND allMembers:${userID}`,
     hitsPerPage: 10000,
   });
   let discussions = hits.reduce(function(result, item) {
     result[item.objectID] = item;
     return result;
   }, {});
+
+  if (blockedUsers) {
+    discussions = filterBlockedUserDiscussions(discussions, blockedUsers);
+  }
 
   return discussions;
 }

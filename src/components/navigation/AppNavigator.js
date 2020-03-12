@@ -14,6 +14,7 @@ import HomePage from '../app/HomePage';
 import StreamPage from '../app/StreamPage';
 import MorePage from '../app/MorePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
+import BlockedUsersList from '../app/elementsUser/elementsProfile/BlockedUsersList';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
 import EventPage from '../app/EventPage';
 import ChallengePage from '../app/ChallengePage';
@@ -208,6 +209,7 @@ const ProfileNavigator = createStackNavigator(
   {
     More: lockedPortrait(MorePage),
     Wallet: lockedPortrait(Wallet),
+    BlockedUsersList: lockedPortrait(BlockedUsersList),
     Settings: lockedPortrait(Settings),
   },
   {

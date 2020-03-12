@@ -75,10 +75,7 @@ class MorePage extends Component {
       </Row>
     );
   }
-  /*
-  
-      
-  */
+
   button(icon, text, page, type, url) {
     return (
       <ButtonColor
@@ -244,7 +241,11 @@ class MorePage extends Component {
               <View style={[styleApp.divider2, {marginTop: 15}]} />
               {this.button('credit-card', 'Payment', 'Payments')}
               {this.button('wallet', 'Wallet', 'Wallet')}
-              {/* {this.button('shopping-bag','My wallet','Wallet',{pageFrom:'Profile'})} */}
+              {this.button(
+                'user-alt-slash',
+                'Blocked users',
+                'BlockedUsersList',
+              )}
             </View>
           ) : null}
         </View>

@@ -1,16 +1,8 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  Linking,
-  Modal,
-} from 'react-native';
+import {View, Text, Dimensions, StyleSheet, Linking, Modal} from 'react-native';
 import moment from 'moment';
 import Hyperlink from 'react-native-hyperlink';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import AsyncImage from '../../layout/image/AsyncImage';
@@ -123,7 +115,7 @@ export default class CardMessage extends React.Component {
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}
         <Row>
-          <Col size={15}>
+          <Col size={15} onPress={() => this.goToProfilePage()}>
             <AsyncImage
               style={{width: 45, height: 45, borderRadius: 5}}
               mainImage={messageAvatar(props.currentMessage.user.info)}
@@ -131,7 +123,9 @@ export default class CardMessage extends React.Component {
             />
           </Col>
           <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
-            <Text style={[styleApp.text, {fontSize: 16}]}>
+            <Text
+              style={[styleApp.text, {fontSize: 16}]}
+              onPress={() => this.goToProfilePage()}>
               {messageName(props.currentMessage.user.info)}{' '}
               <Text style={{color: colors.grey, fontSize: 12}}>
                 {moment(props.currentMessage.createdAt).format('h:mm a')}
@@ -210,9 +204,7 @@ export default class CardMessage extends React.Component {
       : [];
     return (
       <View>
-        <TouchableOpacity onPress={() => this.goToProfilePage()}>
-          {this.renderMessage(this.props.message)}
-        </TouchableOpacity>
+        {this.renderMessage(this.props.message)}
         <Modal visible={this.state.showImage} transparent={true}>
           <ImageViewer
             enableSwipeDown={true}
