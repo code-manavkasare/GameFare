@@ -151,7 +151,6 @@ class EditProfilePage extends Component {
       <View style={styles.content}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() => this.props.navigation.navigate('ProfilePage')}
           textHeader={'Edit Profile'}
           inputRange={[5, 10]}
           loader={loaderPhoto}

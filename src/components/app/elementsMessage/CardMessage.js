@@ -4,9 +4,8 @@ import {
   Text,
   Dimensions,
   StyleSheet,
-  Alert,
+  TouchableOpacity,
   Linking,
-  Image,
   Modal,
 } from 'react-native';
 import moment from 'moment';
@@ -26,7 +25,6 @@ import NavigationService from '../../../../NavigationService';
 import AllIcon from '../../layout/icons/AllIcons';
 
 const {height, width} = Dimensions.get('screen');
-
 export default class CardMessage extends React.Component {
   constructor(props) {
     super(props);
@@ -38,9 +36,6 @@ export default class CardMessage extends React.Component {
     };
     this.clickLink.bind(this);
   }
-  componentDidMount() {
-    //this.urlify(this.props.message.currentMessage.text);
-  }
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     const that = this;
@@ -51,12 +46,8 @@ export default class CardMessage extends React.Component {
   async getDataUrl(url) {
     const params = await getParams(url);
     this.setState({viewUrl: params, url: url});
-    // var doc = Jsoup.connect('http://www.google.com').get();
-    // Linking.openURL(url);
-    // const dataUrl = await LinkPreview.getPreview(url);
   }
   openPage(type, id) {
-    console.log('click message', {type, id});
     NavigationService.push(type, {
       objectID: id,
     });
@@ -67,7 +58,6 @@ export default class CardMessage extends React.Component {
       return this.openPage(params.action, params.objectID);
     }
 
-    // return true;
     if (!viewUrl) return openUrl(url);
     if (!viewUrl.id) return openUrl(url);
     const params = await getParams(url);
@@ -107,7 +97,7 @@ export default class CardMessage extends React.Component {
     }
     return null;
   }
-  renderImages(images, message, discussionID) {
+  renderImages = (images, message, discussionID) => {
     if (images)
       return Object.values(images).map((image, i) => (
         <CardImg
@@ -122,7 +112,12 @@ export default class CardMessage extends React.Component {
         />
       ));
     return null;
-  }
+  };
+  goToProfilePage = () => {
+    this.props.navigation.navigate('ProfilePage', {
+      user: this.props.message.currentMessage.user,
+    });
+  };
   renderMessage(props) {
     return (
       <View style={styleApp.cardMessage}>
@@ -215,7 +210,9 @@ export default class CardMessage extends React.Component {
       : [];
     return (
       <View>
-        {this.renderMessage(this.props.message)}
+        <TouchableOpacity onPress={() => this.goToProfilePage()}>
+          {this.renderMessage(this.props.message)}
+        </TouchableOpacity>
         <Modal visible={this.state.showImage} transparent={true}>
           <ImageViewer
             enableSwipeDown={true}

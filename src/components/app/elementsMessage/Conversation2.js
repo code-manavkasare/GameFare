@@ -1,25 +1,10 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Dimensions} from 'react-native';
 import PropTypes from 'prop-types';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
-import {
-  KeyboardAccessoryView,
-  KeyboardUtils,
-} from 'react-native-keyboard-input';
-const {height, width} = Dimensions.get('screen');
+import {KeyboardAccessoryView} from 'react-native-keyboard-input';
 
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
-import styleApp from '../../style/style';
-import Loader from '../../layout/loaders/Loader';
 import InputMessage from './InputMessage';
 import './Keyboard';
 import CardMessage from './CardMessage';
@@ -89,6 +74,7 @@ export default class KeyboardInput extends Component {
           inverted>
           {this.props.messages.map((message, i) => (
             <CardMessage
+              navigation={this.props.navigation}
               message={{
                 previousMessage: this.props.messages[i + 1]
                   ? this.props.messages[i + 1]
