@@ -15,6 +15,7 @@ import {CameraKitCamera} from 'react-native-camera-kit';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import KeepAwake from 'react-native-keep-awake';
+import Orientation from 'react-native-orientation-locker';
 
 import Loader from '../../layout/loaders/Loader';
 
@@ -36,13 +37,7 @@ import AllIcons from '../../layout/icons/AllIcons';
 import CalibrationHeader from './CalibrationHeader';
 
 const {width, height} = Dimensions.get('screen');
-const heightAdjust = height - ((16/9)*width);
-
-const steps = {
-  PROMPT: 'prompt',
-  ERROR: 'error',
-  WAITING: 'waiting',
-};
+const heightAdjust = height - (16 / 9) * width;
 
 class Calibration extends React.Component {
   constructor(props) {
@@ -51,6 +46,7 @@ class Calibration extends React.Component {
       waitingPermissions: false,
       waitingNetline: false,
       stream: null, // streamKey, playbackID, id
+      orientation: 'PORTRAIT',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -67,14 +63,25 @@ class Calibration extends React.Component {
         console.log('ERROR: Calibration: Could not create stream');
         return this.props.navigation.navigate('TabsApp');
       }
+      Orientation.addDeviceOrientationListener(
+        this._orientationListener.bind(this),
+      );
       return this.props.navigation.navigate('Alert', {
         close: true,
         title:
-          'Set up the camera and take a photo of the court for calibration.',
+          'Put a section of court surface in the red box and take a photo.',
         textButton: 'Got it.',
       });
     }
     return true;
+  }
+  _orientationListener(orientation) {
+    if (
+      (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') &&
+      orientation !== this.state.orientation
+    ) {
+      this.setState({orientation: orientation});
+    }
   }
   async componentWillUnmount() {
     if (this.state.stream) {
@@ -83,6 +90,7 @@ class Calibration extends React.Component {
         .ref('streams/' + this.state.stream.id + '/netlineResults/')
         .off();
     }
+    Orientation.removeDeviceOrientationListener(this._orientationListener);
   }
   async permissions() {
     let camPermission = await Permissions.check(PERMISSIONS.IOS.CAMERA);
@@ -192,6 +200,15 @@ class Calibration extends React.Component {
     await this.camera.changeCamera();
   }
   render() {
+    const delta = 50;
+    const x_offset =
+      this.state.orientation === 'PORTRAIT'
+        ? 0
+        : this.state.orientation === 'LANDSCAPE-LEFT'
+        ? -delta
+        : delta;
+    const cx = width / 2 + x_offset;
+    const cy = (height - heightAdjust) / 2;
     return (
       <View style={styles.container}>
         <KeepAwake />
@@ -205,7 +222,7 @@ class Calibration extends React.Component {
           ref={(cam) => {
             this.camera = cam;
           }}
-          style={styles.fullScreen}
+          style={[styles.fullScreen, {backgroundColor: 'black'}]}
           cameraOptions={{
             flashMode: 'off',
             focusMode: 'off',
@@ -216,7 +233,45 @@ class Calibration extends React.Component {
           <View style={[styles.fullScreen, styles.smallRow]}>
             <Loader color="white" size={60} />
           </View>
-        ) : null}
+        ) : (
+          <Svg
+            style={styles.fullScreen}
+            height={height - heightAdjust}
+            width={width}>
+            <Line
+              x1={cx - delta}
+              y1={cy - delta}
+              x2={cx + delta}
+              y2={cy - delta}
+              stroke="red"
+              strokeWidth="4"
+            />
+            <Line
+              x1={cx + delta}
+              y1={cy - delta}
+              x2={cx + delta}
+              y2={cy + delta}
+              stroke="red"
+              strokeWidth="4"
+            />
+            <Line
+              x1={cx + delta}
+              y1={cy + delta}
+              x2={cx - delta}
+              y2={cy + delta}
+              stroke="red"
+              strokeWidth="4"
+            />
+            <Line
+              x1={cx - delta}
+              y1={cy + delta}
+              x2={cx - delta}
+              y2={cy - delta}
+              stroke="red"
+              strokeWidth="4"
+            />
+          </Svg>
+        )}
         <Row style={styles.toolbar}>
           <Col size={33} />
           <Col style={styleApp.center} size={34}>
@@ -291,7 +346,6 @@ const styles = StyleSheet.create({
     bottom: heightAdjust / 2,
     left: 0,
     right: 0,
-    backgroundColor: 'black',
   },
 });
 const mapStateToProps = (state) => {
