@@ -36,7 +36,6 @@ class CardGroup extends React.Component {
     const groupMembersSnapshot = await firebase
       .database()
       .ref(`groups/${groupID}/members`)
-      .limitToFirst(3)
       .once('value');
     let groupMembers = groupMembersSnapshot.val();
 

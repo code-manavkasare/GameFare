@@ -94,7 +94,7 @@ class ButtonAdd extends Component {
     });
     return (
       <View>
-        <Animated.View
+        {/* <Animated.View
           style={[
             styles.viewButton,
             {
@@ -132,7 +132,7 @@ class ButtonAdd extends Component {
             style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.off}
           />
-        </Animated.View>
+        </Animated.View> */}
 
         <Animated.View
           style={[
