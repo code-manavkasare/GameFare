@@ -55,7 +55,7 @@ class HomeScreen extends React.Component {
   }
 
   async notificationHandler() {
-    const {userID, blockedUsersID} = this.props;
+    const {userID} = this.props;
     this.appBackgroundNotificationListenner();
     this.appOpenFistNotification();
     this.messageListener = firebase
@@ -67,8 +67,7 @@ class HomeScreen extends React.Component {
           .setBody(notification1._body)
           .setData(notification1._data);
         console.log('message received', notification);
-        const {senderID} = this.notification.data;
-        if (userID !== senderID && !includes(senderID, blockedUsersID))
+        if (userID !== notification.data.senderID)
           firebase.notifications().displayNotification(notification);
       });
   }
