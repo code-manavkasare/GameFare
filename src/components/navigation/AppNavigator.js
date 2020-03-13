@@ -290,7 +290,7 @@ const MainApp = createBottomTabNavigator(
   {
     Home: lockedPortrait(HomePage),
     Activity: lockedPortrait(Activity),
-    // Stream: lockedPortrait(StreamPage),
+    Stream: lockedPortrait(StreamPage),
     MessageList: lockedPortrait(MessageList),
     More: ProfileNavigator,
   },
