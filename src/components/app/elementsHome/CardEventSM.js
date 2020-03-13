@@ -23,6 +23,7 @@ class CardEvent extends React.Component {
       loader: false,
       loaderAttendee: true,
       members: {},
+      membersIDArray: [],
     };
   }
   async componentDidMount() {
@@ -34,7 +35,7 @@ class CardEvent extends React.Component {
     if (data.challenge) {
       firstAttendees = await firebase
         .database()
-        .ref('challenges/' + data.objectID + '/teams')
+        .ref(`challenges/${data.objectID}/teams`)
         .limitToFirst(3)
         .once('value');
       firstAttendees = firstAttendees.val();
@@ -45,8 +46,7 @@ class CardEvent extends React.Component {
     } else {
       firstAttendees = await firebase
         .database()
-        .ref('events/' + data.objectID + '/attendees')
-        .limitToFirst(3)
+        .ref(`events/${data.objectID}/attendees`)
         .once('value');
       firstAttendees = firstAttendees.val();
     }
@@ -144,7 +144,9 @@ class CardEvent extends React.Component {
             <Col
               size={this.props.size === 'SM' ? 40 : 20}
               style={styleApp.center2}>
-              {members.map((member, i) => this.cardAttendee(member, i))}
+              {members
+                .slice(0, 3)
+                .map((member, i) => this.cardAttendee(member, i))}
             </Col>
           )
         )}

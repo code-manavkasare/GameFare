@@ -64,8 +64,19 @@ class ProfilePage extends Component {
       />
     );
   };
+
+  blockButton = () => {
+    const {isBlocked, userProfile} = this.state;
+    const {userID} = this.props;
+    if (userID !== userProfile.id) {
+      return isBlocked
+        ? this.button('Unblock User', colors.green, false)
+        : this.button('Block User', colors.red, true);
+    }
+  };
+
   render() {
-    const {loader, isBlocked} = this.state;
+    const {loader} = this.state;
     const {firstname, lastname, picture} = this.state.userProfile.info;
 
     return (
@@ -99,9 +110,7 @@ class ProfilePage extends Component {
               </Text>
             </Row>
           </Grid>
-          {isBlocked
-            ? this.button('Unblock User', colors.green, false)
-            : this.button('Block User', colors.red, true)}
+          {this.blockButton()}
         </ScrollView>
       </View>
     );
@@ -127,7 +136,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return {
     infoUser: state.user.infoUser,
     userID: state.user.userID,
