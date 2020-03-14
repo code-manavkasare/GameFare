@@ -4,39 +4,68 @@ import {connect} from 'react-redux';
 import Svg, {Line} from 'react-native-svg';
 import KeepAwake from 'react-native-keep-awake';
 import {CameraKitCamera} from 'react-native-camera-kit';
+import Orientation from 'react-native-orientation-locker';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 
-import CalibrationHeader from './CalibrationHeader';
+import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import CameraFooter from './CameraFooter';
 
 const {width, height} = Dimensions.get('screen');
-const heightAdjust = height - ((16/9)*width);
+const heightAdjust = height - (16 / 9) * width;
 
 class DrawLines extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      orientation: 'LANDSCAPE-LEFT',
+    };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this._orientationListener = this._orientationListener.bind(this);
+  }
+  componentDidMount() {
+    Orientation.getDeviceOrientation(this._orientationListener);
+    Orientation.addDeviceOrientationListener(this._orientationListener);
+  }
+  componentWillUnmount() {
+    Orientation.removeDeviceOrientationListener(this._orientationListener);
+  }
+  _orientationListener(orientation) {
+    if (
+      (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') &&
+      orientation !== this.state.orientation
+    ) {
+      this.setState({orientation: orientation});
+    }
   }
   lockNetline() {
     const {navigation} = this.props;
     const stream = navigation.getParam('stream');
     navigation.navigate('LiveStream', {stream: stream});
   }
+  async switchCamera() {
+    await this.camera.changeCamera();
+  }
   render() {
     const {navigation} = this.props;
     const netline = navigation.getParam('netline');
-    const {height, width} = Dimensions.get('window');
     return (
       <View style={styles.container}>
         <KeepAwake />
-        <CalibrationHeader
+        <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() => navigation.pop()}
-          next={() => this.lockNetline()}
-          nextVis={true}
+          textHeader={''}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="times"
+          icon2="check"
+          typeIcon2="font"
+          clickButton1={() => navigation.pop()}
+          clickButton2={() => this.lockNetline()}
         />
         <CameraKitCamera
           ref={(cam) => {
@@ -49,48 +78,100 @@ class DrawLines extends React.Component {
             zoomMode: 'off',
           }}
         />
-        <Svg style={styles.fullScreen} height={height-heightAdjust} width={width}>
-          <Line
-            x1={(1 - netline.midline.origin.y) * width}
-            y1={netline.midline.origin.x * height}
-            x2={(1 - netline.midline.destination.y) * width}
-            y2={netline.midline.destination.x * height}
-            stroke="red"
-            strokeWidth="4"
-          />
-          <Line
-            x1={(1 - netline.corners.p1[1]) * width}
-            y1={netline.corners.p1[0] * height}
-            x2={(1 - netline.corners.p2[1]) * width}
-            y2={netline.corners.p2[0] * height}
-            stroke="green"
-            strokeWidth="4"
-          />
-          <Line
-            x1={(1 - netline.corners.p2[1]) * width}
-            y1={netline.corners.p2[0] * height}
-            x2={(1 - netline.corners.p3[1]) * width}
-            y2={netline.corners.p3[0] * height}
-            stroke="green"
-            strokeWidth="4"
-          />
-          <Line
-            x1={(1 - netline.corners.p3[1]) * width}
-            y1={netline.corners.p3[0] * height}
-            x2={(1 - netline.corners.p4[1]) * width}
-            y2={netline.corners.p4[0] * height}
-            stroke="green"
-            strokeWidth="4"
-          />
-          <Line
-            x1={(1 - netline.corners.p4[1]) * width}
-            y1={netline.corners.p4[0] * height}
-            x2={(1 - netline.corners.p1[1]) * width}
-            y2={netline.corners.p1[0] * height}
-            stroke="green"
-            strokeWidth="4"
-          />
-        </Svg>
+        {this.state.orientation === 'LANDSCAPE-LEFT' ? (
+          <Svg
+            style={styles.fullScreen}
+            height={height - heightAdjust}
+            width={width}>
+            <Line
+              x1={(1 - netline.midline.origin.y) * width}
+              y1={netline.midline.origin.x * height}
+              x2={(1 - netline.midline.destination.y) * width}
+              y2={netline.midline.destination.x * height}
+              stroke="red"
+              strokeWidth="4"
+            />
+            <Line
+              x1={(1 - netline.corners.p1[1]) * width}
+              y1={netline.corners.p1[0] * height}
+              x2={(1 - netline.corners.p2[1]) * width}
+              y2={netline.corners.p2[0] * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={(1 - netline.corners.p2[1]) * width}
+              y1={netline.corners.p2[0] * height}
+              x2={(1 - netline.corners.p3[1]) * width}
+              y2={netline.corners.p3[0] * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={(1 - netline.corners.p3[1]) * width}
+              y1={netline.corners.p3[0] * height}
+              x2={(1 - netline.corners.p4[1]) * width}
+              y2={netline.corners.p4[0] * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={(1 - netline.corners.p4[1]) * width}
+              y1={netline.corners.p4[0] * height}
+              x2={(1 - netline.corners.p1[1]) * width}
+              y2={netline.corners.p1[0] * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+          </Svg>
+        ) : (
+          <Svg
+            style={styles.fullScreen}
+            height={height - heightAdjust}
+            width={width}>
+            <Line
+              x1={netline.midline.origin.y * width}
+              y1={(1 - netline.midline.origin.x) * height}
+              x2={netline.midline.destination.y * width}
+              y2={(1 - netline.midline.destination.x) * height}
+              stroke="red"
+              strokeWidth="4"
+            />
+            <Line
+              x1={netline.corners.p1[1] * width}
+              y1={(1 - netline.corners.p1[0]) * height}
+              x2={netline.corners.p2[1] * width}
+              y2={(1 - netline.corners.p2[0]) * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={netline.corners.p2[1] * width}
+              y1={(1 - netline.corners.p2[0]) * height}
+              x2={netline.corners.p3[1] * width}
+              y2={(1 - netline.corners.p3[0]) * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={netline.corners.p3[1] * width}
+              y1={(1 - netline.corners.p3[0]) * height}
+              x2={netline.corners.p4[1] * width}
+              y2={(1 - netline.corners.p4[0]) * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+            <Line
+              x1={netline.corners.p4[1] * width}
+              y1={(1 - netline.corners.p4[0]) * height}
+              x2={netline.corners.p1[1] * width}
+              y2={(1 - netline.corners.p1[0]) * height}
+              stroke="green"
+              strokeWidth="4"
+            />
+          </Svg>
+        )}
+        <CameraFooter switchCamera={() => this.switchCamera()} />
       </View>
     );
   }
@@ -98,9 +179,6 @@ class DrawLines extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  cameraView: {
     flex: 1,
     backgroundColor: 'black',
   },
