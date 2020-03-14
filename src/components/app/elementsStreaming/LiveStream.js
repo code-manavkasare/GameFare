@@ -10,21 +10,19 @@ import {
 import {connect} from 'react-redux';
 
 import {NodeCameraView} from 'react-native-nodemediaclient';
-import {Grid, Row, Col} from 'react-native-easy-grid';
 import KeepAwake from 'react-native-keep-awake';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 
-import ButtonColor from '../../layout/Views/Button';
-import AllIcons from '../../layout/icons/AllIcons';
-
-import {startAnalytics} from '../../functions/streaming';
-import LiveStreamHeader from './LiveStreamHeader';
-import CalibrationHeader from './CalibrationHeader';
+import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import CameraFooter from './CameraFooter';
 
 import {destroyStream} from '../../functions/streaming';
+
+const {width, height} = Dimensions.get('screen');
+const heightAdjust = height - (16 / 9) * width;
 
 class LiveStream extends React.Component {
   constructor(props) {
@@ -45,9 +43,7 @@ class LiveStream extends React.Component {
     }
   }
   async startStream() {
-    const stream = this.props.navigation.getParam('stream', null);
     await this.setState({streaming: true, streamed: true});
-    //startAnalytics(stream);
     this.nodeCameraView.start();
   }
   stopStream() {
@@ -82,23 +78,27 @@ class LiveStream extends React.Component {
       return this.props.navigation.navigate('TabsApp');
     }
   }
+  async switchCamera() {
+    await this.nodeCameraView.switchCamera();
+  }
   render() {
     const {navigation} = this.props;
     const stream = navigation.getParam('stream', null);
-    const {height, width} = Dimensions.get('window');
-    const newHeight = width * (3 / 4);
-    const heightOffset = -((newHeight - height) / 2);
     return (
       <View style={styles.container}>
         <KeepAwake />
-        <CalibrationHeader
+        <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          title={'Calibration'}
-          loader={this.state.loader}
-          close={() => this.close()}
+          textHeader={''}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="times"
+          clickButton1={() => this.close()}
         />
         <NodeCameraView
-          style={[styles.nodeCameraView]}
+          style={styles.fullscreen}
           ref={(nodeCameraView) => {
             this.nodeCameraView = nodeCameraView;
           }}
@@ -114,17 +114,10 @@ class LiveStream extends React.Component {
           }}
           autopreview={true}
         />
-        <Row style={styles.toolbar}>
-          <ButtonColor
-            view={() => {
-              return <View />;
-            }}
-            click={() => this.mainButtonClick()}
-            color={this.state.streaming ? 'red' : 'white'}
-            style={styles.recordButton}
-            onPressColor={colors.off}
-          />
-        </Row>
+        <CameraFooter
+          takePhoto={() => this.mainButtonClick()}
+          switchCamera={() => this.switchCamera()}
+        />
       </View>
     );
   }
@@ -133,40 +126,14 @@ class LiveStream extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    backgroundColor: 'black',
   },
-  netlineContainer: {
-    flex: 1,
-  },
-  smallRow: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nodeCameraView: {
+  fullscreen: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
+    top: heightAdjust / 2,
+    bottom: heightAdjust / 2,
     left: 0,
     right: 0,
-  },
-  toolbar: {
-    flex: 1,
-    width: '100%',
-    height: '10%',
-    justifyContent: 'center',
-    position: 'absolute',
-    bottom: 0,
-    paddingTop: 5,
-  },
-  recordButton: {
-    ...styleApp.center2,
-    width: 48,
-    height: 48,
-    borderRadius: 23,
-    borderWidth: 1,
-    borderColor: 'black',
   },
 });
 const mapStateToProps = (state) => {

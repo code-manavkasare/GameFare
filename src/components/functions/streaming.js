@@ -67,26 +67,6 @@ async function createStreamFirebase(stream) {
   await subscribeToTopics([stream.id]);
 }
 
-async function startAnalytics(stream) {
-  const streamID = stream.id;
-  setTimeout(async () => {
-    console.log('analytics');
-    console.log(streamID);
-    const netlineUrl = 'https://liveball-api-7gv7jag7wq-uc.a.run.app/execute';
-    const requestUrl = netlineUrl + '?stream_id=' + streamID;
-    await axios
-      .get(requestUrl)
-      .then((response) => {
-        console.log('analytics response');
-        console.log(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        return false;
-      });
-  }, 45000);
-}
-
 async function saveStreamResultsMatches(stream, matches, done) {
   await firebase
     .database()
@@ -136,8 +116,20 @@ async function destroyStreamMux(streamID) {
     });
 }
 
-async function uploadNetlinePhoto(streamID, img) {
-  const rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
+async function uploadNetlinePhoto(streamID, img, orientation) {
+  let rotatedImage = img;
+  // IF USING BACK CAMERA
+  // if (orientation === 'LANDSCAPE-LEFT') {
+  //   rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
+  // } else if (orientation === 'LANDSCAPE-RIGHT') {
+  //   rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
+  // }
+  // IF USING FRONT CAMERA
+  if (orientation === 'LANDSCAPE-LEFT') {
+    rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
+  } else if (orientation === 'LANDSCAPE-RIGHT') {
+    rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
+  }
   const pictureUri = await uploadPictureFirebase(
     rotatedImage.uri,
     'streams/' + streamID + '/',
@@ -152,6 +144,5 @@ module.exports = {
   createStream,
   destroyStream,
   uploadNetlinePhoto,
-  startAnalytics,
   saveStreamResultsMatches,
 };

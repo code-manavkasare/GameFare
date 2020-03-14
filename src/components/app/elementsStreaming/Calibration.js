@@ -17,6 +17,7 @@ import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import KeepAwake from 'react-native-keep-awake';
 import Orientation from 'react-native-orientation-locker';
 
+import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import Loader from '../../layout/loaders/Loader';
 
 import {
@@ -25,8 +26,6 @@ import {
   uploadNetlinePhoto,
 } from '../../functions/streaming';
 
-import {pickLibrary} from '../../functions/pictures';
-
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
@@ -34,7 +33,7 @@ import sizes from '../../style/sizes';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
-import CalibrationHeader from './CalibrationHeader';
+import CameraFooter from './CameraFooter';
 
 const {width, height} = Dimensions.get('screen');
 const heightAdjust = height - (16 / 9) * width;
@@ -49,6 +48,7 @@ class Calibration extends React.Component {
       orientation: 'PORTRAIT',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this._orientationListener = this._orientationListener.bind(this);
   }
   async componentDidMount() {
     const permission = await this.permissions();
@@ -63,9 +63,8 @@ class Calibration extends React.Component {
         console.log('ERROR: Calibration: Could not create stream');
         return this.props.navigation.navigate('TabsApp');
       }
-      Orientation.addDeviceOrientationListener(
-        this._orientationListener.bind(this),
-      );
+      Orientation.getDeviceOrientation(this._orientationListener);
+      Orientation.addDeviceOrientationListener(this._orientationListener);
       return this.props.navigation.navigate('Alert', {
         close: true,
         title:
@@ -170,6 +169,7 @@ class Calibration extends React.Component {
           } else {
             that.props.navigation.navigate('DrawLines', {
               stream: that.state.stream,
+              orientation: that.state.orientation,
               netline: {
                 corners: netlineResults.corners,
                 midline: netlineResults.midline,
@@ -187,7 +187,11 @@ class Calibration extends React.Component {
   }
   async takeCalibrationPhoto() {
     const image = await this.camera.capture(false);
-    await uploadNetlinePhoto(this.state.stream.id, image);
+    await uploadNetlinePhoto(
+      this.state.stream.id,
+      image,
+      this.state.orientation,
+    );
   }
   close() {
     // failed calibration or gave up, delete stream from firebase
@@ -200,6 +204,7 @@ class Calibration extends React.Component {
     await this.camera.changeCamera();
   }
   render() {
+    // target coordinates
     const delta = 50;
     const x_offset =
       this.state.orientation === 'PORTRAIT'
@@ -212,11 +217,15 @@ class Calibration extends React.Component {
     return (
       <View style={styles.container}>
         <KeepAwake />
-        <CalibrationHeader
+        <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          title={'Calibration'}
-          loader={this.state.loader}
-          close={() => this.close()}
+          textHeader={''}
+          inputRange={[50, 80]}
+          initialBorderColorIcon={colors.grey}
+          initialBackgroundColor={'transparent'}
+          initialTitleOpacity={0}
+          icon1="times"
+          clickButton1={() => this.close()}
         />
         <CameraKitCamera
           ref={(cam) => {
@@ -230,7 +239,7 @@ class Calibration extends React.Component {
           }}
         />
         {this.state.waitingNetline ? (
-          <View style={[styles.fullScreen, styles.smallRow]}>
+          <View style={[styles.fullScreen, styleApp.center]}>
             <Loader color="white" size={60} />
           </View>
         ) : (
@@ -272,38 +281,10 @@ class Calibration extends React.Component {
             />
           </Svg>
         )}
-        <Row style={styles.toolbar}>
-          <Col size={33} />
-          <Col style={styleApp.center} size={34}>
-            <ButtonColor
-              view={() => {
-                return <View />;
-              }}
-              click={() => this.mainButtonClick()}
-              color={this.state.waitingNetline ? 'black' : 'white'}
-              style={styles.recordButton}
-              onPressColor={colors.off}
-            />
-          </Col>
-          <Col size={33} style={styleApp.center}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name={'random'}
-                    color={colors.greyDark}
-                    size={16}
-                    type="font"
-                  />
-                );
-              }}
-              click={() => this.switchCamera()}
-              color={'white'}
-              style={styles.recordButton}
-              onPressColor={colors.off}
-            />
-          </Col>
-        </Row>
+        <CameraFooter
+          takePhoto={() => this.mainButtonClick()}
+          switchCamera={() => this.switchCamera()}
+        />
       </View>
     );
   }
@@ -312,33 +293,7 @@ class Calibration extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  smallRow: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cameraView: {
-    flex: 1,
     backgroundColor: 'black',
-  },
-  toolbar: {
-    flex: 1,
-    width: '100%',
-    height: '10%',
-    position: 'absolute',
-    bottom: 0,
-    paddingTop: 5,
-  },
-  recordButton: {
-    ...styleApp.center2,
-    width: 48,
-    height: 48,
-    borderRadius: 23,
-    borderWidth: 1,
-    borderColor: 'white',
-    paddingBottom: 5,
   },
   fullScreen: {
     position: 'absolute',
