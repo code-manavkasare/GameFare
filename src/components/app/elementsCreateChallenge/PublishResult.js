@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
   Animated,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
@@ -32,6 +33,7 @@ class PublishResult extends Component {
     this.state = {
       loader: false,
       winnerID: false,
+      scrore: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -65,6 +67,27 @@ class PublishResult extends Component {
       />
     );
   }
+  score() {
+    const {score} = this.state;
+    return (
+      <TextInput
+        style={styleApp.input}
+        placeholder="Additional information, score... (optional)"
+        returnKeyType={'done'}
+        ref={(input) => {
+          this.instructionInput = input;
+        }}
+        underlineColorAndroid="rgba(0,0,0,0)"
+        autoCorrect={true}
+        multiline={true}
+        numberOfLines={6}
+        blurOnSubmit={true}
+        placeholderTextColor={colors.grey}
+        onChangeText={(text) => this.setState({score: text})}
+        value={score}
+      />
+    );
+  }
   publishResultContent(challenge) {
     const {teams} = challenge;
     return (
@@ -76,6 +99,9 @@ class PublishResult extends Component {
         {Object.values(teams).map((team, i) =>
           this.rowTeam(team, i, challenge),
         )}
+
+        <View style={styleApp.divider2} />
+        {this.score()}
       </View>
     );
   }
@@ -83,13 +109,14 @@ class PublishResult extends Component {
     const {goBack} = this.props.navigation;
     const {userID, infoUser} = this.props;
     const {objectID} = challenge;
-    const {winnerID} = this.state;
+    const {winnerID, score} = this.state;
     await this.setState({loader: true});
     await firebase
       .database()
       .ref('challenges/' + objectID + '/results')
       .update({
         winner: winnerID,
+        score: score,
         date: new Date().toString(),
         status: 'pending',
         postedBy: {id: userID, info: infoUser},

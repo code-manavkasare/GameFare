@@ -38,10 +38,12 @@ const initialState = {
       [idTeam1]: {
         id: idTeam1,
         name: 'Team 1',
+        createdAt: Number(new Date()),
       },
       [idTeam2]: {
         id: idTeam2,
         name: 'Team 2',
+        createdAt: Number(new Date()),
       },
     },
   },

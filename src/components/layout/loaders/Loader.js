@@ -57,6 +57,26 @@ export default class Loader extends Component {
           source={require('../../../img/spinners/spinnerGreen.png')}
         />
       );
+    } else if (color === 'grey') {
+      return (
+        <Animated.Image
+          style={[
+            {width: this.props.size, height: this.props.size},
+            {transform: [{rotate: spin}]},
+          ]}
+          source={require('../../../img/spinners/spinnerGrey.png')}
+        />
+      );
+    } else if (color === 'blue') {
+      return (
+        <Animated.Image
+          style={[
+            {width: this.props.size, height: this.props.size},
+            {transform: [{rotate: spin}]},
+          ]}
+          source={require('../../../img/spinners/spinnerBlue.png')}
+        />
+      );
     }
   }
   render() {

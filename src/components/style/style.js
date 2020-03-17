@@ -455,6 +455,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: colors.off,
   },
+  buttonCancel: {
+    height: 55,
+    borderTopWidth: 0.4,
+    borderBottomWidth: 0.4,
+    marginTop: 40,
+    borderColor: colors.grey,
+  },
 });
 
 export default styles;
