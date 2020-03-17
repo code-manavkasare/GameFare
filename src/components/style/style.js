@@ -449,6 +449,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 18,
   },
+  imgUser: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.off,
+  },
 });
 
 export default styles;

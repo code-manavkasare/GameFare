@@ -39,12 +39,10 @@ class PickInfos extends Component {
   }
   async componentDidMount() {
     if (this.props.info.sport === '') {
-      console.log('le setsport ', this.props.sports);
       this.setSport(this.props.sports[0]);
     }
   }
   async setSport(data) {
-    console.log('setSport la', data);
     await this.props.createChallengeAction('setInfo', {
       sport: data.value,
       format: data.formats[0].value,
@@ -177,7 +175,6 @@ class PickInfos extends Component {
   }
   render() {
     const {info, price} = this.props;
-    console.log('render pickinfo', info);
     if (info.sport === '') return null;
     var sport = this.props.sports.filter(
       (sport) => sport.value === info.sport,

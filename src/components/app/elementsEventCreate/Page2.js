@@ -297,7 +297,8 @@ class Page2 extends Component {
       step2.location.address === '' ||
       step2.startDate === '' ||
       step2.name === '' ||
-      step2.image === ''
+      step2.image === '' ||
+      step2.image === 'loading'
     )
       return false;
     return true;

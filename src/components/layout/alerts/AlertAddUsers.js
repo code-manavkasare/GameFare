@@ -107,7 +107,7 @@ export default class AlertAddUsers extends Component {
 
         <View style={{height: 5}} />
         {Object.values(users).map((user, i) => (
-          <CardUserSelect key={i} user={user} />
+          <CardUserSelect key={i} user={user} hideIcon={true} />
         ))}
 
         <View style={styles.viewButton}>

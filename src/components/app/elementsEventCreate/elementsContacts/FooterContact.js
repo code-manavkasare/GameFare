@@ -133,56 +133,34 @@ class FooterContact extends Component {
     );
   }
   contact(contact, i) {
-    var name = contact.givenName;
-    var name = name.slice(0, 5);
-    name = name + '..';
-    var family = contact.familyName[0];
-    if (family === '' || !family) family = '';
-    else family = family.toUpperCase();
-    var initial = contact.givenName[0] + family;
-
     return (
       <View style={[styleApp.center, {height: 70, width: 50, marginTop: 2}]}>
-        <View
-          style={[
-            styleApp.center,
-            {
-              height: 30,
-              width: 30,
-              backgroundColor: contact.color,
-              borderRadius: 15,
-              borderWidth: 1,
-              borderColor: colors.off,
-            },
-          ]}>
-          <Text
-            style={[
-              styleApp.subtitle,
-              {color: 'white', fontSize: 11, fontFamily: 'OpenSans-SemiBold'},
-            ]}>
-            {initial}
+        <View style={[styleApp.center, styles.roundViewContact]}>
+          <Text style={[styleApp.text, {fontSize: 11}]}>
+            {contact.info.firstname[0]}
+            {contact.info.lastname[0] ? contact.info.lastname[0] : ''}
           </Text>
           {this.buttonClose(contact)}
         </View>
         <Text style={[styleApp.text, {fontSize: 12, marginTop: 4}]}>
-          {name}
+          {contact.info.firstname.slice(0, 5)}
         </Text>
       </View>
     );
   }
   send() {
-    if (this.state.val != 0) {
+    if (this.state.val !== 0) {
       this.props.sendSMS();
     }
   }
   colorButtonSMS() {
-    if (this.state.nextVal != 0) {
+    if (this.state.nextVal !== 0) {
       return colors.green;
     }
     return colors.white;
   }
   colorIconSMS() {
-    if (this.state.nextVal != 0) {
+    if (this.state.nextVal !== 0) {
       return 'white';
     }
     return colors.off;
@@ -190,28 +168,18 @@ class FooterContact extends Component {
   render() {
     return (
       <View
-        style={{
-          height: sizes.heightFooterBooking,
-          position: 'absolute',
-          backgroundColor: 'white',
-          bottom: 35,
-          zIndex: 200,
-          width: width,
-          borderTopWidth: 1,
-          borderColor: colors.off,
-          paddingTop: 4,
-          paddingLeft: 10,
-          paddingRight: 10,
-        }}>
+        style={[
+          styles.footer,
+          {
+            height: sizes.heightFooterBooking,
+          },
+        ]}>
         <Row style={{height: 70}}>
           <Col
             size={70}
             style={[
               styleApp.center2,
               {
-                borderLeftWidth: 0,
-                borderColor: colors.off,
-                borderRightWidth: 0,
                 paddingTop: 5,
               },
             ]}>
@@ -233,6 +201,26 @@ class FooterContact extends Component {
 }
 
 const styles = StyleSheet.create({
+  footer: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    bottom: 35,
+    zIndex: 200,
+    width: width,
+    borderTopWidth: 1,
+    borderColor: colors.off,
+    paddingTop: 4,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  roundViewContact: {
+    height: 30,
+    width: 30,
+    backgroundColor: colors.off,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colors.grey,
+  },
   viewNumber: {
     height: 25,
     width: 25,

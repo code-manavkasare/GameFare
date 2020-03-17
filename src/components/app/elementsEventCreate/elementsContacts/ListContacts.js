@@ -18,6 +18,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import Permissions from 'react-native-permissions';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 import Contacts from 'react-native-contacts';
+import CardUserSelect from '../../../layout/cards/CardUserSelect';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -115,25 +116,39 @@ export default class ContactsComponent extends Component {
           initialLoader: false,
         });
       }
-      let Contacts = contacts.filter(
-        (contact) => contact.phoneNumbers.length !== 0,
-      );
-      Contacts = Contacts.sort(function(a, b) {
-        var textA = a.givenName.toUpperCase();
-        var textB = b.givenName.toUpperCase();
-        return textA < textB ? -1 : textA > textB ? 1 : 0;
-      });
+      let Contacts = contacts
+        .filter((contact) => contact.phoneNumbers.length !== 0)
+        .sort(function(a, b) {
+          var textA = a.givenName.toUpperCase();
+          var textB = b.givenName.toUpperCase();
+          return textA < textB ? -1 : textA > textB ? 1 : 0;
+        });
+      // Contacts = Contacts.sort(function(a, b) {
+      //   var textA = a.givenName.toUpperCase();
+      //   var textB = b.givenName.toUpperCase();
+      //   return textA < textB ? -1 : textA > textB ? 1 : 0;
+      // });
       Contacts = Contacts.map((contact, i) => {
-        contact.color =
-          '#' +
-          (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
-        contact.index = i;
+        let header = '';
         if (i == 0) {
-          contact.header = contact.givenName[0];
+          header = contact.givenName[0];
         } else if (Contacts[i - 1].givenName[0] !== Contacts[i].givenName[0]) {
-          contact.header = contact.givenName[0];
+          header = contact.givenName[0];
         }
-        return contact;
+        console.log('contact', contact);
+        let contactToAdd = {
+          id: contact.recordID,
+          index: i,
+          header: header,
+          objectID: contact.recordID,
+          displayPhone: true,
+          info: {
+            firstname: contact.givenName,
+            lastname: contact.familyName,
+            phoneNumber: contact.phoneNumbers[0].number,
+          },
+        };
+        return contactToAdd;
       });
       return that.setState({
         contacts: Contacts,
@@ -142,6 +157,20 @@ export default class ContactsComponent extends Component {
         initialLoader: false,
       });
     });
+  }
+  cardUser(user, i, usersSelected) {
+    console.log('card user list contacts', usersSelected);
+    return (
+      <CardUserSelect
+        user={user}
+        key={i}
+        captain={false}
+        usersSelected={usersSelected}
+        selectUser={(selected, user, usersSelected) =>
+          this.props.selectUser(selected, user, usersSelected)
+        }
+      />
+    );
   }
   rowContact(contact, key) {
     var initial = contact.givenName[0] + contact.familyName[0];
@@ -153,33 +182,23 @@ export default class ContactsComponent extends Component {
         view={() => {
           return (
             <Row>
-              <Col size={15} style={styles.center}>
+              <Col size={15} style={styles.center2}>
                 <View
                   style={[
                     styleApp.center,
                     {
-                      height: 30,
-                      width: 30,
-                      backgroundColor: contact.color,
-                      borderRadius: 15,
+                      height: 40,
+                      width: 40,
+                      backgroundColor: colors.off,
+                      borderRadius: 20,
                       borderWidth: 0.5,
                       borderColor: colors.off,
                     },
                   ]}>
-                  <Text
-                    style={[
-                      styleApp.subtitle,
-                      {
-                        color: 'white',
-                        fontSize: 11,
-                        fontFamily: 'OpenSans-SemiBold',
-                      },
-                    ]}>
-                    {initial}
-                  </Text>
+                  <Text style={[styleApp.text, {fontSize: 11}]}>{initial}</Text>
                 </View>
               </Col>
-              <Col size={70} style={[styles.center2, {paddingLeft: 15}]}>
+              <Col size={70} style={[styles.center2]}>
                 <Text style={[styles.input, {fontSize: 14}]}>
                   {contact.givenName} {contact.familyName}
                 </Text>
@@ -194,7 +213,7 @@ export default class ContactsComponent extends Component {
               </Col>
               <Col size={15} style={styleApp.center}>
                 {Object.values(this.props.contactsSelected).filter(
-                  (contact1) => contact1.recordID == contact.recordID,
+                  (contact1) => contact1.recordID === contact.recordID,
                 ).length != 0 ? (
                   <AllIcons
                     name="check"
@@ -212,7 +231,7 @@ export default class ContactsComponent extends Component {
             contact,
             Object.values(this.props.contactsSelected).filter(
               (contact1) => contact1.recordID === contact.recordID,
-            ).length != 0,
+            ).length !== 0,
           )
         }
         color={colors.white}
@@ -221,6 +240,8 @@ export default class ContactsComponent extends Component {
           borderBottomWidth: 0.5,
           borderColor: colors.off,
           height: 55,
+          paddingLeft: 20,
+          paddingRight: 20,
         }}
         onPressColor={colors.off}
       />
@@ -249,10 +270,11 @@ export default class ContactsComponent extends Component {
     );
   }
   contact(contact, i) {
+    const {usersSelected} = this.props;
     return (
       <View key={i}>
         {contact.header ? this.headerLetter(contact.header) : null}
-        {this.rowContact(contact, i)}
+        {this.cardUser(contact, i, usersSelected)}
       </View>
     );
   }

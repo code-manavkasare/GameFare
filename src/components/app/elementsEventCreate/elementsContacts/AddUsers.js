@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
 import {keys} from 'ramda';
 
@@ -115,14 +114,6 @@ class AddUsers extends Component {
     }, 700);
   };
 
-  showToast(text) {
-    this.refs.toast.show(
-      <View>
-        <Text style={[styleApp.textBold, {color: colors.white}]}>{text}</Text>
-      </View>,
-    );
-  }
-
   render() {
     const {
       searchInputGameFareUsers,
@@ -133,15 +124,7 @@ class AddUsers extends Component {
 
     return (
       <View style={styles.mainView}>
-        <Toast
-          ref="toast"
-          style={styles.toast}
-          position="center"
-          fadeInDuration={750}
-          fadeOutDuration={1000}
-          opacity={0.8}
-          textStyle={{color: 'white'}}
-        />
+
         <SearchBarContact
           placeHolderMessage={'Search for GameFare users...'}
           updateSearch={this.searchGameFareUsers}
@@ -179,9 +162,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomWidth: 0.3,
     borderColor: colors.borderColor,
-  },
-  toast: {
-    backgroundColor: colors.green,
   },
 });
 

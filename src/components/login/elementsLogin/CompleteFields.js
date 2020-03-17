@@ -81,7 +81,6 @@ export default class CompleteFields extends Component {
     } else if (val === 'pick') {
       var uri = await pickLibrary();
     }
-    console.log('uri', uri);
     if (!uri) {
       await this.setState({
         loader: false,

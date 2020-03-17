@@ -13,7 +13,13 @@ export default class CardUserSelect extends Component {
     super(props);
     this.state = {};
   }
-  cardUser(user, selectedUsers) {
+  cardUser(user, usersSelected) {
+    let {marginOnScrollView, hideIcon, captain} = this.props;
+    if (!captain) captain = {};
+    let userSelected = false;
+    let userID = user.id;
+    if (!userID) userID = user.objectID;
+    if (usersSelected) userSelected = usersSelected[userID];
     return (
       <ButtonColor
         view={() => {
@@ -29,54 +35,50 @@ export default class CardUserSelect extends Component {
                 ) : (
                   <View style={[styleApp.center, styles.imgUser]}>
                     <Text style={[styleApp.text, {fontSize: 12}]}>
-                      {user.info.firstname[0] + user.info.lastname[0]}
+                      {user.info.firstname[0]}
+                      {user.info.lastname !== '' ? user.info.lastname[0] : ''}
                     </Text>
                   </View>
                 )}
               </Col>
+
               <Col size={75} style={styleApp.center2}>
                 <Text style={styleApp.text}>
                   {user.info.firstname} {user.info.lastname}
                 </Text>
               </Col>
-              <Col size={10} style={styleApp.center}>
-                {!selectedUsers ? null : selectedUsers[user.objectID] ? (
-                  <AllIcons
-                    name="check-circle"
-                    type="font"
-                    size={23}
-                    color={colors.primary}
-                  />
+              <Col size={10} style={styleApp.center3}>
+                {captain.id === user.objectID ? (
+                  <View style={[styleApp.roundView, {width: 100}]}>
+                    <Text style={styleApp.text}>Captain</Text>
+                  </View>
                 ) : (
-                  <AllIcons
-                    name="circle"
-                    type="font"
-                    size={23}
-                    color={colors.greyDark}
-                  />
+                  !hideIcon && (
+                    <AllIcons
+                      name={userSelected ? 'check-circle' : 'circle'}
+                      type="font"
+                      size={23}
+                      color={colors.primary}
+                    />
+                  )
                 )}
               </Col>
             </Row>
           );
         }}
-        click={() =>
-          selectedUsers
-            ? this.props.selectUser(
-                selectedUsers[user.objectID],
-                user,
-                selectedUsers,
-              )
-            : null
-        }
+        click={() => this.props.selectUser(userSelected, user, usersSelected)}
         color="white"
-        style={styles.cardUser}
-        onPressColor={colors.off}
+        style={[
+          styles.cardUser,
+          marginOnScrollView && {paddingLeft: 0, paddingRight: 0},
+        ]}
+        onPressColor={colors.off2}
       />
     );
   }
   render() {
-    const {user, selectedUsers} = this.props;
-    return this.cardUser(user, selectedUsers);
+    const {user, usersSelected} = this.props;
+    return this.cardUser(user, usersSelected);
   }
 }
 

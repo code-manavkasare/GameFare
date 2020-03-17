@@ -250,7 +250,8 @@ class PickAddress extends Component {
       !this.props.createChallengeData.location.address ||
       this.props.createChallengeData.date.start === '' ||
       this.props.createChallengeData.info.name === '' ||
-      this.props.createChallengeData.info.image === ''
+      this.props.createChallengeData.info.image === '' ||
+      this.props.createChallengeData.info.image === 'loading'
     )
       return false;
     return true;
@@ -258,7 +259,6 @@ class PickAddress extends Component {
   render() {
     const {navigate} = this.props.navigation;
     const {createChallengeData} = this.props;
-    console.log('render pick address', createChallengeData);
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -292,7 +292,10 @@ class PickAddress extends Component {
               enabled={this.conditionOn()}
               loader={this.state.loader}
               click={() =>
-                navigate('SummaryChallenge', {challenge: createChallengeData,subscribe:false})
+                navigate('SummaryChallenge', {
+                  challenge: createChallengeData,
+                  subscribe: false,
+                })
               }
             />
           ) : (

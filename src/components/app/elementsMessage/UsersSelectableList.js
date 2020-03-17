@@ -55,7 +55,7 @@ export default class UsersSelectableList extends React.Component {
                 user={user}
                 key={i}
                 selectUser={this.selectUser.bind(this)}
-                selectedUsers={selectedUsers}
+                usersSelected={selectedUsers}
               />
             ))
           )}

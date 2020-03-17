@@ -1,16 +1,16 @@
 import {indexUsers} from '../database/algolia';
 
-async function autocompleteSearchUsers(search, userID) {
+const autocompleteSearchUsers = async (search, userID, searchCurrentUser) => {
   // await indexUsers.clearCache();
-  let filters = 'NOT objectID:' + userID
-  if (!userID || userID == '') filters = ''
-  const {hits} = await indexUsers.search(search,{
+  let filters = 'NOT objectID:' + userID;
+  if (!userID || userID === '' || searchCurrentUser) filters = '';
+  const {hits} = await indexUsers.search(search, {
     hitsPerPage: 500,
     filters: filters,
   });
   const users = hits.filter((user) => user.info.firstname);
   return users;
-}
+};
 
 function userObject(infoUser, userID) {
   return {

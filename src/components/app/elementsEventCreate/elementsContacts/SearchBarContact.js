@@ -78,7 +78,7 @@ export default class SearchBarContact extends Component {
                   style={styles.center}
                   onPress={() =>
                     this.props.navigation.navigate('NewContact', {
-                      onGoBack: (data) => addNewContact(data),
+                      onGoBack: (data) => this.props.addNewContact(data),
                     })
                   }>
                   <FontIcon name={'user-plus'} color={colors.green} size={14} />

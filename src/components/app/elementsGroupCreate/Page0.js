@@ -26,6 +26,7 @@ import ExpandableCard from '../../layout/cards/ExpandableCard';
 import Switch from '../../layout/switch/Switch';
 import TextField from '../../layout/textField/TextField';
 import AllIcons from '../../layout/icons/AllIcons';
+import AsyncImage from '../../layout/image/AsyncImage';
 import Communications from 'react-native-communications';
 
 import sizes from '../../style/sizes';
@@ -237,10 +238,10 @@ class Page0 extends Component {
   }
   conditionOn() {
     if (
-      this.props.createGroupData.info.name == '' ||
-      this.props.createGroupData.info.description == '' ||
-      this.props.createGroupData.img == '' ||
-      this.props.createGroupData.location.address == ''
+      this.props.createGroupData.info.name === '' ||
+      this.props.createGroupData.info.description === '' ||
+      this.props.createGroupData.img === '' ||
+      this.props.createGroupData.location.address === ''
     )
       return false;
     return true;

@@ -9,7 +9,7 @@ import styleApp from '../../style/style';
 
 import CardGroup from './CardGroup';
 import {indexGroups, getMyGroups} from '../../database/algolia';
-import PlaceHolder from '../../placeHolders/CardEvent';
+import PlaceHolder from '../../placeHolders/CardGroupM';
 
 import ScrollViewX from '../../layout/scrollViews/ScrollViewX';
 

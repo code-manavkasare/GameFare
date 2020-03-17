@@ -16,12 +16,14 @@ import union from 'lodash/union';
 
 import {createChallenge} from '../../functions/createChallenge';
 import {payEntryFee} from '../../functions/createEvent';
+import {sendSMSFunction} from '../../functions/message';
 const {height, width} = Dimensions.get('screen');
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import TextField from '../../layout/textField/TextField';
 
 import Button from '../../layout/buttons/Button';
 import DateEvent from '../elementsEventCreate/DateEvent';
+import {createBranchUrl} from '../../database/branch';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
@@ -41,12 +43,17 @@ class SummaryChallenge extends Component {
     super(props);
     this.state = {
       loader: false,
+      totalWallet: this.props.totalWallet,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {}
   dateTime(date) {
     return <DateEvent start={date.start} end={date.end} />;
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.totalWallet !== this.props.totalWallet)
+      return this.setState({totalWallet: nextProps.totalWallet});
   }
   sport(sport) {
     return (
@@ -91,29 +98,47 @@ class SummaryChallenge extends Component {
   title(text) {
     return <Text style={[styleApp.input]}>{text}</Text>;
   }
-  listMembers(captains) {
-    if (Object.values(captains).length == 0) return null;
+  listMembers(teamsData) {
+    if (!teamsData.typeChallengeTeam)
+      return this.rowUser(teamsData.oponent.captain, 0);
+    const numberMembers = Object.values(teamsData.teams)
+      .filter((team) => team.members)
+      .map((team) => Object.values(team.members).length)
+      .reduce((a, b) => a + b, 0);
+
     return (
-      <View style={{marginLeft: -20, width: width, marginBottom: 0}}>
-        {Object.values(captains).map((user, i) => this.rowUser(user, i))}
-      </View>
+      <Row
+        style={{
+          paddingTop: 10,
+          paddingBottom: 10,
+          marginTop: 5,
+        }}>
+        <Col style={styleApp.center} size={10}>
+          <AllIcons name="trophy" color={colors.grey} size={20} type={'font'} />
+        </Col>
+        <Col style={[styleApp.center2, {paddingLeft: 23}]} size={85}>
+          <Text style={styleApp.text}>
+            {Object.values(teamsData.teams).length} teams • {numberMembers}{' '}
+            players
+          </Text>
+        </Col>
+      </Row>
     );
   }
   rowUser(user, i) {
     const {infoUser, userConnected, userID} = this.props;
     return (
-      <CardUser
-        user={user}
-        infoUser={infoUser}
-        userConnected={userConnected}
-        // objectID={data.objectID}
-        key={i}
-        userID={userID}
-        // removable={false}
-        // removeFunc={() => this.askRemovePlayer(user, data)}
-        type="event"
-        admin={false}
-      />
+      <View style={{marginLeft: -20}}>
+        <CardUser
+          user={user}
+          infoUser={infoUser}
+          userConnected={userConnected}
+          key={i}
+          userID={userID}
+          type="event"
+          admin={false}
+        />
+      </View>
     );
   }
   rowText(text, colorText, fontFamily, val) {
@@ -151,7 +176,6 @@ class SummaryChallenge extends Component {
     const format = Object.values(sport.formats).filter(
       (format) => format.value === info.format,
     )[0];
-    console.log('dataCheckout', dataCheckout);
     const {
       transfertWinner,
       totalAmount,
@@ -159,7 +183,7 @@ class SummaryChallenge extends Component {
       totalWallet,
     } = dataCheckout;
     return (
-      <View style={[styleApp.marginView, {paddingTop: 15}]}>
+      <View style={[styleApp.marginView, {paddingTop: 0}]}>
         <Text style={[styleApp.title, {fontSize: 20}]}>{info.name}</Text>
         <View style={[styleApp.divider2, {marginBottom: 10}]} />
 
@@ -204,7 +228,7 @@ class SummaryChallenge extends Component {
           <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} />
         )}
 
-        {!subscribe && this.listMembers(challenge.captains)}
+        {!subscribe && this.listMembers(challenge.teamsData)}
         <View style={[styleApp.divider2, {marginBottom: 10, marginTop: 5}]} />
 
         {totalAmount === 0 ? null : this.props.userConnected ? (
@@ -241,9 +265,9 @@ class SummaryChallenge extends Component {
             'Pay now',
             colors.title,
             'OpenSans-SemiBold',
-            '$' + Number(creditCardCharge),
+            '$' + Number(Number(creditCardCharge).toFixed(2)),
           )}
-          <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} />
+          {/* <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 10}]} /> */}
         </View>
 
         <View style={{height: 10}} />
@@ -261,6 +285,7 @@ class SummaryChallenge extends Component {
   }
   async submit(challenge, dataCheckout) {
     this.setState({loader: true});
+
     const {dismiss} = this.props.navigation;
     const {
       userID,
@@ -281,7 +306,6 @@ class SummaryChallenge extends Component {
       },
       infoUser,
     );
-    console.log('payEntryChallenge', payEntryChallenge);
 
     if (!payEntryChallenge.response) {
       await this.setState({loader: false});
@@ -292,6 +316,7 @@ class SummaryChallenge extends Component {
         textButton: 'Got it!',
       });
     }
+
     const newChallenge = await createChallenge(challenge, userID, infoUser);
     if (!newChallenge) {
       await this.setState({loader: false});
@@ -307,27 +332,50 @@ class SummaryChallenge extends Component {
     });
     await this.props.eventsAction('addFutureEvent', newChallenge.objectID);
 
-    await this.props.historicSearchAction('setSport', {
-      value: newChallenge.info.sport,
-      league: 'all',
-    });
-    await dismiss();
+    ///// create branch link
+    const {url, description} = await createBranchUrl(
+      newChallenge,
+      'Challenge',
+      newChallenge.images[0],
+    );
 
-    await this.props.createChallengeAction('reset');
-    await this.setState({loader: false});
-    return true;
+    //////// get phone numbers from contact players
+    const teams = newChallenge.teams;
+    const totalMembersArray = Object.values(teams)
+      .filter(
+        (team) =>
+          Object.values(team.members).filter((member) => member.index)
+            .length !== 0,
+      )
+      .map((team) => Object.values(team.members));
+    const allPhoneNumbers = [].concat
+      .apply([], totalMembersArray)
+      .map((member) => member.info.phoneNumber);
+
+    /////// send sms
+    if (allPhoneNumbers.length !== 0)
+      await sendSMSFunction(allPhoneNumbers, description + ' ' + url);
+
+    var that = this;
+    setTimeout(async function() {
+      await that.props.historicSearchAction('setSport', {
+        value: newChallenge.info.sport,
+        league: 'all',
+      });
+      await dismiss();
+
+      await that.props.createChallengeAction('reset');
+      await that.setState({loader: false});
+      return true;
+    }, 400);
   }
   async submitAttendance(challenge, dataCheckout) {
     this.setState({loader: true});
     const {goBack} = this.props.navigation;
 
-    const {
-      userID,
-      infoUser,
-      tokenCusStripe,
-      defaultCard,
-      totalWallet,
-    } = this.props;
+    const {userID, infoUser, tokenCusStripe, defaultCard} = this.props;
+    const selectedUser = this.props.navigation.getParam('selectedUser');
+    const {totalWallet} = this.state;
 
     const payEntryChallenge = await payEntryFee(
       new Date().toString(),
@@ -340,7 +388,6 @@ class SummaryChallenge extends Component {
       },
       infoUser,
     );
-    console.log('payEntryChallenge', payEntryChallenge);
     if (!payEntryChallenge.response) {
       await this.setState({loader: false});
       return this.props.navigation.navigate('Alert', {
@@ -350,13 +397,62 @@ class SummaryChallenge extends Component {
         textButton: 'Got it!',
       });
     }
-    const teamUser = Object.values(challenge.teams).filter(
-      (team) => team.captain.id === userID,
-    )[0];
-    await firebase
-      .database()
-      .ref('challenges/' + challenge.objectID + '/teams/' + teamUser.id)
-      .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
+
+    if (selectedUser) {
+      await firebase
+        .database()
+        .ref(
+          'challenges/' + challenge.objectID + '/teams/' + selectedUser.team.id,
+        )
+        .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
+      await firebase
+        .database()
+        .ref(
+          'challenges/' +
+            challenge.objectID +
+            '/teams/' +
+            selectedUser.team.id +
+            '/members/' +
+            selectedUser.id,
+        )
+        .remove();
+      await firebase
+        .database()
+        .ref(
+          'challenges/' +
+            challenge.objectID +
+            '/teams/' +
+            selectedUser.team.id +
+            '/members/' +
+            userID,
+        )
+        .update({
+          id: userID,
+          info: infoUser,
+          status: 'confirmed',
+        });
+    } else {
+      const teamUser = Object.values(challenge.teams).filter(
+        (team) => team.captain.id === userID,
+      )[0];
+      await firebase
+        .database()
+        .ref('challenges/' + challenge.objectID + '/teams/' + teamUser.id)
+        .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
+
+      await firebase
+        .database()
+        .ref(
+          'challenges/' +
+            challenge.objectID +
+            '/teams/' +
+            teamUser.id +
+            '/members/' +
+            userID,
+        )
+        .update({status: 'confirmed'});
+    }
+
     await this.setState({loader: false});
     return goBack();
   }
@@ -405,7 +501,8 @@ class SummaryChallenge extends Component {
     const {goBack, dismiss, navigate} = this.props.navigation;
     const challenge = this.props.navigation.getParam('challenge');
     const subscribe = this.props.navigation.getParam('subscribe');
-    let {totalWallet, defaultCard} = this.props;
+    let {defaultCard} = this.props;
+    let {totalWallet} = this.state;
     totalWallet = Number(totalWallet);
 
     const {amount, odds} = challenge.price;
@@ -426,7 +523,6 @@ class SummaryChallenge extends Component {
       creditCardCharge,
       totalWallet,
     };
-    console.log('creditCardCharge', creditCardCharge);
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton

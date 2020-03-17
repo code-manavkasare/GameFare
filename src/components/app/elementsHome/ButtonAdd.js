@@ -41,7 +41,7 @@ class ButtonAdd extends Component {
   close() {
     this.open(!this.state.open);
   }
-  async open(val, to) {
+  async open(val, to, data) {
     if (val) {
       await this.props.translateXVoile.setValue(0);
       await this.opacityButton3.setValue(1);
@@ -73,7 +73,7 @@ class ButtonAdd extends Component {
       this.opacityButton3.setValue(0);
       this.setState({open: false});
       if (to !== undefined) {
-        NavigationService.navigate(to);
+        NavigationService.navigate(to, data);
       }
     });
   }
@@ -104,7 +104,7 @@ class ButtonAdd extends Component {
           ]}>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => this.open(!this.state.open, 'CreateEvent0')}
+            onPress={() => this.open(!this.state.open, 'CreateEvent0', {})}
             style={{position: 'absolute', left: -134, width: 140}}>
             <Text
               style={[
@@ -127,7 +127,13 @@ class ButtonAdd extends Component {
                 />
               );
             }}
-            click={() => this.open(!this.state.open, 'CreateChallenge')}
+            click={() =>
+              this.open(!this.state.open, 'CreateChallenge', {
+                title: 'New challenge',
+                teamAdmin: 'all',
+                edit: false,
+              })
+            }
             color={'white'}
             style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.off}
@@ -144,7 +150,7 @@ class ButtonAdd extends Component {
           ]}>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => this.open(!this.state.open, 'CreateEvent0')}
+            onPress={() => this.open(!this.state.open, 'CreateEvent0', {})}
             style={{position: 'absolute', left: -100, width: 100}}>
             <Text
               style={[
@@ -167,7 +173,7 @@ class ButtonAdd extends Component {
                 />
               );
             }}
-            click={() => this.open(!this.state.open, 'CreateEvent0')}
+            click={() => this.open(!this.state.open, 'CreateEvent0', {})}
             color={'white'}
             style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.off}
@@ -184,7 +190,7 @@ class ButtonAdd extends Component {
           ]}>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => this.open(!this.state.open, this.props.pageTo)}
+            onPress={() => this.open(!this.state.open, this.props.pageTo, {})}
             style={{position: 'absolute', left: -100, width: 100}}>
             <Text
               style={[
@@ -207,7 +213,7 @@ class ButtonAdd extends Component {
                 />
               );
             }}
-            click={() => this.open(!this.state.open, this.props.pageTo)}
+            click={() => this.open(!this.state.open, this.props.pageTo, {})}
             color={'white'}
             style={[styleApp.center, styleApp.shade2, styles.buttonRound]}
             onPressColor={colors.off}

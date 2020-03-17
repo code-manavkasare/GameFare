@@ -39,7 +39,6 @@ class CardEvent extends React.Component {
         .limitToFirst(3)
         .once('value');
       firstAttendees = firstAttendees.val();
-
       firstAttendees = Object.values(firstAttendees).map(
         (member) => member.captain,
       );
@@ -65,7 +64,8 @@ class CardEvent extends React.Component {
     return attendees.length;
   }
   cardAttendee(member, i) {
-    if (!member.info) return false;
+    if (!member) return null;
+    if (!member.info) return null;
     if (!member.info.picture)
       return (
         <View

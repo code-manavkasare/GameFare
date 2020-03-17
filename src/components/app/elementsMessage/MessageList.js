@@ -77,7 +77,6 @@ class MessageTab extends React.Component {
       this.props.blockedUsers,
     );
     await this.props.messageAction('setConversations', discussions);
-
     this.setState({loader: false});
   };
 

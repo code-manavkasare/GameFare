@@ -17,7 +17,7 @@ import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import BlockedUsersList from '../app/elementsUser/elementsProfile/BlockedUsersList';
 import Settings from '../app/elementsUser/elementsProfile/Settings';
 import EventPage from '../app/EventPage';
-import ChallengePage from '../app/ChallengePage';
+import ChallengePage from '../app/challengePage/index';
 import MapPage from '../app/elementsHome/MapPage';
 import MapFiltersModals from '../app/elementsHome/MapFiltersModal';
 
@@ -43,8 +43,10 @@ import CreateGroup0 from '../app/elementsGroupCreate/Page0';
 
 import PickMembers from '../app/elementsCreateChallenge/PickMembers';
 import PickInfos from '../app/elementsCreateChallenge/PickInfos';
+import PickTeams from '../app/elementsCreateChallenge/PickTeams';
 import PickAddress from '../app/elementsCreateChallenge/PickAddress';
 import SummaryChallenge from '../app/elementsCreateChallenge/SummaryChallenge';
+import JoinAsContact from '../app/elementsCreateChallenge/JoinAsContact';
 import PublishResult from '../app/elementsCreateChallenge/PublishResult';
 
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
@@ -115,13 +117,14 @@ const CreateGroupNavigator = createStackNavigator(
 
 const CreateChallengeNavigator = createStackNavigator(
   {
+    PickTeams: lockedPortrait(PickTeams),
     PickMembers: lockedPortrait(PickMembers),
     PickInfos: lockedPortrait(PickInfos),
     PickAddress: lockedPortrait(PickAddress),
     SummaryChallenge: lockedPortrait(SummaryChallenge),
   },
   {
-    initialRouteName: 'PickMembers',
+    initialRouteName: 'PickTeams',
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
@@ -167,8 +170,11 @@ const JoinNavigator = createStackNavigator(
 const JoinChallengeNavigator = createStackNavigator(
   {
     Challenge: lockedPortrait(ChallengePage),
+    PickTeams: lockedPortrait(PickTeams),
+    PickMembers: lockedPortrait(PickMembers),
     SummaryChallenge: lockedPortrait(SummaryChallenge),
     PublishResult: lockedPortrait(PublishResult),
+    JoinAsContact: lockedPortrait(JoinAsContact),
   },
   {
     initialRouteName: 'Challenge',

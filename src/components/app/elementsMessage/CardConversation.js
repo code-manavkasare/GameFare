@@ -57,6 +57,7 @@ class CardConversation extends React.Component {
       .once('value');
 
     let discussionMembersFiltered = discussionMembersSnapshot.val();
+    if (!discussionMembersFiltered) discussionMembersFiltered = {};
     delete discussionMembersFiltered[this.props.userID];
     return discussionMembersFiltered;
   };

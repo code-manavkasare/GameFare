@@ -136,8 +136,6 @@ export default class CardUser extends Component {
   cardUser(user) {
     let {status} = this.props;
     if (!status) status = user.status;
-    console.log('carfUser', user);
-    console.log(status);
     return (
       <View>
         <ButtonColor
@@ -259,13 +257,14 @@ export default class CardUser extends Component {
           onPressColor={colors.off}
         />
         {this.props.admin &&
-          user.status === 'pending' &&
+          status === 'pending' &&
           this.rowAcceptRequest(user)}
       </View>
     );
   }
 
   render() {
-    return this.cardUser(this.props.user, this.props.userID);
+    const {user, userID} = this.props;
+    return this.cardUser(user, userID);
   }
 }
