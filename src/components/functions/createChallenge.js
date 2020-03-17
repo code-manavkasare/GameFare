@@ -94,7 +94,6 @@ async function createChallengeObj(challenge, userID, infoUser) {
         0,
     )
     .map((team) => keys(team.members));
-  console.log('totalMembersArray', totalMembersArray);
   const arrayAllMembers = [].concat.apply([], totalMembersArray);
   const allMembers = arrayAllMembers.reduce(function(result, item) {
     result[item] = true;

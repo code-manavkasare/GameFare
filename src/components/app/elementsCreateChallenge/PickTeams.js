@@ -86,6 +86,7 @@ class PickInfos extends Component {
           [idNewTeam]: {
             id: idNewTeam,
             name: 'Team ' + numberTeam,
+            createdAt: Number(new Date()),
           },
         },
       },
@@ -133,9 +134,13 @@ class PickInfos extends Component {
   }
   teamsSections(data, edit, hideButtonRemoveTeam) {
     const {teams, allMembers} = data;
-    return Object.values(teams).map((team, i) =>
-      this.cardTeam(team, i, teams, allMembers, edit, hideButtonRemoveTeam),
-    );
+    return Object.values(teams)
+      .sort(function(a, b) {
+        return a.createdAt - b.createdAt;
+      })
+      .map((team, i) =>
+        this.cardTeam(team, i, teams, allMembers, edit, hideButtonRemoveTeam),
+      );
   }
   async setData(data, edit) {
     if (edit) await this.setState(data);
@@ -160,7 +165,7 @@ class PickInfos extends Component {
 
         {typeChallengeTeam ? (
           <FadeInView duration={300} style={{paddingTop: 20}}>
-            {this.teamsSections(data, edit, !(teamAdmin === 'all' && edit))}
+            {this.teamsSections(data, edit, !(teamAdmin === 'all'))}
             <View
               style={[styleApp.divider2, {marginBottom: 0, marginTop: 5}]}
             />

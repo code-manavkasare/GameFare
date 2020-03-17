@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
+import NavigationService from '../../../../NavigationService';
 
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import ButtonColor from '../../layout/Views/Button';
 import Button from '../../layout/buttons/Button';
+import Loader from '../../layout/loaders/Loader';
 import AsyncImage from '../../layout/image/AsyncImage';
 import {listContactUser} from '../../functions/createChallenge';
 
@@ -22,6 +24,8 @@ import ScrollView from '../../layout/scrollViews/ScrollView';
 import AllIcons from '../../layout/icons/AllIcons';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardUserSelect from '../../layout/cards/CardUserSelect';
+import {createDiscussion, searchDiscussion} from '../../functions/message';
+import {indexUsers} from '../../database/algolia';
 
 import sizes from '../../style/sizes';
 import colors from '../../style/colors';
@@ -32,11 +36,71 @@ class PublishResult extends Component {
     super(props);
     this.state = {
       loader: false,
+      loaderDiscussion: false,
       selectedUser: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {}
+  buttonContactOrganizer(challenge) {
+    const {organizer} = challenge.info;
+    const {loaderDiscussion} = this.state;
+    const {userID, infoUser} = this.props;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col style={styleApp.center}>
+                {loaderDiscussion ? (
+                  <Loader color="grey" size={20} />
+                ) : (
+                  <Text style={styleApp.text}>Contact the organizer</Text>
+                )}
+              </Col>
+            </Row>
+          );
+        }}
+        click={async () => {
+          await this.setState({loaderDiscussion: true});
+          const organizerInfo = await indexUsers.getObject(organizer);
+          // return true;
+          var discussion = await searchDiscussion([userID, organizer], 2);
+
+          //return false;
+          if (!discussion) {
+            discussion = await createDiscussion(
+              {
+                0: {
+                  id: organizer,
+                  info: organizerInfo.info,
+                },
+                1: {
+                  id: userID,
+                  info: infoUser,
+                },
+              },
+              'General',
+            );
+            if (!discussion) {
+              await this.setState({loaderDiscussion: false});
+              return NavigationService.navigate('Alert', {
+                close: true,
+                title: 'An unexpected error has occured.',
+                subtitle: 'Please contact us.',
+                textButton: 'Got it!',
+              });
+            }
+          }
+          await NavigationService.navigate('Conversation', {data: discussion});
+          await this.setState({loaderDiscussion: false});
+        }}
+        color={colors.white}
+        style={styleApp.buttonCancel}
+        onPressColor={colors.off}
+      />
+    );
+  }
   publishResultContent(challenge) {
     const {selectedUser} = this.state;
     const arrrayContactUser = listContactUser(challenge);
@@ -59,6 +123,8 @@ class PublishResult extends Component {
               usersSelected={{[selectedUser.id]: selectedUser}}
             />
           ))}
+
+          {this.buttonContactOrganizer(challenge)}
         </View>
       </View>
     );
