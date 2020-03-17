@@ -169,7 +169,6 @@ class Calibration extends React.Component {
           } else {
             that.props.navigation.navigate('DrawLines', {
               stream: that.state.stream,
-              orientation: that.state.orientation,
               netline: {
                 corners: netlineResults.corners,
                 midline: netlineResults.midline,
@@ -210,8 +209,8 @@ class Calibration extends React.Component {
       this.state.orientation === 'PORTRAIT'
         ? 0
         : this.state.orientation === 'LANDSCAPE-LEFT'
-        ? -delta
-        : delta;
+        ? -0.1 * width
+        : 0.1 * width;
     const cx = width / 2 + x_offset;
     const cy = (height - heightAdjust) / 2;
     return (

@@ -48,6 +48,33 @@ class DrawLines extends React.Component {
   async switchCamera() {
     await this.camera.changeCamera();
   }
+  landscapeLine(x1, y1, x2, y2, stroke, strokeWidth) {
+    // points should be scaled to [0, 1]
+    // switch (1 - x) if using back camera
+    if (this.state.orientation === 'LANDSCAPE-LEFT') {
+      return (
+        <Line
+          x1={(1 - y1) * width}
+          y1={(1 - x1) * height}
+          x2={(1 - y2) * width}
+          y2={(1 - x2) * height}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+      );
+    } else {
+      return (
+        <Line
+          x1={y1 * width}
+          y1={x1 * height}
+          x2={y2 * width}
+          y2={x2 * height}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+      );
+    }
+  }
   render() {
     const {navigation} = this.props;
     const netline = navigation.getParam('netline');
@@ -78,99 +105,51 @@ class DrawLines extends React.Component {
             zoomMode: 'off',
           }}
         />
-        {this.state.orientation === 'LANDSCAPE-LEFT' ? (
-          <Svg
-            style={styles.fullScreen}
-            height={height - heightAdjust}
-            width={width}>
-            <Line
-              x1={(1 - netline.midline.origin.y) * width}
-              y1={netline.midline.origin.x * height}
-              x2={(1 - netline.midline.destination.y) * width}
-              y2={netline.midline.destination.x * height}
-              stroke="red"
-              strokeWidth="4"
-            />
-            <Line
-              x1={(1 - netline.corners.p1[1]) * width}
-              y1={netline.corners.p1[0] * height}
-              x2={(1 - netline.corners.p2[1]) * width}
-              y2={netline.corners.p2[0] * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={(1 - netline.corners.p2[1]) * width}
-              y1={netline.corners.p2[0] * height}
-              x2={(1 - netline.corners.p3[1]) * width}
-              y2={netline.corners.p3[0] * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={(1 - netline.corners.p3[1]) * width}
-              y1={netline.corners.p3[0] * height}
-              x2={(1 - netline.corners.p4[1]) * width}
-              y2={netline.corners.p4[0] * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={(1 - netline.corners.p4[1]) * width}
-              y1={netline.corners.p4[0] * height}
-              x2={(1 - netline.corners.p1[1]) * width}
-              y2={netline.corners.p1[0] * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-          </Svg>
-        ) : (
-          <Svg
-            style={styles.fullScreen}
-            height={height - heightAdjust}
-            width={width}>
-            <Line
-              x1={netline.midline.origin.y * width}
-              y1={(1 - netline.midline.origin.x) * height}
-              x2={netline.midline.destination.y * width}
-              y2={(1 - netline.midline.destination.x) * height}
-              stroke="red"
-              strokeWidth="4"
-            />
-            <Line
-              x1={netline.corners.p1[1] * width}
-              y1={(1 - netline.corners.p1[0]) * height}
-              x2={netline.corners.p2[1] * width}
-              y2={(1 - netline.corners.p2[0]) * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={netline.corners.p2[1] * width}
-              y1={(1 - netline.corners.p2[0]) * height}
-              x2={netline.corners.p3[1] * width}
-              y2={(1 - netline.corners.p3[0]) * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={netline.corners.p3[1] * width}
-              y1={(1 - netline.corners.p3[0]) * height}
-              x2={netline.corners.p4[1] * width}
-              y2={(1 - netline.corners.p4[0]) * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-            <Line
-              x1={netline.corners.p4[1] * width}
-              y1={(1 - netline.corners.p4[0]) * height}
-              x2={netline.corners.p1[1] * width}
-              y2={(1 - netline.corners.p1[0]) * height}
-              stroke="green"
-              strokeWidth="4"
-            />
-          </Svg>
-        )}
+        <Svg
+          style={styles.fullScreen}
+          height={height - heightAdjust}
+          width={width}>
+          {this.landscapeLine(
+            netline.midline.origin.x,
+            netline.midline.origin.y,
+            netline.midline.destination.x,
+            netline.midline.destination.y,
+            'red',
+            '4',
+          )}
+          {this.landscapeLine(
+            netline.corners.p1[0],
+            netline.corners.p1[1],
+            netline.corners.p2[0],
+            netline.corners.p2[1],
+            'green',
+            '4',
+          )}
+          {this.landscapeLine(
+            netline.corners.p2[0],
+            netline.corners.p2[1],
+            netline.corners.p3[0],
+            netline.corners.p3[1],
+            'green',
+            '4',
+          )}
+          {this.landscapeLine(
+            netline.corners.p3[0],
+            netline.corners.p3[1],
+            netline.corners.p4[0],
+            netline.corners.p4[1],
+            'green',
+            '4',
+          )}
+          {this.landscapeLine(
+            netline.corners.p4[0],
+            netline.corners.p4[1],
+            netline.corners.p1[0],
+            netline.corners.p1[1],
+            'green',
+            '4',
+          )}
+        </Svg>
         <CameraFooter switchCamera={() => this.switchCamera()} />
       </View>
     );
