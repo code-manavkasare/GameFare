@@ -391,9 +391,6 @@ class GroupPage extends React.Component {
             ? group.location
             : this.state.editLocation,
       };
-      console.log('newData', newData);
-      // return true;
-      // firebase update, sends notification to group members
       editGroup(newData, () => console.log('edit group failed'));
       // // local data update
       if (this.state.editPic !== noEdit.editPic) {
@@ -419,12 +416,7 @@ class GroupPage extends React.Component {
     }
     this.props.navigation.navigate('Contacts', {
       objectID: data.objectID,
-      url: {
-        description:
-          'Join my group ' + data.info.name + ' by following the link!',
-        image: data.pictures[0],
-        title: data.info.name,
-      },
+      image: data.pictures[0],
       action: 'Group',
       data: {...data, eventID: data.objectID},
     });

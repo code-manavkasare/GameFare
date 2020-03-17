@@ -188,7 +188,7 @@ class VerifyFields extends Component {
   verify() {
     return (
       <View style={styleApp.marginView}>
-        <Text style={[styleApp.title, {marginBottom: 5, marginTop: 10}]}>
+        <Text style={[styleApp.title, {marginBottom: 5, marginTop: 0}]}>
           Please enter the 4-digit code sent to you at{' '}
           {this.props.params.phoneNumber}
         </Text>

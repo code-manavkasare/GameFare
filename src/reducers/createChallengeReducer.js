@@ -5,10 +5,15 @@ import {
   SET_LOCATION_CHALLENGE,
   SET_DATE_CHALLENGE,
   SET_PRICE_CHALLENGE,
+  SET_TEAMS_DATA,
 } from '../actions/types';
 
+import {generateID} from '../components/functions/createEvent';
+
+const idTeam1 = generateID();
+const idTeam2 = generateID();
+
 const initialState = {
-  captains: {},
   info: {
     sport: '',
     format: '',
@@ -25,6 +30,21 @@ const initialState = {
     end: '',
   },
   location: {},
+  teamsData: {
+    typeChallengeTeam: false,
+    oponent: {},
+    allMembers: {},
+    teams: {
+      [idTeam1]: {
+        id: idTeam1,
+        name: 'Team 1',
+      },
+      [idTeam2]: {
+        id: idTeam2,
+        name: 'Team 2',
+      },
+    },
+  },
 };
 
 const createChallengeReducer = (state = initialState, action) => {
@@ -39,6 +59,8 @@ const createChallengeReducer = (state = initialState, action) => {
       return {...state, price: {...state.price, ...action.price}};
     case SET_INFO_CHALLENGE:
       return {...state, info: {...state.info, ...action.info}};
+    case SET_TEAMS_DATA:
+      return {...state, teamsData: {...state.teamsData, ...action.teamsData}};
     case RESET_CHALLENGECREATE_DATA:
       return initialState;
     default:

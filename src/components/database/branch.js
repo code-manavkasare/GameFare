@@ -2,6 +2,8 @@ import axios from 'axios';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import colors from '../style/colors';
 import {Alert, Linking} from 'react-native';
+import branch from 'react-native-branch';
+import {date} from '../layout/date/date';
 
 async function getParams(link) {
   try {
@@ -58,7 +60,76 @@ async function openUrl(url) {
     Alert.alert(error.message);
   }
 }
+
+const dataBranchLink = (objData, action) => {
+  let description = '';
+  let title = '';
+  if (action === 'Challenge') {
+    title = objData.info.name;
+    description =
+      'Join my challenge ' +
+      objData.info.name +
+      ' on ' +
+      date(objData.date.start, 'ddd, MMM D') +
+      ' at ' +
+      date(objData.date.start, 'h:mm a') +
+      ' by following the link!';
+  } else if (action === 'Event') {
+    title = objData.info.name;
+    description =
+      'Join my event ' +
+      objData.info.name +
+      ' on ' +
+      date(objData.date.start, 'ddd, MMM D') +
+      ' at ' +
+      date(objData.date.start, 'h:mm a') +
+      ' by following the link!';
+  } else if (action === 'Group') {
+    title = objData.info.name;
+    description =
+      'Join my group ' + objData.info.name + ' by following the link!';
+  }
+  return {description, title};
+};
+
+const createBranchUrl = async (dataObj, action, image) => {
+  const {description, title} = dataBranchLink(dataObj, action);
+  let branchUniversalObject = await branch.createBranchUniversalObject(
+    'canonicalIdentifier',
+    {
+      contentDescription: description,
+      title: title,
+      contentMetadata: {
+        customMetadata: {
+          objectID: dataObj.objectID,
+          action: action,
+          $uri_redirect_mode: '1',
+          $og_image_url: image,
+        },
+      },
+    },
+  );
+
+  let linkProperties = {feature: 'share', channel: 'GameFare'};
+  let controlParams = {$desktop_url: 'http://getgamefare.com'};
+
+  let {url} = await branchUniversalObject.generateShortUrl(
+    linkProperties,
+    controlParams,
+  );
+  console.log('wooooogooo', {
+    url,
+    description,
+    title,
+    image,
+    action,
+    objectID: dataObj.objectID,
+  });
+  return {url, description, title, image, action, objectID: dataObj.objectID};
+};
+
 module.exports = {
   getParams,
   openUrl,
+  createBranchUrl,
 };

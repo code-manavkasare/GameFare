@@ -88,7 +88,7 @@ class MorePage extends Component {
                     type="font"
                     size={17}
                     name={icon === 'logout' ? 'bicycle' : icon}
-                    color={icon === 'logout' ? colors.green : colors.title}
+                    color={icon === 'logout' ? colors.red : colors.title}
                   />
                 </Col>
               ) : null}
@@ -98,7 +98,7 @@ class MorePage extends Component {
                     styleApp.input,
                     {
                       fontSize: 14,
-                      color: text === 'Logout' ? colors.green : colors.title,
+                      color: text === 'Logout' ? colors.red : colors.title,
                     },
                   ]}>
                   {text}
@@ -116,7 +116,7 @@ class MorePage extends Component {
                   type="mat"
                   size={20}
                   name={'keyboard-arrow-right'}
-                  color={icon === 'logout' ? colors.green : colors.grey}
+                  color={icon === 'logout' ? colors.red : colors.grey}
                 />
               </Col>
             </Row>
@@ -139,7 +139,9 @@ class MorePage extends Component {
     } else if (type === 'logout') {
       this.props.navigation.navigate('Alert', {
         textButton: 'Logout',
-        title: 'Do you want to log out?',
+        title: 'Do you want to log out?'+ '\n',
+        colorButton: 'red',
+        onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
       });
     } else {

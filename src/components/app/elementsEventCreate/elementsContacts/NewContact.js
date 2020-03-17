@@ -38,6 +38,7 @@ class Page1 extends Component {
       phoneNumber: '',
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.addContact = this.addContact.bind(this);
   }
   componentDidMount() {}
   newContact() {

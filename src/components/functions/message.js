@@ -2,6 +2,7 @@ import firebase from 'react-native-firebase';
 import moment from 'moment';
 import {includes} from 'ramda';
 import {indexDiscussions, client} from '../database/algolia';
+import SendSMS from 'react-native-sms';
 
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
@@ -170,6 +171,20 @@ const titleConversation = (conversation, userID, members) => {
   return title;
 };
 
+const sendSMSFunction = async (phoneNumbers, message) => {
+  let args = {
+    body: message,
+    recipients: phoneNumbers,
+    successTypes: ['sent', 'queued'],
+    allowAndroidSendWithoutReadPermission: true,
+  };
+  return new Promise((resolve, reject) => {
+    SendSMS.send(args, (completed, cancelled, error) => {
+      resolve({completed, cancelled, error});
+    });
+  });
+};
+
 export {
   createDiscussion,
   createDiscussionEventGroup,
@@ -178,5 +193,6 @@ export {
   loadMyDiscusions,
   checkMessageRead,
   titleConversation,
+  sendSMSFunction,
   nameOtherMemberConversation,
 };

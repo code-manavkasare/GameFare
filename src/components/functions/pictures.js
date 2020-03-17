@@ -50,7 +50,14 @@ async function resize(uri) {
 }
 
 async function rotateImage(uri, width, height, degrees) {
-  const rotatedUri = await ImageResizer.createResizedImage(uri, height, width, 'JPEG', 100, degrees);
+  const rotatedUri = await ImageResizer.createResizedImage(
+    uri,
+    height,
+    width,
+    'JPEG',
+    100,
+    degrees,
+  );
   return rotatedUri;
 }
 
@@ -122,7 +129,7 @@ async function uploadPictureFirebase(localUri, destination) {
     var url = imageRef.getDownloadURL();
     return url;
   } catch (error) {
-    console.log('error upload',error);
+    console.log('error upload', error);
     return false;
   }
 }

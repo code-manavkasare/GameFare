@@ -1106,19 +1106,7 @@ class EventPage extends React.Component {
     }
     return this.props.navigation.navigate('Contacts', {
       objectID: event.objectID,
-      description: '',
-      url: {
-        description:
-          'Join my event ' +
-          event.info.name +
-          ' on ' +
-          date(event.date.start, 'ddd, MMM D') +
-          ' at ' +
-          date(event.date.start, 'h:mm a') +
-          ' by following the link!',
-        image: event.images[0],
-        title: event.info.name,
-      },
+      image: event.images[0],
       action: 'Event',
       data: {...event, eventID: event.objectID},
     });

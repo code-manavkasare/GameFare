@@ -36,39 +36,51 @@ export default class Results extends Component {
   componentDidMount() {}
 
   async load() {}
-  rowTeam(team, results) {
+  rowTeam(team, results, challenge) {
     const {captain} = team;
+    const {individual} = challenge.info;
     return (
       <ButtonColor
         view={() => {
           return (
             <Row>
               <Col size={20} style={styleApp.center2}>
-                <AsyncImage
-                  style={{height: 35, width: 35, borderRadius: 20}}
-                  mainImage={captain.info.picture}
-                  imgInitial={captain.info.picture}
-                />
+                {individual ? (
+                  <AsyncImage
+                    style={{height: 35, width: 35, borderRadius: 20}}
+                    mainImage={captain.info.picture}
+                    imgInitial={captain.info.picture}
+                  />
+                ) : (
+                  <View style={[styleApp.center, styleApp.imgUser]}>
+                    <Text style={[styleApp.text, {fontSize: 12}]}>
+                      {team.name[0] + team.name[1]}
+                    </Text>
+                  </View>
+                )}
               </Col>
               <Col size={60} style={styleApp.center2}>
                 <Text style={styleApp.text}>
-                  {captain.info.firstname} {captain.info.lastname}
+                  {individual
+                    ? captain.info.firstname + ' ' + captain.info.lastname
+                    : team.name}
                 </Text>
               </Col>
               <Col size={20} style={styleApp.center3}>
-                {results.status !== 'confirmed' && <AllIcons
-                  name={
-                    results.status === 'pending'
-                      ? 'redo-alt'
-                      : results.status === 'disputed'
-                      ? 'redo-alt'
-                      : 'check'
-                  }
-                  color={colors.secondary}
-                  size={18}
-                  type="font"
-                />
-                }
+                {results.status !== 'confirmed' && (
+                  <AllIcons
+                    name={
+                      results.status === 'pending'
+                        ? 'redo-alt'
+                        : results.status === 'disputed'
+                        ? 'redo-alt'
+                        : 'check'
+                    }
+                    color={colors.secondary}
+                    size={18}
+                    type="font"
+                  />
+                )}
               </Col>
             </Row>
           );
@@ -82,7 +94,7 @@ export default class Results extends Component {
           paddingLeft: 20,
           paddingRight: 20,
         }}
-        onPressColor={colors.off}
+        onPressColor={colors.white}
       />
     );
   }
@@ -148,17 +160,25 @@ export default class Results extends Component {
   }
   resultSection() {
     const {challenge} = this.props;
+    const {individual} = challenge.info;
     const {results} = challenge;
     const {postedBy} = results;
     const {userID} = this.props;
-    const teamWinner = Object.values(challenge.teams).filter(
-      (team) => team.id === results.winner,
-    )[0];
-    console.log('resultd', results);
+    let teamWinner = {};
+    if (individual)
+      teamWinner = Object.values(challenge.teams).filter(
+        (team) => team.captain.id === results.winner,
+      )[0];
+    else
+      teamWinner = Object.values(challenge.teams).filter(
+        (team) => team.id === results.winner,
+      )[0];
+
     const checkIfUserCaptain =
       Object.values(challenge.teams).filter(
         (team) => team.captain.id === userID,
       ).length !== 0;
+
     return (
       <View style={styleApp.viewHome}>
         <View style={styleApp.marginView}>
@@ -171,7 +191,7 @@ export default class Results extends Component {
           <View style={[styleApp.divider2, {marginBottom: 10}]} />
         </View>
 
-        {this.rowTeam(teamWinner, results)}
+        {this.rowTeam(teamWinner, results, challenge)}
 
         <View style={styleApp.marginView}>
           {checkIfUserCaptain &&

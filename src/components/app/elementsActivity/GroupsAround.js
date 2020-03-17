@@ -7,7 +7,7 @@ const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import PlaceHolder from '../../placeHolders/CardEvent';
+import PlaceHolder from '../../placeHolders/CardGroupM';
 
 import CardGroup from './CardGroup';
 import {timing, native} from '../../animations/animations';
@@ -27,8 +27,6 @@ class ListEvents extends React.Component {
 
   componentDidMount() {
     this.props.onRef(this);
-    console.log('mount groups around', this.props);
-    // if (this.props.loader)
     this.loadEvent(this.props.sportSelected, this.props.searchLocation);
   }
   async reload() {

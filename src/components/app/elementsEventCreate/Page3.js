@@ -159,7 +159,6 @@ class Page3 extends Component {
         : data.info.levelOption == 'min'
         ? 'and above'
         : 'and below';
-    console.log('page3', data);
     return (
       <View style={[styleApp.marginView, {paddingTop: 15}]}>
         <Row style={{marginBottom: 10}}>

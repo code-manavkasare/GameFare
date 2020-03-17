@@ -66,7 +66,6 @@ class HomeScreen extends React.Component {
           .setTitle(notification1._title)
           .setBody(notification1._body)
           .setData(notification1._data);
-        console.log('message received', notification);
         if (userID !== notification.data.senderID)
           firebase.notifications().displayNotification(notification);
       });

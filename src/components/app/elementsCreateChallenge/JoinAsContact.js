@@ -16,6 +16,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import ButtonColor from '../../layout/Views/Button';
 import Button from '../../layout/buttons/Button';
 import AsyncImage from '../../layout/image/AsyncImage';
+import {listContactUser} from '../../functions/createChallenge';
 
 import ScrollView from '../../layout/scrollViews/ScrollView';
 import AllIcons from '../../layout/icons/AllIcons';
@@ -31,68 +32,75 @@ class PublishResult extends Component {
     super(props);
     this.state = {
       loader: false,
-      winnerID: false,
+      selectedUser: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  rowTeam(team, i, challenge) {
-    const {winnerID} = this.state;
-    let user = {
-      id: team.id,
-      objectID: team.id,
-      info: {
-        firstname: team.name,
-        lastname: '',
-      },
-    };
-    if (challenge.info.individual)
-      user = {...team.captain, objectID: team.captain.id};
-    return (
-      <CardUserSelect
-        marginOnScrollView={true}
-        user={user}
-        key={i}
-        // captain={{}}
-        hideIcon={false}
-        selectUser={(val, user, selectedUsers) => {
-          this.setState({winnerID: user.id});
-        }}
-        usersSelected={{
-          [winnerID]: {
-            id: winnerID,
-          },
-        }}
-      />
-    );
-  }
+  componentDidMount() {}
   publishResultContent(challenge) {
-    const {teams} = challenge;
+    const {selectedUser} = this.state;
+    const arrrayContactUser = listContactUser(challenge);
     return (
-      <View style={styleApp.marginView}>
-        <Text style={[styleApp.title, {marginBottom: 15}]}>
-          Who won the challenge?
-        </Text>
+      <View>
+        <View style={styleApp.marginView}>
+          <Text style={[styleApp.title, {marginBottom: 15}]}>
+            You are joining the challenge as...
+          </Text>
 
-        {Object.values(teams).map((team, i) =>
-          this.rowTeam(team, i, challenge),
-        )}
+          {arrrayContactUser.map((user, i) => (
+            <CardUserSelect
+              marginOnScrollView={true}
+              user={user}
+              key={i}
+              hideIcon={false}
+              selectUser={(val, user, selectedUsers) => {
+                this.setState({selectedUser: user});
+              }}
+              usersSelected={{[selectedUser.id]: selectedUser}}
+            />
+          ))}
+        </View>
       </View>
     );
   }
-  async submitResult(challenge) {
-    const {goBack} = this.props.navigation;
+  async submit(challenge) {
+    const {goBack, navigate} = this.props.navigation;
     const {userID, infoUser} = this.props;
     const {objectID} = challenge;
-    const {winnerID} = this.state;
+    const {selectedUser} = this.state;
+    if (selectedUser.team.captain.id === selectedUser.id)
+      return navigate('SummaryChallenge', {
+        challenge: challenge,
+        subscribe: true,
+        selectedUser: selectedUser,
+      });
+
     await this.setState({loader: true});
     await firebase
       .database()
-      .ref('challenges/' + objectID + '/results')
+      .ref(
+        'challenges/' +
+          objectID +
+          '/teams/' +
+          selectedUser.team.id +
+          '/members/' +
+          selectedUser.id,
+      )
+      .remove();
+    await firebase
+      .database()
+      .ref(
+        'challenges/' +
+          objectID +
+          '/teams/' +
+          selectedUser.team.id +
+          '/members/' +
+          userID,
+      )
       .update({
-        winner: winnerID,
-        date: new Date().toString(),
-        status: 'pending',
-        postedBy: {id: userID, info: infoUser},
+        id: userID,
+        status: 'confirmed',
+        info: infoUser,
       });
     await this.setState({loader: false});
     return goBack();
@@ -101,8 +109,15 @@ class PublishResult extends Component {
     if (this.state.winnerID) return false;
     return true;
   }
+  textButton() {
+    const {selectedUser} = this.state;
+    if (!selectedUser) return 'Confirm attendance';
+    if (selectedUser.team.captain.id === selectedUser.id) return 'Next';
+    return 'Confirm attendance';
+  }
   render() {
     const {navigate, goBack} = this.props.navigation;
+    const {selectedUser, loader} = this.state;
     const challenge = this.props.navigation.getParam('challenge');
     return (
       <View style={styleApp.stylePage}>
@@ -130,12 +145,12 @@ class PublishResult extends Component {
 
         <View style={[styleApp.footerBooking, styleApp.marginView]}>
           <Button
-            text="Confirm result"
+            text={this.textButton()}
             backgroundColor={'green'}
             onPressColor={colors.greenLight}
-            disabled={this.conditionOn()}
-            loader={this.state.loader}
-            click={() => this.submitResult(challenge)}
+            disabled={!selectedUser}
+            loader={loader}
+            click={() => this.submit(challenge)}
           />
         </View>
       </View>

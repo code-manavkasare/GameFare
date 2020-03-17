@@ -10,6 +10,8 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {indexDiscussions, client} from '../../database/algolia';
+import firebase from 'react-native-firebase';
 import FadeInView from 'react-native-fade-in-view';
 import isEqual from 'lodash.isequal';
 const {height, width} = Dimensions.get('screen');
@@ -47,6 +49,34 @@ class HomeScreen extends React.Component {
   async componentDidMount() {
     StatusBar.setHidden(false, 'slide');
     StatusBar.setBarStyle('dark-content', true);
+    // await client.clearCache();
+    // let discussions = await firebase
+    //   .database()
+    //   .ref('discussions')
+    //   .once('value');
+    // discussions = discussions.val();
+
+    // for (var i in discussions) {
+    //   const discussion = discussions[i];
+    //   try {
+    //     const discussionAlgolia = await indexDiscussions.getObject(i);
+    //     if (!discussion.members) {
+    //     } else if (
+    //       Object.values(discussion.members).length !==
+    //       Object.values(discussionAlgolia.members).length
+    //     ) {
+    //       console.log('la discussion different', discussion);
+    //       console.log(i);
+    //       console.log(
+    //         Object.values(discussion.members).length,
+    //         Object.values(discussionAlgolia.members).length,
+    //       );
+    //     }
+    //   } catch (err) {
+    //     console.log('eeeeorrrr', i);
+    //   }
+    // }
+    // console.log('done with convo!');
   }
   navigate(val, data) {
     this.props.navigation.push(val, data);
@@ -146,7 +176,7 @@ class HomeScreen extends React.Component {
   }
   logoutView() {
     return (
-      <View style={[styleApp.marginView, {marginTop: 30}]}>
+      <View style={[styleApp.marginView, {marginTop: 20}]}>
         <View style={styleApp.center}>
           <Image
             style={{height: 85, width: 85, marginBottom: 30}}

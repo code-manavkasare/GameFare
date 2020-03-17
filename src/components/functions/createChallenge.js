@@ -47,47 +47,64 @@ function createTeamsFromCaptains(captains) {
 }
 
 async function createChallengeObj(challenge, userID, infoUser) {
+  let teams = {};
+  console.log('createChallengeObj', challenge);
+  if (challenge.teamsData.typeChallengeTeam) teams = challenge.teamsData.teams;
+  else {
+    const idTeamOponent = generateID();
+    const idTeamUser = generateID();
+    teams = {
+      [idTeamOponent]: {
+        ...challenge.teamsData.oponent,
+        id: idTeamOponent,
+      },
+      [idTeamUser]: {
+        id: idTeamUser,
+        captain: {
+          id: userID,
+          info: infoUser,
+        },
+        members: {
+          [userID]: {
+            id: userID,
+            objectID: userID,
+            info: infoUser,
+          },
+        },
+      },
+    };
+  }
   let newChallenge = {
     ...challenge,
     challenge: true,
     info: {
       ...challenge.info,
       organizer: userID,
+      individual: !challenge.teamsData.typeChallengeTeam,
     },
+    teams: teams,
   };
+  delete newChallenge['teamsData'];
 
-  const teamOrganizer = createNewTeam(
-    {
-      info: infoUser,
-      id: userID,
-    },
-    {
-      [userID]: {
-        info: infoUser,
-        id: userID,
-      },
-    },
-    'confirmed',
-    challenge.price.amount,
-  );
-  console.log('challenge creation', challenge);
-  const teamsFromCaptains = createTeamsFromCaptains(challenge.captains);
-  const teams = {
-    ...teamsFromCaptains,
-    ...teamOrganizer,
-  };
-  delete newChallenge['captains'];
-
-  let totalMembersArray = Object.values(teams).map((team) =>
-    keys(team.members),
-  );
+  let totalMembersArray = Object.values(teams)
+    .filter((team) => team.members)
+    .filter(
+      (team) =>
+        Object.values(team.members).filter((member) => !member.index).length !==
+        0,
+    )
+    .map((team) => keys(team.members));
+  console.log('totalMembersArray', totalMembersArray);
   const arrayAllMembers = [].concat.apply([], totalMembersArray);
+  const allMembers = arrayAllMembers.reduce(function(result, item) {
+    result[item] = true;
+    return result;
+  }, {});
   return {
     ...newChallenge,
     date_timestamp: moment(newChallenge.date.start).valueOf(),
     end_timestamp: moment(newChallenge.date.end).valueOf(),
-    teams: teams,
-    allMembers: arrayAllMembers,
+    allMembers: allMembers,
   };
 }
 
@@ -100,6 +117,8 @@ async function createChallenge(challenge, userID, infoUser) {
   if (!pictureUri) return false;
 
   let newChallenge = await createChallengeObj(challenge, userID, infoUser);
+  console.log('newChallenge', newChallenge);
+  // return false;
 
   newChallenge.images = [pictureUri];
   const discussionID = generateID();
@@ -137,44 +156,75 @@ async function createChallenge(challenge, userID, infoUser) {
   return newChallenge;
 }
 
-async function checkUserAttendingEvent(userID, data) {
-  var filterAttendees =
-    'allAttendees:' +
-    userID +
-    ' OR allCoaches:' +
-    userID +
-    ' OR info.organizer:' +
-    userID;
-  // indexEvents.clearCache();
-  var {hits} = await indexEvents.search({
-    query: data.objectID,
-    filters: filterAttendees,
-  });
-  if (hits.length !== 0 && userID === data.info.organizer) {
-    return {
-      response: false,
-      message:
-        'You are the organizer of this event. You cannot attend your own event.',
-    };
-  } else if (hits.length !== 0) {
-    return {
-      response: false,
-      message:
-        'You are already attending this event. You cannot join it again.',
-    };
-  }
-  return {response: true};
-}
+const isUserAlreadyMember = (challenge, userID, userConnected) => {
+  if (!userConnected) return false;
+  console.log('is user aleadu member', challenge.info.organizer === userID);
+  console.log(challenge.info.organizer);
+  console.log(userID);
+  if (challenge.info.organizer === userID) return true;
+  const {teams} = challenge;
+  const allMembers = Object.values(teams)
+    .filter((team) => team.members)
+    .map((team) => Object.values(team.members));
+  const arrayAllMembers = [].concat.apply([], allMembers);
+  if (isUserCaptainOfTeam(challenge, userID, userConnected))
+    return (
+      arrayAllMembers.filter(
+        (member) => member.id === userID && member.status === 'confirmed',
+      ).length !== 0
+    );
+  return arrayAllMembers.filter((member) => member.id === userID).length !== 0;
+};
 
-function arrayTeams(members, userID, organizer) {
-  if (!members) return [];
-  if (organizer === userID) return Object.values(members);
-  return Object.values(members).filter(
-    (teams) => teams.status === 'confirmed' || teams.captain.id === userID,
+const isUserCaptainOfTeam = (challenge, userID, userConnected) => {
+  if (!userConnected) return false;
+  const {teams} = challenge;
+  return (
+    Object.values(teams).filter((team) => team.captain.id === userID).length !==
+    0
   );
-}
+};
+
+const isUserContactUser = (challenge, userID) => {
+  const {teams} = challenge;
+  const allMembers = Object.values(teams)
+    .filter((team) => team.members)
+    .map((team) => Object.values(team.members));
+  const arrayAllMembers = [].concat.apply([], allMembers);
+  const allMembersGamefare = arrayAllMembers.filter((member) => !member.index);
+  return !allMembersGamefare.filter((member) => member.id === userID);
+};
+
+const listContactUser = (challenge) => {
+  const {teams} = challenge;
+  const allMembers = Object.values(teams)
+    .filter((team) => team.members)
+    .map((team) =>
+      Object.values(team.members).map((member) => {
+        return {...member, team: team};
+      }),
+    );
+  let arrayAllMembers = [].concat.apply([], allMembers);
+  return arrayAllMembers.filter((member) => member.index);
+};
+
+const allTeamsConfirmed = (challenge, userID) => {
+  const {teams} = challenge;
+  if (!teams) return false;
+  return (
+    Object.values(teams).filter(
+      (team) =>
+        team.captain.id !== challenge.info.organizer &&
+        team.status !== 'confirmed',
+    ).length === 0
+  );
+};
 
 module.exports = {
   createChallenge,
-  arrayTeams,
+  isUserAlreadyMember,
+  isUserContactUser,
+  isUserCaptainOfTeam,
+  listContactUser,
+  allTeamsConfirmed,
 };

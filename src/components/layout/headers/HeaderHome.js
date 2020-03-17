@@ -381,7 +381,7 @@ class HeaderHome extends Component {
                 return (
                   <Row>
                     <Col
-                      size={70}
+                      size={80}
                       style={[styleApp.center2, {paddingLeft: 10}]}>
                       <Text
                         style={[
@@ -393,7 +393,7 @@ class HeaderHome extends Component {
                         {getZone(searchLocation.address)}
                       </Text>
                     </Col>
-                    <Col size={30} style={styleApp.center}>
+                    <Col size={20} style={styleApp.center2}>
                       <AllIcons
                         name={this.props.icon2}
                         color={colors.title}

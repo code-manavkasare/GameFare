@@ -22,11 +22,14 @@ import {date} from '../../../layout/date/date';
 import AllIcons from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import {sendSMSFunction} from '../../../functions/message';
 
 import AddGroups from './AddGroups';
 import AddUsers from './AddUsers';
 import ListContacts from './ListContacts';
+import {createBranchUrl} from '../../../database/branch';
 import {native, timing} from '../../../animations/animations';
+import {generateID} from '../../../functions/createEvent';
 import FooterContact from './FooterContact';
 import sizes from '../../../style/sizes';
 import SearchBarContact from './SearchBarContact';
@@ -40,45 +43,19 @@ class Contacts extends Component {
       contacts: [],
       showAddContact: false,
       showShareIcons: true,
+      nameNewContact: '',
+      phoneNewContact: '',
       copied: false,
       contactsSelected: {},
       searchInputContacts: '',
       searchInputGameFareUsers: '',
       searchInputGroups: '',
-      alphabeth: [
-        '',
-        'A',
-        'B',
-        'C',
-        'D',
-        'E',
-        'F',
-        'G',
-        'H',
-        'I',
-        'J',
-        'K',
-        'L',
-        'M',
-        'N',
-        'O',
-        'P',
-        'Q',
-        'R',
-        'S',
-        'T',
-        'U',
-        'V',
-        'W',
-        'X',
-        'Y',
-        'Z',
-      ],
       activeView: 'gamefareUsers',
       fadeInDuration: 500,
     };
     this.counter = 0;
     this.translateYShare = new Animated.Value(0);
+    this.addNewContact = this.addNewContact.bind(this);
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
@@ -86,7 +63,7 @@ class Contacts extends Component {
     return this.state.contactsSelected;
   }
 
-  selectContact(contact, val) {
+  selectContact(val, contact, contactsSelected) {
     Keyboard.dismiss();
     if (!val) {
       this.setState({
@@ -95,7 +72,7 @@ class Contacts extends Component {
         showAddContact: false,
         contactsSelected: {
           ...this.state.contactsSelected,
-          [contact.recordID]: contact,
+          [contact.id]: contact,
         },
       });
     } else {
@@ -118,7 +95,7 @@ class Contacts extends Component {
   }
   deleteContact(contact) {
     var contacts = {...this.state.contactsSelected};
-    delete contacts[contact.recordID];
+    delete contacts[contact.id];
     this.setState({contactsSelected: contacts});
   }
   widthCard(val) {
@@ -166,8 +143,8 @@ class Contacts extends Component {
         openShareEvent={this.openShareEvent.bind(this)}
         onRef={(ref) => (this.listContactRef = ref)}
         translateYShare={this.translateYShare}
-        contactsSelected={this.state.contactsSelected}
-        selectContact={this.selectContact.bind(this)}
+        usersSelected={this.state.contactsSelected}
+        selectUser={this.selectContact.bind(this)}
         deleteContact={this.deleteContact.bind(this)}
         setFreeContact={this.setFreeContact.bind(this)}
       />
@@ -176,7 +153,7 @@ class Contacts extends Component {
 
   changeSearch = (search) => {
     this.setState({searchInputContacts: search});
-    if (search.toLowerCase() == '') {
+    if (search.toLowerCase() === '') {
       return this.listContactRef.setState({
         contacts: this.listContactRef.getContacts(),
       });
@@ -186,9 +163,11 @@ class Contacts extends Component {
         .getContacts()
         .filter(
           (contact) =>
-            contact.givenName.toLowerCase().search(search.toLowerCase()) !=
-              -1 ||
-            contact.familyName.toLowerCase().search(search.toLowerCase()) != -1,
+            contact.info.firstname
+              .toLowerCase()
+              .search(search.toLowerCase()) !== -1 ||
+            contact.info.lastname.toLowerCase().search(search.toLowerCase()) !==
+              -1,
         ),
     });
   };
@@ -202,26 +181,24 @@ class Contacts extends Component {
 
   addNewContact(data) {
     Keyboard.dismiss();
-    var id = Math.random()
-      .toString(36)
-      .substring(7);
+    const contactID = generateID();
     this.selectContact(
-      {
-        color:
-          '#' +
-          (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
-        givenName: data.name.split(' ')[0],
-        recordID: id,
-        familyName:
-          data.name.split(' ')[1] == undefined ? '' : data.name.split(' ')[1],
-        phoneNumbers: [{label: 'mobile', number: data.phoneNumber}],
-      },
       false,
+      {
+        info: {
+          phoneNumber: data.phoneNumber,
+          firstname: data.name.split(' ')[0],
+          lastname: !data.name.split(' ')[1] ? '' : data.name.split(' ')[1],
+        },
+        id: contactID,
+      },
+      {},
     );
     this.props.navigation.navigate('Contacts');
   }
   addContact() {
-    if (this.state.showAddContact) {
+    const {showAddContact, nameNewContact, phoneNewContact} = this.state;
+    if (showAddContact) {
       return (
         <View style={{width: width, marginLeft: -20}}>
           <Row style={{borderBottomWidth: 1, borderColor: '#eaeaea'}}>
@@ -246,7 +223,7 @@ class Contacts extends Component {
                     onChangeText={(text) =>
                       this.setState({nameNewContact: text})
                     }
-                    value={this.state.nameNewContact}
+                    value={nameNewContact}
                   />
                 </Col>
               </Row>
@@ -263,13 +240,12 @@ class Contacts extends Component {
                     onChangeText={(text) =>
                       this.setState({phoneNewContact: text})
                     }
-                    value={this.state.phoneNewContact}
+                    value={phoneNewContact}
                   />
                 </Col>
               </Row>
             </Col>
-            {this.state.nameNewContact == '' ||
-            this.state.phoneNewContact == '' ? (
+            {nameNewContact === '' || phoneNewContact === '' ? (
               <Col size={15} style={styleApp.center}>
                 <Text style={[styles.text, {color: '#eaeaea'}]}>Add</Text>
               </Col>
@@ -279,10 +255,7 @@ class Contacts extends Component {
                 style={styleApp.center}
                 activeOpacity={0.7}
                 onPress={() =>
-                  this.addNewContact(
-                    this.state.nameNewContact,
-                    this.state.phoneNewContact,
-                  )
+                  this.addNewContact(nameNewContact, phoneNewContact)
                 }>
                 <Text style={[styles.text, {color: colors.primary}]}>Add</Text>
               </Col>
@@ -293,58 +266,10 @@ class Contacts extends Component {
     }
     return null;
   }
-  shareEvent() {
-    const {description, title, image} = this.props.navigation.getParam('url');
-    const action = this.props.navigation.getParam('action');
-    const objectID = this.props.navigation.getParam('objectID');
-    console.log('create branch', {description, title, image});
-    console.log({
-      contentDescription: description,
-      title: title,
-      contentMetadata: {
-        customMetadata: {
-          objectID: objectID,
-          action: action,
-          $uri_redirect_mode: '1',
-          $og_image_url: image,
-        },
-      },
-    });
-    branch
-      .createBranchUniversalObject('canonicalIdentifier', {
-        contentDescription: description,
-        title: title,
-        contentMetadata: {
-          customMetadata: {
-            objectID: objectID,
-            action: action,
-            $uri_redirect_mode: '1',
-            $og_image_url: image,
-          },
-        },
-      })
-      .then((branchUniversalObject) => {
-        let shareOptions = {
-          messageHeader: description,
-          messageBody: description,
-        };
-        let linkProperties = {
-          channel: 'facebook',
-        };
-        let controlParams = {
-          $desktop_url: 'https://getgamefare.com',
-        };
-        branchUniversalObject
-          .showShareSheet(shareOptions, linkProperties, controlParams)
-          .then((channel, completed, error) => {
-            console.log('completed', channel);
-          });
-      });
-  }
+
   openShareEvent(val) {
-    if (val == true) {
+    if (val)
       return Animated.timing(this.translateYShare, timing(-55, 400)).start();
-    }
     return Animated.timing(this.translateYShare, timing(0, 400)).start();
   }
   rowShare() {
@@ -380,23 +305,28 @@ class Contacts extends Component {
   }
 
   createBranchMessage = async () => {
+    const data = this.props.navigation.getParam('data');
+    const image = this.props.navigation.getParam('image');
+    const action = this.props.navigation.getParam('action');
+    const {url, description, title, objectID} = await createBranchUrl(
+      data,
+      action,
+      image,
+    );
+
+    return {url, description, title, image, objectID, action};
+  };
+  async shareEvent() {
     const {
+      url,
       description,
       title,
       image,
-      action,
       objectID,
-    } = this.props.navigation.getParam('url');
-    console.log('lets create link', {
-      description,
-      title,
-      image,
       action,
-      objectID,
-    });
-    let branchUniversalObject = await branch.createBranchUniversalObject(
-      'canonicalIdentifier',
-      {
+    } = await this.createBranchMessage();
+    branch
+      .createBranchUniversalObject('canonicalIdentifier', {
         contentDescription: description,
         title: title,
         contentMetadata: {
@@ -407,42 +337,39 @@ class Contacts extends Component {
             $og_image_url: image,
           },
         },
-      },
-    );
-
-    let linkProperties = {feature: 'share', channel: 'GameFare'};
-    let controlParams = {$desktop_url: 'http://getgamefare.com'};
-
-    let {url} = await branchUniversalObject.generateShortUrl(
-      linkProperties,
-      controlParams,
-    );
-
-    return {url, description, action, objectID};
-  };
+      })
+      .then((branchUniversalObject) => {
+        let shareOptions = {
+          messageHeader: description,
+          messageBody: description,
+        };
+        let linkProperties = {
+          channel: 'facebook',
+        };
+        let controlParams = {
+          $desktop_url: 'https://getgamefare.com',
+        };
+        branchUniversalObject
+          .showShareSheet(shareOptions, linkProperties, controlParams)
+          .then((channel, completed, error) => {
+            console.log('completed', channel);
+          });
+      });
+  }
 
   async sendSMS() {
     const contacts = this.state.contactsSelected;
-
     const {url, description} = await this.createBranchMessage();
 
     const phoneNumbers = Object.values(contacts).map(
-      (contact) => contact.phoneNumbers[0].number,
+      (contact) => contact.info.phoneNumber,
     );
-    SendSMS.send(
-      {
-        body: description + ' ' + url,
-        recipients: phoneNumbers,
-        successTypes: ['sent', 'queued'],
-        allowAndroidSendWithoutReadPermission: true,
-      },
-      (completed, cancelled, error) => {
-        if (cancelled || error) {
-          return true;
-        }
-        return this.props.navigation.dismiss();
-      },
+    const smsSent = await sendSMSFunction(
+      phoneNumbers,
+      description + ' ' + url,
     );
+    if (smsSent.completed) return this.props.navigation.dismiss();
+    return true;
   }
   translateXView = (value, userConnected) => {
     if (!userConnected && (value === 'gamefareUsers' || value === 'groups'))
@@ -456,6 +383,7 @@ class Contacts extends Component {
     const objectID = navigation.getParam('objectID');
     const pageFrom = navigation.getParam('pageFrom');
     const data = navigation.getParam('data');
+    const action = navigation.getParam('action');
     ///const groupsTab = navigation.getParam('groupsTab');
     const {
       fadeInDuration,
@@ -497,7 +425,8 @@ class Contacts extends Component {
             height={heightSwitch}
             animationDuration={190}
             options={
-              this.props.userID === data.info.organizer
+              this.props.userID === data.info.organizer &&
+              action !== 'Challenge'
                 ? [
                     {label: 'GameFare', value: 'gamefareUsers'},
                     {label: 'Groups', value: 'groups'},
@@ -519,7 +448,7 @@ class Contacts extends Component {
                 placeHolderMessage={'Search for contact...'}
                 updateSearch={this.changeSearch}
                 showAddContact={true}
-                addNewContact={this.addContact}
+                addNewContact={this.addNewContact}
                 searchString={searchInputContacts}
               />
               {this.listContacts()}
