@@ -119,7 +119,7 @@ PODS:
     - boost-for-react-native
     - DoubleConversion
     - glog
-  - gamefare-camera-kit (1.1.1):
+  - gamefare-camera-kit (1.1.2):
     - React
   - glog (0.3.5)
   - GoogleAppMeasurement (6.1.6):
@@ -862,7 +862,7 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: 4890e58b0e33c8328b8c5e8b7a5a237b9d851d8e
   FirebaseStorage: 93fe2f8190a01bfb2b2c4932df7d679744c4ef1d
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
-  gamefare-camera-kit: 6e549b09f36b9a6e7c821bb075a0a45cc33b6502
+  gamefare-camera-kit: 09c3fd74dc7eb4af3996c910150654cf88f55141
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
   GoogleDataTransport: 47fe3b8e1673e5187dfd615656a3c5034f150d69

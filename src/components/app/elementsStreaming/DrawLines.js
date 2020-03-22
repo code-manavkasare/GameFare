@@ -150,7 +150,6 @@ class DrawLines extends React.Component {
             '4',
           )}
         </Svg>
-        <CameraFooter switchCamera={() => this.switchCamera()} />
       </View>
     );
   }

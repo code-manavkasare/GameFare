@@ -3766,10 +3766,10 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-gamefare-camera-kit@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/gamefare-camera-kit/-/gamefare-camera-kit-1.1.1.tgz#b82f5cd91024478daf4c06baefe9ca0489859979"
-  integrity sha512-se3b6Q8iQKqVd9wgAq/NWcRYbIeVM5BBY8UO6utg7ME/itzAT2yjnh1oHMx6z8hY1x25brWiMelO0wDvJcTwww==
+gamefare-camera-kit@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/gamefare-camera-kit/-/gamefare-camera-kit-1.1.2.tgz#5974e9840648dec9b64828567a54a91ffbd29fbb"
+  integrity sha512-fRZx92cSDXp2rcaY/y/qwDGD0Mogrck2s0Zn0DT8tT7bf5UjGuTVsLYXzaUf6Cr+XNRWfqZuTNSCvtdbJ1QE0g==
   dependencies:
     lodash "^4.14.2"
 

@@ -282,7 +282,6 @@ class Calibration extends React.Component {
         )}
         <CameraFooter
           takePhoto={() => this.mainButtonClick()}
-          switchCamera={() => this.switchCamera()}
         />
       </View>
     );
