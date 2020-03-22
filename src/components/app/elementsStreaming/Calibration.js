@@ -11,7 +11,7 @@ import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
 import Svg, {Line} from 'react-native-svg';
 
-import {CameraKitCamera} from 'react-native-camera-kit';
+import {CameraKitCamera} from 'gamefare-camera-kit';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import KeepAwake from 'react-native-keep-awake';
@@ -282,7 +282,6 @@ class Calibration extends React.Component {
         )}
         <CameraFooter
           takePhoto={() => this.mainButtonClick()}
-          switchCamera={() => this.switchCamera()}
         />
       </View>
     );
