@@ -3,7 +3,7 @@ import {View, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import Svg, {Line} from 'react-native-svg';
 import KeepAwake from 'react-native-keep-awake';
-import {CameraKitCamera} from 'react-native-camera-kit';
+import {CameraKitCamera} from 'gamefare-camera-kit';
 import Orientation from 'react-native-orientation-locker';
 
 import styleApp from '../../style/style';
@@ -55,9 +55,9 @@ class DrawLines extends React.Component {
       return (
         <Line
           x1={(1 - y1) * width}
-          y1={(1 - x1) * height}
+          y1={x1 * height}
           x2={(1 - y2) * width}
-          y2={(1 - x2) * height}
+          y2={x2 * height}
           stroke={stroke}
           strokeWidth={strokeWidth}
         />
@@ -66,9 +66,9 @@ class DrawLines extends React.Component {
       return (
         <Line
           x1={y1 * width}
-          y1={x1 * height}
+          y1={(1 - x1) * height}
           x2={y2 * width}
-          y2={x2 * height}
+          y2={(1 - x2) * height}
           stroke={stroke}
           strokeWidth={strokeWidth}
         />

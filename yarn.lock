@@ -3766,6 +3766,13 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
+gamefare-camera-kit@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/gamefare-camera-kit/-/gamefare-camera-kit-1.1.1.tgz#b82f5cd91024478daf4c06baefe9ca0489859979"
+  integrity sha512-se3b6Q8iQKqVd9wgAq/NWcRYbIeVM5BBY8UO6utg7ME/itzAT2yjnh1oHMx6z8hY1x25brWiMelO0wDvJcTwww==
+  dependencies:
+    lodash "^4.14.2"
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
@@ -6644,13 +6651,6 @@ react-native-calendars@^1.212.0:
     lodash "^4.0.0"
     prop-types "^15.5.10"
     xdate "^0.8.0"
-
-react-native-camera-kit@^8.0.4:
-  version "8.0.4"
-  resolved "https://registry.yarnpkg.com/react-native-camera-kit/-/react-native-camera-kit-8.0.4.tgz#8e350b37a205054ceb140a8babe1d032acdcdbd5"
-  integrity sha512-nzjZVufIF9gnSklufJhpALJP1Ghaj3/fDMYcm4Bvzbq6PAA0CqogX448C7TRWYOqGsE/jFcKagM/J7/M4AJzhw==
-  dependencies:
-    lodash "^4.14.2"
 
 react-native-communications@^2.2.1:
   version "2.2.1"
