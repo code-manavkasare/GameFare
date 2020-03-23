@@ -174,6 +174,10 @@ PODS:
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
   - NodeMediaClient (2.6.0)
+  - OpenTok (2.16.5)
+  - opentok-react-native (0.12.2):
+    - OpenTok
+    - React
   - Permission-BluetoothPeripheral (2.0.8):
     - RNPermissions
   - Permission-Calendars (2.0.8):
@@ -509,6 +513,8 @@ PODS:
   - RNSentry (1.3.3):
     - React
     - Sentry (~> 4.4.0)
+  - RNSketchCanvas (0.8.0):
+    - React
   - RNSVG (11.0.1):
     - React
   - RNVectorIcons (6.6.0):
@@ -527,6 +533,8 @@ PODS:
     - React
     - Stripe (~> 14.0.0)
   - Yoga (1.14.0)
+  - YouTubeSdk (1.0.4):
+    - React
 
 DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
@@ -541,6 +549,7 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - gamefare-camera-kit (from `../node_modules/gamefare-camera-kit`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - opentok-react-native (from `../node_modules/opentok-react-native`)
   - Permission-BluetoothPeripheral (from `../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec`)
   - Permission-Calendars (from `../node_modules/react-native-permissions/ios/Calendars.podspec`)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
@@ -619,11 +628,13 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - "RNSketchCanvas (from `../node_modules/@terrylinla/react-native-sketch-canvas`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+  - YouTubeSdk (from `../node_modules/react-native-youtube-sdk`)
 
 SPEC REPOS:
   trunk:
@@ -657,6 +668,7 @@ SPEC REPOS:
     - Mixpanel
     - nanopb
     - NodeMediaClient
+    - OpenTok
     - Protobuf
     - SDWebImage
     - SDWebImageWebPCoder
@@ -678,6 +690,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/gamefare-camera-kit"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  opentok-react-native:
+    :path: "../node_modules/opentok-react-native"
   Permission-BluetoothPeripheral:
     :path: "../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec"
   Permission-Calendars:
@@ -828,6 +842,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNSketchCanvas:
+    :path: "../node_modules/@terrylinla/react-native-sketch-canvas"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -836,6 +852,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/tipsi-stripe"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
+  YouTubeSdk:
+    :path: "../node_modules/react-native-youtube-sdk"
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
@@ -875,6 +893,8 @@ SPEC CHECKSUMS:
   Mixpanel: 399997670f5452de026449f9e9ecd52eccbb9ff7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   NodeMediaClient: abfa3d21e314e6577c6adbed0a7c5395d47c9f55
+  OpenTok: 5d53a0f1375ee79579c2e40329bd5fa6925354ce
+  opentok-react-native: 75f3a03fc36da5f05eae601557cfecbddb0fac3e
   Permission-BluetoothPeripheral: 425fda0e17a4bf5e28aee8c1f195c45a024e81ad
   Permission-Calendars: 43f00e23f78b722d5c15cdfcabd2bcf3fa02d25e
   Permission-Camera: f9a7b0b01c71febe320436aa74630f23c9483547
@@ -951,6 +971,7 @@ SPEC CHECKSUMS:
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 62284de159bbddba268edd282337afdb8771aaed
   RNSentry: 86baf0c87120cd5eb491d073989f8cbc1a2174c6
+  RNSketchCanvas: 9c28adb5381543ed55cc98ce6de46479cb3cb12c
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   SDWebImage: 5bf6aec6481ae2a062bdc59f9d6c1d1e552090e0
@@ -959,6 +980,7 @@ SPEC CHECKSUMS:
   Stripe: db29ad197c74aca6fb981e4e8355cf7ebd0fca5a
   tipsi-stripe: 61c247493a58d7e8e0bf6ee6b014271f473d2b11
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
+  YouTubeSdk: e7fb8ffad760e5e7f68b535e98c903f65aab1b46
 
 PODFILE CHECKSUM: 99218235d6bd060767a48675eb5697cf11d26f7c
 

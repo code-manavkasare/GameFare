@@ -86,6 +86,11 @@ import AddPlayers from '../app/elementsStreamResults/AddPlayers';
 import MatchPictures from '../app/elementsStreamResults/MatchPictures';
 import StreamResults from '../app/elementsStreamResults/StreamResults';
 
+import RecordType from '../app/coachFlow/RecordType';
+import CoachingType from '../app/coachFlow/CoachingType';
+import StreamPageCoaching from '../app/coachFlow/StreamPage/Index';
+import SaveCoachSession from '../app/coachFlow/SaveCoachSession';
+
 const CreateEventNavigator = createStackNavigator(
   {
     CreateEvent0: lockedPortrait(CreateEvent0),
@@ -181,9 +186,40 @@ const JoinChallengeNavigator = createStackNavigator(
     headerMode: 'none',
     mode: 'card',
     cardOverlayEnabled: false,
-    cardShadowEnabled: true,
+    cardShadowEnabled: false,
   },
 );
+
+const navigatorStreamingCoach  = createStackNavigator(
+  {
+    StreamPageCoaching: lockedPortrait(StreamPageCoaching),
+    SaveCoachSession: lockedPortrait(SaveCoachSession),
+    PickMembers: lockedPortrait(PickMembers),
+  },
+  {
+    initialRouteName: 'StreamPageCoaching',
+    headerMode: 'none',
+    mode: 'modal',
+    cardOverlayEnabled: false,
+    cardShadowEnabled: false,
+  },
+);
+
+
+// const CoachingNavigator = createStackNavigator(
+//   {
+//     StartCoaching: lockedPortrait(RecordType),
+//     CoachingType: lockedPortrait(CoachingType),
+//     StreamPageCoaching:navigatorStreamingCoach,
+//   },
+//   {
+//     initialRouteName: 'StreamPageCoaching',
+//     headerMode: 'none',
+//     mode: 'card',
+//     cardOverlayEnabled: false,
+//     cardShadowEnabled: false,
+//   },
+// );
 
 const JoinGroupNavigator = createStackNavigator(
   {
@@ -394,6 +430,7 @@ const MainStack = createStackNavigator(
     Event: JoinNavigator,
     Challenge: JoinChallengeNavigator,
     Conversation: MessageNavigator,
+    StartCoaching: navigatorStreamingCoach,
     ProfilePage: {screen: lockedPortrait(ProfilePage)},
     Group: JoinGroupNavigator,
     LiveStream: StreamNavigator,

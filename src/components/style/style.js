@@ -190,6 +190,17 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: '40%',
   },
+  buttonCoach: {
+    borderColor: colors.off,
+    height: 40,
+    width: 110,
+    borderRadius: 20,
+    borderWidth: 1,
+    position: 'absolute',
+    zIndex: 40,
+    bottom: 20,
+    right: '37%',
+  },
   textShade: {
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: {width: -1, height: 1},
@@ -270,11 +281,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     borderTopWidth: 0,
-    // backgroundColor:'red',
     height: sizes.heightFooterBooking,
     paddingTop: 15,
-    // paddingLeft:20,paddingRight:20,
-    //borderTopWidth:1,
     zIndex: 20,
     width: width,
     borderColor: '#EAEAEA',
@@ -414,6 +422,7 @@ const styles = StyleSheet.create({
   stylePage: {
     flex: 1,
     borderLeftWidth: 0,
+    borderRadius: 0,
     borderColor: colors.off,
   },
   marginView: {
@@ -461,6 +470,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.4,
     marginTop: 40,
     borderColor: colors.grey,
+  },
+  buttonStartStreaming: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 80,
+    borderWidth: 4,
+    borderColor: colors.white,
+    width: 80,
+    borderRadius: 42.5,
   },
 });
 

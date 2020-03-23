@@ -30,7 +30,9 @@ class CardEvent extends React.Component {
             <Row style={styles.container}>
               <Col size={90} style={styles.leftText}>
                 <Row style={styles.row}>
-                  <Text style={styleApp.title}>{this.props.eventTitle}</Text>
+                  <Text style={[styleApp.text, {fontSize: 19}]}>
+                    {this.props.eventTitle}
+                  </Text>
                 </Row>
                 <Row style={styles.row}>
                   <Text
@@ -44,7 +46,7 @@ class CardEvent extends React.Component {
                   </Text>
                 </Row>
               </Col>
-              <Col size={10} style={styleApp.center2}>
+              <Col size={10} style={styleApp.center3}>
                 <AllIcons
                   type="mat"
                   size={15}
