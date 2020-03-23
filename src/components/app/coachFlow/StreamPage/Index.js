@@ -60,27 +60,56 @@ class StreamPage extends Component {
     this.translateXViewPublisher = new Animated.Value(0);
     this.otSessionRef = React.createRef();
     this.sessionEventHandlers = {
-      streamCreated: event => {
+      streamCreated: (event) => {
         console.log('Stream created!', event);
       },
-      streamDestroyed: event => {
+      streamDestroyed: (event) => {
         console.log('Stream destroyed!', event);
-        firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({isConnected:false})
+        const {userID} = this.props;
+        console.log('userID', userID);
+        firebase
+          .database()
+          .ref(
+            'coachSessions/' +
+              this.state.coachSession.objectID +
+              '/members/' +
+              userID,
+          )
+          .update({isConnected: false});
       },
       sessionDisconnected: async (event) => {
-        console.log('session disconnected !!!!',event)
-        await firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({isConnected:false})
+        console.log('session disconnected !!!!', event);
+        const {userID} = this.props;
+        console.log('userID', userID);
+        await firebase
+          .database()
+          .ref(
+            'coachSessions/' +
+              this.state.coachSession.objectID +
+              '/members/' +
+              userID,
+          )
+          .update({isConnected: false});
         this.setState({
           isConnected: false,
-        })
+        });
       },
       sessionConnected: async (event) => {
-        console.log('session connected !!!!',event)
-        await firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({isConnected:true})
+        console.log('session connected !!!!', event);
+        const {userID} = this.props;
+        await firebase
+          .database()
+          .ref(
+            'coachSessions/' +
+              this.state.coachSession.objectID +
+              '/members/' +
+              userID,
+          )
+          .update({isConnected: true});
         this.setState({
           isConnected: true,
-        })
-      }
+        });
+      },
     };
     this.componentDidMount = this.componentDidMount.bind(this);
   }
@@ -189,7 +218,7 @@ class StreamPage extends Component {
       coachSession,
       hidePublisher,
       screen,
-      isConnected
+      isConnected,
     } = this.state;
     const {userID} = this.props;
 
@@ -210,7 +239,6 @@ class StreamPage extends Component {
 
     const {shareScreen} = member;
     console.log('member', member);
-    
 
     return (
       <View
@@ -225,7 +253,17 @@ class StreamPage extends Component {
           eventHandlers={this.sessionEventHandlers}
           sessionId={sessionID}
           token={member.token}>
-            {!isConnected &&<View style={{height:height,backgroundColor:colors.greyDark,width:width,position:'absolute',zIndez:40,opoacity:0.6}}></View>}
+          {!isConnected && (
+            <View
+              style={{
+                height: height,
+                backgroundColor: colors.greyDark,
+                width: width,
+                position: 'absolute',
+                zIndez: 40,
+                opoacity: 0.6,
+              }}></View>
+          )}
           <OTSubscriber style={styles.OTSubscriber} />
 
           <Animated.View
