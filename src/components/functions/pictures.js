@@ -7,7 +7,6 @@ import CameraRoll from '@react-native-community/cameraroll';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
 import RNVideoHelper from 'react-native-video-helper';
-
 import ImageResizer from 'react-native-image-resizer';
 
 const options = {

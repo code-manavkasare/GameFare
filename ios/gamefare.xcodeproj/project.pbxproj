@@ -29,6 +29,10 @@
 		054C59A623EDA04F006D67F4 /* splashImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D1479235C22FB00560A8E /* splashImage.png */; };
 		054C59A723EDA04F006D67F4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		054C59A823EDA04F006D67F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 172D1482235C7B8F00560A8E /* LaunchScreen.storyboard */; };
+		057F061D242242A5003FA087 /* libopentok-react-native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 057F061C242242A5003FA087 /* libopentok-react-native.a */; };
+		057F0621242242B4003FA087 /* libopentok-react-native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 057F0620242242B4003FA087 /* libopentok-react-native.a */; };
+		057F062524226B21003FA087 /* OTInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F062424226B21003FA087 /* OTInstall.swift */; };
+		057F062624226B21003FA087 /* OTInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F062424226B21003FA087 /* OTInstall.swift */; };
 		05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 05B34DCC23A397CD001B955A /* icomoon.ttf */; };
 		09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 036926E988D44753AF801E89 /* libz.tbd */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -112,6 +116,11 @@
 		050B796323F858C300F91B6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		054C59B123EDA04F006D67F4 /* GameFare-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameFare-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		054C59B223EDA04F006D67F4 /* gamefare-dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gamefare-dev-Info.plist"; path = "/Users/raf/Documents/gamefare-native/ios/gamefare-dev-Info.plist"; sourceTree = "<absolute>"; };
+		057F061C242242A5003FA087 /* libopentok-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libopentok-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		057F0620242242B4003FA087 /* libopentok-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libopentok-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		057F062224226B21003FA087 /* gamefare-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gamefare-Bridging-Header.h"; sourceTree = "<group>"; };
+		057F062324226B21003FA087 /* gamefare-dev-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gamefare-dev-Bridging-Header.h"; sourceTree = "<group>"; };
+		057F062424226B21003FA087 /* OTInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTInstall.swift; sourceTree = "<group>"; };
 		05B34DCC23A397CD001B955A /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icomoon.ttf; path = ../assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
 		0E75EAC3BEE0426BBEE4E246 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* gamefare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gamefare.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,6 +203,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				057F0621242242B4003FA087 /* libopentok-react-native.a in Frameworks */,
 				054C599623EDA04F006D67F4 /* MobileCoreServices.framework in Frameworks */,
 				AD065D257AFF6F33C22590AA /* libPods-gamefare-dev.a in Frameworks */,
 			);
@@ -203,6 +213,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				057F061D242242A5003FA087 /* libopentok-react-native.a in Frameworks */,
 				17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */,
 				09279AC950624A89A83FA1AC /* libz.tbd in Frameworks */,
 				400B8DE5F4E844BE8C243552 /* libPods-gamefare.a in Frameworks */,
@@ -337,6 +348,8 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				057F0620242242B4003FA087 /* libopentok-react-native.a */,
+				057F061C242242A5003FA087 /* libopentok-react-native.a */,
 				17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */,
 				17B60B3E23C75945006B1DCF /* QuartzCore.framework */,
 				17B60B3C23C7593F006B1DCF /* AVFoundation.framework */,
@@ -378,6 +391,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				057F062424226B21003FA087 /* OTInstall.swift */,
 				172D148E235D2F7D00560A8E /* Font */,
 				13B07FAE1A68108700A75B9A /* gamefare */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -386,6 +400,8 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				0E5EB86E236842468BEB826B /* Resources */,
 				3CA397B932D8F6B483E25E23 /* Pods */,
+				057F062224226B21003FA087 /* gamefare-Bridging-Header.h */,
+				057F062324226B21003FA087 /* gamefare-dev-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -490,6 +506,7 @@
 					};
 					054C598F23EDA04F006D67F4 = {
 						DevelopmentTeam = GDMG8R7UAQ;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 					};
 					13B07F861A680F5B00A75B9A = {
@@ -866,6 +883,7 @@
 			files = (
 				054C599323EDA04F006D67F4 /* AppDelegate.m in Sources */,
 				054C599423EDA04F006D67F4 /* main.m in Sources */,
+				057F062624226B21003FA087 /* OTInstall.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -875,6 +893,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				057F062524226B21003FA087 /* OTInstall.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,6 +912,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6A1EBAA59B39D9E53CEC2DF5 /* Pods-gamefareTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
@@ -922,6 +942,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 947574DBB69E32982B7ABA95 /* Pods-gamefareTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -960,7 +981,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -968,6 +989,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "gamefareInc-dev";
 				PRODUCT_NAME = "GameFare-dev";
+				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-dev-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -989,7 +1011,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -997,6 +1019,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "gamefareInc-dev";
 				PRODUCT_NAME = "GameFare-dev";
+				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-dev-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1019,7 +1042,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1028,6 +1051,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = gamefareInc;
 				PRODUCT_NAME = gamefare;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1050,7 +1074,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1059,6 +1083,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = gamefareInc;
 				PRODUCT_NAME = gamefare;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

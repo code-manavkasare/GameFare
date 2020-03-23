@@ -1,8 +1,11 @@
 import {rotateImage, uploadPictureFirebase} from '../functions/pictures';
 import firebase from 'react-native-firebase';
 import axios from 'axios';
+import Permissions from 'react-native-permissions';
+
 import Config from 'react-native-config';
 import {subscribeToTopics} from './notifications';
+import {request, PERMISSIONS} from 'react-native-permissions';
 
 async function createStream(eventID) {
   let stream = await createStreamMux();
@@ -116,6 +119,10 @@ async function destroyStreamMux(streamID) {
     });
 }
 
+const goToSettings = () => {
+  Permissions.openSettings();
+};
+
 async function uploadNetlinePhoto(streamID, img, orientation) {
   let rotatedImage = img;
   // IF USING BACK CAMERA
@@ -140,9 +147,33 @@ async function uploadNetlinePhoto(streamID, img, orientation) {
     .update({netlinePhoto: pictureUri});
 }
 
+const audioVideoPermission = async () => {
+  const permissionCamera = await request(PERMISSIONS.IOS.CAMERA);
+  const permissionMicro = await request(PERMISSIONS.IOS.MICROPHONE);
+  if (permissionCamera === 'granted' && permissionMicro === 'granted')
+    return true;
+  return false;
+};
+
+const microphonePermission = async () => {
+  const permissionMicro = await request(PERMISSIONS.IOS.MICROPHONE);
+  if (permissionMicro === 'granted') return true;
+  return false;
+};
+
+const cameraPermission = async () => {
+  const permissionCamera = await request(PERMISSIONS.IOS.CAMERA);
+  if (permissionCamera === 'granted') return true;
+  return false;
+};
+
 module.exports = {
   createStream,
   destroyStream,
   uploadNetlinePhoto,
   saveStreamResultsMatches,
+  audioVideoPermission,
+  microphonePermission,
+  cameraPermission,
+  goToSettings,
 };

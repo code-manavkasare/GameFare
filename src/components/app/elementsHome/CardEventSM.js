@@ -161,9 +161,12 @@ class CardEvent extends React.Component {
     );
   }
   displayCard(data, members) {
+    if (!data) return null
+    if (!data.info) return null
     const sport = Object.values(this.props.sports).filter(
       (sport) => sport.value === data.info.sport,
     )[0];
+
     var league = Object.values(sport.typeEvent)
       .filter((item) => item)
       .filter((item) => item.value === data.info.league)[0];

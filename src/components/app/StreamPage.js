@@ -8,6 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import {Grid, Row, Col} from 'react-native-easy-grid';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -23,6 +24,8 @@ import CardEvent from './elementsStreaming/CardEvent';
 
 import PlaceHolder from '../placeHolders/CardConversation';
 import Button from '../layout/buttons/Button';
+import ButtonColor from '../layout/Views/Button';
+import AllIcons from '../layout/icons/AllIcons';
 
 class StreamPage extends React.Component {
   constructor(props) {
@@ -102,7 +105,7 @@ class StreamPage extends React.Component {
       return this.logoutView();
     }
     return (
-      <View style={{paddingTop: 5, height: '100%'}}>
+      <View style={{paddingTop: 20, height: '100%'}}>
         <View style={[styleApp.marginView, {marginBottom: 15}]}>
           <Text style={[styleApp.title, {fontSize: 27}]}>Events</Text>
         </View>
@@ -125,27 +128,61 @@ class StreamPage extends React.Component {
       </View>
     );
   }
-
+  buttonCoach() {
+    const {navigate} = this.props.navigation;
+    const {userConnected} = this.props;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={50} style={styleApp.center}>
+                <AllIcons
+                  name="laptop-medical"
+                  color={colors.blue}
+                  size={16}
+                  type="font"
+                />
+              </Col>
+              <Col size={70} style={styleApp.center2}>
+                <Text style={styleApp.text}> Coach</Text>
+              </Col>
+            </Row>
+          );
+        }}
+        color={'white'}
+        style={[styleApp.center, styleApp.shade2, styleApp.buttonCoach]}
+        click={() => {
+          !userConnected ? navigate('SignIn') : navigate('StartCoaching');
+        }}
+        onPressColor={colors.off}
+      />
+    );
+  }
   render() {
     const {events} = this.state;
     if (this.props.userConnected && this.state.wasLoggedOut) {
       this.loadEvents();
     }
     return (
-      <ScrollView2
-        onRef={(ref) => (this.scrollViewRef = ref)}
-        contentScrollView={() => this.streamPageView(events)}
-        keyboardAvoidDisable={true}
-        marginBottomScrollView={0}
-        marginTop={sizes.heightHeaderHome}
-        AnimatedHeaderValue={this.AnimatedHeaderValue}
-        marginBottom={0}
-        colorRefresh={colors.title}
-        stickyHeaderIndices={[3]}
-        refreshControl={false}
-        offsetBottom={10}
-        showsVerticalScrollIndicator={true}
-      />
+      <View style={styleApp.stylePage}>
+        <ScrollView2
+          onRef={(ref) => (this.scrollViewRef = ref)}
+          contentScrollView={() => this.streamPageView(events)}
+          keyboardAvoidDisable={true}
+          marginBottomScrollView={0}
+          marginTop={sizes.marginTopApp}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginBottom={0}
+          colorRefresh={colors.title}
+          stickyHeaderIndices={[3]}
+          refreshControl={false}
+          offsetBottom={10}
+          showsVerticalScrollIndicator={true}
+        />
+
+        {this.buttonCoach()}
+      </View>
     );
   }
 }

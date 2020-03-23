@@ -37,6 +37,7 @@ class NewConversation extends React.Component {
     this.state = {
       loader: true,
       loaderHeader: false,
+      loaderButton:false,
       users: [],
       usersSelected: this.props.navigation.getParam('usersSelected'),
       searchInput: '',
@@ -199,8 +200,10 @@ class NewConversation extends React.Component {
 
   render() {
     const {dismiss, goBack} = this.props.navigation;
-    const {usersSelected} = this.state;
+    const {usersSelected,loaderButton} = this.state;
     const titleHeader = this.props.navigation.getParam('titleHeader');
+    const closeButton = this.props.navigation.getParam('closeButton');
+    const loaderOnSubmit = this.props.navigation.getParam('loaderOnSubmit');
 
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
@@ -213,7 +216,7 @@ class NewConversation extends React.Component {
           initialBorderWidth={0}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1={'arrow-left'}
+          icon1={closeButton ? 'times' : 'arrow-left'}
           text2={'Next'}
           clickButton1={() => goBack()}
           loader={this.state.loaderHeader}
@@ -231,11 +234,14 @@ class NewConversation extends React.Component {
                     Object.values(usersSelected).length +
                     ' players'
                   }
+                  loader={loaderButton}
                   backgroundColor={'green'}
                   onPressColor={colors.greenLight}
-                  click={() =>
-                    this.props.navigation.state.params.onGoBack(usersSelected)
-                  }
+                  click={async() =>{
+                    if (loaderOnSubmit) await this.setState({loaderButton:true})
+                    await this.props.navigation.state.params.onGoBack(usersSelected)
+                    return this.setState({loaderButton:false})
+                  }}
                 />
               </FadeInView>
             )}

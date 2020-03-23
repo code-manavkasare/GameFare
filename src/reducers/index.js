@@ -8,10 +8,12 @@ import eventsReducer from './eventsReducer';
 import createGroupReducer from './createGroupReducer';
 import groupsReducer from './groupsReducer';
 import messageReducer from './messageReducer';
+import coachReducer from './coachReducer';
 
 export default combineReducers({
   globaleVariables: globaleVariablesReducer,
   user: userReducer,
+  coach: coachReducer,
   historicSearch: historicSearchReducer,
   createEventData: createEventReducer,
   createChallengeData: createChallengeReducer,

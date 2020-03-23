@@ -314,8 +314,8 @@ class Page3 extends Component {
         value: event.info.sport,
         league: event.info.league,
       });
-      await that.props.createEventAction('reset');
       await that.setState({loader: false});
+      await that.props.createEventAction('reset');
 
       await dismiss();
     }, 1000);

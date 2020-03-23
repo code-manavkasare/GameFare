@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  blacklist: ['conversations', 'events', 'message', 'createChallengeData'],
+  blacklist: ['conversations', 'events', 'message', 'createChallengeData','coach'],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };
 import {composeWithDevTools} from 'remote-redux-devtools';

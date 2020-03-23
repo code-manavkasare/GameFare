@@ -61,6 +61,8 @@ var sizes = {
   heightHeaderHome: heightHeaderHome,
   heightHeaderFilter: heightHeaderFilter,
   heightHeaderHomeSearch: heightHeaderHomeSearch,
+  height:height,
+  width:width
 };
 
 export default sizes;

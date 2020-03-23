@@ -107,6 +107,15 @@ export default class HeaderFlow extends Component {
       ],
       extrapolate: 'clamp',
     });
+
+    const {
+      sizeLoader,
+      colorLoader,
+      colorIcon1,
+      nobackgroundColorIcon1,
+      sizeIcon1,
+      backgroundColorIcon1,
+    } = this.props;
     return (
       <Animated.View
         style={[
@@ -130,22 +139,25 @@ export default class HeaderFlow extends Component {
               <Animated.View
                 style={[
                   styles.animatedButtonStyle,
-                  {borderColor: borderColorIcon},
+                  {backgroundColor: backgroundColorIcon1?backgroundColorIcon1:'white'},
+                  {
+                    borderColor: borderColorIcon,
+                  },
                 ]}>
                 <ButtonColor
                   view={() => {
                     return (
                       <AllIcons
                         name={this.props.icon1}
-                        color={colors.title}
-                        size={15}
+                        color={colorIcon1 ? colorIcon1 : colors.title}
+                        size={sizeIcon1 ? sizeIcon1 : 15}
                         type="font"
                       />
                     );
                   }}
                   click={() => this.props.clickButton1()}
-                  color={'white'}
-                  style={styles.buttonRight}
+                  color={nobackgroundColorIcon1 ? null : 'white'}
+                  style={[styles.buttonRight]}
                   onPressColor={colors.off}
                 />
               </Animated.View>
@@ -172,7 +184,10 @@ export default class HeaderFlow extends Component {
                 <ButtonColor
                   view={() => {
                     return this.props.loader ? (
-                      <Loader size={20} color={'primary'} />
+                      <Loader
+                        size={sizeLoader ? sizeLoader : 20}
+                        color={colorLoader ? colorLoader : 'primary'}
+                      />
                     ) : this.props.iconOffset === 'text' ? (
                       <Text style={styleApp.text}>{this.props.textOffset}</Text>
                     ) : (
@@ -208,7 +223,10 @@ export default class HeaderFlow extends Component {
           <Col size={2} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
             {this.props.loader ? (
-              <Loader color={'green'} size={24} />
+              <Loader
+                color={colorLoader ? colorLoader : 'green'}
+                size={sizeLoader ? sizeLoader : 24}
+              />
             ) : (
               this.props.icon2 && (
                 <Animated.View
