@@ -18,7 +18,6 @@ const createCoachSession = async (user) => {
       tokbox: {
         sessionID: false,
         sessionIsCreated: false,
-        archiving: false,
       },
       info: {
         organizer: user.id,
