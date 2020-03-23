@@ -65,18 +65,18 @@ class StreamPage extends Component {
       },
       streamDestroyed: event => {
         console.log('Stream destroyed!', event);
-        firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({connected:false})
+        firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({isConnected:false})
       },
       sessionDisconnected: async (event) => {
         console.log('session disconnected !!!!',event)
-        await firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({connected:false})
+        await firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({isConnected:false})
         this.setState({
           isConnected: false,
         })
       },
       sessionConnected: async (event) => {
         console.log('session connected !!!!',event)
-        await firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({connected:true})
+        await firebase.database().ref('coachSessions/' + this.state.coachSession.objectID + '/members/' + this.props.userID).update({isConnected:true})
         this.setState({
           isConnected: true,
         })

@@ -7,7 +7,7 @@ import NavigationService from '../../../../../NavigationService';
 
 import ButtonColor from '../../../layout/Views/Button';
 import AllIcons from '../../../layout/icons/AllIcons';
-import ImageUser from '../../../layout/image/ImageUser'
+import ImageUser from '../../../layout/image/ImageUser';
 import {coachAction} from '../../../../actions/coachActions';
 import {Col, Row} from 'react-native-easy-grid';
 
@@ -20,23 +20,29 @@ class MembersView extends Component {
     super(props);
     this.state = {};
   }
-  cardMember(member,i) {
-    return <Row key={i} style={{paddingTop:5,paddingBottom:5}}>
+  cardMember(member, i) {
+    return (
+      <Row key={i} style={{paddingTop: 5, paddingBottom: 5}}>
         <Col style={styleApp.center2} size={40}>
           <ImageUser user={member} />
         </Col>
         <Col style={styleApp.center2} size={60}>
-          <Text style={[styleApp.text,{color:colors.white}]}>{member.info.firstname}</Text>
+          <Text style={[styleApp.text, {color: colors.white}]}>
+            {member.info.firstname}
+          </Text>
         </Col>
       </Row>
+    );
   }
   membersView() {
-    const {userID,session} = this.props;
+    const {userID, session} = this.props;
     if (!session) return null;
-    const members = Object.values(session.members).filter(member => member.id !== userID && member.isConnected)
+    const members = Object.values(session.members).filter(
+      (member) => member.id !== userID && member.isConnected,
+    );
     return (
       <View style={styles.colButtonsRight}>
-        {members.map((member,i) => this.cardMember(member,i) )}
+        {members.map((member, i) => this.cardMember(member, i))}
       </View>
     );
   }
@@ -53,7 +59,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     zIndex: 5,
-    top: sizes.heightHeaderHome+10,
+    top: sizes.heightHeaderHome + 10,
     width: 130,
   },
   button: {height: 65, width: '100%'},
