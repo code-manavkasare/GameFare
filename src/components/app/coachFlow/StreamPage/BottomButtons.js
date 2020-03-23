@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
+import firebase from 'react-native-firebase';
 
 import NavigationService from '../../../../../NavigationService';
 
@@ -29,9 +30,9 @@ class StreamPage extends Component {
   buttonAddCoach() {
     const {AddMembers} = this.props;
     const {userID} = this.props;
-    const {organizer} = this.props.session.info
-    const isAdmin = organizer === userID
-    if (!isAdmin) return null
+    const {organizer} = this.props.session.info;
+    const isAdmin = organizer === userID;
+    if (!isAdmin) return null;
     return (
       <ButtonColor
         view={() => {
@@ -102,6 +103,8 @@ class StreamPage extends Component {
   }
   buttonRecord() {
     const {sizeButtonRed, borderRadiusButtonRed} = this.animationButtonRed();
+    const {objectID: sessionIDFirebase} = this.props.session;
+
     return (
       <View style={[styleApp.center, styleApp.fullView]}>
         <ButtonColor
@@ -121,20 +124,24 @@ class StreamPage extends Component {
           click={async () => {
             const {recording} = this.state;
 
-            if (recording)
+            if (recording) {
               await Animated.timing(
                 this.animateButtonRed,
                 timing(0, 200),
               ).start();
-            else
+            } else {
+              this.startRecording(sessionIDFirebase);
               await Animated.timing(
                 this.animateButtonRed,
                 timing(1, 150),
               ).start();
+            }
 
             this.setState({recording: !recording});
-            if (recording)
+            if (recording) {
+              this.stopRecording(sessionIDFirebase);
               return NavigationService.navigate('SaveCoachSession');
+            }
           }}
           // color={colors.red}
           style={styleApp.buttonStartStreaming}
@@ -143,6 +150,19 @@ class StreamPage extends Component {
       </View>
     );
   }
+  startRecording = (sessionIDFirebase) => {
+    firebase
+      .database()
+      .ref(`coachSessions/${sessionIDFirebase}/tokbox/archiving`)
+      .set(true);
+  };
+  stopRecording = (sessionIDFirebase) => {
+    firebase
+      .database()
+      .ref(`coachSessions/${sessionIDFirebase}/tokbox/archiving`)
+      .remove();
+  };
+
   rowButtons() {
     return (
       <Row style={[{height: 110, width: width}]}>
