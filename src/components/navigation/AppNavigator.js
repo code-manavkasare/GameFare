@@ -190,10 +190,11 @@ const JoinChallengeNavigator = createStackNavigator(
   },
 );
 
-const navigatorStreamingCoach  = createStackNavigator(
+const navigatorStreamingCoach = createStackNavigator(
   {
     StreamPageCoaching: lockedPortrait(StreamPageCoaching),
     SaveCoachSession: lockedPortrait(SaveCoachSession),
+    CoachingType: lockedPortrait(CoachingType),
     PickMembers: lockedPortrait(PickMembers),
   },
   {
@@ -204,7 +205,6 @@ const navigatorStreamingCoach  = createStackNavigator(
     cardShadowEnabled: false,
   },
 );
-
 
 // const CoachingNavigator = createStackNavigator(
 //   {

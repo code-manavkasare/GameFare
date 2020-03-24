@@ -22,10 +22,15 @@ class StreamPage extends Component {
       recording: false,
       showPastSessionsPicker: false,
     };
-    this.animateButtonRed = new Animated.Value(0);
+    this.animateButtonRed = new Animated.Value(
+      this.props.session.tokbox.archiving ? 1 : 0,
+    );
   }
-  openListSession() {
-    return true;
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.session.tokbox.archiving !== this.props.session.tokbox.archiving
+    )
+      return this.openRecording(nextProps.session.tokbox.archiving);
   }
   buttonAddCoach() {
     const {AddMembers} = this.props;
@@ -101,10 +106,24 @@ class StreamPage extends Component {
       />
     );
   }
-  buttonRecord() {
-    const {sizeButtonRed, borderRadiusButtonRed} = this.animationButtonRed();
+  async openRecording(nextRecordingVal) {
+    console.log('open recoding', nextRecordingVal);
     const {objectID: sessionIDFirebase} = this.props.session;
 
+    await Animated.timing(
+      this.animateButtonRed,
+      timing(nextRecordingVal ? 1 : 0, 200),
+    ).start();
+
+    if (nextRecordingVal) this.startRecording(sessionIDFirebase);
+    else {
+      this.stopRecording(sessionIDFirebase);
+      return NavigationService.navigate('SaveCoachSession');
+    }
+  }
+  buttonRecord() {
+    const {sizeButtonRed, borderRadiusButtonRed} = this.animationButtonRed();
+    const {archiving} = this.props.session.tokbox;
     return (
       <View style={[styleApp.center, styleApp.fullView]}>
         <ButtonColor
@@ -121,28 +140,7 @@ class StreamPage extends Component {
                 ]}></Animated.View>
             );
           }}
-          click={async () => {
-            const {recording} = this.state;
-
-            if (recording) {
-              await Animated.timing(
-                this.animateButtonRed,
-                timing(0, 200),
-              ).start();
-            } else {
-              this.startRecording(sessionIDFirebase);
-              await Animated.timing(
-                this.animateButtonRed,
-                timing(1, 150),
-              ).start();
-            }
-
-            this.setState({recording: !recording});
-            if (recording) {
-              this.stopRecording(sessionIDFirebase);
-              return NavigationService.navigate('SaveCoachSession');
-            }
-          }}
+          click={async () => this.openRecording(!archiving)}
           // color={colors.red}
           style={styleApp.buttonStartStreaming}
           onPressColor={colors.redLight}
