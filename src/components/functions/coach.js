@@ -31,7 +31,17 @@ const createCoachSession = async (user) => {
   return coachSessionID;
 };
 
+const isUserAlone = (session) => {
+  if (!session) return null;
+  if (!session.members) return true;
+  return (
+    Object.values(session.members).filter((member) => member.isConnected)
+      .length <= 1
+  );
+};
+
 module.exports = {
   createCoachSession,
   timeout,
+  isUserAlone,
 };

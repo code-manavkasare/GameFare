@@ -62,14 +62,14 @@ class ShareScreen extends Component {
           styles.page,
           {transform: [{translateX: this.translateXPage}]},
         ]}>
-        {/* {shareScreen && (
+        {shareScreen && (
           <Video
             hideFullScreenControl={true}
             url={archive}
             style={[styleApp.fullSize]}
           />
-        )} */}
-        {shareScreen && (
+        )}
+        {/* {shareScreen && (
           <YouTubePlayer
             ref={(ref) => (this.youTubePlayer = ref)}
             videoId="hrB-_nIer88"
@@ -84,7 +84,7 @@ class ShareScreen extends Component {
             onChangeState={(e) => console.log(e)}
             onChangeFullscreen={(e) => console.log(e)}
           />
-        )}
+        )} */}
       </Animated.View>
     );
   }

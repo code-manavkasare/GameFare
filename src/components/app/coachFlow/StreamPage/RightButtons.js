@@ -83,7 +83,6 @@ class RightButtons extends Component {
           cameraFront ? 'Front' : 'Back',
           !cameraFront,
           () => {
-            
             setState({
               cameraFront: !cameraFront,
             });
