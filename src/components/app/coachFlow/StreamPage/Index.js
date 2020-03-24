@@ -324,7 +324,10 @@ class StreamPage extends Component {
             )}
           </Animated.View>
 
-          <ShareScreenView shareScreen={member.shareScreen} />
+          <ShareScreenView
+            shareScreen={member.shareScreen}
+            session={coachSession}
+          />
 
           {!shareScreen ? (
             <FadeInView duration={300} style={styles.footer}>

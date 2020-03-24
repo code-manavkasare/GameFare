@@ -58,6 +58,7 @@ def shared_pods
   pod 'Permission-Siri', :path => "#{permissions_path}/Siri.podspec"
   pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition.podspec"
   pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit.podspec"
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
 
   # Mapbox
   pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'

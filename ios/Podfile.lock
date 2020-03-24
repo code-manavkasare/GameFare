@@ -419,12 +419,12 @@ PODS:
     - React
   - react-native-statusbar (1.0.3):
     - React
-  - react-native-video (5.0.2):
+  - react-native-video (4.4.5):
     - React
-    - react-native-video/Video (= 5.0.2)
+    - react-native-video/Video (= 4.4.5)
   - react-native-video-helper (1.4.4):
     - React
-  - react-native-video/Video (5.0.2):
+  - react-native-video/Video (4.4.5):
     - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
@@ -533,8 +533,6 @@ PODS:
     - React
     - Stripe (~> 14.0.0)
   - Yoga (1.14.0)
-  - YouTubeSdk (1.0.4):
-    - React
 
 DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
@@ -634,7 +632,6 @@ DEPENDENCIES:
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
-  - YouTubeSdk (from `../node_modules/react-native-youtube-sdk`)
 
 SPEC REPOS:
   trunk:
@@ -852,8 +849,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/tipsi-stripe"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
-  YouTubeSdk:
-    :path: "../node_modules/react-native-youtube-sdk"
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
@@ -940,7 +935,7 @@ SPEC CHECKSUMS:
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
-  react-native-video: d01ed7ff1e38fa7dcc6c15c94cf505e661b7bfd0
+  react-native-video: eee541262ada11bc7ffe8ec5508e6a877937c462
   react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
@@ -980,8 +975,7 @@ SPEC CHECKSUMS:
   Stripe: db29ad197c74aca6fb981e4e8355cf7ebd0fca5a
   tipsi-stripe: 61c247493a58d7e8e0bf6ee6b014271f473d2b11
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
-  YouTubeSdk: e7fb8ffad760e5e7f68b535e98c903f65aab1b46
 
-PODFILE CHECKSUM: 99218235d6bd060767a48675eb5697cf11d26f7c
+PODFILE CHECKSUM: 4e3f7f4bff0392042dbc9b1bfa1fbba6099b0d50
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1
