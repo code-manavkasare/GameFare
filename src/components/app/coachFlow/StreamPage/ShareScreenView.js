@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
+  Button,
   StyleSheet,
   Animated,
   Image,
@@ -12,13 +13,14 @@ import {connect} from 'react-redux';
 import {SketchCanvas} from '@terrylinla/react-native-sketch-canvas';
 const {height, width} = Dimensions.get('screen');
 import isEqual from 'lodash.isequal';
-import YouTubePlayer from 'react-native-youtube-sdk';
-import Video from 'react-native-af-video-player';
+import VideoAF from 'react-native-af-video-player';
+import Video from 'react-native-video';
+import firebase from 'react-native-firebase';
 
+import VideoPlayer from './VideoPlayer';
 import AllIcons from '../../../layout/icons/AllIcons';
 import {coachAction} from '../../../../actions/coachActions';
 import {Col, Row} from 'react-native-easy-grid';
-import RNVideoHelper from 'react-native-video-helper';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -44,16 +46,17 @@ class ShareScreen extends Component {
     if (val) return this.translateXPage.setValue(0);
     return this.translateXPage.setValue(width);
   }
-  onBuffer(event) {
-    return true;
-  }
-  videoError(event) {
-    return true;
-  }
+  updateVideoInfoCloud = (paused, currentTime) => {
+    const {objectID} = this.props.session;
+    firebase
+      .database()
+      .ref(`coachSessions/${objectID}/tokbox/sharedVideo`)
+      .update({paused, currentTime});
+  };
   shareScreen() {
-    const {shareScreen} = this.props;
     const archive =
-      'https://s3.amazonaws.com/tokbox.com.archive2/46561852/32515991-a1a2-41ee-8ab1-cc59f5add68b/archive.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20200323T072054Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=AKIAT5VIDVNM7GIYBDFL%2F20200323%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=e2ae842035a1fb06f37250429fa20945b4d429e54b59c1a092891dc458d864dd';
+      'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4';
+    const {shareScreen} = this.props;
     console.log('shareScreen', shareScreen);
     return (
       <Animated.View
@@ -63,26 +66,18 @@ class ShareScreen extends Component {
           {transform: [{translateX: this.translateXPage}]},
         ]}>
         {shareScreen && (
-          <Video
-            hideFullScreenControl={true}
-            url={archive}
-            style={[styleApp.fullSize]}
+          <VideoPlayer
+            source={archive}
+            updateVideoInfoCloud={(paused, currentTime) => {
+              this.updateVideoInfoCloud(paused, currentTime);
+            }}
           />
         )}
         {/* {shareScreen && (
-          <YouTubePlayer
-            ref={(ref) => (this.youTubePlayer = ref)}
-            videoId="hrB-_nIer88"
-            autoPlay={true}
-            fullscreen={false}
-            showFullScreenButton={false}
-            showSeekBar={true}
-            showPlayPauseButton={true}
-            startTime={5}
-            style={{width: '100%', height: '100%'}}
-            onError={(e) => console.log(e)}
-            onChangeState={(e) => console.log(e)}
-            onChangeFullscreen={(e) => console.log(e)}
+          <VideoAF
+            hideFullScreenControl={true}
+            url={archive}
+            style={[styleApp.fullSize]}
           />
         )} */}
       </Animated.View>
