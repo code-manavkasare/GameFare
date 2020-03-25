@@ -43,7 +43,9 @@ class ShareScreen extends Component {
       nextProps.shareScreen !== this.props.shareScreen ||
       nextProps.personSharingScreen !== this.props.personSharingScreen
     )
-      return this.translateXPage.setValue(nextProps.shareScreen || nextProps.personSharingScreen ? 0 : width);
+      return this.translateXPage.setValue(
+        nextProps.shareScreen || nextProps.personSharingScreen ? 0 : width,
+      );
   }
   open(val) {
     if (val) return this.translateXPage.setValue(0);
@@ -58,6 +60,7 @@ class ShareScreen extends Component {
   };
   shareScreen() {
     const {shareScreen, session, personSharingScreen} = this.props;
+    const {sharedVideo} = session.tokbox;
     console.log('share screeen view', personSharingScreen, shareScreen);
     return (
       <Animated.View
@@ -69,7 +72,11 @@ class ShareScreen extends Component {
         ]}>
         {(shareScreen || personSharingScreen) && (
           <VideoPlayer
-            sharedVideo={session.tokbox.sharedVideo}
+            source={sharedVideo.source}
+            paused={sharedVideo.paused}
+            currentTime={sharedVideo.currentTime}
+            styleContainerVideo={[styleApp.center, styleApp.stylePage]}
+            styleVideo={[styleApp.fullSize, {width: width}]}
             updateVideoInfoCloud={(paused, currentTime) => {
               this.updateVideoInfoCloud(paused, currentTime);
             }}

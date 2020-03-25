@@ -29,37 +29,34 @@ export default class VideoPlayer extends Component {
     super(props);
     this.state = {
       loader: true,
-      paused: false,
+      paused: this.props.paused ? this.props.paused : false,
       totalTime: 0,
-      currentTime: this.props.sharedVideo.currentTime,
+      currentTime: this.props.currentTime ? this.props.currentTime : 0,
       videoLoaded: false,
     };
   }
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState) {
-    console.log('component did update', this.props.sharedVideo.currentTime);
-    if (
-      prevProps.sharedVideo.currentTime !== this.props.sharedVideo.currentTime
-    ) {
-      console.log('component did update', this.props.sharedVideo.currentTime);
-      this.player.seek(this.props.sharedVideo.currentTime);
-      this.setState({currentTime: this.props.sharedVideo.currentTime});
+    if (prevProps.currentTime !== this.props.currentTime) {
+      this.player.seek(this.props.currentTime);
+      this.setState({currentTime: this.props.currentTime});
     }
   }
   togglePlayPause = async () => {
     const {currentTime} = this.state;
-    const {paused} = this.props.sharedVideo;
+    const {paused} = this.props;
     this.props.updateVideoInfoCloud &&
       this.props.updateVideoInfoCloud(!paused, currentTime);
   };
-  onBuffer = () => {
-    console.log('buffer');
+  onBuffer = (event) => {
+    console.log('buffer', event);
+    this.setState({videoLoaded: !event.isBuffering});
   };
   videoError = () => {
     console.log('error');
   };
   playPauseButton = () => {
-    const {paused} = this.props.sharedVideo;
+    const {paused} = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -73,7 +70,6 @@ export default class VideoPlayer extends Component {
           );
         }}
         click={() => this.togglePlayPause()}
-        // color="white"
         style={{height: 30, width: 30}}
         onPressColor={colors.off}
       />
@@ -81,27 +77,23 @@ export default class VideoPlayer extends Component {
   };
   onProgress = (info) => {
     const {currentTime} = info;
-    const {paused} = this.props.sharedVideo;
+    const {paused} = this.props;
     this.setState({paused: paused, currentTime: currentTime});
-    // this.props.updateVideoInfoCloud(paused, currentTime);
   };
   onSlidingStart = () => {
-    this.props.updateVideoInfoCloud(true);
+    const {updateVideoInfoCloud} = this.props;
+    if (updateVideoInfoCloud) updateVideoInfoCloud(true);
   };
   onSlidingComplete = async (SliderTime) => {
-    const {paused} = this.props.sharedVideo;
+    const {paused, updateVideoInfoCloud} = this.props;
+
     this.player.seek(SliderTime);
     this.setState({currentTime: SliderTime});
-    this.props.updateVideoInfoCloud &&
-      this.props.updateVideoInfoCloud(paused, SliderTime);
+    if (updateVideoInfoCloud) updateVideoInfoCloud(paused, SliderTime);
   };
-  controlButtons(sharedVideo) {
-    const {source, paused} = sharedVideo;
+  controlButtons() {
     const {totalTime, currentTime} = this.state;
-    const remainingTime = totalTime.toPrecision(1) - currentTime.toPrecision(1);
-
-    var minutes = Math.floor(remainingTime / 60);
-    console.log('remainingTime', remainingTime, minutes);
+    // const remainingTime = totalTime.toPrecision(1) - currentTime.toPrecision(1);
     return (
       <View style={styles.controlButtons}>
         <Row>
@@ -126,29 +118,40 @@ export default class VideoPlayer extends Component {
             <Text style={[styleApp.title, {fontSize: 14, color: colors.white}]}>
               {/* -{Math.floor(remainingTime / 60)}:
               {remainingTime - Math.floor(remainingTime / 60)} */}
-              {currentTime.toPrecision(2)}/{totalTime.toPrecision(2)}
+              {currentTime.toPrecision(2)}/
+              {totalTime === 0 ? '-' : totalTime.toPrecision(2)}
             </Text>
           </Col>
         </Row>
       </View>
     );
   }
-  render() {
-    const {sharedVideo} = this.props;
-    const {source, currentTime, paused} = sharedVideo;
-    const {videoLoaded} = this.state;
-    console.log('sharedVideo', sharedVideo);
+  bufferView() {
     return (
-      <Animated.View style={[styleApp.center, styleApp.stylePage]}>
-        {!videoLoaded && <Loader color={'grey'} size={32} />}
+      <View style={styles.bufferView}>
+        <Loader color={'grey'} size={32} />
+      </View>
+    );
+  }
+  render() {
+    const {
+      source,
+      currentTime,
+      paused,
+      styleContainerVideo,
+      styleVideo,
+    } = this.props;
+    const {videoLoaded} = this.state;
+    return (
+      <Animated.View style={styleContainerVideo}>
+        {!videoLoaded && this.bufferView()}
         <Video
           source={{uri: source}}
-          style={[styleApp.fullSize, {width: width}]}
+          style={styleVideo}
           ref={(ref) => {
             this.player = ref;
           }}
           onLoad={(callback) => {
-            console.log('onLoad fininsh');
             this.player.seek(currentTime);
             this.setState({videoLoaded: true, totalTime: callback.duration});
           }}
@@ -159,7 +162,7 @@ export default class VideoPlayer extends Component {
           paused={paused}
           onProgress={(info) => !paused && this.onProgress(info)}
         />
-        {this.controlButtons(sharedVideo)}
+        {this.controlButtons()}
       </Animated.View>
     );
   }
@@ -174,8 +177,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
   },
   slideVideo: {width: '90%', height: 40},
+  bufferView: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    ...styleApp.center,
+  },
 });
 
 VideoPlayer.propTypes = {
+  source: PropTypes.string.isRequired,
+  paused: PropTypes.bool,
+  currentTime: PropTypes.number,
   updateVideoInfoCloud: PropTypes.func,
+
+  styleContainerVideo: PropTypes.object.isRequired,
+  styleVideo: PropTypes.object.isRequired,
 };
