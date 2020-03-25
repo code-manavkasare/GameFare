@@ -55,6 +55,7 @@ class ShareScreen extends Component {
   };
   shareScreen() {
     const {shareScreen, session, personSharingScreen} = this.props;
+    console.log('share screeen view');
     return (
       <Animated.View
         style={[
