@@ -20,7 +20,11 @@ import {createCoachSession} from '../../../functions/coach';
 import AllIcons from '../../../layout/icons/AllIcons';
 import Loader from '../../../layout/loaders/Loader';
 import {coachAction} from '../../../../actions/coachActions';
-import {timeout, isUserAlone} from '../../../functions/coach';
+import {
+  timeout,
+  isUserAlone,
+  isSomeoneSharingScreen,
+} from '../../../functions/coach';
 import {audioVideoPermission} from '../../../functions/streaming';
 import {Col, Row} from 'react-native-easy-grid';
 
@@ -276,6 +280,7 @@ class StreamPage extends Component {
 
     const {shareScreen} = member;
     const userIsAlone = isUserAlone(coachSession);
+    const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
 
     const cameraPosition = this.cameraPosition();
     const videoSource = this.videoSource(shareScreen);
@@ -319,10 +324,11 @@ class StreamPage extends Component {
 
           <ShareScreenView
             shareScreen={member.shareScreen}
+            personSharingScreen={personSharingScreen}
             session={coachSession}
           />
 
-          {!shareScreen ? (
+          {!shareScreen && !personSharingScreen ? (
             <FadeInView duration={300} style={styles.footer}>
               <BottomButtons
                 session={coachSession}
@@ -345,7 +351,9 @@ class StreamPage extends Component {
   render() {
     const {goBack, navigate} = this.props.navigation;
     const {loader, permissionsCamera, draw, isConnected} = this.state;
+    const {userID} = this.props;
     const {coachSession} = this.state;
+    const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
     return (
       <View
         style={[
@@ -371,20 +379,22 @@ class StreamPage extends Component {
           clickButton1={() => navigate('Stream')}
         />
 
-        {this.userPartOfSession(coachSession) && isConnected && (
-          <View>
-            <MembersView session={coachSession} />
+        {this.userPartOfSession(coachSession) &&
+          isConnected &&
+          !personSharingScreen && (
+            <View>
+              <MembersView session={coachSession} />
 
-            <RightButtons
-              state={this.state}
-              session={coachSession}
-              setState={this.setState.bind(this)}
-              switchScreenshare={this.switchScreenshare.bind(this)}
-            />
+              <RightButtons
+                state={this.state}
+                session={coachSession}
+                setState={this.setState.bind(this)}
+                switchScreenshare={this.switchScreenshare.bind(this)}
+              />
 
-            <DrawView draw={draw} />
-          </View>
-        )}
+              <DrawView draw={draw} />
+            </View>
+          )}
 
         {this.streamPage()}
 

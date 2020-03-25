@@ -72,7 +72,8 @@ export default class VideoPlayer extends Component {
   onProgress = (info) => {
     const {currentTime} = info;
     const {paused} = this.props.sharedVideo;
-    this.props.updateVideoInfoCloud(paused, currentTime);
+    // this.setState({paused: paused, currentTime: currentTime});
+    // this.props.updateVideoInfoCloud(paused, currentTime);
   };
   onSlidingStart = () => {
     this.props.updateVideoInfoCloud(true);
@@ -86,6 +87,10 @@ export default class VideoPlayer extends Component {
   controlButtons(sharedVideo) {
     const {source, currentTime, paused} = sharedVideo;
     const {totalTime} = this.state;
+    const remainingTime = totalTime.toPrecision(1) - currentTime.toPrecision(1);
+
+    var minutes = Math.floor(remainingTime / 60);
+    console.log('remainingTime', remainingTime, minutes);
     return (
       <View style={styles.controlButtons}>
         <Row>
@@ -107,9 +112,9 @@ export default class VideoPlayer extends Component {
             />
           </Col>
           <Col size={20} style={styleApp.center}>
-            <Text style={[styleApp.text, {fontSize: 14}]}>
-              {currentTime.toPrecision(2).toString()}/
-              {totalTime.toPrecision(2).toString()}
+            <Text style={[styleApp.title, {fontSize: 14, color: colors.white}]}>
+              -{Math.floor(remainingTime / 60)}:
+              {remainingTime - Math.floor(remainingTime / 60)}
             </Text>
           </Col>
         </Row>
@@ -150,9 +155,9 @@ export default class VideoPlayer extends Component {
 const styles = StyleSheet.create({
   controlButtons: {
     position: 'absolute',
-    height: 50,
+    height: 65,
     width: width,
-    bottom: 15,
+    bottom: 25,
     backgroundColor: colors.grey,
   },
   slideVideo: {width: '90%', height: 40},

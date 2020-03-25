@@ -3,6 +3,7 @@ import {
   SET_COACH_SESSION_DATA,
   SET_COACH_SESSION_SETTINGS,
   SET_CURRENT_COACHSESSION_ID,
+  SET_COACH_SESSION_DRAW_SETTINGS,
 } from '../actions/types';
 
 const initialState = {
@@ -10,6 +11,12 @@ const initialState = {
     objectID: false,
   },
   currentSessionID: false,
+  settingsDraw: {
+    color: 'red',
+    clear: false,
+    undo: false,
+    touchEnabled: true,
+  },
   settings: {
     cameraFront: false,
     shareScreen: false,
@@ -28,6 +35,11 @@ const coachReducer = (state = initialState, action) => {
       return {
         ...state,
         settings: {...state.settings, ...action.settings},
+      };
+    case SET_COACH_SESSION_DRAW_SETTINGS:
+      return {
+        ...state,
+        settingsDraw: {...state.settingsDraw, ...action.settingsDraw},
       };
     case SET_CURRENT_COACHSESSION_ID:
       return {...state, currentSessionID: action.currentSessionID};

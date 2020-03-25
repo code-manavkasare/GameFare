@@ -22,45 +22,107 @@ class RightButtons extends Component {
     this.state = {};
   }
   button(icon, text, active, click, colorActive) {
+    const {sizeButton} = icon;
     return (
       <ButtonColor
         view={() => {
           return (
             <Animated.View style={[styleApp.center]}>
-              <AllIcons
-                type={icon.type}
-                color={
-                  active && colorActive
-                    ? colorActive
-                    : active
-                    ? colors.primary
-                    : colors.white
-                }
-                size={19}
-                name={icon.name}
-              />
-              <Text
-                style={[
-                  styleApp.text,
-                  styles.textButton,
-                  {
-                    color:
-                      active && colorActive
-                        ? colorActive
-                        : active
-                        ? colors.primary
-                        : colors.white,
-                  },
-                ]}>
-                {text}
-              </Text>
+              {icon.viewIcon ? (
+                icon.viewIcon
+              ) : (
+                <AllIcons
+                  type={icon.type}
+                  color={
+                    active && colorActive
+                      ? colorActive
+                      : active
+                      ? colors.primary
+                      : colors.white
+                  }
+                  size={19}
+                  name={icon.name}
+                />
+              )}
+
+              {!icon.hideText && (
+                <Text
+                  style={[
+                    styleApp.text,
+                    styles.textButton,
+                    {
+                      color:
+                        active && colorActive
+                          ? colorActive
+                          : active
+                          ? colors.primary
+                          : colors.white,
+                    },
+                  ]}>
+                  {text}
+                </Text>
+              )}
             </Animated.View>
           );
         }}
         click={async () => click()}
-        style={styles.button}
+        style={[
+          styles.button,
+          {
+            height: sizeButton ? sizeButton : styles.button.height,
+          },
+        ]}
         onPressColor={colors.off}
       />
+    );
+  }
+  buttonColor(color) {
+    const {settingsDraw, coachAction} = this.props;
+    return this.button(
+      {
+        viewIcon: (
+          <View
+            style={[
+              styles.roundColor,
+              {
+                backgroundColor: color,
+                borderColor:
+                  settingsDraw.color === color ? 'yellow' : 'transparent',
+              },
+            ]}></View>
+        ),
+        sizeButton: 45,
+        hideText: true,
+      },
+      false,
+      false,
+      () => {
+        console.log('start setCoachSessionDrawSettings');
+        coachAction('setCoachSessionDrawSettings', {color: color});
+      },
+    );
+  }
+  toolsDraw() {
+    const {settingsDraw, coachAction} = this.props;
+    return (
+      <View>
+        {this.buttonColor('red')}
+        {this.buttonColor('blue')}
+        {this.buttonColor('green')}
+
+        {this.button({name: 'trash', type: 'font'}, 'Clear', false, () => {
+          coachAction('setCoachSessionDrawSettings', {
+            clear: !settingsDraw.clear,
+          });
+        })}
+
+        {this.button({name: 'undo', type: 'font'}, 'Undo', false, () => {
+          console.log('undo');
+          coachAction('setCoachSessionDrawSettings', {
+            undo: !settingsDraw.undo,
+          });
+        })}
+      </View>
     );
   }
   buttons() {
@@ -68,13 +130,12 @@ class RightButtons extends Component {
     const {userID} = this.props;
     if (!session) return null;
     const member = session.members[userID];
-    console.log('session right buttons', session);
-    console.log('member', member);
-    // return null;
+
     if (!member) return null;
     const {objectID: sessionID} = session;
     const {shareScreen} = member;
     const {cameraFront, draw} = state;
+    const {settingsDraw, coachAction} = this.props;
     console.log('render right buttons', session);
     return (
       <View style={styles.colButtonsRight}>
@@ -94,6 +155,9 @@ class RightButtons extends Component {
           shareScreen,
           async () => {
             console.log('click share screen');
+            await coachAction('setCoachSessionDrawSettings', {
+              touchEnabled: false,
+            });
             await setState({
               hidePublisher: true,
               screen: !shareScreen,
@@ -110,7 +174,7 @@ class RightButtons extends Component {
           colors.green,
         )}
 
-        {shareScreen &&
+        {/* {shareScreen &&
           this.button(
             {name: 'magic', type: 'font'},
             'Draw',
@@ -120,10 +184,27 @@ class RightButtons extends Component {
               setState({draw: !draw});
             },
             colors.secondary,
+          )} */}
+
+        {shareScreen &&
+          this.button(
+            {name: 'magic', type: 'font'},
+            'Draw',
+            settingsDraw.touchEnabled,
+            () => {
+              console.log(settingsDraw);
+              coachAction('setCoachSessionDrawSettings', {
+                touchEnabled: !settingsDraw.touchEnabled,
+              });
+            },
+            colors.secondary,
           )}
+
+        {settingsDraw.touchEnabled && this.toolsDraw()}
       </View>
     );
   }
+
   render() {
     return this.buttons();
   }
@@ -144,6 +225,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 7,
   },
+  roundColor: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    ...styleApp.center,
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -151,6 +239,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     settings: state.coach.settings,
+    settingsDraw: state.coach.settingsDraw,
   };
 };
 

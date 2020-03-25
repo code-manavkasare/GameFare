@@ -40,8 +40,20 @@ const isUserAlone = (session) => {
   );
 };
 
+const isSomeoneSharingScreen = (session, userID) => {
+  if (!session) return false;
+  if (!session.members) return false;
+  return (
+    Object.values(session.members).filter(
+      (member) =>
+        member.id !== userID && member.isConnected && member.shareScreen,
+    ).length > 0
+  );
+};
+
 module.exports = {
   createCoachSession,
   timeout,
   isUserAlone,
+  isSomeoneSharingScreen,
 };
