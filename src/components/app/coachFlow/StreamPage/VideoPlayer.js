@@ -42,6 +42,7 @@ export default class VideoPlayer extends Component {
       prevProps.sharedVideo.currentTime !== this.props.sharedVideo.currentTime
     ) {
       console.log('component did update', this.props.sharedVideo.currentTime);
+      this.player.seek(this.props.sharedVideo.currentTime);
       this.setState({currentTime: this.props.sharedVideo.currentTime});
     }
   }
