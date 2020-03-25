@@ -18,6 +18,8 @@ import PropTypes from 'prop-types';
 const {height, width} = Dimensions.get('screen');
 
 import AllIcons from '../../../layout/icons/AllIcons';
+import Loader from '../../../layout/loaders/Loader';
+import ButtonColor from '../../../layout/Views/Button';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -30,16 +32,15 @@ export default class VideoPlayer extends Component {
       paused: false,
       totalTime: 0,
       currentTime: 0,
+      videoLoaded: false,
     };
   }
   componentDidMount() {}
 
   togglePlayPause = async () => {
-    await this.setState({paused: this.state.paused ? false : true});
-    const {currentTime, paused} = this.state;
-    console.log('currentTimeVideoPLayer: ', currentTime);
+    const {currentTime, paused} = this.props.sharedVideo;
     this.props.updateVideoInfoCloud &&
-      this.props.updateVideoInfoCloud(paused, currentTime);
+      this.props.updateVideoInfoCloud(!paused, currentTime);
   };
   onBuffer = () => {
     console.log('buffer');
@@ -48,78 +49,115 @@ export default class VideoPlayer extends Component {
     console.log('error');
   };
   playPauseButton = () => {
-    const {paused} = this.state;
-    if (paused)
-      return <Button onPress={() => this.togglePlayPause()} title="Play" />;
-    return <Button onPress={() => this.togglePlayPause()} title="Pause" />;
+    const {paused} = this.props.sharedVideo;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <AllIcons
+              name={paused ? 'play' : 'pause'}
+              color={colors.white}
+              size={20}
+              type="font"
+            />
+          );
+        }}
+        click={() => this.togglePlayPause()}
+        // color="white"
+        style={{height: 30, width: 30}}
+        onPressColor={colors.off}
+      />
+    );
   };
   onProgress = (info) => {
-    const {currentTime, seekableDuration} = info;
-    // console.log(info);
-    this.setState({currentTime: currentTime, totalTime: seekableDuration});
+    const {currentTime} = info;
+    const {paused} = this.props.sharedVideo;
+    this.props.updateVideoInfoCloud(paused, currentTime);
   };
   onSlidingStart = () => {
-    this.setState({paused: true});
+    this.props.updateVideoInfoCloud(true);
   };
   onSlidingComplete = async (SliderTime) => {
+    const {paused} = this.props.sharedVideo;
     this.player.seek(SliderTime);
-    await this.setState({currentTime: SliderTime, paused: false});
     this.props.updateVideoInfoCloud &&
-      this.props.updateVideoInfoCloud(this.state.paused, SliderTime);
+      this.props.updateVideoInfoCloud(paused, SliderTime);
   };
-
-  render() {
-    const {paused, currentTime, totalTime} = this.state;
-    const {source} = this.props;
-    const archive =
-      'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4';
+  controlButtons(sharedVideo) {
+    const {source, currentTime, paused} = sharedVideo;
+    const {totalTime} = this.state;
     return (
-      <Animated.View>
+      <View style={styles.controlButtons}>
         <Row>
-          <Video
-            source={{uri: source}}
-            style={[styleApp.fullSize, {width: width}]}
-            ref={(ref) => {
-              this.player = ref;
-            }}
-            repeat={true}
-            onBuffer={this.onBuffer} // Callback when remote video is buffering
-            onError={this.videoError}
-            paused={paused}
-            onProgress={(info) => this.onProgress(info)}
-          />
-        </Row>
-        <Row style={{width: width}}>
-          <Col>{this.playPauseButton()}</Col>
-          <Col>
+          <Col size={20} style={styleApp.center}>
+            {this.playPauseButton()}
+          </Col>
+          <Col size={60} style={styleApp.center2}>
             <Slider
-              style={{width: 150, height: 40}}
+              style={styles.slideVideo}
               minimumValue={0}
               maximumValue={totalTime}
               value={currentTime}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#000000"
+              minimumTrackTintColor={colors.white}
+              maximumTrackTintColor={colors.greyDark}
               onSlidingStart={() => this.onSlidingStart()}
               onSlidingComplete={(SliderTime) =>
                 this.onSlidingComplete(SliderTime)
               }
             />
           </Col>
-          <Col>
-            <Text>
+          <Col size={20} style={styleApp.center}>
+            <Text style={[styleApp.text, {fontSize: 14}]}>
               {currentTime.toPrecision(2).toString()}/
               {totalTime.toPrecision(2).toString()}
             </Text>
           </Col>
         </Row>
+      </View>
+    );
+  }
+  render() {
+    const {sharedVideo} = this.props;
+    const {source, currentTime, paused} = sharedVideo;
+    const {videoLoaded} = this.state;
+    console.log('sharedVideo', sharedVideo);
+    return (
+      <Animated.View style={[styleApp.center, styleApp.stylePage]}>
+        {!videoLoaded && <Loader color={'grey'} size={32} />}
+        <Video
+          source={{uri: source}}
+          style={[styleApp.fullSize, {width: width}]}
+          ref={(ref) => {
+            this.player = ref;
+          }}
+          onLoad={(callback) => {
+            console.log('onLoad fininsh');
+            this.player.seek(currentTime);
+            this.setState({videoLoaded: true, totalTime: callback.duration});
+          }}
+          repeat={true}
+          onBuffer={this.onBuffer} // Callback when remote video is buffering
+          onError={this.videoError}
+          paused={paused}
+          onProgress={(info) => !paused && this.onProgress(info)}
+        />
+        {this.controlButtons(sharedVideo)}
       </Animated.View>
     );
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  controlButtons: {
+    position: 'absolute',
+    height: 50,
+    width: width,
+    bottom: 15,
+    backgroundColor: colors.grey,
+  },
+  slideVideo: {width: '90%', height: 40},
+});
 
 VideoPlayer.propTypes = {
-  source: PropTypes.string, //TODO: put isRequired when finished
   updateVideoInfoCloud: PropTypes.func,
 };

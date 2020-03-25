@@ -118,7 +118,8 @@ class StreamPage extends Component {
     const {coachAction} = this.props;
     const {userID, infoUser} = this.props;
 
-    let objectID = this.props.navigation.getParam('objectID');
+    // let objectID = this.props.navigation.getParam('objectID');
+    let objectID = 'fdxs572u7gk86iq0zc';
 
     if (!objectID)
       if (!coachSessionID)
@@ -181,10 +182,9 @@ class StreamPage extends Component {
     await timeout(200);
     await this.setState({screen: !screen});
   };
-  videoSource() {
-    const {screen} = this.state;
-    if (screen) return 'screen';
-    return 'camera';
+  videoSource(shareScreen) {
+    if (!shareScreen) return 'camera';
+    return 'screen';
   }
   cameraPosition() {
     const {cameraFront} = this.state;
@@ -247,8 +247,6 @@ class StreamPage extends Component {
     );
   }
   streamPage() {
-    const cameraPosition = this.cameraPosition();
-    const videoSource = this.videoSource();
     const {
       loader,
       showPastSessionsPicker,
@@ -277,10 +275,10 @@ class StreamPage extends Component {
     const member = coachSession.members[userID];
 
     const {shareScreen} = member;
-    console.log('member', member);
-    console.log('render index', this.state);
     const userIsAlone = isUserAlone(coachSession);
-    console.log('d');
+
+    const cameraPosition = this.cameraPosition();
+    const videoSource = this.videoSource(shareScreen);
     return (
       <View
         style={[
@@ -310,11 +308,6 @@ class StreamPage extends Component {
                 ],
               },
             ]}>
-            {/* {!isConnected && (
-              <View style={{height: 400, backgroundColor: 'red'}}>
-                {this.loaderView('We are connecting you to the session...')}
-              </View>
-            )} */}
             {!hidePublisher && (
               <OTPublisher
                 eventHandlers={this.publisherEventHandlers}
