@@ -43,7 +43,7 @@ class ShareScreen extends Component {
       nextProps.shareScreen !== this.props.shareScreen ||
       nextProps.personSharingScreen !== this.props.personSharingScreen
     )
-      return this.translateXPage.setValue(nextProps.shareScreen ? 0 : width);
+      return this.translateXPage.setValue(nextProps.shareScreen || nextProps.personSharingScreen ? 0 : width);
   }
   open(val) {
     if (val) return this.translateXPage.setValue(0);

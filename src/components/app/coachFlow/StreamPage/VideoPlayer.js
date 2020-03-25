@@ -36,7 +36,15 @@ export default class VideoPlayer extends Component {
     };
   }
   componentDidMount() {}
-
+  componentDidUpdate(prevProps, prevState) {
+    console.log('component did update', this.props.sharedVideo.currentTime);
+    if (
+      prevProps.sharedVideo.currentTime !== this.props.sharedVideo.currentTime
+    ) {
+      console.log('component did update', this.props.sharedVideo.currentTime);
+      this.setState({currentTime: this.props.sharedVideo.currentTime});
+    }
+  }
   togglePlayPause = async () => {
     const {currentTime} = this.state;
     const {paused} = this.props.sharedVideo;
@@ -115,8 +123,9 @@ export default class VideoPlayer extends Component {
           </Col>
           <Col size={20} style={styleApp.center}>
             <Text style={[styleApp.title, {fontSize: 14, color: colors.white}]}>
-              -{Math.floor(remainingTime / 60)}:
-              {remainingTime - Math.floor(remainingTime / 60)}
+              {/* -{Math.floor(remainingTime / 60)}:
+              {remainingTime - Math.floor(remainingTime / 60)} */}
+              {currentTime.toPrecision(2)}/{totalTime.toPrecision(2)}
             </Text>
           </Col>
         </Row>
