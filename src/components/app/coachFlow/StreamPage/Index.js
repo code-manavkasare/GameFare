@@ -330,7 +330,7 @@ class StreamPage extends Component {
             session={coachSession}
           />
 
-          {!personSharingScreen ? (
+          {!personSharingScreen && !shareScreen && (
             <FadeInView duration={300} style={styles.footer}>
               <BottomButtons
                 session={coachSession}
@@ -344,7 +344,7 @@ class StreamPage extends Component {
                 onRef={(ref) => (this.pastSessionsRef = ref)}
               />
             </FadeInView>
-          ) : null}
+          )}
         </OTSession>
       </View>
     );

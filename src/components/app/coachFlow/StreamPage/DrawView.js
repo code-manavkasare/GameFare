@@ -46,6 +46,9 @@ class Draw extends Component {
       this.canvasRef.current.undo();
     }
   }
+  onStrokeEnd(event) {
+    console.log('onStrokeEnd', event);
+  }
   drawView() {
     const {settingsDraw} = this.props;
     return (
@@ -57,6 +60,7 @@ class Draw extends Component {
           touchEnabled={settingsDraw.touchEnabled}
           strokeColor={settingsDraw.color}
           strokeWidth={4}
+          onStrokeEnd={(event) => this.onStrokeEnd(event)}
         />
       </Animated.View>
     );
