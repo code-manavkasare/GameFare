@@ -31,14 +31,15 @@ export default class VideoPlayer extends Component {
       loader: true,
       paused: false,
       totalTime: 0,
-      currentTime: 0,
+      currentTime: this.props.sharedVideo.currentTime,
       videoLoaded: false,
     };
   }
   componentDidMount() {}
 
   togglePlayPause = async () => {
-    const {currentTime, paused} = this.props.sharedVideo;
+    const {currentTime} = this.state;
+    const {paused} = this.props.sharedVideo;
     this.props.updateVideoInfoCloud &&
       this.props.updateVideoInfoCloud(!paused, currentTime);
   };
@@ -72,7 +73,7 @@ export default class VideoPlayer extends Component {
   onProgress = (info) => {
     const {currentTime} = info;
     const {paused} = this.props.sharedVideo;
-    // this.setState({paused: paused, currentTime: currentTime});
+    this.setState({paused: paused, currentTime: currentTime});
     // this.props.updateVideoInfoCloud(paused, currentTime);
   };
   onSlidingStart = () => {
@@ -81,12 +82,13 @@ export default class VideoPlayer extends Component {
   onSlidingComplete = async (SliderTime) => {
     const {paused} = this.props.sharedVideo;
     this.player.seek(SliderTime);
+    this.setState({currentTime: SliderTime});
     this.props.updateVideoInfoCloud &&
       this.props.updateVideoInfoCloud(paused, SliderTime);
   };
   controlButtons(sharedVideo) {
-    const {source, currentTime, paused} = sharedVideo;
-    const {totalTime} = this.state;
+    const {source, paused} = sharedVideo;
+    const {totalTime, currentTime} = this.state;
     const remainingTime = totalTime.toPrecision(1) - currentTime.toPrecision(1);
 
     var minutes = Math.floor(remainingTime / 60);
@@ -140,6 +142,7 @@ export default class VideoPlayer extends Component {
             this.player.seek(currentTime);
             this.setState({videoLoaded: true, totalTime: callback.duration});
           }}
+          progressUpdateInterval={1000}
           repeat={true}
           onBuffer={this.onBuffer} // Callback when remote video is buffering
           onError={this.videoError}

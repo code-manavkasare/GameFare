@@ -34,7 +34,7 @@ class ShareScreen extends Component {
       loader: true,
     };
     this.translateXPage = new Animated.Value(
-      this.props.shareScreen ? 0 : width,
+      this.props.shareScreen || this.props.personSharingScreen ? 0 : width,
     );
   }
   componentDidMount() {}
