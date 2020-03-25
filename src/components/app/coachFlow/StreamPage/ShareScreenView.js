@@ -54,7 +54,7 @@ class ShareScreen extends Component {
       .update({paused, currentTime});
   };
   shareScreen() {
-    const {shareScreen, session} = this.props;
+    const {shareScreen, session, personSharingScreen} = this.props;
     return (
       <Animated.View
         style={[
@@ -63,7 +63,7 @@ class ShareScreen extends Component {
           {backgroundColor: colors.greyDark},
           {transform: [{translateX: this.translateXPage}]},
         ]}>
-        {shareScreen && (
+        {(shareScreen || personSharingScreen) && (
           <VideoPlayer
             sharedVideo={session.tokbox.sharedVideo}
             updateVideoInfoCloud={(paused, currentTime) => {

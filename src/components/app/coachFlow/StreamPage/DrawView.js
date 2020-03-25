@@ -27,7 +27,9 @@ class Draw extends Component {
       microAccess: false,
       loader: true,
     };
-    this.translateXPage = new Animated.Value(this.props.draw ? 0 : width);
+    this.translateXPage = new Animated.Value(0);
+    // this.translateXPage = new Animated.Value(this.props.draw ? 0 : width);
+    this.canvasRef = React.createRef();
   }
   componentDidMount() {
     // this.props.onRef(this);
@@ -36,25 +38,25 @@ class Draw extends Component {
     console.log('draw view receive props', nextProps);
     if (nextProps.draw !== this.props.draw) {
       return this.translateXPage.setValue(nextProps.draw ? 0 : width);
+    } else if (nextProps.settingsDraw.clear !== this.props.settingsDraw.clear) {
+      console.log('canvas clear');
+      this.canvasRef.current.clear();
+    } else if (nextProps.settingsDraw.undo !== this.props.settingsDraw.undo) {
+      console.log('canvas undo');
+      this.canvasRef.current.undo();
     }
   }
   drawView() {
+    const {settingsDraw} = this.props;
     return (
       <Animated.View
-        style={[
-          styles.page,
-          {transform: [{translateX: this.translateXPage}]},
-        ]}>
+        style={[styles.page, {transform: [{translateX: this.translateXPage}]}]}>
         <SketchCanvas
-          style={{
-            height: height - 90,
-            width: width,
-            // backgroundColor: 'blue',
-            position: 'absolute',
-            top: 0,
-          }}
-          strokeColor={'red'}
-          strokeWidth={7}
+          style={styles.drawingZone}
+          ref={this.canvasRef}
+          touchEnabled={settingsDraw.touchEnabled}
+          strokeColor={settingsDraw.color}
+          strokeWidth={4}
         />
       </Animated.View>
     );
@@ -74,13 +76,19 @@ const styles = StyleSheet.create({
     // opacity: 0.1,
     zIndex: 3,
   },
+  drawingZone: {
+    height: height - 90,
+    width: width,
+    position: 'absolute',
+    top: 0,
+  },
 });
 
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    coach: state.coach,
+    settingsDraw: state.coach.settingsDraw,
   };
 };
 
