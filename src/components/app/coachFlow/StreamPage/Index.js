@@ -122,8 +122,8 @@ class StreamPage extends Component {
     const {coachAction} = this.props;
     const {userID, infoUser} = this.props;
 
-    // let objectID = this.props.navigation.getParam('objectID');
-    let objectID = 'fdxs572u7gk86iq0zc';
+    let objectID = this.props.navigation.getParam('objectID');
+    // let objectID = 'fdxs572u7gk86iq0zc';
 
     if (!objectID)
       if (!coachSessionID)
