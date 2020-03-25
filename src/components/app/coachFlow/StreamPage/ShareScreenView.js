@@ -39,7 +39,10 @@ class ShareScreen extends Component {
   }
   componentDidMount() {}
   componentWillReceiveProps(nextProps) {
-    if (nextProps.shareScreen !== this.props.shareScreen)
+    if (
+      nextProps.shareScreen !== this.props.shareScreen ||
+      nextProps.personSharingScreen !== this.props.personSharingScreen
+    )
       return this.translateXPage.setValue(nextProps.shareScreen ? 0 : width);
   }
   open(val) {
@@ -55,7 +58,7 @@ class ShareScreen extends Component {
   };
   shareScreen() {
     const {shareScreen, session, personSharingScreen} = this.props;
-    console.log('share screeen view');
+    console.log('share screeen view', personSharingScreen, shareScreen);
     return (
       <Animated.View
         style={[
