@@ -187,6 +187,7 @@ class StreamPage extends Component {
     await this.setState({screen: !screen});
   };
   videoSource(shareScreen) {
+    return 'camera';
     if (!shareScreen) return 'camera';
     return 'screen';
   }
@@ -281,6 +282,7 @@ class StreamPage extends Component {
     const {shareScreen} = member;
     const userIsAlone = isUserAlone(coachSession);
     const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
+    console.log('personSharingScreen,', personSharingScreen);
 
     const cameraPosition = this.cameraPosition();
     const videoSource = this.videoSource(shareScreen);
@@ -328,7 +330,7 @@ class StreamPage extends Component {
             session={coachSession}
           />
 
-          {!shareScreen && !personSharingScreen ? (
+          {!personSharingScreen && !shareScreen && (
             <FadeInView duration={300} style={styles.footer}>
               <BottomButtons
                 session={coachSession}
@@ -342,7 +344,7 @@ class StreamPage extends Component {
                 onRef={(ref) => (this.pastSessionsRef = ref)}
               />
             </FadeInView>
-          ) : null}
+          )}
         </OTSession>
       </View>
     );

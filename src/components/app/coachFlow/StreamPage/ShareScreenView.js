@@ -34,13 +34,18 @@ class ShareScreen extends Component {
       loader: true,
     };
     this.translateXPage = new Animated.Value(
-      this.props.shareScreen ? 0 : width,
+      this.props.shareScreen || this.props.personSharingScreen ? 0 : width,
     );
   }
   componentDidMount() {}
   componentWillReceiveProps(nextProps) {
-    if (nextProps.shareScreen !== this.props.shareScreen)
-      return this.translateXPage.setValue(nextProps.shareScreen ? 0 : width);
+    if (
+      nextProps.shareScreen !== this.props.shareScreen ||
+      nextProps.personSharingScreen !== this.props.personSharingScreen
+    )
+      return this.translateXPage.setValue(
+        nextProps.shareScreen || nextProps.personSharingScreen ? 0 : width,
+      );
   }
   open(val) {
     if (val) return this.translateXPage.setValue(0);
@@ -55,6 +60,8 @@ class ShareScreen extends Component {
   };
   shareScreen() {
     const {shareScreen, session, personSharingScreen} = this.props;
+    const {sharedVideo} = session.tokbox;
+    console.log('share screeen view', personSharingScreen, shareScreen);
     return (
       <Animated.View
         style={[
@@ -65,7 +72,11 @@ class ShareScreen extends Component {
         ]}>
         {(shareScreen || personSharingScreen) && (
           <VideoPlayer
-            sharedVideo={session.tokbox.sharedVideo}
+            source={sharedVideo.source}
+            paused={sharedVideo.paused}
+            currentTime={sharedVideo.currentTime}
+            styleContainerVideo={[styleApp.center, styleApp.stylePage]}
+            styleVideo={[styleApp.fullSize, {width: width}]}
             updateVideoInfoCloud={(paused, currentTime) => {
               this.updateVideoInfoCloud(paused, currentTime);
             }}
