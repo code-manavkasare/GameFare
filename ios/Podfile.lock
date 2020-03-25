@@ -419,12 +419,9 @@ PODS:
     - React
   - react-native-statusbar (1.0.3):
     - React
-  - react-native-video (4.4.5):
+  - react-native-video (2.3.1):
     - React
-    - react-native-video/Video (= 4.4.5)
   - react-native-video-helper (1.4.4):
-    - React
-  - react-native-video/Video (4.4.5):
     - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
@@ -935,7 +932,7 @@ SPEC CHECKSUMS:
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
-  react-native-video: eee541262ada11bc7ffe8ec5508e6a877937c462
+  react-native-video: a6cae6575a8e86cdb5a3d6acf85ea9ea40a15e50
   react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
@@ -978,4 +975,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4e3f7f4bff0392042dbc9b1bfa1fbba6099b0d50
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.8.4

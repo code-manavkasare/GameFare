@@ -87,7 +87,6 @@ import MatchPictures from '../app/elementsStreamResults/MatchPictures';
 import StreamResults from '../app/elementsStreamResults/StreamResults';
 
 import RecordType from '../app/coachFlow/RecordType';
-import CoachingType from '../app/coachFlow/CoachingType';
 import StreamPageCoaching from '../app/coachFlow/StreamPage/Index';
 import SaveCoachSession from '../app/coachFlow/SaveCoachSession';
 
@@ -194,7 +193,6 @@ const navigatorStreamingCoach = createStackNavigator(
   {
     StreamPageCoaching: lockedPortrait(StreamPageCoaching),
     SaveCoachSession: lockedPortrait(SaveCoachSession),
-    CoachingType: lockedPortrait(CoachingType),
     PickMembers: lockedPortrait(PickMembers),
   },
   {
@@ -205,21 +203,6 @@ const navigatorStreamingCoach = createStackNavigator(
     cardShadowEnabled: false,
   },
 );
-
-// const CoachingNavigator = createStackNavigator(
-//   {
-//     StartCoaching: lockedPortrait(RecordType),
-//     CoachingType: lockedPortrait(CoachingType),
-//     StreamPageCoaching:navigatorStreamingCoach,
-//   },
-//   {
-//     initialRouteName: 'StreamPageCoaching',
-//     headerMode: 'none',
-//     mode: 'card',
-//     cardOverlayEnabled: false,
-//     cardShadowEnabled: false,
-//   },
-// );
 
 const JoinGroupNavigator = createStackNavigator(
   {

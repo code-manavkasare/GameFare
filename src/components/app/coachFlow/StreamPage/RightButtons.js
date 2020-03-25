@@ -90,14 +90,15 @@ class RightButtons extends Component {
         )}
         {this.button(
           {name: 'mobile-alt', type: 'font'},
-          'Share',
+          'Share screen',
           shareScreen,
           async () => {
             console.log('click share screen');
-            if (shareScreen) {
-              setState({draw: false});
-            }
-            await setState({hidePublisher: true, screen: !shareScreen});
+            await setState({
+              hidePublisher: true,
+              screen: !shareScreen,
+              draw: shareScreen ? false : draw,
+            });
             await firebase
               .database()
               .ref('coachSessions/' + sessionID + '/members/' + userID)
