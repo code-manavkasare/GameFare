@@ -24,27 +24,66 @@ import ButtonColor from '../../../layout/Views/Button';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 
+const minutes = (time) => {
+  return Math.floor(time / 60);
+};
+
+const seconds = (time) => {
+  const sec = (time - Math.floor(time / 60)).toFixed(0);
+  if (sec.length === 1) return '0' + sec;
+  return sec;
+};
+
+const displayTime = (time) => {
+  return minutes(time) + ':' + seconds(time);
+};
+
+const heightControlBar = 100;
+
 export default class VideoPlayer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: true,
-      paused: this.props.paused ? this.props.paused : false,
+      paused: true,
       totalTime: 0,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
+      noTimeUpdate: false,
       videoLoaded: false,
+      valuePauseBeforeSlide: false,
     };
   }
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.currentTime !== this.props.currentTime) {
-      this.player.seek(this.props.currentTime);
-      this.setState({currentTime: this.props.currentTime});
+    let {currentPause, noTimeUpdate} = this.state;
+    if (
+      prevProps.currentTime !== this.props.currentTime &&
+      prevProps.paused !== this.props.paused
+    ) {
+      if (!noTimeUpdate) {
+        // this.player.seek(this.props.currentTime);
+      }
+      this.setState({
+        currentTime: this.props.currentTime,
+        noTimeUpdate: false,
+        paused: this.props.paused,
+      });
+    } else if (prevProps.currentTime !== this.props.currentTime) {
+      if (!noTimeUpdate) {
+        this.player.seek(this.props.currentTime);
+      }
+      this.setState({
+        currentTime: this.props.currentTime,
+        noTimeUpdate: false,
+      });
+    } else if (prevProps.paused !== this.props.paused) {
+      this.setState({paused: this.props.paused});
     }
   }
   togglePlayPause = async () => {
-    const {currentTime} = this.state;
-    const {paused} = this.props;
+    const {currentTime, paused} = this.state;
+    console.log('togglePlayPause', paused);
+    this.setState({noTimeUpdate: true});
     this.props.updateVideoInfoCloud &&
       this.props.updateVideoInfoCloud(!paused, currentTime);
   };
@@ -55,72 +94,86 @@ export default class VideoPlayer extends Component {
   videoError = () => {
     console.log('error');
   };
-  playPauseButton = () => {
-    const {paused} = this.props;
+
+  onProgress = (info) => {
+    const {currentTime} = info;
+    this.setState({currentTime: currentTime});
+  };
+  onSlidingStart = () => {
+    const {updateVideoInfoCloud} = this.props;
+    // const {paused} = this.state;
+    this.setState({paused: true});
+    if (updateVideoInfoCloud) updateVideoInfoCloud(true);
+  };
+  onSlidingComplete = async (SliderTime) => {
+    const {updateVideoInfoCloud} = this.props;
+    // const {paused, valuePauseBeforeSlide} = this.state;
+
+    this.player.seek(SliderTime);
+    this.setState({currentTime: SliderTime});
+    if (updateVideoInfoCloud) updateVideoInfoCloud(true, SliderTime);
+  };
+  playPauseButton = (paused) => {
     return (
       <ButtonColor
         view={() => {
           return (
             <AllIcons
               name={paused ? 'play' : 'pause'}
-              color={colors.white}
+              color={colors.greyDark}
               size={20}
               type="font"
             />
           );
         }}
+        // color={colors.off2}
         click={() => this.togglePlayPause()}
-        style={{height: 30, width: 30}}
+        style={{height: 60, width: '100%'}}
         onPressColor={colors.off}
       />
     );
   };
-  onProgress = (info) => {
-    const {currentTime} = info;
-    const {paused} = this.props;
-    this.setState({paused: paused, currentTime: currentTime});
-  };
-  onSlidingStart = () => {
-    const {updateVideoInfoCloud} = this.props;
-    if (updateVideoInfoCloud) updateVideoInfoCloud(true);
-  };
-  onSlidingComplete = async (SliderTime) => {
-    const {paused, updateVideoInfoCloud} = this.props;
-
-    this.player.seek(SliderTime);
-    this.setState({currentTime: SliderTime});
-    if (updateVideoInfoCloud) updateVideoInfoCloud(paused, SliderTime);
-  };
   controlButtons() {
-    const {totalTime, currentTime} = this.state;
-    // const remainingTime = totalTime.toPrecision(1) - currentTime.toPrecision(1);
+    const {totalTime, currentTime, videoLoaded, paused} = this.state;
+    let remainingTime = 0;
+    if (totalTime !== 0)
+      remainingTime = totalTime.toPrecision(2) - currentTime.toPrecision(2);
+
+    console.log('remainingTime', totalTime);
     return (
       <View style={styles.controlButtons}>
         <Row>
-          <Col size={20} style={styleApp.center}>
-            {this.playPauseButton()}
-          </Col>
-          <Col size={60} style={styleApp.center2}>
-            <Slider
-              style={styles.slideVideo}
-              minimumValue={0}
-              maximumValue={totalTime}
-              value={currentTime}
-              minimumTrackTintColor={colors.white}
-              maximumTrackTintColor={colors.greyDark}
-              onSlidingStart={() => this.onSlidingStart()}
-              onSlidingComplete={(SliderTime) =>
-                this.onSlidingComplete(SliderTime)
-              }
-            />
-          </Col>
-          <Col size={20} style={styleApp.center}>
-            <Text style={[styleApp.title, {fontSize: 14, color: colors.white}]}>
-              {/* -{Math.floor(remainingTime / 60)}:
-              {remainingTime - Math.floor(remainingTime / 60)} */}
-              {currentTime.toPrecision(2)}/
-              {totalTime === 0 ? '-' : totalTime.toPrecision(2)}
-            </Text>
+          <Col size={10}>{this.playPauseButton(paused)}</Col>
+          <Col size={60}>
+            <Row style={{height: 45}}>
+              <Slider
+                style={styles.slideVideo}
+                minimumValue={0}
+                maximumValue={totalTime}
+                value={currentTime}
+                minimumTrackTintColor={colors.white}
+                maximumTrackTintColor={colors.greyDark}
+                onSlidingStart={() => this.onSlidingStart()}
+                onValueChange={(value) => this.setState({currentTime: value})}
+                onSlidingComplete={(SliderTime) =>
+                  this.onSlidingComplete(SliderTime)
+                }
+              />
+            </Row>
+            <Row style={{height: 35}}>
+              <Col style={styleApp.center2}>
+                <Text style={styles.textTime}>{displayTime(currentTime)}</Text>
+              </Col>
+              <Col style={styleApp.center3}>
+                {!videoLoaded ? (
+                  <Loader size={17} color={'white'} />
+                ) : (
+                  <Text style={styles.textTime}>
+                    -{displayTime(remainingTime)}
+                  </Text>
+                )}
+              </Col>
+            </Row>
           </Col>
         </Row>
       </View>
@@ -136,12 +189,12 @@ export default class VideoPlayer extends Component {
   render() {
     const {
       source,
-      currentTime,
-      paused,
       styleContainerVideo,
       styleVideo,
+      componentOnTop,
     } = this.props;
-    const {videoLoaded} = this.state;
+    const {videoLoaded, currentTime, paused} = this.state;
+    console.log('render video player', paused);
     return (
       <Animated.View style={styleContainerVideo}>
         {!videoLoaded && this.bufferView()}
@@ -162,6 +215,7 @@ export default class VideoPlayer extends Component {
           paused={paused}
           onProgress={(info) => !paused && this.onProgress(info)}
         />
+        {componentOnTop && componentOnTop()}
         {this.controlButtons()}
       </Animated.View>
     );
@@ -171,17 +225,26 @@ export default class VideoPlayer extends Component {
 const styles = StyleSheet.create({
   controlButtons: {
     position: 'absolute',
-    height: 65,
+    height: heightControlBar,
     width: width,
-    bottom: 25,
+    bottom: 0,
+    zIndex: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
     backgroundColor: colors.grey,
   },
-  slideVideo: {width: '90%', height: 40},
+  slideVideo: {width: '100%', height: 40, marginTop: 5},
+  textTime: {...styleApp.title, fontSize: 14, color: colors.white},
   bufferView: {
     position: 'absolute',
     height: '100%',
     width: '100%',
     ...styleApp.center,
+  },
+  viewTimeRemain: {
+    position: 'absolute',
+    top: 40,
+    right: 0,
   },
 });
 

@@ -191,7 +191,7 @@ const JoinChallengeNavigator = createStackNavigator(
 
 const navigatorStreamingCoach = createStackNavigator(
   {
-    StreamPageCoaching: lockedPortrait(StreamPageCoaching),
+    StreamPageCoaching: StreamPageCoaching,
     SaveCoachSession: lockedPortrait(SaveCoachSession),
     PickMembers: lockedPortrait(PickMembers),
   },
