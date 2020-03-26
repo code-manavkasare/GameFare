@@ -1,44 +1,30 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Image,
-  Dimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {OTSession, OTPublisher, OTSubscriber} from 'opentok-react-native';
 import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
+import KeepAwake from 'react-native-keep-awake';
+import FadeInView from 'react-native-fade-in-view';
+const {height, width} = Dimensions.get('screen');
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import Button from '../../../layout/buttons/Button';
-
-import {createCoachSession} from '../../../functions/coach';
-
-import AllIcons from '../../../layout/icons/AllIcons';
 import Loader from '../../../layout/loaders/Loader';
+
 import {coachAction} from '../../../../actions/coachActions';
 import {
-  timeout,
   isUserAlone,
+  createCoachSession,
   isSomeoneSharingScreen,
 } from '../../../functions/coach';
 import {audioVideoPermission} from '../../../functions/streaming';
-import {Col, Row} from 'react-native-easy-grid';
-
-const {height, width} = Dimensions.get('screen');
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import FadeInView from 'react-native-fade-in-view';
-import sizes from '../../../style/sizes';
 
-const {height: screenHeight, width: screenWidth} = Dimensions.get('screen');
 import PermissionView from './PermissionView';
 import RightButtons from './RightButtons';
-import DrawView from './DrawView';
 import ShareScreenView from './ShareScreenView';
 import MembersView from './MembersView';
 import BottomButtons from './BottomButtons';
@@ -54,12 +40,6 @@ class StreamPage extends Component {
       coachSession: false,
       newSession: false,
       permissionsCamera: false,
-      cameraPosition: 'front',
-      videoSource: 'camera',
-
-      hidePublisher: false,
-      screen: false,
-      draw: false,
       cameraFront: true,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -71,9 +51,7 @@ class StreamPage extends Component {
         console.log('Stream created!', event);
       },
       sessionDisconnected: async (event) => {
-        console.log('session disconnected !!!!', event);
         const {userID} = this.props;
-        console.log('userID', userID);
         await firebase
           .database()
           .ref(
@@ -88,7 +66,6 @@ class StreamPage extends Component {
         });
       },
       sessionConnected: async (event) => {
-        console.log('session connected !!!!', event);
         const {userID} = this.props;
         await firebase
           .database()
@@ -107,6 +84,12 @@ class StreamPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   async componentDidMount() {
+    // reset drawing settings
+    const {coachAction} = this.props;
+    coachAction('setCoachSessionDrawSettings', {
+      touchEnabled: false,
+    });
+
     ///// Permission to camera / micro
     const permissionsCamera = await audioVideoPermission();
     await this.setState({permissionsCamera: permissionsCamera});
@@ -123,7 +106,7 @@ class StreamPage extends Component {
     const {userID, infoUser} = this.props;
 
     let objectID = this.props.navigation.getParam('objectID');
-    // let objectID = 'fdxs572u7gk86iq0zc';
+    objectID = 'zc5pmptkk1k88iuy70';
 
     if (!objectID)
       if (!coachSessionID)
@@ -179,17 +162,10 @@ class StreamPage extends Component {
       </FadeInView>
     );
   }
-
-  switchScreenshare = async () => {
-    const {screen} = this.state;
-    await this.setState({screen: 'undisplay'});
-    await timeout(200);
-    await this.setState({screen: !screen});
-  };
   videoSource(shareScreen) {
     return 'camera';
-    if (!shareScreen) return 'camera';
-    return 'screen';
+    // if (!shareScreen) return 'camera';
+    // return 'screen';
   }
   cameraPosition() {
     const {cameraFront} = this.state;
@@ -206,15 +182,7 @@ class StreamPage extends Component {
   newSessionView() {
     const {currentSessionID} = this.props;
     return (
-      <View
-        style={[
-          styleApp.center2,
-          {
-            height: screenHeight,
-            backgroundColor: colors.title,
-            width: width,
-          },
-        ]}>
+      <View style={[styleApp.center2, styleApp.fullSize]}>
         <Button
           backgroundColor="green"
           onPressColor={colors.greenClick}
@@ -256,7 +224,6 @@ class StreamPage extends Component {
       loader,
       showPastSessionsPicker,
       coachSession,
-      hidePublisher,
       newSession,
       isConnected,
     } = this.state;
@@ -282,16 +249,11 @@ class StreamPage extends Component {
     const {shareScreen} = member;
     const userIsAlone = isUserAlone(coachSession);
     const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
-    console.log('personSharingScreen,', personSharingScreen);
 
     const cameraPosition = this.cameraPosition();
     const videoSource = this.videoSource(shareScreen);
     return (
-      <View
-        style={[
-          styleApp.fullSize,
-          {flex: 1, position: 'absolute', zIndex: -1},
-        ]}>
+      <View style={styles.viewStream}>
         {!isConnected &&
           this.loaderView('We are connecting you to the session...')}
 
@@ -315,19 +277,18 @@ class StreamPage extends Component {
                 ],
               },
             ]}>
-            {!hidePublisher && (
-              <OTPublisher
-                eventHandlers={this.publisherEventHandlers}
-                style={styleApp.fullSize}
-                properties={{cameraPosition, videoSource}}
-              />
-            )}
+            <OTPublisher
+              eventHandlers={this.publisherEventHandlers}
+              style={styleApp.fullSize}
+              properties={{cameraPosition, videoSource}}
+            />
           </Animated.View>
 
           <ShareScreenView
             shareScreen={member.shareScreen}
             personSharingScreen={personSharingScreen}
             session={coachSession}
+            videoID={this.videoIDToShare(coachSession)}
           />
 
           {!personSharingScreen && !shareScreen && (
@@ -349,25 +310,23 @@ class StreamPage extends Component {
       </View>
     );
   }
-
+  videoIDToShare(coachSession) {
+    if (!coachSession) return false;
+    if (!coachSession.sharedVideos) return false;
+    return Object.values(coachSession.sharedVideos)[0].id;
+  }
   render() {
-    const {goBack, navigate} = this.props.navigation;
-    const {loader, permissionsCamera, draw, isConnected} = this.state;
+    const {navigate} = this.props.navigation;
+    const {permissionsCamera, isConnected} = this.state;
     const {userID} = this.props;
     const {coachSession} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
     return (
-      <View
-        style={[
-          styleApp.stylePage,
-          {height: height, width: width},
-          {backgroundColor: colors.title},
-        ]}>
+      <View style={styles.pageComponent}>
+        <KeepAwake />
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={''}
           inputRange={[5, 10]}
-          loader={false}
           colorLoader={'white'}
           colorIcon1={colors.white}
           sizeLoader={40}
@@ -377,7 +336,6 @@ class StreamPage extends Component {
           initialBorderColorIcon={'transparent'}
           icon1="times"
           initialTitleOpacity={1}
-          icon2={null}
           clickButton1={() => navigate('Stream')}
         />
 
@@ -390,11 +348,9 @@ class StreamPage extends Component {
               <RightButtons
                 state={this.state}
                 session={coachSession}
+                videoID={this.videoIDToShare(coachSession)}
                 setState={this.setState.bind(this)}
-                switchScreenshare={this.switchScreenshare.bind(this)}
               />
-
-              <DrawView draw={draw} />
             </View>
           )}
 
@@ -407,6 +363,7 @@ class StreamPage extends Component {
 }
 
 const styles = StyleSheet.create({
+  pageComponent: {backgroundColor: colors.title, ...styleApp.fullSize},
   footer: {
     bottom: 0,
     width: width,
@@ -415,18 +372,21 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 5,
   },
+  viewStream: {
+    ...styleApp.fullSize,
+    position: 'absolute',
+    zIndex: -1,
+  },
   OTSubscriber: {
-    width: screenWidth,
-    height: screenHeight,
+    width: width,
+    height: height,
     zIndex: 1,
   },
   OTPublisherAlone: {
-    width: screenWidth,
-    height: screenHeight,
+    width: width,
+    height: height,
     position: 'absolute',
     top: 0,
-    // overflow: 'hidden',
-    //  top: sizes.marginTopApp + 10,
     zIndex: 2,
   },
   OTPublisher: {
@@ -436,7 +396,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 140,
     overflow: 'hidden',
-    //  top: sizes.marginTopApp + 10,
     right: 20,
     zIndex: 2,
     borderWidth: 1,

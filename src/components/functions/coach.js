@@ -51,9 +51,18 @@ const isSomeoneSharingScreen = (session, userID) => {
   );
 };
 
+const getLastDrawing = (video) => {
+  const drawings = Object.values(video.drawings)
+    .sort((a, b) => a.timeStamp - b.timeStamp)
+    .reverse();
+  console.log('get last drawings: ', drawings);
+  return drawings[0];
+};
+
 module.exports = {
   createCoachSession,
   timeout,
   isUserAlone,
   isSomeoneSharingScreen,
+  getLastDrawing,
 };

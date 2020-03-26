@@ -18,6 +18,7 @@ import Video from 'react-native-video';
 import firebase from 'react-native-firebase';
 
 import VideoPlayer from './VideoPlayer';
+import DrawView from './DrawView';
 import AllIcons from '../../../layout/icons/AllIcons';
 import {coachAction} from '../../../../actions/coachActions';
 import {Col, Row} from 'react-native-easy-grid';
@@ -51,34 +52,44 @@ class ShareScreen extends Component {
     if (val) return this.translateXPage.setValue(0);
     return this.translateXPage.setValue(width);
   }
-  updateVideoInfoCloud = (paused, currentTime) => {
+  updateVideoInfoCloud = (paused, currentTime, videoID) => {
     const {objectID} = this.props.session;
     firebase
       .database()
-      .ref(`coachSessions/${objectID}/tokbox/sharedVideo`)
+      .ref(`coachSessions/${objectID}/sharedVideos/${videoID}`)
       .update({paused, currentTime});
   };
+
   shareScreen() {
-    const {shareScreen, session, personSharingScreen} = this.props;
-    const {sharedVideo} = session.tokbox;
+    const {shareScreen, session, personSharingScreen, videoID} = this.props;
+
+    const video = session.sharedVideos[videoID];
     console.log('share screeen view', personSharingScreen, shareScreen);
     return (
       <Animated.View
         style={[
-          styleApp.center,
           styles.page,
           {backgroundColor: colors.greyDark},
           {transform: [{translateX: this.translateXPage}]},
         ]}>
         {(shareScreen || personSharingScreen) && (
           <VideoPlayer
-            source={sharedVideo.source}
-            paused={sharedVideo.paused}
-            currentTime={sharedVideo.currentTime}
+            source={video.source}
+            paused={video.paused}
+            currentTime={video.currentTime}
+            componentOnTop={() => (
+              <DrawView
+                coachSessionID={session.objectID}
+                videoID={videoID}
+                video={video}
+                shareScreen={shareScreen}
+                drawingOpen={shareScreen || personSharingScreen}
+              />
+            )}
             styleContainerVideo={[styleApp.center, styleApp.stylePage]}
             styleVideo={[styleApp.fullSize, {width: width}]}
             updateVideoInfoCloud={(paused, currentTime) => {
-              this.updateVideoInfoCloud(paused, currentTime);
+              this.updateVideoInfoCloud(paused, currentTime, videoID);
             }}
           />
         )}
@@ -92,8 +103,7 @@ class ShareScreen extends Component {
 
 const styles = StyleSheet.create({
   page: {
-    ...styleApp.center,
-    height: '100%',
+    height: height,
     width: width,
     position: 'absolute',
     backgroundColor: colors.title,
