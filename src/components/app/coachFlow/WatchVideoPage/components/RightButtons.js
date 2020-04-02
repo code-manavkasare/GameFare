@@ -3,18 +3,14 @@ import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
 
-import NavigationService from '../../../../../NavigationService';
+import ButtonColor from '../../../../layout/Views/Button';
+import AllIcons from '../../../../layout/icons/AllIcons';
+import {coachAction} from '../../../../../actions/coachActions';
+import {getLastDrawing, getMember} from '../../../../functions/coach';
 
-import ButtonColor from '../../../layout/Views/Button';
-import AllIcons from '../../../layout/icons/AllIcons';
-import {coachAction} from '../../../../actions/coachActions';
-import {timing} from '../../../animations/animations';
-import {getLastDrawing} from '../../../functions/coach';
-import {Col, Row} from 'react-native-easy-grid';
-
-import sizes from '../../../style/sizes';
-import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
+import sizes from '../../../../style/sizes';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
 
 class RightButtons extends Component {
   constructor(props) {
@@ -103,7 +99,7 @@ class RightButtons extends Component {
     );
   }
   toolsDraw() {
-    const {settingsDraw, coachAction, videoID, session} = this.props;
+    const {settingsDraw, coachAction, archiveID, session} = this.props;
     const {objectID} = session;
     return (
       <View style={styles.toolBox}>
@@ -114,7 +110,7 @@ class RightButtons extends Component {
         {this.button({name: 'trash', type: 'font'}, 'Clear', false, () => {
           firebase
             .database()
-            .ref(`coachSessions/${objectID}/sharedVideos/${videoID}/drawings`)
+            .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}/drawings`)
             .remove();
           coachAction('setCoachSessionDrawSettings', {
             clear: !settingsDraw.clear,
@@ -122,13 +118,16 @@ class RightButtons extends Component {
         })}
 
         {this.button({name: 'undo', type: 'font'}, 'Undo', false, () => {
-          if (session.sharedVideos[videoID].drawings) {
-            const idLastDrawing = getLastDrawing(session.sharedVideos[videoID])
-              .id;
+          if (session.sharedVideos[archiveID].drawings) {
+            const idLastDrawing = getLastDrawing(
+              session.sharedVideos[archiveID],
+            ).id;
+            console.log('idLastDrawing', idLastDrawing, archiveID);
+            // return;
             firebase
               .database()
               .ref(
-                `coachSessions/${objectID}/sharedVideos/${videoID}/drawings/${idLastDrawing}`,
+                `coachSessions/${objectID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
               )
               .remove();
           }
@@ -141,47 +140,18 @@ class RightButtons extends Component {
     );
   }
   buttons() {
-    const {state, setState, session} = this.props;
-    const {userID} = this.props;
+    const {session, userID, archiveID} = this.props;
     if (!session) return null;
-    const member = session.members[userID];
+    const member = getMember(session, userID);
+    const {videoIDSharing} = member;
+    const {settingsDraw, coachAction, personSharingScreen} = this.props;
 
-    if (!member) return null;
-    const {objectID: sessionID} = session;
-    const {shareScreen} = member;
-    const {cameraFront, draw} = state;
-    const {settingsDraw, coachAction} = this.props;
-    console.log('render right buttons', session);
+    const displayButtonDraw =
+      personSharingScreen === userID && archiveID === videoIDSharing;
+
     return (
       <View style={styles.colButtonsRight}>
-        {this.button(
-          {name: 'sync', type: 'font'},
-          cameraFront ? 'Front' : 'Back',
-          !cameraFront,
-          () => {
-            setState({
-              cameraFront: !cameraFront,
-            });
-          },
-        )}
-        {this.button(
-          {name: 'mobile-alt', type: 'font'},
-          'Share screen',
-          shareScreen,
-          async () => {
-            console.log('click share screen');
-            await coachAction('setCoachSessionDrawSettings', {
-              touchEnabled: false,
-            });
-            await firebase
-              .database()
-              .ref('coachSessions/' + sessionID + '/members/' + userID)
-              .update({shareScreen: !shareScreen});
-          },
-          colors.green,
-        )}
-
-        {shareScreen &&
+        {displayButtonDraw &&
           this.button(
             {name: 'magic', type: 'font'},
             'Draw',
@@ -192,10 +162,10 @@ class RightButtons extends Component {
                 touchEnabled: !settingsDraw.touchEnabled,
               });
             },
-            colors.title,
+            colors.green,
           )}
 
-        {settingsDraw.touchEnabled && this.toolsDraw()}
+        {displayButtonDraw && settingsDraw.touchEnabled && this.toolsDraw()}
       </View>
     );
   }
@@ -208,18 +178,17 @@ class RightButtons extends Component {
 const styles = StyleSheet.create({
   colButtonsRight: {
     flex: 1,
-    // backgroundColor: 'red',
     position: 'absolute',
     right: 10,
-    zIndex: 5,
-    backgroundColor: colors.grey,
-    paddingTop: 10,
-    paddingBottom: 10,
+    zIndex: 7,
+    backgroundColor: colors.transparentGrey,
+    paddingTop: 0,
+    paddingBottom: 0,
     borderRadius: 5,
     top: sizes.heightHeaderHome,
     width: 65,
   },
-  button: {height: 65, width: '100%'},
+  button: {flex: 1, width: '100%', paddingTop: 10, paddingBottom: 10},
   textButton: {
     fontSize: 11,
     marginTop: 7,

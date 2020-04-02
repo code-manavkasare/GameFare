@@ -13,15 +13,12 @@ import firebase from 'react-native-firebase';
 import {SketchCanvas} from '@terrylinla/react-native-sketch-canvas';
 const {height, width} = Dimensions.get('screen');
 
-import AllIcons from '../../../layout/icons/AllIcons';
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
-import {coachAction} from '../../../../actions/coachActions';
-import {generateID} from '../../../functions/createEvent';
-import {getLastDrawing} from '../../../functions/coach';
-import {Col, Row} from 'react-native-easy-grid';
+import {coachAction} from '../../../../../actions/coachActions';
+import {generateID} from '../../../../functions/createEvent';
+import {getLastDrawing} from '../../../../functions/coach';
 
-import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
+import styleApp from '../../../../style/style';
 
 class Draw extends Component {
   constructor(props) {
@@ -41,12 +38,10 @@ class Draw extends Component {
     if (nextProps.drawingOpen !== this.props.drawingOpen) {
       return this.translateXPage.setValue(nextProps.drawingOpen ? 0 : width);
     } else if (nextProps.settingsDraw.clear !== this.props.settingsDraw.clear) {
-      this.canvas2.clear();
+      this.canvasRef.current.clear();
     } else if (nextProps.settingsDraw.undo !== this.props.settingsDraw.undo) {
-      console.log('undo!');
       const idSketchLast = getLastDrawing(nextProps.video).idSketch;
-      console.log('idSketchLast', idSketchLast);
-      this.canvas2.deletePath(idSketchLast);
+      this.canvasRef.current.deletePath(idSketchLast);
     }
   }
   async onStrokeEnd(event) {
@@ -59,30 +54,22 @@ class Draw extends Component {
       width: width,
     };
     path.id = idPath;
-    const {videoID, coachSessionID} = this.props;
+    const {archiveID, coachSessionID} = this.props;
     await firebase
       .database()
       .ref(
-        `coachSessions/${coachSessionID}/sharedVideos/${videoID}/drawings/${idPath}`,
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
       )
       .update(path);
   }
   drawView() {
-    const {settingsDraw, video, shareScreen} = this.props;
-
+    const {settingsDraw, video, drawingOpen} = this.props;
     return (
-      <Animated.View
-        style={[
-          styles.page,
-          {height: height},
-          {
-            transform: [{translateX: this.translateXPage}],
-          },
-        ]}>
-        {shareScreen ? (
+      <Animated.View style={styles.page}>
+        {drawingOpen ? (
           <SketchCanvas
             style={styles.drawingZone}
-            ref={(ref) => (this.canvas2 = ref)}
+            ref={this.canvasRef}
             touchEnabled={settingsDraw.touchEnabled}
             strokeColor={settingsDraw.color}
             strokeWidth={4}
@@ -90,7 +77,7 @@ class Draw extends Component {
           />
         ) : (
           <View style={styles.drawingZone}>
-          <DisplayDrawingToViewers drawings={video.drawings} />
+            <DisplayDrawingToViewers drawings={video.drawings} />
           </View>
         )}
       </Animated.View>
@@ -107,15 +94,12 @@ const styles = StyleSheet.create({
     height: height,
     width: width,
     position: 'absolute',
-    // backgroundColor: colors.red,
-    // opacity: 0.1,
     zIndex: 3,
   },
   drawingZone: {
     height: '100%',
     width: width,
     zIndex: -2,
-    // backgroundColor: 'red',
     position: 'absolute',
     top: 0,
   },

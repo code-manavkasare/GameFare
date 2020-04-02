@@ -3,26 +3,21 @@ import {
   View,
   Text,
   StyleSheet,
-  Animated,
-  Image,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+import FadeInView from 'react-native-fade-in-view';
+const {height, width} = Dimensions.get('screen');
 
-import AllIcons from '../../../layout/icons/AllIcons';
-import {coachAction} from '../../../../actions/coachActions';
-import {Col, Row} from 'react-native-easy-grid';
 import {
   goToSettings,
   microphonePermission,
   cameraPermission,
-} from '../../../functions/streaming';
-const {height, width} = Dimensions.get('screen');
+} from '../../../../functions/streaming';
 
-import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
-import FadeInView from 'react-native-fade-in-view';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
 
 class StreamPage extends Component {
   constructor(props) {
@@ -61,17 +56,7 @@ class StreamPage extends Component {
   permissionView() {
     const {loader, microAccess, cameraAccess} = this.state;
     return (
-      <FadeInView
-        duration={300}
-        style={{
-          ...styleApp.center,
-          height: '100%',
-          width: width,
-          position: 'absolute',
-          backgroundColor: colors.title,
-          opacity: 0.8,
-          zIndex: 7,
-        }}>
+      <FadeInView duration={300} style={styles.page}>
         <Text style={[styleApp.title, {color: colors.white, marginBottom: 10}]}>
           Stream your performance
         </Text>
@@ -104,7 +89,17 @@ class StreamPage extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  page: {
+    ...styleApp.center,
+    height: '100%',
+    width: width,
+    position: 'absolute',
+    backgroundColor: colors.title,
+    opacity: 0.8,
+    zIndex: 7,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {
@@ -114,4 +109,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(StreamPage);
+export default connect(mapStateToProps, {})(StreamPage);

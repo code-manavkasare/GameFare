@@ -471,14 +471,15 @@ const styles = StyleSheet.create({
     marginTop: 40,
     borderColor: colors.grey,
   },
-  buttonStartStreaming: {
+  cardArchive: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 80,
-    borderWidth: 4,
-    borderColor: colors.white,
-    width: 80,
-    borderRadius: 42.5,
+    overflow: 'hidden',
+    height: 130,
+    width: 250,
+    backgroundColor: colors.title,
+    marginRight: 20,
+    borderRadius: 4,
   },
 });
 

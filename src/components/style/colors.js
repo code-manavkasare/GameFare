@@ -1,4 +1,4 @@
-export default colors = {
+export default {
   primary: '#5499E9',
   primary2: '#5499E9',
   primaryLight: '#88BEFD',
@@ -34,6 +34,7 @@ export default colors = {
   borderColor: '#A7A7AA',
   grey: '#D8D8D8',
   greyDark: '#AEAEAE',
+  transparentGrey: 'rgba(0,0,0,0.5)',
 
   blue: '#4998FA',
   blueLight: '#5499E9',
