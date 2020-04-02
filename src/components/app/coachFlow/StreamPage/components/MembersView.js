@@ -1,19 +1,14 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
-
-import NavigationService from '../../../../../NavigationService';
-
-import ButtonColor from '../../../layout/Views/Button';
-import AllIcons from '../../../layout/icons/AllIcons';
-import ImageUser from '../../../layout/image/ImageUser';
-import {coachAction} from '../../../../actions/coachActions';
 import {Col, Row} from 'react-native-easy-grid';
 
-import sizes from '../../../style/sizes';
-import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
+import ImageUser from '../../../../layout/image/ImageUser';
+import {coachAction} from '../../../../../actions/coachActions';
+
+import sizes from '../../../../style/sizes';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
 
 class MembersView extends Component {
   constructor(props) {
@@ -22,7 +17,7 @@ class MembersView extends Component {
   }
   cardMember(member, i) {
     return (
-      <Row key={i} style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row key={i} style={styles.button}>
         <Col style={styleApp.center2} size={40}>
           <ImageUser user={member} />
         </Col>
@@ -57,23 +52,26 @@ const styles = StyleSheet.create({
   colButtonsRight: {
     flex: 1,
     position: 'absolute',
+    backgroundColor: colors.transparentGrey,
+    borderRadius: 4,
     left: 20,
+
     zIndex: 5,
     top: sizes.heightHeaderHome + 10,
     width: 130,
   },
-  button: {height: 65, width: '100%'},
-  textButton: {
-    fontSize: 11,
-    marginTop: 7,
+  button: {
+    flex: 1,
+    width: '100%',
+    paddingLeft: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    settings: state.coach.settings,
   };
 };
 

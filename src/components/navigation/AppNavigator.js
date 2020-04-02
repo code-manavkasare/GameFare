@@ -86,8 +86,7 @@ import AddPlayers from '../app/elementsStreamResults/AddPlayers';
 import MatchPictures from '../app/elementsStreamResults/MatchPictures';
 import StreamResults from '../app/elementsStreamResults/StreamResults';
 
-import RecordType from '../app/coachFlow/RecordType';
-import StreamPageCoaching from '../app/coachFlow/StreamPage/Index';
+import StreamPageCoaching from '../app/coachFlow/StreamPage/index';
 import SaveCoachSession from '../app/coachFlow/SaveCoachSession';
 
 const CreateEventNavigator = createStackNavigator(
@@ -191,7 +190,13 @@ const JoinChallengeNavigator = createStackNavigator(
 
 const navigatorStreamingCoach = createStackNavigator(
   {
-    StreamPageCoaching: StreamPageCoaching,
+    StreamPageCoaching: {
+      screen: StreamPageCoaching,
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: false,
+      },
+    },
     SaveCoachSession: lockedPortrait(SaveCoachSession),
     PickMembers: lockedPortrait(PickMembers),
   },
@@ -413,7 +418,13 @@ const MainStack = createStackNavigator(
     Event: JoinNavigator,
     Challenge: JoinChallengeNavigator,
     Conversation: MessageNavigator,
-    StartCoaching: navigatorStreamingCoach,
+    StartCoaching: {
+      screen: navigatorStreamingCoach,
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: false,
+      },
+    },
     ProfilePage: {screen: lockedPortrait(ProfilePage)},
     Group: JoinGroupNavigator,
     LiveStream: StreamNavigator,

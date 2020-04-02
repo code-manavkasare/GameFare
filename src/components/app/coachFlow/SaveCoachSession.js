@@ -69,7 +69,7 @@ class SaveCoachSession extends Component {
           initialTitleOpacity={1}
           icon2={'text'}
           text2={'Skip'}
-          // icon1='times'
+          icon1='times'
           clickButton1={() => goBack()}
           clickButton2={() => navigate('Stream')}
         />

@@ -1,34 +1,42 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import {OTSession, OTPublisher, OTSubscriber} from 'opentok-react-native';
+import {
+  OTSession,
+  OTPublisher,
+  OTSubscriber,
+  OTSubscriberView,
+} from 'opentok-react-native';
 import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
 import KeepAwake from 'react-native-keep-awake';
 import FadeInView from 'react-native-fade-in-view';
+import StatusBar from '@react-native-community/status-bar';
 const {height, width} = Dimensions.get('screen');
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import Button from '../../../layout/buttons/Button';
+import CameraView from '../cameraView/index';
 import Loader from '../../../layout/loaders/Loader';
+import {timing} from '../../../animations/animations';
 
 import {coachAction} from '../../../../actions/coachActions';
 import {
   isUserAlone,
   createCoachSession,
   isSomeoneSharingScreen,
+  userPartOfSession,
 } from '../../../functions/coach';
 import {audioVideoPermission} from '../../../functions/streaming';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
+import {offsetFooterStreaming, heightHeaderHome} from '../../../style/sizes';
 
-import PermissionView from './PermissionView';
-import RightButtons from './RightButtons';
-import ShareScreenView from './ShareScreenView';
-import MembersView from './MembersView';
-import BottomButtons from './BottomButtons';
-import PastSessions from './PastSessions';
+import PermissionView from './components/PermissionView';
+import WatchVideoPage from '../WatchVideoPage/index';
+import MembersView from './components/MembersView';
+import Footer from './footer/index';
+import NewSessionView from '../WatchVideoPage/components/NewSessionView';
 
 class StreamPage extends Component {
   constructor(props) {
@@ -41,8 +49,12 @@ class StreamPage extends Component {
       newSession: false,
       permissionsCamera: false,
       cameraFront: true,
+      watchVideo: false,
+      publishAudio: false,
+      myVideo: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.translateYFooter = new Animated.Value(0);
     this.translateYViewPublisher = new Animated.Value(0);
     this.translateXViewPublisher = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -84,6 +96,9 @@ class StreamPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   async componentDidMount() {
+    // change color status bar
+    StatusBar.setBarStyle('light-content', true);
+
     // reset drawing settings
     const {coachAction} = this.props;
     coachAction('setCoachSessionDrawSettings', {
@@ -101,12 +116,13 @@ class StreamPage extends Component {
       return this.setState({loader: false, newSession: true});
     return this.loadCoachSession(currentSessionID);
   }
+  componentDidUpdate(prevProps, prevState) {}
   async loadCoachSession(coachSessionID) {
     const {coachAction} = this.props;
     const {userID, infoUser} = this.props;
 
     let objectID = this.props.navigation.getParam('objectID');
-    objectID = 'zc5pmptkk1k88iuy70';
+    objectID = 'q9y9f1mtkak8e5apgc';
 
     if (!objectID)
       if (!coachSessionID)
@@ -120,36 +136,11 @@ class StreamPage extends Component {
       .ref('coachSessions/' + objectID)
       .on('value', async function(snap) {
         let session = snap.val();
-        console.log('coachSession', session);
         if (!session) return that.setState({newSession: true, loader: false});
         return that.setState({coachSession: session, loader: false});
       });
   }
-  AddMembers() {
-    const {navigate} = this.props.navigation;
-    const currentRoot = this.props.navigation.state.routeName;
 
-    const {coachSession} = this.state;
-    const {objectID} = coachSession;
-    navigate('PickMembers', {
-      usersSelected: {},
-      selectMultiple: true,
-      closeButton: true,
-      loaderOnSubmit: true,
-      displayCurrentUser: true,
-      titleHeader: 'Add someone to the session',
-      onGoBack: async (members) => {
-        for (var i in Object.values(members)) {
-          const member = Object.values(members)[i];
-          await firebase
-            .database()
-            .ref('coachSessions/' + objectID + '/members/' + member.id)
-            .update(member);
-        }
-        return navigate(currentRoot);
-      },
-    });
-  }
   loaderView(text) {
     return (
       <FadeInView
@@ -162,80 +153,56 @@ class StreamPage extends Component {
       </FadeInView>
     );
   }
-  videoSource(shareScreen) {
-    return 'camera';
-    // if (!shareScreen) return 'camera';
-    // return 'screen';
-  }
   cameraPosition() {
     const {cameraFront} = this.state;
     if (cameraFront) return 'front';
     return 'back';
   }
-  userPartOfSession(session) {
-    const {userID} = this.props;
-    if (!session) return false;
-    if (!session.allMembers) return false;
-    if (!session.allMembers[userID]) return false;
-    return true;
-  }
-  newSessionView() {
-    const {currentSessionID} = this.props;
-    return (
-      <View style={[styleApp.center2, styleApp.fullSize]}>
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.greenClick}
-          styleButton={styleApp.marginView}
-          enabled={true}
-          text="Resume session"
-          loader={false}
-          click={async () => {
-            await this.setState({
-              loader: true,
-              newSession: false,
-              isConnected: false,
-            });
-            this.loadCoachSession(currentSessionID);
-          }}
-        />
-        <View style={{height: 20}} />
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          styleButton={styleApp.marginView}
-          enabled={true}
-          text="New session"
-          loader={false}
-          click={async () => {
-            await this.setState({
-              loader: true,
-              newSession: false,
-              isConnected: false,
-            });
-            this.loadCoachSession();
-          }}
-        />
-      </View>
-    );
-  }
+  renderSubscribers = (subscribers) => {
+    return subscribers.map((streamId, index) => {
+      console.log('subscribers', streamId);
+      const styleSubscriber = {
+        height: height / subscribers.length,
+        width: width,
+        top: index * (height / subscribers.length),
+        position: 'absolute',
+      };
+      return (
+        <View
+          // onPress={() => this.handleStreamPress(streamId)}
+          key={streamId}
+          style={styleSubscriber}>
+          <OTSubscriberView streamId={streamId} style={styleApp.fullSize} />
+        </View>
+      );
+    });
+  };
   streamPage() {
     const {
       loader,
-      showPastSessionsPicker,
       coachSession,
       newSession,
       isConnected,
+      publishAudio,
     } = this.state;
-    const {userID} = this.props;
+    const {userID, currentSessionID} = this.props;
 
-    if (loader) return this.loaderView('Loading...');
-    if (newSession) return this.newSessionView();
+    if (loader) return this.loaderView(' ');
+    if (newSession)
+      return (
+        <NewSessionView
+          currentSessionID={currentSessionID}
+          loadCoachSession={this.loadCoachSession.bind(this)}
+          setState={this.setState.bind(this)}
+        />
+      );
 
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Loading...');
 
-    if (!this.userPartOfSession(coachSession))
+    const member = userPartOfSession(coachSession, userID);
+    console.log('member', member);
+    if (!member)
       return (
         <View style={[styleApp.center, {height: 300, width: width}]}>
           <Text style={[styleApp.text, {color: colors.white}]}>
@@ -244,83 +211,44 @@ class StreamPage extends Component {
         </View>
       );
 
-    const member = coachSession.members[userID];
-
-    const {shareScreen} = member;
-    const userIsAlone = isUserAlone(coachSession);
-    const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
-
+    let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
-    const videoSource = this.videoSource(shareScreen);
+
     return (
-      <View style={styles.viewStream}>
+      <View style={[styles.fullSize]}>
         {!isConnected &&
           this.loaderView('We are connecting you to the session...')}
 
         <OTSession
-          //eventHandlers={this.sesssionEventHandlers}
           apiKey={Config.OPENTOK_API}
           ref={this.otSessionRef}
           eventHandlers={this.sessionEventHandlers}
           sessionId={sessionID}
+          style={styleApp.fullSize}
           token={member.token}>
-          <OTSubscriber style={styles.OTSubscriber} />
-
-          <Animated.View
-            style={[
-              userIsAlone ? styles.OTPublisherAlone : styles.OTPublisher,
-              {backgroundColor: colors.greyDark},
-              {
-                transform: [
-                  {translateY: this.translateYViewPublisher},
-                  {translateX: this.translateXViewPublisher},
-                ],
-              },
-            ]}>
-            <OTPublisher
-              eventHandlers={this.publisherEventHandlers}
-              style={styleApp.fullSize}
-              properties={{cameraPosition, videoSource}}
-            />
-          </Animated.View>
-
-          <ShareScreenView
-            shareScreen={member.shareScreen}
-            personSharingScreen={personSharingScreen}
-            session={coachSession}
-            videoID={this.videoIDToShare(coachSession)}
+          <OTPublisher
+            style={!userIsAlone ? styles.OTSubscriberAlone : styles.OTPublisher}
+            properties={{
+              cameraPosition,
+              videoSource: 'camera',
+              publishAudio: publishAudio,
+            }}
           />
 
-          {!personSharingScreen && !shareScreen && (
-            <FadeInView duration={300} style={styles.footer}>
-              <BottomButtons
-                session={coachSession}
-                AddMembers={this.AddMembers.bind(this)}
-                showPastSessionsPicker={showPastSessionsPicker}
-                clickReview={(val) => this.pastSessionsRef.open(val)}
-              />
-              <View style={{height: 20}}></View>
-              <PastSessions
-                translateYViewPublisher={this.translateYViewPublisher}
-                onRef={(ref) => (this.pastSessionsRef = ref)}
-              />
-            </FadeInView>
-          )}
+          <OTSubscriber style={styles.OTSubscriber}>
+            {this.renderSubscribers}
+          </OTSubscriber>
         </OTSession>
+
+        <MembersView session={coachSession} />
       </View>
     );
   }
-  videoIDToShare(coachSession) {
-    if (!coachSession) return false;
-    if (!coachSession.sharedVideos) return false;
-    return Object.values(coachSession.sharedVideos)[0].id;
-  }
   render() {
-    const {navigate} = this.props.navigation;
-    const {permissionsCamera, isConnected} = this.state;
-    const {userID} = this.props;
-    const {coachSession} = this.state;
-    const personSharingScreen = isSomeoneSharingScreen(coachSession, userID);
+    const {dismiss} = this.props.navigation;
+    const {permissionsCamera} = this.state;
+    const {coachSession, isConnected} = this.state;
+    const personSharingScreen = isSomeoneSharingScreen(coachSession);
     return (
       <View style={styles.pageComponent}>
         <KeepAwake />
@@ -336,27 +264,33 @@ class StreamPage extends Component {
           initialBorderColorIcon={'transparent'}
           icon1="times"
           initialTitleOpacity={1}
-          clickButton1={() => navigate('Stream')}
+          clickButton1={() => {
+            dismiss();
+            // change color status bar
+            StatusBar.setBarStyle('dark-content', true);
+          }}
         />
-
-        {this.userPartOfSession(coachSession) &&
-          isConnected &&
-          !personSharingScreen && (
-            <View>
-              <MembersView session={coachSession} />
-
-              <RightButtons
-                state={this.state}
-                session={coachSession}
-                videoID={this.videoIDToShare(coachSession)}
-                setState={this.setState.bind(this)}
-              />
-            </View>
-          )}
-
-        {this.streamPage()}
+        <View style={styles.viewStream}>{this.streamPage()}</View>
 
         {!permissionsCamera && <PermissionView />}
+
+        <WatchVideoPage
+          state={this.state}
+          onRef={(ref) => (this.watchVideoRef = ref)}
+          personSharingScreen={personSharingScreen}
+          session={coachSession}
+          translateYFooter={this.translateYFooter}
+          setState={this.setState.bind(this)}
+        />
+
+        <Footer
+          translateYFooter={this.translateYFooter}
+          session={coachSession}
+          state={this.state}
+          setState={this.setState.bind(this)}
+          watchVideoRef={this.watchVideoRef}
+          displayFooter={isConnected}
+        />
       </View>
     );
   }
@@ -364,13 +298,10 @@ class StreamPage extends Component {
 
 const styles = StyleSheet.create({
   pageComponent: {backgroundColor: colors.title, ...styleApp.fullSize},
-  footer: {
-    bottom: 0,
-    width: width,
+  viewStream: {
+    ...styleApp.fullSize,
     position: 'absolute',
-    backgroundColor: 'transparent',
-    flex: 1,
-    zIndex: 5,
+    zIndex: -1,
   },
   viewStream: {
     ...styleApp.fullSize,
@@ -380,26 +311,25 @@ const styles = StyleSheet.create({
   OTSubscriber: {
     width: width,
     height: height,
-    zIndex: 1,
+    position: 'absolute',
+    zIndex: 4,
   },
-  OTPublisherAlone: {
+  OTSubscriberAlone: {
+    width: 90,
+    height: 120,
+    borderRadius: 5,
+    overflow: 'hidden',
+    position: 'absolute',
+    right: 20,
+    top: heightHeaderHome + 10,
+    zIndex: 4,
+  },
+  OTPublisher: {
     width: width,
     height: height,
     position: 'absolute',
     top: 0,
-    zIndex: 2,
-  },
-  OTPublisher: {
-    width: 110,
-    height: 150,
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 140,
-    overflow: 'hidden',
-    right: 20,
-    zIndex: 2,
-    borderWidth: 1,
-    borderColor: colors.off,
+    zIndex: -10,
   },
   loaderSessionTokBox: {
     height: height,

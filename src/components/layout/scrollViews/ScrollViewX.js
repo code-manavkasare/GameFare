@@ -60,6 +60,8 @@ export default class ScrollViewX extends PureComponent {
     this.ScrollView.scrollTo({x: widthToEvent, y: 0, animated: true});
   };
   render() {
+    console.log('scrollview x ', this.props.events);
+    const {undisplayEmptyList, width: widthProps} = this.props;
     return (
       <ScrollView
         scrollEventThrottle={500}
@@ -79,13 +81,13 @@ export default class ScrollViewX extends PureComponent {
         style={{
           marginLeft: 0,
           flex: 1,
-          width: width,
+          width: widthProps ? widthProps : width,
           paddingLeft: 20,
           paddingRight: 20,
           backgroundColor: this.props.backgroundTransparent
             ? 'transparent'
             : 'white',
-          paddingTop: 7,
+          paddingTop: 0,
         }}>
         {this.props.loader ? (
           [0, 1, 2, 3].map((event, i) => (
@@ -100,17 +102,18 @@ export default class ScrollViewX extends PureComponent {
               <PlaceHolder />
             </View>
           ))
-        ) : Object.values(this.props.events).length == 0 ? (
+        ) : Object.values(this.props.events).length === 0 &&
+          !undisplayEmptyList ? (
           <Button
             view={() => {
               return (
                 <View style={styleApp.center}>
-                  {this.props.imageNoEvent == 'location' ? (
+                  {this.props.imageNoEvent === 'location' ? (
                     <Image
                       source={require('../../../img/images/location.png')}
                       style={{width: 60, height: 60, marginBottom: 15}}
                     />
-                  ) : this.props.imageNoEvent == 'group' ? (
+                  ) : this.props.imageNoEvent === 'group' ? (
                     <Image
                       source={require('../../../img/images/shelve.png')}
                       style={{width: 60, height: 60, marginBottom: 15}}
