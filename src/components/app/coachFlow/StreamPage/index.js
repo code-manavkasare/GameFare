@@ -58,10 +58,21 @@ class StreamPage extends Component {
     this.translateYViewPublisher = new Animated.Value(0);
     this.translateXViewPublisher = new Animated.Value(0);
     this.otSessionRef = React.createRef();
-    this.sessionEventHandlers = {
-      streamCreated: (event) => {
-        console.log('Stream created!', event);
+    this.publisherEventHandlers = {
+      streamCreated: async (event) => {
+        const {userID, currentSessionID} = this.props;
+        console.log('Publisher stream created!', event);
+
+        await firebase
+          .database()
+          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
+          .update({
+            isConnected: true,
+            connectionIdTokbox: event.streamId,
+          });
       },
+    };
+    this.sessionEventHandlers = {
       sessionDisconnected: async (event) => {
         const {userID, currentSessionID} = this.props;
         console.log('session is disconnected', currentSessionID);
@@ -79,16 +90,9 @@ class StreamPage extends Component {
       },
       sessionConnected: async (event) => {
         const {userID, currentSessionID} = this.props;
-        console.log('session connected !!', event);
+        console.log('session connected !! prout1', event);
         console.log('currentSessionID', currentSessionID);
 
-        await firebase
-          .database()
-          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
-          .update({
-            isConnected: true,
-            connectionIdTokbox: event.connection.connectionId,
-          });
         this.setState({
           isConnected: true,
         });
@@ -253,6 +257,7 @@ class StreamPage extends Component {
               videoSource: 'camera',
               publishAudio: publishAudio,
             }}
+            eventHandlers={this.publisherEventHandlers}
           />
 
           <OTSubscriber style={styles.OTSubscriber}>
