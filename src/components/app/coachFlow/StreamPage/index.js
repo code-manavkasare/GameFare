@@ -11,7 +11,6 @@ import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
 import KeepAwake from 'react-native-keep-awake';
 import FadeInView from 'react-native-fade-in-view';
-import StatusBar from '@react-native-community/status-bar';
 const {height, width} = Dimensions.get('screen');
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -25,6 +24,7 @@ import {
   createCoachSession,
   isSomeoneSharingScreen,
   userPartOfSession,
+  isUserAdmin,
 } from '../../../functions/coach';
 import {audioVideoPermission} from '../../../functions/streaming';
 
@@ -42,11 +42,11 @@ class StreamPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: true,
+      loader: false,
       isConnected: false,
       showPastSessionsPicker: false,
       coachSession: false,
-      newSession: false,
+      error: false,
       permissionsCamera: false,
       cameraFront: true,
       watchVideo: false,
@@ -63,31 +63,32 @@ class StreamPage extends Component {
         console.log('Stream created!', event);
       },
       sessionDisconnected: async (event) => {
-        const {userID} = this.props;
+        const {userID, currentSessionID} = this.props;
+        console.log('session is disconnected', currentSessionID);
+        console.log('userID', userID);
         await firebase
           .database()
-          .ref(
-            'coachSessions/' +
-              this.state.coachSession.objectID +
-              '/members/' +
-              userID,
-          )
-          .update({isConnected: false});
+          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
+          .update({
+            isConnected: false,
+          });
         this.setState({
           isConnected: false,
+          coachSession: false,
         });
       },
       sessionConnected: async (event) => {
-        const {userID} = this.props;
+        const {userID, currentSessionID} = this.props;
+        console.log('session connected !!', event);
+        console.log('currentSessionID', currentSessionID);
+
         await firebase
           .database()
-          .ref(
-            'coachSessions/' +
-              this.state.coachSession.objectID +
-              '/members/' +
-              userID,
-          )
-          .update({isConnected: true});
+          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
+          .update({
+            isConnected: true,
+            connectionIdTokbox: event.connection.connectionId,
+          });
         this.setState({
           isConnected: true,
         });
@@ -96,9 +97,7 @@ class StreamPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   async componentDidMount() {
-    // change color status bar
-    StatusBar.setBarStyle('light-content', true);
-
+    await this.setState({loader: true});
     // reset drawing settings
     const {coachAction} = this.props;
     coachAction('setCoachSessionDrawSettings', {
@@ -112,8 +111,7 @@ class StreamPage extends Component {
 
     //// load session
     const {currentSessionID} = this.props;
-    if (currentSessionID)
-      return this.setState({loader: false, newSession: true});
+    if (currentSessionID) return this.setState({loader: false});
     return this.loadCoachSession(currentSessionID);
   }
   componentDidUpdate(prevProps, prevState) {}
@@ -122,8 +120,8 @@ class StreamPage extends Component {
     const {userID, infoUser} = this.props;
 
     let objectID = this.props.navigation.getParam('objectID');
-    objectID = 'q9y9f1mtkak8e5apgc';
-
+    objectID = 'kmek59bc1obk8k0l29z';
+    console.log('new session!', this.state);
     if (!objectID)
       if (!coachSessionID)
         objectID = await createCoachSession({id: userID, info: infoUser});
@@ -136,9 +134,37 @@ class StreamPage extends Component {
       .ref('coachSessions/' + objectID)
       .on('value', async function(snap) {
         let session = snap.val();
-        if (!session) return that.setState({newSession: true, loader: false});
-        return that.setState({coachSession: session, loader: false});
+        console.log('session loaded:', session);
+        if (!session)
+          return that.setState({
+            error: {
+              message: 'This session does exist anymore.',
+            },
+            coachSession: false,
+            loader: false,
+          });
+        if (!session.info)
+          return that.setState({
+            error: {
+              message: 'This session does exist anymore.',
+            },
+            coachSession: false,
+            loader: false,
+          });
+        return that.setState({
+          coachSession: session,
+          loader: false,
+          error: false,
+        });
       });
+  }
+  async endCoachSession() {
+    const {objectID} = this.state.coachSession;
+    await firebase
+      .database()
+      .ref('coachSessions/' + objectID)
+      .off();
+    this.setState({coachSession: false});
   }
 
   loaderView(text) {
@@ -178,30 +204,24 @@ class StreamPage extends Component {
     });
   };
   streamPage() {
-    const {
-      loader,
-      coachSession,
-      newSession,
-      isConnected,
-      publishAudio,
-    } = this.state;
-    const {userID, currentSessionID} = this.props;
+    const {loader, coachSession, isConnected, publishAudio, error} = this.state;
+    const {userID, currentSessionID, userConnected} = this.props;
 
     if (loader) return this.loaderView(' ');
-    if (newSession)
+    if (!userConnected || !coachSession)
       return (
         <NewSessionView
           currentSessionID={currentSessionID}
+          userConnected={userConnected}
+          error={error}
           loadCoachSession={this.loadCoachSession.bind(this)}
           setState={this.setState.bind(this)}
         />
       );
-
     const {sessionID} = coachSession.tokbox;
-    if (!sessionID) return this.loaderView('Loading...');
+    if (!sessionID) return this.loaderView('Creating the room...');
 
     const member = userPartOfSession(coachSession, userID);
-    console.log('member', member);
     if (!member)
       return (
         <View style={[styleApp.center, {height: 300, width: width}]}>
@@ -225,7 +245,7 @@ class StreamPage extends Component {
           eventHandlers={this.sessionEventHandlers}
           sessionId={sessionID}
           style={styleApp.fullSize}
-          token={member.token}>
+          token={member.tokenTokbox}>
           <OTPublisher
             style={!userIsAlone ? styles.OTSubscriberAlone : styles.OTPublisher}
             properties={{
@@ -244,10 +264,31 @@ class StreamPage extends Component {
       </View>
     );
   }
+  AddMembers = (objectID) => {
+    const {navigate} = this.props.navigation;
+    navigate('PickMembers', {
+      usersSelected: {},
+      selectMultiple: true,
+      closeButton: true,
+      loaderOnSubmit: true,
+      displayCurrentUser: true,
+      titleHeader: 'Add someone to the session',
+      onGoBack: async (members) => {
+        for (var i in Object.values(members)) {
+          const member = Object.values(members)[i];
+          await firebase
+            .database()
+            .ref('coachSessions/' + objectID + '/members/' + member.id)
+            .update(member);
+        }
+        return navigate('StreamPageCoaching');
+      },
+    });
+  };
   render() {
     const {dismiss} = this.props.navigation;
-    const {permissionsCamera} = this.state;
-    const {coachSession, isConnected} = this.state;
+    const {coachSession, isConnected, permissionsCamera} = this.state;
+    const {userID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     return (
       <View style={styles.pageComponent}>
@@ -261,14 +302,18 @@ class StreamPage extends Component {
           sizeIcon1={21}
           nobackgroundColorIcon1={true}
           backgroundColorIcon1={'transparent'}
+          backgroundColorIcon2={'transparent'}
           initialBorderColorIcon={'transparent'}
-          icon1="times"
+          // icon1="times"
+          icon2={
+            coachSession && isUserAdmin(coachSession, userID) && 'user-plus'
+          }
           initialTitleOpacity={1}
-          clickButton1={() => {
-            dismiss();
-            // change color status bar
-            StatusBar.setBarStyle('dark-content', true);
-          }}
+          clickButton1={() => dismiss()}
+          clickButton2={() => this.AddMembers(coachSession.objectID)}
+          sizeIcon2={21}
+          typeIcon2="font"
+          colorIcon2={colors.white}
         />
         <View style={styles.viewStream}>{this.streamPage()}</View>
 
@@ -283,14 +328,17 @@ class StreamPage extends Component {
           setState={this.setState.bind(this)}
         />
 
-        <Footer
-          translateYFooter={this.translateYFooter}
-          session={coachSession}
-          state={this.state}
-          setState={this.setState.bind(this)}
-          watchVideoRef={this.watchVideoRef}
-          displayFooter={isConnected}
-        />
+        {coachSession && (
+          <Footer
+            translateYFooter={this.translateYFooter}
+            session={coachSession}
+            state={this.state}
+            setState={this.setState.bind(this)}
+            watchVideoRef={this.watchVideoRef}
+            displayFooter={isConnected}
+            endCoachSession={this.endCoachSession.bind(this)}
+          />
+        )}
       </View>
     );
   }
@@ -298,11 +346,6 @@ class StreamPage extends Component {
 
 const styles = StyleSheet.create({
   pageComponent: {backgroundColor: colors.title, ...styleApp.fullSize},
-  viewStream: {
-    ...styleApp.fullSize,
-    position: 'absolute',
-    zIndex: -1,
-  },
   viewStream: {
     ...styleApp.fullSize,
     position: 'absolute',
@@ -352,6 +395,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     currentSessionID: state.coach.currentSessionID,
+    userConnected: state.user.userConnected,
   };
 };
 

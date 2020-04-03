@@ -293,7 +293,7 @@ class HomeScreen extends React.Component {
           />
         </Animated.View>
 
-        <ButtonColor
+        {/* <ButtonColor
           view={() => {
             return (
               <Row>
@@ -317,7 +317,7 @@ class HomeScreen extends React.Component {
             this.props.navigation.navigate('MapPage');
           }}
           onPressColor={colors.off}
-        />
+        /> */}
       </View>
     );
   }

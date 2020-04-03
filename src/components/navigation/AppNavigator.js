@@ -320,9 +320,9 @@ const MainApp = createBottomTabNavigator(
   {
     Home: lockedPortrait(HomePage),
     Activity: lockedPortrait(Activity),
-    Stream: lockedPortrait(StreamPage),
+    StartCoaching: navigatorStreamingCoach,
     MessageList: lockedPortrait(MessageList),
-    More: ProfileNavigator,
+    Profile: ProfileNavigator,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
@@ -334,13 +334,40 @@ const MainApp = createBottomTabNavigator(
             focused={focused}
             tintColor={tintColor}
             routeName={routeName}
+            signInToPass={routeName === 'Profile' && true}
+            iconName={
+              routeName === 'Home'
+                ? 'searchFooter'
+                : routeName === 'Activity'
+                ? 'calendar2'
+                : routeName === 'StartCoaching'
+                ? 'video-camera'
+                : routeName === 'MessageList'
+                ? 'speech'
+                : routeName === 'Profile'
+                ? 'profileFooter'
+                : null
+            }
+            label={
+              routeName === 'Home'
+                ? 'Browse'
+                : routeName === 'Activity'
+                ? 'Activity'
+                : routeName === 'StartCoaching'
+                ? 'Go Live'
+                : routeName === 'MessageList'
+                ? 'Message'
+                : routeName === 'Profile'
+                ? 'Profile'
+                : null
+            }
           />
         );
       },
     }),
     tabBarOptions: {
-      activeTintColor: colors.primary2,
-      inactiveTintColor: colors.title,
+      activeTintColor: colors.primary,
+      inactiveTintColor: colors.greyDark,
       // tabBarVisible:false,
       showLabel: false,
       style: [
@@ -348,7 +375,7 @@ const MainApp = createBottomTabNavigator(
         {
           borderTopWidth: 0.5,
           shadowOpacity: 0.04,
-          backgroundColor: colors.blue,
+          backgroundColor: colors.white,
           borderTopColor: colors.grey,
           height: 90,
           marginBottom: -35,
@@ -418,13 +445,7 @@ const MainStack = createStackNavigator(
     Event: JoinNavigator,
     Challenge: JoinChallengeNavigator,
     Conversation: MessageNavigator,
-    StartCoaching: {
-      screen: navigatorStreamingCoach,
-      navigationOptions: {
-        gesturesEnabled: false,
-        cardShadowEnabled: false,
-      },
-    },
+
     ProfilePage: {screen: lockedPortrait(ProfilePage)},
     Group: JoinGroupNavigator,
     LiveStream: StreamNavigator,
@@ -455,6 +476,13 @@ const RootStack = createStackNavigator(
       screen: lockedPortrait(ListCountry),
       navigationOptions: {
         gesturesEnabled: false,
+      },
+    },
+    StartCoaching: {
+      screen: navigatorStreamingCoach,
+      navigationOptions: {
+        gesturesEnabled: false,
+        cardShadowEnabled: false,
       },
     },
     Alert: {

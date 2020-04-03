@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+import {Col, Row} from 'react-native-easy-grid';
 
 import Button from '../../../../layout/buttons/Button';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
+import NavigationService from '../../../../../../NavigationService';
 
 export default class NewSessionView extends Component {
   constructor(props) {
@@ -13,7 +15,13 @@ export default class NewSessionView extends Component {
     this.state = {};
   }
   newSessionView() {
-    const {currentSessionID, loadCoachSession, setState} = this.props;
+    const {
+      currentSessionID,
+      loadCoachSession,
+      setState,
+      userConnected,
+      error,
+    } = this.props;
     return (
       <View style={[styleApp.center2, styleApp.fullSize]}>
         <Button
@@ -24,6 +32,7 @@ export default class NewSessionView extends Component {
           text="Resume session"
           loader={false}
           click={async () => {
+            if (!userConnected) return NavigationService.navigate('SignIn');
             await setState({
               loader: true,
               newSession: false,
@@ -41,14 +50,23 @@ export default class NewSessionView extends Component {
           text="New session"
           loader={false}
           click={async () => {
-            await this.setState({
+            console.log('userConnected!!', userConnected);
+            if (!userConnected) return NavigationService.navigate('SignIn');
+            await setState({
               loader: true,
-              newSession: false,
               isConnected: false,
             });
             loadCoachSession();
           }}
         />
+
+        {error && (
+          <Row style={styles.rowError}>
+            <Col style={styleApp.center}>
+              <Text style={styles.textError}>{error.message}</Text>
+            </Col>
+          </Row>
+        )}
       </View>
     );
   }
@@ -58,7 +76,20 @@ export default class NewSessionView extends Component {
   }
 }
 
+const styles = StyleSheet.create({
+  textError: {
+    ...styleApp.text,
+    color: colors.white,
+    fontSize: 15,
+  },
+  rowError: {
+    marginTop: 30,
+    height: 40,
+  },
+});
+
 NewSessionView.propTypes = {
+  userConnected: PropTypes.bool,
   currentSessionID: PropTypes.string,
   loadCoachSession: PropTypes.func,
   setState: PropTypes.setState,

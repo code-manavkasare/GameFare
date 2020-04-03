@@ -2,74 +2,142 @@ import React from 'react';
 import {Text, View, styleAppheet, StyleSheet} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
+import StatusBar from '@react-native-community/status-bar';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import AllIcons from '../../layout/icons/AllIcons';
 import Button from '../../layout/Views/Button';
 
-class MainTabIcon extends React.Component {
+const ButtonMessage = class MainTabIcon extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      newMessage: false,
+    };
   }
-
   render() {
-    const {navigation, focused, tintColor, routeName} = this.props;
+    const {
+      routeName,
+      navigation,
+      tintColor,
+      icon,
+      label,
+      displayPastille,
+      signInToPass,
+      userConnected,
+    } = this.props;
+
+    let {navigateTo} = this.props;
+
+    if (!userConnected && signInToPass) navigateTo = 'SignIn';
     return (
       <Button
         view={() => {
           return (
-            <Row
-              style={[
-                styles.rowInButton,
-                {borderColor: focused ? colors.primary : 'transparent'},
-              ]}>
-              {routeName === 'MessageList' ? (
-                <View style={styleApp.roundMessage} />
-              ) : null}
-              <Col size={10} style={[styleApp.center4, {paddingTop: 10}]}>
+            <Row style={styles.rowInButton}>
+              {displayPastille && (
+                <View
+                  style={[styleApp.roundMessage, {backgroundColor: tintColor}]}
+                />
+              )}
+              <Col style={[styleApp.center4, {paddingTop: 10}]}>
                 <AllIcons
-                  name={
-                    routeName === 'Home'
-                      ? 'searchFooter'
-                      : routeName === 'Activity'
-                      ? 'calendar2'
-                      : routeName === 'Stream'
-                      ? 'video-camera'
-                      : routeName === 'MessageList'
-                      ? 'speech'
-                      : routeName === 'More'
-                      ? 'menu'
-                      : null
-                  }
-                  size={16}
-                  color={tintColor} // color red for stream button?
+                  name={icon.name}
+                  size={icon.size}
+                  color={tintColor}
                   style={styleApp.iconFooter}
-                  type={'moon'}
+                  type={icon.type}
                 />
                 <Text style={[styles.textButton, {color: tintColor}]}>
-                  {routeName === 'Home'
-                    ? 'Browse'
-                    : routeName === 'Activity'
-                    ? 'Activity'
-                    : routeName === 'Stream'
-                    ? 'Go Live'
-                    : routeName === 'MessageList'
-                    ? 'Message'
-                    : routeName === 'More'
-                    ? 'More'
-                    : null}
+                  {label}
                 </Text>
               </Col>
             </Row>
           );
         }}
-        click={() => navigation.navigate(routeName)}
+        click={() => {
+          StatusBar.setBarStyle('dark-content', true);
+          navigation.navigate(navigateTo);
+        }}
         color={'white'}
         style={styles.button}
-        onPressColor={colors.off2}
+        onPressColor={colors.off}
       />
     );
+  }
+};
+
+class MainTabIcon extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  buttonCamera() {
+    const {navigation, focused, tintColor, routeName} = this.props;
+    return (
+      <Button
+        view={() => {
+          return (
+            <AllIcons
+              name={'video-camera'}
+              size={23}
+              color={colors.white} // color red for stream button?
+              // style={styleApp.iconFooter}
+              type={'moon'}
+            />
+          );
+        }}
+        click={() => {
+          // change color status bar
+          StatusBar.setBarStyle('light-content', true);
+          navigation.navigate('StartCoaching');
+        }}
+        color={colors.primary}
+        style={[
+          styles.buttonCamera,
+          {
+            borderWidth: 3,
+            borderColor: focused ? colors.white : colors.white,
+          },
+        ]}
+        onPressColor={focused ? colors.primaryLight : colors.primaryLight}
+      />
+    );
+  }
+  buttonFooter() {
+    const {
+      navigation,
+      focused,
+      tintColor,
+      routeName,
+      iconName,
+      label,
+      userConnected,
+      signInToPass,
+    } = this.props;
+    console.log('routeName', routeName);
+    if (routeName === 'StartCoaching') return this.buttonCamera();
+
+    return (
+      <ButtonMessage
+        navigation={navigation}
+        navigateTo={routeName}
+        signInToPass={signInToPass}
+        userConnected={userConnected}
+        displayPastille={routeName === 'MessageList' && userConnected && true}
+        label={label}
+        icon={{
+          name: iconName,
+          type: 'moon',
+          size: 16,
+        }}
+        tintColor={tintColor}
+      />
+    );
+  }
+
+  render() {
+    return this.buttonFooter();
   }
 }
 
@@ -83,6 +151,13 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 0,
   },
+  buttonCamera: {
+    paddingTop: 0,
+    width: 75,
+    height: 75,
+    marginTop: -60,
+    borderRadius: 40,
+  },
   textButton: {
     ...styleApp.footerText,
     marginTop: 6,
@@ -91,12 +166,14 @@ const styles = StyleSheet.create({
   },
   rowInButton: {
     height: '100%',
-    borderTopWidth: 1.5,
+    // borderTopWidth: 1.5,
   },
 });
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    userConnected: state.user.userConnected,
+  };
 };
 
-export default connect(mapStateToProps, {})(MainTabIcon);
+export default connect(mapStateToProps, {})(MainTabIcon, ButtonMessage);

@@ -61,7 +61,11 @@ export default class ScrollViewX extends PureComponent {
   };
   render() {
     console.log('scrollview x ', this.props.events);
-    const {undisplayEmptyList, width: widthProps} = this.props;
+    const {
+      undisplayEmptyList,
+      width: widthProps,
+      styleButtonEmpty,
+    } = this.props;
     return (
       <ScrollView
         scrollEventThrottle={500}
@@ -116,18 +120,27 @@ export default class ScrollViewX extends PureComponent {
                   ) : this.props.imageNoEvent === 'group' ? (
                     <Image
                       source={require('../../../img/images/shelve.png')}
-                      style={{width: 60, height: 60, marginBottom: 15}}
+                      style={{width: 45, height: 45, marginBottom: 15}}
                     />
                   ) : null}
-                  <Text style={[styleApp.text, {marginTop: 5, fontSize: 12}]}>
+                  <Text
+                    style={[
+                      styleApp.text,
+                      {marginTop: 5, fontSize: 12},
+                      styleButtonEmpty && styleButtonEmpty.text,
+                    ]}>
                     {this.props.messageNoEvent}
                   </Text>
                 </View>
               );
             }}
             click={() => true}
-            color="white"
-            style={[styleApp.center, styles.button]}
+            // color="white"
+            style={[
+              styleApp.center,
+              styles.button,
+              styleButtonEmpty && styleButtonEmpty.button,
+            ]}
             onPressColor={colors.off}
           />
         ) : (

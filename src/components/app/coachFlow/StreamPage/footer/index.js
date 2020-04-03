@@ -22,6 +22,7 @@ class Footer extends Component {
       state,
       displayFooter,
       watchVideoRef,
+      endCoachSession,
     } = this.props;
     if (!displayFooter) return null;
     const userIsAlone = isUserAlone(session);
@@ -44,6 +45,7 @@ class Footer extends Component {
           session={session}
           state={state}
           setState={setState}
+          endCoachSession={endCoachSession}
           clickReview={(val) => this.pastSessionsRef.open(val)}
         />
 

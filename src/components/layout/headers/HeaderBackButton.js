@@ -115,6 +115,8 @@ export default class HeaderFlow extends Component {
       nobackgroundColorIcon1,
       sizeIcon1,
       backgroundColorIcon1,
+      backgroundColorIcon2,
+      colorIcon2,
     } = this.props;
     return (
       <Animated.View
@@ -139,7 +141,11 @@ export default class HeaderFlow extends Component {
               <Animated.View
                 style={[
                   styles.animatedButtonStyle,
-                  {backgroundColor: backgroundColorIcon1?backgroundColorIcon1:'white'},
+                  {
+                    backgroundColor: backgroundColorIcon1
+                      ? backgroundColorIcon1
+                      : 'white',
+                  },
                   {
                     borderColor: borderColorIcon,
                   },
@@ -232,7 +238,12 @@ export default class HeaderFlow extends Component {
                 <Animated.View
                   style={[
                     styles.animatedButtonStyle,
-                    {borderColor: borderColorIcon},
+                    {
+                      borderColor: borderColorIcon,
+                      backgroundColor: backgroundColorIcon2
+                        ? 'transparent'
+                        : 'white',
+                    },
                   ]}>
                   <ButtonColor
                     view={() => {
@@ -253,16 +264,20 @@ export default class HeaderFlow extends Component {
                       ) : (
                         <AllIcons
                           name={this.props.icon2}
-                          color={colors.title}
+                          color={colorIcon2 ? colorIcon2 : colors.title}
                           size={this.props.sizeIcon2}
                           type={this.props.typeIcon2}
                         />
                       );
                     }}
                     click={() => this.props.clickButton2()}
-                    color={'white'}
+                    color={
+                      backgroundColorIcon2 ? backgroundColorIcon2 : colors.white
+                    }
                     style={styles.buttonRight}
-                    onPressColor={colors.off}
+                    onPressColor={
+                      backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
+                    }
                   />
                 </Animated.View>
               )
