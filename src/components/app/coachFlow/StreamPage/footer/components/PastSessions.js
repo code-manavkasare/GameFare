@@ -47,6 +47,15 @@ class PastSessions extends Component {
         backgroundTransparent={true}
         events={sessions}
         width="100%"
+        styleButtonEmpty={{
+          button: {
+            height: '100%',
+            backgroundColor: 'transparent',
+          },
+          text: {
+            color: colors.white,
+          },
+        }}
         undisplayEmptyList={false}
         placeHolder={styles.placeHolderScrollViewX}
         imageNoEvent="group"

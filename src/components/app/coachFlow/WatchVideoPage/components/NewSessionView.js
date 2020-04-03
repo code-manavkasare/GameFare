@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+import {Col, Row} from 'react-native-easy-grid';
 
 import Button from '../../../../layout/buttons/Button';
 
@@ -19,6 +20,7 @@ export default class NewSessionView extends Component {
       loadCoachSession,
       setState,
       userConnected,
+      error,
     } = this.props;
     return (
       <View style={[styleApp.center2, styleApp.fullSize]}>
@@ -50,14 +52,21 @@ export default class NewSessionView extends Component {
           click={async () => {
             console.log('userConnected!!', userConnected);
             if (!userConnected) return NavigationService.navigate('SignIn');
-            await this.setState({
+            await setState({
               loader: true,
-              newSession: false,
               isConnected: false,
             });
             loadCoachSession();
           }}
         />
+
+        {error && (
+          <Row style={styles.rowError}>
+            <Col style={styleApp.center}>
+              <Text style={styles.textError}>{error.message}</Text>
+            </Col>
+          </Row>
+        )}
       </View>
     );
   }
@@ -66,6 +75,18 @@ export default class NewSessionView extends Component {
     return this.newSessionView();
   }
 }
+
+const styles = StyleSheet.create({
+  textError: {
+    ...styleApp.text,
+    color: colors.white,
+    fontSize: 15,
+  },
+  rowError: {
+    marginTop: 30,
+    height: 40,
+  },
+});
 
 NewSessionView.propTypes = {
   userConnected: PropTypes.bool,
