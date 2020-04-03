@@ -188,13 +188,19 @@ class StreamPage extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Image
-              source={require('../../../../../../img/icons/endCall.png')}
-              style={{width: 30, height: 30}}
+            // <Image
+            //   source={require('../../../../../../img/icons/endCall.png')}
+            //   style={{width: 30, height: 30}}
+            // />
+            <AllIcons
+              type={'moon'}
+              color={colors.white}
+              size={25}
+              name={'replay'}
             />
           );
         }}
-        click={async () => endCoachSession()}
+        click={async () => true}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />

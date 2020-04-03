@@ -124,7 +124,7 @@ class StreamPage extends Component {
     const {userID, infoUser} = this.props;
 
     let objectID = this.props.navigation.getParam('objectID');
-    objectID = 'kmek59bc1obk8k0l29z';
+    // objectID = 'kmek59bc1obk8k0l29z';
     console.log('new session!', this.state);
     if (!objectID)
       if (!coachSessionID)
@@ -304,20 +304,21 @@ class StreamPage extends Component {
           colorLoader={'white'}
           colorIcon1={colors.white}
           sizeLoader={40}
-          sizeIcon1={21}
+          sizeIcon1={22}
           nobackgroundColorIcon1={true}
           backgroundColorIcon1={'transparent'}
           backgroundColorIcon2={'transparent'}
           initialBorderColorIcon={'transparent'}
-          // icon1="times"
+          icon1={coachSession && 'times'}
+          typeIcon1="font"
           icon2={
-            coachSession && isUserAdmin(coachSession, userID) && 'user-plus'
+            coachSession && isUserAdmin(coachSession, userID) && 'person-add'
           }
           initialTitleOpacity={1}
-          clickButton1={() => dismiss()}
+          clickButton1={() => this.endCoachSession()}
           clickButton2={() => this.AddMembers(coachSession.objectID)}
-          sizeIcon2={21}
-          typeIcon2="font"
+          sizeIcon2={27}
+          typeIcon2="mat"
           colorIcon2={colors.white}
         />
         <View style={styles.viewStream}>{this.streamPage()}</View>
