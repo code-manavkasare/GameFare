@@ -11,7 +11,6 @@ import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
 import KeepAwake from 'react-native-keep-awake';
 import FadeInView from 'react-native-fade-in-view';
-import StatusBar from '@react-native-community/status-bar';
 const {height, width} = Dimensions.get('screen');
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -25,6 +24,7 @@ import {
   createCoachSession,
   isSomeoneSharingScreen,
   userPartOfSession,
+  isUserAdmin,
 } from '../../../functions/coach';
 import {audioVideoPermission} from '../../../functions/streaming';
 
@@ -79,15 +79,18 @@ class StreamPage extends Component {
       },
       sessionConnected: async (event) => {
         const {userID} = this.props;
+        console.log('session connected !!', event);
+        let updates = {};
+        updates[
+          `coachSessions/${this.state.coachSession.objectID}/members/${userID}/isConnected`
+        ] = true;
+        updates[
+          `coachSessions/${this.state.coachSession.objectID}/members/${userID}/connectionIdTokbox`
+        ] = event.connection.connectionId;
         await firebase
           .database()
-          .ref(
-            'coachSessions/' +
-              this.state.coachSession.objectID +
-              '/members/' +
-              userID,
-          )
-          .update({isConnected: true});
+          .ref()
+          .update(updates);
         this.setState({
           isConnected: true,
         });
@@ -96,9 +99,6 @@ class StreamPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   async componentDidMount() {
-    // change color status bar
-    StatusBar.setBarStyle('light-content', true);
-
     // reset drawing settings
     const {coachAction} = this.props;
     coachAction('setCoachSessionDrawSettings', {
@@ -139,6 +139,14 @@ class StreamPage extends Component {
         if (!session) return that.setState({newSession: true, loader: false});
         return that.setState({coachSession: session, loader: false});
       });
+  }
+  async endCoachSession() {
+    const {objectID} = this.state.coachSession;
+    await firebase
+      .database()
+      .ref('coachSessions/' + objectID)
+      .off();
+    this.setState({newSession: true});
   }
 
   loaderView(text) {
@@ -185,18 +193,18 @@ class StreamPage extends Component {
       isConnected,
       publishAudio,
     } = this.state;
-    const {userID, currentSessionID} = this.props;
+    const {userID, currentSessionID, userConnected} = this.props;
 
     if (loader) return this.loaderView(' ');
-    if (newSession)
+    if (newSession || !userConnected)
       return (
         <NewSessionView
           currentSessionID={currentSessionID}
+          userConnected={userConnected}
           loadCoachSession={this.loadCoachSession.bind(this)}
           setState={this.setState.bind(this)}
         />
       );
-
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Loading...');
 
@@ -225,7 +233,7 @@ class StreamPage extends Component {
           eventHandlers={this.sessionEventHandlers}
           sessionId={sessionID}
           style={styleApp.fullSize}
-          token={member.token}>
+          token={member.tokenTokbox}>
           <OTPublisher
             style={!userIsAlone ? styles.OTSubscriberAlone : styles.OTPublisher}
             properties={{
@@ -244,10 +252,36 @@ class StreamPage extends Component {
       </View>
     );
   }
+  AddMembers = (objectID) => {
+    const {navigate} = this.props.navigation;
+    navigate('PickMembers', {
+      usersSelected: {},
+      selectMultiple: true,
+      closeButton: true,
+      loaderOnSubmit: true,
+      displayCurrentUser: true,
+      titleHeader: 'Add someone to the session',
+      onGoBack: async (members) => {
+        for (var i in Object.values(members)) {
+          const member = Object.values(members)[i];
+          await firebase
+            .database()
+            .ref('coachSessions/' + objectID + '/members/' + member.id)
+            .update(member);
+        }
+        return navigate('StreamPageCoaching');
+      },
+    });
+  };
   render() {
     const {dismiss} = this.props.navigation;
-    const {permissionsCamera} = this.state;
-    const {coachSession, isConnected} = this.state;
+    const {
+      coachSession,
+      isConnected,
+      permissionsCamera,
+      newSession,
+    } = this.state;
+    const {userID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     return (
       <View style={styles.pageComponent}>
@@ -261,14 +295,21 @@ class StreamPage extends Component {
           sizeIcon1={21}
           nobackgroundColorIcon1={true}
           backgroundColorIcon1={'transparent'}
+          backgroundColorIcon2={'transparent'}
           initialBorderColorIcon={'transparent'}
-          icon1="times"
+          // icon1="times"
+          icon2={
+            !newSession &&
+            coachSession &&
+            isUserAdmin(coachSession, userID) &&
+            'user-plus'
+          }
           initialTitleOpacity={1}
-          clickButton1={() => {
-            dismiss();
-            // change color status bar
-            StatusBar.setBarStyle('dark-content', true);
-          }}
+          clickButton1={() => dismiss()}
+          clickButton2={() => this.AddMembers(coachSession.objectID)}
+          sizeIcon2={21}
+          typeIcon2="font"
+          colorIcon2={colors.white}
         />
         <View style={styles.viewStream}>{this.streamPage()}</View>
 
@@ -283,14 +324,17 @@ class StreamPage extends Component {
           setState={this.setState.bind(this)}
         />
 
-        <Footer
-          translateYFooter={this.translateYFooter}
-          session={coachSession}
-          state={this.state}
-          setState={this.setState.bind(this)}
-          watchVideoRef={this.watchVideoRef}
-          displayFooter={isConnected}
-        />
+        {!newSession && (
+          <Footer
+            translateYFooter={this.translateYFooter}
+            session={coachSession}
+            state={this.state}
+            setState={this.setState.bind(this)}
+            watchVideoRef={this.watchVideoRef}
+            displayFooter={isConnected}
+            endCoachSession={this.endCoachSession.bind(this)}
+          />
+        )}
       </View>
     );
   }
@@ -298,11 +342,6 @@ class StreamPage extends Component {
 
 const styles = StyleSheet.create({
   pageComponent: {backgroundColor: colors.title, ...styleApp.fullSize},
-  viewStream: {
-    ...styleApp.fullSize,
-    position: 'absolute',
-    zIndex: -1,
-  },
   viewStream: {
     ...styleApp.fullSize,
     position: 'absolute',
@@ -352,6 +391,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     currentSessionID: state.coach.currentSessionID,
+    userConnected: state.user.userConnected,
   };
 };
 

@@ -6,6 +6,7 @@ import Button from '../../../../layout/buttons/Button';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
+import NavigationService from '../../../../../../NavigationService';
 
 export default class NewSessionView extends Component {
   constructor(props) {
@@ -13,7 +14,12 @@ export default class NewSessionView extends Component {
     this.state = {};
   }
   newSessionView() {
-    const {currentSessionID, loadCoachSession, setState} = this.props;
+    const {
+      currentSessionID,
+      loadCoachSession,
+      setState,
+      userConnected,
+    } = this.props;
     return (
       <View style={[styleApp.center2, styleApp.fullSize]}>
         <Button
@@ -24,6 +30,7 @@ export default class NewSessionView extends Component {
           text="Resume session"
           loader={false}
           click={async () => {
+            if (!userConnected) return NavigationService.navigate('SignIn');
             await setState({
               loader: true,
               newSession: false,
@@ -41,6 +48,8 @@ export default class NewSessionView extends Component {
           text="New session"
           loader={false}
           click={async () => {
+            console.log('userConnected!!', userConnected);
+            if (!userConnected) return NavigationService.navigate('SignIn');
             await this.setState({
               loader: true,
               newSession: false,
@@ -59,6 +68,7 @@ export default class NewSessionView extends Component {
 }
 
 NewSessionView.propTypes = {
+  userConnected: PropTypes.bool,
   currentSessionID: PropTypes.string,
   loadCoachSession: PropTypes.func,
   setState: PropTypes.setState,

@@ -148,7 +148,7 @@ class StreamPage extends Component {
         view={() => {
           return (
             <Animated.View style={styles.buttonText}>
-              {viewVideoBeingShared(sharedVideos)}
+              {false && viewVideoBeingShared(sharedVideos)}
               <AllIcons
                 type={'font'}
                 color={colors.white}
@@ -180,48 +180,21 @@ class StreamPage extends Component {
       />
     );
   }
-  buttonAddMember() {
-    const {userID, session} = this.props;
+  buttonEndCall() {
+    const {userID, session, endCoachSession} = this.props;
     const {organizer} = session.info;
-    const {objectID} = session;
 
-    const isAdmin = organizer === userID;
-    if (!isAdmin) return null;
-    const AddMembers = () => {
-      NavigationService.navigate('PickMembers', {
-        usersSelected: {},
-        selectMultiple: true,
-        closeButton: true,
-        loaderOnSubmit: true,
-        displayCurrentUser: true,
-        titleHeader: 'Add someone to the session',
-        onGoBack: async (members) => {
-          for (var i in Object.values(members)) {
-            const member = Object.values(members)[i];
-            await firebase
-              .database()
-              .ref('coachSessions/' + objectID + '/members/' + member.id)
-              .update(member);
-          }
-          return NavigationService.navigate('StreamPageCoaching');
-        },
-      });
-    };
     return (
       <ButtonColor
         view={() => {
           return (
-            <Animated.View style={styles.buttonText}>
-              <AllIcons
-                type={'font'}
-                color={colors.white}
-                size={23}
-                name={'user-plus'}
-              />
-            </Animated.View>
+            <Image
+              source={require('../../../../../../img/icons/endCall.png')}
+              style={{width: 30, height: 30}}
+            />
           );
         }}
-        click={async () => AddMembers()}
+        click={async () => endCoachSession()}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />
@@ -242,7 +215,7 @@ class StreamPage extends Component {
         <Col style={styleApp.center}>{this.buttonRecord()}</Col>
 
         <Col style={styleApp.center}>{this.contentVideo()}</Col>
-        <Col style={styleApp.center}>{this.buttonAddMember()}</Col>
+        <Col style={styleApp.center}>{this.buttonEndCall()}</Col>
       </Row>
     );
   }

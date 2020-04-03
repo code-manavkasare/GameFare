@@ -102,6 +102,10 @@ const getLastDrawing = (video) => {
   return drawings[0];
 };
 
+const isUserAdmin = (session, userID) => {
+  return userID === session.info.organizer;
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -113,4 +117,5 @@ module.exports = {
   startRecording,
   stopRecording,
   getMember,
+  isUserAdmin,
 };
