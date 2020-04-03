@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import {Button, View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
-import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
+import {Stopwatch} from 'react-native-stopwatch-timer';
 import {Col, Row} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
-
-import NavigationService from '../../../../../../../NavigationService';
+import Modal from 'react-native-modal';
+import {propEq, filter} from 'ramda';
 
 import ButtonColor from '../../../../../layout/Views/Button';
 import AllIcons from '../../../../../layout/icons/AllIcons';
@@ -22,6 +21,7 @@ class StreamPage extends Component {
     this.state = {
       recording: false,
       showPastSessionsPicker: false,
+      chooseRecordSourceMemberModalVisible: false,
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -200,10 +200,66 @@ class StreamPage extends Component {
       />
     );
   }
+
   async openRecording(nextRecordingVal) {
-    const {objectID: sessionIDFirebase} = this.props.session;
-    if (nextRecordingVal) startRecording(sessionIDFirebase);
-    else stopRecording(sessionIDFirebase);
+    const {objectID: sessionIDFirebase, members} = this.props.session;
+    const membersArray = Object.values(members);
+    const isConnected = propEq('isConnected', true);
+    const membersConnectedArray = filter(isConnected, membersArray);
+
+    if (nextRecordingVal && membersConnectedArray.length > 1) {
+      this.toggleChooseRecordSourceMemberModal();
+      return;
+    }
+    if (nextRecordingVal) {
+      startRecording(
+        sessionIDFirebase,
+        membersConnectedArray[0].connectionIdTokbox,
+      );
+    } else stopRecording(sessionIDFirebase);
+  }
+
+  toggleChooseRecordSourceMemberModal = () => {
+    this.setState({
+      chooseRecordSourceMemberModalVisible: !this.state
+        .chooseRecordSourceMemberModalVisible,
+    });
+  };
+
+  chooseRecordSourceMemberModal() {
+    const {members, objectID: idFirebase} = this.props.session;
+
+    const membersArray = Object.values(members);
+    const {chooseRecordSourceMemberModalVisible} = this.state;
+
+    return (
+      <View style={{flex: 1}}>
+        <Modal
+          isVisible={chooseRecordSourceMemberModalVisible}
+          style={[styles.modal, styleApp.center]}>
+          <View style={[styleApp.center]}>
+            <Text style={styleApp.text}>Choose Source</Text>
+            {membersArray.map((member) => {
+              if (member.isConnected) {
+                return (
+                  <Button
+                    color={colors.green}
+                    title={`${member.info.firstname + member.info.lastname}`}
+                    onPress={() =>
+                      startRecording(idFirebase, member.connectionIdTokbox)
+                    }
+                  />
+                );
+              }
+            })}
+            <Button
+              title="Hide modal"
+              onPress={() => this.toggleChooseRecordSourceMemberModal()}
+            />
+          </View>
+        </Modal>
+      </View>
+    );
   }
 
   rowButtons() {
@@ -220,7 +276,12 @@ class StreamPage extends Component {
     );
   }
   render() {
-    return this.rowButtons();
+    return (
+      <View>
+        {this.rowButtons()}
+        {this.chooseRecordSourceMemberModal()}
+      </View>
+    );
   }
 }
 
@@ -278,6 +339,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     ...styleApp.center,
     backgroundColor: colors.red,
+  },
+  modal: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    bottom: '50%',
+    width: '90%',
+    height: 300,
+  },
+  modalPlayerButton: {
+    width: '80%',
+    height: 80,
+    backgroundColor: colors.green,
+    borderRadius: 20,
   },
 });
 
