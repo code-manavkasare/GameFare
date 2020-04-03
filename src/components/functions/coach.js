@@ -75,17 +75,25 @@ const displayTime = (time) => {
   return minutes(time) + ':' + seconds(time);
 };
 
-const startRecording = (sessionIDFirebase) => {
+const startRecording = (sessionIDFirebase, streamMemberId) => {
+  let updates = {};
+  updates[
+    `coachSessions/${sessionIDFirebase}/tokbox/recordingStreamId`
+  ] = streamMemberId;
+  updates[`coachSessions/${sessionIDFirebase}/tokbox/archiving`] = true;
   firebase
     .database()
-    .ref(`coachSessions/${sessionIDFirebase}/tokbox/archiving`)
-    .set(true);
+    .ref()
+    .update(updates);
 };
 const stopRecording = (sessionIDFirebase) => {
+  let updates = {};
+  updates[`coachSessions/${sessionIDFirebase}/tokbox/archiving`] = null;
+  updates[`coachSessions/${sessionIDFirebase}/tokbox/recordingStreamId`] = null;
   firebase
     .database()
-    .ref(`coachSessions/${sessionIDFirebase}/tokbox/archiving`)
-    .remove();
+    .ref()
+    .update(updates);
 };
 
 const getMember = (session, userID) => {
