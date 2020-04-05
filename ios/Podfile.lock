@@ -419,6 +419,8 @@ PODS:
     - React
   - react-native-orientation-locker (1.1.8):
     - React
+  - react-native-safe-area-context (0.7.3):
+    - React
   - react-native-slider (2.0.8):
     - React
   - react-native-sms (1.10.0):
@@ -478,6 +480,8 @@ PODS:
     - React
   - RNCAsyncStorage (1.6.3):
     - React
+  - RNCMaskedView (0.1.7):
+    - React
   - RNDateTimePicker (2.2.1):
     - React
   - RNDeviceInfo (5.5.1):
@@ -505,15 +509,15 @@ PODS:
     - React
   - RNFS (2.16.2):
     - React
-  - RNGestureHandler (1.5.2):
+  - RNGestureHandler (1.6.1):
     - React
   - RNInAppBrowser (3.3.3):
     - React
   - RNPermissions (2.0.8):
     - React
-  - RNReanimated (1.4.0):
+  - RNReanimated (1.7.1):
     - React
-  - RNScreens (2.0.0-alpha.19):
+  - RNScreens (2.4.0):
     - React
   - RNSentry (1.3.3):
     - React
@@ -596,6 +600,7 @@ DEPENDENCIES:
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -619,6 +624,7 @@ DEPENDENCIES:
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
@@ -777,6 +783,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-nodemediaclient"
   react-native-orientation-locker:
     :path: "../node_modules/react-native-orientation-locker"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   react-native-sms:
@@ -821,6 +829,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-awesome-card-io"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-community/masked-view"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
@@ -940,6 +950,7 @@ SPEC CHECKSUMS:
   react-native-mixpanel: 513dc597c9ed239bdee91d16bdc7b9325fdcb779
   react-native-nodemediaclient: 992caea61e917bb49f374c650e3c32b6a3d79b0d
   react-native-orientation-locker: f0ca1a8e5031dab6b74bfb4ab33a17ed2c2fcb0d
+  react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-slider: 3a1cfd00c9c31068251b536822f7192e8d1d6b6f
   react-native-sms: 12219e91750e7b778b29bde402c5eca843e8d66c
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
@@ -962,6 +973,7 @@ SPEC CHECKSUMS:
   rn-fetch-blob: f525a73a78df9ed5d35e67ea65e79d53c15255bc
   RNAwesomeCardIO: caa47eefd8b6ae1986af25df3b86f9d8fbae9bb8
   RNCAsyncStorage: 3c304d1adfaea02ec732ac218801cb13897aa8c0
+  RNCMaskedView: 76c40a1d41c3e2535df09246a2b5487f04de0814
   RNDateTimePicker: 1a251f8b276abda796d8119a96bcd1763a76f6b0
   RNDeviceInfo: 017aa2fd29a437fba26807cbe2fa51a149da70cd
   RNFastImage: 9b0c22643872bb7494c8d87bbbb66cc4c0d9e7a2
@@ -969,11 +981,11 @@ SPEC CHECKSUMS:
   RNFBPerf: aa9a6b9568afcfdbefdcf5b26eee392573126e3d
   RNFirebase: ac0de8b24c6f91ae9459575491ed6a77327619c6
   RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
-  RNGestureHandler: 946a7691e41df61e2c4b1884deab41a4cdc3afff
+  RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNInAppBrowser: 0800f17fd7ed9fc503eb68e427befebb41ee719b
   RNPermissions: 923c1506d0bde387fbcfc18a8f87945806d03c19
-  RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
-  RNScreens: 62284de159bbddba268edd282337afdb8771aaed
+  RNReanimated: 4e102df74a9674fa943e05f97f3362b6e44d0b48
+  RNScreens: b5c0e1b2b04512919e78bd3898e144a157ce2363
   RNSentry: 86baf0c87120cd5eb491d073989f8cbc1a2174c6
   RNSketchCanvas: 9c28adb5381543ed55cc98ce6de46479cb3cb12c
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46

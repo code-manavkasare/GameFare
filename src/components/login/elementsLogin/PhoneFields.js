@@ -11,10 +11,6 @@ import {
   View,
 } from 'react-native';
 import {connect} from 'react-redux';
-// import {updateStepLogin} from '../../../actions/loginActions'
-// import {initApp} from '../../../actions/initAppActions'
-import Flag from 'react-native-flags';
-import NavigationService from '../../../../NavigationService';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -34,8 +30,6 @@ import {
 
 const ListCountry = require('../elementsFlags/country.json');
 
-const {height, width} = Dimensions.get('screen');
-
 class PhoneFields extends Component {
   constructor(props) {
     super(props);
@@ -48,7 +42,7 @@ class PhoneFields extends Component {
   }
   componentDidMount() {
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.firstTextInput.focus();
     }, 550);
   }
@@ -62,7 +56,6 @@ class PhoneFields extends Component {
     return false;
   }
   async next(phone) {
-    // this.firstTextInput.blur()
     this.setState({loader: true});
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
     var phoneNumber = phone;
@@ -70,7 +63,6 @@ class PhoneFields extends Component {
     phoneNumber = phoneNumber.replace(')', '');
     phoneNumber = phoneNumber.replace('(', '');
     phoneNumber = phoneNumber.replace(/ /g, '');
-    // var giftAmount = Number(this.props.giftAmount)
 
     const promiseAxios = await axios.get(url, {
       params: {
@@ -87,7 +79,6 @@ class PhoneFields extends Component {
           phoneNumber: phone,
           country: this.props.country,
         },
-        pageFrom: this.props.pageFrom,
       });
     } else {
       this.setState({error: true, loader: false});
@@ -106,14 +97,12 @@ class PhoneFields extends Component {
     });
   }
   inputPhone() {
+    const {code, callingCode} = this.props.country;
+    const {phoneNumber} = this.state;
     return (
       <TextInput
         style={[styleApp.input, {fontSize: 17}]}
-        // placeholder={'(012) 345 6789'}
-        placeholder={placeholder(
-          this.props.country.code,
-          this.props.country.callingCode,
-        )}
+        placeholder={placeholder(code, callingCode)}
         placeholderTextColor={'#AFAFAF'}
         autoCapitalize="none"
         underlineColorAndroid="rgba(0,0,0,0)"
@@ -126,7 +115,7 @@ class PhoneFields extends Component {
         keyboardType={'phone-pad'}
         returnKeyType={'done'}
         onChangeText={(text) => this.changePhone(text)}
-        value={this.state.phoneNumber}
+        value={phoneNumber}
       />
     );
   }
@@ -160,10 +149,12 @@ class PhoneFields extends Component {
     );
   }
   async selectCountry(country) {
-    await NavigationService.navigate('Phone', {country: country});
+    const {navigate} = this.props;
+    await navigate('Phone', {country: country});
     this.firstTextInput.focus();
   }
   render() {
+    const {navigate} = this.props;
     return (
       <View style={styles.content}>
         <Row style={styles.rowField}>
@@ -172,7 +163,7 @@ class PhoneFields extends Component {
             style={[{borderRightWidth: 0, borderColor: '#EAEAEA'}]}
             activeOpacity={0.8}
             onPress={() => {
-              this.props.navigate('ListCountry', {
+              navigate('ListCountry', {
                 onGoBack: (country) => this.selectCountry(country),
               });
             }}>

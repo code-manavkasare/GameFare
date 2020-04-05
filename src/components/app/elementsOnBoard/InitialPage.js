@@ -24,17 +24,16 @@ class InitialPage extends Component {
     this.translateXText = new Animated.Value(90);
   }
   async componentDidMount() {
-    var variables = await firebase
-      .database()
-      .ref('variables')
-      .once('value');
+    var variables = await firebase.database().ref('variables').once('value');
     variables = variables.val();
+    console.log('variables', variables);
     await this.props.globaleVariablesAction(variables);
     await this.goToHomePageDirectlyFromRefLink();
 
     if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
       return this.props.navigation.navigate('TabsApp');
     }
+
     return this.props.navigation.navigate('SportSelect');
   }
 

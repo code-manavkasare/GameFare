@@ -60,7 +60,7 @@ export default class SelectCountry extends Component {
     //   });
 
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.setState({slice: ListCountry.length});
     }, 1150);
   }
@@ -83,19 +83,20 @@ export default class SelectCountry extends Component {
     this.props.close();
   }
   async selectCountry(country) {
-    this.props.navigation.state.params.onGoBack(country);
+    const {params} = this.props.route;
+    params.onGoBack(country);
   }
   conditionCheck(country) {
     return false;
   }
-  cardCountry(country, displayHeader) {
+  cardCountry(country, displayHeader, i) {
     var displayLetter = false;
-    if (country.name[0] != this.letter && displayHeader) {
+    if (country.name[0] !== this.letter && displayHeader) {
       displayLetter = true;
       this.letter = country.name[0];
     }
     return (
-      <View>
+      <View key={i}>
         {displayLetter && displayHeader ? (
           <Row
             style={{
@@ -168,29 +169,34 @@ export default class SelectCountry extends Component {
           </Col>
         </Row>
         {this.cardCountry(
-          ListCountry.filter((country) => country.name == 'United States')[0],
+          ListCountry.filter((country) => country.name === 'United States')[0],
           false,
+          0,
         )}
         {this.cardCountry(
-          ListCountry.filter((country) => country.name == 'Canada')[0],
+          ListCountry.filter((country) => country.name === 'Canada')[0],
           false,
+          1,
         )}
         {this.cardCountry(
-          ListCountry.filter((country) => country.name == 'France')[0],
+          ListCountry.filter((country) => country.name === 'France')[0],
           false,
+          2,
         )}
         {this.cardCountry(
-          ListCountry.filter((country) => country.name == 'Australia')[0],
+          ListCountry.filter((country) => country.name === 'Australia')[0],
           false,
+          3,
         )}
 
         {ListCountry.slice(0, this.state.slice).map((item, i) =>
-          this.cardCountry(item, true),
+          this.cardCountry(item, true, i + 3),
         )}
       </View>
     );
   }
   render() {
+    const {navigation} = this.props;
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'white'}]}>
         <HeaderBackButton
@@ -202,7 +208,7 @@ export default class SelectCountry extends Component {
           initialTitleOpacity={0}
           icon1="times"
           icon2={null}
-          clickButton1={() => this.props.navigation.navigate('Phone')}
+          clickButton1={() => navigation.navigate('Phone')}
         />
 
         <ScrollView

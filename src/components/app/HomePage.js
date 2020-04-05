@@ -106,7 +106,7 @@ class HomeScreen extends React.Component {
   async changeSport(val) {
     await this.setState({loader: true});
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.setState({loader: false});
     }, 400);
   }
@@ -177,46 +177,6 @@ class HomeScreen extends React.Component {
             />
           </FadeInView>
         )}
-        {/* 
-<Animated.View
-          style={[
-            {
-              // position: 'absolute',
-              flex: 1,
-              width: width,
-              // marginTop: 60,
-              transform: [{translateX: this.translateXEvents}],
-            },
-          ]}>
-          <NewEvents
-            navigate={this.navigate.bind(this)}
-            setState={async (state) => await this.setState(state)}
-            listEvents={listEvents}
-            loader={loaderEvents}
-            navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-            onRef={(ref) => (this.eventGroupsRef = ref)}
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={[
-            {
-              // position: 'absolute',
-              flex: 1,
-              width: width,
-              marginTop: 60,
-              transform: [{translateX: this.translateXGroups}],
-            },
-          ]}>
-          <GroupsAround
-            navigate={this.navigate.bind(this)}
-            setState={async (state) => await this.setState(state)}
-            listGroups={listGroups}
-            loader={loaderGroups}
-            navigate1={(val, data) => this.props.navigation.navigate(val, data)}
-            onRef={(ref) => (this.groupsAroundRef = ref)}
-          />
-        </Animated.View> */}
       </View>
     );
   }
@@ -230,16 +190,11 @@ class HomeScreen extends React.Component {
     return true;
   }
   render() {
-    const {loaderEvents, loaderGroups} = this.state;
+    const {sports} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderHome
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
           textHeader={'Organize your event'}
           inputRange={[0, sizes.heightHeaderHome + 0]}
           initialBorderColorIcon={colors.off}
@@ -247,7 +202,7 @@ class HomeScreen extends React.Component {
           initialTitleOpacity={1}
           icon1="arrow-left"
           league={true}
-          sports={this.props.sports}
+          sports={sports}
           icon2={'map-marker-alt'}
           sizeIcon2={20}
           typeIcon2={'font'}
@@ -256,11 +211,6 @@ class HomeScreen extends React.Component {
               pageFrom: 'Home',
               setUserLocation: true,
             })
-          }
-          clickButton1={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
           }
         />
 
@@ -327,6 +277,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userIDSaved,
     blockedUsersID: state.user.infoUser.blockedUsers,
+    sports: state.globaleVariables.sports.list,
   };
 };
 

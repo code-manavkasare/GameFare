@@ -96,6 +96,7 @@ class MessageTab extends React.Component {
   }
 
   logoutView() {
+    const {navigation} = this.props;
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
         <View style={styleApp.center}>
@@ -110,9 +111,7 @@ class MessageTab extends React.Component {
 
         <Button
           text="Sign in"
-          click={() =>
-            this.props.navigation.navigate('Phone', {pageFrom: 'MessageList'})
-          }
+          click={() => navigation.navigate('SignIn')}
           backgroundColor={'green'}
           onPressColor={colors.greenClick}
         />
@@ -190,7 +189,7 @@ class MessageTab extends React.Component {
     const {navigate} = this.props.navigation;
     const {userConnected} = this.props;
     return (
-      <View>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={userConnected && 'Inbox'}

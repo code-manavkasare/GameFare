@@ -4,10 +4,10 @@ import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import StatusBar from '@react-native-community/status-bar';
 
-import colors from '../../style/colors';
-import styleApp from '../../style/style';
-import AllIcons from '../../layout/icons/AllIcons';
-import Button from '../../layout/Views/Button';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
+import AllIcons from '../../../../layout/icons/AllIcons';
+import Button from '../../../../layout/Views/Button';
 
 const ButtonMessage = class MainTabIcon extends React.Component {
   constructor(props) {
@@ -35,13 +35,13 @@ const ButtonMessage = class MainTabIcon extends React.Component {
       <Button
         view={() => {
           return (
-            <Row style={styles.rowInButton}>
+            <Row>
               {displayPastille && (
                 <View
                   style={[styleApp.roundMessage, {backgroundColor: tintColor}]}
                 />
               )}
-              <Col style={[styleApp.center4, {paddingTop: 10}]}>
+              <Col style={[styleApp.center4, {paddingTop: 15}]}>
                 <AllIcons
                   name={icon.name}
                   size={icon.size}
@@ -81,8 +81,7 @@ class MainTabIcon extends React.Component {
             <AllIcons
               name={'video-camera'}
               size={23}
-              color={colors.white} // color red for stream button?
-              // style={styleApp.iconFooter}
+              color={colors.white}
               type={'moon'}
             />
           );
@@ -90,7 +89,7 @@ class MainTabIcon extends React.Component {
         click={() => {
           // change color status bar
           StatusBar.setBarStyle('light-content', true);
-          navigation.navigate('StartCoaching');
+          navigation.navigate('StartCoaching', {});
         }}
         color={colors.primary}
         style={[
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     width: 75,
     height: 75,
-    marginTop: -60,
+    marginTop: -40,
     borderRadius: 40,
   },
   textButton: {
@@ -166,7 +165,6 @@ const styles = StyleSheet.create({
   },
   rowInButton: {
     height: '100%',
-    // borderTopWidth: 1.5,
   },
 });
 

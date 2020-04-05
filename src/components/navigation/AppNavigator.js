@@ -2,16 +2,9 @@ import React from 'react';
 
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import {createBottomTabNavigator} from 'react-navigation-tabs';
 
 import {lockedPortrait, lockedLandscape} from '../hoc/orientation';
 
-import colors from '../style/colors';
-import styles from '../style/style';
-import MainTabIcon from './navigationElements/MainTabIcon.js';
-
-import HomePage from '../app/HomePage';
-import StreamPage from '../app/StreamPage';
 import MorePage from '../app/MorePage';
 import Wallet from '../app/elementsUser/elementsProfile/Wallet';
 import BlockedUsersList from '../app/elementsUser/elementsProfile/BlockedUsersList';
@@ -188,7 +181,7 @@ const JoinChallengeNavigator = createStackNavigator(
   },
 );
 
-const navigatorStreamingCoach = createStackNavigator(
+export const navigatorStreamingCoach = createStackNavigator(
   {
     StreamPageCoaching: {
       screen: StreamPageCoaching,
@@ -316,80 +309,80 @@ const StreamResultsNavigator = createStackNavigator(
   },
 );
 
-const MainApp = createBottomTabNavigator(
-  {
-    Home: lockedPortrait(HomePage),
-    Activity: lockedPortrait(Activity),
-    StartCoaching: navigatorStreamingCoach,
-    MessageList: lockedPortrait(MessageList),
-    Profile: ProfileNavigator,
-  },
-  {
-    defaultNavigationOptions: ({navigation}) => ({
-      tabBarIcon: ({focused, tintColor}) => {
-        const {routeName} = navigation.state;
-        return (
-          <MainTabIcon
-            navigation={navigation}
-            focused={focused}
-            tintColor={tintColor}
-            routeName={routeName}
-            signInToPass={routeName === 'Profile' && true}
-            iconName={
-              routeName === 'Home'
-                ? 'searchFooter'
-                : routeName === 'Activity'
-                ? 'calendar2'
-                : routeName === 'StartCoaching'
-                ? 'video-camera'
-                : routeName === 'MessageList'
-                ? 'speech'
-                : routeName === 'Profile'
-                ? 'profileFooter'
-                : null
-            }
-            label={
-              routeName === 'Home'
-                ? 'Browse'
-                : routeName === 'Activity'
-                ? 'Activity'
-                : routeName === 'StartCoaching'
-                ? 'Go Live'
-                : routeName === 'MessageList'
-                ? 'Message'
-                : routeName === 'Profile'
-                ? 'Profile'
-                : null
-            }
-          />
-        );
-      },
-    }),
-    tabBarOptions: {
-      activeTintColor: colors.primary,
-      inactiveTintColor: colors.greyDark,
-      // tabBarVisible:false,
-      showLabel: false,
-      style: [
-        styles.shade,
-        {
-          borderTopWidth: 0.5,
-          shadowOpacity: 0.04,
-          backgroundColor: colors.white,
-          borderTopColor: colors.grey,
-          height: 90,
-          marginBottom: -35,
-        },
-      ],
-    },
-  },
-  {
-    initialRouteName: 'Home',
-    headerMode: 'none',
-    mode: 'card',
-    cardOverlayEnabled: true,
-  },
-);
+// const MainApp = createBottomTabNavigator(
+//   {
+//     Home: lockedPortrait(HomePage),
+//     Activity: lockedPortrait(Activity),
+//     StartCoaching: navigatorStreamingCoach,
+//     MessageList: lockedPortrait(MessageList),
+//     Profile: ProfileNavigator,
+//   },
+//   {
+//     defaultNavigationOptions: ({navigation}) => ({
+//       tabBarIcon: ({focused, tintColor}) => {
+//         const {routeName} = navigation.state;
+//         return (
+//           <MainTabIcon
+//             navigation={navigation}
+//             focused={focused}
+//             tintColor={tintColor}
+//             routeName={routeName}
+//             signInToPass={routeName === 'Profile' && true}
+//             iconName={
+//               routeName === 'Home'
+//                 ? 'searchFooter'
+//                 : routeName === 'Activity'
+//                 ? 'calendar2'
+//                 : routeName === 'StartCoaching'
+//                 ? 'video-camera'
+//                 : routeName === 'MessageList'
+//                 ? 'speech'
+//                 : routeName === 'Profile'
+//                 ? 'profileFooter'
+//                 : null
+//             }
+//             label={
+//               routeName === 'Home'
+//                 ? 'Browse'
+//                 : routeName === 'Activity'
+//                 ? 'Activity'
+//                 : routeName === 'StartCoaching'
+//                 ? 'Go Live'
+//                 : routeName === 'MessageList'
+//                 ? 'Message'
+//                 : routeName === 'Profile'
+//                 ? 'Profile'
+//                 : null
+//             }
+//           />
+//         );
+//       },
+//     }),
+//     tabBarOptions: {
+//       activeTintColor: colors.primary,
+//       inactiveTintColor: colors.greyDark,
+//       // tabBarVisible:false,
+//       showLabel: false,
+//       style: [
+//         styles.shade,
+//         {
+//           borderTopWidth: 0.5,
+//           shadowOpacity: 0.04,
+//           backgroundColor: colors.white,
+//           borderTopColor: colors.grey,
+//           height: 90,
+//           marginBottom: -35,
+//         },
+//       ],
+//     },
+//   },
+//   {
+//     initialRouteName: 'Home',
+//     headerMode: 'none',
+//     mode: 'card',
+//     cardOverlayEnabled: true,
+//   },
+// );
 
 const InitialPageNavigator = createStackNavigator(
   {
@@ -429,7 +422,7 @@ const MainStack = createStackNavigator(
   {
     InitialPage: InitialPageNavigator,
     TabsApp: {
-      screen: MainApp,
+      screen: TabsApp,
       navigationOptions: {
         gesturesEnabled: false,
         cardShadowEnabled: false,

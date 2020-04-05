@@ -32,9 +32,7 @@ class InitialPage extends Component {
       sport: '',
       page: 'sport',
     };
-    this.translateXText = new Animated.Value(90);
   }
-  componentDidMount() {}
   async selectSport(sport) {
     await this.props.historicSearchAction('setSport', {
       value: sport,
@@ -46,6 +44,7 @@ class InitialPage extends Component {
     return num % 2;
   }
   button(sport, i) {
+    const {sportSelected} = this.props;
     return (
       <ButtonColor
         key={i}
@@ -54,50 +53,24 @@ class InitialPage extends Component {
             <View
               style={[
                 {
-                  borderWidth: 3,
                   borderColor:
-                    sport.value === this.props.sportSelected
-                      ? colors.primary
-                      : 'white',
-                  borderRadius: 15,
-                  width: 160,
-                  height: 160,
-                  overflow: 'hidden',
-                  backgroundColor: colors.off,
+                    sport.value === sportSelected ? colors.primary : 'white',
+                  ...styles.button,
                 },
               ]}>
               <AsyncImage
-                style={{position: 'absolute', height: '100%', width: '100%'}}
+                style={styles.imgButton}
                 mainImage={sport.card.img.imgSM}
                 imgInitial={sport.card.img.imgXS}
               />
-              {sport.card.img.icon? (
+              {sport.card.img.icon && (
                 <AsyncImage
-                  style={{
-                    position: 'absolute',
-                    height: 23,
-                    width: 23,
-                    right: 5,
-                    top: 5,
-                  }}
+                  style={styles.iconButon}
                   mainImage={sport.card.img.icon}
                   imgInitial={sport.card.img.icon}
                 />
-              ) : null}
-              <Text
-                style={[
-                  styleApp.textBold,
-                  styleApp.textShade,
-                  {
-                    color: 'white',
-                    position: 'absolute',
-                    bottom: 15,
-                    left: 15,
-                    right: 15,
-                  },
-                ]}>
-                {sport.text}
-              </Text>
+              )}
+              <Text style={styles.textButton}>{sport.text}</Text>
             </View>
           );
         }}
@@ -117,48 +90,24 @@ class InitialPage extends Component {
           <Text style={[styleApp.input, {marginTop: 20, fontSize: 24}]}>
             Welcome to GameFare!
           </Text>
-          <Text
-            style={[
-              styleApp.smallText,
-              {
-                color: colors.title,
-                marginBottom: 20,
-                marginTop: 10,
-                fontSize: 16,
-              },
-            ]}>
+          <Text style={styles.subtitle}>
             Pick your sport, join groups and find events.
           </Text>
         </View>
 
-        {/* <View style={styleApp.divider2}/> */}
-
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            marginTop: 20,
-            width: width,
-          }}>
+        <View style={styles.rowButtons}>
           {this.props.sports.map((sport, i) => (
-            <View
-              style={{
-                height: 170,
-                borderColor: colors.title,
-                width: width / 2,
-                flexDirection: 'column',
-              }}>
+            <View style={styles.colButtons}>
               {this.button(sport, i + 1, sport.value)}
             </View>
           ))}
-          {/* {this.button(this.props.sports, 8, sport.value)} */}
         </View>
       </FadeInView>
     );
   }
   render() {
     return (
-      <View style={[{borderLeftWidth: 0, backgroundColor: 'white', flex: 1}]}>
+      <View style={styles.page}>
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.sportPage()}
@@ -171,6 +120,61 @@ class InitialPage extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  page: {
+    backgroundColor: 'white',
+    flex: 1,
+  },
+  button: {
+    borderRadius: 15,
+    width: 160,
+    borderWidth: 3,
+    height: 160,
+    overflow: 'hidden',
+    backgroundColor: colors.off,
+  },
+  imgButton: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+  },
+  iconButon: {
+    position: 'absolute',
+    height: 23,
+    width: 23,
+    right: 5,
+    top: 5,
+  },
+  textButton: {
+    ...styleApp.textBold,
+    ...styleApp.textShade,
+    color: 'white',
+    position: 'absolute',
+    bottom: 15,
+    left: 15,
+    right: 15,
+  },
+  subtitle: {
+    ...styleApp.smallText,
+    color: colors.title,
+    marginBottom: 20,
+    marginTop: 10,
+    fontSize: 16,
+  },
+  rowButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 20,
+    width: width,
+  },
+  colButtons: {
+    height: 170,
+    borderColor: colors.title,
+    width: width / 2,
+    flexDirection: 'column',
+  },
+});
 
 const mapStateToProps = (state) => {
   return {

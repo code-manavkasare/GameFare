@@ -7,7 +7,6 @@ import Button from '../../../../layout/buttons/Button';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import NavigationService from '../../../../../../NavigationService';
 
 export default class NewSessionView extends Component {
   constructor(props) {
@@ -21,9 +20,16 @@ export default class NewSessionView extends Component {
       setState,
       userConnected,
       error,
+      navigation,
+      userAction,
     } = this.props;
     return (
-      <View style={[styleApp.center2, styleApp.fullSize]}>
+      <View
+        style={[
+          styleApp.center2,
+          styleApp.fullSize,
+          {backgroundColor: colors.title},
+        ]}>
         <Button
           backgroundColor="green"
           onPressColor={colors.greenClick}
@@ -32,7 +38,8 @@ export default class NewSessionView extends Component {
           text="Resume session"
           loader={false}
           click={async () => {
-            if (!userConnected) return NavigationService.navigate('SignIn');
+            return userAction('hideFooterApp');
+            if (!userConnected) return navigation.navigate('SignIn');
             await setState({
               loader: true,
               newSession: false,
@@ -51,7 +58,7 @@ export default class NewSessionView extends Component {
           loader={false}
           click={async () => {
             console.log('userConnected!!', userConnected);
-            if (!userConnected) return NavigationService.navigate('SignIn');
+            if (!userConnected) return navigation.navigate('SignIn');
             await setState({
               loader: true,
               isConnected: false,

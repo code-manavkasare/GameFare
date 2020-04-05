@@ -424,6 +424,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderRadius: 0,
     borderColor: colors.off,
+    backgroundColor: colors.white,
   },
   marginView: {
     marginLeft: 20,

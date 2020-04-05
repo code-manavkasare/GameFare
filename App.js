@@ -1,14 +1,15 @@
-import React, {Component} from 'react';
-import {createAppContainer} from 'react-navigation';
-import StatusBar from '@react-native-community/status-bar';
+import 'react-native-gesture-handler';
+
+import React, {Component, Text} from 'react';
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+
 import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 
-import AppSwitchNavigator from './src/components/navigation/AppNavigator';
-import NavigationService from './NavigationService';
+import InitialStack from './src/components/navigation/index';
 
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
@@ -19,7 +20,13 @@ import * as Sentry from '@sentry/react-native';
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
-const AppContainer = createAppContainer(AppSwitchNavigator);
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+  },
+};
 
 class App extends Component {
   async componentDidMount() {
@@ -27,8 +34,6 @@ class App extends Component {
       this.configureSentry();
     }
     SplashScreen.hide();
-    StatusBar.setHidden(true, 'slide');
-    StatusBar.setBarStyle('light-content', true);
     if (this.props.userID !== '') {
       this.autoSignIn();
       refreshTokenOnDatabase(this.props.userID);
@@ -85,11 +90,9 @@ class App extends Component {
 
   render() {
     return (
-      <AppContainer
-        ref={(navigatorRef) => {
-          NavigationService.setTopLevelNavigator(navigatorRef);
-        }}
-      />
+      <NavigationContainer theme={MyTheme}>
+        {InitialStack()}
+      </NavigationContainer>
     );
   }
 }

@@ -1,9 +1,15 @@
-import {SET_USER_INFO, RESET_USER_INFO, RESET_USER_MESSAGES} from './types';
+import {
+  SET_USER_INFO,
+  RESET_USER_INFO,
+  RESET_USER_MESSAGES,
+  SET_LAYOUT_SETTINGS,
+  HIDE_FOOTER_APP,
+} from './types';
 
 import firebase from 'react-native-firebase';
 import Mixpanel from 'react-native-mixpanel';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
-import NavigationService from '../../NavigationService';
+
 import {subscribeToTopics} from '../components/functions/notifications';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
@@ -20,10 +26,19 @@ const resetMessages = () => ({
   type: RESET_USER_MESSAGES,
 });
 
+const setLayoutSettings = (value) => ({
+  type: SET_LAYOUT_SETTINGS,
+  layoutSettings: value,
+});
+
+const hideFooterApp = () => ({
+  type: HIDE_FOOTER_APP,
+});
+
 var infoUserToPushSaved = '';
 
 export const userAction = (val, data) => {
-  return async function(dispatch) {
+  return async function (dispatch) {
     if (val === 'signIn') {
       const user = await firebase
         .auth()
@@ -37,7 +52,7 @@ export const userAction = (val, data) => {
       return firebase
         .database()
         .ref('users/' + userID)
-        .on('value', function(snap) {
+        .on('value', function (snap) {
           var infoUser = snap.val();
 
           var userConnected = false;
@@ -73,6 +88,12 @@ export const userAction = (val, data) => {
       await dispatch(resetUserInfo());
       await dispatch(resetMessages());
       return true;
+    } else if (val === 'setLayoutSettings') {
+      console.log('setLayoutSettings');
+      return dispatch(setLayoutSettings(data));
+    } else if (val === 'hideFooterApp') {
+      console.log('hideFooterApp');
+      return dispatch(hideFooterApp());
     }
     return true;
   };
