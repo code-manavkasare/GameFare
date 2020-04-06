@@ -31,7 +31,7 @@ export default class CardMessage extends React.Component {
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     const that = this;
-    return text.replace(urlRegex, function(url, b, c) {
+    return text.replace(urlRegex, function (url, b, c) {
       return that.getDataUrl(url);
     });
   }
@@ -195,7 +195,7 @@ export default class CardMessage extends React.Component {
     const images = this.props.message.currentMessage.images
       ? Object.values(this.props.message.currentMessage.images)
           .filter((image) => image.type === 'image')
-          .reduce(function(result, item) {
+          .reduce(function (result, item) {
             let image = item;
             image.url = image.uri;
             result[item.id] = item;

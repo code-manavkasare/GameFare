@@ -27,6 +27,7 @@ import {
   isValidNumberCheck,
   placeholder,
 } from '../../functions/phoneNumber';
+import {timeout} from '../../functions/coach';
 
 const ListCountry = require('../elementsFlags/country.json');
 
@@ -148,21 +149,27 @@ class PhoneFields extends Component {
       </Row>
     );
   }
-  async selectCountry(country) {
-    const {navigate} = this.props;
-    await navigate('Phone', {country: country});
+  async selectCountry(countrySelected) {
+    const {navigate, country} = this.props;
+    // if (country)
+    await navigate('Phone', {
+      country: countrySelected ? countrySelected : country,
+    });
+    await timeout(200);
     this.firstTextInput.focus();
   }
   render() {
     const {navigate} = this.props;
+    const {isValid} = this.state;
     return (
       <View style={styles.content}>
         <Row style={styles.rowField}>
           <Col
             size={35}
-            style={[{borderRightWidth: 0, borderColor: '#EAEAEA'}]}
             activeOpacity={0.8}
-            onPress={() => {
+            onPress={async () => {
+              await this.firstTextInput.blur();
+              await timeout(200);
               navigate('ListCountry', {
                 onGoBack: (country) => this.selectCountry(country),
               });
@@ -170,13 +177,7 @@ class PhoneFields extends Component {
             {this.countryCol()}
           </Col>
 
-          <Col
-            size={80}
-            style={[
-              styleApp.center2,
-              {marginRight: 0},
-              {borderBottomWidth: 0, borderColor: '#EAEAEA'},
-            ]}>
+          <Col size={80} style={styleApp.center2}>
             {this.inputPhone()}
           </Col>
         </Row>
@@ -188,6 +189,7 @@ class PhoneFields extends Component {
                 We will text you the verification code.
               </Text>
             </Col>
+
             <Col style={styleApp.center3}>
               <ButtonColor
                 view={() => {
@@ -197,25 +199,18 @@ class PhoneFields extends Component {
                     <AllIcons
                       name="arrow-forward"
                       type="mat"
-                      color={this.state.isValid ? colors.white : colors.green}
+                      color={isValid ? colors.white : colors.grey}
                       size={23}
                     />
                   );
                 }}
-                click={() => this.next(this.state.phoneNumber)}
-                color={!this.state.isValid ? colors.white : colors.green}
+                click={() => isValid && this.next(this.state.phoneNumber)}
+                color={isValid ? colors.green : colors.white}
                 style={[
-                  {
-                    height: 60,
-                    width: 60,
-                    borderRadius: 30,
-                    borderColor: this.state.isValid
-                      ? colors.white
-                      : colors.green,
-                    borderWidth: 1,
-                  },
+                  styles.buttonNext,
+                  {borderColor: isValid ? colors.green : colors.grey},
                 ]}
-                onPressColor={colors.greenClick}
+                onPressColor={isValid ? colors.greenLight : colors.white}
               />
             </Col>
           </Row>
@@ -272,6 +267,13 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonNext: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+
+    borderWidth: 1,
   },
 });
 

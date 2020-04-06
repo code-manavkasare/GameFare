@@ -70,28 +70,6 @@ class LocationSelector extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: '',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton
-          color={colors.title}
-          name="close"
-          size={24}
-          type="mat"
-          click={() => navigation.navigate(navigation.getParam('pageFrom'))}
-        />
-      ),
-      headerRight: () =>
-        navigation.getParam('loader') == true ? (
-          <View style={{paddingRight: 15}}>
-            <Loader color="primary" size={16} />
-          </View>
-        ) : null,
-    };
-  };
   async componentDidMount() {}
   shouldComponentUpdate(nextProps, nextState) {
     if (this.state !== nextState) return true;
@@ -121,6 +99,8 @@ class LocationSelector extends Component {
   async onclickLocation(address) {
     Keyboard.dismiss();
     this.setState({loader: true});
+    const {route} = this.props;
+    const {setUserLocation, setUniqueLocation} = route.params;
     try {
       if (address.type === 'currentLocation' && !this.state.loader)
         return this.getCurrentLocation();
@@ -158,14 +138,14 @@ class LocationSelector extends Component {
             currentHistoricSearchLocation,
           );
         }
-        if (!this.props.navigation.getParam('setUserLocation')) {
+        if (!setUserLocation) {
           return this.props.navigation.state.params.onGoBack({
             address: address.description,
             lat: locationObj.geometry.location.lat,
             lng: locationObj.geometry.location.lng,
           });
         }
-        if (!this.props.navigation.getParam('setUniqueLocation')) {
+        if (!setUniqueLocation) {
           await this.props.historicSearchAction('setLocationSearch', {
             address: address.description,
             lat: locationObj.geometry.location.lat,
@@ -180,6 +160,8 @@ class LocationSelector extends Component {
     }
   }
   async getCurrentLocation() {
+    const {route} = this.props;
+    const {setUserLocation, setUniqueLocation} = route.params;
     var CurrentLocation = await currentLocation();
     if (CurrentLocation.response === false) {
       this.setState({loader: false});
@@ -191,10 +173,10 @@ class LocationSelector extends Component {
       });
     }
 
-    if (!this.props.navigation.getParam('setUserLocation')) {
+    if (!setUserLocation) {
       return this.props.navigation.state.params.onGoBack(CurrentLocation);
     }
-    if (!this.props.navigation.getParam('setUniqueLocation')) {
+    if (!setUniqueLocation) {
       await this.props.historicSearchAction(
         'setLocationSearch',
         CurrentLocation,
@@ -320,7 +302,7 @@ class LocationSelector extends Component {
       <View>
         {this.buttonSearchAddress()}
 
-        {this.state.textInput == '' ? (
+        {this.state.textInput === '' ? (
           <View>
             {this.cardResult({
               type: 'currentLocation',
@@ -358,7 +340,7 @@ class LocationSelector extends Component {
     );
   }
   render() {
-    const {dismiss, goBack} = this.props.navigation;
+    const {goBack} = this.props.navigation;
     return (
       //
       <View style={styles.content}>
@@ -370,12 +352,7 @@ class LocationSelector extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1={
-            this.props.navigation.getParam('pageFrom') == 'LocationSelect'
-              ? 'arrow-left'
-              : 'times'
-          }
-          icon2={null}
+          icon1={'times'}
           clickButton1={() => goBack()}
         />
 

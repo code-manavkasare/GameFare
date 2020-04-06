@@ -8,6 +8,8 @@ import Activity from '../../app/elementsActivity/Activity';
 import HomePage from '../../app/HomePage';
 import MessageList from '../../app/elementsMessage/MessageList';
 import StreamPage from '../../app/coachFlow/StreamPage/index';
+import MorePage from '../../app/MorePage';
+import Profile from './components/Profile';
 
 import colors from '../../style/colors';
 
@@ -18,12 +20,6 @@ function TabsApp() {
     <Tab.Navigator
       initialRouteName="Home"
       keyboardHidesTabBar={false}
-      tabBarOptions={{
-        style: {
-          height: 100,
-          backgroundColor: 'red',
-        },
-      }}
       tabBar={(props) => (
         <Footer
           {...props}
@@ -80,7 +76,7 @@ function TabsApp() {
       />
       <Tab.Screen
         name="Profile"
-        component={Activity}
+        component={Profile}
         options={{
           label: 'Profile',
           signInToPass: true,

@@ -71,28 +71,6 @@ class LocationSelector extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: '',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton
-          color={colors.title}
-          name="close"
-          size={24}
-          type="mat"
-          click={() => navigation.navigate(navigation.getParam('pageFrom'))}
-        />
-      ),
-      headerRight: () =>
-        navigation.getParam('loader') === true ? (
-          <View style={{paddingRight: 15}}>
-            <Loader color="primary" size={16} />
-          </View>
-        ) : null,
-    };
-  };
   async componentDidMount() {}
   shouldComponentUpdate(nextProps, nextState) {
     if (this.state !== nextState) return true;

@@ -5,6 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MainApp from './MainApp/index';
 import SignIn from './SignIn/index';
 import ListCountry from '../login/elementsFlags/ListCountry';
+import Payments from './MainApp/components/Payments';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -28,6 +29,7 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
+      <Stack.Screen name="Payments" component={Payments} />
     </Stack.Navigator>
   );
 }

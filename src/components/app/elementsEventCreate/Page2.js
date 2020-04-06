@@ -304,7 +304,7 @@ class Page2 extends Component {
     return true;
   }
   async next() {
-    const groups = Object.values(this.props.step1.groups).reduce(function(
+    const groups = Object.values(this.props.step1.groups).reduce(function (
       result,
       item,
     ) {
@@ -343,7 +343,7 @@ class Page2 extends Component {
         subscribtionOpen: true,
       },
       groups: this.props.step1.groups,
-      sport: this.props.navigation.getParam('sport'),
+      sport: this.props.route.params.sport,
     });
   }
   render() {

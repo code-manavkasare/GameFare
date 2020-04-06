@@ -208,7 +208,7 @@ export default class SelectCountry extends Component {
           initialTitleOpacity={0}
           icon1="times"
           icon2={null}
-          clickButton1={() => navigation.navigate('Phone')}
+          clickButton1={() => this.selectCountry(false)}
         />
 
         <ScrollView

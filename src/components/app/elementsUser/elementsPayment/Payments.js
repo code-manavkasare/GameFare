@@ -121,15 +121,15 @@ class ListEvent extends Component {
     return this.props.navigation.navigate('Payments');
   }
   openPage(data) {
+    const {navigation} = this.props;
     if (data === 'new') {
-      return this.props.navigation.navigate('NewMethod');
+      return navigation.navigate('NewMethod');
     } else if (data === 'bank') {
       if (!this.props.connectAccountToken)
-        return this.props.navigation.navigate('CreateConnectAccount');
-      return this.props.navigation.navigate('NewBankAccount');
+        return navigation.navigate('CreateConnectAccount');
+      return navigation.navigate('NewBankAccount');
     }
-    return this.props.navigation.navigate('DetailCard', {
-      pageFrom: this.props.navigation.getParam('pageFrom'),
+    return navigation.navigate('DetailCard', {
       data: data,
     });
   }
@@ -182,6 +182,7 @@ class ListEvent extends Component {
     );
   }
   render() {
+    const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -192,7 +193,7 @@ class ListEvent extends Component {
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
           icon1="times"
-          clickButton1={() => this.props.navigation.dismiss()}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}

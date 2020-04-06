@@ -5,10 +5,9 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import {lockedPortrait, lockedLandscape} from '../hoc/orientation';
 
-import MorePage from '../app/MorePage';
-import Wallet from '../app/elementsUser/elementsProfile/Wallet';
-import BlockedUsersList from '../app/elementsUser/elementsProfile/BlockedUsersList';
-import Settings from '../app/elementsUser/elementsProfile/Settings';
+import EditProfilePage from '../../../app/elementsUser/elementsProfile/EditProfilePage';
+import ProfilePage from '../../../app/elementsUser/elementsProfile/ProfilePage';
+
 import EventPage from '../app/EventPage';
 import ChallengePage from '../app/challengePage/index';
 import MapPage from '../app/elementsHome/MapPage';
@@ -18,12 +17,6 @@ import GroupPage from '../app/GroupPage';
 import Checkout from '../app/elementsJoining/Checkout';
 import Coach from '../app/elementsJoining/Coach';
 
-import Phone from '../login/Phone';
-import Verify from '../login/Verify';
-import Complete from '../login/Complete';
-import EditProfilePage from '../app/elementsUser/elementsProfile/EditProfilePage';
-import ProfilePage from '../app/elementsUser/elementsProfile/ProfilePage';
-import ListCountry from '../login/elementsFlags/ListCountry';
 
 import CreateEvent0 from '../app/elementsEventCreate/Page0';
 import CreateEvent1 from '../app/elementsEventCreate/Page1';
@@ -45,17 +38,6 @@ import PublishResult from '../app/elementsCreateChallenge/PublishResult';
 import LocationSelector from '../app/elementsEventCreate/LocationSelector';
 import DateSelector from '../app/elementsEventCreate/DateSelector';
 
-import Activity from '../app/elementsActivity/Activity';
-
-import Payments from '../app/elementsUser/elementsPayment/Payments';
-import NewCard from '../app/elementsUser/elementsPayment/NewCard';
-import NewMethod from '../app/elementsUser/elementsPayment/NewMethod';
-import NewBankAccount from '../app/elementsUser/elementsPayment/NewBankAccount';
-import CreateConnectAccount from '../app/elementsUser/elementsPayment/CreateConnectAccount';
-import DetailCard from '../app/elementsUser/elementsPayment/DetailCard';
-import Scan from '../app/elementsUser/elementsPayment/Scan';
-import ApplePay from '../app/elementsUser/elementsPayment/ApplePay';
-
 import Alert from '../layout/alerts/Alert';
 import AlertAddress from '../layout/alerts/AlertAddress';
 import AlertCall from '../layout/alerts/AlertCall';
@@ -67,7 +49,6 @@ import InitialPage from '../app/elementsOnBoard/InitialPage';
 import SportSelect from '../app/elementsOnBoard/SportSelect';
 import LocationSelect from '../app/elementsOnBoard/LocationSelect';
 
-import MessageList from '../app/elementsMessage/MessageList';
 import Conversation from '../app/elementsMessage/Conversation';
 import NewConversation from '../app/elementsMessage/NewConversation';
 

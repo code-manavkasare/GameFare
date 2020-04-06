@@ -13,7 +13,7 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import {loadMyDiscusions} from '../../functions/message';
 import SearchBarContact from '../elementsEventCreate/elementsContacts/SearchBarContact';
 
-import ScrollView2 from '../../layout/scrollViews/ScrollView';
+import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import sizes from '../../style/sizes';
 import CardConversation from './CardConversation';
 
@@ -143,10 +143,7 @@ class MessageTab extends React.Component {
 
     if (!userConnected) return this.logoutView();
     return (
-      <View style={{paddingTop: 5, minHeight: height}}>
-        <View style={[styleApp.marginView, {marginBottom: 15}]}>
-          <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
-        </View>
+      <View style={{minHeight: height}}>
         <SearchBarContact
           placeHolderMessage={'Search your messages...'}
           updateSearch={(searchInput) => this.updateSearchField(searchInput)}
@@ -193,7 +190,7 @@ class MessageTab extends React.Component {
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={userConnected && 'Inbox'}
-          inputRange={[50, 80]}
+          inputRange={[5, 10]}
           initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
           typeIcon2={'font'}
@@ -209,10 +206,9 @@ class MessageTab extends React.Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
           keyboardAvoidDisable={true}
-          marginBottomScrollView={0}
+          marginBottomScrollView={sizes.heightFooter}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottom={0}
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}

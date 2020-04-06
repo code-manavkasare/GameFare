@@ -13,6 +13,7 @@ var height0 = 50;
 
 let initialHeightControlBar = 110;
 let offsetFooterStreaming = 30;
+
 console.log('height screeen,', height);
 if (Platform.OS === 'ios') {
   height0 = 0;
@@ -65,26 +66,6 @@ if (Platform.OS === 'ios') {
     offsetFooterStreaming = 0;
   }
 }
-
-console.log('initialHeightControlBar', initialHeightControlBar);
-
-var sizes = {
-  heightFooterBooking: heightFooterBooking,
-  heightFooter: heightFooter,
-  marginTopApp: marginTopApp,
-  marginTopHeader: marginTopHeader,
-  heightPicture: heightPicture,
-  height0: height0,
-  heightHeaderHome: heightHeaderHome,
-  heightHeaderFilter: heightHeaderFilter,
-  heightHeaderHomeSearch: heightHeaderHomeSearch,
-  height: height,
-  width: width,
-  initialHeightControlBar: initialHeightControlBar,
-  offsetFooterStreaming: offsetFooterStreaming,
-};
-
-// export default sizes;
 
 module.exports = {
   heightFooterBooking: heightFooterBooking,

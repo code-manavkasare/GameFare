@@ -38,13 +38,13 @@ export default class NewSessionView extends Component {
           text="Resume session"
           loader={false}
           click={async () => {
-            return userAction('hideFooterApp');
             if (!userConnected) return navigation.navigate('SignIn');
             await setState({
               loader: true,
               newSession: false,
               isConnected: false,
             });
+            await userAction('hideFooterApp');
             loadCoachSession(currentSessionID);
           }}
         />

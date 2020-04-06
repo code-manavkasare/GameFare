@@ -37,9 +37,9 @@ class NewConversation extends React.Component {
     this.state = {
       loader: true,
       loaderHeader: false,
-      loaderButton:false,
+      loaderButton: false,
       users: [],
-      usersSelected: this.props.navigation.getParam('usersSelected'),
+      usersSelected: this.props.route.params.usersSelected,
       searchInput: '',
       contacts: false,
     };
@@ -49,9 +49,9 @@ class NewConversation extends React.Component {
     this.changeSearch('');
   }
   async changeSearch(search) {
-    const displayCurrentUser = this.props.navigation.getParam(
-      'displayCurrentUser',
-    );
+    const {route} = this.props;
+    const {displayCurrentUser} = route.params;
+
     const users = await autocompleteSearchUsers(
       search,
       this.props.userID,
@@ -96,7 +96,8 @@ class NewConversation extends React.Component {
     return this.props.navigation.navigate('PickInfos');
   }
   async selectUser(select, user, selectedUsers) {
-    const selectMultiple = this.props.navigation.getParam('selectMultiple');
+    const {route} = this.props;
+    const {selectMultiple} = route.params;
     if (!selectMultiple) {
       await this.setState({
         usersSelected: {
@@ -199,11 +200,11 @@ class NewConversation extends React.Component {
   }
 
   render() {
-    const {dismiss, goBack} = this.props.navigation;
-    const {usersSelected,loaderButton} = this.state;
-    const titleHeader = this.props.navigation.getParam('titleHeader');
-    const closeButton = this.props.navigation.getParam('closeButton');
-    const loaderOnSubmit = this.props.navigation.getParam('loaderOnSubmit');
+    const {goBack} = this.props.navigation;
+    const {usersSelected, loaderButton} = this.state;
+
+    const {route} = this.props;
+    const {titleHeader, closeButton, loaderOnSubmit} = route.params;
 
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
@@ -237,10 +238,13 @@ class NewConversation extends React.Component {
                   loader={loaderButton}
                   backgroundColor={'green'}
                   onPressColor={colors.greenLight}
-                  click={async() =>{
-                    if (loaderOnSubmit) await this.setState({loaderButton:true})
-                    await this.props.navigation.state.params.onGoBack(usersSelected)
-                    return this.setState({loaderButton:false})
+                  click={async () => {
+                    if (loaderOnSubmit)
+                      await this.setState({loaderButton: true});
+                    await this.props.navigation.state.params.onGoBack(
+                      usersSelected,
+                    );
+                    return this.setState({loaderButton: false});
                   }}
                 />
               </FadeInView>

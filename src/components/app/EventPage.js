@@ -84,7 +84,9 @@ class EventPage extends React.Component {
     this.confirmLeaveEvent = this.confirmLeaveEvent.bind(this);
   }
   async componentDidMount() {
-    this.loadEvent(this.props.navigation.getParam('objectID'));
+    const {route} = this.props;
+    const {objectID} = route.params;
+    this.loadEvent(objectID);
   }
   componentWillUnmount() {
     if (this.state.event) {
@@ -99,7 +101,7 @@ class EventPage extends React.Component {
     firebase
       .database()
       .ref('events/' + objectID)
-      .on('value', async function(snap) {
+      .on('value', async function (snap) {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
@@ -158,7 +160,8 @@ class EventPage extends React.Component {
 
   dismiss() {
     const {dismiss} = this.props.navigation;
-    const altDismiss = this.props.navigation.getParam('altDismiss', false);
+    const {route} = this.props;
+    const {altDismiss} = route.params;
     if (altDismiss) {
       altDismiss();
     } else {
@@ -1094,7 +1097,9 @@ class EventPage extends React.Component {
   }
   async refresh() {
     await this.setState({loader: true});
-    return this.loadEvent(this.props.navigation.getParam('objectID'));
+    const {route} = this.props;
+    const {objectID} = route.params;
+    return this.loadEvent(objectID);
   }
 
   goToShareEvent = (event) => {

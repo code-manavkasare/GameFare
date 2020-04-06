@@ -9,7 +9,13 @@ const MainApp = () => {
   return (
     <Stack.Navigator initialRouteName="InitialPage" headerMode="none">
       <Stack.Screen name="InitialPage" component={OnBoarding} />
-      <Stack.Screen name="TabsApp" component={TabsApp} />
+      <Stack.Screen
+        name="TabsApp"
+        component={TabsApp}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

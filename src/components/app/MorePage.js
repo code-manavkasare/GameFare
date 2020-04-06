@@ -139,7 +139,7 @@ class MorePage extends Component {
     } else if (type === 'logout') {
       this.props.navigation.navigate('Alert', {
         textButton: 'Logout',
-        title: 'Do you want to log out?'+ '\n',
+        title: 'Do you want to log out?' + '\n',
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
@@ -330,12 +330,12 @@ class MorePage extends Component {
   }
   render() {
     return (
-      <View style={{height: '100%'}}>
+      <View style={styleApp.stylePage}>
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
-          marginBottomScrollView={0}
+          marginBottomScrollView={sizes.heightFooter}
           marginTop={sizes.marginTopApp + 30}
           offsetBottom={90}
           showsVerticalScrollIndicator={true}

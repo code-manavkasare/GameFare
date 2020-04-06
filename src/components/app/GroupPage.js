@@ -69,14 +69,16 @@ class GroupPage extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    this.loadGroup(this.props.navigation.getParam('objectID'));
+    const {route} = this.props;
+    const {objectID} = route.params;
+    this.loadGroup(objectID);
   }
   async loadGroup(objectID) {
     const that = this;
     firebase
       .database()
       .ref('groups/' + objectID)
-      .on('value', async function(snap) {
+      .on('value', async function (snap) {
         let group = snap.val();
         group.objectID = objectID;
         if (group.allMembers) {
@@ -295,22 +297,10 @@ class GroupPage extends React.Component {
     );
   }
   conditionAdmin() {
-    if (!this.state.group || !this.props.userConnected) {
-      return false;
-    } else {
-      return this.state.group.info.organizer === this.props.userID;
-    }
-    // *** getParam('pageFrom') returning undefined in some cases
-    // *** are these conditions necessary?
-    // else if (
-    //   this.props.navigation.getParam('pageFrom') !== 'Home' &&
-    //   this.state.group.info.organizer === this.props.userID &&
-    //   this.state.group.info.public
-    // ) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
+    const {group} = this.state;
+    const {userConnected, userID} = this.props;
+    if (!group || !userConnected) return false;
+    return group.info.organizer === userID;
   }
   async addPicture(val) {
     await this.setState({loader: true});

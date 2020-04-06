@@ -29,7 +29,7 @@ export default class Verify extends Component {
   }
   componentDidMount() {}
   render() {
-    const {navigation} = this.props;
+    const {navigation, route} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -47,10 +47,9 @@ export default class Verify extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => (
             <VerifyFields
-              pageFrom={navigation.getParam('pageFrom')}
               close={() => navigation.dangerouslyGetParent().pop()}
               navigate={(val, data) => navigation.navigate(val, data)}
-              params={navigation.getParam('data')}
+              params={route.params.data}
             />
           )}
           marginBottomScrollView={0}

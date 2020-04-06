@@ -30,13 +30,14 @@ const MyTheme = {
 
 class App extends Component {
   async componentDidMount() {
+    const {userID} = this.props;
     if (!__DEV__) {
       this.configureSentry();
     }
     SplashScreen.hide();
-    if (this.props.userID !== '') {
+    if (userID !== '') {
       this.autoSignIn();
-      refreshTokenOnDatabase(this.props.userID);
+      refreshTokenOnDatabase(userID);
     }
   }
 

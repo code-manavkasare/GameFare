@@ -36,30 +36,30 @@ class ListEvent extends Component {
   }
   async componentDidMount() {}
   rowCB() {
+    const {route, defaultCard} = this.props;
+    const {data: dataCard} = route.params;
     return (
       <TouchableOpacity
         activeOpacity={1}
         style={{height: 50, marginBottom: 20}}>
         <Row>
           <Col size={15} style={styleApp.center2}>
-            {cardIcon(this.props.navigation.getParam('data').brand)}
+            {cardIcon(dataCard.brand)}
           </Col>
           <Col size={60} style={styleApp.center2}>
             <Text style={styleApp.text}>
-              {this.props.navigation.getParam('data').brand == 'applePay'
+              {dataCard.brand == 'applePay'
                 ? 'Apple Pay'
                 : '•••• ' +
-                  this.props.navigation.getParam('data').last4 +
+                  dataCard.last4 +
                   '    ' +
-                  this.props.navigation.getParam('data').exp_month +
+                  dataCard.exp_month +
                   '/' +
-                  this.props.navigation.getParam('data').exp_year}
+                  dataCard.exp_year}
             </Text>
           </Col>
           <Col size={25} style={styleApp.center3}>
-            {this.props.defaultCard ===
-            undefined ? null : this.props.navigation.getParam('data').id ===
-              this.props.defaultCard.id ? (
+            {defaultCard && dataCard.id === defaultCard.id && (
               <View style={styleApp.viewSport}>
                 <Text
                   style={[
@@ -69,7 +69,7 @@ class ListEvent extends Component {
                   Default
                 </Text>
               </View>
-            ) : null}
+            )}
           </Col>
         </Row>
       </TouchableOpacity>
@@ -102,9 +102,6 @@ class ListEvent extends Component {
             borderColor: colors.off,
             height: 60,
             width: '100%',
-            borderRadius: 0,
-            borderBottomWidth: 0,
-            marginTop: 0,
           },
         ]}
         onPressColor={colors.off}
@@ -112,41 +109,43 @@ class ListEvent extends Component {
     );
   }
   async action(data) {
-    if (data == 'delete') {
+    const {params} = this.props.route;
+    const {data: dataCard} = params;
+    if (data === 'delete') {
       this.props.navigation.navigate('Alert', {
         title: 'Do you want to delete this payment method?',
         subtitle:
-          this.props.navigation.getParam('data').brand === 'applePay'
+          dataCard.brand === 'applePay'
             ? 'Apple Pay'
             : '•••• ' +
-              this.props.navigation.getParam('data').last4 +
+              dataCard.last4 +
               '    ' +
-              this.props.navigation.getParam('data').exp_month +
+              dataCard.exp_month +
               '/' +
-              this.props.navigation.getParam('data').exp_year,
+              dataCard.exp_year,
         textButton: 'Delete',
         onGoBack: () => this.confirmDelete(),
       });
     } else {
-      if (
-        this.props.navigation.getParam('data').id === this.props.defaultCard.id
-      ) {
+      if (dataCard.id === this.props.defaultCard.id) {
         return this.props.navigation.goBack();
       } else {
         await firebase
           .database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
-          .update(this.props.navigation.getParam('data'));
+          .update(dataCard);
         return this.props.navigation.goBack();
       }
     }
   }
   async confirmDelete() {
+    const {params} = this.props.route;
+    const {data: dataCard} = params;
     this.setState({loader: true});
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}deleteUserCreditCard`;
     const results = await axios.get(url, {
       params: {
-        CardID: this.props.navigation.getParam('data').id,
+        CardID: dataCard.id,
         userID: this.props.userID,
         tokenStripeCus: this.props.tokenCusStripe,
       },
@@ -158,17 +157,14 @@ class ListEvent extends Component {
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .remove();
       } else if (
-        this.props.navigation.getParam('data').id ===
-          this.props.defaultCard.id &&
+        dataCard.id === this.props.defaultCard.id &&
         Object.values(this.props.cards).length > 0
       ) {
         await firebase
           .database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .update(Object.values(this.props.cards)[0]);
-      } else if (
-        this.props.navigation.getParam('data').id === this.props.defaultCard.id
-      ) {
+      } else if (dataCard.id === this.props.defaultCard.id) {
         await firebase
           .database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
@@ -187,28 +183,20 @@ class ListEvent extends Component {
           <View style={[styleApp.divider2, {marginTop: 0, marginBottom: 10}]} />
         </View>
 
-        <View
-          style={{
-            height: 0,
-            backgroundColor: colors.borderColor,
-            marginLeft: 0,
-            width: width,
-          }}
-        />
         {this.row('check', 'Set as default', 'set')}
         {this.row('trash-alt', 'Delete payment method', 'delete')}
       </View>
     );
   }
   render() {
+    const {params} = this.props.route;
+    const {data: dataCard} = params;
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={
-            this.props.navigation.getParam('data').brand === 'applePay'
-              ? 'Apple Pay'
-              : this.props.navigation.getParam('data').brand
+            dataCard.brand === 'applePay' ? 'Apple Pay' : dataCard.brand
           }
           inputRange={[20, 50]}
           initialTitleOpacity={0}
@@ -218,7 +206,6 @@ class ListEvent extends Component {
           clickButton1={() => this.props.navigation.goBack()}
         />
         <ScrollView
-          // style={{marginTop:sizes.heightHeaderHome}}
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={this.payments.bind(this)}

@@ -1,28 +1,14 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
+import {CardIOView, CardIOUtilities} from 'react-native-awesome-card-io';
 const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
+
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import BackButton from '../../../layout/buttons/BackButton';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import sizes from '../../../style/sizes';
 
-import colors from '../../../style/colors';
-import {CardIOView, CardIOUtilities} from 'react-native-awesome-card-io';
-
-class ListEvent extends Component {
+class ScanCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,27 +17,6 @@ class ListEvent extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: 'Scan',
-      headerStyle: {
-        backgroundColor: colors.primary,
-        borderBottomWidth: 0,
-      },
-      headerTitleStyle: {
-        color: 'white',
-        fontFamily: 'OpenSans-Bold',
-        fontSize: 14,
-      },
-      headerLeft: () => (
-        <BackButton
-          name="keyboard-arrow-left"
-          type="mat"
-          click={() => navigation.goBack()}
-        />
-      ),
-    };
-  };
   async componentDidMount() {
     CardIOUtilities.preload();
   }
@@ -114,4 +79,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(mapStateToProps, {})(ScanCard);

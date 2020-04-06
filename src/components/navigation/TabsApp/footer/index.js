@@ -5,8 +5,9 @@ import {connect} from 'react-redux';
 
 import ButtonFooter from './components/Button';
 import colors from '../../../style/colors';
-import {width} from '../../../style/sizes';
+import {width, heightFooter} from '../../../style/sizes';
 import {native} from '../../../animations/animations';
+import styleApp from '../../../style/style';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class Footer extends React.Component {
             const {icon, label, signInToPass} = options;
             const isFocused = state.index === index;
             return (
-              <Col>
+              <Col style={styleApp.center}>
                 <ButtonFooter
                   navigation={navigation}
                   focused={isFocused}
@@ -65,11 +66,11 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    height: 90,
+    height: heightFooter,
     position: 'absolute',
     bottom: 0,
     width: width,
-    borderTopWidth: 1,
+    borderTopWidth: 0.4,
     borderColor: colors.grey,
   },
 });

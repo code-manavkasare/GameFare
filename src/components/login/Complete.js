@@ -36,7 +36,7 @@ export default class Complete extends Component {
   };
   componentDidMount() {}
   render() {
-    const {navigation} = this.props;
+    const {navigation, route} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -55,9 +55,8 @@ export default class Complete extends Component {
           contentScrollView={() => (
             <CompleteFields
               dismiss={() => navigation.dangerouslyGetParent().pop()}
-              pageFrom={navigation.getParam('pageFrom')}
               navigate={(val, data) => navigation.navigate(val, data)}
-              params={navigation.getParam('data')}
+              params={route.params.data}
             />
           )}
           marginBottomScrollView={0}

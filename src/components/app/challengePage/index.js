@@ -80,7 +80,9 @@ class ChallengePage extends React.Component {
     this.confirmLeaveEvent = this.confirmLeaveEvent.bind(this);
   }
   async componentDidMount() {
-    this.loadEvent(this.props.navigation.getParam('objectID'));
+    const {route} = this.props;
+    const {objectID} = route.params;
+    this.loadEvent(objectID);
   }
   componentWillUnmount() {
     if (this.state.event) {
@@ -95,7 +97,7 @@ class ChallengePage extends React.Component {
     firebase
       .database()
       .ref('challenges/' + objectID)
-      .on('value', async function(snap) {
+      .on('value', async function (snap) {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
@@ -119,7 +121,8 @@ class ChallengePage extends React.Component {
 
   dismiss() {
     const {dismiss} = this.props.navigation;
-    const altDismiss = this.props.navigation.getParam('altDismiss', false);
+    const {route} = this.props;
+    const {altDismiss} = route.params;
     if (altDismiss) {
       altDismiss();
     } else {

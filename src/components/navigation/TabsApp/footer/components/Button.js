@@ -152,9 +152,9 @@ const styles = StyleSheet.create({
   },
   buttonCamera: {
     paddingTop: 0,
-    width: 75,
-    height: 75,
-    marginTop: -40,
+    width: 70,
+    height: 70,
+    marginTop: -35,
     borderRadius: 40,
   },
   textButton: {
