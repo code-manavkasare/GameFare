@@ -138,7 +138,7 @@ class MessageTab extends React.Component {
   }
 
   messagePageView() {
-    const {discussions, userConnected} = this.props;
+    const {discussions, userConnected, navigation} = this.props;
     const {searchInput} = this.state;
 
     if (!userConnected) return this.logoutView();
@@ -167,6 +167,7 @@ class MessageTab extends React.Component {
               <CardConversation
                 key={i}
                 index={i}
+                navigation={navigation}
                 discussionID={discussion}
                 myConversation={true}
               />

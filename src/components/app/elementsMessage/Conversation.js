@@ -143,9 +143,7 @@ class MessageTab extends React.Component {
           initialTitleOpacity={1}
           icon1={'arrow-left'}
           icon2={null}
-          clickButton1={async () => {
-            this.props.navigation.dismiss();
-          }}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
           clickButton2={() => true}
         />
         <View style={{height: sizes.heightHeaderHome}} />

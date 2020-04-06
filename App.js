@@ -14,6 +14,7 @@ import InitialStack from './src/components/navigation/index';
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
+import {navigationRef} from './NavigationService';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -91,7 +92,7 @@ class App extends Component {
 
   render() {
     return (
-      <NavigationContainer theme={MyTheme}>
+      <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
       </NavigationContainer>
     );

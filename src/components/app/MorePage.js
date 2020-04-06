@@ -207,7 +207,9 @@ class MorePage extends Component {
         <View style={styleApp.marginView}>
           {userConnected ? (
             <View>
-              <TouchableOpacity onPress={() => this.goToEditProfile()}>
+              <TouchableOpacity
+                onPress={() => this.goToEditProfile()}
+                activeOpacity={0.9}>
                 <Row style={{marginBottom: 20}}>
                   <Col size={30} style={styleApp.center2}>
                     {infoUser.picture ? (

@@ -80,7 +80,9 @@ class ChallengePage extends React.Component {
     this.confirmLeaveEvent = this.confirmLeaveEvent.bind(this);
   }
   async componentDidMount() {
-    const {route} = this.props;
+    const {route, navigation} = this.props;
+    console.log('route challene', route);
+    console.log(navigation);
     const {objectID} = route.params;
     this.loadEvent(objectID);
   }
@@ -120,13 +122,13 @@ class ChallengePage extends React.Component {
   }
 
   dismiss() {
-    const {dismiss} = this.props.navigation;
+    const {navigation} = this.props;
     const {route} = this.props;
     const {altDismiss} = route.params;
     if (altDismiss) {
       altDismiss();
     } else {
-      dismiss();
+      navigation.dangerouslyGetParent().pop();
     }
   }
 

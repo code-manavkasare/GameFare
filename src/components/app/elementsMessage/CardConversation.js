@@ -8,7 +8,7 @@ import isEqual from 'lodash.isequal';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
-import NavigationService from '../../../../NavigationService';
+import {navigate} from '../../../../NavigationService';
 import PlaceHolder from '../../placeHolders/CardConversation';
 
 import styleApp from '../../style/style';
@@ -97,6 +97,7 @@ class CardConversation extends React.Component {
   }
 
   async clickCard(conversation, lastMessage) {
+    const {navigation} = this.props;
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await firebase
         .database()
@@ -109,7 +110,7 @@ class CardConversation extends React.Component {
         )
         .update({[this.props.userID]: true});
     }
-    NavigationService.push('Conversation', {
+    navigate('Conversation', {
       data: conversation,
       myConversation: this.props.myConversation,
     });

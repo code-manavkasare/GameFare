@@ -7,6 +7,12 @@ import SignIn from './SignIn/index';
 import ListCountry from '../login/elementsFlags/ListCountry';
 import Payments from './MainApp/components/Payments';
 
+import LocationSelector from '../app/elementsEventCreate/LocationSelector';
+import DateSelector from '../app/elementsEventCreate/DateSelector';
+
+import Contacts from './MainApp/components/Contacts';
+import NewConversation from '../app/elementsMessage/NewConversation';
+
 const Stack = createStackNavigator();
 function InitialStack() {
   return (
@@ -30,6 +36,11 @@ function InitialStack() {
         }}
       />
       <Stack.Screen name="Payments" component={Payments} />
+      <Stack.Screen name="Location" component={LocationSelector} />
+      <Stack.Screen name="Date" component={DateSelector} />
+
+      <Stack.Screen name="Contacts" component={Contacts} />
+      <Stack.Screen name="NewConversation" component={NewConversation} />
     </Stack.Navigator>
   );
 }
