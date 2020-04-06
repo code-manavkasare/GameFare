@@ -3,25 +3,26 @@ import {Button, View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import {Col, Row} from 'react-native-easy-grid';
-import Modal from 'react-native-modal';
 import {propEq, filter} from 'ramda';
+import * as Animatable from 'react-native-animatable';
 
 import ButtonColor from '../../../../../layout/Views/Button';
 import AllIcons from '../../../../../layout/icons/AllIcons';
 import Loader from '../../../../../layout/loaders/Loader';
 import {startRecording, stopRecording} from '../../../../../functions/coach';
+import VideoSourcePopup from './VideoSourcePopup';
 
 import {width, offsetFooterStreaming} from '../../../../../style/sizes';
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
 
-class StreamPage extends Component {
+class BottomButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
       recording: false,
       showPastSessionsPicker: false,
-      chooseRecordSourceMemberModalVisible: false,
+      videoSourcePopupVisible: false,
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -37,7 +38,7 @@ class StreamPage extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Animated.View style={styles.buttonText}>
+            <Animated.View style={styleApp.center}>
               <AllIcons
                 type={'moon'}
                 color={colors.white}
@@ -48,7 +49,6 @@ class StreamPage extends Component {
           );
         }}
         click={async () => setState({cameraFront: !state.cameraFront})}
-        // color={colors.red}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />
@@ -60,7 +60,7 @@ class StreamPage extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Animated.View style={styles.buttonText}>
+            <Animated.View style={styleApp.center}>
               <AllIcons
                 type={'font'}
                 color={colors.white}
@@ -71,7 +71,6 @@ class StreamPage extends Component {
           );
         }}
         click={async () => setState({publishAudio: !state.publishAudio})}
-        // color={colors.red}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />
@@ -120,7 +119,6 @@ class StreamPage extends Component {
         <ButtonColor
           view={() => insideViewButton(loading)}
           click={async () => this.openRecording(!archiving)}
-          // color={colors.red}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}
         />
@@ -147,7 +145,7 @@ class StreamPage extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Animated.View style={styles.buttonText}>
+            <Animated.View style={styleApp.center}>
               {false && viewVideoBeingShared(sharedVideos)}
               <AllIcons
                 type={'font'}
@@ -174,7 +172,6 @@ class StreamPage extends Component {
           });
           clickReview(!showPastSessionsPicker);
         }}
-        // color={colors.red}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />
@@ -208,7 +205,7 @@ class StreamPage extends Component {
     const membersConnectedArray = filter(isConnected, membersArray);
 
     if (nextRecordingVal && membersConnectedArray.length > 1) {
-      this.toggleChooseRecordSourceMemberModal();
+      this.toggleVideoSourcePopup();
       return;
     }
     if (nextRecordingVal) {
@@ -219,48 +216,62 @@ class StreamPage extends Component {
     } else stopRecording(sessionIDFirebase);
   }
 
-  toggleChooseRecordSourceMemberModal = () => {
+  toggleVideoSourcePopup = () => {
     this.setState({
-      chooseRecordSourceMemberModalVisible: !this.state
-        .chooseRecordSourceMemberModalVisible,
+      videoSourcePopupVisible: !this.state.videoSourcePopupVisible,
     });
   };
 
-  chooseRecordSourceMemberModal() {
-    const {members, objectID: idFirebase} = this.props.session;
+  videoSourcePopup = () => {
+    const {objectID: idFirebase, members} = this.props.session;
+
+    //TODO: define global usage with team and export to styles.js
+    const zoomIn = {
+      0: {
+        opacity: 0,
+        scale: 0,
+      },
+      0.5: {
+        opacity: 0.5,
+        scale: 0.3,
+      },
+      1: {
+        opacity: 1,
+        scale: 1,
+      },
+    };
+
+    const zoomOut = {
+      0: {
+        opacity: 1,
+        scale: 1,
+      },
+      0.5: {
+        opacity: 0.5,
+        scale: 0.3,
+      },
+      1: {
+        opacity: 0,
+        scale: 0,
+      },
+    };
 
     const membersArray = Object.values(members);
-    const {chooseRecordSourceMemberModalVisible} = this.state;
+    const {videoSourcePopupVisible} = this.state;
 
     return (
-      <View style={{flex: 1}}>
-        <Modal
-          isVisible={chooseRecordSourceMemberModalVisible}
-          style={[styles.modal, styleApp.center]}>
-          <View style={[styleApp.center]}>
-            <Text style={styleApp.text}>Choose Source</Text>
-            {membersArray.map((member) => {
-              if (member.isConnected) {
-                return (
-                  <Button
-                    color={colors.green}
-                    title={`${member.info.firstname + member.info.lastname}`}
-                    onPress={() =>
-                      startRecording(idFirebase, member.connectionIdTokbox)
-                    }
-                  />
-                );
-              }
-            })}
-            <Button
-              title="Hide modal"
-              onPress={() => this.toggleChooseRecordSourceMemberModal()}
-            />
-          </View>
-        </Modal>
-      </View>
+      <Animatable.View
+        animation={videoSourcePopupVisible ? zoomIn : zoomOut}
+        duration={600}>
+        <VideoSourcePopup
+          members={membersArray}
+          selectMember={(member) =>
+            startRecording(idFirebase, member.connectionIdTokbox)
+          }
+        />
+      </Animatable.View>
     );
-  }
+  };
 
   rowButtons() {
     return (
@@ -279,7 +290,7 @@ class StreamPage extends Component {
     return (
       <View>
         {this.rowButtons()}
-        {this.chooseRecordSourceMemberModal()}
+        {this.videoSourcePopup()}
       </View>
     );
   }
@@ -293,7 +304,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.transparentGrey,
     paddingBottom: 20,
   },
-  buttonText: {...styleApp.center},
   whiteButtonRecording: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -340,20 +350,6 @@ const styles = StyleSheet.create({
     ...styleApp.center,
     backgroundColor: colors.red,
   },
-  modal: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    bottom: '50%',
-    width: '90%',
-    height: 300,
-  },
-  modalPlayerButton: {
-    width: '80%',
-    height: 80,
-    backgroundColor: colors.green,
-    borderRadius: 20,
-  },
 });
 
 const mapStateToProps = (state) => {
@@ -364,4 +360,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(StreamPage);
+export default connect(mapStateToProps, {})(BottomButton);
