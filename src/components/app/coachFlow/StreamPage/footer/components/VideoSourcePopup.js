@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {Animated, View, Text, StyleSheet} from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
@@ -21,6 +27,8 @@ export default class VideoSourcePopup extends Component {
 
     return (
       <View style={[styles.square, styleApp.center]}>
+        <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
+        <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
         {members.map((member, i) => {
           if (member.isConnected) {
             const {firstname, lastname, picture} = member.info;
@@ -64,6 +72,9 @@ export default class VideoSourcePopup extends Component {
           }
         })}
         <View style={styles.triangle} />
+        <TouchableWithoutFeedback onPress={() => this.props.close()}>
+          <View style={styles.fullPage} />
+        </TouchableWithoutFeedback>
       </View>
     );
   }
@@ -103,9 +114,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: colors.off,
   },
+  fullPage: {
+    position: 'absolute',
+    width: sizes.width,
+    height: 200000,
+    backgroundColor: 'transparent',
+    zIndex: -1,
+  },
+  text: {
+    marginTop: 10,
+    marginHorizontal: 'auto',
+    textAlign: 'center',
+  },
 });
 
 VideoSourcePopup.propTypes = {
   members: PropTypes.array.isRequired,
   selectMember: PropTypes.func,
+  close: PropTypes.func,
 };

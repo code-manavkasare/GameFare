@@ -265,9 +265,10 @@ class BottomButton extends Component {
         duration={600}>
         <VideoSourcePopup
           members={membersArray}
-          selectMember={(member) =>
-            startRecording(idFirebase, member.connectionIdTokbox)
-          }
+          selectMember={(member) => {
+            startRecording(idFirebase, member.connectionIdTokbox);
+          }}
+          close={() => this.toggleVideoSourcePopup()}
         />
       </Animatable.View>
     );
