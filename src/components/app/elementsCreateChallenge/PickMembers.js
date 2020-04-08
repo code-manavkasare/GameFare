@@ -97,14 +97,14 @@ class NewConversation extends React.Component {
   }
   async selectUser(select, user, selectedUsers) {
     const {route} = this.props;
-    const {selectMultiple} = route.params;
+    const {selectMultiple, onGoBack} = route.params;
     if (!selectMultiple) {
       await this.setState({
         usersSelected: {
           [user.objectID]: {...user, id: user.objectID},
         },
       });
-      return this.props.navigation.state.params.onGoBack(user);
+      return onGoBack(user);
     }
 
     let {usersSelected} = this.state;
@@ -204,7 +204,7 @@ class NewConversation extends React.Component {
     const {usersSelected, loaderButton} = this.state;
 
     const {route} = this.props;
-    const {titleHeader, closeButton, loaderOnSubmit} = route.params;
+    const {titleHeader, closeButton, loaderOnSubmit, onGoBack} = route.params;
 
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
@@ -241,9 +241,7 @@ class NewConversation extends React.Component {
                   click={async () => {
                     if (loaderOnSubmit)
                       await this.setState({loaderButton: true});
-                    await this.props.navigation.state.params.onGoBack(
-                      usersSelected,
-                    );
+                    await onGoBack(usersSelected);
                     return this.setState({loaderButton: false});
                   }}
                 />

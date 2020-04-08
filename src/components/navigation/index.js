@@ -12,6 +12,11 @@ import DateSelector from '../app/elementsEventCreate/DateSelector';
 
 import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
+import AddMembers from '../app/elementsCreateChallenge/PickMembers';
+
+import Alerts from './MainApp/components/Alerts';
+
+import Alert from '../layout/alerts/Alert';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -41,6 +46,23 @@ function InitialStack() {
 
       <Stack.Screen name="Contacts" component={Contacts} />
       <Stack.Screen name="NewConversation" component={NewConversation} />
+
+      <Stack.Screen
+        name="Alert"
+        component={Alert}
+        options={{
+          cardStyle: {backgroundColor: 'transparent'},
+          gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="PickMembers"
+        component={AddMembers}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }

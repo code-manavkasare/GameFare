@@ -1,13 +1,6 @@
 import MapPage from '../app/elementsHome/MapPage';
 import MapFiltersModals from '../app/elementsHome/MapFiltersModal';
 
-import Alert from '../layout/alerts/Alert';
-import AlertAddress from '../layout/alerts/AlertAddress';
-import AlertCall from '../layout/alerts/AlertCall';
-import AlertAddImage from '../layout/alerts/AlertAddImage';
-import AlertAddUsers from '../layout/alerts/AlertAddUsers';
-import AlertYesNo from '../layout/alerts/AlertYesNo';
-
 const StreamNavigator = createStackNavigator(
   {
     LiveStream: lockedPortrait(LiveStream),

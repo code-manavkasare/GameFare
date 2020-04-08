@@ -35,32 +35,34 @@ const ButtonMessage = class MainTabIcon extends React.Component {
       <Button
         view={() => {
           return (
-            <Row>
+            <View>
               {displayPastille && (
                 <View
                   style={[styleApp.roundMessage, {backgroundColor: tintColor}]}
                 />
               )}
-              <Col style={[styleApp.center4, {paddingTop: 15}]}>
-                <AllIcons
-                  name={icon.name}
-                  size={icon.size}
-                  color={tintColor}
-                  style={styleApp.iconFooter}
-                  type={icon.type}
-                />
+              {/* <Col style={[styleApp.center, {backgroundColor: 'red'}]}>
                 <Text style={[styles.textButton, {color: tintColor}]}>
                   {label}
                 </Text>
-              </Col>
-            </Row>
+              </Col> */}
+              <AllIcons
+                name={icon.name}
+                size={icon.size}
+                color={tintColor}
+                //  style={styleApp.iconFooter}
+                type={icon.type}
+              />
+            </View>
           );
         }}
         click={() => {
-          StatusBar.setBarStyle('dark-content', true);
+          if (navigateTo === 'Stream')
+            StatusBar.setBarStyle('light-content', true);
+          else StatusBar.setBarStyle('dark-content', true);
           navigation.navigate(navigateTo);
         }}
-        color={'white'}
+        // color={'red'}
         style={styles.button}
         onPressColor={colors.off}
       />
@@ -80,7 +82,7 @@ class MainTabIcon extends React.Component {
           return (
             <AllIcons
               name={'video-camera'}
-              size={23}
+              size={19}
               color={colors.white}
               type={'moon'}
             />
@@ -89,7 +91,7 @@ class MainTabIcon extends React.Component {
         click={() => {
           // change color status bar
           StatusBar.setBarStyle('light-content', true);
-          navigation.navigate('StartCoaching', {});
+          navigation.navigate('Stream', {});
         }}
         color={colors.primary}
         style={[
@@ -109,13 +111,12 @@ class MainTabIcon extends React.Component {
       focused,
       tintColor,
       routeName,
-      iconName,
+      icon,
       label,
       userConnected,
       signInToPass,
     } = this.props;
     console.log('routeName', routeName);
-    if (routeName === 'StartCoaching') return this.buttonCamera();
 
     return (
       <ButtonMessage
@@ -125,11 +126,7 @@ class MainTabIcon extends React.Component {
         userConnected={userConnected}
         displayPastille={routeName === 'MessageList' && userConnected && true}
         label={label}
-        icon={{
-          name: iconName,
-          type: 'moon',
-          size: 16,
-        }}
+        icon={icon}
         tintColor={tintColor}
       />
     );
@@ -152,9 +149,9 @@ const styles = StyleSheet.create({
   },
   buttonCamera: {
     paddingTop: 0,
-    width: 70,
-    height: 70,
-    marginTop: -35,
+    width: 60,
+    height: 60,
+    marginTop: -0,
     borderRadius: 40,
   },
   textButton: {

@@ -167,11 +167,11 @@ class ListEvent extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={this.listWallet.bind(this)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottomScrollView={sizes.heightFooter}
+          marginBottomScrollView={0}
           refreshControl={true}
           refresh={() => this.refresh()}
           marginTop={sizes.heightHeaderHome}
-          offsetBottom={40}
+          offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />
       </View>

@@ -15,10 +15,10 @@ class Footer extends React.Component {
     this.translateYFooter = new Animated.Value(0);
   }
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.footerIsVisible !== this.props.footerIsVisible) {
-      console.log('translate footer !!!!!!');
-      return this.translateFooter(this.props.footerIsVisible);
-    }
+    // if (prevProps.footerIsVisible !== this.props.footerIsVisible) {
+    //   console.log('translate footer !!!!!!');
+    //   return this.translateFooter(this.props.footerIsVisible);
+    // }
   };
   translateFooter = (open) => {
     return Animated.parallel([
@@ -33,7 +33,7 @@ class Footer extends React.Component {
           styles.footer,
           {transform: [{translateY: this.translateYFooter}]},
         ]}>
-        <Row>
+        <Row style={{overflow: 'hidden'}}>
           {state.routes.map((route, index) => {
             const {options} = descriptors[route.key];
             const {icon, label, signInToPass} = options;
@@ -46,7 +46,7 @@ class Footer extends React.Component {
                   tintColor={isFocused ? colors.active : colors.inactive}
                   routeName={route.name}
                   signInToPass={signInToPass}
-                  iconName={icon.name}
+                  icon={icon}
                   label={label}
                 />
               </Col>
@@ -64,20 +64,25 @@ class Footer extends React.Component {
 
 const styles = StyleSheet.create({
   footer: {
+    ...styleApp.shade,
     flexDirection: 'row',
     backgroundColor: 'white',
     height: heightFooter,
     position: 'absolute',
-    bottom: 0,
-    width: width,
-    borderTopWidth: 0.4,
-    borderColor: colors.grey,
+    bottom: 30,
+    zIndex: 0,
+    width: width - 100,
+    marginLeft: 50,
+    borderWidth: 1,
+    borderRadius: 35,
+    // overflow: 'hidden',
+    borderColor: colors.off,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
-    footerIsVisible: state.user.layoutSettings.footerIsVisible,
+    // footerIsVisible: state.user.layoutSettings.footerIsVisible,
   };
 };
 

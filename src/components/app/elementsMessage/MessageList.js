@@ -207,14 +207,14 @@ class MessageTab extends React.Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
           keyboardAvoidDisable={true}
-          marginBottomScrollView={sizes.heightFooter}
+          marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}
           refresh={() => this.loadDiscussions()}
-          offsetBottom={10}
+          offsetBottom={sizes.heightFooter + 30}
           showsVerticalScrollIndicator={true}
         />
       </View>

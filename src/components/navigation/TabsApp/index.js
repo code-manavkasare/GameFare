@@ -4,11 +4,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Footer from './footer/index';
 
-import Activity from '../../app/elementsActivity/Activity';
-import HomePage from '../../app/HomePage';
 import MessageList from '../../app/elementsMessage/MessageList';
-import StreamPage from '../../app/coachFlow/StreamPage/index';
-import MorePage from '../../app/MorePage';
+import Stream from './components/Stream';
 import Profile from './components/Profile';
 
 import colors from '../../style/colors';
@@ -18,7 +15,7 @@ const Tab = createBottomTabNavigator();
 function TabsApp() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Profile"
       keyboardHidesTabBar={false}
       tabBar={(props) => (
         <Footer
@@ -27,38 +24,28 @@ function TabsApp() {
         />
       )}>
       <Tab.Screen
-        name="Home"
-        component={HomePage}
+        name="Profile"
+        component={Profile}
         options={{
-          label: 'Home',
+          label: 'Profile',
           signInToPass: false,
           icon: {
-            name: 'searchFooter',
+            name: 'profileFooter',
             type: 'moon',
+            size: 23,
           },
         }}
       />
       <Tab.Screen
-        name="Activity"
-        component={Activity}
-        options={{
-          label: 'Activity',
-          signInToPass: false,
-          icon: {
-            name: 'calendar2',
-            type: 'moon',
-          },
-        }}
-      />
-      <Tab.Screen
-        name="StartCoaching"
-        component={StreamPage}
+        name="Stream"
+        component={Stream}
         options={{
           label: 'Stream',
           signInToPass: false,
           icon: {
-            name: 'calendar2',
+            name: 'video-camera',
             type: 'moon',
+            size: 23,
           },
         }}
       />
@@ -71,18 +58,7 @@ function TabsApp() {
           icon: {
             name: 'speech',
             type: 'moon',
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          label: 'Profile',
-          signInToPass: true,
-          icon: {
-            name: 'profileFooter',
-            type: 'moon',
+            size: 23,
           },
         }}
       />

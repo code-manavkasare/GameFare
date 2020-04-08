@@ -16,7 +16,7 @@ const persistConfig = {
     'events',
     'message',
     'createChallengeData',
-    'coach',
+    //'coach',
     'globaleVariables',
   ],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.

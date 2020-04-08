@@ -16,6 +16,7 @@ import Communications from 'react-native-communications';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
+import NavigationService from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
@@ -137,7 +138,7 @@ class MorePage extends Component {
     } else if (type === 'email') {
       this.sendEmail();
     } else if (type === 'logout') {
-      this.props.navigation.navigate('Alert', {
+      NavigationService.navigate('Alert', {
         textButton: 'Logout',
         title: 'Do you want to log out?' + '\n',
         colorButton: 'red',
@@ -251,7 +252,9 @@ class MorePage extends Component {
                 'BlockedUsersList',
               )}
             </View>
-          ) : null}
+          ) : (
+            this.button('sign', 'Sign In', 'SignIn')
+          )}
         </View>
 
         <View style={[styleApp.marginView, {marginTop: 30}]}>
@@ -310,7 +313,7 @@ class MorePage extends Component {
   }
   async confirmLogout() {
     await this.props.userAction('logout', {userID: this.props.userID});
-    this.props.navigation.navigate('Home');
+    this.props.navigation.navigate('Profile');
   }
   rowCheck(text) {
     return (
@@ -337,28 +340,11 @@ class MorePage extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
-          marginBottomScrollView={sizes.heightFooter}
+          marginBottomScrollView={0}
           marginTop={sizes.marginTopApp + 30}
-          offsetBottom={90}
+          offsetBottom={sizes.heightFooter + 90}
           showsVerticalScrollIndicator={true}
         />
-
-        {!this.props.userConnected ? (
-          <View
-            style={[
-              styleApp.footerBooking,
-              {bottom: 0, height: 90, paddingLeft: 20, paddingRight: 20},
-            ]}>
-            <Button
-              text="Sign in"
-              click={() =>
-                this.props.navigation.navigate('Phone', {pageFrom: 'Profile'})
-              }
-              backgroundColor={'green'}
-              onPressColor={colors.greenClick}
-            />
-          </View>
-        ) : null}
       </View>
     );
   }

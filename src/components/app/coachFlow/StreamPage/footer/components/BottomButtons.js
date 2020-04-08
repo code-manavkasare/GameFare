@@ -245,10 +245,11 @@ class StreamPage extends Component {
           style={[styles.modal, styleApp.center]}>
           <View style={[styleApp.center]}>
             <Text style={styleApp.text}>Choose Source</Text>
-            {membersArray.map((member) => {
+            {membersArray.map((member, i) => {
               if (member.isConnected) {
                 return (
                   <Button
+                    key={i}
                     color={colors.green}
                     title={`${member.info.firstname + member.info.lastname}`}
                     onPress={() =>

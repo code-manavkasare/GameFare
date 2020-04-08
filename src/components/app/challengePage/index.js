@@ -55,6 +55,7 @@ import PlaceHolder from '../../placeHolders/EventPage';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import {stylesMapPage} from '../elementsHome/MapPage';
 
 const noEdit = {
   editMode: false,
@@ -658,7 +659,7 @@ class ChallengePage extends React.Component {
     const {userID, infoUser, userConnected} = this.props;
     const {navigate} = this.props.navigation;
     return (
-      <View style={{flex: 1}}>
+      <View style={styleApp.stylePage}>
         {this.header(event)}
         <ParallaxScrollView
           style={styles.paralaxView}

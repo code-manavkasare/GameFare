@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     width: width,
     position: 'absolute',
     backgroundColor: colors.title,
-    opacity: 0.8,
+    opacity: 1,
     zIndex: 7,
   },
 });
