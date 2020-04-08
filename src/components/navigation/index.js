@@ -45,7 +45,13 @@ function InitialStack() {
       <Stack.Screen name="Date" component={DateSelector} />
 
       <Stack.Screen name="Contacts" component={Contacts} />
-      <Stack.Screen name="NewConversation" component={NewConversation} />
+      <Stack.Screen
+        name="NewConversation"
+        component={NewConversation}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
 
       <Stack.Screen
         name="Alert"

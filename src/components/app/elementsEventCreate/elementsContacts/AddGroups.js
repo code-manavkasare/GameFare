@@ -241,7 +241,7 @@ class AddGroups extends Component {
         },
       };
     });
-    return NavigationService.navigate('AlertAddUsers', {
+    return NavigationService.navigate('Alert', {
       close: true,
       title: 'Congrats, you have added group(s) to ' + nameEvent + '.',
       users: groupsAlert,

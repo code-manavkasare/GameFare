@@ -25,7 +25,7 @@ export default class NewSessionView extends Component {
       layoutAction,
       setState,
     } = this.props;
-    // if (currentSessionID === '') return null;
+    if (currentSessionID === '') return null;
     return (
       <Button
         backgroundColor="green"

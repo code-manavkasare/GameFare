@@ -1113,10 +1113,13 @@ class EventPage extends React.Component {
       return this.props.navigation.navigate('SignIn');
     }
     return this.props.navigation.navigate('Contacts', {
-      objectID: event.objectID,
-      image: event.images[0],
-      action: 'Event',
-      data: {...event, eventID: event.objectID},
+      screen: 'Contacts',
+      params: {
+        objectID: event.objectID,
+        image: event.images[0],
+        action: 'Event',
+        data: {...event, eventID: event.objectID},
+      },
     });
   };
   checkout(event) {

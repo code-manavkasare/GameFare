@@ -2,7 +2,6 @@ import * as React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import StreamPage from '../../../app/coachFlow/StreamPage/index';
-import AddMembers from '../../../app/elementsCreateChallenge/PickMembers';
 
 const Stack = createStackNavigator();
 const Stream = () => {

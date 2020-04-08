@@ -4,11 +4,14 @@ import {
   RESET_USER_MESSAGES,
   SET_LAYOUT_SETTINGS,
   HIDE_FOOTER_APP,
+  RESET_COACH_DATA,
 } from './types';
 
 import firebase from 'react-native-firebase';
 import Mixpanel from 'react-native-mixpanel';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
+
+import {resetDataCoachSession} from './coachActions';
 
 import {subscribeToTopics} from '../components/functions/notifications';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
@@ -34,6 +37,10 @@ const setLayoutSettings = (value) => ({
 const hideFooterApp = () => ({
   type: HIDE_FOOTER_APP,
 });
+
+// const resetDataCoachSession = () => ({
+//   type: RESET_COACH_DATA,
+// });
 
 var infoUserToPushSaved = '';
 
@@ -87,6 +94,7 @@ export const userAction = (val, data) => {
         .off('value');
       await dispatch(resetUserInfo());
       await dispatch(resetMessages());
+      await dispatch(resetDataCoachSession());
       return true;
     } else if (val === 'setLayoutSettings') {
       console.log('setLayoutSettings');

@@ -78,12 +78,19 @@ class StreamPage extends Component {
             connectionIdTokbox: event.streamId,
           });
       },
+      streamDestroyed: async (event) => {
+        const {userID, currentSessionID} = this.props;
+        await firebase
+          .database()
+          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
+          .update({
+            isConnected: false,
+          });
+      },
     };
     this.sessionEventHandlers = {
       sessionDisconnected: async (event) => {
         const {userID, currentSessionID} = this.props;
-        console.log('session is disconnected', currentSessionID);
-        console.log('userID', userID);
         await firebase
           .database()
           .ref(`coachSessions/${currentSessionID}/members/${userID}`)
@@ -96,10 +103,6 @@ class StreamPage extends Component {
         });
       },
       sessionConnected: async (event) => {
-        const {userID, currentSessionID} = this.props;
-        console.log('session connected !! prout1', event);
-        console.log('currentSessionID', currentSessionID);
-
         this.setState({
           isConnected: true,
         });
@@ -204,7 +207,7 @@ class StreamPage extends Component {
     this.setState({coachSession: false});
   }
 
-  loaderView(text) {
+  loaderView(text, hideLoader) {
     return (
       <FadeInView
         duration={250}
@@ -212,7 +215,7 @@ class StreamPage extends Component {
         <Text style={[styleApp.text, {color: colors.white, marginBottom: 25}]}>
           {text}
         </Text>
-        <Loader size={34} color={'white'} />
+        {!hideLoader && <Loader size={34} color={'white'} />}
       </FadeInView>
     );
   }
@@ -246,14 +249,7 @@ class StreamPage extends Component {
     if (!sessionID) return this.loaderView('Creating the room...');
 
     const member = userPartOfSession(coachSession, userID);
-    if (!member)
-      return (
-        <View style={[styleApp.center, {height: 300, width: width}]}>
-          <Text style={[styleApp.text, {color: colors.white}]}>
-            You are not a member of this conversation
-          </Text>
-        </View>
-      );
+    console.log('member session', member);
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
@@ -288,9 +284,13 @@ class StreamPage extends Component {
 
         {loader && this.loaderView(' ')}
 
-        {!isConnected &&
-          this.loaderView('We are connecting you to the session...')}
+        {!member
+          ? this.loaderView('You are not a member of this conversation', true)
+          : !isConnected
+          ? this.loaderView('We are connecting you to the session...')
+          : null}
 
+        {}
         <OTSession
           apiKey={Config.OPENTOK_API}
           ref={this.otSessionRef}
@@ -307,13 +307,12 @@ class StreamPage extends Component {
             }}
             eventHandlers={this.publisherEventHandlers}
           />
-
           <OTSubscriber style={styles.OTSubscriber}>
             {this.renderSubscribers}
           </OTSubscriber>
-        </OTSession>
 
-        <MembersView session={coachSession} />
+          <MembersView session={coachSession} />
+        </OTSession>
       </View>
     );
   }

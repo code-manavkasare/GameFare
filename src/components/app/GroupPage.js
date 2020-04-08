@@ -405,10 +405,13 @@ class GroupPage extends React.Component {
       return this.props.navigation.navigate('SignIn');
     }
     this.props.navigation.navigate('Contacts', {
-      objectID: data.objectID,
-      image: data.pictures[0],
-      action: 'Group',
-      data: {...data, eventID: data.objectID},
+      screen: 'Contacts',
+      params: {
+        objectID: data.objectID,
+        image: data.pictures[0],
+        action: 'Group',
+        data: {...data, eventID: data.objectID},
+      },
     });
   };
 

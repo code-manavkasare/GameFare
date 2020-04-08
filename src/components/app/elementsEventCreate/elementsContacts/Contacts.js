@@ -357,6 +357,7 @@ class Contacts extends Component {
   }
 
   async sendSMS() {
+    const {navigation} = this.props;
     const contacts = this.state.contactsSelected;
     const {url, description} = await this.createBranchMessage();
 
@@ -367,7 +368,8 @@ class Contacts extends Component {
       phoneNumbers,
       description + ' ' + url,
     );
-    if (smsSent.completed) return this.props.navigation.dismiss();
+
+    if (smsSent.completed) return navigation.dangerouslyGetParent().pop();
     return true;
   }
   translateXView = (value, userConnected) => {
@@ -378,9 +380,8 @@ class Contacts extends Component {
 
   render() {
     const {navigation, userConnected} = this.props;
-    const {dismiss} = navigation;
     const {route} = this.props;
-    const {objectID,pageFrom,data,action} = route.params;
+    const {objectID, pageFrom, data, action} = route.params;
 
     const {
       fadeInDuration,
@@ -401,8 +402,8 @@ class Contacts extends Component {
           initialTitleOpacity={1}
           icon1={'times'}
           text2="Skip"
-          clickButton2={() => dismiss()}
-          clickButton1={() => dismiss()}
+          // clickButton2={() => dismiss()}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
 
         <View

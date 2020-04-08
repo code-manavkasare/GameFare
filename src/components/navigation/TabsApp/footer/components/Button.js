@@ -115,16 +115,25 @@ class MainTabIcon extends React.Component {
       label,
       userConnected,
       signInToPass,
+      userID,
+      discussions,
     } = this.props;
-    console.log('routeName', routeName);
-
+    const displayPastille =
+      Object.values(discussions).filter((discussion) => {
+        let usersRead = discussion.lastMessage.usersRead;
+        if (!usersRead) usersRead = [];
+        if (!usersRead[userID]) return true;
+        return false;
+      }).length !== 0;
     return (
       <ButtonMessage
         navigation={navigation}
         navigateTo={routeName}
         signInToPass={signInToPass}
         userConnected={userConnected}
-        displayPastille={routeName === 'MessageList' && userConnected && true}
+        displayPastille={
+          routeName === 'MessageList' && userConnected && displayPastille
+        }
         label={label}
         icon={icon}
         tintColor={tintColor}
@@ -168,6 +177,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userConnected: state.user.userConnected,
+    discussions: state.message.conversations,
+    userID: state.user.userID,
   };
 };
 

@@ -633,10 +633,13 @@ class ChallengePage extends React.Component {
     }
 
     return this.props.navigation.navigate('Contacts', {
-      objectID: event.objectID,
-      image: event.images[0],
-      action: 'Challenge',
-      data: {...event, objectID: event.objectID},
+      screen: 'Contacts',
+      params: {
+        objectID: event.objectID,
+        image: event.images[0],
+        action: 'Challenge',
+        data: {...event, objectID: event.objectID},
+      },
     });
   };
   bottomActionButton(title, click, color) {
