@@ -74,7 +74,7 @@ class EditProfilePage extends Component {
         picture: newProfilePictureUrl ? newProfilePictureUrl : pictureUrl,
       });
     this.setState({loader: false});
-    this.props.navigation.navigate('More');
+    this.props.navigation.goBack();
   }
 
   async addPicture(val) {
@@ -150,16 +150,27 @@ class EditProfilePage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          // AnimatedHeaderValue={this.AnimatedHeaderValue}
+          // textHeader={'Edit Profile'}
+          // inputRange={[5, 10]}
+          // loader={loaderPhoto}
+          // initialBorderColorIcon={'white'}
+          // initialBackgroundColor={'white'}
+          // initialBorderColorHeader={colors.grey}
+          // initialTitleOpacity={1}
+          // icon1={'arrow-left'}
+          // clickButton1={() => navigation.goBack()}
+
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Edit Profile'}
           inputRange={[5, 10]}
-          loader={loaderPhoto}
-          initialBorderColorIcon={'white'}
+          initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
-          initialBorderColorHeader={colors.grey}
-          initialTitleOpacity={1}
           icon1={'arrow-left'}
-          clickButton1={() => navigation.dangerouslyGetParent().pop()}
+          initialBorderColorHeader={colors.off}
+          initialTitleOpacity={1}
+          initialBorderWidth={1}
+          clickButton1={() => navigation.goBack()}
         />
 
         <ScrollView
@@ -168,7 +179,7 @@ class EditProfilePage extends Component {
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           showsVerticalScrollIndicator={true}>
-          <Row style={{paddingLeft: 20, paddingRight: 20}}>
+          <Row style={{paddingLeft: 20, paddingRight: 20, marginTop: 20}}>
             <Col size={20} style={styleApp.center2}>
               {this.buttonPicture(pictureUrl, pictureUri, loaderPhoto)}
             </Col>
@@ -211,7 +222,12 @@ class EditProfilePage extends Component {
           </Row>
         </ScrollView>
 
-        <View style={[styleApp.footerBooking, styleApp.marginView]}>
+        <View
+          style={[
+            styleApp.footerBooking,
+            styleApp.marginView,
+            {bottom: sizes.heightFooter + 20},
+          ]}>
           <Button
             text="Update Profile"
             backgroundColor={'green'}
