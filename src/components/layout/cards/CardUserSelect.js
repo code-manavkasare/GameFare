@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-
 import {Col, Row} from 'react-native-easy-grid';
+import PropTypes from 'prop-types';
+
 import ButtonColor from '../Views/Button';
 import colors from '../../style/colors';
 import AllIcons from '../../layout/icons/AllIcons';
@@ -95,3 +96,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.off,
   },
 });
+
+CardUserSelect.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.string,
+    info: PropTypes.object,
+  }).isRequired,
+  usersSelected: PropTypes.object,
+  selectUser: PropTypes.func,
+  hideIcon: PropTypes.bool,
+};
