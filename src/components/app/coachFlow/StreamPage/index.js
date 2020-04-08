@@ -20,6 +20,7 @@ import {timing} from '../../../animations/animations';
 
 import {coachAction} from '../../../../actions/coachActions';
 import {userAction} from '../../../../actions/userActions';
+import {layoutAction} from '../../../../actions/layoutActions';
 import {
   isUserAlone,
   createCoachSession,
@@ -146,7 +147,7 @@ class StreamPage extends Component {
 
     if (route.params) objectID = route.params.objectID;
 
-    objectID = 'vbavi4hs44k8qx315d';
+    //  objectID = 'vbavi4hs44k8qx315d';
 
     if (!userConnected)
       return this.setState({
@@ -238,7 +239,7 @@ class StreamPage extends Component {
   };
   streamPage() {
     const {coachSession, isConnected, publishAudio, loader} = this.state;
-    const {userID, userConnected} = this.props;
+    const {userID, userConnected, layoutAction} = this.props;
 
     const {sessionID} = coachSession.tokbox;
     if (!userConnected) return null;
@@ -275,10 +276,9 @@ class StreamPage extends Component {
           icon2={isUserAdmin(coachSession, userID) && 'person-add'}
           initialTitleOpacity={1}
           clickButton1={async () => {
-            const {userAction} = this.props;
+            const {layoutAction} = this.props;
             this.setState({displayHomeView: true});
-            // this.endCoachSession();
-            //await userAction('hideFooterApp');
+            await layoutAction('setLayout', {isFooterVisible: true});
           }}
           clickButton2={() => this.AddMembers(coachSession.objectID)}
           sizeIcon2={27}
@@ -322,14 +322,14 @@ class StreamPage extends Component {
     const {
       currentSessionID,
       userConnected,
-      userAction,
+      layoutAction,
       navigation,
     } = this.props;
     return (
       <NewSessionView
         currentSessionID={!currentSessionID ? '' : currentSessionID}
         userConnected={userConnected}
-        userAction={userAction}
+        layoutAction={layoutAction}
         error={error}
         navigation={navigation}
         loadCoachSession={this.loadCoachSession.bind(this)}
@@ -467,4 +467,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction, userAction})(StreamPage);
+export default connect(mapStateToProps, {
+  coachAction,
+  userAction,
+  layoutAction,
+})(StreamPage);

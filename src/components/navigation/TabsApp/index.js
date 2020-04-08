@@ -3,6 +3,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Footer from './footer/index';
+import {footerRef} from '../../../../NavigationService';
 
 import MessageList from '../../app/elementsMessage/MessageList';
 import Stream from './components/Stream';
@@ -13,12 +14,14 @@ import colors from '../../style/colors';
 const Tab = createBottomTabNavigator();
 
 function TabsApp() {
+  console.log('tabs app');
   return (
     <Tab.Navigator
       initialRouteName="Profile"
       keyboardHidesTabBar={false}
       tabBar={(props) => (
         <Footer
+          ref={footerRef}
           {...props}
           colors={{active: colors.primary, inactive: colors.greyDark}}
         />

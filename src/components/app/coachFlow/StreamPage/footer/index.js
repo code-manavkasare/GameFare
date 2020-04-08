@@ -67,7 +67,7 @@ class Footer extends Component {
 
 const styles = StyleSheet.create({
   footer: {
-    bottom: heightFooter + marginBottomApp,
+    bottom: 0,
     width: width,
     position: 'absolute',
     flex: 1,

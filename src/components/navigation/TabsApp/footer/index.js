@@ -14,11 +14,15 @@ class Footer extends React.Component {
     super(props);
     this.translateYFooter = new Animated.Value(0);
   }
+  componentDidMount() {
+    // this.props.ref(this);
+  }
   componentDidUpdate = (prevProps, prevState) => {
-    // if (prevProps.footerIsVisible !== this.props.footerIsVisible) {
-    //   console.log('translate footer !!!!!!');
-    //   return this.translateFooter(this.props.footerIsVisible);
-    // }
+    console.log('footer is udpated');
+    if (prevProps.isFooterVisible !== this.props.isFooterVisible) {
+      console.log('translate footer !!!!!!');
+      return this.translateFooter(this.props.isFooterVisible);
+    }
   };
   translateFooter = (open) => {
     return Animated.parallel([
@@ -82,7 +86,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    // footerIsVisible: state.user.layoutSettings.footerIsVisible,
+    isFooterVisible: state.layout.isFooterVisible,
   };
 };
 

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {CommonActions, StackActions} from '@react-navigation/native';
 
 const navigationRef = React.createRef();
+const footerRef = React.createRef();
 
 const navigate = (routeName, params) => {
   navigationRef.current?.navigate(routeName, params);
@@ -39,4 +40,5 @@ module.exports = {
   dismiss,
   goBack,
   navigationRef,
+  footerRef,
 };
