@@ -3,8 +3,8 @@ const {height, width} = Dimensions.get('screen');
 
 var marginTopHeader = 7;
 var heightPicture = 280;
-var heightFooterBooking = 155;
-var heightFooter = 135;
+var heightFooterBooking = 80;
+var heightFooter = 70;
 var marginTopApp = 10;
 var heightHeaderHome = 70;
 var heightHeaderFilter = 100;
@@ -13,15 +13,19 @@ var height0 = 50;
 
 let initialHeightControlBar = 110;
 let offsetFooterStreaming = 30;
+
+let marginBottomApp = 50;
+
 console.log('height screeen,', height);
 if (Platform.OS === 'ios') {
   height0 = 0;
   marginTopHeader = 24;
   heightPicture = 240;
   heightHeaderHome = 70;
+  marginBottomApp = 0;
   heightHeaderFilter = 100;
   heightFooterBooking = 82;
-  heightFooter = 60;
+  heightFooter = 70;
   marginTopApp = 20;
   heightHeaderHomeSearch = 130;
   initialHeightControlBar = 80;
@@ -33,8 +37,9 @@ if (Platform.OS === 'ios') {
     heightHeaderHome = 100;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 93;
+    heightFooter = 70;
     marginTopApp = 35;
+    marginBottomApp = 30;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 30;
@@ -44,13 +49,14 @@ if (Platform.OS === 'ios') {
     heightHeaderHome = 100;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 91;
+    heightFooter = 70;
     marginTopApp = 35;
+    marginBottomApp = 35;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;
   } else if (height === 667) {
-    heightFooterBooking = 85;
+    heightFooterBooking = 60;
     heightHeaderHome = 70;
     heightHeaderFilter = 100;
     heightHeaderHomeSearch = 130;
@@ -66,26 +72,6 @@ if (Platform.OS === 'ios') {
   }
 }
 
-console.log('initialHeightControlBar', initialHeightControlBar);
-
-var sizes = {
-  heightFooterBooking: heightFooterBooking,
-  heightFooter: heightFooter,
-  marginTopApp: marginTopApp,
-  marginTopHeader: marginTopHeader,
-  heightPicture: heightPicture,
-  height0: height0,
-  heightHeaderHome: heightHeaderHome,
-  heightHeaderFilter: heightHeaderFilter,
-  heightHeaderHomeSearch: heightHeaderHomeSearch,
-  height: height,
-  width: width,
-  initialHeightControlBar: initialHeightControlBar,
-  offsetFooterStreaming: offsetFooterStreaming,
-};
-
-// export default sizes;
-
 module.exports = {
   heightFooterBooking: heightFooterBooking,
   heightFooter: heightFooter,
@@ -98,6 +84,7 @@ module.exports = {
   heightHeaderHomeSearch: heightHeaderHomeSearch,
   height: height,
   width: width,
+  marginBottomApp: marginBottomApp,
   initialHeightControlBar: initialHeightControlBar,
   offsetFooterStreaming: offsetFooterStreaming,
 };

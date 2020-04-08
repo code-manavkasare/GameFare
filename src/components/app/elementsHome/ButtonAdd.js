@@ -17,6 +17,7 @@ import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import styleApp from '../../style/style';
+import {heightFooter} from '../../style/sizes';
 import {timing, native} from '../../animations/animations';
 
 var {height, width} = Dimensions.get('screen');
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     width: 55,
     position: 'absolute',
     zIndex: 40,
-    bottom: 20,
+    bottom: heightFooter + 20,
     right: 20,
   },
   buttonRound: {

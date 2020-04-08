@@ -93,11 +93,11 @@ class AddUsers extends Component {
     const {url, description} = await this.props.createBranchMessage();
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
     var that = this;
-    setTimeout(async function() {
+    setTimeout(async function () {
       await that.props.messageAction('setConversation', discussion);
       await that.setState({loaderButton: false});
       await that.userListRef.reset();
-      NavigationService.navigate('AlertAddUsers', {
+      NavigationService.navigate('Alert', {
         close: true,
         title: 'Congrats, you have invited new players to ' + nameEvent,
         users: selectedUsersWithId,
@@ -124,7 +124,6 @@ class AddUsers extends Component {
 
     return (
       <View style={styles.mainView}>
-
         <SearchBarContact
           placeHolderMessage={'Search for GameFare users...'}
           updateSearch={this.searchGameFareUsers}

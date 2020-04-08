@@ -26,12 +26,12 @@ const setCoachSessionDrawSettings = (value) => ({
   settingsDraw: value,
 });
 
-const reset = () => ({
+export const resetDataCoachSession = () => ({
   type: RESET_COACH_DATA,
 });
 
 export const coachAction = (val, data) => {
-  return async function(dispatch) {
+  return async function (dispatch) {
     if (val === 'setCoachSession') {
       await dispatch(setCoachSession(data));
     } else if (val === 'setCoachSessionSettings') {
@@ -41,7 +41,7 @@ export const coachAction = (val, data) => {
     } else if (val === 'setCurrentCoachSessionID') {
       await dispatch(setCurrentCoachSessionID(data));
     } else if (val === 'reset') {
-      await dispatch(reset());
+      await dispatch(resetDataCoachSession());
     }
     return true;
   };

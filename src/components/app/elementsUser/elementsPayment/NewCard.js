@@ -114,7 +114,7 @@ class ListEvent extends Component {
       promiseAddCreditCard = promiseAddCreditCard.data;
       if (promiseAddCreditCard.response) {
         Keyboard.dismiss();
-        this.props.navigation.dismiss();
+        this.props.navigation.dangerouslyGetParent().pop()
       } else {
         if (promiseAddCreditCard.message) {
           this.wrongCB(promiseAddCreditCard.message);

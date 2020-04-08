@@ -1,52 +1,44 @@
-import {NavigationActions, StackActions} from 'react-navigation';
+import * as React from 'react';
+import {CommonActions, StackActions} from '@react-navigation/native';
 
-let _navigator;
+const navigationRef = React.createRef();
+const footerRef = React.createRef();
 
-function setTopLevelNavigator(navigatorRef) {
-  _navigator = navigatorRef;
-}
+const navigate = (routeName, params) => {
+  navigationRef.current?.navigate(routeName, params);
+};
 
-function navigate(routeName, params) {
-  _navigator.dispatch(
-    NavigationActions.navigate({
-      routeName,
-      params,
-    }),
+const push = (routeName, params) => {
+  console.log('push!', params);
+  navigationRef.current?.dispatch(
+    StackActions.push(routeName, {screen: routeName, params: params}),
   );
-}
+};
 
-function push(routeName, params) {
-  _navigator.dispatch(
-    StackActions.push({
-      routeName,
-      params,
-    }),
-  );
-}
-
-function pop(number) {
-  _navigator.dispatch(
+const pop = (number) => {
+  navigationRef().dispatch(
     StackActions.pop({
       n: number,
     }),
   );
-}
+};
 
-function goBack() {
-  _navigator.dispatch(NavigationActions.back());
-}
+const goBack = () => {
+  navigationRef.dispatch(CommonActions.back());
+};
 
-function dismiss() {
-  _navigator.dispatch(NavigationActions.dismiss());
-}
+const dismiss = () => {
+  navigationRef.dangerouslyGetParent().pop();
+};
 
 // add other navigation functions that you need and export them
 
-export default {
+module.exports = {
   navigate,
   push,
-  setTopLevelNavigator,
   pop,
   dismiss,
   goBack,
+  navigationRef,
+  footerRef,
 };

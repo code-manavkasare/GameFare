@@ -10,8 +10,6 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {indexDiscussions, client} from '../../database/algolia';
-import firebase from 'react-native-firebase';
 import FadeInView from 'react-native-fade-in-view';
 import isEqual from 'lodash.isequal';
 const {height, width} = Dimensions.get('screen');
@@ -21,18 +19,19 @@ import {historicSearchAction} from '../../../actions/historicSearchActions';
 import HeaderHome from '../../layout/headers/HeaderHome';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
+import {
+  heightFooter,
+  heightHeaderFilter,
+  heightHeaderHome,
+} from '../../../components/style/sizes';
 import MyGroups from './MyGroups';
-import GroupsAround from './GroupsAround';
+
 import MyEvents from '../elementsHome/MyEvents';
 import Switch from '../../layout/switch/Switch';
 
-import ScrollView2 from '../../layout/scrollViews/ScrollView';
-
-import StatusBar from '@react-native-community/status-bar';
+import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import ButtonAdd from '../../app/elementsHome/ButtonAdd';
 import Button from '../../layout/buttons/Button';
-
-import sizes from '../../style/sizes';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -45,38 +44,6 @@ class HomeScreen extends React.Component {
     this.translateXVoile = new Animated.Value(width);
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.opacityVoile = new Animated.Value(0.3);
-  }
-  async componentDidMount() {
-    StatusBar.setHidden(false, 'slide');
-    StatusBar.setBarStyle('dark-content', true);
-    // await client.clearCache();
-    // let discussions = await firebase
-    //   .database()
-    //   .ref('discussions')
-    //   .once('value');
-    // discussions = discussions.val();
-
-    // for (var i in discussions) {
-    //   const discussion = discussions[i];
-    //   try {
-    //     const discussionAlgolia = await indexDiscussions.getObject(i);
-    //     if (!discussion.members) {
-    //     } else if (
-    //       Object.values(discussion.members).length !==
-    //       Object.values(discussionAlgolia.members).length
-    //     ) {
-    //       console.log('la discussion different', discussion);
-    //       console.log(i);
-    //       console.log(
-    //         Object.values(discussion.members).length,
-    //         Object.values(discussionAlgolia.members).length,
-    //       );
-    //     }
-    //   } catch (err) {
-    //     console.log('eeeeorrrr', i);
-    //   }
-    // }
-    // console.log('done with convo!');
   }
   navigate(val, data) {
     this.props.navigation.push(val, data);
@@ -93,7 +60,7 @@ class HomeScreen extends React.Component {
   async changeSport(val) {
     await this.setState({loader: true, filterSports: val});
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.setState({loader: false});
     }, 400);
   }
@@ -205,7 +172,7 @@ class HomeScreen extends React.Component {
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             textHeader={'Organize your event'}
             hideButton2={true}
-            inputRange={[0, sizes.heightHeaderHome + 0]}
+            inputRange={[0, heightHeaderHome + 0]}
             initialBorderColorIcon={colors.off}
             initialBackgroundColor={'white'}
             initialTitleOpacity={1}
@@ -228,10 +195,9 @@ class HomeScreen extends React.Component {
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.ActivityTab(userConnected)}
-          marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderFilter - 30}
+          marginBottomScrollView={heightFooter}
+          marginTop={heightHeaderFilter - 30}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottom={0}
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}
@@ -264,24 +230,6 @@ class HomeScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  button: {
-    height: 40,
-    width: 120,
-    backgroundColor: 'blue',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  voile: {
-    position: 'absolute',
-    height: height,
-    backgroundColor: colors.title,
-    width: width,
-    opacity: 0.4,
-    // zIndex:220,
-  },
-});
 
 const mapStateToProps = (state) => {
   return {

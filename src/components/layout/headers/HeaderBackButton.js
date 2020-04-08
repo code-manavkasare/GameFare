@@ -114,6 +114,7 @@ export default class HeaderFlow extends Component {
       colorIcon1,
       nobackgroundColorIcon1,
       sizeIcon1,
+      typeIcon1,
       backgroundColorIcon1,
       backgroundColorIcon2,
       colorIcon2,
@@ -157,7 +158,7 @@ export default class HeaderFlow extends Component {
                         name={this.props.icon1}
                         color={colorIcon1 ? colorIcon1 : colors.title}
                         size={sizeIcon1 ? sizeIcon1 : 15}
-                        type="font"
+                        type={typeIcon1 ? typeIcon1 : 'font'}
                       />
                     );
                   }}

@@ -11,10 +11,6 @@ import {
   View,
 } from 'react-native';
 import {connect} from 'react-redux';
-// import {updateStepLogin} from '../../../actions/loginActions'
-// import {initApp} from '../../../actions/initAppActions'
-import Flag from 'react-native-flags';
-import NavigationService from '../../../../NavigationService';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -31,10 +27,9 @@ import {
   isValidNumberCheck,
   placeholder,
 } from '../../functions/phoneNumber';
+import {timeout} from '../../functions/coach';
 
 const ListCountry = require('../elementsFlags/country.json');
-
-const {height, width} = Dimensions.get('screen');
 
 class PhoneFields extends Component {
   constructor(props) {
@@ -48,7 +43,7 @@ class PhoneFields extends Component {
   }
   componentDidMount() {
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.firstTextInput.focus();
     }, 550);
   }
@@ -62,7 +57,6 @@ class PhoneFields extends Component {
     return false;
   }
   async next(phone) {
-    // this.firstTextInput.blur()
     this.setState({loader: true});
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
     var phoneNumber = phone;
@@ -70,7 +64,6 @@ class PhoneFields extends Component {
     phoneNumber = phoneNumber.replace(')', '');
     phoneNumber = phoneNumber.replace('(', '');
     phoneNumber = phoneNumber.replace(/ /g, '');
-    // var giftAmount = Number(this.props.giftAmount)
 
     const promiseAxios = await axios.get(url, {
       params: {
@@ -87,7 +80,6 @@ class PhoneFields extends Component {
           phoneNumber: phone,
           country: this.props.country,
         },
-        pageFrom: this.props.pageFrom,
       });
     } else {
       this.setState({error: true, loader: false});
@@ -106,14 +98,12 @@ class PhoneFields extends Component {
     });
   }
   inputPhone() {
+    const {code, callingCode} = this.props.country;
+    const {phoneNumber} = this.state;
     return (
       <TextInput
         style={[styleApp.input, {fontSize: 17}]}
-        // placeholder={'(012) 345 6789'}
-        placeholder={placeholder(
-          this.props.country.code,
-          this.props.country.callingCode,
-        )}
+        placeholder={placeholder(code, callingCode)}
         placeholderTextColor={'#AFAFAF'}
         autoCapitalize="none"
         underlineColorAndroid="rgba(0,0,0,0)"
@@ -126,7 +116,7 @@ class PhoneFields extends Component {
         keyboardType={'phone-pad'}
         returnKeyType={'done'}
         onChangeText={(text) => this.changePhone(text)}
-        value={this.state.phoneNumber}
+        value={phoneNumber}
       />
     );
   }
@@ -159,33 +149,35 @@ class PhoneFields extends Component {
       </Row>
     );
   }
-  async selectCountry(country) {
-    await NavigationService.navigate('Phone', {country: country});
+  async selectCountry(countrySelected) {
+    const {navigate, country} = this.props;
+    // if (country)
+    await navigate('Phone', {
+      country: countrySelected ? countrySelected : country,
+    });
+    await timeout(200);
     this.firstTextInput.focus();
   }
   render() {
+    const {navigate} = this.props;
+    const {isValid} = this.state;
     return (
       <View style={styles.content}>
         <Row style={styles.rowField}>
           <Col
             size={35}
-            style={[{borderRightWidth: 0, borderColor: '#EAEAEA'}]}
             activeOpacity={0.8}
-            onPress={() => {
-              this.props.navigate('ListCountry', {
+            onPress={async () => {
+              await this.firstTextInput.blur();
+              await timeout(200);
+              navigate('ListCountry', {
                 onGoBack: (country) => this.selectCountry(country),
               });
             }}>
             {this.countryCol()}
           </Col>
 
-          <Col
-            size={80}
-            style={[
-              styleApp.center2,
-              {marginRight: 0},
-              {borderBottomWidth: 0, borderColor: '#EAEAEA'},
-            ]}>
+          <Col size={80} style={styleApp.center2}>
             {this.inputPhone()}
           </Col>
         </Row>
@@ -197,6 +189,7 @@ class PhoneFields extends Component {
                 We will text you the verification code.
               </Text>
             </Col>
+
             <Col style={styleApp.center3}>
               <ButtonColor
                 view={() => {
@@ -206,25 +199,18 @@ class PhoneFields extends Component {
                     <AllIcons
                       name="arrow-forward"
                       type="mat"
-                      color={this.state.isValid ? colors.white : colors.green}
+                      color={isValid ? colors.white : colors.grey}
                       size={23}
                     />
                   );
                 }}
-                click={() => this.next(this.state.phoneNumber)}
-                color={!this.state.isValid ? colors.white : colors.green}
+                click={() => isValid && this.next(this.state.phoneNumber)}
+                color={isValid ? colors.green : colors.white}
                 style={[
-                  {
-                    height: 60,
-                    width: 60,
-                    borderRadius: 30,
-                    borderColor: this.state.isValid
-                      ? colors.white
-                      : colors.green,
-                    borderWidth: 1,
-                  },
+                  styles.buttonNext,
+                  {borderColor: isValid ? colors.green : colors.grey},
                 ]}
-                onPressColor={colors.greenClick}
+                onPressColor={isValid ? colors.greenLight : colors.white}
               />
             </Col>
           </Row>
@@ -281,6 +267,13 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonNext: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+
+    borderWidth: 1,
   },
 });
 

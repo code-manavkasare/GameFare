@@ -27,7 +27,8 @@ export default class MapFiltersModal extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const filters = this.props.navigation.getParam('filters');
+    const {route} = this.props;
+    const {filters, endDate, startDate} = route.params;
     const markedDates = filters.startingDay
       ? {
           [filters.startingDay.dateString]: {
@@ -39,11 +40,9 @@ export default class MapFiltersModal extends Component {
 
     this.setState({
       daySelectedStart:
-        this.props.navigation.getParam('startDate') === ''
+        startDate === ''
           ? moment().format('YYYY-MM-DD')
-          : moment(this.props.navigation.getParam('endDate')).format(
-              'YYYY-MM-DD',
-            ),
+          : moment(endDate).format('YYYY-MM-DD'),
       filters,
       markedDates,
     });
@@ -127,31 +126,21 @@ export default class MapFiltersModal extends Component {
     this.props.navigation.goBack();
   }
   render() {
+    const {route} = this.props;
+    const {pageFrom} = route.params;
     return (
       <View style={styles.content}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          close={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
+          close={() => this.props.navigation.navigate(pageFrom)}
           textHeader={'Date'}
           inputRange={[5, 10]}
           loader={this.state.loader}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1={
-            this.props.navigation.getParam('pageFrom') == 'LocationSelect'
-              ? 'arrow-left'
-              : 'times'
-          }
-          clickButton1={() =>
-            this.props.navigation.navigate(
-              this.props.navigation.getParam('pageFrom'),
-            )
-          }
+          icon1={pageFrom === 'LocationSelect' ? 'arrow-left' : 'times'}
+          clickButton1={() => this.props.navigation.navigate(pageFrom)}
         />
 
         <ScrollView

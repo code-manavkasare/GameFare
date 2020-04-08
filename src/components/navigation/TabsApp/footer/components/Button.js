@@ -4,10 +4,10 @@ import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import StatusBar from '@react-native-community/status-bar';
 
-import colors from '../../style/colors';
-import styleApp from '../../style/style';
-import AllIcons from '../../layout/icons/AllIcons';
-import Button from '../../layout/Views/Button';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
+import AllIcons from '../../../../layout/icons/AllIcons';
+import Button from '../../../../layout/Views/Button';
 
 const ButtonMessage = class MainTabIcon extends React.Component {
   constructor(props) {
@@ -35,32 +35,34 @@ const ButtonMessage = class MainTabIcon extends React.Component {
       <Button
         view={() => {
           return (
-            <Row style={styles.rowInButton}>
+            <View>
               {displayPastille && (
                 <View
                   style={[styleApp.roundMessage, {backgroundColor: tintColor}]}
                 />
               )}
-              <Col style={[styleApp.center4, {paddingTop: 10}]}>
-                <AllIcons
-                  name={icon.name}
-                  size={icon.size}
-                  color={tintColor}
-                  style={styleApp.iconFooter}
-                  type={icon.type}
-                />
+              {/* <Col style={[styleApp.center, {backgroundColor: 'red'}]}>
                 <Text style={[styles.textButton, {color: tintColor}]}>
                   {label}
                 </Text>
-              </Col>
-            </Row>
+              </Col> */}
+              <AllIcons
+                name={icon.name}
+                size={icon.size}
+                color={tintColor}
+                //  style={styleApp.iconFooter}
+                type={icon.type}
+              />
+            </View>
           );
         }}
         click={() => {
-          StatusBar.setBarStyle('dark-content', true);
+          if (navigateTo === 'Stream')
+            StatusBar.setBarStyle('light-content', true);
+          else StatusBar.setBarStyle('dark-content', true);
           navigation.navigate(navigateTo);
         }}
-        color={'white'}
+        // color={'red'}
         style={styles.button}
         onPressColor={colors.off}
       />
@@ -80,9 +82,8 @@ class MainTabIcon extends React.Component {
           return (
             <AllIcons
               name={'video-camera'}
-              size={23}
-              color={colors.white} // color red for stream button?
-              // style={styleApp.iconFooter}
+              size={19}
+              color={colors.white}
               type={'moon'}
             />
           );
@@ -90,7 +91,7 @@ class MainTabIcon extends React.Component {
         click={() => {
           // change color status bar
           StatusBar.setBarStyle('light-content', true);
-          navigation.navigate('StartCoaching');
+          navigation.navigate('Stream', {});
         }}
         color={colors.primary}
         style={[
@@ -110,27 +111,31 @@ class MainTabIcon extends React.Component {
       focused,
       tintColor,
       routeName,
-      iconName,
+      icon,
       label,
       userConnected,
       signInToPass,
+      userID,
+      discussions,
     } = this.props;
-    console.log('routeName', routeName);
-    if (routeName === 'StartCoaching') return this.buttonCamera();
-
+    const displayPastille =
+      Object.values(discussions).filter((discussion) => {
+        let usersRead = discussion.lastMessage.usersRead;
+        if (!usersRead) usersRead = [];
+        if (!usersRead[userID]) return true;
+        return false;
+      }).length !== 0;
     return (
       <ButtonMessage
         navigation={navigation}
         navigateTo={routeName}
         signInToPass={signInToPass}
         userConnected={userConnected}
-        displayPastille={routeName === 'MessageList' && userConnected && true}
+        displayPastille={
+          routeName === 'MessageList' && userConnected && displayPastille
+        }
         label={label}
-        icon={{
-          name: iconName,
-          type: 'moon',
-          size: 16,
-        }}
+        icon={icon}
         tintColor={tintColor}
       />
     );
@@ -153,9 +158,9 @@ const styles = StyleSheet.create({
   },
   buttonCamera: {
     paddingTop: 0,
-    width: 75,
-    height: 75,
-    marginTop: -60,
+    width: 60,
+    height: 60,
+    marginTop: -0,
     borderRadius: 40,
   },
   textButton: {
@@ -166,13 +171,14 @@ const styles = StyleSheet.create({
   },
   rowInButton: {
     height: '100%',
-    // borderTopWidth: 1.5,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
     userConnected: state.user.userConnected,
+    discussions: state.message.conversations,
+    userID: state.user.userID,
   };
 };
 

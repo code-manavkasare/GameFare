@@ -18,6 +18,9 @@ export default class LoadingScreen extends React.Component {
   }
   componentDidMount() {}
   phone() {
+    const {params} = this.props.route;
+    let country = false;
+    if (params) country = params.country;
     return (
       <View style={styleApp.marginView}>
         <Text
@@ -28,11 +31,10 @@ export default class LoadingScreen extends React.Component {
           Enter your mobile number.
         </Text>
         <PhoneFields
-          pageFrom={this.props.navigation.getParam('pageFrom')}
           country={
-            !this.props.navigation.getParam('country')
-              ? {name: 'United States', callingCode: '1', code: 'US'}
-              : this.props.navigation.getParam('country')
+            country
+              ? country
+              : {name: 'United States', callingCode: '1', code: 'US'}
           }
           navigate={this.navigate.bind(this)}
         />
@@ -43,6 +45,7 @@ export default class LoadingScreen extends React.Component {
     this.props.navigation.navigate(page, data);
   }
   render() {
+    const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -54,7 +57,7 @@ export default class LoadingScreen extends React.Component {
           initialTitleOpacity={1}
           icon1="times"
           icon2={null}
-          clickButton1={() => this.props.navigation.dismiss()}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
 
         <ScrollView

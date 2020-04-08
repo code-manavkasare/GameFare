@@ -41,73 +41,55 @@ export default class Date extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentWillMount() {
+    const {route} = this.props;
+    const {startDate, endDate, recurrence} = route.params;
     this.setState({
-      startTimeHour:
-        this.props.navigation.getParam('startDate') == ''
-          ? '1'
-          : moment(this.props.navigation.getParam('startDate')).format('h'),
-      startTimeMin:
-        this.props.navigation.getParam('startDate') == ''
-          ? '00'
-          : moment(this.props.navigation.getParam('startDate')).format('mm'),
-      endTimeHour:
-        this.props.navigation.getParam('endDate') == ''
-          ? '1'
-          : moment(this.props.navigation.getParam('endDate')).format('h'),
-      endTimeMin:
-        this.props.navigation.getParam('endDate') == ''
-          ? '00'
-          : moment(this.props.navigation.getParam('endDate')).format('mm'),
+      startTimeHour: startDate === '' ? '1' : moment(startDate).format('h'),
+      startTimeMin: startDate === '' ? '00' : moment(startDate).format('mm'),
+      endTimeHour: endDate === '' ? '1' : moment(endDate).format('h'),
+      endTimeMin: endDate === '' ? '00' : moment(endDate).format('mm'),
       startPart:
-        this.props.navigation.getParam('startDate') == ''
+        startDate == ''
           ? false
-          : moment(this.props.navigation.getParam('startDate')).format('a') ==
-            'am'
+          : moment(startDate).format('a') === 'am'
           ? false
           : true,
       endPart:
-        this.props.navigation.getParam('endDate') == ''
+        endDate === ''
           ? false
-          : moment(this.props.navigation.getParam('endDate')).format('a') ==
-            'am'
+          : moment(endDate).format('a') === 'am'
           ? false
           : true,
       sameDay:
-        this.props.navigation.getParam('startDate') == ''
+        startDate == ''
           ? true
-          : moment(this.props.navigation.getParam('endDate')).format(
-              'YYYY-MM-DD',
-            ) ==
-            moment(this.props.navigation.getParam('startDate')).format(
-              'YYYY-MM-DD',
-            )
+          : moment(endDate).format('YYYY-MM-DD') ==
+            moment(startDate).format('YYYY-MM-DD')
           ? true
           : false,
       daySelectedStart:
-        this.props.navigation.getParam('startDate') == ''
+        startDate == ''
           ? moment().format('YYYY-MM-DD')
-          : moment(this.props.navigation.getParam('endDate')).format(
-              'YYYY-MM-DD',
-            ),
+          : moment(endDate).format('YYYY-MM-DD'),
       markedDatesStart: {
-        [this.props.navigation.getParam('startDate') == ''
+        [startDate == ''
           ? moment().format('YYYY-MM-DD')
-          : moment(this.props.navigation.getParam('endDate')).format(
-              'YYYY-MM-DD',
-            )]: {selected: true, selectedColor: colors.primary},
+          : moment(endDate).format('YYYY-MM-DD')]: {
+          selected: true,
+          selectedColor: colors.primary,
+        },
       },
       daySelectedEnd:
-        this.props.navigation.getParam('endDate') == ''
+        endDate === ''
           ? moment().format('YYYY-MM-DD')
-          : moment(this.props.navigation.getParam('endDate')).format(
-              'YYYY-MM-DD',
-            ),
+          : moment(endDate).format('YYYY-MM-DD'),
       markedDatesEnd: {
-        [this.props.navigation.getParam('endDate') == ''
+        [endDate === ''
           ? moment().format('YYYY-MM-DD')
-          : moment(this.props.navigation.getParam('endDate')).format(
-              'YYYY-MM-DD',
-            )]: {selected: true, selectedColor: colors.primary},
+          : moment(endDate).format('YYYY-MM-DD')]: {
+          selected: true,
+          selectedColor: colors.primary,
+        },
       },
       hourPicker: [
         '1',
@@ -137,7 +119,7 @@ export default class Date extends Component {
         '50',
         '55',
       ],
-      recurrence: this.props.navigation.getParam('recurrence'),
+      recurrence: recurrence,
     });
   }
   selectDay(day, date, markedDates) {
@@ -370,8 +352,9 @@ export default class Date extends Component {
   }
   async close() {
     await Keyboard.dismiss();
-    let c = this.props.navigation.getParam('close');
-    c();
+    const {route} = this.props;
+    const {close} = route.params;
+    close();
   }
   async submit() {
     var now = moment();
@@ -458,14 +441,9 @@ export default class Date extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1={
-            this.props.navigation.getParam('pageFrom') === 'LocationSelect'
-              ? 'arrow-left'
-              : 'times'
-          }
+          icon1={'times'}
           icon2={null}
           clickButton1={() => this.close()}
-          // clickButton1={() => this.props.navigation.navigate('CreateEvent2')}
         />
 
         <ScrollView

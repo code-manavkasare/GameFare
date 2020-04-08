@@ -10,22 +10,15 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import StatusBar from '@react-native-community/status-bar';
+
 import BackButton from '../../layout/buttons/BackButton';
 import Button from '../../layout/buttons/Button';
 import ButtonOff from '../../layout/buttons/ButtonOff';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
-import Header from '../../layout/headers/HeaderButton';
-import ButtonRound from '../../layout/buttons/ButtonRound';
 import ScrollView from '../../layout/scrollViews/ScrollView';
-import ExpandableCard from '../../layout/cards/ExpandableCard';
-import Switch from '../../layout/switch/Switch';
-import AllIcons from '../../layout/icons/AllIcons';
-import {date} from '../../layout/date/date';
 
+import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 
@@ -103,6 +96,8 @@ export default class Page0 extends Component {
     );
   }
   render() {
+    const {route} = this.props;
+    const {pageFrom, data} = route.params;
     return (
       <View style={[styleApp.stylePage, {borderLeftWidth: 1}]}>
         <HeaderBackButton
@@ -138,8 +133,8 @@ export default class Page0 extends Component {
             loader={this.state.loader}
             click={() =>
               this.props.navigation.navigate('Checkout', {
-                pageFrom: this.props.navigation.getParam('pageFrom'),
-                data: this.props.navigation.getParam('data'),
+                pageFrom: pageFrom,
+                data: data,
                 coach: this.state,
               })
             }

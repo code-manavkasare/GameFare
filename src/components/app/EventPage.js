@@ -84,7 +84,10 @@ class EventPage extends React.Component {
     this.confirmLeaveEvent = this.confirmLeaveEvent.bind(this);
   }
   async componentDidMount() {
-    this.loadEvent(this.props.navigation.getParam('objectID'));
+    const {route} = this.props;
+    console.log('routeeewwewe', route);
+    const {objectID} = route.params;
+    this.loadEvent(objectID);
   }
   componentWillUnmount() {
     if (this.state.event) {
@@ -99,7 +102,7 @@ class EventPage extends React.Component {
     firebase
       .database()
       .ref('events/' + objectID)
-      .on('value', async function(snap) {
+      .on('value', async function (snap) {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
@@ -157,12 +160,15 @@ class EventPage extends React.Component {
   }
 
   dismiss() {
-    const {dismiss} = this.props.navigation;
-    const altDismiss = this.props.navigation.getParam('altDismiss', false);
+    const {navigation} = this.props;
+    const {route} = this.props;
+    console.log('route!!!!!!!', route);
+    const {altDismiss} = route.params;
+
     if (altDismiss) {
       altDismiss();
     } else {
-      dismiss();
+      navigation.dangerouslyGetParent().pop();
     }
   }
 
@@ -1094,7 +1100,9 @@ class EventPage extends React.Component {
   }
   async refresh() {
     await this.setState({loader: true});
-    return this.loadEvent(this.props.navigation.getParam('objectID'));
+    const {route} = this.props;
+    const {objectID} = route.params;
+    return this.loadEvent(objectID);
   }
 
   goToShareEvent = (event) => {
@@ -1105,10 +1113,13 @@ class EventPage extends React.Component {
       return this.props.navigation.navigate('SignIn');
     }
     return this.props.navigation.navigate('Contacts', {
-      objectID: event.objectID,
-      image: event.images[0],
-      action: 'Event',
-      data: {...event, eventID: event.objectID},
+      screen: 'Contacts',
+      params: {
+        objectID: event.objectID,
+        image: event.images[0],
+        action: 'Event',
+        data: {...event, eventID: event.objectID},
+      },
     });
   };
   checkout(event) {

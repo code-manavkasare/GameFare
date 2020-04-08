@@ -9,6 +9,7 @@ import createGroupReducer from './createGroupReducer';
 import groupsReducer from './groupsReducer';
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
+import layoutReducer from './layoutReducer';
 
 export default combineReducers({
   globaleVariables: globaleVariablesReducer,
@@ -21,4 +22,5 @@ export default combineReducers({
   groups: groupsReducer,
   createGroup: createGroupReducer,
   message: messageReducer,
+  layout: layoutReducer,
 });

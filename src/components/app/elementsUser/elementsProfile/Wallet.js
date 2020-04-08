@@ -11,12 +11,10 @@ import {
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import firebase from 'react-native-firebase';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import AllIcons from '../../../layout/icons/AllIcons';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import axios from 'axios';
 
-import ScrollView from '../../../layout/scrollViews/ScrollView';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import PlaceHolder from '../../../placeHolders/CardConversation';
 import Config from 'react-native-config';
 
@@ -44,7 +42,7 @@ class ListEvent extends Component {
       .once('value');
     listTransfers = listTransfers.val();
     if (!listTransfers) listTransfers = [];
-    listTransfers = Object.values(listTransfers).sort(function(a, b) {
+    listTransfers = Object.values(listTransfers).sort(function (a, b) {
       return new Date(b.date) - new Date(a.date);
     });
     return this.setState({
@@ -67,7 +65,7 @@ class ListEvent extends Component {
   listWallet() {
     const {loader, listTransfers} = this.state;
     return (
-      <View style={{marginTop: 10}}>
+      <View style={{marginTop: 10, minHeight: height}}>
         {loader ? (
           this.placehoder()
         ) : listTransfers.length === 0 ? (
@@ -147,11 +145,7 @@ class ListEvent extends Component {
     const {dismiss, goBack} = this.props.navigation;
     const {wallet} = this.props;
     return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          flex: 1,
-        }}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Wallet: $' + wallet.totalWallet}
@@ -177,7 +171,7 @@ class ListEvent extends Component {
           refreshControl={true}
           refresh={() => this.refresh()}
           marginTop={sizes.heightHeaderHome}
-          offsetBottom={40}
+          offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />
       </View>

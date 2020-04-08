@@ -305,9 +305,8 @@ class Contacts extends Component {
   }
 
   createBranchMessage = async () => {
-    const data = this.props.navigation.getParam('data');
-    const image = this.props.navigation.getParam('image');
-    const action = this.props.navigation.getParam('action');
+    const {route} = this.props;
+    const {data, image, action} = route.params;
     const {url, description, title, objectID} = await createBranchUrl(
       data,
       action,
@@ -358,6 +357,7 @@ class Contacts extends Component {
   }
 
   async sendSMS() {
+    const {navigation} = this.props;
     const contacts = this.state.contactsSelected;
     const {url, description} = await this.createBranchMessage();
 
@@ -368,7 +368,8 @@ class Contacts extends Component {
       phoneNumbers,
       description + ' ' + url,
     );
-    if (smsSent.completed) return this.props.navigation.dismiss();
+
+    if (smsSent.completed) return navigation.dangerouslyGetParent().pop();
     return true;
   }
   translateXView = (value, userConnected) => {
@@ -379,12 +380,9 @@ class Contacts extends Component {
 
   render() {
     const {navigation, userConnected} = this.props;
-    const {dismiss} = navigation;
-    const objectID = navigation.getParam('objectID');
-    const pageFrom = navigation.getParam('pageFrom');
-    const data = navigation.getParam('data');
-    const action = navigation.getParam('action');
-    ///const groupsTab = navigation.getParam('groupsTab');
+    const {route} = this.props;
+    const {objectID, pageFrom, data, action} = route.params;
+
     const {
       fadeInDuration,
       searchInputContacts,
@@ -404,8 +402,8 @@ class Contacts extends Component {
           initialTitleOpacity={1}
           icon1={'times'}
           text2="Skip"
-          clickButton2={() => dismiss()}
-          clickButton1={() => dismiss()}
+          // clickButton2={() => dismiss()}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
 
         <View

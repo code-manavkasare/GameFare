@@ -357,7 +357,7 @@ class SummaryChallenge extends Component {
       await sendSMSFunction(allPhoneNumbers, description + ' ' + url);
 
     var that = this;
-    setTimeout(async function() {
+    setTimeout(async function () {
       await that.props.historicSearchAction('setSport', {
         value: newChallenge.info.sport,
         league: 'all',
@@ -373,8 +373,8 @@ class SummaryChallenge extends Component {
     this.setState({loader: true});
     const {goBack} = this.props.navigation;
 
-    const {userID, infoUser, tokenCusStripe, defaultCard} = this.props;
-    const selectedUser = this.props.navigation.getParam('selectedUser');
+    const {userID, infoUser, tokenCusStripe, defaultCard, route} = this.props;
+    const {selectedUser} = route.params;
     const {totalWallet} = this.state;
 
     const payEntryChallenge = await payEntryFee(
@@ -498,9 +498,10 @@ class SummaryChallenge extends Component {
     return true;
   }
   render() {
-    const {goBack, dismiss, navigate} = this.props.navigation;
-    const challenge = this.props.navigation.getParam('challenge');
-    const subscribe = this.props.navigation.getParam('subscribe');
+    const {goBack} = this.props.navigation;
+    const {route} = this.props;
+    const {challenge, subscribe} = route.params;
+
     let {defaultCard} = this.props;
     let {totalWallet} = this.state;
     totalWallet = Number(totalWallet);

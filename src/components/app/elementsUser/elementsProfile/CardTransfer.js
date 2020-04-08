@@ -36,6 +36,7 @@ class CardTransfer extends Component {
                     {
                       color:
                         transfer.type === 'minus' ? colors.red : colors.green,
+                      fontSize: 19,
                     },
                   ]}>
                   {this.signTransfer(transfer)}${transfer.invoice.totalPrice}
