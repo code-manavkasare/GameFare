@@ -7,58 +7,91 @@ import Button from '../../../../layout/buttons/Button';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import NavigationService from '../../../../../../NavigationService';
+import {timeout} from '../../../../functions/coach';
+import {heightFooter} from '../../../../style/sizes';
+import {footerRef} from '../../../../../../NavigationService';
 
 export default class NewSessionView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  newSessionView() {
+  buttonCurrentSession() {
     const {
       currentSessionID,
       loadCoachSession,
-      setState,
       userConnected,
-      error,
+      navigation,
+      layoutAction,
+      setState,
+    } = this.props;
+    if (currentSessionID === '') return null;
+    return (
+      <Button
+        backgroundColor="green"
+        onPressColor={colors.greenClick}
+        //   styleButton={[styleApp.marginView, {paddingBottom: 20}]}
+        enabled={true}
+        styleButton={{marginBottom: 20}}
+        text="Resume session"
+        loader={false}
+        click={async () => {
+          if (!userConnected) return navigation.navigate('SignIn');
+          // footerRef.translateFooter(false);
+          await layoutAction('setLayout', {isFooterVisible: false});
+          await timeout(100);
+          await setState({
+            loader: true,
+            displayHomeView: false,
+          });
+          loadCoachSession(currentSessionID);
+        }}
+      />
+    );
+  }
+  buttonNewSession() {
+    const {
+      loadCoachSession,
+      userConnected,
+      navigation,
+      userAction,
+      currentSessionID,
+      setState,
+      layoutAction,
+      endCoachSession,
     } = this.props;
     return (
-      <View style={[styleApp.center2, styleApp.fullSize]}>
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.greenClick}
-          styleButton={styleApp.marginView}
-          enabled={true}
-          text="Resume session"
-          loader={false}
-          click={async () => {
-            if (!userConnected) return NavigationService.navigate('SignIn');
-            await setState({
-              loader: true,
-              newSession: false,
-              isConnected: false,
-            });
-            loadCoachSession(currentSessionID);
-          }}
-        />
-        <View style={{height: 20}} />
-        <Button
-          backgroundColor="primary"
-          onPressColor={colors.primaryLight}
-          styleButton={styleApp.marginView}
-          enabled={true}
-          text="New session"
-          loader={false}
-          click={async () => {
-            console.log('userConnected!!', userConnected);
-            if (!userConnected) return NavigationService.navigate('SignIn');
-            await setState({
-              loader: true,
-              isConnected: false,
-            });
-            loadCoachSession();
-          }}
-        />
+      <Button
+        backgroundColor="primary"
+        onPressColor={colors.primaryLight}
+        //  styleButton={styleApp.marginView}
+        enabled={true}
+        text="New session"
+        loader={false}
+        click={async () => {
+          if (!userConnected) return navigation.navigate('SignIn');
+          await layoutAction('setLayout', {isFooterVisible: false});
+          await timeout(100);
+          await endCoachSession(currentSessionID);
+          await setState({
+            loader: true,
+            displayHomeView: false,
+          });
+
+          loadCoachSession();
+        }}
+      />
+    );
+  }
+  listSessions() {
+    const {error} = this.props;
+    return (
+      <View style={styles.page}>
+        <View style={styleApp.marginView}>
+          {this.buttonCurrentSession()}
+
+          {this.buttonNewSession()}
+        </View>
 
         {error && (
           <Row style={styles.rowError}>
@@ -72,11 +105,19 @@ export default class NewSessionView extends Component {
   }
 
   render() {
-    return this.newSessionView();
+    return this.listSessions();
   }
 }
 
 const styles = StyleSheet.create({
+  page: {
+    ...styleApp.center2,
+    ...styleApp.fullSize,
+    backgroundColor: colors.title,
+    paddingBottom: heightFooter,
+    position: 'absolute',
+    zIndex: 20,
+  },
   textError: {
     ...styleApp.text,
     color: colors.white,

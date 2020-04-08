@@ -8,7 +8,7 @@ import {isUserAlone} from '../../../../functions/coach';
 
 import BottomButtons from './components/BottomButtons';
 import VideosView from './components/VideosView';
-import CameraView from '../../cameraView/index';
+import {heightFooter, marginBottomApp} from '../../../../style/sizes';
 
 class Footer extends Component {
   constructor(props) {

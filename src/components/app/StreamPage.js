@@ -153,7 +153,7 @@ class StreamPage extends React.Component {
         color={'white'}
         style={[styleApp.center, styleApp.shade2, styleApp.buttonCoach]}
         click={() => {
-          !userConnected ? navigate('SignIn') : navigate('StartCoaching');
+          !userConnected ? navigate('SignIn') : navigate('Stream');
         }}
         onPressColor={colors.off}
       />

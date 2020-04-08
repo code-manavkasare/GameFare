@@ -31,8 +31,8 @@ class ProfilePage extends Component {
   }
 
   componentDidMount = () => {
-    const {navigation, infoUser} = this.props;
-    const userProfile = navigation.getParam('user');
+    const {infoUser, route} = this.props;
+    const userProfile = route.params.user;
     let isBlocked = false;
     if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
       isBlocked = true;

@@ -29,34 +29,33 @@ class MessageTab extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    this.loadMessages(
-      this.props.navigation.getParam('data'),
-      this.props.navigation.getParam('myConversation'),
-      this.props.userID,
-    );
+    const {route, userID} = this.props;
+    const {data: dataEvent, myConversation} = route.params;
+    this.loadMessages(dataEvent, myConversation, userID);
   }
   componentWillUnmount() {
+    const {route} = this.props;
+    const {data: dataEvent} = route.params;
     firebase
       .database()
-      .ref('discussions/' + this.props.navigation.getParam('data').objectID)
+      .ref('discussions/' + dataEvent.objectID)
       .off();
   }
   async loadMessages(conversation, myConversation, userID) {
     if (!conversation.objectID) {
       conversation = await indexDiscussions.getObject(conversation);
     }
-    if (!conversation)
-      return this.loadMessages(
-        this.props.navigation.getParam('data'),
-        this.props.navigation.getParam('myConversation'),
-        this.props.userID,
-      );
+    if (!conversation) {
+      const {route, userID} = this.props;
+      const {data: dataEvent, myConversation} = route.params;
+      return this.loadMessages(dataEvent, myConversation, userID);
+    }
     const {gamefareUser} = this.props;
     const that = this;
     firebase
       .database()
       .ref('discussions/' + conversation.objectID)
-      .on('value', async function(snap) {
+      .on('value', async function (snap) {
         let discussion = snap.val();
         delete discussion.members[userID];
         let messages = discussion.messages;
@@ -144,9 +143,7 @@ class MessageTab extends React.Component {
           initialTitleOpacity={1}
           icon1={'arrow-left'}
           icon2={null}
-          clickButton1={async () => {
-            this.props.navigation.dismiss();
-          }}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
           clickButton2={() => true}
         />
         <View style={{height: sizes.heightHeaderHome}} />

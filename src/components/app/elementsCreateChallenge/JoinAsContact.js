@@ -182,9 +182,10 @@ class PublishResult extends Component {
     return 'Confirm attendance';
   }
   render() {
-    const {navigate, goBack} = this.props.navigation;
+    const {goBack} = this.props.navigation;
     const {selectedUser, loader} = this.state;
-    const challenge = this.props.navigation.getParam('challenge');
+    const {route} = this.props;
+    const {challenge} = route.params;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton

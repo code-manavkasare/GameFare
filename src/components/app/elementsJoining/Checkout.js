@@ -94,12 +94,12 @@ class Checkout extends Component {
     );
   }
   sport(sport) {
+    const {route} = this.props;
+    const {data: event} = route.params;
     return (
       <Row>
         <Col size={75} style={styleApp.center2}>
-          <Text style={styleApp.title}>
-            {this.props.navigation.getParam('data').info.name}
-          </Text>
+          <Text style={styleApp.title}>{event.info.name}</Text>
         </Col>
         <Col size={25} style={styleApp.center3}>
           <View
@@ -108,11 +108,8 @@ class Checkout extends Component {
               {backgroundColor: sport.card.color.color, width: '100%'},
             ]}>
             <Text style={[styleApp.textSport, {color: 'white'}]}>
-              {this.props.navigation
-                .getParam('data')
-                .info.sport.charAt(0)
-                .toUpperCase() +
-                this.props.navigation.getParam('data').info.sport.slice(1)}
+              {event.info.sport.charAt(0).toUpperCase() +
+                event.info.sport.slice(1)}
             </Text>
           </View>
         </Col>
@@ -249,6 +246,8 @@ class Checkout extends Component {
 
   async submit(data, waitlist) {
     await this.setState({loader: true});
+    const {route} = this.props;
+    const {coach, users} = route.params;
     var {response, message} = await joinEvent(
       data,
       this.props.userID,
@@ -259,8 +258,8 @@ class Checkout extends Component {
         defaultCard: this.props.defaultCard,
         totalWallet: this.props.totalWallet,
       },
-      this.props.navigation.getParam('coach'),
-      this.props.navigation.getParam('users'),
+      coach,
+      users,
       waitlist,
     );
     if (!response) {
@@ -305,8 +304,8 @@ class Checkout extends Component {
     return 'Pay & Confirm attendance';
   }
   render() {
-    const waitlist = this.props.navigation.getParam('waitlist');
-    const event = this.props.navigation.getParam('data');
+    const {route, userConnected} = this.props;
+    const {data: event, waitlist} = route.params;
     const creditCardCharge = Math.max(
       0,
       Number(event.price.joiningFee) - Number(this.props.totalWallet),
@@ -338,7 +337,7 @@ class Checkout extends Component {
           showsVerticalScrollIndicator={false}
         />
         <View style={styleApp.footerBooking}>
-          {this.props.userConnected ? (
+          {userConnected ? (
             <Button
               icon={'next'}
               backgroundColor="green"

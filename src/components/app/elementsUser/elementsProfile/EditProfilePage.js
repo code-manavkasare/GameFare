@@ -146,9 +146,9 @@ class EditProfilePage extends Component {
       pictureUri,
       pictureUrl,
     } = this.state;
-
+    const {navigation} = this.props;
     return (
-      <View style={styles.content}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Edit Profile'}
@@ -159,7 +159,7 @@ class EditProfilePage extends Component {
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           icon1={'arrow-left'}
-          clickButton1={() => this.props.navigation.navigate('More')}
+          clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
 
         <ScrollView
@@ -168,7 +168,7 @@ class EditProfilePage extends Component {
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           showsVerticalScrollIndicator={true}>
-          <Row>
+          <Row style={{paddingLeft: 20, paddingRight: 20}}>
             <Col size={20} style={styleApp.center2}>
               {this.buttonPicture(pictureUrl, pictureUri, loaderPhoto)}
             </Col>

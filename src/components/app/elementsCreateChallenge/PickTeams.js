@@ -44,18 +44,17 @@ class PickInfos extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    const edit = this.props.navigation.getParam('edit');
+    const {route} = this.props;
+    const {edit, dataEditTeams, teamAdmin} = route.params;
 
     if (edit) {
-      let dataEditTeams = this.props.navigation.getParam('dataEditTeams');
-      let teamAdmin = this.props.navigation.getParam('teamAdmin');
       let teams = dataEditTeams.teams;
       if (!teams) teams = {};
       teams = Object.values(teams)
         .reverse()
         // .slice(0, 1)
         .filter((team) => team.id === teamAdmin.id || teamAdmin === 'all')
-        .reduce(function(result, item) {
+        .reduce(function (result, item) {
           result[item.id] = item;
           return result;
         }, {});
@@ -95,7 +94,8 @@ class PickInfos extends Component {
   }
   addOponentAlert(oponent) {
     const {navigate} = this.props.navigation;
-    const edit = this.props.navigation.getParam('edit');
+    const {route} = this.props;
+    const {edit} = route.params;
     return navigate('PickMembers', {
       titleHeader: 'Pick your oponent',
       displayCurrentUser: false,
@@ -135,7 +135,7 @@ class PickInfos extends Component {
   teamsSections(data, edit, hideButtonRemoveTeam) {
     const {teams, allMembers} = data;
     return Object.values(teams)
-      .sort(function(a, b) {
+      .sort(function (a, b) {
         return a.createdAt - b.createdAt;
       })
       .map((team, i) =>
@@ -149,7 +149,8 @@ class PickInfos extends Component {
   }
   pickTeams(data, edit) {
     const {typeChallengeTeam, oponent, allMembers} = data;
-    const teamAdmin = this.props.navigation.getParam('teamAdmin');
+    const {route} = this.props;
+    const {teamAdmin} = route.params;
     return (
       <View style={styleApp.marginView}>
         {teamAdmin === 'all' &&
@@ -225,8 +226,8 @@ class PickInfos extends Component {
   async saveEdit() {
     await this.setState({loader: true});
     const {typeChallengeTeam, teams, oponent} = this.state;
-    const {userID, infoUser} = this.props;
-    const teamAdmin = this.props.navigation.getParam('teamAdmin');
+    const {userID, infoUser, route} = this.props;
+    const {teamAdmin, objectID} = route.params;
 
     let newTeams = {};
     if (typeChallengeTeam) newTeams = teams;
@@ -257,8 +258,6 @@ class PickInfos extends Component {
       };
     }
 
-    const objectID = this.props.navigation.getParam('objectID');
-
     if (teamAdmin === 'all') {
       await firebase
         .database()
@@ -279,12 +278,12 @@ class PickInfos extends Component {
     return this.props.navigation.goBack();
   }
   render() {
-    const edit = this.props.navigation.getParam('edit');
+    const {route} = this.props;
+    const {edit, title} = route.params;
     if (edit) var teamsData = this.state;
     else var teamsData = this.props.teamsData;
 
     const {dismiss, goBack, navigate} = this.props.navigation;
-    const title = this.props.navigation.getParam('title');
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton

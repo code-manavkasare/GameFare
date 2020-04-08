@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     shadowColor: '#46474B',
     shadowOffset: {width: 0, height: 0},
     shadowRadius: 5,
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
   },
   headerBooking: {
     position: 'absolute',
@@ -322,11 +322,11 @@ const styles = StyleSheet.create({
     // zIndex:220,
   },
   roundMessage: {
-    height: 9,
-    width: 9,
-    borderRadius: 4.5,
-    top: 8.5,
-    left: width / 5 - 37,
+    height: 11,
+    width: 11,
+    borderRadius: 5.5,
+    top: -4,
+    left: 18,
     position: 'absolute',
     zIndex: 30,
     borderWidth: 1,
@@ -424,6 +424,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderRadius: 0,
     borderColor: colors.off,
+    backgroundColor: colors.white,
   },
   marginView: {
     marginLeft: 20,

@@ -55,6 +55,7 @@ import PlaceHolder from '../../placeHolders/EventPage';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import {stylesMapPage} from '../elementsHome/MapPage';
 
 const noEdit = {
   editMode: false,
@@ -80,7 +81,11 @@ class ChallengePage extends React.Component {
     this.confirmLeaveEvent = this.confirmLeaveEvent.bind(this);
   }
   async componentDidMount() {
-    this.loadEvent(this.props.navigation.getParam('objectID'));
+    const {route, navigation} = this.props;
+    console.log('route challene', route);
+    console.log(navigation);
+    const {objectID} = route.params;
+    this.loadEvent(objectID);
   }
   componentWillUnmount() {
     if (this.state.event) {
@@ -95,7 +100,7 @@ class ChallengePage extends React.Component {
     firebase
       .database()
       .ref('challenges/' + objectID)
-      .on('value', async function(snap) {
+      .on('value', async function (snap) {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
@@ -118,12 +123,13 @@ class ChallengePage extends React.Component {
   }
 
   dismiss() {
-    const {dismiss} = this.props.navigation;
-    const altDismiss = this.props.navigation.getParam('altDismiss', false);
+    const {navigation} = this.props;
+    const {route} = this.props;
+    const {altDismiss} = route.params;
     if (altDismiss) {
       altDismiss();
     } else {
-      dismiss();
+      navigation.dangerouslyGetParent().pop();
     }
   }
 
@@ -627,10 +633,13 @@ class ChallengePage extends React.Component {
     }
 
     return this.props.navigation.navigate('Contacts', {
-      objectID: event.objectID,
-      image: event.images[0],
-      action: 'Challenge',
-      data: {...event, objectID: event.objectID},
+      screen: 'Contacts',
+      params: {
+        objectID: event.objectID,
+        image: event.images[0],
+        action: 'Challenge',
+        data: {...event, objectID: event.objectID},
+      },
     });
   };
   bottomActionButton(title, click, color) {
@@ -653,7 +662,7 @@ class ChallengePage extends React.Component {
     const {userID, infoUser, userConnected} = this.props;
     const {navigate} = this.props.navigation;
     return (
-      <View style={{flex: 1}}>
+      <View style={styleApp.stylePage}>
         {this.header(event)}
         <ParallaxScrollView
           style={styles.paralaxView}

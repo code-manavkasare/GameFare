@@ -29,28 +29,9 @@ class ListEvent extends Component {
       events: [],
     };
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: 'Personal information',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton
-          color={colors.title}
-          name="keyboard-arrow-left"
-          type="mat"
-          click={() => navigation.navigate(navigation.getParam('pageFrom'))}
-        />
-      ),
-    };
-  };
   async componentDidMount() {}
   settings() {
-    return (
-      <View style={{marginTop: 0}}>
-        {/* <Text style={[styleApp.title,{marginBottom:20,fontSize:19}]}>Payment methods</Text> */}
-      </View>
-    );
+    return <View style={{marginTop: 0}}></View>;
   }
   render() {
     return (

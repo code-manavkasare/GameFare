@@ -144,6 +144,8 @@ class Page3 extends Component {
   }
 
   page2(data, sport) {
+    const {route} = this.props;
+    const {groups} = route.params;
     var league = Object.values(sport.typeEvent).filter(
       (item) => item.value == data.info.league,
     )[0];
@@ -252,7 +254,7 @@ class Page3 extends Component {
           'font',
         )}
 
-        {this.listGroups(this.props.navigation.getParam('groups'))}
+        {this.listGroups(groups)}
 
         <View style={[styleApp.divider2, {marginBottom: 10}]} />
 
@@ -278,12 +280,14 @@ class Page3 extends Component {
   async submit(data) {
     this.setState({loader: true});
     const {dismiss} = this.props.navigation;
+    const {route} = this.props;
+    const {groups} = route.params;
     var event = await createEvent(
       data,
       this.props.userID,
       this.props.infoUser,
       this.props.level,
-      this.props.navigation.getParam('groups'),
+      groups,
     );
     if (!event) {
       await this.setState({loader: false});
@@ -296,7 +300,6 @@ class Page3 extends Component {
     }
 
     if (data.groups.length !== 0) {
-      var groups = this.props.navigation.getParam('groups');
       for (var i in groups) {
         await this.props.groupsAction('editGroup', {
           objectID: groups[i].objectID,
@@ -309,7 +312,7 @@ class Page3 extends Component {
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
     var that = this;
-    setTimeout(async function() {
+    setTimeout(async function () {
       await that.props.historicSearchAction('setSport', {
         value: event.info.sport,
         league: event.info.league,
@@ -319,27 +322,10 @@ class Page3 extends Component {
 
       await dismiss();
     }, 1000);
-
-    // return this.props.navigation.navigate('Contacts', {
-    //   objectID: event.objectID,
-    //   description: '',
-    //   url: {
-    //     description:
-    //       'Join my event ' +
-    //       event.info.name +
-    //       ' on ' +
-    //       date(event.date.start, 'ddd, MMM D') +
-    //       ' at ' +
-    //       date(event.date.start, 'h:mm a') +
-    //       ' by following the link!',
-    //     image: event.pictures[0],
-    //     title: event.info.name,
-    //   },
-    //   action: 'Event',
-    //   data: {...event, eventID: event.objectID},
-    // });
   }
   render() {
+    const {route} = this.props;
+    const {sport, data} = route.params;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -356,12 +342,7 @@ class Page3 extends Component {
 
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() =>
-            this.page2(
-              this.props.navigation.getParam('data'),
-              this.props.navigation.getParam('sport'),
-            )
-          }
+          contentScrollView={() => this.page2(data, sport)}
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -380,7 +361,7 @@ class Page3 extends Component {
               disabled={false}
               text={'Create event'}
               loader={this.state.loader}
-              click={() => this.submit(this.props.navigation.getParam('data'))}
+              click={() => this.submit(data)}
             />
           ) : (
             <Button

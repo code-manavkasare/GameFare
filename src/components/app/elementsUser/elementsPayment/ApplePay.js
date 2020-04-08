@@ -128,6 +128,7 @@ class ApplePay extends Component {
     );
   }
   render() {
+    const {navigation} = this.props;
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
@@ -140,8 +141,8 @@ class ApplePay extends Component {
           icon1="arrow-left"
           icon2="text"
           text2="Close"
-          clickButton1={() => this.props.navigation.goBack()}
-          clickButton2={() => this.props.navigation.dismiss()}
+          clickButton1={() => navigation.goBack()}
+          clickButton2={() => navigation.dangerouslyGetParent().pop()}
         />
         <ScrollView
           AnimatedHeaderValue={this.AnimatedHeaderValue}

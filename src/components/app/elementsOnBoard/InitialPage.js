@@ -4,6 +4,7 @@ import {View, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import branch from 'react-native-branch';
 import FadeInView from 'react-native-fade-in-view';
+import StatusBar from '@react-native-community/status-bar';
 
 import {globaleVariablesAction} from '../../../actions/globaleVariablesActions';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
@@ -24,17 +25,19 @@ class InitialPage extends Component {
     this.translateXText = new Animated.Value(90);
   }
   async componentDidMount() {
-    var variables = await firebase
-      .database()
-      .ref('variables')
-      .once('value');
+    var variables = await firebase.database().ref('variables').once('value');
     variables = variables.val();
+    console.log('variables', variables);
     await this.props.globaleVariablesAction(variables);
     await this.goToHomePageDirectlyFromRefLink();
+
+    await StatusBar.setBarStyle('dark-content', true);
+    await StatusBar.setHidden(false, true);
 
     if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
       return this.props.navigation.navigate('TabsApp');
     }
+
     return this.props.navigation.navigate('SportSelect');
   }
 

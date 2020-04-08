@@ -29,7 +29,7 @@ export default class Verify extends Component {
   }
   componentDidMount() {}
   render() {
-    const {dismiss} = this.props.navigation;
+    const {navigation, route} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -40,21 +40,16 @@ export default class Verify extends Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           icon1="arrow-left"
-          icon2={null}
-          
-          clickButton1={() => this.props.navigation.navigate('Phone')}
+          clickButton1={() => navigation.navigate('Phone')}
         />
 
         <ScrollView
-          onRef={ref => (this.scrollViewRef = ref)}
+          onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => (
             <VerifyFields
-              pageFrom={this.props.navigation.getParam('pageFrom')}
-              close={() => dismiss()}
-              navigate={(val, data) =>
-                this.props.navigation.navigate(val, data)
-              }
-              params={this.props.navigation.getParam('data')}
+              close={() => navigation.dangerouslyGetParent().pop()}
+              navigate={(val, data) => navigation.navigate(val, data)}
+              params={route.params.data}
             />
           )}
           marginBottomScrollView={0}

@@ -29,8 +29,10 @@ class Page1 extends Component {
   }
   componentDidMount() {
     if (this.props.step1.level === -1) {
+      const {route} = this.props;
+      const {sport} = route.params;
       this.props.createEventAction('setStep1', {
-        level: this.props.navigation.getParam('sport').level.list[0].value,
+        level: sport.level.list[0].value,
       });
     }
   }
@@ -196,7 +198,7 @@ class Page1 extends Component {
 
         {this.plusMinus(step1, 'numberPlayers', 200, 1, 1, 'user-check')}
         {this.gender()}
-{/* 
+        {/* 
         {Object.values(step1.groups).length !== 0 &&
           Object.values(step1.groups).map((group, i) =>
             this.rowGroup(group, i, Object.values(step1.groups)),
@@ -209,7 +211,8 @@ class Page1 extends Component {
   }
   render() {
     const {step1} = this.props;
-    const sport = this.props.navigation.getParam('sport');
+    const {route} = this.props;
+    const {sport} = route.params;
     const {goBack} = this.props.navigation;
     if (step1.level === -1) return null;
 

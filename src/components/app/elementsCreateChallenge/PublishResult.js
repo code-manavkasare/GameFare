@@ -130,7 +130,8 @@ class PublishResult extends Component {
   }
   render() {
     const {navigate, goBack} = this.props.navigation;
-    const challenge = this.props.navigation.getParam('challenge');
+    const {route} = this.props;
+    const {challenge} = route.params;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton

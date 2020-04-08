@@ -13,7 +13,7 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import {loadMyDiscusions} from '../../functions/message';
 import SearchBarContact from '../elementsEventCreate/elementsContacts/SearchBarContact';
 
-import ScrollView2 from '../../layout/scrollViews/ScrollView';
+import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import sizes from '../../style/sizes';
 import CardConversation from './CardConversation';
 
@@ -76,6 +76,7 @@ class MessageTab extends React.Component {
       this.state.searchInput,
       this.props.blockedUsers,
     );
+    console.log('discussions loaded', discussions);
     await this.props.messageAction('setConversations', discussions);
     this.setState({loader: false});
   };
@@ -96,6 +97,7 @@ class MessageTab extends React.Component {
   }
 
   logoutView() {
+    const {navigation} = this.props;
     return (
       <View style={[styleApp.marginView, {marginTop: 30}]}>
         <View style={styleApp.center}>
@@ -110,9 +112,7 @@ class MessageTab extends React.Component {
 
         <Button
           text="Sign in"
-          click={() =>
-            this.props.navigation.navigate('Phone', {pageFrom: 'MessageList'})
-          }
+          click={() => navigation.navigate('SignIn')}
           backgroundColor={'green'}
           onPressColor={colors.greenClick}
         />
@@ -139,15 +139,12 @@ class MessageTab extends React.Component {
   }
 
   messagePageView() {
-    const {discussions, userConnected} = this.props;
+    const {discussions, userConnected, navigation} = this.props;
     const {searchInput} = this.state;
 
     if (!userConnected) return this.logoutView();
     return (
-      <View style={{paddingTop: 5, minHeight: height}}>
-        <View style={[styleApp.marginView, {marginBottom: 15}]}>
-          <Text style={[styleApp.title, {fontSize: 27}]}>Inbox</Text>
-        </View>
+      <View style={{minHeight: height}}>
         <SearchBarContact
           placeHolderMessage={'Search your messages...'}
           updateSearch={(searchInput) => this.updateSearchField(searchInput)}
@@ -171,6 +168,7 @@ class MessageTab extends React.Component {
               <CardConversation
                 key={i}
                 index={i}
+                navigation={navigation}
                 discussionID={discussion}
                 myConversation={true}
               />
@@ -190,11 +188,11 @@ class MessageTab extends React.Component {
     const {navigate} = this.props.navigation;
     const {userConnected} = this.props;
     return (
-      <View>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={userConnected && 'Inbox'}
-          inputRange={[50, 80]}
+          inputRange={[5, 10]}
           initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
           typeIcon2={'font'}
@@ -213,12 +211,11 @@ class MessageTab extends React.Component {
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottom={0}
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}
           refreshControl={true}
           refresh={() => this.loadDiscussions()}
-          offsetBottom={10}
+          offsetBottom={sizes.heightFooter + 30}
           showsVerticalScrollIndicator={true}
         />
       </View>

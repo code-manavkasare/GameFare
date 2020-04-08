@@ -44,6 +44,7 @@ const coachReducer = (state = initialState, action) => {
     case SET_CURRENT_COACHSESSION_ID:
       return {...state, currentSessionID: action.currentSessionID};
     case RESET_COACH_DATA:
+      console.log('RESET_COACH_DATA', initialState);
       return initialState;
     default:
       return state;

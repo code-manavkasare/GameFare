@@ -393,12 +393,11 @@ class Page0 extends Component {
     if (this.props.step0.joiningFee === '') return false;
     return true;
   }
-  close() {
-    this.props.navigation.navigate(this.props.navigation.getParam('pageFrom'));
-  }
   next(sport) {
+    const {route} = this.props;
+    const {group} = route.params;
     this.props.navigation.navigate('CreateEvent1', {
-      group: this.props.navigation.getParam('group'),
+      group: group,
       sport: sport,
     });
   }

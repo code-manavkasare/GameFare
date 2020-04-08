@@ -1,21 +1,9 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
+
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import BackButton from '../../../layout/buttons/BackButton';
 import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
@@ -24,7 +12,7 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import {cardIcon} from './iconCard';
 
-class ListEvent extends Component {
+class NewMethod extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,6 +23,7 @@ class ListEvent extends Component {
   }
   async componentDidMount() {}
   row(icon, text, page, data) {
+    const {defaultCard} = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -47,8 +36,7 @@ class ListEvent extends Component {
                 <Text style={styleApp.input}>{text}</Text>
               </Col>
               <Col size={10} style={styleApp.center}>
-                {this.props.defaultCard == undefined ? null : this.props
-                    .defaultCard.id == data.id ? (
+                {!defaultCard ? null : defaultCard.id === data.id ? (
                   <View style={styles.defaultView}>
                     <Text style={styles.textDefault}>D</Text>
                   </View>
@@ -59,16 +47,7 @@ class ListEvent extends Component {
         }}
         click={() => this.props.navigation.navigate(page, data)}
         color="white"
-        style={[
-          {
-            borderColor: colors.off,
-            height: 60,
-            width: '100%',
-            borderRadius: 0,
-            borderBottomWidth: 0,
-            marginTop: 0,
-          },
-        ]}
+        style={styles.button}
         onPressColor={colors.off}
       />
     );
@@ -83,21 +62,8 @@ class ListEvent extends Component {
           <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 0}]} />
         </View>
 
-        <View
-          style={{
-            backgroundColor: colors.borderColor,
-            height: 0,
-            marginLeft: 0,
-            width: width,
-          }}
-        />
-
-        {this.row(cardIcon('default'), 'Credit/Debit card', 'NewCard', {
-          pageFrom: this.props.navigation.getParam('pageFrom'),
-        })}
-        {this.row(cardIcon('applePay'), 'Apple Pay', 'ApplePay', {
-          pageFrom: this.props.navigation.getParam('pageFrom'),
-        })}
+        {this.row(cardIcon('default'), 'Credit/Debit card', 'NewCard', {})}
+        {this.row(cardIcon('applePay'), 'Apple Pay', 'ApplePay', {})}
       </View>
     );
   }
@@ -128,7 +94,13 @@ class ListEvent extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  button: {
+    borderColor: colors.off,
+    height: 60,
+    width: '100%',
+  },
+});
 
 const mapStateToProps = (state) => {
   return {
@@ -138,4 +110,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(mapStateToProps, {})(NewMethod);

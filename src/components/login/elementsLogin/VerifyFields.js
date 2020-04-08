@@ -112,13 +112,12 @@ class VerifyFields extends Component {
       });
       if (profileCompleted) {
         var that = this;
-        setTimeout(function() {
+        setTimeout(function () {
           that.props.close();
         }, 550);
       } else {
         this.props.navigate('Complete', {
           data: {userID: this.props.params.userID},
-          pageFrom: this.props.pageFrom,
         });
       }
     }
@@ -161,18 +160,18 @@ class VerifyFields extends Component {
   statusSMS() {
     return (
       <Col style={styles.center}>
-        {this.state.step == 'verifying' ? (
+        {this.state.step === 'verifying' ? (
           <Text style={styleApp.input}>Verifying code...</Text>
-        ) : this.state.step == 'signIn' ? (
+        ) : this.state.step === 'signIn' ? (
           <Text style={styleApp.input}>We are signing you in...</Text>
-        ) : this.state.step == 'sending' ? (
+        ) : this.state.step === 'sending' ? (
           <Text style={styleApp.input}>SMS being sent...</Text>
-        ) : this.state.step == 'error' ? (
+        ) : this.state.step === 'error' ? (
           <Text style={styleApp.input}>Wrong code</Text>
-        ) : this.state.step == 'wrongNumber' ? (
+        ) : this.state.step === 'wrongNumber' ? (
           <Text style={styleApp.input}>Error, verify your number</Text>
-        ) : this.state.step == 'sent' ? (
-          <Text style={styleApp.input}>SMS sent</Text>
+        ) : this.state.step === 'sent' ? (
+          <Text style={styleApp.input}>✓ SMS sent</Text>
         ) : null}
       </Col>
     );
