@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
@@ -39,7 +39,7 @@ class MorePage extends Component {
   }
   componentWillUnmount() {
     this.removeNotificationListener();
-    this.messageListener();
+    // this.messageListener();
   }
   async notificationHandler() {
     const {userID} = this.props;
@@ -63,10 +63,9 @@ class MorePage extends Component {
       .notifications()
       .onNotificationOpened((notification) => {
         const {data} = notification.notification;
-        NavigationService.push(data.action, data)
+        NavigationService.push(data.action, data);
       });
   }
-
 
   button(icon, text, page, type, url) {
     return (
@@ -122,11 +121,10 @@ class MorePage extends Component {
     );
   }
   clickButton(page, type, url) {
-    const {navigation} = this.props
+    const {navigation} = this.props;
     if (type === 'url') {
       // navigation.navigate('Webview',{url:url})
       this.openLink(url);
-
     } else if (type === 'call') {
       this.call();
     } else if (type === 'email') {
@@ -237,7 +235,10 @@ class MorePage extends Component {
               </TouchableOpacity>
 
               <Text style={styleApp.text}>Account parameters</Text>
-              <View style={[styleApp.divider2, {marginTop: 15}]} />
+              <View
+                style={[styleApp.divider2, {marginTop: 15, marginBottom: 0}]}
+              />
+              {this.button('video', 'Video Library', 'VideoLibraryPage')}
               {this.button('credit-card', 'Payment', 'Payments')}
               {this.button('wallet', 'Wallet', 'Wallet')}
               {this.button(
@@ -258,44 +259,43 @@ class MorePage extends Component {
           {this.button('envelope', 'Email', 'Alert', 'email')}
         </View>
 
-          <View style={styleApp.marginView}>
-            <Text style={styleApp.text}>Social media</Text>
+        <View style={styleApp.marginView}>
+          <Text style={styleApp.text}>Social media</Text>
 
-            <View style={[styleApp.divider2, {marginBottom: 0}]} />
-            {this.button(
-              'instagram',
-              'Visit us on Instagram',
-              'Alert',
-              'url',
-              'https://www.instagram.com/getgamefare',
-            )}
-          </View>
+          <View style={[styleApp.divider2, {marginBottom: 0}]} />
+          {this.button(
+            'instagram',
+            'Visit us on Instagram',
+            'Alert',
+            'url',
+            'https://www.instagram.com/getgamefare',
+          )}
+        </View>
 
-          <View style={styleApp.marginView}>
-            <Text style={styleApp.text}>Legal</Text>
+        <View style={styleApp.marginView}>
+          <Text style={styleApp.text}>Legal</Text>
 
-            <View style={[styleApp.divider2, {marginBottom: 0}]} />
-            {this.button(
-              false,
-              'Privacy policy',
-              'Alert',
-              'url',
-              'https://www.getgamefare.com/privacy',
-            )}
-            {this.button(
-              false,
-              'Terms of service',
-              'Alert',
-              'url',
-              'https://www.getgamefare.com/terms',
-            )}
-          </View>
-     
+          <View style={[styleApp.divider2, {marginBottom: 0}]} />
+          {this.button(
+            false,
+            'Privacy policy',
+            'Alert',
+            'url',
+            'https://www.getgamefare.com/privacy',
+          )}
+          {this.button(
+            false,
+            'Terms of service',
+            'Alert',
+            'url',
+            'https://www.getgamefare.com/terms',
+          )}
+        </View>
 
-          <View style={styleApp.marginView}>
-            {this.props.userConnected &&
-              this.button('logout', 'Logout', 'Alert', 'logout')}
-          </View>
+        <View style={styleApp.marginView}>
+          {this.props.userConnected &&
+            this.button('logout', 'Logout', 'Alert', 'logout')}
+        </View>
       </View>
     );
   }
