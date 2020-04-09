@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 15,
     paddingBottom: 25,
+    marginBottom: marginBottomApp,
     alignItems: 'center',
     justifyContent: 'center',
   },
