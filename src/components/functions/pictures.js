@@ -85,7 +85,7 @@ async function takePicture() {
   var permissionVal = await permission('camera');
   if (!permissionVal) return false;
 
-  let promise = new Promise(function(resolve, reject) {
+  let promise = new Promise(function (resolve, reject) {
     // executor (the producing code, "singer")
     ImagePicker.launchCamera(options, (response) => {
       if (!response.uri) {
@@ -103,7 +103,7 @@ async function pickLibrary() {
   var permissionVal = await permission('library');
   if (!permissionVal) return false;
 
-  let promise = new Promise(function(resolve, reject) {
+  let promise = new Promise(function (resolve, reject) {
     // executor (the producing code, "singer")
     ImagePicker.launchImageLibrary(options, (response) => {
       if (!response.uri) {
@@ -120,10 +120,7 @@ async function pickLibrary() {
 async function uploadPictureFirebase(localUri, destination) {
   try {
     let imageName = 'groupPicture';
-    const imageRef = firebase
-      .storage()
-      .ref(destination)
-      .child(imageName);
+    const imageRef = firebase.storage().ref(destination).child(imageName);
     await imageRef.put(localUri, {contentType: 'image/jpg'});
     var url = imageRef.getDownloadURL();
     return url;
@@ -136,10 +133,7 @@ async function uploadPictureFirebase(localUri, destination) {
 async function uploadVideoFirebase(image, destination) {
   try {
     let imageName = 'content.mp4';
-    const imageRef = firebase
-      .storage()
-      .ref(destination)
-      .child(imageName);
+    const imageRef = firebase.storage().ref(destination).child(imageName);
     await imageRef.put(image.uri, {contentType: 'video'});
     var url = await imageRef.getDownloadURL();
     return url;
@@ -157,6 +151,13 @@ async function getPhotoUser() {
   return edges;
 }
 
+const sortVideos = (videos) => {
+  if (!videos) videos = {};
+  return Object.values(videos)
+    .sort((a, b) => a.startTimestamp - b.startTimestamp)
+    .reverse();
+};
+
 module.exports = {
   takePicture,
   pickLibrary,
@@ -166,4 +167,5 @@ module.exports = {
   uploadPictureFirebase,
   uploadVideoFirebase,
   getPhotoUser,
+  sortVideos,
 };
