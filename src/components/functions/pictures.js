@@ -130,13 +130,37 @@ async function uploadPictureFirebase(localUri, destination) {
   }
 }
 
-async function uploadVideoFirebase(image, destination) {
+async function uploadVideoFirebase(image, destination, name) {
   try {
-    let imageName = 'content.mp4';
-    const imageRef = firebase.storage().ref(destination).child(imageName);
-    await imageRef.put(image.uri, {contentType: 'video'});
-    var url = await imageRef.getDownloadURL();
-    return url;
+    const imageRef = firebase.storage().ref(destination).child(name);
+    const uploadTask = imageRef.put(image.uri, {contentType: 'video'});
+
+    uploadTask.on(
+      'state_changed',
+      function (snapshot) {
+        // Observe state change events such as progress, pause, and resume
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
+      },
+      function (error) {
+        console.log(error);
+      },
+      async () => {
+        console.log('Upload complete');
+        var url = await imageRef.getDownloadURL();
+        console.log('url: ', url);
+        return url;
+      },
+    );
   } catch (err) {
     console.log('error upload', err);
     return false;

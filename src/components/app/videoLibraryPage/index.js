@@ -18,7 +18,7 @@ import CardArchive from '../coachFlow/StreamPage/footer/components/CardArchive';
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 import PlaceHolder from '../../placeHolders/CardConversation';
 
-import {sortVideos} from '../../functions/pictures';
+import {uploadVideoFirebase, sortVideos} from '../../functions/pictures';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -78,7 +78,30 @@ class VideoLibraryPage extends Component {
       multiple: true,
       mediaType: 'video',
     });
-    console.log(videos);
+    console.log('videos', videos);
+
+    const {userID} = this.props;
+    const videoUri = videos[0].path;
+    console.log('videoUri: ', videoUri);
+    const destinationImage = `archivedStreams/test/`;
+    const videoUrl = await uploadVideoFirebase(
+      {uri: videoUri},
+      destinationImage,
+      'archive.mp4',
+    );
+    console.log('videoUrl: ', videoUrl);
+
+    let updates = {};
+    updates[`archivedStreams/test`] = {
+      id: 'test',
+      url: videoUrl,
+      source: 'personal',
+      usersLinked: {[userID]: true},
+    };
+    updates[`users/${userID}/archivedStreams/test`] = true;
+
+    await firebase.database().ref().update(updates);
+    console.log('videoUploaded');
   };
 
   render() {
