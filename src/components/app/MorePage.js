@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
+import firebase from 'react-native-firebase'
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
@@ -33,49 +34,39 @@ class MorePage extends Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  title(text) {
-    return (
-      <Row style={{marginTop: 20, marginBottom: 10}}>
-        <Col style={styleApp.center2}>
-          <Text
-            style={[
-              styleApp.title,
-              {
-                fontSize: 12,
-                color: colors.title,
-                fontFamily: 'OpenSans-SemiBold',
-              },
-            ]}>
-            {text}
-          </Text>
-        </Col>
-      </Row>
-    );
+  componentDidMount() {
+    this.notificationHandler();
   }
-  bigtitle(text) {
-    return (
-      <Row style={{marginBottom: 5}}>
-        <Col style={styleApp.center2}>
-          <Text
-            style={[
-              styleApp.title,
-              {fontSize: 19, fontFamily: 'OpenSans-SemiBold'},
-            ]}>
-            {text}
-          </Text>
-        </Col>
-      </Row>
-    );
+  componentWillUnmount() {
+    this.removeNotificationListener();
+    this.messageListener();
   }
-  subtitle(text) {
-    return (
-      <Row style={{marginBottom: 0}}>
-        <Col style={styleApp.center2}>
-          <Text style={[styleApp.subtitle, {fontSize: 13}]}>{text}</Text>
-        </Col>
-      </Row>
-    );
+  async notificationHandler() {
+    const {userID} = this.props;
+    this.appBackgroundNotificationListenner();
+    this.appOpenFistNotification();
+    this.messageListener = firebase
+      .notifications()
+      .onNotification((notification1) => {
+        const notification = new firebase.notifications.Notification()
+          .setNotificationId(notification1._notificationId)
+          .setTitle(notification1._title)
+          .setBody(notification1._body)
+          .setData(notification1._data);
+        if (userID !== notification.data.senderID)
+          firebase.notifications().displayNotification(notification);
+      });
   }
+
+  appBackgroundNotificationListenner() {
+    this.removeNotificationListener = firebase
+      .notifications()
+      .onNotificationOpened((notification) => {
+        const {data} = notification.notification;
+        NavigationService.push(data.action, data)
+      });
+  }
+
 
   button(icon, text, page, type, url) {
     return (
@@ -131,8 +122,11 @@ class MorePage extends Component {
     );
   }
   clickButton(page, type, url) {
+    const {navigation} = this.props
     if (type === 'url') {
+      // navigation.navigate('Webview',{url:url})
       this.openLink(url);
+
     } else if (type === 'call') {
       this.call();
     } else if (type === 'email') {
@@ -204,7 +198,7 @@ class MorePage extends Component {
   profile() {
     const {infoUser, userConnected} = this.props;
     return (
-      <View style={{marginLeft: 0, width: width, marginTop: 0}}>
+      <View>
         <View style={styleApp.marginView}>
           {userConnected ? (
             <View>
@@ -262,10 +256,8 @@ class MorePage extends Component {
 
           <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]} />
           {this.button('envelope', 'Email', 'Alert', 'email')}
-          {/* {this.button('phone', 'Call', 'Alert', 'call')} */}
         </View>
 
-        <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
             <Text style={styleApp.text}>Social media</Text>
 
@@ -278,9 +270,7 @@ class MorePage extends Component {
               'https://www.instagram.com/getgamefare',
             )}
           </View>
-        </View>
 
-        <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
             <Text style={styleApp.text}>Legal</Text>
 
@@ -300,38 +290,18 @@ class MorePage extends Component {
               'https://www.getgamefare.com/terms',
             )}
           </View>
-        </View>
+     
 
-        <View style={styleApp.viewHome}>
           <View style={styleApp.marginView}>
             {this.props.userConnected &&
               this.button('logout', 'Logout', 'Alert', 'logout')}
           </View>
-        </View>
       </View>
     );
   }
   async confirmLogout() {
     await this.props.userAction('logout', {userID: this.props.userID});
     this.props.navigation.navigate('Profile');
-  }
-  rowCheck(text) {
-    return (
-      <Row style={{height: 30}}>
-        <Col size={10} style={styleApp.center2}>
-          <AllIcons name="check" type="mat" size={17} color={colors.grey} />
-        </Col>
-        <Col size={90} style={styleApp.center2}>
-          <Text
-            style={[
-              styleApp.text,
-              {fontFamily: 'OpenSans-Regular', fontSize: 14},
-            ]}>
-            {text}
-          </Text>
-        </Col>
-      </Row>
-    );
   }
   render() {
     return (

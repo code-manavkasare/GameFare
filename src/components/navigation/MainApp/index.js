@@ -11,10 +11,11 @@ import CreateEvent from './components/CreateEvent';
 import JoinEvent from './components/JoinEvent';
 import JoinGroup from './components/JoinGroup';
 
-import EditProfilePage from '../../app/elementsUser/elementsProfile/EditProfilePage';
 import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
 
 import Conversation from '../../app/elementsMessage/Conversation';
+
+import Webview from '../../layout/Views/Webview'
 
 const Stack = createStackNavigator();
 const MainApp = () => {
@@ -39,7 +40,9 @@ const MainApp = () => {
       <Stack.Screen name="Conversation" component={Conversation} />
 
       <Stack.Screen name="ProfilePage" component={ProfilePage} />
-      <Stack.Screen name="EditProfilePage" component={EditProfilePage} />
+
+      <Stack.Screen name="Webview" component={Webview} />
+      
     </Stack.Navigator>
   );
 };

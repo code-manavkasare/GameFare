@@ -23,7 +23,7 @@ function TabsApp() {
         <Footer
           ref={footerRef}
           {...props}
-          colors={{active: colors.primary, inactive: colors.greyDark}}
+          colors={{active: colors.white, inactive: colors.greyDark}}
         />
       )}>
       <Tab.Screen
@@ -35,7 +35,7 @@ function TabsApp() {
           icon: {
             name: 'profileFooter',
             type: 'moon',
-            size: 23,
+            size: 21,
           },
         }}
       />
@@ -48,7 +48,7 @@ function TabsApp() {
           icon: {
             name: 'video-camera',
             type: 'moon',
-            size: 23,
+            size: 21,
           },
         }}
       />
@@ -61,7 +61,7 @@ function TabsApp() {
           icon: {
             name: 'speech',
             type: 'moon',
-            size: 23,
+            size: 21,
           },
         }}
       />
