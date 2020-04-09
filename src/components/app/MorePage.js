@@ -140,7 +140,7 @@ class MorePage extends Component {
     } else if (type === 'logout') {
       NavigationService.navigate('Alert', {
         textButton: 'Logout',
-        title: 'Do you want to log out?' + '\n',
+        title: 'Do you want to log out?',
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
