@@ -43,42 +43,7 @@ class HomeScreen extends React.Component {
     this.translateXGroups = new Animated.Value(width);
     this.opacityVoile = new Animated.Value(0.3);
   }
-  componentDidMount() {
-    StatusBar.setHidden(false, 'slide');
-    StatusBar.setBarStyle('dark-content', true);
-    this.notificationHandler();
-  }
 
-  componentWillUnmount() {
-    this.removeNotificationListener();
-    this.messageListener();
-  }
-
-  async notificationHandler() {
-    const {userID} = this.props;
-    this.appBackgroundNotificationListenner();
-    this.appOpenFistNotification();
-    this.messageListener = firebase
-      .notifications()
-      .onNotification((notification1) => {
-        const notification = new firebase.notifications.Notification()
-          .setNotificationId(notification1._notificationId)
-          .setTitle(notification1._title)
-          .setBody(notification1._body)
-          .setData(notification1._data);
-        if (userID !== notification.data.senderID)
-          firebase.notifications().displayNotification(notification);
-      });
-  }
-
-  appBackgroundNotificationListenner() {
-    this.removeNotificationListener = firebase
-      .notifications()
-      .onNotificationOpened((notification) => {
-        const {data} = notification.notification;
-        this.openPageFromNotification(data.action, data);
-      });
-  }
 
   async appOpenFistNotification() {
     const notificationOpen = await firebase
@@ -86,13 +51,10 @@ class HomeScreen extends React.Component {
       .getInitialNotification();
     if (notificationOpen) {
       const {data} = notificationOpen.notification;
-      this.openPageFromNotification(data.action, data);
+      NavigationService.push(data.action, data)
     }
   }
 
-  openPageFromNotification(page, data) {
-    this.props.navigation.push(page, data);
-  }
 
   navigate(val, data) {
     this.props.navigation.push(val, data);
