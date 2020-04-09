@@ -123,20 +123,20 @@ const goToSettings = () => {
   Permissions.openSettings();
 };
 
-async function uploadNetlinePhoto(streamID, img, orientation) {
+async function uploadNetlinePhoto(streamID, img, orientation, cameraCondition, cameraOrientation) {
   let rotatedImage = img;
-  // IF USING BACK CAMERA
-  // if (orientation === 'LANDSCAPE-LEFT') {
-  //   rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
-  // } else if (orientation === 'LANDSCAPE-RIGHT') {
-  //   rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
-  // }
-  // IF USING FRONT CAMERA
   if (orientation === 'LANDSCAPE-LEFT') {
     rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
   } else if (orientation === 'LANDSCAPE-RIGHT') {
     rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
-  }
+  }  
+  await firebase
+    .database()
+    .ref('streams/' + streamID + '/')
+    .update({
+      courtConditions: cameraCondition,
+      cameraOrientation: cameraOrientation
+    });
   const pictureUri = await uploadPictureFirebase(
     rotatedImage.uri,
     'streams/' + streamID + '/',
@@ -144,7 +144,9 @@ async function uploadNetlinePhoto(streamID, img, orientation) {
   await firebase
     .database()
     .ref('streams/' + streamID + '/')
-    .update({netlinePhoto: pictureUri});
+    .update({
+      netlinePhoto: pictureUri
+    });
 }
 
 const audioVideoPermission = async () => {

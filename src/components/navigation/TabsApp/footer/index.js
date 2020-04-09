@@ -33,12 +33,7 @@ class Footer extends React.Component {
     ]).start();
   };
   translateBlueView = (index,numberRoutes) => {
-    console.log('translateBlueView',index,numberRoutes)
-   
-    // console.log('widthFooter/numberRoutes)*index',widthFooter/numberRoutes)*index)
     const translateTo = (widthFooter/numberRoutes)*Number(index)
-    console.log('translateTo',translateTo)
-    // return null
     return Animated.parallel([
       Animated.spring(this.translateXMovingView, timing(translateTo, 100)),
     ]).start();

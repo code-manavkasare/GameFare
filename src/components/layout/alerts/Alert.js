@@ -46,7 +46,7 @@ export default class Alert extends Component {
   subtitle() {
     const {subtitle} = this.props.route.params;
     if (subtitle)
-      return <Text style={[styleApp.text, {fontSize: 15}]}>{subtitle}</Text>;
+      return <Text style={[styleApp.text, {fontSize: 15, marginTop:20}]}>{subtitle}</Text>;
     return null;
   }
   click() {
@@ -57,6 +57,13 @@ export default class Alert extends Component {
       return onGoBack();
     }
     return navigation.goBack();
+  }
+  optionClick(operation) {
+    const { navigation } = this.props;
+    navigation.goBack();
+    if (operation) {
+      operation()
+    }
   }
   async close() {
     this.openVoile(false);
@@ -71,7 +78,11 @@ export default class Alert extends Component {
       onPressColor,
       icon,
       textButton,
+      displayList,
+      listOptions,
+      close
     } = this.props.route.params;
+    const closable = (close !== undefined)?close:true
 
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'transparent'}]}>
@@ -87,15 +98,20 @@ export default class Alert extends Component {
           />
         </Animated.View>
         <View style={styles.viewModal}>
-          <TouchableOpacity
-            style={styles.buttonClose}
-            activeOpacity={0.5}
-            onPress={() => this.close()}>
-            <MatIcon name="close" color={'#4a4a4a'} size={24} />
-          </TouchableOpacity>
+          {
+            closable?
+              <TouchableOpacity
+                style={styles.buttonClose}
+                activeOpacity={0.5}
+                onPress={() => this.close()}>
+                <MatIcon name="close" color={'#4a4a4a'} size={24} />
+              </TouchableOpacity>
+            : null
+          }
 
           {icon && <View style={styles.viewIcon}>{icon}</View>}
 
+          {/* View Title */}
           <Row style={styles.rowTitleSubtitle}>
             <Col>
               {this.title()}
@@ -103,16 +119,65 @@ export default class Alert extends Component {
             </Col>
           </Row>
 
-          <View style={styles.viewButton}>
-            <Button
-              backgroundColor={colorButton ? colorButton : 'green'}
-              disabled={false}
-              onPressColor={onPressColor ? onPressColor : colors.greenClick}
-              text={textButton}
-              click={() => this.click()}
-              loader={this.state.loader}
-            />
-          </View>
+          {
+          // CASE 1: Two options given (YES / NO Style)
+          (displayList && listOptions.length === 2)?
+            <Row style={styles.buttonArea}>
+              <Col size={45} style={styles.viewButton}>
+                <Button
+                  backgroundColor={'green'}
+                  disabled={false}
+                  onPressColor={colors.greenLight}
+                  text={listOptions[0].title || 'Yes'}
+                  click={() => this.optionClick(listOptions[0].operation)}
+                  loader={this.state.loader}
+                />
+              </Col>
+              <Col size={10} />
+              <Col size={45} style={styles.viewButton}>
+                <Button
+                  backgroundColor={'red'}
+                  disabled={false}
+                  onPressColor={colors.redLight}
+                  text={listOptions[1].title || 'No'}
+                  click={() => this.optionClick(listOptions[1].operation)}
+                  loader={this.state.loader}
+                />
+              </Col>
+            </Row>
+
+          // CASE 2: More than two options available (All blue buttons)
+          :(displayList)?
+            <Col style={styles.buttonArea}>
+              {listOptions.map((option, i) => (
+                <Row style={styles.viewButton}>
+                  <Button
+                    backgroundColor={'blue'}
+                    disabled={false}
+                    onPressColor={colors.blueLight}
+                    text={option.title}
+                    click={() => this.optionClick(option.operation)}
+                    loader={this.state.loader}
+                  />
+                </Row>
+              ))}
+            </Col>
+          
+          // CASE 3: Only one option provided (Same as previous usage)
+          :
+            <View style={styles.buttonArea}>
+              <View style={styles.viewButton}>
+                <Button
+                  backgroundColor={colorButton ? colorButton : 'green'}
+                  disabled={false}
+                  onPressColor={onPressColor ? onPressColor : colors.greenClick}
+                  text={textButton}
+                  click={() => this.click()}
+                  loader={this.state.loader}
+                />
+              </View>
+            </View>
+          }
         </View>
       </View>
     );
@@ -162,13 +227,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 13,
   },
-  viewButton: {
-    marginTop: 25,
-    marginLeft: 20,
+  buttonArea: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 15,
+    paddingBottom: 25,
     marginBottom: marginBottomApp,
     alignItems: 'center',
     justifyContent: 'center',
-    width: width - 40,
-    height: 50,
+  },
+  viewButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width:'100%',
+    paddingTop: 10,
   },
 });
