@@ -144,25 +144,6 @@ class VideoViews extends Component {
       </Col>
     );
   }
-  listSessions(sessions) {
-    const {openVideo} = this.props;
-    return Object.values(sessions).map((archiveID, i) => (
-      <CardArchive
-        archiveID={archiveID}
-        key={i}
-        openVideo={(source, thumbnail) => {
-          console.log('llala open card archive', thumbnail);
-          openVideo({
-            watchVideo: true,
-            thumbnail: thumbnail,
-            source: source,
-            myVideo: true,
-            archiveID: archiveID,
-          });
-        }}
-      />
-    ));
-  }
   sessions() {
     const {heightView} = this.animationView();
     const {session, openVideo} = this.props;
