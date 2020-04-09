@@ -59,10 +59,10 @@ class VideoLibraryPage extends Component {
           videosArray.map((video, i) => {
             return (
               <CardArchive
-                archive={videosArray}
+                archive={video}
                 key={i}
                 openVideo={(source, thumbnail) => {
-                  console.log('llala open card archive');
+                  alert('not working yet');
                 }}
               />
             );
@@ -72,14 +72,13 @@ class VideoLibraryPage extends Component {
     );
   }
 
-  uploadVideo = () => {
+  uploadVideo = async () => {
     console.log('upload');
-    ImagePicker.openPicker({
+    const videos = await ImagePicker.openPicker({
       multiple: true,
       mediaType: 'video',
-    }).then((videos) => {
-      console.log(videos);
     });
+    console.log(videos);
   };
 
   render() {
