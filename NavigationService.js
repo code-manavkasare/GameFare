@@ -2,7 +2,6 @@ import * as React from 'react';
 import {CommonActions, StackActions} from '@react-navigation/native';
 
 const navigationRef = React.createRef();
-const footerRef = React.createRef();
 
 const navigate = (routeName, params) => {
   navigationRef.current?.navigate(routeName, params);
@@ -31,6 +30,17 @@ const dismiss = () => {
   navigationRef.dangerouslyGetParent().pop();
 };
 
+const setParams = (routeKey, params) => {
+  console.log('setParams', navigationRef);
+  console.log('new params,', params, routeKey);
+  if (navigationRef.current) return navigationRef.current.setParams(params);
+
+  navigationRef.dispatch({
+    ...CommonActions.setParams(params),
+    source: routeKey,
+  });
+};
+
 // add other navigation functions that you need and export them
 
 module.exports = {
@@ -40,5 +50,5 @@ module.exports = {
   dismiss,
   goBack,
   navigationRef,
-  footerRef,
+  setParams,
 };

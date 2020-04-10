@@ -2,6 +2,7 @@ import {SET_LAYOUT} from '../actions/types';
 
 const initialState = {
   isFooterVisible: true,
+  activeTab: 'Profile',
 };
 
 const layoutReducer = (state = initialState, action) => {

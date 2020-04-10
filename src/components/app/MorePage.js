@@ -66,7 +66,65 @@ class MorePage extends Component {
         NavigationService.push(data.action, data);
       });
   }
-
+  async appOpenFistNotification() {
+    const notificationOpen = await firebase
+      .notifications()
+      .getInitialNotification();
+    if (notificationOpen) {
+      const {data} = notificationOpen.notification;
+      NavigationService.push(data.action, data);
+    }
+  }
+  button2(dataButton) {
+    const {text, icon, click, text2} = dataButton;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={10} style={styleApp.center2}>
+                <AllIcons
+                  type={icon.type}
+                  size={icon.size}
+                  name={icon.name}
+                  color={icon.color}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text
+                  style={[
+                    styleApp.input,
+                    {
+                      fontSize: 14,
+                      color: text === 'Logout' ? colors.red : colors.title,
+                    },
+                  ]}>
+                  {text}
+                </Text>
+              </Col>
+              <Col size={20} style={styleApp.center3}>
+                <Text style={[styleApp.text, {color: colors.primary}]}>
+                  {text2}
+                </Text>
+              </Col>
+              <Col size={10} style={styleApp.center3}>
+                <AllIcons
+                  type="mat"
+                  size={20}
+                  name={'keyboard-arrow-right'}
+                  color={colors.grey}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => click()}
+        color="white"
+        style={styles.button}
+        onPressColor={colors.off}
+      />
+    );
+  }
   button(icon, text, page, type, url) {
     return (
       <ButtonColor
@@ -259,7 +317,7 @@ class MorePage extends Component {
           {this.button('envelope', 'Email', 'Alert', 'email')}
         </View>
 
-        <View style={styleApp.marginView}>
+        <View style={[styleApp.marginView, {marginTop: 20}]}>
           <Text style={styleApp.text}>Social media</Text>
 
           <View style={[styleApp.divider2, {marginBottom: 0}]} />
@@ -272,7 +330,7 @@ class MorePage extends Component {
           )}
         </View>
 
-        <View style={styleApp.marginView}>
+        <View style={[styleApp.marginView, {marginTop: 20}]}>
           <Text style={styleApp.text}>Legal</Text>
 
           <View style={[styleApp.divider2, {marginBottom: 0}]} />
@@ -290,9 +348,27 @@ class MorePage extends Component {
             'url',
             'https://www.getgamefare.com/terms',
           )}
+
+          {this.button2({
+            text: 'Test notif',
+            icon: {
+              name: 'user',
+              type: 'font',
+              size: 20,
+              color: colors.title,
+            },
+            click: () =>
+              NavigationService.navigate('Stream', {
+                screen: 'StreamPage',
+                params: {
+                  openSession: true,
+                  objectID: '2mvi15eag9ek8qwr684',
+                },
+              }),
+          })}
         </View>
 
-        <View style={styleApp.marginView}>
+        <View style={[styleApp.marginView, {marginTop: 20}]}>
           {this.props.userConnected &&
             this.button('logout', 'Logout', 'Alert', 'logout')}
         </View>
@@ -348,4 +424,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction})(MorePage);
+export default connect(
+  mapStateToProps,
+  {userAction},
+)(MorePage);

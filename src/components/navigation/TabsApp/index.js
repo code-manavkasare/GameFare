@@ -3,7 +3,6 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Footer from './footer/index';
-import {footerRef} from '../../../../NavigationService';
 
 import MessageList from '../../app/elementsMessage/MessageList';
 import Stream from './components/Stream';
@@ -21,7 +20,6 @@ function TabsApp() {
       keyboardHidesTabBar={false}
       tabBar={(props) => (
         <Footer
-          ref={footerRef}
           {...props}
           colors={{active: colors.white, inactive: colors.greyDark}}
         />
@@ -31,6 +29,7 @@ function TabsApp() {
         component={Profile}
         options={{
           label: 'Profile',
+          pageStack: 'MorePage',
           signInToPass: false,
           icon: {
             name: 'profileFooter',
@@ -43,6 +42,7 @@ function TabsApp() {
         name="Stream"
         component={Stream}
         options={{
+          pageStack: 'StreamPage',
           label: 'Stream',
           signInToPass: false,
           icon: {
@@ -56,7 +56,9 @@ function TabsApp() {
         name="MessageList"
         component={MessageList}
         options={{
+          displayPastille: true,
           label: 'Message',
+          pageStack: 'MessageList',
           signInToPass: false,
           icon: {
             name: 'speech',
