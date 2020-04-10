@@ -73,72 +73,16 @@ export default class ScrollViewPage extends PureComponent {
     return null;
   }
   render() {
-    const AnimateHeaderBackground = this.AnimatedHeaderValue.interpolate({
-      inputRange: [0, 60],
-      outputRange: ['transparent', 'white'],
-      extrapolate: 'clamp',
-    });
-    const AnimateHeaderBorder = this.AnimatedHeaderValue.interpolate({
-      inputRange: [30, 60],
-      outputRange: ['transparent', colors.off],
-      extrapolate: 'clamp',
-    });
-    const AnimateColorIcon = this.AnimatedHeaderValue.interpolate({
-      inputRange: [0, 60],
-      outputRange: [this.props.initialColorIcon, colors.title],
-      extrapolate: 'clamp',
-    });
+    const {scrollDisabled} = this.props
     return (
       <View>
-        {this.props.header ? (
-          <Animated.View
-            style={[
-              styleApp.center,
-              {
-                borderColor: AnimateHeaderBorder,
-                height: 46,
-                width: 46,
-                borderRadius: 23,
-                borderWidth: 1,
-                backgroundColor: AnimateHeaderBackground,
-                position: 'absolute',
-                top: 15,
-                right: 20,
-                zIndex: 40,
-              },
-            ]}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name={this.props.icon1}
-                    color={AnimateColorIcon}
-                    size={18}
-                    type="font"
-                  />
-                );
-              }}
-              click={() => this.props.clickButton1()}
-              color={'transparent'}
-              style={[
-                styleApp.center,
-                {
-                  height: 46,
-                  width: 46,
-                  borderRadius: 23,
-                  backgroundColor: AnimateHeaderBackground,
-                },
-              ]}
-              onPressColor={'transparent'}
-            />
-          </Animated.View>
-        ) : null}
         <KeyboardAwareScrollView
           enableOnAndroid={true}
           extraScrollHeight={30}
           keyboardOpeningTime={120}
           bounces={true}
           enableResetScrollToCoords={false}
+          scrollEnabled={!scrollDisabled}
           refreshControl={this.refreshControl()}
           keyboardShouldPersistTaps={'always'}
           keyboardDismissMode={'none'}

@@ -3,6 +3,7 @@ import {Text, View, styleAppheet, StyleSheet} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import StatusBar from '@react-native-community/status-bar';
+import {navigate} from '../../../../../../NavigationService';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
@@ -13,36 +14,46 @@ class MainTabIcon extends React.Component {
   constructor(props) {
     super(props);
   }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.isFocused !== this.props.isFocused && this.props.isFocused) {
+      const {translateBlueView, index, numberRoutes} = this.props;
+      if (Number(index) === 1) StatusBar.setBarStyle('light-content', true);
+      else StatusBar.setBarStyle('dark-content', true);
+      translateBlueView(index, numberRoutes);
+    }
+  }
   buttonFooter() {
     const {
       navigation,
       tintColor,
       icon,
       label,
+      displayPastille,
       signInToPass,
       userConnected,
       index,
       discussions,
-      translateBlueView,
-      numberRoutes,
       userID,
     } = this.props;
-    const displayPastille =
-    Object.values(discussions).filter((discussion) => {
-      let usersRead = discussion.lastMessage.usersRead;
-      if (!usersRead) usersRead = [];
-      if (!usersRead[userID]) return true;
-      return false;
-    }).length !== 0;
-    let {routeName} = this.props;
+    const conditionDisplayPastille =
+      Object.values(discussions).filter((discussion) => {
+        let usersRead = discussion.lastMessage.usersRead;
+        if (!usersRead) usersRead = [];
+        if (!usersRead[userID]) return true;
+        return false;
+      }).length !== 0;
+    let {routeName, pageStack} = this.props;
 
-    if (!userConnected && signInToPass) routeName = 'SignIn';
+    if (!userConnected && signInToPass) {
+      routeName = 'SignIn';
+      pageStack = 'Phone';
+    }
     return (
       <Button
         view={() => {
           return (
             <View>
-              {displayPastille && (
+              {displayPastille && conditionDisplayPastille && (
                 <View
                   style={[styleApp.roundMessage, {backgroundColor: tintColor}]}
                 />
@@ -57,11 +68,7 @@ class MainTabIcon extends React.Component {
           );
         }}
         click={() => {
-          translateBlueView(index,numberRoutes)
-          if (routeName === 'Stream')
-            StatusBar.setBarStyle('light-content', true);
-          else StatusBar.setBarStyle('dark-content', true);
-          navigation.navigate(routeName);
+          navigate(routeName, {screen: pageStack, params: {}});
         }}
         // color={'red'}
         style={styles.button}
@@ -102,4 +109,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(MainTabIcon);
+export default connect(
+  mapStateToProps,
+  {},
+)(MainTabIcon);

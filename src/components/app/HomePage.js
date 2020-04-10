@@ -43,19 +43,6 @@ class HomeScreen extends React.Component {
     this.translateXGroups = new Animated.Value(width);
     this.opacityVoile = new Animated.Value(0.3);
   }
-
-
-  async appOpenFistNotification() {
-    const notificationOpen = await firebase
-      .notifications()
-      .getInitialNotification();
-    if (notificationOpen) {
-      const {data} = notificationOpen.notification;
-      NavigationService.push(data.action, data)
-    }
-  }
-
-
   navigate(val, data) {
     this.props.navigation.push(val, data);
   }

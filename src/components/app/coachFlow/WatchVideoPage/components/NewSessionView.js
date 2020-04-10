@@ -7,9 +7,7 @@ import Button from '../../../../layout/buttons/Button';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import {timeout} from '../../../../functions/coach';
 import {heightFooter} from '../../../../style/sizes';
-import {footerRef} from '../../../../../../NavigationService';
 
 export default class NewSessionView extends Component {
   constructor(props) {
@@ -37,9 +35,7 @@ export default class NewSessionView extends Component {
         loader={false}
         click={async () => {
           if (!userConnected) return navigation.navigate('SignIn');
-          // footerRef.translateFooter(false);
           await layoutAction('setLayout', {isFooterVisible: false});
-          await timeout(100);
           await setState({
             loader: true,
             displayHomeView: false,
@@ -64,14 +60,12 @@ export default class NewSessionView extends Component {
       <Button
         backgroundColor="primary"
         onPressColor={colors.primaryLight}
-        //  styleButton={styleApp.marginView}
         enabled={true}
         text="New session"
         loader={false}
         click={async () => {
           if (!userConnected) return navigation.navigate('SignIn');
           await layoutAction('setLayout', {isFooterVisible: false});
-          await timeout(100);
           await endCoachSession(currentSessionID);
           await setState({
             loader: true,
@@ -85,9 +79,12 @@ export default class NewSessionView extends Component {
   }
   listSessions() {
     const {error} = this.props;
+    
     return (
       <View style={styles.page}>
         <View style={styleApp.marginView}>
+         
+
           {this.buttonCurrentSession()}
 
           {this.buttonNewSession()}
