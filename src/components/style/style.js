@@ -472,16 +472,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     borderColor: colors.grey,
   },
-  cardArchive: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    height: 130,
-    width: 250,
-    backgroundColor: colors.title,
-    marginRight: 20,
-    borderRadius: 4,
-  },
 });
 
 export default styles;

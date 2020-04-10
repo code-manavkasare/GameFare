@@ -47,7 +47,7 @@ class VideoLibraryPage extends Component {
     console.log('videosArray: ', videosArray);
 
     return (
-      <View style={{marginTop: 10, minHeight: height}}>
+      <View style={styles.container}>
         {loader ? (
           this.placehoder()
         ) : videosArray.length === 0 ? (
@@ -59,6 +59,7 @@ class VideoLibraryPage extends Component {
           videosArray.map((video, i) => {
             return (
               <CardArchive
+                style={styles.cardArchive}
                 archive={video}
                 key={i}
                 openVideo={(source, thumbnail) => {
@@ -100,7 +101,10 @@ class VideoLibraryPage extends Component {
     };
     updates[`users/${userID}/archivedStreams/test`] = true;
 
-    await firebase.database().ref().update(updates);
+    await firebase
+      .database()
+      .ref()
+      .update(updates);
     console.log('videoUploaded');
   };
 
@@ -129,8 +133,8 @@ class VideoLibraryPage extends Component {
           contentScrollView={this.listVideos.bind(this)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          refreshControl={true}
-          refresh={() => this.refresh()}
+          refreshControl={false}
+          // refresh={() => this.refresh()}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}
@@ -140,10 +144,24 @@ class VideoLibraryPage extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 10,
+    minHeight: height,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  cardArchive: {
+    width: width / 2 - 10,
+    height: 150,
+    borderRadius: 4,
+    overflow: 'hidden',
+    backgroundColor: colors.title,
+    margin: 5,
+  },
+});
 
 const mapStateToProps = (state) => {
-  console.log('state: ', state);
   return {
     archivedStreams: state.user.infoUser.archivedStreams,
     userID: state.user.userID,
@@ -151,4 +169,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(VideoLibraryPage);
+export default connect(mapStateToProps)(VideoLibraryPage);

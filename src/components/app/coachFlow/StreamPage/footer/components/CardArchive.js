@@ -66,7 +66,7 @@ export default class CardArchive extends Component {
     } = archive;
 
     return (
-      <View style={styleApp.cardArchive}>
+      <View style={[styles.cardArchive, this.props.style]}>
         {!archiveData.available ? (
           <View
             style={[

@@ -17,6 +17,7 @@ class PastSessions extends Component {
 
     return Object.values(sessions).map((archive, i) => (
       <CardArchive
+        style={styles.cardArchive}
         archive={archive}
         key={i}
         openVideo={(source, thumbnail) => {
@@ -76,6 +77,16 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     marginRight: 20,
   },
+  cardArchive: {
+    height: 130,
+    width: 250,
+    marginRight: 20,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    backgroundColor: colors.title,
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -84,4 +95,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(PastSessions);
+export default connect(
+  mapStateToProps,
+  {},
+)(PastSessions);
