@@ -3,12 +3,10 @@ import {StyleSheet, Animated} from 'react-native';
 
 import {connect} from 'react-redux';
 
-import {width} from '../../../../style/sizes';
 import {isUserAlone} from '../../../../functions/coach';
 
 import BottomButtons from './components/BottomButtons';
 import VideosView from './components/VideosView';
-import {heightFooter, marginBottomApp} from '../../../../style/sizes';
 
 class Footer extends Component {
   constructor(props) {
@@ -25,22 +23,10 @@ class Footer extends Component {
       endCoachSession,
     } = this.props;
     if (!displayFooter) return null;
-    const userIsAlone = isUserAlone(session);
 
     return (
       <Animated.View
         style={[styles.footer, {transform: [{translateY: translateYFooter}]}]}>
-        {/* <CameraView
-          styleCamera={{
-            position: 'absolute',
-            height: 200,
-            width: 200,
-            top: -200,
-            zIndex: 200,
-          }}
-          onRef={(ref) => (this.cameraRef = ref)}
-          cameraFront={true}
-        /> */}
         <BottomButtons
           session={session}
           state={state}
@@ -68,7 +54,7 @@ class Footer extends Component {
 const styles = StyleSheet.create({
   footer: {
     bottom: 0,
-    width: width,
+    width: '100%',
     position: 'absolute',
     flex: 1,
     zIndex: 5,
@@ -89,4 +75,7 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(Footer);
+export default connect(
+  mapStateToProps,
+  {},
+)(Footer);

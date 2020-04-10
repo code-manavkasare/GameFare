@@ -37,7 +37,7 @@ if (Platform.OS === 'ios') {
     heightHeaderHome = 100;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 70;
+    heightFooter = 75;
     marginTopApp = 35;
     marginBottomApp = 30;
     heightHeaderHomeSearch = 100;
@@ -49,7 +49,7 @@ if (Platform.OS === 'ios') {
     heightHeaderHome = 100;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 70;
+    heightFooter = 75;
     marginTopApp = 35;
     marginBottomApp = 35;
     heightHeaderHomeSearch = 100;

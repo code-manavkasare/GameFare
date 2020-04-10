@@ -185,19 +185,19 @@ class BottomButton extends Component {
       <ButtonColor
         view={() => {
           return (
-            // <Image
-            //   source={require('../../../../../../img/icons/endCall.png')}
-            //   style={{width: 30, height: 30}}
-            // />
-            <AllIcons
-              type={'moon'}
-              color={colors.white}
-              size={25}
-              name={'replay'}
+            <Image
+              source={require('../../../../../../img/icons/endCall.png')}
+              style={{width: 30, height: 30}}
             />
+            // <AllIcons
+            //   type={'moon'}
+            //   color={colors.white}
+            //   size={25}
+            //   name={'replay'}
+            // />
           );
         }}
-        click={async () => true}
+        click={async () => endCoachSession(true)}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />
@@ -265,8 +265,10 @@ class BottomButton extends Component {
     const membersArray = Object.values(members);
     const {videoSourcePopupVisible} = this.state;
 
+    if (!videoSourcePopupVisible) return false;
+
     return (
-      <Animatable.View
+      <View
         animation={videoSourcePopupVisible ? zoomIn : zoomOut}
         duration={600}>
         <VideoSourcePopup
@@ -276,7 +278,7 @@ class BottomButton extends Component {
           }}
           close={() => this.toggleVideoSourcePopup()}
         />
-      </Animatable.View>
+      </View>
     );
   };
 
@@ -307,7 +309,7 @@ const styles = StyleSheet.create({
   rowButtons: {
     height: 100 + offsetFooterStreaming,
     paddingTop: 10,
-    width: width,
+    width: '100%',
     backgroundColor: colors.transparentGrey,
     paddingBottom: 20,
   },
@@ -367,4 +369,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(BottomButton);
+export default connect(
+  mapStateToProps,
+  {},
+)(BottomButton);

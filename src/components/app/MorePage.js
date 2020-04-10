@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
@@ -63,11 +63,68 @@ class MorePage extends Component {
       .notifications()
       .onNotificationOpened((notification) => {
         const {data} = notification.notification;
-        NavigationService.push(data.action, data)
+        NavigationService.push(data.action, data);
       });
   }
-
-
+  async appOpenFistNotification() {
+    const notificationOpen = await firebase
+      .notifications()
+      .getInitialNotification();
+    if (notificationOpen) {
+      const {data} = notificationOpen.notification;
+      NavigationService.push(data.action, data);
+    }
+  }
+  button2(dataButton) {
+    const {text, icon, click, text2} = dataButton;
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={10} style={styleApp.center2}>
+                <AllIcons
+                  type={icon.type}
+                  size={icon.size}
+                  name={icon.name}
+                  color={icon.color}
+                />
+              </Col>
+              <Col size={60} style={styleApp.center2}>
+                <Text
+                  style={[
+                    styleApp.input,
+                    {
+                      fontSize: 14,
+                      color: text === 'Logout' ? colors.red : colors.title,
+                    },
+                  ]}>
+                  {text}
+                </Text>
+              </Col>
+              <Col size={20} style={styleApp.center3}>
+                <Text style={[styleApp.text, {color: colors.primary}]}>
+                  {text2}
+                </Text>
+              </Col>
+              <Col size={10} style={styleApp.center3}>
+                <AllIcons
+                  type="mat"
+                  size={20}
+                  name={'keyboard-arrow-right'}
+                  color={colors.grey}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => click()}
+        color="white"
+        style={styles.button}
+        onPressColor={colors.off}
+      />
+    );
+  }
   button(icon, text, page, type, url) {
     return (
       <ButtonColor
@@ -122,11 +179,10 @@ class MorePage extends Component {
     );
   }
   clickButton(page, type, url) {
-    const {navigation} = this.props
+    const {navigation} = this.props;
     if (type === 'url') {
       // navigation.navigate('Webview',{url:url})
       this.openLink(url);
-
     } else if (type === 'call') {
       this.call();
     } else if (type === 'email') {
@@ -258,44 +314,61 @@ class MorePage extends Component {
           {this.button('envelope', 'Email', 'Alert', 'email')}
         </View>
 
-          <View style={styleApp.marginView}>
-            <Text style={styleApp.text}>Social media</Text>
+        <View style={[styleApp.marginView, {marginTop: 20}]}>
+          <Text style={styleApp.text}>Social media</Text>
 
-            <View style={[styleApp.divider2, {marginBottom: 0}]} />
-            {this.button(
-              'instagram',
-              'Visit us on Instagram',
-              'Alert',
-              'url',
-              'https://www.instagram.com/getgamefare',
-            )}
-          </View>
+          <View style={[styleApp.divider2, {marginBottom: 0}]} />
+          {this.button(
+            'instagram',
+            'Visit us on Instagram',
+            'Alert',
+            'url',
+            'https://www.instagram.com/getgamefare',
+          )}
+        </View>
 
-          <View style={styleApp.marginView}>
-            <Text style={styleApp.text}>Legal</Text>
+        <View style={[styleApp.marginView, {marginTop: 20}]}>
+          <Text style={styleApp.text}>Legal</Text>
 
-            <View style={[styleApp.divider2, {marginBottom: 0}]} />
-            {this.button(
-              false,
-              'Privacy policy',
-              'Alert',
-              'url',
-              'https://www.getgamefare.com/privacy',
-            )}
-            {this.button(
-              false,
-              'Terms of service',
-              'Alert',
-              'url',
-              'https://www.getgamefare.com/terms',
-            )}
-          </View>
-     
+          <View style={[styleApp.divider2, {marginBottom: 0}]} />
+          {this.button(
+            false,
+            'Privacy policy',
+            'Alert',
+            'url',
+            'https://www.getgamefare.com/privacy',
+          )}
+          {this.button(
+            false,
+            'Terms of service',
+            'Alert',
+            'url',
+            'https://www.getgamefare.com/terms',
+          )}
 
-          <View style={styleApp.marginView}>
-            {this.props.userConnected &&
-              this.button('logout', 'Logout', 'Alert', 'logout')}
-          </View>
+          {this.button2({
+            text: 'Test notif',
+            icon: {
+              name: 'user',
+              type: 'font',
+              size: 20,
+              color: colors.title,
+            },
+            click: () =>
+              NavigationService.navigate('Stream', {
+                screen: 'StreamPage',
+                params: {
+                  openSession: true,
+                  objectID: '2mvi15eag9ek8qwr684',
+                },
+              }),
+          })}
+        </View>
+
+        <View style={[styleApp.marginView, {marginTop: 20}]}>
+          {this.props.userConnected &&
+            this.button('logout', 'Logout', 'Alert', 'logout')}
+        </View>
       </View>
     );
   }
@@ -348,4 +421,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction})(MorePage);
+export default connect(
+  mapStateToProps,
+  {userAction},
+)(MorePage);
