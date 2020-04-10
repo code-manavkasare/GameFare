@@ -14,6 +14,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/footer/components/CardArchive';
+import CardUploading from './components/CardUploading';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 import PlaceHolder from '../../placeHolders/CardConversation';
@@ -30,6 +31,7 @@ class VideoLibraryPage extends Component {
     this.state = {
       videosArray: [],
       loader: false,
+      uploadingVideosArray: [],
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -42,12 +44,31 @@ class VideoLibraryPage extends Component {
     await this.setState({videosArray});
   };
 
+  uploadingVideosList = () => {
+    const {uploadingVideosArray} = this.state;
+    return (
+      uploadingVideosArray.length > 0 &&
+      uploadingVideosArray.map((uploadingVideo, i) => {
+        console.log('i: ', i);
+        console.log('uploadingVideo: ', uploadingVideo);
+        return (
+          <CardUploading
+            key={i}
+            style={styles.CardUploading}
+            videoInfo={uploadingVideo}
+            dismiss={(videoUploaded) => this.dismissUploadCard(videoUploaded)}
+          />
+        );
+      })
+    );
+  };
+
   listVideos() {
     const {loader, videosArray} = this.state;
-    console.log('videosArray: ', videosArray);
 
     return (
       <View style={styles.container}>
+        {this.uploadingVideosList()}
         {loader ? (
           this.placehoder()
         ) : videosArray.length === 0 ? (
@@ -74,38 +95,19 @@ class VideoLibraryPage extends Component {
   }
 
   uploadVideo = async () => {
-    console.log('upload');
     const videos = await ImagePicker.openPicker({
       multiple: true,
       mediaType: 'video',
     });
     console.log('videos', videos);
+    this.setState({uploadingVideosArray: videos});
+  };
 
-    const {userID} = this.props;
-    const videoUri = videos[0].path;
-    console.log('videoUri: ', videoUri);
-    const destinationImage = `archivedStreams/test/`;
-    const videoUrl = await uploadVideoFirebase(
-      {uri: videoUri},
-      destinationImage,
-      'archive.mp4',
-    );
-    console.log('videoUrl: ', videoUrl);
-
-    let updates = {};
-    updates[`archivedStreams/test`] = {
-      id: 'test',
-      url: videoUrl,
-      source: 'personal',
-      usersLinked: {[userID]: true},
-    };
-    updates[`users/${userID}/archivedStreams/test`] = true;
-
-    await firebase
-      .database()
-      .ref()
-      .update(updates);
-    console.log('videoUploaded');
+  dismissUploadCard = (videoUploaded) => {
+    let {uploadingVideosArray} = this.state;
+    const index = uploadingVideosArray.indexOf(videoUploaded);
+    uploadingVideosArray.splice(index, 1);
+    this.setState({uploadingVideosArray});
   };
 
   render() {
@@ -159,13 +161,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.title,
     margin: 5,
   },
+  CardUploading: {
+    width: width / 2 - 10,
+    height: 150,
+    borderRadius: 4,
+    overflow: 'hidden',
+    backgroundColor: 'white',
+    margin: 5,
+  },
 });
 
 const mapStateToProps = (state) => {
   return {
     archivedStreams: state.user.infoUser.archivedStreams,
     userID: state.user.userID,
-    wallet: state.user.infoUser.wallet,
   };
 };
 
