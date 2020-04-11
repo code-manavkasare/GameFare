@@ -3,8 +3,6 @@ import {StyleSheet, Animated} from 'react-native';
 
 import {connect} from 'react-redux';
 
-import {isUserAlone} from '../../../../functions/coach';
-
 import BottomButtons from './components/BottomButtons';
 import VideosView from './components/VideosView';
 

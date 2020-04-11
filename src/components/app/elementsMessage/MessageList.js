@@ -99,7 +99,7 @@ class MessageTab extends React.Component {
   logoutView() {
     const {navigation} = this.props;
     return (
-      <View style={[styleApp.marginView, {marginTop: 30}]}>
+      <View style={[styleApp.marginView, {marginTop: 30, minHeight: height}]}>
         <View style={styleApp.center}>
           <Image
             style={{height: 85, width: 85, marginBottom: 30}}
@@ -232,6 +232,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction, messageAction})(
-  MessageTab,
-);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction, messageAction},
+)(MessageTab);
