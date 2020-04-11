@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import FadeInView from 'react-native-fade-in-view';
@@ -29,13 +30,15 @@ class StreamPage extends Component {
     };
   }
   async componentDidMount() {
+    const {setState} = this.props;
     const cameraAccess = await cameraPermission();
     const microAccess = await microphonePermission();
     this.setState({
+      loader: false,
       cameraAccess: cameraAccess,
       microAccess: microAccess,
-      loader: false,
     });
+    if (setState) setState({permissionsCamera: cameraAccess && microAccess});
   }
   button(text, active) {
     return (
@@ -57,9 +60,6 @@ class StreamPage extends Component {
     const {loader, microAccess, cameraAccess} = this.state;
     return (
       <FadeInView duration={300} style={styles.page}>
-        <Text style={[styleApp.title, {color: colors.white, marginBottom: 10}]}>
-          Stream your performance
-        </Text>
         <Text style={styleApp.subtitle}>Enable access so you can start</Text>
         <Text style={[styleApp.subtitle, {marginBottom: 30}]}>
           taking photos and videos.
@@ -91,13 +91,9 @@ class StreamPage extends Component {
 
 const styles = StyleSheet.create({
   page: {
+    //  flex: 1,
     ...styleApp.center,
-    height: '100%',
-    width: width,
-    position: 'absolute',
-    backgroundColor: colors.title,
-    opacity: 1,
-    zIndex: 7,
+    height: 200,
   },
 });
 
@@ -109,4 +105,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(StreamPage);
+export default connect(
+  mapStateToProps,
+  {},
+)(StreamPage);

@@ -5,8 +5,8 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
-  UIManager,
-  findNodeHandle,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {
@@ -19,11 +19,13 @@ import Config from 'react-native-config';
 import firebase from 'react-native-firebase';
 import KeepAwake from 'react-native-keep-awake';
 import FadeInView from 'react-native-fade-in-view';
+import {Col, Row} from 'react-native-easy-grid';
+
 const {height, width} = Dimensions.get('screen');
 
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 import Loader from '../../../../layout/loaders/Loader';
-import {timing, native} from '../../../../animations/animations';
+import {timing, native, openStream} from '../../../../animations/animations';
 
 import {coachAction} from '../../../../../actions/coachActions';
 import {userAction} from '../../../../../actions/userActions';
@@ -33,6 +35,7 @@ import {
   isSomeoneSharingScreen,
   userPartOfSession,
   isUserAdmin,
+  timeout,
 } from '../../../../functions/coach';
 
 import colors from '../../../../style/colors';
@@ -42,11 +45,6 @@ import {heightHeaderHome} from '../../../../style/sizes';
 import WatchVideoPage from '../../WatchVideoPage/index';
 import MembersView from './MembersView';
 import Footer from '../footer/index';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-
-const isPair = (num) => {
-  return num % 2 !== 0;
-};
 
 const isEven = (n) => {
   return !(n & 1);
@@ -283,31 +281,33 @@ class StreamPage extends Component {
   animatedValues() {
     const {heightCardSession} = this.props;
     const {x, y} = this.state.coordinates;
-    const widthCard = this.animatedPage.interpolate({
+    let initialScaleX = (width / 2 - 40) / width;
+    let initialScaleY = heightCardSession / height;
+    const scaleXCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [width / 2, width],
+      outputRange: [initialScaleX, 1],
       extrapolate: 'clamp',
     });
-    const heightCard = this.animatedPage.interpolate({
+    const scaleYCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [heightCardSession, height],
+      outputRange: [initialScaleY, 1],
       extrapolate: 'clamp',
     });
 
     const xCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [x, 0],
+      outputRange: [x + 20 - ((1 - initialScaleX) * width) / 2, 0],
       extrapolate: 'clamp',
     });
     const yCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [y, 0],
+      outputRange: [y - ((1 - initialScaleY) * height) / 2, 0],
       extrapolate: 'clamp',
     });
 
     return {
-      widthCard,
-      heightCard,
+      scaleXCard,
+      scaleYCard,
       xCard,
       yCard,
     };
@@ -329,7 +329,7 @@ class StreamPage extends Component {
       let xView = isEven(Number(index)) ? 0 : width / 2;
       let yView =
         offsetScrollView +
-        heightCardSession * Math.floor(Number(index) / 2) -
+        (heightCardSession + 20) * Math.floor(Number(index) / 2) -
         getScrollYValue;
       console.log('xView!!!!', xView);
 
@@ -338,9 +338,8 @@ class StreamPage extends Component {
       const currentOpenSession = route.params.objectID;
       console.log('currentOpenSession', currentOpenSession);
       console.log('coachSessionID', coachSessionID);
-      // if (currentOpenSession && coachSessionID !== currentOpenSession)
-      //   await closeCurrentSession(currentOpenSession);
-      // if (currentOpenSession)
+      if (currentOpenSession && coachSessionID !== currentOpenSession)
+        await closeCurrentSession(currentOpenSession);
       /////////////////////////
 
       await this.setState({
@@ -350,19 +349,23 @@ class StreamPage extends Component {
 
       await navigation.setParams({objectID: coachSessionID, openSession: true});
     } else await navigation.setParams({openSession: false});
-
+    console.log('coordinates coordinates', this.state.coordinates);
     await layoutAction('setLayout', {isFooterVisible: !nextVal});
-    return Animated.timing(
+    //     this.setState({
+    //   pageFullScreen: nextVal,
+    //   coordinates: !nextVal ? {x: 0, y: 0} : this.state.coordinates,
+    // });
+    Animated.spring(
       this.animatedPage,
-      timing(nextVal ? 1 : 0, 200),
-    ).start(() => {
-      const {coordinates, coachSession} = this.state;
-      this.setState({
-        pageFullScreen: nextVal,
-        coordinates: !nextVal ? {x: 0, y: 0} : coordinates,
-      });
-      if (!coachSession) this.loadCoachSession();
+      openStream(nextVal ? 1 : 0, 200),
+    ).start();
+    await timeout(220);
+    const {coordinates, coachSession, pageFullScreen} = this.state;
+    this.setState({
+      pageFullScreen: nextVal,
+      coordinates: !nextVal ? {x: 0, y: 0} : coordinates,
     });
+    if (!coachSession && nextVal) this.loadCoachSession();
   }
   render() {
     const {
@@ -372,9 +375,8 @@ class StreamPage extends Component {
       coordinates,
       pageFullScreen,
     } = this.state;
-    const {coachSessionID} = this.props;
 
-    const {userID} = this.props;
+    const {userID, heightCardSession} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
 
     let containerStreamView = {
@@ -382,24 +384,44 @@ class StreamPage extends Component {
       marginTop: 0,
       width: width / 2 - 40,
       overflow: 'hidden',
-      height: 150,
+      height: heightCardSession,
       borderWidth: 1,
       borderColor: colors.off,
     };
-    if (pageFullScreen)
+    let styleCard = {
+      height: heightCardSession,
+      width: width - 20 / 2,
+      borderRadius: 6,
+      position: 'relative',
+    };
+    if (pageFullScreen) {
+      styleCard = [
+        // transform: [{translateX: xCard}, {translateY: yCard}],
+        // {transform: [{translateX: xCard}, {translateY: yCard}]},
+        {
+          position: 'absolute',
+          height: height,
+          width: width,
+          backgroundColor: colors.title,
+        },
+      ];
       containerStreamView = {
-        borderRadius: 5,
-        overflow: 'hidden',
         position: 'absolute',
-        backgroundColor: colors.title,
+        // backgroundColor:'blue',
+        // backgroundColor: colors.title,
         zIndex: 50,
         top: -coordinates.y,
         left: -coordinates.x,
         height: height,
         width: width,
+        borderRadius: 10,
       };
+    }
     console.log('pageFullScreen!!', pageFullScreen);
-    const {widthCard, heightCard, xCard, yCard} = this.animatedValues();
+
+    const {scaleXCard, scaleYCard, xCard, yCard} = this.animatedValues();
+    console.log('scaleX', scaleXCard);
+    console.log('scaleYCard', scaleYCard);
     return (
       <View style={containerStreamView}>
         <Animated.View
@@ -407,8 +429,15 @@ class StreamPage extends Component {
             this.streamViewRef = ref;
           }}
           style={[
-            {height: heightCard, width: widthCard, position: 'relative'},
-            {transform: [{translateX: xCard}, {translateY: yCard}]},
+            styleCard,
+            pageFullScreen && {
+              transform: [
+                {translateX: xCard},
+                {translateY: yCard},
+                {scaleX: scaleXCard},
+                {scaleY: scaleYCard},
+              ],
+            },
           ]}>
           <KeepAwake />
 
@@ -424,7 +453,7 @@ class StreamPage extends Component {
               backgroundColorIcon1={'transparent'}
               backgroundColorIcon2={'transparent'}
               initialBorderColorIcon={'transparent'}
-              icon1={'arrow-left'}
+              icon1={'chevron-down'}
               typeIcon1="font"
               icon2={
                 !coachSession
@@ -465,7 +494,37 @@ class StreamPage extends Component {
                 styleApp.fullView,
                 {backgroundColor: colors.greyDark + '60'},
               ]}>
-              {/* <Text>{coachSessionID}</Text> */}
+              {coachSession && (
+                <Row
+                  style={{
+                    //  position: 'absolute',
+                    bottom: 0,
+                    //  backgroundColor: 'red',
+                    paddingLeft: 10,
+                    zIndex: 20,
+                    height: 40,
+                    width: width / 2 - 40,
+                    paddingRight: 10,
+                  }}>
+                  <Col size={60}>
+                    {/* <Image
+                      source={require('../../../../../img/icons/endCall.png')}
+                      style={{width: 25, height: 25}}
+                    /> */}
+                  </Col>
+                  <Col size={20} />
+                  <Col
+                    size={20}
+                    activeOpacity={0.7}
+                    style={styleApp.center}
+                    onPress={() => this.endCoachSession()}>
+                    <Image
+                      source={require('../../../../../img/icons/endCall.png')}
+                      style={{width: 25, height: 25}}
+                    />
+                  </Col>
+                </Row>
+              )}
             </TouchableOpacity>
           )}
 
