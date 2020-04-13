@@ -28,10 +28,6 @@ class CardUploading extends Component {
     console.log('videoInfo: ', this.props.videoInfo);
   };
 
-  // componentWillUnmount = () => {
-  //   this.state.uploadTask.cancel();
-  // };
-
   dismiss = (videoInfo) => {
     this.props.dismiss(videoInfo);
   };
@@ -78,14 +74,12 @@ class CardUploading extends Component {
   uploadFile = async () => {
     const {userID, videoInfo, indexVideoArray} = this.props;
     console.log('indexVideoArray: ', indexVideoArray);
-    const {height, filename, width} = videoInfo;
+    const {height, width} = videoInfo;
     console.log('videoInfo: ', videoInfo);
 
-    const regex = /.*-/;
-    const cleanIdFile = regex.exec(videoInfo.localIdentifier);
-    const idFile = `${userID}-${cleanIdFile}`;
+    const id = videoInfo.localIdentifier.split('/')[0];
 
-    const destinationCloud = `archivedStreams/${idFile}`;
+    const destinationCloud = `archivedStreams/${id}`;
     const videoUrl = await this.uploadVideoFirebase(
       videoInfo.path,
       destinationCloud,
@@ -94,16 +88,18 @@ class CardUploading extends Component {
     console.log('videoUrl: ', videoUrl);
 
     let updates = {};
+    const startTimestamp = Date.now();
     updates[destinationCloud] = {
-      id: 'test',
+      id,
       url: videoUrl,
       uploadedByUser: true,
-      usersLinked: {[userID]: true},
+      members: {[userID]: true},
       resolution: `${width}x${height}`,
+      startTimestamp,
     };
     updates[`users/${userID}/${destinationCloud}`] = {
-      id: idFile,
-      timestamp: Date.now(),
+      id,
+      startTimestamp,
       uploadedByUser: true,
     };
 
@@ -120,6 +116,7 @@ class CardUploading extends Component {
     return (
       <View style={[styleApp.center, this.props.style]}>
         <Progress.Circle
+          color={colors.primary}
           size={100}
           progress={progress}
           showsText={true}
