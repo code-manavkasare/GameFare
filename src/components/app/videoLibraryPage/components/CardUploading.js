@@ -74,7 +74,7 @@ class CardUploading extends Component {
   uploadFile = async () => {
     const {userID, videoInfo, indexVideoArray} = this.props;
     console.log('indexVideoArray: ', indexVideoArray);
-    const {height, width} = videoInfo;
+    const {height, width, size} = videoInfo;
     console.log('videoInfo: ', videoInfo);
 
     const id = videoInfo.localIdentifier.split('/')[0];
@@ -94,6 +94,7 @@ class CardUploading extends Component {
       url: videoUrl,
       uploadedByUser: true,
       members: {[userID]: true},
+      sizeOctets: size,
       resolution: `${width}x${height}`,
       startTimestamp,
     };
