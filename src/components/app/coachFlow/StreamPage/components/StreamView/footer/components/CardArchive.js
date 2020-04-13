@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
-import {connect} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
 
@@ -13,7 +12,7 @@ import {date, time} from '../../../../../../../layout/date/date';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-class CardArchive extends Component {
+export default class CardArchive extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,6 +21,7 @@ class CardArchive extends Component {
   }
   async componentDidMount() {
     const {archive: archiveData} = this.props;
+
     if (archiveData.available) this.loadArchive(archiveData.id);
   }
   componentDidUpdate(prevProps, prevState) {
@@ -42,7 +42,7 @@ class CardArchive extends Component {
       .ref('archivedStreams/' + archiveID)
       .once('value');
     archive = archive.val();
-    if (archive) this.setState({archive: archive});
+    if (archive) await this.setState({archive: archive});
   }
   placeholder() {
     return (
@@ -64,8 +64,9 @@ class CardArchive extends Component {
       resolution,
       durationSeconds,
     } = archive;
+
     return (
-      <View style={styleApp.cardArchive}>
+      <View style={[styles.cardArchive, this.props.style]}>
         {!archiveData.available ? (
           <View
             style={[
@@ -124,6 +125,7 @@ class CardArchive extends Component {
   }
   render() {
     const {archive} = this.state;
+
     return this.cardArchive(archive);
   }
 }
@@ -134,12 +136,3 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(CardArchive);

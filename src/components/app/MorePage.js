@@ -39,7 +39,7 @@ class MorePage extends Component {
   }
   componentWillUnmount() {
     this.removeNotificationListener();
-    this.messageListener();
+    // this.messageListener();
   }
   async notificationHandler() {
     const {userID} = this.props;
@@ -293,7 +293,10 @@ class MorePage extends Component {
               </TouchableOpacity>
 
               <Text style={styleApp.text}>Account parameters</Text>
-              <View style={[styleApp.divider2, {marginTop: 15}]} />
+              <View
+                style={[styleApp.divider2, {marginTop: 15, marginBottom: 0}]}
+              />
+              {this.button('video', 'Video Library', 'VideoLibraryPage')}
               {this.button('credit-card', 'Payment', 'Payments')}
               {this.button('wallet', 'Wallet', 'Wallet')}
               {this.button(
