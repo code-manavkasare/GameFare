@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     width: width - 40,
     marginLeft: 20,
     backgroundColor: 'red',
-    zIndex: 20,
+    zIndex: 5,
   },
 });
 
@@ -120,4 +120,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(ButtonShareVideo);
+export default connect(
+  mapStateToProps,
+  {coachAction},
+)(ButtonShareVideo);

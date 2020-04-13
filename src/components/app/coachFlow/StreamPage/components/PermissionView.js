@@ -60,10 +60,13 @@ class StreamPage extends Component {
     const {loader, microAccess, cameraAccess} = this.state;
     return (
       <FadeInView duration={300} style={styles.page}>
-        <Text style={styleApp.subtitle}>Enable access so you can start</Text>
-        <Text style={[styleApp.subtitle, {marginBottom: 30}]}>
-          taking photos and videos.
-        </Text>
+        <View style={styleApp.marginView}>
+          <Text
+            style={[styleApp.subtitle, {marginBottom: 20, color: colors.off}]}>
+            Enable access to your camera and microphone to start using our
+            coaching tool and enhance your performance.
+          </Text>
+        </View>
 
         {!loader && (
           <View>
@@ -91,8 +94,6 @@ class StreamPage extends Component {
 
 const styles = StyleSheet.create({
   page: {
-    //  flex: 1,
-    ...styleApp.center,
     height: 200,
   },
 });

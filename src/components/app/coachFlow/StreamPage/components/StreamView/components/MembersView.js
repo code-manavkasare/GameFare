@@ -3,12 +3,12 @@ import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 
-import ImageUser from '../../../../layout/image/ImageUser';
-import {coachAction} from '../../../../../actions/coachActions';
+import ImageUser from '../../../../../../layout/image/ImageUser';
+import {coachAction} from '../../../../../../../actions/coachActions';
 
-import sizes from '../../../../style/sizes';
-import colors from '../../../../style/colors';
-import styleApp from '../../../../style/style';
+import sizes from '../../../../../../style/sizes';
+import colors from '../../../../../../style/colors';
+import styleApp from '../../../../../../style/style';
 
 class MembersView extends Component {
   constructor(props) {
@@ -30,11 +30,22 @@ class MembersView extends Component {
     );
   }
   membersView() {
-    const {userID, session} = this.props;
-    if (!session) return null;
+    const {userID, session, hide, card} = this.props;
+    if (!session || hide) return null;
+    if (!session.members) return null;
     const members = Object.values(session.members).filter(
       (member) => member.id !== userID && member.isConnected,
     );
+    if (card)
+      return (
+        <View style={styles.rowImgCard}>
+          {members.map((member, i) => (
+            <View key={i} style={styles.colImg}>
+              <ImageUser user={member} />
+            </View>
+          ))}
+        </View>
+      );
     return (
       <View style={styles.colButtonsRight}>
         {members.map((member, i) => this.cardMember(member, i))}
@@ -43,6 +54,7 @@ class MembersView extends Component {
   }
   render() {
     const {session} = this.props;
+    console.log('members view render !!!', session);
     if (!session) return null;
     return this.membersView(session);
   }
@@ -60,6 +72,20 @@ const styles = StyleSheet.create({
     top: sizes.heightHeaderHome + 10,
     width: 130,
   },
+  rowImgCard: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '100%',
+    position: 'absolute',
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
+  },
+  colImg: {
+    height: 50,
+    width: 50,
+    flexDirection: 'column',
+  },
   button: {
     flex: 1,
     width: '100%',
@@ -75,4 +101,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(MembersView);
+export default connect(
+  mapStateToProps,
+  {coachAction},
+)(MembersView);

@@ -465,6 +465,7 @@ const styles = StyleSheet.create({
     height: 130,
     width: 60,
     right: 0,
+    zIndex: 60,
     backgroundColor: colors.transparentGrey,
     borderRadius: 5,
     paddingTop: 5,

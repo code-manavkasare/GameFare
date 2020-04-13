@@ -1,6 +1,10 @@
 import firebase from 'react-native-firebase';
 import {keys} from 'ramda';
 import moment from 'moment';
+import {Dimensions} from 'react-native';
+const {height, width} = Dimensions.get('screen');
+import colors from '../style/style';
+import {heightCardSession} from '../style/sizes';
 
 import {generateID} from './createEvent';
 
@@ -114,6 +118,49 @@ const isUserAdmin = (session, userID) => {
   return userID === session.info.organizer;
 };
 
+const isEven = (n) => {
+  return !(n & 1);
+};
+
+const styleStreamView = (index, coordinates, pageFullScreen) => {
+  let styleContainerStreamView = {
+    marginTop: 0,
+    width: width / 2 - 30,
+    overflow: 'hidden',
+    borderRadius: 5,
+    marginLeft: isEven(Number(index)) ? 20 : 10,
+    height: heightCardSession,
+  };
+  let styleCard = {
+    height: heightCardSession,
+    width: width - 20 / 2,
+    borderRadius: 6,
+    // overflow: 'hidden',
+    position: 'relative',
+  };
+  if (pageFullScreen) {
+    styleCard = [
+      {
+        position: 'absolute',
+        height: height,
+        width: width,
+        backgroundColor: colors.off + '70',
+      },
+    ];
+    styleContainerStreamView = {
+      position: 'absolute',
+      zIndex: 50,
+      top: -coordinates.y,
+      left: -coordinates.x,
+      height: height,
+      width: width,
+      borderRadius: 10,
+      backgroundColor: colors.title,
+    };
+  }
+  return {styleContainerStreamView, styleCard};
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -126,4 +173,6 @@ module.exports = {
   stopRecording,
   getMember,
   isUserAdmin,
+  isEven,
+  styleStreamView,
 };

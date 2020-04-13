@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
-import ScrollViewX from '../../../../../layout/scrollViews/ScrollViewX';
 
 import {connect} from 'react-redux';
 
 import CardArchive from './CardArchive';
-import colors from '../../../../../style/colors';
+import ScrollViewX from '../../../../../../../layout/scrollViews/ScrollViewX';
+import colors from '../../../../../../../style/colors';
 
 class PastSessions extends Component {
   constructor(props) {
@@ -84,4 +84,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(PastSessions);
+export default connect(
+  mapStateToProps,
+  {},
+)(PastSessions);

@@ -4,14 +4,14 @@ import {connect} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
 
-import ButtonColor from '../../../../../layout/Views/Button';
-import AllIcons from '../../../../../layout/icons/AllIcons';
+import ButtonColor from '../../../../../../../layout/Views/Button';
+import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-import {displayTime} from '../../../../../functions/coach';
-import {date, time} from '../../../../../layout/date/date';
+import {displayTime} from '../../../../../../../functions/coach';
+import {date, time} from '../../../../../../../layout/date/date';
 
-import colors from '../../../../../style/colors';
-import styleApp from '../../../../../style/style';
+import colors from '../../../../../../../style/colors';
+import styleApp from '../../../../../../../style/style';
 
 class CardArchive extends Component {
   constructor(props) {
@@ -139,4 +139,7 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(CardArchive);
+export default connect(
+  mapStateToProps,
+  {},
+)(CardArchive);
