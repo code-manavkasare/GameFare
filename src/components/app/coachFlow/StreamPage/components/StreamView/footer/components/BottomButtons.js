@@ -4,17 +4,19 @@ import {connect} from 'react-redux';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import {Col, Row} from 'react-native-easy-grid';
 import {propEq, filter} from 'ramda';
-import * as Animatable from 'react-native-animatable';
 
-import ButtonColor from '../../../../../layout/Views/Button';
-import AllIcons from '../../../../../layout/icons/AllIcons';
-import Loader from '../../../../../layout/loaders/Loader';
-import {startRecording, stopRecording} from '../../../../../functions/coach';
+import ButtonColor from '../../../../../../../layout/Views/Button';
+import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import Loader from '../../../../../../../layout/loaders/Loader';
+import {
+  startRecording,
+  stopRecording,
+} from '../../../../../../../functions/coach';
 import VideoSourcePopup from './VideoSourcePopup';
 
-import {width, offsetFooterStreaming} from '../../../../../style/sizes';
-import colors from '../../../../../style/colors';
-import styleApp from '../../../../../style/style';
+import {offsetFooterStreaming} from '../../../../../../../style/sizes';
+import colors from '../../../../../../../style/colors';
+import styleApp from '../../../../../../../style/style';
 
 class BottomButton extends Component {
   constructor(props) {
@@ -178,15 +180,13 @@ class BottomButton extends Component {
     );
   }
   buttonEndCall() {
-    const {userID, session, endCoachSession} = this.props;
-    const {organizer} = session.info;
-
+    const {session, endCoachSession} = this.props;
     return (
       <ButtonColor
         view={() => {
           return (
             <Image
-              source={require('../../../../../../img/icons/endCall.png')}
+              source={require('../../../../../../../../img/icons/endCall.png')}
               style={{width: 30, height: 30}}
             />
             // <AllIcons

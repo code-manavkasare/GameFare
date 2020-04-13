@@ -25,6 +25,7 @@ export default {
   greenLight: '#28D9AA',
   greenLight2: '#3ED665',
   greenUltraLight: '#ECFCF8',
+  greenConfirm: '#71D66A',
 
   off: '#eaeaea',
   off2: '#FAFAFA',

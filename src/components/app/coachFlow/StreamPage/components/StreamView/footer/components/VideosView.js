@@ -3,24 +3,24 @@ import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 
-import ButtonColor from '../../../../../layout/Views/Button';
-import AllIcons from '../../../../../layout/icons/AllIcons';
-import Loader from '../../../../../layout/loaders/Loader';
+import ButtonColor from '../../../../../../../layout/Views/Button';
+import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import Loader from '../../../../../../../layout/loaders/Loader';
 
 import CardArchive from './CardArchive';
 import PastSessions from './PastSessions';
-import AsyncImage from '../../../../../layout/image/AsyncImage';
-import {coachAction} from '../../../../../../actions/coachActions';
-import {timing} from '../../../../../animations/animations';
+import AsyncImage from '../../../../../../../layout/image/AsyncImage';
+import {coachAction} from '../../../../../../../../actions/coachActions';
+import {timing} from '../../../../../../../animations/animations';
 import {
   timeout,
   isSomeoneSharingScreen,
   stopRecording,
-} from '../../../../../functions/coach';
+} from '../../../../../../../functions/coach';
 
-import {width} from '../../../../../style/sizes';
-import colors from '../../../../../style/colors';
-import styleApp from '../../../../../style/style';
+import {width} from '../../../../../../../style/sizes';
+import colors from '../../../../../../../style/colors';
+import styleApp from '../../../../../../../style/style';
 
 class VideoViews extends Component {
   constructor(props) {
@@ -235,4 +235,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(VideoViews);
+export default connect(
+  mapStateToProps,
+  {coachAction},
+)(VideoViews);

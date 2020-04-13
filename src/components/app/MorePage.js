@@ -374,7 +374,7 @@ class MorePage extends Component {
   }
   async confirmLogout() {
     await this.props.userAction('logout', {userID: this.props.userID});
-    this.props.navigation.navigate('Profile');
+    return true;
   }
   render() {
     return (

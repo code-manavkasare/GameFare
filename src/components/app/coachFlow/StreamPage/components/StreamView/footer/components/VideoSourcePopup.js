@@ -9,12 +9,12 @@ import {
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
-import ButtonColor from '../../../../../layout/Views/Button';
-import AsyncImage from '../../../../../layout/image/AsyncImage';
+import ButtonColor from '../../../../../../../layout/Views/Button';
+import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
-import colors from '../../../../../style/colors';
-import sizes from '../../../../../style/sizes';
-import styleApp from '../../../../../style/style';
+import colors from '../../../../../../../style/colors';
+import sizes from '../../../../../../../style/sizes';
+import styleApp from '../../../../../../../style/style';
 
 export default class VideoSourcePopup extends Component {
   constructor(props) {

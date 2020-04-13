@@ -46,23 +46,27 @@ export default class Alert extends Component {
   subtitle() {
     const {subtitle} = this.props.route.params;
     if (subtitle)
-      return <Text style={[styleApp.text, {fontSize: 15, marginTop:20}]}>{subtitle}</Text>;
+      return (
+        <Text style={[styleApp.text, {fontSize: 15, marginTop: 20}]}>
+          {subtitle}
+        </Text>
+      );
     return null;
   }
-  click() {
-    const {navigation, route} = this.props;
+  async click() {
+    const {route} = this.props;
     const {close, onGoBack} = route.params;
     if (!close) {
       this.setState({loader: true});
-      return onGoBack();
+      await onGoBack();
     }
-    return navigation.goBack();
+    return this.close();
   }
   optionClick(operation) {
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     navigation.goBack();
     if (operation) {
-      operation()
+      operation();
     }
   }
   async close() {
@@ -80,9 +84,9 @@ export default class Alert extends Component {
       textButton,
       displayList,
       listOptions,
-      close
+      close,
     } = this.props.route.params;
-    const closable = (close !== undefined)?close:true
+    const closable = close !== undefined ? close : true;
 
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'transparent'}]}>
@@ -98,16 +102,14 @@ export default class Alert extends Component {
           />
         </Animated.View>
         <View style={styles.viewModal}>
-          {
-            closable?
-              <TouchableOpacity
-                style={styles.buttonClose}
-                activeOpacity={0.5}
-                onPress={() => this.close()}>
-                <MatIcon name="close" color={'#4a4a4a'} size={24} />
-              </TouchableOpacity>
-            : null
-          }
+          {closable ? (
+            <TouchableOpacity
+              style={styles.buttonClose}
+              activeOpacity={0.5}
+              onPress={() => this.close()}>
+              <MatIcon name="close" color={'#4a4a4a'} size={24} />
+            </TouchableOpacity>
+          ) : null}
 
           {icon && <View style={styles.viewIcon}>{icon}</View>}
 
@@ -119,9 +121,8 @@ export default class Alert extends Component {
             </Col>
           </Row>
 
-          {
-          // CASE 1: Two options given (YES / NO Style)
-          (displayList && listOptions.length === 2)?
+          {// CASE 1: Two options given (YES / NO Style)
+          displayList && listOptions.length === 2 ? (
             <Row style={styles.buttonArea}>
               <Col size={45} style={styles.viewButton}>
                 <Button
@@ -145,9 +146,8 @@ export default class Alert extends Component {
                 />
               </Col>
             </Row>
-
-          // CASE 2: More than two options available (All blue buttons)
-          :(displayList)?
+          ) : // CASE 2: More than two options available (All blue buttons)
+          displayList ? (
             <Col style={styles.buttonArea}>
               {listOptions.map((option, i) => (
                 <Row style={styles.viewButton}>
@@ -162,9 +162,8 @@ export default class Alert extends Component {
                 </Row>
               ))}
             </Col>
-          
-          // CASE 3: Only one option provided (Same as previous usage)
-          :
+          ) : (
+            // CASE 3: Only one option provided (Same as previous usage)
             <View style={styles.buttonArea}>
               <View style={styles.viewButton}>
                 <Button
@@ -177,7 +176,7 @@ export default class Alert extends Component {
                 />
               </View>
             </View>
-          }
+          )}
         </View>
       </View>
     );
@@ -234,12 +233,13 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
     marginBottom: marginBottomApp,
     alignItems: 'center',
+    //  backgroundColor: 'red',
     justifyContent: 'center',
   },
   viewButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    width:'100%',
+    width: '100%',
     paddingTop: 10,
   },
 });

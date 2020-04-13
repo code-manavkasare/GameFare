@@ -16,12 +16,9 @@ class Footer extends Component {
       setState,
       translateYFooter,
       state,
-      displayFooter,
       watchVideoRef,
       endCoachSession,
     } = this.props;
-    if (!displayFooter) return null;
-
     return (
       <Animated.View
         style={[styles.footer, {transform: [{translateY: translateYFooter}]}]}>

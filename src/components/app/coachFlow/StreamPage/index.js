@@ -8,8 +8,6 @@ import {
   Image,
 } from 'react-native';
 import {connect} from 'react-redux';
-import FadeInView from 'react-native-fade-in-view';
-import firebase from 'react-native-firebase';
 const {height, width} = Dimensions.get('screen');
 
 import colors from '../../../style/colors';
@@ -17,24 +15,19 @@ import styleApp from '../../../style/style';
 import {marginTopApp, heightFooter} from '../../../style/sizes';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import Button from '../../../layout/buttons/Button';
+import LogoutView from './components/LogoutView';
 import PermissionView from './components/PermissionView';
 
-import {setParams, navigate} from '../../../../../NavigationService';
 import {timeout, createCoachSession} from '../../../functions/coach';
-import {audioVideoPermission} from '../../../functions/streaming';
+import {heightCardSession} from '../../../style/sizes';
 
-import StreamView from './components/StreamView';
-
-const heightCardSession = 170;
+import StreamView from './components/StreamView/index';
 
 class StreamPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cameraAccess: false,
-      microAccess: false,
       loader: false,
-      open: false,
       permissionsCamera: false,
     };
     this.itemsRef = [];
@@ -75,28 +68,29 @@ class StreamPage extends Component {
   async resetOpenSession() {
     const {navigation} = this.props;
     await timeout(300);
-    console.log('resetOpenSession');
     navigation.setParams({openSession: false, objectID: false});
   }
-  listStreams(arrayIDSessions) {
+  listStreams(arraySessions) {
     const {navigation, route} = this.props;
     let objectID = false;
     if (route.params) objectID = route.params.objectID;
 
     return (
       <View style={styles.rowButtons}>
-        {arrayIDSessions.map((coachSessionID, i) => {
+        {arraySessions.map((coachSession, i) => {
+          const coachSessionID = coachSession.id;
+          const zIndexViewStream = objectID === coachSessionID ? 2 : 1;
           return (
             <View
               style={[
                 styles.colButtons,
-                styleApp.center,
-                {zIndex: objectID === coachSessionID ? 40 : 1},
+                styleApp.center2,
+                {zIndex: zIndexViewStream},
               ]}>
               <StreamView
                 key={i}
                 index={i}
-                offsetScrollView={marginTopApp + 80 + 60}
+                offsetScrollView={marginTopApp + 80 + 70}
                 heightCardSession={heightCardSession}
                 navigation={navigation}
                 route={route}
@@ -124,9 +118,7 @@ class StreamPage extends Component {
         <Button
           backgroundColor="primary"
           onPressColor={colors.primaryLight}
-          enabled={true}
           text="New session"
-          // styleButton={styles.buttonNewSession}
           loader={loader}
           click={async () => {
             if (!userConnected) return navigation.navigate('SignIn');
@@ -142,69 +134,28 @@ class StreamPage extends Component {
       </View>
     );
   }
-  logoutView() {
-    const styleViewLiveLogo = {
-      ...styleApp.center,
-      right: width / 2 - 75,
-      top: 10,
-      position: 'absolute',
-      backgroundColor: colors.off,
-      height: 45,
-      width: 45,
-      borderRadius: 22.5,
-      borderWidth: 1,
-      borderColor: colors.grey,
-    };
-    return (
-      <View style={styleApp.marginView}>
-        <Text
-          style={[styleApp.subtitle, {marginBottom: 20, color: colors.off}]}>
-          Improve your tennis performance with GameFare. Create your room,
-          invite your coach or your friends, and take your right hit to the next
-          level.
-        </Text>
-        <View style={[styleApp.center, {marginBottom: 20}]}>
-          <Image
-            source={require('../../../../img/images/racket.png')}
-            style={{height: 80, width: 80, marginTop: 30}}
-          />
-          <View style={styleViewLiveLogo}>
-            <Image
-              source={require('../../../../img/images/live-news.png')}
-              style={{
-                height: 27,
-                width: 27,
-              }}
-            />
-          </View>
-        </View>
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.greenLight}
-          enabled={true}
-          text="Sign in to start"
-          styleButton={styles.buttonNewSession}
-          loader={false}
-          click={async () => navigate('SignIn')}
-        />
-      </View>
-    );
-  }
+
   StreamTab() {
     const {permissionsCamera} = this.state;
     let {coachSessions, userConnected} = this.props;
     if (!coachSessions) coachSessions = {};
 
+    console.log('coachSessionscoachSessionscoachSessions', coachSessions);
+    coachSessions = Object.values(coachSessions)
+      .sort(function(a, b) {
+        return a.timestamp - b.timestamp;
+      })
+      .reverse();
     return (
       <View style={styles.containerTabPage}>
         <Text style={styles.titlePage}>Stream your performance</Text>
         {userConnected && permissionsCamera && this.buttonNewSession()}
         {!userConnected ? (
-          this.logoutView()
+          <LogoutView />
         ) : !permissionsCamera ? (
           <PermissionView setState={this.setState.bind(this)} />
         ) : (
-          this.listStreams(Object.keys(coachSessions))
+          this.listStreams(coachSessions)
         )}
       </View>
     );
@@ -215,6 +166,16 @@ class StreamPage extends Component {
     if (route.params) openSession = route.params.openSession;
     return (
       <View style={[styleApp.page, {backgroundColor: colors.title}]}>
+        {/* <View
+          style={{
+            height: marginTopApp,
+            position: 'absolute',
+            zIndex: 1,
+            top: 0,
+            width: width,
+           //  backgroundColor: colors.red,
+          }}
+        /> */}
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -223,7 +184,7 @@ class StreamPage extends Component {
           marginTop={0}
           scrollDisabled={openSession}
           offsetBottom={heightFooter + 90}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
       </View>
     );
@@ -245,14 +206,13 @@ const styles = StyleSheet.create({
   viewButtonNewSession: {
     position: 'relative',
     zIndex: -1,
-    marginTop: 0,
+    marginTop: 10,
     ...styleApp.marginView,
   },
   buttonNewSession: {
     position: 'relative',
     zIndex: -1,
     marginTop: 20,
-    //...styleApp.marginView,
   },
   rowButtons: {
     flexDirection: 'row',
@@ -263,11 +223,9 @@ const styles = StyleSheet.create({
   colButtons: {
     height: heightCardSession,
     marginBottom: 20,
-    borderColor: colors.title,
     width: width / 2,
     flexDirection: 'column',
     position: 'relative',
-    zIndex: 30,
   },
 });
 

@@ -16,6 +16,8 @@ let offsetFooterStreaming = 30;
 
 let marginBottomApp = 50;
 
+let heightCardSession = 170;
+
 console.log('height screeen,', height);
 if (Platform.OS === 'ios') {
   height0 = 0;
@@ -39,7 +41,7 @@ if (Platform.OS === 'ios') {
     heightFooterBooking = 110;
     heightFooter = 75;
     marginTopApp = 35;
-    marginBottomApp = 30;
+    marginBottomApp = 15;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 30;
@@ -51,7 +53,7 @@ if (Platform.OS === 'ios') {
     heightFooterBooking = 110;
     heightFooter = 75;
     marginTopApp = 35;
-    marginBottomApp = 35;
+    marginBottomApp = 15;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;
@@ -87,4 +89,5 @@ module.exports = {
   marginBottomApp: marginBottomApp,
   initialHeightControlBar: initialHeightControlBar,
   offsetFooterStreaming: offsetFooterStreaming,
+  heightCardSession,
 };
