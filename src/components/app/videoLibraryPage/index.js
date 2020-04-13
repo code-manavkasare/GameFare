@@ -13,7 +13,7 @@ import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
-import CardArchive from '../coachFlow/StreamPage/footer/components/CardArchive';
+import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 import CardUploading from './components/CardUploading';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
