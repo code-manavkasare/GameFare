@@ -3,6 +3,8 @@ import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
 
+import NavigationService from '../../../../../../../../NavigationService';
+
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
 import colors from '../../../../../../style/colors';
 import {isUserAdmin} from '../../../../../../functions/coach';
@@ -14,7 +16,7 @@ class HeaderStreamView extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   AddMembers = (objectID) => {
-    const {navigate} = this.props.navigation;
+    const {navigate} = NavigationService;
     navigate('PickMembers', {
       usersSelected: {},
       selectMultiple: true,

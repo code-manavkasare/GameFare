@@ -12,6 +12,8 @@ import firebase from 'react-native-firebase';
 import KeepAwake from 'react-native-keep-awake';
 import FadeInView from 'react-native-fade-in-view';
 
+import CameraView from '../../../cameraView/index';
+
 const {height, width} = Dimensions.get('screen');
 
 import Header from './components/Header';
@@ -32,12 +34,40 @@ import {
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
-import {heightHeaderHome, heightCardSession} from '../../../../../style/sizes';
+import {
+  heightHeaderHome,
+  heightCardSession,
+  widthCardSession,
+} from '../../../../../style/sizes';
 
 import WatchVideoPage from '../../../WatchVideoPage/index';
 import MembersView from './components/MembersView';
 import Footer from './footer/index';
 import CardStreamView from './components/CardStreamView';
+
+const getInitialScale = (widthCardSession, heightCardSession) => {
+  return {
+    initialScaleX: widthCardSession / width,
+    initialScaleY: heightCardSession / height,
+  };
+};
+
+const getPositionView = (
+  offsetScrollView,
+  widthCardSession,
+  heightCardSession,
+  index,
+  getScrollY,
+) => {
+  const numberCardPerRow = Math.round(width / widthCardSession);
+  var remainder = index % numberCardPerRow;
+  let x = widthCardSession * remainder;
+  let y =
+    offsetScrollView +
+    heightCardSession * Math.floor(index / numberCardPerRow) -
+    getScrollY;
+  return {x, y};
+};
 
 class StreamPage extends Component {
   constructor(props) {
@@ -51,6 +81,7 @@ class StreamPage extends Component {
       watchVideo: false,
       displayHomeView: true,
       publishAudio: false,
+      publishVideo: true,
       myVideo: false,
       pageFullScreen: false,
       coordinates: {x: 0, y: 0},
@@ -112,13 +143,16 @@ class StreamPage extends Component {
   }
   async componentDidMount() {
     this.props.onRef(this);
-    // reset drawing settings
-    const {coachAction} = this.props;
-    coachAction('setCoachSessionDrawSettings', {
-      touchEnabled: false,
-    });
-
+    console.log('stream view mounted!', this.props.coachSessionID);
     this.loadCoachSession();
+  }
+  componentWillUnmount() {
+    const {coachSessionID} = this.props;
+    console.log('stream view will unmount', coachSessionID);
+    firebase
+      .database()
+      .ref('coachSessions/' + coachSessionID)
+      .off();
   }
   async open(nextVal) {
     const {
@@ -126,50 +160,48 @@ class StreamPage extends Component {
       getScrollY,
       index,
       offsetScrollView,
-      navigation,
-      route,
       closeCurrentSession,
       coachSessionID,
+      sessionInfo,
     } = this.props;
-    if (nextVal)
-      await navigation.setParams({objectID: coachSessionID, openSession: true});
-    else await navigation.setParams({openSession: false});
-
     if (nextVal) {
-      const getScrollYValue = getScrollY();
-      let xView = isEven(Number(index)) ? 0 : width / 2;
-      let yView =
-        offsetScrollView +
-        (heightCardSession + 20) * Math.floor(Number(index) / 2) -
-        getScrollYValue;
+      await this.props.coachAction('setSessionInfo', {
+        objectID: coachSessionID,
+        opened: true,
+      });
+      const {x, y} = getPositionView(
+        offsetScrollView,
+        widthCardSession,
+        heightCardSession,
+        index,
+        getScrollY(),
+      );
+      console.log('x,y got', {x, y});
 
       ////// close current opened session
-      const currentOpenSession = route.params.objectID;
+      const currentOpenSession = sessionInfo.objectID;
       if (currentOpenSession && coachSessionID !== currentOpenSession)
         await closeCurrentSession(currentOpenSession);
       /////////////////////////
 
       await this.setState({
-        coordinates: {x: xView, y: yView},
+        coordinates: {x: x, y: y},
         pageFullScreen: true,
         opened: true,
       });
+      await layoutAction('setLayout', {isFooterVisible: false});
+      Animated.parallel([
+        Animated.timing(this.animatedPage, native(1, 250)),
+      ]).start();
+    } else {
+      await layoutAction('setLayout', {isFooterVisible: true});
+      Animated.timing(this.animatedPage, native(0, 250)).start(() => {
+        console.log('set full screen to false');
+        this.setState({
+          pageFullScreen: false,
+        });
+      });
     }
-
-    await layoutAction('setLayout', {isFooterVisible: !nextVal});
-
-    Animated.spring(
-      this.animatedPage,
-      openStream(nextVal ? 1 : 0, 200),
-    ).start();
-    await timeout(220);
-
-    const {coordinates, coachSession} = this.state;
-    this.setState({
-      pageFullScreen: nextVal,
-      coordinates: !nextVal ? {x: 0, y: 0} : coordinates,
-    });
-    if (!coachSession && nextVal) this.loadCoachSession();
   }
   async loadCoachSession() {
     await this.setState({loader: true});
@@ -209,24 +241,23 @@ class StreamPage extends Component {
       });
   }
   async endCoachSession(hangup) {
-    const {coachSessionID} = this.props;
-    // await firebase
-    //   .database()
-    //   .ref('coachSessions/' + coachSessionID)
-    //   .off();
     await this.setState({opened: false});
     if (hangup) return this.open(false);
     return true;
   }
 
   loaderView(text, hideLoader) {
+    const {pageFullScreen} = this.state;
     return (
       <FadeInView
         duration={250}
         style={[styleApp.center, styles.loaderSessionTokBox]}>
-        <Text style={[styleApp.text, {color: colors.white, marginBottom: 25}]}>
-          {text}
-        </Text>
+        {pageFullScreen && (
+          <Text
+            style={[styleApp.text, {color: colors.white, marginBottom: 25}]}>
+            {text}
+          </Text>
+        )}
         {!hideLoader && <Loader size={34} color={'white'} />}
       </FadeInView>
     );
@@ -237,9 +268,13 @@ class StreamPage extends Component {
     return 'back';
   }
   renderSubscribers = (subscribers) => {
+    const {pageFullScreen} = this.state;
+    console.log('styleSubscriber', pageFullScreen);
+    let styleSubscriber = {};
+    let heightViewSubscriber = height;
     return subscribers.map((streamId, index) => {
-      let heightViewSubscriber = height;
-      const styleSubscriber = {
+      console.log('heightViewSubscriber');
+      styleSubscriber = {
         height: heightViewSubscriber / subscribers.length,
         width: width,
         top: index * (heightViewSubscriber / subscribers.length),
@@ -252,11 +287,29 @@ class StreamPage extends Component {
       );
     });
   };
+  styleSession() {
+    const {pageFullScreen} = this.state;
+    if (!pageFullScreen) {
+      return {
+        height: heightCardSession / -20,
+        marginTop: 0,
+        width: width * 0.2,
+        marginLeft: width * 0.5,
+        borderRadius:6
+        // position: 'absolute',
+      };
+    }
+    return {
+      height: height,
+      width: width,
+    };
+  }
   streamPage() {
     const {
       coachSession,
       isConnected,
       publishAudio,
+      publishVideo,
       loader,
       pageFullScreen,
     } = this.state;
@@ -279,35 +332,53 @@ class StreamPage extends Component {
           ? this.loaderView('We are connecting you to the session...')
           : null}
 
-        <OTSession
-          apiKey={Config.OPENTOK_API}
-          ref={this.otSessionRef}
-          eventHandlers={this.sessionEventHandlers}
-          sessionId={sessionID}
-          style={styleApp.fullSize}
-          token={member.tokenTokbox}>
-          <OTPublisher
-            style={!userIsAlone ? styles.OTSubscriberAlone : styles.OTPublisher}
-            properties={{
-              cameraPosition,
-              videoSource: 'camera',
-              publishAudio: publishAudio,
-            }}
-            eventHandlers={this.publisherEventHandlers}
-          />
-          <OTSubscriber style={styles.OTSubscriber}>
-            {this.renderSubscribers}
-          </OTSubscriber>
+        <View style={this.styleSession()}>
+          <OTSession
+            apiKey={Config.OPENTOK_API}
+            ref={this.otSessionRef}
+            eventHandlers={this.sessionEventHandlers}
+            sessionId={sessionID}
+            style={styleApp.fullSize}
+            token={member.tokenTokbox}>
+            <OTPublisher
+              style={
+                !userIsAlone ? styles.OTSubscriberAlone : styles.OTPublisher
+              }
+              properties={{
+                cameraPosition,
+                videoSource: 'camera',
+                publishAudio: publishAudio,
+                publishVideo: publishVideo,
+              }}
+              eventHandlers={this.publisherEventHandlers}
+            />
+            <OTSubscriber style={styles.OTSubscriber}>
+              {this.renderSubscribers}
+            </OTSubscriber>
 
-          <MembersView session={coachSession} hide={!pageFullScreen} />
-        </OTSession>
+            <MembersView session={coachSession} hide={!pageFullScreen} />
+
+            {!publishVideo && (
+              <CameraView
+                onRef={(ref) => (this.cameraRef = ref)}
+                styleCamera={{height: 300, width: 200}}
+                cameraFront={true}
+                captureAudio={false}
+              />
+            )}
+          </OTSession>
+        </View>
       </View>
     );
   }
   animatedValues() {
     const {x, y} = this.state.coordinates;
-    let initialScaleX = (width / 2 - 30) / width;
-    let initialScaleY = heightCardSession / height;
+
+    const {initialScaleX, initialScaleY} = getInitialScale(
+      widthCardSession,
+      heightCardSession,
+    );
+
     const scaleXCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
       outputRange: [initialScaleX, 1],
@@ -321,7 +392,7 @@ class StreamPage extends Component {
 
     const xCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [x + 20 - ((1 - initialScaleX) * width) / 2, 0],
+      outputRange: [x - ((1 - initialScaleX) * width) / 2, 0],
       extrapolate: 'clamp',
     });
     const yCard = this.animatedPage.interpolate({
@@ -337,7 +408,7 @@ class StreamPage extends Component {
       yCard,
     };
   }
-  render() {
+  sharedElement() {
     const {
       coachSession,
       isConnected,
@@ -347,7 +418,7 @@ class StreamPage extends Component {
       opened,
     } = this.state;
 
-    const {navigation, index, coachSessionID} = this.props;
+    const {index, coachSessionID, timestamp} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
 
     const {styleContainerStreamView, styleCard} = styleStreamView(
@@ -357,6 +428,7 @@ class StreamPage extends Component {
     );
 
     const {scaleXCard, scaleYCard, xCard, yCard} = this.animatedValues();
+    console.log('render element stream', this.state);
     return (
       <View style={styleContainerStreamView}>
         <Animated.View
@@ -377,16 +449,10 @@ class StreamPage extends Component {
           <KeepAwake />
 
           {pageFullScreen && (
-            <Header
-              coachSession={coachSession}
-              navigation={navigation}
-              open={this.open.bind(this)}
-            />
+            <Header coachSession={coachSession} open={this.open.bind(this)} />
           )}
 
-          {coachSession && opened && (
-            <View style={styles.viewStream}>{this.streamPage()}</View>
-          )}
+          {opened && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
           <WatchVideoPage
             state={this.state}
@@ -403,10 +469,10 @@ class StreamPage extends Component {
               endCoachSession={this.endCoachSession.bind(this)}
               open={this.open.bind(this)}
               coachSession={coachSession}
+              timestamp={timestamp}
               isConnected={isConnected}
             />
           )}
-
           {loader && this.loaderView(' ')}
 
           {pageFullScreen && isConnected && (
@@ -423,17 +489,35 @@ class StreamPage extends Component {
       </View>
     );
   }
+  render() {
+    const {sessionInfo, coachSessionID} = this.props;
+    return (
+      <View
+        style={[
+          styles.col,
+          {zIndex: sessionInfo.objectID === coachSessionID ? 20 : 3},
+        ]}>
+        {this.sharedElement()}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
+  col: {
+    height: heightCardSession,
+    width: widthCardSession,
+    flexDirection: 'column',
+    position: 'relative',
+  },
   pageComponent: {
-    backgroundColor: colors.title,
+    backgroundColor: colors.white,
     ...styleApp.fullSize,
     // ...styleApp.center,
   },
   viewStream: {
     ...styleApp.fullSize,
-    backgroundColor: colors.title,
+    backgroundColor: colors.white,
     position: 'absolute',
     zIndex: -1,
   },
@@ -480,6 +564,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
+    sessionInfo: state.coach.sessionInfo,
   };
 };
 

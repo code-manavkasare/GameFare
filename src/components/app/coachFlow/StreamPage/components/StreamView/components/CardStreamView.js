@@ -4,12 +4,17 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import firebase from 'react-native-firebase';
 
-import {width, heightCardSession} from '../../../../../../style/sizes';
+import {
+  width,
+  heightCardSession,
+  widthCardSession,
+} from '../../../../../../style/sizes';
 import {navigate} from '../../../../../../../../NavigationService';
 import AllIcons from '../../../../../../layout/icons/AllIcons';
 import ButtonColor from '../../../../../../layout/Views/Button';
 import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
+import {date, time} from '../../../../../../layout/date/date';
 import MembersView from './MembersView';
 
 class CardStream extends Component {
@@ -24,6 +29,7 @@ class CardStream extends Component {
       textButton: 'Delete',
       onGoBack: async () => {
         let updates = {};
+        console.log('delete user from', coachSessionID);
         updates[`users/${userID}/coachSessions/${coachSessionID}`] = null;
         updates[`coachSessions/${coachSessionID}/members/${userID}`] = null;
         updates[`coachSessions/${coachSessionID}/allMembers/${userID}`] = null;
@@ -59,7 +65,7 @@ class CardStream extends Component {
   buttonDelete() {
     return (
       <ButtonColor
-        color={colors.blue}
+        // color={colors.blue}
         onPressColor={colors.blueLight}
         click={() => this.deleteSession()}
         style={styles.button}
@@ -68,7 +74,7 @@ class CardStream extends Component {
             <AllIcons
               name="trash-alt"
               size={15}
-              color={colors.white}
+              color={colors.title}
               type="font"
             />
           );
@@ -77,8 +83,17 @@ class CardStream extends Component {
     );
   }
   cardStream() {
-    const {isConnected, open, coachSession, coachSessionID} = this.props;
-    const backgroundColor = isConnected ? colors.off + '0' : colors.off + '70';
+    const {
+      isConnected,
+      open,
+      coachSession,
+      coachSessionID,
+      timestamp,
+    } = this.props;
+    const backgroundColor = isConnected
+      ? colors.white + '0'
+      : colors.white + '0';
+    const dateFormat = new Date(timestamp).toString();
     return (
       <TouchableOpacity
         onPress={() => open(true)}
@@ -87,30 +102,37 @@ class CardStream extends Component {
           styles.card,
           {
             backgroundColor: backgroundColor,
-            borderColor: isConnected ? colors.greenConfirm : colors.white,
+            borderColor: colors.off,
           },
         ]}>
-        <MembersView session={coachSession} card={true} />
-        <View style={styleApp.fullSize}>
-          {!isConnected && (
-            <View style={[styleApp.fullSize, styleApp.center]}>
-              <Text style={[styleApp.text, {color: colors.white}]}>
-                {/* Disconnected {coachSessionID} */}
-                Disconnected
-              </Text>
-            </View>
-          )}
-          <Row style={styles.rowTools}>
-            <Col size={20} style={styleApp.center2}>
-              {this.buttonDelete()}
+        <Row style={styles.rowTools}>
+          <Col size={40} style={styleApp.center2}>
+            <Text style={[styleApp.text, {fontSize: 13}]}>
+              {date(dateFormat)} at {time(dateFormat)}
+            </Text>
+
+            <Text
+              style={[
+                styleApp.text,
+                {color: colors.greyDark, fontSize: 13, marginTop: 5},
+              ]}>
+              {isConnected ? 'Connected' : 'Disconnected'}
+            </Text>
+
+            <MembersView session={coachSession} card={true} />
+          </Col>
+          <Col size={30} />
+          {isConnected ? (
+            <Col size={15} style={styleApp.center3}>
+              {this.buttonEndCall()}
             </Col>
-            {isConnected && (
-              <Col size={20} style={styleApp.center3}>
-                {this.buttonEndCall()}
-              </Col>
-            )}
-          </Row>
-        </View>
+          ) : (
+            <Col size={15} />
+          )}
+          <Col size={15} style={styleApp.center3}>
+            {this.buttonDelete()}
+          </Col>
+        </Row>
       </TouchableOpacity>
     );
   }
@@ -121,24 +143,21 @@ class CardStream extends Component {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 3,
-    position: 'relative',
+    //   borderTopWidth: 1,
+    //  borderBottomWidth: 1,
+    position: 'absolute',
+    borderTopWidth: 1,
+    zIndex: -1,
     height: heightCardSession,
-    width: width / 2 - 30,
+    width: widthCardSession,
     borderColor: colors.off,
-    overflow: 'hidden',
-    borderRadius: 5,
+    //  backgroundColor: 'red',
+    // overflow: 'hidden',
   },
   rowTools: {
-    paddingLeft: 10,
-    // backgroundColor: colors.green + '60',
-    height: 65,
-    position: 'absolute',
-    width: '100%',
-    // borderTopWidth: 1,
-    borderColor: colors.off,
-    paddingRight: 10,
-    bottom: 0,
+    paddingRight: 20,
+
+    paddingLeft: 20,
   },
   button: {
     ...styleApp.center,

@@ -120,7 +120,7 @@ class VideoLibraryPage extends Component {
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
-          initialBorderColorHeader={colors.grey}
+          //   initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
           typeIcon2={'font'}

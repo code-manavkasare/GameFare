@@ -129,7 +129,7 @@ class BottomButton extends Component {
   }
   contentVideo() {
     const {showPastSessionsPicker} = this.state;
-    const {clickReview} = this.props;
+    const {clickReview, setState, state} = this.props;
     const {sharedVideos} = this.props.session;
 
     const viewVideoBeingShared = (sharedVideos) => {
@@ -173,6 +173,7 @@ class BottomButton extends Component {
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
           });
           clickReview(!showPastSessionsPicker);
+          // setState({publishVideo: !state.publishVideo});
         }}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}

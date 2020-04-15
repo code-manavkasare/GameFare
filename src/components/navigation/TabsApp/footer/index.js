@@ -25,13 +25,10 @@ class Footer extends React.Component {
   componentDidUpdate = (prevProps, prevState) => {
     console.log('footer is udpated');
     if (prevProps.isFooterVisible !== this.props.isFooterVisible) {
-      console.log('translate footer');
       return this.translateFooter(this.props.isFooterVisible);
     } else if (prevProps.activeTab !== this.props.activeTab) {
-      console.log('translate blue view footer');
       const {routes} = this.props.state;
       const index = routes.map((e) => e.name).indexOf(this.props.activeTab);
-      console.log('index', index);
       return this.translateBlueView(index, routes.length);
     }
   };

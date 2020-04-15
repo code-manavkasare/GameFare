@@ -4,7 +4,7 @@ import moment from 'moment';
 import {Dimensions} from 'react-native';
 const {height, width} = Dimensions.get('screen');
 import colors from '../style/style';
-import {heightCardSession} from '../style/sizes';
+import {heightCardSession, widthCardSession} from '../style/sizes';
 
 import {generateID} from './createEvent';
 
@@ -31,7 +31,6 @@ const createCoachSession = async (user) => {
       },
       allMembers: {[user.id]: true},
     });
-  await timeout(1000);
   return coachSessionID;
 };
 
@@ -125,17 +124,14 @@ const isEven = (n) => {
 const styleStreamView = (index, coordinates, pageFullScreen) => {
   let styleContainerStreamView = {
     marginTop: 0,
-    width: width / 2 - 30,
+    width: widthCardSession,
     overflow: 'hidden',
-    borderRadius: 5,
-    marginLeft: isEven(Number(index)) ? 20 : 10,
+    borderRadius: 0,
     height: heightCardSession,
   };
   let styleCard = {
-    height: heightCardSession,
-    width: width - 20 / 2,
-    borderRadius: 6,
-    // overflow: 'hidden',
+    height: '100%',
+    width: '100%',
     position: 'relative',
   };
   if (pageFullScreen) {
@@ -144,7 +140,7 @@ const styleStreamView = (index, coordinates, pageFullScreen) => {
         position: 'absolute',
         height: height,
         width: width,
-        backgroundColor: colors.off + '70',
+        backgroundColor: colors.off + '0',
       },
     ];
     styleContainerStreamView = {

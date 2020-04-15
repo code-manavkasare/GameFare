@@ -1,21 +1,31 @@
-import moment from 'moment'
+import moment from 'moment';
 import jstz from 'jstz';
 
-
-function date(dateOff,format) {
-  var date = dateOff.split(' GMT')[0]
-  return (moment(date).format(format)).toString()
+function date(dateOff, format) {
+  let formatToUse = format;
+  var date = dateOff.split(' GMT')[0];
+  if (!formatToUse) formatToUse = 'ddd, MMM D';
+  return moment(date)
+    .format(formatToUse)
+    .toString();
 }
 
-function time(dateOff,format) {
-  var date = dateOff.split(' GMT')[0]
-  return (moment(date).format(format)).toString()
+function time(dateOff, format) {
+  let formatToUse = format;
+  var date = dateOff.split(' GMT')[0];
+  if (!formatToUse) formatToUse = 'h:mm a';
+  return moment(date)
+    .format(formatToUse)
+    .toString();
 }
 
-function timeZone(date,timeZone) {
-  if (moment.tz(new Date(), jstz.determine().name()).format('Z') != date.split(' GMT')[1]) return '(' + timeZone + ')'
-  return null
+function timeZone(date, timeZone) {
+  if (
+    moment.tz(new Date(), jstz.determine().name()).format('Z') !=
+    date.split(' GMT')[1]
+  )
+    return '(' + timeZone + ')';
+  return null;
 }
 
-
-module.exports = {date,time,timeZone};
+module.exports = {date, time, timeZone};

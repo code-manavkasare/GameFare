@@ -62,13 +62,16 @@ class StreamPage extends Component {
       <FadeInView duration={300} style={styles.page}>
         <View style={styleApp.marginView}>
           <Text
-            style={[styleApp.subtitle, {marginBottom: 20, color: colors.off}]}>
+            style={[
+              styleApp.subtitle,
+              {marginBottom: 20, color: colors.title},
+            ]}>
             Enable access to your camera and microphone to start using our
             coaching tool and enhance your performance.
           </Text>
         </View>
 
-        {!loader && (
+        {
           <View>
             {this.button(
               cameraAccess
@@ -83,7 +86,7 @@ class StreamPage extends Component {
               microAccess,
             )}
           </View>
-        )}
+        }
       </FadeInView>
     );
   }

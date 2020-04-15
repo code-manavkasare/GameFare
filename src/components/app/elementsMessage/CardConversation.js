@@ -98,6 +98,7 @@ class CardConversation extends React.Component {
 
   async clickCard(conversation, lastMessage) {
     const {navigation} = this.props;
+    console.log('conversation click', conversation);
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await firebase
         .database()
@@ -203,6 +204,7 @@ const styles = StyleSheet.create({
   textUnread: {fontSize: 13, marginTop: 2, color: colors.title},
 });
 
-export default connect(mapStateToProps, {historicSearchAction, messageAction})(
-  CardConversation,
-);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction, messageAction},
+)(CardConversation);

@@ -16,7 +16,7 @@ const persistConfig = {
     'events',
     'message',
     'createChallengeData',
-    //'coach',
+    'coach',
     'layout',
     'globaleVariables',
   ],

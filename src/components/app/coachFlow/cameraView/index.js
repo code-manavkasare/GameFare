@@ -25,7 +25,7 @@ export default class CameraView extends Component {
     this.props.onRef(this);
   }
   cameraView() {
-    const {styleCamera, cameraFront} = this.props;
+    const {styleCamera, cameraFront, captureAudio} = this.props;
     return (
       <RNCamera
         ref={(ref) => {
@@ -38,6 +38,7 @@ export default class CameraView extends Component {
             : RNCamera.Constants.Type.back
         }
         flashMode={RNCamera.Constants.FlashMode.off}
+        captureAudio={captureAudio}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need your permission to use your camera',
@@ -67,4 +68,5 @@ const styles = StyleSheet.create({});
 CameraView.propTypes = {
   styleCamera: PropTypes.object,
   cameraFront: PropTypes.bool,
+  captureAudio: PropTypes.bool,
 };

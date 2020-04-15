@@ -36,7 +36,7 @@ export default class LogoutView extends Component {
     return (
       <View style={styleApp.marginView}>
         <Text
-          style={[styleApp.subtitle, {marginBottom: 20, color: colors.off}]}>
+          style={[styleApp.subtitle, {marginBottom: 20, color: colors.title}]}>
           Improve your tennis performance with GameFare. Create your room,
           invite your coach or your friends, and take your right hit to the next
           level.

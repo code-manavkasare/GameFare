@@ -93,7 +93,6 @@ class RightButtons extends Component {
       false,
       false,
       () => {
-        console.log('start setCoachSessionDrawSettings');
         coachAction('setCoachSessionDrawSettings', {color: color});
       },
     );
@@ -157,7 +156,6 @@ class RightButtons extends Component {
             'Draw',
             settingsDraw.touchEnabled,
             () => {
-              console.log(settingsDraw);
               coachAction('setCoachSessionDrawSettings', {
                 touchEnabled: !settingsDraw.touchEnabled,
               });
