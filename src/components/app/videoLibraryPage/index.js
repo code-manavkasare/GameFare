@@ -38,6 +38,9 @@ class VideoLibraryPage extends Component {
   async componentDidMount() {
     this.getUserVideos();
   }
+  componentDidUpdate = () => {
+    this.getUserVideos();
+  };
 
   getUserVideos = async () => {
     const videosArray = sortVideos(this.props.archivedStreams);
@@ -53,7 +56,7 @@ class VideoLibraryPage extends Component {
         console.log('uploadingVideo: ', uploadingVideo);
         return (
           <CardUploading
-            key={i}
+            key={uploadingVideo.localIdentifier}
             style={styles.CardUploading}
             videoInfo={uploadingVideo}
             dismiss={(videoUploaded) => this.dismissUploadCard(videoUploaded)}
@@ -82,7 +85,7 @@ class VideoLibraryPage extends Component {
               <CardArchive
                 style={styles.cardArchive}
                 archive={video}
-                key={i}
+                key={video.id}
                 openVideo={(source, thumbnail) => {
                   alert('not working yet');
                 }}
