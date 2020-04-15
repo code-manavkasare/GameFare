@@ -12,6 +12,7 @@ import {
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import firebase from 'react-native-firebase';
+import Orientation from 'react-native-orientation-locker';
 
 import VideoPlayer from '../VideoPlayer/index';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -38,6 +39,7 @@ class WatchVideoPage extends Component {
       thumbnail: false,
       archiveID: false,
       myVideo: false,
+      portrait: true,
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -45,7 +47,25 @@ class WatchVideoPage extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
+    var initialOrientation = Orientation.getInitialOrientation();
+    this.setScreenOrientation(initialOrientation);
+    Orientation.addOrientationListener(this._onOrientationDidChange);
   }
+  componentWillUnmount = () => {
+    Orientation.removeOrientationListener(this._onOrientationDidChange);
+  };
+  _onOrientationDidChange = (orientation) => {
+    console.log('orientation: ', orientation);
+    this.setScreenOrientation(orientation);
+  };
+  setScreenOrientation = (orientation) => {
+    if (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') {
+      this.setState({portait: false});
+    } else if (orientation === 'PORTRAIT') {
+      this.setState({portait: true});
+    }
+  };
+
   async open(videoData) {
     const {watchVideo, source, thumbnail, myVideo, archiveID} = videoData;
     const that = this;
@@ -84,8 +104,7 @@ class WatchVideoPage extends Component {
   watchVideoView() {
     const {session, personSharingScreen, userID, state} = this.props;
     // if (!state.watchVideo) return null;
-    const {videoSource, thumbnail, myVideo, archiveID} = this.state;
-    const portait = true;
+    const {videoSource, thumbnail, myVideo, archiveID, portait} = this.state;
     let video = {};
 
     let widthView = height;
@@ -168,7 +187,7 @@ class WatchVideoPage extends Component {
             )}
             styleContainerVideo={[
               styleApp.center,
-              {width: '100%', height: '100%'},
+              {width: widthView, height: heightView},
             ]}
             styleVideo={[styleApp.fullSize, {width: '100%'}]}
             noUpdateInCloud={myVideo ? true : false}

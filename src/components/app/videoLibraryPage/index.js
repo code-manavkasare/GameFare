@@ -1,25 +1,15 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
-import ImagePicker from 'react-native-image-crop-picker';
+import MediaPicker from 'react-native-image-crop-picker';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 import CardUploading from './components/CardUploading';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
-import PlaceHolder from '../../placeHolders/CardConversation';
 
-import {uploadVideoFirebase, sortVideos} from '../../functions/pictures';
+import {sortVideos} from '../../functions/pictures';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -52,8 +42,6 @@ class VideoLibraryPage extends Component {
     return (
       uploadingVideosArray.length > 0 &&
       uploadingVideosArray.map((uploadingVideo, i) => {
-        console.log('i: ', i);
-        console.log('uploadingVideo: ', uploadingVideo);
         return (
           <CardUploading
             key={uploadingVideo.localIdentifier}
@@ -98,7 +86,7 @@ class VideoLibraryPage extends Component {
   }
 
   uploadVideo = async () => {
-    const videos = await ImagePicker.openPicker({
+    const videos = await MediaPicker.openPicker({
       multiple: true,
       mediaType: 'video',
     });
@@ -139,7 +127,6 @@ class VideoLibraryPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
           refreshControl={false}
-          // refresh={() => this.refresh()}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}

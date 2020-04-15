@@ -1,15 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Animated,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import {connect} from 'react-redux';
+import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import Video from 'react-native-video';
 import Slider from '@react-native-community/slider';
@@ -398,6 +388,7 @@ export default class VideoPlayer extends Component {
               ref={(ref) => {
                 this.player = ref;
               }}
+              resizeMode={'cover'}
               rate={playbackRate}
               onLoad={async (callback) => {
                 await this.setState({
