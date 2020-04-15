@@ -49,15 +49,6 @@ class WatchVideoPage extends Component {
   async open(videoData) {
     const {watchVideo, source, thumbnail, myVideo, archiveID} = videoData;
     const that = this;
-    console.log('archiveID', archiveID);
-    console.log('open watch video view', {
-      watchVideo,
-      source,
-      thumbnail,
-      myVideo,
-      archiveID,
-    });
-
     if (watchVideo)
       await that.setState({
         videoSource: source,
@@ -94,8 +85,15 @@ class WatchVideoPage extends Component {
     const {session, personSharingScreen, userID, state} = this.props;
     // if (!state.watchVideo) return null;
     const {videoSource, thumbnail, myVideo, archiveID} = this.state;
+    const portait = true;
     let video = {};
 
+    let widthView = height;
+    let heightView = width;
+    if (portait) {
+      widthView = width;
+      heightView = height;
+    }
     if (myVideo)
       video = {
         source: videoSource,
@@ -103,17 +101,16 @@ class WatchVideoPage extends Component {
         currentTime: 0,
       };
     else {
-      console.log('personSharingScreen', personSharingScreen);
       if (!personSharingScreen || !archiveID) return null;
       video = {...session.sharedVideos[archiveID]};
     }
-    console.log('render video watch view', video);
-    console.log('archiveID', archiveID);
     return (
       <Animated.View
         style={[
           styles.page,
           {
+            width: widthView,
+            height: heightView,
             transform: [
               {translateX: this.translateXPage},
               {translateY: this.translateYPage},
@@ -143,14 +140,6 @@ class WatchVideoPage extends Component {
           openVideo={(videoData) => this.open(videoData)}
         />
 
-        <ButtonShareVideo
-          archiveID={archiveID}
-          session={session}
-          source={video.source}
-          personSharingScreen={personSharingScreen}
-          getVideoState={() => this.videoPlayerRef.getState()}
-        />
-
         {videoSource && (
           <VideoPlayer
             source={videoSource}
@@ -160,15 +149,28 @@ class WatchVideoPage extends Component {
             placeHolderImg={thumbnail}
             autoplay={!myVideo ? true : false}
             componentOnTop={() => (
-              <DrawView
-                coachSessionID={session.objectID}
-                archiveID={archiveID}
-                video={video}
-                drawingOpen={personSharingScreen === userID}
-              />
+              <View
+                style={{position: 'absolute', height: '100%', width: '100%'}}>
+                <DrawView
+                  coachSessionID={session.objectID}
+                  archiveID={archiveID}
+                  video={video}
+                  drawingOpen={personSharingScreen === userID}
+                />
+                <ButtonShareVideo
+                  archiveID={archiveID}
+                  session={session}
+                  source={video.source}
+                  personSharingScreen={personSharingScreen}
+                  getVideoState={() => this.videoPlayerRef.getState()}
+                />
+              </View>
             )}
-            styleContainerVideo={[styleApp.center, styleApp.stylePage]}
-            styleVideo={[styleApp.fullSize, {width: width}]}
+            styleContainerVideo={[
+              styleApp.center,
+              {width: '100%', height: '100%'},
+            ]}
+            styleVideo={[styleApp.fullSize, {width: '100%'}]}
             noUpdateInCloud={myVideo ? true : false}
             updateVideoInfoCloud={(paused, currentTime) =>
               this.updateVideoInfoCloud(paused, currentTime, archiveID)
@@ -200,4 +202,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(WatchVideoPage);
+export default connect(
+  mapStateToProps,
+  {coachAction},
+)(WatchVideoPage);

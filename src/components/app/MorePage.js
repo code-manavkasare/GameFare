@@ -350,7 +350,7 @@ class MorePage extends Component {
           )}
 
           {this.button2({
-            text: 'Test notif',
+            text: 'Test notif open stream',
             icon: {
               name: 'user',
               type: 'font',
@@ -362,7 +362,22 @@ class MorePage extends Component {
                 screen: 'StreamPage',
                 params: {
                   openSession: true,
-                  objectID: '2mvi15eag9ek8qwr684',
+                  objectID: 'cv3xy4p7ghk8zhqn1r',
+                },
+              }),
+          })}
+          {this.button2({
+            text: 'Test notif open conversation',
+            icon: {
+              name: 'user',
+              type: 'font',
+              size: 20,
+              color: colors.title,
+            },
+            click: () =>
+              NavigationService.navigate('Conversation', {
+                data: {
+                  objectID: '-M4pyI87V02bA7Uz1_ah',
                 },
               }),
           })}

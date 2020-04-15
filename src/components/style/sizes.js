@@ -16,7 +16,10 @@ let offsetFooterStreaming = 30;
 
 let marginBottomApp = 50;
 
-let heightCardSession = 170;
+let heightHeaderStream = 60;
+let offsetBottomHeaderStream = 30;
+let heightCardSession = 70;
+let widthCardSession = width;
 
 console.log('height screeen,', height);
 if (Platform.OS === 'ios') {
@@ -90,4 +93,7 @@ module.exports = {
   initialHeightControlBar: initialHeightControlBar,
   offsetFooterStreaming: offsetFooterStreaming,
   heightCardSession,
+  widthCardSession,
+  heightHeaderStream,
+  offsetBottomHeaderStream,
 };
