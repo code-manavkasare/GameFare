@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
+import PropTypes from 'prop-types';
+import Video from 'react-native-video';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
@@ -11,14 +13,22 @@ import {date, time} from '../../../../../../../layout/date/date';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
+import {of} from 'ramda';
 
 export default class CardArchive extends Component {
+  static propTypes = {
+    archive: PropTypes.object.isRequired,
+    openVideo: PropTypes.func,
+    style: PropTypes.object,
+  };
   constructor(props) {
     super(props);
     this.state = {
       archive: false,
+      videoFullscren: false,
     };
   }
+
   async componentDidMount() {
     const {archive: archiveData} = this.props;
 
@@ -54,8 +64,33 @@ export default class CardArchive extends Component {
       />
     );
   }
-  cardArchive(archive) {
+
+  openVideo = (url, thumbnail) => {
     const {openVideo} = this.props;
+    if (openVideo) {
+      openVideo(url, thumbnail);
+    } else {
+      this.setState({videoFullscren: true});
+    }
+  };
+
+  videoFullscreen = () => {
+    const {archive, videoFullscren} = this.state;
+
+    if (videoFullscren) {
+      return (
+        <Video
+          source={{uri: archive.url}}
+          fullscreen={true}
+          onFullscreenPlayerDidDismiss={(event) => {
+            this.setState({videoFullscren: false});
+          }}
+        />
+      );
+    }
+  };
+
+  cardArchive(archive) {
     const {archive: archiveData} = this.props;
     const {
       thumbnail,
@@ -107,7 +142,7 @@ export default class CardArchive extends Component {
                   />
                 );
               }}
-              click={() => openVideo(url, thumbnail)}
+              click={() => this.openVideo(url, thumbnail)}
               color={colors.greyDark + '40'}
               onPressColor={colors.greyDark + '40'}
               style={[
@@ -126,7 +161,12 @@ export default class CardArchive extends Component {
   render() {
     const {archive} = this.state;
 
-    return this.cardArchive(archive);
+    return (
+      <View>
+        {this.cardArchive(archive)}
+        {this.videoFullscreen()}
+      </View>
+    );
   }
 }
 

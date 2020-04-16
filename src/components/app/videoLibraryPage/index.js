@@ -74,9 +74,6 @@ class VideoLibraryPage extends Component {
                 style={styles.cardArchive}
                 archive={video}
                 key={video.id}
-                openVideo={(source, thumbnail) => {
-                  alert('not working yet');
-                }}
               />
             );
           })
