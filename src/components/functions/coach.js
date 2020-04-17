@@ -151,7 +151,7 @@ const styleStreamView = (index, coordinates, pageFullScreen) => {
       height: height,
       width: width,
       borderRadius: 10,
-      backgroundColor: colors.title,
+      // backgroundColor: colors.title,
     };
   }
   return {styleContainerStreamView, styleCard};

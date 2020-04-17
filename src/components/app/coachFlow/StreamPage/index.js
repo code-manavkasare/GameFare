@@ -41,11 +41,12 @@ class StreamTab extends Component {
     let {userConnected} = this.props;
     return (
       <View style={styles.containerTabPage}>
+        <View style={{height: offsetBottomHeaderStream / 2}} />
         <HeaderListStream
           userConnected={userConnected}
           hideButtonNewSession={!userConnected || !permissionsCamera}
         />
-        <View style={{height: offsetBottomHeaderStream}} />
+        <View style={{height: offsetBottomHeaderStream / 2}} />
         {!userConnected ? (
           <LogoutView />
         ) : !permissionsCamera ? (
@@ -58,6 +59,7 @@ class StreamTab extends Component {
   };
 
   render() {
+    const {scrollDisabled} = this.props;
     return (
       <View style={[styleApp.page, {backgroundColor: 'white'}]}>
         <ScrollView
@@ -66,7 +68,7 @@ class StreamTab extends Component {
           contentScrollView={() => this.StreamTab()}
           marginBottomScrollView={0}
           marginTop={0}
-          scrollDisabled={false}
+          scrollDisabled={scrollDisabled}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />
@@ -100,6 +102,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
+    scrollDisabled: state.coach.sessionInfo.scrollDisabled,
   };
 };
 

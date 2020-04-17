@@ -9,7 +9,11 @@ const navigate = (routeName, params) => {
 
 const push = (routeName, params) => {
   console.log('push!', params);
-  navigationRef.current?.dispatch(
+  if (params.uniqueStack)
+    return navigationRef.current?.dispatch(
+      StackActions.push(routeName, params),
+    );
+  return navigationRef.current?.dispatch(
     StackActions.push(routeName, {screen: routeName, params: params}),
   );
 };

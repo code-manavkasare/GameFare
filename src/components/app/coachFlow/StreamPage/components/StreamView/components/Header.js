@@ -22,7 +22,7 @@ class HeaderStreamView extends Component {
       selectMultiple: true,
       closeButton: true,
       loaderOnSubmit: true,
-      displayCurrentUser: true,
+      displayCurrentUser: false,
       titleHeader: 'Add someone to the session',
       onGoBack: async (members) => {
         for (var i in Object.values(members)) {
@@ -37,7 +37,7 @@ class HeaderStreamView extends Component {
     });
   };
   header() {
-    const {coachSession, userID, open} = this.props;
+    const {coachSession, userID, open, setState, state} = this.props;
     return (
       <HeaderBackButton
         AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -49,8 +49,13 @@ class HeaderStreamView extends Component {
         nobackgroundColorIcon1={true}
         backgroundColorIcon1={'transparent'}
         backgroundColorIcon2={'transparent'}
+        backgroundColorIconOffset={'transparent'}
         initialBorderColorIcon={'transparent'}
+        sizeIconOffset={23}
         icon1={'chevron-down'}
+        iconOffset="switchCam"
+        typeIconOffset="moon"
+        clickButtonOffset={() => setState({cameraFront: !state.cameraFront})}
         typeIcon1="font"
         icon2={
           !coachSession

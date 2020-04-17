@@ -25,7 +25,8 @@ const initialState = {
   },
   sessionInfo: {
     objectID: false,
-    opened: false,
+    autoOpen: false,
+    scrollDisabled:false,
   },
 };
 

@@ -34,23 +34,24 @@ class BottomButton extends Component {
       return this.openRecording(nextProps.session.tokbox.archiving);
   }
 
-  cameraSwitch() {
+  publishVideo() {
     const {setState, state} = this.props;
+    const {publishVideo} = state;
     return (
       <ButtonColor
         view={() => {
           return (
             <Animated.View style={styleApp.center}>
               <AllIcons
-                type={'moon'}
+                type={'font'}
                 color={colors.white}
                 size={23}
-                name={'switchCam'}
+                name={publishVideo ? 'video' : 'video-slash'}
               />
             </Animated.View>
           );
         }}
-        click={async () => setState({cameraFront: !state.cameraFront})}
+        click={async () => setState({publishVideo: !publishVideo})}
         style={styleApp.fullSize}
         onPressColor={colors.redLight}
       />
@@ -190,12 +191,6 @@ class BottomButton extends Component {
               source={require('../../../../../../../../img/icons/endCall.png')}
               style={{width: 30, height: 30}}
             />
-            // <AllIcons
-            //   type={'moon'}
-            //   color={colors.white}
-            //   size={25}
-            //   name={'replay'}
-            // />
           );
         }}
         click={async () => endCoachSession(true)}
@@ -286,7 +281,7 @@ class BottomButton extends Component {
   rowButtons() {
     return (
       <Row style={styles.rowButtons}>
-        <Col style={styleApp.center}>{this.cameraSwitch()}</Col>
+        <Col style={styleApp.center}>{this.publishVideo()}</Col>
         <Col style={styleApp.center}>{this.publishAudio()}</Col>
 
         <Col style={styleApp.center}>{this.buttonRecord()}</Col>

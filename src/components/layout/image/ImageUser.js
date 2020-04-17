@@ -11,16 +11,28 @@ export default class ImageUser extends Component {
     super(props);
   }
   image(user) {
-    if (user.info.picture) return <AsyncImage
-      style={styleApp.roundView2}
-      mainImage={user.info.picture}
-      imgInitial={user.info.picture}
-    />
-  return <View style={styleApp.roundView2}>
-    <Text style={[styleApp.input, {fontSize: 11}]}>
-      {user.info.firstname[0] + user.info.lastname[0]}
-    </Text>
-  </View>
+    const {styleImgProps} = this.props;
+
+    let styleImg = {
+      ...styleApp.roundView2,
+      ...styleImgProps,
+    };
+
+    if (user.info.picture)
+      return (
+        <AsyncImage
+          style={styleImg}
+          mainImage={user.info.picture}
+          imgInitial={user.info.picture}
+        />
+      );
+    return (
+      <View style={styleImg}>
+        <Text style={[styleApp.input, {fontSize: 11}]}>
+          {user.info.firstname[0] + user.info.lastname[0]}
+        </Text>
+      </View>
+    );
   }
   render() {
     const {user} = this.props;
@@ -28,9 +40,7 @@ export default class ImageUser extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});
 
 ImageUser.propTypes = {
   user: PropTypes.object.isRequired,

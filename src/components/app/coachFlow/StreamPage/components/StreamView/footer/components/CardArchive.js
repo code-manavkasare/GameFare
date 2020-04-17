@@ -31,7 +31,6 @@ export default class CardArchive extends Component {
 
   async componentDidMount() {
     const {archive: archiveData} = this.props;
-
     if (archiveData.available) this.loadArchive(archiveData.id);
   }
   componentDidUpdate(prevProps, prevState) {

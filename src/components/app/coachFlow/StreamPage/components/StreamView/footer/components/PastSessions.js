@@ -19,7 +19,7 @@ class PastSessions extends Component {
       <CardArchive
         style={styles.cardArchive}
         archive={archive}
-        key={i}
+        key={archive.id}
         openVideo={(source, thumbnail) => {
           console.log('llala open card archive', thumbnail);
           openVideo({
