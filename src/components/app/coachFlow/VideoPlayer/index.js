@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import Video from 'react-native-video';
 import Slider from '@react-native-community/slider';
@@ -17,6 +24,7 @@ import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
 import {timeout, displayTime} from '../../../functions/coach';
+import {timing} from '../../../animations/animations';
 
 const {initialHeightControlBar} = sizes;
 
@@ -41,6 +49,7 @@ export default class VideoPlayer extends Component {
       videoLoading: false,
       displayVideo: this.props.autoplay,
     };
+    this.opacityControlBar = new Animated.Value(1);
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -139,19 +148,23 @@ export default class VideoPlayer extends Component {
     const {playbackRate, showSpeedSet} = this.state;
     const speeds = [
       {
-        label: '1 | 4',
+        label: '0.25',
         value: 0.25,
       },
       {
-        label: '1 | 2',
+        label: '0.5',
         value: 0.5,
       },
       {
-        label: '1 | 1',
+        label: 'Normal',
         value: 1,
       },
       {
-        label: '2 | 1',
+        label: '1.5',
+        value: 1.5,
+      },
+      {
+        label: '2',
         value: 2,
       },
     ];
@@ -185,7 +198,12 @@ export default class VideoPlayer extends Component {
     return (
       <View style={styleApp.fullSize}>
         {showSpeedSet && (
-          <FadeInView duration={250} style={styles.viewSpeedSet}>
+          <FadeInView
+            duration={250}
+            style={[
+              styles.viewSpeedSet,
+              {height: speeds.length * 30, top: -(speeds.length * 30 + 25)},
+            ]}>
             {speeds.map((speed, i) => buttonSpeed(speed, i))}
             <View style={styles.triangleSpeedView} />
           </FadeInView>
@@ -222,9 +240,7 @@ export default class VideoPlayer extends Component {
       displayButtonPlay,
     } = this.state;
     let remainingTime = 0;
-    console.log('render control buttons', totalTime, currentTime);
-    console.log(this.props);
-    //  if (!totalTime || !currentTime) return null;
+
     if (totalTime !== 0)
       remainingTime = totalTime.toPrecision(2) - currentTime.toPrecision(2);
     let {
@@ -233,15 +249,17 @@ export default class VideoPlayer extends Component {
       hideFullScreenButton,
     } = this.props;
     if (!heightControlBar) heightControlBar = initialHeightControlBar;
-    console.log('remainingTime', totalTime);
-    console.log('displayTime(totalTime)', displayTime(totalTime));
-    console.log('initialHeightControlBar', initialHeightControlBar);
+
     if (displayButtonPlay) return null;
     return (
       <Animated.View
         style={[
           styles.controlButtons,
-          {height: heightControlBar, backgroundColor: colors.transparentGrey},
+          {
+            height: heightControlBar,
+            backgroundColor: colors.transparentGrey,
+            opacity: this.opacityControlBar,
+          },
         ]}>
         <Row>
           <Col size={10}>{this.playPauseButton(paused)}</Col>
@@ -345,6 +363,13 @@ export default class VideoPlayer extends Component {
       </View>
     );
   }
+  clickVideo() {
+    console.log('click video !', this.opacityControlBar);
+    Animated.timing(
+      this.opacityControlBar,
+      timing(!this.opacityControlBar._value, 200),
+    ).start();
+  }
   render() {
     const {
       source,
@@ -363,11 +388,6 @@ export default class VideoPlayer extends Component {
       placeHolderImg,
       displayVideo,
     } = this.state;
-
-    console.log('render video player', paused);
-    console.log('source', source);
-    console.log('placeHolderImg', placeHolderImg);
-    console.log('displayVideo', displayVideo);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight && buttonTopRight()}
@@ -376,8 +396,19 @@ export default class VideoPlayer extends Component {
           mainImage={placeHolderImg}
         />
 
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
+            zIndex: 2,
+          }}
+          activeOpacity={1}
+          onPress={() => this.clickVideo()}
+        />
+
         {displayVideo && (
-          <View
+          <TouchableOpacity
             style={[
               styleApp.fullSize,
               {backgroundColor: colors.transparentGrey},
@@ -388,7 +419,7 @@ export default class VideoPlayer extends Component {
               ref={(ref) => {
                 this.player = ref;
               }}
-              resizeMode={'cover'}
+              // resizeMode={'cover'}
               rate={playbackRate}
               onLoad={async (callback) => {
                 await this.setState({
@@ -413,7 +444,7 @@ export default class VideoPlayer extends Component {
               paused={paused}
               onProgress={(info) => !paused && this.onProgress(info)}
             />
-          </View>
+          </TouchableOpacity>
         )}
         {videoLoading && this.bufferView()}
         {this.initialButtonButtonPlay()}
@@ -452,9 +483,7 @@ const styles = StyleSheet.create({
   },
   viewSpeedSet: {
     position: 'absolute',
-    top: -147,
-    height: 130,
-    width: 60,
+    width: 65,
     right: 0,
     zIndex: 60,
     backgroundColor: colors.transparentGrey,

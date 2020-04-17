@@ -184,7 +184,9 @@ export default class HeaderFlow extends Component {
                     width: 48,
                     borderRadius: 23.8,
                     borderWidth: 1,
-                    backgroundColor: 'white',
+                    backgroundColor: backgroundColorIcon1
+                      ? backgroundColorIcon1
+                      : 'white',
                     overFlow: 'hidden',
                   },
                 ]}>
@@ -205,7 +207,7 @@ export default class HeaderFlow extends Component {
                             ? colors.title
                             : colors.white
                         }
-                        size={this.props.sizeIcon2}
+                        size={this.props.sizeIconOffset}
                         type={this.props.typeIconOffset}
                       />
                     );

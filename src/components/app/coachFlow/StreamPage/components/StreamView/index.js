@@ -27,8 +27,6 @@ import {
   isUserAlone,
   isSomeoneSharingScreen,
   userPartOfSession,
-  timeout,
-  isEven,
   styleStreamView,
 } from '../../../../../functions/coach';
 
@@ -84,8 +82,8 @@ class StreamPage extends Component {
       publishVideo: true,
       myVideo: false,
       pageFullScreen: false,
+      open: false,
       coordinates: {x: 0, y: 0},
-      opened: false,
     };
     this.translateYFooter = new Animated.Value(0);
     this.translateYViewPublisher = new Animated.Value(0);
@@ -144,6 +142,9 @@ class StreamPage extends Component {
   async componentDidMount() {
     this.props.onRef(this);
     console.log('stream view mounted!', this.props.coachSessionID);
+    const {coachSessionID} = this.props;
+    const {autoOpen, objectID} = this.props.sessionInfo;
+    if (coachSessionID === objectID && autoOpen) this.open(true);
     this.loadCoachSession();
   }
   componentWillUnmount() {
@@ -167,7 +168,7 @@ class StreamPage extends Component {
     if (nextVal) {
       await this.props.coachAction('setSessionInfo', {
         objectID: coachSessionID,
-        opened: true,
+        scrollDisabled: true,
       });
       const {x, y} = getPositionView(
         offsetScrollView,
@@ -187,7 +188,7 @@ class StreamPage extends Component {
       await this.setState({
         coordinates: {x: x, y: y},
         pageFullScreen: true,
-        opened: true,
+        open: true,
       });
       await layoutAction('setLayout', {isFooterVisible: false});
       Animated.parallel([
@@ -196,9 +197,12 @@ class StreamPage extends Component {
     } else {
       await layoutAction('setLayout', {isFooterVisible: true});
       Animated.timing(this.animatedPage, native(0, 250)).start(() => {
-        console.log('set full screen to false');
+        console.log('set full screen to false', coachSessionID);
         this.setState({
           pageFullScreen: false,
+        });
+        this.props.coachAction('setSessionInfo', {
+          scrollDisabled: false,
         });
       });
     }
@@ -241,13 +245,15 @@ class StreamPage extends Component {
       });
   }
   async endCoachSession(hangup) {
-    await this.setState({opened: false});
+    const {coachAction} = this.props;
+    await this.setState({open: false});
     if (hangup) return this.open(false);
     return true;
   }
 
   loaderView(text, hideLoader) {
     const {pageFullScreen} = this.state;
+    if (!pageFullScreen) return null;
     return (
       <FadeInView
         duration={250}
@@ -268,12 +274,9 @@ class StreamPage extends Component {
     return 'back';
   }
   renderSubscribers = (subscribers) => {
-    const {pageFullScreen} = this.state;
-    console.log('styleSubscriber', pageFullScreen);
     let styleSubscriber = {};
     let heightViewSubscriber = height;
     return subscribers.map((streamId, index) => {
-      console.log('heightViewSubscriber');
       styleSubscriber = {
         height: heightViewSubscriber / subscribers.length,
         width: width,
@@ -291,11 +294,11 @@ class StreamPage extends Component {
     const {pageFullScreen} = this.state;
     if (!pageFullScreen) {
       return {
-        height: heightCardSession / -20,
+        height: 0,
         marginTop: 0,
-        width: width * 0.2,
-        marginLeft: width * 0.5,
-        borderRadius:6
+        width: 0,
+        marginLeft: width,
+        borderRadius: 6,
         // position: 'absolute',
       };
     }
@@ -314,6 +317,8 @@ class StreamPage extends Component {
       pageFullScreen,
     } = this.state;
     const {userID, userConnected} = this.props;
+
+    if (!coachSession.tokbox) return null;
 
     const {sessionID} = coachSession.tokbox;
     if (!userConnected) return null;
@@ -352,7 +357,13 @@ class StreamPage extends Component {
               }}
               eventHandlers={this.publisherEventHandlers}
             />
-            <OTSubscriber style={styles.OTSubscriber}>
+
+            <OTSubscriber
+              style={
+                pageFullScreen
+                  ? styles.OTSubscriber
+                  : {height: 0, width: 0, position: 'absolute'}
+              }>
               {this.renderSubscribers}
             </OTSubscriber>
 
@@ -415,10 +426,10 @@ class StreamPage extends Component {
       loader,
       coordinates,
       pageFullScreen,
-      opened,
+      open,
     } = this.state;
 
-    const {index, coachSessionID, timestamp} = this.props;
+    const {index, coachSessionID, timestamp, sessionInfo} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
 
     const {styleContainerStreamView, styleCard} = styleStreamView(
@@ -449,10 +460,15 @@ class StreamPage extends Component {
           <KeepAwake />
 
           {pageFullScreen && (
-            <Header coachSession={coachSession} open={this.open.bind(this)} />
+            <Header
+              coachSession={coachSession}
+              open={this.open.bind(this)}
+              setState={this.setState.bind(this)}
+              state={this.state}
+            />
           )}
 
-          {opened && <View style={styles.viewStream}>{this.streamPage()}</View>}
+          {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
           <WatchVideoPage
             state={this.state}

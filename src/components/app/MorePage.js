@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+
+import {coachAction} from '../../actions/coachActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
@@ -63,8 +65,19 @@ class MorePage extends Component {
       .notifications()
       .onNotificationOpened((notification) => {
         const {data} = notification.notification;
-        NavigationService.push(data.action, data);
+        this.navigate(data.action, data);
       });
+  }
+  async navigate(action, data) {
+    if (action === 'Stream') {
+      await coachAction('setSessionInfo', {
+        objectID: data.objectID,
+        autoOpen: true,
+      });
+    }
+    if (data.typeNavigation === 'navigate')
+      return NavigationService.navigate(data.action, data);
+    return NavigationService.push(data.action, data);
   }
   async appOpenFistNotification() {
     const notificationOpen = await firebase
@@ -72,7 +85,7 @@ class MorePage extends Component {
       .getInitialNotification();
     if (notificationOpen) {
       const {data} = notificationOpen.notification;
-      NavigationService.push(data.action, data);
+      this.navigate(data.action, data);
     }
   }
   button2(dataButton) {
@@ -375,10 +388,9 @@ class MorePage extends Component {
               color: colors.title,
             },
             click: () =>
-              NavigationService.navigate('Conversation', {
-                data: {
-                  objectID: '-M4pyI87V02bA7Uz1_ah',
-                },
+              NavigationService.push('Conversation', {
+                data: '-M4pyI87V02bA7Uz1_ah',
+                uniqueStack: 'true',
               }),
           })}
         </View>
@@ -441,5 +453,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {userAction},
+  {userAction, coachAction},
 )(MorePage);

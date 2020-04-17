@@ -13,7 +13,7 @@ import {
   heightHeaderStream,
   offsetBottomHeaderStream,
 } from '../../../../style/sizes';
-import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
 
 class ListStreams extends Component {
   constructor(props) {
@@ -74,19 +74,20 @@ class ListStreams extends Component {
 
   render() {
     return (
-      <View style={{borderBottomWidth: 1, borderColor: colors.off}}>
+      <View>
         {this.list()}
+        <View style={[styles.divider]} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  rowButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    // marginTop: 20,
-    width: width,
+  divider: {
+    ...styleApp.divider2,
+    marginTop: 0,
+    width: width - 40,
+    marginLeft: 20,
   },
 });
 

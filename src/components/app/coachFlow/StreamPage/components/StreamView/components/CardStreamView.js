@@ -15,7 +15,7 @@ import ButtonColor from '../../../../../../layout/Views/Button';
 import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
 import {date, time} from '../../../../../../layout/date/date';
-import MembersView from './MembersView';
+import ImageUser from '../../../../../../layout/image/ImageUser';
 
 class CardStream extends Component {
   constructor(props) {
@@ -74,12 +74,94 @@ class CardStream extends Component {
             <AllIcons
               name="trash-alt"
               size={15}
-              color={colors.title}
+              color={colors.greyDark}
               type="font"
             />
           );
         }}
       />
+    );
+  }
+  viewLive() {
+    const styleViewLive = {
+      position: 'absolute',
+      top: 0,
+      right: 20,
+      height: 20,
+      width: 40,
+      ...styleApp.center,
+      backgroundColor: colors.red,
+      borderBottomLeftRadius: 5,
+      borderBottomRightRadius: 5,
+    };
+    return (
+      <View style={styleViewLive}>
+        <Text style={[styleApp.text, {color: colors.white, fontSize: 10}]}>
+          Live
+        </Text>
+      </View>
+    );
+  }
+  viewMembers() {
+    const styleRow = {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      //   backgroundColor: 'red',
+      flex: 1,
+    };
+    const sizeImg = 40;
+    const styleCol = {
+      paddingRight: 3,
+    };
+    const styleVoile = {
+      position: 'absolute',
+      zIndex: 10,
+      borderRadius: sizeImg / 2,
+      height: sizeImg,
+      width: sizeImg,
+    };
+    const {userID, coachSession} = this.props;
+    if (!coachSession) return null;
+    const members = Object.values(coachSession.members).filter(
+      (member) => member.id !== userID,
+    );
+    return (
+      <View style={styleRow}>
+        {members.length === 0 ? (
+          <Text
+            style={[
+              styleApp.text,
+              {color: colors.greyDark, fontSize: 13, marginTop: 5},
+            ]}>
+            No one else is part of this room.
+          </Text>
+        ) : (
+          members.map((member, i) => {
+            const opacityVoile = member.isConnected ? '00' : '90';
+            const styleVoileApply = {
+              ...styleVoile,
+              borderWidth: member.isConnected ? 3 : 2,
+              borderColor: member.isConnected
+                ? colors.greenConfirm
+                : colors.grey,
+              backgroundColor: colors.off + opacityVoile,
+            };
+            return (
+              <View style={styleCol}>
+                <View style={styleVoileApply} />
+                <ImageUser
+                  key={member.id}
+                  user={member}
+                  styleImgProps={{
+                    height: sizeImg,
+                    width: sizeImg,
+                  }}
+                />
+              </View>
+            );
+          })
+        )}
+      </View>
     );
   }
   cardStream() {
@@ -102,26 +184,22 @@ class CardStream extends Component {
           styles.card,
           {
             backgroundColor: backgroundColor,
-            borderColor: colors.off,
           },
         ]}>
         <Row style={styles.rowTools}>
-          <Col size={40} style={styleApp.center2}>
-            <Text style={[styleApp.text, {fontSize: 13}]}>
-              {date(dateFormat)} at {time(dateFormat)}
-            </Text>
-
+          <View style={styles.divider} />
+          {isConnected && this.viewLive()}
+          <Col size={70}>
             <Text
               style={[
                 styleApp.text,
-                {color: colors.greyDark, fontSize: 13, marginTop: 5},
+                {fontSize: 13, marginTop: 10, marginBottom: 10},
               ]}>
-              {isConnected ? 'Connected' : 'Disconnected'}
+              {date(dateFormat)} at {time(dateFormat)}
             </Text>
 
-            <MembersView session={coachSession} card={true} />
+            {this.viewMembers()}
           </Col>
-          <Col size={30} />
           {isConnected ? (
             <Col size={15} style={styleApp.center3}>
               {this.buttonEndCall()}
@@ -143,20 +221,21 @@ class CardStream extends Component {
 
 const styles = StyleSheet.create({
   card: {
-    //   borderTopWidth: 1,
-    //  borderBottomWidth: 1,
     position: 'absolute',
-    borderTopWidth: 1,
     zIndex: -1,
     height: heightCardSession,
     width: widthCardSession,
-    borderColor: colors.off,
-    //  backgroundColor: 'red',
-    // overflow: 'hidden',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.off,
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 20,
   },
   rowTools: {
     paddingRight: 20,
-
     paddingLeft: 20,
   },
   button: {

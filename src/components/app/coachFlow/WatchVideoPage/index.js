@@ -168,8 +168,14 @@ class WatchVideoPage extends Component {
             placeHolderImg={thumbnail}
             autoplay={!myVideo ? true : false}
             componentOnTop={() => (
-              <View
-                style={{position: 'absolute', height: '100%', width: '100%'}}>
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  ...styleApp.fullSize,
+                  zIndex: 3,
+                }}
+                activeOpacity={1}
+                onPress={() => this.videoPlayerRef.clickVideo()}>
                 <DrawView
                   coachSessionID={session.objectID}
                   archiveID={archiveID}
@@ -183,13 +189,13 @@ class WatchVideoPage extends Component {
                   personSharingScreen={personSharingScreen}
                   getVideoState={() => this.videoPlayerRef.getState()}
                 />
-              </View>
+              </TouchableOpacity>
             )}
             styleContainerVideo={[
               styleApp.center,
-              {width: widthView, height: heightView},
+              {width: '100%', height: '100%'},
             ]}
-            styleVideo={[styleApp.fullSize, {width: '100%'}]}
+            styleVideo={[styleApp.fullSize]}
             noUpdateInCloud={myVideo ? true : false}
             updateVideoInfoCloud={(paused, currentTime) =>
               this.updateVideoInfoCloud(paused, currentTime, archiveID)
