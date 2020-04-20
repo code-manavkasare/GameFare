@@ -130,3 +130,6 @@ And the guide for React work also for React Native: https://github.com/airbnb/ja
 ## Reset cache of debugger
 rm -rf ~/Library/Application\ Support/React\ Native\ Debugger/
 
+## Launch app on other simulator
+yarn  ios-dev --simulator "iPhone 5s"
+
