@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
+import {ProcessingManager} from 'react-native-video-processing';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
@@ -87,8 +88,17 @@ class VideoLibraryPage extends Component {
       multiple: true,
       mediaType: 'video',
     });
-    console.log('videos', videos);
-    this.setState({uploadingVideosArray: videos});
+    let uploadingVideosArray = videos;
+
+    await Promise.all(
+      videos.map(async (video, i) => {
+        await ProcessingManager.getVideoInfo(video.path).then(({duration}) => {
+          uploadingVideosArray[i].duration = Math.round(duration);
+        });
+      }),
+    );
+
+    this.setState({uploadingVideosArray});
   };
 
   dismissUploadCard = (videoUploaded) => {

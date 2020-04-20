@@ -47,7 +47,7 @@ class WatchVideoPage extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
-    var initialOrientation = Orientation.getInitialOrientation();
+    const initialOrientation = Orientation.getInitialOrientation();
     this.setScreenOrientation(initialOrientation);
     Orientation.addOrientationListener(this._onOrientationDidChange);
   }
@@ -60,9 +60,9 @@ class WatchVideoPage extends Component {
   };
   setScreenOrientation = (orientation) => {
     if (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') {
-      this.setState({portait: false});
+      this.setState({portrait: false});
     } else if (orientation === 'PORTRAIT') {
-      this.setState({portait: true});
+      this.setState({portrait: true});
     }
   };
 
@@ -104,12 +104,12 @@ class WatchVideoPage extends Component {
   watchVideoView() {
     const {session, personSharingScreen, userID, state} = this.props;
     // if (!state.watchVideo) return null;
-    const {videoSource, thumbnail, myVideo, archiveID, portait} = this.state;
+    const {videoSource, thumbnail, myVideo, archiveID, portrait} = this.state;
     let video = {};
 
     let widthView = height;
     let heightView = width;
-    if (portait) {
+    if (portrait) {
       widthView = width;
       heightView = height;
     }

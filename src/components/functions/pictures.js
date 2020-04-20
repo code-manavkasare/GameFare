@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {Platform, PermissionsAndroid} from 'react-native';
-
 import firebase from 'react-native-firebase';
 import CameraRoll from '@react-native-community/cameraroll';
-
 import {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
-import RNVideoHelper from 'react-native-video-helper';
+import {ProcessingManager} from 'react-native-video-processing';
+// import RNVideoHelper from 'react-native-video-helper';
+
 import ImageResizer from 'react-native-image-resizer';
 
 const options = {
@@ -60,32 +60,11 @@ async function rotateImage(uri, width, height, degrees) {
   return rotatedUri;
 }
 
-async function resizeVideo(uri) {
-  try {
-    RNVideoHelper.compress(uri, {
-      quality: 'low', // default low, can be medium or high
-      defaultOrientation: 0, // By default is 0, some devices not save this property in metadata. Can be between 0 - 360
-    })
-      .progress((value) => {
-        console.warn('progress', value); // Int with progress value from 0 to 1
-      })
-      .then((compressedUri) => {
-        console.warn('compressedUri', compressedUri); // String with path to temporary compressed video
-      });
-    return false;
-  } catch (err) {
-    console.log('errror', err);
-  }
-
-  return false;
-  return newUri;
-}
-
 async function takePicture() {
   var permissionVal = await permission('camera');
   if (!permissionVal) return false;
 
-  let promise = new Promise(function (resolve, reject) {
+  let promise = new Promise(function(resolve, reject) {
     // executor (the producing code, "singer")
     ImagePicker.launchCamera(options, (response) => {
       if (!response.uri) {
@@ -103,7 +82,7 @@ async function pickLibrary() {
   var permissionVal = await permission('library');
   if (!permissionVal) return false;
 
-  let promise = new Promise(function (resolve, reject) {
+  let promise = new Promise(function(resolve, reject) {
     // executor (the producing code, "singer")
     ImagePicker.launchImageLibrary(options, (response) => {
       if (!response.uri) {
@@ -120,7 +99,10 @@ async function pickLibrary() {
 async function uploadPictureFirebase(localUri, destination) {
   try {
     let imageName = 'groupPicture';
-    const imageRef = firebase.storage().ref(destination).child(imageName);
+    const imageRef = firebase
+      .storage()
+      .ref(destination)
+      .child(imageName);
     await imageRef.put(localUri, {contentType: 'image/jpg'});
     var url = imageRef.getDownloadURL();
     return url;
@@ -132,12 +114,15 @@ async function uploadPictureFirebase(localUri, destination) {
 
 async function uploadVideoFirebase(image, destination, name) {
   try {
-    const imageRef = firebase.storage().ref(destination).child(name);
+    const imageRef = firebase
+      .storage()
+      .ref(destination)
+      .child(name);
     const uploadTask = imageRef.put(image.uri, {contentType: 'video'});
 
     uploadTask.on(
       'state_changed',
-      function (snapshot) {
+      function(snapshot) {
         // Observe state change events such as progress, pause, and resume
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -151,7 +136,7 @@ async function uploadVideoFirebase(image, destination, name) {
             break;
         }
       },
-      function (error) {
+      function(error) {
         console.log(error);
       },
       async () => {
@@ -186,7 +171,6 @@ module.exports = {
   takePicture,
   pickLibrary,
   resize,
-  resizeVideo,
   rotateImage,
   uploadPictureFirebase,
   uploadVideoFirebase,

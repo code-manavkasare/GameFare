@@ -156,6 +156,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (6.5.1):
     - GoogleUtilities/Logger
+  - GPUImage (0.2.0)
   - GTMSessionFetcher/Core (1.3.1)
   - leveldb-library (1.22)
   - libwebp (1.0.3):
@@ -431,8 +432,6 @@ PODS:
     - React
   - react-native-video (2.3.1):
     - React
-  - react-native-video-helper (1.4.4):
-    - React
   - React-RCTActionSheet (0.61.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.2)
   - React-RCTAnimation (0.61.2):
@@ -539,6 +538,8 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
+  - RNVideoProcessing (1.7.4):
+    - React
   - RSKImageCropper (2.2.3)
   - SDWebImage (5.4.0):
     - SDWebImage/Core (= 5.4.0)
@@ -568,6 +569,7 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - gamefare-camera-kit (from `../node_modules/gamefare-camera-kit`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - GPUImage (from `https://github.com/BunHouth/GPUImage.git`)
   - opentok-react-native (from `../node_modules/opentok-react-native`)
   - Permission-BluetoothPeripheral (from `../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec`)
   - Permission-Calendars (from `../node_modules/react-native-permissions/ios/Calendars.podspec`)
@@ -618,7 +620,6 @@ DEPENDENCIES:
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
   - react-native-video (from `../node_modules/react-native-video`)
-  - react-native-video-helper (from `../node_modules/react-native-video-helper`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -655,6 +656,7 @@ DEPENDENCIES:
   - "RNSketchCanvas (from `../node_modules/@terrylinla/react-native-sketch-canvas`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - RNVideoProcessing (from `../node_modules/react-native-video-processing`)
   - Stripe
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -714,6 +716,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/gamefare-camera-kit"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  GPUImage:
+    :git: https://github.com/BunHouth/GPUImage.git
   opentok-react-native:
     :path: "../node_modules/opentok-react-native"
   Permission-BluetoothPeripheral:
@@ -810,8 +814,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/status-bar"
   react-native-video:
     :path: "../node_modules/react-native-video"
-  react-native-video-helper:
-    :path: "../node_modules/react-native-video-helper"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -882,10 +884,17 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  RNVideoProcessing:
+    :path: "../node_modules/react-native-video-processing"
   tipsi-stripe:
     :path: "../node_modules/tipsi-stripe"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
+
+CHECKOUT OPTIONS:
+  GPUImage:
+    :commit: c0f80da9240a07fae7ec5119d2ef252b061e340f
+    :git: https://github.com/BunHouth/GPUImage.git
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
@@ -919,6 +928,7 @@ SPEC CHECKSUMS:
   GoogleDataTransportCCTSupport: 36f69887fd212db6d7ef4dd45ba44523717a434e
   GoogleToolboxForMac: 800648f8b3127618c1b59c7f97684427630c5ea3
   GoogleUtilities: 06eb53bb579efe7099152735900dd04bf09e7275
+  GPUImage: d34c2d8ce12c9d7eb7e4f5017e1a7dd2eb0abc70
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   libwebp: 057912d6d0abfb6357d8bb05c0ea470301f5d61e
@@ -975,7 +985,6 @@ SPEC CHECKSUMS:
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
   react-native-video: a6cae6575a8e86cdb5a3d6acf85ea9ea40a15e50
-  react-native-video-helper: 3da49b5ea422eb3dadef9e8bde47c14504d2cc74
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
   React-RCTBlob: d26ac0e313fbf14e7203473fd593ccaaeee8329e
@@ -1011,6 +1020,7 @@ SPEC CHECKSUMS:
   RNSketchCanvas: 9c28adb5381543ed55cc98ce6de46479cb3cb12c
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  RNVideoProcessing: cda67217db87030a335137bfb0c637bce2532aeb
   RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
   SDWebImage: 5bf6aec6481ae2a062bdc59f9d6c1d1e552090e0
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987
@@ -1019,6 +1029,6 @@ SPEC CHECKSUMS:
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 4e3f7f4bff0392042dbc9b1bfa1fbba6099b0d50
+PODFILE CHECKSUM: 2c21f1c62857e5013eccd40e9048093612acb63f
 
 COCOAPODS: 1.9.1
