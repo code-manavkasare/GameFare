@@ -60,6 +60,9 @@ def shared_pods
   pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit.podspec"
   pod 'react-native-video', :path => '../node_modules/react-native-video'
 
+  #RN VideoProcessing
+  pod 'GPUImage', git: 'https://github.com/BunHouth/GPUImage.git'
+
   # Mapbox
   pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
   pod 'react-native-statusbar', :path => '../node_modules/@react-native-community/status-bar'

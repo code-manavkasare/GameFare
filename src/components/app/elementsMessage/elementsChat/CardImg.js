@@ -26,7 +26,6 @@ import {
   uploadPictureFirebase,
   uploadVideoFirebase,
   resize,
-  resizeVideo,
 } from '../../../functions/pictures';
 import FadeInView from 'react-native-fade-in-view';
 

@@ -18,7 +18,6 @@ import firebase from 'react-native-firebase';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
-import {resizeVideo} from '../../functions/pictures';
 const {height, width} = Dimensions.get('screen');
 
 import AsyncImage from '../../layout/image/AsyncImage';
