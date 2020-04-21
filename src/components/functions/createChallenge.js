@@ -128,26 +128,23 @@ async function createChallenge(challenge, userID, infoUser) {
     .push(newChallenge);
   newChallenge.objectID = key;
 
-  await firebase
-    .database()
-    .ref('challenges/' + key)
-    .update({eventID: key});
+  let updates = {};
+  updates[`challenges/${key}`] = {eventID: key};
+  updates[`discussions/${discussionID}`] = createDiscussionEventGroup(
+    discussionID,
+    key,
+    pictureUri,
+    newChallenge.info.name,
+    {
+      id: userID,
+      info: infoUser,
+    },
+  );
 
   await firebase
     .database()
-    .ref('discussions/' + discussionID)
-    .update(
-      createDiscussionEventGroup(
-        discussionID,
-        key,
-        pictureUri,
-        newChallenge.info.name,
-        {
-          id: userID,
-          info: infoUser,
-        },
-      ),
-    );
+    .ref()
+    .update(updates);
 
   await subscribeToTopics([userID, 'all', key]);
   refreshTokenOnDatabase(userID);
@@ -157,26 +154,27 @@ async function createChallenge(challenge, userID, infoUser) {
 
 const isUserAlreadyMember = (challenge, userID, userConnected) => {
   if (!userConnected) return false;
-  console.log('is user aleadu member', challenge.info.organizer === userID);
-  console.log(challenge.info.organizer);
-  console.log(userID);
+
   if (challenge.info.organizer === userID) return true;
   const {teams} = challenge;
   const allMembers = Object.values(teams)
     .filter((team) => team.members)
     .map((team) => Object.values(team.members));
   const arrayAllMembers = [].concat.apply([], allMembers);
+
   if (isUserCaptainOfTeam(challenge, userID, userConnected))
     return (
       arrayAllMembers.filter(
         (member) => member.id === userID && member.status === 'confirmed',
       ).length !== 0
     );
+
   return arrayAllMembers.filter((member) => member.id === userID).length !== 0;
 };
 
 const isUserCaptainOfTeam = (challenge, userID, userConnected) => {
   if (!userConnected) return false;
+
   const {teams} = challenge;
   return (
     Object.values(teams).filter((team) => team.captain.id === userID).length !==

@@ -34,6 +34,7 @@ class ButtonShareVideo extends Component {
     } = this.props;
     const {objectID} = session;
     const stateVideo = getVideoState();
+
     if (value) {
       await coachAction('setCoachSessionDrawSettings', {
         touchEnabled: false,
@@ -47,14 +48,17 @@ class ButtonShareVideo extends Component {
         id: archiveID,
         thumbnail: stateVideo.placeHolderImg,
       };
+
+      let updates = {};
+      updates[`coachSessions/${objectID}/sharedVideos/${archiveID}`] = video;
+      updates[`coachSessions/${objectID}/members/${userID}`] = {
+        shareScreen: true,
+        videoIDSharing: archiveID,
+      };
       await firebase
         .database()
-        .ref('coachSessions/' + objectID + '/sharedVideos/' + archiveID)
-        .update(video);
-      await firebase
-        .database()
-        .ref('coachSessions/' + objectID + '/members/' + userID)
-        .update({shareScreen: true, videoIDSharing: archiveID});
+        .ref()
+        .update(updates);
     } else {
       await firebase
         .database()

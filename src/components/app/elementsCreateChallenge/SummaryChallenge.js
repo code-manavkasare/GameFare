@@ -357,7 +357,7 @@ class SummaryChallenge extends Component {
       await sendSMSFunction(allPhoneNumbers, description + ' ' + url);
 
     var that = this;
-    setTimeout(async function () {
+    setTimeout(async function() {
       await that.props.historicSearchAction('setSport', {
         value: newChallenge.info.sport,
         league: 'all',
@@ -435,22 +435,22 @@ class SummaryChallenge extends Component {
       const teamUser = Object.values(challenge.teams).filter(
         (team) => team.captain.id === userID,
       )[0];
-      await firebase
-        .database()
-        .ref('challenges/' + challenge.objectID + '/teams/' + teamUser.id)
-        .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
+
+      let updates = {};
+      updates[`challenges/${challenge.objectID}/teams/${teamUser.id}`] = {
+        status: 'confirmed',
+        amountPaid: dataCheckout.totalAmount,
+      };
+      updates[
+        `challenges/${challenge.objectID}/teams/${
+          teamUser.id
+        }/members/${userID}`
+      ] = {status: 'confirmed'};
 
       await firebase
         .database()
-        .ref(
-          'challenges/' +
-            challenge.objectID +
-            '/teams/' +
-            teamUser.id +
-            '/members/' +
-            userID,
-        )
-        .update({status: 'confirmed'});
+        .ref()
+        .update(updates);
     }
 
     await this.setState({loader: false});
@@ -610,9 +610,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  eventsAction,
-  createChallengeAction,
-  historicSearchAction,
-  groupsAction,
-})(SummaryChallenge);
+export default connect(
+  mapStateToProps,
+  {
+    eventsAction,
+    createChallengeAction,
+    historicSearchAction,
+    groupsAction,
+  },
+)(SummaryChallenge);

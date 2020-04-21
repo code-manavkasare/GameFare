@@ -54,7 +54,7 @@ class PickInfos extends Component {
         .reverse()
         // .slice(0, 1)
         .filter((team) => team.id === teamAdmin.id || teamAdmin === 'all')
-        .reduce(function (result, item) {
+        .reduce(function(result, item) {
           result[item.id] = item;
           return result;
         }, {});
@@ -135,7 +135,7 @@ class PickInfos extends Component {
   teamsSections(data, edit, hideButtonRemoveTeam) {
     const {teams, allMembers} = data;
     return Object.values(teams)
-      .sort(function (a, b) {
+      .sort(function(a, b) {
         return a.createdAt - b.createdAt;
       })
       .map((team, i) =>
@@ -259,14 +259,13 @@ class PickInfos extends Component {
     }
 
     if (teamAdmin === 'all') {
+      let updates = {};
+      updates[`challenges/${objectID}`] = {teams: newTeams};
+      updates[`challenges/${objectID}/info`] = {individual: !typeChallengeTeam};
       await firebase
         .database()
-        .ref('challenges/' + objectID)
-        .update({teams: newTeams});
-      await firebase
-        .database()
-        .ref('challenges/' + objectID + '/info')
-        .update({individual: !typeChallengeTeam});
+        .ref()
+        .update(updates);
     } else {
       await firebase
         .database()
@@ -336,4 +335,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {createChallengeAction})(PickInfos);
+export default connect(
+  mapStateToProps,
+  {createChallengeAction},
+)(PickInfos);

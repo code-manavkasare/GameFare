@@ -99,26 +99,23 @@ async function createEvent(data, userID, infoUser, level) {
   event.eventID = key;
   event.objectID = key;
 
-  await firebase
-    .database()
-    .ref('events/' + key)
-    .update({eventID: key});
+  let updates = {};
+  updates[`events/${key}`] = {eventID: key};
+  updates[`discussions/${discussionID}`] = createDiscussionEventGroup(
+    discussionID,
+    key,
+    pictureUri,
+    event.info.name,
+    {
+      id: userID,
+      info: infoUser,
+    },
+  );
 
   await firebase
     .database()
-    .ref('discussions/' + discussionID)
-    .update(
-      createDiscussionEventGroup(
-        discussionID,
-        key,
-        pictureUri,
-        event.info.name,
-        {
-          id: userID,
-          info: infoUser,
-        },
-      ),
-    );
+    .ref()
+    .update(updates);
 
   await pushEventToGroups(data.groups, key);
   await subscribeToTopics([userID, 'all', key]);
