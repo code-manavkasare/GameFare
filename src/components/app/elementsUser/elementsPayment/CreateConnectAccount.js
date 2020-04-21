@@ -77,7 +77,9 @@ class ListEvent extends Component {
     const {navigate} = this.props.navigation;
 
     //////////////// Create Strip Connect account /////////////////
-    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createUserStripeAccount`;
+    const urlCreateUserConnectAccount = `${
+      Config.FIREBASE_CLOUD_FUNCTIONS_URL
+    }createUserStripeAccount`;
     let responseCreateConnectAccount = await axios.get(
       urlCreateUserConnectAccount,
       {
@@ -307,7 +309,7 @@ class ListEvent extends Component {
   newBankAccount(country) {
     return (
       <View style={styleApp.marginView}>
-        <Text style={[styleApp.title, {marginBottom: 10, marginTop: 10}]}>
+        <Text style={[styleApp.title, {marginBottom: 10, marginTop: 30}]}>
           Personal information
         </Text>
         {this.countrySelect(country)}
@@ -377,7 +379,7 @@ class ListEvent extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Personal information'}
-          inputRange={[20, 50]}
+          inputRange={[5, 10]}
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
@@ -441,4 +443,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

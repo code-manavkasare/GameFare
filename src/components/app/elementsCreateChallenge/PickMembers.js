@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
   Dimensions,
   TextInput,
@@ -27,9 +25,6 @@ import CardUserSelect from '../../layout/cards/CardUserSelect';
 
 import {createChallengeAction} from '../../../actions/createChallengeActions';
 import {autocompleteSearchUsers} from '../../functions/users';
-import {createDiscussion, searchDiscussion} from '../../functions/message';
-
-const {height, width} = Dimensions.get('screen');
 
 class NewConversation extends React.Component {
   constructor(props) {
@@ -79,12 +74,13 @@ class NewConversation extends React.Component {
     });
   };
   switch(textOn, textOff, state, click) {
+    const {currentWidth} = this.props.currentScreenSize;
     return (
       <Switch
         textOn={textOn}
         textOff={textOff}
         finalColorOn={colors.primary}
-        translateXTo={width / 2 - 20}
+        translateXTo={currentWidth / 2 - 20}
         height={50}
         state={this.state[state]}
         setState={(val) => click(val)}
@@ -159,8 +155,9 @@ class NewConversation extends React.Component {
   }
   pickMembers(usersSelected) {
     const {contacts} = this.state;
+    const {currentHeight} = this.props.currentScreenSize;
     return (
-      <View style={{marginTop: sizes.heightHeaderHome}}>
+      <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
         <View style={styleApp.marginView}>
           {this.switch('GameFare', 'Contacts', 'contacts', async (val) => {
             await this.setState({contacts: val});
@@ -181,7 +178,7 @@ class NewConversation extends React.Component {
           <View>
             <ScrollView
               keyboardShouldPersistTaps={'always'}
-              style={styles.scrollViewUsers}>
+              style={[styles.scrollViewUsers, {minHeight: currentHeight}]}>
               {this.state.loader ? (
                 <View style={[styleApp.center, {height: 200}]}>
                   <Loader size={35} color={'green'} />
@@ -205,9 +202,9 @@ class NewConversation extends React.Component {
 
     const {route} = this.props;
     const {titleHeader, closeButton, loaderOnSubmit, onGoBack} = route.params;
-
+    const {currentHeight} = this.props.currentScreenSize;
     return (
-      <View style={{backgroundColor: colors.white, height: height}}>
+      <View style={{backgroundColor: colors.white, height: currentHeight}}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={titleHeader}
@@ -257,15 +254,13 @@ const styles = StyleSheet.create({
     height: 55,
     borderBottomWidth: 0,
     borderColor: colors.borderColor,
-    width: width,
-    paddingLeft: 20,
-    paddingRight: 20,
+    width: '100%',
+    paddingLeft: '5%',
+    paddingRight: '5%',
     marginTop: 10,
   },
   scrollViewUsers: {
     paddingTop: 10,
-    minHeight: height,
-    // backgroundColor: colors.green,
   },
   searchBar: {
     backgroundColor: colors.off2,
@@ -286,9 +281,11 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     captains: state.createChallengeData.captains,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 
-export default connect(mapStateToProps, {createChallengeAction})(
-  NewConversation,
-);
+export default connect(
+  mapStateToProps,
+  {createChallengeAction},
+)(NewConversation);

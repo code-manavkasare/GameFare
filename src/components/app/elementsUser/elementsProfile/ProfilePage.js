@@ -48,7 +48,7 @@ class ProfilePage extends Component {
   picture = (pictureUrl) => {
     if (pictureUrl) {
       return <AsyncImage style={styles.asyncImage} mainImage={pictureUrl} />;
-    } else return <View style={styles.asyncImage}></View>;
+    } else return <View style={styles.asyncImage} />;
   };
 
   button = (text, color, block) => {
@@ -80,7 +80,7 @@ class ProfilePage extends Component {
     const {firstname, lastname, picture} = this.state.userProfile.info;
 
     return (
-      <View style={styles.content}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Profile Page'}

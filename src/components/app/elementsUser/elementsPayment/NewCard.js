@@ -12,7 +12,6 @@ import {
   Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
 
@@ -85,7 +84,9 @@ class ListEvent extends Component {
     const monthExpiry = expiry[0];
     const yearExpiry = expiry[1];
 
-    const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createTokenCard`;
+    const urlCreateToken = `${
+      Config.FIREBASE_CLOUD_FUNCTIONS_URL
+    }createTokenCard`;
     let response = await axios.get(urlCreateToken, {
       params: {
         number: this.state.cardNumber,
@@ -114,7 +115,7 @@ class ListEvent extends Component {
       promiseAddCreditCard = promiseAddCreditCard.data;
       if (promiseAddCreditCard.response) {
         Keyboard.dismiss();
-        this.props.navigation.dangerouslyGetParent().pop()
+        this.props.navigation.dangerouslyGetParent().pop();
       } else {
         if (promiseAddCreditCard.message) {
           this.wrongCB(promiseAddCreditCard.message);
@@ -247,7 +248,7 @@ class ListEvent extends Component {
   }
   payments() {
     return (
-      <View style={styleApp.marginView}>
+      <View style={[styleApp.marginView, {marginTop: 20}]}>
         <TouchableOpacity
           style={[styleApp.inputForm, {borderBottomWidth: 1}]}
           activeOpacity={0.7}
@@ -330,7 +331,7 @@ class ListEvent extends Component {
               />
             </TouchableOpacity>
           </Col>
-          <Col size={10}></Col>
+          <Col size={10} />
           <Col size={40}>
             <TouchableOpacity
               style={[styleApp.inputForm, styleApp.center2]}
@@ -467,4 +468,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

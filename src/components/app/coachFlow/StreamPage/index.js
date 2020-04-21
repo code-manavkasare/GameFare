@@ -9,7 +9,6 @@ import {
   Image,
 } from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
 
 import coachAction from '../../../../actions/coachActions';
 
@@ -31,16 +30,17 @@ import HeaderListStream from './components/HeaderListStream';
 class StreamTab extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
-
+    this.state = {
+      permissionsCamera: false,
+    };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  async componentDidMount() {}
-  StreamTab = () => {
+  StreamTab = (currentHeight) => {
     const {permissionsCamera} = this.state;
     let {userConnected} = this.props;
+    console.log('render StreamTab', this.state);
     return (
-      <View style={styles.containerTabPage}>
+      <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
         <View style={{height: offsetBottomHeaderStream / 2}} />
         <HeaderListStream
           userConnected={userConnected}
@@ -59,15 +59,18 @@ class StreamTab extends Component {
   };
 
   render() {
-    const {scrollDisabled} = this.props;
+    const {scrollDisabled, currentScreenSize} = this.props;
+
+    const {currentHeight, currentWidth, portrait} = currentScreenSize;
+    console.log('getCurrentScreenSize', {currentHeight, currentWidth});
     return (
-      <View style={[styleApp.page, {backgroundColor: 'white'}]}>
+      <View style={styleApp.stylePage}>
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={() => this.StreamTab()}
+          contentScrollView={() => this.StreamTab(currentHeight)}
           marginBottomScrollView={0}
-          marginTop={0}
+          marginTop={portrait ? -marginTopApp : 0}
           scrollDisabled={scrollDisabled}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
@@ -81,19 +84,12 @@ const styles = StyleSheet.create({
   containerTabPage: {
     ...styleApp.fullSize,
     paddingTop: marginTopApp,
-    minHeight: height - 100,
   },
   titlePage: {
     ...styleApp.title,
     color: colors.title,
     marginBottom: 10,
     marginLeft: 20,
-  },
-  rowButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    // marginTop: 20,
-    width: width,
   },
 });
 
@@ -102,6 +98,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
+    currentScreenSize: state.layout.currentScreenSize,
     scrollDisabled: state.coach.sessionInfo.scrollDisabled,
   };
 };

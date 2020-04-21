@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import ScrollView from '../../../layout/scrollViews/ScrollView';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import sizes from '../../../style/sizes';
@@ -95,7 +95,7 @@ class ApplePay extends Component {
   }
   applePayComponent() {
     return (
-      <View style={{marginTop: 20, paddingLeft: 20, paddingRight: 20}}>
+      <View style={{marginTop: 20, paddingLeft: '5%', paddingRight: '5%'}}>
         <Row>
           {this.state.loader ? (
             <Col style={styleApp.center}>
@@ -176,4 +176,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ApplePay);
+export default connect(
+  mapStateToProps,
+  {},
+)(ApplePay);

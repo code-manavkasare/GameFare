@@ -10,11 +10,10 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'react-native-firebase';
-const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AllIcons from '../../../layout/icons/AllIcons';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-import ScrollView from '../../../layout/scrollViews/ScrollView';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
@@ -33,11 +32,12 @@ class ListEvent extends Component {
   }
   async componentDidMount() {}
   row(icon, text, data) {
+    const {defaultCard} = this.props;
     return (
       <ButtonColor
         view={() => {
           return (
-            <Row style={{paddingLeft: 20, paddingRight: 20}}>
+            <Row style={{paddingLeft: '5%', paddingRight: '5%'}}>
               <Col size={15} style={styleApp.center2}>
                 {icon}
               </Col>
@@ -45,12 +45,25 @@ class ListEvent extends Component {
                 <Text style={styleApp.input}>{text}</Text>
               </Col>
               <Col size={10} style={styleApp.center3}>
-                {this.props.defaultCard == undefined ? null : this.props
-                    .defaultCard.id === data.id ? (
+                {!defaultCard ? (
+                  <AllIcons
+                    type="mat"
+                    size={20}
+                    name={'keyboard-arrow-right'}
+                    color={icon === 'logout' ? colors.red : colors.grey}
+                  />
+                ) : defaultCard.id === data.id ? (
                   <View style={styles.defaultView}>
                     <Text style={styles.textDefault}>Default</Text>
                   </View>
-                ) : null}
+                ) : (
+                  <AllIcons
+                    type="mat"
+                    size={20}
+                    name={'keyboard-arrow-right'}
+                    color={icon === 'logout' ? colors.red : colors.grey}
+                  />
+                )}
               </Col>
             </Row>
           );
@@ -145,7 +158,7 @@ class ListEvent extends Component {
   }
   payments() {
     return (
-      <View style={{marginTop: 20}}>
+      <View style={{marginTop: 0}}>
         <View style={styleApp.marginView}>
           <Text
             style={[
@@ -188,7 +201,7 @@ class ListEvent extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Payment methods'}
-          inputRange={[20, 50]}
+          inputRange={[5, 10]}
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
@@ -240,4 +253,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

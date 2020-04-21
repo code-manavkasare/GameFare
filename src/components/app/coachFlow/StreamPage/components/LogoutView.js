@@ -23,25 +23,27 @@ export default class LogoutView extends Component {
   logoutView() {
     const styleViewLiveLogo = {
       ...styleApp.center,
-      right: width / 2 - 75,
-      top: 10,
-      position: 'absolute',
+      //  right: width / 2 - 75,
+      // top: 10,
+      // position: 'absolute',
       backgroundColor: colors.off,
       height: 45,
       width: 45,
       borderRadius: 22.5,
       borderWidth: 1,
       borderColor: colors.grey,
+      marginTop: -100,
+      marginLeft: 65,
     };
     return (
-      <View style={styleApp.marginView}>
+      <View style={[styleApp.marginView]}>
         <Text
           style={[styleApp.subtitle, {marginBottom: 20, color: colors.title}]}>
           Improve your tennis performance with GameFare. Create your room,
           invite your coach or your friends, and take your right hit to the next
           level.
         </Text>
-        <View style={[styleApp.center, {marginBottom: 20}]}>
+        <View style={[styleApp.center, {marginBottom: 100}]}>
           <Image
             source={require('../../../../../img/images/racket.png')}
             style={{height: 80, width: 80, marginTop: 30}}

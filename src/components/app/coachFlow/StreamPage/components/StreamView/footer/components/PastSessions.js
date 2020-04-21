@@ -51,7 +51,7 @@ class PastSessions extends Component {
         styleButtonEmpty={{
           button: {
             height: '100%',
-            backgroundColor: 'transparent',
+            backgroundColor: 'red',
           },
           text: {
             color: colors.white,

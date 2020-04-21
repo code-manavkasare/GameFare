@@ -43,7 +43,7 @@ class PhoneFields extends Component {
   }
   componentDidMount() {
     var that = this;
-    setTimeout(function () {
+    setTimeout(function() {
       that.firstTextInput.focus();
     }, 550);
   }
@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
   rowNext: {
     flex: 1,
     // backgroundColor: 'red',
+    width: '100%',
     paddingLeft: 20,
     paddingRight: 20,
     marginBottom: 10,
@@ -283,4 +284,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(PhoneFields);
+export default connect(
+  mapStateToProps,
+  {},
+)(PhoneFields);

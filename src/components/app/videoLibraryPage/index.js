@@ -122,7 +122,7 @@ class VideoLibraryPage extends Component {
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
           typeIcon2={'font'}
-          sizeIcon2={17}
+        sizeIcon2={17}
           icon1={'arrow-left'}
           icon2={'cloud-upload-alt'}
           clickButton1={() => goBack()}
@@ -147,6 +147,8 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 10,
     minHeight: height,
+    marginLeft: 0,
+    //  width: width - 40,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },

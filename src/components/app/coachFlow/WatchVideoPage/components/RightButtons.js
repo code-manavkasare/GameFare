@@ -85,7 +85,8 @@ class RightButtons extends Component {
                 borderColor:
                   settingsDraw.color === color ? colors.secondary : 'white',
               },
-            ]}></View>
+            ]}
+          />
         ),
         sizeButton: 45,
         hideText: true,
@@ -178,12 +179,12 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     right: 10,
-    zIndex: 7,
+    zIndex: 40,
     backgroundColor: colors.transparentGrey,
     paddingTop: 0,
     paddingBottom: 0,
     borderRadius: 5,
-    top: sizes.heightHeaderHome,
+    top: sizes.marginTopApp,
     width: 65,
   },
   button: {flex: 1, width: '100%', paddingTop: 10, paddingBottom: 10},
@@ -210,4 +211,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(RightButtons);
+export default connect(
+  mapStateToProps,
+  {coachAction},
+)(RightButtons);

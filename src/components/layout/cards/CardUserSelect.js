@@ -86,8 +86,8 @@ export default class CardUserSelect extends Component {
 const styles = StyleSheet.create({
   cardUser: {
     height: 55,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: '5%',
+    paddingRight: '5%',
   },
   imgUser: {
     width: 40,

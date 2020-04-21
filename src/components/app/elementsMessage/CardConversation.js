@@ -124,7 +124,12 @@ class CardConversation extends React.Component {
         key={i}
         view={() => {
           return (
-            <Row>
+            <Row
+              style={{
+                // backgroundColor: 'red',
+                ...styleApp.fullSize,
+                width: '100%',
+              }}>
               <Col size={20} style={styleApp.center2}>
                 <ImageConversation
                   members={members}

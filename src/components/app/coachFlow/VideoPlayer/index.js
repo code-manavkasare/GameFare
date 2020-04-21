@@ -292,9 +292,7 @@ export default class VideoPlayer extends Component {
                   </Text>
                 </Col>
                 <Col style={styleApp.center3}>
-                  {!videoLoaded ? (
-                    <Loader size={17} color={'white'} />
-                  ) : (
+                  {videoLoaded && (
                     <Text style={styles.textTime}>
                       {displayTime(totalTime)}
                     </Text>
@@ -339,7 +337,7 @@ export default class VideoPlayer extends Component {
             />
           );
         }}
-        color={colors.transparentGrey}
+        color={colors.grey + '40'}
         click={async () => this.clickInitialButtonPlay()}
         style={{position: 'absolute', zIndex: 6, ...styleApp.fullSize}}
         onPressColor={'transparent'}
@@ -409,10 +407,7 @@ export default class VideoPlayer extends Component {
 
         {displayVideo && (
           <TouchableOpacity
-            style={[
-              styleApp.fullSize,
-              {backgroundColor: colors.transparentGrey},
-            ]}>
+            style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
             <Video
               source={{uri: source}}
               style={styleVideo}

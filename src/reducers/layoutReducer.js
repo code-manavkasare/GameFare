@@ -1,8 +1,15 @@
 import {SET_LAYOUT} from '../actions/types';
+import {Dimensions} from 'react-native';
+const {height, width} = Dimensions.get('screen');
 
 const initialState = {
   isFooterVisible: true,
   activeTab: 'Profile',
+  currentScreenSize: {
+    currentWidth: width,
+    currentHeight: height,
+    portrait: true,
+  },
 };
 
 const layoutReducer = (state = initialState, action) => {
