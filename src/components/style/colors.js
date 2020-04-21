@@ -3,6 +3,8 @@ export default {
   primary2: '#5499E9',
   primaryLight: '#88BEFD',
 
+  transparent: 'transparent',
+
   secondary: '#FEDA66',
   terciary: '#5A5E74',
   title: '#222222',

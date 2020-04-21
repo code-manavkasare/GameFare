@@ -45,20 +45,22 @@ class BottomButton extends Component {
               <AllIcons
                 type={'font'}
                 color={colors.white}
-                size={23}
+                size={21}
                 name={publishVideo ? 'video' : 'video-slash'}
               />
             </Animated.View>
           );
         }}
+        color={publishVideo ? colors.green : colors.red}
         click={async () => setState({publishVideo: !publishVideo})}
-        style={styleApp.fullSize}
-        onPressColor={colors.redLight}
+        style={styles.buttonRound}
+        onPressColor={publishVideo ? colors.red : colors.greenClick}
       />
     );
   }
   publishAudio() {
     const {setState, state} = this.props;
+    const {publishAudio} = state;
     return (
       <ButtonColor
         view={() => {
@@ -68,14 +70,15 @@ class BottomButton extends Component {
                 type={'font'}
                 color={colors.white}
                 size={23}
-                name={state.publishAudio ? 'microphone' : 'microphone-slash'}
+                name={publishAudio ? 'microphone' : 'microphone-slash'}
               />
             </Animated.View>
           );
         }}
-        click={async () => setState({publishAudio: !state.publishAudio})}
-        style={styleApp.fullSize}
-        onPressColor={colors.redLight}
+        color={publishAudio ? colors.green : colors.red}
+        click={async () => setState({publishAudio: !publishAudio})}
+        style={styles.buttonRound}
+        onPressColor={publishAudio ? colors.red : colors.greenClick}
       />
     );
   }
@@ -306,7 +309,7 @@ const styles = StyleSheet.create({
     height: 100 + offsetFooterStreaming,
     paddingTop: 10,
     width: '100%',
-    backgroundColor: colors.transparentGrey,
+    // backgroundColor: colors.transparentGrey,
     paddingBottom: 20,
   },
   whiteButtonRecording: {
@@ -354,6 +357,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     ...styleApp.center,
     backgroundColor: colors.red,
+  },
+  buttonRound: {
+    ...styleApp.fullSize,
+    height: 55,
+    width: 55,
+    borderRadius: 27.5,
   },
 });
 

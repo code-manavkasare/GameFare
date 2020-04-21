@@ -55,7 +55,7 @@ class MessageTab extends React.Component {
     firebase
       .database()
       .ref('discussions/' + conversation.objectID)
-      .on('value', async function (snap) {
+      .on('value', async function(snap) {
         let discussion = snap.val();
         delete discussion.members[userID];
         let messages = discussion.messages;
@@ -137,8 +137,8 @@ class MessageTab extends React.Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           typeIcon2={'mat'}
-          initialBorderWidth={0.3}
-          initialBorderColorHeader={colors.borderColor}
+          initialBorderWidth={1}
+          initialBorderColorHeader={colors.off}
           sizeIcon2={17}
           initialTitleOpacity={1}
           icon1={'arrow-left'}
@@ -171,4 +171,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {messageAction})(MessageTab);
+export default connect(
+  mapStateToProps,
+  {messageAction},
+)(MessageTab);

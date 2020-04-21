@@ -86,7 +86,7 @@ class CardStream extends Component {
     const styleViewLive = {
       position: 'absolute',
       top: 0,
-      right: 20,
+      right: '0%',
       height: 20,
       width: 40,
       ...styleApp.center,
@@ -122,6 +122,7 @@ class CardStream extends Component {
     };
     const {userID, coachSession} = this.props;
     if (!coachSession) return null;
+    if (!coachSession.members) return null;
     const members = Object.values(coachSession.members).filter(
       (member) => member.id !== userID,
     );
@@ -147,7 +148,7 @@ class CardStream extends Component {
               backgroundColor: colors.off + opacityVoile,
             };
             return (
-              <View style={styleCol}>
+              <View style={styleCol} key={member.id}>
                 <View style={styleVoileApply} />
                 <ImageUser
                   key={member.id}
@@ -165,13 +166,8 @@ class CardStream extends Component {
     );
   }
   cardStream() {
-    const {
-      isConnected,
-      open,
-      coachSession,
-      coachSessionID,
-      timestamp,
-    } = this.props;
+    const {isConnected, open, currentScreenSize, timestamp} = this.props;
+    const {currentWidth} = currentScreenSize;
     const backgroundColor = isConnected
       ? colors.white + '0'
       : colors.white + '0';
@@ -180,14 +176,9 @@ class CardStream extends Component {
       <TouchableOpacity
         onPress={() => open(true)}
         activeOpacity={1}
-        style={[
-          styles.card,
-          {
-            backgroundColor: backgroundColor,
-          },
-        ]}>
-        <Row style={styles.rowTools}>
-          <View style={styles.divider} />
+        style={styles.card}>
+        <View style={[styleApp.divider2]} />
+        <Row>
           {isConnected && this.viewLive()}
           <Col size={70}>
             <Text
@@ -223,8 +214,11 @@ const styles = StyleSheet.create({
   card: {
     position: 'absolute',
     zIndex: -1,
+    width: '100%',
+    paddingRight: '5%',
+    paddingLeft: '5%',
+    // backgroundColor: 'red',
     height: heightCardSession,
-    width: widthCardSession,
   },
   divider: {
     height: 1,
@@ -249,6 +243,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

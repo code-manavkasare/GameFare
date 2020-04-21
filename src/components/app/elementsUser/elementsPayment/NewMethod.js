@@ -3,9 +3,10 @@ import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
-import ScrollView from '../../../layout/scrollViews/ScrollView';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import AllIcons from '../../../layout/icons/AllIcons';
 
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
@@ -28,19 +29,20 @@ class NewMethod extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Row style={{paddingLeft: 20, paddingRight: 20}}>
+            <Row style={{paddingLeft: '5%', paddingRight: '5%'}}>
               <Col size={15} style={styleApp.center2}>
                 {icon}
               </Col>
               <Col size={75} style={[styleApp.center2]}>
                 <Text style={styleApp.input}>{text}</Text>
               </Col>
-              <Col size={10} style={styleApp.center}>
-                {!defaultCard ? null : defaultCard.id === data.id ? (
-                  <View style={styles.defaultView}>
-                    <Text style={styles.textDefault}>D</Text>
-                  </View>
-                ) : null}
+              <Col size={10} style={styleApp.center3}>
+                <AllIcons
+                  type="mat"
+                  size={20}
+                  name={'keyboard-arrow-right'}
+                  color={icon === 'logout' ? colors.red : colors.grey}
+                />
               </Col>
             </Row>
           );
@@ -54,7 +56,7 @@ class NewMethod extends Component {
   }
   payments() {
     return (
-      <View style={{marginTop: 10}}>
+      <View style={{marginTop: 0}}>
         <View style={styleApp.marginView}>
           <Text style={[styleApp.title, {marginBottom: 20, fontSize: 19}]}>
             New payment method
@@ -73,7 +75,7 @@ class NewMethod extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'New method'}
-          inputRange={[20, 50]}
+          inputRange={[5, 10]}
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
@@ -110,4 +112,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(NewMethod);
+export default connect(
+  mapStateToProps,
+  {},
+)(NewMethod);

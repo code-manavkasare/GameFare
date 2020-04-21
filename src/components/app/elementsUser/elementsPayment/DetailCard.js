@@ -16,7 +16,7 @@ import axios from 'axios';
 import Config from 'react-native-config';
 
 import AllIcons from '../../../layout/icons/AllIcons';
-import ScrollView from '../../../layout/scrollViews/ScrollView';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import ButtonColor from '../../../layout/Views/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
@@ -80,7 +80,7 @@ class ListEvent extends Component {
       <ButtonColor
         view={() => {
           return (
-            <Row style={{paddingLeft: 20, paddingRight: 20}}>
+            <Row style={{paddingLeft: '5%', paddingRight: '5%'}}>
               <Col size={15} style={styleApp.center2}>
                 <AllIcons
                   name={icon}
@@ -177,7 +177,7 @@ class ListEvent extends Component {
   }
   payments() {
     return (
-      <View style={{marginTop: 10}}>
+      <View style={{marginTop: 0}}>
         <View style={styleApp.marginView}>
           {this.rowCB()}
           <View style={[styleApp.divider2, {marginTop: 0, marginBottom: 10}]} />
@@ -198,7 +198,7 @@ class ListEvent extends Component {
           textHeader={
             dataCard.brand === 'applePay' ? 'Apple Pay' : dataCard.brand
           }
-          inputRange={[20, 50]}
+          inputRange={[5, 10]}
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
@@ -212,7 +212,7 @@ class ListEvent extends Component {
           marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           offsetBottom={90 + 60}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         />
       </View>
     );
@@ -228,4 +228,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

@@ -83,8 +83,8 @@ class HeaderListStream extends Component {
 const styles = StyleSheet.create({
   header: {
     height: heightHeaderStream,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: '5%',
+    paddingRight: '5%',
   },
   buttonNewSession: {
     ...styleApp.center,

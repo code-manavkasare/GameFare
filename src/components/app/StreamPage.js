@@ -194,4 +194,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(StreamPage);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(StreamPage);

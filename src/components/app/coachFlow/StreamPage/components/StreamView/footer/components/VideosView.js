@@ -160,8 +160,8 @@ class VideoViews extends Component {
       <Animated.View
         style={{
           height: heightView,
-          width: width,
-          backgroundColor: colors.transparentGrey,
+          width: '100%',
+          //  backgroundColor: colors.transparentGrey,
         }}>
         <Row>
           {displayInitialButtons && this.colInitialButtons()}

@@ -69,7 +69,7 @@ export default class SearchBarContact extends Component {
                   />
                 </Col>
               ) : (
-                <Col size={15}></Col>
+                <Col size={15} />
               )}
               {showAddContact && (
                 <Col
@@ -93,7 +93,7 @@ export default class SearchBarContact extends Component {
         color="white"
         style={{
           height: 55,
-          width: width,
+          width: '100%',
           borderBottomWidth: 0.5,
           borderColor: colors.off,
         }}

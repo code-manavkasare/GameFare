@@ -6,26 +6,21 @@ import {
   Image,
   Dimensions,
   View,
-  FlatList,
-  TouchableOpacity,
   Animated,
   InteractionManager,
 } from 'react-native';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import Flag from 'react-native-flags';
-import {CountrySelection} from 'react-native-country-list';
-
 const {height, width} = Dimensions.get('screen');
+
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
+
 import styleApp from '../../style/style';
-import Header from '../../layout/headers/HeaderButton';
 import sizes from '../../style/sizes';
-import AllIcons from '../../layout/icons/AllIcons';
 import BackButton from '../../layout/buttons/BackButton';
 const ListCountry = require('./country.json');
 
@@ -42,43 +37,11 @@ export default class SelectCountry extends Component {
     this.letter = '-';
   }
   async componentDidMount() {
-    // var path = RNFS.DocumentDirectoryPath + '/test.json';
-
-    // var allCountry = []
-    // for (var i in ListCountry) {
-    //   var country = ListCountry[i]
-    //   country.img = "1"
-    //   delete country['flag']
-    //   allCountry.push(country)
-    // }
-    // // write the file
-    // RNFS.writeFile(path, JSON.stringify(allCountry), 'utf8')
-    //   .then((success) => {
-    //     console.log('FILE WRITTEN!',path);
-    //   })
-    //   .catch((err) => {
-    //   });
-
     var that = this;
-    setTimeout(function () {
+    setTimeout(function() {
       that.setState({slice: ListCountry.length});
     }, 1150);
   }
-  static navigationOptions = ({navigation}) => {
-    return {
-      title: '',
-      headerStyle: styleApp.styleHeader,
-      headerTitleStyle: styleApp.textHeader,
-      headerLeft: () => (
-        <BackButton
-          name="keyboard-arrow-down"
-          color={colors.title}
-          type="mat"
-          click={() => navigation.navigate('Phone')}
-        />
-      ),
-    };
-  };
   back() {
     this.props.close();
   }
@@ -97,36 +60,30 @@ export default class SelectCountry extends Component {
     }
     return (
       <View key={i}>
-        {displayLetter && displayHeader ? (
-          <Row
-            style={{
-              paddingTop: 10,
-              paddingBottom: 10,
-              backgroundColor: colors.off,
-              paddingLeft: 20,
-            }}>
-            <Col style={styles.center2}>
+        {displayLetter && displayHeader && (
+          <Row style={styles.rowLetter}>
+            <Col style={styleApp.center2}>
               <Text style={[styles.subtitle, {fontWeight: 'bold'}]}>
                 {this.letter}
               </Text>
             </Col>
           </Row>
-        ) : null}
+        )}
 
         <ButtonColor
           view={() => {
             return (
               <Row>
-                <Col size={15} style={styles.center2}>
+                <Col size={15} style={styleApp.center2}>
                   <Image
                     source={{uri: country.flag}}
                     style={{width: 23, height: 23, borderRadius: 11.5}}
                   />
                 </Col>
-                <Col size={70} style={styles.center2}>
+                <Col size={70} style={styleApp.center2}>
                   <Text style={styles.subtitle}>{country.name}</Text>
                 </Col>
-                <Col size={15} style={styles.center}>
+                <Col size={15} style={styleApp.center}>
                   {this.conditionCheck(country) ? (
                     <MatIcon name="check" color={colors.primary} size={18} />
                   ) : null}
@@ -136,33 +93,17 @@ export default class SelectCountry extends Component {
           }}
           click={() => this.selectCountry(country)}
           color="white"
-          style={{
-            backgroundColor: 'white',
-            paddingTop: 5,
-            paddingBottom: 5,
-            height: 40,
-            marginLeft: -0,
-            width: width,
-            paddingLeft: 20,
-            paddingRight: 20,
-          }}
+          style={styles.buttonCountry}
           onPressColor={colors.off}
         />
       </View>
     );
   }
   contryComponent() {
-    //
     return (
-      <View style={{marginLeft: 0, width: width - 0}}>
-        <Row
-          style={{
-            paddingTop: 10,
-            paddingBottom: 10,
-            backgroundColor: colors.off,
-            paddingLeft: 20,
-          }}>
-          <Col style={styles.center2}>
+      <View>
+        <Row style={styles.rowLetter}>
+          <Col style={styleApp.center2}>
             <Text style={[styles.subtitle, {fontWeight: 'bold'}]}>
               Common countries
             </Text>
@@ -189,16 +130,15 @@ export default class SelectCountry extends Component {
           3,
         )}
 
-        {ListCountry.slice(0, this.state.slice).map((item, i) =>
-          this.cardCountry(item, true, i + 3),
+        {ListCountry.slice(0, this.state.slice).map((country) =>
+          this.cardCountry(country, true, country.code),
         )}
       </View>
     );
   }
   render() {
-    const {navigation} = this.props;
     return (
-      <View style={[styleApp.stylePage, {backgroundColor: 'white'}]}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Select your country'}
@@ -231,10 +171,20 @@ const styles = StyleSheet.create({
     width: width,
     backgroundColor: 'white',
   },
-  title: {
-    fontSize: 20,
-    fontFamily: 'OpenSans-SemiBold',
-    color: colors.title,
+  rowLetter: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: colors.off,
+    paddingLeft: 20,
+  },
+  buttonCountry: {
+    backgroundColor: 'white',
+    paddingTop: 5,
+    paddingBottom: 5,
+    height: 40,
+    width: width,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   subtitle: {
     fontSize: 13,

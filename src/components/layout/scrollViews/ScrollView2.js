@@ -1,25 +1,12 @@
 import React, {Component, PureComponent} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  ScrollView,
-  View,
-  Animated,
-  Easing,
-  Dimensions,
-  RefreshControl,
-} from 'react-native';
-
+import {Platform, View, Animated, RefreshControl} from 'react-native';
+import {connect} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
 import colors from '../../style/colors';
-import styleApp from '../../style/style';
-import ButtonColor from '../Views/Button';
-import AllIcons from '../icons/AllIcons';
+import sizes, {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
 
-const {height, width} = Dimensions.get('screen');
-
-export default class ScrollViewPage extends PureComponent {
+class ScrollViewPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,17 +25,19 @@ export default class ScrollViewPage extends PureComponent {
     this.scrollRef.props.scrollToEnd({animated: false});
   }
   styleScrollView() {
+    let {marginTop, marginBottomScrollView, currentScreenSize} = this.props;
+    let {portrait} = currentScreenSize;
+    const marginTopAdded = portrait ? marginTopApp : marginTopAppLanscape;
+    if (!marginTop) marginTop = 0;
+    console.log('marginTop + marginTopAdded', marginTop, marginTopAdded);
     return {
-      marginTop: this.props.marginTop,
-      marginBottom:
-        this.props.marginBottomScrollView
-          ? this.props.marginBottomScrollView
-          : 0,
+      marginTop: marginTop + marginTopAdded,
+      marginBottom: marginBottomScrollView ? marginBottomScrollView : 0,
     };
   }
   styleInsideView() {
     if (this.props.fullWidth) return {paddingTop: 0};
-    return {marginLeft: 20, width: width - 40, paddingTop: 20};
+    return {marginLeft: '5%', width: '90%', paddingTop: 20};
   }
   async refresh() {
     this.setState({refreshing: true});
@@ -60,9 +49,7 @@ export default class ScrollViewPage extends PureComponent {
       return (
         <RefreshControl
           tintColor={
-            this.props.colorRefresh
-              ? this.props.colorRefresh
-              : colors.title
+            this.props.colorRefresh ? this.props.colorRefresh : colors.title
           }
           refreshing={this.state.refreshing}
           onRefresh={() => this.refresh()}
@@ -73,7 +60,8 @@ export default class ScrollViewPage extends PureComponent {
     return null;
   }
   render() {
-    const {scrollDisabled} = this.props
+    const {scrollDisabled} = this.props;
+
     return (
       <View>
         <KeyboardAwareScrollView
@@ -115,16 +103,13 @@ export default class ScrollViewPage extends PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  content: {
-    height: height,
-    width: width,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
-});
+const mapStateToProps = (state) => {
+  return {
+    currentScreenSize: state.layout.currentScreenSize,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(ScrollViewPage);

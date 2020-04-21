@@ -1,133 +1,263 @@
 import React, {Component} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  Animated,
-  BackHandler,
-  Easing,
-  View,
-  Dimensions,
-} from 'react-native';
+import {connect} from 'react-redux';
+
+import {Platform, StyleSheet, Text, Animated, View} from 'react-native';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
-import sizes from '../../style/sizes';
+import sizes, {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
 import Loader from '../loaders/Loader';
 import colors from '../../style/colors';
 import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
 import styleApp from '../../style/style';
-import AsyncImage from '../image/AsyncImage';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-const AnimatedIcon = Animated.createAnimatedComponent(FontIcon);
-const {height, width} = Dimensions.get('screen');
 
-export default class HeaderFlow extends Component {
+class HeaderBackButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
       enableClickButton: true,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
-    this.handleBackPress = this.handleBackPress.bind(this);
   }
   componentWillMount() {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
-    if (this.props.loaderOn) {
+    const {loaderOn} = this.props;
+    if (loaderOn) {
       this.props.onRef(this);
     }
   }
-  handleBackPress = () => {
-    if (this.props.enableClickButton && this.state.enableClickButton) {
-      this.close();
-    }
-  };
-  componentWillUnmount() {
-    this.backHandler.remove();
-  }
-  async close() {
-    this.setState({enableClickButton: false});
-    if (this.props.enableClickButton && this.state.enableClickButton) {
-      this.props.close();
-      var that = this;
-      setTimeout(function() {
-        that.setState({enableClickButton: true});
-      }, 1500);
-    }
-  }
-  sizeColTitle() {
-    if (this.props.headerType) return 25;
-    return 70;
-  }
-  render() {
-    const AnimateOpacityTitle = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: [
-        this.props.inputRange[1] + 20,
-        this.props.inputRange[1] + 30,
-      ],
+  animatedValues() {
+    const {
+      AnimatedHeaderValue,
+      inputRange,
+      initialBorderColorHeader,
+      initialBorderWidth,
+      initialBackgroundColor,
+      initialBorderColorIcon,
+    } = this.props;
+    const AnimateOpacityTitle = AnimatedHeaderValue.interpolate({
+      inputRange: [inputRange[1] + 20, inputRange[1] + 30],
       outputRange: [this.props.initialTitleOpacity, 1],
       extrapolate: 'clamp',
     });
-    const AnimateBackgroundView = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: [
-        this.props.inputRange[1] - 0.42,
-        this.props.inputRange[1] - 0.1,
-      ],
-      outputRange: [this.props.initialBackgroundColor, 'white'],
+    const AnimateBackgroundView = AnimatedHeaderValue.interpolate({
+      inputRange: [inputRange[1] - 0.42, inputRange[1] - 0.1],
+      outputRange: [initialBackgroundColor, colors.white],
       extrapolate: 'clamp',
     });
-    const borderWidth = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
+    const borderWidth = AnimatedHeaderValue.interpolate({
+      inputRange: inputRange,
+      outputRange: [initialBorderWidth ? initialBorderWidth : 0, 0.3],
+      extrapolate: 'clamp',
+    });
+    const borderColorIcon = AnimatedHeaderValue.interpolate({
+      inputRange: inputRange,
+      outputRange: [initialBorderColorIcon, colors.white],
+      extrapolate: 'clamp',
+    });
+    const borderColorView = AnimatedHeaderValue.interpolate({
+      inputRange: inputRange,
       outputRange: [
-        this.props.initialBorderWidth ? this.props.initialBorderWidth : 0,
-        0.3,
-      ],
-      extrapolate: 'clamp',
-    });
-    const AnimateColorIcon = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [colors.title, colors.title],
-      extrapolate: 'clamp',
-    });
-    const borderColorIcon = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [this.props.initialBorderColorIcon, 'white'],
-      extrapolate: 'clamp',
-    });
-    const borderColorView = this.props.AnimatedHeaderValue.interpolate({
-      inputRange: this.props.inputRange,
-      outputRange: [
-        this.props.initialBorderColorHeader
-          ? this.props.initialBorderColorHeader
-          : 'white',
+        initialBorderColorHeader ? initialBorderColorHeader : colors.white,
         colors.grey,
       ],
       extrapolate: 'clamp',
     });
-
+    return {
+      AnimateOpacityTitle,
+      AnimateBackgroundView,
+      borderWidth,
+      borderColorIcon,
+      borderColorView,
+    };
+  }
+  button1() {
     const {
-      sizeLoader,
-      colorLoader,
+      icon1,
+      backgroundColorIcon1,
       colorIcon1,
-      nobackgroundColorIcon1,
       sizeIcon1,
       typeIcon1,
+      nobackgroundColorIcon1,
+    } = this.props;
+    const {borderColorIcon} = this.animatedValues();
+    if (icon1)
+      return (
+        <Animated.View
+          style={[
+            styles.animatedButtonStyle,
+            {
+              backgroundColor: backgroundColorIcon1
+                ? backgroundColorIcon1
+                : colors.white,
+              borderColor: borderColorIcon,
+            },
+          ]}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name={icon1}
+                  color={colorIcon1 ? colorIcon1 : colors.title}
+                  size={sizeIcon1 ? sizeIcon1 : 15}
+                  type={typeIcon1 ? typeIcon1 : 'font'}
+                />
+              );
+            }}
+            click={() => this.props.clickButton1()}
+            color={nobackgroundColorIcon1 ? null : 'white'}
+            style={[styles.buttonRight]}
+            onPressColor={colors.off}
+          />
+        </Animated.View>
+      );
+    return null;
+  }
+  buttonOffset() {
+    const styleButton = {
+      height: 48,
+      width: 48,
+      borderRadius: 23.8,
+      borderWidth: 1,
+      overFlow: 'hidden',
+    };
+    const {
+      clickButtonOffset,
       backgroundColorIcon1,
+      iconOffset,
+      textOffset,
+      colorIconOffset,
+      sizeIconOffset,
+      typeIconOffset,
+    } = this.props;
+    const {borderColorIcon} = this.animatedValues();
+    if (clickButtonOffset)
+      return (
+        <Animated.View
+          style={[
+            styleButton,
+            {
+              borderColor: borderColorIcon,
+
+              backgroundColor: backgroundColorIcon1
+                ? backgroundColorIcon1
+                : colors.white,
+            },
+          ]}>
+          <ButtonColor
+            view={() => {
+              return iconOffset === 'text' ? (
+                <Text style={styleApp.text}>{textOffset}</Text>
+              ) : (
+                <AllIcons
+                  name={iconOffset}
+                  color={
+                    colorIconOffset === colors.white
+                      ? colors.title
+                      : colors.white
+                  }
+                  size={sizeIconOffset}
+                  type={typeIconOffset}
+                />
+              );
+            }}
+            click={() => clickButtonOffset()}
+            color={colorIconOffset}
+            style={[styleApp.center, styleApp.fullSize]}
+            onPressColor={colors.off}
+          />
+        </Animated.View>
+      );
+  }
+  button2() {
+    const {
+      loader,
+      icon2,
+      colorLoader,
+      sizeLoader,
       backgroundColorIcon2,
       colorIcon2,
+      clickButton2,
+      sizeIcon2,
+      typeIcon2,
+      text2Off,
+      text2,
     } = this.props;
+    const {borderColorIcon} = this.animatedValues();
+    if (loader)
+      return (
+        <Loader
+          color={colorLoader ? colorLoader : 'green'}
+          size={sizeLoader ? sizeLoader : 27}
+        />
+      );
+    if (icon2)
+      return (
+        <Animated.View
+          style={[
+            styles.animatedButtonStyle,
+            {
+              borderColor: borderColorIcon,
+              backgroundColor: backgroundColorIcon2
+                ? colors.transparent
+                : colors.white,
+            },
+          ]}>
+          <ButtonColor
+            view={() => {
+              // const {typeIcon2, sizeIcon2, icon2} = this.props;
+              return loader ? (
+                <Loader size={20} color={'primary'} />
+              ) : icon2 === 'text' ? (
+                <Text
+                  style={[
+                    styleApp.text,
+                    {
+                      color: text2Off ? colors.off : colors.title,
+                    },
+                  ]}>
+                  {text2}
+                </Text>
+              ) : (
+                <AllIcons
+                  name={icon2}
+                  color={colorIcon2 ? colorIcon2 : colors.title}
+                  size={sizeIcon2}
+                  type={typeIcon2}
+                />
+              );
+            }}
+            click={() => clickButton2()}
+            color={backgroundColorIcon2 ? backgroundColorIcon2 : colors.white}
+            style={styles.buttonRight}
+            onPressColor={
+              backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
+            }
+          />
+        </Animated.View>
+      );
+  }
+  render() {
+    const {imgHeader, currentScreenSize} = this.props;
+    const {portrait} = currentScreenSize;
+    const marginTop = portrait ? marginTopApp : marginTopAppLanscape;
+
+    const {
+      AnimateOpacityTitle,
+      AnimateBackgroundView,
+      borderColorView,
+      borderWidth,
+    } = this.animatedValues();
+
     return (
       <Animated.View
         style={[
           styles.header,
           {
             backgroundColor: AnimateBackgroundView,
+            marginTop: marginTop,
             borderBottomWidth: borderWidth,
             borderColor: borderColorView,
-            width: width,
+            width: '100%',
           },
         ]}>
         <Row>
@@ -137,154 +267,18 @@ export default class HeaderFlow extends Component {
               {this.props.textHeader}
             </Animated.Text>
           </View>
-          <Col size={15} style={styles.center2} activeOpacity={0.4}>
-            {this.props.icon1 && (
-              <Animated.View
-                style={[
-                  styles.animatedButtonStyle,
-                  {
-                    backgroundColor: backgroundColorIcon1
-                      ? backgroundColorIcon1
-                      : 'white',
-                  },
-                  {
-                    borderColor: borderColorIcon,
-                  },
-                ]}>
-                <ButtonColor
-                  view={() => {
-                    return (
-                      <AllIcons
-                        name={this.props.icon1}
-                        color={colorIcon1 ? colorIcon1 : colors.title}
-                        size={sizeIcon1 ? sizeIcon1 : 15}
-                        type={typeIcon1 ? typeIcon1 : 'font'}
-                      />
-                    );
-                  }}
-                  click={() => this.props.clickButton1()}
-                  color={nobackgroundColorIcon1 ? null : 'white'}
-                  style={[styles.buttonRight]}
-                  onPressColor={colors.off}
-                />
-              </Animated.View>
-            )}
+          <Col size={15} style={styleApp.center2} activeOpacity={0.4}>
+            {this.button1()}
           </Col>
           <Col size={15} style={styleApp.center}>
-            {this.props.imgHeader ? this.props.imgHeader : null}
+            {imgHeader && imgHeader}
           </Col>
           <Col size={35} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
-            {this.props.loader ? null : this.props.clickButtonOffset ? (
-              <Animated.View
-                style={[
-                  {
-                    borderColor: borderColorIcon,
-                    height: 48,
-                    width: 48,
-                    borderRadius: 23.8,
-                    borderWidth: 1,
-                    backgroundColor: backgroundColorIcon1
-                      ? backgroundColorIcon1
-                      : 'white',
-                    overFlow: 'hidden',
-                  },
-                ]}>
-                <ButtonColor
-                  view={() => {
-                    return this.props.loader ? (
-                      <Loader
-                        size={sizeLoader ? sizeLoader : 20}
-                        color={colorLoader ? colorLoader : 'primary'}
-                      />
-                    ) : this.props.iconOffset === 'text' ? (
-                      <Text style={styleApp.text}>{this.props.textOffset}</Text>
-                    ) : (
-                      <AllIcons
-                        name={this.props.iconOffset}
-                        color={
-                          this.props.colorIconOffset === colors.white
-                            ? colors.title
-                            : colors.white
-                        }
-                        size={this.props.sizeIconOffset}
-                        type={this.props.typeIconOffset}
-                      />
-                    );
-                  }}
-                  click={() => this.props.clickButtonOffset()}
-                  color={this.props.colorIconOffset}
-                  style={[
-                    styleApp.center,
-                    {
-                      height: 46,
-                      width: 46,
-                      borderRadius: 23,
-                      borderWidth: 0,
-                      overFlow: 'hidden',
-                    },
-                  ]}
-                  onPressColor={colors.off}
-                />
-              </Animated.View>
-            ) : null}
+            {this.buttonOffset()}
           </Col>
-          <Col size={2} style={styles.center} />
           <Col size={15} style={[styleApp.center3]}>
-            {this.props.loader ? (
-              <Loader
-                color={colorLoader ? colorLoader : 'green'}
-                size={sizeLoader ? sizeLoader : 24}
-              />
-            ) : (
-              this.props.icon2 && (
-                <Animated.View
-                  style={[
-                    styles.animatedButtonStyle,
-                    {
-                      borderColor: borderColorIcon,
-                      backgroundColor: backgroundColorIcon2
-                        ? 'transparent'
-                        : 'white',
-                    },
-                  ]}>
-                  <ButtonColor
-                    view={() => {
-                      return this.props.loader ? (
-                        <Loader size={20} color={'primary'} />
-                      ) : this.props.icon2 == 'text' ? (
-                        <Text
-                          style={[
-                            styleApp.text,
-                            {
-                              color: this.props.text2Off
-                                ? colors.off
-                                : colors.title,
-                            },
-                          ]}>
-                          {this.props.text2}
-                        </Text>
-                      ) : (
-                        <AllIcons
-                          name={this.props.icon2}
-                          color={colorIcon2 ? colorIcon2 : colors.title}
-                          size={this.props.sizeIcon2}
-                          type={this.props.typeIcon2}
-                        />
-                      );
-                    }}
-                    click={() => this.props.clickButton2()}
-                    color={
-                      backgroundColorIcon2 ? backgroundColorIcon2 : colors.white
-                    }
-                    style={styles.buttonRight}
-                    onPressColor={
-                      backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
-                    }
-                  />
-                </Animated.View>
-              )
-            )}
+            {this.button2()}
           </Col>
         </Row>
       </Animated.View>
@@ -297,26 +291,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  center2: {
-    justifyContent: 'center',
-  },
   header: {
     height: sizes.heightHeaderHome,
-    paddingTop: sizes.marginTopHeader - 5,
-    paddingLeft: 20,
-    paddingRight: 20,
+    //   paddingTop: sizes.marginTopHeader - 5,
+    paddingLeft: '5%',
+    paddingRight: '5%',
     borderBottomWidth: 1,
     position: 'absolute',
     zIndex: 10,
-  },
-  title: {
-    fontSize: 15,
-    paddingLeft: 7,
-    color: '#4B4B4B',
-  },
-  textTitleHeader: {
-    color: colors.title,
-    fontSize: 17,
   },
   buttonRight: {
     ...styleApp.center,
@@ -336,8 +318,18 @@ const styles = StyleSheet.create({
   rowTextHeader: {
     ...styleApp.center,
     height: '100%',
-    marginLeft: -20,
     position: 'absolute',
-    width: width,
+    width: '100%',
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+    currentScreenSize: state.layout.currentScreenSize,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(HeaderBackButton);

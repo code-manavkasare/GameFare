@@ -28,7 +28,6 @@ import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 import ListPhotos from './ListPhotos';
 import NavigationService from '../../../../NavigationService';
-const {height, width} = Dimensions.get('screen');
 
 class InputMessage extends React.Component {
   constructor(props) {
@@ -203,7 +202,7 @@ class InputMessage extends React.Component {
               size={16}
             />
           </Col>
-          <Col size={35} style={styleApp.center2}></Col>
+          <Col size={35} style={styleApp.center2} />
 
           <Col size={20} style={styleApp.center3}>
             <ButtonColor
@@ -266,8 +265,8 @@ class InputMessage extends React.Component {
 
 const styles = StyleSheet.create({
   keyboardContainer: {
-    borderTopWidth: 0.5,
-    borderColor: colors.borderColor,
+    borderTopWidth: 1,
+    borderColor: colors.off,
     ...Platform.select({
       ios: {
         flex: 1,
@@ -278,22 +277,22 @@ const styles = StyleSheet.create({
   scrollViewImages: {
     paddingTop: 10,
     paddingBottom: 10,
-    paddingLeft: 20,
+    paddingLeft: '5%',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   textInput: {
     flex: 1,
     ...styleApp.input,
-    marginLeft: 10,
+    marginLeft: '5%',
     marginTop: 10,
     marginBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
+    //   paddingLeft: '2.5%',
+    paddingRight: '2.5%',
     paddingTop: 2,
     paddingBottom: 5,
     fontSize: 16,
-    width: width - 20,
+    width: '90%',
     backgroundColor: 'white',
     borderRadius: 18,
   },
@@ -334,4 +333,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(InputMessage);
+export default connect(
+  mapStateToProps,
+  {},
+)(InputMessage);

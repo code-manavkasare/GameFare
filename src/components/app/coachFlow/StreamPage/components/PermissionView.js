@@ -45,7 +45,7 @@ class StreamPage extends Component {
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => !active && goToSettings()}
-        style={{...styleApp.center, width: width, height: 30}}>
+        style={{...styleApp.center, width: '100%', height: 30}}>
         <Text
           style={[
             styleApp.text,

@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 
 import React, {Component, Text} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+import {View} from 'react-native';
 
 import {connect} from 'react-redux';
 import axios from 'axios';
@@ -15,6 +16,7 @@ import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
+import OrientationListener from './src/components/hoc/orientationListener';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -94,6 +96,7 @@ class App extends Component {
     return (
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
+        <OrientationListener />
       </NavigationContainer>
     );
   }
@@ -109,6 +112,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {globaleVariablesAction, userAction})(
-  App,
-);
+export default connect(
+  mapStateToProps,
+  {globaleVariablesAction, userAction},
+)(App);

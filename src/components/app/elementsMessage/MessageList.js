@@ -150,31 +150,23 @@ class MessageTab extends React.Component {
           updateSearch={(searchInput) => this.updateSearchField(searchInput)}
           searchString={searchInput}
         />
-        <View
-          style={[
-            styleApp.divider2,
-            {marginLeft: 20, width: width - 40, marginTop: 0},
-          ]}
-        />
-        <View>
-          {this.state.loader ? (
-            this.placeHolder()
-          ) : Object.keys(discussions).length === 0 || !discussions ? (
-            <Text style={[styleApp.text, {marginTop: 10, marginLeft: 20}]}>
-              You don’t have any messages yet.
-            </Text>
-          ) : (
-            keys(discussions).map((discussion, i) => (
-              <CardConversation
-                key={i}
-                index={i}
-                navigation={navigation}
-                discussionID={discussion}
-                myConversation={true}
-              />
-            ))
-          )}
-        </View>
+        {this.state.loader ? (
+          this.placeHolder()
+        ) : Object.keys(discussions).length === 0 || !discussions ? (
+          <Text style={[styleApp.text, {marginTop: 10, marginLeft: 20}]}>
+            You don’t have any messages yet.
+          </Text>
+        ) : (
+          keys(discussions).map((discussion, i) => (
+            <CardConversation
+              key={i}
+              index={i}
+              navigation={navigation}
+              discussionID={discussion}
+              myConversation={true}
+            />
+          ))
+        )}
         <View style={{height: 30}} />
       </View>
     );
@@ -189,27 +181,31 @@ class MessageTab extends React.Component {
     const {userConnected} = this.props;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={userConnected && 'Inbox'}
-          inputRange={[5, 10]}
-          initialBorderColorIcon={colors.white}
-          initialBackgroundColor={'white'}
-          typeIcon2={'font'}
-          sizeIcon2={17}
-          initialTitleOpacity={0}
-          icon2={userConnected && 'edit'}
-          clickButton2={() =>
-            userConnected ? navigate('NewConversation') : navigate('SignIn')
-          }
-        />
+        {userConnected && (
+          <HeaderBackButton
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            textHeader={userConnected && 'Inbox'}
+            inputRange={[5, 10]}
+            initialBorderColorIcon={colors.white}
+            initialBackgroundColor={'white'}
+            typeIcon2={'font'}
+            sizeIcon2={17}
+            initialTitleOpacity={0}
+            icon2={userConnected && 'edit'}
+            clickButton2={() =>
+              userConnected ? navigate('NewConversation') : navigate('SignIn')
+            }
+          />
+        )}
 
         <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.messagePageView()}
           keyboardAvoidDisable={true}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={
+            userConnected ? sizes.heightHeaderHome : sizes.marginTopApp
+          }
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           colorRefresh={colors.title}
           stickyHeaderIndices={[3]}

@@ -28,7 +28,6 @@ import ButtonColor from '../layout/Views/Button';
 import AsyncImage from '../layout/image/AsyncImage';
 
 import {userAction} from '../../actions/userActions';
-const {height, width} = Dimensions.get('screen');
 
 class MorePage extends Component {
   constructor(props) {
@@ -267,135 +266,119 @@ class MorePage extends Component {
   profile() {
     const {infoUser, userConnected} = this.props;
     return (
-      <View>
-        <View style={styleApp.marginView}>
-          {userConnected ? (
-            <View>
-              <TouchableOpacity
-                onPress={() => this.goToEditProfile()}
-                activeOpacity={0.9}>
-                <Row style={{marginBottom: 20}}>
-                  <Col size={30} style={styleApp.center2}>
-                    {infoUser.picture ? (
-                      <AsyncImage
-                        style={styles.asyncImage}
-                        mainImage={infoUser.picture}
-                      />
-                    ) : (
-                      <View
-                        style={[
-                          styles.asyncImage,
-                          styleApp.center,
-                          {backgroundColor: colors.off},
-                        ]}>
-                        <Text style={[styleApp.input, {fontSize: 20}]}>
-                          {infoUser.firstname[0] + infoUser.lastname[0]}
-                        </Text>
-                      </View>
-                    )}
-                  </Col>
-                  <Col size={70} style={styleApp.center2}>
-                    <Text style={styleApp.title}>
-                      {infoUser.firstname + ' ' + infoUser.lastname}
-                    </Text>
-                    <Text style={styleApp.subtitle}>
-                      {infoUser.countryCode + ' ' + infoUser.phoneNumber}
-                    </Text>
-                  </Col>
-                </Row>
-              </TouchableOpacity>
+      <View style={{marginTop: 20}}>
+        {userConnected ? (
+          <View>
+            <TouchableOpacity
+              onPress={() => this.goToEditProfile()}
+              style={styleApp.marginView}
+              activeOpacity={0.9}>
+              <Row>
+                <Col size={30} style={styleApp.center2}>
+                  {infoUser.picture ? (
+                    <AsyncImage
+                      style={styles.asyncImage}
+                      mainImage={infoUser.picture}
+                    />
+                  ) : (
+                    <View
+                      style={[
+                        styles.asyncImage,
+                        styleApp.center,
+                        {backgroundColor: colors.off},
+                      ]}>
+                      <Text style={[styleApp.input, {fontSize: 20}]}>
+                        {infoUser.firstname[0] + infoUser.lastname[0]}
+                      </Text>
+                    </View>
+                  )}
+                </Col>
+                <Col size={70} style={styleApp.center2}>
+                  <Text style={styleApp.title}>
+                    {infoUser.firstname + ' ' + infoUser.lastname}
+                  </Text>
+                  <Text style={styleApp.subtitle}>
+                    {infoUser.countryCode + ' ' + infoUser.phoneNumber}
+                  </Text>
+                </Col>
+              </Row>
+            </TouchableOpacity>
 
-              <Text style={styleApp.text}>Account parameters</Text>
-              <View
-                style={[styleApp.divider2, {marginTop: 15, marginBottom: 0}]}
-              />
-              {this.button('video', 'Video Library', 'VideoLibraryPage')}
-              {this.button('credit-card', 'Payment', 'Payments')}
-              {this.button('wallet', 'Wallet', 'Wallet')}
-              {this.button(
-                'user-alt-slash',
-                'Blocked users',
-                'BlockedUsersList',
-              )}
-            </View>
-          ) : (
-            this.button('sign', 'Sign In', 'SignIn')
-          )}
-        </View>
+            <Text style={styles.title}>Account parameters</Text>
+            <View style={styleApp.divider} />
+            {this.button('video', 'Video Library', 'VideoLibraryPage')}
+            {this.button('credit-card', 'Payment', 'Payments')}
+            {this.button('wallet', 'Wallet', 'Wallet')}
+            {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
+          </View>
+        ) : (
+          this.button('sign', 'Sign In', 'SignIn')
+        )}
 
-        <View style={[styleApp.marginView, {marginTop: 30}]}>
-          <Text style={styleApp.text}>Assistance</Text>
+        <Text style={styles.title}>Assistance</Text>
+        <View style={styleApp.divider} />
+        {this.button('envelope', 'Email', 'Alert', 'email')}
 
-          <View style={[styleApp.divider2, {marginBottom: 0, marginTop: 15}]} />
-          {this.button('envelope', 'Email', 'Alert', 'email')}
-        </View>
+        <Text style={styles.title}>Social media</Text>
+        <View style={styleApp.divider} />
+        {this.button(
+          'instagram',
+          'Visit us on Instagram',
+          'Alert',
+          'url',
+          'https://www.instagram.com/getgamefare',
+        )}
 
-        <View style={[styleApp.marginView, {marginTop: 20}]}>
-          <Text style={styleApp.text}>Social media</Text>
+        <Text style={styles.title}>Legal</Text>
+        <View style={styleApp.divider} />
+        {this.button(
+          false,
+          'Privacy policy',
+          'Alert',
+          'url',
+          'https://www.getgamefare.com/privacy',
+        )}
+        {this.button(
+          false,
+          'Terms of service',
+          'Alert',
+          'url',
+          'https://www.getgamefare.com/terms',
+        )}
 
-          <View style={[styleApp.divider2, {marginBottom: 0}]} />
-          {this.button(
-            'instagram',
-            'Visit us on Instagram',
-            'Alert',
-            'url',
-            'https://www.instagram.com/getgamefare',
-          )}
-        </View>
+        {this.button2({
+          text: 'Test notif open stream',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () =>
+            NavigationService.navigate('Stream', {
+              screen: 'StreamPage',
+              params: {
+                openSession: true,
+                objectID: 'cv3xy4p7ghk8zhqn1r',
+              },
+            }),
+        })}
+        {this.button2({
+          text: 'Test notif open conversation',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () =>
+            NavigationService.push('Conversation', {
+              data: '-M4pyI87V02bA7Uz1_ah',
+              uniqueStack: 'true',
+            }),
+        })}
 
-        <View style={[styleApp.marginView, {marginTop: 20}]}>
-          <Text style={styleApp.text}>Legal</Text>
-
-          <View style={[styleApp.divider2, {marginBottom: 0}]} />
-          {this.button(
-            false,
-            'Privacy policy',
-            'Alert',
-            'url',
-            'https://www.getgamefare.com/privacy',
-          )}
-          {this.button(
-            false,
-            'Terms of service',
-            'Alert',
-            'url',
-            'https://www.getgamefare.com/terms',
-          )}
-
-          {this.button2({
-            text: 'Test notif open stream',
-            icon: {
-              name: 'user',
-              type: 'font',
-              size: 20,
-              color: colors.title,
-            },
-            click: () =>
-              NavigationService.navigate('Stream', {
-                screen: 'StreamPage',
-                params: {
-                  openSession: true,
-                  objectID: 'cv3xy4p7ghk8zhqn1r',
-                },
-              }),
-          })}
-          {this.button2({
-            text: 'Test notif open conversation',
-            icon: {
-              name: 'user',
-              type: 'font',
-              size: 20,
-              color: colors.title,
-            },
-            click: () =>
-              NavigationService.push('Conversation', {
-                data: '-M4pyI87V02bA7Uz1_ah',
-                uniqueStack: 'true',
-              }),
-          })}
-        </View>
-
-        <View style={[styleApp.marginView, {marginTop: 20}]}>
+        <View style={[{marginTop: 20}]}>
           {this.props.userConnected &&
             this.button('logout', 'Logout', 'Alert', 'logout')}
         </View>
@@ -408,13 +391,13 @@ class MorePage extends Component {
   }
   render() {
     return (
-      <View style={styleApp.stylePage}>
+      <View style={[styleApp.stylePage]}>
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.marginTopApp + 30}
+          marginTop={0}
           offsetBottom={sizes.heightFooter + 90}
           showsVerticalScrollIndicator={true}
         />
@@ -426,13 +409,19 @@ class MorePage extends Component {
 const styles = StyleSheet.create({
   button: {
     height: 55,
-    marginLeft: -20,
-    width: width,
-    paddingLeft: 20,
-    paddingRight: 20,
+    marginLeft: 0,
+    width: '100%',
+    paddingLeft: '5%',
+    paddingRight: '5%',
     borderColor: colors.borderColor,
     backgroundColor: 'white',
     borderBottomWidth: 0,
+  },
+  title: {
+    ...styleApp.text,
+    marginLeft: '5%',
+    marginBottom: 10,
+    marginTop: 30,
   },
   asyncImage: {
     width: 90,

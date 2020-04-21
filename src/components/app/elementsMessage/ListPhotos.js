@@ -9,16 +9,8 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import {KeyboardRegistry} from 'react-native-keyboard-input';
-import CameraRoll from '@react-native-community/cameraroll';
-import {pickLibrary} from '../../functions/pictures';
-import {generateID} from '../../functions/createGroup';
 
-import AllIcons from '../../layout/icons/AllIcons';
-import ButtonColor from '../../layout/Views/Button';
-import StyleApp from '../../style/style';
-const {height, width} = Dimensions.get('screen');
-import {Col, Row} from 'react-native-easy-grid';
+import {generateID} from '../../functions/createGroup';
 
 import CardContent from './CardContent';
 import colors from '../../style/colors';
@@ -78,11 +70,11 @@ export default class ListPhotos extends Component {
           style={[styles.keyboardContainer]}
           showsHorizontalScrollIndicator={false}>
           {this.props.images === 'loading' ? (
-            <View style={{height: 100, backgroundColor: 'yellow'}}></View>
+            <View style={{height: 100, backgroundColor: 'yellow'}} />
           ) : (
             this.props.images.map((data, i) => this.buttonImage(data, i))
           )}
-          <View style={{width: 20}}></View>
+          <View style={{width: 50}} />
         </ScrollView>
         {/* <ButtonColor
           view={() => {
@@ -107,7 +99,7 @@ export default class ListPhotos extends Component {
 
 const styles = StyleSheet.create({
   keyboardContainer: {
-    width: width,
+    width: '100%',
     height: '100%',
     paddingTop: 10,
     paddingBottom: 10,

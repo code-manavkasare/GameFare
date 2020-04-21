@@ -12,7 +12,6 @@ import {
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import firebase from 'react-native-firebase';
-import Orientation from 'react-native-orientation-locker';
 
 import VideoPlayer from '../VideoPlayer/index';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -39,7 +38,6 @@ class WatchVideoPage extends Component {
       thumbnail: false,
       archiveID: false,
       myVideo: false,
-      portrait: true,
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -47,25 +45,7 @@ class WatchVideoPage extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
-    const initialOrientation = Orientation.getInitialOrientation();
-    this.setScreenOrientation(initialOrientation);
-    Orientation.addOrientationListener(this._onOrientationDidChange);
   }
-  componentWillUnmount = () => {
-    Orientation.removeOrientationListener(this._onOrientationDidChange);
-  };
-  _onOrientationDidChange = (orientation) => {
-    console.log('orientation: ', orientation);
-    this.setScreenOrientation(orientation);
-  };
-  setScreenOrientation = (orientation) => {
-    if (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') {
-      this.setState({portrait: false});
-    } else if (orientation === 'PORTRAIT') {
-      this.setState({portrait: true});
-    }
-  };
-
   async open(videoData) {
     const {watchVideo, source, thumbnail, myVideo, archiveID} = videoData;
     const that = this;
@@ -102,17 +82,17 @@ class WatchVideoPage extends Component {
   };
 
   watchVideoView() {
-    const {session, personSharingScreen, userID, state} = this.props;
-    // if (!state.watchVideo) return null;
-    const {videoSource, thumbnail, myVideo, archiveID, portrait} = this.state;
+    const {
+      session,
+      personSharingScreen,
+      userID,
+      currentScreenSize,
+    } = this.props;
+    const {videoSource, thumbnail, myVideo, archiveID} = this.state;
     let video = {};
 
-    let widthView = height;
-    let heightView = width;
-    if (portrait) {
-      widthView = width;
-      heightView = height;
-    }
+    const {currentWidth, currentHeight} = currentScreenSize;
+
     if (myVideo)
       video = {
         source: videoSource,
@@ -128,8 +108,8 @@ class WatchVideoPage extends Component {
         style={[
           styles.page,
           {
-            width: widthView,
-            height: heightView,
+            width: currentWidth,
+            height: currentHeight,
             transform: [
               {translateX: this.translateXPage},
               {translateY: this.translateYPage},
@@ -158,6 +138,7 @@ class WatchVideoPage extends Component {
           setState={this.setState.bind(this)}
           openVideo={(videoData) => this.open(videoData)}
         />
+        
 
         {videoSource && (
           <VideoPlayer
@@ -224,6 +205,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

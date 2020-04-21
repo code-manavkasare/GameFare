@@ -10,6 +10,7 @@ import {
   heightCardSession,
   marginTopApp,
   width,
+  height,
   heightHeaderStream,
   offsetBottomHeaderStream,
 } from '../../../../style/sizes';
@@ -23,9 +24,6 @@ class ListStreams extends Component {
     };
     this.itemsRef = [];
   }
-  componentDidMount() {
-    // this.props.onRef(this);
-  }
   static getDerivedStateFromProps(props, state) {
     if (!isEqual(props.coachSessions, state.coachSessions)) {
       return {
@@ -34,6 +32,7 @@ class ListStreams extends Component {
     }
     return {};
   }
+
   openSession(objectID) {
     this.itemsRef[objectID].open();
   }
@@ -76,7 +75,7 @@ class ListStreams extends Component {
     return (
       <View>
         {this.list()}
-        <View style={[styles.divider]} />
+        <View style={[styles.divider, {width: '90%', marginLeft: '5%'}]} />
       </View>
     );
   }

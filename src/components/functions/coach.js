@@ -1,10 +1,6 @@
 import firebase from 'react-native-firebase';
-import {keys} from 'ramda';
-import moment from 'moment';
-import {Dimensions} from 'react-native';
-const {height, width} = Dimensions.get('screen');
-import colors from '../style/style';
-import {heightCardSession, widthCardSession} from '../style/sizes';
+import colors from '../style/colors';
+import {heightCardSession} from '../style/sizes';
 
 import {generateID} from './createEvent';
 
@@ -121,10 +117,15 @@ const isEven = (n) => {
   return !(n & 1);
 };
 
-const styleStreamView = (index, coordinates, pageFullScreen) => {
+const styleStreamView = (
+  index,
+  coordinates,
+  pageFullScreen,
+  currentScreenSize,
+) => {
   let styleContainerStreamView = {
     marginTop: 0,
-    width: widthCardSession,
+    width: currentScreenSize.currentWidth,
     overflow: 'hidden',
     borderRadius: 0,
     height: heightCardSession,
@@ -134,13 +135,15 @@ const styleStreamView = (index, coordinates, pageFullScreen) => {
     width: '100%',
     position: 'relative',
   };
+  console.log('on get les colors !!', colors);
+  console.log('pageFullScreen', pageFullScreen);
   if (pageFullScreen) {
     styleCard = [
       {
         position: 'absolute',
-        height: height,
-        width: width,
-        backgroundColor: colors.off + '0',
+        height: currentScreenSize.currentHeight,
+        width: currentScreenSize.currentWidth,
+        //  backgroundColor: colors.off + '0',
       },
     ];
     styleContainerStreamView = {
@@ -148,13 +151,18 @@ const styleStreamView = (index, coordinates, pageFullScreen) => {
       zIndex: 50,
       top: -coordinates.y,
       left: -coordinates.x,
-      height: height,
-      width: width,
+      height: currentScreenSize.currentHeight,
+      width: currentScreenSize.currentWidth,
       borderRadius: 10,
-      // backgroundColor: colors.title,
+      // backgroundColor: colors.red,
     };
   }
   return {styleContainerStreamView, styleCard};
+};
+
+const getVideoSharing = (userID, session) => {
+  const {videoIDSharing} = session.members[userID];
+  return session.sharedVideos[videoIDSharing];
 };
 
 module.exports = {
@@ -171,4 +179,5 @@ module.exports = {
   isUserAdmin,
   isEven,
   styleStreamView,
+  getVideoSharing,
 };

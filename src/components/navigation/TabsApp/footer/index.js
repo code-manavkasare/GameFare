@@ -51,12 +51,20 @@ class Footer extends React.Component {
   };
 
   footer = () => {
-    const {state, descriptors, navigation, colors} = this.props;
+    const {
+      state,
+      descriptors,
+      navigation,
+      colors,
+      currentScreenSize,
+    } = this.props;
+    const {currentWidth} = currentScreenSize;
     return (
       <Animated.View
         style={[
           styles.footer,
           styleApp.center3,
+          {marginLeft: (currentWidth - widthFooter) / 2},
           {transform: [{translateY: this.translateYFooter}]},
         ]}>
         <Row style={{width: '100%'}}>
@@ -117,7 +125,7 @@ const styles = StyleSheet.create({
     bottom: 30,
     zIndex: 0,
     width: widthFooter,
-    marginLeft: (width - widthFooter) / 2,
+
     borderWidth: 1,
     borderRadius: heightFooter / 2,
     // overflow: 'hidden',
@@ -141,6 +149,7 @@ const mapStateToProps = (state) => {
   return {
     isFooterVisible: state.layout.isFooterVisible,
     activeTab: state.layout.activeTab,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 
