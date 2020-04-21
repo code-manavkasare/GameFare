@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 import {ProcessingManager} from 'react-native-video-processing';
+import equal from 'fast-deep-equal';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
@@ -26,11 +27,14 @@ class VideoLibraryPage extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  async componentDidMount() {
+  componentDidMount = () => {
     this.getUserVideos();
-  }
-  componentDidUpdate = () => {
-    this.getUserVideos();
+  };
+
+  componentDidUpdate = (prevProps) => {
+    if (!equal(prevProps.archivedStreams, this.props.archivedStreams)) {
+      this.getUserVideos();
+    }
   };
 
   getUserVideos = async () => {
@@ -69,7 +73,7 @@ class VideoLibraryPage extends Component {
             or record yourself !
           </Text>
         ) : (
-          videosArray.map((video, i) => {
+          videosArray.map((video) => {
             return (
               <CardArchive
                 style={styles.cardArchive}
@@ -118,7 +122,6 @@ class VideoLibraryPage extends Component {
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
-          //   initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
           typeIcon2={'font'}
