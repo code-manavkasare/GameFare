@@ -295,20 +295,11 @@ class AddGroups extends Component {
           updatesGroup['/groups/' + objectID] = true;
           updatesEvent['/groups/' + group.objectID] = true;
 
-          // await firebase
-          //   .database()
-          //   .ref('groups/' + group.objectID)
-          //   .update(updatesGroup);
-
           await firebase
             .database()
             .ref('groups/' + objectID)
             .update(updatesEvent);
         } else if (!hasGroup(selectedGroups)) {
-          // await firebase
-          //   .database()
-          //   .ref('groups/' + group.objectID + '/groups/' + objectID)
-          //   .remove();
           await firebase
             .database()
             .ref('groups/' + objectID + '/groups/' + group.objectID)

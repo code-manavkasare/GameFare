@@ -54,19 +54,19 @@ export default class CompleteFields extends Component {
       );
     }
 
-    await firebase
-      .database()
-      .ref('users/' + userID + '/userInfo/')
-      .update({
-        firstname,
-        lastname,
-        picture: profilePictureUrl,
-      });
+    let updates = {};
+    updates[`users/${userID}/userInfo/`] = {
+      firstname,
+      lastname,
+      picture: profilePictureUrl,
+    };
+    updates[`users/${this.props.params.userID}`] = {profileCompleted: true};
 
     await firebase
       .database()
-      .ref('users/' + this.props.params.userID)
-      .update({profileCompleted: true});
+      .ref()
+      .update(updates);
+
     await Keyboard.dismiss();
     var that = this;
     setTimeout(function() {
