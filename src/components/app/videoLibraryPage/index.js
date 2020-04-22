@@ -3,7 +3,6 @@ import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 import {ProcessingManager} from 'react-native-video-processing';
-import equal from 'fast-deep-equal';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
@@ -27,19 +26,10 @@ class VideoLibraryPage extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount = () => {
-    this.getUserVideos();
-  };
 
-  componentDidUpdate = (prevProps) => {
-    if (!equal(prevProps.archivedStreams, this.props.archivedStreams)) {
-      this.getUserVideos();
-    }
-  };
-
-  getUserVideos = async () => {
-    const videosArray = sortVideos(this.props.archivedStreams);
-    await this.setState({videosArray});
+  static getDerivedStateFromProps = (props) => {
+    const videosArray = sortVideos(props.archivedStreams);
+    return {videosArray};
   };
 
   uploadingVideosList = () => {
