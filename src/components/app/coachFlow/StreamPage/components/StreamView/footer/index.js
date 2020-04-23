@@ -18,10 +18,15 @@ class Footer extends Component {
       state,
       watchVideoRef,
       endCoachSession,
+      opacityHeader,
     } = this.props;
     return (
       <Animated.View
-        style={[styles.footer, {transform: [{translateY: translateYFooter}]}]}>
+        style={[
+          styles.footer,
+          {opacity: opacityHeader},
+          {transform: [{translateY: translateYFooter}]},
+        ]}>
         <BottomButtons
           session={session}
           state={state}

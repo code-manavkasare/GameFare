@@ -40,7 +40,13 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen name="Payments" component={Payments} />
+      <Stack.Screen
+        name="Payments"
+        component={Payments}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
       <Stack.Screen name="Location" component={LocationSelector} />
       <Stack.Screen name="Date" component={DateSelector} />
 

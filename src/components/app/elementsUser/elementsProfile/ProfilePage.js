@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Animated, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {Animated, StyleSheet, Text, View} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
@@ -9,8 +9,9 @@ import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes from '../../../style/sizes';
+import {heightHeaderHome} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -74,10 +75,28 @@ class ProfilePage extends Component {
         : this.button('Block User', colors.red, true);
     }
   };
+  profilePage() {
+    const {firstname, lastname, picture} = this.state.userProfile.info;
+    return (
+      <View style={styleApp.marginView}>
+        <Row>
+          <Col style={styleApp.center2} size={35}>
+            {this.picture(picture)}
+          </Col>
+          <Col size={65}>
+            <Text style={[styleApp.title, {fontSize: 22}]}>
+              {firstname} {lastname}
+            </Text>
+          </Col>
+        </Row>
+        <View style={{height: 40}} />
+        {this.blockButton()}
+      </View>
+    );
+  }
 
   render() {
     const {loader} = this.state;
-    const {firstname, lastname, picture} = this.state.userProfile.info;
 
     return (
       <View style={styleApp.stylePage}>
@@ -97,21 +116,12 @@ class ProfilePage extends Component {
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
+          contentScrollView={() => this.profilePage()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
-          showsVerticalScrollIndicator={true}>
-          <Grid style={{height: 250}}>
-            <Row size={8} style={styleApp.center2}>
-              {this.picture(picture)}
-            </Row>
-            <Row size={2} style={styleApp.center2}>
-              <Text style={[styleApp.title, {marginBottom: 0, fontSize: 25}]}>
-                {firstname} {lastname}
-              </Text>
-            </Row>
-          </Grid>
-          {this.blockButton()}
-        </ScrollView>
+          marginTop={heightHeaderHome}
+          offsetBottom={90}
+          showsVerticalScrollIndicator={true}
+        />
       </View>
     );
   }
@@ -125,12 +135,10 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   asyncImage: {
-    width: 180,
-    height: 180,
+    width: 110,
+    height: 110,
     borderColor: colors.off,
-    borderRadius: 45,
-    position: 'absolute',
-    zIndex: 0,
+    borderRadius: 6,
     backgroundColor: colors.grey,
   },
 });

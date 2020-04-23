@@ -26,9 +26,9 @@ export default class LoadingScreen extends React.Component {
         <Text
           style={[
             styleApp.title,
-            {marginBottom: 20, fontSize: 21, marginTop: 10},
+            {marginBottom: 20, fontSize: 21, marginTop: 0},
           ]}>
-          Enter your mobile number.
+          What is your mobile number?
         </Text>
         <PhoneFields
           country={

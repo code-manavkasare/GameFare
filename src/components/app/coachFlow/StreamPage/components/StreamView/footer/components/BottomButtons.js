@@ -51,10 +51,10 @@ class BottomButton extends Component {
             </Animated.View>
           );
         }}
-        color={publishVideo ? colors.green : colors.red}
+        color={publishVideo ? colors.green : colors.redLight}
         click={async () => setState({publishVideo: !publishVideo})}
         style={styles.buttonRound}
-        onPressColor={publishVideo ? colors.red : colors.greenClick}
+        onPressColor={publishVideo ? colors.redLight : colors.greenLight}
       />
     );
   }
@@ -69,16 +69,16 @@ class BottomButton extends Component {
               <AllIcons
                 type={'font'}
                 color={colors.white}
-                size={23}
+                size={18}
                 name={publishAudio ? 'microphone' : 'microphone-slash'}
               />
             </Animated.View>
           );
         }}
-        color={publishAudio ? colors.green : colors.red}
+        color={publishAudio ? colors.green : colors.redLight}
         click={async () => setState({publishAudio: !publishAudio})}
         style={styles.buttonRound}
-        onPressColor={publishAudio ? colors.red : colors.greenClick}
+        onPressColor={publishAudio ? colors.redLight : colors.greenLight}
       />
     );
   }
@@ -92,11 +92,12 @@ class BottomButton extends Component {
       if (loading) return <Loader size={27} color="white" />;
       return (
         <Animated.View
-          style={
+          style={[
             !archiving
               ? styles.buttonStartStreaming
-              : styles.buttonStopStreaming
-          }
+              : styles.buttonStopStreaming,
+            {backgroundColor: colors.greyDark + '70'},
+          ]}
         />
       );
     };
@@ -156,22 +157,21 @@ class BottomButton extends Component {
               <AllIcons
                 type={'font'}
                 color={colors.white}
-                size={25}
+                size={showPastSessionsPicker ? 19 : 22}
                 name={'film'}
               />
               {showPastSessionsPicker && (
-                <View style={styleArrowDown}>
-                  <AllIcons
-                    type={'font'}
-                    color={colors.white}
-                    size={16}
-                    name={'chevron-down'}
-                  />
-                </View>
+                <AllIcons
+                  type={'font'}
+                  color={colors.white}
+                  size={12}
+                  name={'chevron-down'}
+                />
               )}
             </Animated.View>
           );
         }}
+        color={colors.greyDark + '70'}
         click={async () => {
           this.setState({
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
@@ -179,8 +179,8 @@ class BottomButton extends Component {
           clickReview(!showPastSessionsPicker);
           // setState({publishVideo: !state.publishVideo});
         }}
-        style={styleApp.fullSize}
-        onPressColor={colors.redLight}
+        style={styles.buttonRound}
+        onPressColor={colors.grey + '40'}
       />
     );
   }
@@ -192,12 +192,13 @@ class BottomButton extends Component {
           return (
             <Image
               source={require('../../../../../../../../img/icons/endCall.png')}
-              style={{width: 30, height: 30}}
+              style={{width: 25, height: 25}}
             />
           );
         }}
+        color={colors.greyDark + '70'}
         click={async () => endCoachSession(true)}
-        style={styleApp.fullSize}
+        style={styles.buttonRound}
         onPressColor={colors.redLight}
       />
     );
@@ -315,25 +316,23 @@ const styles = StyleSheet.create({
   whiteButtonRecording: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 70,
-    borderWidth: 4,
+    height: 55,
+    borderWidth: 3,
     borderColor: colors.white,
-    width: 70,
+    width: 55,
     borderRadius: 42.5,
   },
   buttonStartStreaming: {
     ...styleApp.center,
-    height: 55,
-    width: 55,
+    height: 40,
+    width: 40,
     borderRadius: 40,
-    backgroundColor: colors.red,
   },
   buttonStopStreaming: {
     ...styleApp.center,
-    height: 35,
-    width: 35,
+    height: 25,
+    width: 25,
     borderRadius: 5,
-    backgroundColor: colors.red,
   },
   viewVideoBeingShared: {
     ...styleApp.center,

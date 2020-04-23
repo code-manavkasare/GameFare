@@ -1,12 +1,13 @@
 import {Platform, Easing, Dimensions} from 'react-native';
 
-function timing(toValue, duration) {
+function timing(toValue, duration, delay) {
   if (!duration) {
     duration = 250;
   }
   return {
     toValue: toValue,
     easing: Easing.ease,
+    delay: delay ? delay : 0,
     duration: duration,
   };
 }
@@ -24,12 +25,12 @@ function native(toValue) {
   };
 }
 
-function openStream(toValue) {
+function openStream(toValue, duration) {
   return {
     toValue: toValue,
-    duration: 170,
-    friction: 160,
-    tension: 190,
+    duration: duration ? duration : 230,
+    // friction: 20,
+    // tension: 50,
     easing: Easing.ease,
     useNativeDriver: true,
     // restSpeedThreshold: 3, restDisplacementThreshold:0.1

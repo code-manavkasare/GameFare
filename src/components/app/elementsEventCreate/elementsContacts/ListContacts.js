@@ -159,11 +159,11 @@ export default class ContactsComponent extends Component {
     });
   }
   cardUser(user, i, usersSelected) {
-    console.log('card user list contacts', usersSelected);
+    console.log('card user list contacts', usersSelected, user);
     return (
       <CardUserSelect
         user={user}
-        key={i}
+        key={user.id}
         captain={false}
         usersSelected={usersSelected}
         selectUser={(selected, user, usersSelected) =>
@@ -265,7 +265,7 @@ export default class ContactsComponent extends Component {
             {letter}
           </Text>
         </Col>
-        <Col size={85}></Col>
+        <Col size={85} />
       </Row>
     );
   }
@@ -284,14 +284,7 @@ export default class ContactsComponent extends Component {
   }
   listContacts() {
     return (
-      <ScrollView
-        keyboardShouldPersistTaps={'always'}
-        onScroll={this.handleScroll.bind(this)}
-        style={{
-          height: heightScrollView,
-          marginBottom: sizes.heightFooterBooking,
-        }}
-        stickyHeaderIndices={this.state.stickyHeader}>
+      <View>
         {this.state.initialLoader ? (
           <View style={[styleApp.center4, {paddingTop: 130}]}>
             <Loader color="green" size={35} />
@@ -301,8 +294,7 @@ export default class ContactsComponent extends Component {
         ) : (
           this.state.contacts.map((contact, i) => this.contact(contact, i))
         )}
-        <View style={{height: 70}} />
-      </ScrollView>
+      </View>
     );
   }
   viewNotAuthorized() {

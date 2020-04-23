@@ -35,6 +35,7 @@ class ListEvent extends Component {
     const {defaultCard} = this.props;
     return (
       <ButtonColor
+        key={data.id}
         view={() => {
           return (
             <Row style={{paddingLeft: '5%', paddingRight: '5%'}}>

@@ -135,8 +135,6 @@ const styleStreamView = (
     width: '100%',
     position: 'relative',
   };
-  console.log('on get les colors !!', colors);
-  console.log('pageFullScreen', pageFullScreen);
   if (pageFullScreen) {
     styleCard = [
       {

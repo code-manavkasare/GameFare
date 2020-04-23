@@ -14,7 +14,11 @@ import FadeInView from 'react-native-fade-in-view';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
+import {
+  heightHeaderHome,
+  marginTopApp,
+  marginTopAppLanscape,
+} from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import Button from '../../layout/buttons/Button';
@@ -147,7 +151,7 @@ class NewConversation extends React.Component {
     return (
       <CardUserSelect
         user={user}
-        key={i}
+        key={user.id}
         usersSelected={usersSelected}
         selectUser={this.selectUser.bind(this)}
       />
@@ -155,9 +159,14 @@ class NewConversation extends React.Component {
   }
   pickMembers(usersSelected) {
     const {contacts} = this.state;
-    const {currentHeight} = this.props.currentScreenSize;
+    const {
+      currentHeight,
+      portrait,
+      currentWidth,
+    } = this.props.currentScreenSize;
+    const marginTop = portrait ? marginTopApp : marginTopAppLanscape;
     return (
-      <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
+      <View style={{marginTop: heightHeaderHome + marginTop}}>
         <View style={styleApp.marginView}>
           {this.switch('GameFare', 'Contacts', 'contacts', async (val) => {
             await this.setState({contacts: val});
@@ -165,33 +174,31 @@ class NewConversation extends React.Component {
           })}
         </View>
         {this.searchInput()}
-        {contacts ? (
-          <ListContacts
-            selectUser={(selected, user, selectedUsers) =>
-              this.selectUser(selected, user, selectedUsers)
-            }
-            onRef={(ref) => (this.listContactRef = ref)}
-            usersSelected={usersSelected}
-            selectContact={(contact) => true}
-          />
-        ) : (
-          <View>
-            <ScrollView
-              keyboardShouldPersistTaps={'always'}
-              style={[styles.scrollViewUsers, {minHeight: currentHeight}]}>
-              {this.state.loader ? (
-                <View style={[styleApp.center, {height: 200}]}>
-                  <Loader size={35} color={'green'} />
-                </View>
-              ) : (
-                this.state.users.map((user, i) =>
-                  this.cardUser(user, i, usersSelected),
-                )
-              )}
-              <View style={{height: 300}} />
-            </ScrollView>
-          </View>
-        )}
+        <View>
+          <ScrollView
+            keyboardShouldPersistTaps={'always'}
+            style={[styles.scrollViewUsers, {minHeight: currentHeight}]}>
+            {this.state.loader ? (
+              <View style={[styleApp.center, {height: 200}]}>
+                <Loader size={35} color={'green'} />
+              </View>
+            ) : contacts ? (
+              <ListContacts
+                selectUser={(selected, user, selectedUsers) =>
+                  this.selectUser(selected, user, selectedUsers)
+                }
+                onRef={(ref) => (this.listContactRef = ref)}
+                usersSelected={usersSelected}
+                selectContact={(contact) => true}
+              />
+            ) : (
+              this.state.users.map((user, i) =>
+                this.cardUser(user, i, usersSelected),
+              )
+            )}
+            <View style={{height: currentWidth}} />
+          </ScrollView>
+        </View>
       </View>
     );
   }

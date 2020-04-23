@@ -111,7 +111,7 @@ export default class ScrollViewX extends PureComponent {
           <Button
             view={() => {
               return (
-                <View style={styleApp.center}>
+                <View style={styleApp.center4}>
                   {this.props.imageNoEvent === 'location' ? (
                     <Image
                       source={require('../../../img/images/location.png')}
@@ -120,13 +120,13 @@ export default class ScrollViewX extends PureComponent {
                   ) : this.props.imageNoEvent === 'group' ? (
                     <Image
                       source={require('../../../img/images/shelve.png')}
-                      style={{width: 45, height: 45, marginBottom: 15}}
+                      style={{width: 55, height: 55, marginBottom: 15}}
                     />
                   ) : null}
                   <Text
                     style={[
                       styleApp.text,
-                      {marginTop: 5, fontSize: 12},
+                      {marginTop: 5, fontSize: 14},
                       styleButtonEmpty && styleButtonEmpty.text,
                     ]}>
                     {this.props.messageNoEvent}

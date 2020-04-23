@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
-import {Platform, StyleSheet, Text, Animated, View} from 'react-native';
+import {StyleSheet, Text, Animated, View} from 'react-native';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
 import sizes, {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
@@ -17,9 +17,9 @@ class HeaderBackButton extends Component {
     this.state = {
       enableClickButton: true,
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
-  componentWillMount() {
+  componentDidMount() {
     const {loaderOn} = this.props;
     if (loaderOn) {
       this.props.onRef(this);
@@ -129,15 +129,15 @@ class HeaderBackButton extends Component {
       sizeIconOffset,
       typeIconOffset,
     } = this.props;
+    console.log('');
     const {borderColorIcon} = this.animatedValues();
-    if (clickButtonOffset)
+    if (iconOffset)
       return (
         <Animated.View
           style={[
             styleButton,
             {
               borderColor: borderColorIcon,
-
               backgroundColor: backgroundColorIcon1
                 ? backgroundColorIcon1
                 : colors.white,
@@ -237,7 +237,7 @@ class HeaderBackButton extends Component {
       );
   }
   render() {
-    const {imgHeader, currentScreenSize} = this.props;
+    const {imgHeader, currentScreenSize, opacityHeader} = this.props;
     const {portrait} = currentScreenSize;
     const marginTop = portrait ? marginTopApp : marginTopAppLanscape;
 
@@ -248,18 +248,18 @@ class HeaderBackButton extends Component {
       borderWidth,
     } = this.animatedValues();
 
+    const styleHeader = {
+      ...styles.header,
+      backgroundColor: AnimateBackgroundView,
+      marginTop: marginTop,
+      opacity: opacityHeader ? opacityHeader : 1,
+      borderBottomWidth: borderWidth,
+      borderColor: borderColorView,
+      width: '100%',
+    };
+
     return (
-      <Animated.View
-        style={[
-          styles.header,
-          {
-            backgroundColor: AnimateBackgroundView,
-            marginTop: marginTop,
-            borderBottomWidth: borderWidth,
-            borderColor: borderColorView,
-            width: '100%',
-          },
-        ]}>
+      <Animated.View style={styleHeader}>
         <Row>
           <View style={styles.rowTextHeader}>
             <Animated.Text
@@ -293,7 +293,6 @@ const styles = StyleSheet.create({
   },
   header: {
     height: sizes.heightHeaderHome,
-    //   paddingTop: sizes.marginTopHeader - 5,
     paddingLeft: '5%',
     paddingRight: '5%',
     borderBottomWidth: 1,

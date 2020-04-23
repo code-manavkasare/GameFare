@@ -10,12 +10,12 @@ import {
   Dimensions,
   RefreshControl,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
 
-const {height, width} = Dimensions.get('screen');
-
-export default class ScrollViewPage extends PureComponent {
+class ScrollViewPage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,13 +28,16 @@ export default class ScrollViewPage extends PureComponent {
     this.props.onRef(this);
   }
   styleScrollView() {
+    let {marginTop, currentScreenSize} = this.props;
+    let {portrait} = currentScreenSize;
+    const marginTopAdded = portrait ? marginTopApp : marginTopAppLanscape;
     return {
-      marginTop: this.props.marginTop,
+      marginTop: marginTop + marginTopAdded,
     };
   }
   styleInsideView() {
     if (this.props.fullWidth) return {paddingTop: 0};
-    return {marginLeft: 20, width: width - 40, paddingTop: 20};
+    return {marginLeft: '5%', width: '90%', paddingTop: '5%'};
   }
   async refresh() {
     this.setState({refreshing: true});
@@ -75,10 +78,9 @@ export default class ScrollViewPage extends PureComponent {
           {
             nativeEvent: {
               contentOffset: {
-                y:
-                  !this.props.AnimatedHeaderValue
-                    ? this.AnimatedHeaderValue
-                    : this.props.AnimatedHeaderValue,
+                y: !this.props.AnimatedHeaderValue
+                  ? this.AnimatedHeaderValue
+                  : this.props.AnimatedHeaderValue,
               },
             },
           },
@@ -93,16 +95,13 @@ export default class ScrollViewPage extends PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  content: {
-    height: height,
-    width: width,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
-});
+const mapStateToProps = (state) => {
+  return {
+    currentScreenSize: state.layout.currentScreenSize,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(ScrollViewPage);
