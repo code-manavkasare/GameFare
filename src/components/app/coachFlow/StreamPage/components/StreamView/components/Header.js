@@ -37,7 +37,14 @@ class HeaderStreamView extends Component {
     });
   };
   header() {
-    const {coachSession, userID, open, setState, state} = this.props;
+    const {
+      coachSession,
+      userID,
+      open,
+      setState,
+      state,
+      opacityHeader,
+    } = this.props;
     const {isConnected} = state;
     return (
       <HeaderBackButton
@@ -46,13 +53,14 @@ class HeaderStreamView extends Component {
         colorLoader={'white'}
         colorIcon1={colors.white}
         sizeLoader={40}
-        sizeIcon1={22}
+        sizeIcon1={18}
+        opacityHeader={opacityHeader}
         nobackgroundColorIcon1={true}
-        backgroundColorIcon1={'transparent'}
-        backgroundColorIcon2={'transparent'}
-        backgroundColorIconOffset={'transparent'}
+        backgroundColorIcon1={colors.greyDark + '70'}
+        backgroundColorIcon2={colors.greyDark + '70'}
+        backgroundColorIconOffset={colors.greyDark + '70'}
         initialBorderColorIcon={'transparent'}
-        sizeIconOffset={27}
+        sizeIconOffset={23}
         icon1={'chevron-down'}
         icon2={isConnected && 'switchCam'}
         typeIconOffset="mat"

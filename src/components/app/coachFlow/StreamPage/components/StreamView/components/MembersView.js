@@ -6,9 +6,10 @@ import {Col, Row} from 'react-native-easy-grid';
 import ImageUser from '../../../../../../layout/image/ImageUser';
 import {coachAction} from '../../../../../../../actions/coachActions';
 
-import sizes from '../../../../../../style/sizes';
+import sizes, {marginTopApp} from '../../../../../../style/sizes';
 import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
+import {navigate} from '../../../../../../../../NavigationService';
 
 class MembersView extends Component {
   constructor(props) {
@@ -19,7 +20,13 @@ class MembersView extends Component {
     return (
       <Row key={i} style={styles.button}>
         <Col style={styleApp.center2} size={40}>
-          <ImageUser user={member} />
+          <ImageUser
+            user={member}
+            onClick={() => {
+              console.log('click img user 2');
+              navigate('ProfilePage', {user: member});
+            }}
+          />
         </Col>
         <Col style={styleApp.center2} size={60}>
           <Text style={[styleApp.text, {color: colors.white}]}>
@@ -41,7 +48,13 @@ class MembersView extends Component {
         <View style={styles.rowImgCard}>
           {members.map((member, i) => (
             <View key={i} style={styles.colImg}>
-              <ImageUser user={member} />
+              <ImageUser
+                user={member}
+                onClick={() => {
+                  console.log('click img user 1');
+                  navigate('ProfilePage', {user: member});
+                }}
+              />
             </View>
           ))}
         </View>
@@ -66,10 +79,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: colors.transparentGrey,
     borderRadius: 4,
-    left: 20,
+    left: '5%',
 
-    zIndex: 5,
-    top: sizes.heightHeaderHome + 10,
+    zIndex: 2,
+    top: sizes.heightHeaderHome + marginTopApp + 10,
     width: 130,
   },
   rowImgCard: {

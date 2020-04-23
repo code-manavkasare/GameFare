@@ -30,11 +30,8 @@ export default class Alert extends Component {
     this.opacityVoile = new Animated.Value(0);
   }
   async componentDidMount() {
-    await timeout(230);
+    await timeout(300);
     this.openVoile(true);
-  }
-  componentWillUnmount() {
-    this.openVoile(false);
   }
   openVoile(val) {
     Animated.timing(this.opacityVoile, timing(val ? 1 : 0, 200)).start();

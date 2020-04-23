@@ -48,15 +48,17 @@ class WatchVideoPage extends Component {
   }
   async open(videoData) {
     const {watchVideo, source, thumbnail, myVideo, archiveID} = videoData;
-    const that = this;
-    if (watchVideo)
-      await that.setState({
+    const {currentWidth} = this.props.currentScreenSize;
+    if (watchVideo) {
+      await this.translateXPage.setValue(0);
+      await this.setState({
         videoSource: source,
         watchVideo: true,
         thumbnail: thumbnail,
         myVideo: myVideo,
         archiveID: archiveID,
       });
+    }
     Animated.parallel([
       Animated.spring(
         this.translateYPage,
@@ -64,7 +66,8 @@ class WatchVideoPage extends Component {
       ),
     ]).start(async () => {
       if (!watchVideo) {
-        that.setState({
+        this.translateXPage.setValue(currentWidth);
+        this.setState({
           watchVideo: false,
           videoSource: false,
           thumbnail: false,
@@ -124,7 +127,7 @@ class WatchVideoPage extends Component {
           sizeLoader={40}
           sizeIcon1={21}
           nobackgroundColorIcon1={true}
-          backgroundColorIcon1={'transparent'}
+          backgroundColorIcon1={colors.off + '60'}
           initialBorderColorIcon={'transparent'}
           icon1="times"
           initialTitleOpacity={1}
@@ -138,7 +141,6 @@ class WatchVideoPage extends Component {
           setState={this.setState.bind(this)}
           openVideo={(videoData) => this.open(videoData)}
         />
-        
 
         {videoSource && (
           <VideoPlayer

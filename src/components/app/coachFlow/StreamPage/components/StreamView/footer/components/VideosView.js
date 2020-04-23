@@ -161,12 +161,11 @@ class VideoViews extends Component {
         style={{
           height: heightView,
           width: '100%',
-          //  backgroundColor: colors.transparentGrey,
         }}>
         <Row>
           {displayInitialButtons && this.colInitialButtons()}
           <Col size={85}>
-            <PastSessions openVideo={openVideo} />
+            <PastSessions openVideo={(videoData) => openVideo(videoData)} />
           </Col>
         </Row>
       </Animated.View>

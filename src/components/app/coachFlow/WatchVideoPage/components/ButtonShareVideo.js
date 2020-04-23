@@ -49,16 +49,23 @@ class ButtonShareVideo extends Component {
         thumbnail: stateVideo.placeHolderImg,
       };
 
-      let updates = {};
-      updates[`coachSessions/${objectID}/sharedVideos/${archiveID}`] = video;
-      updates[`coachSessions/${objectID}/members/${userID}`] = {
-        shareScreen: true,
-        videoIDSharing: archiveID,
-      };
+      // let updates = {};
+      // updates[`coachSessions/${objectID}/sharedVideos/${archiveID}`] = video;
+      // updates[`coachSessions/${objectID}/members/${userID}`] = {
+      //   shareScreen: true,
+      //   videoIDSharing: archiveID,
+      // };
       await firebase
         .database()
-        .ref()
-        .update(updates);
+        .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}`)
+        .update(video);
+      await firebase
+        .database()
+        .ref(`coachSessions/${objectID}/members/${userID}`)
+        .update({
+          shareScreen: true,
+          videoIDSharing: archiveID,
+        });
     } else {
       await firebase
         .database()

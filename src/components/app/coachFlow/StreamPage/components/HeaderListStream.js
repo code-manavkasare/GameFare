@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Text, View, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
+import firebase from 'react-native-firebase';
 
 import {createCoachSession} from '../../../../functions/coach';
 import {coachAction} from '../../../../../actions/coachActions';
@@ -60,14 +61,21 @@ class HeaderListStream extends Component {
                   id: userID,
                   info: infoUser,
                 });
-
-                this.setState({loader: false});
-                coachAction('setSessionInfo', {
+                await coachAction('setSessionInfo', {
                   objectID: objectID,
                   autoOpen: true,
                 });
+                await firebase
+                  .database()
+                  .ref(`users/${userID}/coachSessions/${objectID}`)
+                  .set({
+                    id: objectID,
+                    timestamp: Date.now(),
+                  });
+
+                this.setState({loader: false});
               }}
-              onPressColor={colors.greenLight2}
+              onPressColor={colors.greenClick}
             />
           </Col>
         )}

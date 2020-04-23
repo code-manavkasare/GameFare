@@ -29,7 +29,6 @@ class ScrollViewPage extends Component {
     let {portrait} = currentScreenSize;
     const marginTopAdded = portrait ? marginTopApp : marginTopAppLanscape;
     if (!marginTop) marginTop = 0;
-    console.log('marginTop + marginTopAdded', marginTop, marginTopAdded);
     return {
       marginTop: marginTop + marginTopAdded,
       marginBottom: marginBottomScrollView ? marginBottomScrollView : 0,
@@ -102,6 +101,7 @@ class ScrollViewPage extends Component {
     );
   }
 }
+
 
 const mapStateToProps = (state) => {
   return {
