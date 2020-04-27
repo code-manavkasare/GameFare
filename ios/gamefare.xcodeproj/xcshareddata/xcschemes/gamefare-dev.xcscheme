@@ -23,22 +23,6 @@
             </ActionContent>
          </ExecutionAction>
       </PreActions>
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "054C598F23EDA04F006D67F4"
-               BuildableName = "GameFare-dev.app"
-               BlueprintName = "gamefare-dev"
-               ReferencedContainer = "container:gamefare.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
