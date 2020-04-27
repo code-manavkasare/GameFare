@@ -189,8 +189,12 @@ PODS:
     - libwebp/webp
   - libwebp/mux (1.1.0):
     - libwebp/demux
-  - libwebp/webp (1.1.0)
-  - Mixpanel (3.6.0)
+  - libwebp/webp (1.0.3)
+  - lottie-ios (3.1.3)
+  - lottie-react-native (3.3.2):
+    - lottie-ios (~> 3.1.3)
+    - React
+  - Mixpanel (3.5.0)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
@@ -647,6 +651,8 @@ DEPENDENCIES:
   - gamefare-camera-kit (from `../node_modules/gamefare-camera-kit`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - GPUImage (from `https://github.com/BunHouth/GPUImage.git`)
+  - lottie-ios (from `../node_modules/lottie-ios`)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - opentok-react-native (from `../node_modules/opentok-react-native`)
   - Permission-BluetoothPeripheral (from `../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec`)
   - Permission-Calendars (from `../node_modules/react-native-permissions/ios/Calendars.podspec`)
@@ -805,6 +811,10 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   GPUImage:
     :git: https://github.com/BunHouth/GPUImage.git
+  lottie-ios:
+    :path: "../node_modules/lottie-ios"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   opentok-react-native:
     :path: "../node_modules/opentok-react-native"
   Permission-BluetoothPeripheral:
@@ -1028,8 +1038,10 @@ SPEC CHECKSUMS:
   GPUImage: d34c2d8ce12c9d7eb7e4f5017e1a7dd2eb0abc70
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
-  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
-  Mixpanel: 446b6e7713aa34a9a3516ff7648d56551384fc94
+  libwebp: 057912d6d0abfb6357d8bb05c0ea470301f5d61e
+  lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
+  lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
+  Mixpanel: 399997670f5452de026449f9e9ecd52eccbb9ff7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   NodeMediaClient: abfa3d21e314e6577c6adbed0a7c5395d47c9f55
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355

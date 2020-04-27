@@ -21,7 +21,6 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import BackButton from '../../layout/buttons/BackButton';
 
 import RNFetchBlob from 'rn-fetch-blob';
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;

@@ -21,7 +21,6 @@ import ButtonColor from '../../layout/Views/Button';
 
 import styleApp from '../../style/style';
 import sizes from '../../style/sizes';
-import BackButton from '../../layout/buttons/BackButton';
 const ListCountry = require('./country.json');
 
 import RNFS from 'react-native-fs';

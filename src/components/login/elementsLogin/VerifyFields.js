@@ -124,7 +124,7 @@ class VerifyFields extends Component {
     if (this.state.loader)
       return (
         <View style={[styles.center, {marginTop: 10}]}>
-          <Loader color={'green'} size={27} />
+          <Loader color={colors.green} size={40} type={2} />
         </View>
       );
     return null;

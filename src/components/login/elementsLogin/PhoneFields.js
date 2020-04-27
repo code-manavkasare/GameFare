@@ -194,7 +194,7 @@ class PhoneFields extends Component {
               <ButtonColor
                 view={() => {
                   if (this.state.loader)
-                    return <Loader color="white" size={25} />;
+                    return <Loader color={colors.white} size={40} type={2} />;
                   return (
                     <AllIcons
                       name="arrow-forward"

@@ -7,8 +7,8 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-
 import {Col, Row, Grid} from 'react-native-easy-grid';
+
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';

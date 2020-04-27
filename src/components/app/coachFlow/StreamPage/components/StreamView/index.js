@@ -333,7 +333,7 @@ class StreamPage extends Component {
             {text}
           </Text>
         )}
-        {!hideLoader && <Loader size={34} color={'white'} />}
+        {!hideLoader && <Loader size={40} color={colors.white} />}
       </FadeInView>
     );
   }

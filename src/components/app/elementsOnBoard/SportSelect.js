@@ -85,12 +85,12 @@ class InitialPage extends Component {
   }
   sportPage() {
     return (
-      <FadeInView duration={200} style={{height: height, paddingTop: 20}}>
+      <FadeInView duration={200} style={{minHeight: height}}>
         <View style={[styleApp.marginView]}>
-          <Text style={[styleApp.input, {marginTop: 20, fontSize: 24}]}>
+          <Text style={[styleApp.input, {fontSize: 24, marginBottom: 5}]}>
             Welcome to GameFare!
           </Text>
-          <Text style={styles.subtitle}>
+          <Text style={styleApp.subtitle}>
             Pick your sport, join groups and find events.
           </Text>
         </View>
@@ -185,4 +185,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(InitialPage);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(InitialPage);

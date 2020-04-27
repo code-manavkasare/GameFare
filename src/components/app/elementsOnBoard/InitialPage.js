@@ -29,17 +29,13 @@ class InitialPage extends Component {
       .ref('variables')
       .once('value');
     variables = variables.val();
-    console.log('variables', variables);
     await this.props.globaleVariablesAction(variables);
     await this.goToHomePageDirectlyFromRefLink();
-
     await StatusBar.setBarStyle('dark-content', true);
     await StatusBar.setHidden(false, true);
-
     if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
       return this.props.navigation.navigate('TabsApp');
     }
-
     return this.props.navigation.navigate('SportSelect');
   }
 
@@ -87,31 +83,30 @@ class InitialPage extends Component {
   };
 
   loader() {
+    const {currentWidth, currentHeight} = this.props.currentScreenSize;
     return (
-      <FadeInView duration={200} style={[styleApp.center, {height: height}]}>
+      <FadeInView
+        duration={200}
+        style={[styleApp.center, {height: currentHeight}]}>
         <View
           style={[
             styleApp.center,
-            {height: 70, width: width, marginBottom: 0},
+            {height: 100, width: currentWidth, marginBottom: 0},
           ]}>
           <Animated.Image
-            style={{width: 35, height: 35, position: 'absolute'}}
+            style={{width: 40, height: 40, position: 'absolute'}}
             source={require('../../../img/logos/logoWhite.png')}
           />
-          {/* <Animated.Text style={[styleApp.title,{color:'white',transform:[{translateX:this.translateXText}]}]}>GameFare</Animated.Text> */}
         </View>
         <View style={{position: 'absolute'}}>
-          <Loader color="white" size={60} />
+          <Loader color={colors.white} size={100} type={2} speed={2.2} />
         </View>
       </FadeInView>
     );
   }
   render() {
     return (
-      <View
-        style={[
-          {borderLeftWidth: 0, backgroundColor: colors.blue, height: height},
-        ]}>
+      <View style={[{backgroundColor: colors.blue, height: height}]}>
         {this.loader()}
       </View>
     );
@@ -123,6 +118,7 @@ const mapStateToProps = (state) => {
     variables: state.globaleVariables,
     sportSelected: state.historicSearch.sport,
     leagueSelected: state.historicSearch.league,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

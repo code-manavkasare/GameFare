@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  Dimensions,
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  Animated,
-} from 'react-native';
+import {Dimensions, View, StyleSheet, Text, Animated} from 'react-native';
 import {connect} from 'react-redux';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -14,6 +7,7 @@ import CardUserSelect from '../../../layout/cards/CardUserSelect';
 import Loader from '../../../layout/loaders/Loader';
 import {getBlockedUsers} from '../../../database/algolia';
 import {blockUnblockUser} from '../../../database/firebase/users';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
@@ -73,17 +67,32 @@ class BlockedUsersList extends Component {
       />
     );
   }
+  blockUsers() {
+    const {blockedUsers, selectedUsers, loader} = this.state;
+    if (loader)
+      return (
+        <View style={[styleApp.center, {minHeight: '100%'}]}>
+          <Loader size={35} color={'green'} />
+        </View>
+      );
+    if (blockedUsers.length === 0)
+      return (
+        <Text style={[styleApp.text, {marginLeft: 20, marginTop: 20}]}>
+          You have not blocked any user.
+        </Text>
+      );
+    if (blockedUsers)
+      return blockedUsers.map((user, i) =>
+        this.cardUser(user, i, selectedUsers),
+      );
+    return null;
+  }
 
   render() {
-    const {blockedUsers, selectedUsers, loader} = this.state;
+    const {loader} = this.state;
     const {goBack} = this.props.navigation;
-
     return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          flex: 1,
-        }}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Blocked Users'}
@@ -101,35 +110,21 @@ class BlockedUsersList extends Component {
           clickButton1={() => goBack()}
           clickButton2={() => this.unblockUser()}
         />
-        <ScrollView style={styles.scrollViewUsers}>
-          {loader && (
-            <View style={[styleApp.center, {height: 200}]}>
-              <Loader size={35} color={'green'} />
-            </View>
-          )}
-          {!loader &&
-            blockedUsers &&
-            blockedUsers.map((user, i) =>
-              this.cardUser(user, i, selectedUsers),
-            )}
-          {!loader && blockedUsers.length === 0 && (
-            <Text style={[styleApp.text, {marginLeft: 20, marginTop: 20}]}>
-              You have not blocked any user.
-            </Text>
-          )}
-          <View style={{height: 300}} />
-        </ScrollView>
+
+        <ScrollView
+          onRef={(ref) => (this.scrollViewRef = ref)}
+          contentScrollView={this.blockUsers.bind(this)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginBottomScrollView={0}
+          refreshControl={false}
+          marginTop={sizes.heightHeaderHome}
+          offsetBottom={sizes.heightFooter + 40}
+          showsVerticalScrollIndicator={true}
+        />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  scrollViewUsers: {
-    paddingTop: sizes.heightHeaderHome,
-    minHeight: height,
-  },
-});
 
 const mapStateToProps = (state) => {
   return {
@@ -138,4 +133,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(BlockedUsersList);
+export default connect(
+  mapStateToProps,
+  {},
+)(BlockedUsersList);

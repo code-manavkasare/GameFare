@@ -5,6 +5,11 @@ const {height, width} = Dimensions.get('screen');
 const initialState = {
   isFooterVisible: true,
   activeTab: 'Profile',
+  notification: {
+    notification: {
+      image: '',
+    },
+  },
   currentScreenSize: {
     currentWidth: width,
     currentHeight: height,

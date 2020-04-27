@@ -31,7 +31,8 @@ export default {
 
   off: '#eaeaea',
   off2: '#FAFAFA',
-  white: 'white',
+  white: '#FFFFFF',
+
   inputOff: '#C4C4C6',
 
   borderColor: '#A7A7AA',
