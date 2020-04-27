@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import ramda from 'ramda';
 import Toast from 'react-native-easy-toast';
 import PropTypes from 'prop-types';
@@ -270,23 +270,19 @@ class AddGroups extends Component {
           updatesGroup['/events/' + objectID] = true;
           updatesEvent['/groups/' + group.objectID] = true;
 
-          await firebase
-            .database()
+          await database()
             .ref('groups/' + group.objectID)
             .update(updatesGroup);
 
-          await firebase
-            .database()
+          await database()
             .ref('events/' + objectID)
             .update(updatesEvent);
         } else if (!hasGroup(selectedGroups)) {
-          await firebase
-            .database()
+          await database()
             .ref('groups/' + group.objectID + '/events/' + objectID)
             .remove();
 
-          await firebase
-            .database()
+          await database()
             .ref('events/' + objectID + '/groups/' + group.objectID)
             .remove();
         }
@@ -295,13 +291,11 @@ class AddGroups extends Component {
           updatesGroup['/groups/' + objectID] = true;
           updatesEvent['/groups/' + group.objectID] = true;
 
-          await firebase
-            .database()
+          await database()
             .ref('groups/' + objectID)
             .update(updatesEvent);
         } else if (!hasGroup(selectedGroups)) {
-          await firebase
-            .database()
+          await database()
             .ref('groups/' + objectID + '/groups/' + group.objectID)
             .remove();
         }

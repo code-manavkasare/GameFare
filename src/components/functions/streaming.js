@@ -1,5 +1,5 @@
 import {rotateImage, uploadPictureFirebase} from '../functions/pictures';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import axios from 'axios';
 import Permissions from 'react-native-permissions';
 
@@ -60,8 +60,7 @@ async function createStreamMux() {
   return stream;
 }
 async function createStreamFirebase(stream) {
-  await firebase
-    .database()
+  await database()
     .ref('streams/' + stream.id + '/')
     .set(stream)
     .catch((error) => {
@@ -71,8 +70,7 @@ async function createStreamFirebase(stream) {
 }
 
 async function saveStreamResultsMatches(stream, matches, done) {
-  await firebase
-    .database()
+  await database()
     .ref('streams/' + stream.id + '/liveballResults')
     .update({matches: matches, organized: done})
     .catch((error) => {
@@ -87,8 +85,7 @@ async function destroyStream(streamID, saveFirebase) {
   }
 }
 async function destroyStreamFirebase(streamID) {
-  await firebase
-    .database()
+  await database()
     .ref('streams/' + streamID + '/')
     .remove()
     .catch(function(error) {
@@ -123,29 +120,33 @@ const goToSettings = () => {
   Permissions.openSettings();
 };
 
-async function uploadNetlinePhoto(streamID, img, orientation, cameraCondition, cameraOrientation) {
+async function uploadNetlinePhoto(
+  streamID,
+  img,
+  orientation,
+  cameraCondition,
+  cameraOrientation,
+) {
   let rotatedImage = img;
   if (orientation === 'LANDSCAPE-LEFT') {
     rotatedImage = await rotateImage(img.uri, img.height, img.width, 90);
   } else if (orientation === 'LANDSCAPE-RIGHT') {
     rotatedImage = await rotateImage(img.uri, img.height, img.width, 270);
-  }  
-  await firebase
-    .database()
+  }
+  await database()
     .ref('streams/' + streamID + '/')
     .update({
       courtConditions: cameraCondition,
-      cameraOrientation: cameraOrientation
+      cameraOrientation: cameraOrientation,
     });
   const pictureUri = await uploadPictureFirebase(
     rotatedImage.uri,
     'streams/' + streamID + '/',
   );
-  await firebase
-    .database()
+  await database()
     .ref('streams/' + streamID + '/')
     .update({
-      netlinePhoto: pictureUri
+      netlinePhoto: pictureUri,
     });
 }
 

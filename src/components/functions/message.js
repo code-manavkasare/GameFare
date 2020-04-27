@@ -1,4 +1,4 @@
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import moment from 'moment';
 import {includes} from 'ramda';
 import {indexDiscussions, client} from '../database/algolia';
@@ -48,8 +48,7 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
     firstMessageExists,
   );
 
-  const {key} = await firebase
-    .database()
+  const {key} = await database()
     .ref('discussions/')
     .push(newDiscussion);
   newDiscussion.objectID = key;
@@ -58,8 +57,7 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
 }
 
 async function sendNewMessage(discusssionID, user, text, images) {
-  await firebase
-    .database()
+  await database()
     .ref('discussions/' + discusssionID + '/messages')
     .push({
       user: user,

@@ -1,11 +1,8 @@
-import React, {Component} from 'react';
 import {Platform, PermissionsAndroid} from 'react-native';
-import firebase from 'react-native-firebase';
+import storage from '@react-native-firebase/storage';
 import CameraRoll from '@react-native-community/cameraroll';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
-import {ProcessingManager} from 'react-native-video-processing';
-// import RNVideoHelper from 'react-native-video-helper';
 
 import ImageResizer from 'react-native-image-resizer';
 
@@ -99,8 +96,7 @@ async function pickLibrary() {
 async function uploadPictureFirebase(localUri, destination) {
   try {
     let imageName = 'groupPicture';
-    const imageRef = firebase
-      .storage()
+    const imageRef = storage()
       .ref(destination)
       .child(imageName);
     await imageRef.put(localUri, {contentType: 'image/jpg'});
@@ -115,8 +111,7 @@ async function uploadPictureFirebase(localUri, destination) {
 async function uploadVideoFirebase(image, destination) {
   try {
     let imageName = 'content.mp4';
-    const imageRef = firebase
-      .storage()
+    const imageRef = storage()
       .ref(destination)
       .child(imageName);
     await imageRef.put(image.uri, {contentType: 'video'});

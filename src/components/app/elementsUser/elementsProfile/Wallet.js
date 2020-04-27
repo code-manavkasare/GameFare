@@ -1,16 +1,9 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
 const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
+
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import axios from 'axios';
 
@@ -36,13 +29,12 @@ class ListEvent extends Component {
     this.loadTransfers();
   }
   async loadTransfers() {
-    let listTransfers = await firebase
-      .database()
+    let listTransfers = await database()
       .ref('usersTransfers/' + this.props.userID)
       .once('value');
     listTransfers = listTransfers.val();
     if (!listTransfers) listTransfers = [];
-    listTransfers = Object.values(listTransfers).sort(function (a, b) {
+    listTransfers = Object.values(listTransfers).sort(function(a, b) {
       return new Date(b.date) - new Date(a.date);
     });
     return this.setState({
@@ -112,7 +104,9 @@ class ListEvent extends Component {
     });
   }
   async confirmWithdraw(amount, tokenBankAccount, connectAccountToken) {
-    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}withdrawToBankAccount`;
+    const urlCreateUserConnectAccount = `${
+      Config.FIREBASE_CLOUD_FUNCTIONS_URL
+    }withdrawToBankAccount`;
     const {userID, wallet} = this.props;
     let {data} = await axios.get(urlCreateUserConnectAccount, {
       params: {
@@ -188,4 +182,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import PropTypes from 'prop-types';
 import Video from 'react-native-video';
 
@@ -46,8 +46,7 @@ export default class CardArchive extends Component {
       this.setState({archive: false});
   }
   async loadArchive(archiveID) {
-    let archive = await firebase
-      .database()
+    let archive = await database()
       .ref('archivedStreams/' + archiveID)
       .once('value');
     archive = archive.val();

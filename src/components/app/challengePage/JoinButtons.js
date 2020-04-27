@@ -12,7 +12,6 @@ import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 import {messageAction} from '../../../actions/messageActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
 
 import Button from '../../layout/buttons/Button';
 import colors from '../../style/colors';
@@ -105,6 +104,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction, messageAction})(
-  JoinButtons,
-);
+export default connect(
+  mapStateToProps,
+  {groupsAction, messageAction},
+)(JoinButtons);

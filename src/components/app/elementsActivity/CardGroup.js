@@ -5,7 +5,9 @@ import FadeInView from 'react-native-fade-in-view';
 import PropTypes from 'prop-types';
 
 import AsyncImage from '../../layout/image/AsyncImage';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
+import messaging from '@react-native-firebase/messaging';
+
 import NavigationService from '../../../../NavigationService';
 import {getZone} from '../../functions/location';
 
@@ -33,8 +35,7 @@ class CardGroup extends React.Component {
   getMembers = async () => {
     const {objectID: groupID} = this.props.groupData;
 
-    const groupMembersSnapshot = await firebase
-      .database()
+    const groupMembersSnapshot = await database()
       .ref(`groups/${groupID}/members`)
       .once('value');
     let groupMembers = groupMembersSnapshot.val();
@@ -80,7 +81,7 @@ class CardGroup extends React.Component {
       return NavigationService.navigate('SignIn');
     }
 
-    var tokenNotification = await firebase.messaging().getToken();
+    var tokenNotification = await messaging().getToken();
     if (!tokenNotification) tokenNotification = '';
     await subscribeUserToGroup(
       data.objectID,

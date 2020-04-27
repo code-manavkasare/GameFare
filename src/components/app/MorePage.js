@@ -6,7 +6,6 @@ import {
   Linking,
   Alert,
   Animated,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -15,7 +14,7 @@ import {coachAction} from '../../actions/coachActions';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
-import firebase from 'react-native-firebase';
+// import firebase from 'react-native-firebase';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
@@ -23,7 +22,6 @@ import NavigationService from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
-import Button from '../layout/buttons/Button';
 import ButtonColor from '../layout/Views/Button';
 import AsyncImage from '../layout/image/AsyncImage';
 
@@ -44,28 +42,28 @@ class MorePage extends Component {
   }
   async notificationHandler() {
     const {userID} = this.props;
-    this.appBackgroundNotificationListenner();
-    this.appOpenFistNotification();
-    this.messageListener = firebase
-      .notifications()
-      .onNotification((notification1) => {
-        const notification = new firebase.notifications.Notification()
-          .setNotificationId(notification1._notificationId)
-          .setTitle(notification1._title)
-          .setBody(notification1._body)
-          .setData(notification1._data);
-        if (userID !== notification.data.senderID)
-          firebase.notifications().displayNotification(notification);
-      });
+    // this.appBackgroundNotificationListenner();
+    // this.appOpenFistNotification();
+    // this.messageListener = firebase
+    //   .notifications()
+    //   .onNotification((notification1) => {
+    //     const notification = new firebase.notifications.Notification()
+    //       .setNotificationId(notification1._notificationId)
+    //       .setTitle(notification1._title)
+    //       .setBody(notification1._body)
+    //       .setData(notification1._data);
+    //     if (userID !== notification.data.senderID)
+    //       firebase.notifications().displayNotification(notification);
+    //   });
   }
 
   appBackgroundNotificationListenner() {
-    this.removeNotificationListener = firebase
-      .notifications()
-      .onNotificationOpened((notification) => {
-        const {data} = notification.notification;
-        this.navigate(data.action, data);
-      });
+    // this.removeNotificationListener = firebase
+    //   .notifications()
+    //   .onNotificationOpened((notification) => {
+    //     const {data} = notification.notification;
+    //     this.navigate(data.action, data);
+    //   });
   }
   async navigate(action, data) {
     if (action === 'Stream') {
@@ -79,13 +77,13 @@ class MorePage extends Component {
     return NavigationService.push(data.action, data);
   }
   async appOpenFistNotification() {
-    const notificationOpen = await firebase
-      .notifications()
-      .getInitialNotification();
-    if (notificationOpen) {
-      const {data} = notificationOpen.notification;
-      this.navigate(data.action, data);
-    }
+    // const notificationOpen = await firebase
+    //   .notifications()
+    //   .getInitialNotification();
+    // if (notificationOpen) {
+    //   const {data} = notificationOpen.notification;
+    //   this.navigate(data.action, data);
+    // }
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;

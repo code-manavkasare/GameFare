@@ -9,8 +9,10 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
+
 import {createChallengeAction} from '../../../actions/createChallengeActions';
-import firebase from 'react-native-firebase';
+
 import Slider from '@react-native-community/slider';
 import SwitchSelector from 'react-native-switch-selector';
 import FadeInView from 'react-native-fade-in-view';
@@ -262,13 +264,11 @@ class PickInfos extends Component {
       let updates = {};
       updates[`challenges/${objectID}`] = {teams: newTeams};
       updates[`challenges/${objectID}/info`] = {individual: !typeChallengeTeam};
-      await firebase
-        .database()
+      await database()
         .ref()
         .update(updates);
     } else {
-      await firebase
-        .database()
+      await database()
         .ref('challenges/' + objectID + '/teams/' + teamAdmin.id)
         .update(Object.values(newTeams)[0]);
     }

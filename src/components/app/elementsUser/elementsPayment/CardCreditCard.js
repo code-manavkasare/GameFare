@@ -1,23 +1,9 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import Header from '../../../layout/headers/HeaderButton';
-import ScrollView from '../../../layout/scrollViews/ScrollView';
 import AllIcons from '../../../layout/icons/AllIcons';
 
-import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import {cardIcon} from './iconCard';
 import ButtonColor from '../../../layout/Views/Button';
@@ -91,4 +77,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(CardCreditCard);
+export default connect(
+  mapStateToProps,
+  {},
+)(CardCreditCard);

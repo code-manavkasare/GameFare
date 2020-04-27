@@ -9,12 +9,13 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
+
 import {groupsAction} from '../../../actions/groupsActions';
 import {messageAction} from '../../../actions/messageActions';
 import {subscribeToTopics} from '../../functions/notifications';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
 import CardUser from '../elementsEventPage/CardUser';
 
 import ButtonColor from '../../layout/Views/Button';
@@ -227,12 +228,10 @@ class MembersView extends Component {
         data.discussions[0],
       );
     await this.props.groupsAction('deleteMyGroup', data.objectID);
-    await firebase
-      .database()
+    await database()
       .ref('groups/' + data.objectID + '/members/' + this.props.userID)
       .update({action: 'unsubscribed'});
-    await firebase
-      .database()
+    await database()
       .ref('groups/' + data.objectID + '/members/' + this.props.userID)
       .remove();
     await removeMemberDiscussion(data.discussions[0], this.props.userID);
@@ -336,6 +335,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction, messageAction})(
-  MembersView,
-);
+export default connect(
+  mapStateToProps,
+  {groupsAction, messageAction},
+)(MembersView);

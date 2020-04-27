@@ -1,16 +1,8 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, TouchableOpacity, Animated} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
+
 import {Col, Row} from 'react-native-easy-grid';
 import axios from 'axios';
 import Config from 'react-native-config';
@@ -130,8 +122,7 @@ class ListEvent extends Component {
       if (dataCard.id === this.props.defaultCard.id) {
         return this.props.navigation.goBack();
       } else {
-        await firebase
-          .database()
+        await database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .update(dataCard);
         return this.props.navigation.goBack();
@@ -152,21 +143,18 @@ class ListEvent extends Component {
     });
     if (results.data.response) {
       if (!this.props.cards) {
-        await firebase
-          .database()
+        await database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .remove();
       } else if (
         dataCard.id === this.props.defaultCard.id &&
         Object.values(this.props.cards).length > 0
       ) {
-        await firebase
-          .database()
+        await database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .update(Object.values(this.props.cards)[0]);
       } else if (dataCard.id === this.props.defaultCard.id) {
-        await firebase
-          .database()
+        await database()
           .ref('users/' + this.props.userID + '/wallet/defaultCard/')
           .remove();
       }

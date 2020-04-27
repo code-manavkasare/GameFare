@@ -1,4 +1,4 @@
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import axios from 'axios';
 import {keys} from 'ramda';
 import moment from 'moment';
@@ -22,16 +22,14 @@ function generateID() {
 }
 
 async function addMemberDiscussion(discussionID, member) {
-  await firebase
-    .database()
+  await database()
     .ref('discussions/' + discussionID + '/members/' + member.id)
     .update(member);
   return true;
 }
 
 async function removeMemberDiscussion(discussionID, userID) {
-  await firebase
-    .database()
+  await database()
     .ref('discussions/' + discussionID + '/members/' + userID)
     .remove();
   return true;
@@ -70,8 +68,7 @@ async function createEventObj(data, userID, infoUser, level, groups) {
 
 async function pushEventToGroups(groups, eventID) {
   for (var i in keys(groups)) {
-    await firebase
-      .database()
+    await database()
       .ref('groups/' + keys(groups)[i] + '/events')
       .update({
         [eventID]: true,
@@ -92,8 +89,7 @@ async function createEvent(data, userID, infoUser, level) {
   event.images = [pictureUri];
   const discussionID = generateID();
   event.discussions = [discussionID];
-  const {key} = await firebase
-    .database()
+  const {key} = await database()
     .ref('events')
     .push(event);
   event.eventID = key;
@@ -112,8 +108,7 @@ async function createEvent(data, userID, infoUser, level) {
     },
   );
 
-  await firebase
-    .database()
+  await database()
     .ref()
     .update(updates);
 
@@ -263,8 +258,7 @@ async function joinEvent(
       ...usersToPush,
       [user.id]: user,
     };
-    await firebase
-      .database()
+    await database()
       .ref('events/' + data.objectID + '/' + pushSection + '/' + users[i].id)
       .update(user);
     if (user.status === 'confirmed') {

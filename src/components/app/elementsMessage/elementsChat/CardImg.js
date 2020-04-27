@@ -1,33 +1,21 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  Image,
-  ScrollView,
-  Animated,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import Video from 'react-native-af-video-player';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import ButtonColor from '../../../layout/Views/Button';
-const {height, width} = Dimensions.get('screen');
 
 import AsyncImage from '../../../layout/image/AsyncImage';
 import Loader from '../../../layout/loaders/Loader';
-import AllIcons from '../../../layout/icons/AllIcons';
 import {
   uploadPictureFirebase,
   uploadVideoFirebase,
   resize,
 } from '../../../functions/pictures';
-import FadeInView from 'react-native-fade-in-view';
 
 export default class CardContent extends React.Component {
   constructor(props) {
@@ -82,8 +70,7 @@ export default class CardContent extends React.Component {
     }
 
     if (newImgUrl && newImgUrl !== '')
-      await firebase
-        .database()
+      await database()
         .ref(destinationImage)
         .update({
           uploaded: true,

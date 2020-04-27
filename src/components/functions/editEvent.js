@@ -1,4 +1,4 @@
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import moment from 'moment';
 
 // helpers for EventPage in edit mode
@@ -36,8 +36,7 @@ async function editEvent(updatedEvent, callback = () => {}) {
     date_timestamp: moment(updatedEvent.date.start).valueOf(),
     end_timestamp: moment(updatedEvent.date.end).valueOf(),
   };
-  await firebase
-    .database()
+  await database()
     .ref('events/' + updatedEvent.objectID + '/')
     .update(updatedEvent)
     .then(() => callback)
@@ -51,8 +50,7 @@ async function removePlayerFromEvent(player, event) {
   if (event.allAttendees) {
     let index = event.allAttendees.indexOf(player.id);
     if (index !== -1) {
-      await firebase
-        .database()
+      await database()
         .ref('events/' + event.objectID + '/allAttendees/' + index)
         .remove()
         .catch((err) => {
@@ -60,8 +58,7 @@ async function removePlayerFromEvent(player, event) {
         });
     }
   }
-  await firebase
-    .database()
+  await database()
     .ref('events/' + event.objectID + '/attendees/' + player.id)
     .remove()
     .catch((err) => {

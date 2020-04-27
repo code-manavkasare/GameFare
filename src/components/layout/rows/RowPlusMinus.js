@@ -1,18 +1,14 @@
 import React, {Component} from 'react';
-import {View, Text, Dimensions, StyleSheet} from 'react-native';
-import firebase from 'react-native-firebase';
+import {Text, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
 import {Col, Row} from 'react-native-easy-grid';
 
 import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
-import Loader from '../loaders/Loader';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import NavigationService from '../../../../NavigationService';
-
-const {width} = Dimensions.get('screen');
 
 export default class RowPlusMinus extends Component {
   constructor(props) {

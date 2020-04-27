@@ -8,11 +8,12 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
+
 import {eventsAction} from '../../../actions/eventsActions';
 import {groupsAction} from '../../../actions/groupsActions';
 import {createChallengeAction} from '../../../actions/createChallengeActions';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
-import union from 'lodash/union';
 
 import {createChallenge} from '../../functions/createChallenge';
 import {payEntryFee} from '../../functions/createEvent';
@@ -27,7 +28,6 @@ import {createBranchUrl} from '../../database/branch';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
-import firebase from 'react-native-firebase';
 import CardUser from '../elementsEventPage/CardUser';
 import CardCreditCard from '../elementsUser/elementsPayment/CardCreditCard';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -399,14 +399,12 @@ class SummaryChallenge extends Component {
     }
 
     if (selectedUser) {
-      await firebase
-        .database()
+      await database()
         .ref(
           'challenges/' + challenge.objectID + '/teams/' + selectedUser.team.id,
         )
         .update({status: 'confirmed', amountPaid: dataCheckout.totalAmount});
-      await firebase
-        .database()
+      await database()
         .ref(
           'challenges/' +
             challenge.objectID +
@@ -416,8 +414,7 @@ class SummaryChallenge extends Component {
             selectedUser.id,
         )
         .remove();
-      await firebase
-        .database()
+      await database()
         .ref(
           'challenges/' +
             challenge.objectID +
@@ -447,8 +444,7 @@ class SummaryChallenge extends Component {
         }/members/${userID}`
       ] = {status: 'confirmed'};
 
-      await firebase
-        .database()
+      await database()
         .ref()
         .update(updates);
     }

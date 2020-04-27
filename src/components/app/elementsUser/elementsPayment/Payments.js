@@ -1,15 +1,7 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AllIcons from '../../../layout/icons/AllIcons';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -128,8 +120,7 @@ class ListEvent extends Component {
   }
   async confirmDeleteBankAccount() {
     const {userID} = this.props;
-    await firebase
-      .database()
+    await database()
       .ref('users/' + userID + '/wallet/bankAccount')
       .remove();
     return this.props.navigation.navigate('Payments');

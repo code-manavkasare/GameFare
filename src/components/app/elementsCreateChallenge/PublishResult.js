@@ -10,7 +10,7 @@ import {
   TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -111,8 +111,7 @@ class PublishResult extends Component {
     const {objectID} = challenge;
     const {winnerID, score} = this.state;
     await this.setState({loader: true});
-    await firebase
-      .database()
+    await database()
       .ref('challenges/' + objectID + '/results')
       .update({
         winner: winnerID,
@@ -193,4 +192,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(PublishResult);
+export default connect(
+  mapStateToProps,
+  {},
+)(PublishResult);

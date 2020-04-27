@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import {View, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import branch from 'react-native-branch';
@@ -25,7 +25,9 @@ class InitialPage extends Component {
     this.translateXText = new Animated.Value(90);
   }
   async componentDidMount() {
-    var variables = await firebase.database().ref('variables').once('value');
+    var variables = await database()
+      .ref('variables')
+      .once('value');
     variables = variables.val();
     console.log('variables', variables);
     await this.props.globaleVariablesAction(variables);
@@ -66,8 +68,7 @@ class InitialPage extends Component {
   };
 
   initialSetupFromRefLink = async (isEvent, eventID) => {
-    const eventFirebase = await firebase
-      .database()
+    const eventFirebase = await database()
       .ref((isEvent ? '/events/' : '/groups/') + eventID)
       .once('value');
     const event = eventFirebase.val();
@@ -125,7 +126,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  globaleVariablesAction,
-  historicSearchAction,
-})(InitialPage);
+export default connect(
+  mapStateToProps,
+  {
+    globaleVariablesAction,
+    historicSearchAction,
+  },
+)(InitialPage);

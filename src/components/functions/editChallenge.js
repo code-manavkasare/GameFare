@@ -1,4 +1,4 @@
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import moment from 'moment';
 
 async function editChallenge(updatedEvent, callback = () => {}) {
@@ -11,8 +11,7 @@ async function editChallenge(updatedEvent, callback = () => {}) {
     date_timestamp: moment(updatedEvent.date.start).valueOf(),
     end_timestamp: moment(updatedEvent.date.end).valueOf(),
   };
-  await firebase
-    .database()
+  await database()
     .ref('challenges/' + updatedEvent.objectID + '/')
     .update(updatedEvent)
     .then(() => callback)
@@ -23,8 +22,7 @@ async function editChallenge(updatedEvent, callback = () => {}) {
 }
 
 async function removePlayerFromChallenge(team, challenge) {
-  await firebase
-    .database()
+  await database()
     .ref('challenges/' + challenge.objectID + '/teams/' + team.id)
     .remove()
     .catch((err) => {

@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Text, View, Button} from 'react-native';
 import {connect} from 'react-redux';
-
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import {coachAction} from '../../../../../../actions/coachActions';
 import {userAction} from '../../../../../../actions/userActions';
@@ -51,8 +50,7 @@ class SessionView extends Component {
     updates[`coachSessions/${objectID}/members/${userID}`] = null;
     updates[`coachSessions/${objectID}/allMembers/${userID}`] = null;
     console.log('updates', updates);
-    await firebase
-      .database()
+    await database()
       .ref()
       .update(updates);
   };

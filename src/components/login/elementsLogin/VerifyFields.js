@@ -1,15 +1,8 @@
 import React, {Component, createRef} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-  Dimensions,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import CodeFiled from 'react-native-confirmation-code-field';
 import {Col, Row} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import axios from 'axios';
 import {connect} from 'react-redux';
 import Config from 'react-native-config';
@@ -18,7 +11,6 @@ import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {userAction} from '../../../actions/userActions';
-const {height, width} = Dimensions.get('screen');
 
 class VerifyFields extends Component {
   constructor(props) {
@@ -99,8 +91,7 @@ class VerifyFields extends Component {
       });
     } else {
       this.setState({step: 'signIn'});
-      var profileCompleted = await firebase
-        .database()
+      var profileCompleted = await database()
         .ref('users/' + this.props.params.userID + '/profileCompleted')
         .once('value');
       profileCompleted = profileCompleted.val();
@@ -112,7 +103,7 @@ class VerifyFields extends Component {
       });
       if (profileCompleted) {
         var that = this;
-        setTimeout(function () {
+        setTimeout(function() {
           that.props.close();
         }, 550);
       } else {
@@ -275,4 +266,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {userAction})(VerifyFields);
+export default connect(
+  mapStateToProps,
+  {userAction},
+)(VerifyFields);

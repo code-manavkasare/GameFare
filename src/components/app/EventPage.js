@@ -10,9 +10,10 @@ import {
   TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
+
 import {eventsAction} from '../../actions/eventsActions';
 import {messageAction} from '../../actions/messageActions';
-import firebase from 'react-native-firebase';
 import NavigationService from '../../../NavigationService';
 import {
   editEvent,
@@ -91,18 +92,16 @@ class EventPage extends React.Component {
   }
   componentWillUnmount() {
     if (this.state.event) {
-      firebase
-        .database()
+      database()
         .ref('events/' + this.state.event.objectID)
         .off();
     }
   }
   async loadEvent(objectID) {
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('events/' + objectID)
-      .on('value', async function (snap) {
+      .on('value', async function(snap) {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
@@ -847,12 +846,10 @@ class EventPage extends React.Component {
     await this.props.messageAction('deleteMyConversation', data.discussions[0]);
     await this.props.eventsAction('deleteMyEvent', data.objectID);
 
-    await firebase
-      .database()
+    await database()
       .ref('cancelledEvents/' + data.objectID)
       .update({...data, status: 'onDelete'});
-    await firebase
-      .database()
+    await database()
       .ref('events/' + data.objectID)
       .remove();
     await goBack();
@@ -869,12 +866,10 @@ class EventPage extends React.Component {
 
     await this.props.eventsAction('deleteMyEvent', data.objectID);
 
-    await firebase
-      .database()
+    await database()
       .ref('events/' + data.objectID + '/attendees/' + userID)
       .update({action: 'unsubscribed'});
-    await firebase
-      .database()
+    await database()
       .ref('events/' + data.objectID + '/attendees/' + userID)
       .remove();
     await removeMemberDiscussion(data.discussions[0], userID);
@@ -1144,8 +1139,7 @@ class EventPage extends React.Component {
   }
   async confirmCheckout(event, payout) {
     const {wallet, userID} = this.props;
-    await firebase
-      .database()
+    await database()
       .ref('events/' + event.objectID)
       .update({checkoutDone: true});
     if (payout !== 0) {
@@ -1159,12 +1153,10 @@ class EventPage extends React.Component {
         type: 'plus',
         date: new Date().toString(),
       };
-      await firebase
-        .database()
+      await database()
         .ref('users/' + userID + '/wallet/')
         .update({totalWallet: newUserWallet});
-      await firebase
-        .database()
+      await database()
         .ref('usersTransfers/' + userID)
         .push(transferCharge);
     }
@@ -1316,6 +1308,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {eventsAction, messageAction})(
-  EventPage,
-);
+export default connect(
+  mapStateToProps,
+  {eventsAction, messageAction},
+)(EventPage);

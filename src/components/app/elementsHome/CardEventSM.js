@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import FadeInView from 'react-native-fade-in-view';
 import {Col, Row} from 'react-native-easy-grid';
 
@@ -33,8 +33,7 @@ class CardEvent extends React.Component {
     let firstAttendees = {};
     const {data} = this.props;
     if (data.challenge) {
-      firstAttendees = await firebase
-        .database()
+      firstAttendees = await database()
         .ref(`challenges/${data.objectID}/teams`)
         .limitToFirst(3)
         .once('value');
@@ -43,8 +42,7 @@ class CardEvent extends React.Component {
         (member) => member.captain,
       );
     } else {
-      firstAttendees = await firebase
-        .database()
+      firstAttendees = await database()
         .ref(`events/${data.objectID}/attendees`)
         .once('value');
       firstAttendees = firstAttendees.val();
@@ -127,17 +125,20 @@ class CardEvent extends React.Component {
               style={{
                 ...styleApp.roundView,
                 left: 0,
-              }}></View>
+              }}
+            />
             <View
               style={{
                 ...styleApp.roundView,
                 left: 15,
-              }}></View>
+              }}
+            />
             <View
               style={{
                 ...styleApp.roundView,
                 left: 30,
-              }}></View>
+              }}
+            />
           </Col>
         ) : (
           members.length !== 0 && (
@@ -289,4 +290,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(CardEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(CardEvent);
