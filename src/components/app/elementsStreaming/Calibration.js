@@ -8,11 +8,10 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import Svg, {Line} from 'react-native-svg';
 
 import {CameraKitCamera} from 'gamefare-camera-kit';
-import {Grid, Row, Col} from 'react-native-easy-grid';
 import Permissions, {PERMISSIONS, RESULTS} from 'react-native-permissions';
 import KeepAwake from 'react-native-keep-awake';
 import Orientation from 'react-native-orientation-locker';
@@ -28,10 +27,6 @@ import {
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
-
-import ButtonColor from '../../layout/Views/Button';
-import AllIcons from '../../layout/icons/AllIcons';
 
 import CameraFooter from './CameraFooter';
 
@@ -84,8 +79,7 @@ class Calibration extends React.Component {
   }
   async componentWillUnmount() {
     if (this.state.stream) {
-      firebase
-        .database()
+      database()
         .ref('streams/' + this.state.stream.id + '/netlineResults/')
         .off();
     }
@@ -149,8 +143,7 @@ class Calibration extends React.Component {
   }
   addNetlineListener() {
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('streams/' + this.state.stream.id + '/netlineResults/')
       .on('value', async function(snap) {
         let netlineResults = snap.val();
@@ -280,9 +273,7 @@ class Calibration extends React.Component {
             />
           </Svg>
         )}
-        <CameraFooter
-          takePhoto={() => this.mainButtonClick()}
-        />
+        <CameraFooter takePhoto={() => this.mainButtonClick()} />
       </View>
     );
   }
@@ -308,4 +299,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(Calibration);
+export default connect(
+  mapStateToProps,
+  {},
+)(Calibration);

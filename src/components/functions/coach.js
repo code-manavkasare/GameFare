@@ -1,4 +1,5 @@
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
+
 import colors from '../style/colors';
 import {heightCardSession} from '../style/sizes';
 
@@ -10,8 +11,7 @@ const timeout = (ms) => {
 
 const createCoachSession = async (user) => {
   const coachSessionID = generateID();
-  await firebase
-    .database()
+  await database()
     .ref('coachSessions/' + coachSessionID)
     .update({
       objectID: coachSessionID,
@@ -80,8 +80,7 @@ const startRecording = (sessionIDFirebase, streamMemberId) => {
     `coachSessions/${sessionIDFirebase}/tokbox/recordingStreamId`
   ] = streamMemberId;
   updates[`coachSessions/${sessionIDFirebase}/tokbox/archiving`] = true;
-  firebase
-    .database()
+  database()
     .ref()
     .update(updates);
 };
@@ -89,8 +88,7 @@ const stopRecording = (sessionIDFirebase) => {
   let updates = {};
   updates[`coachSessions/${sessionIDFirebase}/tokbox/archiving`] = null;
   updates[`coachSessions/${sessionIDFirebase}/tokbox/recordingStreamId`] = null;
-  firebase
-    .database()
+  database()
     .ref()
     .update(updates);
 };

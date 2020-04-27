@@ -1,6 +1,4 @@
-import React, {Component} from 'react';
-import {Platform, PermissionsAndroid} from 'react-native';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import {uploadPictureFirebase} from '../functions/pictures';
 import {addMemberDiscussion} from './createEvent';
@@ -43,12 +41,10 @@ async function createGroup(data, userID, infoUser) {
   delete group['img'];
   const discussionID = generateID();
   group.discussions = [discussionID];
-  var {key} = await firebase
-    .database()
+  var {key} = await database()
     .ref('groups')
     .push(group);
-  await firebase
-    .database()
+  await database()
     .ref('discussions/' + discussionID)
     .update(
       createDiscussionEventGroup(
@@ -82,8 +78,7 @@ async function subscribeUserToGroup(
     info: infoUser,
   };
   refreshTokenOnDatabase(userID);
-  await firebase
-    .database()
+  await database()
     .ref('groups/' + groupID + '/members/' + userID)
     .update(user);
   if (user.status === 'confirmed') {

@@ -9,7 +9,7 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import NavigationService from '../../../../NavigationService';
 
 const {height, width} = Dimensions.get('screen');
@@ -142,8 +142,7 @@ class PublishResult extends Component {
       });
 
     await this.setState({loader: true});
-    await firebase
-      .database()
+    await database()
       .ref(
         'challenges/' +
           objectID +
@@ -153,8 +152,7 @@ class PublishResult extends Component {
           selectedUser.id,
       )
       .remove();
-    await firebase
-      .database()
+    await database()
       .ref(
         'challenges/' +
           objectID +
@@ -247,4 +245,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(PublishResult);
+export default connect(
+  mapStateToProps,
+  {},
+)(PublishResult);

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import NavigationService from '../../../../../../../../NavigationService';
 
@@ -27,8 +27,7 @@ class HeaderStreamView extends Component {
       onGoBack: async (members) => {
         for (var i in Object.values(members)) {
           const member = Object.values(members)[i];
-          await firebase
-            .database()
+          await database()
             .ref('coachSessions/' + objectID + '/members/' + member.id)
             .update(member);
         }

@@ -2,21 +2,18 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   InputAccessoryView,
   Dimensions,
   TextInput,
   Animated,
-  Platform,
   Image,
-  Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import moment from 'moment';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
@@ -29,7 +26,6 @@ const ListCountry = require('../../../login/elementsFlags/country.json');
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
 import Button from '../../../layout/buttons/Button';
 import ButtonColor from '../../../layout/Views/Button';
@@ -106,8 +102,7 @@ class ListEvent extends Component {
       return this.wrongCB(responseCreateConnectAccount.error.message);
     /////////////////////////////////////////////////////////////////////
 
-    await firebase
-      .database()
+    await database()
       .ref('users/' + userID + '/wallet/')
       .update({
         connectAccountToken: responseCreateConnectAccount.token,

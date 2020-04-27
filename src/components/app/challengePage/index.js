@@ -10,21 +10,18 @@ import {
   TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
+
 import {eventsAction} from '../../../actions/eventsActions';
 import {messageAction} from '../../../actions/messageActions';
-import firebase from 'react-native-firebase';
 import NavigationService from '../../../../NavigationService';
 import {editChallenge} from '../../functions/editChallenge';
-import {
-  addMemberDiscussion,
-  removeMemberDiscussion,
-} from '../../functions/createEvent';
+import {removeMemberDiscussion} from '../../functions/createEvent';
 import TeamsView from './TeamsView';
 
 import RNCalendarEvents from 'react-native-calendar-events';
 import {getPermissionCalendar, isDatePast} from '../../functions/date';
 import moment from 'moment';
-import ramda from 'ramda';
 
 const {height, width} = Dimensions.get('screen');
 import colors from '../../style/colors';
@@ -37,7 +34,6 @@ import AsyncImage from '../../layout/image/AsyncImage';
 
 import AllIcons from '../../layout/icons/AllIcons';
 import DateEvent from '../elementsEventCreate/DateEvent';
-import {date} from '../../layout/date/date';
 import Button2 from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import RowPlusMinus from '../../layout/rows/RowPlusMinus';
@@ -55,7 +51,6 @@ import PlaceHolder from '../../placeHolders/EventPage';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
-import {stylesMapPage} from '../elementsHome/MapPage';
 
 const noEdit = {
   editMode: false,
@@ -89,18 +84,16 @@ class ChallengePage extends React.Component {
   }
   componentWillUnmount() {
     if (this.state.event) {
-      firebase
-        .database()
+      database()
         .ref('challenges/' + this.state.event.objectID)
         .off();
     }
   }
   async loadEvent(objectID) {
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('challenges/' + objectID)
-      .on('value', async function (snap) {
+      .on('value', async function(snap) {
         let event = snap.val();
         if (!event) return null;
         event.objectID = objectID;
@@ -543,12 +536,10 @@ class ChallengePage extends React.Component {
     await this.props.messageAction('deleteMyConversation', data.discussions[0]);
     await this.props.eventsAction('deleteMyEvent', data.objectID);
 
-    await firebase
-      .database()
+    await database()
       .ref('cancelledChallenges/' + data.objectID)
       .update({...data, status: 'onDelete'});
-    await firebase
-      .database()
+    await database()
       .ref('challenges/' + data.objectID)
       .remove();
     await goBack();
@@ -565,12 +556,10 @@ class ChallengePage extends React.Component {
 
     await this.props.eventsAction('deleteMyEvent', data.objectID);
 
-    await firebase
-      .database()
+    await database()
       .ref('events/' + data.objectID + '/teams/' + userID)
       .update({action: 'unsubscribed'});
-    await firebase
-      .database()
+    await database()
       .ref('events/' + data.objectID + '/attendees/' + userID)
       .remove();
     await removeMemberDiscussion(data.discussions[0], userID);
@@ -769,6 +758,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {eventsAction, messageAction})(
-  ChallengePage,
-);
+export default connect(
+  mapStateToProps,
+  {eventsAction, messageAction},
+)(ChallengePage);

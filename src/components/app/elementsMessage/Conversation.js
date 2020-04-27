@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import moment from 'moment';
 
 import {messageAction} from '../../../actions/messageActions';
@@ -36,8 +36,7 @@ class MessageTab extends React.Component {
   componentWillUnmount() {
     const {route} = this.props;
     const {data: dataEvent} = route.params;
-    firebase
-      .database()
+    database()
       .ref('discussions/' + dataEvent.objectID)
       .off();
   }
@@ -52,8 +51,7 @@ class MessageTab extends React.Component {
     }
     const {gamefareUser} = this.props;
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('discussions/' + conversation.objectID)
       .on('value', async function(snap) {
         let discussion = snap.val();

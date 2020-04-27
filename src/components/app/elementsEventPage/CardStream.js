@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, Dimensions} from 'react-native';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import PropTypes from 'prop-types';
 import {Col, Row} from 'react-native-easy-grid';
 
@@ -29,16 +29,14 @@ export default class CardStream extends Component {
   componentWillUnmount() {
     console.log('CARD STREAM UNMOUNT');
     if (this.state.event) {
-      firebase
-        .database()
+      database()
         .ref('streams/' + this.props.streamID)
         .off();
     }
   }
   async loadStream(streamID) {
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('streams/' + streamID)
       .on('value', async function(snap) {
         let stream = snap.val();

@@ -11,16 +11,10 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-//#import "RNFIRMessaging.h"
 #import <Firebase.h>
 
-#import "RNFirebaseNotifications.h"
-#import "RNFirebaseMessaging.h"
-
-#import <Fabric/Fabric.h>
 #import "Mixpanel.h"
 #import "RNSplashScreen.h"
-#import <Crashlytics/Crashlytics.h>
 #import "RNBranch.h"
 #import "Orientation.h"
 @implementation AppDelegate
@@ -54,8 +48,6 @@
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }
-//  [RNFirebaseNotifications configure];
-  [Fabric with:@[[Crashlytics class]]];
   [RNSplashScreen show];
   return YES;
 }

@@ -1,17 +1,9 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Platform,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Platform, Animated} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
+
+import database from '@react-native-firebase/database';
+
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -71,8 +63,7 @@ class ApplePay extends Component {
       id: brand,
       title: title,
     };
-    firebase
-      .database()
+    database()
       .ref('users/' + this.props.userID + '/wallet/defaultCard/')
       .update(card);
     if (this.props.cards) {
@@ -81,14 +72,12 @@ class ApplePay extends Component {
           (card) => card.brand === 'applePay',
         ).length == 0
       ) {
-        firebase
-          .database()
+        database()
           .ref('users/' + this.props.userID + '/wallet/cards/' + brand)
           .update(card);
       }
     } else {
-      firebase
-        .database()
+      database()
         .ref('users/' + this.props.userID + '/wallet/cards/' + brand)
         .update(card);
     }

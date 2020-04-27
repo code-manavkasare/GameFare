@@ -8,9 +8,8 @@ import {
   Animated,
   Image,
 } from 'react-native';
-import {connect} from 'react-redux';
 import NavigationService from '../../../../NavigationService';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -100,13 +99,11 @@ export default class CardUser extends Component {
   }
   async confirmAccept(user, status) {
     if (this.props.type === 'group') {
-      await firebase
-        .database()
+      await database()
         .ref('groups/' + this.props.objectID + '/members/' + user.id)
         .update({status: status});
     } else {
-      await firebase
-        .database()
+      await database()
         .ref('events/' + this.props.objectID + '/attendees/' + user.id)
         .update({status: status});
     }
@@ -122,7 +119,7 @@ export default class CardUser extends Component {
             colors.red,
           )}
         </Col>
-        <Col size={4}></Col>
+        <Col size={4} />
         <Col size={48}>
           {this.button(
             () => this.accept(user, 'confirmed', 'accept', 'Confirm'),

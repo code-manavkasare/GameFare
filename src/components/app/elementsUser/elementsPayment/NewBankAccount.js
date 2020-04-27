@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   InputAccessoryView,
-  Dimensions,
   TextInput,
   Animated,
   Platform,
@@ -13,10 +11,9 @@ import {
   Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
 import {Col, Row} from 'react-native-easy-grid';
 import Config from 'react-native-config';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import axios from 'axios';
 
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -28,7 +25,6 @@ const ListCountry = require('../../../login/elementsFlags/country.json');
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import {cardIcon} from './iconCard';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
 import ButtonColor from '../../../layout/Views/Button';
 
@@ -59,7 +55,9 @@ class ListEvent extends Component {
     if (Platform.OS === 'android') {
       Keyboard.dismiss();
     }
-    const urlCreateToken = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}createBankAccountToken`;
+    const urlCreateToken = `${
+      Config.FIREBASE_CLOUD_FUNCTIONS_URL
+    }createBankAccountToken`;
     let state = this.state;
     delete state['loader'];
     delete state['error'];
@@ -71,7 +69,9 @@ class ListEvent extends Component {
     dataCreateToken = dataCreateToken.data;
     if (dataCreateToken.error)
       return this.wrongCB(dataCreateToken.error.message);
-    const urlCreateUserConnectAccount = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}addBankAccountToUser`;
+    const urlCreateUserConnectAccount = `${
+      Config.FIREBASE_CLOUD_FUNCTIONS_URL
+    }addBankAccountToUser`;
     let responseCreateConnectAccount = await axios.get(
       urlCreateUserConnectAccount,
       {
@@ -85,8 +85,7 @@ class ListEvent extends Component {
     responseCreateConnectAccount = responseCreateConnectAccount.data;
     if (responseCreateConnectAccount.error)
       return this.wrongCB(responseCreateConnectAccount.error.message);
-    await firebase
-      .database()
+    await database()
       .ref('users/' + userID + '/wallet/bankAccount/')
       .update(dataCreateToken.bankAccount);
     return this.props.navigation.navigate('Payments');
@@ -274,4 +273,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import VideoPlayer from '../VideoPlayer/index';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -78,8 +78,7 @@ class WatchVideoPage extends Component {
   }
   updateVideoInfoCloud = (paused, currentTime, archiveID) => {
     const {objectID} = this.props.session;
-    firebase
-      .database()
+    database()
       .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}`)
       .update({paused, currentTime});
   };

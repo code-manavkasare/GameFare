@@ -11,8 +11,9 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import firebase from 'react-native-firebase';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
+
 import {createEventAction} from '../../actions/createEventActions';
 import {groupsAction} from '../../actions/groupsActions';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -75,10 +76,9 @@ class GroupPage extends React.Component {
   }
   async loadGroup(objectID) {
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('groups/' + objectID)
-      .on('value', async function (snap) {
+      .on('value', async function(snap) {
         let group = snap.val();
         group.objectID = objectID;
         if (group.allMembers) {
@@ -91,8 +91,7 @@ class GroupPage extends React.Component {
   }
   componentWillUnmount() {
     if (this.state.group) {
-      firebase
-        .database()
+      database()
         .ref('groups/' + this.state.group.objectID)
         .off();
     }
@@ -519,6 +518,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {createEventAction, groupsAction})(
-  GroupPage,
-);
+export default connect(
+  mapStateToProps,
+  {createEventAction, groupsAction},
+)(GroupPage);

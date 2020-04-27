@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import NavigationService from '../../../../../NavigationService';
 
@@ -65,8 +65,7 @@ class EditProfilePage extends Component {
       );
     }
 
-    await firebase
-      .database()
+    await database()
       .ref('users/' + userID + '/userInfo/')
       .update({
         firstname,

@@ -1,9 +1,8 @@
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 async function editGroup(updatedGroup, callback = () => {}) {
   // handle uploading of new image if one selected
-  await firebase
-    .database()
+  await database()
     .ref('groups/' + updatedGroup.objectID + '/')
     .update(updatedGroup)
     .then(() => callback)
@@ -14,8 +13,7 @@ async function editGroup(updatedGroup, callback = () => {}) {
 }
 
 async function removeUserFromGroup(playerID, group) {
-  await firebase
-    .database()
+  await database()
     .ref('groups/' + group.objectID + '/members/' + playerID)
     .remove()
     .catch((err) => {

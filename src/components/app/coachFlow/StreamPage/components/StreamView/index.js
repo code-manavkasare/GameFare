@@ -8,7 +8,7 @@ import {
   OTSubscriberView,
 } from 'opentok-react-native';
 import Config from 'react-native-config';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import FadeInView from 'react-native-fade-in-view';
 import isEqual from 'lodash.isequal';
@@ -107,8 +107,7 @@ class StreamPage extends Component {
     this.publisherEventHandlers = {
       streamCreated: async (event) => {
         const {userID, coachSessionID} = this.props;
-        await firebase
-          .database()
+        await database()
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: true,
@@ -120,8 +119,7 @@ class StreamPage extends Component {
       },
       streamDestroyed: async (event) => {
         const {userID, coachSessionID} = this.props;
-        await firebase
-          .database()
+        await database()
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: false,
@@ -134,8 +132,7 @@ class StreamPage extends Component {
     this.sessionEventHandlers = {
       sessionDisconnected: async (event) => {
         const {userID, coachSessionID} = this.props;
-        await firebase
-          .database()
+        await database()
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: false,
@@ -277,8 +274,7 @@ class StreamPage extends Component {
     const {userID, coachSessionID} = this.props;
 
     const that = this;
-    firebase
-      .database()
+    database()
       .ref('coachSessions/' + coachSessionID)
       .on('value', async function(snap) {
         let session = snap.val();

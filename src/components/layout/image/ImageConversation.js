@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, View, Text} from 'react-native';
-import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
 import PropTypes from 'prop-types';
 
 import AsyncImage from './AsyncImage';
@@ -18,7 +16,7 @@ export default class ImageConversation extends Component {
     if (!member) {
       return (
         <View style={[style, styleApp.center, {backgroundColor: colors.off}]}>
-          <Text style={[styleApp.input, {fontSize: 11}]}></Text>
+          <Text style={[styleApp.input, {fontSize: 11}]} />
         </View>
       );
     }

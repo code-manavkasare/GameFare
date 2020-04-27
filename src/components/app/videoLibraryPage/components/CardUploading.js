@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
+import storage from '@react-native-firebase/storage';
+
 import * as Progress from 'react-native-progress';
 
 import colors from '../../../style/colors';
@@ -34,8 +36,7 @@ class CardUploading extends Component {
 
   uploadVideoFirebase = async (uri, destination, name) => {
     const that = this;
-    const videoRef = firebase
-      .storage()
+    const videoRef = storage()
       .ref(destination)
       .child(name);
     const uploadTask = videoRef.put(uri, {contentType: 'video'});
@@ -49,10 +50,10 @@ class CardUploading extends Component {
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           await that.setState({progress: progress.toFixed(0) / 100});
           switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED: // or 'paused'
+            case storage.TaskState.PAUSED: // or 'paused'
               console.log('Upload is paused');
               break;
-            case firebase.storage.TaskState.RUNNING: // or 'running'
+            case storage.TaskState.RUNNING: // or 'running'
               console.log('Upload is running');
               break;
           }
@@ -103,8 +104,7 @@ class CardUploading extends Component {
       uploadedByUser: true,
     };
 
-    await firebase
-      .database()
+    await database()
       .ref()
       .update(updates);
     console.log('videoUploaded');
@@ -126,8 +126,6 @@ class CardUploading extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({});
 
 const mapStateToProps = (state) => {
   return {

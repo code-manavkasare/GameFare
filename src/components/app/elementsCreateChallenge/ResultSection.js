@@ -11,7 +11,8 @@ import {
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
+
 import NavigationService from '../../../../NavigationService';
 
 import ButtonColor from '../../layout/Views/Button';
@@ -100,8 +101,7 @@ export default class Results extends Component {
   }
   async confirmResult(status, challenge) {
     const {userID, infoUser} = this.props;
-    await firebase
-      .database()
+    await database()
       .ref('challenges/' + challenge.objectID + '/results')
       .update({
         status: status,

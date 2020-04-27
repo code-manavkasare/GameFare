@@ -11,22 +11,15 @@ import {
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 import {messageAction} from '../../../actions/messageActions';
-import {subscribeToTopics} from '../../functions/notifications';
+
 const {height, width} = Dimensions.get('screen');
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
-import CardUser from '../elementsEventPage/CardUser';
 
 import ButtonColor from '../../layout/Views/Button';
 import CardTeam from '../elementsCreateChallenge/CardTeam';
-import AllIcons from '../../layout/icons/AllIcons';
-import FadeInView from 'react-native-fade-in-view';
-import PlaceHolder from '../../placeHolders/ListAttendees';
-import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import NavigationService from '../../../../NavigationService';
 
-import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 
 class MembersView extends Component {
@@ -149,6 +142,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction, messageAction})(
-  MembersView,
-);
+export default connect(
+  mapStateToProps,
+  {groupsAction, messageAction},
+)(MembersView);

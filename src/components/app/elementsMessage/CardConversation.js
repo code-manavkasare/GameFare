@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import moment from 'moment';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import isEqual from 'lodash.isequal';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
@@ -50,8 +50,7 @@ class CardConversation extends React.Component {
   getMembers = async () => {
     const {discussionID} = this.props;
 
-    const discussionMembersSnapshot = await firebase
-      .database()
+    const discussionMembersSnapshot = await database()
       .ref(`discussions/${discussionID}/members`)
       .limitToFirst(3)
       .once('value');
@@ -100,8 +99,7 @@ class CardConversation extends React.Component {
     const {navigation} = this.props;
     console.log('conversation click', conversation);
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
-      await firebase
-        .database()
+      await database()
         .ref(
           'discussions/' +
             conversation.objectID +

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import ButtonColor from '../../../../layout/Views/Button';
 import AllIcons from '../../../../layout/icons/AllIcons';
@@ -108,8 +108,7 @@ class RightButtons extends Component {
         {this.buttonColor(colors.greenStrong)}
 
         {this.button({name: 'trash', type: 'font'}, 'Clear', false, () => {
-          firebase
-            .database()
+          database()
             .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}/drawings`)
             .remove();
           coachAction('setCoachSessionDrawSettings', {
@@ -124,8 +123,7 @@ class RightButtons extends Component {
             ).id;
             console.log('idLastDrawing', idLastDrawing, archiveID);
             // return;
-            firebase
-              .database()
+            database()
               .ref(
                 `coachSessions/${objectID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
               )

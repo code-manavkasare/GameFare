@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import {heightCardSession} from '../../../../../../style/sizes';
 import {navigate} from '../../../../../../../../NavigationService';
@@ -34,8 +34,7 @@ class CardStream extends Component {
         updates[`coachSessions/${coachSessionID}/members/${userID}`] = null;
         updates[`coachSessions/${coachSessionID}/allMembers/${userID}`] = null;
         console.log('updates', updates);
-        await firebase
-          .database()
+        database()
           .ref()
           .update(updates);
 

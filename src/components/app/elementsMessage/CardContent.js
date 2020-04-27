@@ -1,24 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  Image,
-  ScrollView,
-  Animated,
-  StyleSheet,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {historicSearchAction} from '../../../actions/historicSearchActions';
-import {messageAction} from '../../../actions/messageActions';
+import {View, Text, Image, StyleSheet} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import NavigationService from '../../../../NavigationService';
-import firebase from 'react-native-firebase';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
-const {height, width} = Dimensions.get('screen');
 
 import AsyncImage from '../../layout/image/AsyncImage';
 import AllIcons from '../../layout/icons/AllIcons';

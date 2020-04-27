@@ -4,13 +4,12 @@ import {
   Text,
   TextInput,
   Keyboard,
-  Dimensions,
   InputAccessoryView,
   ActivityIndicator,
   View,
 } from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import NavigationService from '../../../../NavigationService';
 
@@ -24,11 +23,8 @@ import AsyncImage from '../../layout/image/AsyncImage';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import AllIcons from '../../layout/icons/AllIcons';
-import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import ButtonFull from '../../layout/buttons/ButtonFull';
-
-const {height, width} = Dimensions.get('screen');
 
 export default class CompleteFields extends Component {
   constructor(props) {
@@ -62,8 +58,7 @@ export default class CompleteFields extends Component {
     };
     updates[`users/${this.props.params.userID}`] = {profileCompleted: true};
 
-    await firebase
-      .database()
+    await database()
       .ref()
       .update(updates);
 

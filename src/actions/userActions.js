@@ -7,7 +7,9 @@ import {
   RESET_COACH_DATA,
 } from './types';
 
-import firebase from 'react-native-firebase';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
 
@@ -45,21 +47,18 @@ const hideFooterApp = () => ({
 var infoUserToPushSaved = '';
 
 export const userAction = (val, data) => {
-  return async function (dispatch) {
+  return async function(dispatch) {
     if (val === 'signIn') {
-      const user = await firebase
-        .auth()
-        .signInWithCustomToken(data.firebaseSignInToken);
+      const user = await auth().signInWithCustomToken(data.firebaseSignInToken);
       const userID = user.user.uid;
       await subscribeToTopics([userID]);
 
       Mixpanel.identify(userID);
       Mixpanel.set({userID: userID});
 
-      return firebase
-        .database()
+      return database()
         .ref('users/' + userID)
-        .on('value', function (snap) {
+        .on('value', function(snap) {
           var infoUser = snap.val();
 
           var userConnected = false;
@@ -87,9 +86,8 @@ export const userAction = (val, data) => {
           return userConnected;
         });
     } else if (val === 'logout') {
-      await firebase.messaging().unsubscribeFromTopic(data.userID);
-      await firebase
-        .database()
+      await messaging().unsubscribeFromTopic(data.userID);
+      await database()
         .ref('users/' + data.userID)
         .off('value');
       await dispatch(resetUserInfo());

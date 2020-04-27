@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 import {SketchCanvas} from '@terrylinla/react-native-sketch-canvas';
 const {height, width} = Dimensions.get('screen');
 
@@ -55,8 +55,7 @@ class Draw extends Component {
     };
     path.id = idPath;
     const {archiveID, coachSessionID} = this.props;
-    await firebase
-      .database()
+    await database()
       .ref(
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
       )
@@ -125,4 +124,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {coachAction})(Draw);
+export default connect(
+  mapStateToProps,
+  {coachAction},
+)(Draw);

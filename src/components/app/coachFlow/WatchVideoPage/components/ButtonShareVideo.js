@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 const {height, width} = Dimensions.get('screen');
 
 import Button from '../../../../layout/buttons/Button';
@@ -67,8 +67,7 @@ class ButtonShareVideo extends Component {
           videoIDSharing: archiveID,
         });
     } else {
-      await firebase
-        .database()
+      await database()
         .ref('coachSessions/' + objectID + '/members/' + userID)
         .update({shareScreen: false});
     }

@@ -1,11 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {View, Text, Dimensions, Animated, TouchableOpacity} from 'react-native';
-import StatusBar from '@react-native-community/status-bar';
-import firebase from 'react-native-firebase';
-import {Col, Row} from 'react-native-easy-grid';
+
 import FadeInView from 'react-native-fade-in-view';
-import {includes} from 'ramda';
 
 import HeaderHome from '../layout/headers/HeaderHome';
 import NewEvents from './elementsHome/NewEvents';
@@ -15,11 +12,8 @@ import colors from '../style/colors';
 import Switch from '../layout/switch/Switch';
 import {historicSearchAction} from '../../actions/historicSearchActions';
 
-import ButtonColor from '../layout/Views/Button';
 import ScrollView2 from '../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
-import AllIcons from '../layout/icons/AllIcons';
-import {getZone} from '../functions/location';
 
 import sizes from '../style/sizes';
 import isEqual from 'lodash.isequal';
@@ -55,7 +49,7 @@ class HomeScreen extends React.Component {
   async changeSport(val) {
     await this.setState({loader: true});
     var that = this;
-    setTimeout(function () {
+    setTimeout(function() {
       that.setState({loader: false});
     }, 400);
   }
@@ -230,4 +224,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(HomeScreen);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(HomeScreen);

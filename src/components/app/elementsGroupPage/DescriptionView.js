@@ -11,7 +11,7 @@ import {
 import {connect} from 'react-redux';
 import {groupsAction} from '../../../actions/groupsActions';
 const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import colors from '../../style/colors';
 import FadeInView from 'react-native-fade-in-view';
@@ -33,8 +33,7 @@ class DescriptionView extends Component {
     return this.setState({loader: false});
   }
   async load() {
-    var description = await firebase
-      .database()
+    var description = await database()
       .ref('groups/' + this.props.objectID + '/info/description/')
       .once('value');
     description = description.val();
@@ -69,33 +68,34 @@ class DescriptionView extends Component {
                 marginLeft: 0,
               }}
             />
-          ) : !this.props.editMode
-              ? <FadeInView duration={300} style={{marginTop: 5}}>
-                  <Text style={styleApp.smallText}>
-                    {this.props.data.info.description}
-                  </Text>
-                </FadeInView>
-              : <TouchableOpacity
-                  style={{marginTop: 5}}
-                  activeOpacity={0.7}
-                  onPress={() => this.descRef.focus()}>
-                  <TextInput
-                    style={styleApp.smallText}
-                    multiline={true}
-                    placeholder={String(this.props.data.info.description)}
-                    returnKeyType={'done'}
-                    blurOnSubmit={true}
-                    onFocus={() => this.props.scrollToDescription()}
-                    ref={(input) => {
-                      this.descRef = input;
-                    }}
-                    underlineColorAndroid="rgba(0,0,0,0)"
-                    autoCorrect={true}
-                    onChangeText={(text) => this.props.onChangeText(text)}
-                    value={this.props.value}
-                  />
-                </TouchableOpacity>
-          }
+          ) : !this.props.editMode ? (
+            <FadeInView duration={300} style={{marginTop: 5}}>
+              <Text style={styleApp.smallText}>
+                {this.props.data.info.description}
+              </Text>
+            </FadeInView>
+          ) : (
+            <TouchableOpacity
+              style={{marginTop: 5}}
+              activeOpacity={0.7}
+              onPress={() => this.descRef.focus()}>
+              <TextInput
+                style={styleApp.smallText}
+                multiline={true}
+                placeholder={String(this.props.data.info.description)}
+                returnKeyType={'done'}
+                blurOnSubmit={true}
+                onFocus={() => this.props.scrollToDescription()}
+                ref={(input) => {
+                  this.descRef = input;
+                }}
+                underlineColorAndroid="rgba(0,0,0,0)"
+                autoCorrect={true}
+                onChangeText={(text) => this.props.onChangeText(text)}
+                value={this.props.value}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -111,4 +111,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {groupsAction})(DescriptionView);
+export default connect(
+  mapStateToProps,
+  {groupsAction},
+)(DescriptionView);

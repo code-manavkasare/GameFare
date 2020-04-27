@@ -1,15 +1,12 @@
-import firebase from 'react-native-firebase';
-import axios from 'axios';
+import database from '@react-native-firebase/database';
 import {keys} from 'ramda';
 import moment from 'moment';
-import Config from 'react-native-config';
 
 import {uploadPictureFirebase} from '../functions/pictures';
 import {
   subscribeToTopics,
   refreshTokenOnDatabase,
 } from '../functions/notifications';
-import {indexEvents} from '../database/algolia';
 import {createDiscussionEventGroup} from '../functions/message';
 
 function generateID() {
@@ -122,8 +119,7 @@ async function createChallenge(challenge, userID, infoUser) {
   newChallenge.images = [pictureUri];
   const discussionID = generateID();
   newChallenge.discussions = [discussionID];
-  const {key} = await firebase
-    .database()
+  const {key} = await database()
     .ref('challenges')
     .push(newChallenge);
   newChallenge.objectID = key;
@@ -141,8 +137,7 @@ async function createChallenge(challenge, userID, infoUser) {
     },
   );
 
-  await firebase
-    .database()
+  await database()
     .ref()
     .update(updates);
 

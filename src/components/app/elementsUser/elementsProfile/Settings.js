@@ -1,25 +1,10 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import firebase from 'react-native-firebase';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import AllIcons from '../../../layout/icons/AllIcons';
-import Header from '../../../layout/headers/HeaderButton';
+
 import ScrollView from '../../../layout/scrollViews/ScrollView';
 
-import sizes from '../../../style/sizes';
-import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import BackButton from '../../../layout/buttons/BackButton';
 
 class ListEvent extends Component {
   constructor(props) {
@@ -31,7 +16,7 @@ class ListEvent extends Component {
   }
   async componentDidMount() {}
   settings() {
-    return <View style={{marginTop: 0}}></View>;
+    return <View style={{marginTop: 0}} />;
   }
   render() {
     return (
@@ -49,22 +34,6 @@ class ListEvent extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  defaultView: {
-    backgroundColor: colors.greenLight,
-    borderRadius: 12.5,
-    height: 25,
-    width: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textDefault: {
-    color: colors.greenStrong,
-    fontSize: 12,
-    fontFamily: 'OpenSans-Bold',
-  },
-});
-
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
@@ -73,4 +42,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ListEvent);
+export default connect(
+  mapStateToProps,
+  {},
+)(ListEvent);

@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {eventsAction} from '../../../actions/eventsActions';
 import {groupsAction} from '../../../actions/groupsActions';
@@ -22,8 +15,7 @@ import TextField from '../../layout/textField/TextField';
 import Button from '../../layout/buttons/Button';
 import ButtonColor from '../../layout/Views/Button';
 import DateEvent from './DateEvent';
-import {date} from '../../layout/date/date';
-import firebase from 'react-native-firebase';
+
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AsyncImage from '../../layout/image/AsyncImage';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -312,7 +304,7 @@ class Page3 extends Component {
     await this.props.eventsAction('addFutureEvent', event.objectID);
 
     var that = this;
-    setTimeout(async function () {
+    setTimeout(async function() {
       await that.props.historicSearchAction('setSport', {
         value: event.info.sport,
         league: event.info.league,
@@ -398,9 +390,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  eventsAction,
-  createEventAction,
-  historicSearchAction,
-  groupsAction,
-})(Page3);
+export default connect(
+  mapStateToProps,
+  {
+    eventsAction,
+    createEventAction,
+    historicSearchAction,
+    groupsAction,
+  },
+)(Page3);
