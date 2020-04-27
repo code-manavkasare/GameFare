@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios-dev": "react-native run-ios --scheme gamefare-dev",
     "ios-prod": "react-native run-ios --scheme gamefare",
+    "clean": "rm -rf node_modules && yarn && cd ios && rm -rf Pods && pod install && cd .."
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
