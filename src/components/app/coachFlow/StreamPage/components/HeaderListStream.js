@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Text, View, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import firebase from 'react-native-firebase';
+import database from '@react-native-firebase/database';
 
 import {createCoachSession} from '../../../../functions/coach';
 import {coachAction} from '../../../../../actions/coachActions';
@@ -65,8 +65,7 @@ class HeaderListStream extends Component {
                   objectID: objectID,
                   autoOpen: true,
                 });
-                await firebase
-                  .database()
+                await database()
                   .ref(`users/${userID}/coachSessions/${objectID}`)
                   .set({
                     id: objectID,

@@ -1,6 +1,6 @@
 import React, {Component, createRef} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
-import CodeFiled from 'react-native-confirmation-code-field';
+import {CodeField, Cursor} from 'react-native-confirmation-code-field';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import axios from 'axios';
@@ -11,6 +11,8 @@ import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {userAction} from '../../../actions/userActions';
+
+const CELL_COUNT = 4;
 
 class VerifyFields extends Component {
   constructor(props) {
@@ -25,8 +27,6 @@ class VerifyFields extends Component {
     this.sendSMS = this.sendSMS.bind(this);
   }
   field = createRef();
-  containerProps = {style: styles.inputWrapStyle};
-  colors = ['#ff595f', '#e42959'];
   componentDidMount() {
     this.sendSMS();
   }
@@ -176,6 +176,16 @@ class VerifyFields extends Component {
     );
   }
   verify() {
+    const {verifCode} = this.state;
+    // const setValue = (value) => {
+    //   return this.setState({value: value});
+    // };
+    // const {value} = this.state;
+    // const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+    // const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+    //   value,
+    //   setValue,
+    // });
     return (
       <View style={styleApp.marginView}>
         <Text style={[styleApp.title, {marginBottom: 5, marginTop: 0}]}>
@@ -183,17 +193,36 @@ class VerifyFields extends Component {
           {this.props.params.phoneNumber}
         </Text>
         <View style={styles.inputWrapper}>
-          <CodeFiled
+          <CodeField
+            value={verifCode}
             blurOnSubmit={true}
             variant="clear"
             autoFocus={true}
-            codeLength={4}
-            caretHidden={true}
-            keyboardType="numeric"
             ref={this.field}
-            cellProps={this.cellProps}
-            containerProps={this.containerProps}
-            onFulfill={(code) => this.onFinishCheckingCode(code)}
+            onChangeText={(value) => {
+              this.setState({verifCode: value});
+              if (value.length === CELL_COUNT) {
+                this.verifPhone(value);
+              }
+            }}
+            cellCount={CELL_COUNT}
+            rootStyle={styles.input}
+            keyboardType="number-pad"
+            renderCell={({index, symbol, isFocused}) => (
+              <View
+                style={{
+                  height: 55,
+                  borderBottomWidth: 1,
+                  //     borderColor: 'red',
+                  marginRight: 5,
+                }}>
+                <Text
+                  key={index}
+                  style={[styles.textOn, isFocused && styles.textOn]}>
+                  {symbol || (isFocused ? null : null)}
+                </Text>
+              </View>
+            )}
           />
         </View>
 
@@ -225,38 +254,21 @@ const styles = StyleSheet.create({
     height: 50,
     marginTop: 5,
   },
-  text: {
-    fontSize: 14,
-    color: colors.title,
-    fontFamily: 'OpenSans-SemiBold',
-  },
   textOn: {
-    fontSize: 14,
+    fontSize: 25,
+    ...styleApp.text,
     color: colors.green,
-    fontFamily: 'OpenSans-SemiBold',
   },
   inputNotEmpty: {
     borderColor: colors.green,
   },
   input: {
     height: 55,
-    width: 50,
+    width: 50 * 4,
     borderRadius: 2,
-    color: colors.green,
-    fontSize: 29,
-    fontFamily: 'OpenSans-SemiBold',
-    backgroundColor: 'white',
+    //  backgroundColor: colors.red,
     borderBottomWidth: 3,
-    borderColor: colors.grey,
-    ...Platform.select({
-      web: {
-        lineHeight: 46,
-      },
-    }),
-    shadowColor: '#46474B',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0,
-    shadowRadius: 5,
+    borderColor: colors.blue,
   },
 });
 

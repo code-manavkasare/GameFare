@@ -21,6 +21,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
   for (NSString* family in [UIFont familyNames])
   {
     NSLog(@"%@", family);
@@ -45,9 +48,6 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  if ([FIRApp defaultApp] == nil) {
-    [FIRApp configure];
-  }
   [RNSplashScreen show];
   return YES;
 }

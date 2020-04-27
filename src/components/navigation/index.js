@@ -13,9 +13,6 @@ import DateSelector from '../app/elementsEventCreate/DateSelector';
 import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import AddMembers from '../app/elementsCreateChallenge/PickMembers';
-
-import Alerts from './MainApp/components/Alerts';
-
 import Alert from '../layout/alerts/Alert';
 
 const Stack = createStackNavigator();
@@ -33,6 +30,7 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
+
       <Stack.Screen
         name="ListCountry"
         component={ListCountry}
@@ -40,6 +38,7 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
+
       <Stack.Screen
         name="Payments"
         component={Payments}
@@ -47,10 +46,12 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
+
       <Stack.Screen name="Location" component={LocationSelector} />
       <Stack.Screen name="Date" component={DateSelector} />
 
       <Stack.Screen name="Contacts" component={Contacts} />
+
       <Stack.Screen
         name="NewConversation"
         component={NewConversation}

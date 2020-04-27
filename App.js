@@ -1,15 +1,13 @@
 import 'react-native-gesture-handler';
 
-import React, {Component, Text} from 'react';
+import React, {Component} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {View} from 'react-native';
 
 import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
-
 import InitialStack from './src/components/navigation/index';
 
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions';

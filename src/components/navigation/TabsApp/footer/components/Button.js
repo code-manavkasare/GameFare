@@ -1,6 +1,5 @@
 import React from 'react';
 import {Text, View, styleAppheet, StyleSheet} from 'react-native';
-import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import StatusBar from '@react-native-community/status-bar';
 import {navigate} from '../../../../../../NavigationService';
@@ -17,8 +16,8 @@ class MainTabIcon extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.isFocused !== this.props.isFocused && this.props.isFocused) {
       const {translateBlueView, index, numberRoutes} = this.props;
-      // if (Number(index) === 1) StatusBar.setBarStyle('light-content', true);
-      // else StatusBar.setBarStyle('dark-content', true);
+      if (Number(index) === 1) StatusBar.setBarStyle('light-content', true);
+      else StatusBar.setBarStyle('dark-content', true);
       StatusBar.setBarStyle('dark-content', true);
       translateBlueView(index, numberRoutes);
     }

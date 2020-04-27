@@ -2,27 +2,14 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
   TextInput,
   InputAccessoryView,
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome';
-import StatusBar from '@react-native-community/status-bar';
-import BackButton from '../../../layout/buttons/BackButton';
 
-import Header from '../../../layout/headers/HeaderButton';
-import ButtonRound from '../../../layout/buttons/ButtonRound';
+import {Col, Row, Grid} from 'react-native-easy-grid';
 import ScrollView from '../../../layout/scrollViews/ScrollView';
-import ExpandableCard from '../../../layout/cards/ExpandableCard';
-import Switch from '../../../layout/switch/Switch';
-import AllIcons from '../../../layout/icons/AllIcons';
-import {date} from '../../../layout/date/date';
 import ButtonFull from '../../../layout/buttons/ButtonFull';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
@@ -144,4 +131,7 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(Page1);
+export default connect(
+  mapStateToProps,
+  {},
+)(Page1);
