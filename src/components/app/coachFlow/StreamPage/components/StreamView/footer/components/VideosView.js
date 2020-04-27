@@ -114,7 +114,7 @@ class VideoViews extends Component {
               <ButtonColor
                 view={() => {
                   return loaderLiveReview ? (
-                    <Loader size={30} color="white" />
+                    <Loader size={30} color={colors.white} />
                   ) : (
                     <View style={styleApp.center}>
                       <AllIcons

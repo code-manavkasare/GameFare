@@ -1,11 +1,10 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
-import Header from '../layout/headers/HeaderButton';
+
 import ScrollView from '../layout/scrollViews/ScrollView';
 import PhoneFields from './elementsLogin/PhoneFields';
 import sizes from '../style/sizes';
-import BackButton from '../layout/buttons/BackButton';
-import AllIcons from '../layout/icons/AllIcons';
+
 import styleApp from '../style/style';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 import colors from '../style/colors';
@@ -73,5 +72,3 @@ export default class LoadingScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({});

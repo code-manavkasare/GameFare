@@ -67,6 +67,7 @@ async function currentLocation() {
     area: geocodeLocation[0].formattedAddress,
     lat: currentPosition.coords.latitude,
     lng: currentPosition.coords.longitude,
+    response: true,
   };
 }
 

@@ -8,17 +8,11 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
-import Header from '../layout/headers/HeaderButton';
 import ScrollView from '../layout/scrollViews/ScrollView';
 import sizes from '../style/sizes';
 import styleApp from '../style/style';
 import VerifyFields from './elementsLogin/VerifyFields';
-import {connect} from 'react-redux';
-import AllIcons from '../layout/icons/AllIcons';
-import BackButton from '../layout/buttons/BackButton';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
-
-const {height, width} = Dimensions.get('screen');
 
 export default class Verify extends Component {
   constructor(props) {
@@ -63,4 +57,3 @@ export default class Verify extends Component {
   }
 }
 
-const styles = StyleSheet.create({});

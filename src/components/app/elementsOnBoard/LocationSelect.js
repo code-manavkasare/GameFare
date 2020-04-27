@@ -1,39 +1,22 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Animated,
-  Image,
-} from 'react-native';
+import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 
-const {height, width} = Dimensions.get('screen');
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import FadeInView from 'react-native-fade-in-view';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import LocationSearchBar from './LocationSearchBar';
-import ButtonColor from '../../layout/Views/Button';
-
 import ScrollView from '../../layout/scrollViews/ScrollView2';
-import {currentLocation} from '../../functions/location';
 
-import sizes from '../../style/sizes';
-import colors from '../../style/colors';
+import {heightHeaderHome} from '../../style/sizes';
 import styleApp from '../../style/style';
-import AllIcon from '../../layout/icons/AllIcons';
+import colors from '../../style/colors';
 
-class InitialPage extends Component {
+class LocationSelect extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
     };
-    this.translateXText = new Animated.Value(90);
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.setLocation.bind(this);
   }
@@ -41,31 +24,10 @@ class InitialPage extends Component {
     await this.props.historicSearchAction('setLocationSearch', location);
     return this.props.navigation.navigate('TabsApp');
   }
-  async currentLocation() {
-    this.setState({loader: true});
-    var location = await currentLocation();
-    if (location.response === false) {
-      this.setState({loader: false});
-      return this.props.navigation.navigate('Alert', {
-        close: true,
-        textButton: 'Got it!',
-        title: 'An error has occured.',
-        subtitle: 'Please check your settings.',
-      });
-    }
-    return this.setLocation(location);
-  }
-
-  locationSelector() {
-    return (
-      <FadeInView duration={200} style={{height: height / 2}}>
-        <LocationSearchBar selectLocation={(location) => this.setLocation(location)} />
-      </FadeInView>
-    );
-  }
   render() {
+    const {loader} = this.state;
     return (
-      <View style={[{backgroundColor: 'white', flex: 1}]}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Pick your location'}
@@ -73,50 +35,34 @@ class InitialPage extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          loader={this.state.loader}
+          initialBorderColorHeader={colors.off}
+          // initialBorderWidth={0.3}
+          loader={loader}
           icon1="arrow-left"
           clickButton1={() => this.props.navigation.goBack()}
           icon2="text"
           text2={'Skip'}
           clickButton2={() => this.props.navigation.navigate('TabsApp')}
         />
-        <ScrollView
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.locationSelector.bind(this)}
-          marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          offsetBottom={0}
-          showsVerticalScrollIndicator={false}
-        />
+
+        <View style={{marginTop: heightHeaderHome}}>
+          <LocationSearchBar
+            setState={this.setState.bind(this)}
+            loader={loader}
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
+            selectLocation={(location) => this.setLocation(location)}
+          />
+        </View>
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  imgBackground: {
-    height: 40,
-    width: 40,
-    // borderRadius:24,
-    borderColor: colors.off,
-    borderWidth: 0,
-    borderRadius: 20,
-  },
-  cardSport: {
-    // backgroundColor:'red',
-    marginRight: 0,
-    height: 60,
-    width: width,
-    borderColor: colors.off,
-    borderWidth: 1,
-    // marginRight:10,
-    borderRadius: 10,
-  },
-});
-
 const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(InitialPage);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(LocationSelect);

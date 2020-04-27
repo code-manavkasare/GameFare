@@ -1,27 +1,20 @@
 import React, {Component} from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   TextInput,
-  Image,
   Animated,
-  Easing,
   Keyboard,
-  PermissionsAndroid,
-  Dimensions,
   View,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {currentLocation} from '../../functions/location';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import BackButton from '../../layout/buttons/BackButton';
+import {Col, Row} from 'react-native-easy-grid';
 
 import RNFetchBlob from 'rn-fetch-blob';
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
@@ -30,13 +23,12 @@ window.Blob = RNFetchBlob.polyfill.Blob;
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
-import Loader from '../../layout/loaders/Loader';
+
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
-import ScrollView from '../../layout/scrollViews/ScrollView';
+import ScrollView from '../../layout/scrollViews/ScrollView2';
 import NavigationService from '../../../../NavigationService';
-const {height, width} = Dimensions.get('screen');
 
 class LocationSelector extends Component {
   constructor(props) {
@@ -68,13 +60,9 @@ class LocationSelector extends Component {
       ],
       initialLoader: true,
     };
-    this.componentDidMount = this.componentDidMount.bind(this);
-    this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  async componentDidMount() {}
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.state !== nextState) return true;
-    return false;
+  componentDidMount() {
+    console.log('this.props.', this.props);
   }
   async changeLocation(value) {
     try {
@@ -98,12 +86,16 @@ class LocationSelector extends Component {
     }
   }
   async onclickLocation(address) {
+    const {loader, setState} = this.props;
     Keyboard.dismiss();
     try {
-      if (address.type === 'currentLocation' && this.state.loader === false)
+      if (address.type === 'currentLocation' && !loader) {
+        await setState({loader: true});
         return this.getCurrentLocation();
+      }
 
-      if (this.state.loader === false) {
+      if (!loader) {
+        await setState({loader: true});
         var url2 =
           'https://maps.googleapis.com/maps/api/geocode/json?new_forward_geocoder=true&place_id=' +
           address.place_id +
@@ -113,7 +105,7 @@ class LocationSelector extends Component {
         var locationObj = json.results[0];
 
         var currentHistoricSearchLocation = this.props.historicSearchLocation;
-        if (Object.values(currentHistoricSearchLocation) == 0) {
+        if (Object.values(currentHistoricSearchLocation) === 0) {
           var add = address;
           add.type = 'past';
           currentHistoricSearchLocation = {
@@ -125,7 +117,7 @@ class LocationSelector extends Component {
             'setHistoricLocationSearch',
             currentHistoricSearchLocation,
           );
-        } else if (currentHistoricSearchLocation[address.id] === undefined) {
+        } else if (!currentHistoricSearchLocation[address.id]) {
           var add = address;
           add.type = 'past';
           currentHistoricSearchLocation = {
@@ -145,13 +137,15 @@ class LocationSelector extends Component {
       }
     } catch (err) {
       console.log('error', err);
-      this.setState({loader: false});
+      setState({loader: false});
     }
   }
   async getCurrentLocation() {
+    const {setState} = this.props;
     var CurrentLocation = await currentLocation();
-    if (CurrentLocation.response === false) {
-      await this.setState({loader: false});
+    console.log('CurrentLocation', CurrentLocation);
+    if (!CurrentLocation.response) {
+      await setState({loader: false});
       return NavigationService.navigate('Alert', {
         close: true,
         textButton: 'Got it!',
@@ -162,23 +156,11 @@ class LocationSelector extends Component {
     this.props.selectLocation(CurrentLocation);
   }
   buttonSearchAddress() {
+    const {textInput} = this.state;
     return (
-      <Animated.View
-        style={[
-          styleApp.inputForm,
-          {
-            height: 50,
-            marginTop: 10,
-            marginLeft: 20,
-            width: width - 40,
-            backgroundColor: colors.off2,
-            borderWidth: 0.3,
-            borderRadius: 5,
-            marginBottom: 10,
-          },
-        ]}>
-        <Row style={{height: 50}}>
-          <Col size={15} style={styles.center}>
+      <Animated.View style={styles.searchInput}>
+        <Row>
+          <Col size={15} style={styleApp.center}>
             <AllIcons
               name="map-marker-alt"
               size={18}
@@ -186,11 +168,10 @@ class LocationSelector extends Component {
               type="font"
             />
           </Col>
-          <Col size={75} style={styles.center2}>
+          <Col size={75} style={styleApp.center2}>
             <TextInput
               placeholder="Search for an address"
               autoCorrect={false}
-              // autoFocus={true}
               icon={'angle-down'}
               style={styleApp.input}
               autoFocus={true}
@@ -200,55 +181,63 @@ class LocationSelector extends Component {
               underlineColorAndroid="rgba(0,0,0,0)"
               returnKeyType={'done'}
               onChangeText={(text) => this.changeLocation(text)}
-              value={this.state.textInput}
+              value={textInput}
             />
           </Col>
-          {this.state.textInput != '' ? (
+          {textInput !== '' ? (
             <Col
               size={10}
-              style={styles.center}
+              style={styleApp.center}
               activeOpacity={0.7}
               onPress={() => this.changeLocation('')}>
-              <FontIcon name="times-circle" color={colors.grey} size={12} />
+              <FontIcon name="times-circle" color={colors.greyDark} size={15} />
             </Col>
           ) : (
-            <Col size={10} style={styles.center}></Col>
+            <Col size={10} style={styleApp.center} />
           )}
         </Row>
       </Animated.View>
     );
   }
-  /*
-
-    
-    */
   cardResult(result) {
+    const {historicSearchLocation} = this.props;
     return (
       <ButtonColor
         view={() => {
           return (
-            <Row style={{marginLeft: 20, width: width - 40}}>
-              <Col size={15} style={styles.center}>
+            <Row>
+              <Col size={15} style={styleApp.center}>
                 {result.type === 'currentLocation' ? (
-                  <MatIcon name="my-location" color="grey" size={18} />
-                ) : this.props.historicSearchLocation[result.id] !=
-                  undefined ? (
-                  <MatIcon name="access-time" color="grey" size={16} />
+                  <MatIcon
+                    name="my-location"
+                    color={colors.greyDark}
+                    size={18}
+                  />
+                ) : historicSearchLocation[result.id] ? (
+                  <MatIcon
+                    name="access-time"
+                    color={colors.greyDark}
+                    size={16}
+                  />
                 ) : (
-                  <FontIcon name="map-marker" color="grey" size={16} />
+                  <FontIcon
+                    name="map-marker"
+                    color={colors.greyDark}
+                    size={16}
+                  />
                 )}
               </Col>
-              <Col size={85} style={styles.center2}>
+              <Col size={85} style={styleApp.center2}>
                 {result.type === 'currentLocation' ? (
-                  <Text style={styles.mainRes}>
+                  <Text style={styleApp.text}>
                     {result.structured_formatting.main_text}
                   </Text>
                 ) : (
                   <View>
-                    <Text style={styles.mainRes}>
+                    <Text style={styleApp.text}>
                       {result.structured_formatting.main_text}
                     </Text>
-                    <Text style={styles.secondRes}>
+                    <Text style={styleApp.subtitle}>
                       {result.structured_formatting.secondary_text}
                     </Text>
                   </View>
@@ -257,111 +246,78 @@ class LocationSelector extends Component {
             </Row>
           );
         }}
-        click={() => {
-          this.onclickLocation(result);
-        }}
+        click={() => this.onclickLocation(result)}
         color="white"
-        style={{
-          flex: 1,
-          borderBottomWidth: 0,
-          borderColor: '#EAEAEA',
-          paddingTop: 15,
-          paddingBottom: 15,
-          marginLeft: 0,
-          width: width,
-        }}
+        style={styles.buttonResult}
         onPressColor={colors.off}
       />
     );
   }
   locationFields() {
+    const {results} = this.state;
     return (
-      <View>
+      <View style={{...styleApp.marginView, marginTop: 5}}>
         {this.buttonSearchAddress()}
 
-        {Object.values(this.state.results).map((result, i) => (
-          <TouchableOpacity
-            key={i}
-            activeOpacity={0.8}
-            onPress={() => {
-              this.onclickLocation(result);
-            }}>
-            {this.cardResult(result)}
-          </TouchableOpacity>
-        ))}
+        {Object.values(results).map((result, i) => this.cardResult(result))}
       </View>
     );
   }
   render() {
+    const {AnimatedHeaderValue} = this.props;
     return (
-      <View style={styles.content}>
-        <ScrollView
-          style={{marginTop: sizes.heightHeaderHome}}
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.locationFields.bind(this)}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottomScrollView={0}
-          offsetBottom={90}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+      <ScrollView
+        onRef={(ref) => (this.scrollViewRef = ref)}
+        contentScrollView={this.locationFields.bind(this)}
+        marginBottomScrollView={0}
+        AnimatedHeaderValue={AnimatedHeaderValue}
+        marginTop={0}
+        offsetBottom={90}
+        showsVerticalScrollIndicator={true}
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: 0,
-    borderTopWidth: 0,
-    borderColor: colors.off,
-    height: height,
-    width: width,
+    flex: 1,
+    width: '100%',
+    //  backgroundColor: 'red',
   },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  searchInput: {
+    height: 50,
+    marginTop: 10,
+    width: '100%',
+    backgroundColor: colors.off2,
+    borderWidth: 0.3,
+    borderColor: colors.grey,
+    borderRadius: 5,
+    marginBottom: 10,
   },
-  center2: {
-    //alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mainRes: {
-    color: '#46474B',
-    fontSize: 17,
-    fontFamily: 'OpenSans-SemiBold',
+  buttonResult: {
+    flex: 1,
+    paddingTop: 15,
+    paddingBottom: 15,
+    width: '100%',
+    borderRadius: 5,
   },
   secondRes: {
-    color: 'grey',
+    ...styleApp.text,
+    color: colors.greyDark,
     fontSize: 17,
     marginTop: 2,
-    fontFamily: 'OpenSans-Regular',
-  },
-  title: {
-    color: 'white',
-    fontSize: 19,
-    fontFamily: 'OpenSans-Bold',
-  },
-  subtitle: {
-    color: colors.title,
-    fontSize: 15,
-    fontFamily: 'OpenSans-Regular',
-  },
-  popupNoProviders: {
-    top: 0,
-    height: height,
-    width: '100%',
-    marginLeft: 0,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
     historicSearchLocation: state.historicSearch.historicSearchLocation,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(
-  LocationSelector,
-);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(LocationSelector);

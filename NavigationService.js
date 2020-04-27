@@ -45,6 +45,13 @@ const setParams = (routeKey, params) => {
   });
 };
 
+const clickNotification = async (notification) => {
+  const {action, typeNavigation} = notification;
+  if (typeNavigation === 'navigate') return navigate(action, notification);
+  console.log('click notif', action, notification);
+  return push(action, notification);
+};
+
 // add other navigation functions that you need and export them
 
 module.exports = {
@@ -55,4 +62,5 @@ module.exports = {
   goBack,
   navigationRef,
   setParams,
+  clickNotification,
 };

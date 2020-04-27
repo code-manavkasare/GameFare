@@ -9,6 +9,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import InitialStack from './src/components/navigation/index';
+import Notification from './src/components/layout/alerts/Notification';
 
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
@@ -95,6 +96,7 @@ class App extends Component {
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
         <OrientationListener />
+        <Notification />
       </NavigationContainer>
     );
   }

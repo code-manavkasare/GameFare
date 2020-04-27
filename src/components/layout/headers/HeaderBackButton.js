@@ -58,7 +58,7 @@ class HeaderBackButton extends Component {
       inputRange: inputRange,
       outputRange: [
         initialBorderColorHeader ? initialBorderColorHeader : colors.white,
-        colors.grey,
+        colors.off,
       ],
       extrapolate: 'clamp',
     });
@@ -186,8 +186,8 @@ class HeaderBackButton extends Component {
     if (loader)
       return (
         <Loader
-          color={colorLoader ? colorLoader : 'green'}
-          size={sizeLoader ? sizeLoader : 27}
+          color={colorLoader ? colorLoader : colors.green}
+          size={sizeLoader ? sizeLoader : 35}
         />
       );
     if (icon2)
@@ -204,9 +204,8 @@ class HeaderBackButton extends Component {
           ]}>
           <ButtonColor
             view={() => {
-              // const {typeIcon2, sizeIcon2, icon2} = this.props;
               return loader ? (
-                <Loader size={20} color={'primary'} />
+                <Loader size={30} color={colors.primary} />
               ) : icon2 === 'text' ? (
                 <Text
                   style={[

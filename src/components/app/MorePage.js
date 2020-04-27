@@ -9,16 +9,18 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
 
 import {coachAction} from '../../actions/coachActions';
+import {layoutAction} from '../../actions/layoutActions';
+
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
-// import firebase from 'react-native-firebase';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
-import NavigationService from '../../../NavigationService';
+import NavigationService, {clickNotification} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
@@ -34,56 +36,32 @@ class MorePage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    this.notificationHandler();
+    // this.notificationHandler();
   }
   componentWillUnmount() {
     this.removeNotificationListener();
     // this.messageListener();
   }
   async notificationHandler() {
-    const {userID} = this.props;
-    // this.appBackgroundNotificationListenner();
-    // this.appOpenFistNotification();
-    // this.messageListener = firebase
-    //   .notifications()
-    //   .onNotification((notification1) => {
-    //     const notification = new firebase.notifications.Notification()
-    //       .setNotificationId(notification1._notificationId)
-    //       .setTitle(notification1._title)
-    //       .setBody(notification1._body)
-    //       .setData(notification1._data);
-    //     if (userID !== notification.data.senderID)
-    //       firebase.notifications().displayNotification(notification);
-    //   });
+    const {userID, layoutAction} = this.props;
+    this.unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      this.layoutAction('setLayout', {notification: remoteMessage});
+    });
+    this.appBackgroundNotificationListenner();
+    this.appOpenFistNotification();
   }
 
   appBackgroundNotificationListenner() {
-    // this.removeNotificationListener = firebase
-    //   .notifications()
-    //   .onNotificationOpened((notification) => {
-    //     const {data} = notification.notification;
-    //     this.navigate(data.action, data);
-    //   });
+    this.removeNotificationListener = messaging().onNotificationOpenedApp(
+      (notification) => {
+        clickNotification(notification);
+      },
+    );
   }
-  async navigate(action, data) {
-    if (action === 'Stream') {
-      await coachAction('setSessionInfo', {
-        objectID: data.objectID,
-        autoOpen: true,
-      });
-    }
-    if (data.typeNavigation === 'navigate')
-      return NavigationService.navigate(data.action, data);
-    return NavigationService.push(data.action, data);
-  }
+
   async appOpenFistNotification() {
-    // const notificationOpen = await firebase
-    //   .notifications()
-    //   .getInitialNotification();
-    // if (notificationOpen) {
-    //   const {data} = notificationOpen.notification;
-    //   this.navigate(data.action, data);
-    // }
+    const notificationOpen = await messaging().getInitialNotification();
+    if (notificationOpen) return clickNotification(notificationOpen);
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;
@@ -189,9 +167,7 @@ class MorePage extends Component {
     );
   }
   clickButton(page, type, url) {
-    const {navigation} = this.props;
     if (type === 'url') {
-      // navigation.navigate('Webview',{url:url})
       this.openLink(url);
     } else if (type === 'call') {
       this.call();
@@ -376,6 +352,32 @@ class MorePage extends Component {
             }),
         })}
 
+        {this.button2({
+          text: 'Test notif appears',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () => {
+            const {layoutAction} = this.props;
+            layoutAction('setLayout', {
+              notification: {
+                action: 'Event',
+                data: '-M2CAEeMbL28eRlCpa9M',
+                notification: {
+                  title: 'You just received a new message',
+                  timestamp: Date.now(),
+                  body: 'Hey you',
+                  image:
+                    'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+                },
+              },
+            });
+          },
+        })}
+
         <View style={[{marginTop: 20}]}>
           {this.props.userConnected &&
             this.button('logout', 'Logout', 'Alert', 'logout')}
@@ -440,5 +442,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {userAction, coachAction},
+  {userAction, coachAction, layoutAction},
 )(MorePage);
