@@ -4,7 +4,6 @@ import {View, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
-
 import * as Progress from 'react-native-progress';
 
 import colors from '../../../style/colors';
@@ -39,7 +38,11 @@ class CardUploading extends Component {
     const videoRef = storage()
       .ref(destination)
       .child(name);
-    const uploadTask = videoRef.put(uri, {contentType: 'video'});
+    const uploadTask = videoRef.putFile(uri, {
+      contentType: 'video',
+      cacheControl: 'no-store',
+    });
+
     this.setState({uploadTask});
 
     return new Promise((resolve, reject) =>
