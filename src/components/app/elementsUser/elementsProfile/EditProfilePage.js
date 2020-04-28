@@ -11,22 +11,15 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
+import {uploadPictureFirebase} from '../../../functions/pictures';
 import NavigationService from '../../../../../NavigationService';
-
-import {
-  takePicture,
-  pickLibrary,
-  resize,
-  uploadPictureFirebase,
-} from '../../../functions/pictures';
-import AsyncImage from '../../../layout/image/AsyncImage';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
-import AllIcons from '../../../layout/icons/AllIcons';
-import ButtonColor from '../../../layout/Views/Button';
+
 import Button from '../../../layout/buttons/Button';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import ButtonAddImage from '../../../layout/buttons/ButtonAddImage';
 
 class EditProfilePage extends Component {
   constructor(props) {
@@ -41,16 +34,14 @@ class EditProfilePage extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-
-  componentDidMount = async () => {
-    const {firstname, lastname, picture} = this.props.infoUser;
-
-    await this.setState({
+  static getDerivedStateFromProps(props, state) {
+    const {firstname, lastname, picture} = props.infoUser;
+    return {
       firstname,
       lastname,
       pictureUrl: picture ? picture : false,
-    });
-  };
+    };
+  }
 
   async updateProfile() {
     this.setState({loader: true});
@@ -58,12 +49,14 @@ class EditProfilePage extends Component {
     const {firstname, lastname, pictureUri, pictureUrl} = this.state;
 
     let newProfilePictureUrl = false;
+    console.log('profilePictureUrl', pictureUri);
     if (pictureUri) {
       newProfilePictureUrl = await uploadPictureFirebase(
         pictureUri,
         'users/' + userID + '/userInfo/',
       );
     }
+    console.log('newProfilePictureUrl', newProfilePictureUrl);
 
     await database()
       .ref('users/' + userID + '/userInfo/')
@@ -75,64 +68,15 @@ class EditProfilePage extends Component {
     this.setState({loader: false});
     this.props.navigation.goBack();
   }
-
-  async addPicture(val) {
-    await this.setState({loaderPhoto: true});
-    if (val === 'take') {
-      var uri = await takePicture();
-    } else if (val === 'pick') {
-      var uri = await pickLibrary();
-    }
-    if (!uri) {
-      await this.setState({
-        loaderPhoto: false,
-      });
-    }
-
-    const uriResized = await resize(uri);
-    await this.setState({
-      pictureUri: uriResized,
-      loaderPhoto: false,
-    });
-  }
-
   buttonPicture(pictureUrl, pictureUri) {
     return (
-      <ButtonColor
-        color={colors.white}
-        onPressColor={colors.white}
-        click={() =>
-          NavigationService.navigate('AlertAddImage', {
-            title: 'Add picture',
-            onGoBack: (val) => {
-              this.addPicture(val);
-            },
-          })
-        }
-        style={[styles.buttonRound]}
-        view={() => {
-          if (pictureUrl && !pictureUri) {
-            return (
-              <AsyncImage style={styles.asyncImage} mainImage={pictureUrl} />
-            );
-          }
-          return !pictureUri ? (
-            <View style={styleApp.center}>
-              <AllIcons
-                name={'image'}
-                color={colors.title}
-                size={40}
-                type="font"
-              />
-              <Text style={styleApp.text}>Add profile</Text>
-              <Text style={styleApp.text}>picture</Text>
-            </View>
-          ) : (
-            <View style={styleApp.center}>
-              <AsyncImage style={styles.asyncImage} mainImage={pictureUri} />
-            </View>
-          );
-        }}
+      <ButtonAddImage
+        title={'Add profile'}
+        title2={'picture'}
+        img={pictureUri ? pictureUri : pictureUrl}
+        setState={(uri) => this.setState({pictureUri: uri})}
+        styleImg={{height: 70, width: 70, borderRadius: 35}}
+        closeAddImage={() => NavigationService.navigate('EditProfilePage')}
       />
     );
   }
@@ -149,17 +93,6 @@ class EditProfilePage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
-          // AnimatedHeaderValue={this.AnimatedHeaderValue}
-          // textHeader={'Edit Profile'}
-          // inputRange={[5, 10]}
-          // loader={loaderPhoto}
-          // initialBorderColorIcon={'white'}
-          // initialBackgroundColor={'white'}
-          // initialBorderColorHeader={colors.grey}
-          // initialTitleOpacity={1}
-          // icon1={'arrow-left'}
-          // clickButton1={() => navigation.goBack()}
-
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Edit Profile'}
           inputRange={[5, 10]}
@@ -176,12 +109,13 @@ class EditProfilePage extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.heightHeaderHome + 20}
           showsVerticalScrollIndicator={true}>
-          <Row style={{paddingLeft: 20, paddingRight: 20, marginTop: 20}}>
+          <Row style={{paddingLeft: 20, paddingRight: 20, marginTop: 40}}>
             <Col size={20} style={styleApp.center2}>
               {this.buttonPicture(pictureUrl, pictureUri, loaderPhoto)}
             </Col>
+            <Col size={3} />
             <Col size={40}>
               <Text style={[styleApp.title, {marginBottom: 0, fontSize: 16}]}>
                 First name

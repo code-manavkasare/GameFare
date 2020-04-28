@@ -4,8 +4,8 @@ import {connect} from 'react-redux';
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import ScrollView from '../../layout/scrollViews/ScrollView';
 import LocationSearchBar from './LocationSearchBar';
-import ScrollView from '../../layout/scrollViews/ScrollView2';
 
 import {heightHeaderHome} from '../../style/sizes';
 import styleApp from '../../style/style';
@@ -45,14 +45,21 @@ class LocationSelect extends Component {
           clickButton2={() => this.props.navigation.navigate('TabsApp')}
         />
 
-        <View style={{marginTop: heightHeaderHome}}>
-          <LocationSearchBar
-            setState={this.setState.bind(this)}
-            loader={loader}
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
-            selectLocation={(location) => this.setLocation(location)}
-          />
-        </View>
+        <ScrollView
+          onRef={(ref) => (this.scrollViewRef = ref)}
+          contentScrollView={() => (
+            <LocationSearchBar
+              setState={this.setState.bind(this)}
+              loader={loader}
+              selectLocation={(location) => this.setLocation(location)}
+            />
+          )}
+          marginBottomScrollView={0}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          marginTop={heightHeaderHome}
+          offsetBottom={90}
+          showsVerticalScrollIndicator={true}
+        />
       </View>
     );
   }

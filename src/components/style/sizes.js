@@ -54,7 +54,7 @@ if (Platform.OS === 'ios') {
     heightFooterBooking = 110;
     heightFooter = 75;
     marginTopApp = 35;
-    marginBottomApp = 15;
+    marginBottomApp = 35;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;

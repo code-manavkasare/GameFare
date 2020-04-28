@@ -92,7 +92,7 @@ export default class Button extends Component {
           disabled={this.props.disabled}
           onPress={() => this.props.click()}>
           {this.props.loader ? (
-            <Loader size={35} color={colors.white} />
+            <Loader size={38} color={colors.white} />
           ) : (
             <Text style={this.styleText()}>{this.props.text}</Text>
           )}

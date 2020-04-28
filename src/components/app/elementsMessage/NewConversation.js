@@ -15,7 +15,11 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
+import {
+  marginTopApp,
+  heightHeaderHome,
+  marginTopAppLanscape,
+} from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardUserSelect from '../../layout/cards/CardUserSelect';
@@ -123,8 +127,11 @@ class NewConversation extends React.Component {
     );
   }
   newConversationPage(selectedUsers) {
+    const {portrait} = this.props;
+    let marginTopAdd = marginTopApp;
+    if (!portrait) marginTopAdd = marginTopAppLanscape;
     return (
-      <View style={{marginTop: sizes.heightHeaderHome}}>
+      <View style={{marginTop: heightHeaderHome + marginTopAdd}}>
         {this.searchInput(selectedUsers)}
 
         <ScrollView
@@ -132,7 +139,7 @@ class NewConversation extends React.Component {
           style={styles.scrollViewUsers}>
           {this.state.loader ? (
             <View style={[styleApp.center, {height: 200}]}>
-              <Loader size={35} color={'green'} />
+              <Loader size={55} color={colors.primary} />
             </View>
           ) : (
             this.state.users.map((user, i) =>
@@ -149,7 +156,7 @@ class NewConversation extends React.Component {
     const {dismiss, goBack} = this.props.navigation;
     let {selectedUsers} = this.state;
     return (
-      <View style={{backgroundColor: colors.white, height: height}}>
+      <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={'Add participants'}
@@ -180,9 +187,9 @@ const styles = StyleSheet.create({
     height: 55,
     borderBottomWidth: 0,
     borderColor: colors.borderColor,
-    width: width,
-    paddingLeft: 20,
-    paddingRight: 20,
+    width: '100%',
+    paddingLeft: '5%',
+    paddingRight: '5%',
   },
   scrollViewUsers: {
     paddingTop: 10,
@@ -207,9 +214,11 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
+    portrait: state.layout.currentScreenSize.portrait,
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(
-  NewConversation,
-);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(NewConversation);

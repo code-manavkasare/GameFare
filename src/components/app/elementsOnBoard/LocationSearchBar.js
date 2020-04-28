@@ -264,18 +264,7 @@ class LocationSelector extends Component {
     );
   }
   render() {
-    const {AnimatedHeaderValue} = this.props;
-    return (
-      <ScrollView
-        onRef={(ref) => (this.scrollViewRef = ref)}
-        contentScrollView={this.locationFields.bind(this)}
-        marginBottomScrollView={0}
-        AnimatedHeaderValue={AnimatedHeaderValue}
-        marginTop={0}
-        offsetBottom={90}
-        showsVerticalScrollIndicator={true}
-      />
-    );
+    return this.locationFields();
   }
 }
 

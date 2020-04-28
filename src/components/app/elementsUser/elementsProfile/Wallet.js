@@ -57,7 +57,7 @@ class ListEvent extends Component {
   listWallet() {
     const {loader, listTransfers} = this.state;
     return (
-      <View style={{marginTop: 10, minHeight: height}}>
+      <View style={{marginTop: 0, minHeight: height}}>
         {loader ? (
           this.placehoder()
         ) : listTransfers.length === 0 ? (
@@ -146,7 +146,7 @@ class ListEvent extends Component {
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
-          initialBorderColorHeader={colors.grey}
+          //     initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
           typeIcon2={'font'}

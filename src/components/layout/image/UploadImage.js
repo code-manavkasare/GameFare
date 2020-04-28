@@ -67,11 +67,6 @@ export default class ImageSelection extends Component {
       componentWillMount(){
         if (this.props.readOnly) this.setState({ avatarSource: { uri: this.props.beforePhotos[this.props.type] }})
       }
-      componentWillReceiveProps(nextProps) {
-        // if (nextProps.dataUser.infoUser.picture !== this.props.dataUser.infoUser.picture) {
-        //   this.setState({ avatarSource: { uri: nextProps.dataUser.infoUser.picture }})
-        // }
-      }
 
       async selectPhoto(){
         this.setState({loading: true})

@@ -7,6 +7,7 @@ import {
   PanResponder,
   Animated,
   View,
+  Image,
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
@@ -38,11 +39,10 @@ class Notification extends Component {
       onMoveShouldSetResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderMove: (event, gestureState) => {
-        if (gestureState.dy < 10)
-          this.translateYNotif.setValue(gestureState.dy);
+        if (gestureState.dy < 0) this.translateYNotif.setValue(gestureState.dy);
       },
       onPanResponderRelease: () => {
-        if (this.translateYNotif._value < 0)
+        if (this.translateYNotif._value < -20)
           return this.close(initialTranslateY);
         return this.close(0);
       },
@@ -71,8 +71,8 @@ class Notification extends Component {
   }
   render() {
     const {currentWidth, notification} = this.props;
-    const {body, title, image} = notification.notification;
-    console.log('render notif', notification);
+    let {body, title, picture} = notification.notification;
+    const styleImg = {height: 40, width: 40, borderRadius: 5};
     return (
       <Animated.View
         style={[
@@ -89,10 +89,14 @@ class Notification extends Component {
           }}>
           <Row style={styleApp.marginView}>
             <Col size={15} style={styleApp.center2}>
-              <AsyncImage
-                mainImage={image}
-                style={{height: 30, width: 30, borderRadius: 5}}
-              />
+              {!picture ? (
+                <Image
+                  source={require('../../../img/logos/logoios.png')}
+                  style={styleImg}
+                />
+              ) : (
+                <AsyncImage mainImage={picture} style={styleImg} />
+              )}
             </Col>
             <Col size={85} style={styleApp.center2}>
               <Text style={styles.title}>{title}</Text>

@@ -11,8 +11,17 @@ import Loader from '../../layout/loaders/Loader';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {userAction} from '../../../actions/userActions';
+import {timeout} from '../../functions/coach';
 
 const CELL_COUNT = 4;
+
+const formatPhoneNumber = (phoneNumber) => {
+  phoneNumber = phoneNumber.replace('-', '');
+  phoneNumber = phoneNumber.replace('(', '');
+  phoneNumber = phoneNumber.replace(')', '');
+  phoneNumber = phoneNumber.replace(/ /g, '');
+  return phoneNumber;
+};
 
 class VerifyFields extends Component {
   constructor(props) {
@@ -23,67 +32,55 @@ class VerifyFields extends Component {
       step: 'sending',
     };
     this.componentDidMount = this.componentDidMount.bind(this);
-    // this.verifPhone = this.verifPhone.bind(this)
     this.sendSMS = this.sendSMS.bind(this);
+    this.field = createRef();
   }
-  field = createRef();
+
   componentDidMount() {
     this.sendSMS();
   }
   async sendSMS() {
-    this.setState({loader: true, step: 'sending'});
-    var phoneNumber = this.props.params.phoneNumber;
-    phoneNumber = phoneNumber.replace('-', '');
-    phoneNumber = phoneNumber.replace('(', '');
-    phoneNumber = phoneNumber.replace(')', '');
-    phoneNumber = phoneNumber.replace(/ /g, '');
-
-    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}sendSMSVerification`;
+    await this.setState({loader: true, step: 'sending'});
+    const {phoneNumber, country} = this.props.params;
+    const {userID} = this.props;
+    const phoneNumberFormated = formatPhoneNumber(phoneNumber);
+    const url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}sendSMSVerification`;
     const promiseAxios = await axios.get(url, {
       params: {
-        phoneNumber: phoneNumber,
-        countryCode: this.props.params.country.callingCode,
-        userID: this.props.params.userID,
+        phoneNumber: phoneNumberFormated,
+        countryCode: country.callingCode,
+        userID: userID,
       },
     });
-    if (promiseAxios.data.response == false) {
+    if (!promiseAxios.data.response) {
       this.setState({step: 'wrongNumber', loader: false});
     } else {
       this.setState({step: 'sent', loader: false});
     }
   }
-  onFinishCheckingCode(val) {
-    this.verifPhone(val);
-  }
-  cellProps = ({/*index, isFocused,*/ hasValue}) => {
-    if (hasValue) {
-      return {
-        style: [styles.input, styles.inputNotEmpty],
-      };
-    }
-    return {
-      style: styles.input,
-    };
-  };
   async verifPhone(code) {
     this.setState({step: 'verifying', loader: true});
-    var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}verifyPhone`;
-    var phoneNumber = this.props.params.phoneNumber;
-    phoneNumber = phoneNumber.replace('-', '');
-    phoneNumber = phoneNumber.replace('(', '');
-    phoneNumber = phoneNumber.replace(')', '');
-    phoneNumber = phoneNumber.replace(/ /g, '');
+    const url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}verifyPhone`;
+    const {
+      phoneNumber,
+      country,
+      firebaseSignInToken,
+      userID,
+    } = this.props.params;
+    const {close, navigate, userAction} = this.props;
+    const phoneNumberFormated = formatPhoneNumber(phoneNumber);
+    console.log('verufy ohone', phoneNumberFormated);
+    console.log('country', country);
     const promiseAxios = await axios.get(url, {
       params: {
-        phoneNumber: phoneNumber,
-        countryCode: this.props.params.country.callingCode,
-        userID: this.props.params.userID,
+        phoneNumber: phoneNumberFormated,
+        countryCode: country.callingCode,
+        userID: userID,
         code: code.toString(),
       },
     });
-    if (promiseAxios.data.response == false) {
+    if (!promiseAxios.data.response) {
       this.clearCode();
-      // this.field.focus()
       this.setState({
         step: 'error',
         verifCode: '',
@@ -92,39 +89,33 @@ class VerifyFields extends Component {
     } else {
       this.setState({step: 'signIn'});
       var profileCompleted = await database()
-        .ref('users/' + this.props.params.userID + '/profileCompleted')
+        .ref('users/' + userID + '/profileCompleted')
         .once('value');
       profileCompleted = profileCompleted.val();
-      await this.props.userAction('signIn', {
-        userID: this.props.params.userID,
-        firebaseSignInToken: this.props.params.firebaseSignInToken,
+      await userAction('signIn', {
+        userID: userID,
+        firebaseSignInToken: firebaseSignInToken,
         phoneNumber: phoneNumber,
-        countryCode: this.props.params.country.callingCode,
+        countryCode: country.callingCode,
       });
       if (profileCompleted) {
-        var that = this;
-        setTimeout(function() {
-          that.props.close();
-        }, 550);
+        await timeout(550);
+        close();
       } else {
-        this.props.navigate('Complete', {
-          data: {userID: this.props.params.userID},
+        navigate('Complete', {
+          data: {userID: userID},
         });
       }
     }
   }
   clearCode() {
-    const {current} = this.field;
-    if (current) {
-      current.clear();
-      current.focus();
-    }
+    return this.setState({verifCode: ''});
   }
   loader() {
     if (this.state.loader)
       return (
-        <View style={[styles.center, {marginTop: 10}]}>
-          <Loader color={colors.green} size={40} type={2} />
+        <View style={[styleApp.center, {marginTop: 10}]}>
+          <Loader color={colors.green} size={50} />
         </View>
       );
     return null;
@@ -133,14 +124,15 @@ class VerifyFields extends Component {
     if (!this.state.loader) {
       return (
         <Row style={{height: 30}}>
-          <Col style={styles.center}>
+          <Col style={styleApp.center}>
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => {
+              onPress={async () => {
+                await this.clearCode();
                 this.sendSMS();
               }}
               style={{marginTop: 3}}>
-              <Text style={styles.textOn}>Resend SMS</Text>
+              <Text style={[styles.textOn, {fontSize: 14}]}>Resend SMS</Text>
             </TouchableOpacity>
           </Col>
         </Row>
@@ -150,7 +142,7 @@ class VerifyFields extends Component {
   }
   statusSMS() {
     return (
-      <Col style={styles.center}>
+      <Col style={styleApp.center}>
         {this.state.step === 'verifying' ? (
           <Text style={styleApp.input}>Verifying code...</Text>
         ) : this.state.step === 'signIn' ? (
@@ -177,21 +169,13 @@ class VerifyFields extends Component {
   }
   verify() {
     const {verifCode} = this.state;
-    // const setValue = (value) => {
-    //   return this.setState({value: value});
-    // };
-    // const {value} = this.state;
-    // const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
-    // const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    //   value,
-    //   setValue,
-    // });
     return (
       <View style={styleApp.marginView}>
         <Text style={[styleApp.title, {marginBottom: 5, marginTop: 0}]}>
           Please enter the 4-digit code sent to you at{' '}
           {this.props.params.phoneNumber}
         </Text>
+
         <View style={styles.inputWrapper}>
           <CodeField
             value={verifCode}
@@ -209,19 +193,11 @@ class VerifyFields extends Component {
             rootStyle={styles.input}
             keyboardType="number-pad"
             renderCell={({index, symbol, isFocused}) => (
-              <View
-                style={{
-                  height: 55,
-                  borderBottomWidth: 1,
-                  //     borderColor: 'red',
-                  marginRight: 5,
-                }}>
-                <Text
-                  key={index}
-                  style={[styles.textOn, isFocused && styles.textOn]}>
-                  {symbol || (isFocused ? null : null)}
-                </Text>
-              </View>
+              <Text
+                key={index}
+                style={[styles.cell, isFocused && styles.focusCell]}>
+                {symbol}
+              </Text>
             )}
           />
         </View>
@@ -241,22 +217,13 @@ class VerifyFields extends Component {
 const styles = StyleSheet.create({
   inputWrapper: {
     alignItems: 'center',
-    marginTop: 10,
-    height: 80,
+    marginTop: 20,
+    height: 55,
     width: '100%',
-    // justifyContent: 'center',
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputWrapStyle: {
-    height: 50,
-    marginTop: 5,
   },
   textOn: {
-    fontSize: 25,
     ...styleApp.text,
+    fontSize: 25,
     color: colors.green,
   },
   inputNotEmpty: {
@@ -264,17 +231,32 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 55,
-    width: 50 * 4,
+    width: 60 * 4,
     borderRadius: 2,
     //  backgroundColor: colors.red,
-    borderBottomWidth: 3,
+  },
+  cell: {
+    ...styleApp.text,
+    width: 45,
+    height: 45,
+    lineHeight: 38,
+    fontSize: 24,
+    borderWidth: 2,
+    borderColor: colors.off,
+    textAlign: 'center',
+    color: colors.blue,
+    backgroundColor: colors.off2,
+    borderRadius: 4,
+  },
+  focusCell: {
     borderColor: colors.blue,
+    backgroundColor: colors.white,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user,
+    userID: state.user.userID,
   };
 };
 

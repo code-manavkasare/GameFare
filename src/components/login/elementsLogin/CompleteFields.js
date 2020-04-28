@@ -5,7 +5,6 @@ import {
   TextInput,
   Keyboard,
   InputAccessoryView,
-  ActivityIndicator,
   View,
 } from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -13,18 +12,14 @@ import database from '@react-native-firebase/database';
 
 import NavigationService from '../../../../NavigationService';
 
-import {
-  takePicture,
-  pickLibrary,
-  resize,
-  uploadPictureFirebase,
-} from '../../functions/pictures';
-import AsyncImage from '../../layout/image/AsyncImage';
+import {uploadPictureFirebase} from '../../functions/pictures';
+import {timeout} from '../../functions/coach';
+
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import AllIcons from '../../layout/icons/AllIcons';
-import ButtonColor from '../../layout/Views/Button';
+
 import ButtonFull from '../../layout/buttons/ButtonFull';
+import ButtonAddImage from '../../layout/buttons/ButtonAddImage';
 
 export default class CompleteFields extends Component {
   constructor(props) {
@@ -42,113 +37,37 @@ export default class CompleteFields extends Component {
     const {userID} = this.props.params;
     const {firstname, lastname, pictureUri} = this.state;
 
-    let profilePictureUrl = false;
-    if (pictureUri !== '') {
-      profilePictureUrl = await uploadPictureFirebase(
-        pictureUri,
-        'users/' + userID + '/userInfo/',
-      );
-    }
+    const profilePictureUrl = await uploadPictureFirebase(
+      pictureUri,
+      'users/' + userID + '/userInfo/',
+    );
+    console.log('profilePictureUrl', profilePictureUrl);
 
     let updates = {};
-    updates[`users/${userID}/userInfo/`] = {
-      firstname,
-      lastname,
-      picture: profilePictureUrl,
-    };
-    updates[`users/${this.props.params.userID}`] = {profileCompleted: true};
+    updates[`users/${this.props.params.userID}/profileCompleted`] = true;
+    updates[`users/${userID}/userInfo/firstname`] = firstname;
+    updates[`users/${userID}/userInfo/lastname`] = lastname;
+    updates[`users/${userID}/userInfo/picture`] = profilePictureUrl;
 
     await database()
       .ref()
       .update(updates);
 
     await Keyboard.dismiss();
-    var that = this;
-    setTimeout(function() {
-      that.props.dismiss();
-    }, 550);
+    await timeout(550);
+    this.props.dismiss();
   }
-
-  async addPicture(val) {
-    await this.setState({loader: true});
-    if (val === 'take') {
-      var uri = await takePicture();
-    } else if (val === 'pick') {
-      var uri = await pickLibrary();
-    }
-    if (!uri) {
-      await this.setState({
-        loader: false,
-      });
-      return this.focusOnText();
-    }
-
-    const uriResized = await resize(uri);
-    await this.setState({
-      pictureUri: uriResized,
-      loader: false,
-    });
-    return this.focusOnText();
-  }
-
   focusOnText = () => {
     const {firstname, lastname} = this.state;
     if (firstname === '' && lastname === '') this.firstnameInput.focus();
     if (firstname !== '') this.lastnameInput.focus();
   };
   async closeAddImage() {
-    await NavigationService.goBack();
+    await NavigationService.navigate('Complete');
     return this.focusOnText();
-  }
-  buttonPicture(pictureUri, loader) {
-    return (
-      <ButtonColor
-        color={colors.white}
-        onPressColor={colors.white}
-        click={() =>
-          NavigationService.navigate('AlertAddImage', {
-            title: 'Add picture',
-            closeButton: () => this.closeAddImage(),
-            onGoBack: (val) => {
-              this.addPicture(val);
-            },
-          })
-        }
-        style={[styles.buttonRound]}
-        view={() => {
-          return pictureUri === '' ? (
-            <View style={styleApp.center}>
-              <AllIcons
-                name={'image'}
-                color={colors.title}
-                size={40}
-                type="font"
-              />
-              <Text style={styleApp.text}>Add profile</Text>
-              <Text style={styleApp.text}>picture</Text>
-              {loader && (
-                <View style={{position: 'absolute', zIndex: 30}}>
-                  <ActivityIndicator />
-                </View>
-              )}
-            </View>
-          ) : (
-            <View style={styleApp.center}>
-              <AsyncImage style={styles.asyncImage} mainImage={pictureUri} />
-              {loader && (
-                <View style={{position: 'absolute', zIndex: 30}}>
-                  <ActivityIndicator />
-                </View>
-              )}
-            </View>
-          );
-        }}
-      />
-    );
   }
   render() {
     const {firstname, lastname, loader, pictureUri} = this.state;
-
     return (
       <View style={styles.content}>
         <Text style={[styleApp.title, {marginBottom: 30, fontSize: 21}]}>
@@ -157,8 +76,16 @@ export default class CompleteFields extends Component {
 
         <Row>
           <Col size={20} style={styleApp.center2}>
-            {this.buttonPicture(pictureUri, loader)}
+            <ButtonAddImage
+              title={'Add profile'}
+              title2={'picture'}
+              img={pictureUri}
+              setState={(uri) => this.setState({pictureUri: uri})}
+              styleImg={{height: 70, width: 70, borderRadius: 35}}
+              closeAddImage={() => this.closeAddImage()}
+            />
           </Col>
+          <Col size={3} />
           <Col size={40}>
             <Text style={[styleApp.title, {marginBottom: 0, fontSize: 16}]}>
               First name
@@ -219,19 +146,6 @@ export default class CompleteFields extends Component {
             text={'Next'}
           />
         </InputAccessoryView>
-
-        {/* <View style={styleApp.footerBooking}>
-          <View style={{marginLeft: 20, width: width - 40}}>
-            <Button
-              backgroundColor={'green'}
-              onPressColor={colors.greenClick}
-              text={'Next'}
-              disabled={!true}
-              loader={this.state.loader}
-              click={() => this.submit()}
-            />
-          </View>
-        </View> */}
 
         <InputAccessoryView nativeID={'lastname'}>
           <ButtonFull

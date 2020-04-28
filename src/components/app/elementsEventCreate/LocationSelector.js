@@ -33,7 +33,7 @@ import Loader from '../../layout/loaders/Loader';
 import ButtonColor from '../../layout/Views/Button';
 import AllIcons from '../../layout/icons/AllIcons';
 
-import ScrollView from '../../layout/scrollViews/ScrollView';
+import ScrollView from '../../layout/scrollViews/ScrollView2';
 const {height, width} = Dimensions.get('screen');
 
 class LocationSelector extends Component {
@@ -184,6 +184,7 @@ class LocationSelector extends Component {
     return this.props.navigation.goBack();
   }
   buttonSearchAddress() {
+    const {textInput} = this.state;
     return (
       <Animated.View
         style={[
@@ -200,7 +201,7 @@ class LocationSelector extends Component {
           },
         ]}>
         <Row style={{height: 50}}>
-          <Col size={15} style={styles.center}>
+          <Col size={15} style={styleApp.center}>
             <AllIcons
               name="map-marker-alt"
               size={18}
@@ -208,7 +209,7 @@ class LocationSelector extends Component {
               type="font"
             />
           </Col>
-          <Col size={75} style={styles.center2}>
+          <Col size={75} style={styleApp.center2}>
             <TextInput
               placeholder="Search for an address"
               autoCorrect={false}
@@ -222,10 +223,10 @@ class LocationSelector extends Component {
               underlineColorAndroid="rgba(0,0,0,0)"
               returnKeyType={'done'}
               onChangeText={(text) => this.changeLocation(text)}
-              value={this.state.textInput}
+              value={textInput}
             />
           </Col>
-          {this.state.textInput != '' ? (
+          {textInput !== '' ? (
             <Col
               size={10}
               style={styles.center}
@@ -234,7 +235,7 @@ class LocationSelector extends Component {
               <FontIcon name="times-circle" color={colors.grey} size={12} />
             </Col>
           ) : (
-            <Col size={10} style={styles.center}></Col>
+            <Col size={10} style={styleApp.center} />
           )}
         </Row>
       </Animated.View>
@@ -245,32 +246,44 @@ class LocationSelector extends Component {
     
     */
   cardResult(result) {
+    const {historicSearchLocation} = this.props;
     return (
       <ButtonColor
         view={() => {
           return (
             <Row>
-              <Col size={15} style={styles.center}>
-                {result.type == 'currentLocation' ? (
-                  <MatIcon name="my-location" color="grey" size={18} />
-                ) : this.props.historicSearchLocation[result.id] !=
-                  undefined ? (
-                  <MatIcon name="access-time" color="grey" size={16} />
+              <Col size={15} style={styleApp.center}>
+                {result.type === 'currentLocation' ? (
+                  <MatIcon
+                    name="my-location"
+                    color={colors.greyDark}
+                    size={18}
+                  />
+                ) : !historicSearchLocation[result.id] ? (
+                  <MatIcon
+                    name="access-time"
+                    color={colors.greyDark}
+                    size={16}
+                  />
                 ) : (
-                  <FontIcon name="map-marker" color="grey" size={16} />
+                  <FontIcon
+                    name="map-marker"
+                    color={colors.greyDark}
+                    size={16}
+                  />
                 )}
               </Col>
-              <Col size={85} style={styles.center2}>
-                {result.type == 'currentLocation' ? (
+              <Col size={85} style={styleApp.center2}>
+                {result.type === 'currentLocation' ? (
                   <Text style={styles.mainRes}>
                     {result.structured_formatting.main_text}
                   </Text>
                 ) : (
                   <View>
-                    <Text style={styles.mainRes}>
+                    <Text style={styleApp.text}>
                       {result.structured_formatting.main_text}
                     </Text>
-                    <Text style={styles.secondRes}>
+                    <Text style={styleApp.subtitle}>
                       {result.structured_formatting.secondary_text}
                     </Text>
                   </View>
@@ -283,15 +296,7 @@ class LocationSelector extends Component {
           this.onclickLocation(result);
         }}
         color="white"
-        style={{
-          flex: 1,
-          borderBottomWidth: 0,
-          borderColor: '#EAEAEA',
-          paddingTop: 15,
-          paddingBottom: 15,
-          marginLeft: 0,
-          width: width,
-        }}
+        style={styles.buttonResult}
         onPressColor={colors.off}
       />
     );
@@ -373,41 +378,17 @@ class LocationSelector extends Component {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: 'white',
-    position: 'absolute',
-    top: 0,
-    borderTopWidth: 0,
-    borderColor: colors.off,
-    height: height,
-    width: width,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    //alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mainRes: {
-    color: '#46474B',
-    fontSize: 17,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  secondRes: {
-    color: 'grey',
-    fontSize: 17,
-    marginTop: 2,
-    fontFamily: 'OpenSans-Regular',
   },
   title: {
     color: 'white',
     fontSize: 19,
     fontFamily: 'OpenSans-Bold',
   },
-  subtitle: {
-    color: colors.title,
-    fontSize: 15,
-    fontFamily: 'OpenSans-Regular',
+  buttonResult: {
+    flex: 1,
+    paddingTop: 15,
+    paddingBottom: 15,
+    width: width,
   },
   popupNoProviders: {
     top: 0,
@@ -423,6 +404,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {historicSearchAction})(
-  LocationSelector,
-);
+export default connect(
+  mapStateToProps,
+  {historicSearchAction},
+)(LocationSelector);

@@ -36,16 +36,17 @@ class MorePage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    // this.notificationHandler();
+    this.notificationHandler();
   }
   componentWillUnmount() {
-    this.removeNotificationListener();
-    // this.messageListener();
+    // this.removeNotificationListener();
   }
   async notificationHandler() {
-    const {userID, layoutAction} = this.props;
-    this.unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      this.layoutAction('setLayout', {notification: remoteMessage});
+    const {layoutAction} = this.props;
+    console.log('notificationHandler');
+    messaging().onMessage((remoteMessage) => {
+      console.log('remoteMessage', remoteMessage);
+      layoutAction('setLayout', {notification: remoteMessage.data});
     });
     this.appBackgroundNotificationListenner();
     this.appOpenFistNotification();

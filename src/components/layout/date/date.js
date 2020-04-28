@@ -5,7 +5,7 @@ function date(dateOff, format) {
   let formatToUse = format;
   var date = dateOff.split(' GMT')[0];
   if (!formatToUse) formatToUse = 'ddd, MMM D';
-  return moment(date)
+  return moment(new Date(date))
     .format(formatToUse)
     .toString();
 }
@@ -14,7 +14,7 @@ function time(dateOff, format) {
   let formatToUse = format;
   var date = dateOff.split(' GMT')[0];
   if (!formatToUse) formatToUse = 'h:mm a';
-  return moment(date)
+  return moment(new Date(date))
     .format(formatToUse)
     .toString();
 }

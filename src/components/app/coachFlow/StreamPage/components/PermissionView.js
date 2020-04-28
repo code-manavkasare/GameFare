@@ -59,7 +59,7 @@ class StreamPage extends Component {
   permissionView() {
     const {loader, microAccess, cameraAccess} = this.state;
     return (
-      <FadeInView duration={300} style={styles.page}>
+      <View duration={300} style={styles.page}>
         <View style={styleApp.marginView}>
           <Text
             style={[
@@ -87,7 +87,7 @@ class StreamPage extends Component {
             )}
           </View>
         }
-      </FadeInView>
+      </View>
     );
   }
   render() {

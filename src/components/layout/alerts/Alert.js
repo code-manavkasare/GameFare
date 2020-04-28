@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 
-const {height, width} = Dimensions.get('screen');
-
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import Button from '../buttons/Button';
+import ButtonColor from '../Views/Button';
+import AllIcons from '../icons/AllIcons';
+import AlertAddImage from './AlertAddImage';
+
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import {timing} from '../../animations/animations';
@@ -59,12 +61,12 @@ export default class Alert extends Component {
     }
     return this.close();
   }
-  optionClick(operation) {
+  async optionClick(operation) {
     const {navigation} = this.props;
-    navigation.goBack();
     if (operation) {
-      operation();
+      await operation();
     }
+    navigation.goBack();
   }
   async close() {
     this.openVoile(false);
@@ -82,9 +84,10 @@ export default class Alert extends Component {
       displayList,
       listOptions,
       close,
+      onGoBack,
     } = this.props.route.params;
     const closable = close !== undefined ? close : true;
-
+    console.log('displayList', displayList);
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'transparent'}]}>
         <Animated.View
@@ -110,7 +113,6 @@ export default class Alert extends Component {
 
           {icon && <View style={styles.viewIcon}>{icon}</View>}
 
-          {/* View Title */}
           <Row style={styles.rowTitleSubtitle}>
             <Col>
               {this.title()}
@@ -118,8 +120,16 @@ export default class Alert extends Component {
             </Col>
           </Row>
 
+          <View style={styleApp.divider} />
+
           {// CASE 1: Two options given (YES / NO Style)
-          displayList && listOptions.length === 2 ? (
+          displayList === 'addImage' ? (
+            <AlertAddImage
+              onGoBack={onGoBack}
+              close={() => this.close()}
+              navigation={navigation}
+            />
+          ) : displayList && listOptions.length === 2 ? (
             <Row style={styles.buttonArea}>
               <Col size={45} style={styles.viewButton}>
                 <Button
@@ -146,18 +156,44 @@ export default class Alert extends Component {
           ) : // CASE 2: More than two options available (All blue buttons)
           displayList ? (
             <Col style={styles.buttonArea}>
-              {listOptions.map((option, i) => (
-                <Row style={styles.viewButton}>
-                  <Button
-                    backgroundColor={'blue'}
-                    disabled={false}
-                    onPressColor={colors.blueLight}
-                    text={option.title}
-                    click={() => this.optionClick(option.operation)}
-                    loader={this.state.loader}
+              {listOptions.map((option, i) => {
+                const {icon, title, operation} = option;
+                return (
+                  <ButtonColor
+                    key={i}
+                    view={() => {
+                      const {name, size, type, color} = icon;
+                      return (
+                        <Row>
+                          <Col size={20} style={styleApp.center}>
+                            <AllIcons
+                              name={name}
+                              type={type}
+                              color={color}
+                              size={size}
+                            />
+                          </Col>
+                          <Col size={60} style={styleApp.center2}>
+                            <Text style={styleApp.text}>{title}</Text>
+                          </Col>
+                          <Col size={20} style={styleApp.center3}>
+                            <AllIcons
+                              name="keyboard-arrow-right"
+                              type={'mat'}
+                              color={colors.grey}
+                              size={13}
+                            />
+                          </Col>
+                        </Row>
+                      );
+                    }}
+                    click={() => this.optionClick(operation)}
+                    color="white"
+                    style={styles.buttonList}
+                    onPressColor={colors.off}
                   />
-                </Row>
-              ))}
+                );
+              })}
             </Col>
           ) : (
             // CASE 3: Only one option provided (Same as previous usage)
@@ -174,6 +210,7 @@ export default class Alert extends Component {
               </View>
             </View>
           )}
+          <View style={{height: marginBottomApp}} />
         </View>
       </View>
     );
@@ -185,14 +222,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     position: 'absolute',
     flex: 1,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
     backgroundColor: 'white',
-    borderTopWidth: 0.3,
-    borderColor: colors.borderColor,
+    borderWidth: 1,
+    paddingTop: 10,
+    borderColor: colors.off,
     width: '100%',
-    shadowColor: '#46474B',
-    shadowOffset: {width: 0, height: 0},
-    shadowRadius: 10,
-    shadowOpacity: 0.2,
+    // shadowColor: '#46474B',
+    // shadowOffset: {width: 0, height: 0},
+    // shadowRadius: 10,
+    // shadowOpacity: 0.2,
   },
   rowTitleSubtitle: {
     flex: 1,
@@ -207,7 +247,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     right: '5%',
-    top: 20,
+    top: 30,
     zIndex: 30,
     alignItems: 'center',
     justifyContent: 'center',
@@ -228,11 +268,13 @@ const styles = StyleSheet.create({
     paddingLeft: '5%',
     paddingRight: '5%',
     paddingTop: 15,
-    paddingBottom: 25,
-    marginBottom: marginBottomApp,
+    // paddingBottom: 25,
     alignItems: 'center',
-    //  backgroundColor: 'red',
     justifyContent: 'center',
+  },
+  buttonList: {
+    height: 55,
+    width: '100%',
   },
   viewButton: {
     alignItems: 'center',
