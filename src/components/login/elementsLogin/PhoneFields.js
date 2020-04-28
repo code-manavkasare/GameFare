@@ -197,10 +197,10 @@ class PhoneFields extends Component {
                     return <Loader color={colors.white} size={40} type={2} />;
                   return (
                     <AllIcons
-                      name="arrow-forward"
-                      type="mat"
+                      name="arrow-right"
+                      type="font"
                       color={isValid ? colors.white : colors.grey}
-                      size={23}
+                      size={20}
                     />
                   );
                 }}

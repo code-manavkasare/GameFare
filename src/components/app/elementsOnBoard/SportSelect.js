@@ -85,7 +85,7 @@ class InitialPage extends Component {
   }
   sportPage() {
     return (
-      <FadeInView duration={200} style={{minHeight: height}}>
+      <FadeInView duration={200} style={{minHeight: height, marginTop: 20}}>
         <View style={[styleApp.marginView]}>
           <Text style={[styleApp.input, {fontSize: 24, marginBottom: 5}]}>
             Welcome to GameFare!
@@ -107,12 +107,12 @@ class InitialPage extends Component {
   }
   render() {
     return (
-      <View style={styles.page}>
+      <View style={styleApp.stylePage}>
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.sportPage()}
           marginBottomScrollView={0}
-          marginTop={sizes.marginTopApp}
+          marginTop={0}
           offsetBottom={0}
           showsVerticalScrollIndicator={false}
         />

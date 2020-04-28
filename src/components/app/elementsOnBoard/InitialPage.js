@@ -33,10 +33,10 @@ class InitialPage extends Component {
     await this.goToHomePageDirectlyFromRefLink();
     await StatusBar.setBarStyle('dark-content', true);
     await StatusBar.setHidden(false, true);
-    if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
-      return this.props.navigation.navigate('TabsApp');
-    }
-    return this.props.navigation.navigate('SportSelect');
+    // if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
+    //   return this.props.navigation.navigate('TabsApp');
+    // }
+    return this.props.navigation.navigate('TabsApp');
   }
 
   goToHomePageDirectlyFromRefLink = async () => {

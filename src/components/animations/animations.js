@@ -9,6 +9,7 @@ function timing(toValue, duration, delay) {
     easing: Easing.ease,
     delay: delay ? delay : 0,
     duration: duration,
+    useNativeDriver: false,
   };
 }
 

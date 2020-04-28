@@ -94,12 +94,11 @@ async function pickLibrary() {
 }
 
 async function uploadPictureFirebase(localUri, destination) {
+  console.log('starte upload pictue', localUri);
   try {
     let imageName = 'groupPicture';
-    const imageRef = storage()
-      .ref(destination)
-      .child(imageName);
-    await imageRef.put(localUri, {contentType: 'image/jpg'});
+    const imageRef = storage().ref(destination + '/' + imageName);
+    await imageRef.putFile(localUri);
     var url = imageRef.getDownloadURL();
     return url;
   } catch (error) {

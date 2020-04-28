@@ -74,17 +74,20 @@ class ScrollViewPage extends PureComponent {
         extraHeight={100}
         showsVerticalScrollIndicator={this.props.showsVerticalScrollIndicator}
         scrollEventThrottle={16}
-        onScroll={Animated.event([
-          {
-            nativeEvent: {
-              contentOffset: {
-                y: !this.props.AnimatedHeaderValue
-                  ? this.AnimatedHeaderValue
-                  : this.props.AnimatedHeaderValue,
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: !this.props.AnimatedHeaderValue
+                    ? this.AnimatedHeaderValue
+                    : this.props.AnimatedHeaderValue,
+                },
               },
             },
-          },
-        ])}
+          ],
+          {useNativeDriver: false},
+        )}
         // style={}
         style={this.styleScrollView()}>
         {this.props.contentScrollView()}
