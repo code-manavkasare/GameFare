@@ -60,7 +60,7 @@ class HeaderStreamView extends Component {
         backgroundColorIconOffset={colors.greyDark + '70'}
         initialBorderColorIcon={'transparent'}
         sizeIconOffset={23}
-        icon1={'chevron-down'}
+        icon1={'arrow-left'}
         icon2={isConnected && 'switchCam'}
         typeIconOffset="mat"
         clickButton2={() => setState({cameraFront: !state.cameraFront})}

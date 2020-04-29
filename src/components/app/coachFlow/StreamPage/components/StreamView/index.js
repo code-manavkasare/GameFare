@@ -94,12 +94,10 @@ class StreamPage extends Component {
       sessionInfo: this.props.sessionInfo,
     };
     this.translateYFooter = new Animated.Value(0);
-    this.translateYViewPublisher = new Animated.Value(0);
-    this.translateXViewPublisher = new Animated.Value(0);
     this.animatedPage = new Animated.Value(0);
-    this.opacityHeader = new Animated.Value(0);
-    this.opacityStreamView = new Animated.Value(0);
-    this.translateXCard = new Animated.Value(0);
+    this.opacityHeader = new Animated.Value(1);
+    this.opacityStreamView = new Animated.Value(1);
+    // this.translateXCard = new Animated.Value(0);
     this.opacityCard = new Animated.Value(1);
     this.otSessionRef = React.createRef();
     this.watchVideoRef = React.createRef();
@@ -190,10 +188,6 @@ class StreamPage extends Component {
       props.sessionInfo.objectID === props.coachSessionID &&
       props.sessionInfo.scrollDisabled === state.sessionInfo.scrollDisabled
     ) {
-      console.log(
-        'getDerivedStateFromProps props.sessionInfo',
-        props.sessionInfo,
-      );
       return {
         sessionInfo: props.sessionInfo,
       };
@@ -239,34 +233,20 @@ class StreamPage extends Component {
         open: true,
       });
       await layoutAction('setLayout', {isFooterVisible: false});
-      await this.opacityCard.setValue(0);
-      Animated.parallel([
-        Animated.timing(this.animatedPage, openStream(1, 250)),
-        Animated.timing(this.opacityStreamView, timing(1, 180)),
-        Animated.timing(this.opacityHeader, timing(1, 230)),
-        // Animated.timing(this.opacityCard, timing(0, 0)),
-      ]).start(() =>
-        this.translateXCard.setValue(currentScreenSize.currentWidth),
-      );
+      Animated.spring(this.animatedPage, native(1, 250)).start();
     } else {
       await layoutAction('setLayout', {isFooterVisible: true});
-      await this.translateXCard.setValue(0);
       await StatusBar.setBarStyle('dark-content', true);
-      Animated.parallel([
-        Animated.timing(this.animatedPage, openStream(0.05, 230)),
-        Animated.timing(this.opacityStreamView, timing(1, 200)),
-        Animated.timing(this.opacityHeader, timing(0, 110)),
-      ]).start(async () => {
+      Animated.timing(this.animatedPage, openStream(0, 230)).start(async () => {
         this.setState({
           pageFullScreen: false,
+          coordinates: {x: 0, y: 0},
         });
-        this.opacityCard.setValue(1);
         this.props.coachAction('setSessionInfo', {
           scrollDisabled: false,
           autoOpen: false,
         });
       });
-      await timeout(200);
     }
   }
   async loadCoachSession() {
@@ -319,22 +299,15 @@ class StreamPage extends Component {
     await this.setState({open: false});
     return true;
   }
-
   loaderView(text, hideLoader) {
     const {pageFullScreen} = this.state;
+    const styleText = {...styleApp.text, color: colors.white, marginBottom: 25};
     if (!pageFullScreen) return null;
     return (
-      <FadeInView
-        duration={250}
-        style={[styleApp.center, styles.loaderSessionTokBox]}>
-        {pageFullScreen && (
-          <Text
-            style={[styleApp.text, {color: colors.white, marginBottom: 25}]}>
-            {text}
-          </Text>
-        )}
-        {!hideLoader && <Loader size={40} color={colors.white} />}
-      </FadeInView>
+      <View style={[styleApp.center, styles.loaderSessionTokBox]}>
+        {pageFullScreen && <Text style={styleText}>{text}</Text>}
+        {!hideLoader && <Loader size={55} color={colors.white} />}
+      </View>
     );
   }
   cameraPosition() {
@@ -386,7 +359,6 @@ class StreamPage extends Component {
         width: 0,
         marginLeft: width,
         borderRadius: 6,
-        // position: 'absolute',
       };
     }
     return {
@@ -414,12 +386,7 @@ class StreamPage extends Component {
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
-    console.log(
-      'render stream component',
-      member.tokenTokbox,
-      sessionID,
-      Config.OPENTOK_API,
-    );
+
     return (
       <Animated.View
         style={[styleApp.fullSize, {opacity: this.opacityStreamView}]}>
@@ -476,34 +443,20 @@ class StreamPage extends Component {
       currentHeight,
       currentWidth,
     );
-
-    const scaleXCard = this.animatedPage.interpolate({
+    const translateXStream = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [initialScaleX, 1],
+      outputRange: [currentWidth, 0],
       extrapolate: 'clamp',
     });
-    const scaleYCard = this.animatedPage.interpolate({
+    const translateXCard = this.animatedPage.interpolate({
       inputRange: [0, 1],
-      outputRange: [initialScaleY, 1],
-      extrapolate: 'clamp',
-    });
-
-    const xCard = this.animatedPage.interpolate({
-      inputRange: [0, 1],
-      outputRange: [x - ((1 - initialScaleX) * currentWidth) / 2, 0],
-      extrapolate: 'clamp',
-    });
-    const yCard = this.animatedPage.interpolate({
-      inputRange: [0, 1],
-      outputRange: [y - ((1 - initialScaleY) * currentHeight) / 2, 0],
+      outputRange: [0, -currentWidth],
       extrapolate: 'clamp',
     });
 
     return {
-      scaleXCard,
-      scaleYCard,
-      xCard,
-      yCard,
+      translateXStream,
+      translateXCard,
     };
   }
   sharedElement() {
@@ -526,24 +479,22 @@ class StreamPage extends Component {
       pageFullScreen,
       currentScreenSize,
     );
-    const {scaleXCard, scaleYCard, xCard, yCard} = this.animatedValues();
-    console.log('render shared element', pageFullScreen);
-
+    const {translateXStream, translateXCard} = this.animatedValues();
     return (
       <View style={styleContainerStreamView}>
-        {
-          <CardStreamView
-            coachSessionID={coachSessionID}
-            endCoachSession={this.endCoachSession.bind(this)}
-            open={this.open.bind(this)}
-            coachSession={coachSession}
-            translateXCard={this.translateXCard}
-            timestamp={timestamp}
-            sessionInfo={sessionInfo}
-            opacityCard={this.opacityCard}
-            isConnected={isConnected}
-          />
-        }
+        <CardStreamView
+          coachSessionID={coachSessionID}
+          endCoachSession={this.endCoachSession.bind(this)}
+          open={this.open.bind(this)}
+          coachSession={coachSession}
+          translateXCard={translateXCard}
+          timestamp={timestamp}
+          sessionInfo={sessionInfo}
+          opacityCard={this.opacityCard}
+          isConnected={isConnected}
+          coordinates={coordinates}
+        />
+
         <Animated.View
           ref={(ref) => {
             this.streamViewRef = ref;
@@ -551,12 +502,7 @@ class StreamPage extends Component {
           style={[
             styleCard,
             pageFullScreen && {
-              transform: [
-                {translateX: xCard},
-                {translateY: yCard},
-                {scaleX: scaleXCard},
-                {scaleY: scaleYCard},
-              ],
+              transform: [{translateX: translateXStream}],
             },
           ]}>
           <KeepAwake />

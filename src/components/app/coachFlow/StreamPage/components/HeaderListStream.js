@@ -41,7 +41,7 @@ class HeaderListStream extends Component {
             <ButtonColor
               view={() => {
                 return loader ? (
-                  <Loader size={25} color="white" />
+                  <Loader size={35} color={colors.white} />
                 ) : (
                   <AllIcons
                     name="plus"

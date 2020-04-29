@@ -46,10 +46,13 @@ const setParams = (routeKey, params) => {
 };
 
 const clickNotification = async (notification) => {
-  const {action, typeNavigation} = notification;
-  if (typeNavigation === 'navigate') return navigate(action, notification);
-  console.log('click notif', action, notification);
-  return push(action, notification);
+  var {action, typeNavigation} = notification;
+  if (!notification.action) var {action, typeNavigation} = notification.data;
+
+  console.log('click noatification', notification);
+  if (typeNavigation === 'navigate') return navigate(action, notification.data);
+  console.log('click notif', action, notification.data);
+  return push(action, notification.data);
 };
 
 // add other navigation functions that you need and export them

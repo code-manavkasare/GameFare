@@ -32,7 +32,6 @@ class ListStreams extends Component {
     }
     return {};
   }
-
   openSession(objectID) {
     this.itemsRef[objectID].open();
   }

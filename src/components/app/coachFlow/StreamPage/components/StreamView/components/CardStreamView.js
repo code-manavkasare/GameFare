@@ -29,11 +29,9 @@ class CardStream extends Component {
       textButton: 'Delete',
       onGoBack: async () => {
         let updates = {};
-        console.log('delete user from', coachSessionID);
         updates[`users/${userID}/coachSessions/${coachSessionID}`] = null;
         updates[`coachSessions/${coachSessionID}/members/${userID}`] = null;
         updates[`coachSessions/${coachSessionID}/allMembers/${userID}`] = null;
-        console.log('updates', updates);
         database()
           .ref()
           .update(updates);
@@ -64,7 +62,6 @@ class CardStream extends Component {
   buttonDelete() {
     return (
       <ButtonColor
-        // color={colors.blue}
         onPressColor={colors.blueLight}
         click={() => this.deleteSession()}
         style={styles.button}
@@ -93,11 +90,10 @@ class CardStream extends Component {
       borderBottomLeftRadius: 5,
       borderBottomRightRadius: 5,
     };
+    const styleText = {...styleApp.text, color: colors.white, fontSize: 10};
     return (
       <View style={styleViewLive}>
-        <Text style={[styleApp.text, {color: colors.white, fontSize: 10}]}>
-          Live
-        </Text>
+        <Text style={styleText}>Live</Text>
       </View>
     );
   }
@@ -105,11 +101,10 @@ class CardStream extends Component {
     const styleRow = {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      //   backgroundColor: 'red',
       flex: 1,
     };
     const sizeImg = 40;
-
+    const styleText = {...styleApp.text, color: colors.greyDark, fontSize: 13};
     const {userID, coachSession} = this.props;
     if (!coachSession) return null;
     if (!coachSession.members) return null;
@@ -119,13 +114,7 @@ class CardStream extends Component {
     return (
       <View style={styleRow}>
         {members.length === 0 ? (
-          <Text
-            style={[
-              styleApp.text,
-              {color: colors.greyDark, fontSize: 13, marginTop: 0},
-            ]}>
-            No one else is part of this room.
-          </Text>
+          <Text style={styleText}>No one else is part of this room.</Text>
         ) : (
           members.map((member, i) => {
             const styleImg = {
@@ -133,15 +122,13 @@ class CardStream extends Component {
               width: sizeImg,
               opacity: member.isConnected ? 1 : 0.7,
             };
+            const styleImgContainer = {
+              height: 40,
+              width: 40,
+              ...styleApp.center2,
+            };
             return (
-              <View
-                key={member.id}
-                style={{
-                  height: 40,
-                  width: 40,
-                  // backgroundColor: 'red',
-                  ...styleApp.center2,
-                }}>
+              <View key={member.id} style={styleImgContainer}>
                 <ImageUser
                   key={member.id}
                   user={member}
@@ -164,6 +151,7 @@ class CardStream extends Component {
       translateXCard,
       sessionInfo,
       coachSessionID,
+      coordinates,
     } = this.props;
     const {clickEnabled} = this.state;
 
@@ -172,8 +160,11 @@ class CardStream extends Component {
       <Animated.View
         style={[
           styles.card,
-          // {zIndex: sessionInfo.objectID === coachSessionID ? 20 : 3},
-          {opacity: opacityCard, transform: [{translateX: translateXCard}]},
+          {
+            opacity: opacityCard,
+            top: coordinates.y,
+            transform: [{translateX: translateXCard}],
+          },
         ]}>
         <ButtonColor
           color={colors.white}
@@ -187,7 +178,7 @@ class CardStream extends Component {
             return (
               <Row>
                 {isConnected && this.viewLive()}
-                <Col size={70}>
+                <Col size={55}>
                   <Text
                     style={[
                       styleApp.text,
@@ -199,14 +190,22 @@ class CardStream extends Component {
                   {this.viewMembers()}
                 </Col>
                 {isConnected ? (
-                  <Col size={15} style={styleApp.center3}>
+                  <Col size={20} style={styleApp.center3}>
                     {this.buttonEndCall()}
                   </Col>
                 ) : (
-                  <Col size={15} />
+                  <Col size={20} />
                 )}
                 <Col size={15} style={styleApp.center3}>
                   {this.buttonDelete()}
+                </Col>
+                <Col size={10} style={styleApp.center3}>
+                  <AllIcons
+                    name="keyboard-arrow-right"
+                    type="mat"
+                    color={colors.grey}
+                    size={15}
+                  />
                 </Col>
               </Row>
             );
@@ -223,7 +222,7 @@ class CardStream extends Component {
 const styles = StyleSheet.create({
   card: {
     position: 'absolute',
-    zIndex: 30,
+    zIndex: 1,
     width: '100%',
     backgroundColor: colors.white,
     borderTopWidth: 1,
