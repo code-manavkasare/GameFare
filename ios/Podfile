@@ -1,8 +1,3 @@
-plugin 'cocoapods-binary'
-# use_frameworks!
-# all_binary!
-# enable_bitcode_for_prebuilt_frameworks!
-
 platform :ios, '9.0'
 
 # Override Firebase SDK Version
