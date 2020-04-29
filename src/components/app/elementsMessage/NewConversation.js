@@ -84,7 +84,6 @@ class NewConversation extends React.Component {
     return this.setState({loaderHeader: false});
   }
   selectUser(select, user, selectedUsers) {
-    console.log('select user', select, user, selectedUsers);
     if (!select)
       selectedUsers = {
         ...selectedUsers,

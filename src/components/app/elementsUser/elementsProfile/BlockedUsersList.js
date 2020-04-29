@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, View, StyleSheet, Text, Animated} from 'react-native';
+import {View, Text, Animated} from 'react-native';
 import {connect} from 'react-redux';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -9,10 +9,10 @@ import {getBlockedUsers} from '../../../database/algolia';
 import {blockUnblockUser} from '../../../database/firebase/users';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
+import Button from '../../../layout/buttons/Button';
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-const {height, width} = Dimensions.get('screen');
 
 class BlockedUsersList extends Component {
   constructor(props) {
@@ -28,14 +28,14 @@ class BlockedUsersList extends Component {
     this.refreshUsersList();
   };
 
-  selectUser(select, user, selectedUsers) {
-    if (!select)
-      selectedUsers = {
-        ...selectedUsers,
-        [user.objectID]: user,
-      };
-    else delete selectedUsers[user.objectID];
-    this.setState({selectedUsers: selectedUsers});
+  selectUser(select, user) {
+    let {selectedUsers} = this.state;
+    if (!select) {
+      selectedUsers[user.objectID] = user;
+    } else delete selectedUsers[user.objectID];
+    console.log('selectedUsers: ', selectedUsers);
+
+    this.setState({selectedUsers});
   }
 
   unblockUser = async () => {
@@ -57,13 +57,14 @@ class BlockedUsersList extends Component {
     this.setState({blockedUsers, loader: false});
   }
 
-  cardUser(user, i, selectedUsers) {
+  cardUser(user) {
+    const {selectedUsers} = this.state;
     return (
       <CardUserSelect
         user={user}
-        key={i}
+        key={user.info.objectID}
         selectUser={this.selectUser.bind(this)}
-        selectedUsers={selectedUsers}
+        usersSelected={selectedUsers}
       />
     );
   }
@@ -89,7 +90,7 @@ class BlockedUsersList extends Component {
   }
 
   render() {
-    const {loader} = this.state;
+    const {blockedUsers} = this.state;
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
@@ -102,13 +103,10 @@ class BlockedUsersList extends Component {
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
-          loader={loader}
           typeIcon2={'font'}
           sizeIcon2={17}
           icon1={'arrow-left'}
-          icon2={'user-check'}
           clickButton1={() => goBack()}
-          clickButton2={() => this.unblockUser()}
         />
 
         <ScrollView
@@ -121,6 +119,22 @@ class BlockedUsersList extends Component {
           offsetBottom={sizes.heightFooter + 40}
           showsVerticalScrollIndicator={true}
         />
+
+        {blockedUsers.length !== 0 && (
+          <View
+            style={[
+              styleApp.footerBooking,
+              styleApp.marginView,
+              {bottom: sizes.heightFooter + 20},
+            ]}>
+            <Button
+              text="Unblock users"
+              backgroundColor={'green'}
+              onPressColor={colors.greenLight}
+              click={() => this.unblockUser()}
+            />
+          </View>
+        )}
       </View>
     );
   }
