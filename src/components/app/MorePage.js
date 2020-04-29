@@ -38,20 +38,17 @@ class MorePage extends Component {
   componentDidMount() {
     this.notificationHandler();
   }
-  componentWillUnmount() {
-    // this.removeNotificationListener();
-  }
   async notificationHandler() {
-    const {layoutAction} = this.props;
     console.log('notificationHandler');
+    const {layoutAction, userID} = this.props;
     messaging().onMessage((remoteMessage) => {
       console.log('remoteMessage', remoteMessage);
-      layoutAction('setLayout', {notification: remoteMessage.data});
+      if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
+        return layoutAction('setLayout', {notification: remoteMessage});
     });
     this.appBackgroundNotificationListenner();
     this.appOpenFistNotification();
   }
-
   appBackgroundNotificationListenner() {
     this.removeNotificationListener = messaging().onNotificationOpenedApp(
       (notification) => {
@@ -59,7 +56,6 @@ class MorePage extends Component {
       },
     );
   }
-
   async appOpenFistNotification() {
     const notificationOpen = await messaging().getInitialNotification();
     if (notificationOpen) return clickNotification(notificationOpen);

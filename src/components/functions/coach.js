@@ -134,14 +134,13 @@ const styleStreamView = (
     position: 'relative',
   };
   if (pageFullScreen) {
-    styleCard = [
-      {
-        position: 'absolute',
-        height: currentScreenSize.currentHeight,
-        width: currentScreenSize.currentWidth,
-        //  backgroundColor: colors.off + '0',
-      },
-    ];
+    styleCard = {
+      position: 'absolute',
+      height: currentScreenSize.currentHeight,
+      width: currentScreenSize.currentWidth,
+      top: 0,
+      backgroundColor: colors.transparentGrey,
+    };
     styleContainerStreamView = {
       position: 'absolute',
       zIndex: 50,

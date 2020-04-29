@@ -1,4 +1,7 @@
+plugin 'cocoapods-binary'
+
 platform :ios, '9.0'
+
 # Override Firebase SDK Version
 $RNFirebaseAsStaticFramework = true
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
@@ -43,6 +46,16 @@ def flipper_post_install(installer)
   end
 end
 
+# Post Install processing for Bitcode
+def bitcode_post_install(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+        config.build_settings['BITCODE_GENERATION_MODE'] = 'bitcode'
+        config.build_settings['ENABLE_BITCODE'] = 'YES'
+    end
+  end
+end
+
 def shared_pods
   # Pods for gamefare
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
@@ -75,7 +88,7 @@ def shared_pods
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   pod 'Stripe'
-  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+  # pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-BluetoothPeripheral', :path => "#{permissions_path}/BluetoothPeripheral.podspec"
@@ -104,6 +117,10 @@ def shared_pods
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 end
 
+enable_bitcode_for_prebuilt_frameworks!
+
+
+
 target 'gamefare' do
   shared_pods
   target 'gamefareTests' do
@@ -121,5 +138,6 @@ target 'gamefare-dev' do
   add_flipper_pods!
   post_install do |installer|
     flipper_post_install(installer)
+    bitcode_post_install(installer)
   end
 end
