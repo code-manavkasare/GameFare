@@ -109,39 +109,16 @@ class StreamPage extends Component {
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: true,
-            connectionIdTokbox: event.streamId,
+            streamIdTokBox: event.streamId,
+            connectionIdTokbox: event.connectionId,
           });
         this.setState({
           isConnected: true,
         });
       },
       streamDestroyed: async (event) => {
-        const {userID, coachSessionID} = this.props;
-        await database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-          .update({
-            isConnected: false,
-          });
         this.setState({
           isConnected: false,
-        });
-      },
-    };
-    this.sessionEventHandlers = {
-      sessionDisconnected: async (event) => {
-        const {userID, coachSessionID} = this.props;
-        await database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-          .update({
-            isConnected: false,
-          });
-        this.setState({
-          isConnected: false,
-        });
-      },
-      sessionConnected: async (event) => {
-        this.setState({
-          isConnected: true,
         });
       },
     };
