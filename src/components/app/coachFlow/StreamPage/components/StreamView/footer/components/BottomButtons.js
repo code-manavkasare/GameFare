@@ -217,7 +217,7 @@ class BottomButton extends Component {
     if (nextRecordingVal) {
       startRecording(
         sessionIDFirebase,
-        membersConnectedArray[0].connectionIdTokbox,
+        membersConnectedArray[0].streamIdTokBox,
       );
     } else stopRecording(sessionIDFirebase);
   }
@@ -274,7 +274,7 @@ class BottomButton extends Component {
         <VideoSourcePopup
           members={membersArray}
           selectMember={(member) => {
-            startRecording(idFirebase, member.connectionIdTokbox);
+            startRecording(idFirebase, member.streamIdTokBox);
           }}
           close={() => this.toggleVideoSourcePopup()}
         />
