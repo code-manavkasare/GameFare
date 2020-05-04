@@ -21,7 +21,6 @@ class PastSessions extends Component {
         archive={archive}
         key={archive.id}
         openVideo={(source, thumbnail) => {
-          console.log('llala open card archive', thumbnail);
           openVideo({
             watchVideo: true,
             thumbnail: thumbnail,

@@ -16,18 +16,18 @@ let initialHeightControlBar = 110;
 let offsetFooterStreaming = 30;
 
 let marginBottomApp = 50;
+let marginBottomAppLandscade = 10;
 
 let heightHeaderStream = 60;
 let offsetBottomHeaderStream = 10;
 let heightCardSession = 90;
 let widthCardSession = width;
 
-console.log('height screeen,', height);
 if (Platform.OS === 'ios') {
   height0 = 0;
   marginTopHeader = 24;
   heightPicture = 240;
-  marginBottomApp = 0;
+  marginBottomApp = 10;
   heightHeaderFilter = 100;
   heightFooterBooking = 82;
   heightFooter = 70;
@@ -44,6 +44,7 @@ if (Platform.OS === 'ios') {
     heightFooter = 75;
     marginTopApp = 35;
     marginBottomApp = 30;
+    marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 30;
@@ -55,6 +56,7 @@ if (Platform.OS === 'ios') {
     heightFooter = 75;
     marginTopApp = 35;
     marginBottomApp = 35;
+    marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;
@@ -93,4 +95,5 @@ module.exports = {
   heightHeaderStream,
   offsetBottomHeaderStream,
   marginTopAppLanscape,
+  marginBottomAppLandscade,
 };

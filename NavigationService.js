@@ -8,7 +8,6 @@ const navigate = (routeName, params) => {
 };
 
 const push = (routeName, params) => {
-  console.log('push!', params);
   if (params.uniqueStack)
     return navigationRef.current?.dispatch(
       StackActions.push(routeName, params),
@@ -35,8 +34,6 @@ const dismiss = () => {
 };
 
 const setParams = (routeKey, params) => {
-  console.log('setParams', navigationRef);
-  console.log('new params,', params, routeKey);
   if (navigationRef.current) return navigationRef.current.setParams(params);
 
   navigationRef.dispatch({
@@ -49,9 +46,7 @@ const clickNotification = async (notification) => {
   var {action, typeNavigation} = notification;
   if (!notification.action) var {action, typeNavigation} = notification.data;
 
-  console.log('click noatification', notification);
   if (typeNavigation === 'navigate') return navigate(action, notification.data);
-  console.log('click notif', action, notification.data);
   return push(action, notification.data);
 };
 

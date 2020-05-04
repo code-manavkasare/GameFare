@@ -5,9 +5,7 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
-import Loader from '../../../../../../../layout/loaders/Loader';
 
-import CardArchive from './CardArchive';
 import PastSessions from './PastSessions';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 import {coachAction} from '../../../../../../../../actions/coachActions';
@@ -15,10 +13,8 @@ import {timing} from '../../../../../../../animations/animations';
 import {
   timeout,
   isSomeoneSharingScreen,
-  stopRecording,
 } from '../../../../../../../functions/coach';
 
-import {width} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
@@ -42,34 +38,18 @@ class VideoViews extends Component {
       Animated.timing(this.animateView, timing(0, 200)),
     ]).start();
   }
-  async startLiveReview() {
-    const {objectID} = this.props.session;
-    await this.setState({loaderLiveReview: true});
-    await stopRecording(objectID);
-    await timeout(1000);
-
-    this.setState({loaderLiveReview: false});
-  }
+  async startLiveReview() {}
   colInitialButtons() {
-    const {loaderLiveReview} = this.state;
-    const {openVideo, session} = this.props;
-    const {sharedVideos} = session;
-
-    const userSharingScreen = isSomeoneSharingScreen(session);
-    const {archiving, recordingArchiveInfo} = session.tokbox;
-    const displayButtonLiveSession = archiving && recordingArchiveInfo;
-
-    const buttonVideoCurrentlyShared = (session, userSharingScreen) => {
-      const {videoIDSharing} = session.members[userSharingScreen];
-      const video = sharedVideos[videoIDSharing];
+    const buttonVideoCurrentlyShared = () => {
+      const {videoBeingShared, openVideo} = this.props;
       return (
-        <Row style={{paddingBottom: displayButtonLiveSession ? 5 : 0}}>
+        <Row style={{paddingBottom: 0}}>
           <AsyncImage
             style={[
               styleApp.fullSize,
               {position: 'absolute', zIndez: 6, borderRadius: 5},
             ]}
-            mainImage={video.thumbnail}
+            mainImage={videoBeingShared.thumbnail}
           />
           <ButtonColor
             view={() => {
@@ -85,15 +65,10 @@ class VideoViews extends Component {
               );
             }}
             click={() => {
-              console.log('onclick sur open live sharing video', {
-                watchVideo: true,
-                acrhiveID: videoIDSharing,
-                ...video,
-              });
               openVideo({
                 watchVideo: true,
-                acrhiveID: videoIDSharing,
-                ...video,
+                acrhiveID: videoBeingShared.id,
+                ...videoBeingShared,
               });
             }}
             color={colors.grey + '60'}
@@ -103,13 +78,12 @@ class VideoViews extends Component {
         </Row>
       );
     };
-
+    const {personSharingScreen} = this.props;
     return (
       <Col style={{paddingLeft: 10}} key={0} size={15}>
         <View style={styles.colInitialButtons}>
-          {userSharingScreen &&
-            buttonVideoCurrentlyShared(session, userSharingScreen)}
-          {displayButtonLiveSession && (
+          {personSharingScreen && buttonVideoCurrentlyShared()}
+          {/* {displayButtonLiveSession && (
             <Row style={{paddingTop: !userSharingScreen ? 0 : 5}}>
               <ButtonColor
                 view={() => {
@@ -139,31 +113,23 @@ class VideoViews extends Component {
                 style={styles.buttonLiveSession}
               />
             </Row>
-          )}
+          )} */}
         </View>
       </Col>
     );
   }
   sessions() {
     const {heightView} = this.animationView();
-    const {session, openVideo} = this.props;
+    const {openVideo,personSharingScreen} = this.props;
 
-    const {archiving, recordingArchiveInfo} = session.tokbox;
-    const userSharingScreen = isSomeoneSharingScreen(session);
-
-    const displayInitialButtons =
-      userSharingScreen || (archiving && recordingArchiveInfo);
-
-    let sessions = [];
-
+    const styleViewVideos = {
+      height: heightView,
+      width: '100%',
+    };
     return (
-      <Animated.View
-        style={{
-          height: heightView,
-          width: '100%',
-        }}>
+      <Animated.View style={styleViewVideos}>
         <Row>
-          {displayInitialButtons && this.colInitialButtons()}
+          {personSharingScreen && this.colInitialButtons()}
           <Col size={85}>
             <PastSessions openVideo={(videoData) => openVideo(videoData)} />
           </Col>

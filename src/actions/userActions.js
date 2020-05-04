@@ -95,10 +95,8 @@ export const userAction = (val, data) => {
       await dispatch(resetDataCoachSession());
       return true;
     } else if (val === 'setLayoutSettings') {
-      console.log('setLayoutSettings');
       return dispatch(setLayoutSettings(data));
     } else if (val === 'hideFooterApp') {
-      console.log('hideFooterApp');
       return dispatch(hideFooterApp());
     }
     return true;

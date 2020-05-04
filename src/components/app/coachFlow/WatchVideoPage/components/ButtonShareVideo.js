@@ -31,6 +31,7 @@ class ButtonShareVideo extends Component {
       archiveID,
       getVideoState,
       source,
+      togglePlayPause,
     } = this.props;
     const {objectID} = session;
     const stateVideo = getVideoState();
@@ -43,41 +44,37 @@ class ButtonShareVideo extends Component {
       const video = {
         source: source,
         currentTime: stateVideo.currentTime,
-        paused: stateVideo.paused,
+        paused: true,
         archiveID: archiveID,
         id: archiveID,
         thumbnail: stateVideo.placeHolderImg,
       };
 
-      // let updates = {};
-      // updates[`coachSessions/${objectID}/sharedVideos/${archiveID}`] = video;
-      // updates[`coachSessions/${objectID}/members/${userID}`] = {
-      //   shareScreen: true,
-      //   videoIDSharing: archiveID,
-      // };
-      await firebase
-        .database()
-        .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}`)
-        .update(video);
-      await firebase
-        .database()
-        .ref(`coachSessions/${objectID}/members/${userID}`)
-        .update({
-          shareScreen: true,
-          videoIDSharing: archiveID,
-        });
+      let updates = {};
+      updates[`coachSessions/${objectID}/sharedVideos/${archiveID}`] = video;
+      updates[`coachSessions/${objectID}/members/${userID}/shareScreen`] = true;
+      updates[
+        `coachSessions/${objectID}/members/${userID}/videoIDSharing`
+      ] = archiveID;
+      await togglePlayPause(true);
+      await database()
+        .ref()
+        .update(updates);
+      // await togglePlayPause(true);
     } else {
       await database()
-        .ref('coachSessions/' + objectID + '/members/' + userID)
-        .update({shareScreen: false});
+        .ref()
+        .update({
+          [`coachSessions/${objectID}/members/${userID}/shareScreen`]: false,
+        });
     }
   }
-  buttonStart() {
+  buttonStart(styleButton) {
     return (
       <Button
         backgroundColor="green"
         onPressColor={colors.greenLight}
-        styleButton={styles.button}
+        styleButton={styleButton}
         enabled={true}
         text="Share this video"
         loader={false}
@@ -85,12 +82,12 @@ class ButtonShareVideo extends Component {
       />
     );
   }
-  buttonStop() {
+  buttonStop(styleButton) {
     return (
       <Button
         backgroundColor="red"
         onPressColor={colors.redLight}
-        styleButton={styles.button}
+        styleButton={styleButton}
         enabled={true}
         text="Stop sharing"
         loader={false}
@@ -99,13 +96,36 @@ class ButtonShareVideo extends Component {
     );
   }
   button() {
-    const {userID, personSharingScreen, session, archiveID} = this.props;
+    const {
+      userID,
+      personSharingScreen,
+      session,
+      archiveID,
+      portrait,
+    } = this.props;
+    let styleButton = {
+      position: 'absolute',
+      bottom: 120,
+      width: '90%',
+      marginLeft: '5%',
+      zIndex: 5,
+    };
+    if (!portrait)
+      styleButton = {
+        position: 'absolute',
+        bottom: 120,
+        width: 170,
+        marginLeft: '5%',
+        zIndex: 5,
+      };
     const member = getMember(session, userID);
-    if (!personSharingScreen) return this.buttonStart();
+    if (!personSharingScreen) return this.buttonStart(styleButton);
     if (personSharingScreen !== userID) return null;
 
-    if (member.videoIDSharing === archiveID) return this.buttonStop();
-    return this.buttonStart();
+    if (member.videoIDSharing === archiveID)
+      return this.buttonStop(styleButton);
+    // return null;
+    return this.buttonStart(styleButton);
   }
 
   render() {
@@ -117,9 +137,8 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     bottom: 120,
-    width: width - 40,
-    marginLeft: 20,
-    backgroundColor: 'red',
+    width: '90%',
+    marginLeft: '5%',
     zIndex: 5,
   },
 });
@@ -127,6 +146,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    portrait: state.layout.currentScreenSize.portrait,
   };
 };
 

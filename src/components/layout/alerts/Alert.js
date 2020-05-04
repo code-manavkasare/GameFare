@@ -87,7 +87,6 @@ export default class Alert extends Component {
       onGoBack,
     } = this.props.route.params;
     const closable = close !== undefined ? close : true;
-    console.log('displayList', displayList);
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'transparent'}]}>
         <Animated.View

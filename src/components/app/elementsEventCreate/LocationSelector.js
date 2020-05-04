@@ -151,7 +151,6 @@ class LocationSelector extends Component {
             lng: locationObj.geometry.location.lng,
           });
         }
-        console.log('done set location');
         return this.props.navigation.goBack();
       }
     } catch (err) {

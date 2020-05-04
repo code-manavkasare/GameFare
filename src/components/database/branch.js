@@ -117,14 +117,6 @@ const createBranchUrl = async (dataObj, action, image) => {
     linkProperties,
     controlParams,
   );
-  console.log('wooooogooo', {
-    url,
-    description,
-    title,
-    image,
-    action,
-    objectID: dataObj.objectID,
-  });
   return {url, description, title, image, action, objectID: dataObj.objectID};
 };
 

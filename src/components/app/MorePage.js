@@ -39,10 +39,8 @@ class MorePage extends Component {
     this.notificationHandler();
   }
   async notificationHandler() {
-    console.log('notificationHandler');
     const {layoutAction, userID} = this.props;
     messaging().onMessage((remoteMessage) => {
-      console.log('remoteMessage', remoteMessage);
       if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
         return layoutAction('setLayout', {notification: remoteMessage});
     });
@@ -421,8 +419,8 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   asyncImage: {
-    width: 90,
-    height: 90,
+    width: 75,
+    height: 75,
     borderColor: colors.off,
     borderRadius: 45,
   },
