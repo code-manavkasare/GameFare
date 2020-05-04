@@ -12,8 +12,6 @@ import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
 import {date, time} from '../../../../../../layout/date/date';
 import ImageUser from '../../../../../../layout/image/ImageUser';
-import {timeout} from '../../../../../../functions/coach';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 class CardStream extends Component {
   constructor(props) {
@@ -22,7 +20,7 @@ class CardStream extends Component {
       clickEnabled: true,
     };
   }
-  deleteSession = (objectID) => {
+  deleteSession = () => {
     const {userID, coachSessionID} = this.props;
     navigate('Alert', {
       title: 'Do you want to delete this session?',
@@ -105,30 +103,39 @@ class CardStream extends Component {
     };
     const sizeImg = 40;
     const styleText = {...styleApp.text, color: colors.greyDark, fontSize: 13};
-    const {userID, coachSession} = this.props;
-    if (!coachSession) return null;
-    if (!coachSession.members) return null;
-    const members = Object.values(coachSession.members).filter(
-      (member) => member.id !== userID,
-    );
+    const {members, userID} = this.props;
+
+    let membersDisplay = [];
+    if (members)
+      membersDisplay = Object.values(members).filter(
+        (member) => member.id !== userID,
+      );
     return (
       <View style={styleRow}>
-        {members.length === 0 ? (
+        {membersDisplay.length === 0 ? (
           <Text style={styleText}>No one else is part of this room.</Text>
         ) : (
-          members.map((member, i) => {
+          membersDisplay.map((member) => {
             const styleImg = {
               height: sizeImg,
               width: sizeImg,
-              opacity: member.isConnected ? 1 : 0.7,
+              borderRadius: sizeImg / 2,
             };
             const styleImgContainer = {
-              height: 40,
-              width: 40,
+              height: sizeImg,
+              width: sizeImg + 2,
+              overflow: 'hidden',
               ...styleApp.center2,
+            };
+            const styleVoile = {
+              ...styleImg,
+              position: 'absolute',
+              backgroundColor: colors.off + '90',
+              zIndex: 10,
             };
             return (
               <View key={member.id} style={styleImgContainer}>
+                {!member.isConnected && <View style={styleVoile} />}
                 <ImageUser
                   key={member.id}
                   user={member}
@@ -145,12 +152,9 @@ class CardStream extends Component {
     const {
       isConnected,
       open,
-      currentScreenSize,
       timestamp,
       opacityCard,
       translateXCard,
-      sessionInfo,
-      coachSessionID,
       coordinates,
     } = this.props;
     const {clickEnabled} = this.state;
@@ -178,7 +182,7 @@ class CardStream extends Component {
             return (
               <Row>
                 {isConnected && this.viewLive()}
-                <Col size={55}>
+                <Col size={60}>
                   <Text
                     style={[
                       styleApp.text,
@@ -199,7 +203,7 @@ class CardStream extends Component {
                 <Col size={15} style={styleApp.center3}>
                   {this.buttonDelete()}
                 </Col>
-                <Col size={10} style={styleApp.center3}>
+                <Col size={5} style={styleApp.center3}>
                   <AllIcons
                     name="keyboard-arrow-right"
                     type="mat"

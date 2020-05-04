@@ -7,7 +7,12 @@ import {layoutAction} from '../../../../actions/layoutActions';
 
 import ButtonFooter from './components/Button';
 import colors from '../../../style/colors';
-import {width, heightFooter} from '../../../style/sizes';
+import {
+  width,
+  heightFooter,
+  marginBottomApp,
+  marginBottomAppLandscade,
+} from '../../../style/sizes';
 import {native, timing} from '../../../animations/animations';
 import styleApp from '../../../style/style';
 
@@ -58,12 +63,13 @@ class Footer extends React.Component {
       colors,
       currentScreenSize,
     } = this.props;
-    const {currentWidth} = currentScreenSize;
+    const {currentWidth, portrait} = currentScreenSize;
     return (
       <Animated.View
         style={[
           styles.footer,
           styleApp.center3,
+          {bottom: portrait ? marginBottomApp : marginBottomAppLandscade},
           {marginLeft: (currentWidth - widthFooter) / 2},
           {transform: [{translateY: this.translateYFooter}]},
         ]}>
@@ -122,7 +128,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: heightFooter,
     position: 'absolute',
-    bottom: 30,
     zIndex: 0,
     width: widthFooter,
 

@@ -3,16 +3,9 @@ import {Button, View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import {Col, Row} from 'react-native-easy-grid';
-import {propEq, filter} from 'ramda';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
-import Loader from '../../../../../../../layout/loaders/Loader';
-import {
-  startRecording,
-  stopRecording,
-} from '../../../../../../../functions/coach';
-import VideoSourcePopup from './VideoSourcePopup';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
@@ -22,21 +15,16 @@ class BottomButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      recording: false,
       showPastSessionsPicker: false,
-      videoSourcePopupVisible: false,
+      recording: false,
+      startTimeRecording: 0,
+      publishVideo: false,
+      publishAudio: false,
     };
   }
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.session.tokbox.archiving !== this.props.session.tokbox.archiving
-    )
-      return this.openRecording(nextProps.session.tokbox.archiving);
-  }
-
   publishVideo() {
-    const {setState, state} = this.props;
-    const {publishVideo} = state;
+    const {setState} = this.props;
+    const {publishVideo} = this.state;
     return (
       <ButtonColor
         view={() => {
@@ -45,22 +33,25 @@ class BottomButton extends Component {
               <AllIcons
                 type={'font'}
                 color={colors.white}
-                size={21}
+                size={18}
                 name={publishVideo ? 'video' : 'video-slash'}
               />
             </Animated.View>
           );
         }}
         color={publishVideo ? colors.green : colors.redLight}
-        click={async () => setState({publishVideo: !publishVideo})}
+        click={async () => {
+          await this.setState({publishVideo: !publishVideo});
+          setState({publishVideo: !publishVideo});
+        }}
         style={styles.buttonRound}
         onPressColor={publishVideo ? colors.redLight : colors.greenLight}
       />
     );
   }
   publishAudio() {
-    const {setState, state} = this.props;
-    const {publishAudio} = state;
+    const {setState} = this.props;
+    const {publishAudio} = this.state;
     return (
       <ButtonColor
         view={() => {
@@ -76,7 +67,10 @@ class BottomButton extends Component {
           );
         }}
         color={publishAudio ? colors.green : colors.redLight}
-        click={async () => setState({publishAudio: !publishAudio})}
+        click={async () => {
+          await this.setState({publishAudio: !publishAudio});
+          setState({publishAudio: !publishAudio});
+        }}
         style={styles.buttonRound}
         onPressColor={publishAudio ? colors.redLight : colors.greenLight}
       />
@@ -84,16 +78,13 @@ class BottomButton extends Component {
   }
 
   buttonRecord() {
-    const {archiving, recordingArchiveInfo} = this.props.session.tokbox;
+    const {recording, startTimeRecording} = this.state;
 
-    const loading = archiving && !recordingArchiveInfo;
-
-    const insideViewButton = (loading) => {
-      if (loading) return <Loader size={27} color="white" />;
+    const insideViewButton = () => {
       return (
         <Animated.View
           style={[
-            !archiving
+            !recording
               ? styles.buttonStartStreaming
               : styles.buttonStopStreaming,
             {backgroundColor: colors.greyDark + '70'},
@@ -101,9 +92,8 @@ class BottomButton extends Component {
         />
       );
     };
-    const timer = (recordingArchiveInfo) => {
-      const timerRecording =
-        Number(new Date()) - recordingArchiveInfo.startTimestamp;
+    const timer = (startTimeRecording) => {
+      const timerRecording = Number(new Date()) - startTimeRecording;
       return (
         <Stopwatch
           laps
@@ -122,10 +112,10 @@ class BottomButton extends Component {
 
     return (
       <View style={[styleApp.center, styleApp.fullSize]}>
-        {archiving && !loading && timer(recordingArchiveInfo)}
+        {recording && timer(startTimeRecording)}
         <ButtonColor
-          view={() => insideViewButton(loading)}
-          click={async () => this.openRecording(!archiving)}
+          view={() => insideViewButton()}
+          click={async () => this.openRecording()}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}
         />
@@ -134,26 +124,13 @@ class BottomButton extends Component {
   }
   contentVideo() {
     const {showPastSessionsPicker} = this.state;
-    const {clickReview, setState, state} = this.props;
-    const {sharedVideos} = this.props.session;
+    const {clickReview} = this.props;
 
-    const viewVideoBeingShared = (sharedVideos) => {
-      if (!sharedVideos) return null;
-      return <View style={styles.viewVideoBeingShared} />;
-    };
-    const styleArrowDown = {
-      position: 'absolute',
-      height: 30,
-      width: 30,
-      ...styleApp.center,
-      top: 23,
-    };
     return (
       <ButtonColor
         view={() => {
           return (
             <Animated.View style={styleApp.center}>
-              {false && viewVideoBeingShared(sharedVideos)}
               <AllIcons
                 type={'font'}
                 color={colors.white}
@@ -177,7 +154,6 @@ class BottomButton extends Component {
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
           });
           clickReview(!showPastSessionsPicker);
-          // setState({publishVideo: !state.publishVideo});
         }}
         style={styles.buttonRound}
         onPressColor={colors.grey + '40'}
@@ -185,7 +161,7 @@ class BottomButton extends Component {
     );
   }
   buttonEndCall() {
-    const {session, endCoachSession} = this.props;
+    const {endCoachSession} = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -204,84 +180,15 @@ class BottomButton extends Component {
     );
   }
 
-  async openRecording(nextRecordingVal) {
-    const {objectID: sessionIDFirebase, members} = this.props.session;
-    const membersArray = Object.values(members);
-    const isConnected = propEq('isConnected', true);
-    const membersConnectedArray = filter(isConnected, membersArray);
-
-    if (nextRecordingVal && membersConnectedArray.length > 1) {
-      this.toggleVideoSourcePopup();
-      return;
-    }
-    if (nextRecordingVal) {
-      startRecording(
-        sessionIDFirebase,
-        membersConnectedArray[0].streamIdTokBox,
-      );
-    } else stopRecording(sessionIDFirebase);
-  }
-
-  toggleVideoSourcePopup = () => {
-    this.setState({
-      videoSourcePopupVisible: !this.state.videoSourcePopupVisible,
+  async openRecording() {
+    const {recording} = this.state;
+    if (!recording) await this.props.startRecording();
+    else await this.props.stopRecording();
+    return this.setState({
+      recording: !recording,
+      startTimeRecording: Date.now(),
     });
-  };
-
-  videoSourcePopup = () => {
-    const {objectID: idFirebase, members} = this.props.session;
-
-    //TODO: define global usage with team and export to styles.js
-    const zoomIn = {
-      0: {
-        opacity: 0,
-        scale: 0,
-      },
-      0.5: {
-        opacity: 0.5,
-        scale: 0.3,
-      },
-      1: {
-        opacity: 1,
-        scale: 1,
-      },
-    };
-
-    const zoomOut = {
-      0: {
-        opacity: 1,
-        scale: 1,
-      },
-      0.5: {
-        opacity: 0.5,
-        scale: 0.3,
-      },
-      1: {
-        opacity: 0,
-        scale: 0,
-      },
-    };
-
-    const membersArray = Object.values(members);
-    const {videoSourcePopupVisible} = this.state;
-
-    if (!videoSourcePopupVisible) return false;
-
-    return (
-      <View
-        animation={videoSourcePopupVisible ? zoomIn : zoomOut}
-        duration={600}>
-        <VideoSourcePopup
-          members={membersArray}
-          selectMember={(member) => {
-            startRecording(idFirebase, member.streamIdTokBox);
-          }}
-          close={() => this.toggleVideoSourcePopup()}
-        />
-      </View>
-    );
-  };
-
+  }
   rowButtons() {
     return (
       <Row style={styles.rowButtons}>
@@ -296,12 +203,7 @@ class BottomButton extends Component {
     );
   }
   render() {
-    return (
-      <View>
-        {this.rowButtons()}
-        {this.videoSourcePopup()}
-      </View>
-    );
+    return <View>{this.rowButtons()}</View>;
   }
 }
 
@@ -310,7 +212,6 @@ const styles = StyleSheet.create({
     height: 100 + offsetFooterStreaming,
     paddingTop: 10,
     width: '100%',
-    // backgroundColor: colors.transparentGrey,
     paddingBottom: 20,
   },
   whiteButtonRecording: {
@@ -333,19 +234,6 @@ const styles = StyleSheet.create({
     height: 25,
     width: 25,
     borderRadius: 5,
-  },
-  viewVideoBeingShared: {
-    ...styleApp.center,
-    position: 'absolute',
-    top: -6,
-    zIndex: 20,
-    right: -6,
-    borderWidth: 1,
-    borderColor: colors.white,
-    backgroundColor: colors.red,
-    height: 15,
-    width: 15,
-    borderRadius: 10,
   },
   viewRecordingTime: {
     position: 'absolute',

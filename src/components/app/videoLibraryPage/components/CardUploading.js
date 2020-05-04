@@ -80,6 +80,7 @@ class CardUploading extends Component {
     const {duration, height, width, size} = videoInfo;
 
     const id = videoInfo.localIdentifier.split('/')[0];
+    console.log('videoInfovideoInfovideoInfovideoInfo', videoInfo);
 
     const destinationCloud = `archivedStreams/${id}`;
     const videoUrl = await this.uploadVideoFirebase(

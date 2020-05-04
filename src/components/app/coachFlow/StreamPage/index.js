@@ -27,6 +27,8 @@ import PermissionView from './components/PermissionView';
 import ListStreams from './components/ListStreams';
 import HeaderListStream from './components/HeaderListStream';
 
+import {getResolutions} from '../../../functions/cameraResolution';
+
 class StreamTab extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +36,9 @@ class StreamTab extends Component {
       permissionsCamera: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  componentDidMount() {
+    // const resolutionList = getResolutions(true);
   }
   StreamTab = (currentHeight) => {
     const {permissionsCamera} = this.state;

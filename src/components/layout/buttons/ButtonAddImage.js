@@ -46,8 +46,7 @@ export default class Button extends Component {
   render() {
     const {loader} = this.state;
     const {img, title, title2, styleImg} = this.props;
-    console.log('imgimgimg', img);
-    // return null;
+
     return (
       <ButtonColor
         view={() => {

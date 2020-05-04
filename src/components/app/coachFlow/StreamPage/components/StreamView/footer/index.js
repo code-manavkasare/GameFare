@@ -11,14 +11,23 @@ class Footer extends Component {
     super(props);
     this.state = {};
   }
-  footer(session) {
+  shouldComponentUpdate = (nextProps) => {
+    return (
+      nextProps.videoBeingShared.id !== this.props.videoBeingShared.id ||
+      nextProps.personSharingScreen !== this.props.personSharingScreen
+    );
+  };
+  footer() {
     const {
       setState,
       translateYFooter,
-      state,
       watchVideoRef,
       endCoachSession,
       opacityHeader,
+      startRecording,
+      stopRecording,
+      personSharingScreen,
+      videoBeingShared,
     } = this.props;
     return (
       <Animated.View
@@ -28,16 +37,19 @@ class Footer extends Component {
           {transform: [{translateY: translateYFooter}]},
         ]}>
         <BottomButtons
-          session={session}
-          state={state}
           setState={setState}
+          personSharingScreen={personSharingScreen}
+          videoBeingShared={videoBeingShared}
           endCoachSession={endCoachSession}
           clickReview={(val) => this.pastSessionsRef.open(val)}
+          startRecording={() => startRecording()}
+          stopRecording={() => stopRecording()}
         />
 
         <VideosView
-          session={session}
           setState={setState}
+          personSharingScreen={personSharingScreen}
+          videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.pastSessionsRef = ref)}
           openVideo={(data) => watchVideoRef.open(data)}
         />
@@ -45,9 +57,7 @@ class Footer extends Component {
     );
   }
   render() {
-    const {session} = this.props;
-    if (!session) return null;
-    return this.footer(session);
+    return this.footer();
   }
 }
 

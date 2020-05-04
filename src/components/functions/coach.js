@@ -9,6 +9,8 @@ const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+const infoCameraResolution = () => {};
+
 const createCoachSession = async (user) => {
   const coachSessionID = generateID();
   await database()
@@ -103,7 +105,6 @@ const getLastDrawing = (video) => {
   const drawings = Object.values(video.drawings)
     .sort((a, b) => a.timeStamp - b.timeStamp)
     .reverse();
-  console.log('get last drawings: ', drawings);
   return drawings[0];
 };
 
@@ -155,8 +156,12 @@ const styleStreamView = (
   return {styleContainerStreamView, styleCard};
 };
 
-const getVideoSharing = (userID, session) => {
-  const {videoIDSharing} = session.members[userID];
+const getVideoSharing = (session, personSharingScreen) => {
+  if (!session) return false;
+  if (!personSharingScreen) return false;
+
+  const {videoIDSharing} = session.members[personSharingScreen];
+  if (!session.sharedVideos) return false;
   return session.sharedVideos[videoIDSharing];
 };
 

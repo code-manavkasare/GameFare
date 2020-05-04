@@ -121,8 +121,6 @@ class RightButtons extends Component {
             const idLastDrawing = getLastDrawing(
               session.sharedVideos[archiveID],
             ).id;
-            console.log('idLastDrawing', idLastDrawing, archiveID);
-            // return;
             database()
               .ref(
                 `coachSessions/${objectID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
@@ -176,13 +174,13 @@ const styles = StyleSheet.create({
   colButtonsRight: {
     flex: 1,
     position: 'absolute',
-    right: 10,
+    right: '5%',
     zIndex: 40,
     backgroundColor: colors.transparentGrey,
     paddingTop: 0,
     paddingBottom: 0,
     borderRadius: 5,
-    top: sizes.marginTopApp,
+    top: sizes.marginTopApp + 10,
     width: 65,
   },
   button: {flex: 1, width: '100%', paddingTop: 10, paddingBottom: 10},

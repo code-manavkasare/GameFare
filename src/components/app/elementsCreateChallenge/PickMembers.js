@@ -11,6 +11,7 @@ import {
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
+import StatusBar from '@react-native-community/status-bar';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -46,6 +47,7 @@ class NewConversation extends React.Component {
   }
   async componentDidMount() {
     this.changeSearch('');
+    StatusBar.setBarStyle('dark-content', true);
   }
   async changeSearch(search) {
     const {route} = this.props;
@@ -151,7 +153,7 @@ class NewConversation extends React.Component {
     return (
       <CardUserSelect
         user={user}
-        key={user.id}
+        key={user.objectID}
         usersSelected={usersSelected}
         selectUser={this.selectUser.bind(this)}
       />
@@ -180,7 +182,7 @@ class NewConversation extends React.Component {
             style={[styles.scrollViewUsers, {minHeight: currentHeight}]}>
             {this.state.loader ? (
               <View style={[styleApp.center, {height: 200}]}>
-                <Loader size={35} color={'green'} />
+                <Loader size={55} color={colors.primary} />
               </View>
             ) : contacts ? (
               <ListContacts
@@ -223,7 +225,10 @@ class NewConversation extends React.Component {
           initialTitleOpacity={1}
           icon1={closeButton ? 'times' : 'arrow-left'}
           text2={'Next'}
-          clickButton1={() => goBack()}
+          clickButton1={() => {
+            StatusBar.setBarStyle('light-content', true);
+            goBack();
+          }}
           loader={this.state.loaderHeader}
         />
         {this.pickMembers(usersSelected)}
@@ -246,6 +251,7 @@ class NewConversation extends React.Component {
                     if (loaderOnSubmit)
                       await this.setState({loaderButton: true});
                     await onGoBack(usersSelected);
+                    StatusBar.setBarStyle('light-content', true);
                     return this.setState({loaderButton: false});
                   }}
                 />

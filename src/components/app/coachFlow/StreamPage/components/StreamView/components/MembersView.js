@@ -37,22 +37,20 @@ class MembersView extends Component {
     );
   }
   membersView() {
-    const {userID, session, hide, card} = this.props;
-    if (!session || hide) return null;
-    if (!session.members) return null;
-    const members = Object.values(session.members).filter(
+    const {userID, members, hide, card} = this.props;
+    if (!members || hide) return null;
+    const membersDisplay = Object.values(members).filter(
       (member) => member.id !== userID && member.isConnected,
     );
     if (card)
       return (
         <View style={styles.rowImgCard}>
-          {members.map((member, i) => (
+          {membersDisplay.map((member, i) => (
             <View key={i} style={styles.colImg}>
               <ImageUser
                 user={member}
                 onClick={() => {
                   console.log('click img user 1');
-                  navigate('ProfilePage', {user: member});
                 }}
               />
             </View>
@@ -61,15 +59,12 @@ class MembersView extends Component {
       );
     return (
       <View style={styles.colButtonsRight}>
-        {members.map((member, i) => this.cardMember(member, i))}
+        {membersDisplay.map((member, i) => this.cardMember(member, i))}
       </View>
     );
   }
   render() {
-    const {session} = this.props;
-    console.log('members view render !!!', session);
-    if (!session) return null;
-    return this.membersView(session);
+    return this.membersView();
   }
 }
 

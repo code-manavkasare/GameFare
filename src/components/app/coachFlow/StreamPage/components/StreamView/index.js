@@ -10,7 +10,6 @@ import {
 import Config from 'react-native-config';
 import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
-import FadeInView from 'react-native-fade-in-view';
 import isEqual from 'lodash.isequal';
 import StatusBar from '@react-native-community/status-bar';
 
@@ -29,7 +28,6 @@ import {
   userPartOfSession,
   styleStreamView,
   getVideoSharing,
-  timeout,
 } from '../../../../../functions/coach';
 
 import colors from '../../../../../style/colors';
@@ -85,8 +83,7 @@ class StreamPage extends Component {
       cameraFront: true,
       watchVideo: false,
       publishAudio: false,
-      publishVideo: true,
-      myVideo: false,
+      publishVideo: false,
       pageFullScreen: false,
       open: false,
       coordinates: {x: 0, y: 0},
@@ -97,9 +94,9 @@ class StreamPage extends Component {
     this.animatedPage = new Animated.Value(0);
     this.opacityHeader = new Animated.Value(1);
     this.opacityStreamView = new Animated.Value(1);
-    // this.translateXCard = new Animated.Value(0);
     this.opacityCard = new Animated.Value(1);
     this.otSessionRef = React.createRef();
+    this.otPublisherRef = React.createRef();
     this.watchVideoRef = React.createRef();
 
     this.publisherEventHandlers = {
@@ -144,21 +141,6 @@ class StreamPage extends Component {
     )
       return true;
     return false;
-  }
-  componentDidUpdate(prevProps, prevState) {
-    console.log('componentDidUpdate');
-    Object.entries(this.props).forEach(
-      ([key, val]) =>
-        prevProps[key] !== val &&
-        console.log(`Prop '${key}' changed '${this.props.coachSessionID}'`),
-    );
-    if (this.state) {
-      Object.entries(this.state).forEach(
-        ([key, val]) =>
-          prevState[key] !== val &&
-          console.log(`State '${key}' changed '${this.props.coachSessionID}'`),
-      );
-    }
   }
   static getDerivedStateFromProps(props, state) {
     if (
@@ -263,10 +245,9 @@ class StreamPage extends Component {
       pageFullScreen &&
       userID !== personSharingScreen
     ) {
-      const video = getVideoSharing(personSharingScreen, session);
+      const video = getVideoSharing(session, personSharingScreen);
       this.watchVideoRef.open({
         watchVideo: true,
-        myVideo: false,
         ...video,
       });
     }
@@ -276,6 +257,37 @@ class StreamPage extends Component {
     await this.setState({open: false});
     return true;
   }
+
+  startRecording = async () => {
+    return true;
+    function messageCallback(response) {
+      if (response.error) {
+        console.log(`Error initializing recording: ${response.message}`);
+      } else {
+        console.log('Started recording...');
+      }
+    }
+    await this.otPublisherRef.current.startRecording(
+      messageCallback.bind(this),
+    );
+  };
+  stopRecording = async () => {
+
+    return true;
+    function messageCallback(response) {
+      if (response.error) {
+        console.log(`Error storing recording: ${response.message}`);
+        let videoUrl = response.videoUrl;
+        console.log(`Stopped recording. Video stored at: ${videoUrl}`);
+      } else {
+        let videoUrl = response.videoUrl;
+        console.log(`Stopped recording. Video stored at: ${videoUrl}`);
+      }
+    }
+
+    await this.otPublisherRef.current.stopRecording(messageCallback.bind(this));
+  };
+
   loaderView(text, hideLoader) {
     const {pageFullScreen} = this.state;
     const styleText = {...styleApp.text, color: colors.white, marginBottom: 25};
@@ -373,8 +385,7 @@ class StreamPage extends Component {
           ? this.loaderView('We are connecting you to the session...')
           : null}
 
-        <MembersView session={coachSession} />
-        {/* {this.pausedView(userIsAlone)} */}
+        <MembersView members={coachSession.members} />
         {!publishVideo && this.pausedView(userIsAlone)}
         <View style={this.styleSession()}>
           <OTSession
@@ -384,6 +395,7 @@ class StreamPage extends Component {
             sessionId={sessionID}
             token={member.tokenTokbox}>
             <OTPublisher
+              ref={this.otPublisherRef}
               style={
                 userIsAlone
                   ? styles.OTPublisherAlone
@@ -412,14 +424,14 @@ class StreamPage extends Component {
     );
   }
   animatedValues() {
-    const {x, y} = this.state.coordinates;
+    /// const {x, y} = this.state.coordinates;
     const {currentHeight, currentWidth} = this.props.currentScreenSize;
-    const {initialScaleX, initialScaleY} = getInitialScale(
-      currentWidth,
-      heightCardSession,
-      currentHeight,
-      currentWidth,
-    );
+    // const {initialScaleX, initialScaleY} = getInitialScale(
+    //   currentWidth,
+    //   heightCardSession,
+    //   currentHeight,
+    //   currentWidth,
+    // );
     const translateXStream = this.animatedPage.interpolate({
       inputRange: [0, 1],
       outputRange: [currentWidth, 0],
@@ -449,7 +461,7 @@ class StreamPage extends Component {
 
     const {index, coachSessionID, timestamp, currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
-
+    const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     const {styleContainerStreamView, styleCard} = styleStreamView(
       index,
       coordinates,
@@ -463,7 +475,7 @@ class StreamPage extends Component {
           coachSessionID={coachSessionID}
           endCoachSession={this.endCoachSession.bind(this)}
           open={this.open.bind(this)}
-          coachSession={coachSession}
+          members={coachSession.members}
           translateXCard={translateXCard}
           timestamp={timestamp}
           sessionInfo={sessionInfo}
@@ -508,12 +520,18 @@ class StreamPage extends Component {
           {isConnected && (
             <Footer
               translateYFooter={this.translateYFooter}
-              session={coachSession}
-              state={this.state}
               opacityHeader={this.opacityHeader}
               setState={this.setState.bind(this)}
               watchVideoRef={this.watchVideoRef}
               endCoachSession={this.endCoachSession.bind(this)}
+              startRecording={() => {
+                this.startRecording();
+              }}
+              stopRecording={() => {
+                this.stopRecording();
+              }}
+              personSharingScreen={personSharingScreen}
+              videoBeingShared={videoBeingShared}
             />
           )}
         </Animated.View>
@@ -524,7 +542,6 @@ class StreamPage extends Component {
     const {coachSessionID} = this.props;
     const {sessionInfo} = this.state;
     const {objectID, autoOpen} = sessionInfo;
-    console.log('render stream view', coachSessionID);
     return (
       <View
         style={[

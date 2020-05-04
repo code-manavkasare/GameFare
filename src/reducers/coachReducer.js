@@ -53,7 +53,6 @@ const coachReducer = (state = initialState, action) => {
         sessionInfo: {...state.sessionInfo, ...action.sessionInfo},
       };
     case RESET_COACH_DATA:
-      console.log('RESET_COACH_DATA', initialState);
       return initialState;
     default:
       return state;

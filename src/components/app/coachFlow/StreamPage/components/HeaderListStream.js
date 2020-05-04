@@ -29,7 +29,6 @@ class HeaderListStream extends Component {
       hideButtonNewSession,
     } = this.props;
     const {loader} = this.state;
-    console.log('hideButtonNewSession', hideButtonNewSession);
     return (
       <Row style={styles.header}>
         <Col size={85} style={styleApp.center2}>

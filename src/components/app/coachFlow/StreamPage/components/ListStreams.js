@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, Text} from 'react-native';
 import isEqual from 'lodash.isequal';
 
 import {connect} from 'react-redux';
@@ -9,8 +9,6 @@ import StreamView from './StreamView/index';
 import {
   heightCardSession,
   marginTopApp,
-  width,
-  height,
   heightHeaderStream,
   offsetBottomHeaderStream,
 } from '../../../../style/sizes';
@@ -46,7 +44,12 @@ class ListStreams extends Component {
   list = () => {
     const coachSessions = this.sessionsArray();
     const {AnimatedHeaderValue} = this.props;
-    console.log('render list coach Sessions', coachSessions);
+    if (Object.values(coachSessions).length === 0)
+      return (
+        <Text style={[styleApp.text, {paddingLeft: '5%'}]}>
+          You don't have any session yet.
+        </Text>
+      );
     return Object.values(coachSessions).map((session, i) => {
       const {sessionInfo} = this.props;
       const {objectID} = sessionInfo;
@@ -78,7 +81,7 @@ class ListStreams extends Component {
     return (
       <View>
         {this.list()}
-        <View style={[styleApp.divider2, {width: '100%'}]} />
+        {/* <View style={[styleApp.divider2, {width: '100%'}]} /> */}
       </View>
     );
   }

@@ -135,7 +135,6 @@ export default class ContactsComponent extends Component {
         } else if (Contacts[i - 1].givenName[0] !== Contacts[i].givenName[0]) {
           header = contact.givenName[0];
         }
-        console.log('contact', contact);
         let contactToAdd = {
           id: contact.recordID,
           index: i,
@@ -159,7 +158,6 @@ export default class ContactsComponent extends Component {
     });
   }
   cardUser(user, i, usersSelected) {
-    console.log('card user list contacts', usersSelected, user);
     return (
       <CardUserSelect
         user={user}

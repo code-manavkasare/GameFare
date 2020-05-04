@@ -22,6 +22,9 @@ import {coachAction} from '../../../../actions/coachActions';
 import RightButtons from './components/RightButtons';
 import ButtonShareVideo from './components/ButtonShareVideo';
 import DrawView from './components/DrawView';
+import Loader from '../../../layout/loaders/Loader';
+
+import {getVideoSharing, timeout} from '../../../functions/coach';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -37,7 +40,6 @@ class WatchVideoPage extends Component {
       displayComponent: false,
       thumbnail: false,
       archiveID: false,
-      myVideo: false,
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -47,7 +49,7 @@ class WatchVideoPage extends Component {
     this.props.onRef(this);
   }
   async open(videoData) {
-    const {watchVideo, source, thumbnail, myVideo, archiveID} = videoData;
+    const {watchVideo, source, thumbnail, archiveID} = videoData;
     const {currentWidth} = this.props.currentScreenSize;
     if (watchVideo) {
       await this.translateXPage.setValue(0);
@@ -55,10 +57,10 @@ class WatchVideoPage extends Component {
         videoSource: source,
         watchVideo: true,
         thumbnail: thumbnail,
-        myVideo: myVideo,
         archiveID: archiveID,
       });
     }
+
     Animated.parallel([
       Animated.spring(
         this.translateYPage,
@@ -82,7 +84,15 @@ class WatchVideoPage extends Component {
       .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}`)
       .update({paused, currentTime});
   };
-
+  isMyVideo() {
+    const {userID, session, personSharingScreen} = this.props;
+    const {archiveID} = this.state;
+    if (!archiveID) return true;
+    const videoSharing = getVideoSharing(session, personSharingScreen);
+    if (!videoSharing) return true;
+    if (personSharingScreen && videoSharing.id === archiveID) return false;
+    return true;
+  }
   watchVideoView() {
     const {
       session,
@@ -90,10 +100,11 @@ class WatchVideoPage extends Component {
       userID,
       currentScreenSize,
     } = this.props;
-    const {videoSource, thumbnail, myVideo, archiveID} = this.state;
-    let video = {};
-
+    const {videoSource, thumbnail, archiveID, watchVideo} = this.state;
     const {currentWidth, currentHeight} = currentScreenSize;
+    const myVideo = this.isMyVideo();
+
+    let video = {};
 
     if (myVideo)
       video = {
@@ -102,7 +113,6 @@ class WatchVideoPage extends Component {
         currentTime: 0,
       };
     else {
-      if (!personSharingScreen || !archiveID) return null;
       video = {...session.sharedVideos[archiveID]};
     }
     return (
@@ -148,7 +158,6 @@ class WatchVideoPage extends Component {
             currentTime={video.currentTime}
             hideFullScreenButton={true}
             placeHolderImg={thumbnail}
-            autoplay={!myVideo ? true : false}
             componentOnTop={() => (
               <TouchableOpacity
                 style={{
@@ -169,22 +178,26 @@ class WatchVideoPage extends Component {
                   session={session}
                   source={video.source}
                   personSharingScreen={personSharingScreen}
+                  togglePlayPause={() =>
+                    this.videoPlayerRef.togglePlayPause(true)
+                  }
                   getVideoState={() => this.videoPlayerRef.getState()}
                 />
               </TouchableOpacity>
             )}
-            styleContainerVideo={[
-              styleApp.center,
-              {width: '100%', height: '100%'},
-            ]}
-            styleVideo={[styleApp.fullSize]}
-            noUpdateInCloud={myVideo ? true : false}
+            styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
+            styleVideo={styleApp.fullSize}
+            noUpdateInCloud={myVideo}
+            updateOnProgress={userID === personSharingScreen}
             updateVideoInfoCloud={(paused, currentTime) =>
               this.updateVideoInfoCloud(paused, currentTime, archiveID)
             }
             onRef={(ref) => (this.videoPlayerRef = ref)}
           />
         )}
+        {/* <View style={[styleApp.fullSize, styleApp.center]}>
+          <Loader color={colors.white} size={65} />
+        </View> */}
       </Animated.View>
     );
   }

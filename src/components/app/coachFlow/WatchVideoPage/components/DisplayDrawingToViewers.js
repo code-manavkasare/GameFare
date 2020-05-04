@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Dimensions} from 'react-native';
-const {height, width} = Dimensions.get('screen');
+// const {height, width} = Dimensions.get('screen');
 import Svg, {Polyline} from 'react-native-svg';
 
 export default class DisplayDraingToViewers extends Component {
@@ -11,10 +11,16 @@ export default class DisplayDraingToViewers extends Component {
   componentDidMount() {}
   draw(draw, i) {
     let arrayDots = draw.data;
+    const {currentScreenSize} = this.props;
     const {screenSource} = draw;
+    const {currentWidth, currentHeight, portrait} = currentScreenSize;
 
-    const Rx = width / screenSource.width;
-    const Ry = height / screenSource.height;
+    let Rx = currentWidth / screenSource.width;
+    let Ry = currentHeight / screenSource.height;
+    if (!portrait) {
+      Ry = currentWidth / screenSource.width;
+      Rx = currentHeight / screenSource.height;
+    }
 
     arrayDots = arrayDots.map((dot) => {
       let Xsource = Number(dot.split(',')[0]);
@@ -28,8 +34,8 @@ export default class DisplayDraingToViewers extends Component {
     return (
       <Svg
         key={i}
-        height={height}
-        width="100%"
+        height={currentHeight}
+        width={currentWidth}
         style={{position: 'absolute', zIndex: -2}}>
         <Polyline
           points={dots}

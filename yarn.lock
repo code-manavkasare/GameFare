@@ -7254,10 +7254,10 @@ react-native-easy-toast@^1.2.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-fade-in-view@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-fade-in-view/-/react-native-fade-in-view-1.0.5.tgz#efe61dcbf708646914d0f806af3488150885bf74"
-  integrity sha1-7+Ydy/cIZGkU0PgGrzSIFQiFv3Q=
+react-native-fade-in-view@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-fade-in-view/-/react-native-fade-in-view-1.0.6.tgz#e7a153b2adf3ba2d11b10d81cb69c601d0cb25ec"
+  integrity sha512-EJzic/rOwnRjvfaeRdXOKuNAdCswKV55UxOWxwlibfObf2j9CXYWv54iDEurmYOO+jXZIXKfGy6fDs/2JnsY7g==
 
 react-native-fast-image@^7.0.2:
   version "7.0.2"
@@ -7772,10 +7772,10 @@ redux-devtools-instrument@^1.9.4:
     lodash "^4.2.0"
     symbol-observable "^1.0.2"
 
-redux-persist@^5.6.12:
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-5.10.0.tgz#5d8d802c5571e55924efc1c3a9b23575283be62b"
-  integrity sha512-sSJAzNq7zka3qVHKce1hbvqf0Vf5DuTVm7dr4GtsqQVOexnrvbV47RWFiPxQ8fscnyiuWyD2O92DOxPl0tGCRg==
+redux-persist@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-6.0.0.tgz#b4d2972f9859597c130d40d4b146fecdab51b3a8"
+  integrity sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==
 
 redux-thunk@^2.3.0:
   version "2.3.0"
