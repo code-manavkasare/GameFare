@@ -84,11 +84,12 @@ class WatchVideoPage extends Component {
       }
     });
   }
-  updateVideoInfoCloud = (paused, currentTime, archiveID) => {
+  updateVideoInfoCloud = async (paused, currentTime, archiveID) => {
     const {coachSessionID} = this.props;
-    database()
+    await database()
       .ref(`coachSessions/${coachSessionID}/sharedVideos/${archiveID}`)
       .update({paused, currentTime});
+    return true;
   };
   isMyVideo() {
     const {personSharingScreen, videoBeingShared} = this.props;
@@ -121,7 +122,6 @@ class WatchVideoPage extends Component {
     else {
       video = {...sharedVideos[archiveID]};
     }
-    console.log('render watch video page', this.state);
     return (
       <Animated.View
         style={[

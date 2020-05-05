@@ -18,7 +18,7 @@ class BottomButton extends Component {
       showPastSessionsPicker: false,
       recording: false,
       startTimeRecording: 0,
-      publishVideo: false,
+      publishVideo: true,
       publishAudio: false,
     };
   }

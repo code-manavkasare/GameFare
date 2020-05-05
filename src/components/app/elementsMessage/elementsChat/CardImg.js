@@ -3,7 +3,7 @@ import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
-import Video from 'react-native-af-video-player';
+// import Video from 'react-native-af-video-player';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -106,12 +106,15 @@ export default class CardContent extends React.Component {
     if (local) return <View style={{width: '100%', height: 130}} />;
     if (type === 'video')
       return (
-        <Video
-          hideFullScreenControl={true}
-          url={uri}
-          style={[styleApp.fullSize]}
-        />
+        <View style={{height: '100%', width: '100%', backgroundColor: 'red'}} />
       );
+    // return (
+    //   <Video
+    //     hideFullScreenControl={true}
+    //     url={uri}
+    //     style={[styleApp.fullSize]}
+    //   />
+    // );
     return this.picture(uri, local);
   }
   cardContent(image, index) {

@@ -20,6 +20,7 @@ export default class VideoPlayer extends Component {
     this.state = {
       loader: true,
       paused: this.props.paused,
+      lastValuePaused: false,
       totalTime: 0,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
       videoLoaded: false,
@@ -42,15 +43,14 @@ export default class VideoPlayer extends Component {
     if (prevState.totalTime !== this.state.totalTime)
       this.player.seek(this.state.currentTime, 0);
     else if (
-      prevState.currentTime + 2 < this.state.currentTime ||
-      prevState.currentTime - 2 > this.state.currentTime
+      (prevState.currentTime + 2 < this.state.currentTime ||
+        prevState.currentTime - 2 > this.state.currentTime) &&
+      !this.state.onSliding
     )
       this.player.seek(this.state.currentTime, 0);
   }
   static getDerivedStateFromProps(props, state) {
-    console.log('getDerivedStateFromProps', props.source, state.source);
     if (props.source !== state.source) {
-      console.log('source changed on the video player');
       return {
         source: props.source,
         paused: !props.myVideo ? props.currentTime : false,
@@ -62,7 +62,8 @@ export default class VideoPlayer extends Component {
       props.currentTime !== state.currentTime &&
       (props.currentTime + 2 < state.currentTime ||
         props.currentTime - 2 > state.currentTime) &&
-      !props.noUpdateInCloud
+      !props.noUpdateInCloud &&
+      !state.onSliding
     )
       return {
         currentTime: props.currentTime,
@@ -100,7 +101,8 @@ export default class VideoPlayer extends Component {
     const {updateOnProgress} = this.props;
     const {currentTime} = info;
     const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
-    this.setState({currentTime: currentTime});
+    if (!onSliding) this.setState({currentTime: currentTime});
+
     if (
       updateVideoInfoCloud &&
       !noUpdateInCloud &&
@@ -111,21 +113,28 @@ export default class VideoPlayer extends Component {
   };
   onSlidingComplete = async (SliderTime) => {
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
+    const {lastValuePaused} = this.state;
+    // await timeout(60);
+    await this.player.seek(SliderTime);
 
     if (updateVideoInfoCloud && !noUpdateInCloud)
       await updateVideoInfoCloud(true, SliderTime);
 
-    this.player.seek(SliderTime);
-    this.setState({currentTime: SliderTime, onSliding: false});
+    await this.setState({
+      currentTime: SliderTime,
+      onSliding: false,
+      paused: lastValuePaused,
+    });
+    
+
+    return true;
   };
   onSlidingStart = async () => {
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     const {currentTime} = this.state;
-
     if (updateVideoInfoCloud && !noUpdateInCloud) {
       updateVideoInfoCloud(true, currentTime);
-      await this.setState({paused: true, onSliding: true});
-    } else this.setState({onSliding: true});
+    }
   };
   playPauseButton = (paused) => {
     const styleButton = {height: 45, width: '100%'};
@@ -233,7 +242,9 @@ export default class VideoPlayer extends Component {
               // repeat={true}
               onBuffer={this.onBuffer}
               paused={paused}
-              onProgress={(info) => !paused && this.onProgress(info)}
+              onProgress={(info) =>
+                !paused && !onSliding && this.onProgress(info)
+              }
             />
           </TouchableOpacity>
         )}
@@ -251,6 +262,7 @@ export default class VideoPlayer extends Component {
             videoLoaded={videoLoaded}
             opacityControlBar={this.opacityControlBar}
             playbackRate={playbackRate}
+            onSliding={onSliding}
             setState={this.setState.bind(this)}
             togglePlayPause={this.togglePlayPause.bind(this)}
             onSlidingComplete={this.onSlidingComplete.bind(this)}
