@@ -108,8 +108,8 @@ const getLastDrawing = (video) => {
   return drawings[0];
 };
 
-const isUserAdmin = (session, userID) => {
-  return userID === session.info.organizer;
+const isUserAdmin = (organizerID, userID) => {
+  return userID === organizerID;
 };
 
 const isEven = (n) => {

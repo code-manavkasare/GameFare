@@ -37,7 +37,8 @@ class HeaderStreamView extends Component {
   };
   header() {
     const {
-      coachSession,
+      coachSessionID,
+      organizerID,
       userID,
       open,
       setState,
@@ -66,17 +67,13 @@ class HeaderStreamView extends Component {
         clickButton2={() => setState({cameraFront: !state.cameraFront})}
         typeIcon1="font"
         iconOffset={
-          !coachSession
-            ? null
-            : isConnected && isUserAdmin(coachSession, userID)
-            ? 'person-add'
-            : null
+          isConnected && isUserAdmin(organizerID, userID) && 'person-add'
         }
         initialTitleOpacity={1}
         clickButton1={async () => {
           open(false);
         }}
-        clickButtonOffset={() => this.AddMembers(coachSession.objectID)}
+        clickButtonOffset={() => this.AddMembers(coachSessionID)}
         sizeIcon2={20}
         typeIcon2="moon"
         colorIcon2={colors.white}

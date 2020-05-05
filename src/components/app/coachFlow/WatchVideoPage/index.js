@@ -51,14 +51,17 @@ class WatchVideoPage extends Component {
   async open(videoData) {
     const {watchVideo, source, thumbnail, archiveID} = videoData;
     const {currentWidth} = this.props.currentScreenSize;
+    const {videoSource} = this.state;
+
     if (watchVideo) {
       await this.translateXPage.setValue(0);
-      await this.setState({
-        videoSource: source,
-        watchVideo: true,
-        thumbnail: thumbnail,
-        archiveID: archiveID,
-      });
+      if (videoSource)
+        await this.setState({
+          videoSource: source,
+          watchVideo: true,
+          thumbnail: thumbnail,
+          archiveID: archiveID,
+        });
     }
 
     Animated.parallel([
@@ -69,43 +72,47 @@ class WatchVideoPage extends Component {
     ]).start(async () => {
       if (!watchVideo) {
         this.translateXPage.setValue(currentWidth);
-        this.setState({
-          watchVideo: false,
-          videoSource: false,
-          thumbnail: false,
-          archiveID: false,
+        this.videoPlayerRef.togglePlayPause(true);
+      }
+      if (watchVideo && !videoSource) {
+        await this.setState({
+          videoSource: source,
+          watchVideo: true,
+          thumbnail: thumbnail,
+          archiveID: archiveID,
         });
       }
     });
   }
-  updateVideoInfoCloud = (paused, currentTime, archiveID) => {
-    const {objectID} = this.props.session;
-    database()
-      .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}`)
+  updateVideoInfoCloud = async (paused, currentTime, archiveID) => {
+    const {coachSessionID} = this.props;
+    await database()
+      .ref(`coachSessions/${coachSessionID}/sharedVideos/${archiveID}`)
       .update({paused, currentTime});
+    return true;
   };
   isMyVideo() {
-    const {userID, session, personSharingScreen} = this.props;
+    const {personSharingScreen, videoBeingShared} = this.props;
     const {archiveID} = this.state;
     if (!archiveID) return true;
-    const videoSharing = getVideoSharing(session, personSharingScreen);
-    if (!videoSharing) return true;
-    if (personSharingScreen && videoSharing.id === archiveID) return false;
+    if (!videoBeingShared) return true;
+    if (personSharingScreen && videoBeingShared.id === archiveID) return false;
     return true;
   }
   watchVideoView() {
     const {
-      session,
       personSharingScreen,
       userID,
       currentScreenSize,
+      sharedVideos,
+      coachSessionID,
+      videoBeingShared,
     } = this.props;
-    const {videoSource, thumbnail, archiveID, watchVideo} = this.state;
+    const {videoSource, thumbnail, archiveID} = this.state;
     const {currentWidth, currentHeight} = currentScreenSize;
     const myVideo = this.isMyVideo();
 
     let video = {};
-
     if (myVideo)
       video = {
         source: videoSource,
@@ -113,8 +120,9 @@ class WatchVideoPage extends Component {
         currentTime: 0,
       };
     else {
-      video = {...session.sharedVideos[archiveID]};
+      video = {...sharedVideos[archiveID]};
     }
+
     return (
       <Animated.View
         style={[
@@ -145,59 +153,59 @@ class WatchVideoPage extends Component {
         <RightButtons
           state={this.props.state}
           archiveID={archiveID}
-          session={session}
+          coachSessionID={coachSessionID}
+          videoBeingShared={videoBeingShared}
           personSharingScreen={personSharingScreen}
           setState={this.setState.bind(this)}
           openVideo={(videoData) => this.open(videoData)}
         />
 
-        {videoSource && (
-          <VideoPlayer
-            source={videoSource}
-            paused={video.paused}
-            currentTime={video.currentTime}
-            hideFullScreenButton={true}
-            placeHolderImg={thumbnail}
-            componentOnTop={() => (
-              <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  ...styleApp.fullSize,
-                  zIndex: 3,
-                }}
-                activeOpacity={1}
-                onPress={() => this.videoPlayerRef.clickVideo()}>
-                <DrawView
-                  coachSessionID={session.objectID}
-                  archiveID={archiveID}
-                  video={video}
-                  drawingOpen={personSharingScreen === userID}
-                />
-                <ButtonShareVideo
-                  archiveID={archiveID}
-                  session={session}
-                  source={video.source}
-                  personSharingScreen={personSharingScreen}
-                  togglePlayPause={() =>
-                    this.videoPlayerRef.togglePlayPause(true)
-                  }
-                  getVideoState={() => this.videoPlayerRef.getState()}
-                />
-              </TouchableOpacity>
-            )}
-            styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
-            styleVideo={styleApp.fullSize}
-            noUpdateInCloud={myVideo}
-            updateOnProgress={userID === personSharingScreen}
-            updateVideoInfoCloud={(paused, currentTime) =>
-              this.updateVideoInfoCloud(paused, currentTime, archiveID)
-            }
-            onRef={(ref) => (this.videoPlayerRef = ref)}
-          />
-        )}
-        {/* <View style={[styleApp.fullSize, styleApp.center]}>
-          <Loader color={colors.white} size={65} />
-        </View> */}
+        <VideoPlayer
+          source={videoSource}
+          paused={video.paused}
+          currentTime={video.currentTime}
+          hideFullScreenButton={true}
+          placeHolderImg={thumbnail}
+          componentOnTop={() => (
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                ...styleApp.fullSize,
+                zIndex: 3,
+              }}
+              activeOpacity={1}
+              onPress={() => this.videoPlayerRef.clickVideo()}>
+              <DrawView
+                coachSessionID={coachSessionID}
+                archiveID={archiveID}
+                video={video}
+                drawingOpen={
+                  personSharingScreen === userID &&
+                  archiveID === videoBeingShared.id
+                }
+              />
+              <ButtonShareVideo
+                archiveID={archiveID}
+                coachSessionID={coachSessionID}
+                videoBeingShared={videoBeingShared}
+                source={video.source}
+                personSharingScreen={personSharingScreen}
+                togglePlayPause={() =>
+                  this.videoPlayerRef.togglePlayPause(true)
+                }
+                getVideoState={() => this.videoPlayerRef.getState()}
+              />
+            </TouchableOpacity>
+          )}
+          styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
+          styleVideo={styleApp.fullSize}
+          noUpdateInCloud={myVideo}
+          updateOnProgress={userID === personSharingScreen}
+          updateVideoInfoCloud={(paused, currentTime) =>
+            this.updateVideoInfoCloud(paused, currentTime, archiveID)
+          }
+          onRef={(ref) => (this.videoPlayerRef = ref)}
+        />
       </Animated.View>
     );
   }

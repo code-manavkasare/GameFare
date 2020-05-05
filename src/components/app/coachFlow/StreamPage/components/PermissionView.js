@@ -26,7 +26,6 @@ class StreamPage extends Component {
     this.state = {
       cameraAccess: false,
       microAccess: false,
-      loader: true,
     };
   }
   async componentDidMount() {
@@ -34,11 +33,10 @@ class StreamPage extends Component {
     const cameraAccess = await cameraPermission();
     const microAccess = await microphonePermission();
     this.setState({
-      loader: false,
       cameraAccess: cameraAccess,
       microAccess: microAccess,
     });
-    if (setState) setState({permissionsCamera: cameraAccess && microAccess});
+    if (setState) setState({permissionsCamera: cameraAccess && microAccess,initialLoader:false});
   }
   button(text, active) {
     return (
@@ -57,7 +55,9 @@ class StreamPage extends Component {
     );
   }
   permissionView() {
-    const {loader, microAccess, cameraAccess} = this.state;
+    const {microAccess, cameraAccess} = this.state;
+    const {initialLoader} = this.props;
+    if (initialLoader) return null;
     return (
       <View duration={300} style={styles.page}>
         <View style={styleApp.marginView}>
