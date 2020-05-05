@@ -122,7 +122,6 @@ class WatchVideoPage extends Component {
     else {
       video = {...sharedVideos[archiveID]};
     }
-
     return (
       <Animated.View
         style={[
