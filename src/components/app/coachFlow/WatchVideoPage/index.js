@@ -51,14 +51,17 @@ class WatchVideoPage extends Component {
   async open(videoData) {
     const {watchVideo, source, thumbnail, archiveID} = videoData;
     const {currentWidth} = this.props.currentScreenSize;
+    const {videoSource} = this.state;
+
     if (watchVideo) {
       await this.translateXPage.setValue(0);
-      await this.setState({
-        videoSource: source,
-        watchVideo: true,
-        thumbnail: thumbnail,
-        archiveID: archiveID,
-      });
+      if (videoSource)
+        await this.setState({
+          videoSource: source,
+          watchVideo: true,
+          thumbnail: thumbnail,
+          archiveID: archiveID,
+        });
     }
 
     Animated.parallel([
@@ -70,6 +73,14 @@ class WatchVideoPage extends Component {
       if (!watchVideo) {
         this.translateXPage.setValue(currentWidth);
         this.videoPlayerRef.togglePlayPause(true);
+      }
+      if (watchVideo && !videoSource) {
+        await this.setState({
+          videoSource: source,
+          watchVideo: true,
+          thumbnail: thumbnail,
+          archiveID: archiveID,
+        });
       }
     });
   }

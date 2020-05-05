@@ -7,6 +7,7 @@ import Video from 'react-native-video';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
 import {displayTime} from '../../../../../../../functions/coach';
 import {date, time} from '../../../../../../../layout/date/date';
@@ -113,7 +114,7 @@ export default class CardArchive extends Component {
           </View>
         ) : archive ? (
           <View style={styleApp.fullSize}>
-            <Image source={{uri: thumbnail}} style={styleApp.fullSize} />
+            <AsyncImage mainImage={thumbnail} style={styleApp.fullSize} />
             <View style={{...styles.viewText, bottom: 5, left: 5}}>
               <Text
                 style={[styleApp.text, {color: colors.white, fontSize: 12}]}>
@@ -142,7 +143,7 @@ export default class CardArchive extends Component {
               }}
               click={() => this.openVideo(url, thumbnail)}
               color={colors.greyDark + '40'}
-              onPressColor={colors.greyDark + '40'}
+              onPressColor={colors.grey + '40'}
               style={[
                 styleApp.fullSize,
                 styleApp.center,
