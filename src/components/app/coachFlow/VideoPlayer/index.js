@@ -25,6 +25,7 @@ export default class VideoPlayer extends Component {
       videoLoaded: false,
       fullscreen: false,
       onSliding: false,
+      source: this.props.source,
       playbackRate: 1,
 
       placeHolderImg: this.props.placeHolderImg,
@@ -47,6 +48,16 @@ export default class VideoPlayer extends Component {
       this.player.seek(this.state.currentTime, 0);
   }
   static getDerivedStateFromProps(props, state) {
+    console.log('getDerivedStateFromProps', props.source, state.source);
+    if (props.source !== state.source) {
+      console.log('source changed on the video player');
+      return {
+        source: props.source,
+        paused: !props.myVideo ? props.currentTime : false,
+        currentTime: !props.myVideo ? props.currentTime : 0,
+        placeHolderImg: props.placeHolderImg,
+      };
+    }
     if (
       props.currentTime !== state.currentTime &&
       (props.currentTime + 2 < state.currentTime ||
@@ -66,6 +77,7 @@ export default class VideoPlayer extends Component {
       return {
         placeHolderImg: props.placeHolderImg,
       };
+
     return {};
   }
   getState() {
@@ -145,7 +157,7 @@ export default class VideoPlayer extends Component {
         style={[
           styleApp.fullSize,
           styleApp.center,
-          {backgroundColor: colors.transparent},
+          {backgroundColor: colors.transparent, position: 'absolute'},
         ]}>
         <Loader size={60} color={colors.white} />
       </View>
@@ -159,7 +171,6 @@ export default class VideoPlayer extends Component {
   }
   render() {
     const {
-      source,
       styleContainerVideo,
       styleVideo,
       componentOnTop,
@@ -179,11 +190,12 @@ export default class VideoPlayer extends Component {
       totalTime,
       videoLoaded,
       loader,
+      source,
       onSliding,
     } = this.state;
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
-        {loader && this.fullScreenLoader()}
+        {this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
         <AsyncImage
           style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
@@ -196,7 +208,7 @@ export default class VideoPlayer extends Component {
           onPress={() => this.clickVideo()}
         />
 
-        {displayVideo && (
+        {displayVideo && source && (
           <TouchableOpacity
             style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
             <Video

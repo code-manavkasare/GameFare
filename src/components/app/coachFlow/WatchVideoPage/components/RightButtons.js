@@ -99,8 +99,13 @@ class RightButtons extends Component {
     );
   }
   toolsDraw() {
-    const {settingsDraw, coachAction, archiveID, session} = this.props;
-    const {objectID} = session;
+    const {
+      settingsDraw,
+      coachAction,
+      archiveID,
+      coachSessionID,
+      videoBeingShared,
+    } = this.props;
     return (
       <View style={styles.toolBox}>
         {this.buttonColor(colors.red)}
@@ -109,7 +114,9 @@ class RightButtons extends Component {
 
         {this.button({name: 'trash', type: 'font'}, 'Clear', false, () => {
           database()
-            .ref(`coachSessions/${objectID}/sharedVideos/${archiveID}/drawings`)
+            .ref(
+              `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings`,
+            )
             .remove();
           coachAction('setCoachSessionDrawSettings', {
             clear: !settingsDraw.clear,
@@ -117,13 +124,11 @@ class RightButtons extends Component {
         })}
 
         {this.button({name: 'undo', type: 'font'}, 'Undo', false, () => {
-          if (session.sharedVideos[archiveID].drawings) {
-            const idLastDrawing = getLastDrawing(
-              session.sharedVideos[archiveID],
-            ).id;
+          if (videoBeingShared.drawings) {
+            const idLastDrawing = getLastDrawing(videoBeingShared).id;
             database()
               .ref(
-                `coachSessions/${objectID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
+                `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
               )
               .remove();
           }
@@ -136,14 +141,12 @@ class RightButtons extends Component {
     );
   }
   buttons() {
-    const {session, userID, archiveID} = this.props;
-    if (!session) return null;
-    const member = getMember(session, userID);
-    const {videoIDSharing} = member;
+    const {userID, archiveID, videoBeingShared} = this.props;
+
     const {settingsDraw, coachAction, personSharingScreen} = this.props;
 
     const displayButtonDraw =
-      personSharingScreen === userID && archiveID === videoIDSharing;
+      personSharingScreen === userID && archiveID === videoBeingShared.id;
 
     return (
       <View style={styles.colButtonsRight}>
@@ -152,11 +155,10 @@ class RightButtons extends Component {
             {name: 'magic', type: 'font'},
             'Draw',
             settingsDraw.touchEnabled,
-            () => {
+            () =>
               coachAction('setCoachSessionDrawSettings', {
                 touchEnabled: !settingsDraw.touchEnabled,
-              });
-            },
+              }),
             colors.green,
           )}
 
