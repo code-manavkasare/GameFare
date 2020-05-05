@@ -7,13 +7,15 @@ import Video from 'react-native-video';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
 import {displayTime} from '../../../../../../../functions/coach';
 import {date, time} from '../../../../../../../layout/date/date';
+import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
-import {of} from 'ramda';
+import {timeout} from '../../../../../../../functions/coach';
 
 export default class CardArchive extends Component {
   static propTypes = {
@@ -26,6 +28,9 @@ export default class CardArchive extends Component {
     this.state = {
       archive: false,
       videoFullscren: false,
+      paused: true,
+      displayVideoPlayer: false,
+      loader: false,
     };
   }
 
@@ -63,25 +68,30 @@ export default class CardArchive extends Component {
     );
   }
 
-  openVideo = (url, thumbnail) => {
+  openVideo = async (url, thumbnail) => {
     const {openVideo} = this.props;
     if (openVideo) {
       openVideo(url, thumbnail);
     } else {
-      this.setState({videoFullscren: true});
+      this.setState({loader: true, displayVideoPlayer: true});
     }
   };
 
   videoFullscreen = () => {
-    const {archive, videoFullscren} = this.state;
-
-    if (videoFullscren) {
+    const {archive, videoFullscren, displayVideoPlayer, paused} = this.state;
+    if (displayVideoPlayer) {
       return (
         <Video
           source={{uri: archive.url}}
-          fullscreen={true}
+          fullscreen={videoFullscren}
+          paused={paused}
+          style={{position: 'absolute', width: 0, height: 0}}
+          onLoad={async (callback) => {
+            await timeout(1000);
+            this.setState({videoFullscren: true, loader: false, paused: false});
+          }}
           onFullscreenPlayerDidDismiss={(event) => {
-            this.setState({videoFullscren: false});
+            this.setState({videoFullscren: false, paused: true});
           }}
         />
       );
@@ -113,7 +123,7 @@ export default class CardArchive extends Component {
           </View>
         ) : archive ? (
           <View style={styleApp.fullSize}>
-            <Image source={{uri: thumbnail}} style={styleApp.fullSize} />
+            <AsyncImage mainImage={thumbnail} style={styleApp.fullSize} />
             <View style={{...styles.viewText, bottom: 5, left: 5}}>
               <Text
                 style={[styleApp.text, {color: colors.white, fontSize: 12}]}>
@@ -131,6 +141,8 @@ export default class CardArchive extends Component {
             </View>
             <ButtonColor
               view={() => {
+                const {loader} = this.state;
+                if (loader) return <Loader size={50} color={colors.white} />;
                 return (
                   <AllIcons
                     type={'font'}
@@ -142,7 +154,7 @@ export default class CardArchive extends Component {
               }}
               click={() => this.openVideo(url, thumbnail)}
               color={colors.greyDark + '40'}
-              onPressColor={colors.greyDark + '40'}
+              onPressColor={colors.grey + '40'}
               style={[
                 styleApp.fullSize,
                 styleApp.center,

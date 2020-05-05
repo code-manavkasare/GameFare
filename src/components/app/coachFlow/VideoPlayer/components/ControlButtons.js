@@ -30,7 +30,7 @@ export default class VideoPlayer extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (state.updateCurrentTime)
+    if (state.updateCurrentTime && !props.onSliding)
       return {
         currentTime: props.currentTime,
       };
@@ -153,6 +153,7 @@ export default class VideoPlayer extends Component {
       hideFullScreenButton,
       opacityControlBar,
       setState,
+      paused,
       onSlidingComplete,
       onSlidingStart,
     } = this.props;
@@ -178,8 +179,6 @@ export default class VideoPlayer extends Component {
             <Row
               style={{
                 height: 45,
-                paddingLeft: 10,
-                paddingRight: 10,
               }}>
               <Col style={styleApp.center}>
                 <Slider
@@ -189,16 +188,25 @@ export default class VideoPlayer extends Component {
                   value={currentTime}
                   minimumTrackTintColor={colors.white}
                   maximumTrackTintColor={colors.greyDark + '50'}
-                  onValueChange={(value) => this.setState({currentTime: value})}
-                  onSlidingStart={() => onSlidingStart()}
+                  // onValueChange={(value) => this.setState({currentTime: value})}
+                  onSlidingStart={async () => {
+                    await setState({
+                      onSliding: true,
+                      paused: true,
+                      lastValuePaused: paused,
+                    });
+
+                    onSlidingStart();
+                  }}
                   onSlidingComplete={async (SliderTime) => {
-                    onSlidingComplete(SliderTime);
+                    await onSlidingComplete(SliderTime);
+                    await setState({onSliding: false});
                   }}
                 />
               </Col>
             </Row>
             {sizeControlButton !== 'sm' && (
-              <Row style={{height: 15, marginTop: -5}}>
+              <Row style={{height: 15, marginTop: -3}}>
                 <Col style={styleApp.center2}>
                   <Text style={styles.textTime}>
                     {displayTime(currentTime)}
@@ -253,7 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
   },
   slideVideo: {width: '100%', height: 40, marginTop: 0},
-  textTime: {...styleApp.title, fontSize: 14, color: colors.white},
+  textTime: {...styleApp.textBold, fontSize: 14, color: colors.white},
   viewSpeedSet: {
     position: 'absolute',
     width: 65,

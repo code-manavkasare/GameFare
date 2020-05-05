@@ -13,12 +13,14 @@ import {
   offsetBottomHeaderStream,
 } from '../../../../style/sizes';
 import styleApp from '../../../../style/style';
+import colors from '../../../../style/colors';
+import Loader from '../../../../layout/loaders/Loader';
 
 class ListStreams extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coachSessions: this.props.coachSessions,
+      coachSessions: false,
     };
     this.itemsRef = [];
   }
@@ -35,15 +37,16 @@ class ListStreams extends Component {
   }
   sessionsArray = () => {
     let {coachSessions} = this.state;
-    if (!coachSessions) coachSessions = {};
+    if (!coachSessions) return false;
     return Object.values(coachSessions).sort(function(a, b) {
       return b.timestamp - a.timestamp;
     });
   };
-
+  
   list = () => {
     const coachSessions = this.sessionsArray();
     const {AnimatedHeaderValue} = this.props;
+    if (!coachSessions) return this.viewLoader();
     if (Object.values(coachSessions).length === 0)
       return (
         <Text style={[styleApp.text, {paddingLeft: '5%'}]}>

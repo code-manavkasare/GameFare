@@ -272,7 +272,6 @@ class StreamPage extends Component {
     );
   };
   stopRecording = async () => {
-
     return true;
     function messageCallback(response) {
       if (response.error) {
@@ -424,14 +423,8 @@ class StreamPage extends Component {
     );
   }
   animatedValues() {
-    /// const {x, y} = this.state.coordinates;
-    const {currentHeight, currentWidth} = this.props.currentScreenSize;
-    // const {initialScaleX, initialScaleY} = getInitialScale(
-    //   currentWidth,
-    //   heightCardSession,
-    //   currentHeight,
-    //   currentWidth,
-    // );
+    const {currentWidth} = this.props.currentScreenSize;
+
     const translateXStream = this.animatedPage.interpolate({
       inputRange: [0, 1],
       outputRange: [currentWidth, 0],
@@ -497,7 +490,8 @@ class StreamPage extends Component {
           <KeepAwake />
 
           <Header
-            coachSession={coachSession}
+            coachSessionID={coachSessionID}
+            organizerID={coachSession && coachSession.info.organizer}
             opacityHeader={this.opacityHeader}
             open={this.open.bind(this)}
             setState={this.setState.bind(this)}
@@ -509,10 +503,12 @@ class StreamPage extends Component {
           <WatchVideoPage
             state={this.state}
             onRef={(ref) => (this.watchVideoRef = ref)}
-            personSharingScreen={personSharingScreen}
-            session={coachSession}
             translateYFooter={this.translateYFooter}
             setState={this.setState.bind(this)}
+            personSharingScreen={personSharingScreen}
+            videoBeingShared={videoBeingShared}
+            sharedVideos={coachSession.sharedVideos}
+            coachSessionID={coachSessionID}
           />
 
           {loader && this.loaderView(' ')}

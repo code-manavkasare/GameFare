@@ -25,24 +25,28 @@ import LogoutView from './components/LogoutView';
 import PermissionView from './components/PermissionView';
 
 import ListStreams from './components/ListStreams';
+import Loader from '../../../layout/loaders/Loader';
 import HeaderListStream from './components/HeaderListStream';
-
-import {getResolutions} from '../../../functions/cameraResolution';
 
 class StreamTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
       permissionsCamera: false,
+      initialLoader: true,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
-    // const resolutionList = getResolutions(true);
-  }
+  viewLoader = () => {
+    return (
+      <View style={[{height: 120}, styleApp.center]}>
+        <Loader size={55} color={colors.primary} />
+      </View>
+    );
+  };
   StreamTab = (currentHeight) => {
-    const {permissionsCamera} = this.state;
-    let {userConnected, sessionInfo} = this.props;
+    const {permissionsCamera, initialLoader} = this.state;
+    let {userConnected} = this.props;
     return (
       <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
         <View style={{height: offsetBottomHeaderStream / 2}} />
@@ -51,10 +55,16 @@ class StreamTab extends Component {
           hideButtonNewSession={!userConnected || !permissionsCamera}
         />
         <View style={{height: offsetBottomHeaderStream / 2}} />
+
+        {initialLoader && this.viewLoader()}
+
         {!userConnected ? (
           <LogoutView />
         ) : !permissionsCamera ? (
-          <PermissionView setState={this.setState.bind(this)} />
+          <PermissionView
+            initialLoader={initialLoader}
+            setState={this.setState.bind(this)}
+          />
         ) : (
           <ListStreams AnimatedHeaderValue={this.AnimatedHeaderValue} />
         )}
