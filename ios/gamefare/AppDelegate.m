@@ -96,4 +96,11 @@
   return [Orientation getOrientation];
 }
 
+// fix EventDispatcher bug
+#if RCT_DEV
+- (BOOL)bridge:(RCTBridge *)bridge didNotFindModule:(NSString *)moduleName {
+  return YES;
+}
+#endif
+
 @end

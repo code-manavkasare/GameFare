@@ -4379,6 +4379,15 @@ gamefare-camera-kit@^1.1.2:
   dependencies:
     lodash "^4.14.2"
 
+"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git":
+  version "0.0.1"
+  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#72980d3dcbba88f81ba79e22989c22092cfb5c2d"
+  dependencies:
+    axios "^0.19.0"
+    prop-types "^15.7.2"
+    underscore "^1.9.1"
+    uuid "^3.3.3"
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
@@ -6538,16 +6547,6 @@ opencollective-postinstall@^2.0.1, opencollective-postinstall@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.2.tgz#5657f1bede69b6e33a45939b061eb53d3c6c3a89"
   integrity sha512-pVOEP16TrAO2/fjej1IdOyupJY8KDUM1CvsaScRbw6oddvpQoOfGk4ywha0HKKVAD6RkW4x6Q+tNBwhf3Bgpuw==
-
-opentok-react-native@^0.12.2:
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/opentok-react-native/-/opentok-react-native-0.12.2.tgz#f174fcebd841720c879437756395199bb897a79a"
-  integrity sha512-aWs+SaHLwtaIpnmQWN5+4V0IOOcELb1EgXIQTJbcxRvXyx1BcNsvFkkqWk4kvnWvDpGMPSXjW64Mcmzmpmw0AA==
-  dependencies:
-    axios "^0.19.0"
-    prop-types "^15.7.2"
-    underscore "^1.9.1"
-    uuid "^3.3.3"
 
 opn@^5.4.0:
   version "5.5.0"
