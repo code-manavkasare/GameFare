@@ -6,7 +6,7 @@ import {
   OTPublisher,
   OTSubscriber,
   OTSubscriberView,
-} from 'opentok-react-native';
+} from 'gamefare-local-opentok';
 import Config from 'react-native-config';
 import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
@@ -17,7 +17,7 @@ const {height, width} = Dimensions.get('screen');
 
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
-import {native, timing, openStream} from '../../../../../animations/animations';
+import {native, openStream} from '../../../../../animations/animations';
 
 import {coachAction} from '../../../../../../actions/coachActions';
 import {userAction} from '../../../../../../actions/userActions';
@@ -42,18 +42,6 @@ import WatchVideoPage from '../../../WatchVideoPage/index';
 import MembersView from './components/MembersView';
 import Footer from './footer/index';
 import CardStreamView from './components/CardStreamView';
-
-const getInitialScale = (
-  widthCardSession,
-  heightCardSession,
-  currentHeight,
-  currentWidth,
-) => {
-  return {
-    initialScaleX: widthCardSession / currentWidth,
-    initialScaleY: heightCardSession / currentHeight,
-  };
-};
 
 const getPositionView = (
   offsetScrollView,
@@ -83,7 +71,7 @@ class StreamPage extends Component {
       cameraFront: true,
       watchVideo: false,
       publishAudio: false,
-      publishVideo: false,
+      publishVideo: true,
       pageFullScreen: false,
       open: false,
       coordinates: {x: 0, y: 0},
@@ -213,6 +201,7 @@ class StreamPage extends Component {
     const {userID, coachSessionID} = this.props;
 
     const that = this;
+    console.log('before load session', coachSessionID);
     database()
       .ref('coachSessions/' + coachSessionID)
       .on('value', async function(snap) {
@@ -228,6 +217,7 @@ class StreamPage extends Component {
           });
         const members = session.members;
         if (members) members[userID];
+        console.log('after load session', session);
         that.openVideoShared(session);
         return that.setState({
           coachSession: session,
@@ -259,7 +249,6 @@ class StreamPage extends Component {
   }
 
   startRecording = async () => {
-    return true;
     function messageCallback(response) {
       if (response.error) {
         console.log(`Error initializing recording: ${response.message}`);
@@ -272,7 +261,6 @@ class StreamPage extends Component {
     );
   };
   stopRecording = async () => {
-    return true;
     function messageCallback(response) {
       if (response.error) {
         console.log(`Error storing recording: ${response.message}`);
@@ -374,6 +362,14 @@ class StreamPage extends Component {
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
+    console.log(
+      'render strean vudei',
+      this.state.coachSession,
+      isConnected,
+      Config.OPENTOK_API,
+    );
+    console.log('member.tokenTokbox', member.tokenTokbox);
+    console.log('sessionID', sessionID);
 
     return (
       <Animated.View
@@ -389,7 +385,7 @@ class StreamPage extends Component {
         <View style={this.styleSession()}>
           <OTSession
             apiKey={Config.OPENTOK_API}
-            // ref={this.otSessionRef}
+            ref={this.otSessionRef}
             eventHandlers={this.sessionEventHandlers}
             sessionId={sessionID}
             token={member.tokenTokbox}>
@@ -424,7 +420,6 @@ class StreamPage extends Component {
   }
   animatedValues() {
     const {currentWidth} = this.props.currentScreenSize;
-
     const translateXStream = this.animatedPage.interpolate({
       inputRange: [0, 1],
       outputRange: [currentWidth, 0],
