@@ -15,7 +15,7 @@
 
 #import "Mixpanel.h"
 #import "RNSplashScreen.h"
-#import "RNBranch.h"
+#import <RNBranch/RNBranch.h>
 #import "Orientation.h"
 @implementation AppDelegate
 
