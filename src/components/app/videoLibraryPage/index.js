@@ -42,7 +42,9 @@ class VideoLibraryPage extends Component {
             key={uploadingVideo.localIdentifier}
             style={styles.CardUploading}
             videoInfo={uploadingVideo}
+            uploadOnMount={true}
             dismiss={(videoUploaded) => this.dismissUploadCard(videoUploaded)}
+            onRef={(ref) => (this.cardUploadingRef = ref)}
           />
         );
       })
@@ -50,14 +52,14 @@ class VideoLibraryPage extends Component {
   };
 
   listVideos() {
-    const {loader, videosArray} = this.state;
+    const {loader, videosArray, uploadingVideosArray} = this.state;
 
     return (
       <View style={styles.container}>
         {this.uploadingVideosList()}
         {loader ? (
           this.placehoder()
-        ) : videosArray.length === 0 ? (
+        ) : videosArray.length === 0 && uploadingVideosArray.length === 0 ? (
           <Text style={[styleApp.text, {marginLeft: 20, marginTop: 10}]}>
             You have no video in your cloud yet. Start today by uploading some
             or record yourself !
@@ -81,6 +83,7 @@ class VideoLibraryPage extends Component {
     const videos = await MediaPicker.openPicker({
       multiple: true,
       mediaType: 'video',
+      compressVideoPreset: 'HighestQuality',
     });
     let uploadingVideosArray = videos;
 
@@ -91,7 +94,6 @@ class VideoLibraryPage extends Component {
         });
       }),
     );
-
     this.setState({uploadingVideosArray});
   };
 
@@ -115,7 +117,7 @@ class VideoLibraryPage extends Component {
           initialTitleOpacity={1}
           initialBorderWidth={0.3}
           typeIcon2={'font'}
-        sizeIcon2={17}
+          sizeIcon2={17}
           icon1={'arrow-left'}
           icon2={'cloud-upload-alt'}
           clickButton1={() => goBack()}

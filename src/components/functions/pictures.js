@@ -3,7 +3,7 @@ import storage from '@react-native-firebase/storage';
 import CameraRoll from '@react-native-community/cameraroll';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
-
+import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
 
 const options = {
@@ -137,6 +137,21 @@ const sortVideos = (videos) => {
     .reverse();
 };
 
+const getLastVideo = async () => {
+  const {edges} = await CameraRoll.getPhotos({
+    first: 1,
+    assetType: 'Videos',
+  });
+  console.log('edges', edges);
+  return edges[0].node.image;
+};
+
+const getVideoInfo = async (videoUrl) => {
+  const videoInfo = await ProcessingManager.getVideoInfo(videoUrl);
+  console.log('videoInfo', videoInfo);
+  return videoInfo;
+};
+
 module.exports = {
   takePicture,
   pickLibrary,
@@ -146,4 +161,6 @@ module.exports = {
   uploadVideoFirebase,
   getPhotoUser,
   sortVideos,
+  getVideoInfo,
+  getLastVideo,
 };

@@ -70,8 +70,8 @@ class StreamPage extends Component {
       error: false,
       cameraFront: true,
       watchVideo: false,
-      publishAudio: false,
-      publishVideo: true,
+      publishAudio: !__DEV__,
+      publishVideo: !__DEV__,
       pageFullScreen: false,
       open: false,
       coordinates: {x: 0, y: 0},
@@ -247,34 +247,6 @@ class StreamPage extends Component {
     await this.setState({open: false});
     return true;
   }
-
-  startRecording = async () => {
-    function messageCallback(response) {
-      if (response.error) {
-        console.log(`Error initializing recording: ${response.message}`);
-      } else {
-        console.log('Started recording...');
-      }
-    }
-    await this.otPublisherRef.current.startRecording(
-      messageCallback.bind(this),
-    );
-  };
-  stopRecording = async () => {
-    function messageCallback(response) {
-      if (response.error) {
-        console.log(`Error storing recording: ${response.message}`);
-        let videoUrl = response.videoUrl;
-        console.log(`Stopped recording. Video stored at: ${videoUrl}`);
-      } else {
-        let videoUrl = response.videoUrl;
-        console.log(`Stopped recording. Video stored at: ${videoUrl}`);
-      }
-    }
-
-    await this.otPublisherRef.current.stopRecording(messageCallback.bind(this));
-  };
-
   loaderView(text, hideLoader) {
     const {pageFullScreen} = this.state;
     const styleText = {...styleApp.text, color: colors.white, marginBottom: 25};
@@ -515,12 +487,7 @@ class StreamPage extends Component {
               setState={this.setState.bind(this)}
               watchVideoRef={this.watchVideoRef}
               endCoachSession={this.endCoachSession.bind(this)}
-              startRecording={() => {
-                this.startRecording();
-              }}
-              stopRecording={() => {
-                this.stopRecording();
-              }}
+              otPublisherRef={this.otPublisherRef}
               personSharingScreen={personSharingScreen}
               videoBeingShared={videoBeingShared}
             />

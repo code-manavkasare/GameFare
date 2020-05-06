@@ -24,10 +24,9 @@ class Footer extends Component {
       watchVideoRef,
       endCoachSession,
       opacityHeader,
-      startRecording,
-      stopRecording,
       personSharingScreen,
       videoBeingShared,
+      otPublisherRef,
     } = this.props;
     return (
       <Animated.View
@@ -42,8 +41,7 @@ class Footer extends Component {
           videoBeingShared={videoBeingShared}
           endCoachSession={endCoachSession}
           clickReview={(val) => this.pastSessionsRef.open(val)}
-          startRecording={() => startRecording()}
-          stopRecording={() => stopRecording()}
+          otPublisherRef={otPublisherRef}
         />
 
         <VideosView

@@ -100,26 +100,35 @@ export default class CardArchive extends Component {
 
   cardArchive(archive) {
     const {archive: archiveData} = this.props;
+    const {localUrl} = archiveData;
     const {
       thumbnail,
       url,
       startTimestamp,
       resolution,
+
       durationSeconds,
     } = archive;
-
+    console.log('localUrl', localUrl);
     return (
       <View style={[styles.cardArchive, this.props.style]}>
         {!archiveData.available ? (
-          <View
-            style={[
-              styleApp.fullSize,
-              styleApp.center,
-              {backgroundColor: colors.grey + '60'},
-            ]}>
-            <Text style={[styleApp.text, {color: colors.white}]}>
-              Processing video...
-            </Text>
+          <View style={[styleApp.fullSize]}>
+            <View
+              style={[
+                styleApp.fullSize,
+                styleApp.center,
+                {position: 'absolute', zIndex: 20},
+                {backgroundColor: colors.grey + '30'},
+              ]}>
+              <Text style={[styleApp.text, {color: colors.white}]}>
+                Processing video...
+              </Text>
+            </View>
+            <Image
+              source={{uri: 'ph://' + localUrl}}
+              style={styleApp.fullSize}
+            />
           </View>
         ) : archive ? (
           <View style={styleApp.fullSize}>
