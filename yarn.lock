@@ -4381,7 +4381,7 @@ gamefare-camera-kit@^1.1.2:
 
 "gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git":
   version "0.0.1"
-  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#72980d3dcbba88f81ba79e22989c22092cfb5c2d"
+  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#862cc26935af5fc1ee415ed0bee8593cafba0255"
   dependencies:
     axios "^0.19.0"
     prop-types "^15.7.2"
@@ -7053,10 +7053,10 @@ react-native-awesome-card-io@^0.8.2:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-branch@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-3.1.1.tgz#41926463a05e6e94d76e2346051f0fc374e77596"
-  integrity sha512-q3Jz2vFWnxjmRWiMFo2PqOrh9TNPrPgt4xntWUMNUmE4860D4i6esOZ/e+JIE7ym//bvki1tQgucTyntSFRrKQ==
+react-native-branch@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-4.4.0.tgz#841a741e00f86904e685a31da84e1b46e57a1d1f"
+  integrity sha512-PwflqzN7cY8DHJZ0Jp8dwoLJXZhBnoeCf+HM6Grbx2Vj9f3ObQAYnYFpBCOXsw19TxCU/DDLWpOY7tC8B3AnxA==
 
 react-native-calendar-events@^1.7.3:
   version "1.7.3"
@@ -7240,10 +7240,15 @@ react-native-keyboard-input@^6.0.0:
     lodash "^4.17.4"
     react-native-keyboard-tracking-view "^5.5.0"
 
-react-native-keyboard-tracking-view@^5.5.0, react-native-keyboard-tracking-view@^5.6.1:
+react-native-keyboard-tracking-view@^5.5.0:
   version "5.6.1"
   resolved "https://registry.yarnpkg.com/react-native-keyboard-tracking-view/-/react-native-keyboard-tracking-view-5.6.1.tgz#287186f6ae6335baf83ad106c7779f68d1cc48c2"
   integrity sha512-uud94SDB2ffGWQHb2ehCIxNi1lmSOQneZ/ro3Zb6Nu6yEh4ljqr1fbRco+pU1RWzaM73uS32A3vPu3NuXjPceA==
+
+react-native-keyboard-tracking-view@^5.7.0:
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-tracking-view/-/react-native-keyboard-tracking-view-5.7.0.tgz#264d0b7dfa1a7c362583953f81bc73d7598fea8a"
+  integrity sha512-MDeEwAbn9LJDOfHq0QLCGaZirVLk2X/tHqkAqz3y6uxryTRdSl9PwleOVar5Jx2oAPEg4J9BXbUD1wwOOi+5Kg==
 
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
