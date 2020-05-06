@@ -125,7 +125,6 @@ export default class VideoPlayer extends Component {
       onSliding: false,
       paused: lastValuePaused,
     });
-    
 
     return true;
   };
@@ -206,10 +205,12 @@ export default class VideoPlayer extends Component {
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
-        <AsyncImage
-          style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
-          mainImage={placeHolderImg}
-        />
+        {placeHolderImg && (
+          <AsyncImage
+            style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
+            mainImage={placeHolderImg}
+          />
+        )}
 
         <TouchableOpacity
           style={styles.viewClickOnVideo}
@@ -238,7 +239,7 @@ export default class VideoPlayer extends Component {
               onFullscreenPlayerDidDismiss={(event) => {
                 this.setState({fullscreen: false});
               }}
-              progressUpdateInterval={1000}
+              progressUpdateInterval={500}
               // repeat={true}
               onBuffer={this.onBuffer}
               paused={paused}

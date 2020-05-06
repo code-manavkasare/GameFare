@@ -37,16 +37,15 @@ class ListStreams extends Component {
   }
   sessionsArray = () => {
     let {coachSessions} = this.state;
-    if (!coachSessions) return false;
+    if (!coachSessions) return [];
     return Object.values(coachSessions).sort(function(a, b) {
       return b.timestamp - a.timestamp;
     });
   };
-  
   list = () => {
     const coachSessions = this.sessionsArray();
     const {AnimatedHeaderValue} = this.props;
-    if (!coachSessions) return this.viewLoader();
+
     if (Object.values(coachSessions).length === 0)
       return (
         <Text style={[styleApp.text, {paddingLeft: '5%'}]}>
@@ -81,12 +80,7 @@ class ListStreams extends Component {
   };
 
   render() {
-    return (
-      <View>
-        {this.list()}
-        {/* <View style={[styleApp.divider2, {width: '100%'}]} /> */}
-      </View>
-    );
+    return <View>{this.list()}</View>;
   }
 }
 

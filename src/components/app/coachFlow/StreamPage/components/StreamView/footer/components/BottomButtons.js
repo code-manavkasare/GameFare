@@ -11,6 +11,12 @@ import {offsetFooterStreaming} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
+import {
+  getVideoInfo,
+  getLastVideo,
+} from '../../../../../../../functions/pictures';
+import CardUploading from '../../../../../../videoLibraryPage/components/CardUploading';
+
 class BottomButton extends Component {
   constructor(props) {
     super(props);
@@ -18,8 +24,8 @@ class BottomButton extends Component {
       showPastSessionsPicker: false,
       recording: false,
       startTimeRecording: 0,
-      publishVideo: true,
-      publishAudio: false,
+      publishVideo: !__DEV__,
+      publishAudio: !__DEV__,
     };
   }
   publishVideo() {
@@ -76,22 +82,64 @@ class BottomButton extends Component {
       />
     );
   }
+  startRecording = async () => {
+    console.log('before start recording');
+    const messageCallback = (response) => {
+      if (response.error) {
+        console.log(`Error initializing recording: ${response.message}`);
+      } else {
+        console.log('Started recording...');
+        this.setState({
+          recording: true,
+          startTimeRecording: Date.now(),
+        });
+      }
+    };
+    const {otPublisherRef} = this.props;
+    await otPublisherRef.current.startRecording(messageCallback);
+  };
+  stopRecording = async () => {
+    const {otPublisherRef} = this.props;
+    const messageCallback = async (response) => {
+      if (response.error) {
+        console.log(`Error storing recording: ${response.message}`);
+      } else {
+        let videoUrl = response.videoUrl;
 
+        console.log(`Stopped recording. Video stored at: ${videoUrl}`);
+        await this.setState({
+          recording: false,
+        });
+        if (videoUrl) {
+          const {playableDuration, width, height, uri} = await getLastVideo();
+          console.log('lastVideo', {
+            duration: playableDuration,
+            width,
+            height,
+            path: videoUrl,
+            localIdentifier: uri.split('ph://')[1],
+          });
+
+          this.cardUploadingRef.open(true, {
+            duration: playableDuration,
+            width,
+            height,
+            path: videoUrl,
+            localIdentifier: uri.split('ph://')[1],
+          });
+        }
+      }
+    };
+
+    await otPublisherRef.current.stopRecording(messageCallback);
+  };
   buttonRecord() {
     const {recording, startTimeRecording} = this.state;
-
-    const insideViewButton = () => {
-      return (
-        <Animated.View
-          style={[
-            !recording
-              ? styles.buttonStartStreaming
-              : styles.buttonStopStreaming,
-            {backgroundColor: colors.greyDark + '70'},
-          ]}
-        />
-      );
+    const optionsTimer = {
+      container: styles.viewRecordingTime,
+      text: [styleApp.text, {color: colors.white, fontSize: 15}],
     };
+
     const timer = (startTimeRecording) => {
       const timerRecording = Number(new Date()) - startTimeRecording;
       return (
@@ -105,17 +153,33 @@ class BottomButton extends Component {
       );
     };
 
-    const optionsTimer = {
-      container: styles.viewRecordingTime,
-      text: [styleApp.text, {color: colors.white, fontSize: 15}],
+    const insideViewButton = () => {
+      return (
+        <Animated.View
+          style={[
+            !recording
+              ? styles.buttonStartStreaming
+              : styles.buttonStopStreaming,
+            {backgroundColor: colors.greyDark + '70'},
+          ]}
+        />
+      );
     };
-
     return (
       <View style={[styleApp.center, styleApp.fullSize]}>
+        <CardUploading
+          onRef={(ref) => (this.cardUploadingRef = ref)}
+          style={styles.CardUploading}
+          size="sm"
+        />
         {recording && timer(startTimeRecording)}
         <ButtonColor
           view={() => insideViewButton()}
-          click={async () => this.openRecording()}
+          click={async () => {
+            const {recording} = this.state;
+            if (!recording) return this.startRecording();
+            return this.stopRecording();
+          }}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}
         />
@@ -180,15 +244,6 @@ class BottomButton extends Component {
     );
   }
 
-  async openRecording() {
-    const {recording} = this.state;
-    if (!recording) await this.props.startRecording();
-    else await this.props.stopRecording();
-    return this.setState({
-      recording: !recording,
-      startTimeRecording: Date.now(),
-    });
-  }
   rowButtons() {
     return (
       <Row style={styles.rowButtons}>
@@ -213,6 +268,18 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     width: '100%',
     paddingBottom: 20,
+  },
+  CardUploading: {
+    position: 'absolute',
+    height: 70,
+    width: 200,
+    backgroundColor: colors.white,
+    borderRadius: 35,
+    borderColor: colors.off,
+    borderWidth: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+    top: -60,
   },
   whiteButtonRecording: {
     alignItems: 'center',
