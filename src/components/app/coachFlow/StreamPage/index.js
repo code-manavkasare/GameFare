@@ -39,11 +39,14 @@ class StreamTab extends Component {
   }
   componentDidMount = () => {
     const {params} = this.props.route;
-    if (params.objectID) this.openSession(params.objectID);
+    if (params?.objectID) this.openSession(params.objectID);
   };
   componentDidUpdate = (prevProps, prevState) => {
     const {params} = this.props.route;
-    if (prevProps.route.params.objectID !== params.objectID && params.objectID)
+    if (
+      prevProps.route.params?.objectID !== params?.objectID &&
+      params?.objectID
+    )
       this.openSession(params.objectID);
   };
   openSession = (objectID) => {
