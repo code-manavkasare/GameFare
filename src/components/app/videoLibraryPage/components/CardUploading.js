@@ -21,6 +21,7 @@ import {timing, native} from '../../../animations/animations';
 import ButtonColor from '../../../layout/Views/Button';
 import Loader from '../../../layout/loaders/Loader';
 import AllIcons from '../../../layout/icons/AllIcons';
+import {resolutionP} from '../../../functions/pictures';
 import isEqual from 'lodash.isequal';
 
 class CardUploading extends Component {
@@ -39,6 +40,7 @@ class CardUploading extends Component {
       uploadTask: '',
       videoInfo: {
         duration: 0,
+        size: {},
       },
     };
     this.scaleCard = new Animated.Value(0);
@@ -65,26 +67,15 @@ class CardUploading extends Component {
       Animated.timing(this.scaleCard, native(nextVal ? 1 : 0)),
     ]).start();
   };
-  uploadVideoFirebase = async (videoInfo, destination, name) => {
-    const that = this;
-    const {size, path} = videoInfo;
-    console.log('(videoInfo, destination, name)', {
-      videoInfo,
-      destination,
-      name,
-      path,
-    });
+  uploadThumbnail = async (thumbnail, destination, name) => {
     const videoRef = storage()
       .ref(destination)
       .child(name);
-    const uploadTask = videoRef.putFile(path, {
-      contentType: 'video',
+    const uploadTask = videoRef.putFile(thumbnail, {
+      contentType: 'image/jpeg',
       cacheControl: 'no-store',
-      // size: size,
     });
-    console.log('uploadTask', uploadTask);
-    // this.setState({uploadTask});
-
+    const that = this;
     return new Promise((resolve, reject) =>
       uploadTask.on(
         'state_changed',
@@ -92,9 +83,9 @@ class CardUploading extends Component {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           if (isNaN(progress)) progress = 0;
-          console.log('progress', progress);
+          console.log('progress thumbnal', progress);
           await that.setState({
-            progress: progress.toFixed(0) / 100,
+            progress: (progress.toFixed(0) / 100) * 0.2,
             status: 'uploading',
           });
           switch (snapshot.state) {
@@ -103,6 +94,52 @@ class CardUploading extends Component {
               break;
             case storage.TaskState.RUNNING: // or 'running'
               console.log('Upload is running');
+              break;
+          }
+        },
+        function(error) {
+          console.log(error);
+          reject(error);
+        },
+        async () => {
+          console.log('Upload thumbnail complete');
+          var url = await videoRef.getDownloadURL();
+          console.log('url: ', url);
+          resolve(url);
+        },
+      ),
+    );
+  };
+  uploadVideoFirebase = async (videoInfo, destination, name) => {
+    const that = this;
+    const {path} = videoInfo;
+
+    const videoRef = storage()
+      .ref(destination)
+      .child(name);
+    const uploadTask = videoRef.putFile(path, {
+      contentType: 'video',
+      cacheControl: 'no-store',
+    });
+    return new Promise((resolve, reject) =>
+      uploadTask.on(
+        'state_changed',
+        async function(snapshot) {
+          let progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (isNaN(progress)) progress = 0;
+          console.log('progress', progress);
+          
+          await that.setState({
+            progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
+            status: 'uploading',
+          });
+          switch (snapshot.state) {
+            case storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused');
+              break;
+            case storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload video is running');
               break;
           }
         },
@@ -124,12 +161,18 @@ class CardUploading extends Component {
     await this.setState({status: 'loading'});
     const {videoInfo} = this.state;
     const {userID, dismiss} = this.props;
-    const {duration, height, width, size, path} = videoInfo;
+    const {duration, size} = videoInfo;
 
     const id = videoInfo.localIdentifier.split('/')[0];
     console.log('videoInfovideoInfovideoInfovideoInfo', videoInfo);
 
     const destinationCloud = `archivedStreams/${id}`;
+    const thumbnailUrl = await this.uploadThumbnail(
+      videoInfo.thumbnail,
+      destinationCloud,
+      'thumbnail.jpg',
+    );
+    console.log('thumbnailUrl', thumbnailUrl);
     const videoUrl = await this.uploadVideoFirebase(
       videoInfo,
       destinationCloud,
@@ -145,13 +188,11 @@ class CardUploading extends Component {
     updates[`${destinationCloud}/url`] = videoUrl;
     updates[`${destinationCloud}/uploadedByUser`] = true;
     updates[`${destinationCloud}/members`] = {[userID]: true};
-    updates[`${destinationCloud}/sizeOctets`] = size;
-    updates[`${destinationCloud}/resolution`] = `${width}x${height}`;
+    updates[`${destinationCloud}/size`] = size;
+    updates[`${destinationCloud}/thumbnail`] = thumbnailUrl;
     updates[`${destinationCloud}/startTimestamp`] = startTimestamp;
 
     updates[`users/${userID}/${destinationCloud}/id`] = id;
-    updates[`users/${userID}/${destinationCloud}/localUrl`] =
-      videoInfo.localIdentifier;
     updates[
       `users/${userID}/${destinationCloud}/startTimestamp`
     ] = startTimestamp;
@@ -165,10 +206,7 @@ class CardUploading extends Component {
     if (dismiss) dismiss(videoInfo);
     this.open(false);
   };
-  resolutionP(width, height) {
-    if (width > height) return height + 'p';
-    return width + 'p';
-  }
+
   render() {
     const {style, size} = this.props;
     const {progress, videoInfo, status} = this.state;
@@ -201,7 +239,7 @@ class CardUploading extends Component {
             <Col size={35} style={styleApp.center}>
               <Image
                 style={styles.imgCard}
-                source={{uri: 'ph://' + videoInfo.localIdentifier}}
+                source={{uri: videoInfo.thumbnail}}
               />
             </Col>
             <Col size={45} style={styleApp.center2}>
@@ -209,7 +247,7 @@ class CardUploading extends Component {
                 {videoInfo.duration.toFixed(0)}sec
               </Text>
               <Text style={[styleApp.text, {fontSize: 13}]}>
-                {this.resolutionP(videoInfo.width, videoInfo.height)}
+                {resolutionP(videoInfo.size)}
               </Text>
             </Col>
 
@@ -255,13 +293,27 @@ class CardUploading extends Component {
             </Col>
           </Row>
         ) : (
-          <Progress.Circle
-            color={colors.primary}
-            size={100}
-            progress={progress}
-            showsText={true}
-            formatText={() => `${Math.round(progress * 100)}%`}
-          />
+          <View style={styleApp.fullSize}>
+            <View style={styles.voile}>
+              <Progress.Circle
+                color={colors.white}
+                size={100}
+                borderColor={colors.white}
+                borderWidth={2}
+                textStyle={[
+                  styles.textProgress,
+                  {fontSize: 19, color: colors.white},
+                ]}
+                progress={progress}
+                showsText={true}
+                formatText={() => `${Math.round(progress * 100)}%`}
+              />
+            </View>
+            <Image
+              style={styleApp.fullSize}
+              source={{uri: videoInfo.thumbnail}}
+            />
+          </View>
         )}
       </Animated.View>
     );
@@ -279,6 +331,13 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
+  },
+  voile: {
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    position: 'absolute',
+    zIndex: 10,
+    backgroundColor: colors.greyDark + '80',
   },
   buttonClose: {
     position: 'absolute',

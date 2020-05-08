@@ -21,7 +21,7 @@ export default class VideoPlayer extends Component {
       loader: true,
       paused: this.props.paused,
       lastValuePaused: false,
-      totalTime: 0,
+      totalTime: false,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
       videoLoaded: false,
       fullscreen: false,
@@ -205,7 +205,7 @@ export default class VideoPlayer extends Component {
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
-        {placeHolderImg && (
+        {placeHolderImg && !totalTime && (
           <AsyncImage
             style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
             mainImage={placeHolderImg}
@@ -276,14 +276,6 @@ export default class VideoPlayer extends Component {
 }
 
 const styles = StyleSheet.create({
-  bufferView: {
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    zIndex: -1,
-    backgroundColor: colors.transparentGrey,
-    ...styleApp.center,
-  },
   viewClickOnVideo: {
     position: 'absolute',
     height: '100%',

@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Animated,
+  Image,
+} from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 import {ProcessingManager} from 'react-native-video-processing';
@@ -10,7 +17,12 @@ import CardUploading from './components/CardUploading';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 
-import {sortVideos} from '../../functions/pictures';
+import {
+  sortVideos,
+  permission,
+  goToSettings,
+  getVideoInfo,
+} from '../../functions/pictures';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -80,20 +92,46 @@ class VideoLibraryPage extends Component {
   }
 
   uploadVideo = async () => {
+    const {navigate} = this.props.navigation;
+    const permissionLibrary = await permission('library');
+    console.log('permissionLibrary', permissionLibrary);
+    if (!permissionLibrary)
+      return navigate('Alert', {
+        textButton: 'Open Settings',
+        title:
+          'You need to allow access to your library before uploading videos.',
+        colorButton: 'blue',
+        onPressColor: colors.blueLight,
+        onGoBack: () => goToSettings(),
+        icon: (
+          <Image
+            source={require('../../../img/icons/technology.png')}
+            style={{width: 25, height: 25}}
+          />
+        ),
+      });
     const videos = await MediaPicker.openPicker({
       multiple: true,
       mediaType: 'video',
-      compressVideoPreset: 'HighestQuality',
+      compressVideoPreset: __DEV__ ? 'MediumQuality' : 'HighestQuality',
     });
     let uploadingVideosArray = videos;
+    console.log('uploadingVideosArray', uploadingVideosArray);
+
+    const testVideo = await getVideoInfo(uploadingVideosArray[0].path);
+    console.log('testVideo', testVideo);
 
     await Promise.all(
       videos.map(async (video, i) => {
-        await ProcessingManager.getVideoInfo(video.path).then(({duration}) => {
-          uploadingVideosArray[i].duration = Math.round(duration);
-        });
+        let newVideo = await getVideoInfo(video.path);
+        newVideo.path = video.path;
+        newVideo.localIdentifier = video.localIdentifier;
+        uploadingVideosArray[i] = newVideo;
+        // return newVideo;
       }),
     );
+    console.log('videos', uploadingVideosArray);
+
     this.setState({uploadingVideosArray});
   };
 
@@ -130,7 +168,7 @@ class VideoLibraryPage extends Component {
           marginBottomScrollView={0}
           refreshControl={false}
           marginTop={sizes.heightHeaderHome}
-          offsetBottom={sizes.heightFooter + 40}
+          offsetBottom={sizes.heightFooter + 70}
           showsVerticalScrollIndicator={true}
         />
       </View>
@@ -141,7 +179,7 @@ class VideoLibraryPage extends Component {
 const styles = StyleSheet.create({
   container: {
     marginTop: 10,
-    minHeight: height,
+    // minHeight: height,
     marginLeft: 0,
     //  width: width - 40,
     flexDirection: 'row',

@@ -4380,8 +4380,8 @@ gamefare-camera-kit@^1.1.2:
     lodash "^4.14.2"
 
 "gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git":
-  version "0.0.1"
-  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#862cc26935af5fc1ee415ed0bee8593cafba0255"
+  version "0.0.2"
+  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#6a27c05edd3ca56b66e29cf6e4cc28f0fb452213"
   dependencies:
     axios "^0.19.0"
     prop-types "^15.7.2"
@@ -7396,6 +7396,10 @@ react-native-switch-selector@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/react-native-switch-selector/-/react-native-switch-selector-2.0.2.tgz#69621b2a52b8f024d89fd766bafc4b8478bf5d84"
   integrity sha512-58zeoIRrYTzUCSMTebd/GbkF70xOjnqAaGOAz1pF9kYLPRLvLUIR6z1K9M1GLcdtMraB/dtcLDGLVsPdM2qajw==
+
+react-native-thumbnail@phuochau/react-native-thumbnail:
+  version "1.1.3"
+  resolved "https://codeload.github.com/phuochau/react-native-thumbnail/tar.gz/dc9af06fcee553dce561158cfb05e915655634bb"
 
 react-native-vector-icons@^6.6.0:
   version "6.6.0"
