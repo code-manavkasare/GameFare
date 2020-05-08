@@ -160,7 +160,7 @@ class WatchVideoPage extends Component {
         />
 
         <VideoPlayer
-          source={videoSource}
+          source={videoSource ? videoSource : ''}
           paused={video.paused}
           currentTime={video.currentTime}
           hideFullScreenButton={true}

@@ -330,7 +330,7 @@ class MorePage extends Component {
                   screen: 'StreamPage',
                   params: {
                     openSession: true,
-                    objectID: 'cv3xy4p7ghk8zhqn1r',
+                    objectID: 'yrhyg3a4nrik9v83hjx',
                   },
                 }),
             })}
@@ -361,13 +361,19 @@ class MorePage extends Component {
                 const {layoutAction} = this.props;
                 layoutAction('setLayout', {
                   notification: {
-                    action: 'Event',
-                    data: '-M2CAEeMbL28eRlCpa9M',
+                    data: {
+                      action: 'Stream',
+                      screen: 'StreamPage',
+                      objectID: 'yrhyg3a4nrik9v83hjx',
+                      typeNavigation: 'navigate',
+                      notUniqueStack: 'true',
+                      date: Date.now(),
+                    },
                     notification: {
-                      title: 'You just received a new message',
+                      title: 'Marroco has invited you to a video chat ',
                       timestamp: Date.now(),
-                      body: 'Hey you',
-                      image:
+                      body: 'Click on this notification to join.',
+                      picture:
                         'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
                     },
                   },

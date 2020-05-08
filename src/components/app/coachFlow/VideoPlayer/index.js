@@ -205,7 +205,7 @@ export default class VideoPlayer extends Component {
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
-        {placeHolderImg && !totalTime && (
+        {placeHolderImg !== '' && !totalTime && (
           <AsyncImage
             style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
             mainImage={placeHolderImg}
@@ -218,7 +218,7 @@ export default class VideoPlayer extends Component {
           onPress={() => this.clickVideo()}
         />
 
-        {displayVideo && source && (
+        {displayVideo && source !== '' && (
           <TouchableOpacity
             style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
             <Video
