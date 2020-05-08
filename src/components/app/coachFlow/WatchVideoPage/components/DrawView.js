@@ -39,7 +39,7 @@ class Draw extends Component {
       this.canvasRef.current.clear();
     } else if (prevProps.settingsDraw.undo !== this.props.settingsDraw.undo) {
       const idSketchLast = getLastDrawing(this.props.video).idSketch;
-      this.canvasRef.current.deletePath(idSketchLast);
+      if (idSketchLast) this.canvasRef.current.deletePath(idSketchLast);
     }
   }
   async onStrokeEnd(event) {

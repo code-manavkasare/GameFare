@@ -102,6 +102,7 @@ const getMember = (session, userID) => {
 };
 
 const getLastDrawing = (video) => {
+  if (!video.drawings) return false;
   const drawings = Object.values(video.drawings)
     .sort((a, b) => a.timeStamp - b.timeStamp)
     .reverse();

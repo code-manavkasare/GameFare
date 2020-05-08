@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import {Col, Row} from 'react-native-easy-grid';
 
+import {navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
@@ -14,6 +15,8 @@ import styleApp from '../../../../../../../style/style';
 import {
   getVideoInfo,
   getLastVideo,
+  permission,
+  goToSettings,
 } from '../../../../../../../functions/pictures';
 import CardUploading from '../../../../../../videoLibraryPage/components/CardUploading';
 
@@ -95,6 +98,25 @@ class BottomButton extends Component {
         });
       }
     };
+    const permissionLibrary = await permission('library');
+    if (!permissionLibrary)
+      return navigate('Alert', {
+        textButton: 'Open Settings',
+        title:
+          'You need to allow access to your library before you record a video.',
+        subtitle:
+          'At the end of the record, we will save the file under your library.',
+        colorButton: 'blue',
+        onPressColor: colors.blueLight,
+        onGoBack: () => goToSettings(),
+        icon: (
+          <Image
+            source={require('../../../../../../../../img/icons/technology.png')}
+            style={{width: 25, height: 25}}
+          />
+        ),
+      });
+
     const {otPublisherRef} = this.props;
     await otPublisherRef.current.startRecording(messageCallback);
   };
@@ -105,28 +127,22 @@ class BottomButton extends Component {
         console.log(`Error storing recording: ${response.message}`);
       } else {
         let videoUrl = response.videoUrl;
-
-        console.log(`Stopped recording. Video stored at: ${videoUrl}`);
+        console.log(`Stopped recording. Video stored at: ${response}`);
+        let videoUUID = videoUrl
+          .split('/')
+          [videoUrl.split('/').length - 1].split('.')[0];
+        console.log('videoUUID', videoUUID);
         await this.setState({
           recording: false,
         });
-        if (videoUrl) {
-          const {playableDuration, width, height, uri} = await getLastVideo();
-          console.log('lastVideo', {
-            duration: playableDuration,
-            width,
-            height,
-            path: videoUrl,
-            localIdentifier: uri.split('ph://')[1],
-          });
 
-          this.cardUploadingRef.open(true, {
-            duration: playableDuration,
-            width,
-            height,
-            path: videoUrl,
-            localIdentifier: uri.split('ph://')[1],
-          });
+        // if (!videoUrl)
+        //   videoUrl =
+        //     'file:///Users/florian/Library/Developer/CoreSimulator/Devices/9843DB4D-2A70-43B0-8068-84A689C40FEE/data/Containers/Data/Application/8ADD5F02-01AE-4383-9210-9B63C636CADF/tmp/react-native-image-crop-picker/92955176-CFB3-4659-8CA8-F9FCE0C88E11.mp4';
+        if (videoUrl) {
+          let videoInfo = await getVideoInfo(videoUrl);
+          videoInfo.localIdentifier = videoUUID;
+          this.cardUploadingRef.open(true, videoInfo);
         }
       }
     };

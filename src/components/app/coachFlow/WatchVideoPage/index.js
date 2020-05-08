@@ -215,10 +215,8 @@ class WatchVideoPage extends Component {
 
 const styles = StyleSheet.create({
   page: {
-    height: height,
-    width: width,
     position: 'absolute',
-    backgroundColor: colors.greyDark,
+    backgroundColor: colors.title,
     zIndex: 60,
   },
 });

@@ -1,10 +1,11 @@
 import {Platform, PermissionsAndroid} from 'react-native';
 import storage from '@react-native-firebase/storage';
 import CameraRoll from '@react-native-community/cameraroll';
-import {request, PERMISSIONS} from 'react-native-permissions';
+import Permissions, {request, PERMISSIONS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
 import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
+import RNThumbnail from 'react-native-thumbnail';
 
 const options = {
   quality: 1.0,
@@ -13,7 +14,7 @@ const options = {
   },
 };
 
-async function permission(type) {
+const permission = async (type) => {
   if (type === 'camera') {
     if (Platform.OS === 'ios') {
       var permission = await request(PERMISSIONS.IOS.CAMERA);
@@ -27,7 +28,7 @@ async function permission(type) {
       return true;
     }
   }
-}
+};
 
 async function resize(uri) {
   try {
@@ -56,6 +57,10 @@ async function rotateImage(uri, width, height, degrees) {
   );
   return rotatedUri;
 }
+
+const goToSettings = () => {
+  Permissions.openSettings();
+};
 
 async function takePicture() {
   var permissionVal = await permission('camera');
@@ -146,10 +151,25 @@ const getLastVideo = async () => {
   return edges[0].node.image;
 };
 
+const generateThumbnail = async (videoPath) => {
+  const thumbnail = await RNThumbnail.get(videoPath);
+  console.log('generate thumbanul', thumbnail);
+  return thumbnail.path;
+};
+
 const getVideoInfo = async (videoUrl) => {
-  const videoInfo = await ProcessingManager.getVideoInfo(videoUrl);
+  let videoInfo = await ProcessingManager.getVideoInfo(videoUrl);
   console.log('videoInfo', videoInfo);
+  const thumbnail = await generateThumbnail(videoUrl);
+  videoInfo.thumbnail = thumbnail;
+  videoInfo.path = videoUrl;
   return videoInfo;
+};
+
+const resolutionP = (size) => {
+  const {height, width} = size;
+  if (width > height) return height + 'p';
+  return width + 'p';
 };
 
 module.exports = {
@@ -163,4 +183,7 @@ module.exports = {
   sortVideos,
   getVideoInfo,
   getLastVideo,
+  permission,
+  goToSettings,
+  resolutionP,
 };

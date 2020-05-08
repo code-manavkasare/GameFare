@@ -9,13 +9,13 @@ import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
-import {displayTime} from '../../../../../../../functions/coach';
-import {date, time} from '../../../../../../../layout/date/date';
+import {displayTime, timeout} from '../../../../../../../functions/coach';
+import {date} from '../../../../../../../layout/date/date';
+import {resolutionP} from '../../../../../../../functions/pictures';
 import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
-import {timeout} from '../../../../../../../functions/coach';
 
 export default class CardArchive extends Component {
   static propTypes = {
@@ -36,19 +36,7 @@ export default class CardArchive extends Component {
 
   async componentDidMount() {
     const {archive: archiveData} = this.props;
-    if (archiveData.available) this.loadArchive(archiveData.id);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.archive.available !== this.props.archive.available &&
-      this.props.archive.available
-    )
-      this.loadArchive(this.props.archive.id);
-    if (
-      prevProps.archive.available !== this.props.archive.available &&
-      !this.props.archive.available
-    )
-      this.setState({archive: false});
+    this.loadArchive(archiveData.id);
   }
   async loadArchive(archiveID) {
     let archive = await database()
@@ -97,40 +85,14 @@ export default class CardArchive extends Component {
       );
     }
   };
-
   cardArchive(archive) {
-    const {archive: archiveData} = this.props;
+    const {archive: archiveData, style} = this.props;
     const {localUrl} = archiveData;
-    const {
-      thumbnail,
-      url,
-      startTimestamp,
-      resolution,
-
-      durationSeconds,
-    } = archive;
+    const {thumbnail, url, startTimestamp, size, durationSeconds} = archive;
     console.log('localUrl', localUrl);
     return (
-      <View style={[styles.cardArchive, this.props.style]}>
-        {!archiveData.available ? (
-          <View style={[styleApp.fullSize]}>
-            <View
-              style={[
-                styleApp.fullSize,
-                styleApp.center,
-                {position: 'absolute', zIndex: 20},
-                {backgroundColor: colors.grey + '30'},
-              ]}>
-              <Text style={[styleApp.text, {color: colors.white}]}>
-                Processing video...
-              </Text>
-            </View>
-            <Image
-              source={{uri: 'ph://' + localUrl}}
-              style={styleApp.fullSize}
-            />
-          </View>
-        ) : archive ? (
+      <View style={[styles.cardArchive, style]}>
+        {archive ? (
           <View style={styleApp.fullSize}>
             <AsyncImage mainImage={thumbnail} style={styleApp.fullSize} />
             <View style={{...styles.viewText, bottom: 5, left: 5}}>
@@ -145,7 +107,8 @@ export default class CardArchive extends Component {
             <View style={{...styles.viewText, top: 5, right: 5}}>
               <Text
                 style={[styleApp.text, {color: colors.white, fontSize: 15}]}>
-                {resolution}p • {displayTime(durationSeconds)}
+                {size ? resolutionP(size) : '720p'} •{' '}
+                {displayTime(durationSeconds)}
               </Text>
             </View>
             <ButtonColor

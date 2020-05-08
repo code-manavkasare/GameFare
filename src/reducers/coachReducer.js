@@ -6,6 +6,7 @@ import {
   SET_SESSION_INFO,
   SET_COACH_SESSION_DRAW_SETTINGS,
 } from '../actions/types';
+import colors from '../components/style/colors';
 
 const initialState = {
   coachSession: {
@@ -13,7 +14,7 @@ const initialState = {
   },
   currentSessionID: false,
   settingsDraw: {
-    color: 'red',
+    color: colors.red,
     clear: false,
     undo: false,
     touchEnabled: true,
@@ -26,7 +27,7 @@ const initialState = {
   sessionInfo: {
     objectID: false,
     autoOpen: false,
-    scrollDisabled:false,
+    scrollDisabled: false,
   },
 };
 

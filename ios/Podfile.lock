@@ -148,7 +148,7 @@ PODS:
     - glog
   - gamefare-camera-kit (1.1.2):
     - React
-  - gamefare-local-opentok (0.0.1):
+  - gamefare-local-opentok (0.0.2):
     - OpenTok
     - React
   - glog (0.3.5)
@@ -604,6 +604,8 @@ PODS:
     - React
   - RNSVG (11.0.1):
     - React
+  - RNThumbnail (1.1.3):
+    - React
   - RNVectorIcons (6.6.0):
     - React
   - RNVideoProcessing (1.7.4):
@@ -744,6 +746,7 @@ DEPENDENCIES:
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - "RNSketchCanvas (from `../node_modules/@terrylinla/react-native-sketch-canvas`)"
   - RNSVG (from `../node_modules/react-native-svg`)
+  - RNThumbnail (from `../node_modules/react-native-thumbnail`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - RNVideoProcessing (from `../node_modules/react-native-video-processing`)
   - Stripe
@@ -988,6 +991,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@terrylinla/react-native-sketch-canvas"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  RNThumbnail:
+    :path: "../node_modules/react-native-thumbnail"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   RNVideoProcessing:
@@ -1033,7 +1038,7 @@ SPEC CHECKSUMS:
   FlipperKit: 6dc9b8f4ef60d9e5ded7f0264db299c91f18832e
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   gamefare-camera-kit: 09c3fd74dc7eb4af3996c910150654cf88f55141
-  gamefare-local-opentok: d35a5731d382c5064de16cb84263d78f3292e115
+  gamefare-local-opentok: 865535bad47e6d6eb53373d19630d4fa799619a6
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
   GoogleDataTransport: 653963cf5be60fb59cf051e070f0836fdc305f81
@@ -1136,6 +1141,7 @@ SPEC CHECKSUMS:
   RNSentry: 86baf0c87120cd5eb491d073989f8cbc1a2174c6
   RNSketchCanvas: 9c28adb5381543ed55cc98ce6de46479cb3cb12c
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
+  RNThumbnail: ac78ef4deb457fcb4f2dfe4b613e35d710d8ba2d
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: cda67217db87030a335137bfb0c637bce2532aeb
   RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
