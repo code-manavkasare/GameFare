@@ -5,7 +5,6 @@ import {
   Button,
   StyleSheet,
   Animated,
-  Image,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
@@ -84,13 +83,26 @@ class WatchVideoPage extends Component {
       }
     });
   }
-  updateVideoInfoCloud = async (paused, currentTime, archiveID) => {
+  updateVideoInfoCloud = async (paused, currentTime, playRate) => {
     const {coachSessionID} = this.props;
+    const {archiveID} = this.state;
+    let updates = {};
+    updates[
+      `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/paused`
+    ] = paused;
+    updates[
+      `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/currentTime`
+    ] = currentTime;
+    if (playRate)
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/playRate`
+      ] = playRate;
     await database()
-      .ref(`coachSessions/${coachSessionID}/sharedVideos/${archiveID}`)
-      .update({paused, currentTime});
+      .ref()
+      .update(updates);
     return true;
   };
+
   isMyVideo() {
     const {personSharingScreen, videoBeingShared} = this.props;
     const {archiveID} = this.state;
@@ -118,6 +130,7 @@ class WatchVideoPage extends Component {
         source: videoSource,
         paused: false,
         currentTime: 0,
+        playRate: 1,
       };
     else {
       video = {...sharedVideos[archiveID]};
@@ -162,6 +175,7 @@ class WatchVideoPage extends Component {
         <VideoPlayer
           source={videoSource}
           paused={video.paused}
+          playRate={video.playRate}
           currentTime={video.currentTime}
           hideFullScreenButton={true}
           placeHolderImg={thumbnail}
@@ -200,8 +214,8 @@ class WatchVideoPage extends Component {
           styleVideo={styleApp.fullSize}
           noUpdateInCloud={myVideo}
           updateOnProgress={userID === personSharingScreen}
-          updateVideoInfoCloud={(paused, currentTime) =>
-            this.updateVideoInfoCloud(paused, currentTime, archiveID)
+          updateVideoInfoCloud={(paused, currentTime, playRate) =>
+            this.updateVideoInfoCloud(paused, currentTime, playRate)
           }
           onRef={(ref) => (this.videoPlayerRef = ref)}
         />

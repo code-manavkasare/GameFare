@@ -27,7 +27,7 @@ export default class VideoPlayer extends Component {
       fullscreen: false,
       onSliding: false,
       source: this.props.source,
-      playbackRate: 1,
+      playRate: 1,
 
       placeHolderImg: this.props.placeHolderImg,
       displayVideo: false,
@@ -54,6 +54,7 @@ export default class VideoPlayer extends Component {
       return {
         source: props.source,
         paused: !props.myVideo ? props.currentTime : false,
+        playRate: props.playRate,
         currentTime: !props.myVideo ? props.currentTime : 0,
         placeHolderImg: props.placeHolderImg,
       };
@@ -68,10 +69,14 @@ export default class VideoPlayer extends Component {
       return {
         currentTime: props.currentTime,
       };
-    if (props.paused !== state.paused && !props.noUpdateInCloud) {
+    if (
+      (props.paused !== state.paused || props.playRate !== state.playRate) &&
+      !props.noUpdateInCloud
+    ) {
       return {
         paused: props.paused,
         currentTime: props.currentTime,
+        playRate: props.playRate,
       };
     }
     if (props.placeHolderImg !== state.placeHolderImg)
@@ -85,14 +90,22 @@ export default class VideoPlayer extends Component {
     return this.state;
   }
   togglePlayPause = async (forcePause) => {
-    let {currentTime, paused} = this.state;
+    let {currentTime, paused, playRate} = this.state;
     if (forcePause) paused = false;
     const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
 
     if (updateVideoInfoCloud && !noUpdateInCloud)
-      updateVideoInfoCloud(!paused, currentTime);
+      updateVideoInfoCloud(!paused, currentTime, playRate);
     else this.setState({paused: !paused});
   };
+
+  updatePlayRate = async (playRate) => {
+    let {currentTime, paused} = this.state;
+    console.log('prout', playRate);
+    const {updateVideoInfoCloud} = this.props;
+    await updateVideoInfoCloud(paused, currentTime, playRate);
+  };
+
   onBuffer = (event) => {
     this.setState({videoLoaded: !event.isBuffering});
   };
@@ -192,12 +205,11 @@ export default class VideoPlayer extends Component {
       currentTime,
       paused,
       fullscreen,
-      playbackRate,
+      playRate,
       placeHolderImg,
       displayVideo,
       totalTime,
       videoLoaded,
-      loader,
       source,
       onSliding,
     } = this.state;
@@ -227,7 +239,7 @@ export default class VideoPlayer extends Component {
               ref={(ref) => {
                 this.player = ref;
               }}
-              rate={playbackRate}
+              rate={playRate}
               onLoad={async (callback) => {
                 await this.setState({
                   totalTime: callback.duration,
@@ -262,10 +274,11 @@ export default class VideoPlayer extends Component {
             totalTime={totalTime}
             videoLoaded={videoLoaded}
             opacityControlBar={this.opacityControlBar}
-            playbackRate={playbackRate}
+            playRate={playRate}
             onSliding={onSliding}
             setState={this.setState.bind(this)}
             togglePlayPause={this.togglePlayPause.bind(this)}
+            updatePlayRate={(playRate) => this.updatePlayRate(playRate)}
             onSlidingComplete={this.onSlidingComplete.bind(this)}
             onSlidingStart={this.onSlidingStart.bind(this)}
           />
