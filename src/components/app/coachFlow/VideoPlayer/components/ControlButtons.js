@@ -16,7 +16,7 @@ import {displayTime} from '../../../../functions/coach';
 
 const {initialHeightControlBar} = sizes;
 
-export default class VideoPlayer extends Component {
+export default class ControlButtons extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,9 +57,10 @@ export default class VideoPlayer extends Component {
       />
     );
   };
+
   speedButton() {
     const {showSpeedSet} = this.state;
-    const {playbackRate, setState} = this.props;
+    const {updatePlayRate, playRate, setState} = this.props;
     const speeds = [
       {
         label: '0.25',
@@ -92,17 +93,17 @@ export default class VideoPlayer extends Component {
                 style={[
                   styleApp.text,
                   {
-                    color:
-                      playbackRate === speed.value ? colors.red : colors.white,
+                    color: playRate === speed.value ? colors.red : colors.white,
                   },
                 ]}>
                 {speed.label}
               </Text>
             );
           }}
-          click={() => {
+          click={async () => {
             this.setState({showSpeedSet: false});
-            setState({playbackRate: speed.value});
+            setState({playRate: speed.value});
+            updatePlayRate(speed.value);
           }}
           style={{height: 30, width: '100%'}}
           onPressColor={colors.off}
@@ -279,7 +280,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 6,
     borderRightWidth: 6,
     borderTopWidth: 12,
-    // borderStyle: 'solid',
     backgroundColor: 'transparent',
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
 });
 
-VideoPlayer.propTypes = {
+ControlButtons.propTypes = {
   paused: PropTypes.bool,
   currentTime: PropTypes.number,
 
