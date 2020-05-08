@@ -4,11 +4,16 @@ import {CommonActions, StackActions} from '@react-navigation/native';
 const navigationRef = React.createRef();
 
 const navigate = (routeName, params) => {
-  navigationRef.current?.navigate(routeName, params);
+  if (params?.notUniqueStack)
+    return navigationRef.current?.navigate(routeName, {
+      screen: params.screen,
+      params: params,
+    });
+  return navigationRef.current?.navigate(routeName, params);
 };
 
 const push = (routeName, params) => {
-  if (params.uniqueStack)
+  if (params?.uniqueStack)
     return navigationRef.current?.dispatch(
       StackActions.push(routeName, params),
     );
@@ -46,6 +51,8 @@ const clickNotification = async (notification) => {
   var {action, typeNavigation} = notification;
   if (!notification.action) var {action, typeNavigation} = notification.data;
 
+  console.log('typeNavigation', typeNavigation);
+  console.log('action', notification.data);
   if (typeNavigation === 'navigate') return navigate(action, notification.data);
   return push(action, notification.data);
 };

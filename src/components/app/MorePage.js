@@ -315,63 +315,73 @@ class MorePage extends Component {
           'https://www.getgamefare.com/terms',
         )}
 
-        {this.button2({
-          text: 'Test notif open stream',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () =>
-            NavigationService.navigate('Stream', {
-              screen: 'StreamPage',
-              params: {
-                openSession: true,
-                objectID: 'cv3xy4p7ghk8zhqn1r',
+        {__DEV__ && (
+          <View>
+            {this.button2({
+              text: 'Test notif open stream',
+              icon: {
+                name: 'user',
+                type: 'font',
+                size: 20,
+                color: colors.title,
               },
-            }),
-        })}
-        {this.button2({
-          text: 'Test notif open conversation',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () =>
-            NavigationService.push('Conversation', {
-              data: '-M4pyI87V02bA7Uz1_ah',
-              uniqueStack: 'true',
-            }),
-        })}
+              click: () =>
+                NavigationService.navigate('Stream', {
+                  screen: 'StreamPage',
+                  params: {
+                    openSession: true,
+                    objectID: 'yrhyg3a4nrik9v83hjx',
+                  },
+                }),
+            })}
+            {this.button2({
+              text: 'Test notif open conversation',
+              icon: {
+                name: 'user',
+                type: 'font',
+                size: 20,
+                color: colors.title,
+              },
+              click: () =>
+                NavigationService.push('Conversation', {
+                  data: '-M4pyI87V02bA7Uz1_ah',
+                  uniqueStack: 'true',
+                }),
+            })}
 
-        {this.button2({
-          text: 'Test notif appears',
-          icon: {
-            name: 'user',
-            type: 'font',
-            size: 20,
-            color: colors.title,
-          },
-          click: () => {
-            const {layoutAction} = this.props;
-            layoutAction('setLayout', {
-              notification: {
-                action: 'Event',
-                data: '-M2CAEeMbL28eRlCpa9M',
-                notification: {
-                  title: 'You just received a new message',
-                  timestamp: Date.now(),
-                  body: 'Hey you',
-                  image:
-                    'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-                },
+            {this.button2({
+              text: 'Test notif appears',
+              icon: {
+                name: 'user',
+                type: 'font',
+                size: 20,
+                color: colors.title,
               },
-            });
-          },
-        })}
+              click: () => {
+                const {layoutAction} = this.props;
+                layoutAction('setLayout', {
+                  notification: {
+                    data: {
+                      action: 'Stream',
+                      screen: 'StreamPage',
+                      objectID: 'yrhyg3a4nrik9v83hjx',
+                      typeNavigation: 'navigate',
+                      notUniqueStack: 'true',
+                      date: Date.now(),
+                    },
+                    notification: {
+                      title: 'Marroco has invited you to a video chat ',
+                      timestamp: Date.now(),
+                      body: 'Click on this notification to join.',
+                      picture:
+                        'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+                    },
+                  },
+                });
+              },
+            })}
+          </View>
+        )}
 
         <View style={[{marginTop: 20}]}>
           {this.props.userConnected &&

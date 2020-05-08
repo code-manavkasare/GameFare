@@ -101,7 +101,7 @@
 	<key>NSMotionUsageDescription</key>
 	<string>test</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photos if you would like to use your photo library to upload your profile picture.</string>
+	<string>We need access to your photos to be able to store and upload files at your discretion.</string>
 	<key>NSSiriUsageDescription</key>
 	<string>test</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

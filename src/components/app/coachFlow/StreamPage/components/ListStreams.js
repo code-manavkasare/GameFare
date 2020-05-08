@@ -13,8 +13,6 @@ import {
   offsetBottomHeaderStream,
 } from '../../../../style/sizes';
 import styleApp from '../../../../style/style';
-import colors from '../../../../style/colors';
-import Loader from '../../../../layout/loaders/Loader';
 
 class ListStreams extends Component {
   constructor(props) {
@@ -24,6 +22,9 @@ class ListStreams extends Component {
     };
     this.itemsRef = [];
   }
+  componentDidMount = () => {
+    this.props.onRef(this);
+  };
   static getDerivedStateFromProps(props, state) {
     if (!isEqual(props.coachSessions, state.coachSessions)) {
       return {
@@ -33,7 +34,8 @@ class ListStreams extends Component {
     return {};
   }
   openSession(objectID) {
-    this.itemsRef[objectID].open();
+    console.log('open Session!', objectID);
+    this.itemsRef[objectID].open(true);
   }
   sessionsArray = () => {
     let {coachSessions} = this.state;
@@ -44,8 +46,8 @@ class ListStreams extends Component {
   };
   list = () => {
     const coachSessions = this.sessionsArray();
-    const {AnimatedHeaderValue} = this.props;
-
+    const {AnimatedHeaderValue, userConnected} = this.props;
+    if (!userConnected) return null;
     if (Object.values(coachSessions).length === 0)
       return (
         <Text style={[styleApp.text, {paddingLeft: '5%'}]}>
@@ -87,6 +89,7 @@ class ListStreams extends Component {
 const mapStateToProps = (state) => {
   return {
     coachSessions: state.user.infoUser.coachSessions,
+    userConnected: state.user.userConnected,
     sessionInfo: state.coach.sessionInfo,
     ListStreams,
   };

@@ -21,7 +21,7 @@ export default class VideoPlayer extends Component {
       loader: true,
       paused: this.props.paused,
       lastValuePaused: false,
-      totalTime: 0,
+      totalTime: false,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
       videoLoaded: false,
       fullscreen: false,
@@ -101,7 +101,6 @@ export default class VideoPlayer extends Component {
 
   updatePlayRate = async (playRate) => {
     let {currentTime, paused} = this.state;
-    console.log('prout', playRate);
     const {updateVideoInfoCloud} = this.props;
     await updateVideoInfoCloud(paused, currentTime, playRate);
   };
@@ -217,7 +216,7 @@ export default class VideoPlayer extends Component {
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
-        {placeHolderImg && (
+        {placeHolderImg !== '' && !totalTime && (
           <AsyncImage
             style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
             mainImage={placeHolderImg}
@@ -230,7 +229,7 @@ export default class VideoPlayer extends Component {
           onPress={() => this.clickVideo()}
         />
 
-        {displayVideo && source && (
+        {displayVideo && source !== '' && (
           <TouchableOpacity
             style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
             <Video
@@ -289,14 +288,6 @@ export default class VideoPlayer extends Component {
 }
 
 const styles = StyleSheet.create({
-  bufferView: {
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    zIndex: -1,
-    backgroundColor: colors.transparentGrey,
-    ...styleApp.center,
-  },
   viewClickOnVideo: {
     position: 'absolute',
     height: '100%',

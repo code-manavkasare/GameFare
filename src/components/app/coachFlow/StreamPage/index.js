@@ -37,6 +37,21 @@ class StreamTab extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  componentDidMount = () => {
+    const {params} = this.props.route;
+    if (params?.objectID) this.openSession(params.objectID);
+  };
+  componentDidUpdate = (prevProps, prevState) => {
+    const {params} = this.props.route;
+    if (
+      prevProps.route.params?.objectID !== params?.objectID &&
+      params?.objectID
+    )
+      this.openSession(params.objectID);
+  };
+  openSession = (objectID) => {
+    this.listStreamRef.openSession(objectID);
+  };
   viewLoader = () => {
     return (
       <View style={[{height: 120}, styleApp.center]}>
@@ -56,7 +71,7 @@ class StreamTab extends Component {
         />
         <View style={{height: offsetBottomHeaderStream / 2}} />
 
-        {initialLoader && this.viewLoader()}
+        {userConnected && initialLoader && this.viewLoader()}
 
         {!userConnected ? (
           <LogoutView />
@@ -65,9 +80,11 @@ class StreamTab extends Component {
             initialLoader={initialLoader}
             setState={this.setState.bind(this)}
           />
-        ) : (
-          <ListStreams AnimatedHeaderValue={this.AnimatedHeaderValue} />
-        )}
+        ) : null}
+        <ListStreams
+          onRef={(ref) => (this.listStreamRef = ref)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+        />
       </View>
     );
   };

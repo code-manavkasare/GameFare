@@ -16,7 +16,7 @@ function TabsApp() {
   console.log('tabs app');
   return (
     <Tab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Stream"
       keyboardHidesTabBar={false}
       tabBar={(props) => (
         <Footer
@@ -24,20 +24,6 @@ function TabsApp() {
           colors={{active: colors.white, inactive: colors.greyDark}}
         />
       )}>
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          label: 'Profile',
-          pageStack: 'MorePage',
-          signInToPass: false,
-          icon: {
-            name: 'profileFooter',
-            type: 'moon',
-            size: 21,
-          },
-        }}
-      />
       <Tab.Screen
         name="Stream"
         component={Stream}
@@ -52,6 +38,7 @@ function TabsApp() {
           },
         }}
       />
+
       <Tab.Screen
         name="MessageList"
         component={MessageList}
@@ -62,6 +49,20 @@ function TabsApp() {
           signInToPass: false,
           icon: {
             name: 'speech',
+            type: 'moon',
+            size: 21,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          label: 'Profile',
+          pageStack: 'MorePage',
+          signInToPass: false,
+          icon: {
+            name: 'profileFooter',
             type: 'moon',
             size: 21,
           },
