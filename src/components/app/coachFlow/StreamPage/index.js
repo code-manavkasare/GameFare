@@ -26,6 +26,7 @@ import PermissionView from './components/PermissionView';
 
 import ListStreams from './components/ListStreams';
 import Loader from '../../../layout/loaders/Loader';
+import {timeout} from '../../../functions/coach';
 import HeaderListStream from './components/HeaderListStream';
 
 class StreamTab extends Component {
@@ -49,7 +50,8 @@ class StreamTab extends Component {
     )
       this.openSession(params.objectID);
   };
-  openSession = (objectID) => {
+  openSession = async (objectID) => {
+    await timeout(600);
     this.listStreamRef.openSession(objectID);
   };
   viewLoader = () => {
@@ -82,6 +84,7 @@ class StreamTab extends Component {
           />
         ) : null}
         <ListStreams
+          permissionsCamera={permissionsCamera}
           onRef={(ref) => (this.listStreamRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />

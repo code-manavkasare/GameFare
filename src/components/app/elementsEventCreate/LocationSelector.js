@@ -378,11 +378,6 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: 'white',
   },
-  title: {
-    color: 'white',
-    fontSize: 19,
-    fontFamily: 'OpenSans-Bold',
-  },
   buttonResult: {
     flex: 1,
     paddingTop: 15,

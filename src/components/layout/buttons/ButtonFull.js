@@ -2,18 +2,13 @@ import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
-  Platform,
-  TouchableOpacity,
-  Dimensions,
-  Easing,
   Animated,
   TouchableHighlight,
   View,
 } from 'react-native';
 import colors from '../../style/colors';
 import Loader from '../loaders/Loader';
-
-const {height, width} = Dimensions.get('screen');
+import styleApp from '../../style/style';
 
 export default class Button extends Component {
   constructor(props) {
@@ -74,13 +69,11 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
   buttonSubmit: {
+    ...styleApp.center,
     height: 55,
     backgroundColor: colors.primary,
     borderRadius: 0,
     width: '100%',
-    alignItems: 'center',
-    width: '100%',
-    justifyContent: 'center',
     borderTopWidth: 1,
     borderColor: '#eaeaea',
     shadowColor: '#46474B',
@@ -89,8 +82,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   textButtonOn: {
-    color: 'white',
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 18,
+    ...styleApp.text,
+    color: colors.white,
   },
 });

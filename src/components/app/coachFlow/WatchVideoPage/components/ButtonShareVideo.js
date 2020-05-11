@@ -23,6 +23,7 @@ class ButtonShareVideo extends Component {
       getVideoState,
       source,
       togglePlayPause,
+      open,
     } = this.props;
     const stateVideo = getVideoState();
 
@@ -60,6 +61,7 @@ class ButtonShareVideo extends Component {
         .update({
           [`coachSessions/${coachSessionID}/members/${userID}/shareScreen`]: false,
         });
+      open(false);
     }
   }
   buttonStart(styleButton) {

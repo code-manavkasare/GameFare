@@ -114,8 +114,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   textButtonOn: {
-    color: 'white',
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 18,
+    ...styleApp.text,
+    color: colors.white,
   },
 });

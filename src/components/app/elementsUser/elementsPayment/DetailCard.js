@@ -55,7 +55,7 @@ class ListEvent extends Component {
               <View style={styleApp.viewSport}>
                 <Text
                   style={[
-                    styleApp.textSport,
+                    styleApp.text,
                     {fontSize: 12, color: colors.white},
                   ]}>
                   Default

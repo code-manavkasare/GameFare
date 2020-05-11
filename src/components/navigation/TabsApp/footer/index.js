@@ -2,18 +2,19 @@ import React from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
 
 import {layoutAction} from '../../../../actions/layoutActions';
 
 import ButtonFooter from './components/Button';
 import colors from '../../../style/colors';
 import {
-  width,
   heightFooter,
   marginBottomApp,
   marginBottomAppLandscade,
 } from '../../../style/sizes';
-import {native, timing} from '../../../animations/animations';
+import {native} from '../../../animations/animations';
+import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 
 const widthFooter = 220;
@@ -25,7 +26,27 @@ class Footer extends React.Component {
     this.translateXMovingView = new Animated.Value(0);
   }
   componentDidMount() {
-    // this.props.ref(this);
+    this.notificationHandler();
+  }
+  async notificationHandler() {
+    const {layoutAction, userID} = this.props;
+    messaging().onMessage((remoteMessage) => {
+      if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
+        return layoutAction('setLayout', {notification: remoteMessage});
+    });
+    this.appBackgroundNotificationListenner();
+    this.appOpenFistNotification();
+  }
+  appBackgroundNotificationListenner() {
+    this.removeNotificationListener = messaging().onNotificationOpenedApp(
+      (notification) => {
+        clickNotification(notification);
+      },
+    );
+  }
+  async appOpenFistNotification() {
+    const notificationOpen = await messaging().getInitialNotification();
+    if (notificationOpen) return clickNotification(notificationOpen);
   }
   componentDidUpdate = (prevProps, prevState) => {
     console.log('footer is udpated');
@@ -116,7 +137,6 @@ class Footer extends React.Component {
     );
   };
   render() {
-    // return null;
     return this.footer();
   }
 }

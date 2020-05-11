@@ -157,7 +157,7 @@ class ButtonAdd extends Component {
               style={[
                 styleApp.title,
                 styleApp.textShadowColor,
-                {color: 'white', fontSize: 17, fontFamily: 'OpenSans-Bold'},
+                {color: 'white', fontSize: 17},
               ]}>
               New Event
             </Text>
@@ -197,7 +197,7 @@ class ButtonAdd extends Component {
               style={[
                 styleApp.title,
                 styleApp.textShadowColor2,
-                {color: 'white', fontSize: 17, fontFamily: 'OpenSans-Bold'},
+                {color: colors.white, fontSize: 17},
               ]}>
               {this.textButton()}
             </Text>
@@ -264,6 +264,7 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {createEventAction, createGroupAction})(
-  ButtonAdd,
-);
+export default connect(
+  mapStateToProps,
+  {createEventAction, createGroupAction},
+)(ButtonAdd);

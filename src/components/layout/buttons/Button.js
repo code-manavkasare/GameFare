@@ -7,14 +7,12 @@ import {
   Dimensions,
   Easing,
   Animated,
-  TouchableHighlight,
-  View,
 } from 'react-native';
 import colors from '../../style/colors';
 import Loader from '../loaders/Loader';
 import {timing} from '../../animations/animations';
 import styleApp from '../../style/style';
-const {height, width} = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 export default class Button extends Component {
   constructor(props) {
@@ -118,8 +116,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   textButtonOn: {
-    color: 'white',
-    fontFamily: 'OpenSans-Bold',
-    fontSize: 16,
+    ...styleApp.textBold,
+    fontSize: 18,
+    color: colors.white,
   },
 });

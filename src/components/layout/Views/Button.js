@@ -52,25 +52,3 @@ export default class Button extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  buttonSubmit: {
-    height: 55,
-    backgroundColor: colors.primary,
-    borderRadius: 5,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 0.3,
-    borderColor: colors.borderColor,
-    shadowColor: '#46474B',
-    shadowOffset: {width: 0, height: 0},
-    shadowRadius: 15,
-    shadowOpacity: 0,
-  },
-  textButtonOn: {
-    color: 'white',
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 18,
-  },
-});

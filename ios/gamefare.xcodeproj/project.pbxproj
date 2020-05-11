@@ -48,6 +48,18 @@
 		172D14A0235D2FB300560A8E /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1492235D2F9500560A8E /* OpenSans-Regular.ttf */; };
 		172D14A1235D2FB300560A8E /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1494235D2F9500560A8E /* OpenSans-SemiBold.ttf */; };
 		172D14A2235D2FB300560A8E /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 172D1495235D2F9600560A8E /* OpenSans-SemiBoldItalic.ttf */; };
+		1793B3CD2466AABA00FD1F7B /* AvenirLTStd-Roman.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3C92466AAB900FD1F7B /* AvenirLTStd-Roman.otf */; };
+		1793B3CE2466AABA00FD1F7B /* AvenirLTStd-Roman.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3C92466AAB900FD1F7B /* AvenirLTStd-Roman.otf */; };
+		1793B3CF2466AABA00FD1F7B /* AvenirLTStd-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3CB2466AAB900FD1F7B /* AvenirLTStd-Book.otf */; };
+		1793B3D02466AABA00FD1F7B /* AvenirLTStd-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3CB2466AAB900FD1F7B /* AvenirLTStd-Book.otf */; };
+		1793B3D12466AABA00FD1F7B /* AvenirLTStd-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3CC2466AABA00FD1F7B /* AvenirLTStd-Medium.otf */; };
+		1793B3D22466AABA00FD1F7B /* AvenirLTStd-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3CC2466AABA00FD1F7B /* AvenirLTStd-Medium.otf */; };
+		1793B3D9246767C200FD1F7B /* Avenir-Book.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3D5246767C200FD1F7B /* Avenir-Book.ttf */; };
+		1793B3DA246767C200FD1F7B /* Avenir-Book.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3D5246767C200FD1F7B /* Avenir-Book.ttf */; };
+		1793B3DB246767C200FD1F7B /* Avenir-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3D7246767C200FD1F7B /* Avenir-Light.ttf */; };
+		1793B3DC246767C200FD1F7B /* Avenir-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3D7246767C200FD1F7B /* Avenir-Light.ttf */; };
+		1793B3DD246767C200FD1F7B /* Avenir-Roman.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3D8246767C200FD1F7B /* Avenir-Roman.ttf */; };
+		1793B3DE246767C200FD1F7B /* Avenir-Roman.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1793B3D8246767C200FD1F7B /* Avenir-Roman.ttf */; };
 		17B60B4123C7594D006B1DCF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B60B4023C7594C006B1DCF /* MobileCoreServices.framework */; };
 		17C26B8A236A3B80006835E7 /* logoios.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B88236A3B80006835E7 /* logoios.png */; };
 		17C26B8C236A3BC7006835E7 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 17C26B8B236A3BC6006835E7 /* logo.png */; };
@@ -139,6 +151,12 @@
 		172D1497235D2F9600560A8E /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		172D1498235D2F9600560A8E /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		172D14A3235DA3F800560A8E /* RNCStatusBar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCStatusBar.xcodeproj; path = "../node_modules/@react-native-community/status-bar/ios/RNCStatusBar.xcodeproj"; sourceTree = "<group>"; };
+		1793B3C92466AAB900FD1F7B /* AvenirLTStd-Roman.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AvenirLTStd-Roman.otf"; path = "../../assets/fonts/AvenirLTStd-Roman.otf"; sourceTree = "<group>"; };
+		1793B3CB2466AAB900FD1F7B /* AvenirLTStd-Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AvenirLTStd-Book.otf"; path = "../../assets/fonts/AvenirLTStd-Book.otf"; sourceTree = "<group>"; };
+		1793B3CC2466AABA00FD1F7B /* AvenirLTStd-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AvenirLTStd-Medium.otf"; path = "../../assets/fonts/AvenirLTStd-Medium.otf"; sourceTree = "<group>"; };
+		1793B3D5246767C200FD1F7B /* Avenir-Book.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Avenir-Book.ttf"; path = "../../assets/fonts/Avenir-Book.ttf"; sourceTree = "<group>"; };
+		1793B3D7246767C200FD1F7B /* Avenir-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Avenir-Light.ttf"; path = "../../assets/fonts/Avenir-Light.ttf"; sourceTree = "<group>"; };
+		1793B3D8246767C200FD1F7B /* Avenir-Roman.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Avenir-Roman.ttf"; path = "../../assets/fonts/Avenir-Roman.ttf"; sourceTree = "<group>"; };
 		17B60B3623C75929006B1DCF /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		17B60B3823C75931006B1DCF /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		17B60B3A23C75938006B1DCF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -309,6 +327,12 @@
 		172D148E235D2F7D00560A8E /* Font */ = {
 			isa = PBXGroup;
 			children = (
+				1793B3D5246767C200FD1F7B /* Avenir-Book.ttf */,
+				1793B3D7246767C200FD1F7B /* Avenir-Light.ttf */,
+				1793B3D8246767C200FD1F7B /* Avenir-Roman.ttf */,
+				1793B3CB2466AAB900FD1F7B /* AvenirLTStd-Book.otf */,
+				1793B3CC2466AABA00FD1F7B /* AvenirLTStd-Medium.otf */,
+				1793B3C92466AAB900FD1F7B /* AvenirLTStd-Roman.otf */,
 				172D1498235D2F9600560A8E /* OpenSans-Bold.ttf */,
 				172D1496235D2F9600560A8E /* OpenSans-BoldItalic.ttf */,
 				172D1491235D2F9500560A8E /* OpenSans-ExtraBold.ttf */,
@@ -586,11 +610,16 @@
 			files = (
 				054C599923EDA04F006D67F4 /* icomoon.ttf in Resources */,
 				054C599A23EDA04F006D67F4 /* OpenSans-Bold.ttf in Resources */,
+				1793B3D02466AABA00FD1F7B /* AvenirLTStd-Book.otf in Resources */,
+				1793B3CE2466AABA00FD1F7B /* AvenirLTStd-Roman.otf in Resources */,
 				054C599B23EDA04F006D67F4 /* OpenSans-BoldItalic.ttf in Resources */,
+				1793B3DA246767C200FD1F7B /* Avenir-Book.ttf in Resources */,
 				054C599C23EDA04F006D67F4 /* OpenSans-ExtraBold.ttf in Resources */,
 				054C599D23EDA04F006D67F4 /* OpenSans-ExtraBoldItalic.ttf in Resources */,
+				1793B3D22466AABA00FD1F7B /* AvenirLTStd-Medium.otf in Resources */,
 				054C599E23EDA04F006D67F4 /* logo.png in Resources */,
 				054C599F23EDA04F006D67F4 /* OpenSans-Italic.ttf in Resources */,
+				1793B3DE246767C200FD1F7B /* Avenir-Roman.ttf in Resources */,
 				054C59A023EDA04F006D67F4 /* OpenSans-Light.ttf in Resources */,
 				054C59A123EDA04F006D67F4 /* OpenSans-LightItalic.ttf in Resources */,
 				054C59A223EDA04F006D67F4 /* OpenSans-Regular.ttf in Resources */,
@@ -598,6 +627,7 @@
 				054C59A423EDA04F006D67F4 /* logoios.png in Resources */,
 				050B796423F858C300F91B6B /* GoogleService-Info.plist in Resources */,
 				054C59A523EDA04F006D67F4 /* OpenSans-SemiBoldItalic.ttf in Resources */,
+				1793B3DC246767C200FD1F7B /* Avenir-Light.ttf in Resources */,
 				054C59A623EDA04F006D67F4 /* splashImage.png in Resources */,
 				054C59A723EDA04F006D67F4 /* Images.xcassets in Resources */,
 				054C59A823EDA04F006D67F4 /* LaunchScreen.storyboard in Resources */,
@@ -610,11 +640,16 @@
 			files = (
 				05B34DCD23A397CD001B955A /* icomoon.ttf in Resources */,
 				172D1499235D2FB300560A8E /* OpenSans-Bold.ttf in Resources */,
+				1793B3CF2466AABA00FD1F7B /* AvenirLTStd-Book.otf in Resources */,
+				1793B3CD2466AABA00FD1F7B /* AvenirLTStd-Roman.otf in Resources */,
 				172D149A235D2FB300560A8E /* OpenSans-BoldItalic.ttf in Resources */,
+				1793B3D9246767C200FD1F7B /* Avenir-Book.ttf in Resources */,
 				172D149B235D2FB300560A8E /* OpenSans-ExtraBold.ttf in Resources */,
 				172D149C235D2FB300560A8E /* OpenSans-ExtraBoldItalic.ttf in Resources */,
+				1793B3D12466AABA00FD1F7B /* AvenirLTStd-Medium.otf in Resources */,
 				17C26B8C236A3BC7006835E7 /* logo.png in Resources */,
 				172D149D235D2FB300560A8E /* OpenSans-Italic.ttf in Resources */,
+				1793B3DD246767C200FD1F7B /* Avenir-Roman.ttf in Resources */,
 				172D149E235D2FB300560A8E /* OpenSans-Light.ttf in Resources */,
 				172D149F235D2FB300560A8E /* OpenSans-LightItalic.ttf in Resources */,
 				172D14A0235D2FB300560A8E /* OpenSans-Regular.ttf in Resources */,
@@ -622,6 +657,7 @@
 				17C26B8A236A3B80006835E7 /* logoios.png in Resources */,
 				050B790323F1A85100F91B6B /* GoogleService-Info.plist in Resources */,
 				172D14A2235D2FB300560A8E /* OpenSans-SemiBoldItalic.ttf in Resources */,
+				1793B3DB246767C200FD1F7B /* Avenir-Light.ttf in Resources */,
 				172D147A235C22FB00560A8E /* splashImage.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				172D1483235C7B8F00560A8E /* LaunchScreen.storyboard in Resources */,

@@ -73,24 +73,6 @@ class ParalaxScrollView extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  viewSport: {
-    backgroundColor: colors.greenLight,
-    borderRadius: 3,
-    paddingLeft: 10,
-    paddingRight: 10,
-    height: 25,
-    width: 70,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textSport: {
-    color: colors.greenStrong,
-    fontSize: 13,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-});
-
 const mapStateToProps = (state) => {
   return {};
 };

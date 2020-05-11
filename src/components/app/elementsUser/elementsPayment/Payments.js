@@ -224,9 +224,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textDefault: {
+    ...styleApp.text,
     color: colors.white,
     fontSize: 12,
-    fontFamily: 'OpenSans-Bold',
   },
   buttonRow: {
     borderColor: colors.off,

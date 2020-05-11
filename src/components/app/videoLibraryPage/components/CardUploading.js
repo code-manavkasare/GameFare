@@ -26,7 +26,7 @@ import isEqual from 'lodash.isequal';
 
 class CardUploading extends Component {
   static propTypes = {
-    videoInfo: PropTypes.object.isRequired,
+    videoInfo: PropTypes.object,
     style: PropTypes.object,
     dismiss: PropTypes.func,
     uploadOnMount: PropTypes.bool,
@@ -129,7 +129,7 @@ class CardUploading extends Component {
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           if (isNaN(progress)) progress = 0;
           console.log('progress', progress);
-          
+
           await that.setState({
             progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
             status: 'uploading',

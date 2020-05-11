@@ -53,8 +53,9 @@ export default class VideoPlayer extends Component {
     if (props.source !== state.source) {
       return {
         source: props.source,
-        paused: !props.myVideo ? props.currentTime : false,
+        paused: !props.myVideo ? props.paused : false,
         playRate: props.playRate,
+        totalTime: false,
         currentTime: !props.myVideo ? props.currentTime : 0,
         placeHolderImg: props.placeHolderImg,
       };
@@ -198,6 +199,7 @@ export default class VideoPlayer extends Component {
       heightControlBar,
       sizeControlButton,
       hideFullScreenButton,
+      index,
     } = this.props;
 
     const {
@@ -212,6 +214,9 @@ export default class VideoPlayer extends Component {
       source,
       onSliding,
     } = this.state;
+    console.log('render video player', source, paused);
+    console.log('stte', this.state);
+    console.log(placeHolderImg !== '' && !totalTime);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {this.fullScreenLoader()}
@@ -233,6 +238,7 @@ export default class VideoPlayer extends Component {
           <TouchableOpacity
             style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
             <Video
+              key={index}
               source={{uri: source}}
               style={styleVideo}
               ref={(ref) => {

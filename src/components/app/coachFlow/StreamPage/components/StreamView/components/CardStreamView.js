@@ -102,7 +102,7 @@ class CardStream extends Component {
       flex: 1,
     };
     const sizeImg = 40;
-    const styleText = {...styleApp.text, color: colors.greyDark, fontSize: 13};
+    const styleText = {...styleApp.text, color: colors.greyDark, fontSize: 15};
     const {members, userID} = this.props;
 
     let membersDisplay = [];

@@ -46,8 +46,8 @@ class ListStreams extends Component {
   };
   list = () => {
     const coachSessions = this.sessionsArray();
-    const {AnimatedHeaderValue, userConnected} = this.props;
-    if (!userConnected) return null;
+    const {AnimatedHeaderValue, userConnected,permissionsCamera} = this.props;
+    if (!userConnected || !permissionsCamera) return null;
     if (Object.values(coachSessions).length === 0)
       return (
         <Text style={[styleApp.text, {paddingLeft: '5%'}]}>

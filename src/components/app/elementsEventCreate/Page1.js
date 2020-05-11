@@ -102,7 +102,7 @@ class Page1 extends Component {
         <Col size={60} style={[styleApp.center2, {paddingLeft: 10}]}>
           <Text style={styleApp.input}>
             {step1[state]} {step1[state] === 1 ? 'player' : 'players'}{' '}
-            <Text style={styleApp.regularText}>(total)</Text>
+            <Text style={styleApp.text}>(total)</Text>
           </Text>
         </Col>
         <Col
@@ -284,4 +284,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {createEventAction})(Page1);
+export default connect(
+  mapStateToProps,
+  {createEventAction},
+)(Page1);

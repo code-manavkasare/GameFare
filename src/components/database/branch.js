@@ -88,6 +88,9 @@ const dataBranchLink = (objData, action) => {
     title = objData.info.name;
     description =
       'Join my group ' + objData.info.name + ' by following the link!';
+  } else {
+    title='Join the GameFare community.'
+    description='Subtitle'
   }
   return {description, title};
 };

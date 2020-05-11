@@ -202,7 +202,7 @@ class VerifyFields extends Component {
           />
         </View>
 
-        <Row style={{height: 45}}>{this.statusSMS()}</Row>
+        <Row style={{height: 45, marginTop: 5}}>{this.statusSMS()}</Row>
         {this.loader()}
 
         {this.buttonResend()}
@@ -237,9 +237,11 @@ const styles = StyleSheet.create({
   },
   cell: {
     ...styleApp.text,
+    ...styleApp.center,
     width: 45,
-    height: 45,
+    height: 55,
     lineHeight: 38,
+    paddingTop: 7,
     fontSize: 24,
     borderWidth: 2,
     borderColor: colors.off,
@@ -249,6 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   focusCell: {
+    ...styleApp.shade,
     borderColor: colors.blue,
     backgroundColor: colors.white,
   },

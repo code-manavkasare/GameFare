@@ -99,7 +99,7 @@ class Conversation2 extends Component {
           {this.props.messages.map((message, i) =>
             this.filterBlockedUserMessage(message, i),
           )}
-          <View style={{height: 30}} />
+          <View style={{height: 70}} />
         </InvertibleScrollView>
 
         <KeyboardAccessoryView

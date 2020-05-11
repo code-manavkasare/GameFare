@@ -43,8 +43,8 @@ class CardTransfer extends Component {
                 </Text>
               </Col>
               <Col size={70} style={styleApp.center2}>
-                <Text style={styleApp.text}>{transfer.title}</Text>
-                <Text style={[styleApp.smallText, {marginTop: 4}]}>
+                <Text style={[styleApp.titleSmall,{fontSize:16}]}>{transfer.title}</Text>
+                <Text style={[styleApp.subtitle, {marginTop: 4,fontSize:14}]}>
                   {moment(transfer.date).format('MMMM, Do')} at{' '}
                   {moment(transfer.date).format('h:mm a')}
                 </Text>

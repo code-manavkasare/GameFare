@@ -25,23 +25,11 @@ export default class Switch extends Component {
       colorAnim1: new Animated.Value(this.props.state ? 1 : 0),
       colorAnim0: new Animated.Value(!this.props.state ? 1 : 0),
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
     this.translateXBorder = new Animated.Value(
       this.props.state ? this.props.translateXTo : 0,
     );
     this.colorAnim1 = new Animated.Value(this.props.state ? 1 : 0);
     this.colorAnim0 = new Animated.Value(!this.props.state ? 1 : 0);
-  }
-  componentWillMount() {}
-  styleTickFreeText(free, color) {
-    if (free)
-      return {
-        ...styles.text,
-        color: color,
-        fontFamily: 'OpenSans-SemiBold',
-        // textDecorationLine: 'underline',
-      };
-    return {...styles.text, color: '#eaeaea'};
   }
   async changeValue(newVal) {
     var check = await this.props.setState(newVal);
@@ -136,16 +124,16 @@ export default class Switch extends Component {
             {transform: [{translateX: this.translateXBorder}]},
             this.borderStyle(this.props.state),
           ]}>
-          <Animated.Text style={[styles.text, {color: 'white'}]}>
+          <Animated.Text style={[styleApp.text, {color: 'white'}]}>
             {!this.props.state ? this.props.textOn : this.props.textOff}
           </Animated.Text>
         </Animated.View>
         <Row style={{borderRadius: 7}}>
-          <Col style={styles.center}>
+          <Col style={styleApp.center}>
             <ButtonColor
               view={() => {
                 return (
-                  <Animated.Text style={[styles.text, {color: colorText0}]}>
+                  <Animated.Text style={[styleApp.text, {color: colorText0}]}>
                     {textOn}
                   </Animated.Text>
                 );
@@ -160,7 +148,7 @@ export default class Switch extends Component {
             <ButtonColor
               view={() => {
                 return (
-                  <Animated.Text style={[styles.text, {color: colorText1}]}>
+                  <Animated.Text style={[styleApp.text, {color: colorText1}]}>
                     {textOff}
                   </Animated.Text>
                 );
@@ -178,18 +166,6 @@ export default class Switch extends Component {
 }
 
 const styles = StyleSheet.create({
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: 'OpenSans-SemiBold',
-    color: colors.title,
-  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -206,10 +182,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 30,
     width: '50%',
-  },
-  text: {
-    //color:colors.title,
-    fontSize: 15,
-    fontFamily: 'OpenSans-SemiBold',
   },
 });
