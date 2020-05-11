@@ -139,7 +139,7 @@ class CardConversation extends React.Component {
               <Col
                 size={60}
                 style={[styleApp.center2, {paddingLeft: 5, paddingRight: 5}]}>
-                <Text style={[styleApp.text, {fontSize: 18}]}>{title}</Text>
+                <Text style={[styleApp.titleSmall, {fontSize: 18}]}>{title}</Text>
                 {this.lastMessage(lastMessage)}
               </Col>
               <Col size={5} style={styleApp.center2}>

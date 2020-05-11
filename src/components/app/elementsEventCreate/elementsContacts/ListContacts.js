@@ -3,18 +3,12 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TouchableOpacity,
   Image,
-  TextInput,
   Keyboard,
   Dimensions,
-  FlatList,
-  ScrollView,
-  Animated,
   View,
 } from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import Permissions from 'react-native-permissions';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 import Contacts from 'react-native-contacts';
@@ -25,19 +19,10 @@ import styleApp from '../../../style/style';
 import AllIcons from '../../../layout/icons/AllIcons';
 import Loader from '../../../layout/loaders/Loader';
 
-import sizes from '../../../style/sizes';
-// import ScrollView from '../../../layout/scrollViews/ScrollView'
 import Button from '../../../layout/buttons/Button';
 import ButtonColor from '../../../layout/Views/Button';
 
-const {height, width} = Dimensions.get('screen');
-const heightScrollView =
-  height -
-  sizes.heightHeaderHome -
-  50 -
-  sizes.heightFooterBooking -
-  sizes.marginTopApp -
-  25;
+const {width} = Dimensions.get('screen');
 
 export default class ContactsComponent extends Component {
   constructor(props) {
@@ -180,7 +165,7 @@ export default class ContactsComponent extends Component {
         view={() => {
           return (
             <Row>
-              <Col size={15} style={styles.center2}>
+              <Col size={15} style={styleApp.center2}>
                 <View
                   style={[
                     styleApp.center,
@@ -196,17 +181,16 @@ export default class ContactsComponent extends Component {
                   <Text style={[styleApp.text, {fontSize: 11}]}>{initial}</Text>
                 </View>
               </Col>
-              <Col size={70} style={[styles.center2]}>
-                <Text style={[styles.input, {fontSize: 14}]}>
+              <Col size={70} style={[styleApp.center2]}>
+                <Text style={[styleApp.text, {fontSize: 14}]}>
                   {contact.givenName} {contact.familyName}
                 </Text>
                 <Text
                   style={[
-                    styles.subtitle,
+                    styleApp.subtitle,
                     {fontSize: 12, marginTop: 4, color: colors.greyDark},
                   ]}>
                   {contact.phoneNumbers[0].number}
-                  {/* • {contact.phoneNumbers[0].label} */}
                 </Text>
               </Col>
               <Col size={15} style={styleApp.center}>
@@ -254,14 +238,8 @@ export default class ContactsComponent extends Component {
           borderBottomWidth: 0.5,
           borderColor: colors.off,
         }}>
-        <Col style={styles.center} size={15}>
-          <Text
-            style={[
-              styles.text,
-              {fontSize: 12, fontFamily: 'OpenSans-SemiBold'},
-            ]}>
-            {letter}
-          </Text>
+        <Col style={styleApp.center} size={15}>
+          <Text style={[styleApp.text, {fontSize: 12}]}>{letter}</Text>
         </Col>
         <Col size={85} />
       </Row>
@@ -285,7 +263,7 @@ export default class ContactsComponent extends Component {
       <View>
         {this.state.initialLoader ? (
           <View style={[styleApp.center4, {paddingTop: 130}]}>
-            <Loader color="green" size={35} />
+            <Loader color={colors.primary} size={50} />
           </View>
         ) : !this.state.authorizedContact ? (
           this.viewNotAuthorized()
@@ -299,14 +277,14 @@ export default class ContactsComponent extends Component {
     return (
       <View
         style={[
-          styles.center,
+          styleApp.center,
           {marginTop: 20, width: width - 40, marginLeft: 20},
         ]}>
         <Image
           source={require('../../../../img/animals/bird.png')}
           style={{height: 70, width: 70, marginBottom: 20}}
         />
-        <Text style={[styles.text, {fontFamily: 'OpenSans-SemiBold'}]}>
+        <Text style={styleApp.text}>
           We need to access your contacts. Please go to your settings and turn
           the contacts authorisation.
         </Text>
@@ -343,34 +321,15 @@ export default class ContactsComponent extends Component {
 
 const styles = StyleSheet.create({
   content: {
-    // height:height-sizes.marginTopApp-105-70,
     width: width,
     height: '100%',
-    // paddingBottom:100,
     marginLeft: 0,
-  },
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   rowContactSelected: {
     width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
     backgroundColor: 'white',
-  },
-  center2: {
-    justifyContent: 'center',
-  },
-  input: {
-    color: colors.title,
-    fontSize: 16,
-    fontFamily: 'OpenSans-Regular',
-  },
-  text: {
-    color: colors.title,
-    fontSize: 15,
-    fontFamily: 'OpenSans-Regular',
   },
   viewTick: {
     position: 'absolute',

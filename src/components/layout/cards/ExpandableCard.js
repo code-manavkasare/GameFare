@@ -9,7 +9,6 @@ import {
   Easing,
   Dimensions,
 } from 'react-native';
-import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
@@ -19,7 +18,6 @@ import ButtonColor from '../Views/Button';
 import NavigationService from '../../../../NavigationService';
 
 const {height, width} = Dimensions.get('screen');
-import Icon from '../icons/icons';
 import AllIcons from '../icons/AllIcons';
 import AsyncImage from '../image/AsyncImage';
 import {timing, native} from '../../animations/animations';
@@ -32,9 +30,7 @@ export default class ExpandableCard extends Component {
       expanded: false,
       heightCard: new Animated.Value(this.initialHeight()),
       heightDropDown: new Animated.Value(55),
-      // listExpend:this.props.option.listExpend
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
     this.heightCard = new Animated.Value(this.initialHeight());
     this.heightDropDown = new Animated.Value(55);
     this.rotateIcon = new Animated.Value(0);
@@ -48,7 +44,6 @@ export default class ExpandableCard extends Component {
     if (this.props.option.alwaysExpanded) return 1;
     return 0;
   }
-  componentWillMount() {}
   componentWillReceiveProps(nextProps) {
     if (this.props.option !== nextProps.option) {
       Animated.parallel([
@@ -58,24 +53,20 @@ export default class ExpandableCard extends Component {
     }
   }
   valueOption(option) {
-    if (option.value == this.props.providersPreference.type)
+    if (option.value === this.props.providersPreference.type)
       return (
-        <Text style={[styles.title, {color: colors.title}]}>
-          {this.props.providersPreference.text}
-        </Text>
+        <Text style={styleApp.text}>{this.props.providersPreference.text}</Text>
       );
-    return <Text style={styles.title}>{option.text}</Text>;
+    return <Text style={styleApp.text}>{option.text}</Text>;
   }
   getColorIcon(option, value) {
-    if (option.value == this.props.valueSelected) return colors.title;
+    if (option.value === this.props.valueSelected) return colors.title;
     return '#eaeaea';
   }
-  getColorIcon2(option) {
-    // if (option.value == this.props.providersPreference.type) return colors.primary
+  getColorIcon2() {
     return colors.subtitle;
   }
   getHeightExpand() {
-    //return this.props.option.listExpend.length*50 + 50
     return 50;
   }
   async expand(listExpend) {
@@ -96,14 +87,13 @@ export default class ExpandableCard extends Component {
     return true;
   }
   colorCheck(option, value, colorOff) {
-    if (option.expendable == true && option.valueSelected == value)
+    if (option.expendable && option.valueSelected === value)
       return colors.title;
-    else if (option.expendable == false && option.selected == value)
+    else if (!option.expendable && option.selected === value)
       return colors.title;
     return colorOff;
   }
   borderColor() {
-    // if (this.state.expanded) return colors.primary
     return colors.borderColor;
   }
   textValue(item) {
@@ -183,9 +173,7 @@ export default class ExpandableCard extends Component {
                 size={15}
                 style={styleApp.center}
                 activeOpacity={item.title != undefined ? 0.7 : 1}
-                onPress={() =>
-                  item.title ? this.openAlert(item) : null
-                }>
+                onPress={() => (item.title ? this.openAlert(item) : null)}>
                 {item.title ? (
                   <AllIcons
                     type={'font'}
@@ -312,14 +300,5 @@ const styles = StyleSheet.create({
     borderColor: '#C1DACE',
     backgroundColor: '#C1DACE',
     borderWidth: 1.5,
-  },
-  title: {
-    color: '#C7C7CC',
-    fontSize: 15,
-    fontFamily: 'OpenSans-Regular',
-  },
-  title2: {
-    fontSize: 15,
-    fontFamily: 'OpenSans-Regular',
   },
 });

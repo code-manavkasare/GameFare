@@ -5,11 +5,11 @@ import {
   StyleSheet,
   Linking,
   Alert,
+  Image,
   Animated,
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import messaging from '@react-native-firebase/messaging';
 
 import {coachAction} from '../../actions/coachActions';
 import {layoutAction} from '../../actions/layoutActions';
@@ -20,43 +20,23 @@ import Communications from 'react-native-communications';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
-import NavigationService, {clickNotification} from '../../../NavigationService';
+import NavigationService, {navigate} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
 import ButtonColor from '../layout/Views/Button';
+import Button from '../layout/buttons/Button';
 import AsyncImage from '../layout/image/AsyncImage';
 
 import {userAction} from '../../actions/userActions';
+import {sendSMSFunction} from '../functions/message';
+import {createBranchUrl} from '../database/branch';
 
 class MorePage extends Component {
   constructor(props) {
     super(props);
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
-  }
-  componentDidMount() {
-    this.notificationHandler();
-  }
-  async notificationHandler() {
-    const {layoutAction, userID} = this.props;
-    messaging().onMessage((remoteMessage) => {
-      if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
-        return layoutAction('setLayout', {notification: remoteMessage});
-    });
-    this.appBackgroundNotificationListenner();
-    this.appOpenFistNotification();
-  }
-  appBackgroundNotificationListenner() {
-    this.removeNotificationListener = messaging().onNotificationOpenedApp(
-      (notification) => {
-        clickNotification(notification);
-      },
-    );
-  }
-  async appOpenFistNotification() {
-    const notificationOpen = await messaging().getInitialNotification();
-    if (notificationOpen) return clickNotification(notificationOpen);
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;
@@ -127,9 +107,9 @@ class MorePage extends Component {
               <Col size={60} style={[styleApp.center2, {paddingLeft: 0}]}>
                 <Text
                   style={[
-                    styleApp.input,
+                    styleApp.text,
                     {
-                      fontSize: 14,
+                      fontSize: 15,
                       color: text === 'Logout' ? colors.red : colors.title,
                     },
                   ]}>
@@ -138,7 +118,7 @@ class MorePage extends Component {
               </Col>
               <Col size={20} style={styleApp.center3}>
                 {page === 'Wallet' && (
-                  <Text style={[styleApp.text, {color: colors.primary}]}>
+                  <Text style={[styleApp.textBold, {color: colors.primary}]}>
                     ${this.props.wallet.totalWallet}
                   </Text>
                 )}
@@ -273,6 +253,44 @@ class MorePage extends Component {
               </Row>
             </TouchableOpacity>
 
+            <View style={{height: 20}} />
+
+            {this.button2({
+              text: 'Share GameFare with your friends',
+              icon: {
+                name: 'gifts',
+                type: 'font',
+                size: 20,
+                color: colors.title,
+              },
+              click: () =>
+                navigate('PickMembers', {
+                  usersSelected: {},
+                  selectMultiple: true,
+                  closeButton: true,
+                  loaderOnSubmit: true,
+                  contactsOnly: true,
+                  displayCurrentUser: false,
+                  noUpdateStatusBar: true,
+                  titleHeader: 'Select your contacts',
+                  onGoBack: async (members) => {
+                    console.log('members', members);
+                    let phoneNumbers = Object.values(members).map(
+                      (member) => member.info.phoneNumber,
+                    );
+                    const {url} = await createBranchUrl({});
+                    console.log('url', url);
+                    const {completed} = await sendSMSFunction(
+                      phoneNumbers,
+                      'Click here to join the gamefare community. ' + url,
+                    );
+                    console.log('sendMessages', completed);
+                    if (completed) return navigate('Profile');
+                    return true;
+                  },
+                }),
+            })}
+
             <Text style={styles.title}>Account parameters</Text>
             <View style={styleApp.divider} />
             {this.button('video', 'Video Library', 'VideoLibraryPage')}
@@ -281,7 +299,26 @@ class MorePage extends Component {
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
           </View>
         ) : (
-          this.button('sign', 'Sign In', 'SignIn')
+          <View style={styleApp.center}>
+            <Image
+              source={require('../../img/images/tennisZoom.png')}
+              style={{height: 100, width: 100, marginBottom: 20}}
+            />
+
+            <Text style={styleApp.text}>
+              Sign in to start improving your tennis skills.
+            </Text>
+
+            <Button
+              backgroundColor="green"
+              onPressColor={colors.greenLight}
+              enabled={true}
+              text="Sign in"
+              styleButton={styles.buttonLogin}
+              loader={false}
+              click={async () => navigate('SignIn')}
+            />
+          </View>
         )}
 
         <Text style={styles.title}>Assistance</Text>
@@ -315,7 +352,7 @@ class MorePage extends Component {
           'https://www.getgamefare.com/terms',
         )}
 
-        {__DEV__ && (
+        {/* {__DEV__ && (
           <View>
             {this.button2({
               text: 'Test notif open stream',
@@ -381,7 +418,7 @@ class MorePage extends Component {
               },
             })}
           </View>
-        )}
+        )} */}
 
         <View style={[{marginTop: 20}]}>
           {this.props.userConnected &&
@@ -422,8 +459,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderBottomWidth: 0,
   },
+  buttonLogin: {
+    //  marginRight: '5%',
+    //  marginLeft: '5%',
+    width: '90%',
+    marginTop: 20,
+  },
   title: {
     ...styleApp.text,
+    fontSize: 12,
     marginLeft: '5%',
     marginBottom: 10,
     marginTop: 30,

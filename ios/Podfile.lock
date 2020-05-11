@@ -611,9 +611,9 @@ PODS:
   - RNVideoProcessing (1.7.4):
     - React
   - RSKImageCropper (2.2.3)
-  - SDWebImage (5.7.3):
-    - SDWebImage/Core (= 5.7.3)
-  - SDWebImage/Core (5.7.3)
+  - SDWebImage (5.7.4):
+    - SDWebImage/Core (= 5.7.4)
+  - SDWebImage/Core (5.7.4)
   - SDWebImageWebPCoder (0.2.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.0)
@@ -1145,7 +1145,7 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: cda67217db87030a335137bfb0c637bce2532aeb
   RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
-  SDWebImage: 97351f6582ceca541ea294ba66a1fcb342a331c2
+  SDWebImage: 48b88379b798fd1e4298f95bb25d2cdabbf4deb3
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987
   Sentry: 14bdd673870e8cf64932b149fad5bbbf39a9b390
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0

@@ -47,6 +47,10 @@ class WatchVideoPage extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
+  componentDidUpdate(prevProps) {
+    if (!this.isMyVideo(prevProps) && this.isMyVideo(this.props))
+      return this.open(false);
+  }
   async open(videoData) {
     const {watchVideo, source, thumbnail, archiveID} = videoData;
     const {currentWidth} = this.props.currentScreenSize;
@@ -103,8 +107,8 @@ class WatchVideoPage extends Component {
     return true;
   };
 
-  isMyVideo() {
-    const {personSharingScreen, videoBeingShared} = this.props;
+  isMyVideo(props) {
+    const {personSharingScreen, videoBeingShared} = props;
     const {archiveID} = this.state;
     if (!archiveID) return true;
     if (!videoBeingShared) return true;
@@ -122,7 +126,7 @@ class WatchVideoPage extends Component {
     } = this.props;
     const {videoSource, thumbnail, archiveID} = this.state;
     const {currentWidth, currentHeight} = currentScreenSize;
-    const myVideo = this.isMyVideo();
+    const myVideo = this.isMyVideo(this.props);
 
     let video = {};
     if (myVideo)
@@ -176,6 +180,7 @@ class WatchVideoPage extends Component {
           source={videoSource ? videoSource : ''}
           paused={video.paused}
           playRate={video.playRate}
+          index={archiveID}
           currentTime={video.currentTime}
           hideFullScreenButton={true}
           placeHolderImg={thumbnail}
@@ -206,6 +211,7 @@ class WatchVideoPage extends Component {
                 togglePlayPause={() =>
                   this.videoPlayerRef.togglePlayPause(true)
                 }
+                open={this.open.bind(this)}
                 getVideoState={() => this.videoPlayerRef.getState()}
               />
             </TouchableOpacity>

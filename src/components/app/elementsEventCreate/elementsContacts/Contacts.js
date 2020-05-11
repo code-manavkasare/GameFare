@@ -111,11 +111,7 @@ class Contacts extends Component {
         }}>
         <Row style={styles.cardContactSelected}>
           <Col size={75} style={styleApp.center}>
-            <Text
-              style={[
-                styles.text,
-                {color: 'white', fontSize: 11, fontFamily: 'OpenSans-SemiBold'},
-              ]}>
+            <Text style={[styleApp.text, {color: 'white', fontSize: 11}]}>
               {contact.givenName} {contact.familyName}
             </Text>
           </Col>
@@ -214,7 +210,7 @@ class Contacts extends Component {
               <Row style={{height: 40}}>
                 <Col style={styleApp.center2}>
                   <TextInput
-                    style={styles.input}
+                    style={styleApp.input}
                     placeholder={'Full contact name'}
                     returnKeyType={'done'}
                     blurOnSubmit={true}
@@ -230,7 +226,7 @@ class Contacts extends Component {
               <Row style={{height: 40}}>
                 <Col style={styleApp.center2}>
                   <TextInput
-                    style={styles.input}
+                    style={styleApp.input}
                     placeholder={'Phone number'}
                     returnKeyType={'done'}
                     keyboardType={'phone-pad'}
@@ -247,7 +243,7 @@ class Contacts extends Component {
             </Col>
             {nameNewContact === '' || phoneNewContact === '' ? (
               <Col size={15} style={styleApp.center}>
-                <Text style={[styles.text, {color: '#eaeaea'}]}>Add</Text>
+                <Text style={[styleApp.text, {color: '#eaeaea'}]}>Add</Text>
               </Col>
             ) : (
               <Col
@@ -257,7 +253,9 @@ class Contacts extends Component {
                 onPress={() =>
                   this.addNewContact(nameNewContact, phoneNewContact)
                 }>
-                <Text style={[styles.text, {color: colors.primary}]}>Add</Text>
+                <Text style={[styleApp.text, {color: colors.primary}]}>
+                  Add
+                </Text>
               </Col>
             )}
           </Row>
@@ -494,16 +492,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#89DB87',
     margin: 5,
     borderRadius: 5,
-  },
-  input: {
-    color: colors.title,
-    fontSize: 16,
-    fontFamily: 'OpenSans-Regular',
-  },
-  text: {
-    color: colors.title,
-    fontSize: 15,
-    fontFamily: 'OpenSans-Regular',
   },
   shareSocials: {
     height: heightShareEventSocials,

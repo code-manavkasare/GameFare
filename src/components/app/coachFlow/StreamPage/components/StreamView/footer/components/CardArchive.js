@@ -106,7 +106,7 @@ export default class CardArchive extends Component {
             </View>
             <View style={{...styles.viewText, top: 5, right: 5}}>
               <Text
-                style={[styleApp.text, {color: colors.white, fontSize: 15}]}>
+                style={[styleApp.title, {color: colors.white, fontSize: 15}]}>
                 {size ? resolutionP(size) : '720p'} •{' '}
                 {displayTime(durationSeconds)}
               </Text>

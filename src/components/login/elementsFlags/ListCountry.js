@@ -23,8 +23,6 @@ import styleApp from '../../style/style';
 import sizes from '../../style/sizes';
 const ListCountry = require('./country.json');
 
-import RNFS from 'react-native-fs';
-
 export default class SelectCountry extends Component {
   constructor(props) {
     super(props);
@@ -62,7 +60,7 @@ export default class SelectCountry extends Component {
         {displayLetter && displayHeader && (
           <Row style={styles.rowLetter}>
             <Col style={styleApp.center2}>
-              <Text style={[styles.subtitle, {fontWeight: 'bold'}]}>
+              <Text style={[styleApp.title, {fontSize: 14}]}>
                 {this.letter}
               </Text>
             </Col>
@@ -80,7 +78,9 @@ export default class SelectCountry extends Component {
                   />
                 </Col>
                 <Col size={70} style={styleApp.center2}>
-                  <Text style={styles.subtitle}>{country.name}</Text>
+                  <Text style={[styleApp.text, {fontSize: 14}]}>
+                    {country.name}
+                  </Text>
                 </Col>
                 <Col size={15} style={styleApp.center}>
                   {this.conditionCheck(country) ? (
@@ -103,7 +103,7 @@ export default class SelectCountry extends Component {
       <View>
         <Row style={styles.rowLetter}>
           <Col style={styleApp.center2}>
-            <Text style={[styles.subtitle, {fontWeight: 'bold'}]}>
+            <Text style={[styleApp.title, {fontSize: 14}]}>
               Common countries
             </Text>
           </Col>
@@ -184,11 +184,6 @@ const styles = StyleSheet.create({
     width: width,
     paddingLeft: 20,
     paddingRight: 20,
-  },
-  subtitle: {
-    fontSize: 13,
-    fontFamily: 'OpenSans-SemiBold',
-    color: colors.title,
   },
   center: {
     alignItems: 'center',

@@ -22,6 +22,7 @@ class HeaderStreamView extends Component {
       selectMultiple: true,
       closeButton: true,
       loaderOnSubmit: true,
+      contactsOnly: false,
       displayCurrentUser: false,
       titleHeader: 'Add someone to the session',
       onGoBack: async (members) => {
@@ -56,9 +57,9 @@ class HeaderStreamView extends Component {
         sizeIcon1={18}
         opacityHeader={opacityHeader}
         nobackgroundColorIcon1={true}
-        backgroundColorIcon1={colors.greyDark + '70'}
-        backgroundColorIcon2={colors.greyDark + '70'}
-        backgroundColorIconOffset={colors.greyDark + '70'}
+        backgroundColorIcon1={colors.title + '70'}
+        backgroundColorIcon2={colors.title + '70'}
+        backgroundColorIconOffset={colors.title + '70'}
         initialBorderColorIcon={'transparent'}
         sizeIconOffset={23}
         icon1={'arrow-left'}

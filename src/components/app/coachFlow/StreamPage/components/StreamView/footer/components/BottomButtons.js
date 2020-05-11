@@ -176,7 +176,7 @@ class BottomButton extends Component {
             !recording
               ? styles.buttonStartStreaming
               : styles.buttonStopStreaming,
-            {backgroundColor: colors.greyDark + '70'},
+            {backgroundColor: colors.greyDark + '90'},
           ]}
         />
       );
@@ -228,7 +228,7 @@ class BottomButton extends Component {
             </Animated.View>
           );
         }}
-        color={colors.greyDark + '70'}
+        color={colors.title + '70'}
         click={async () => {
           this.setState({
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
@@ -252,7 +252,7 @@ class BottomButton extends Component {
             />
           );
         }}
-        color={colors.greyDark + '70'}
+        color={colors.title + '70'}
         click={async () => endCoachSession(true)}
         style={styles.buttonRound}
         onPressColor={colors.redLight}

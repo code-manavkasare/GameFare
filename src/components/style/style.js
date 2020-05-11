@@ -1,8 +1,11 @@
 import {StyleSheet, Dimensions} from 'react-native';
 import sizes from './sizes';
 import colors from './colors';
-// import {Fonts} from '../../utils/Font'
+
 const {height, width} = Dimensions.get('screen');
+
+const font = 'Avenir-Book';
+const fontLight = 'Avenir-Light';
 
 const styles = StyleSheet.create({
   center: {
@@ -86,42 +89,52 @@ const styles = StyleSheet.create({
     paddingRight: '5%',
   },
   title: {
-    fontSize: 22,
-    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 23,
+    fontFamily: font,
     color: colors.title,
+    fontWeight: '700',
+  },
+  titleSmall: {
+    fontSize: 23,
+    fontFamily: font,
+    color: colors.title,
+    fontWeight: '500',
   },
   text: {
-    fontSize: 15,
-    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16,
+    fontFamily: font,
     color: colors.title,
+    fontWeight: '600',
   },
   textBold: {
-    fontSize: 15,
-    fontFamily: 'OpenSans-Bold',
+    fontSize: 16,
+    fontFamily: font,
     color: colors.title,
+    fontWeight: 'bold',
   },
   smallText: {
     fontSize: 13,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: fontLight,
     color: colors.title,
   },
   input: {
     fontSize: 15,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: font,
+    fontWeight: '600',
     color: colors.title,
   },
   inputOff: {
     color: '#C7C7CC',
     fontSize: 15,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: font,
   },
   subtitle: {
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 15,
+    fontFamily: font,
+    fontSize: 17,
     color: colors.greyDark,
   },
   subtitleSX: {
-    fontFamily: 'OpenSans-Light',
+    fontFamily: fontLight,
     fontSize: 15,
     color: colors.title,
   },
@@ -383,25 +396,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textSport: {
-    color: colors.greenStrong,
-    fontSize: 13,
-    fontFamily: 'OpenSans-SemiBold',
-  },
-  regularText: {
-    fontFamily: 'OpenSans-Regular',
-  },
   footerText: {
     color: 'white',
     fontSize: 11,
     marginTop: 0,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: font,
   },
   footerTextOff: {
     color: colors.primaryLight,
     fontSize: 11,
     marginTop: 0,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: font,
   },
   styleHeader: {
     backgroundColor: 'white',
@@ -417,7 +422,8 @@ const styles = StyleSheet.create({
   },
   textHeader: {
     color: colors.title,
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: font,
+    fontWeight: '600',
     fontSize: 13,
   },
   stylePage: {
@@ -458,7 +464,7 @@ const styles = StyleSheet.create({
   eventTitle: {
     color: colors.primary,
     marginTop: 0,
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: font,
     fontSize: 18,
   },
   imgUser: {

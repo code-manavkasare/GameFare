@@ -49,6 +49,12 @@ class NewConversation extends React.Component {
     this.changeSearch('');
     StatusBar.setBarStyle('dark-content', true);
   }
+  static getDerivedStateFromProps(props, state) {
+    const {route} = props;
+    const {contactsOnly} = route.params;
+    if (contactsOnly) return {contacts: true};
+    return {};
+  }
   async changeSearch(search) {
     const {route} = this.props;
     const {displayCurrentUser} = route.params;
@@ -166,15 +172,19 @@ class NewConversation extends React.Component {
       portrait,
       currentWidth,
     } = this.props.currentScreenSize;
+    const {route} = this.props;
+    const {displaySwitch} = route.params;
     const marginTop = portrait ? marginTopApp : marginTopAppLanscape;
     return (
       <View style={{marginTop: heightHeaderHome + marginTop}}>
-        <View style={styleApp.marginView}>
-          {this.switch('GameFare', 'Contacts', 'contacts', async (val) => {
-            await this.setState({contacts: val});
-            return true;
-          })}
-        </View>
+        {displaySwitch && (
+          <View style={styleApp.marginView}>
+            {this.switch('GameFare', 'Contacts', 'contacts', async (val) => {
+              await this.setState({contacts: val});
+              return true;
+            })}
+          </View>
+        )}
         {this.searchInput()}
         <View>
           <ScrollView
@@ -210,7 +220,13 @@ class NewConversation extends React.Component {
     const {usersSelected, loaderButton} = this.state;
 
     const {route} = this.props;
-    const {titleHeader, closeButton, loaderOnSubmit, onGoBack} = route.params;
+    const {
+      titleHeader,
+      closeButton,
+      loaderOnSubmit,
+      onGoBack,
+      noUpdateStatusBar,
+    } = route.params;
     const {currentHeight} = this.props.currentScreenSize;
     return (
       <View style={{backgroundColor: colors.white, height: currentHeight}}>
@@ -226,7 +242,8 @@ class NewConversation extends React.Component {
           icon1={closeButton ? 'times' : 'arrow-left'}
           text2={'Next'}
           clickButton1={() => {
-            StatusBar.setBarStyle('light-content', true);
+            if (!noUpdateStatusBar)
+              StatusBar.setBarStyle('light-content', true);
             goBack();
           }}
           loader={this.state.loaderHeader}
@@ -251,7 +268,8 @@ class NewConversation extends React.Component {
                     if (loaderOnSubmit)
                       await this.setState({loaderButton: true});
                     await onGoBack(usersSelected);
-                    StatusBar.setBarStyle('light-content', true);
+                    if (!noUpdateStatusBar)
+                      StatusBar.setBarStyle('light-content', true);
                     return this.setState({loaderButton: false});
                   }}
                 />
@@ -270,7 +288,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: '5%',
     paddingRight: '5%',
-    marginTop: 10,
+    // marginTop: 10,
   },
   scrollViewUsers: {
     paddingTop: 10,
