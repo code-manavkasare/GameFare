@@ -293,21 +293,27 @@ export default class ContactsComponent extends Component {
           click={this.goToSettings.bind(this)}
           text={'Settings'}
           styleText={{color: colors.primary, fontSize: 14}}
+          backgroundColor={'red'}
           styleButton={{
-            height: 35,
+            height: 45,
             backgroundColor: 'white',
             marginBottom: 10,
             marginTop: 20,
           }}
-          onPressColor="white"
+          onPressColor={colors.redLight}
         />
-        <Button
+        {/* <Button
           click={() => this.loadContacts()}
           text={'Load contacts'}
+          backgroundColor={'primary'}
           styleText={{color: colors.primary, fontSize: 14}}
-          styleButton={{height: 35, backgroundColor: 'white', marginBottom: 15}}
-          onPressColor="white"
-        />
+          styleButton={{
+            height: 45,
+            backgroundColor: 'white',
+            marginBottom: 15,
+          }}
+          onPressColor={colors.primaryLight}
+        /> */}
       </View>
     );
   }

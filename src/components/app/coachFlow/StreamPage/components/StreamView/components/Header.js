@@ -27,7 +27,8 @@ class HeaderStreamView extends Component {
       titleHeader: 'Add someone to the session',
       onGoBack: async (members) => {
         for (var i in Object.values(members)) {
-          const member = Object.values(members)[i];
+          let member = Object.values(members)[i];
+          member.isConnected = false;
           await database()
             .ref('coachSessions/' + objectID + '/members/' + member.id)
             .update(member);

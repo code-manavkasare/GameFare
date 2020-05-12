@@ -25,7 +25,7 @@ const createCoachSession = async (user) => {
         organizer: user.id,
       },
       members: {
-        [user.id]: user,
+        [user.id]: {...user, isConnected: false},
       },
       allMembers: {[user.id]: true},
     });

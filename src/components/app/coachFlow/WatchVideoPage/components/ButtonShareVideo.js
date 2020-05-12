@@ -7,12 +7,19 @@ import Button from '../../../../layout/buttons/Button';
 import {coachAction} from '../../../../../actions/coachActions';
 
 import colors from '../../../../style/colors';
-import styleApp from '../../../../style/style';
+import {
+  marginTopApp,
+  heightHeaderHome,
+  marginTopAppLanscape,
+} from '../../../../style/sizes';
 
 class ButtonShareVideo extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+  }
+  componentDidMount() {
+    this.props.onRef(this);
   }
   async startSharingVideo(value) {
     const {
@@ -36,6 +43,7 @@ class ButtonShareVideo extends Component {
         source: source,
         currentTime: stateVideo.currentTime,
         paused: true,
+        playRate: 1,
         archiveID: archiveID,
         id: archiveID,
         thumbnail: stateVideo.placeHolderImg,
@@ -64,27 +72,53 @@ class ButtonShareVideo extends Component {
       open(false);
     }
   }
-  buttonStart(styleButton) {
+  buttonStart() {
+    const {portrait} = this.props;
+    let marginTop = marginTopApp + heightHeaderHome;
+    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
+    const style = {
+      position: 'absolute',
+      zIndex: 600,
+      height: 30,
+      width: 110,
+      left: '5%',
+      borderRadius: 15,
+      top: marginTop,
+    };
     return (
       <Button
         backgroundColor="green"
         onPressColor={colors.greenLight}
-        styleButton={styleButton}
+        styleButton={style}
         enabled={true}
-        text="Share this video"
+        text="Share video"
         loader={false}
+        textButton={{fontSize: 13}}
         click={() => this.startSharingVideo(true)}
       />
     );
   }
-  buttonStop(styleButton) {
+  buttonStop() {
+    const {portrait} = this.props;
+    let marginTop = marginTopApp + heightHeaderHome;
+    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
+    const style = {
+      position: 'absolute',
+      zIndex: 600,
+      height: 30,
+      width: 80,
+      left: '5%',
+      borderRadius: 15,
+      top: marginTop,
+    };
     return (
       <Button
         backgroundColor="red"
         onPressColor={colors.redLight}
-        styleButton={styleButton}
+        styleButton={style}
         enabled={true}
-        text="Stop sharing"
+        textButton={{fontSize: 13}}
+        text="Sharing..."
         loader={false}
         click={() => this.startSharingVideo(false)}
       />
@@ -95,30 +129,14 @@ class ButtonShareVideo extends Component {
       userID,
       personSharingScreen,
       archiveID,
-      portrait,
       videoBeingShared,
     } = this.props;
-    let styleButton = {
-      position: 'absolute',
-      bottom: 120,
-      width: '90%',
-      marginLeft: '5%',
-      zIndex: 5,
-    };
-    if (!portrait)
-      styleButton = {
-        position: 'absolute',
-        bottom: 120,
-        width: 170,
-        marginLeft: '5%',
-        zIndex: 5,
-      };
-    if (!personSharingScreen) return this.buttonStart(styleButton);
-    if (personSharingScreen !== userID) return null;
 
-    if (videoBeingShared.id === archiveID) return this.buttonStop(styleButton);
-    // return null;
-    return this.buttonStart(styleButton);
+    if (!personSharingScreen) return this.buttonStart();
+    if (personSharingScreen !== userID) return null;
+    if (videoBeingShared.id === archiveID) return this.buttonStop();
+
+    return this.buttonStart();
   }
 
   render() {

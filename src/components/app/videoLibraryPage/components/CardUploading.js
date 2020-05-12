@@ -61,6 +61,11 @@ class CardUploading extends Component {
       };
     return {};
   }
+  getVideoUploadStatus() {
+    const {progress, videoInfo} = this.state;
+    if (progress !== 0 && progress !== 100) return videoInfo;
+    return false;
+  }
   open = async (nextVal, videoInfo) => {
     if (nextVal && videoInfo) await this.setState({videoInfo});
     return Animated.parallel([

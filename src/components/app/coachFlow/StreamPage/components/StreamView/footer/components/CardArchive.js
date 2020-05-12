@@ -87,9 +87,7 @@ export default class CardArchive extends Component {
   };
   cardArchive(archive) {
     const {archive: archiveData, style} = this.props;
-    const {localUrl} = archiveData;
     const {thumbnail, url, startTimestamp, size, durationSeconds} = archive;
-    console.log('localUrl', localUrl);
     return (
       <View style={[styles.cardArchive, style]}>
         {archive ? (

@@ -61,7 +61,7 @@ export default class Button extends Component {
         color: colors[this.props.backgroundColor],
       };
     if (this.props.textButton)
-      return {...styles.textButtonOn, ...this.props.textButton};
+    return {...styles.textButtonOn, ...this.props.textButton};
     return styles.textButtonOn;
   }
   onPress(val) {

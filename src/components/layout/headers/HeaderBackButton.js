@@ -46,7 +46,7 @@ class HeaderBackButton extends Component {
     });
     const borderWidth = AnimatedHeaderValue.interpolate({
       inputRange: inputRange,
-      outputRange: [initialBorderWidth ? initialBorderWidth : 0, 0.3],
+      outputRange: [initialBorderWidth ? initialBorderWidth : 0, 1],
       extrapolate: 'clamp',
     });
     const borderColorIcon = AnimatedHeaderValue.interpolate({
