@@ -234,6 +234,7 @@ class Calibration extends React.Component {
           <View style={[styles.fullScreen, styleApp.center]}>
             <Loader color="white" size={60} />
           </View>
+          
         ) : (
           <Svg
             style={styles.fullScreen}

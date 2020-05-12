@@ -139,6 +139,8 @@ class WatchVideoPage extends Component {
     else {
       video = {...sharedVideos[archiveID]};
     }
+    const drawingOpen =
+      personSharingScreen && archiveID === videoBeingShared.id;
     return (
       <Animated.View
         style={[
@@ -160,17 +162,25 @@ class WatchVideoPage extends Component {
           sizeLoader={40}
           sizeIcon1={21}
           nobackgroundColorIcon1={true}
-          backgroundColorIcon1={colors.off + '60'}
+          backgroundColorIcon1={colors.title + '70'}
           initialBorderColorIcon={'transparent'}
           icon1="times"
           initialTitleOpacity={1}
-          clickButton1={() => this.open(false)}
+          clickButton1={() => {
+            if (
+              personSharingScreen === userID &&
+              videoBeingShared.id === archiveID
+            )
+              return this.buttonShareRef.startSharingVideo(false);
+            this.open(false);
+          }}
         />
         <RightButtons
           state={this.props.state}
           archiveID={archiveID}
           coachSessionID={coachSessionID}
           videoBeingShared={videoBeingShared}
+          drawingOpen={drawingOpen}
           personSharingScreen={personSharingScreen}
           setState={this.setState.bind(this)}
           openVideo={(videoData) => this.open(videoData)}
@@ -197,12 +207,10 @@ class WatchVideoPage extends Component {
                 coachSessionID={coachSessionID}
                 archiveID={archiveID}
                 video={video}
-                drawingOpen={
-                  personSharingScreen === userID &&
-                  archiveID === videoBeingShared.id
-                }
+                drawingOpen={drawingOpen}
               />
               <ButtonShareVideo
+                onRef={(ref) => (this.buttonShareRef = ref)}
                 archiveID={archiveID}
                 coachSessionID={coachSessionID}
                 videoBeingShared={videoBeingShared}

@@ -30,7 +30,9 @@ class Footer extends React.Component {
   }
   async notificationHandler() {
     const {layoutAction, userID} = this.props;
-    messaging().onMessage((remoteMessage) => {
+    console.log('notificationHandler', userID);
+    const unsubscribe = messaging().onMessage((remoteMessage) => {
+      console.log('remoteMessage', remoteMessage);
       if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
         return layoutAction('setLayout', {notification: remoteMessage});
     });
@@ -175,6 +177,7 @@ const mapStateToProps = (state) => {
     isFooterVisible: state.layout.isFooterVisible,
     activeTab: state.layout.activeTab,
     currentScreenSize: state.layout.currentScreenSize,
+    userID: state.user.userID,
   };
 };
 

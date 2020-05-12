@@ -11,6 +11,12 @@ class Footer extends Component {
     super(props);
     this.state = {};
   }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  getVideoUploadStatus() {
+    return this.bottomButtonRef.getVideoUploadStatus();
+  }
   shouldComponentUpdate = (nextProps) => {
     return (
       nextProps.videoBeingShared.id !== this.props.videoBeingShared.id ||
@@ -40,6 +46,7 @@ class Footer extends Component {
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
           endCoachSession={endCoachSession}
+          onRef={(ref) => (this.bottomButtonRef = ref)}
           clickReview={(val) => this.pastSessionsRef.open(val)}
           otPublisherRef={otPublisherRef}
         />

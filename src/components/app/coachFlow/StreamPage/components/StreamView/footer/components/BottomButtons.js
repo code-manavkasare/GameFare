@@ -31,6 +31,12 @@ class BottomButton extends Component {
       publishAudio: !__DEV__,
     };
   }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  getVideoUploadStatus() {
+    return this.cardUploadingRef.getVideoUploadStatus();
+  }
   publishVideo() {
     const {setState} = this.props;
     const {publishVideo} = this.state;

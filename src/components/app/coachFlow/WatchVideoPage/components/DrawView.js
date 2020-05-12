@@ -36,7 +36,11 @@ class Draw extends Component {
         this.props.drawingOpen ? 0 : this.props.currentScreenSize.currentWidth,
       );
     } else if (prevProps.settingsDraw.clear !== this.props.settingsDraw.clear) {
-      this.canvasRef.current.clear();
+      try {
+        this.canvasRef.current.clear();
+      } catch (err) {
+        console.log('error');
+      }
     } else if (prevProps.settingsDraw.undo !== this.props.settingsDraw.undo) {
       const idSketchLast = getLastDrawing(this.props.video).idSketch;
       if (idSketchLast) this.canvasRef.current.deletePath(idSketchLast);
@@ -63,10 +67,11 @@ class Draw extends Component {
   drawView() {
     const {settingsDraw, video, drawingOpen, currentScreenSize} = this.props;
     const {currentWidth, currentHeight} = currentScreenSize;
+    console.log('drawingOpen ici la', drawingOpen);
     return (
       <Animated.View
         style={[styles.page, {height: currentHeight, width: currentWidth}]}>
-        {drawingOpen ? (
+        {drawingOpen && (
           <SketchCanvas
             style={styles.drawingZone}
             ref={this.canvasRef}
@@ -75,14 +80,13 @@ class Draw extends Component {
             strokeWidth={4}
             onStrokeEnd={(event) => this.onStrokeEnd(event)}
           />
-        ) : (
-          <View style={styles.drawingZone}>
-            <DisplayDrawingToViewers
-              currentScreenSize={currentScreenSize}
-              drawings={video.drawings}
-            />
-          </View>
         )}
+        <View style={styles.drawingZoneDisplay}>
+          <DisplayDrawingToViewers
+            currentScreenSize={currentScreenSize}
+            drawings={video.drawings}
+          />
+        </View>
       </Animated.View>
     );
   }
@@ -102,6 +106,14 @@ const styles = StyleSheet.create({
     width: '100%',
     // backgroundColor: colors.off + '40',
     zIndex: -2,
+    position: 'absolute',
+    top: 0,
+  },
+  drawingZoneDisplay: {
+    height: '100%',
+    width: '100%',
+    // backgroundColor: colors.off + '40',
+    zIndex: -3,
     position: 'absolute',
     top: 0,
   },

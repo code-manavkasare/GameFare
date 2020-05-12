@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Dimensions,
+  Image,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {
   OTSession,
@@ -14,6 +21,7 @@ import isEqual from 'lodash.isequal';
 import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
+import {navigate} from '../../../../../../../NavigationService';
 
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
@@ -243,6 +251,25 @@ class StreamPage extends Component {
     }
   }
   async endCoachSession(hangup) {
+    const isVideoBeingUploaded = this.footerRef.getVideoUploadStatus();
+    console.log('isVideoBeingUploaded', isVideoBeingUploaded);
+    if (isVideoBeingUploaded)
+      return navigate('Alert', {
+        title: 'A video is being uploaded.',
+        textButton: 'Continue',
+        subtitle: 'Do you wish to continue?',
+        onGoBack: async () => {
+          if (hangup) await this.open(false);
+          await this.setState({open: false});
+          return true;
+        },
+        icon: (
+          <Image
+            style={{height: 35, width: 35, borderRadius: 20}}
+            source={{uri: isVideoBeingUploaded.thumbnail}}
+          />
+        ),
+      });
     if (hangup) await this.open(false);
     await this.setState({open: false});
     return true;
@@ -490,6 +517,7 @@ class StreamPage extends Component {
               otPublisherRef={this.otPublisherRef}
               personSharingScreen={personSharingScreen}
               videoBeingShared={videoBeingShared}
+              onRef={(ref) => (this.footerRef = ref)}
             />
           )}
         </Animated.View>
