@@ -7287,11 +7287,6 @@ react-native-modal-datetime-picker@^8.1.3:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-nodemediaclient@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/react-native-nodemediaclient/-/react-native-nodemediaclient-0.1.5.tgz#b1be8aa7e656de7b49a720a6f40487cf53b804fd"
-  integrity sha512-hgUSD45QwwUsxTCYK1L7XSQscBalJPo2f/BvuSEOEetKZ5qXZ8NslFkS/0xn7UJ4bWwDjX1iZLNjppakMsqJVw==
-
 react-native-open-maps@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/react-native-open-maps/-/react-native-open-maps-0.3.4.tgz#c63fa82ca162b1584a6ce38b9a0e2421e5086074"

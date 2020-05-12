@@ -203,7 +203,6 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
-  - NodeMediaClient (2.6.0)
   - OpenSSL-Universal (1.0.2.19):
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
@@ -440,13 +439,6 @@ PODS:
     - React
   - react-native-mixpanel (1.2.0):
     - Mixpanel (~> 3.6.0)
-    - React
-  - react-native-nodemediaclient (0.1.5):
-    - NodeMediaClient (= 2.6.0)
-    - React
-    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.1.5)
-  - react-native-nodemediaclient/RCTNodeMediaClient (0.1.5):
-    - NodeMediaClient (= 2.6.0)
     - React
   - react-native-orientation-locker (1.1.8):
     - React
@@ -700,7 +692,6 @@ DEPENDENCIES:
   - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
-  - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
@@ -788,7 +779,6 @@ SPEC REPOS:
     - libwebp
     - Mixpanel
     - nanopb
-    - NodeMediaClient
     - OpenSSL-Universal
     - OpenTok
     - PromisesObjC
@@ -901,8 +891,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-maps"
   react-native-mixpanel:
     :path: "../node_modules/react-native-mixpanel"
-  react-native-nodemediaclient:
-    :path: "../node_modules/react-native-nodemediaclient"
   react-native-orientation-locker:
     :path: "../node_modules/react-native-orientation-locker"
   react-native-safe-area-context:
@@ -1052,7 +1040,6 @@ SPEC CHECKSUMS:
   lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   Mixpanel: 446b6e7713aa34a9a3516ff7648d56551384fc94
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  NodeMediaClient: abfa3d21e314e6577c6adbed0a7c5395d47c9f55
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   OpenTok: 85ce78080020035425aa1a317f2ff5a0fcc1e265
   Permission-BluetoothPeripheral: 425fda0e17a4bf5e28aee8c1f195c45a024e81ad
@@ -1096,7 +1083,6 @@ SPEC CHECKSUMS:
   react-native-mapbox-gl: fcd88e2bf0ddea552b0209cc2770a5ac2b9c9910
   react-native-maps: 6e499eee4eabf422ba8b6f94e993cc768bf35153
   react-native-mixpanel: d644efe1ca33d2646d5cba29e24a13ebc9b37209
-  react-native-nodemediaclient: 992caea61e917bb49f374c650e3c32b6a3d79b0d
   react-native-orientation-locker: f0ca1a8e5031dab6b74bfb4ab33a17ed2c2fcb0d
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-slider: 3a1cfd00c9c31068251b536822f7192e8d1d6b6f
