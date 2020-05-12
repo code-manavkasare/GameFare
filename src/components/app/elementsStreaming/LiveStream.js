@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 
-import {NodeCameraView} from 'react-native-nodemediaclient';
+// import {NodeCameraView} from 'react-native-nodemediaclient';
 import KeepAwake from 'react-native-keep-awake';
 
 import styleApp from '../../style/style';
@@ -44,7 +44,7 @@ class LiveStream extends React.Component {
   }
   async startStream() {
     await this.setState({streaming: true, streamed: true});
-    this.nodeCameraView.start();
+    // this.nodeCameraView.start();
   }
   stopStream() {
     this.nodeCameraView.stop();
@@ -143,4 +143,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(LiveStream);
+export default connect(
+  mapStateToProps,
+  {},
+)(LiveStream);
