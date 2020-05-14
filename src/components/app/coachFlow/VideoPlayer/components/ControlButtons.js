@@ -28,12 +28,17 @@ export default class ControlButtons extends Component {
       updateCurrentTime: true,
     };
   }
-
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  getCurrentTime() {
+    return this.state.currentTime;
+  }
   static getDerivedStateFromProps(props, state) {
-    if (state.updateCurrentTime && !props.onSliding)
-      return {
-        currentTime: props.currentTime,
-      };
+    // if (state.updateCurrentTime && !props.onSliding)
+    //   return {
+    //     currentTime: props.currentTime,
+    //   };
     return {};
   }
 
@@ -145,9 +150,7 @@ export default class ControlButtons extends Component {
   controlButtons() {
     const {totalTime} = this.props;
     const {currentTime} = this.state;
-    // let remainingTime = 0;
-    // if (totalTime !== 0)
-    //   remainingTime = totalTime.toPrecision(2) - currentTime.toPrecision(2);
+
     let {
       heightControlBar,
       sizeControlButton,
@@ -180,6 +183,8 @@ export default class ControlButtons extends Component {
             <Row
               style={{
                 height: 45,
+                paddingLeft: 10,
+                paddingRight: 10,
               }}>
               <Col style={styleApp.center}>
                 <Slider
@@ -207,7 +212,13 @@ export default class ControlButtons extends Component {
               </Col>
             </Row>
             {sizeControlButton !== 'sm' && (
-              <Row style={{height: 15, marginTop: -3}}>
+              <Row
+                style={{
+                  height: 15,
+                  marginTop: -3,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}>
                 <Col style={styleApp.center2}>
                   <Text style={styles.textTime}>
                     {displayTime(currentTime)}

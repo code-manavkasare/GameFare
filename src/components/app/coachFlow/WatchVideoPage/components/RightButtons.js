@@ -8,7 +8,11 @@ import AllIcons from '../../../../layout/icons/AllIcons';
 import {coachAction} from '../../../../../actions/coachActions';
 import {getLastDrawing} from '../../../../functions/coach';
 
-import {marginTopApp, marginTopAppLanscape} from '../../../../style/sizes';
+import {
+  marginTopApp,
+  marginTopAppLanscape,
+  heightHeaderHome,
+} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 
@@ -17,115 +21,110 @@ class RightButtons extends Component {
     super(props);
     this.state = {};
   }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  componentDidUpdate(prevProps) {
+    const {userID} = this.props;
+    let prevDrawings = prevProps.videoBeingShared.drawings;
+    if (prevDrawings) {
+      const lastDrawing = getLastDrawing(prevDrawings);
+      if (lastDrawing.userID === userID) {
+        const prevDrawingsLength = Object.values(prevDrawings).length;
+        let nextDrawings = this.props.videoBeingShared.drawings;
+        if (!nextDrawings) nextDrawings = {};
+        const nextDrawingsLength = Object.values(nextDrawings).length;
+        console.log(
+          'nextDrawingsLength',
+          nextDrawingsLength,
+          prevDrawingsLength,
+        );
+        if (
+          prevDrawingsLength !== nextDrawingsLength &&
+          prevDrawingsLength > nextDrawingsLength
+        )
+          this.props.drawViewRef.undo(lastDrawing.idSketch);
+      }
+    }
+  }
   button(icon, text, active, click, colorActive) {
-    const {sizeButton} = icon;
     return (
       <ButtonColor
         view={() => {
           return (
-            <Animated.View style={[styleApp.center]}>
-              {icon.viewIcon ? (
-                icon.viewIcon
-              ) : (
-                <AllIcons
-                  type={icon.type}
-                  color={
-                    active && colorActive
-                      ? colorActive
-                      : active
-                      ? colors.primary
-                      : colors.white
-                  }
-                  size={19}
-                  name={icon.name}
-                />
-              )}
-
-              {!icon.hideText && (
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    styles.textButton,
-                    {
-                      color:
-                        active && colorActive
-                          ? colorActive
-                          : active
-                          ? colors.primary
-                          : colors.white,
-                    },
-                  ]}>
-                  {text}
-                </Text>
-              )}
-            </Animated.View>
+            <AllIcons
+              type={icon.type}
+              color={
+                active && colorActive
+                  ? colorActive
+                  : active
+                  ? colors.primary
+                  : colors.white
+              }
+              size={19}
+              name={icon.name}
+            />
           );
         }}
         click={async () => click()}
-        style={[
-          styles.button,
-          {
-            height: sizeButton ? sizeButton : styles.button.height,
-          },
-        ]}
+        style={styles.button}
         onPressColor={colors.off}
       />
     );
   }
   buttonColor(color) {
     const {settingsDraw, coachAction} = this.props;
-    return this.button(
+    const styleButton = [
+      styles.roundColor,
       {
-        viewIcon: (
-          <View
-            style={[
-              styles.roundColor,
-              {
-                backgroundColor: color,
-                borderColor:
-                  settingsDraw.color === color ? colors.secondary : 'white',
-              },
-            ]}
-          />
-        ),
-        sizeButton: 35,
-        hideText: true,
+        backgroundColor: color,
+
+        borderColor: settingsDraw.color === color ? colors.secondary : 'white',
       },
-      false,
-      false,
-      () => {
-        coachAction('setCoachSessionDrawSettings', {color: color});
-      },
+    ];
+    return (
+      <ButtonColor
+        view={() => {
+          return <View style={styleButton} />;
+        }}
+        click={async () =>
+          coachAction('setCoachSessionDrawSettings', {color: color})
+        }
+        style={[styles.button, {height: 35}]}
+        onPressColor={colors.off}
+      />
     );
   }
-  toolsDraw() {
+  undo = async (idLastDrawing) => {
     const {
-      settingsDraw,
-      coachAction,
-      archiveID,
-      coachSessionID,
       videoBeingShared,
+      coachSessionID,
+      settingsDraw,
+      archiveID,
+      drawViewRef,
+      coachAction,
     } = this.props;
+    if (videoBeingShared.drawings) {
+      if (!idLastDrawing)
+        idLastDrawing = getLastDrawing(videoBeingShared.drawings).id;
+      await database()
+        .ref(
+          `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
+        )
+        .remove();
+    }
+  };
+  toolsDraw() {
+    const {archiveID, coachSessionID} = this.props;
     return (
       <View style={styles.toolBox}>
         {this.buttonColor(colors.red)}
         {this.buttonColor(colors.blue)}
         {this.buttonColor(colors.greenStrong)}
 
-        {this.button({name: 'undo', type: 'font'}, 'Undo', false, () => {
-          if (videoBeingShared.drawings) {
-            const idLastDrawing = getLastDrawing(videoBeingShared).id;
-            database()
-              .ref(
-                `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
-              )
-              .remove();
-          }
-
-          coachAction('setCoachSessionDrawSettings', {
-            undo: !settingsDraw.undo,
-          });
-        })}
+        {this.button({name: 'undo', type: 'font'}, 'Undo', false, () =>
+          this.undo(),
+        )}
 
         {this.button({name: 'trash', type: 'font'}, 'Clear', false, () => {
           database()
@@ -133,43 +132,31 @@ class RightButtons extends Component {
               `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings`,
             )
             .remove();
-          coachAction('setCoachSessionDrawSettings', {
-            clear: !settingsDraw.clear,
-          });
+          this.props.drawViewRef.clear();
         })}
       </View>
     );
   }
+  openToolBox() {
+    const {coachAction, settingsDraw} = this.props;
+    console.log('openToolBox', settingsDraw.touchEnabled);
+    coachAction('setCoachSessionDrawSettings', {
+      touchEnabled: !settingsDraw.touchEnabled,
+    });
+  }
   buttons() {
-    const {archiveID, videoBeingShared} = this.props;
-
-    const {
-      settingsDraw,
-      coachAction,
-      personSharingScreen,
-      portrait,
-      drawingOpen,
-    } = this.props;
-    if (!drawingOpen) return null;
+    const {archiveID, videoBeingShared, settingsDraw} = this.props;
+    const {personSharingScreen, portrait, drawingEnable} = this.props;
+    const {touchEnabled} = settingsDraw;
+    if (!drawingEnable || !touchEnabled) return null;
 
     const displayButtonDraw =
       personSharingScreen && archiveID === videoBeingShared.id;
     let marginTop = marginTopApp;
     if (!portrait) marginTop = marginTopAppLanscape;
     return (
-      <View style={[styles.colButtonsRight, {top: marginTop + 10}]}>
-        {displayButtonDraw &&
-          this.button(
-            {name: 'magic', type: 'font'},
-            'Draw',
-            settingsDraw.touchEnabled,
-            () =>
-              coachAction('setCoachSessionDrawSettings', {
-                touchEnabled: !settingsDraw.touchEnabled,
-              }),
-            colors.secondary,
-          )}
-
+      <View
+        style={[styles.colButtonsRight, {top: marginTop + heightHeaderHome}]}>
         {displayButtonDraw && settingsDraw.touchEnabled && this.toolsDraw()}
       </View>
     );
@@ -185,16 +172,17 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     right: '5%',
-    zIndex: 40,
+    paddingTop: 10,
+    paddingBottom: 10,
+    zIndex: 2,
     backgroundColor: colors.title + '90',
-    paddingTop: 5,
-    paddingBottom: 5,
-    borderRadius: 45,
+
+    borderRadius: 27.5,
     borderWidth: 1,
     borderColor: colors.off,
-    width: 65,
+    width: 55,
   },
-  button: {flex: 1, width: '100%', paddingTop: 10, paddingBottom: 10},
+  button: {height: 55, width: '100%', paddingTop: 10, paddingBottom: 10},
   textButton: {
     fontSize: 11,
     marginTop: 7,

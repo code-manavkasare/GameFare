@@ -209,7 +209,7 @@ class StreamPage extends Component {
     const {userID, coachSessionID} = this.props;
 
     const that = this;
-    console.log('before load session', coachSessionID);
+
     database()
       .ref('coachSessions/' + coachSessionID)
       .on('value', async function(snap) {
@@ -252,7 +252,7 @@ class StreamPage extends Component {
   }
   async endCoachSession(hangup) {
     const isVideoBeingUploaded = this.footerRef.getVideoUploadStatus();
-    console.log('isVideoBeingUploaded', isVideoBeingUploaded);
+
     if (isVideoBeingUploaded)
       return navigate('Alert', {
         title: 'A video is being uploaded.',
@@ -276,7 +276,11 @@ class StreamPage extends Component {
   }
   loaderView(text, hideLoader) {
     const {pageFullScreen} = this.state;
-    const styleText = {...styleApp.text, color: colors.white, marginBottom: 25};
+    const styleText = {
+      ...styleApp.textBold,
+      color: colors.white,
+      marginBottom: 25,
+    };
     if (!pageFullScreen) return null;
     return (
       <View style={[styleApp.center, styles.loaderSessionTokBox]}>
@@ -313,14 +317,14 @@ class StreamPage extends Component {
 
     style = {
       ...style,
-      backgroundColor: colors.grey,
+      backgroundColor: colors.greyDark,
       ...styleApp.center,
       zIndex: 2,
     };
 
     return (
       <View style={style}>
-        <Text style={[styleApp.text, {color: colors.white}]}>Paused</Text>
+        <Text style={[styleApp.textBold, {color: colors.white}]}>Paused</Text>
       </View>
     );
   }
@@ -361,14 +365,6 @@ class StreamPage extends Component {
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
-    console.log(
-      'render strean vudei',
-      this.state.coachSession,
-      isConnected,
-      Config.OPENTOK_API,
-    );
-    console.log('member.tokenTokbox', member.tokenTokbox);
-    console.log('sessionID', sessionID);
 
     return (
       <Animated.View
@@ -456,6 +452,7 @@ class StreamPage extends Component {
       currentScreenSize,
     );
     const {translateXStream, translateXCard} = this.animatedValues();
+
     return (
       <View style={styleContainerStreamView}>
         <CardStreamView

@@ -101,12 +101,11 @@ const getMember = (session, userID) => {
   return session.members[userID];
 };
 
-const getLastDrawing = (video) => {
-  if (!video.drawings) return false;
-  const drawings = Object.values(video.drawings)
+const getLastDrawing = (drawings) => {
+  if (!drawings) return false;
+  return Object.values(drawings)
     .sort((a, b) => a.timeStamp - b.timeStamp)
-    .reverse();
-  return drawings[0];
+    .reverse()[0];
 };
 
 const isUserAdmin = (organizerID, userID) => {
@@ -141,7 +140,7 @@ const styleStreamView = (
       height: currentScreenSize.currentHeight,
       width: currentScreenSize.currentWidth,
       top: 0,
-      backgroundColor: colors.transparentGrey,
+      backgroundColor: colors.greyDark,
     };
     styleContainerStreamView = {
       position: 'absolute',

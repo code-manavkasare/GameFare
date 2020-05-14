@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import {Dimensions} from 'react-native';
-// const {height, width} = Dimensions.get('screen');
 import Svg, {Polyline} from 'react-native-svg';
 
 export default class DisplayDraingToViewers extends Component {
@@ -9,6 +7,9 @@ export default class DisplayDraingToViewers extends Component {
     this.state = {};
   }
   componentDidMount() {}
+  componentDidUpdate() {
+    console.log('display drawing to view viewers update', this.props.drawings);
+  }
   draw(draw, i) {
     let arrayDots = draw.data;
     const {currentScreenSize} = this.props;
@@ -33,7 +34,7 @@ export default class DisplayDraingToViewers extends Component {
     dots = dots.replace(',', ' ');
     return (
       <Svg
-        key={i}
+        key={draw.idSketch}
         height={currentHeight}
         width={currentWidth}
         style={{position: 'absolute', zIndex: -2}}>

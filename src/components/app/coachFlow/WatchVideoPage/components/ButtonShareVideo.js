@@ -39,20 +39,29 @@ class ButtonShareVideo extends Component {
         touchEnabled: false,
       });
 
-      const video = {
-        source: source,
-        currentTime: stateVideo.currentTime,
-        paused: true,
-        playRate: 1,
-        archiveID: archiveID,
-        id: archiveID,
-        thumbnail: stateVideo.placeHolderImg,
-      };
-
       let updates = {};
       updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}`
-      ] = video;
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/source`
+      ] = source;
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/currentTime`
+      ] = stateVideo.currentTime;
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/paused`
+      ] = true;
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/playRate`
+      ] = 1;
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/archiveID`
+      ] = archiveID;
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/id`
+      ] = archiveID;
+      updates[
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/thumbnail`
+      ] = stateVideo.placeHolderImg;
+
       updates[
         `coachSessions/${coachSessionID}/members/${userID}/shareScreen`
       ] = true;

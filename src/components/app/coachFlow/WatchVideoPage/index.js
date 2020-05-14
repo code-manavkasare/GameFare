@@ -87,20 +87,22 @@ class WatchVideoPage extends Component {
       }
     });
   }
-  updateVideoInfoCloud = async (paused, currentTime, playRate) => {
-    const {coachSessionID} = this.props;
+  updateVideoInfoCloud = async (dataUpdate) => {
+    // dataUpdate = {paused, currentTime, playRate}
+    const {coachSessionID, userID} = this.props;
     const {archiveID} = this.state;
     let updates = {};
-    updates[
-      `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/paused`
-    ] = paused;
-    updates[
-      `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/currentTime`
-    ] = currentTime;
-    if (playRate)
+    console.log('dataUpdate', dataUpdate);
+
+    for (var i in dataUpdate) {
+      console.log('i', i);
       updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/playRate`
-      ] = playRate;
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/${i}`
+      ] = dataUpdate[i];
+    }
+    updates[
+      `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/userIDLastUpdate`
+    ] = userID;
     await database()
       .ref()
       .update(updates);
@@ -139,8 +141,9 @@ class WatchVideoPage extends Component {
     else {
       video = {...sharedVideos[archiveID]};
     }
-    const drawingOpen =
+    const drawingEnable =
       personSharingScreen && archiveID === videoBeingShared.id;
+    console.log('render watch video  page', videoBeingShared.drawings);
     return (
       <Animated.View
         style={[
@@ -165,6 +168,12 @@ class WatchVideoPage extends Component {
           backgroundColorIcon1={colors.title + '70'}
           initialBorderColorIcon={'transparent'}
           icon1="times"
+          icon2={drawingEnable && 'pencil-ruler'}
+          backgroundColorIcon2={colors.title + '70'}
+          clickButton2={() => this.rightButtonsRef.openToolBox()}
+          sizeIcon2={20}
+          typeIcon2="font"
+          colorIcon2={colors.white}
           initialTitleOpacity={1}
           clickButton1={() => {
             if (
@@ -175,25 +184,18 @@ class WatchVideoPage extends Component {
             this.open(false);
           }}
         />
-        <RightButtons
-          state={this.props.state}
-          archiveID={archiveID}
-          coachSessionID={coachSessionID}
-          videoBeingShared={videoBeingShared}
-          drawingOpen={drawingOpen}
-          personSharingScreen={personSharingScreen}
-          setState={this.setState.bind(this)}
-          openVideo={(videoData) => this.open(videoData)}
-        />
 
         <VideoPlayer
           source={videoSource ? videoSource : ''}
           paused={video.paused}
           playRate={video.playRate}
           index={archiveID}
+          userID={userID}
           currentTime={video.currentTime}
+          userIDLastUpdate={video.userIDLastUpdate}
           hideFullScreenButton={true}
           placeHolderImg={thumbnail}
+          propsComponentOnTop={videoBeingShared.drawings}
           componentOnTop={() => (
             <TouchableOpacity
               style={{
@@ -206,8 +208,13 @@ class WatchVideoPage extends Component {
               <DrawView
                 coachSessionID={coachSessionID}
                 archiveID={archiveID}
+                videoBeingShared={videoBeingShared}
+                drawings={
+                  videoBeingShared?.drawings ? videoBeingShared.drawings : {}
+                }
+                onRef={(ref) => (this.drawViewRef = ref)}
+                drawingOpen={drawingEnable}
                 video={video}
-                drawingOpen={drawingOpen}
               />
               <ButtonShareVideo
                 onRef={(ref) => (this.buttonShareRef = ref)}
@@ -232,6 +239,18 @@ class WatchVideoPage extends Component {
             this.updateVideoInfoCloud(paused, currentTime, playRate)
           }
           onRef={(ref) => (this.videoPlayerRef = ref)}
+        />
+        <RightButtons
+          state={this.props.state}
+          archiveID={archiveID}
+          onRef={(ref) => (this.rightButtonsRef = ref)}
+          coachSessionID={coachSessionID}
+          videoBeingShared={videoBeingShared}
+          drawViewRef={this.drawViewRef}
+          drawingEnable={drawingEnable}
+          personSharingScreen={personSharingScreen}
+          setState={this.setState.bind(this)}
+          openVideo={(videoData) => this.open(videoData)}
         />
       </Animated.View>
     );
