@@ -53,32 +53,46 @@ class HeaderStreamView extends Component {
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         inputRange={[5, 10]}
         colorLoader={'white'}
-        colorIcon1={colors.white}
         sizeLoader={40}
-        sizeIcon1={18}
-        opacityHeader={opacityHeader}
-        nobackgroundColorIcon1={true}
-        backgroundColorIcon1={colors.title + '70'}
-        backgroundColorIcon2={colors.title + '70'}
-        backgroundColorIconOffset={colors.title + '70'}
         initialBorderColorIcon={'transparent'}
-        sizeIconOffset={23}
+        opacityHeader={opacityHeader}
+        
+
         icon1={'arrow-left'}
-        icon2={isConnected && 'switchCam'}
-        typeIconOffset="mat"
-        clickButton2={() => setState({cameraFront: !state.cameraFront})}
         typeIcon1="font"
-        iconOffset={
-          isConnected && isUserAdmin(organizerID, userID) && 'person-add'
-        }
-        initialTitleOpacity={1}
+        backgroundColorIcon1={colors.title + '70'}
         clickButton1={async () => {
           open(false);
         }}
-        clickButtonOffset={() => this.AddMembers(coachSessionID)}
+        nobackgroundColorIcon1={true}
+        sizeIcon1={18}
+        colorIcon1={colors.white}
+
+        icon2={isConnected && 'switchCam'}
+        backgroundColorIcon2={colors.title + '70'}
+        clickButton2={() => setState({cameraFront: !state.cameraFront})}
         sizeIcon2={20}
         typeIcon2="moon"
         colorIcon2={colors.white}
+
+        
+        
+        
+        iconOffset={
+          isConnected && isUserAdmin(organizerID, userID) && 'person-add'
+        }
+        typeIconOffset="mat"
+        sizeIconOffset={23}
+        backgroundColorIconOffset={colors.title + '70'}
+       
+       
+        
+        
+        
+        initialTitleOpacity={1}
+        
+        clickButtonOffset={() => this.AddMembers(coachSessionID)}
+        
       />
     );
   }

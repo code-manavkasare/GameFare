@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     color: colors.title,
     fontFamily: font,
     fontWeight: '600',
-    fontSize: 13,
+    fontSize: 14,
   },
   stylePage: {
     flex: 1,

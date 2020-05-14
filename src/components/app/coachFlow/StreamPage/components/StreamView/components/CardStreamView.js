@@ -86,9 +86,10 @@ class CardStream extends Component {
       ...styleApp.center,
       backgroundColor: colors.red,
       borderBottomLeftRadius: 5,
+      // marginTop: 5,
       borderBottomRightRadius: 5,
     };
-    const styleText = {...styleApp.text, color: colors.white, fontSize: 10};
+    const styleText = {...styleApp.textBold, color: colors.white, fontSize: 10};
     return (
       <View style={styleViewLive}>
         <Text style={styleText}>Live</Text>

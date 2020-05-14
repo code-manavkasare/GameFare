@@ -31,7 +31,7 @@ export default class CardMessage extends React.Component {
   urlify(text) {
     const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     const that = this;
-    return text.replace(urlRegex, function (url, b, c) {
+    return text.replace(urlRegex, function(url, b, c) {
       return that.getDataUrl(url);
     });
   }
@@ -115,14 +115,17 @@ export default class CardMessage extends React.Component {
       <View style={styleApp.cardMessage}>
         {this.rowDay(props)}
         <Row>
-          <Col size={15} onPress={() => this.goToProfilePage()}>
+          <Col
+            size={20}
+            activeOpacity={1}
+            onPress={() => this.goToProfilePage()}>
             <AsyncImage
               style={{width: 45, height: 45, borderRadius: 5}}
               mainImage={messageAvatar(props.currentMessage.user.info)}
               imgInitial={messageAvatar(props.currentMessage.user.info)}
             />
           </Col>
-          <Col size={85} style={[styleApp.center2, {marginBottom: 10}]}>
+          <Col size={80} style={[styleApp.center2, {marginBottom: 10}]}>
             <Text
               style={[styleApp.text, {fontSize: 16}]}
               onPress={() => this.goToProfilePage()}>
@@ -195,7 +198,7 @@ export default class CardMessage extends React.Component {
     const images = this.props.message.currentMessage.images
       ? Object.values(this.props.message.currentMessage.images)
           .filter((image) => image.type === 'image')
-          .reduce(function (result, item) {
+          .reduce(function(result, item) {
             let image = item;
             image.url = image.uri;
             result[item.id] = item;
@@ -231,7 +234,7 @@ export default class CardMessage extends React.Component {
                       color={colors.white}
                     />
                   </Col>
-                  <Col size={85}></Col>
+                  <Col size={85} />
                 </Row>
               );
             }}

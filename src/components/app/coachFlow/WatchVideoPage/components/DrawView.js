@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Animated,
   Image,
-  Dimensions,
+  Alert,
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -28,30 +28,46 @@ class Draw extends Component {
       loader: true,
     };
     this.translateXPage = new Animated.Value(0);
-    this.canvasRef = React.createRef();
+    // this.canvasRef = React.createRef();
+  }
+  componentDidMount() {
+    this.props.onRef(this);
   }
   componentDidUpdate(prevProps) {
     if (prevProps.drawingOpen !== this.props.drawingOpen) {
       return this.translateXPage.setValue(
         this.props.drawingOpen ? 0 : this.props.currentScreenSize.currentWidth,
       );
-    } else if (prevProps.settingsDraw.clear !== this.props.settingsDraw.clear) {
-      try {
-        this.canvasRef.current.clear();
-      } catch (err) {
-        console.log('error');
-      }
-    } else if (prevProps.settingsDraw.undo !== this.props.settingsDraw.undo) {
-      const idSketchLast = getLastDrawing(this.props.video).idSketch;
-      if (idSketchLast) this.canvasRef.current.deletePath(idSketchLast);
     }
   }
+  clear = () => {
+    try {
+      console.log('clear', this.props.coachSessionID);
+      this.canvasRef.clear();
+    } catch (err) {
+      console.log('error');
+    }
+  };
+  undo = (idLastDrawing) => {
+    const {drawings} = this.props;
+    if (!idLastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
+    console.log('delete last path', idLastDrawing);
+    if (idLastDrawing) {
+      try {
+        this.canvasRef.deletePath(idLastDrawing);
+      } catch (err) {
+        Alert.alert('error!', err);
+      }
+    }
+  };
   async onStrokeEnd(event) {
+    const {userID} = this.props;
     const {currentWidth, currentHeight} = this.props.currentScreenSize;
     let {path} = event;
     path.timeStamp = Number(new Date());
     const idPath = generateID();
     path.idSketch = path.id;
+    path.userID = userID;
     path.screenSource = {
       height: currentHeight,
       width: currentWidth,
@@ -65,16 +81,16 @@ class Draw extends Component {
       .update(path);
   }
   drawView() {
-    const {settingsDraw, video, drawingOpen, currentScreenSize} = this.props;
+    const {settingsDraw, drawings, drawingOpen, currentScreenSize} = this.props;
     const {currentWidth, currentHeight} = currentScreenSize;
-    console.log('drawingOpen ici la', drawingOpen);
+    console.log('render drawview',drawings)
     return (
       <Animated.View
         style={[styles.page, {height: currentHeight, width: currentWidth}]}>
         {drawingOpen && (
           <SketchCanvas
             style={styles.drawingZone}
-            ref={this.canvasRef}
+            ref={(ref) => (this.canvasRef = ref)}
             touchEnabled={settingsDraw.touchEnabled}
             strokeColor={settingsDraw.color}
             strokeWidth={4}
@@ -84,7 +100,7 @@ class Draw extends Component {
         <View style={styles.drawingZoneDisplay}>
           <DisplayDrawingToViewers
             currentScreenSize={currentScreenSize}
-            drawings={video.drawings}
+            drawings={drawings}
           />
         </View>
       </Animated.View>
@@ -101,6 +117,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 3,
   },
+
   drawingZone: {
     height: '100%',
     width: '100%',

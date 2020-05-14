@@ -1034,7 +1034,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1587651740;
+				CURRENT_PROJECT_VERSION = 1587651741;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
@@ -1054,6 +1054,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-dev-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1066,7 +1067,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1587651740;
+				CURRENT_PROJECT_VERSION = 1587651741;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = "gamefare-dev-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1084,6 +1085,7 @@
 				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-dev-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1117,6 +1119,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1148,6 +1151,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

@@ -293,7 +293,7 @@ export default class ContactsComponent extends Component {
           click={this.goToSettings.bind(this)}
           text={'Settings'}
           styleText={{color: colors.primary, fontSize: 14}}
-          backgroundColor={'red'}
+          backgroundColor={'primary'}
           styleButton={{
             height: 45,
             backgroundColor: 'white',

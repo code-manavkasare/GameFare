@@ -56,7 +56,7 @@ class ProfilePage extends Component {
     return (
       <ButtonColor
         view={() => (
-          <Text style={[styleApp.text, {color: colors.white}]}>{text}</Text>
+          <Text style={[styleApp.textBold, {color: colors.white}]}>{text}</Text>
         )}
         style={{height: 45, borderRadius: 5}}
         click={() => this.blockUnblockUser(block)}

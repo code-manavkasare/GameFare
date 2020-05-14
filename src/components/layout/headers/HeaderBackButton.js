@@ -146,7 +146,7 @@ class HeaderBackButton extends Component {
           <ButtonColor
             view={() => {
               return iconOffset === 'text' ? (
-                <Text style={styleApp.text}>{textOffset}</Text>
+                <Text style={styleApp.textBold}>{textOffset}</Text>
               ) : (
                 <AllIcons
                   name={iconOffset}
@@ -209,7 +209,7 @@ class HeaderBackButton extends Component {
               ) : icon2 === 'text' ? (
                 <Text
                   style={[
-                    styleApp.text,
+                    styleApp.textBold,
                     {
                       color: text2Off ? colors.off : colors.title,
                     },
