@@ -43,7 +43,8 @@ export default class ControlButtons extends Component {
   }
 
   playPauseButton = () => {
-    const {togglePlayPause, paused} = this.props;
+    const {togglePlayPause, paused, totalTime, seek} = this.props;
+    const {currentTime} = this.state;
     return (
       <ButtonColor
         view={() => {
@@ -56,7 +57,13 @@ export default class ControlButtons extends Component {
             />
           );
         }}
-        click={() => togglePlayPause()}
+        click={async () => {
+          if (totalTime === currentTime && paused) {
+            await seek(0);
+            await this.setState({currentTime: 0});
+          }
+          togglePlayPause();
+        }}
         style={{height: 45, width: '100%'}}
         onPressColor={colors.off}
       />
