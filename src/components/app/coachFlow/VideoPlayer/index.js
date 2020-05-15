@@ -297,6 +297,10 @@ export default class VideoPlayer extends Component {
               onProgress={(info) =>
                 !paused && !onSliding && this.onProgress(info)
               }
+              onEnd={() => {
+                this.togglePlayPause(true);
+                this.controlButtonRef.setState({currentTime: totalTime});
+              }}
             />
           </TouchableOpacity>
         )}
@@ -318,7 +322,10 @@ export default class VideoPlayer extends Component {
             onSliding={onSliding}
             setState={this.setState.bind(this)}
             togglePlayPause={this.togglePlayPause.bind(this)}
-            updatePlayRate={(playRate) => this.updatePlayRate(playRate)}
+            seek={(time) => this.player.seek(time, 0)}
+            updatePlayRate={(playRate) => {
+              return this.updatePlayRate(playRate);
+            }}
             onSlidingComplete={this.onSlidingComplete.bind(this)}
             onSlidingStart={this.onSlidingStart.bind(this)}
           />
