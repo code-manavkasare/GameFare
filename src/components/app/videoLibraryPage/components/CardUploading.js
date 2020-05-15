@@ -252,7 +252,7 @@ class CardUploading extends Component {
                 {videoInfo.duration.toFixed(0)}sec
               </Text>
               <Text style={[styleApp.text, {fontSize: 13}]}>
-                {resolutionP(videoInfo.size)}
+                {videoInfo.size && resolutionP(videoInfo.size)}
               </Text>
             </Col>
 
