@@ -251,25 +251,25 @@ class StreamPage extends Component {
     }
   }
   async endCoachSession(hangup) {
-    const isVideoBeingUploaded = this.footerRef.getVideoUploadStatus();
+    // const isVideoBeingUploaded = this.footerRef.getVideoUploadStatus();
 
-    if (isVideoBeingUploaded)
-      return navigate('Alert', {
-        title: 'A video is being uploaded.',
-        textButton: 'Continue',
-        subtitle: 'Do you wish to continue?',
-        onGoBack: async () => {
-          if (hangup) await this.open(false);
-          await this.setState({open: false});
-          return true;
-        },
-        icon: (
-          <Image
-            style={{height: 35, width: 35, borderRadius: 20}}
-            source={{uri: isVideoBeingUploaded.thumbnail}}
-          />
-        ),
-      });
+    // if (isVideoBeingUploaded)
+    //   return navigate('Alert', {
+    //     title: 'A video is being uploaded.',
+    //     textButton: 'Continue',
+    //     subtitle: 'Do you wish to continue?',
+    //     onGoBack: async () => {
+    //       if (hangup) await this.open(false);
+    //       await this.setState({open: false});
+    //       return true;
+    //     },
+    //     icon: (
+    //       <Image
+    //         style={{height: 35, width: 35, borderRadius: 20}}
+    //         source={{uri: isVideoBeingUploaded.thumbnail}}
+    //       />
+    //     ),
+    //   });
     if (hangup) await this.open(false);
     await this.setState({open: false});
     return true;
@@ -354,7 +354,8 @@ class StreamPage extends Component {
       pageFullScreen,
     } = this.state;
     const {userID, userConnected} = this.props;
-
+    const personSharingScreen = isSomeoneSharingScreen(coachSession);
+    const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!coachSession.tokbox) return null;
 
     const {sessionID} = coachSession.tokbox;
@@ -410,6 +411,18 @@ class StreamPage extends Component {
             </OTSubscriber>
           </OTSession>
         </View>
+
+        <Footer
+          translateYFooter={this.translateYFooter}
+          opacityHeader={this.opacityHeader}
+          setState={this.setState.bind(this)}
+          watchVideoRef={this.watchVideoRef}
+          endCoachSession={this.endCoachSession.bind(this)}
+          otPublisherRef={this.otPublisherRef}
+          personSharingScreen={personSharingScreen}
+          videoBeingShared={videoBeingShared}
+          onRef={(ref) => (this.footerRef = ref)}
+        />
       </Animated.View>
     );
   }
@@ -503,20 +516,6 @@ class StreamPage extends Component {
           />
 
           {loader && this.loaderView(' ')}
-
-          {isConnected && (
-            <Footer
-              translateYFooter={this.translateYFooter}
-              opacityHeader={this.opacityHeader}
-              setState={this.setState.bind(this)}
-              watchVideoRef={this.watchVideoRef}
-              endCoachSession={this.endCoachSession.bind(this)}
-              otPublisherRef={this.otPublisherRef}
-              personSharingScreen={personSharingScreen}
-              videoBeingShared={videoBeingShared}
-              onRef={(ref) => (this.footerRef = ref)}
-            />
-          )}
         </Animated.View>
       </View>
     );
@@ -588,7 +587,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.primary2,
     width: '100%',
-    zIndex: 5,
+    zIndex: 10,
     opacity: 1,
   },
   loaderView: {
