@@ -66,13 +66,34 @@ const minutes = (time) => {
   return Math.floor(time / 60);
 };
 
-const seconds = (time) => {
-  const sec = (time % 60).toFixed(0);
+const seconds = (time, displayMilliseconds) => {
+  let sec = (time % 60).toFixed(0);
+  if (displayMilliseconds) sec = Math.floor(time % 60).toFixed(0);
   if (sec.length === 1) return '0' + sec;
   return sec;
 };
 
-const displayTime = (time) => {
+const milliSeconds = (time) => {
+  const min = minutes(time) * 60;
+  console.log('min', min);
+  const sec = Math.floor(time % 60);
+  console.log('sec', sec);
+  console.log('time', time);
+  console.log('(min + sec)', min + sec);
+  return ((time - (min + sec)) * 100).toFixed(0);
+};
+
+const displayTime = (time, displayMilliseconds) => {
+  console.log('milliSeconds', milliSeconds(time));
+  if (displayMilliseconds)
+    return (
+      minutes(time) +
+      ':' +
+      seconds(time, displayMilliseconds) +
+      ':' +
+      milliSeconds(time)
+    );
+
   return minutes(time) + ':' + seconds(time);
 };
 

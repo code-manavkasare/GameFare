@@ -58,6 +58,7 @@ class ButtonShareVideo extends Component {
       updates[
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/id`
       ] = archiveID;
+
       updates[
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/thumbnail`
       ] = stateVideo.placeHolderImg;
@@ -77,6 +78,7 @@ class ButtonShareVideo extends Component {
         .ref()
         .update({
           [`coachSessions/${coachSessionID}/members/${userID}/shareScreen`]: false,
+          [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings`]: null,
         });
       open(false);
     }
