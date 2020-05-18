@@ -228,7 +228,7 @@ export default class ControlButtons extends Component {
                 }}>
                 <Col style={styleApp.center2}>
                   <Text style={styles.textTime}>
-                    {displayTime(currentTime)}
+                    {displayTime(currentTime, true)}
                   </Text>
                 </Col>
                 <Col style={styleApp.center3}>

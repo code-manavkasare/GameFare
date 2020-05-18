@@ -15,6 +15,12 @@ import {timeout} from '../../../functions/coach';
 import {timing} from '../../../animations/animations';
 import ControlButtons from './components/ControlButtons';
 
+const isCurrentTimeNeedsUpdate = (prev, next) => {
+  const offSet = 0.02;
+  if (prev + offSet < next || prev - offSet > next) return true;
+  return false;
+};
+
 export default class VideoPlayer extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +50,7 @@ export default class VideoPlayer extends Component {
     const {source, paused, currentTime} = this.props;
     if (nextProps.source !== source) return true;
     if (nextProps.paused !== paused) return true;
-    if (this.isCurrentTimeNeedsUpdate(currentTime, nextProps.currentTime))
+    if (isCurrentTimeNeedsUpdate(currentTime, nextProps.currentTime))
       return true;
     if (!isEqual(this.state, nextState)) return true;
     if (!isEqual(this.props.propsComponentOnTop, nextProps.propsComponentOnTop))
@@ -65,11 +71,11 @@ export default class VideoPlayer extends Component {
       console.log('this.props.currentTime', this.state.currentTime);
       console.log('currentTime', currentTime);
       console.log(
-        'this.isCurrentTimeNeedsUpdate(currentTime, this.state.currentTime)',
-        this.isCurrentTimeNeedsUpdate(currentTime, this.state.currentTime),
+        'isCurrentTimeNeedsUpdate(currentTime, this.state.currentTime)',
+        isCurrentTimeNeedsUpdate(currentTime, this.state.currentTime),
       );
       if (
-        this.isCurrentTimeNeedsUpdate(currentTime, this.state.currentTime) &&
+        isCurrentTimeNeedsUpdate(currentTime, this.state.currentTime) &&
         !this.state.onSliding
       ) {
         console.log('seek on update from cloud');
@@ -78,10 +84,7 @@ export default class VideoPlayer extends Component {
       }
     }
   }
-  isCurrentTimeNeedsUpdate(prev, next) {
-    if (prev + 0.2 < next || prev - 0.2 > next) return true;
-    return false;
-  }
+
   static getDerivedStateFromProps(props, state) {
     if (props.source !== state.source) {
       return {
@@ -105,8 +108,7 @@ export default class VideoPlayer extends Component {
     }
     if (
       props.currentTime !== state.currentTime &&
-      (props.currentTime + 0.2 < state.currentTime ||
-        props.currentTime - 0.2 > state.currentTime) &&
+      isCurrentTimeNeedsUpdate(props.currentTime, state.currentTime) &&
       !props.noUpdateInCloud &&
       !state.onSliding
     )

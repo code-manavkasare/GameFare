@@ -42,8 +42,10 @@ class RightButtons extends Component {
         if (
           prevDrawingsLength !== nextDrawingsLength &&
           prevDrawingsLength > nextDrawingsLength
-        )
+        ) {
+          if (nextDrawingsLength === 0) return this.props.drawViewRef.clear();
           this.props.drawViewRef.undo(lastDrawing.idSketch);
+        }
       }
     }
   }
