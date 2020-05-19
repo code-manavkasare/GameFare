@@ -41,7 +41,6 @@ export default class CompleteFields extends Component {
       pictureUri,
       'users/' + userID + '/userInfo/',
     );
-    console.log('profilePictureUrl', profilePictureUrl);
 
     let updates = {};
     updates[`users/${this.props.params.userID}/profileCompleted`] = true;

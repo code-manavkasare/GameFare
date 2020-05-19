@@ -42,7 +42,7 @@ class Draw extends Component {
   }
   clear = () => {
     try {
-      console.log('clear', this.props.coachSessionID);
+  
       this.canvasRef.clear();
     } catch (err) {
       console.log('error');
@@ -51,7 +51,7 @@ class Draw extends Component {
   undo = (idLastDrawing) => {
     const {drawings} = this.props;
     if (!idLastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
-    console.log('delete last path', idLastDrawing);
+
     if (idLastDrawing) {
       try {
         this.canvasRef.deletePath(idLastDrawing);
@@ -83,7 +83,7 @@ class Draw extends Component {
   drawView() {
     const {settingsDraw, drawings, drawingOpen, currentScreenSize} = this.props;
     const {currentWidth, currentHeight} = currentScreenSize;
-    console.log('render drawview',drawings)
+
     return (
       <Animated.View
         style={[styles.page, {height: currentHeight, width: currentWidth}]}>

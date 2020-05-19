@@ -51,8 +51,6 @@ const clickNotification = async (notification) => {
   var {action, typeNavigation} = notification;
   if (!notification.action) var {action, typeNavigation} = notification.data;
 
-  console.log('typeNavigation', typeNavigation);
-  console.log('action', notification.data);
   if (typeNavigation === 'navigate') return navigate(action, notification.data);
   return push(action, notification.data);
 };

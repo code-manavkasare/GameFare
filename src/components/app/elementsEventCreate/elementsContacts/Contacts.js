@@ -349,7 +349,7 @@ class Contacts extends Component {
         branchUniversalObject
           .showShareSheet(shareOptions, linkProperties, controlParams)
           .then((channel, completed, error) => {
-            console.log('completed', channel);
+           
           });
       });
   }

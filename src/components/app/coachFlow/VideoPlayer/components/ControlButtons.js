@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
-import Slider from '@react-native-community/slider';
 import PropTypes from 'prop-types';
 import FadeInView from 'react-native-fade-in-view';
 
+import Slider from './Slider';
 import AllIcons from '../../../../layout/icons/AllIcons';
-
+import CurrentTime from './CurrentTime';
 import ButtonColor from '../../../../layout/Views/Button';
 
 import colors from '../../../../style/colors';
@@ -21,30 +21,36 @@ export default class ControlButtons extends Component {
     super(props);
     this.state = {
       totalTime: 0,
-      currentTime: this.props.currentTime,
-      videoLoaded: false,
       fullscreen: false,
       showSpeedSet: false,
-      updateCurrentTime: true,
+      paused: this.props.paused,
     };
   }
   componentDidMount() {
     this.props.onRef(this);
   }
-  getCurrentTime() {
-    return this.state.currentTime;
+  setCurrentTime(currentTime, forceUpdate) {
+    const {paused} = this.state;
+    if (!paused || forceUpdate) {
+      this.sliderRef.setCurrentTime(currentTime);
+      this.currentTimeRef.setCurrentTime(currentTime);
+    }
   }
   static getDerivedStateFromProps(props, state) {
-    // if (state.updateCurrentTime && !props.onSliding)
-    //   return {
-    //     currentTime: props.currentTime,
-    //   };
-    return {};
+    if (props.paused !== state.paused)
+      return {
+        paused: props.paused,
+      };
   }
-
+  getPaused() {
+    return this.state.paused;
+  }
+  getCurrentTime() {
+    return this.currentTimeRef.getCurrentTime();
+  }
   playPauseButton = () => {
-    const {togglePlayPause, paused, totalTime, seek} = this.props;
-    const {currentTime} = this.state;
+    const {togglePlayPause, totalTime, seek} = this.props;
+    const {paused} = this.state;
     return (
       <ButtonColor
         view={() => {
@@ -57,11 +63,14 @@ export default class ControlButtons extends Component {
             />
           );
         }}
+        // color={colors.grey}
         click={async () => {
+          const currentTime = this.currentTimeRef.getCurrentTime();
           if (totalTime === currentTime && paused) {
             await seek(0);
             await this.setState({currentTime: 0});
           }
+          await this.setState({paused: !paused});
           togglePlayPause();
         }}
         style={{height: 45, width: '100%'}}
@@ -155,20 +164,19 @@ export default class ControlButtons extends Component {
     );
   }
   controlButtons() {
-    const {totalTime} = this.props;
-    const {currentTime} = this.state;
-
-    let {
-      heightControlBar,
+    let {heightControlBar} = this.props;
+    const {
       sizeControlButton,
       hideFullScreenButton,
       opacityControlBar,
       setState,
-      paused,
+      currentTime,
       onSlidingComplete,
       onSlidingStart,
+      totalTime,
     } = this.props;
     if (!heightControlBar) heightControlBar = initialHeightControlBar;
+
     return (
       <Animated.View
         style={[
@@ -181,55 +189,32 @@ export default class ControlButtons extends Component {
         ]}>
         <Row>
           <Col size={10}>{this.playPauseButton()}</Col>
-          {sizeControlButton === 'sm' && (
-            <Col size={15} style={styleApp.center}>
-              <Text style={styles.textTime}>{displayTime(currentTime)}</Text>
-            </Col>
-          )}
           <Col size={60}>
-            <Row
-              style={{
-                height: 45,
-                paddingLeft: 10,
-                paddingRight: 10,
-              }}>
+            <Row style={styles.rowSlider}>
               <Col style={styleApp.center}>
                 <Slider
-                  style={styles.slideVideo}
-                  minimumValue={0}
-                  maximumValue={totalTime}
-                  value={currentTime}
-                  minimumTrackTintColor={colors.white}
-                  maximumTrackTintColor={colors.greyDark + '50'}
-                  // onValueChange={(value) => this.setState({currentTime: value})}
-                  onSlidingStart={async () => {
-                    await setState({
-                      onSliding: true,
-                      paused: true,
-                      lastValuePaused: paused,
-                    });
-
-                    onSlidingStart();
+                  onRef={(ref) => (this.sliderRef = ref)}
+                  currentTime={currentTime}
+                  totalTime={totalTime}
+                  onValueChange={(value) =>
+                    this.currentTimeRef.setCurrentTime(value)
+                  }
+                  onSlidingStart={async (SliderTime) => {
+                    onSlidingStart(SliderTime);
                   }}
-                  onSlidingComplete={async (SliderTime) => {
-                    await onSlidingComplete(SliderTime);
-                    await setState({onSliding: false});
-                  }}
+                  onSlidingComplete={(SliderTime) =>
+                    onSlidingComplete(SliderTime)
+                  }
                 />
               </Col>
             </Row>
             {sizeControlButton !== 'sm' && (
-              <Row
-                style={{
-                  height: 15,
-                  marginTop: -3,
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                }}>
+              <Row style={styles.rowTime}>
                 <Col style={styleApp.center2}>
-                  <Text style={styles.textTime}>
-                    {displayTime(currentTime, true)}
-                  </Text>
+                  <CurrentTime
+                    onRef={(ref) => (this.currentTimeRef = ref)}
+                    currentTime={currentTime}
+                  />
                 </Col>
                 <Col style={styleApp.center3}>
                   {totalTime !== 0 && (
@@ -304,6 +289,17 @@ const styles = StyleSheet.create({
     borderTopColor: colors.transparentGrey,
     position: 'absolute',
     bottom: -12,
+  },
+  rowSlider: {
+    height: 45,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  rowTime: {
+    height: 15,
+    marginTop: -3,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
 

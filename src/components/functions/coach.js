@@ -75,16 +75,16 @@ const seconds = (time, displayMilliseconds) => {
 
 const milliSeconds = (time) => {
   const min = minutes(time) * 60;
-  console.log('min', min);
   const sec = Math.floor(time % 60);
-  console.log('sec', sec);
-  console.log('time', time);
-  console.log('(min + sec)', min + sec);
-  return ((time - (min + sec)) * 100).toFixed(0);
+  let ms = Number(((time - (min + sec)) * 100).toFixed(0));
+
+  if (ms.toString().length === 1) return '0' + ms;
+  if (ms === 100) return '00';
+  if (ms === 0) return '00';
+  return ms;
 };
 
 const displayTime = (time, displayMilliseconds) => {
-  console.log('milliSeconds', milliSeconds(time));
   if (displayMilliseconds)
     return (
       minutes(time) +

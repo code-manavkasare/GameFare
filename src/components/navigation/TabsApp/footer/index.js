@@ -30,9 +30,9 @@ class Footer extends React.Component {
   }
   async notificationHandler() {
     const {layoutAction, userID} = this.props;
-    console.log('notificationHandler', userID);
+  
     const unsubscribe = messaging().onMessage((remoteMessage) => {
-      console.log('remoteMessage', remoteMessage);
+    
       if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
         return layoutAction('setLayout', {notification: remoteMessage});
     });
@@ -51,7 +51,7 @@ class Footer extends React.Component {
     if (notificationOpen) return clickNotification(notificationOpen);
   }
   componentDidUpdate = (prevProps, prevState) => {
-    console.log('footer is udpated');
+
     if (prevProps.isFooterVisible !== this.props.isFooterVisible) {
       return this.translateFooter(this.props.isFooterVisible);
     } else if (prevProps.activeTab !== this.props.activeTab) {

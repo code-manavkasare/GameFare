@@ -13,7 +13,6 @@ import colors from '../../style/colors';
 const Tab = createBottomTabNavigator();
 
 function TabsApp() {
-  console.log('tabs app');
   return (
     <Tab.Navigator
       initialRouteName="Stream"
