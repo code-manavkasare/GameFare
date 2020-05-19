@@ -86,7 +86,7 @@ class EventPage extends React.Component {
   }
   async componentDidMount() {
     const {route} = this.props;
-    console.log('routeeewwewe', route);
+
     const {objectID} = route.params;
     this.loadEvent(objectID);
   }
@@ -161,7 +161,7 @@ class EventPage extends React.Component {
   dismiss() {
     const {navigation} = this.props;
     const {route} = this.props;
-    console.log('route!!!!!!!', route);
+
     const {altDismiss} = route.params;
 
     if (altDismiss) {
@@ -1079,9 +1079,7 @@ class EventPage extends React.Component {
   }
   async removePlayer(player, data) {
     let newData = {...data};
-    await removePlayerFromEvent(player, newData).catch((err) => {
-      console.log(err.message);
-    });
+    await removePlayerFromEvent(player, newData).catch((err) => {});
     for (var i in newData.allAttendees) {
       if (newData.allAttendees[i] === player.id) {
         delete newData.allAttendees[i];

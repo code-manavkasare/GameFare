@@ -69,8 +69,7 @@ class VerifyFields extends Component {
     } = this.props.params;
     const {close, navigate, userAction} = this.props;
     const phoneNumberFormated = formatPhoneNumber(phoneNumber);
-    console.log('verufy ohone', phoneNumberFormated);
-    console.log('country', country);
+
     const promiseAxios = await axios.get(url, {
       params: {
         phoneNumber: phoneNumberFormated,

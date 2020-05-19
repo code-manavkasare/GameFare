@@ -52,7 +52,7 @@ export default class CameraView extends Component {
           buttonNegative: 'Cancel',
         }}
         onGoogleVisionBarcodesDetected={({barcodes}) => {
-          console.log(barcodes);
+       
         }}
       />
     );

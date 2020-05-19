@@ -34,11 +34,7 @@ class RightButtons extends Component {
         let nextDrawings = this.props.videoBeingShared.drawings;
         if (!nextDrawings) nextDrawings = {};
         const nextDrawingsLength = Object.values(nextDrawings).length;
-        console.log(
-          'nextDrawingsLength',
-          nextDrawingsLength,
-          prevDrawingsLength,
-        );
+
         if (
           prevDrawingsLength !== nextDrawingsLength &&
           prevDrawingsLength > nextDrawingsLength
@@ -141,7 +137,7 @@ class RightButtons extends Component {
   }
   openToolBox() {
     const {coachAction, settingsDraw} = this.props;
-    console.log('openToolBox', settingsDraw.touchEnabled);
+
     coachAction('setCoachSessionDrawSettings', {
       touchEnabled: !settingsDraw.touchEnabled,
     });

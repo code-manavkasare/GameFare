@@ -21,9 +21,6 @@ import {coachAction} from '../../../../actions/coachActions';
 import RightButtons from './components/RightButtons';
 import ButtonShareVideo from './components/ButtonShareVideo';
 import DrawView from './components/DrawView';
-import Loader from '../../../layout/loaders/Loader';
-
-import {getVideoSharing, timeout} from '../../../functions/coach';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -46,6 +43,23 @@ class WatchVideoPage extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
+  }
+  video(props, state) {
+    const {sharedVideos} = props;
+    const {archiveID, videoSource} = state;
+    const myVideo = this.isMyVideo(props);
+    if (myVideo)
+      return {
+        source: videoSource,
+        paused: false,
+        currentTime: 0,
+        playRate: 1,
+      };
+
+    if (!sharedVideos) return {};
+    let video = sharedVideos[archiveID];
+    if (!video) return {};
+    return video;
   }
   componentDidUpdate(prevProps) {
     if (!this.isMyVideo(prevProps) && this.isMyVideo(this.props))
@@ -88,21 +102,15 @@ class WatchVideoPage extends Component {
     });
   }
   updateVideoInfoCloud = async (dataUpdate) => {
-    // dataUpdate = {paused, currentTime, playRate}
-    const {coachSessionID, userID} = this.props;
+    const {coachSessionID} = this.props;
     const {archiveID} = this.state;
     let updates = {};
-    console.log('dataUpdate', dataUpdate);
 
     for (var i in dataUpdate) {
-      console.log('i', i);
       updates[
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/${i}`
       ] = dataUpdate[i];
     }
-    updates[
-      `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/userIDLastUpdate`
-    ] = userID;
     await database()
       .ref()
       .update(updates);
@@ -122,28 +130,16 @@ class WatchVideoPage extends Component {
       personSharingScreen,
       userID,
       currentScreenSize,
-      sharedVideos,
       coachSessionID,
       videoBeingShared,
     } = this.props;
     const {videoSource, thumbnail, archiveID} = this.state;
     const {currentWidth, currentHeight} = currentScreenSize;
     const myVideo = this.isMyVideo(this.props);
-
-    let video = {};
-    if (myVideo)
-      video = {
-        source: videoSource,
-        paused: false,
-        currentTime: 0,
-        playRate: 1,
-      };
-    else {
-      video = {...sharedVideos[archiveID]};
-    }
+    const video = this.video(this.props, this.state);
     const drawingEnable =
       personSharingScreen && archiveID === videoBeingShared.id;
-    console.log('render watch video  page', videoBeingShared.drawings);
+
     return (
       <Animated.View
         style={[
