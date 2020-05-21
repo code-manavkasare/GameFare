@@ -6,28 +6,15 @@ export default class DisplayDraingToViewers extends Component {
     super(props);
     this.state = {};
   }
-  componentDidMount() {}
-  componentDidUpdate() {
-    console.log('display drawing to view viewers update', this.props.drawings);
-  }
   draw(draw, i) {
     let arrayDots = draw.data;
-    const {currentScreenSize} = this.props;
-    const {screenSource} = draw;
-    const {currentWidth, currentHeight, portrait} = currentScreenSize;
-
-    let Rx = currentWidth / screenSource.width;
-    let Ry = currentHeight / screenSource.height;
-    if (!portrait) {
-      Ry = currentWidth / screenSource.width;
-      Rx = currentHeight / screenSource.height;
-    }
+    const {widthDrawView, heightDrawView} = this.props;
 
     arrayDots = arrayDots.map((dot) => {
       let Xsource = Number(dot.split(',')[0]);
       let Ysource = Number(dot.split(',')[1]);
-      const Xtarget = Rx * Xsource;
-      const Ytarget = Ry * Ysource;
+      const Xtarget = widthDrawView * Xsource;
+      const Ytarget = heightDrawView * Ysource;
       return Xtarget + ',' + Ytarget;
     });
     let dots = arrayDots.toString();
@@ -35,9 +22,9 @@ export default class DisplayDraingToViewers extends Component {
     return (
       <Svg
         key={draw.idSketch}
-        height={currentHeight}
-        width={currentWidth}
-        style={{position: 'absolute', zIndex: -2}}>
+        height={heightDrawView}
+        width={widthDrawView}
+        style={[{position: 'absolute', zIndex: -2}]}>
         <Polyline
           points={dots}
           fill="none"
