@@ -208,7 +208,7 @@ export default class VideoPlayer extends Component {
         /> */}
 
         {displayVideo && source !== '' && (
-          <TouchableOpacity
+          <View
             style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
             <Video
               key={index}
@@ -219,12 +219,15 @@ export default class VideoPlayer extends Component {
               }}
               rate={playRate}
               onLoad={async (callback) => {
-                const {currentTime} = this.state;
+                const {setSizeVideo} = this.props;
+                if (setSizeVideo) setSizeVideo(callback.naturalSize);
+
                 await this.setState({
                   totalTime: callback.duration,
                   videoLoaded: true,
                   loader: false,
                 });
+                const {currentTime} = this.state;
                 this.seek(currentTime);
               }}
               muted={__DEV__ ? true : false}
@@ -241,7 +244,7 @@ export default class VideoPlayer extends Component {
                 this.controlButtonRef.setCurrentTime(totalTime, true);
               }}
             />
-          </TouchableOpacity>
+          </View>
         )}
 
         {componentOnTop && componentOnTop()}

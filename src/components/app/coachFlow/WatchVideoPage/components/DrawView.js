@@ -18,6 +18,8 @@ import {generateID} from '../../../../functions/createEvent';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import styleApp from '../../../../style/style';
+import colors from '../../../../style/colors';
+import {ratio} from '../../../../style/sizes';
 
 class Draw extends Component {
   constructor(props) {
@@ -42,7 +44,6 @@ class Draw extends Component {
   }
   clear = () => {
     try {
-  
       this.canvasRef.clear();
     } catch (err) {
       console.log('error');
@@ -60,33 +61,73 @@ class Draw extends Component {
       }
     }
   };
-  async onStrokeEnd(event) {
+  async onStrokeEnd(event, widthDrawView, heightDrawView) {
     const {userID} = this.props;
-    const {currentWidth, currentHeight} = this.props.currentScreenSize;
     let {path} = event;
     path.timeStamp = Number(new Date());
     const idPath = generateID();
     path.idSketch = path.id;
     path.userID = userID;
-    path.screenSource = {
-      height: currentHeight,
-      width: currentWidth,
-    };
     path.id = idPath;
+    let {data} = path;
+
+    data = data.map((dot) => {
+      let x = Number(dot.split(',')[0]);
+      x = x / widthDrawView;
+      let y = Number(dot.split(',')[1]);
+      y = y / heightDrawView;
+      return x + ',' + y;
+    });
+
+    path.data = data;
     const {archiveID, coachSessionID} = this.props;
     await database()
       .ref(
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
       )
       .update(path);
+    return this.undo(path.idSketch);
   }
   drawView() {
-    const {settingsDraw, drawings, drawingOpen, currentScreenSize} = this.props;
-    const {currentWidth, currentHeight} = currentScreenSize;
+    const {
+      settingsDraw,
+      drawings,
+      drawingOpen,
+      currentScreenSize,
+      sizeVideo,
+      isMyVideo,
+    } = this.props;
 
+    let h = 0;
+    let w = 0;
+
+    const {currentWidth, currentHeight} = currentScreenSize;
+    console.log('sizeVideo', sizeVideo);
+
+    if (sizeVideo) {
+      const ratioScreen = ratio(currentWidth, currentHeight);
+      const ratioVideo = ratio(sizeVideo.width, sizeVideo.height);
+
+      w = currentWidth;
+      h = currentWidth * ratioVideo;
+      if (ratioScreen < ratioVideo) {
+        h = currentHeight;
+        w = currentHeight / ratioVideo;
+      }
+    }
+
+    let styleDrawView = {
+      height: h,
+      width: w,
+      backgroundColor: colors.grey + '0',
+      borderWidth: 3,
+      borderColor: colors.grey,
+    };
+
+    console.log('styleDrawView', styleDrawView);
+    if (isMyVideo) return null;
     return (
-      <Animated.View
-        style={[styles.page, {height: currentHeight, width: currentWidth}]}>
+      <Animated.View style={[styles.page, styleDrawView]}>
         {drawingOpen && (
           <SketchCanvas
             style={styles.drawingZone}
@@ -94,11 +135,13 @@ class Draw extends Component {
             touchEnabled={settingsDraw.touchEnabled}
             strokeColor={settingsDraw.color}
             strokeWidth={4}
-            onStrokeEnd={(event) => this.onStrokeEnd(event)}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
           />
         )}
         <View style={styles.drawingZoneDisplay}>
           <DisplayDrawingToViewers
+            heightDrawView={h}
+            widthDrawView={w}
             currentScreenSize={currentScreenSize}
             drawings={drawings}
           />
@@ -113,8 +156,9 @@ class Draw extends Component {
 
 const styles = StyleSheet.create({
   page: {
-    ...styleApp.center,
     position: 'absolute',
+    // backgroundColor: 'blue',
+    // backgroundColor: colors.off + '40',
     zIndex: 3,
   },
 

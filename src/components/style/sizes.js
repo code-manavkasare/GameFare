@@ -1,6 +1,6 @@
 import {Platform, Dimensions} from 'react-native';
 const {height, width} = Dimensions.get('screen');
-
+console.log('height!', height);
 var marginTopHeader = 7;
 var heightPicture = 280;
 var heightFooterBooking = 80;
@@ -48,6 +48,7 @@ if (Platform.OS === 'ios') {
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 30;
+
   } else if (height === 896) {
     marginTopHeader = 48;
     heightPicture = 280;
@@ -60,6 +61,7 @@ if (Platform.OS === 'ios') {
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;
+
   } else if (height === 667) {
     heightFooterBooking = 60;
     heightHeaderFilter = 100;
@@ -74,6 +76,10 @@ if (Platform.OS === 'ios') {
     offsetFooterStreaming = 0;
   }
 }
+
+const ratio = (w, h) => {
+  return h / w;
+};
 
 module.exports = {
   heightFooterBooking: heightFooterBooking,
@@ -96,4 +102,5 @@ module.exports = {
   offsetBottomHeaderStream,
   marginTopAppLanscape,
   marginBottomAppLandscade,
+  ratio,
 };

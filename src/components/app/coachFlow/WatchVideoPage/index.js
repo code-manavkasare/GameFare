@@ -36,6 +36,7 @@ class WatchVideoPage extends Component {
       displayComponent: false,
       thumbnail: false,
       archiveID: false,
+      sizeVideo: false,
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -133,7 +134,7 @@ class WatchVideoPage extends Component {
       coachSessionID,
       videoBeingShared,
     } = this.props;
-    const {videoSource, thumbnail, archiveID} = this.state;
+    const {videoSource, thumbnail, archiveID, sizeVideo} = this.state;
     const {currentWidth, currentHeight} = currentScreenSize;
     const myVideo = this.isMyVideo(this.props);
     const video = this.video(this.props, this.state);
@@ -189,6 +190,10 @@ class WatchVideoPage extends Component {
           userID={userID}
           currentTime={video.currentTime}
           userIDLastUpdate={video.userIDLastUpdate}
+          setSizeVideo={(sizeVideo) => {
+            console.log('setsize video,', sizeVideo);
+            this.setState({sizeVideo: sizeVideo});
+          }}
           hideFullScreenButton={true}
           placeHolderImg={thumbnail}
           propsComponentOnTop={videoBeingShared.drawings}
@@ -197,6 +202,7 @@ class WatchVideoPage extends Component {
               style={{
                 position: 'absolute',
                 ...styleApp.fullSize,
+                ...styleApp.center,
                 zIndex: 3,
               }}
               activeOpacity={1}
@@ -205,11 +211,14 @@ class WatchVideoPage extends Component {
                 coachSessionID={coachSessionID}
                 archiveID={archiveID}
                 videoBeingShared={videoBeingShared}
+                sizeVideo={sizeVideo}
+
                 drawings={
                   videoBeingShared?.drawings ? videoBeingShared.drawings : {}
                 }
                 onRef={(ref) => (this.drawViewRef = ref)}
                 drawingOpen={drawingEnable}
+                isMyVideo={this.isMyVideo(this.props)}
                 video={video}
               />
               <ButtonShareVideo
