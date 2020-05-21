@@ -10,7 +10,7 @@ import {getLastDrawing} from '../../../../functions/coach';
 
 import {
   marginTopApp,
-  marginTopAppLanscape,
+  marginTopAppLandscape,
   heightHeaderHome,
 } from '../../../../style/sizes';
 import colors from '../../../../style/colors';
@@ -151,7 +151,7 @@ class RightButtons extends Component {
     const displayButtonDraw =
       personSharingScreen && archiveID === videoBeingShared.id;
     let marginTop = marginTopApp;
-    if (!portrait) marginTop = marginTopAppLanscape;
+    if (!portrait) marginTop = marginTopAppLandscape;
     return (
       <View
         style={[styles.colButtonsRight, {top: marginTop + heightHeaderHome}]}>

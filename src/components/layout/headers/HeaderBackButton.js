@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {StyleSheet, Text, Animated, View} from 'react-native';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
-import sizes, {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
+import sizes, {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 import Loader from '../loaders/Loader';
 import colors from '../../style/colors';
 import ButtonColor from '../Views/Button';
@@ -238,7 +238,7 @@ class HeaderBackButton extends Component {
   render() {
     const {imgHeader, currentScreenSize, opacityHeader} = this.props;
     const {portrait} = currentScreenSize;
-    const marginTop = portrait ? marginTopApp : marginTopAppLanscape;
+    const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
 
     const {
       AnimateOpacityTitle,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   animatedButtonStyle: {
     height: 48,
     width: 48,
-    borderRadius: 23.8,
+    borderRadius: 24,
     borderWidth: 1,
     backgroundColor: 'white',
     // overFlow: 'hidden',

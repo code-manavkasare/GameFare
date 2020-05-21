@@ -10,7 +10,7 @@ import colors from '../../../../style/colors';
 import {
   marginTopApp,
   heightHeaderHome,
-  marginTopAppLanscape,
+  marginTopAppLandscape,
 } from '../../../../style/sizes';
 
 class ButtonShareVideo extends Component {
@@ -86,7 +86,7 @@ class ButtonShareVideo extends Component {
   buttonStart() {
     const {portrait} = this.props;
     let marginTop = marginTopApp + heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
+    if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
     const style = {
       position: 'absolute',
       zIndex: 600,
@@ -112,7 +112,7 @@ class ButtonShareVideo extends Component {
   buttonStop() {
     const {portrait} = this.props;
     let marginTop = marginTopApp + heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
+    if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
     const style = {
       position: 'absolute',
       zIndex: 600,

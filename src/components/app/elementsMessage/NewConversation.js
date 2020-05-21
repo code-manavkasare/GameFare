@@ -18,7 +18,7 @@ import colors from '../../style/colors';
 import {
   marginTopApp,
   heightHeaderHome,
-  marginTopAppLanscape,
+  marginTopAppLandscape,
 } from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -128,7 +128,7 @@ class NewConversation extends React.Component {
   newConversationPage(selectedUsers) {
     const {portrait} = this.props;
     let marginTopAdd = marginTopApp;
-    if (!portrait) marginTopAdd = marginTopAppLanscape;
+    if (!portrait) marginTopAdd = marginTopAppLandscape;
     return (
       <View style={{marginTop: heightHeaderHome + marginTopAdd}}>
         {this.searchInput(selectedUsers)}

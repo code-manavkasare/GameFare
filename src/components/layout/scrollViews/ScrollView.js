@@ -13,7 +13,7 @@ import {
 import {connect} from 'react-redux';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
+import {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 
 class ScrollViewPage extends PureComponent {
   constructor(props) {
@@ -30,7 +30,7 @@ class ScrollViewPage extends PureComponent {
   styleScrollView() {
     let {marginTop, currentScreenSize} = this.props;
     let {portrait} = currentScreenSize;
-    const marginTopAdded = portrait ? marginTopApp : marginTopAppLanscape;
+    const marginTopAdded = portrait ? marginTopApp : marginTopAppLandscape;
     return {
       marginTop: marginTop + marginTopAdded,
     };
