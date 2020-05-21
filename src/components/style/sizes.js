@@ -6,7 +6,7 @@ var heightPicture = 280;
 var heightFooterBooking = 80;
 var heightFooter = 70;
 var marginTopApp = 10;
-let marginTopAppLanscape = 0;
+let marginTopAppLandscape = 0;
 var heightHeaderHome = 75;
 var heightHeaderFilter = 100;
 var heightHeaderHomeSearch = 130;
@@ -22,6 +22,9 @@ let heightHeaderStream = 60;
 let offsetBottomHeaderStream = 10;
 let heightCardSession = 90;
 let widthCardSession = width;
+
+let marginTopDrawing = 0;
+let marginLeftDrawing = 0;
 
 if (Platform.OS === 'ios') {
   height0 = 0;
@@ -48,7 +51,6 @@ if (Platform.OS === 'ios') {
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 30;
-
   } else if (height === 896) {
     marginTopHeader = 48;
     heightPicture = 280;
@@ -61,7 +63,6 @@ if (Platform.OS === 'ios') {
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;
-
   } else if (height === 667) {
     heightFooterBooking = 60;
     heightHeaderFilter = 100;
@@ -74,6 +75,16 @@ if (Platform.OS === 'ios') {
     heightHeaderHomeSearch = 130;
     initialHeightControlBar = 80;
     offsetFooterStreaming = 0;
+  } else if (height === 1024) {
+    marginLeftDrawing = 81.5;
+  } else if (height === 1112) {
+    marginLeftDrawing = 104.5;
+  } else if (height === 1080) {
+    marginLeftDrawing = 101.25;
+  } else if (height === 1194) {
+    marginLeftDrawing = 81.7;
+  } else if (height === 1366) {
+    marginLeftDrawing = 129;
   }
 }
 
@@ -100,7 +111,7 @@ module.exports = {
   widthCardSession,
   heightHeaderStream,
   offsetBottomHeaderStream,
-  marginTopAppLanscape,
+  marginTopAppLandscape,
   marginBottomAppLandscade,
   ratio,
 };

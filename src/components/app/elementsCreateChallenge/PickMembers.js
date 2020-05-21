@@ -18,7 +18,7 @@ import colors from '../../style/colors';
 import {
   heightHeaderHome,
   marginTopApp,
-  marginTopAppLanscape,
+  marginTopAppLandscape,
 } from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -174,7 +174,7 @@ class NewConversation extends React.Component {
     } = this.props.currentScreenSize;
     const {route} = this.props;
     const {displaySwitch} = route.params;
-    const marginTop = portrait ? marginTopApp : marginTopAppLanscape;
+    const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
     return (
       <View style={{marginTop: heightHeaderHome + marginTop}}>
         {displaySwitch && (

@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import colors from '../../style/colors';
-import sizes, {marginTopApp, marginTopAppLanscape} from '../../style/sizes';
+import sizes, {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 
 class ScrollViewPage extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class ScrollViewPage extends Component {
   styleScrollView() {
     let {marginTop, marginBottomScrollView, currentScreenSize} = this.props;
     let {portrait} = currentScreenSize;
-    const marginTopAdded = portrait ? marginTopApp : marginTopAppLanscape;
+    const marginTopAdded = portrait ? marginTopApp : marginTopAppLandscape;
     if (!marginTop) marginTop = 0;
     return {
       marginTop: marginTop + marginTopAdded,

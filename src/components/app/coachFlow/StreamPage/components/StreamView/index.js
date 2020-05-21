@@ -21,7 +21,6 @@ import isEqual from 'lodash.isequal';
 import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
-import {navigate} from '../../../../../../../NavigationService';
 
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
@@ -44,6 +43,7 @@ import {
   heightHeaderHome,
   heightCardSession,
   marginTopApp,
+  marginTopAppLandscape,
 } from '../../../../../style/sizes';
 
 import WatchVideoPage from '../../../WatchVideoPage/index';
@@ -225,7 +225,7 @@ class StreamPage extends Component {
           });
         const members = session.members;
         if (members) members[userID];
-        console.log('after load session', session);
+
         that.openVideoShared(session);
         return that.setState({
           coachSession: session,
@@ -251,25 +251,6 @@ class StreamPage extends Component {
     }
   }
   async endCoachSession(hangup) {
-    // const isVideoBeingUploaded = this.footerRef.getVideoUploadStatus();
-
-    // if (isVideoBeingUploaded)
-    //   return navigate('Alert', {
-    //     title: 'A video is being uploaded.',
-    //     textButton: 'Continue',
-    //     subtitle: 'Do you wish to continue?',
-    //     onGoBack: async () => {
-    //       if (hangup) await this.open(false);
-    //       await this.setState({open: false});
-    //       return true;
-    //     },
-    //     icon: (
-    //       <Image
-    //         style={{height: 35, width: 35, borderRadius: 20}}
-    //         source={{uri: isVideoBeingUploaded.thumbnail}}
-    //       />
-    //     ),
-    //   });
     if (hangup) await this.open(false);
     await this.setState({open: false});
     return true;
@@ -311,9 +292,7 @@ class StreamPage extends Component {
     });
   };
   pausedView(userIsAlone) {
-    let style = userIsAlone
-      ? styles.OTPublisherAlone
-      : styles.OTSubscriberNotAlone;
+    let style = this.stylePublisher(userIsAlone);
 
     style = {
       ...style,
@@ -322,9 +301,19 @@ class StreamPage extends Component {
       zIndex: 2,
     };
 
+    let styleTextAlone = {};
+    if (!userIsAlone)
+      styleTextAlone = {
+        fontSize: 9,
+        marginBottom: 27,
+      };
+
     return (
       <View style={style}>
-        <Text style={[styleApp.textBold, {color: colors.white}]}>Paused</Text>
+        <Text
+          style={[styleApp.textBold, styleTextAlone, {color: colors.white}]}>
+          Paused
+        </Text>
       </View>
     );
   }
@@ -343,6 +332,17 @@ class StreamPage extends Component {
     return {
       height: currentScreenSize.currentHeight,
       width: currentScreenSize.currentWidth,
+    };
+  }
+  stylePublisher(userIsAlone) {
+    if (userIsAlone) return styles.OTPublisherAlone;
+
+    const {portrait} = this.props.currentScreenSize;
+    let marginTop = marginTopApp;
+    if (!portrait) marginTop = marginTopAppLandscape;
+    return {
+      ...styles.OTSubscriberNotAlone,
+      top: marginTop + (heightHeaderHome - 48) / 2,
     };
   }
   streamPage() {
@@ -387,11 +387,7 @@ class StreamPage extends Component {
             token={member.tokenTokbox}>
             <OTPublisher
               ref={this.otPublisherRef}
-              style={
-                userIsAlone
-                  ? styles.OTPublisherAlone
-                  : styles.OTSubscriberNotAlone
-              }
+              style={this.stylePublisher(userIsAlone)}
               properties={{
                 cameraPosition,
                 videoSource: 'camera',
@@ -567,13 +563,12 @@ const styles = StyleSheet.create({
     zIndex: 8,
   },
   OTSubscriberNotAlone: {
-    width: 90,
-    height: 120,
-    borderRadius: 5,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     overflow: 'hidden',
     position: 'absolute',
-    right: 20,
-    top: heightHeaderHome + marginTopApp + 10,
+    right: '5%',
     zIndex: 4,
   },
   OTPublisherAlone: {
