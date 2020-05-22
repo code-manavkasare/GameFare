@@ -306,7 +306,7 @@ class StreamPage extends Component {
         currentHeight / subscribers.length,
       );
       let ratioVideo = ratio(16, 9);
-      if (member.portrait) ratioVideo = ratio(9, 16);
+      if (member?.portrait) ratioVideo = ratio(9, 16);
 
       let w = currentWidth;
       let h = currentWidth * ratioVideo;
@@ -314,7 +314,6 @@ class StreamPage extends Component {
         h = currentHeight;
         w = currentHeight / ratioVideo;
       }
-      console.log('subscriber', w, h, member.portrait);
       const styleSubscriber = {
         ...styleApp.center,
         height: currentHeight / subscribers.length,
