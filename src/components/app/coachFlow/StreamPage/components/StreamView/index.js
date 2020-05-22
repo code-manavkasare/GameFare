@@ -44,6 +44,7 @@ import {
   heightCardSession,
   marginTopApp,
   marginTopAppLandscape,
+  ratio,
 } from '../../../../../style/sizes';
 
 import WatchVideoPage from '../../../WatchVideoPage/index';
@@ -97,13 +98,15 @@ class StreamPage extends Component {
 
     this.publisherEventHandlers = {
       streamCreated: async (event) => {
-        const {userID, coachSessionID} = this.props;
+        const {userID, coachSessionID, currentScreenSize} = this.props;
+        const {portrait} = currentScreenSize;
         await database()
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: true,
             streamIdTokBox: event.streamId,
             connectionIdTokbox: event.connectionId,
+            portrait: portrait,
           });
         this.setState({
           isConnected: true,
@@ -117,6 +120,7 @@ class StreamPage extends Component {
     };
     this.componentDidMount = this.componentDidMount.bind(this);
   }
+
   async componentDidMount() {
     this.props.onRef(this);
     const {coachSessionID} = this.props;
@@ -148,6 +152,20 @@ class StreamPage extends Component {
       };
     }
     return {};
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const {portrait} = this.props.currentScreenSize;
+    const {userID, coachSessionID} = this.props;
+
+    if (
+      portrait !== prevProps.currentScreenSize.portrait &&
+      this.state.isConnected
+    )
+      database()
+        .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+        .update({
+          portrait: portrait,
+        });
   }
 
   async open(nextVal) {
@@ -276,17 +294,38 @@ class StreamPage extends Component {
     return 'back';
   }
   renderSubscribers = (subscribers) => {
+    const {coachSession} = this.state;
     const {currentHeight, currentWidth} = this.props.currentScreenSize;
+    console.log('subscribers', subscribers);
     return subscribers.map((streamId, index) => {
+      const member = Object.values(coachSession.members).filter(
+        (member) => member.streamIdTokBox === streamId,
+      )[0];
+      const ratioScreen = ratio(
+        currentWidth,
+        currentHeight / subscribers.length,
+      );
+      let ratioVideo = ratio(16, 9);
+      if (member.portrait) ratioVideo = ratio(9, 16);
+
+      let w = currentWidth;
+      let h = currentWidth * ratioVideo;
+      if (ratioScreen < ratioVideo) {
+        h = currentHeight;
+        w = currentHeight / ratioVideo;
+      }
+      console.log('subscriber', w, h, member.portrait);
       const styleSubscriber = {
+        ...styleApp.center,
         height: currentHeight / subscribers.length,
         width: currentWidth,
         top: index * (currentHeight / subscribers.length),
         position: 'absolute',
+        backgroundColor: colors.title,
       };
       return (
         <View key={streamId} style={styleSubscriber}>
-          <OTSubscriberView streamId={streamId} style={styleApp.fullSize} />
+          <OTSubscriberView streamId={streamId} style={{width: w, height: h}} />
         </View>
       );
     });
