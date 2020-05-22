@@ -37,10 +37,13 @@ export default class CompleteFields extends Component {
     const {userID} = this.props.params;
     const {firstname, lastname, pictureUri} = this.state;
 
-    const profilePictureUrl = await uploadPictureFirebase(
-      pictureUri,
-      'users/' + userID + '/userInfo/',
-    );
+    let profilePictureUrl = null;
+    if (pictureUri !== '') {
+      profilePictureUrl = await uploadPictureFirebase(
+        pictureUri,
+        'users/' + userID + '/userInfo/',
+      );
+    }
 
     let updates = {};
     updates[`users/${this.props.params.userID}/profileCompleted`] = true;
@@ -152,7 +155,7 @@ export default class CompleteFields extends Component {
             onPressColor={colors.greenClick}
             loader={loader}
             click={() => this.confirm()}
-            enable={firstname !== '' && lastname !== '' && pictureUri !== ''}
+            enable={firstname !== '' && lastname !== ''}
             text={'Complete profile'}
             ref={(input) => {
               this.inputLastname = input;
