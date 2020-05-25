@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Animated, Image} from 'react-native';
 import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
@@ -161,10 +161,13 @@ export default class VideoPlayer extends Component {
     );
   }
   clickVideo() {
+    console.log('click video !!!!!!!!');
     Animated.timing(
       this.opacityControlBar,
       timing(!this.opacityControlBar._value, 200),
-    ).start();
+    ).start(() => {
+      console.log('done video click');
+    });
   }
   render() {
     const {
@@ -220,7 +223,20 @@ export default class VideoPlayer extends Component {
               rate={playRate}
               onLoad={async (callback) => {
                 const {setSizeVideo} = this.props;
-                if (setSizeVideo) setSizeVideo(callback.naturalSize);
+                console.log('video loaded!!!', callback);
+                console.log('uri,', source);
+                if (setSizeVideo)
+                  Image.getSize(
+                    placeHolderImg,
+                    (width, height) => {
+                      setSizeVideo({width, height});
+                    },
+                    (error) => {
+                      console.error(
+                        `Couldn't get the image size: ${error.message}`,
+                      );
+                    },
+                  );
 
                 await this.setState({
                   totalTime: callback.duration,

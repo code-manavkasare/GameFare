@@ -59,7 +59,7 @@ class PastSessions extends Component {
         undisplayEmptyList={false}
         placeHolder={styles.placeHolderScrollViewX}
         imageNoEvent="group"
-        messageNoEvent={"You haven't record any session yet"}
+        messageNoEvent={"You haven't recorded any session yet."}
         content={() => this.listSessions(sessions)}
         onRef={(ref) => (this.scrollViewRef1 = ref)}
       />

@@ -37,7 +37,9 @@ class MainTabIcon extends React.Component {
     } = this.props;
     const conditionDisplayPastille =
       Object.values(discussions).filter((discussion) => {
-        let usersRead = discussion.lastMessage.usersRead;
+        const lastMessage = discussion.lastMessage;
+        if (!lastMessage) return [];
+        let usersRead = lastMessage.usersRead;
         if (!usersRead) usersRead = [];
         if (!usersRead[userID]) return true;
         return false;

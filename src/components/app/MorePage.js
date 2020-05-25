@@ -202,9 +202,10 @@ class MorePage extends Component {
     Communications.phonecall('+13477380603', true);
   }
   sendEmail() {
+    const {userConnected, infoUser} = this.props;
     var email1 = 'contact@getgamefare.com';
-    var subject =
-      this.props.infoUser.firstname + ' ' + this.props.infoUser.lastname;
+    let subject = infoUser.firstname + ' ' + infoUser.lastname;
+    if (!userConnected) subject = '';
     Communications.email([email1], null, null, subject, '');
   }
 
