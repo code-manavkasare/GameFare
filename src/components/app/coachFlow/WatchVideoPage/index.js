@@ -187,11 +187,12 @@ class WatchVideoPage extends Component {
           paused={video.paused}
           playRate={video.playRate}
           index={archiveID}
+          resizeMode="contain"
           userID={userID}
           currentTime={video.currentTime}
           userIDLastUpdate={video.userIDLastUpdate}
           setSizeVideo={(sizeVideo) => {
-            console.log('setsize video,', sizeVideo);
+            console.log('setsize video,', sizeVideo, archiveID);
             this.setState({sizeVideo: sizeVideo});
           }}
           hideFullScreenButton={true}
@@ -206,13 +207,13 @@ class WatchVideoPage extends Component {
                 zIndex: 3,
               }}
               activeOpacity={1}
-              onPress={() => this.videoPlayerRef.clickVideo()}>
+              // onPress={() => this.videoPlayerRef.clickVideo()}
+            >
               <DrawView
                 coachSessionID={coachSessionID}
                 archiveID={archiveID}
                 videoBeingShared={videoBeingShared}
                 sizeVideo={sizeVideo}
-
                 drawings={
                   videoBeingShared?.drawings ? videoBeingShared.drawings : {}
                 }

@@ -81,8 +81,7 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
   },
   cardConversation: {
-    height: 85,
-    // flex: 1,
+    height: 90,
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: '5%',
