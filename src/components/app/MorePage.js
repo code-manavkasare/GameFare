@@ -295,8 +295,8 @@ class MorePage extends Component {
             <Text style={styles.title}>Account parameters</Text>
             <View style={styleApp.divider} />
             {this.button('video', 'Video Library', 'VideoLibraryPage')}
-            {this.button('credit-card', 'Payment', 'Payments')}
-            {this.button('wallet', 'Wallet', 'Wallet')}
+            {/* {this.button('credit-card', 'Payment', 'Payments')}
+            {this.button('wallet', 'Wallet', 'Wallet')} */}
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
           </View>
         ) : (

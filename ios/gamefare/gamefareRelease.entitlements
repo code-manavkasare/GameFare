@@ -8,5 +8,9 @@
 	<array>
 		<string>applinks:gamefare.app.link</string>
 	</array>
+	<key>com.apple.developer.in-app-payments</key>
+	<array>
+		<string>merchant.com.gamefare</string>
+	</array>
 </dict>
 </plist>
