@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Animated, StyleSheet, Text, View} from 'react-native';
+import {Animated, StyleSheet, Text, View, AppState} from 'react-native';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import {openSettings} from 'react-native-permissions';
@@ -9,15 +9,39 @@ import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import AllIcons from '../../../layout/icons/AllIcons';
 import {heightHeaderHome} from '../../../style/sizes';
+import {permission} from '../../../functions/pictures';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 class NotificationPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      appState: AppState.currentState,
+      permission: false,
+    };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  async componentDidMount() {
+    this.loadPermission();
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+  async loadPermission() {
+    const permissionNotification = await permission('notification');
+    this.setState({permission: permissionNotification});
+  }
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.loadPermission();
+    }
+    this.setState({appState: nextAppState});
+  };
 
   button = (text, color, click) => {
     return (
@@ -45,8 +69,7 @@ class NotificationPage extends Component {
     );
   }
   notificationView() {
-    const {params} = this.props.route;
-    const {permission} = params;
+    const {permission} = this.state;
     return (
       <View style={styleApp.marginView}>
         <Row>
