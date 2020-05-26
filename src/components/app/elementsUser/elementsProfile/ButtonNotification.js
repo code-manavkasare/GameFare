@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, AppState} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
@@ -17,13 +17,29 @@ class CardTransfer extends Component {
     this.state = {
       loader: true,
       permission: false,
+      appState: AppState.currentState,
     };
   }
   async componentDidMount() {
+    this.loadPermission();
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+  async loadPermission() {
     const permissionNotification = await permission('notification');
-    console.log('permissionNotification', permissionNotification);
     this.setState({permission: permissionNotification});
   }
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.loadPermission();
+    }
+    this.setState({appState: nextAppState});
+  };
 
   render() {
     const {loader, permission} = this.state;
@@ -59,7 +75,7 @@ class CardTransfer extends Component {
             </Row>
           );
         }}
-        click={() => navigate('NotificationPage', {permission: permission})}
+        click={() => navigate('NotificationPage')}
         color="white"
         style={styles.button}
         onPressColor={colors.off}
