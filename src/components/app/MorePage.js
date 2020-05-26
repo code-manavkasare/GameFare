@@ -20,6 +20,7 @@ import Communications from 'react-native-communications';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
+import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
 import NavigationService, {navigate} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
@@ -297,6 +298,8 @@ class MorePage extends Component {
             {this.button('video', 'Video Library', 'VideoLibraryPage')}
             {/* {this.button('credit-card', 'Payment', 'Payments')}
             {this.button('wallet', 'Wallet', 'Wallet')} */}
+            <ButtonNotification displayBeforeLoader={true} />
+
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
           </View>
         ) : (
