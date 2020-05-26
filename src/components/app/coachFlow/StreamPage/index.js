@@ -28,6 +28,7 @@ import ListStreams from './components/ListStreams';
 import Loader from '../../../layout/loaders/Loader';
 import {timeout} from '../../../functions/coach';
 import HeaderListStream from './components/HeaderListStream';
+import ButtonNotification from '../../elementsUser/elementsProfile/ButtonNotification';
 
 class StreamTab extends Component {
   constructor(props) {
@@ -71,8 +72,9 @@ class StreamTab extends Component {
           userConnected={userConnected}
           hideButtonNewSession={!userConnected || !permissionsCamera}
         />
-        <View style={{height: offsetBottomHeaderStream / 2}} />
 
+        <View style={{height: offsetBottomHeaderStream / 2}} />
+        <ButtonNotification displayBeforeLoader={true} />
         {userConnected && initialLoader && this.viewLoader()}
 
         {!userConnected ? (

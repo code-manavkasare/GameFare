@@ -46,7 +46,7 @@ class ListStreams extends Component {
   };
   list = () => {
     const coachSessions = this.sessionsArray();
-    const {AnimatedHeaderValue, userConnected,permissionsCamera} = this.props;
+    const {AnimatedHeaderValue, userConnected, permissionsCamera} = this.props;
     if (!userConnected || !permissionsCamera) return null;
     if (Object.values(coachSessions).length === 0)
       return (
@@ -63,7 +63,7 @@ class ListStreams extends Component {
           <StreamView
             index={Number(i)}
             offsetScrollView={
-              marginTopApp + heightHeaderStream + offsetBottomHeaderStream
+              marginTopApp + heightHeaderStream + offsetBottomHeaderStream + 55
             }
             heightCardSession={heightCardSession}
             coachSessionID={session.id}

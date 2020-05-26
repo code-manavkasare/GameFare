@@ -32,7 +32,9 @@ class HeaderListStream extends Component {
     return (
       <Row style={styles.header}>
         <Col size={85} style={styleApp.center2}>
-          <Text style={styleApp.title}>Stream your performance</Text>
+          <Text style={[styleApp.title, {fontSize: 18}]}>
+            Stream your performance
+          </Text>
         </Col>
 
         {!hideButtonNewSession && (

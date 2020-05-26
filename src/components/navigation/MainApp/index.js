@@ -15,7 +15,8 @@ import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
 
 import Conversation from '../../app/elementsMessage/Conversation';
 
-import Webview from '../../layout/Views/Webview'
+import Webview from '../../layout/Views/Webview';
+import NotificationPage from '../../app/elementsUser/elementsProfile/NotificationPage';
 
 const Stack = createStackNavigator();
 const MainApp = () => {
@@ -42,7 +43,8 @@ const MainApp = () => {
       <Stack.Screen name="ProfilePage" component={ProfilePage} />
 
       <Stack.Screen name="Webview" component={Webview} />
-      
+
+      <Stack.Screen name="NotificationPage" component={NotificationPage} />
     </Stack.Navigator>
   );
 };

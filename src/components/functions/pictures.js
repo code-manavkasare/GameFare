@@ -1,7 +1,11 @@
 import {Platform, PermissionsAndroid} from 'react-native';
 import storage from '@react-native-firebase/storage';
 import CameraRoll from '@react-native-community/cameraroll';
-import Permissions, {request, PERMISSIONS} from 'react-native-permissions';
+import Permissions, {
+  request,
+  PERMISSIONS,
+  checkNotifications,
+} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-picker';
 import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
@@ -25,6 +29,13 @@ const permission = async (type) => {
     if (Platform.OS === 'ios') {
       var permission = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
       if (permission !== 'granted') return false;
+      return true;
+    }
+  } else if (type === 'notification') {
+    if (Platform.OS === 'ios') {
+      const {status, settings} = await checkNotifications();
+      console.log('status', status, settings);
+      if (status !== 'granted') return false;
       return true;
     }
   }

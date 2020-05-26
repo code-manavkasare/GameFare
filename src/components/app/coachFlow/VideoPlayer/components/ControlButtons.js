@@ -41,6 +41,7 @@ export default class ControlButtons extends Component {
       return {
         paused: props.paused,
       };
+    return {};
   }
   getPaused() {
     return this.state.paused;
