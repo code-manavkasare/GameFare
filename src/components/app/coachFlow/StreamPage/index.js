@@ -74,7 +74,7 @@ class StreamTab extends Component {
         />
 
         <View style={{height: offsetBottomHeaderStream / 2}} />
-        <ButtonNotification displayBeforeLoader={true} />
+        {userConnected && <ButtonNotification displayBeforeLoader={true} />}
         {userConnected && initialLoader && this.viewLoader()}
 
         {!userConnected ? (
