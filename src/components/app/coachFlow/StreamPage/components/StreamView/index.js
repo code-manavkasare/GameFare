@@ -51,6 +51,7 @@ import WatchVideoPage from '../../../WatchVideoPage/index';
 import MembersView from './components/MembersView';
 import Footer from './footer/index';
 import CardStreamView from './components/CardStreamView';
+import axios from 'axios';
 
 const getPositionView = (
   offsetScrollView,
@@ -196,8 +197,9 @@ class StreamPage extends Component {
       await StatusBar.setBarStyle('light-content', true);
       ////// close current opened session
       const currentOpenSession = sessionInfo.objectID;
-      if (currentOpenSession && coachSessionID !== currentOpenSession)
-        await closeCurrentSession(currentOpenSession);
+      console.log('currentOpenSession', currentOpenSession, coachSessionID);
+
+      // await closeCurrentSession(coachSessionID);
       /////////////////////////
 
       await this.setState({
@@ -206,7 +208,36 @@ class StreamPage extends Component {
         open: true,
       });
       await layoutAction('setLayout', {isFooterVisible: false});
-      Animated.spring(this.animatedPage, native(1, 250)).start();
+      Animated.spring(this.animatedPage, native(1, 250)).start(async () => {
+        const {coachSession} = this.state;
+        const {coachSessionID, userID} = this.props;
+        const member = this.member(coachSession);
+        console.log(
+          'member.expireTimeToken',
+          member.expireTimeToken - Date.now(),
+        );
+
+        if (member.expireTimeToken < Date.now() || !member.expireTimeToken) {
+          var url = `${
+            Config.FIREBASE_CLOUD_FUNCTIONS_URL
+          }updateSessionTokenUser`;
+          console.log('call cloud function', {
+            coachSessionID,
+            userID,
+            coachSessionIDOpentok: coachSession.vonageSessionId,
+            isOrganizer: coachSession.info.organizer === userID,
+          });
+          const updateSessionTokenUser = await axios.get(url, {
+            params: {
+              coachSessionID,
+              userID,
+              coachSessionIDOpentok: coachSession.vonageSessionId,
+              isOrganizer: (coachSession.info.organizer === userID).toString(),
+            },
+          });
+          console.log('updateSessionTokenUser', updateSessionTokenUser);
+        }
+      });
     } else {
       await layoutAction('setLayout', {isFooterVisible: true});
       await StatusBar.setBarStyle('dark-content', true);
@@ -222,12 +253,18 @@ class StreamPage extends Component {
       });
     }
   }
+  member(session) {
+    const {userID} = this.props;
+    const members = session.members;
+    if (members) return members[userID];
+    return {};
+  }
   async loadCoachSession() {
     await this.setState({loader: true});
     const {userID, coachSessionID} = this.props;
 
     const that = this;
-
+    console.log('start load session', coachSessionID);
     database()
       .ref('coachSessions/' + coachSessionID)
       .on('value', async function(snap) {
@@ -241,8 +278,6 @@ class StreamPage extends Component {
             coachSession: false,
             loader: false,
           });
-        const members = session.members;
-        if (members) members[userID];
 
         that.openVideoShared(session);
         return that.setState({
@@ -296,7 +331,6 @@ class StreamPage extends Component {
   renderSubscribers = (subscribers) => {
     const {coachSession} = this.state;
     const {currentHeight, currentWidth} = this.props.currentScreenSize;
-    console.log('subscribers', subscribers);
     return subscribers.map((streamId, index) => {
       const member = Object.values(coachSession.members).filter(
         (member) => member.streamIdTokBox === streamId,
@@ -410,7 +444,7 @@ class StreamPage extends Component {
         style={[styleApp.fullSize, {opacity: this.opacityStreamView}]}>
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
-          : !isConnected
+          : !member.isConnected
           ? this.loaderView('We are connecting you to the session...')
           : null}
 

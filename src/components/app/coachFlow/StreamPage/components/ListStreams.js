@@ -34,7 +34,6 @@ class ListStreams extends Component {
     return {};
   }
   openSession(objectID) {
-    console.log('open Session!', objectID);
     this.itemsRef[objectID].open(true);
   }
   sessionsArray = () => {

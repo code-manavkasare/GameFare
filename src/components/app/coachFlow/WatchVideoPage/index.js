@@ -192,11 +192,10 @@ class WatchVideoPage extends Component {
           currentTime={video.currentTime}
           userIDLastUpdate={video.userIDLastUpdate}
           setSizeVideo={(sizeVideo) => {
-            console.log('setsize video,', sizeVideo, archiveID);
             this.setState({sizeVideo: sizeVideo});
           }}
           hideFullScreenButton={true}
-          placeHolderImg={thumbnail}
+          placeHolderImg={thumbnail ? thumbnail : ''}
           propsComponentOnTop={videoBeingShared.drawings}
           componentOnTop={() => (
             <TouchableOpacity

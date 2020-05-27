@@ -276,17 +276,14 @@ class MorePage extends Component {
                   noUpdateStatusBar: true,
                   titleHeader: 'Select your contacts',
                   onGoBack: async (members) => {
-                    console.log('members', members);
                     let phoneNumbers = Object.values(members).map(
                       (member) => member.info.phoneNumber,
                     );
                     const {url} = await createBranchUrl({});
-                    console.log('url', url);
                     const {completed} = await sendSMSFunction(
                       phoneNumbers,
                       'Click here to join the gamefare community. ' + url,
                     );
-                    console.log('sendMessages', completed);
                     if (completed) return navigate('Profile');
                     return true;
                   },

@@ -61,9 +61,6 @@ class LocationSelector extends Component {
       initialLoader: true,
     };
   }
-  componentDidMount() {
-    console.log('this.props.', this.props);
-  }
   async changeLocation(value) {
     try {
       this.setState({textInput: value});

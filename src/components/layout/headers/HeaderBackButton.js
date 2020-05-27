@@ -129,7 +129,6 @@ class HeaderBackButton extends Component {
       sizeIconOffset,
       typeIconOffset,
     } = this.props;
-    console.log('');
     const {borderColorIcon} = this.animatedValues();
     if (iconOffset)
       return (

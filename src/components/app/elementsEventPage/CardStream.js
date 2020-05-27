@@ -27,7 +27,6 @@ export default class CardStream extends Component {
     this.loadStream(this.props.streamID);
   }
   componentWillUnmount() {
-    console.log('CARD STREAM UNMOUNT');
     if (this.state.event) {
       database()
         .ref('streams/' + this.props.streamID)

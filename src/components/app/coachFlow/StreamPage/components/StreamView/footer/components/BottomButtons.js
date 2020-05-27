@@ -92,7 +92,6 @@ class BottomButton extends Component {
     );
   }
   startRecording = async () => {
-    console.log('before start recording');
     const messageCallback = (response) => {
       if (response.error) {
         console.log(`Error initializing recording: ${response.message}`);

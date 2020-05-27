@@ -97,7 +97,6 @@ class CardConversation extends React.Component {
 
   async clickCard(conversation, lastMessage) {
     const {navigation} = this.props;
-    console.log('conversation click', conversation);
     if (this.props.myConversation && lastMessage.id !== 'noMessage') {
       await database()
         .ref(

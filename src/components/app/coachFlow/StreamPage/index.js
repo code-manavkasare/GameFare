@@ -52,6 +52,11 @@ class StreamTab extends Component {
       this.openSession(params.objectID);
   };
   openSession = async (objectID) => {
+    this.props.coachAction('setSessionInfo', {
+      objectID: objectID,
+      scrollDisabled: true,
+      autoOpen: true,
+    });
     await timeout(600);
     this.listStreamRef.openSession(objectID);
   };

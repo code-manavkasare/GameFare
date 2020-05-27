@@ -173,7 +173,7 @@ class CardUploading extends Component {
 
     const destinationCloud = `archivedStreams/${id}`;
     const thumbnailUrl = await this.uploadThumbnail(
-      videoInfo.thumbnail,
+      'file:///private' + videoInfo.thumbnail,
       destinationCloud,
       'thumbnail.jpg',
     );
