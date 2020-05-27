@@ -32,9 +32,16 @@ function messageName(infoUser) {
   return infoUser.firstname + ' ' + infoUser.lastname;
 }
 
+const formatPhoneNumber = (phoneNumber) => {
+  let phone = phoneNumber.replace(/[^\w\s]/gi, '');
+  phone = phoneNumber.replace(/ /g, '');
+  return phone;
+};
+
 module.exports = {
   autocompleteSearchUsers,
   userObject,
   messageAvatar,
   messageName,
+  formatPhoneNumber,
 };

@@ -28,6 +28,7 @@ import {
   placeholder,
 } from '../../functions/phoneNumber';
 import {timeout} from '../../functions/coach';
+import {formatPhoneNumber} from '../../functions/users';
 
 const ListCountry = require('../elementsFlags/country.json');
 
@@ -59,11 +60,7 @@ class PhoneFields extends Component {
   async next(phone) {
     this.setState({loader: true});
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
-    var phoneNumber = phone;
-    phoneNumber = phoneNumber.replace('-', '');
-    phoneNumber = phoneNumber.replace(')', '');
-    phoneNumber = phoneNumber.replace('(', '');
-    phoneNumber = phoneNumber.replace(/ /g, '');
+    const phoneNumber = formatPhoneNumber(phone);
 
     const promiseAxios = await axios.get(url, {
       params: {
