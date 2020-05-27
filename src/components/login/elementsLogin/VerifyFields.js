@@ -12,16 +12,9 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {userAction} from '../../../actions/userActions';
 import {timeout} from '../../functions/coach';
+import {formatPhoneNumber} from '../../functions/users';
 
 const CELL_COUNT = 4;
-
-const formatPhoneNumber = (phoneNumber) => {
-  phoneNumber = phoneNumber.replace('-', '');
-  phoneNumber = phoneNumber.replace('(', '');
-  phoneNumber = phoneNumber.replace(')', '');
-  phoneNumber = phoneNumber.replace(/ /g, '');
-  return phoneNumber;
-};
 
 class VerifyFields extends Component {
   constructor(props) {
