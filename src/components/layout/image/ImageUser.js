@@ -40,8 +40,6 @@ export default class ImageUser extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          console.log('click imgae');
-          console.log('onClick', onClick);
           if (onClick) return onClick();
         }}
         activeOpacity={0.9}

@@ -23,7 +23,7 @@ export default class VideoPlayer extends Component {
       paused: this.props.paused,
       placeHolderImg: this.props.placeHolderImg,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
-      totalTime: false,
+      totalTime: 0,
       videoLoaded: false,
       fullscreen: false,
       playRate: 1,
@@ -73,6 +73,7 @@ export default class VideoPlayer extends Component {
         currentTime: props.currentTime,
       };
     }
+    return {};
   }
   getState() {
     return {...this.state, currentTime: this.controlButtonRef.getCurrentTime()};
@@ -161,13 +162,10 @@ export default class VideoPlayer extends Component {
     );
   }
   clickVideo() {
-    console.log('click video !!!!!!!!');
     Animated.timing(
       this.opacityControlBar,
       timing(!this.opacityControlBar._value, 200),
-    ).start(() => {
-      console.log('done video click');
-    });
+    ).start();
   }
   render() {
     const {
@@ -223,8 +221,6 @@ export default class VideoPlayer extends Component {
               rate={playRate}
               onLoad={async (callback) => {
                 const {setSizeVideo} = this.props;
-                console.log('video loaded!!!', callback);
-                console.log('uri,', source);
                 if (setSizeVideo)
                   Image.getSize(
                     placeHolderImg,

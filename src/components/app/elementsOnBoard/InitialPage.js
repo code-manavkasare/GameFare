@@ -54,7 +54,6 @@ class InitialPage extends Component {
             objectID,
           );
         }
-        console.log('open link brancj', params);
         await this.props.navigation.navigate('TabsApp');
         if (action)
           return this.props.navigation.push(action, {objectID: objectID});

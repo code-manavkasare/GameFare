@@ -159,7 +159,6 @@ class MyEvents extends React.Component {
       numberPast = ' (' + pastEvents.length + ')';
     }
     const {past, loader} = this.state;
-    console.log('render ListEvent', futureEvents);
     return (
       <View style={{marginTop: 20}}>
         <View style={[styleApp.marginView, {marginBottom: 20}]}>

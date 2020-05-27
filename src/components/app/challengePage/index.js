@@ -77,8 +77,7 @@ class ChallengePage extends React.Component {
   }
   async componentDidMount() {
     const {route, navigation} = this.props;
-    console.log('route challene', route);
-    console.log(navigation);
+
     const {objectID} = route.params;
     this.loadEvent(objectID);
   }

@@ -46,7 +46,6 @@ class Draw extends Component {
     try {
       this.canvasRef.clear();
     } catch (err) {
-      console.log('error');
     }
   };
   undo = (idLastDrawing) => {
@@ -102,7 +101,6 @@ class Draw extends Component {
     let w = 0;
 
     const {currentWidth, currentHeight} = currentScreenSize;
-    console.log('sizeVideo', sizeVideo);
 
     if (sizeVideo) {
       const ratioScreen = ratio(currentWidth, currentHeight);
@@ -124,7 +122,6 @@ class Draw extends Component {
       borderColor: colors.grey,
     };
 
-    console.log('styleDrawView', styleDrawView);
     if (isMyVideo) return null;
     return (
       <Animated.View style={[styles.page, styleDrawView]}>

@@ -53,7 +53,7 @@ class CourtPositioning extends Component {
         },
       },
     );
-    console.log('responseCourtCalibration', responseCourtCalibration);
+
   }
   courtCalibration() {
     const {route} = this.props;
@@ -62,7 +62,7 @@ class CourtPositioning extends Component {
     const {loader} = this.state;
     let thumbnailsAnalytics = archive.thumbnailsAnalytics;
     if (!thumbnailsAnalytics) thumbnailsAnalytics = [thumbnail];
-    console.log('render court calibration', archive);
+
 
     return (
       <View style={styleApp.marginView}>
