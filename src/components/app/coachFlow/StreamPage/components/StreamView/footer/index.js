@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Animated} from 'react-native';
 
 import {connect} from 'react-redux';
+import isEqual from 'lodash.isequal';
 
 import BottomButtons from './components/BottomButtons';
 import VideosView from './components/VideosView';
@@ -20,7 +21,8 @@ class Footer extends Component {
   shouldComponentUpdate = (nextProps) => {
     return (
       nextProps.videoBeingShared.id !== this.props.videoBeingShared.id ||
-      nextProps.personSharingScreen !== this.props.personSharingScreen
+      nextProps.personSharingScreen !== this.props.personSharingScreen ||
+      !isEqual(nextProps.members, this.props.members)
     );
   };
   footer() {
@@ -33,6 +35,7 @@ class Footer extends Component {
       personSharingScreen,
       videoBeingShared,
       otPublisherRef,
+      members
     } = this.props;
     return (
       <Animated.View
@@ -49,6 +52,7 @@ class Footer extends Component {
           onRef={(ref) => (this.bottomButtonRef = ref)}
           clickReview={(val) => this.pastSessionsRef.open(val)}
           otPublisherRef={otPublisherRef}
+          members={members}
         />
 
         <VideosView

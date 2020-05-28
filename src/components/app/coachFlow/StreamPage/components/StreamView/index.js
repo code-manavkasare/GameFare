@@ -490,6 +490,7 @@ class StreamPage extends Component {
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.footerRef = ref)}
+          members={coachSession.members}
         />
       </Animated.View>
     );

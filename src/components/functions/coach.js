@@ -116,6 +116,14 @@ const stopRecording = (sessionIDFirebase) => {
     .update(updates);
 };
 
+const startRemoteRecording = (memberID) => {
+  
+}
+
+const stopRemoteRecording = () => {
+
+}
+
 const getMember = (session, userID) => {
   if (!session) return {};
   if (!session.members) return {};

@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableWithoutFeedback,
+  Animated, Easing
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
@@ -19,20 +20,75 @@ import styleApp from '../../../../../../../style/style';
 export default class VideoSourcePopup extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visible: false,
+      inValue: new Animated.Value(0),
+      contentValue: new Animated.Value(0)
+    };
+  }
+
+  componentDidMount() {
+    this.props.onRef(this);
+    console.log(this.props.members)
+  }
+
+  open() {
+    Animated.timing(this.state.inValue, {
+      toValue: 1,
+      duration: 150,
+      easing: Easing.inOut(Easing.linear),
+      useNativeDriver: false
+    }).start();
+    Animated.timing(this.state.contentValue, {
+      toValue: 1,
+      duration: 100,
+      delay: 50,
+      easing: Easing.inOut(Easing.linear),
+      useNativeDriver: false
+    }).start();
+    this.setState({visible: true})
+  }
+
+  close() {
+    Animated.timing(this.state.inValue, {
+      toValue: 0,
+      duration: 150,
+      easing: Easing.inOut(Easing.linear),
+      useNativeDriver: false
+    }).start();
+    Animated.timing(this.state.contentValue, {
+      toValue: 0,
+      duration: 50,
+      easing: Easing.inOut(Easing.linear),
+      useNativeDriver: false
+    }).start();
+    this.setState({visible: false})
   }
 
   render() {
+    const {visible, inValue, contentValue} = this.state;
     const {members} = this.props;
-
+    const animatedViewBottom = inValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [120, 100 + sizes.offsetFooterStreaming]
+    })
+    const animatedWidth = inValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [sizes.width - 200, sizes.width - 160]
+    })
+    
     return (
-      <View style={[styles.square, styleApp.center]}>
-        <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
-        <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
-        {members.map((member, i) => {
+      <Animated.View 
+        pointerEvents={visible?"auto":"none"} 
+        style={[styles.square, styleApp.center, {opacity: inValue, bottom:animatedViewBottom, width: animatedWidth}]}
+      >
+        <Animated.Text style={[styleApp.text, styles.text, {opacity: contentValue}]}>Choose a video source</Animated.Text>
+        <Animated.View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5, opacity: contentValue}]} />
+        {Object.values(members).map((member, i) => {
           if (member.isConnected) {
             const {firstname, lastname, picture} = member.info;
             return (
+              <Animated.View style={{width:'100%', opacity:contentValue}}>
               <ButtonColor
                 view={() => {
                   return (
@@ -68,33 +124,37 @@ export default class VideoSourcePopup extends Component {
                 style={[styles.cardUser]}
                 onPressColor={colors.off2}
               />
+              </Animated.View>
             );
           }
         })}
         <View style={styles.triangle} />
-        <TouchableWithoutFeedback onPress={() => this.props.close()}>
-          <View style={styles.fullPage} />
+        <TouchableWithoutFeedback onPress={() => this.close()}>
+          <View pointerEvents={visible?"auto":"none"} style={styles.fullPage} />
         </TouchableWithoutFeedback>
-      </View>
+      </Animated.View>
     );
   }
 }
 
-const triangleBase = 26;
+const triangleBase = 21;
 
 const styles = StyleSheet.create({
   square: {
     position: 'absolute',
     alignSelf: 'center',
-    width: sizes.width - 160,
     paddingHorizontal: 10,
-    bottom: 100 + sizes.offsetFooterStreaming,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    zIndex:2
   },
   triangle: {
-    borderLeftWidth: triangleBase / 2,
-    borderRightWidth: triangleBase / 2,
+    borderLeftWidth: triangleBase / 1.5,
+    borderRightWidth: triangleBase / 1.5,
     borderTopWidth: triangleBase,
     backgroundColor: 'transparent',
     borderLeftColor: 'transparent',
@@ -102,11 +162,17 @@ const styles = StyleSheet.create({
     borderTopColor: colors.white,
     position: 'absolute',
     bottom: -triangleBase,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    zIndex:1
   },
   cardUser: {
     height: 55,
     paddingLeft: 20,
     paddingRight: 20,
+    marginBottom: 10
   },
   imgUser: {
     width: 40,
@@ -122,9 +188,10 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   text: {
-    marginTop: 10,
+    marginTop: 15,
     marginHorizontal: 'auto',
     textAlign: 'center',
+    fontWeight:'bold'
   },
 });
 

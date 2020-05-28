@@ -225,7 +225,7 @@ class CardUploading extends Component {
         ]}>
         {size === 'sm' ? (
           <Row>
-            <ButtonColor
+            {/* <ButtonColor
               view={() => {
                 return (
                   <AllIcons
@@ -240,7 +240,7 @@ class CardUploading extends Component {
               color={colors.off2}
               style={styles.buttonClose}
               onPressColor={colors.off}
-            />
+            /> */}
             <Col size={35} style={styleApp.center}>
               <Image
                 style={styles.imgCard}

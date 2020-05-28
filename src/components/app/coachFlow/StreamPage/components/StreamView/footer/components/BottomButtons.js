@@ -3,10 +3,15 @@ import {Button, View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import {Col, Row} from 'react-native-easy-grid';
+import isEqual from 'lodash.isequal';
+
+import VideoSourcePopup from './VideoSourcePopup'
 
 import {navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
+
+import {startRemoteRecording, stopRemoteRecording} from '../../../../../../../functions/coach'
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
@@ -26,6 +31,7 @@ class BottomButton extends Component {
     this.state = {
       showPastSessionsPicker: false,
       recording: false,
+      recordingUser: undefined,
       startTimeRecording: 0,
       publishVideo: !__DEV__,
       publishAudio: !__DEV__,
@@ -33,6 +39,25 @@ class BottomButton extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const {members} = this.props
+    const {recording, startTimeRecording} = prevState
+    const member = this.member(members)
+    if (member.recording) {
+      if (!recording && member.recording.isRecording && member.recording.timestamp > startTimeRecording) {
+        console.log('Start remote recording!')
+        this.startRecording()
+      } else if (recording && !member.recording.isRecording) {
+        console.log('Stop remote recording!')
+        this.stopRecording()
+      }
+    }
+  }
+  member(members) {
+    const {userID} = this.props;
+    if (members) return members[userID];
+    return {};
   }
   getVideoUploadStatus() {
     return this.cardUploadingRef.getVideoUploadStatus();
@@ -91,6 +116,20 @@ class BottomButton extends Component {
       />
     );
   }
+  startRemoteRecording = async (member) => {
+    const recordingUser = member.id
+    console.log('start recording')
+    console.log(recordingUser)
+    this.videoSourcePopupRef.close()
+    startRemoteRecording(recordingUser)
+    this.setState({recordingUser})
+  }
+  stopRemoteRecording = async () => {
+    const {recordingUser} = this.state
+    console.log('stop recording')
+    stopRemoteRecording(recordingUser)
+    this.setState({recordingUser: undefined})
+  }
   startRecording = async () => {
     const messageCallback = (response) => {
       if (response.error) {
@@ -139,6 +178,7 @@ class BottomButton extends Component {
         console.log('videoUUID', videoUUID);
         await this.setState({
           recording: false,
+          startTimeRecording: 0
         });
 
         // if (!videoUrl)
@@ -147,7 +187,8 @@ class BottomButton extends Component {
         if (videoUrl) {
           let videoInfo = await getVideoInfo(videoUrl);
           videoInfo.localIdentifier = videoUUID;
-          this.cardUploadingRef.open(true, videoInfo);
+          await this.cardUploadingRef.open(true, videoInfo);
+          await this.cardUploadingRef.uploadFile()
         }
       }
     };
@@ -198,7 +239,7 @@ class BottomButton extends Component {
           view={() => insideViewButton()}
           click={async () => {
             const {recording} = this.state;
-            if (!recording) return this.startRecording();
+            if (!recording) return this.videoSourcePopupRef.open()
             return this.stopRecording();
           }}
           style={styles.whiteButtonRecording}
@@ -278,8 +319,24 @@ class BottomButton extends Component {
       </Row>
     );
   }
+
+  recordingSelector() {
+    const {members} = this.props
+    return (
+      <VideoSourcePopup 
+        onRef={(ref) => (this.videoSourcePopupRef = ref)}
+        members={members} 
+        close={() => {}}
+        selectMember={(member) => {this.startRemoteRecording(member)}}
+        />
+    )
+  }
+
   render() {
-    return <View>{this.rowButtons()}</View>;
+    return  <View>
+              {this.rowButtons()}
+              {this.recordingSelector()}
+            </View>;
   }
 }
 
