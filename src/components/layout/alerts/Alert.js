@@ -132,10 +132,10 @@ export default class Alert extends Component {
             <Row style={styles.buttonArea}>
               <Col size={45} style={styles.viewButton}>
                 <Button
-                  backgroundColor={'green'}
+                  backgroundColor={'red'}
                   disabled={false}
-                  onPressColor={colors.greenLight}
-                  text={listOptions[0].title || 'Yes'}
+                  onPressColor={colors.redLight}
+                  text={listOptions[1].title || 'No'}
                   click={() => this.optionClick(listOptions[0].operation)}
                   loader={this.state.loader}
                 />
@@ -143,10 +143,10 @@ export default class Alert extends Component {
               <Col size={10} />
               <Col size={45} style={styles.viewButton}>
                 <Button
-                  backgroundColor={'red'}
+                  backgroundColor={'green'}
                   disabled={false}
-                  onPressColor={colors.redLight}
-                  text={listOptions[1].title || 'No'}
+                  onPressColor={colors.greenLight}
+                  text={listOptions[0].title || 'Yes'}
                   click={() => this.optionClick(listOptions[1].operation)}
                   loader={this.state.loader}
                 />
