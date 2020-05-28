@@ -13,7 +13,10 @@ import {
 import {generateID} from '../../functions/createGroup';
 
 import CardContent from './CardContent';
+import {goToSettings} from '../../functions/pictures';
+import Button from '../../layout/buttons/Button';
 import colors from '../../style/colors';
+import styleApp from '../../style/style';
 
 export default class ListPhotos extends Component {
   static propTypes = {
@@ -62,6 +65,7 @@ export default class ListPhotos extends Component {
     );
   }
   render() {
+    const {images} = this.props;
     return (
       <View>
         <ScrollView
@@ -69,10 +73,23 @@ export default class ListPhotos extends Component {
           keyboardShouldPersistTaps={'always'}
           style={[styles.keyboardContainer]}
           showsHorizontalScrollIndicator={false}>
-          {this.props.images === 'loading' ? (
-            <View style={{height: 100, backgroundColor: 'yellow'}} />
+          {!images ? (
+            <View style={[styleApp.center2, {height: 120, width: '100%'}]}>
+              <Text style={styleApp.text}>
+                You need to allow access to your library.
+              </Text>
+              <Button
+                backgroundColor="green"
+                onPressColor={colors.greenLight}
+                enabled={true}
+                text="Open settings"
+                styleButton={{height: 40, marginTop: 10}}
+                loader={false}
+                click={async () => goToSettings()}
+              />
+            </View>
           ) : (
-            this.props.images.map((data, i) => this.buttonImage(data, i))
+            images.map((data, i) => this.buttonImage(data, i))
           )}
           <View style={{width: 50}} />
         </ScrollView>

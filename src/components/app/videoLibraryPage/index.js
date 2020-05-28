@@ -114,7 +114,7 @@ class VideoLibraryPage extends Component {
       multiple: true,
       mediaType: 'video',
       compressVideoPreset: __DEV__ ? 'MediumQuality' : 'HighestQuality',
-    });
+    }).catch((err) => console.log('error', err));
     let uploadingVideosArray = videos;
     console.log('uploadingVideosArray', uploadingVideosArray);
 

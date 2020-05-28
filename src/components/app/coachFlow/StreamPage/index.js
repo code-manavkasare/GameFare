@@ -38,6 +38,7 @@ class StreamTab extends Component {
       initialLoader: true,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.openSession = this.openSession.bind(this);
   }
   componentDidMount = () => {
     const {params} = this.props.route;
@@ -52,7 +53,8 @@ class StreamTab extends Component {
       this.openSession(params.objectID);
   };
   openSession = async (objectID) => {
-    this.props.coachAction('setSessionInfo', {
+    const {coachAction} = this.props;
+    coachAction('setSessionInfo', {
       objectID: objectID,
       scrollDisabled: true,
       autoOpen: true,

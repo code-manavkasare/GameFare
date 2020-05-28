@@ -139,6 +139,9 @@ async function uploadVideoFirebase(image, destination) {
 }
 
 async function getPhotoUser() {
+  const permissionLibrary = await permission('library');
+  console.log('permissionLibrary', permissionLibrary);
+  if (!permissionLibrary) return false;
   const {edges} = await CameraRoll.getPhotos({
     first: 80,
     assetType: 'All',

@@ -175,13 +175,13 @@ class StreamPage extends Component {
       getScrollY,
       index,
       offsetScrollView,
-      closeCurrentSession,
+      coachAction,
       coachSessionID,
       currentScreenSize,
     } = this.props;
     const {sessionInfo} = this.state;
     if (nextVal) {
-      await this.props.coachAction('setSessionInfo', {
+      await coachAction('setSessionInfo', {
         objectID: coachSessionID,
         scrollDisabled: true,
         autoOpen: true,
