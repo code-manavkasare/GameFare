@@ -14,7 +14,12 @@ import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import FadeInView from 'react-native-fade-in-view';
 import {Col, Row} from 'react-native-easy-grid';
 
-import {takePicture, getPhotoUser, pickLibrary} from '../../functions/pictures';
+import {
+  takePicture,
+  getPhotoUser,
+  pickLibrary,
+  permission,
+} from '../../functions/pictures';
 import {generateID} from '../../functions/createGroup';
 import {
   sendNewMessage,
@@ -59,10 +64,12 @@ class InputMessage extends React.Component {
   async openPicturesView() {
     if (!this.state.showImages) {
       await this.textInputRef.blur();
+      console.log('opemPicture');
       const imagesUser = await getPhotoUser();
-      await this.setState({imagesUser: imagesUser});
+      console.log('opemPicture2', imagesUser);
+      return this.setState({imagesUser: imagesUser, showImages: true});
     }
-    return this.setState({showImages: !this.state.showImages});
+    return this.setState({showImages: false});
   }
   addImage(image, val) {
     if (!val) {
@@ -89,6 +96,9 @@ class InputMessage extends React.Component {
     return true;
   }
   async selectPicture() {
+    const permissionLibrary = await permission('library');
+    if (!permissionLibrary)
+      return this.setState({showImages: true, imagesUser: false});
     var picture = await pickLibrary();
     if (picture)
       return this.addImage(
@@ -126,6 +136,7 @@ class InputMessage extends React.Component {
     return placeholderInput;
   };
   renderInput() {
+    const {showImages} = this.state;
     return (
       <View style={styles.keyboardContainer}>
         <AutoGrowingTextInput
@@ -246,8 +257,8 @@ class InputMessage extends React.Component {
           </Col>
         </Row>
 
-        {this.state.showImages && (
-          <View style={{height: 120, backgroundColor: 'white'}}>
+        {showImages && (
+          <View style={{height: 120, width: '100%'}}>
             <ListPhotos
               addImage={this.addImage.bind(this)}
               images={this.state.imagesUser}

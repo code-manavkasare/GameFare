@@ -34,7 +34,11 @@ class ListStreams extends Component {
     return {};
   }
   openSession(objectID) {
-    this.itemsRef[objectID].open(true);
+    try {
+      this.itemsRef[objectID].open(true);
+    } catch (err) {
+      console.log('error !!!!!', err);
+    }
   }
   sessionsArray = () => {
     let {coachSessions} = this.state;

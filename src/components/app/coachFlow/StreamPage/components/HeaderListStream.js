@@ -56,7 +56,7 @@ class HeaderListStream extends Component {
               style={styles.buttonNewSession}
               click={async () => {
                 if (!userConnected) return navigation.navigate('SignIn');
-                const {userID, infoUser} = this.props;
+                const {userID, infoUser, coachAction} = this.props;
                 await this.setState({loader: true});
                 const objectID = await createCoachSession({
                   id: userID,
