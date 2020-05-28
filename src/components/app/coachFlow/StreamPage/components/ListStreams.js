@@ -12,6 +12,7 @@ import {
   heightHeaderStream,
   offsetBottomHeaderStream,
 } from '../../../../style/sizes';
+import {timeout} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
 
 class ListStreams extends Component {
@@ -33,11 +34,13 @@ class ListStreams extends Component {
     }
     return {};
   }
-  openSession(objectID) {
+  async openSession(objectID) {
     try {
       this.itemsRef[objectID].open(true);
     } catch (err) {
       console.log('error !!!!!', err);
+      await timeout(600);
+      this.openSession(objectID);
     }
   }
   sessionsArray = () => {
