@@ -22,6 +22,8 @@ import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
 
+import {navigate} from '../../../../../../../NavigationService';
+
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
 import {native, openStream} from '../../../../../animations/animations';
@@ -133,6 +135,7 @@ class StreamPage extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (!isEqual(nextState, this.state)) return true;
     if (nextProps.userConnected !== this.props.userConnected) return true;
+    if (!isEqual(nextProps.settings, this.props.settings)) return true;
     if (!isEqual(nextProps.currentScreenSize, this.props.currentScreenSize))
       return true;
     if (
@@ -168,7 +171,6 @@ class StreamPage extends Component {
           portrait: portrait,
         });
   }
-
   async open(nextVal) {
     const {
       layoutAction,
@@ -209,34 +211,8 @@ class StreamPage extends Component {
       });
       await layoutAction('setLayout', {isFooterVisible: false});
       Animated.spring(this.animatedPage, native(1, 250)).start(async () => {
-        const {coachSession} = this.state;
-        const {coachSessionID, userID} = this.props;
-        const member = this.member(coachSession);
-        console.log(
-          'member.expireTimeToken',
-          member.expireTimeToken - Date.now(),
-        );
-
-        if (member.expireTimeToken < Date.now() || !member.expireTimeToken) {
-          var url = `${
-            Config.FIREBASE_CLOUD_FUNCTIONS_URL
-          }updateSessionTokenUser`;
-          console.log('call cloud function', {
-            coachSessionID,
-            userID,
-            coachSessionIDOpentok: coachSession.vonageSessionId,
-            isOrganizer: coachSession.info.organizer === userID,
-          });
-          const updateSessionTokenUser = await axios.get(url, {
-            params: {
-              coachSessionID,
-              userID,
-              coachSessionIDOpentok: coachSession.vonageSessionId,
-              isOrganizer: (coachSession.info.organizer === userID).toString(),
-            },
-          });
-          console.log('updateSessionTokenUser', updateSessionTokenUser);
-        }
+        this.refreshTokenMember();
+        this.popupPermissionRecording();
       });
     } else {
       await layoutAction('setLayout', {isFooterVisible: true});
@@ -250,6 +226,54 @@ class StreamPage extends Component {
           scrollDisabled: false,
           autoOpen: false,
         });
+      });
+    }
+  }
+  popupPermissionRecording() {
+    const {permissionOtherUserToRecord} = this.props.settings;
+    const {coachAction} = this.props;
+    console.log('popupPermissionRecording', permissionOtherUserToRecord);
+    if (permissionOtherUserToRecord === 'none')
+      return navigate('Alert', {
+        textButton: 'Allow',
+        title:
+          'Allow participants to trigger a recording on your phone during this call ?',
+        displayList: true,
+        listOptions: [
+          {
+            operation: () =>
+              coachAction('setCoachSessionSettings', {
+                permissionOtherUserToRecord: false,
+              }),
+          },
+          {
+            operation: () =>
+              coachAction('setCoachSessionSettings', {
+                permissionOtherUserToRecord: true,
+              }),
+          },
+        ],
+      });
+  }
+  async refreshTokenMember() {
+    const {coachSession} = this.state;
+    const member = this.member(coachSession);
+    const {coachSessionID, userID} = this.props;
+    if (member.expireTimeToken < Date.now() || !member.expireTimeToken) {
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
+      console.log('call cloud function', {
+        coachSessionID,
+        userID,
+        coachSessionIDOpentok: coachSession.vonageSessionId,
+        isOrganizer: coachSession.info.organizer === userID,
+      });
+      await axios.get(url, {
+        params: {
+          coachSessionID,
+          userID,
+          coachSessionIDOpentok: coachSession.vonageSessionId,
+          isOrganizer: (coachSession.info.organizer === userID).toString(),
+        },
       });
     }
   }
@@ -673,6 +697,7 @@ const mapStateToProps = (state) => {
     userConnected: state.user.userConnected,
     currentScreenSize: state.layout.currentScreenSize,
     sessionInfo: state.coach.sessionInfo,
+    settings: state.coach.settings,
   };
 };
 
