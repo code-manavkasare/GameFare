@@ -53,13 +53,6 @@ class StreamTab extends Component {
       this.openSession(params.objectID);
   };
   openSession = async (objectID) => {
-    const {coachAction} = this.props;
-    // coachAction('setSessionInfo', {
-    //   objectID: objectID,
-    //   scrollDisabled: true,
-    //   autoOpen: true,
-    // });
-
     this.listStreamRef.openSession(objectID);
   };
   viewLoader = () => {
