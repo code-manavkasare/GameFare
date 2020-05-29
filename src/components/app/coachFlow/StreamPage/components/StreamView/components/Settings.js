@@ -25,22 +25,25 @@ import AllIcon from '../../../../../../layout/icons/AllIcons';
 import Loader from '../../../../../../layout/loaders/Loader';
 import database from '@react-native-firebase/database';
 
-class CourtPositioning extends Component {
+class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: true,
+      permissionOtherUserToRecord: this.props.route.params
+        .permissionOtherUserToRecord,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
-    // this.getCourtCalibration();
+    // this.getCourtCalibration();'
+    console.log('routes', this.props.route);
   }
   settings() {
     let {settings, userID} = this.props;
     if (!settings) settings = {};
-    const {permissionOtherUserToRecord} = settings;
+    const {permissionOtherUserToRecord} = this.state;
     return (
       <View style={styleApp.marginView}>
         <Row>
@@ -54,13 +57,17 @@ class CourtPositioning extends Component {
               trackColor={{false: '#767577', true: '#81b0ff'}}
               thumbColor={'white'}
               ios_backgroundColor="#3e3e3e"
-              onValueChange={() =>
+              onValueChange={async () => {
+                const {coachSessionID} = this.props.route.params;
+                await this.setState({
+                  permissionOtherUserToRecord: !permissionOtherUserToRecord,
+                });
                 database()
-                  .ref(`users/${userID}/settings`)
+                  .ref(`coachSessions/${coachSessionID}/members/${userID}`)
                   .update({
                     permissionOtherUserToRecord: !permissionOtherUserToRecord,
-                  })
-              }
+                  });
+              }}
               value={permissionOtherUserToRecord}
             />
           </Col>
@@ -131,4 +138,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {coachAction},
-)(CourtPositioning);
+)(Settings);
