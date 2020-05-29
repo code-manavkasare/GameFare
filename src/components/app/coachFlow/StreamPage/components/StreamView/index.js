@@ -324,13 +324,15 @@ class StreamPage extends Component {
     }
   }
   popupPermissionRecording() {
-    let {settings, userID} = this.props;
-    if (!settings) settings = {};
-    const {permissionOtherUserToRecord} = settings;
+    let {userID, coachSessionID} = this.props;
+    const {coachSession} = this.state;
 
+    const member = this.member(coachSession);
+    console.log('member ////', member);
+    const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
       return database()
-        .ref(`users/${userID}/settings`)
+        .ref(`coachSessions/${coachSessionID}/members/${userID}`)
         .update({
           permissionOtherUserToRecord: nextVal,
         });
@@ -342,6 +344,7 @@ class StreamPage extends Component {
         title:
           'Allow participants to trigger a recording on your phone during this call?',
         displayList: true,
+
         listOptions: [
           {
             operation: () => setPermission(false),
@@ -694,6 +697,9 @@ class StreamPage extends Component {
           <Header
             coachSessionID={coachSessionID}
             organizerID={coachSession && coachSession.info.organizer}
+            permissionOtherUserToRecord={
+              this.member(coachSession).permissionOtherUserToRecord
+            }
             opacityHeader={this.opacityHeader}
             open={this.open.bind(this)}
             setState={this.setState.bind(this)}
@@ -803,7 +809,6 @@ const mapStateToProps = (state) => {
     userConnected: state.user.userConnected,
     currentScreenSize: state.layout.currentScreenSize,
     sessionInfo: state.coach.sessionInfo,
-    settings: state.user.infoUser.settings,
   };
 };
 

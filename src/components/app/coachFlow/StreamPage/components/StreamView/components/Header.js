@@ -45,6 +45,7 @@ class HeaderStreamView extends Component {
       open,
       setState,
       state,
+      permissionOtherUserToRecord,
       opacityHeader,
     } = this.props;
     const {isConnected} = state;
@@ -83,7 +84,12 @@ class HeaderStreamView extends Component {
         clickButtonOffset2={() => this.AddMembers(coachSessionID)}
         backgroundColorIconOffset2={colors.title + '70'}
         initialTitleOpacity={1}
-        clickButtonOffset={() => NavigationService.navigate('Settings')}
+        clickButtonOffset={() =>
+          NavigationService.navigate('Settings', {
+            coachSessionID: coachSessionID,
+            permissionOtherUserToRecord: permissionOtherUserToRecord,
+          })
+        }
       />
     );
   }
