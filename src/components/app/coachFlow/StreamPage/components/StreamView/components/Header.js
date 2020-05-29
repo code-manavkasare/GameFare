@@ -45,6 +45,7 @@ class HeaderStreamView extends Component {
       open,
       setState,
       state,
+      permissionOtherUserToRecord,
       opacityHeader,
     } = this.props;
     const {isConnected} = state;
@@ -56,8 +57,6 @@ class HeaderStreamView extends Component {
         sizeLoader={40}
         initialBorderColorIcon={'transparent'}
         opacityHeader={opacityHeader}
-        
-
         icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '70'}
@@ -67,32 +66,30 @@ class HeaderStreamView extends Component {
         nobackgroundColorIcon1={true}
         sizeIcon1={18}
         colorIcon1={colors.white}
-
         icon2={isConnected && 'switchCam'}
         backgroundColorIcon2={colors.title + '70'}
         clickButton2={() => setState({cameraFront: !state.cameraFront})}
         sizeIcon2={20}
         typeIcon2="moon"
         colorIcon2={colors.white}
-
-        
-        
-        
-        iconOffset={
+        iconOffset={isConnected && 'cog'}
+        typeIconOffset="font"
+        sizeIconOffset={18}
+        backgroundColorIconOffset={colors.title + '70'}
+        iconOffset2={
           isConnected && isUserAdmin(organizerID, userID) && 'person-add'
         }
-        typeIconOffset="mat"
-        sizeIconOffset={23}
-        backgroundColorIconOffset={colors.title + '70'}
-       
-       
-        
-        
-        
+        typeIconOffset2="mat"
+        sizeIconOffset2={23}
+        clickButtonOffset2={() => this.AddMembers(coachSessionID)}
+        backgroundColorIconOffset2={colors.title + '70'}
         initialTitleOpacity={1}
-        
-        clickButtonOffset={() => this.AddMembers(coachSessionID)}
-        
+        clickButtonOffset={() =>
+          NavigationService.navigate('Settings', {
+            coachSessionID: coachSessionID,
+            permissionOtherUserToRecord: permissionOtherUserToRecord,
+          })
+        }
       />
     );
   }

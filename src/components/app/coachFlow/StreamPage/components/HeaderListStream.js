@@ -56,7 +56,8 @@ class HeaderListStream extends Component {
               style={styles.buttonNewSession}
               click={async () => {
                 if (!userConnected) return navigation.navigate('SignIn');
-                const {userID, infoUser, coachAction} = this.props;
+                const {userID, infoUser, coachAction, sessionInfo} = this.props;
+                const {objectID: prevObjectID} = sessionInfo;
                 await this.setState({loader: true});
                 const objectID = await createCoachSession({
                   id: userID,
@@ -65,6 +66,7 @@ class HeaderListStream extends Component {
                 await coachAction('setSessionInfo', {
                   objectID: objectID,
                   autoOpen: true,
+                  prevObjectID: prevObjectID,
                 });
                 await database()
                   .ref(`users/${userID}/coachSessions/${objectID}`)
@@ -113,6 +115,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
+    sessionInfo: state.coach.sessionInfo,
   };
 };
 

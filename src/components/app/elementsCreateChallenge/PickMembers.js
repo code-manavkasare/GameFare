@@ -31,7 +31,7 @@ import CardUserSelect from '../../layout/cards/CardUserSelect';
 import {createChallengeAction} from '../../../actions/createChallengeActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 
-class NewConversation extends React.Component {
+class PickMembers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,13 +56,14 @@ class NewConversation extends React.Component {
     return {};
   }
   async changeSearch(search) {
-    const {route} = this.props;
+    const {blockedByUsers, route} = this.props;
     const {displayCurrentUser} = route.params;
 
     const users = await autocompleteSearchUsers(
       search,
       this.props.userID,
       displayCurrentUser,
+      Object.keys(blockedByUsers),
     );
     return this.setState({users: users, loader: false});
   }
@@ -309,6 +310,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
+    blockedByUsers: state.user.infoUser.blockedByUsers,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     captains: state.createChallengeData.captains,
@@ -319,4 +321,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {createChallengeAction},
-)(NewConversation);
+)(PickMembers);

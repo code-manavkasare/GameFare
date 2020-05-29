@@ -35,12 +35,15 @@ class ListStreams extends Component {
     return {};
   }
   async openSession(objectID) {
-    try {
-      this.itemsRef[objectID].open(true);
-    } catch (err) {
-      console.log('error !!!!!', err);
-      await timeout(600);
-      this.openSession(objectID);
+    var i;
+    for (i = 0; i < 15; i++) {
+      try {
+        this.itemsRef[objectID].open(true);
+        break;
+      } catch (err) {
+        console.log('error !!!!!', err);
+        await timeout(600);
+      }
     }
   }
   sessionsArray = () => {

@@ -46,7 +46,13 @@ class NewConversation extends React.Component {
     this.changeSearch('');
   }
   async changeSearch(search) {
-    const users = await autocompleteSearchUsers(search, this.props.userID);
+    const {blockedByUsers} = this.props;
+    const users = await autocompleteSearchUsers(
+      search,
+      this.props.userID,
+      false,
+      Object.keys(blockedByUsers),
+    );
     this.setState({users: users, loader: false});
   }
   async next(selectedUsers) {
@@ -211,6 +217,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
+    blockedByUsers: state.user.infoUser.blockedByUsers,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     portrait: state.layout.currentScreenSize.portrait,
