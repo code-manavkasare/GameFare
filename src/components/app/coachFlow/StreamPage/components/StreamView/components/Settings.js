@@ -23,6 +23,7 @@ import AsyncImage from '../../../../../../layout/image/AsyncImage';
 import ButtonColor from '../../../../../../layout/Views/Button';
 import AllIcon from '../../../../../../layout/icons/AllIcons';
 import Loader from '../../../../../../layout/loaders/Loader';
+import database from '@react-native-firebase/database';
 
 class CourtPositioning extends Component {
   constructor(props) {
@@ -37,14 +38,15 @@ class CourtPositioning extends Component {
     // this.getCourtCalibration();
   }
   settings() {
-    const {settings, coachAction} = this.props;
+    let {settings, userID} = this.props;
+    if (!settings) settings = {};
     const {permissionOtherUserToRecord} = settings;
     return (
       <View style={styleApp.marginView}>
         <Row>
           <Col size={80} style={styleApp.center2}>
             <Text style={styleApp.text}>
-              Allow call participants to remotely trigger a recordng
+              Allow call participants to remotely trigger a recording
             </Text>
           </Col>
           <Col size={20} style={styleApp.center3}>
@@ -53,9 +55,11 @@ class CourtPositioning extends Component {
               thumbColor={'white'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() =>
-                coachAction('setCoachSessionSettings', {
-                  permissionOtherUserToRecord: !permissionOtherUserToRecord,
-                })
+                database()
+                  .ref(`users/${userID}/settings`)
+                  .update({
+                    permissionOtherUserToRecord: !permissionOtherUserToRecord,
+                  })
               }
               value={permissionOtherUserToRecord}
             />
@@ -73,9 +77,7 @@ class CourtPositioning extends Component {
     goBack();
   }
   render() {
-    const {currentScreenSize, navigation, route} = this.props;
-    const {loader} = this.state;
-    const {goBack} = navigation;
+    const {currentScreenSize} = this.props;
     const {portrait} = currentScreenSize;
     let marginTop = heightHeaderHome;
     if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
@@ -111,17 +113,6 @@ class CourtPositioning extends Component {
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />
-        {/* 
-        <FadeInView
-          duration={300}
-          style={[styleApp.footerBooking, styleApp.marginView]}>
-          <Button
-            text={'Save settings'}
-            backgroundColor={'green'}
-            onPressColor={colors.greenLight}
-            click={async () => this.save()}
-          />
-        </FadeInView> */}
       </View>
     );
   }
@@ -133,7 +124,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
-    settings: state.coach.settings,
+    settings: state.user.infoUser.settings,
   };
 };
 

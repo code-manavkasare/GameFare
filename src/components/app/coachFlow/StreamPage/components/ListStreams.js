@@ -36,7 +36,7 @@ class ListStreams extends Component {
   }
   async openSession(objectID) {
     var i;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 15; i++) {
       try {
         this.itemsRef[objectID].open(true);
         break;
