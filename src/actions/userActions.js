@@ -11,11 +11,12 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
-const mixPanelToken = 'f850115393f202af278e9024c2acc738';
+
 
 import {resetDataCoachSession} from './coachActions';
 
 import {subscribeToTopics} from '../components/functions/notifications';
+const mixPanelToken = 'f850115393f202af278e9024c2acc738';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 const setUserInfo = (value) => ({
