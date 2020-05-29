@@ -173,17 +173,12 @@ class StreamPage extends Component {
             date: new Date(),
           },
         );
-        // await database()
-        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-        //   .update({
-        //     isConnected: true,
-        //     streamIdTokBox: streamId,
-        //     connectionIdTokbox: connectionId,
-        //     portrait: portrait,
-        //   });
-        // this.setState({
-        //   isConnected: true,
-        // });
+        await database()
+          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .update({
+            streamIdTokBox: streamId,
+            connectionIdTokbox: connectionId,
+          });
       },
       streamDestroyed: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
@@ -199,6 +194,11 @@ class StreamPage extends Component {
             date: new Date(),
           },
         );
+        await database()
+          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .update({
+            isConnected: false,
+          });
         this.setState({
           isConnected: false,
         });
@@ -482,6 +482,8 @@ class StreamPage extends Component {
         position: 'absolute',
         backgroundColor: colors.title,
       };
+      console.log('styleSubscriber', styleSubscriber, {width: w, height: h});
+      console.log('member', member);
       return (
         <View key={streamId} style={styleSubscriber}>
           <OTSubscriberView streamId={streamId} style={{width: w, height: h}} />
