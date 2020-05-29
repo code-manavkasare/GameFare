@@ -1,9 +1,26 @@
 import {indexUsers} from '../database/algolia';
 
-const autocompleteSearchUsers = async (search, userID, searchCurrentUser) => {
-  // await indexUsers.clearCache();
-  let filters = 'NOT objectID:' + userID;
-  if (!userID || userID === '' || searchCurrentUser) filters = '';
+const autocompleteSearchUsers = async (
+  search,
+  userID,
+  searchCurrentUser,
+  blockedByUsers,
+) => {
+  let filters = `NOT objectID:${userID}`;
+  if ((!userID || userID === '' || searchCurrentUser) && !blockedByUsers) {
+    filters = '';
+  }
+  if ((!userID || userID === '' || searchCurrentUser) && blockedByUsers) {
+    filters = `NOT objectID:${blockedByUsers[0]}`;
+    blockedByUsers.map((blockedByUser, i) => {
+      if (i > 0) filters = filters + ` AND NOT objectID:${blockedByUser}`;
+    });
+  } else if (userID && blockedByUsers) {
+    blockedByUsers.map((blockedByUser) => {
+      filters = filters + ` AND NOT objectID:${blockedByUser}`;
+    });
+  }
+
   const {hits} = await indexUsers.search(search, {
     hitsPerPage: 500,
     filters: filters,
