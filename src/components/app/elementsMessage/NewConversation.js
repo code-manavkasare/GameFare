@@ -51,7 +51,7 @@ class NewConversation extends React.Component {
       search,
       this.props.userID,
       false,
-      Object.keys(blockedByUsers),
+      blockedByUsers ? Object.keys(blockedByUsers) : false,
     );
     this.setState({users: users, loader: false});
   }
