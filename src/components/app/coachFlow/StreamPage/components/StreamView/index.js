@@ -576,7 +576,7 @@ class StreamPage extends Component {
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
           : !isConnected
-          ? this.loaderView('Connection')
+          ? this.loaderView('Connecting')
           : null}
 
         <MembersView members={coachSession.members} />
