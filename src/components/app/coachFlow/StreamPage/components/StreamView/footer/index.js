@@ -53,6 +53,7 @@ class Footer extends Component {
           clickReview={(val) => this.pastSessionsRef.open(val)}
           otPublisherRef={otPublisherRef}
           members={members}
+          coachSessionID = {this.props.coachSessionID}
         />
 
         <VideosView

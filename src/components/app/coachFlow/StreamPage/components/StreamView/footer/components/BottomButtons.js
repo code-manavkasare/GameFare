@@ -41,27 +41,140 @@ class BottomButton extends Component {
     this.props.onRef(this);
   }
   componentDidUpdate(prevProps, prevState) {
-    const {members} = this.props
-    const {recording, startTimeRecording} = prevState
-    const member = this.member(members)
-    if (member.recording) {
+    const {members, userID} = this.props
+    const {recording, startTimeRecording, recordingUser} = prevState
+    const member = (members) ? members[userID] : undefined
+    if (member && member.recording !== undefined) {
       if (!recording && member.recording.isRecording && member.recording.timestamp > startTimeRecording) {
-        console.log('Start remote recording!')
         this.startRecording()
       } else if (recording && !member.recording.isRecording) {
-        console.log('Stop remote recording!')
         this.stopRecording()
       }
     }
   }
-  member(members) {
-    const {userID} = this.props;
-    if (members) return members[userID];
+  static getDerivedStateFromProps(props, state) {
+    const {members, userID} = props
+    const {recording, startTimeRecording, recordingUser} = state
+    const member = (members) ? members[userID] : undefined
+    if (member && member.recording !== undefined) {
+      if (!recording && member.recording.isRecording && member.recording.timestamp > startTimeRecording) {
+        console.log('Start remote recording!')
+        return {
+          recording: true,
+          recordingUser: member.id,
+          startTimeRecording: Date.now()
+        }
+      } else if (recording && !member.recording.isRecording) {
+        console.log('Stop remote recording!')
+        return {
+          recording: false,
+          recordingUser: undefined,
+          startTimeRecording: 0
+        }
+      }
+    } else {
+      var recordingMember = undefined
+      for (var m in members) {
+        if (members[m].recording && members[m].recording.isRecording) recordingMember = members[m]
+      }
+      if (recordingMember === undefined) {
+        console.log('No one is recording')
+        return {
+          recording: false,
+          recordingUser: undefined,
+          startTimeRecording: 0
+        }
+      } else {
+        console.log('Someone is recording')
+        return {
+          recording: true,
+          recordingUser: recordingMember.id,
+          startTimeRecording: recordingMember.recording.timestamp
+        }
+      }
+    }
     return {};
   }
   getVideoUploadStatus() {
     return this.cardUploadingRef.getVideoUploadStatus();
   }
+  startRemoteRecording = async (member) => {
+    const {coachSessionID, userID} = this.props
+    const recordingUser = member.id
+    console.log('start recording')
+    this.videoSourcePopupRef.close()
+    startRemoteRecording(recordingUser, coachSessionID, userID)
+  }
+  stopRemoteRecording = async () => {
+    const {coachSessionID, userID} = this.props
+    const {recordingUser} = this.state
+    console.log('stop recording')
+    stopRemoteRecording(recordingUser, coachSessionID, userID)
+  }
+  startRecording = async () => {
+    const {userID} = this.props
+    const messageCallback = (response) => {
+      if (response.error) {
+        console.log(`Error initializing recording: ${response.message}`);
+      } else {
+        console.log('Started recording...');
+        this.setState({
+          recording: true,
+          recordingUser: userID,
+          startTimeRecording: Date.now(),
+        });
+      }
+    };
+    const permissionLibrary = await permission('library');
+    if (!permissionLibrary)
+      return navigate('Alert', {
+        textButton: 'Open Settings',
+        title:
+          'You need to allow access to your library before you record a video.',
+        subtitle:
+          'At the end of the record, we will save the file under your library.',
+        colorButton: 'blue',
+        onPressColor: colors.blueLight,
+        onGoBack: () => goToSettings(),
+        icon: (
+          <Image
+            source={require('../../../../../../../../img/icons/technology.png')}
+            style={{width: 25, height: 25}}
+          />
+        ),
+      });
+
+    const {otPublisherRef} = this.props;
+    await otPublisherRef.current.startRecording(messageCallback);
+  };
+  stopRecording = async () => {
+    const {otPublisherRef} = this.props;
+    const messageCallback = async (response) => {
+      if (response.error) {
+        console.log(`Error storing recording: ${response.message}`);
+      } else {
+        let videoUrl = response.videoUrl;
+        console.log(`Stopped recording. Video stored at: ${response}`);
+        let videoUUID = videoUrl
+          .split('/')
+          [videoUrl.split('/').length - 1].split('.')[0];
+        console.log('videoUUID', videoUUID);
+
+        // if (!videoUrl)
+        //   videoUrl =
+        //     'file:///Users/florian/Library/Developer/CoreSimulator/Devices/9843DB4D-2A70-43B0-8068-84A689C40FEE/data/Containers/Data/Application/8ADD5F02-01AE-4383-9210-9B63C636CADF/tmp/react-native-image-crop-picker/92955176-CFB3-4659-8CA8-F9FCE0C88E11.mp4';
+        if (videoUrl) {
+          let videoInfo = await getVideoInfo(videoUrl);
+          videoInfo.localIdentifier = videoUUID;
+          await this.cardUploadingRef.open(true, videoInfo);
+          console.log(videoInfo)
+          await this.cardUploadingRef.uploadFile()
+        }
+      }
+    };
+
+    await otPublisherRef.current.stopRecording(messageCallback);
+  };
   publishVideo() {
     const {setState} = this.props;
     const {publishVideo} = this.state;
@@ -116,85 +229,6 @@ class BottomButton extends Component {
       />
     );
   }
-  startRemoteRecording = async (member) => {
-    const recordingUser = member.id
-    console.log('start recording')
-    console.log(recordingUser)
-    this.videoSourcePopupRef.close()
-    startRemoteRecording(recordingUser)
-    this.setState({recordingUser})
-  }
-  stopRemoteRecording = async () => {
-    const {recordingUser} = this.state
-    console.log('stop recording')
-    stopRemoteRecording(recordingUser)
-    this.setState({recordingUser: undefined})
-  }
-  startRecording = async () => {
-    const messageCallback = (response) => {
-      if (response.error) {
-        console.log(`Error initializing recording: ${response.message}`);
-      } else {
-        console.log('Started recording...');
-        this.setState({
-          recording: true,
-          startTimeRecording: Date.now(),
-        });
-      }
-    };
-    const permissionLibrary = await permission('library');
-    if (!permissionLibrary)
-      return navigate('Alert', {
-        textButton: 'Open Settings',
-        title:
-          'You need to allow access to your library before you record a video.',
-        subtitle:
-          'At the end of the record, we will save the file under your library.',
-        colorButton: 'blue',
-        onPressColor: colors.blueLight,
-        onGoBack: () => goToSettings(),
-        icon: (
-          <Image
-            source={require('../../../../../../../../img/icons/technology.png')}
-            style={{width: 25, height: 25}}
-          />
-        ),
-      });
-
-    const {otPublisherRef} = this.props;
-    await otPublisherRef.current.startRecording(messageCallback);
-  };
-  stopRecording = async () => {
-    const {otPublisherRef} = this.props;
-    const messageCallback = async (response) => {
-      if (response.error) {
-        console.log(`Error storing recording: ${response.message}`);
-      } else {
-        let videoUrl = response.videoUrl;
-        console.log(`Stopped recording. Video stored at: ${response}`);
-        let videoUUID = videoUrl
-          .split('/')
-          [videoUrl.split('/').length - 1].split('.')[0];
-        console.log('videoUUID', videoUUID);
-        await this.setState({
-          recording: false,
-          startTimeRecording: 0
-        });
-
-        // if (!videoUrl)
-        //   videoUrl =
-        //     'file:///Users/florian/Library/Developer/CoreSimulator/Devices/9843DB4D-2A70-43B0-8068-84A689C40FEE/data/Containers/Data/Application/8ADD5F02-01AE-4383-9210-9B63C636CADF/tmp/react-native-image-crop-picker/92955176-CFB3-4659-8CA8-F9FCE0C88E11.mp4';
-        if (videoUrl) {
-          let videoInfo = await getVideoInfo(videoUrl);
-          videoInfo.localIdentifier = videoUUID;
-          await this.cardUploadingRef.open(true, videoInfo);
-          await this.cardUploadingRef.uploadFile()
-        }
-      }
-    };
-
-    await otPublisherRef.current.stopRecording(messageCallback);
-  };
   buttonRecord() {
     const {recording, startTimeRecording} = this.state;
     const optionsTimer = {
@@ -240,7 +274,7 @@ class BottomButton extends Component {
           click={async () => {
             const {recording} = this.state;
             if (!recording) return this.videoSourcePopupRef.open()
-            return this.stopRecording();
+            return this.stopRemoteRecording();
           }}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}

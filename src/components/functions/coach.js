@@ -116,12 +116,24 @@ const stopRecording = (sessionIDFirebase) => {
     .update(updates);
 };
 
-const startRemoteRecording = (memberID) => {
-  
+const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
+  let updates = {};
+  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`] = true;
+  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`] = Date.now();
+  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/userIDrequesting`] = selfID;
+  console.log(updates)
+  database()
+    .ref()
+    .update(updates)
 }
 
-const stopRemoteRecording = () => {
-
+const stopRemoteRecording = (memberID, sessionIDFirebase) => {
+  let updates = {};
+  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`] = false;
+  console.log(updates)
+  database()
+    .ref()
+    .update(updates)
 }
 
 const getMember = (session, userID) => {
@@ -209,4 +221,6 @@ module.exports = {
   isEven,
   styleStreamView,
   getVideoSharing,
+  startRemoteRecording,
+  stopRemoteRecording
 };

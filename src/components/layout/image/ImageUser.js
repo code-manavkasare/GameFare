@@ -13,7 +13,7 @@ export default class ImageUser extends Component {
   }
   image() {
     const {user} = this.props;
-    if (user.info.picture)
+    if (user.info && user.info.picture)
       return (
         <AsyncImage
           style={styleApp.fullSize}
@@ -24,7 +24,7 @@ export default class ImageUser extends Component {
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
         <Text style={[styleApp.input, {fontSize: 11}]}>
-          {user.info.firstname[0] + user.info.lastname[0]}
+          {(user.info) && user.info.firstname[0] + user.info.lastname[0]}
         </Text>
       </View>
     );

@@ -13,6 +13,8 @@ import PropTypes from 'prop-types';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
+import {native} from '../../../../../../../animations/animations';
+
 import colors from '../../../../../../../style/colors';
 import sizes from '../../../../../../../style/sizes';
 import styleApp from '../../../../../../../style/style';
@@ -25,70 +27,46 @@ export default class VideoSourcePopup extends Component {
       inValue: new Animated.Value(0),
       contentValue: new Animated.Value(0)
     };
+    this.scaleCard = new Animated.Value(0);
   }
 
   componentDidMount() {
     this.props.onRef(this);
-    console.log(this.props.members)
+  }
+  static getDerivedStateFromProps (props, state) {
+    return { members: props.members ? Object.values(props.members).filter((member) => {return (member.isConnected)}) : []}
+    // TODO: permissionOtherUserToRecord = true
   }
 
   open() {
-    Animated.timing(this.state.inValue, {
-      toValue: 1,
-      duration: 150,
-      easing: Easing.inOut(Easing.linear),
-      useNativeDriver: false
-    }).start();
-    Animated.timing(this.state.contentValue, {
-      toValue: 1,
-      duration: 100,
-      delay: 50,
-      easing: Easing.inOut(Easing.linear),
-      useNativeDriver: false
-    }).start();
     this.setState({visible: true})
+    return Animated.parallel([
+      Animated.timing(this.scaleCard, native(1)),
+    ]).start();
   }
 
   close() {
-    Animated.timing(this.state.inValue, {
-      toValue: 0,
-      duration: 150,
-      easing: Easing.inOut(Easing.linear),
-      useNativeDriver: false
-    }).start();
-    Animated.timing(this.state.contentValue, {
-      toValue: 0,
-      duration: 50,
-      easing: Easing.inOut(Easing.linear),
-      useNativeDriver: false
-    }).start();
     this.setState({visible: false})
+    return Animated.parallel([
+      Animated.timing(this.scaleCard, native(0)),
+    ]).start();
   }
 
   render() {
-    const {visible, inValue, contentValue} = this.state;
-    const {members} = this.props;
-    const animatedViewBottom = inValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [120, 100 + sizes.offsetFooterStreaming]
-    })
-    const animatedWidth = inValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [sizes.width - 200, sizes.width - 160]
-    })
+    const {visible} = this.state;
+    const {members} = this.state;
     
     return (
       <Animated.View 
         pointerEvents={visible?"auto":"none"} 
-        style={[styles.square, styleApp.center, {opacity: inValue, bottom:animatedViewBottom, width: animatedWidth}]}
+        style={[styles.square, styleApp.center, {opacity: this.scaleCard}]}
       >
-        <Animated.Text style={[styleApp.text, styles.text, {opacity: contentValue}]}>Choose a video source</Animated.Text>
-        <Animated.View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5, opacity: contentValue}]} />
-        {Object.values(members).map((member, i) => {
-          if (member.isConnected) {
+        <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
+        <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
+        {members && members.map((member, i) => {
             const {firstname, lastname, picture} = member.info;
             return (
-              <Animated.View style={{width:'100%', opacity:contentValue}}>
+              <View style={{width:'100%'}}>
               <ButtonColor
                 view={() => {
                   return (
@@ -124,10 +102,10 @@ export default class VideoSourcePopup extends Component {
                 style={[styles.cardUser]}
                 onPressColor={colors.off2}
               />
-              </Animated.View>
+              </View>
             );
           }
-        })}
+        )}
         <View style={styles.triangle} />
         <TouchableWithoutFeedback onPress={() => this.close()}>
           <View pointerEvents={visible?"auto":"none"} style={styles.fullPage} />
@@ -146,6 +124,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: 'white',
     borderRadius: 15,
+    width:sizes.width - 160,
+    bottom: 100 + sizes.offsetFooterStreaming,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
@@ -163,9 +143,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -triangleBase,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 15 },
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.2,
-    shadowRadius: 10,
+    shadowRadius: 6,
     zIndex:1
   },
   cardUser: {
