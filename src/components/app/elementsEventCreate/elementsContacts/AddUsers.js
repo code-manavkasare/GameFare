@@ -44,12 +44,16 @@ class AddUsers extends Component {
   }
 
   searchGameFareUsers = async (search) => {
+    const {blockedByUsers, userID} = this.props;
+
     this.setState({loader: true, searchInputGameFareUsers: search});
     this.props.changeSearchGameFareUsers(search);
 
     const gamefareUsersResults = await autocompleteSearchUsers(
       search,
-      this.props.userID,
+      userID,
+      false,
+      blockedByUsers ? Object.keys(blockedByUsers) : false,
     );
 
     this.setState({loader: false, usersList: gamefareUsersResults});
@@ -93,7 +97,7 @@ class AddUsers extends Component {
     const {url, description} = await this.props.createBranchMessage();
     await sendNewMessage(discussion.objectID, user, `${description} ${url}`);
     var that = this;
-    setTimeout(async function () {
+    setTimeout(async function() {
       await that.props.messageAction('setConversation', discussion);
       await that.setState({loaderButton: false});
       await that.userListRef.reset();
@@ -173,9 +177,13 @@ AddUsers.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
+    blockedByUsers: state.user.infoUser.blockedByUsers,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
   };
 };
 
-export default connect(mapStateToProps, {messageAction})(AddUsers);
+export default connect(
+  mapStateToProps,
+  {messageAction},
+)(AddUsers);

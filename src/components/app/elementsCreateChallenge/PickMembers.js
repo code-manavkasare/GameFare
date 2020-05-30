@@ -63,7 +63,7 @@ class PickMembers extends React.Component {
       search,
       this.props.userID,
       displayCurrentUser,
-      Object.keys(blockedByUsers),
+      blockedByUsers ? Object.keys(blockedByUsers) : false,
     );
     return this.setState({users: users, loader: false});
   }
