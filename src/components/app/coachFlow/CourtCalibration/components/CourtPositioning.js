@@ -125,6 +125,7 @@ class CourtPositioning extends Component {
           sizeLoader={40}
           sizeIcon1={21}
           nobackgroundColorIcon1={true}
+          initialBorderWidth={1}
           // backgroundColorIcon1={colors.white}
 
           icon1="arrow-left"

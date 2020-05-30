@@ -167,6 +167,61 @@ class HeaderBackButton extends Component {
         </Animated.View>
       );
   }
+  buttonOffset2() {
+    const styleButton = {
+      height: 48,
+      width: 48,
+      borderRadius: 23.8,
+      borderWidth: 1,
+      overFlow: 'hidden',
+    };
+    const {
+      clickButtonOffset2,
+      backgroundColorIcon1,
+      iconOffset2,
+      textOffset2,
+      colorIconOffset2,
+      sizeIconOffset2,
+      typeIconOffset2,
+    } = this.props;
+    const {borderColorIcon} = this.animatedValues();
+    if (iconOffset2)
+      return (
+        <Animated.View
+          style={[
+            styleButton,
+            {
+              borderColor: borderColorIcon,
+              backgroundColor: backgroundColorIcon1
+                ? backgroundColorIcon1
+                : colors.white,
+            },
+          ]}>
+          <ButtonColor
+            view={() => {
+              return iconOffset2 === 'text' ? (
+                <Text style={styleApp.textBold}>{textOffset2}</Text>
+              ) : (
+                <AllIcons
+                  name={iconOffset2}
+                  color={
+                    colorIconOffset2 === colors.white
+                      ? colors.title
+                      : colors.white
+                  }
+                  size={sizeIconOffset2}
+                  type={typeIconOffset2}
+                />
+              );
+            }}
+            click={() => clickButtonOffset2()}
+            color={colorIconOffset2}
+            style={[styleApp.center, styleApp.fullSize]}
+            onPressColor={colors.off}
+          />
+        </Animated.View>
+      );
+  }
   button2() {
     const {
       loader,
@@ -271,7 +326,10 @@ class HeaderBackButton extends Component {
           <Col size={15} style={styleApp.center}>
             {imgHeader && imgHeader}
           </Col>
-          <Col size={35} style={styles.center} />
+          <Col size={20} style={styles.center} />
+          <Col size={15} style={[styleApp.center3]}>
+            {this.buttonOffset2()}
+          </Col>
           <Col size={15} style={[styleApp.center3]}>
             {this.buttonOffset()}
           </Col>

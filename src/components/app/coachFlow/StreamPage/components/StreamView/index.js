@@ -22,6 +22,13 @@ import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
 
+import Mixpanel from 'react-native-mixpanel';
+import {mixPanelToken} from '../../../../../database/firebase/tokens';
+console.log('mixPanelToken', mixPanelToken);
+Mixpanel.sharedInstanceWithToken(mixPanelToken);
+
+import {navigate} from '../../../../../../../NavigationService';
+
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
 import {native, openStream} from '../../../../../animations/animations';
@@ -97,23 +104,101 @@ class StreamPage extends Component {
     this.otPublisherRef = React.createRef();
     this.watchVideoRef = React.createRef();
 
-    this.publisherEventHandlers = {
-      streamCreated: async (event) => {
+    this.sessionEventHandlers = {
+      streamCreated: (event) => {
+        const {userID, coachSessionID} = this.props;
+        console.log('sessionEventHandlers streamCreated ' + coachSessionID);
+        Mixpanel.trackWithProperties(
+          'sessionEventHandlers streamCreated ' + coachSessionID,
+          {
+            userID,
+            coachSessionID,
+            event,
+          },
+        );
+      },
+      streamDestroyed: (event) => {
+        const {userID, coachSessionID} = this.props;
+        console.log('sessionEventHandlers streamDestroyed ' + coachSessionID);
+        Mixpanel.trackWithProperties(
+          'sessionEventHandlers streamDestroyed ' + coachSessionID,
+          {
+            userID,
+            coachSessionID,
+            event,
+          },
+        );
+      },
+      sessionConnected: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
+        console.log('sessionEventHandlers sessionConnected ' + coachSessionID);
+        Mixpanel.trackWithProperties(
+          'sessionEventHandlers sessionConnected ' + coachSessionID,
+          {
+            userID,
+            coachSessionID,
+            event,
+            date: new Date(),
+          },
+        );
         const {portrait} = currentScreenSize;
+        const {streamId, connectionId} = event;
         await database()
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: true,
-            streamIdTokBox: event.streamId,
-            connectionIdTokbox: event.connectionId,
+            streamIdTokBox: streamId,
+            connectionIdTokbox: connectionId,
             portrait: portrait,
           });
         this.setState({
           isConnected: true,
         });
       },
+    };
+
+    this.publisherEventHandlers = {
+      streamCreated: async (event) => {
+        const {userID, coachSessionID, currentScreenSize} = this.props;
+        const {portrait} = currentScreenSize;
+        const {streamId, connectionId} = event;
+        console.log('publisherEventHandlers streamCreated ' + coachSessionID);
+        Mixpanel.trackWithProperties(
+          'publisherEventHandlers streamCreated ' + coachSessionID,
+          {
+            userID,
+            coachSessionID,
+            streamId,
+            connectionId,
+            date: new Date(),
+          },
+        );
+        await database()
+          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .update({
+            streamIdTokBox: streamId,
+            connectionIdTokbox: connectionId,
+          });
+      },
       streamDestroyed: async (event) => {
+        const {userID, coachSessionID, currentScreenSize} = this.props;
+        const {streamId, connectionId} = event;
+        console.log('publisherEventHandlers streamDestroyed ' + coachSessionID);
+        Mixpanel.trackWithProperties(
+          'publisherEventHandlers streamDestroyed ' + coachSessionID,
+          {
+            userID,
+            coachSessionID,
+            streamId,
+            connectionId,
+            date: new Date(),
+          },
+        );
+        await database()
+          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .update({
+            isConnected: false,
+          });
         this.setState({
           isConnected: false,
         });
@@ -124,15 +209,22 @@ class StreamPage extends Component {
 
   async componentDidMount() {
     this.props.onRef(this);
-    const {coachSessionID} = this.props;
-    const {sessionInfo} = this.props;
-    const {autoOpen, objectID} = sessionInfo;
-    if (coachSessionID === objectID && autoOpen) this.open(true);
     this.loadCoachSession();
+
+    const {coachSessionID, closeCurrentSession} = this.props;
+    const {sessionInfo} = this.props;
+    const {autoOpen, objectID, prevObjectID} = sessionInfo;
+    console.log('mount Session', coachSessionID, sessionInfo);
+    if (prevObjectID && prevObjectID !== coachSessionID) {
+      console.log('close session,' + objectID);
+      await closeCurrentSession(prevObjectID);
+    }
+    if (coachSessionID === objectID && autoOpen) this.open(true);
   }
   shouldComponentUpdate(nextProps, nextState) {
     if (!isEqual(nextState, this.state)) return true;
     if (nextProps.userConnected !== this.props.userConnected) return true;
+    if (!isEqual(nextProps.settings, this.props.settings)) return true;
     if (!isEqual(nextProps.currentScreenSize, this.props.currentScreenSize))
       return true;
     if (
@@ -144,10 +236,7 @@ class StreamPage extends Component {
     return false;
   }
   static getDerivedStateFromProps(props, state) {
-    if (
-      props.sessionInfo.objectID === props.coachSessionID &&
-      props.sessionInfo.scrollDisabled === state.sessionInfo.scrollDisabled
-    ) {
+    if (props.sessionInfo !== state.sessionInfo) {
       return {
         sessionInfo: props.sessionInfo,
       };
@@ -167,8 +256,14 @@ class StreamPage extends Component {
         .update({
           portrait: portrait,
         });
+    if (
+      prevState.coachSession.vonageSessionId !==
+        this.state.coachSession.vonageSessionId &&
+      this.state.coachSession.vonageSessionId
+    ) {
+      this.refreshTokenMember();
+    }
   }
-
   async open(nextVal) {
     const {
       layoutAction,
@@ -177,10 +272,17 @@ class StreamPage extends Component {
       offsetScrollView,
       coachAction,
       coachSessionID,
+      closeCurrentSession,
       currentScreenSize,
     } = this.props;
     const {sessionInfo} = this.state;
+    console.log('open session', nextVal, coachSessionID);
     if (nextVal) {
+      ////// close current opened session
+      const currentOpenSession = sessionInfo.objectID;
+      if (currentOpenSession && currentOpenSession !== coachSessionID)
+        await closeCurrentSession(currentOpenSession);
+      /////////////////////////
       await coachAction('setSessionInfo', {
         objectID: coachSessionID,
         scrollDisabled: true,
@@ -195,12 +297,6 @@ class StreamPage extends Component {
       );
 
       await StatusBar.setBarStyle('light-content', true);
-      ////// close current opened session
-      const currentOpenSession = sessionInfo.objectID;
-      console.log('currentOpenSession', currentOpenSession, coachSessionID);
-
-      // await closeCurrentSession(coachSessionID);
-      /////////////////////////
 
       await this.setState({
         coordinates: {x: x, y: y},
@@ -209,34 +305,8 @@ class StreamPage extends Component {
       });
       await layoutAction('setLayout', {isFooterVisible: false});
       Animated.spring(this.animatedPage, native(1, 250)).start(async () => {
-        const {coachSession} = this.state;
-        const {coachSessionID, userID} = this.props;
-        const member = this.member(coachSession);
-        console.log(
-          'member.expireTimeToken',
-          member.expireTimeToken - Date.now(),
-        );
-
-        if (member.expireTimeToken < Date.now() || !member.expireTimeToken) {
-          var url = `${
-            Config.FIREBASE_CLOUD_FUNCTIONS_URL
-          }updateSessionTokenUser`;
-          console.log('call cloud function', {
-            coachSessionID,
-            userID,
-            coachSessionIDOpentok: coachSession.vonageSessionId,
-            isOrganizer: coachSession.info.organizer === userID,
-          });
-          const updateSessionTokenUser = await axios.get(url, {
-            params: {
-              coachSessionID,
-              userID,
-              coachSessionIDOpentok: coachSession.vonageSessionId,
-              isOrganizer: (coachSession.info.organizer === userID).toString(),
-            },
-          });
-          console.log('updateSessionTokenUser', updateSessionTokenUser);
-        }
+        this.refreshTokenMember();
+        this.popupPermissionRecording();
       });
     } else {
       await layoutAction('setLayout', {isFooterVisible: true});
@@ -250,6 +320,64 @@ class StreamPage extends Component {
           scrollDisabled: false,
           autoOpen: false,
         });
+      });
+    }
+  }
+  popupPermissionRecording() {
+    let {userID, coachSessionID} = this.props;
+    const {coachSession} = this.state;
+
+    const member = this.member(coachSession);
+    console.log('member ////', member);
+    const {permissionOtherUserToRecord} = member;
+    const setPermission = (nextVal) => {
+      return database()
+        .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+        .update({
+          permissionOtherUserToRecord: nextVal,
+        });
+    };
+
+    if (permissionOtherUserToRecord === undefined)
+      return navigate('Alert', {
+        textButton: 'Allow',
+        title:
+          'Allow participants to trigger a recording on your phone during this call?',
+        displayList: true,
+
+        listOptions: [
+          {
+            operation: () => setPermission(false),
+          },
+          {
+            operation: () => setPermission(true),
+          },
+        ],
+      });
+  }
+  async refreshTokenMember() {
+    const {coachSession} = this.state;
+    const member = this.member(coachSession);
+    const {coachSessionID, userID} = this.props;
+    console.log('refreshTokenMember');
+    if (
+      coachSession.vonageSessionId &&
+      (member.expireTimeToken < Date.now() || !member.expireTimeToken)
+    ) {
+      var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
+      console.log('call cloud function', {
+        coachSessionID,
+        userID,
+        coachSessionIDOpentok: coachSession.vonageSessionId,
+        isOrganizer: coachSession.info.organizer === userID,
+      });
+      await axios.get(url, {
+        params: {
+          coachSessionID,
+          userID,
+          coachSessionIDOpentok: coachSession.vonageSessionId,
+          isOrganizer: (coachSession.info.organizer === userID).toString(),
+        },
       });
     }
   }
@@ -313,6 +441,7 @@ class StreamPage extends Component {
     const styleText = {
       ...styleApp.textBold,
       color: colors.white,
+      fontSize: 20,
       marginBottom: 25,
     };
     if (!pageFullScreen) return null;
@@ -356,6 +485,8 @@ class StreamPage extends Component {
         position: 'absolute',
         backgroundColor: colors.title,
       };
+      console.log('styleSubscriber', styleSubscriber, {width: w, height: h});
+      console.log('member', member);
       return (
         <View key={streamId} style={styleSubscriber}>
           <OTSubscriberView streamId={streamId} style={{width: w, height: h}} />
@@ -432,52 +563,54 @@ class StreamPage extends Component {
 
     const {sessionID} = coachSession.tokbox;
     if (!userConnected) return null;
-    if (!sessionID) return this.loaderView('Creating the room...');
+    if (!sessionID) return this.loaderView('Room creation');
 
     const member = userPartOfSession(coachSession, userID);
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
-
+    console.log('render stream view ', isConnected);
     return (
       <Animated.View
         style={[styleApp.fullSize, {opacity: this.opacityStreamView}]}>
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
-          : !member.isConnected
-          ? this.loaderView('We are connecting you to the session...')
+          : !isConnected
+          ? this.loaderView('Connection')
           : null}
 
         <MembersView members={coachSession.members} />
         {!publishVideo && this.pausedView(userIsAlone)}
         <View style={this.styleSession()}>
-          <OTSession
-            apiKey={Config.OPENTOK_API}
-            ref={this.otSessionRef}
-            eventHandlers={this.sessionEventHandlers}
-            sessionId={sessionID}
-            token={member.tokenTokbox}>
-            <OTPublisher
-              ref={this.otPublisherRef}
-              style={this.stylePublisher(userIsAlone)}
-              properties={{
-                cameraPosition,
-                videoSource: 'camera',
-                publishAudio: publishAudio,
-                publishVideo: publishVideo,
-              }}
-              eventHandlers={this.publisherEventHandlers}
-            />
+          {member.tokenTokbox && (
+            <OTSession
+              apiKey={Config.OPENTOK_API}
+              ref={this.otSessionRef}
+              eventHandlers={this.sessionEventHandlers}
+              sessionId={sessionID}
+              token={member.tokenTokbox}>
+              <OTPublisher
+                ref={this.otPublisherRef}
+                style={this.stylePublisher(userIsAlone)}
+                properties={{
+                  cameraPosition,
+                  videoSource: 'camera',
+                  publishAudio: publishAudio,
+                  publishVideo: publishVideo,
+                }}
+                eventHandlers={this.publisherEventHandlers}
+              />
 
-            <OTSubscriber
-              style={
-                pageFullScreen
-                  ? styles.OTSubscriber
-                  : {height: 0, width: 0, position: 'absolute', marginTop: 60}
-              }>
-              {this.renderSubscribers}
-            </OTSubscriber>
-          </OTSession>
+              <OTSubscriber
+                style={
+                  pageFullScreen
+                    ? styles.OTSubscriber
+                    : {height: 0, width: 0, position: 'absolute', marginTop: 60}
+                }>
+                {this.renderSubscribers}
+              </OTSubscriber>
+            </OTSession>
+          )}
         </View>
 
         <Footer
@@ -566,6 +699,9 @@ class StreamPage extends Component {
           <Header
             coachSessionID={coachSessionID}
             organizerID={coachSession && coachSession.info.organizer}
+            permissionOtherUserToRecord={
+              this.member(coachSession).permissionOtherUserToRecord
+            }
             opacityHeader={this.opacityHeader}
             open={this.open.bind(this)}
             setState={this.setState.bind(this)}

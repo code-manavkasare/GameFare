@@ -20,12 +20,11 @@ const initialState = {
     touchEnabled: true,
   },
   settings: {
-    cameraFront: false,
-    shareScreen: false,
-    draw: false,
+    permissionOtherUserToRecord: 'none',
   },
   sessionInfo: {
     objectID: false,
+    prevObjectID: false,
     autoOpen: false,
     scrollDisabled: false,
   },
