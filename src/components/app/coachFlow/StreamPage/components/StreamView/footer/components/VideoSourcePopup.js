@@ -23,9 +23,7 @@ export default class VideoSourcePopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
-      inValue: new Animated.Value(0),
-      contentValue: new Animated.Value(0)
+      visible: false
     };
     this.scaleCard = new Animated.Value(0);
   }
@@ -33,9 +31,13 @@ export default class VideoSourcePopup extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
+
   static getDerivedStateFromProps (props, state) {
-    return { members: props.members ? Object.values(props.members).filter((member) => {return (member.isConnected)}) : []}
-    // TODO: permissionOtherUserToRecord = true
+    return { members: props.members ? 
+        Object.values(props.members).filter((member) => {
+          return (member.isConnected && member.permissionOtherUserToRecord)
+        }) 
+      : undefined }
   }
 
   open() {
@@ -52,64 +54,83 @@ export default class VideoSourcePopup extends Component {
     ]).start();
   }
 
+  memberRow(member, i) {
+    const {firstname, lastname, picture} = member.info;
+    return (
+      <View style={{width:'100%'}}>
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={1} style={styleApp.center2}>
+                {member.info.picture ? (
+                  <AsyncImage
+                    style={styles.imgUser}
+                    mainImage={picture}
+                    imgInitial={picture}
+                  />
+                ) : (
+                  <View style={[styleApp.center, styles.imgUser]}>
+                    <Text style={[styleApp.text, {fontSize: 12}]}>
+                      {firstname[0]}
+                      {lastname !== '' ? lastname[0] : ''}
+                    </Text>
+                  </View>
+                )}
+              </Col>
+
+              <Col size={2} style={styleApp.center2}>
+                <Text style={styleApp.text}>
+                  {firstname} {lastname}
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => this.props.selectMember(member)}
+        key={i}
+        color="white"
+        style={[styles.cardUser]}
+        onPressColor={colors.off2}
+      />
+      </View>
+    );
+  }
+
+  backdrop() {
+    const {visible} = this.state;
+
+    return (
+      <TouchableWithoutFeedback onPress={() => this.close()}>
+        <View pointerEvents={visible?"auto":"none"} style={styles.fullPage} />
+      </TouchableWithoutFeedback>
+    )
+  }
+
   render() {
     const {visible} = this.state;
     const {members} = this.state;
     
+    const translateY = this.scaleCard.interpolate({
+      inputRange: [0, 1],
+      outputRange: [30, 0],
+      extrapolate: 'clamp'
+    });
+
     return (
       <Animated.View 
         pointerEvents={visible?"auto":"none"} 
-        style={[styles.square, styleApp.center, {opacity: this.scaleCard}]}
+        style={[styles.square, styleApp.center, 
+          {
+            opacity: this.scaleCard,
+            transform: [{translateY: translateY}],
+          }]}
       >
         <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
         <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
-        {members && members.map((member, i) => {
-            const {firstname, lastname, picture} = member.info;
-            return (
-              <View style={{width:'100%'}}>
-              <ButtonColor
-                view={() => {
-                  return (
-                    <Row>
-                      <Col size={1} style={styleApp.center2}>
-                        {member.info.picture ? (
-                          <AsyncImage
-                            style={styles.imgUser}
-                            mainImage={picture}
-                            imgInitial={picture}
-                          />
-                        ) : (
-                          <View style={[styleApp.center, styles.imgUser]}>
-                            <Text style={[styleApp.text, {fontSize: 12}]}>
-                              {firstname[0]}
-                              {lastname !== '' ? lastname[0] : ''}
-                            </Text>
-                          </View>
-                        )}
-                      </Col>
-
-                      <Col size={2} style={styleApp.center2}>
-                        <Text style={styleApp.text}>
-                          {firstname} {lastname}
-                        </Text>
-                      </Col>
-                    </Row>
-                  );
-                }}
-                click={() => this.props.selectMember(member)}
-                key={i}
-                color="white"
-                style={[styles.cardUser]}
-                onPressColor={colors.off2}
-              />
-              </View>
-            );
-          }
-        )}
+        {members ? members.map(this.memberRow.bind(this)) : null}
         <View style={styles.triangle} />
-        <TouchableWithoutFeedback onPress={() => this.close()}>
-          <View pointerEvents={visible?"auto":"none"} style={styles.fullPage} />
-        </TouchableWithoutFeedback>
+        {this.backdrop()}
       </Animated.View>
     );
   }

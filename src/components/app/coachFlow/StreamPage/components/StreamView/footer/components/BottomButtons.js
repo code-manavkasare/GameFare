@@ -11,7 +11,7 @@ import {navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-import {startRemoteRecording, stopRemoteRecording} from '../../../../../../../functions/coach'
+import {startRemoteRecording, stopRemoteRecording, updateTimestamp} from '../../../../../../../functions/coach'
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
@@ -54,7 +54,7 @@ class BottomButton extends Component {
   }
   static getDerivedStateFromProps(props, state) {
     const {members, userID} = props
-    const {recording, startTimeRecording, recordingUser} = state
+    const {recording, startTimeRecording} = state
     const member = (members) ? members[userID] : undefined
     if (member && member.recording !== undefined) {
       if (!recording && member.recording.isRecording && member.recording.timestamp > startTimeRecording) {
@@ -112,17 +112,18 @@ class BottomButton extends Component {
     stopRemoteRecording(recordingUser, coachSessionID, userID)
   }
   startRecording = async () => {
-    const {userID} = this.props
-    const messageCallback = (response) => {
+    const {coachSessionID, userID} = this.props
+    const messageCallback = async (response) => {
       if (response.error) {
         console.log(`Error initializing recording: ${response.message}`);
       } else {
         console.log('Started recording...');
-        this.setState({
+        await this.setState({
           recording: true,
           recordingUser: userID,
           startTimeRecording: Date.now(),
         });
+        updateTimestamp(coachSessionID, userID, this.state.startTimeRecording)
       }
     };
     const permissionLibrary = await permission('library');
