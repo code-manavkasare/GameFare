@@ -576,7 +576,7 @@ class StreamPage extends Component {
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
           : !isConnected
-          ? this.loaderView('Connection')
+          ? this.loaderView('Connecting')
           : null}
 
         <MembersView members={coachSession.members} />
@@ -623,6 +623,8 @@ class StreamPage extends Component {
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.footerRef = ref)}
+          members={coachSession.members}
+          coachSessionID={this.props.coachSessionID}
         />
       </Animated.View>
     );

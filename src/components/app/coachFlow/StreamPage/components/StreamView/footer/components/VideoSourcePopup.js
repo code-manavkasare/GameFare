@@ -5,12 +5,15 @@ import {
   Text,
   StyleSheet,
   TouchableWithoutFeedback,
+  Animated, Easing
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
+
+import {native} from '../../../../../../../animations/animations';
 
 import colors from '../../../../../../../style/colors';
 import sizes from '../../../../../../../style/sizes';
@@ -19,82 +22,140 @@ import styleApp from '../../../../../../../style/style';
 export default class VideoSourcePopup extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      visible: false
+    };
+    this.scaleCard = new Animated.Value(0);
+  }
+
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+
+  static getDerivedStateFromProps (props, state) {
+    return { members: props.members ? 
+        Object.values(props.members).filter((member) => {
+          return (member.isConnected && member.permissionOtherUserToRecord)
+        }) 
+      : undefined }
+  }
+
+  open() {
+    this.setState({visible: true})
+    return Animated.parallel([
+      Animated.timing(this.scaleCard, native(1)),
+    ]).start();
+  }
+
+  close() {
+    this.setState({visible: false})
+    return Animated.parallel([
+      Animated.timing(this.scaleCard, native(0)),
+    ]).start();
+  }
+
+  memberRow(member, i) {
+    const {firstname, lastname, picture} = member.info;
+    return (
+      <View style={{width:'100%'}}>
+      <ButtonColor
+        view={() => {
+          return (
+            <Row>
+              <Col size={1} style={styleApp.center2}>
+                {member.info.picture ? (
+                  <AsyncImage
+                    style={styles.imgUser}
+                    mainImage={picture}
+                    imgInitial={picture}
+                  />
+                ) : (
+                  <View style={[styleApp.center, styles.imgUser]}>
+                    <Text style={[styleApp.text, {fontSize: 12}]}>
+                      {firstname[0]}
+                      {lastname !== '' ? lastname[0] : ''}
+                    </Text>
+                  </View>
+                )}
+              </Col>
+
+              <Col size={2} style={styleApp.center2}>
+                <Text style={styleApp.text}>
+                  {firstname} {lastname}
+                </Text>
+              </Col>
+            </Row>
+          );
+        }}
+        click={() => this.props.selectMember(member)}
+        key={i}
+        color="white"
+        style={[styles.cardUser]}
+        onPressColor={colors.off2}
+      />
+      </View>
+    );
+  }
+
+  backdrop() {
+    const {visible} = this.state;
+
+    return (
+      <TouchableWithoutFeedback onPress={() => this.close()}>
+        <View pointerEvents={visible?"auto":"none"} style={styles.fullPage} />
+      </TouchableWithoutFeedback>
+    )
   }
 
   render() {
-    const {members} = this.props;
+    const {visible} = this.state;
+    const {members} = this.state;
+    
+    const translateY = this.scaleCard.interpolate({
+      inputRange: [0, 1],
+      outputRange: [30, 0],
+      extrapolate: 'clamp'
+    });
 
     return (
-      <View style={[styles.square, styleApp.center]}>
+      <Animated.View 
+        pointerEvents={visible?"auto":"none"} 
+        style={[styles.square, styleApp.center, 
+          {
+            opacity: this.scaleCard,
+            transform: [{translateY: translateY}],
+          }]}
+      >
         <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
         <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
-        {members.map((member, i) => {
-          if (member.isConnected) {
-            const {firstname, lastname, picture} = member.info;
-            return (
-              <ButtonColor
-                view={() => {
-                  return (
-                    <Row>
-                      <Col size={1} style={styleApp.center2}>
-                        {member.info.picture ? (
-                          <AsyncImage
-                            style={styles.imgUser}
-                            mainImage={picture}
-                            imgInitial={picture}
-                          />
-                        ) : (
-                          <View style={[styleApp.center, styles.imgUser]}>
-                            <Text style={[styleApp.text, {fontSize: 12}]}>
-                              {firstname[0]}
-                              {lastname !== '' ? lastname[0] : ''}
-                            </Text>
-                          </View>
-                        )}
-                      </Col>
-
-                      <Col size={2} style={styleApp.center2}>
-                        <Text style={styleApp.text}>
-                          {firstname} {lastname}
-                        </Text>
-                      </Col>
-                    </Row>
-                  );
-                }}
-                click={() => this.props.selectMember(member)}
-                key={i}
-                color="white"
-                style={[styles.cardUser]}
-                onPressColor={colors.off2}
-              />
-            );
-          }
-        })}
+        {members ? members.map(this.memberRow.bind(this)) : null}
         <View style={styles.triangle} />
-        <TouchableWithoutFeedback onPress={() => this.props.close()}>
-          <View style={styles.fullPage} />
-        </TouchableWithoutFeedback>
-      </View>
+        {this.backdrop()}
+      </Animated.View>
     );
   }
 }
 
-const triangleBase = 26;
+const triangleBase = 21;
 
 const styles = StyleSheet.create({
   square: {
     position: 'absolute',
     alignSelf: 'center',
-    width: sizes.width - 160,
     paddingHorizontal: 10,
-    bottom: 100 + sizes.offsetFooterStreaming,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 15,
+    width:sizes.width - 160,
+    bottom: 100 + sizes.offsetFooterStreaming,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    zIndex:2
   },
   triangle: {
-    borderLeftWidth: triangleBase / 2,
-    borderRightWidth: triangleBase / 2,
+    borderLeftWidth: triangleBase / 1.5,
+    borderRightWidth: triangleBase / 1.5,
     borderTopWidth: triangleBase,
     backgroundColor: 'transparent',
     borderLeftColor: 'transparent',
@@ -102,11 +163,17 @@ const styles = StyleSheet.create({
     borderTopColor: colors.white,
     position: 'absolute',
     bottom: -triangleBase,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    zIndex:1
   },
   cardUser: {
     height: 55,
     paddingLeft: 20,
     paddingRight: 20,
+    marginBottom: 10
   },
   imgUser: {
     width: 40,
@@ -122,9 +189,10 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   text: {
-    marginTop: 10,
+    marginTop: 15,
     marginHorizontal: 'auto',
     textAlign: 'center',
+    fontWeight:'bold'
   },
 });
 
