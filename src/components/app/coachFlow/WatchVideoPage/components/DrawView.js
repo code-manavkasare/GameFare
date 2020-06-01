@@ -118,7 +118,7 @@ class Draw extends Component {
       height: h,
       width: w,
       backgroundColor: colors.grey + '0',
-      borderWidth: 3,
+      borderWidth: 1,
       borderColor: colors.grey,
     };
 

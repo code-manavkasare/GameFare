@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.title + '90',
 
     borderRadius: 27.5,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: colors.off,
     width: 55,
   },
