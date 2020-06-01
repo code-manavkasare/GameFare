@@ -7,7 +7,7 @@ var heightFooterBooking = 80;
 var heightFooter = 70;
 var marginTopApp = 10;
 let marginTopAppLandscape = 0;
-var heightHeaderHome = 75;
+var heightHeaderHome = 70;
 var heightHeaderFilter = 100;
 var heightHeaderHomeSearch = 130;
 var height0 = 50;
@@ -64,7 +64,7 @@ if (Platform.OS === 'ios') {
     initialHeightControlBar = 100;
     offsetFooterStreaming = 35;
   } else if (height === 667) {
-    heightFooterBooking = 60;
+    heightFooterBooking = 85;
     heightHeaderFilter = 100;
     heightHeaderHomeSearch = 130;
     initialHeightControlBar = 80;

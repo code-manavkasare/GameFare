@@ -49,7 +49,6 @@ class CourtCalibration extends Component {
       {text: 'Right', value: 'right', id: 3},
     ];
     const {angle} = this.state;
-
     return (
       <View style={styleApp.marginView}>
         <Row>

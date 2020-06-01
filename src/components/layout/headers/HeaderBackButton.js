@@ -290,7 +290,12 @@ class HeaderBackButton extends Component {
       );
   }
   render() {
-    const {imgHeader, currentScreenSize, opacityHeader} = this.props;
+    const {
+      imgHeader,
+      currentScreenSize,
+      opacityHeader,
+      textHeader,
+    } = this.props;
     const {portrait} = currentScreenSize;
     const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
 
@@ -317,7 +322,7 @@ class HeaderBackButton extends Component {
           <View style={styles.rowTextHeader}>
             <Animated.Text
               style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
-              {this.props.textHeader}
+              {textHeader}
             </Animated.Text>
           </View>
           <Col size={15} style={styleApp.center2} activeOpacity={0.4}>

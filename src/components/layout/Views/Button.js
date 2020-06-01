@@ -38,8 +38,11 @@ export default class Button extends Component {
       inputRange: [0, 300],
       outputRange: [this.props.color, this.props.onPressColor],
     });
+    const {pointerEvents} = this.props;
     return (
-      <Animated.View style={[this.props.style, {backgroundColor: color}]}>
+      <Animated.View
+        pointerEvents={pointerEvents}
+        style={[this.props.style, {backgroundColor: color}]}>
         <TouchableOpacity
           activeOpacity={1}
           style={[styleApp.center, {width: '100%', height: '100%'}]}

@@ -181,6 +181,7 @@ const getVideoInfo = async (videoUrl) => {
 };
 
 const resolutionP = (size) => {
+  if (!size) return '720p';
   const {height, width} = size;
   if (width > height) return height + 'p';
   return width + 'p';

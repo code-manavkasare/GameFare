@@ -7207,10 +7207,10 @@ react-native-easy-toast@^1.2.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-fade-in-view@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/react-native-fade-in-view/-/react-native-fade-in-view-1.0.6.tgz#e7a153b2adf3ba2d11b10d81cb69c601d0cb25ec"
-  integrity sha512-EJzic/rOwnRjvfaeRdXOKuNAdCswKV55UxOWxwlibfObf2j9CXYWv54iDEurmYOO+jXZIXKfGy6fDs/2JnsY7g==
+react-native-fade-in-view@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-fade-in-view/-/react-native-fade-in-view-1.1.0.tgz#9d7e39d09cbbd715c2e180151aa388d126d41cce"
+  integrity sha512-1KOyRRgDdgN3X14bDjxXmZ4/La4DVZVBbr/aOpvzxDEDsQrq8uSCM+2hBcqC5mPGqTOcwKqVRtbzxRq145xxzA==
 
 react-native-fast-image@^7.0.2:
   version "7.0.2"

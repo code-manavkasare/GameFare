@@ -13,6 +13,9 @@ import DateSelector from '../app/elementsEventCreate/DateSelector';
 import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import AddMembers from '../app/elementsCreateChallenge/PickMembers';
+
+import CourtCalibration from './MainApp/components/CourtCalibration';
+
 import Alert from '../layout/alerts/Alert';
 
 const Stack = createStackNavigator();
@@ -72,6 +75,14 @@ function InitialStack() {
       <Stack.Screen
         name="PickMembers"
         component={AddMembers}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="CourtCalibration"
+        component={CourtCalibration}
         options={{
           gestureEnabled: false,
         }}
