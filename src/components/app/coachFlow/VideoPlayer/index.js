@@ -27,6 +27,7 @@ export default class VideoPlayer extends Component {
       videoLoaded: false,
       fullscreen: false,
       playRate: 1,
+      muted: __DEV__,
       displayVideo: false,
     };
     this.opacityControlBar = new Animated.Value(1);
@@ -189,6 +190,8 @@ export default class VideoPlayer extends Component {
       totalTime,
       videoLoaded,
       source,
+      onSliding,
+      muted,
     } = this.state;
 
     return (
@@ -242,7 +245,7 @@ export default class VideoPlayer extends Component {
                 const {currentTime} = this.state;
                 this.seek(currentTime);
               }}
-              muted={__DEV__ ? true : false}
+              muted={muted}
               fullscreen={fullscreen}
               onFullscreenPlayerDidDismiss={(event) => {
                 this.setState({fullscreen: false});

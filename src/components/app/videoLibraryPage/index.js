@@ -72,7 +72,7 @@ class VideoLibraryPage extends Component {
         {loader ? (
           this.placehoder()
         ) : videosArray.length === 0 && uploadingVideosArray.length === 0 ? (
-          <Text style={[styleApp.text, {marginLeft: 20, marginTop: 10}]}>
+          <Text style={[styleApp.text, styleApp.marginView, {marginTop: 0}]}>
             You have no video in your cloud yet. Start today by uploading some
             or record yourself !
           </Text>
@@ -83,6 +83,7 @@ class VideoLibraryPage extends Component {
                 style={styles.cardArchive}
                 archive={video}
                 key={video.id}
+                noUpdateStatusBar={true}
               />
             );
           })

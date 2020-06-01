@@ -33,40 +33,55 @@ class CourtPositioning extends Component {
     super(props);
     this.state = {
       loader: true,
+      error: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
-    // this.getCourtCalibration();
+    this.getCourtCalibration();
   }
   async getCourtCalibration() {
     const {userID} = this.props;
     const urlCreateUserConnectAccount = `${
       Config.FIREBASE_CLOUD_FUNCTIONS_URL
     }courtCalibration`;
+    const {route} = this.props;
+    const {archive, angleSelected} = route.params;
+    const {thumbnail} = archive;
+    let thumbnailsAnalytics = archive.thumbnailsAnalytics;
+    if (!thumbnailsAnalytics) thumbnailsAnalytics = [thumbnail];
+    thumbnailsAnalytics = ['https://bit.ly/3c6Js2m'];
     let responseCourtCalibration = await axios.get(
       urlCreateUserConnectAccount,
       {
         params: {
           userID: userID,
+          thumbnail: thumbnailsAnalytics[0],
+          angleSelected: angleSelected,
         },
       },
     );
+    const {data} = responseCourtCalibration;
 
+    console.log('responseCourtCalibration', data);
+    this.setState({loader: false, error: data.message});
   }
   courtCalibration() {
     const {route} = this.props;
     const {archive} = route.params;
+    const {error} = this.state;
     const {size, thumbnail, durationSeconds, startTimestamp} = archive;
     const {loader} = this.state;
     let thumbnailsAnalytics = archive.thumbnailsAnalytics;
     if (!thumbnailsAnalytics) thumbnailsAnalytics = [thumbnail];
-
-
+    thumbnailsAnalytics = [
+      'https://firebasestorage.googleapis.com/v0/b/gamefare-dev-cfc88.appspot.com/o/test%2Ftest.png?alt=media&token=e7d2ea0e-950c-4956-be98-5f257f356ea0',
+    ];
+    console.log('render court calibration', archive);
     return (
       <View style={styleApp.marginView}>
-        <Row>
+        {/* <Row>
           <Col style={styleApp.center2} size={25}>
             <AsyncImage mainImage={thumbnail} style={styles.img} />
           </Col>
@@ -81,8 +96,8 @@ class CourtPositioning extends Component {
               )}
             </Text>
           </Col>
-        </Row>
-        <Text style={[styleApp.title, {marginTop: 20}]}>
+        </Row> */}
+        <Text style={[styleApp.title, {marginTop: 0}]}>
           Confirm the position of the court.
         </Text>
 
@@ -102,6 +117,7 @@ class CourtPositioning extends Component {
             </View>
           )}
         </View>
+        {<Text style={[styleApp.subtitle, {marginTop: 20}]}>{error}</Text>}
       </View>
     );
   }
@@ -123,7 +139,7 @@ class CourtPositioning extends Component {
           //   colorIcon1={colors.greyDark}
           textHeader="Court position"
           sizeLoader={40}
-          sizeIcon1={21}
+          // sizeIcon1={15}
           nobackgroundColorIcon1={true}
           initialBorderWidth={1}
           // backgroundColorIcon1={colors.white}
@@ -151,7 +167,7 @@ class CourtPositioning extends Component {
             duration={300}
             style={[styleApp.footerBooking, styleApp.marginView]}>
             <Button
-              text={'Confirm angle'}
+              text={'Confirm court position'}
               backgroundColor={'green'}
               onPressColor={colors.greenLight}
               click={async () => {
