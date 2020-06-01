@@ -122,6 +122,7 @@ export default class VideoPlayer extends Component {
       currentTime: SliderTime,
       paused: prevPaused,
     });
+
     return true;
   };
   onSlidingStart = async () => {
