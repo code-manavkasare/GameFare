@@ -42,6 +42,7 @@ import {
   userPartOfSession,
   styleStreamView,
   getVideoSharing,
+  timeout,
 } from '../../../../../functions/coach';
 
 import colors from '../../../../../style/colors';
@@ -117,6 +118,25 @@ class StreamPage extends Component {
           },
         );
       },
+      sessionDisconnected: (event) => {
+        const {userID, coachSessionID} = this.props;
+        console.log(
+          'sessionEventHandlers sessionDisconnected ' + coachSessionID,
+        );
+        Mixpanel.trackWithProperties(
+          'sessionEventHandlers sessionDisconnected ' + coachSessionID,
+          {
+            userID,
+            coachSessionID,
+            event,
+          },
+        );
+        database()
+          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .update({
+            isConnected: false,
+          });
+      },
       streamDestroyed: (event) => {
         const {userID, coachSessionID} = this.props;
         console.log('sessionEventHandlers streamDestroyed ' + coachSessionID);
@@ -128,6 +148,11 @@ class StreamPage extends Component {
             event,
           },
         );
+        database()
+          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .update({
+            isConnected: false,
+          });
       },
       sessionConnected: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
@@ -194,7 +219,7 @@ class StreamPage extends Component {
             date: new Date(),
           },
         );
-        await database()
+        database()
           .ref(`coachSessions/${coachSessionID}/members/${userID}`)
           .update({
             isConnected: false,
@@ -280,8 +305,12 @@ class StreamPage extends Component {
     if (nextVal) {
       ////// close current opened session
       const currentOpenSession = sessionInfo.objectID;
-      if (currentOpenSession && currentOpenSession !== coachSessionID)
+      if (currentOpenSession && currentOpenSession !== coachSessionID) {
         await closeCurrentSession(currentOpenSession);
+
+        // we await a bit so that the stream is 100% sure detroyed.
+        timeout(300);
+      }
       /////////////////////////
       await coachAction('setSessionInfo', {
         objectID: coachSessionID,
@@ -361,7 +390,7 @@ class StreamPage extends Component {
     const {coachSessionID, userID} = this.props;
     console.log('refreshTokenMember');
     if (
-      coachSession.vonageSessionId &&
+      coachSession?.vonageSessionId &&
       (member.expireTimeToken < Date.now() || !member.expireTimeToken)
     ) {
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
@@ -433,7 +462,13 @@ class StreamPage extends Component {
   }
   async endCoachSession(hangup) {
     if (hangup) await this.open(false);
-    await this.setState({open: false});
+    await this.setState({open: false, isConnected: false});
+    const {coachSessionID, userID} = this.props;
+    Mixpanel.trackWithProperties('End Session ' + coachSessionID, {
+      userID,
+      coachSessionID,
+      date: new Date(),
+    });
     return true;
   }
   loaderView(text, hideLoader) {
@@ -758,14 +793,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     position: 'relative',
   },
-  pageComponent: {
-    backgroundColor: colors.white,
-    ...styleApp.fullSize,
-    // ...styleApp.center,
-  },
   viewStream: {
     ...styleApp.fullSize,
-    backgroundColor: colors.white,
     position: 'absolute',
     zIndex: -1,
   },
