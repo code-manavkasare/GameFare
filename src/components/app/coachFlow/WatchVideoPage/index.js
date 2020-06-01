@@ -165,11 +165,11 @@ class WatchVideoPage extends Component {
           backgroundColorIcon1={colors.title + '70'}
           initialBorderColorIcon={'transparent'}
           icon1="times"
-          icon2={drawingEnable && 'pencil-ruler'}
+          icon2={drawingEnable && 'gesture'}
           backgroundColorIcon2={colors.title + '70'}
           clickButton2={() => this.rightButtonsRef.openToolBox()}
           sizeIcon2={20}
-          typeIcon2="font"
+          typeIcon2="mat"
           colorIcon2={colors.white}
           initialTitleOpacity={1}
           clickButton1={() => {
