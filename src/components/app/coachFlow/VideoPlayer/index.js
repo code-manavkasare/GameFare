@@ -21,6 +21,7 @@ export default class VideoPlayer extends Component {
       loader: true,
       source: this.props.source,
       paused: this.props.paused,
+      prevPaused: false,
       placeHolderImg: this.props.placeHolderImg,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
       totalTime: 0,
@@ -112,19 +113,23 @@ export default class VideoPlayer extends Component {
     if (!paused) this.controlButtonRef.setCurrentTime(currentTime);
   };
   onSlidingComplete = async (SliderTime) => {
+    const {prevPaused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
-    if (updateVideoInfoCloud && !noUpdateInCloud)
-      await updateVideoInfoCloud({currentTime: SliderTime});
+    const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
+    if (isCloudUpdating)
+      await updateVideoInfoCloud({currentTime: SliderTime, paused: prevPaused});
     await this.setState({
       currentTime: SliderTime,
+      // paused: prevPaused,
     });
     return true;
   };
   onSlidingStart = async () => {
+    const {paused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     if (updateVideoInfoCloud && !noUpdateInCloud)
       return updateVideoInfoCloud({paused: true});
-    return this.setState({paused: true});
+    return this.setState({paused: true, prevPaused: paused});
   };
   playPauseButton = (paused) => {
     const styleButton = {height: 45, width: '100%'};

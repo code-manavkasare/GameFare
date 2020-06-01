@@ -270,12 +270,12 @@ const styles = StyleSheet.create({
   viewSpeedSet: {
     position: 'absolute',
     width: 65,
-    right: 0,
+    right: '5%',
     zIndex: 60,
     backgroundColor: colors.transparentGrey,
     borderRadius: 5,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
     ...styleApp.center,
   },
   triangleSpeedView: {
