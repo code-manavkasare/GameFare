@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import {View, Text, StyleSheet, Animated, Image, Alert} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
+import Slider from '@react-native-community/slider';
+
+import {fromHsv} from 'react-native-color-picker';
 
 import ButtonColor from '../../../../layout/Views/Button';
 import AllIcons from '../../../../layout/icons/AllIcons';
@@ -19,7 +22,9 @@ import styleApp from '../../../../style/style';
 class RightButtons extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      colorSelected: this.props.settingsDraw.color,
+    };
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -76,8 +81,7 @@ class RightButtons extends Component {
       styles.roundColor,
       {
         backgroundColor: color,
-
-        borderColor: settingsDraw.color === color ? colors.secondary : 'white',
+        borderColor: colors.white,
       },
     ];
     return (
@@ -88,7 +92,7 @@ class RightButtons extends Component {
         click={async () =>
           coachAction('setCoachSessionDrawSettings', {color: color})
         }
-        style={[styles.button, {height: 35}]}
+        style={[styles.button, {height: 40}]}
         onPressColor={colors.off}
       />
     );
@@ -102,6 +106,7 @@ class RightButtons extends Component {
       drawViewRef,
       coachAction,
     } = this.props;
+
     if (videoBeingShared.drawings) {
       if (!idLastDrawing)
         idLastDrawing = getLastDrawing(videoBeingShared.drawings).id;
@@ -112,13 +117,39 @@ class RightButtons extends Component {
         .remove();
     }
   };
+
   toolsDraw() {
-    const {archiveID, coachSessionID} = this.props;
+    const {colorSelected} = this.state;
+    const {archiveID, coachSessionID, settingsDraw, coachAction} = this.props;
+    const valueColor = (value) => {
+      return fromHsv({h: value, s: 0.8, v: 1});
+    };
     return (
-      <View style={styles.toolBox}>
-        {this.buttonColor(colors.red)}
-        {this.buttonColor(colors.blue)}
-        {this.buttonColor(colors.greenStrong)}
+      <View style={[styleApp.center, styles.toolBox]}>
+        {this.buttonColor(colorSelected)}
+        <Slider
+          style={{width: 80, height: '100%'}}
+          minimumValue={0}
+          maximumValue={300}
+          step={20}
+          minimumTrackTintColor={colors.white}
+          maximumTrackTintColor={valueColor(settingsDraw.color)}
+          onSlidingStart={(value) =>
+            this.setState({colorSelected: valueColor(value)})
+          }
+          onValueChange={(value) =>
+            this.setState({colorSelected: valueColor(value)})
+          }
+          onSlidingComplete={(value) =>
+            coachAction('setCoachSessionDrawSettings', {
+              color: valueColor(value),
+            })
+          }
+          // onColorSelected={(color) => {
+          //   // coachAction('setCoachSessionDrawSettings', {color: fromHsv(color)});
+          //   console.log('onColorSelected', fromHsv(color));
+          // }}
+        />
 
         {this.button({name: 'undo', type: 'font'}, 'Undo', false, () =>
           this.undo(),
@@ -170,17 +201,18 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     right: '5%',
-    paddingTop: 10,
+    width: 220,
+    height: 50,
+    paddingTop: 0,
     paddingBottom: 10,
     zIndex: 2,
-    backgroundColor: colors.title + '90',
+    backgroundColor: colors.transparentGrey,
 
-    borderRadius: 27.5,
-    borderWidth: 1,
+    borderRadius: 25,
+    borderWidth: 0,
     borderColor: colors.off,
-    width: 55,
   },
-  button: {height: 55, width: '100%', paddingTop: 10, paddingBottom: 10},
+  button: {height: 40, width: 40, paddingTop: 10, paddingBottom: 10},
   textButton: {
     fontSize: 11,
     marginTop: 7,
@@ -189,10 +221,16 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 20,
-    borderWidth: 2,
+    borderWidth: 0,
     ...styleApp.center,
   },
-  toolBox: {},
+  toolBox: {
+    // backgroundColor: 'red',
+    flexDirection: 'row',
+    paddingLeft: 10,
+    paddingTop: 5,
+    width: 200,
+  },
 });
 
 const mapStateToProps = (state) => {
