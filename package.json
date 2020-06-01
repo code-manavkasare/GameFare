@@ -59,6 +59,7 @@
     "react-native-calendar-events": "^1.7.3",
     "react-native-calendars": "^1.212.0",
     "react-native-camera": "^3.21.0",
+    "react-native-color-picker": "^0.5.2",
     "react-native-communications": "^2.2.1",
     "react-native-config": "^0.12.0",
     "react-native-confirmation-code-field": "^6.0.0",
