@@ -23,7 +23,7 @@ class RightButtons extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      colorSelected: colors.red,
+      colorSelected: this.props.settingsDraw.color,
     };
   }
   componentDidMount() {
@@ -125,19 +125,15 @@ class RightButtons extends Component {
       return fromHsv({h: value, s: 0.8, v: 1});
     };
     return (
-      <View style={styles.toolBox}>
-        {/* {this.buttonColor(colors.red)}
-        {this.buttonColor(colors.blue)}
-        {this.buttonColor(colors.greenStrong)} */}
-
+      <View style={[styleApp.center, styles.toolBox]}>
         {this.buttonColor(colorSelected)}
         <Slider
-          style={{width: '100%', height: 40}}
+          style={{width: 80, height: '100%'}}
           minimumValue={0}
           maximumValue={300}
           step={20}
-          minimumTrackTintColor="#FFFFFF"
-          maximumTrackTintColor="#000000"
+          minimumTrackTintColor={colors.white}
+          maximumTrackTintColor={valueColor(settingsDraw.color)}
           onSlidingStart={(value) =>
             this.setState({colorSelected: valueColor(value)})
           }
@@ -205,29 +201,36 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     right: '5%',
-    paddingTop: 10,
+    width: 220,
+    height: 50,
+    paddingTop: 0,
     paddingBottom: 10,
     zIndex: 2,
-    backgroundColor: colors.title + '90',
+    backgroundColor: colors.transparentGrey,
 
-    borderRadius: 27.5,
+    borderRadius: 25,
     borderWidth: 0,
     borderColor: colors.off,
-    width: 55,
   },
-  button: {height: 55, width: '100%', paddingTop: 10, paddingBottom: 10},
+  button: {height: 40, width: 40, paddingTop: 10, paddingBottom: 10},
   textButton: {
     fontSize: 11,
     marginTop: 7,
   },
   roundColor: {
-    height: 35,
-    width: 35,
+    height: 30,
+    width: 30,
     borderRadius: 20,
-    borderWidth: 2,
+    borderWidth: 0,
     ...styleApp.center,
   },
-  toolBox: {},
+  toolBox: {
+    // backgroundColor: 'red',
+    flexDirection: 'row',
+    paddingLeft: 10,
+    paddingTop: 5,
+    width: 200,
+  },
 });
 
 const mapStateToProps = (state) => {
