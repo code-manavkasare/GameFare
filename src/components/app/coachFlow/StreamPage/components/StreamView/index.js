@@ -459,25 +459,20 @@ class StreamPage extends Component {
   }
   renderSubscribers = (subscribers) => {
     const {coachSession} = this.state;
-    const {currentHeight, currentWidth} = this.props.currentScreenSize;
+    const {
+      currentHeight,
+      currentWidth,
+      portrait,
+    } = this.props.currentScreenSize;
     return subscribers.map((streamId, index) => {
       const member = Object.values(coachSession.members).filter(
         (member) => member.streamIdTokBox === streamId,
       )[0];
-      const ratioScreen = ratio(
-        currentWidth,
-        currentHeight / subscribers.length,
-      );
+
       let ratioVideo = ratio(16, 9);
       if (member?.portrait) ratioVideo = ratio(9, 16);
 
-      let w = currentWidth;
-      let h = currentWidth * ratioVideo;
-      if (ratioScreen < ratioVideo) {
-        h = currentHeight;
-        w = currentHeight / ratioVideo;
-      }
-      const styleSubscriber = {
+      let styleSubscriber = {
         ...styleApp.center,
         height: currentHeight / subscribers.length,
         width: currentWidth,
@@ -485,8 +480,22 @@ class StreamPage extends Component {
         position: 'absolute',
         backgroundColor: colors.title,
       };
-      console.log('styleSubscriber', styleSubscriber, {width: w, height: h});
-      console.log('member', member);
+      if (!portrait)
+        styleSubscriber = {
+          ...styleApp.center,
+          height: currentHeight,
+          width: currentWidth / subscribers.length,
+          left: index * (currentWidth / subscribers.length),
+          position: 'absolute',
+          backgroundColor: colors.title,
+        };
+      const ratioScreen = ratio(styleSubscriber.width, styleSubscriber.height);
+      let w = styleSubscriber.width;
+      let h = styleSubscriber.width * ratioVideo;
+      if (ratioScreen < ratioVideo) {
+        h = styleSubscriber.height;
+        w = styleSubscriber.height / ratioVideo;
+      }
       return (
         <View key={streamId} style={styleSubscriber}>
           <OTSubscriberView streamId={streamId} style={{width: w, height: h}} />
