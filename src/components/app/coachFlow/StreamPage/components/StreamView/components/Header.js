@@ -29,6 +29,7 @@ class HeaderStreamView extends Component {
         for (var i in Object.values(members)) {
           let member = Object.values(members)[i];
           member.isConnected = false;
+          member.invitationTimeStamp = Date.now();
           await database()
             .ref('coachSessions/' + objectID + '/members/' + member.id)
             .update(member);
