@@ -120,7 +120,7 @@ export default class VideoPlayer extends Component {
       await updateVideoInfoCloud({currentTime: SliderTime, paused: prevPaused});
     await this.setState({
       currentTime: SliderTime,
-      // paused: prevPaused,
+      paused: prevPaused,
     });
     return true;
   };
