@@ -131,11 +131,11 @@ class StreamPage extends Component {
             event,
           },
         );
-        database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-          .update({
-            isConnected: false,
-          });
+        // database()
+        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+        //   .update({
+        //     isConnected: false,
+        //   });
       },
       streamDestroyed: (event) => {
         const {userID, coachSessionID} = this.props;
@@ -148,11 +148,11 @@ class StreamPage extends Component {
             event,
           },
         );
-        database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-          .update({
-            isConnected: false,
-          });
+        // database()
+        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+        //   .update({
+        //     isConnected: false,
+        //   });
       },
       sessionConnected: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
@@ -219,11 +219,11 @@ class StreamPage extends Component {
             date: new Date(),
           },
         );
-        database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-          .update({
-            isConnected: false,
-          });
+        // database()
+        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+        //   .update({
+        //     isConnected: false,
+        //   });
         this.setState({
           isConnected: false,
         });
