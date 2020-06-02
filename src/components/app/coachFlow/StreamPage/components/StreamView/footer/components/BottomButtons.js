@@ -268,6 +268,7 @@ class BottomButton extends Component {
           onRef={(ref) => (this.cardUploadingRef = ref)}
           style={styles.CardUploading}
           size="sm"
+          members={this.props.members}
         />
         {recording && timer(startTimeRecording)}
         <ButtonColor

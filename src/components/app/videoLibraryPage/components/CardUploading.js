@@ -165,7 +165,7 @@ class CardUploading extends Component {
   uploadFile = async () => {
     await this.setState({status: 'loading'});
     const {videoInfo} = this.state;
-    const {userID, dismiss} = this.props;
+    const {userID, dismiss, members} = this.props;
     const {duration, size} = videoInfo;
 
     const id = videoInfo.localIdentifier.split('/')[0];
@@ -192,16 +192,22 @@ class CardUploading extends Component {
     updates[`${destinationCloud}/id`] = id;
     updates[`${destinationCloud}/url`] = videoUrl;
     updates[`${destinationCloud}/uploadedByUser`] = true;
-    updates[`${destinationCloud}/members`] = {[userID]: true};
+    updates[`${destinationCloud}/sourceUser`] = userID;
     updates[`${destinationCloud}/size`] = size;
     updates[`${destinationCloud}/thumbnail`] = thumbnailUrl;
     updates[`${destinationCloud}/startTimestamp`] = startTimestamp;
 
-    updates[`users/${userID}/${destinationCloud}/id`] = id;
-    updates[
-      `users/${userID}/${destinationCloud}/startTimestamp`
-    ] = startTimestamp;
-    updates[`users/${userID}/${destinationCloud}/uploadedByUser`] = true;
+    Object.values(members).map(member => {
+      updates[`${destinationCloud}/members/${member.id}/timestamp`] = startTimestamp;
+      updates[`${destinationCloud}/members/${member.id}/id`] = member.id;
+      updates[`${destinationCloud}/members/${member.id}/invitedBy`] = userID
+
+      updates[`users/${member.id}/${destinationCloud}/id`] = id;
+      updates[
+        `users/${member.id}/${destinationCloud}/startTimestamp`
+      ] = startTimestamp;
+      updates[`users/${member.id}/${destinationCloud}/uploadedByUser`] = true;
+    })
 
     await database()
       .ref()
