@@ -29,6 +29,7 @@ const MyTheme = {
     ...DefaultTheme.colors,
   },
 };
+ d
 
 class App extends Component {
   async componentDidMount() {
