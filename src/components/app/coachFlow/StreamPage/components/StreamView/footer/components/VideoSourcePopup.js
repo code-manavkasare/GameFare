@@ -7,8 +7,10 @@ import {
   TouchableWithoutFeedback,
   Animated, Easing
 } from 'react-native';
+import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
+import {Stopwatch} from 'react-native-stopwatch-timer';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
@@ -19,7 +21,7 @@ import colors from '../../../../../../../style/colors';
 import sizes from '../../../../../../../style/sizes';
 import styleApp from '../../../../../../../style/style';
 
-export default class VideoSourcePopup extends Component {
+class VideoSourcePopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +57,25 @@ export default class VideoSourcePopup extends Component {
   }
 
   memberRow(member, i) {
+    const {userID} = this.props
     const {firstname, lastname, picture} = member.info;
+    const optionsTimer = {
+      container: styles.viewRecordingTime,
+      text: [styleApp.text, {color: colors.white, fontSize: 14}],
+    };
+
+    const timer = (startTimeRecording) => {
+      const timerRecording = Number(new Date()) - startTimeRecording;
+      return (
+        <Stopwatch
+          laps
+          start={true}
+          startTime={timerRecording < 0 ? 0 : timerRecording}
+          options={optionsTimer}
+        />
+      );
+    };
+
     return (
       <View style={{width:'100%'}} key={member.id}>
       <ButtonColor
@@ -79,10 +99,28 @@ export default class VideoSourcePopup extends Component {
                 )}
               </Col>
 
-              <Col size={2} style={styleApp.center2}>
-                <Text style={styleApp.text}>
-                  {firstname} {lastname}
+              <Col size={2} style={[styleApp.center2]}>
+                <Text style={styles.nameText} numberOfLines={1}> 
+                  {
+                    (userID === member.id) 
+                    ? 
+                    'Your Camera' 
+                    : 
+                    firstname + ' ' + lastname
+                  }
                 </Text>
+              </Col>
+
+              <Col size={1} style={[styleApp.center, {alignContent:'flex-end'}]}>
+                {
+                  member.recording && member.recording.isRecording 
+                  ? 
+                  timer(member.recording.timestamp) 
+                  : 
+                  <View style={styles.recordButton}>
+                    <Text style={[styleApp.text, {color: colors.white, fontSize: 14}]}>Record</Text>
+                  </View>
+                }
               </Col>
             </Row>
           );
@@ -145,7 +183,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: 'white',
     borderRadius: 15,
-    width:sizes.width - 100,
+    width:sizes.width - 50,
     bottom: 100 + sizes.offsetFooterStreaming,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
@@ -194,6 +232,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight:'bold'
   },
+  viewRecordingTime: {
+    width: 70,
+    height: 23,
+    borderRadius: 5,
+    ...styleApp.center,
+    backgroundColor: colors.red,
+  },
+  recordButton: {
+    width: 70,
+    height: 23,
+    borderRadius: 5,
+    ...styleApp.center,
+    backgroundColor: colors.greyDark,
+  },
+  nameText: {
+    ...styleApp.text,
+    paddingRight:15,
+    marginLeft:-5
+  }
 });
 
 VideoSourcePopup.propTypes = {
@@ -201,3 +258,11 @@ VideoSourcePopup.propTypes = {
   selectMember: PropTypes.func,
   close: PropTypes.func,
 };
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userID,
+  };
+};
+
+export default connect(mapStateToProps)(VideoSourcePopup);

@@ -744,7 +744,7 @@ class StreamPage extends Component {
             coachSessionID={coachSessionID}
             organizerID={coachSession && coachSession.info.organizer}
             permissionOtherUserToRecord={
-              this.member(coachSession).permissionOtherUserToRecord
+              coachSession ? this.member(coachSession).permissionOtherUserToRecord : false
             }
             opacityHeader={this.opacityHeader}
             open={this.open.bind(this)}
