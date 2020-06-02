@@ -175,18 +175,15 @@ class RightButtons extends Component {
   }
   buttons() {
     const {archiveID, videoBeingShared, settingsDraw} = this.props;
-    const {personSharingScreen, portrait, drawingEnable} = this.props;
-    const {touchEnabled} = settingsDraw;
-    if (!drawingEnable || !touchEnabled) return null;
+    const {personSharingScreen, portrait, drawingOpen} = this.props;
+    if (!drawingOpen) return null;
 
-    const displayButtonDraw =
-      personSharingScreen && archiveID === videoBeingShared.id;
     let marginTop = marginTopApp;
     if (!portrait) marginTop = marginTopAppLandscape;
     return (
       <View
         style={[styles.colButtonsRight, {top: marginTop + heightHeaderHome}]}>
-        {displayButtonDraw && settingsDraw.touchEnabled && this.toolsDraw()}
+        {drawingOpen && this.toolsDraw()}
       </View>
     );
   }
