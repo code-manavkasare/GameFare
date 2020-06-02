@@ -160,7 +160,7 @@ export default class CardArchive extends Component {
                 </Col>
               </Row>
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               activeOpacity={1}
               onPress={() => this.openStatistics()}
               style={{
@@ -195,15 +195,15 @@ export default class CardArchive extends Component {
                   </Text>
                 </Col>
                 <Col size={20} style={styleApp.center3}>
-                  {/* <AllIcons
+                  <AllIcons
                     type={'mat'}
                     color={colors.white}
                     size={25}
                     name={'keyboard-arrow-right'}
-                  /> */}
+                  />
                 </Col>
               </Row>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View
               pointerEvents="none"
               style={{...styles.viewText, bottom: 5, left: 5}}>
