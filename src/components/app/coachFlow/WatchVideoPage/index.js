@@ -13,8 +13,6 @@ const {height, width} = Dimensions.get('screen');
 import database from '@react-native-firebase/database';
 
 import VideoPlayer from '../VideoPlayer/index';
-import PinchableBox from '../../../layout/Views/PinchableBox';
-
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import {native} from '../../../animations/animations';
@@ -186,7 +184,7 @@ class WatchVideoPage extends Component {
             this.setState({drawingOpen: true});
             // this.rightButtonsRef.openToolBox();
           }}
-          sizeIcon2={20}
+          sizeIcon2={24}
           typeIcon2="mat"
           colorIcon2={colors.white}
           initialTitleOpacity={1}
@@ -198,10 +196,10 @@ class WatchVideoPage extends Component {
               return this.buttonShareRef.startSharingVideo(false);
             this.open(false);
           }}
-          iconOffset="expand"
+          iconOffset="open-with"
           // colorIconOffset={colors.title}
-          typeIconOffset="font"
-          sizeIconOffset={23}
+          typeIconOffset="mat"
+          sizeIconOffset={25}
           clickButtonOffset={() => this.setState({drawingOpen: false})}
         />
 
