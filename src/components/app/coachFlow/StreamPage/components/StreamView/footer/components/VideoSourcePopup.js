@@ -57,7 +57,7 @@ export default class VideoSourcePopup extends Component {
   memberRow(member, i) {
     const {firstname, lastname, picture} = member.info;
     return (
-      <View style={{width:'100%'}}>
+      <View style={{width:'100%'}} key={member.id}>
       <ButtonColor
         view={() => {
           return (
@@ -88,7 +88,7 @@ export default class VideoSourcePopup extends Component {
           );
         }}
         click={() => this.props.selectMember(member)}
-        key={i}
+        key={member.id}
         color="white"
         style={[styles.cardUser]}
         onPressColor={colors.off2}
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: 'white',
     borderRadius: 15,
-    width:sizes.width - 160,
+    width:sizes.width - 100,
     bottom: 100 + sizes.offsetFooterStreaming,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
