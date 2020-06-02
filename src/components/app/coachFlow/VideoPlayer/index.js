@@ -7,6 +7,7 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import Loader from '../../../layout/loaders/Loader';
 import ButtonColor from '../../../layout/Views/Button';
+import PinchableBox from '../../../layout/Views/PinchableBox';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -217,58 +218,81 @@ export default class VideoPlayer extends Component {
           onPress={() => this.clickVideo()}
         /> */}
 
-        {displayVideo && source !== '' && (
+        {((displayVideo && source !== '') || __DEV__) && (
           <View
-            style={[styleApp.fullSize, {backgroundColor: colors.grey + '00'}]}>
-            <Video
-              key={index}
-              source={{uri: source}}
-              style={styleVideo}
-              ref={(ref) => {
-                this.player = ref;
-              }}
-              rate={playRate}
-              onLoad={async (callback) => {
-                const {setSizeVideo} = this.props;
-                if (setSizeVideo)
-                  Image.getSize(
-                    placeHolderImg,
-                    (width, height) => {
-                      setSizeVideo({width, height});
-                    },
-                    (error) => {
-                      console.error(
-                        `Couldn't get the image size: ${error.message}`,
-                      );
-                    },
-                  );
+            style={[
+              styleApp.fullSize,
+              styleApp.center,
+              {backgroundColor: colors.grey + '00'},
+            ]}>
+            <PinchableBox
+              styleContainer={[styleApp.fullSize, styleApp.center]}
+              component={() => (
+                <View style={[styleApp.fullSize, styleApp.center]}>
+                  {/* <AsyncImage
+                    mainImage={
+                      'https://images.pexels.com/photos/4389409/pexels-photo-4389409.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
+                    }
+                    style={{height: '100%', width: '100%'}}
+                  /> */}
+                  <Video
+                    key={index}
+                    source={{uri: source}}
+                    style={[
+                      {
+                        width: '100%',
+                        height: '100%',
+                        // aspectRatio: 0.5,
+                        // backgroundColor: 'blue',
+                      },
+                    ]}
+                    ref={(ref) => {
+                      this.player = ref;
+                    }}
+                    rate={playRate}
+                    onLoad={async (callback) => {
+                      const {setSizeVideo} = this.props;
+                      if (setSizeVideo)
+                        Image.getSize(
+                          placeHolderImg,
+                          (width, height) => {
+                            setSizeVideo({width, height});
+                          },
+                          (error) => {
+                            console.error(
+                              `Couldn't get the image size: ${error.message}`,
+                            );
+                          },
+                        );
 
-                await this.setState({
-                  totalTime: callback.duration,
-                  videoLoaded: true,
-                  loader: false,
-                });
-                const {currentTime} = this.state;
-                this.seek(currentTime);
-              }}
-              muted={muted}
-              fullscreen={fullscreen}
-              onFullscreenPlayerDidDismiss={(event) => {
-                this.setState({fullscreen: false});
-              }}
-              progressUpdateInterval={10}
-              onBuffer={this.onBuffer}
-              paused={paused}
-              onProgress={(info) => !paused && this.onProgress(info)}
-              onEnd={() => {
-                this.togglePlayPause(true);
-                this.controlButtonRef.setCurrentTime(totalTime, true);
-              }}
+                      await this.setState({
+                        totalTime: callback.duration,
+                        videoLoaded: true,
+                        loader: false,
+                      });
+                      const {currentTime} = this.state;
+                      this.seek(currentTime);
+                    }}
+                    muted={muted}
+                    fullscreen={fullscreen}
+                    onFullscreenPlayerDidDismiss={(event) => {
+                      this.setState({fullscreen: false});
+                    }}
+                    progressUpdateInterval={10}
+                    onBuffer={this.onBuffer}
+                    paused={paused}
+                    onProgress={(info) => !paused && this.onProgress(info)}
+                    onEnd={() => {
+                      this.togglePlayPause(true);
+                      this.controlButtonRef.setCurrentTime(totalTime, true);
+                    }}
+                  />
+                  {componentOnTop && componentOnTop()}
+                </View>
+              )}
             />
           </View>
         )}
-
-        {componentOnTop && componentOnTop()}
 
         {displayVideo && (
           <ControlButtons

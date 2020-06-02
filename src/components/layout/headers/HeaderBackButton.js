@@ -122,7 +122,7 @@ class HeaderBackButton extends Component {
     };
     const {
       clickButtonOffset,
-      backgroundColorIcon1,
+      backgroundColorIconOffset,
       iconOffset,
       textOffset,
       colorIconOffset,
@@ -137,8 +137,8 @@ class HeaderBackButton extends Component {
             styleButton,
             {
               borderColor: borderColorIcon,
-              backgroundColor: backgroundColorIcon1
-                ? backgroundColorIcon1
+              backgroundColor: backgroundColorIconOffset
+                ? backgroundColorIconOffset
                 : colors.white,
             },
           ]}>

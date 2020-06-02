@@ -45,8 +45,7 @@ class Draw extends Component {
   clear = () => {
     try {
       this.canvasRef.clear();
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   undo = (idLastDrawing) => {
     const {drawings} = this.props;
@@ -79,13 +78,15 @@ class Draw extends Component {
     });
 
     path.data = data;
-    const {archiveID, coachSessionID} = this.props;
-    await database()
-      .ref(
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
-      )
-      .update(path);
-    return this.undo(path.idSketch);
+    const {archiveID, coachSessionID, videoBeingShared} = this.props;
+    if (videoBeingShared) {
+      await database()
+        .ref(
+          `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
+        )
+        .update(path);
+      return this.undo(path.idSketch);
+    }
   }
   drawView() {
     const {
@@ -117,24 +118,25 @@ class Draw extends Component {
     let styleDrawView = {
       height: h,
       width: w,
-      backgroundColor: colors.grey + '0',
-      borderWidth: 1,
-      borderColor: colors.grey,
+      backgroundColor: colors.red + '0',
+      borderWidth: 2,
+      borderColor: colors.off,
     };
 
-    if (isMyVideo) return null;
+    if (!drawingOpen) return null;
+    console.log('drawview render', styleDrawView);
     return (
       <Animated.View style={[styles.page, styleDrawView]}>
-        {drawingOpen && (
+        {
           <SketchCanvas
             style={styles.drawingZone}
             ref={(ref) => (this.canvasRef = ref)}
-            touchEnabled={settingsDraw.touchEnabled}
+            touchEnabled={drawingOpen}
             strokeColor={settingsDraw.color}
             strokeWidth={4}
             onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
           />
-        )}
+        }
         <View style={styles.drawingZoneDisplay}>
           <DisplayDrawingToViewers
             heightDrawView={h}

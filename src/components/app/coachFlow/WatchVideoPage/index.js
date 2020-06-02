@@ -13,6 +13,8 @@ const {height, width} = Dimensions.get('screen');
 import database from '@react-native-firebase/database';
 
 import VideoPlayer from '../VideoPlayer/index';
+import PinchableBox from '../../../layout/Views/PinchableBox';
+
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import {native} from '../../../animations/animations';
@@ -37,10 +39,11 @@ class WatchVideoPage extends Component {
       thumbnail: false,
       archiveID: false,
       sizeVideo: false,
+      drawingOpen: false,
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
-    this.translateYPage = new Animated.Value(height);
+    this.translateYPage = new Animated.Value(height * 2);
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -134,7 +137,13 @@ class WatchVideoPage extends Component {
       coachSessionID,
       videoBeingShared,
     } = this.props;
-    const {videoSource, thumbnail, archiveID, sizeVideo} = this.state;
+    const {
+      videoSource,
+      thumbnail,
+      archiveID,
+      sizeVideo,
+      drawingOpen,
+    } = this.state;
     const {currentWidth, currentHeight} = currentScreenSize;
     const myVideo = this.isMyVideo(this.props);
     const video = this.video(this.props, this.state);
@@ -165,9 +174,18 @@ class WatchVideoPage extends Component {
           backgroundColorIcon1={colors.title + '70'}
           initialBorderColorIcon={'transparent'}
           icon1="times"
-          icon2={drawingEnable && 'gesture'}
-          backgroundColorIcon2={colors.title + '70'}
-          clickButton2={() => this.rightButtonsRef.openToolBox()}
+          icon2={'gesture'}
+          backgroundColorIcon2={
+            drawingOpen ? colors.secondary : colors.title + '70'
+          }
+          backgroundColorIconOffset={
+            !drawingOpen ? colors.secondary : colors.title + '70'
+          }
+          clickButton2={() => {
+            console.log('click button 2');
+            this.setState({drawingOpen: true});
+            // this.rightButtonsRef.openToolBox();
+          }}
           sizeIcon2={20}
           typeIcon2="mat"
           colorIcon2={colors.white}
@@ -180,8 +198,24 @@ class WatchVideoPage extends Component {
               return this.buttonShareRef.startSharingVideo(false);
             this.open(false);
           }}
+          iconOffset="expand"
+          // colorIconOffset={colors.title}
+          typeIconOffset="font"
+          sizeIconOffset={23}
+          clickButtonOffset={() => this.setState({drawingOpen: false})}
         />
 
+        <ButtonShareVideo
+          onRef={(ref) => (this.buttonShareRef = ref)}
+          archiveID={archiveID}
+          coachSessionID={coachSessionID}
+          videoBeingShared={videoBeingShared}
+          source={video.source}
+          personSharingScreen={personSharingScreen}
+          togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
+          open={this.open.bind(this)}
+          getVideoState={() => this.videoPlayerRef.getState()}
+        />
         <VideoPlayer
           source={videoSource ? videoSource : ''}
           paused={video.paused}
@@ -198,43 +232,19 @@ class WatchVideoPage extends Component {
           placeHolderImg={thumbnail ? thumbnail : ''}
           propsComponentOnTop={videoBeingShared.drawings}
           componentOnTop={() => (
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                ...styleApp.fullSize,
-                ...styleApp.center,
-                zIndex: 3,
-              }}
-              activeOpacity={1}
-              // onPress={() => this.videoPlayerRef.clickVideo()}
-            >
-              <DrawView
-                coachSessionID={coachSessionID}
-                archiveID={archiveID}
-                videoBeingShared={videoBeingShared}
-                sizeVideo={sizeVideo}
-                drawings={
-                  videoBeingShared?.drawings ? videoBeingShared.drawings : {}
-                }
-                onRef={(ref) => (this.drawViewRef = ref)}
-                drawingOpen={drawingEnable}
-                isMyVideo={this.isMyVideo(this.props)}
-                video={video}
-              />
-              <ButtonShareVideo
-                onRef={(ref) => (this.buttonShareRef = ref)}
-                archiveID={archiveID}
-                coachSessionID={coachSessionID}
-                videoBeingShared={videoBeingShared}
-                source={video.source}
-                personSharingScreen={personSharingScreen}
-                togglePlayPause={() =>
-                  this.videoPlayerRef.togglePlayPause(true)
-                }
-                open={this.open.bind(this)}
-                getVideoState={() => this.videoPlayerRef.getState()}
-              />
-            </TouchableOpacity>
+            <DrawView
+              coachSessionID={coachSessionID}
+              archiveID={archiveID}
+              videoBeingShared={videoBeingShared}
+              drawingOpen={drawingOpen}
+              sizeVideo={sizeVideo}
+              drawings={
+                videoBeingShared?.drawings ? videoBeingShared.drawings : {}
+              }
+              onRef={(ref) => (this.drawViewRef = ref)}
+              isMyVideo={this.isMyVideo(this.props)}
+              video={video}
+            />
           )}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
           styleVideo={styleApp.fullSize}
@@ -245,6 +255,7 @@ class WatchVideoPage extends Component {
           }
           onRef={(ref) => (this.videoPlayerRef = ref)}
         />
+
         <RightButtons
           state={this.props.state}
           archiveID={archiveID}
@@ -252,7 +263,7 @@ class WatchVideoPage extends Component {
           coachSessionID={coachSessionID}
           videoBeingShared={videoBeingShared}
           drawViewRef={this.drawViewRef}
-          drawingEnable={drawingEnable}
+          drawingOpen={drawingOpen}
           personSharingScreen={personSharingScreen}
           setState={this.setState.bind(this)}
           openVideo={(videoData) => this.open(videoData)}
@@ -270,6 +281,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: colors.title,
     zIndex: 60,
+  },
+  containerPinchView: {
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    backgroundColor: 'blue',
   },
 });
 
