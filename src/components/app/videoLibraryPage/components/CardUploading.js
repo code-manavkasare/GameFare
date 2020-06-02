@@ -168,6 +168,8 @@ class CardUploading extends Component {
     const {userID, dismiss, members} = this.props;
     const {duration, size} = videoInfo;
 
+    if (duration === 0) return
+
     const id = videoInfo.localIdentifier.split('/')[0];
     console.log('videoInfovideoInfovideoInfovideoInfo', videoInfo);
 
@@ -221,7 +223,7 @@ class CardUploading extends Component {
   render() {
     const {style, size} = this.props;
     const {progress, videoInfo, status} = this.state;
-    console.log('videoInfo', videoInfo);
+    // console.log('videoInfo', videoInfo);
     return (
       <Animated.View
         style={[
