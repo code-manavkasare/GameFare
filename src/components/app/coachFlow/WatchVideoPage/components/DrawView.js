@@ -99,7 +99,6 @@ class Draw extends Component {
       isMyVideo,
     } = this.props;
     const {scaleDrawing} = this.state;
-    console.log('scaleDrawing', scaleDrawing);
 
     let h = 0;
     let w = 0;
@@ -127,7 +126,7 @@ class Draw extends Component {
     };
 
     if (styleDrawView.h === 0) return null;
-    console.log('drawview render', styleDrawView);
+
     return (
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}
