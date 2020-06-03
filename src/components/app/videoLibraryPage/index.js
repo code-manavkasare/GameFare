@@ -9,11 +9,15 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
-import {ProcessingManager} from 'react-native-video-processing';
+import {includes} from 'ramda';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 import CardUploading from './components/CardUploading';
+import {
+  addVideoToMember,
+  deleteVideoFromLibrary,
+} from '../../database/firebase/videosManagement.js';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 
@@ -35,6 +39,8 @@ class VideoLibraryPage extends Component {
       videosArray: [],
       loader: false,
       uploadingVideosArray: [],
+      selectableMode: false,
+      selectedVideos: [],
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -64,7 +70,13 @@ class VideoLibraryPage extends Component {
   };
 
   listVideos() {
-    const {loader, videosArray, uploadingVideosArray} = this.state;
+    const {
+      loader,
+      selectableMode,
+      selectedVideos,
+      uploadingVideosArray,
+      videosArray,
+    } = this.state;
 
     return (
       <View style={styles.container}>
@@ -78,8 +90,12 @@ class VideoLibraryPage extends Component {
           </Text>
         ) : (
           videosArray.map((video) => {
+            const isSelected = includes(video.id, selectedVideos);
             return (
               <CardArchive
+                selectableMode={selectableMode}
+                isSelected={isSelected}
+                selectVideo={this.selectVideo}
                 style={styles.cardArchive}
                 archive={video}
                 key={video.id}
@@ -91,6 +107,19 @@ class VideoLibraryPage extends Component {
       </View>
     );
   }
+
+  selectVideo = (id, isSelected) => {
+    let {selectedVideos} = this.state;
+    if (isSelected) {
+      selectedVideos.push(id);
+    } else {
+      const index = selectedVideos.indexOf(id);
+      if (index > -1) {
+        selectedVideos.splice(index, 1);
+      }
+    }
+    this.setState({selectedVideos});
+  };
 
   uploadVideo = async () => {
     const {navigate} = this.props.navigation;
@@ -143,13 +172,41 @@ class VideoLibraryPage extends Component {
     this.setState({uploadingVideosArray});
   };
 
+  pickMembersToShareVideosWith = () => {
+    const {navigate} = this.props.navigation;
+    const {selectedVideos} = this.state;
+    const {userID} = this.props;
+
+    navigate('PickMembers', {
+      usersSelected: {},
+      selectMultiple: true,
+      closeButton: true,
+      loaderOnSubmit: true,
+      contactsOnly: false,
+      displayCurrentUser: false,
+      titleHeader: 'Select members to share video with',
+      onGoBack: async (members) => {
+        for (const member of Object.values(members)) {
+          for (const videoId of selectedVideos) {
+            addVideoToMember(userID, member.id, videoId);
+          }
+        }
+        this.setState({selectableMode: false});
+        return navigate('VideoLibraryPage');
+      },
+    });
+  };
+
   render() {
     const {goBack} = this.props.navigation;
+    const {selectableMode, selectedVideos} = this.state;
+    const {userID} = this.props;
+
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Video Library'}
+          textHeader={selectableMode ? 'Select Videos' : 'Video Library'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
@@ -157,10 +214,26 @@ class VideoLibraryPage extends Component {
           initialBorderWidth={0.3}
           typeIcon2={'font'}
           sizeIcon2={17}
-          icon1={'arrow-left'}
-          icon2={'cloud-upload-alt'}
-          clickButton1={() => goBack()}
-          clickButton2={() => this.uploadVideo()}
+          icon1={selectableMode ? 'times' : 'arrow-left'}
+          icon2={selectableMode ? 'user-plus' : 'cloud-upload-alt'}
+          typeIconOffset={'font'}
+          colorIconOffset={colors.white}
+          sizeIconOffset={17}
+          iconOffset={selectableMode ? 'trash-alt' : 'text'}
+          textOffset={'Select'}
+          clickButton1={() =>
+            selectableMode ? this.setState({selectableMode: false}) : goBack()
+          }
+          clickButton2={() =>
+            selectableMode
+              ? this.pickMembersToShareVideosWith()
+              : this.uploadVideo()
+          }
+          clickButtonOffset={() =>
+            selectableMode
+              ? deleteVideoFromLibrary(userID, selectedVideos)
+              : this.setState({selectableMode: true})
+          }
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
@@ -180,9 +253,7 @@ class VideoLibraryPage extends Component {
 const styles = StyleSheet.create({
   container: {
     marginTop: 10,
-    // minHeight: height,
     marginLeft: 0,
-    //  width: width - 40,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
