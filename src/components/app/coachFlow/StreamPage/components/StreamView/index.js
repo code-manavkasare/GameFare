@@ -370,6 +370,7 @@ class StreamPage extends Component {
   async refreshTokenMember() {
     const {coachSession} = this.state;
     const member = this.member(coachSession);
+    if (!member) return;
     const {coachSessionID, userID} = this.props;
     console.log('refreshTokenMember');
     if (
@@ -739,7 +740,7 @@ class StreamPage extends Component {
 
           {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
-          {/* <WatchVideoPage
+          <WatchVideoPage
             state={this.state}
             onRef={(ref) => (this.watchVideoRef = ref)}
             translateYFooter={this.translateYFooter}
@@ -748,7 +749,7 @@ class StreamPage extends Component {
             videoBeingShared={videoBeingShared}
             sharedVideos={coachSession.sharedVideos}
             coachSessionID={coachSessionID}
-          /> */}
+          />
 
           {loader && this.loaderView(' ')}
         </Animated.View>
