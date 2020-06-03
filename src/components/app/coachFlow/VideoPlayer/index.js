@@ -38,7 +38,7 @@ export default class VideoPlayer extends Component {
     this.props.onRef(this);
     const {currentTime} = this.state;
     await timeout(1000);
-    this.setState({loader: false, displayVideo: true});
+    this.setState({displayVideo: true});
     if (currentTime !== 0) this.seek(currentTime);
   }
 
@@ -52,6 +52,8 @@ export default class VideoPlayer extends Component {
       this.controlButtonRef.setCurrentTime(currentTime, true);
       this.seek(currentTime);
     }
+
+    if (prevState.source !== source) this.PinchableBoxRef.resetPosition();
   }
   static getDerivedStateFromProps(props, state) {
     if (props.source !== state.source) {
@@ -185,6 +187,7 @@ export default class VideoPlayer extends Component {
       sizeControlButton,
       hideFullScreenButton,
       index,
+      setScale,
     } = this.props;
 
     const {
@@ -197,13 +200,13 @@ export default class VideoPlayer extends Component {
       totalTime,
       videoLoaded,
       source,
-      onSliding,
+      loader,
       muted,
     } = this.state;
 
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
-        {this.fullScreenLoader()}
+        {loader && this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
         {placeHolderImg !== '' && !totalTime && (
           <AsyncImage
@@ -227,6 +230,8 @@ export default class VideoPlayer extends Component {
             ]}>
             <PinchableBox
               styleContainer={[styleApp.fullSize, styleApp.center]}
+              onRef={(ref) => (this.PinchableBoxRef = ref)}
+              scaleChange={(val) => setScale && setScale(val)}
               component={() => (
                 <View style={[styleApp.fullSize, styleApp.center]}>
                   {/* <AsyncImage

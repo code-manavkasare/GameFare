@@ -597,6 +597,8 @@ PODS:
     - React-Core
     - React-RCTImage
     - RSKImageCropper
+  - RNImageEditor (0.8.3):
+    - React
   - RNInAppBrowser (3.3.3):
     - React
   - RNPermissions (2.0.8):
@@ -746,6 +748,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - "RNImageEditor (from `../node_modules/@wwimmo/react-native-sketch-canvas`)"
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -984,6 +987,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNImageEditor:
+    :path: "../node_modules/@wwimmo/react-native-sketch-canvas"
   RNInAppBrowser:
     :path: "../node_modules/react-native-inappbrowser-reborn"
   RNPermissions:
@@ -1142,6 +1147,7 @@ SPEC CHECKSUMS:
   RNFS: 0d4191b1052bef9ce70deff00a5b4169c62bbd9b
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: cf129d17e042ce3e96fb9ada967c28f21f977c82
+  RNImageEditor: 43f5f80bbfcb66dd9fff2399a22f3500514617e2
   RNInAppBrowser: 0800f17fd7ed9fc503eb68e427befebb41ee719b
   RNPermissions: 923c1506d0bde387fbcfc18a8f87945806d03c19
   RNReanimated: 4e102df74a9674fa943e05f97f3362b6e44d0b48
