@@ -131,11 +131,6 @@ class StreamPage extends Component {
             event,
           },
         );
-        // database()
-        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-        //   .update({
-        //     isConnected: false,
-        //   });
       },
       streamDestroyed: (event) => {
         const {userID, coachSessionID} = this.props;
@@ -148,11 +143,6 @@ class StreamPage extends Component {
             event,
           },
         );
-        // database()
-        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-        //   .update({
-        //     isConnected: false,
-        //   });
       },
       sessionConnected: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
@@ -166,19 +156,6 @@ class StreamPage extends Component {
             date: new Date(),
           },
         );
-        const {portrait} = currentScreenSize;
-        const {streamId, connectionId} = event;
-        await database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-          .update({
-            isConnected: true,
-            streamIdTokBox: streamId,
-            connectionIdTokbox: connectionId,
-            portrait: portrait,
-          });
-        this.setState({
-          isConnected: true,
-        });
       },
     };
 
@@ -203,7 +180,12 @@ class StreamPage extends Component {
           .update({
             streamIdTokBox: streamId,
             connectionIdTokbox: connectionId,
+            portrait: portrait,
+            isConnected: true,
           });
+        this.setState({
+          isConnected: true,
+        });
       },
       streamDestroyed: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
@@ -357,6 +339,7 @@ class StreamPage extends Component {
     const {coachSession} = this.state;
 
     const member = this.member(coachSession);
+    if (!member) return;
     console.log('member ////', member);
     const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
@@ -613,7 +596,7 @@ class StreamPage extends Component {
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
-    console.log('render stream view ', isConnected);
+    console.log('render stream view ', isConnected, member.tokenTokbox);
     return (
       <Animated.View
         style={[styleApp.fullSize, {opacity: this.opacityStreamView}]}>
@@ -744,7 +727,9 @@ class StreamPage extends Component {
             coachSessionID={coachSessionID}
             organizerID={coachSession && coachSession.info.organizer}
             permissionOtherUserToRecord={
-              coachSession ? this.member(coachSession).permissionOtherUserToRecord : false
+              coachSession
+                ? this.member(coachSession)?.permissionOtherUserToRecord
+                : false
             }
             opacityHeader={this.opacityHeader}
             open={this.open.bind(this)}
@@ -754,7 +739,7 @@ class StreamPage extends Component {
 
           {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
-          <WatchVideoPage
+          {/* <WatchVideoPage
             state={this.state}
             onRef={(ref) => (this.watchVideoRef = ref)}
             translateYFooter={this.translateYFooter}
@@ -763,7 +748,7 @@ class StreamPage extends Component {
             videoBeingShared={videoBeingShared}
             sharedVideos={coachSession.sharedVideos}
             coachSessionID={coachSessionID}
-          />
+          /> */}
 
           {loader && this.loaderView(' ')}
         </Animated.View>
