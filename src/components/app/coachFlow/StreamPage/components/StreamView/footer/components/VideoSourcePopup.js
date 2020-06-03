@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   TouchableWithoutFeedback,
-  Animated, Easing
+  Animated,
+  Easing,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
@@ -25,7 +26,7 @@ class VideoSourcePopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false
+      visible: false,
     };
     this.scaleCard = new Animated.Value(0);
   }
@@ -34,30 +35,36 @@ class VideoSourcePopup extends Component {
     this.props.onRef(this);
   }
 
-  static getDerivedStateFromProps (props, state) {
-    return { members: props.members ? 
-        Object.values(props.members).filter((member) => {
-          return (member.isConnected && member.permissionOtherUserToRecord)
-        }) 
-      : undefined }
+  static getDerivedStateFromProps(props, state) {
+    const {userID} = props;
+    return {
+      members: props.members
+        ? Object.values(props.members).filter((member) => {
+            return (
+              member.isConnected &&
+              (member.permissionOtherUserToRecord || member.id === userID)
+            );
+          })
+        : undefined,
+    };
   }
 
   open() {
-    this.setState({visible: true})
+    this.setState({visible: true});
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(1)),
     ]).start();
   }
 
   close() {
-    this.setState({visible: false})
+    this.setState({visible: false});
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(0)),
     ]).start();
   }
 
   memberRow(member, i) {
-    const {userID} = this.props
+    const {userID} = this.props;
     const {firstname, lastname, picture} = member.info;
     const optionsTimer = {
       container: styles.viewRecordingTime,
@@ -77,60 +84,62 @@ class VideoSourcePopup extends Component {
     };
 
     return (
-      <View style={{width:'100%'}} key={member.id}>
-      <ButtonColor
-        view={() => {
-          return (
-            <Row>
-              <Col size={1} style={styleApp.center2}>
-                {member.info.picture ? (
-                  <AsyncImage
-                    style={styles.imgUser}
-                    mainImage={picture}
-                    imgInitial={picture}
-                  />
-                ) : (
-                  <View style={[styleApp.center, styles.imgUser]}>
-                    <Text style={[styleApp.text, {fontSize: 12}]}>
-                      {firstname[0]}
-                      {lastname !== '' ? lastname[0] : ''}
-                    </Text>
-                  </View>
-                )}
-              </Col>
+      <View style={{width: '100%'}} key={member.id}>
+        <ButtonColor
+          view={() => {
+            return (
+              <Row>
+                <Col size={1} style={styleApp.center2}>
+                  {member.info.picture ? (
+                    <AsyncImage
+                      style={styles.imgUser}
+                      mainImage={picture}
+                      imgInitial={picture}
+                    />
+                  ) : (
+                    <View style={[styleApp.center, styles.imgUser]}>
+                      <Text style={[styleApp.text, {fontSize: 12}]}>
+                        {firstname[0]}
+                        {lastname !== '' ? lastname[0] : ''}
+                      </Text>
+                    </View>
+                  )}
+                </Col>
 
-              <Col size={2} style={[styleApp.center2]}>
-                <Text style={styles.nameText} numberOfLines={1}> 
-                  {
-                    (userID === member.id) 
-                    ? 
-                    'Your Camera' 
-                    : 
-                    firstname + ' ' + lastname
-                  }
-                </Text>
-              </Col>
+                <Col size={2} style={[styleApp.center2]}>
+                  <Text style={styles.nameText} numberOfLines={1}>
+                    {userID === member.id
+                      ? 'Your Camera'
+                      : firstname + ' ' + lastname}
+                  </Text>
+                </Col>
 
-              <Col size={1} style={[styleApp.center, {alignContent:'flex-end'}]}>
-                {
-                  member.recording && member.recording.isRecording 
-                  ? 
-                  timer(member.recording.timestamp) 
-                  : 
-                  <View style={styles.recordButton}>
-                    <Text style={[styleApp.text, {color: colors.white, fontSize: 14}]}>Record</Text>
-                  </View>
-                }
-              </Col>
-            </Row>
-          );
-        }}
-        click={() => this.props.selectMember(member)}
-        key={member.id}
-        color="white"
-        style={[styles.cardUser]}
-        onPressColor={colors.off2}
-      />
+                <Col
+                  size={1}
+                  style={[styleApp.center, {alignContent: 'flex-end'}]}>
+                  {member.recording && member.recording.isRecording ? (
+                    timer(member.recording.timestamp)
+                  ) : (
+                    <View style={styles.recordButton}>
+                      <Text
+                        style={[
+                          styleApp.text,
+                          {color: colors.white, fontSize: 14},
+                        ]}>
+                        Record
+                      </Text>
+                    </View>
+                  )}
+                </Col>
+              </Row>
+            );
+          }}
+          click={() => this.props.selectMember(member)}
+          key={member.id}
+          color="white"
+          style={[styles.cardUser]}
+          onPressColor={colors.off2}
+        />
       </View>
     );
   }
@@ -140,30 +149,35 @@ class VideoSourcePopup extends Component {
 
     return (
       <TouchableWithoutFeedback onPress={() => this.close()}>
-        <View pointerEvents={visible?"auto":"none"} style={styles.fullPage} />
+        <View
+          pointerEvents={visible ? 'auto' : 'none'}
+          style={styles.fullPage}
+        />
       </TouchableWithoutFeedback>
-    )
+    );
   }
 
   render() {
     const {visible} = this.state;
     const {members} = this.state;
-    
+
     const translateY = this.scaleCard.interpolate({
       inputRange: [0, 1],
       outputRange: [30, 0],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
 
     return (
-      <Animated.View 
-        pointerEvents={visible?"auto":"none"} 
-        style={[styles.square, styleApp.center, 
+      <Animated.View
+        pointerEvents={visible ? 'auto' : 'none'}
+        style={[
+          styles.square,
+          styleApp.center,
           {
             opacity: this.scaleCard,
             transform: [{translateY: translateY}],
-          }]}
-      >
+          },
+        ]}>
         <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
         <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
         {members ? members.map(this.memberRow.bind(this)) : null}
@@ -183,13 +197,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: 'white',
     borderRadius: 15,
-    width:sizes.width - 50,
+    width: sizes.width - 50,
     bottom: 100 + sizes.offsetFooterStreaming,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.2,
     shadowRadius: 10,
-    zIndex:2
+    zIndex: 2,
   },
   triangle: {
     borderLeftWidth: triangleBase / 1.5,
@@ -202,16 +216,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -triangleBase,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
+    shadowOffset: {width: 0, height: 12},
     shadowOpacity: 0.2,
     shadowRadius: 6,
-    zIndex:1
+    zIndex: 1,
   },
   cardUser: {
     height: 55,
     paddingLeft: 20,
     paddingRight: 20,
-    marginBottom: 10
+    marginBottom: 10,
   },
   imgUser: {
     width: 40,
@@ -230,7 +244,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginHorizontal: 'auto',
     textAlign: 'center',
-    fontWeight:'bold'
+    fontWeight: 'bold',
   },
   viewRecordingTime: {
     width: 70,
@@ -248,9 +262,9 @@ const styles = StyleSheet.create({
   },
   nameText: {
     ...styleApp.text,
-    paddingRight:15,
-    marginLeft:-5
-  }
+    paddingRight: 15,
+    marginLeft: -5,
+  },
 });
 
 VideoSourcePopup.propTypes = {
