@@ -1685,10 +1685,6 @@
   version "0.8.3"
   resolved "https://github.com/wwimmo/react-native-sketch-canvas.git#13f6d895f2f717f9561f038b23f6c68331560548"
 
-"@wwimmo/react-native-sketch-canvas@wwimmo/react-native-sketch-image":
-  version "0.8.3"
-  resolved "https://codeload.github.com/wwimmo/react-native-sketch-image/tar.gz/13f6d895f2f717f9561f038b23f6c68331560548"
-
 abab@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"

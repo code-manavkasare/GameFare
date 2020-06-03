@@ -39,15 +39,8 @@ export default class PinchableBox extends Component {
   );
 
   onPinchHandlerStateChange = (event) => {
-    ///console.log('on pinch state change2', event.nativeEvent.scale);
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastScale *= event.nativeEvent.scale;
-      console.log(
-        'on pinch state change',
-        //
-        this._lastScale,
-      );
-      // this.realScale = event.nativeEvent.scale
 
       this._baseScale.setValue(this._lastScale);
       this._pinchScale.setValue(1);
@@ -56,7 +49,7 @@ export default class PinchableBox extends Component {
     }
   };
   onPan({nativeEvent: {scale}}) {
-    console.log('onPan', scale);
+    // console.log('onPan', scale);
   }
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -69,11 +62,11 @@ export default class PinchableBox extends Component {
     }
   };
   resetPosition() {
-    console.log('resetPotion');
     this._translateX.setValue(0);
     this._translateY.setValue(0);
     this._pinchScale.setValue(1);
     this._baseScale.setValue(1);
+    this._lastScale.setValue(1);
   }
   render() {
     const {styleContainer, component} = this.props;
