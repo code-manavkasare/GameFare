@@ -1,20 +1,6 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-const {height, width} = Dimensions.get('screen');
 import {RNCamera} from 'react-native-camera';
-
 import PropTypes from 'prop-types';
-
-import {native} from '../../../animations/animations';
-import colors from '../../../style/colors';
-import styleApp from '../../../style/style';
 
 export default class CameraView extends Component {
   constructor(props) {
@@ -51,9 +37,7 @@ export default class CameraView extends Component {
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-       
-        }}
+        onGoogleVisionBarcodesDetected={({barcodes}) => {}}
       />
     );
   }
@@ -62,8 +46,6 @@ export default class CameraView extends Component {
     return this.cameraView();
   }
 }
-
-const styles = StyleSheet.create({});
 
 CameraView.propTypes = {
   styleCamera: PropTypes.object,

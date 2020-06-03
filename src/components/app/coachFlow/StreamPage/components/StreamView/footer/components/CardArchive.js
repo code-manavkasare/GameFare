@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Switch,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import database from '@react-native-firebase/database';
 import PropTypes from 'prop-types';
@@ -32,6 +25,13 @@ export default class CardArchive extends Component {
     archive: PropTypes.object.isRequired,
     openVideo: PropTypes.func,
     style: PropTypes.object,
+    selectableMode: PropTypes.bool,
+    isSelected: PropTypes.bool,
+    selectVideo: PropTypes.func,
+  };
+  static defaultProps = {
+    selectableMode: false,
+    isSelected: false,
   };
   constructor(props) {
     super(props);
@@ -113,16 +113,10 @@ export default class CardArchive extends Component {
     }
   };
   cardArchive(archive) {
-    const {archive: archiveData, style, noUpdateStatusBar} = this.props;
-    const {
-      thumbnail,
-      url,
-      startTimestamp,
-      size,
-      durationSeconds,
-      // doAnalytics,
-    } = archive;
-    const {doAnalytics, loader} = this.state;
+    const {isSelected, style, selectableMode, selectVideo} = this.props;
+    const {id, thumbnail, url, startTimestamp, size, durationSeconds} = archive;
+    const {loader} = this.state;
+
     return (
       <View style={[styles.cardArchive, style]}>
         {archive ? (
@@ -149,6 +143,13 @@ export default class CardArchive extends Component {
                 <Col size={20} style={styleApp.center3}>
                   {loader ? (
                     <Loader size={25} color={colors.white} />
+                  ) : selectableMode ? (
+                    <AllIcons
+                      name={isSelected ? 'check-circle' : 'circle'}
+                      type="font"
+                      size={25}
+                      color={colors.green}
+                    />
                   ) : (
                     <AllIcons
                       type={'font'}
@@ -219,7 +220,6 @@ export default class CardArchive extends Component {
 
             <ButtonColor
               view={() => {
-                const {loader} = this.state;
                 const styleRow = {
                   position: 'absolute',
                   bottom: 20,
@@ -227,7 +227,11 @@ export default class CardArchive extends Component {
                 };
                 return <Row style={styleRow} />;
               }}
-              click={() => this.openVideo(url, thumbnail)}
+              click={() =>
+                selectableMode
+                  ? selectVideo(id, !isSelected)
+                  : this.openVideo(url, thumbnail)
+              }
               color={colors.greyDark + '40'}
               onPressColor={colors.grey + '40'}
               style={[

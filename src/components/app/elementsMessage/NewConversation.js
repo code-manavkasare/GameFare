@@ -1,17 +1,14 @@
 import React from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
   Dimensions,
   TextInput,
-  Image,
   ScrollView,
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
