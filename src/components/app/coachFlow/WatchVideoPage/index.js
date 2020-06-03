@@ -80,6 +80,7 @@ class WatchVideoPage extends Component {
           watchVideo: true,
           thumbnail: thumbnail,
           archiveID: archiveID,
+          drawingOpen: false,
         });
     }
 
@@ -229,6 +230,7 @@ class WatchVideoPage extends Component {
           hideFullScreenButton={true}
           placeHolderImg={thumbnail ? thumbnail : ''}
           propsComponentOnTop={videoBeingShared.drawings}
+          setScale={(val) => this.drawViewRef.setState({scaleDrawing: val})}
           componentOnTop={() => (
             <DrawView
               coachSessionID={coachSessionID}

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
-import {SketchCanvas} from '@terrylinla/react-native-sketch-canvas';
+import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
 
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
 import {coachAction} from '../../../../../actions/coachActions';
@@ -28,6 +28,7 @@ class Draw extends Component {
       cameraAccess: false,
       microAccess: false,
       loader: true,
+      scaleDrawing: 1,
     };
     this.translateXPage = new Animated.Value(0);
     // this.canvasRef = React.createRef();
@@ -97,6 +98,8 @@ class Draw extends Component {
       sizeVideo,
       isMyVideo,
     } = this.props;
+    const {scaleDrawing} = this.state;
+    console.log('scaleDrawing', scaleDrawing);
 
     let h = 0;
     let w = 0;
@@ -119,21 +122,24 @@ class Draw extends Component {
       height: h,
       width: w,
       backgroundColor: colors.red + '0',
-      borderWidth: 2,
-      borderColor: colors.off,
+      // borderWidth: drawingOpen ? 2 : 2,
+      // borderColor: drawingOpen ? 'transparent' : colors.off,
     };
 
-    if (!drawingOpen) return null;
+    if (styleDrawView.h === 0) return null;
     console.log('drawview render', styleDrawView);
     return (
-      <Animated.View style={[styles.page, styleDrawView]}>
+      <Animated.View
+        pointerEvents={drawingOpen ? 'auto' : 'none'}
+        style={[styles.page, styleDrawView]}>
         {
-          <SketchCanvas
+          <ImageEditor
             style={styles.drawingZone}
             ref={(ref) => (this.canvasRef = ref)}
             touchEnabled={drawingOpen}
             strokeColor={settingsDraw.color}
             strokeWidth={4}
+            scale={scaleDrawing}
             onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
           />
         }
