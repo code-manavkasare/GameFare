@@ -435,6 +435,8 @@ PODS:
     - React
   - react-native-image-resizer (1.1.0):
     - React
+  - react-native-job-queue (0.1.0):
+    - React
   - react-native-keep-awake (4.0.0):
     - React
   - react-native-mapbox-gl (8.1.0-beta.1):
@@ -706,6 +708,7 @@ DEPENDENCIES:
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
+  - react-native-job-queue (from `../node_modules/react-native-job-queue`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -905,6 +908,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
     :path: "../node_modules/react-native-image-resizer"
+  react-native-job-queue:
+    :path: "../node_modules/react-native-job-queue"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
   react-native-mapbox-gl:
@@ -1106,6 +1111,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b
   react-native-image-resizer: 1ffe71ec5f2596c3a24d42548c03bfbfb06fe810
+  react-native-job-queue: f0d7bac7fc4d62fb376c5c862898791065b900a2
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-mapbox-gl: 0a688ca4060ac73e11ed928c2f9a7b70b4665f99
   react-native-maps: 6e499eee4eabf422ba8b6f94e993cc768bf35153

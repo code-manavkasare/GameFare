@@ -82,6 +82,7 @@
     "react-native-image-zoom-viewer": "^2.2.27",
     "react-native-inappbrowser-reborn": "^3.1.0",
     "react-native-invertible-scroll-view": "^2.0.0",
+    "react-native-job-queue": "^0.1.0",
     "react-native-keep-awake": "^4.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-keyboard-input": "^6.0.0",

@@ -168,7 +168,6 @@ class CardUploading extends Component {
     const {userID, dismiss, members} = this.props;
     const {duration, size} = videoInfo;
 
-    if (duration === 0) return
 
     const id = videoInfo.localIdentifier.split('/')[0];
     console.log('videoInfovideoInfovideoInfovideoInfo', videoInfo);

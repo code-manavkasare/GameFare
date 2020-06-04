@@ -7315,6 +7315,11 @@ react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.2.1:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
 
+react-native-job-queue@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-job-queue/-/react-native-job-queue-0.1.0.tgz#47848c2272253a7e6d28f6977ea59dd624721b33"
+  integrity sha512-fCB7RtFvky2y4pHJiDyqD4C4hBJet2JienOPWF7M7x6q6MxG5If/Kp45tTulyeEJpQnQBKkx6Oh8NQqOGV7c2g==
+
 react-native-keep-awake@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/react-native-keep-awake/-/react-native-keep-awake-4.0.0.tgz#d89fdc3fb60b3cffa979ef37dc5816196df998a2"
