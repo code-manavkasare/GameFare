@@ -1,13 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  StyleSheet,
-  Animated,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, Animated, Text, Image} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
@@ -45,6 +38,7 @@ class CardUploading extends Component {
     };
     this.scaleCard = new Animated.Value(0);
   }
+
   componentDidMount = async () => {
     this.props.onRef(this);
     const {uploadOnMount} = this.props;
@@ -54,6 +48,7 @@ class CardUploading extends Component {
       this.uploadFile();
     }
   };
+
   static getDerivedStateFromProps(props, state) {
     if (!isEqual(props.videoInfo, state.videoInfo) && props.videoInfo)
       return {
@@ -61,17 +56,20 @@ class CardUploading extends Component {
       };
     return {};
   }
+
   getVideoUploadStatus() {
     const {progress, videoInfo} = this.state;
     if (progress !== 0 && progress !== 1) return videoInfo;
     return false;
   }
+
   open = async (nextVal, videoInfo) => {
     if (nextVal && videoInfo) await this.setState({videoInfo});
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(nextVal ? 1 : 0)),
     ]).start();
   };
+
   uploadThumbnail = async (thumbnail, destination, name) => {
     const videoRef = storage()
       .ref(destination)
@@ -80,6 +78,7 @@ class CardUploading extends Component {
       contentType: 'image/jpeg',
       cacheControl: 'no-store',
     });
+
     const that = this;
     return new Promise((resolve, reject) =>
       uploadTask.on(
@@ -115,6 +114,7 @@ class CardUploading extends Component {
       ),
     );
   };
+
   uploadVideoFirebase = async (videoInfo, destination, name) => {
     const that = this;
     const {path} = videoInfo;
@@ -165,16 +165,16 @@ class CardUploading extends Component {
   uploadFile = async () => {
     await this.setState({status: 'loading'});
     const {videoInfo} = this.state;
-    const {userID, dismiss, members} = this.props;
+    const {userID, dismiss} = this.props;
+    let {members} = this.props;
     const {duration, size} = videoInfo;
 
-
     const id = videoInfo.localIdentifier.split('/')[0];
-    console.log('videoInfovideoInfovideoInfovideoInfo', videoInfo);
+    console.log('videoInfo', videoInfo);
 
     const destinationCloud = `archivedStreams/${id}`;
     const thumbnailUrl = await this.uploadThumbnail(
-      'file:///private' + videoInfo.thumbnail,
+      'file:///' + videoInfo.thumbnail,
       destinationCloud,
       'thumbnail.jpg',
     );
@@ -198,17 +198,24 @@ class CardUploading extends Component {
     updates[`${destinationCloud}/thumbnail`] = thumbnailUrl;
     updates[`${destinationCloud}/startTimestamp`] = startTimestamp;
 
-    Object.values(members).map(member => {
-      updates[`${destinationCloud}/members/${member.id}/timestamp`] = startTimestamp;
+    // case for videoLibraryPage
+    if (!members) {
+      members = [{id: userID}];
+    }
+
+    Object.values(members).map((member) => {
+      updates[
+        `${destinationCloud}/members/${member.id}/timestamp`
+      ] = startTimestamp;
       updates[`${destinationCloud}/members/${member.id}/id`] = member.id;
-      updates[`${destinationCloud}/members/${member.id}/invitedBy`] = userID
+      updates[`${destinationCloud}/members/${member.id}/invitedBy`] = userID;
 
       updates[`users/${member.id}/${destinationCloud}/id`] = id;
       updates[
         `users/${member.id}/${destinationCloud}/startTimestamp`
       ] = startTimestamp;
       updates[`users/${member.id}/${destinationCloud}/uploadedByUser`] = true;
-    })
+    });
 
     await database()
       .ref()
