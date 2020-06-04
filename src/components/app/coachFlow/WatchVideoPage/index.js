@@ -74,14 +74,18 @@ class WatchVideoPage extends Component {
 
     if (watchVideo) {
       await this.translateXPage.setValue(0);
-      if (videoSource)
+      console.log('open video');
+      if (videoSource) {
+        let closeDrawing = {};
+        if (videoSource !== source) closeDrawing = {drawingOpen: false};
         await this.setState({
           videoSource: source,
           watchVideo: true,
           thumbnail: thumbnail,
           archiveID: archiveID,
-          drawingOpen: false,
+          ...closeDrawing,
         });
+      }
     }
 
     Animated.parallel([
@@ -148,7 +152,7 @@ class WatchVideoPage extends Component {
     const video = this.video(this.props, this.state);
     const drawingEnable =
       personSharingScreen && archiveID === videoBeingShared.id;
-
+    console.log('render watch video page', drawingOpen);
     return (
       <Animated.View
         style={[
@@ -183,7 +187,6 @@ class WatchVideoPage extends Component {
           clickButton2={() => {
             console.log('click button 2');
             this.setState({drawingOpen: true});
-            // this.rightButtonsRef.openToolBox();
           }}
           sizeIcon2={24}
           typeIcon2="mat"

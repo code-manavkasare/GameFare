@@ -118,29 +118,39 @@ const stopRecording = (sessionIDFirebase) => {
 
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
-  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`] = timestamp
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`
+  ] = timestamp;
   database()
     .ref()
-    .update(updates)
-}
+    .update(updates);
+};
 
 const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
   let updates = {};
-  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`] = true;
-  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`] = Date.now();
-  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/userIDrequesting`] = selfID;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
+  ] = true;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`
+  ] = Date.now();
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/userIDrequesting`
+  ] = selfID;
   database()
     .ref()
-    .update(updates)
-}
+    .update(updates);
+};
 
 const stopRemoteRecording = (memberID, sessionIDFirebase) => {
   let updates = {};
-  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`] = false;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
+  ] = false;
   database()
     .ref()
-    .update(updates)
-}
+    .update(updates);
+};
 
 const getMember = (session, userID) => {
   if (!session) return {};
@@ -229,5 +239,5 @@ module.exports = {
   getVideoSharing,
   startRemoteRecording,
   stopRemoteRecording,
-  updateTimestamp
+  updateTimestamp,
 };
