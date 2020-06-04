@@ -34,9 +34,13 @@ class ListStreams extends Component {
     }
     return {};
   }
-  componentDidUpdate(prevProps,prevState) {
-    if (prevState.coachSessions) {
-      if (Object.values(prevState.coachSessions).length !== Object.values(this.state.coachSessions).length && this.props.sessionInfo.objectID) 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.coachSessions && this.state.coachSessions) {
+      if (
+        Object.values(prevState.coachSessions).length !==
+          Object.values(this.state.coachSessions).length &&
+        this.props.sessionInfo.objectID
+      )
         return this.itemsRef[this.props.sessionInfo.objectID].reOpen();
     }
   }
@@ -45,7 +49,7 @@ class ListStreams extends Component {
     for (i = 0; i < 15; i++) {
       try {
         this.itemsRef[objectID].open(true);
-        
+
         break;
       } catch (err) {
         console.log('error !!!!!', err);
@@ -63,7 +67,7 @@ class ListStreams extends Component {
   list = () => {
     const coachSessions = this.sessionsArray();
     const {AnimatedHeaderValue, userConnected, permissionsCamera} = this.props;
-    if (!userConnected || !permissionsCamera) return null;
+    if (!userConnected || !permissionsCamera || !coachSessions) return null;
     if (Object.values(coachSessions).length === 0)
       return (
         <Text style={[styleApp.text, {paddingLeft: '5%'}]}>
