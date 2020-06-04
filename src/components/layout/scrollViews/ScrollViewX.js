@@ -60,7 +60,7 @@ export default class ScrollViewX extends PureComponent {
     this.ScrollView.scrollTo({x: widthToEvent, y: 0, animated: true});
   };
   render() {
-    console.log('scrollview x ', this.props.events);
+    // console.log('scrollview x ', this.props.events);
     const {
       undisplayEmptyList,
       width: widthProps,
