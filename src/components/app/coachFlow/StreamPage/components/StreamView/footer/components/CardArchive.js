@@ -149,6 +149,7 @@ export default class CardArchive extends Component {
                       type="font"
                       size={25}
                       color={colors.green}
+                      solid={isSelected ? true : false}
                     />
                   ) : (
                     <AllIcons
