@@ -34,11 +34,18 @@ class ListStreams extends Component {
     }
     return {};
   }
+  componentDidUpdate(prevProps,prevState) {
+    if (prevState.coachSessions) {
+      if (Object.values(prevState.coachSessions).length !== Object.values(this.state.coachSessions).length && this.props.sessionInfo.objectID) 
+        return this.itemsRef[this.props.sessionInfo.objectID].reOpen();
+    }
+  }
   async openSession(objectID) {
     var i;
     for (i = 0; i < 15; i++) {
       try {
         this.itemsRef[objectID].open(true);
+        
         break;
       } catch (err) {
         console.log('error !!!!!', err);
@@ -81,7 +88,7 @@ class ListStreams extends Component {
               return AnimatedHeaderValue._value;
             }}
             closeCurrentSession={async (currentSessionID) => {
-              return this.itemsRef[currentSessionID].endCoachSession();
+              return this.itemsRef[currentSessionID].endCoachSession(true);
             }}
             onRef={(ref) => (this.itemsRef[session.id] = ref)}
           />
