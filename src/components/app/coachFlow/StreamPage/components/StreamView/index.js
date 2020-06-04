@@ -271,6 +271,11 @@ class StreamPage extends Component {
       this.refreshTokenMember();
     }
   }
+  reOpen() {
+    console.log('boom reopen')
+    const {pageFullScreen} = this.state
+    if (pageFullScreen) this.open(true)
+  }
   async open(nextVal) {
     const {
       layoutAction,
