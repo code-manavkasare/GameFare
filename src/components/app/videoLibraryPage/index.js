@@ -69,6 +69,11 @@ class VideoLibraryPage extends Component {
     );
   };
 
+  deleteVideos = () => {
+    deleteVideoFromLibrary(this.props.userID, this.state.selectedVideos);
+    this.setState({selectedVideos: [], selectableMode: false});
+  };
+
   listVideos() {
     const {
       loader,
@@ -191,7 +196,7 @@ class VideoLibraryPage extends Component {
             addVideoToMember(userID, member.id, videoId);
           }
         }
-        this.setState({selectableMode: false});
+        this.setState({selectableMode: false, selectedVideos: []});
         return navigate('VideoLibraryPage');
       },
     });
@@ -231,7 +236,7 @@ class VideoLibraryPage extends Component {
           }
           clickButtonOffset={() =>
             selectableMode
-              ? deleteVideoFromLibrary(userID, selectedVideos)
+              ? this.deleteVideos()
               : this.setState({selectableMode: true})
           }
         />
