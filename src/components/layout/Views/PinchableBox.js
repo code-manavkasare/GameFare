@@ -66,7 +66,7 @@ export default class PinchableBox extends Component {
     this._translateY.setValue(0);
     this._pinchScale.setValue(1);
     this._baseScale.setValue(1);
-    this._lastScale.setValue(1);
+    this._lastScale = 1;
   }
   render() {
     const {styleContainer, component} = this.props;

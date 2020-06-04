@@ -20,6 +20,7 @@ import {getLastDrawing} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import {ratio} from '../../../../style/sizes';
+import isEqual from 'lodash.isequal';
 
 class Draw extends Component {
   constructor(props) {
@@ -29,34 +30,41 @@ class Draw extends Component {
       microAccess: false,
       loader: true,
       scaleDrawing: 1,
+      drawings: {},
     };
-    this.translateXPage = new Animated.Value(0);
-    // this.canvasRef = React.createRef();
   }
   componentDidMount() {
     this.props.onRef(this);
   }
-  componentDidUpdate(prevProps) {
-    if (prevProps.drawingOpen !== this.props.drawingOpen) {
-      return this.translateXPage.setValue(
-        this.props.drawingOpen ? 0 : this.props.currentScreenSize.currentWidth,
-      );
-    }
+  static getDerivedStateFromProps(props, state) {
+    if (!isEqual(props.drawings, state.drawings) && props.videoBeingShared)
+      return {
+        drawings: props.drawings,
+      };
+    return {};
   }
   clear = () => {
     try {
       this.canvasRef.clear();
+      this.setState({drawings: {}});
     } catch (err) {}
   };
   undo = (idLastDrawing) => {
-    const {drawings} = this.props;
-    if (!idLastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
+    const {drawings} = this.state;
 
+    if (!idLastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
     if (idLastDrawing) {
       try {
+        const newDrawing = Object.values(drawings)
+          .filter((item) => item.idSketch !== idLastDrawing)
+          .reduce(function(result, item) {
+            result[item.id] = item;
+            return result;
+          }, {});
+        this.setState({drawings: newDrawing});
         this.canvasRef.deletePath(idLastDrawing);
       } catch (err) {
-        Alert.alert('error!', err);
+        Alert.alert('error!', err.toString());
       }
     }
   };
@@ -80,24 +88,30 @@ class Draw extends Component {
 
     path.data = data;
     const {archiveID, coachSessionID, videoBeingShared} = this.props;
-    if (videoBeingShared) {
+    if (videoBeingShared.id === archiveID) {
       await database()
         .ref(
           `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
         )
         .update(path);
       return this.undo(path.idSketch);
+    } else {
+      const {drawings} = this.state;
+
+      const newDrawings = {...drawings, [path.idSketch]: path};
+      this.setState({drawings: newDrawings});
     }
   }
   drawView() {
     const {
       settingsDraw,
-      drawings,
+      videoBeingShared,
+      archiveID,
       drawingOpen,
       currentScreenSize,
       sizeVideo,
-      isMyVideo,
     } = this.props;
+    const {drawings} = this.state;
     const {scaleDrawing} = this.state;
 
     let h = 0;
@@ -120,36 +134,32 @@ class Draw extends Component {
     let styleDrawView = {
       height: h,
       width: w,
-      backgroundColor: colors.red + '0',
-      // borderWidth: drawingOpen ? 2 : 2,
-      // borderColor: drawingOpen ? 'transparent' : colors.off,
     };
 
     if (styleDrawView.h === 0) return null;
-
     return (
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}
         style={[styles.page, styleDrawView]}>
-        {
-          <ImageEditor
-            style={styles.drawingZone}
-            ref={(ref) => (this.canvasRef = ref)}
-            touchEnabled={drawingOpen}
-            strokeColor={settingsDraw.color}
-            strokeWidth={4}
-            scale={scaleDrawing}
-            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-          />
-        }
-        <View style={styles.drawingZoneDisplay}>
-          <DisplayDrawingToViewers
-            heightDrawView={h}
-            widthDrawView={w}
-            currentScreenSize={currentScreenSize}
-            drawings={drawings}
-          />
-        </View>
+        <ImageEditor
+          style={styles.drawingZone}
+          ref={(ref) => (this.canvasRef = ref)}
+          touchEnabled={drawingOpen}
+          strokeColor={settingsDraw.color}
+          strokeWidth={4}
+          scale={scaleDrawing}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+        {videoBeingShared.id === archiveID && (
+          <View style={styles.drawingZoneDisplay}>
+            <DisplayDrawingToViewers
+              heightDrawView={h}
+              widthDrawView={w}
+              currentScreenSize={currentScreenSize}
+              drawings={drawings}
+            />
+          </View>
+        )}
       </Animated.View>
     );
   }
@@ -161,15 +171,12 @@ class Draw extends Component {
 const styles = StyleSheet.create({
   page: {
     position: 'absolute',
-    // backgroundColor: 'blue',
-    // backgroundColor: colors.off + '40',
     zIndex: 3,
   },
 
   drawingZone: {
     height: '100%',
     width: '100%',
-    // backgroundColor: colors.off + '40',
     zIndex: -2,
     position: 'absolute',
     top: 0,
@@ -177,7 +184,6 @@ const styles = StyleSheet.create({
   drawingZoneDisplay: {
     height: '100%',
     width: '100%',
-    // backgroundColor: colors.off + '40',
     zIndex: -3,
     position: 'absolute',
     top: 0,

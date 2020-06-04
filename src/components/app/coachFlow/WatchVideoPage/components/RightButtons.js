@@ -101,13 +101,11 @@ class RightButtons extends Component {
     const {
       videoBeingShared,
       coachSessionID,
-      settingsDraw,
       archiveID,
-      drawViewRef,
-      coachAction,
     } = this.props;
-
-    if (videoBeingShared.drawings) {
+    console.log('videoBeingShared?.drawings', videoBeingShared?.drawings);
+    console.log('idLastDrawing', idLastDrawing);
+    if (videoBeingShared?.drawings) {
       if (!idLastDrawing)
         idLastDrawing = getLastDrawing(videoBeingShared.drawings).id;
       await database()
@@ -115,6 +113,9 @@ class RightButtons extends Component {
           `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
         )
         .remove();
+    } else {
+      console.log('ici,');
+      this.props.drawViewRef.undo();
     }
   };
 
@@ -145,10 +146,6 @@ class RightButtons extends Component {
               color: valueColor(value),
             })
           }
-          // onColorSelected={(color) => {
-          //   // coachAction('setCoachSessionDrawSettings', {color: fromHsv(color)});
-          //   console.log('onColorSelected', fromHsv(color));
-          // }}
         />
 
         {this.button({name: 'undo', type: 'font'}, 'Undo', false, () =>
@@ -174,8 +171,7 @@ class RightButtons extends Component {
     });
   }
   buttons() {
-    const {archiveID, videoBeingShared, settingsDraw} = this.props;
-    const {personSharingScreen, portrait, drawingOpen} = this.props;
+    const {portrait, drawingOpen} = this.props;
     if (!drawingOpen) return null;
 
     let marginTop = marginTopApp;
