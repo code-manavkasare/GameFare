@@ -65,7 +65,7 @@ class BottomButton extends Component {
     
     var newState = {}
 
-    const archivedVideosLength = Object.values(archivedStreams).length
+    const archivedVideosLength = (archivedStreams) ? Object.values(archivedStreams).length : 0
     if (archivedVideosLength > seenVideos && seenVideos > 0) {
       newState = { ...newState,
         unreadVideos: archivedVideosLength - seenVideos,
@@ -330,7 +330,7 @@ class BottomButton extends Component {
           this.setState({
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
             unreadVideos: 0,
-            seenVideos: Object.values(archivedStreams).length
+            seenVideos: (archivedStreams) ? Object.values(archivedStreams).length : 0
           });
           clickReview(!showPastSessionsPicker);
         }}
