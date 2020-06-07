@@ -189,6 +189,7 @@ class VideoLibraryPage extends Component {
       loaderOnSubmit: true,
       contactsOnly: false,
       displayCurrentUser: false,
+      noUpdateStatusBar: true,
       titleHeader: 'Select members to share video with',
       onGoBack: async (members) => {
         for (const member of Object.values(members)) {
