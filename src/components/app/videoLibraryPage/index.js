@@ -18,6 +18,7 @@ import {
   addVideoToMember,
   deleteVideoFromLibrary,
 } from '../../database/firebase/videosManagement.js';
+import {navigate} from '../../../../NavigationService';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
 
@@ -70,7 +71,17 @@ class VideoLibraryPage extends Component {
   };
 
   deleteVideos = () => {
-    deleteVideoFromLibrary(this.props.userID, this.state.selectedVideos);
+    const {selectedVideos} = this.state;
+    const numberVideos = selectedVideos.length;
+    if (numberVideos !== 0) {
+      navigate('Alert', {
+        title: `Video deleted cannot be retrieved, do you confirm ?`,
+        textButton: `Delete (${numberVideos})`,
+        onGoBack: async () => {
+          deleteVideoFromLibrary(this.props.userID, selectedVideos);
+        },
+      });
+    }
     this.setState({selectedVideos: [], selectableMode: false});
   };
 

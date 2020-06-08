@@ -68,7 +68,6 @@ export default class CardArchive extends Component {
   }
 
   openVideo = async (url, thumbnail) => {
-    console.log('url', url, this.state);
     const {openVideo} = this.props;
     if (openVideo) {
       openVideo(url, thumbnail);
@@ -76,6 +75,7 @@ export default class CardArchive extends Component {
       this.setState({loader: true, displayVideoPlayer: true});
     }
   };
+
   openStatistics() {
     const {noUpdateStatusBar} = this.props;
     const {archive} = this.state;
@@ -106,7 +106,11 @@ export default class CardArchive extends Component {
             this.setState({videoFullscren: true, loader: false, paused: false});
           }}
           onFullscreenPlayerDidDismiss={(event) => {
-            this.setState({videoFullscren: false, paused: true});
+            this.setState({
+              videoFullscren: false,
+              paused: true,
+              displayVideoPlayer: false,
+            });
           }}
         />
       );
