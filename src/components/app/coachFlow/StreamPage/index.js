@@ -71,6 +71,9 @@ class StreamTab extends Component {
         <HeaderListStream
           userConnected={userConnected}
           hideButtonNewSession={!userConnected || !permissionsCamera}
+          closeSession={async (currentSessionID) => {
+            return this.listStreamRef.closeSession(currentSessionID);
+          }}
         />
 
         <View style={{height: offsetBottomHeaderStream / 2}} />

@@ -3,19 +3,23 @@ import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import queue, {Worker} from 'react-native-job-queue';
-import VideoSourcePopup from './VideoSourcePopup'
+import VideoSourcePopup from './VideoSourcePopup';
 
 import {navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-import {startRemoteRecording, stopRemoteRecording, updateTimestamp} from '../../../../../../../functions/coach'
+import {
+  startRemoteRecording,
+  stopRemoteRecording,
+  updateTimestamp,
+} from '../../../../../../../functions/coach';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-import {native} from '../../../../../../../animations/animations'
+import {native} from '../../../../../../../animations/animations';
 
 import {
   getVideoInfo,
@@ -35,107 +39,107 @@ class BottomButton extends Component {
       publishVideo: !__DEV__,
       publishAudio: !__DEV__,
       unreadVideos: 0,
-      seenVideos: 0
+      seenVideos: 0,
     };
     this.recordingIndicator = {
-      color: new Animated.Value(0)
-    }
+      color: new Animated.Value(0),
+    };
   }
   componentDidMount() {
     this.props.onRef(this);
-    this.configureQueue()
+    this.configureQueue();
   }
   componentDidUpdate(prevProps, prevState) {
-    const {recordingSelf} = this.state
+    const {recordingSelf} = this.state;
     if (recordingSelf !== prevState.recordingSelf) {
-      console.log('Recieved recording instruction!')
+      console.log('Recieved recording instruction!');
       if (recordingSelf) {
-        console.log('Queueing start recording!')
-        queue.addJob('startRecording')
+        console.log('Queueing start recording!');
+        queue.addJob('startRecording');
       } else {
-        console.log('Queueing stop recording!')
-        queue.addJob('stopRecording')
+        console.log('Queueing stop recording!');
+        queue.addJob('stopRecording');
       }
     }
   }
   static getDerivedStateFromProps(props, state) {
-    const {members, userID, archivedStreams} = props
-    const {recordingSelf, seenVideos} = state
-    const member = (members) ? members[userID] : undefined
-    
-    var newState = {}
+    const {members, userID, archivedStreams} = props;
+    const {recordingSelf, seenVideos} = state;
+    const member = members ? members[userID] : undefined;
 
-    const archivedVideosLength = (archivedStreams) ? Object.values(archivedStreams).length : 0
+    var newState = {};
+
+    const archivedVideosLength = archivedStreams
+      ? Object.values(archivedStreams).length
+      : 0;
     if (archivedVideosLength > seenVideos && seenVideos > 0) {
-      newState = { ...newState,
-        unreadVideos: archivedVideosLength - seenVideos,
-      }
+      newState = {...newState, unreadVideos: archivedVideosLength - seenVideos};
     } else {
-      newState = { ...newState,
-        seenVideos: archivedVideosLength,
-      }
+      newState = {...newState, seenVideos: archivedVideosLength};
     }
 
-    if (member && member.recording !== undefined && member.recording.isRecording !== recordingSelf) {
+    if (
+      member &&
+      member.recording !== undefined &&
+      member.recording.isRecording !== recordingSelf
+    ) {
       if (!recordingSelf && member.recording.isRecording) {
-        newState = { ...newState,
-          recording: true,
-          recordingSelf: true
-        }
+        newState = {...newState, recording: true, recordingSelf: true};
       } else if (recordingSelf && !member.recording.isRecording) {
-        newState = { ...newState,
-          recordingSelf: false
-        }
+        newState = {...newState, recordingSelf: false};
       }
     }
-    var recordingMember = (newState.recordingSelf) ? member : undefined
+    var recordingMember = newState.recordingSelf ? member : undefined;
     for (var m in members) {
-      if (members[m].recording && members[m].recording.isRecording) recordingMember = members[m]
+      if (members[m].recording && members[m].recording.isRecording)
+        recordingMember = members[m];
     }
     if (recordingMember === undefined && !newState.recordingSelf) {
-      console.log('No one is recording')
+      console.log('No one is recording');
       newState = {
         ...newState,
-        recording: false
-      }
+        recording: false,
+      };
     } else {
-      console.log('Someone is recording')
+      console.log('Someone is recording');
       newState = {
         ...newState,
-        recording: true
-      }
+        recording: true,
+      };
     }
     return newState;
   }
   configureQueue() {
-    queue.removeWorker("startRecording")
-    queue.removeWorker("stopRecording") 
-    queue.addWorker(new Worker("startRecording",this.startRecording.bind(this)))
-    queue.addWorker(new Worker("stopRecording",this.stopRecording.bind(this)))
+    queue.removeWorker('startRecording');
+    queue.removeWorker('stopRecording');
+    queue.addWorker(
+      new Worker('startRecording', this.startRecording.bind(this)),
+    );
+    queue.addWorker(new Worker('stopRecording', this.stopRecording.bind(this)));
   }
   getVideoUploadStatus() {
     return this.cardUploadingRef.getVideoUploadStatus();
   }
   startRemoteRecording = async (member) => {
-    const {coachSessionID, userID} = this.props
-    const recordingUser = member.id
-    console.log(userID, 'start recording')
-    await startRemoteRecording(recordingUser, coachSessionID, userID)
-  }
+    const {coachSessionID, userID} = this.props;
+    const recordingUser = member.id;
+    console.log(userID, 'start recording');
+    await startRemoteRecording(recordingUser, coachSessionID, userID);
+  };
   stopRemoteRecording = async (member) => {
-    const {coachSessionID, userID} = this.props
-    const recordingUser = member.id
-    console.log('stop recording')
-    stopRemoteRecording(recordingUser, coachSessionID, userID)
-  }
+    const {coachSessionID, userID} = this.props;
+    const recordingUser = member.id;
+    console.log('stop recording');
+    stopRemoteRecording(recordingUser, coachSessionID, userID);
+  };
   startRecording = async () => {
-    const {coachSessionID, userID} = this.props
+    const {coachSessionID, userID} = this.props;
     const messageCallback = async (response) => {
       if (response.error) {
         console.log(`Error initializing recording: ${response.message}`);
       } else {
         console.log('Started recording...');
-        updateTimestamp(coachSessionID, userID, Date.now())
+        updateTimestamp(coachSessionID, userID, Date.now());
       }
     };
     const permissionLibrary = await permission('library');
@@ -168,16 +172,16 @@ class BottomButton extends Component {
       } else {
         let videoUrl = response.videoUrl;
         console.log(`Stopped recording. Video stored at: ${response}`);
-        let videoUUID = (videoUrl ? videoUrl
-          .split('/')
-          [videoUrl.split('/').length - 1].split('.')[0] : undefined);
+        let videoUUID = videoUrl
+          ? videoUrl.split('/')[videoUrl.split('/').length - 1].split('.')[0]
+          : undefined;
         console.log('videoUUID', videoUUID);
         if (videoUrl) {
           let videoInfo = await getVideoInfo(videoUrl);
-          if (videoInfo.duration === 0) return
+          if (videoInfo.duration === 0) return;
           videoInfo.localIdentifier = videoUUID;
           await this.cardUploadingRef.open(true, videoInfo);
-          await this.cardUploadingRef.uploadFile()
+          await this.cardUploadingRef.uploadFile();
         }
       }
     };
@@ -244,24 +248,24 @@ class BottomButton extends Component {
     if (recording) {
       //Start animation
       Animated.parallel([
-          Animated.timing(this.recordingIndicator.color, native(1, 1000)),
+        Animated.timing(this.recordingIndicator.color, native(1, 1000)),
       ]).start(() => {
         Animated.parallel([
           Animated.timing(this.recordingIndicator.color, native(0, 1000)),
         ]).start(() => {
-          this.indicatorAnimation()
+          this.indicatorAnimation();
         });
       });
     } else {
       //Stop animating
-      this.recordingIndicator.color.setValue(0)
+      this.recordingIndicator.color.setValue(0);
     }
-  }
+  };
 
   buttonRecord() {
     const {recording} = this.state;
 
-    this.indicatorAnimation()
+    this.indicatorAnimation();
 
     const insideViewButton = () => {
       return (
@@ -269,9 +273,14 @@ class BottomButton extends Component {
           style={[
             !recording
               ? styles.buttonStartStreaming
-              : styles.buttonStopStreaming
-          ]} >
-        <Animated.View style={[styles.recordingOverlay, {opacity: this.recordingIndicator.color}]} />
+              : styles.buttonStopStreaming,
+          ]}>
+          <Animated.View
+            style={[
+              styles.recordingOverlay,
+              {opacity: this.recordingIndicator.color},
+            ]}
+          />
         </Animated.View>
       );
     };
@@ -285,7 +294,9 @@ class BottomButton extends Component {
         />
         <ButtonColor
           view={() => insideViewButton()}
-          click={async () => {return this.videoSourcePopupRef.open()}}
+          click={async () => {
+            return this.videoSourcePopupRef.open();
+          }}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}
         />
@@ -307,13 +318,15 @@ class BottomButton extends Component {
                 size={showPastSessionsPicker ? 19 : 22}
                 name={'film'}
               />
-              {(this.state.unreadVideos === 0) ? null :
-              <View style={styles.unreadIndicator}>
-                {(this.state.unreadVideos > 10) ? null :
-                <Text style={styles.unreadIndText}>
-                  {this.state.unreadVideos}
-                </Text>}
-              </View>}
+              {this.state.unreadVideos === 0 ? null : (
+                <View style={styles.unreadIndicator}>
+                  {this.state.unreadVideos > 10 ? null : (
+                    <Text style={styles.unreadIndText}>
+                      {this.state.unreadVideos}
+                    </Text>
+                  )}
+                </View>
+              )}
               {showPastSessionsPicker && (
                 <AllIcons
                   type={'font'}
@@ -330,7 +343,9 @@ class BottomButton extends Component {
           this.setState({
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
             unreadVideos: 0,
-            seenVideos: (archivedStreams) ? Object.values(archivedStreams).length : 0
+            seenVideos: archivedStreams
+              ? Object.values(archivedStreams).length
+              : 0,
           });
           clickReview(!showPastSessionsPicker);
         }}
@@ -374,30 +389,32 @@ class BottomButton extends Component {
   }
 
   recordingSelector() {
-    const {members} = this.props
+    const {members} = this.props;
 
     const selectMember = (member) => {
       if (member.recording && member.recording.isRecording) {
-        this.stopRemoteRecording(member)
+        this.stopRemoteRecording(member);
       } else {
-        this.startRemoteRecording(member)
+        this.startRemoteRecording(member);
       }
-    }
+    };
     return (
-      <VideoSourcePopup 
+      <VideoSourcePopup
         onRef={(ref) => (this.videoSourcePopupRef = ref)}
-        members={members} 
+        members={members}
         close={() => {}}
         selectMember={selectMember.bind(this)}
-        />
-    )
+      />
+    );
   }
 
   render() {
-    return  <View>
-              {this.rowButtons()}
-              {this.recordingSelector()}
-            </View>;
+    return (
+      <View>
+        {this.rowButtons()}
+        {this.recordingSelector()}
+      </View>
+    );
   }
 }
 
@@ -431,42 +448,42 @@ const styles = StyleSheet.create({
   },
   buttonStartStreaming: {
     ...styleApp.center,
-    backgroundColor: colors.greyDark, 
-    opacity: 0.8, 
-    overflow:'hidden',
+    backgroundColor: colors.greyDark,
+    opacity: 0.8,
+    overflow: 'hidden',
     height: 40,
     width: 40,
-    borderRadius: 40
+    borderRadius: 40,
   },
   buttonStopStreaming: {
     ...styleApp.center,
-    backgroundColor: colors.greyDark, 
-    opacity: 0.8, 
-    overflow:'hidden',
+    backgroundColor: colors.greyDark,
+    opacity: 0.8,
+    overflow: 'hidden',
     height: 25,
     width: 25,
-    borderRadius: 5
+    borderRadius: 5,
   },
   recordingOverlay: {
-    backgroundColor: colors.redLight, 
-    height:'100%', 
-    width: '100%'
+    backgroundColor: colors.redLight,
+    height: '100%',
+    width: '100%',
   },
   unreadIndicator: {
     ...styleApp.textBold,
-    height:13, 
-    width:13, 
+    height: 13,
+    width: 13,
     position: 'absolute',
-    backgroundColor: colors.white, 
-    top: -4, 
-    left:16, 
-    borderRadius:10, 
+    backgroundColor: colors.white,
+    top: -4,
+    left: 16,
+    borderRadius: 10,
   },
   unreadIndText: {
     ...styleApp.textBold,
-    fontSize:10, 
-    marginTop:0.5, 
-    textAlign:'center'
+    fontSize: 10,
+    marginTop: 0.5,
+    textAlign: 'center',
   },
   viewRecordingTime: {
     position: 'absolute',
