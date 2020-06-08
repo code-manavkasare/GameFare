@@ -57,6 +57,9 @@ class ListStreams extends Component {
       }
     }
   }
+  closeSession(objectID) {
+    return this.itemsRef[objectID].endCoachSession(true);
+  }
   sessionsArray = () => {
     let {coachSessions} = this.state;
     if (!coachSessions) return [];

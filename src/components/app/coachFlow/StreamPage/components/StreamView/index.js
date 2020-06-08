@@ -272,9 +272,9 @@ class StreamPage extends Component {
     }
   }
   reOpen() {
-    console.log('boom reopen')
-    const {pageFullScreen} = this.state
-    if (pageFullScreen) this.open(true)
+    console.log('boom reopen');
+    const {pageFullScreen} = this.state;
+    if (pageFullScreen) this.open(true);
   }
   async open(nextVal) {
     const {
@@ -294,7 +294,6 @@ class StreamPage extends Component {
       const currentOpenSession = sessionInfo.objectID;
       if (currentOpenSession && currentOpenSession !== coachSessionID) {
         await closeCurrentSession(currentOpenSession);
-
         // we await a bit so that the stream is 100% sure detroyed.
         timeout(300);
       }
@@ -334,7 +333,7 @@ class StreamPage extends Component {
         });
         this.props.coachAction('setSessionInfo', {
           scrollDisabled: false,
-          autoOpen: false,
+          // autoOpen: false,
         });
       });
     }

@@ -1,21 +1,15 @@
 import React, {Component} from 'react';
 import {
-  Modal,
   View,
   Text,
   StyleSheet,
   TouchableWithoutFeedback,
   Animated,
-  Easing,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
-import {Stopwatch} from 'react-native-stopwatch-timer';
 
-import ButtonColor from '../../../../../../../layout/Views/Button';
-import AsyncImage from '../../../../../../../layout/image/AsyncImage';
-
+import MemberSource from './MemberSource';
 import {native} from '../../../../../../../animations/animations';
 
 import colors from '../../../../../../../style/colors';
@@ -29,6 +23,7 @@ class VideoSourcePopup extends Component {
       visible: false,
     };
     this.scaleCard = new Animated.Value(0);
+    this.itemsRef = [];
   }
 
   componentDidMount() {
@@ -62,88 +57,6 @@ class VideoSourcePopup extends Component {
       Animated.timing(this.scaleCard, native(0)),
     ]).start();
   }
-
-  memberRow(member, i) {
-    const {userID} = this.props;
-    const {firstname, lastname, picture} = member.info;
-    const optionsTimer = {
-      container: styles.viewRecordingTime,
-      text: [styleApp.text, {color: colors.white, fontSize: 14}],
-    };
-
-    const timer = (startTimeRecording) => {
-      const timerRecording = Number(new Date()) - startTimeRecording;
-      return (
-        <Stopwatch
-          laps
-          start={true}
-          startTime={timerRecording < 0 ? 0 : timerRecording}
-          options={optionsTimer}
-        />
-      );
-    };
-
-    return (
-      <View style={{width: '100%'}} key={member.id}>
-        <ButtonColor
-          view={() => {
-            return (
-              <Row>
-                <Col size={1} style={styleApp.center2}>
-                  {member.info.picture ? (
-                    <AsyncImage
-                      style={styles.imgUser}
-                      mainImage={picture}
-                      imgInitial={picture}
-                    />
-                  ) : (
-                    <View style={[styleApp.center, styles.imgUser]}>
-                      <Text style={[styleApp.text, {fontSize: 12}]}>
-                        {firstname[0]}
-                        {lastname !== '' ? lastname[0] : ''}
-                      </Text>
-                    </View>
-                  )}
-                </Col>
-
-                <Col size={2} style={[styleApp.center2]}>
-                  <Text style={styles.nameText} numberOfLines={1}>
-                    {userID === member.id
-                      ? 'Your Camera'
-                      : firstname + ' ' + lastname}
-                  </Text>
-                </Col>
-
-                <Col
-                  size={1}
-                  style={[styleApp.center, {alignContent: 'flex-end'}]}>
-                  {member.recording && member.recording.isRecording ? (
-                    timer(member.recording.timestamp)
-                  ) : (
-                    <View style={styles.recordButton}>
-                      <Text
-                        style={[
-                          styleApp.text,
-                          {color: colors.white, fontSize: 14},
-                        ]}>
-                        Record
-                      </Text>
-                    </View>
-                  )}
-                </Col>
-              </Row>
-            );
-          }}
-          click={() => this.props.selectMember(member)}
-          key={member.id}
-          color="white"
-          style={[styles.cardUser]}
-          onPressColor={colors.off2}
-        />
-      </View>
-    );
-  }
-
   backdrop() {
     const {visible} = this.state;
 
@@ -158,8 +71,8 @@ class VideoSourcePopup extends Component {
   }
 
   render() {
-    const {visible} = this.state;
-    const {members} = this.state;
+    const {visible, members} = this.state;
+    const {selectMember} = this.props;
 
     const translateY = this.scaleCard.interpolate({
       inputRange: [0, 1],
@@ -180,7 +93,14 @@ class VideoSourcePopup extends Component {
         ]}>
         <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
         <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
-        {members ? members.map(this.memberRow.bind(this)) : null}
+        {members?.map((member) => (
+          <MemberSource
+            member={member}
+            key={member.id}
+            onRef={(ref) => (this.itemsRef[member.id] = ref)}
+            selectMember={(member) => selectMember(member)}
+          />
+        ))}
         <View style={styles.triangle} />
         {this.backdrop()}
       </Animated.View>
@@ -221,18 +141,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     zIndex: 1,
   },
-  cardUser: {
-    height: 55,
-    paddingLeft: 20,
-    paddingRight: 20,
-    marginBottom: 10,
-  },
-  imgUser: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.off,
-  },
   fullPage: {
     position: 'absolute',
     width: sizes.width,
@@ -245,25 +153,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     textAlign: 'center',
     fontWeight: 'bold',
-  },
-  viewRecordingTime: {
-    width: 70,
-    height: 23,
-    borderRadius: 5,
-    ...styleApp.center,
-    backgroundColor: colors.red,
-  },
-  recordButton: {
-    width: 70,
-    height: 23,
-    borderRadius: 5,
-    ...styleApp.center,
-    backgroundColor: colors.greyDark,
-  },
-  nameText: {
-    ...styleApp.text,
-    paddingRight: 15,
-    marginLeft: -5,
   },
 });
 

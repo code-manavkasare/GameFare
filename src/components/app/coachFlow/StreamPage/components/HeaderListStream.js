@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 
-import {createCoachSession} from '../../../../functions/coach';
+import {createCoachSession, timeout} from '../../../../functions/coach';
 import {coachAction} from '../../../../../actions/coachActions';
 
 import colors from '../../../../style/colors';
@@ -21,11 +21,13 @@ class HeaderListStream extends Component {
       loader: false,
     };
   }
+
   header = () => {
     const {
       userConnected,
       navigation,
       coachAction,
+      closeSession,
       hideButtonNewSession,
     } = this.props;
     const {loader} = this.state;
@@ -59,6 +61,13 @@ class HeaderListStream extends Component {
                 const {userID, infoUser, coachAction, sessionInfo} = this.props;
                 const {objectID: prevObjectID} = sessionInfo;
                 await this.setState({loader: true});
+
+                const currentOpenSession = sessionInfo.objectID;
+                if (currentOpenSession) {
+                  await closeSession(currentOpenSession);
+                  // we await a bit so that the stream is 100% sure detroyed.
+                  timeout(300);
+                }
                 const objectID = await createCoachSession({
                   id: userID,
                   info: infoUser,
@@ -66,8 +75,9 @@ class HeaderListStream extends Component {
                 await coachAction('setSessionInfo', {
                   objectID: objectID,
                   autoOpen: true,
-                  prevObjectID: prevObjectID,
+                  // prevObjectID: 'teub',
                 });
+
                 await database()
                   .ref(`users/${userID}/coachSessions/${objectID}`)
                   .set({
