@@ -75,7 +75,7 @@ class VideoLibraryPage extends Component {
     const numberVideos = selectedVideos.length;
     if (numberVideos !== 0) {
       navigate('Alert', {
-        title: `Video deleted cannot be retrieved, do you confirm ?`,
+        title: `Are you sure you want to delete this video? This action cannot be undone.`,
         textButton: `Delete (${numberVideos})`,
         onGoBack: async () => {
           deleteVideoFromLibrary(this.props.userID, selectedVideos);
