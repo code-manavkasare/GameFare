@@ -38,7 +38,7 @@ const dismiss = () => {
   navigationRef.dangerouslyGetParent().pop();
 };
 
-const setParams = (routeKey, params) => {
+const setParams = ({routeKey, params}) => {
   if (navigationRef.current) return navigationRef.current.setParams(params);
 
   navigationRef.dispatch({

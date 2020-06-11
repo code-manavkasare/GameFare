@@ -61,7 +61,7 @@ export default class Button extends Component {
         color: colors[this.props.backgroundColor],
       };
     if (this.props.textButton)
-    return {...styles.textButtonOn, ...this.props.textButton};
+      return {...styles.textButtonOn, ...this.props.textButton};
     return styles.textButtonOn;
   }
   onPress(val) {
@@ -78,21 +78,20 @@ export default class Button extends Component {
       inputRange: [0, 300],
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()],
     });
+    const {click, disabled, loader, text} = this.props;
     return (
       <Animated.View style={[this.styleButton(), {backgroundColor: color}]}>
         <TouchableOpacity
           activeOpacity={1}
           style={[styleApp.center, {width: '100%', height: '100%'}]}
-          // underlayColor={this.onPressColor()}
-          // style={[this.styleButton()]}
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
-          disabled={this.props.disabled}
-          onPress={() => this.props.click()}>
-          {this.props.loader ? (
+          disabled={disabled}
+          onPress={() => !loader && click()}>
+          {loader ? (
             <Loader size={38} color={colors.white} />
           ) : (
-            <Text style={this.styleText()}>{this.props.text}</Text>
+            <Text style={this.styleText()}>{text}</Text>
           )}
         </TouchableOpacity>
       </Animated.View>

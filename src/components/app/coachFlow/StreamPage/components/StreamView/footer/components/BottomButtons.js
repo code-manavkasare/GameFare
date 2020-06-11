@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import {View, Text, StyleSheet, Animated, Image, Alert} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import queue, {Worker} from 'react-native-job-queue';
 import VideoSourcePopup from './VideoSourcePopup';
 
-import {navigate} from '../../../../../../../../../NavigationService';
+import {
+  navigate,
+  setParams,
+} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
@@ -13,6 +16,7 @@ import {
   startRemoteRecording,
   stopRemoteRecording,
   updateTimestamp,
+  generateFlagsThumbnail,
 } from '../../../../../../../functions/coach';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
@@ -25,8 +29,10 @@ import {
   getVideoInfo,
   permission,
   goToSettings,
+  getLastVideo,
 } from '../../../../../../../functions/pictures';
 import CardUploading from '../../../../../../videoLibraryPage/components/CardUploading';
+import isEqual from 'lodash.isequal';
 
 class BottomButton extends Component {
   constructor(props) {
@@ -40,6 +46,7 @@ class BottomButton extends Component {
       publishAudio: !__DEV__,
       unreadVideos: 0,
       seenVideos: 0,
+      finalizeRecordingMember: false,
     };
     this.recordingIndicator = {
       color: new Animated.Value(0),
@@ -50,7 +57,9 @@ class BottomButton extends Component {
     this.configureQueue();
   }
   componentDidUpdate(prevProps, prevState) {
-    const {recordingSelf} = this.state;
+    const {recordingSelf, finalizeRecordingMember} = this.state;
+    const {members} = this.props;
+
     if (recordingSelf !== prevState.recordingSelf) {
       console.log('Recieved recording instruction!');
       if (recordingSelf) {
@@ -60,6 +69,15 @@ class BottomButton extends Component {
         console.log('Queueing stop recording!');
         queue.addJob('stopRecording');
       }
+    }
+    if (finalizeRecordingMember) {
+      if (
+        !isEqual(
+          members[finalizeRecordingMember],
+          prevProps.members[finalizeRecordingMember],
+        )
+      )
+        return setParams({params: {member: members[finalizeRecordingMember]}});
     }
   }
   static getDerivedStateFromProps(props, state) {
@@ -131,6 +149,14 @@ class BottomButton extends Component {
     const recordingUser = member.id;
     console.log('stop recording');
     stopRemoteRecording(recordingUser, coachSessionID, userID);
+    navigate('FinalizeRecording', {
+      member: member,
+      coachSessionID: coachSessionID,
+      onGoBack: () => {
+        return this.setState({finalizeRecordingMember: false});
+      },
+    });
+    this.setState({finalizeRecordingMember: member.id});
   };
   startRecording = async () => {
     const {coachSessionID, userID} = this.props;
@@ -165,24 +191,35 @@ class BottomButton extends Component {
     await otPublisherRef.current.startRecording(messageCallback);
   };
   stopRecording = async () => {
-    const {otPublisherRef} = this.props;
+    const {otPublisherRef, members, userID} = this.props;
     const messageCallback = async (response) => {
-      if (response.error) {
-        console.log(`Error storing recording: ${response.message}`);
-      } else {
-        let videoUrl = response.videoUrl;
-        console.log(`Stopped recording. Video stored at: ${response}`);
-        let videoUUID = videoUrl
-          ? videoUrl.split('/')[videoUrl.split('/').length - 1].split('.')[0]
-          : undefined;
-        console.log('videoUUID', videoUUID);
-        if (videoUrl) {
-          let videoInfo = await getVideoInfo(videoUrl);
-          if (videoInfo.duration === 0) return;
-          videoInfo.localIdentifier = videoUUID;
-          await this.cardUploadingRef.open(true, videoInfo);
-          await this.cardUploadingRef.uploadFile();
-        }
+      if (response.error)
+        return Alert.alert(`Error storing recording: ${response.message}`);
+      let {videoUrl} = response;
+
+      videoUrl =
+        'file:///Users/florian/Library/Developer/CoreSimulator/Devices/001BF671-29EC-4383-A4A7-547A99E69E68/data/Containers/Data/Application/311BB133-2A9A-4CBA-9DFC-86A76E048F4A/tmp/react-native-image-crop-picker/24BBD220-CD43-4BE7-B4E2-867C9F1B02D5.mp4';
+      let videoUUID = videoUrl
+        ? videoUrl.split('/')[videoUrl.split('/').length - 1].split('.')[0]
+        : undefined;
+
+      if (videoUrl) {
+        const recording = Object.values(members).filter(
+          (member) => member.id === userID,
+        )[0].recording;
+        console.log('recording', recording);
+        const thumbnails = await generateFlagsThumbnail({
+          flags: recording.flags,
+          source: videoUrl,
+        });
+        console.log('thumbnails', thumbnails);
+        
+
+        // let videoInfo = await getVideoInfo(videoUrl);
+        // if (videoInfo.duration === 0) return;
+        // videoInfo.localIdentifier = videoUUID;
+        // await this.cardUploadingRef.open(true, videoInfo);
+        // await this.cardUploadingRef.uploadFile();
       }
     };
 
@@ -389,7 +426,7 @@ class BottomButton extends Component {
   }
 
   recordingSelector() {
-    const {members} = this.props;
+    const {members, coachSessionID} = this.props;
 
     const selectMember = (member) => {
       if (member.recording && member.recording.isRecording) {
@@ -401,7 +438,8 @@ class BottomButton extends Component {
     return (
       <VideoSourcePopup
         onRef={(ref) => (this.videoSourcePopupRef = ref)}
-        members={members}
+        members={members ? members : []}
+        coachSessionID={coachSessionID}
         close={() => {}}
         selectMember={selectMember.bind(this)}
       />
