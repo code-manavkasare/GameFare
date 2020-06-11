@@ -9,6 +9,7 @@ import isEqual from 'lodash.isequal';
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
+import {generateSnippetsFromFlags} from '../../../../../../../functions/videoManagement';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
@@ -26,18 +27,27 @@ class VideoSourcePopup extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const {recording} = this.state.member;
     const {recording: prevRecording} = prevState.member;
     if (recording && prevRecording) {
-      console.log('il est la');
       if (
         !isEqual(prevRecording.uploadRequest, recording.uploadRequest) &&
         !recording.uploadRequest.uploadLaunched &&
         !recording.uploadRequest?.flagsSelected['fullVideo']
       ) {
-        console.log('Start Uploading snipets');
-        // const snipets = await  this.generateSnipet(recording.uploadRequest.flagsSelected,recording.localSource) TODO-SNIPET
+        console.log('Start generating snipets');
+        console.log('recording.localSource: ', recording.localSource);
+        console.log(
+          'recording.uploadRequest.flagsSelected: ',
+          recording.uploadRequest.flagsSelected,
+        );
+        //TODO send good flags and source
+        const flagsWithSnippets = await generateSnippetsFromFlags(
+          recording.localSource,
+          recording.uploadRequest.flagsSelected,
+        );
+        console.log('flagsWithSnippets: ', flagsWithSnippets);
       }
     }
   }
