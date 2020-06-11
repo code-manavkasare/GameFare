@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, View, Text} from 'react-native';
 import PropTypes from 'prop-types';
 
+import {navigate} from '../../../../NavigationService';
+
 import AsyncImage from './AsyncImage';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -23,14 +25,14 @@ export default class ImageUser extends Component {
       );
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
-        <Text style={[styleApp.input, {fontSize: 11}]}>
-          {(user.info) && user.info.firstname[0] + user.info.lastname[0]}
+        <Text style={[styleApp.text, {fontSize: 11}]}>
+          {user.info && user.info.firstname[0] + user.info.lastname[0]}
         </Text>
       </View>
     );
   }
   button() {
-    const {onClick, styleImgProps} = this.props;
+    const {onClick, styleImgProps, user} = this.props;
 
     let styleImg = {
       ...styleApp.roundView2,
@@ -41,6 +43,7 @@ export default class ImageUser extends Component {
       <TouchableOpacity
         onPress={() => {
           if (onClick) return onClick();
+          else navigate('ProfilePage', {user: user});
         }}
         activeOpacity={0.9}
         style={styleImg}>

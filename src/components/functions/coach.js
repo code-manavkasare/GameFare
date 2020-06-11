@@ -1,4 +1,6 @@
 import database from '@react-native-firebase/database';
+import {createThumbnail} from 'react-native-create-thumbnail';
+import RNFS from 'react-native-fs';
 
 import colors from '../style/colors';
 import {heightCardSession} from '../style/sizes';
@@ -119,7 +121,7 @@ const stopRecording = (sessionIDFirebase) => {
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
   updates[
-    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/startTimestamp`
   ] = timestamp;
   database()
     .ref()
@@ -132,11 +134,14 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
   ] = true;
   updates[
-    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/timestamp`
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/startTimestamp`
   ] = Date.now();
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/userIDrequesting`
   ] = selfID;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/flags`
+  ] = {};
   database()
     .ref()
     .update(updates);
@@ -147,6 +152,9 @@ const stopRemoteRecording = (memberID, sessionIDFirebase) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
   ] = false;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/stopTimestamp`
+  ] = Date.now();
   database()
     .ref()
     .update(updates);
@@ -222,6 +230,52 @@ const getVideoSharing = (session, personSharingScreen) => {
   return session.sharedVideos[videoIDSharing];
 };
 
+const generateFlagsThumbnail = async ({
+  flags,
+  source,
+  memberID,
+  coachSessionID,
+}) => {
+  let thumbnails = [];
+  if (flags) {
+    for (var i in flags) {
+      const flag = flags[i];
+      const thumbnail = await createThumbnail({
+        url: source,
+        timeStamp: flag.time,
+      });
+      thumbnails.push({
+        path: thumbnail.path,
+        storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${
+          flag.id
+        }/thumbnail`,
+        filename: 'thumbnail',
+        updateFirebaseAfterUpload: true,
+      });
+      console.log('infoFile', thumbnail);
+    }
+  } else {
+    const thumbnail = await createThumbnail({
+      url: source,
+      timeStamp: 500,
+    });
+    thumbnails.push({
+      path: thumbnail.path,
+      storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
+      filename: 'thumbnail',
+      updateFirebaseAfterUpload: true,
+    });
+  }
+  await database()
+    .ref()
+    .update({
+      [`coachSessions/${coachSessionID}/members/${memberID}/recording/localSource`]: source,
+    });
+
+  console.log('generate thumbanuls', thumbnails);
+  return thumbnails;
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -240,4 +294,5 @@ module.exports = {
   startRemoteRecording,
   stopRemoteRecording,
   updateTimestamp,
+  generateFlagsThumbnail,
 };

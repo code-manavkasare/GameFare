@@ -35,7 +35,7 @@ class Footer extends Component {
       personSharingScreen,
       videoBeingShared,
       otPublisherRef,
-      members
+      members,
     } = this.props;
     return (
       <Animated.View
@@ -53,7 +53,7 @@ class Footer extends Component {
           clickReview={(val) => this.pastSessionsRef.open(val)}
           otPublisherRef={otPublisherRef}
           members={members}
-          coachSessionID = {this.props.coachSessionID}
+          coachSessionID={this.props.coachSessionID}
         />
 
         <VideosView

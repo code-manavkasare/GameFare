@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 
 import ImageUser from '../../../../../../layout/image/ImageUser';
+import styleApp from '../../../../../../style/style';
 import {coachAction} from '../../../../../../../actions/coachActions';
 
 import {
@@ -12,34 +13,43 @@ import {
   marginTopAppLandscape,
 } from '../../../../../../style/sizes';
 import {navigate} from '../../../../../../../../NavigationService';
+import AddFlagButton from '../footer/components/AddFlagButton';
 
 class MembersView extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  cardMember(member, i) {
+  cardMember(member) {
+    const {coachSessionID} = this.props;
     return (
-      <ImageUser
-        key={member.id}
-        user={member}
-        styleImgProps={{height: 50, width: 50, borderRadius: 25}}
-        onClick={() => navigate('ProfilePage', {user: member})}
-      />
+      <Row key={member.id} style={styles.cardMember}>
+        <Col size={50} style={styleApp.center2}>
+          <ImageUser
+            styleImgProps={{height: 45, width: 45, borderRadius: 30}}
+            user={member}
+          />
+        </Col>
+        <Col size={50} style={styleApp.center}>
+          <AddFlagButton coachSessionID={coachSessionID} member={member} />
+        </Col>
+      </Row>
     );
   }
   membersView() {
     const {userID, members, hide, currentScreenSize} = this.props;
+    console.log('members view', members, hide);
     if (!members || hide) return null;
     const membersDisplay = Object.values(members).filter(
-      (member) => member.id !== userID && member.isConnected,
+      (member) => member.isConnected && member.id !== userID,
     );
     const {portrait} = currentScreenSize;
     let marginTop = marginTopApp;
     if (!portrait) marginTop = marginTopAppLandscape;
+    console.log('membersDisplay', membersDisplay);
     return (
       <View style={[styles.listMembers, {top: heightHeaderHome + marginTop}]}>
-        {membersDisplay.map((member, i) => this.cardMember(member, i))}
+        {membersDisplay.map((member) => this.cardMember(member))}
       </View>
     );
   }
@@ -53,7 +63,11 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     left: '5%',
-    zIndex: 2,
+    zIndex: 6,
+  },
+  cardMember: {
+    height: 35,
+    width: 110,
   },
 });
 

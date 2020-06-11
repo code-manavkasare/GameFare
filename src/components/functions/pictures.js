@@ -149,6 +149,17 @@ async function getPhotoUser() {
   return edges;
 }
 
+// const getLastVideo = async (limitToLast) => {
+//   const permissionLibrary = await permission('library');
+//   console.log('permissionLibrary', permissionLibrary);
+//   if (!permissionLibrary) return false;
+//   const {edges} = await CameraRoll.getPhotos({
+//     first: limitToLast,
+//     assetType: 'Videos',
+//   });
+//   return edges;
+// };
+
 const sortVideos = (videos) => {
   if (!videos) videos = {};
   return Object.values(videos)

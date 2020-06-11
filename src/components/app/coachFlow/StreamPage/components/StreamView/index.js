@@ -24,7 +24,6 @@ const {height, width} = Dimensions.get('screen');
 
 import Mixpanel from 'react-native-mixpanel';
 import {mixPanelToken} from '../../../../../database/firebase/tokens';
-console.log('mixPanelToken', mixPanelToken);
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 import {navigate} from '../../../../../../../NavigationService';
@@ -118,32 +117,6 @@ class StreamPage extends Component {
           },
         );
       },
-      sessionDisconnected: (event) => {
-        const {userID, coachSessionID} = this.props;
-        console.log(
-          'sessionEventHandlers sessionDisconnected ' + coachSessionID,
-        );
-        Mixpanel.trackWithProperties(
-          'sessionEventHandlers sessionDisconnected ' + coachSessionID,
-          {
-            userID,
-            coachSessionID,
-            event,
-          },
-        );
-      },
-      streamDestroyed: (event) => {
-        const {userID, coachSessionID} = this.props;
-        console.log('sessionEventHandlers streamDestroyed ' + coachSessionID);
-        Mixpanel.trackWithProperties(
-          'sessionEventHandlers streamDestroyed ' + coachSessionID,
-          {
-            userID,
-            coachSessionID,
-            event,
-          },
-        );
-      },
       sessionConnected: async (event) => {
         const {userID, coachSessionID, currentScreenSize} = this.props;
         console.log('sessionEventHandlers sessionConnected ' + coachSessionID);
@@ -201,11 +174,6 @@ class StreamPage extends Component {
             date: new Date(),
           },
         );
-        // database()
-        //   .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-        //   .update({
-        //     isConnected: false,
-        //   });
         this.setState({
           isConnected: false,
         });
@@ -221,9 +189,7 @@ class StreamPage extends Component {
     const {coachSessionID, closeCurrentSession} = this.props;
     const {sessionInfo} = this.props;
     const {autoOpen, objectID, prevObjectID} = sessionInfo;
-    console.log('mount Session', coachSessionID, sessionInfo);
     if (prevObjectID && prevObjectID !== coachSessionID) {
-      console.log('close session,' + objectID);
       await closeCurrentSession(prevObjectID);
     }
     if (coachSessionID === objectID && autoOpen) this.open(true);
@@ -272,7 +238,6 @@ class StreamPage extends Component {
     }
   }
   reOpen() {
-    console.log('boom reopen');
     const {pageFullScreen} = this.state;
     if (pageFullScreen) this.open(true);
   }
@@ -288,7 +253,6 @@ class StreamPage extends Component {
       currentScreenSize,
     } = this.props;
     const {sessionInfo} = this.state;
-    console.log('open session', nextVal, coachSessionID);
     if (nextVal) {
       ////// close current opened session
       const currentOpenSession = sessionInfo.objectID;
@@ -344,7 +308,6 @@ class StreamPage extends Component {
 
     const member = this.member(coachSession);
     if (!member) return;
-    console.log('member ////', member);
     const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
       return database()
@@ -376,18 +339,11 @@ class StreamPage extends Component {
     const member = this.member(coachSession);
     if (!member) return;
     const {coachSessionID, userID} = this.props;
-    console.log('refreshTokenMember');
     if (
       coachSession?.vonageSessionId &&
       (member.expireTimeToken < Date.now() || !member.expireTimeToken)
     ) {
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
-      console.log('call cloud function', {
-        coachSessionID,
-        userID,
-        coachSessionIDOpentok: coachSession.vonageSessionId,
-        isOrganizer: coachSession.info.organizer === userID,
-      });
       await axios.get(url, {
         params: {
           coachSessionID,
@@ -588,7 +544,7 @@ class StreamPage extends Component {
       publishVideo,
       pageFullScreen,
     } = this.state;
-    const {userID, userConnected} = this.props;
+    const {userID, userConnected, coachSessionID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!coachSession.tokbox) return null;
@@ -601,7 +557,6 @@ class StreamPage extends Component {
 
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
-    console.log('render stream view ', isConnected, member.tokenTokbox);
     return (
       <Animated.View
         style={[styleApp.fullSize, {opacity: this.opacityStreamView}]}>
@@ -611,7 +566,10 @@ class StreamPage extends Component {
           ? this.loaderView('Connecting')
           : null}
 
-        <MembersView members={coachSession.members} />
+        <MembersView
+          members={coachSession.members}
+          coachSessionID={coachSessionID}
+        />
         {!publishVideo && this.pausedView(userIsAlone)}
         <View style={this.styleSession()}>
           {member.tokenTokbox && (
@@ -700,7 +658,6 @@ class StreamPage extends Component {
       currentScreenSize,
     );
     const {translateXStream, translateXCard} = this.animatedValues();
-
     return (
       <View style={styleContainerStreamView}>
         <CardStreamView

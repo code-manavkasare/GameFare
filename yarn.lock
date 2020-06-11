@@ -7200,6 +7200,11 @@ react-native-country-list@^1.0.10:
   resolved "https://registry.yarnpkg.com/react-native-country-list/-/react-native-country-list-1.0.10.tgz#b8e387ff361d7dc2972e135d894ae1b3e20e1ff6"
   integrity sha512-fxeiUWbsQSMbDpdEwamBRp2z60PN1CJ0HP+Z1U1K9lUwW8VKiU2HpeT9FjMuSTsWwbJgIYfeYzKvs+g2bdJtmA==
 
+react-native-create-thumbnail@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-create-thumbnail/-/react-native-create-thumbnail-1.2.1.tgz#3e75ce9ac28f6d65462df64f548916b9d05549e6"
+  integrity sha512-DQWBOYm27YeBW0UJvTkIJuK9qPV7z0mBGvvrOa3L/1vUoM6MwIHrsCfgacWdnrfu0lMwTPTjdA/9DFq3FIWreQ==
+
 react-native-device-info@^5.5.1:
   version "5.5.1"
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-5.5.1.tgz#1b942f0d868161f96305055c296818ba415813dc"
