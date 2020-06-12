@@ -12,6 +12,7 @@ import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
 import {date, time} from '../../../../../../layout/date/date';
 import ImageUser from '../../../../../../layout/image/ImageUser';
+import {coachAction} from '../../.././../../../../actions/coachActions';
 
 class CardStream extends Component {
   constructor(props) {
@@ -26,14 +27,18 @@ class CardStream extends Component {
       title: 'Do you want to delete this session?',
       textButton: 'Delete',
       onGoBack: async () => {
+        const {objectID} = this.props.sessionInfo;
         let updates = {};
         updates[`users/${userID}/coachSessions/${coachSessionID}`] = null;
         updates[`coachSessions/${coachSessionID}/members/${userID}`] = null;
         updates[`coachSessions/${coachSessionID}/allMembers/${userID}`] = null;
-        database()
+        await database()
           .ref()
           .update(updates);
-
+        if (objectID === coachSessionID)
+          await coachAction('setSessionInfo', {
+            objectID: false,
+          });
         return true;
       },
     });
@@ -258,10 +263,11 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
+    sessionInfo: state.coach.sessionInfo,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {},
+  {coachAction},
 )(CardStream);

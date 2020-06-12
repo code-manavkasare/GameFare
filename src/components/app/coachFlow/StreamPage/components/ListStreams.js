@@ -58,6 +58,7 @@ class ListStreams extends Component {
     }
   }
   closeSession(objectID) {
+    console.log('closeSession', objectID);
     return this.itemsRef[objectID].endCoachSession(true);
   }
   sessionsArray = () => {

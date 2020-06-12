@@ -253,6 +253,8 @@ class StreamPage extends Component {
       currentScreenSize,
     } = this.props;
     const {sessionInfo} = this.state;
+    console.log('open session',nextVal)
+    console.log('sessionID',coachSessionID)
     if (nextVal) {
       ////// close current opened session
       const currentOpenSession = sessionInfo.objectID;
@@ -335,14 +337,16 @@ class StreamPage extends Component {
       });
   }
   async refreshTokenMember() {
+    console.log('refreshTokenMember');
     const {coachSession} = this.state;
     const member = this.member(coachSession);
-    if (!member) return;
+    if (!member || !coachSession) return;
     const {coachSessionID, userID} = this.props;
     if (
-      coachSession?.vonageSessionId &&
+      coachSession.vonageSessionId &&
       (member.expireTimeToken < Date.now() || !member.expireTimeToken)
     ) {
+      console.log('updateSessionTokenUser', coachSession.vonageSessionId);
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
       await axios.get(url, {
         params: {

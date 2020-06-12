@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
@@ -215,12 +221,6 @@ export default class VideoPlayer extends Component {
           />
         )}
 
-        {/* <TouchableOpacity
-          style={styles.viewClickOnVideo}
-          activeOpacity={1}
-          onPress={() => this.clickVideo()}
-        /> */}
-
         {((displayVideo && source !== '') || __DEV__) && (
           <View
             style={[
@@ -232,6 +232,7 @@ export default class VideoPlayer extends Component {
               styleContainer={[styleApp.fullSize, styleApp.center]}
               onRef={(ref) => (this.PinchableBoxRef = ref)}
               scaleChange={(val) => setScale && setScale(val)}
+              singleTouch={() => this.clickVideo()}
               component={() => (
                 <View style={[styleApp.fullSize, styleApp.center]}>
                   {source !== '' && (

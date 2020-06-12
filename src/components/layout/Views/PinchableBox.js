@@ -4,6 +4,7 @@ import {
   PinchGestureHandler,
   PanGestureHandler,
   State,
+  TapGestureHandler,
 } from 'react-native-gesture-handler';
 
 export default class PinchableBox extends Component {
@@ -14,6 +15,7 @@ export default class PinchableBox extends Component {
   _translateY = new Animated.Value(0);
   _lastOffset = {x: 0, y: 0};
   _lastScale = 1;
+  doubleTapRef = React.createRef();
   componentDidMount() {
     this.props.onRef(this);
   }
@@ -68,6 +70,17 @@ export default class PinchableBox extends Component {
     this._baseScale.setValue(1);
     this._lastScale = 1;
   }
+  _onSingleTap = (event) => {
+    if (event.nativeEvent.state === State.ACTIVE) {
+      const {singleTouch} = this.props;
+      if (singleTouch) singleTouch();
+    }
+  };
+  _onDoubleTap = (event) => {
+    if (event.nativeEvent.state === State.ACTIVE) {
+      // alert('D0able tap, good job!');
+    }
+  };
   render() {
     const {styleContainer, component} = this.props;
     return (
@@ -78,23 +91,36 @@ export default class PinchableBox extends Component {
           <PinchGestureHandler
             onGestureEvent={this.onPinchGestureEvent}
             onHandlerStateChange={this.onPinchHandlerStateChange}>
-            <Animated.View
-              collapsable={false}
-              style={[
-                styleContainer,
-                {
-                  transform: [
-                    {scale: this.scale},
-                    {
-                      translateX: this._translateX,
-                    },
-                    {
-                      translateY: this._translateY,
-                    },
-                  ],
-                },
-              ]}>
-              {component()}
+            <Animated.View style={styleContainer}>
+              <TapGestureHandler
+                onHandlerStateChange={this._onSingleTap}
+                waitFor={this.doubleTapRef}>
+                <Animated.View style={styleContainer}>
+                  <TapGestureHandler
+                    ref={this.doubleTapRef}
+                    onHandlerStateChange={this._onDoubleTap}
+                    numberOfTaps={2}>
+                    <Animated.View
+                      collapsable={false}
+                      style={[
+                        styleContainer,
+                        {
+                          transform: [
+                            {scale: this.scale},
+                            {
+                              translateX: this._translateX,
+                            },
+                            {
+                              translateY: this._translateY,
+                            },
+                          ],
+                        },
+                      ]}>
+                      {component()}
+                    </Animated.View>
+                  </TapGestureHandler>
+                </Animated.View>
+              </TapGestureHandler>
             </Animated.View>
           </PinchGestureHandler>
         </Animated.View>
