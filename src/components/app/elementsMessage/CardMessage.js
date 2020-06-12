@@ -65,23 +65,23 @@ export default class CardMessage extends React.Component {
   rowDay(props) {
     if (
       !props.previousMessage ||
-      moment(props.currentMessage.createdAt).format('DDD') !==
-        moment(props.previousMessage.createdAt).format('DDD') ||
-      !props.previousMessage.createdAt
+      moment(props.currentMessage.timeStamp).format('DDD') !==
+        moment(props.previousMessage.timeStamp).format('DDD') ||
+      !props.previousMessage.timeStamp
     ) {
       return (
         <Row style={styles.message}>
           <Col style={styleApp.center2}>
             <Text style={[styleApp.text, {marginBottom: 10, marginTop: 10}]}>
-              {moment(props.currentMessage.createdAt).format('DDD') ===
+              {moment(props.currentMessage.timeStamp).format('DDD') ===
               moment().format('DDD')
                 ? 'Today'
                 : Number(
-                    moment(props.currentMessage.createdAt).format('DDD') ===
+                    moment(props.currentMessage.timeStamp).format('DDD') ===
                       Number(moment().format('DDD')) - 1,
                   )
                 ? 'Yesterday'
-                : moment(props.currentMessage.createdAt).format('MMMM, Do')}
+                : moment(props.currentMessage.timeStamp).format('MMMM, Do')}
             </Text>
           </Col>
         </Row>
@@ -131,7 +131,7 @@ export default class CardMessage extends React.Component {
               onPress={() => this.goToProfilePage()}>
               {messageName(props.currentMessage.user.info)}{' '}
               <Text style={{color: colors.grey, fontSize: 12}}>
-                {moment(props.currentMessage.createdAt).format('h:mm a')}
+                {moment(props.currentMessage.timeStamp).format('h:mm a')}
               </Text>
             </Text>
             {props.currentMessage.text !== '' && (
