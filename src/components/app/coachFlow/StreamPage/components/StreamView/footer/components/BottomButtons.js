@@ -12,6 +12,8 @@ import {
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
+import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions'
+
 import {
   startRemoteRecording,
   stopRemoteRecording,
@@ -552,5 +554,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {},
+  {uploadQueueAction},
 )(BottomButton);

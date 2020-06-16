@@ -10,6 +10,7 @@ import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
+import UploadManager from './src/components/app/elementsUpload/UploadManager'
 
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
@@ -97,6 +98,7 @@ class App extends Component {
         {InitialStack()}
         <OrientationListener />
         <Notification />
+        <UploadManager />
       </NavigationContainer>
     );
   }
