@@ -5,11 +5,16 @@ import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import {Stopwatch} from 'react-native-stopwatch-timer';
 import isEqual from 'lodash.isequal';
+import database from '@react-native-firebase/database';
 
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
-import AllIcons from '../../../../../../../layout/icons/AllIcons';
-import {generateSnippetsFromFlags} from '../../../../../../../functions/videoManagement';
+import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
+import {
+  generateSnippetsFromFlags,
+  arrayUploadFromSnipets,
+} from '../../../../../../../functions/videoManagement';
+import {getVideoUUID} from '../../../../../../../functions/coach';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
@@ -28,26 +33,43 @@ class VideoSourcePopup extends Component {
     this.props.onRef(this);
   }
   async componentDidUpdate(prevProps, prevState) {
-    const {recording} = this.state.member;
+    const {member} = this.state;
+    const {coachSessionID, uploadQueueAction, getMembers, userID} = this.props;
+    const {recording, id: memberID} = member;
     const {recording: prevRecording} = prevState.member;
     if (recording && prevRecording) {
       if (
         !isEqual(prevRecording.uploadRequest, recording.uploadRequest) &&
-        !recording.uploadRequest.uploadLaunched &&
-        !recording.uploadRequest?.flagsSelected['fullVideo']
+        recording.uploadRequest &&
+        !recording.uploadRequest.uploadLaunched
       ) {
-        console.log('Start generating snipets');
-        console.log('recording.localSource: ', recording.localSource);
-        console.log(
-          'recording.uploadRequest.flagsSelected: ',
-          recording.uploadRequest.flagsSelected,
-        );
-        //TODO send good flags and source
-        const flagsWithSnippets = await generateSnippetsFromFlags(
-          recording.localSource,
-          recording.uploadRequest.flagsSelected,
-        );
-        console.log('flagsWithSnippets: ', flagsWithSnippets);
+        const {uploadRequest} = recording;
+        const {flagsSelected} = uploadRequest;
+        console.log('upload requeated !!!!!!', member, recording);
+        console.log('flagsSelected', flagsSelected);
+
+        const membersSession = getMembers();
+        console.log('membersSession', membersSession);
+
+        const videosToUpload = await arrayUploadFromSnipets({
+          flagsSelected,
+          recording,
+          coachSessionID,
+          memberID: member.id,
+          members: membersSession,
+          userID,
+        });
+        console.log('videosToUpload', videosToUpload);
+
+        await database()
+          .ref()
+          .update({
+            [`coachSessions/${coachSessionID}/members/${memberID}/recording/uploadRequest/uploadLaunched`]: true,
+          });
+
+        /// TODO add flagsWithSnippets in uploadList
+        // this.props.uploadAction(videosToUpload)
+        uploadQueueAction('enqueueFilesUpload', videosToUpload);
       }
     }
   }
@@ -189,4 +211,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(VideoSourcePopup);
+export default connect(
+  mapStateToProps,
+  {uploadQueueAction},
+)(VideoSourcePopup);

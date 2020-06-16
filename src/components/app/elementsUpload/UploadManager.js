@@ -31,6 +31,7 @@ class UploadManager extends Component {
 
     const uploadInstruction = status === 'uploading';
     const readyTask = (task && task.progress === 0) || init;
+    console.log('processQueue', uploadInstruction, readyTask);
 
     if (uploadInstruction && readyTask) {
       switch (task.type) {
@@ -60,6 +61,7 @@ class UploadManager extends Component {
 
     let updates = firebaseUpdates;
     updates[destinationFile] = url;
+    console.log('databaseUpdates', updates);
     database()
       .ref()
       .update(updates);
@@ -76,7 +78,8 @@ class UploadManager extends Component {
     console.log('Image info: ', imageInfo);
 
     const imageUrl = await this.uploadImage(
-      'file:///' + imageInfo.path,
+      //  'file:///' +
+      imageInfo.path,
       storageDestination,
       'image.jpg',
     );
@@ -126,6 +129,7 @@ class UploadManager extends Component {
   };
 
   uploadImage = async (path, destination, name) => {
+    console.log('uploadImage', path, destination);
     const videoRef = storage()
       .ref(destination)
       .child(name);
@@ -134,6 +138,7 @@ class UploadManager extends Component {
       cacheControl: 'no-store',
     });
     let url = await videoRef.getDownloadURL();
+    console.log('url', url);
     return new Promise((resolve, reject) => {
       if (url) resolve(url);
       else reject(url);

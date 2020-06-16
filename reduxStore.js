@@ -19,6 +19,7 @@ const persistConfig = {
     'coach',
     'layout',
     'globaleVariables',
+    'uploadQueue',
   ],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };

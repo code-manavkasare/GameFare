@@ -72,6 +72,7 @@ class VideoSourcePopup extends Component {
 
   render() {
     const {visible, members} = this.state;
+    const {members: propsMembers} = this.props;
     const {selectMember, coachSessionID} = this.props;
 
     const translateY = this.scaleCard.interpolate({
@@ -99,6 +100,9 @@ class VideoSourcePopup extends Component {
             key={member.id}
             coachSessionID={coachSessionID}
             onRef={(ref) => (this.itemsRef[member.id] = ref)}
+            getMembers={() => {
+              return propsMembers;
+            }}
             selectMember={(member) => selectMember(member)}
           />
         ))}
