@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import queue, {Worker} from 'react-native-job-queue';
 import VideoSourcePopup from './VideoSourcePopup';
+import database from '@react-native-firebase/database';
 
 import {
   navigate,
@@ -12,7 +13,7 @@ import {
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions'
+import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
 
 import {
   startRemoteRecording,
@@ -28,12 +29,9 @@ import styleApp from '../../../../../../../style/style';
 import {native} from '../../../../../../../animations/animations';
 
 import {
-  getVideoInfo,
   permission,
   goToSettings,
-  getLastVideo,
 } from '../../../../../../../functions/pictures';
-import CardUploading from '../../../../../../videoLibraryPage/components/CardUploading';
 import isEqual from 'lodash.isequal';
 
 class BottomButton extends Component {
@@ -137,9 +135,6 @@ class BottomButton extends Component {
     );
     queue.addWorker(new Worker('stopRecording', this.stopRecording.bind(this)));
   }
-  getVideoUploadStatus() {
-    return this.cardUploadingRef.getVideoUploadStatus();
-  }
   startRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
@@ -149,7 +144,6 @@ class BottomButton extends Component {
   stopRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
-    console.log('stop recording');
     stopRemoteRecording(recordingUser, coachSessionID, userID);
     navigate('FinalizeRecording', {
       member: member,
@@ -163,12 +157,9 @@ class BottomButton extends Component {
   startRecording = async () => {
     const {coachSessionID, userID} = this.props;
     const messageCallback = async (response) => {
-      if (response.error) {
-        console.log(`Error initializing recording: ${response.message}`);
-      } else {
-        console.log('Started recording...');
-        updateTimestamp(coachSessionID, userID, Date.now());
-      }
+      if (response.error)
+        return console.log(`Error initializing recording: ${response.message}`);
+      updateTimestamp(coachSessionID, userID, Date.now());
     };
     const permissionLibrary = await permission('library');
     if (!permissionLibrary)
@@ -193,35 +184,34 @@ class BottomButton extends Component {
     await otPublisherRef.current.startRecording(messageCallback);
   };
   stopRecording = async () => {
-    const {otPublisherRef, members, userID} = this.props;
+    const {
+      otPublisherRef,
+      members,
+      userID,
+      coachSessionID,
+      uploadQueueAction,
+    } = this.props;
     const messageCallback = async (response) => {
       if (response.error)
         return Alert.alert(`Error storing recording: ${response.message}`);
       let {videoUrl} = response;
 
-      videoUrl =
-        'file:///Users/florian/Library/Developer/CoreSimulator/Devices/001BF671-29EC-4383-A4A7-547A99E69E68/data/Containers/Data/Application/311BB133-2A9A-4CBA-9DFC-86A76E048F4A/tmp/react-native-image-crop-picker/24BBD220-CD43-4BE7-B4E2-867C9F1B02D5.mp4';
-      let videoUUID = videoUrl
-        ? videoUrl.split('/')[videoUrl.split('/').length - 1].split('.')[0]
-        : undefined;
-
       if (videoUrl) {
-        const recording = Object.values(members).filter(
+        const member = Object.values(members).filter(
           (member) => member.id === userID,
-        )[0].recording;
+        )[0];
+        const {id: memberID, recording} = member;
         console.log('recording', recording);
         const thumbnails = await generateFlagsThumbnail({
           flags: recording.flags,
           source: videoUrl,
+          coachSessionID,
+          memberID: memberID,
         });
         console.log('thumbnails', thumbnails);
-        
-
-        // let videoInfo = await getVideoInfo(videoUrl);
-        // if (videoInfo.duration === 0) return;
-        // videoInfo.localIdentifier = videoUUID;
-        // await this.cardUploadingRef.open(true, videoInfo);
-        // await this.cardUploadingRef.uploadFile();
+        // TODO-UPLOAD push thumbnails to upload
+        // call new uploadReducer add thumbnails array
+        uploadQueueAction('enqueueFilesUpload', thumbnails);
       }
     };
 
@@ -325,12 +315,6 @@ class BottomButton extends Component {
     };
     return (
       <View style={[styleApp.center, styleApp.fullSize]}>
-        <CardUploading
-          onRef={(ref) => (this.cardUploadingRef = ref)}
-          style={styles.CardUploading}
-          size="sm"
-          members={this.props.members}
-        />
         <ButtonColor
           view={() => insideViewButton()}
           click={async () => {

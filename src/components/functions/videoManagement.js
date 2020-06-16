@@ -1,20 +1,8 @@
 import {ProcessingManager} from 'react-native-video-processing';
+import {getVideoUUID} from './coach';
 
 const generateSnippetsFromFlags = async (source, flags) => {
-  console.log('source: ', source);
-  console.log('flags: ', flags);
-  //TODO : delete example when data is good
-  const flagsExample = {
-    flag1: {id: 'flag1', startTime: 1000, stopTime: 4000, time: 2000},
-    flag2: {id: 'flag2', startTime: 2000, stopTime: 5000, time: 3000},
-    flag3: {id: 'flag3', startTime: 3000, stopTime: 6000, time: 5000},
-  };
-  const sourceExample =
-    'file:///private/var/mobile/Containers/Data/Application/07A87600-4F3F-4BA8-A2A6-5DAF7041655E/tmp/react-native-image-crop-picker/3A5711F9-6C57-4621-BCE7-9100D781BBAD.mp4';
-
-  let flagsWithSnippets = flagsExample;
-
-  for (const flag of Object.values(flagsExample)) {
+  for (const flag of Object.values(flags)) {
     console.log('flag: ', flag);
     const {id, startTime, stopTime} = flag;
     const trimOptions = {
@@ -24,13 +12,118 @@ const generateSnippetsFromFlags = async (source, flags) => {
       saveWithCurrentDate: true,
     };
 
-    await ProcessingManager.trim(sourceExample, trimOptions).then(
-      (snippetLocalPath) => {
-        flagsWithSnippets[id].snippetLocalPath = snippetLocalPath;
-      },
-    );
+    if (!source) flags[id].snippetLocalPath = 'simulator';
+    else
+      await ProcessingManager.trim(source, trimOptions).then(
+        (snippetLocalPath) => {
+          flags[id].snippetLocalPath = snippetLocalPath;
+        },
+      );
   }
-  return flagsWithSnippets;
+  return flags;
 };
 
-export {generateSnippetsFromFlags};
+const updatesMember = ({members, destinationCloud, userID, uuid}) => {
+  let updates = {};
+  console.log('bim !!!!!', members);
+  Object.values(members).map((member) => {
+    const memberID = member.id;
+    const timeStamp = Date.now();
+    updates[`${destinationCloud}/members/${member.id}/timestamp`] = timeStamp;
+    updates[`${destinationCloud}/members/${memberID}/id`] = memberID;
+    updates[`${destinationCloud}/members/${memberID}/invitedBy`] = userID;
+    updates[`users/${memberID}/${destinationCloud}/id`] = uuid;
+    updates[`users/${memberID}/${destinationCloud}/startTimestamp`] = timeStamp;
+    updates[`users/${memberID}/${destinationCloud}/uploadedByUser`] = true;
+  });
+  console.log('updatesMember', updates);
+  return updates;
+};
+
+const arrayUploadFromSnipets = async ({
+  flagsSelected,
+  recording,
+  coachSessionID,
+  memberID,
+  members,
+  userID,
+}) => {
+  console.log('arrayUploadFromSnipets', {
+    flagsSelected,
+    recording,
+    coachSessionID,
+    memberID,
+  });
+  if (!flagsSelected['fullVideo']) {
+    console.log('Video uploaded.');
+    const flagsWithSnippets = await generateSnippetsFromFlags(
+      recording.localSource,
+      flagsSelected,
+    );
+    return Object.values(flagsWithSnippets).map((flag) => {
+      const {snippetLocalPath, id, thumbnail, startTime, stopTime} = flag;
+      const duration = stopTime - startTime;
+      const uuid = getVideoUUID(snippetLocalPath);
+      const destinationCloud = `archivedStreams/${uuid}`;
+      const updateMembers = updatesMember({
+        members,
+        destinationCloud,
+        userID,
+        uuid,
+      });
+      console.log('updateMembers0', updateMembers);
+      return {
+        path: snippetLocalPath,
+        localIdentifier: getVideoUUID(snippetLocalPath),
+        storageDestination: destinationCloud,
+        destinationFile: `${destinationCloud}/url`,
+        firebaseUpdates: {
+          [`${destinationCloud}/durationSeconds`]: duration,
+          [`${destinationCloud}/id`]: uuid,
+          [`${destinationCloud}/uploadedByUser`]: true,
+          [`${destinationCloud}/sourceUser`]: memberID,
+          [`${destinationCloud}/thumbnail`]: thumbnail ? thumbnail : false,
+          [`${destinationCloud}/startTimestamp`]: Date.now(),
+          ...updateMembers,
+        },
+        type: 'video',
+        duration: stopTime - startTime,
+        thumbnail: thumbnail ? thumbnail : false,
+        filename: uuid,
+        progress: 0,
+        updateFirebaseAfterUpload: true,
+        date: Date.now(),
+      };
+    });
+  } else {
+    const {localSource, thumbnail, startTimestamp, stopTimestamp} = recording;
+    const uuid = getVideoUUID(localSource);
+    const destinationCloud = `archivedStreams/${uuid}`;
+    return [
+      {
+        path: localSource,
+        duration: stopTimestamp - startTimestamp,
+        localIdentifier: getVideoUUID(localSource),
+        storageDestination: destinationCloud,
+        destinationFile: `${destinationCloud}/url`,
+        firebaseUpdates: {
+          [`${destinationCloud}/durationSeconds`]:
+            stopTimestamp - startTimestamp,
+          [`${destinationCloud}/id`]: uuid,
+          [`${destinationCloud}/uploadedByUser`]: true,
+          [`${destinationCloud}/sourceUser`]: memberID,
+          [`${destinationCloud}/thumbnail`]: thumbnail ? thumbnail : '',
+          [`${destinationCloud}/startTimestamp`]: Date.now(),
+        },
+        type: 'video',
+        filename: uuid,
+        progress: 0,
+        thumbnail: thumbnail ? thumbnail : false,
+        updateFirebaseAfterUpload: true,
+        date: Date.now(),
+      },
+    ];
+  }
+};
+
+export {generateSnippetsFromFlags, arrayUploadFromSnipets};

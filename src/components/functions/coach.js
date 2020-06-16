@@ -142,6 +142,13 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/flags`
   ] = {};
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/uploadRequest`
+  ] = {};
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/thumbnail`
+  ] = null;
+
   database()
     .ref()
     .update(updates);
@@ -230,6 +237,14 @@ const getVideoSharing = (session, personSharingScreen) => {
   return session.sharedVideos[videoIDSharing];
 };
 
+const getVideoUUID = (path) => {
+  if (!path) return 'simulator';
+  const videoUUID = path
+    ? path.split('/')[path.split('/').length - 1].split('.')[0]
+    : generateID();
+  return videoUUID;
+};
+
 const generateFlagsThumbnail = async ({
   flags,
   source,
@@ -240,32 +255,44 @@ const generateFlagsThumbnail = async ({
   if (flags) {
     for (var i in flags) {
       const flag = flags[i];
+      const flagID = flag.id;
       const thumbnail = await createThumbnail({
         url: source,
         timeStamp: flag.time,
       });
+
       thumbnails.push({
         path: thumbnail.path,
-        storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${
-          flag.id
-        }/thumbnail`,
+        localIdentifier: getVideoUUID(thumbnail.path),
+        storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
+        destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
+        firebaseUpdates: {},
+        displayInList: true,
+        progress: 0,
+        type: 'image',
         filename: 'thumbnail',
         updateFirebaseAfterUpload: true,
+        date: Date.now(),
       });
-      console.log('infoFile', thumbnail);
     }
-  } else {
-    const thumbnail = await createThumbnail({
-      url: source,
-      timeStamp: 500,
-    });
-    thumbnails.push({
-      path: thumbnail.path,
-      storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
-      filename: 'thumbnail',
-      updateFirebaseAfterUpload: true,
-    });
   }
+  const thumbnailFullVideo = await createThumbnail({
+    url: source,
+    timeStamp: 500,
+  });
+  thumbnails.push({
+    path: thumbnailFullVideo.path,
+    localIdentifier: getVideoUUID(thumbnailFullVideo.path),
+    storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
+    destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
+    firebaseUpdates: {},
+    filename: 'thumbnail',
+    displayInList: true,
+    progress: 0,
+    type: 'image',
+    updateFirebaseAfterUpload: true,
+    date: Date.now(),
+  });
   await database()
     .ref()
     .update({
@@ -295,4 +322,5 @@ module.exports = {
   stopRemoteRecording,
   updateTimestamp,
   generateFlagsThumbnail,
+  getVideoUUID,
 };

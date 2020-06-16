@@ -20,46 +20,46 @@ const enqueueFilesUpload = (value) => ({
 
 const dequeueFileUpload = (value) => ({
   type: DEQUEUE_FILE_UPLOAD,
-  index: value
-})
+  index: value,
+});
 
 const setUploadStatus = (value) => ({
   type: SET_UPLOAD_STATUS,
-  status: value
-})
+  status: value,
+});
 
 const setUploadIndex = (value) => ({
   type: SET_UPLOAD_INDEX,
-  index: value
-})
+  index: value,
+});
 
 const setJobProgress = (value) => ({
-  type: SET_JOB_PROGRESS, 
+  type: SET_JOB_PROGRESS,
   index: value.index,
-  progress: value.progress
-})
+  progress: value.progress,
+});
 
 const resetUploadQueue = () => ({
-  type: RESET_UPLOAD_QUEUE
-})
+  type: RESET_UPLOAD_QUEUE,
+});
 
 export const uploadQueueAction = (val, data) => {
   // console.log('UPLOAD FILE ACTION', val, data)
   return async function(dispatch) {
     if (val === 'enqueueFileUpload') {
-      await dispatch(enqueueFileUpload(data))      
+      await dispatch(enqueueFileUpload(data));
     } else if (val === 'enqueueFilesUpload') {
-      await dispatch(enqueueFilesUpload(data))      
+      await dispatch(enqueueFilesUpload(data));
     } else if (val === 'dequeueFileUpload') {
-      await dispatch(dequeueFileUpload(data))
+      await dispatch(dequeueFileUpload(data));
     } else if (val === 'setUploadStatus') {
-      await dispatch(setUploadStatus(data))
+      await dispatch(setUploadStatus(data));
     } else if (val === 'setUploadIndex') {
-      await dispatch(setUploadIndex(data))
+      await dispatch(setUploadIndex(data));
     } else if (val === 'setJobProgress') {
-      await dispatch(setJobProgress(data))
+      await dispatch(setJobProgress(data));
     } else if (val === 'resetUploadQueue') {
-      await dispatch(resetUploadQueue())
+      await dispatch(resetUploadQueue());
     }
     return true;
   };

@@ -18,7 +18,7 @@ class QueueList extends Component {
 
   componentDidMount() {
     const {queue} = this.props.uploadQueue;
-    console.log('im the queue! :) ', queue);
+    console.log('im the queue! :) ', this.props.uploadQueue);
   }
 
   header() {
@@ -35,9 +35,7 @@ class QueueList extends Component {
 
   list() {
     const {queue} = this.props.uploadQueue;
-    const filteredQueue = queue.filter((task) => {
-      return task.displayInList;
-    });
+    const filteredQueue = queue.filter((task) => task.displayInList);
 
     return (
       <View style={{marginBottom: 10}}>

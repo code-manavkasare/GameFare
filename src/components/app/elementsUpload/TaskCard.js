@@ -85,28 +85,29 @@ class TaskCard extends Component {
     const {task, index} = this.props;
     const id = task.localIdentifier;
     return (
-      <Swipeout
-        key={id}
-        style={{height: 80}}
-        backgroundColor="transparent"
-        right={[
-          {
-            type: 'delete',
-            component: this.deleteButton(),
-            onPress: () => {
-              this.deleteJob(index);
-            },
-          },
-        ]}>
-        <View style={styles.container}>
-          <Row>
-            <Col size={35}>{this.thumbnail()}</Col>
-            <Col size={65} style={styles.taskInfo}>
-              {this.taskInfo()}
-            </Col>
-          </Row>
-        </View>
-      </Swipeout>
+      <View style={styles.card}>
+        <Row>
+          <Col size={35}>{this.thumbnail()}</Col>
+          <Col size={65} style={styles.taskInfo}>
+            {this.taskInfo()}
+          </Col>
+        </Row>
+      </View>
+      // <Swipeout
+      //   key={id}
+      //   style={{height: 80}}
+      //   backgroundColor="transparent"
+      //   right={[
+      //     {
+      //       type: 'delete',
+      //       component: this.deleteButton(),
+      //       onPress: () => {
+      //         this.deleteJob(index);
+      //       },
+      //     },
+      //   ]}>
+
+      // </Swipeout>
     );
   }
 
@@ -137,10 +138,9 @@ const styles = StyleSheet.create({
     ...styleApp.center,
     ...styleApp.fullSize,
   },
-  container: {
-    paddingRight: '5%',
-    paddingLeft: '5%',
-    height: '100%',
+  card: {
+    ...styleApp.marginView,
+    height: 80,
   },
   thumbnail: {
     height: 60,

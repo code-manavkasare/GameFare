@@ -15,9 +15,6 @@ class Footer extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
-  getVideoUploadStatus() {
-    return this.bottomButtonRef.getVideoUploadStatus();
-  }
   shouldComponentUpdate = (nextProps) => {
     return (
       nextProps.videoBeingShared.id !== this.props.videoBeingShared.id ||
