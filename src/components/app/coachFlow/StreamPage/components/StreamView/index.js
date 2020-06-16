@@ -56,6 +56,7 @@ import {
 
 import WatchVideoPage from '../../../WatchVideoPage/index';
 import MembersView from './components/MembersView';
+import UploadButton from '../../../../elementsUpload/UploadButton'
 import Footer from './footer/index';
 import CardStreamView from './components/CardStreamView';
 import axios from 'axios';
@@ -702,6 +703,21 @@ class StreamPage extends Component {
             setState={this.setState.bind(this)}
             state={this.state}
           />
+          {
+          isConnected && 
+          <UploadButton
+            backdrop
+            style={{
+              ...styles.uploadButton, 
+              top: currentScreenSize.portrait ? 
+                (marginTopApp+55) : (marginTopAppLandscape+75)}}
+            expandableView
+            expandableViewStyle={{
+              width: currentScreenSize.currentWidth*0.7, 
+              minHeight:150,
+            }}
+          />
+          }
 
           {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
@@ -791,6 +807,14 @@ const styles = StyleSheet.create({
     opacity: 0.4,
     zIndex: 30,
     position: 'absolute',
+  },
+  uploadButton: {
+    height: heightHeaderHome,
+    paddingLeft: '5%',
+    paddingRight: '5%',
+    position: 'absolute',
+    zIndex: 15,
+    width:'100%'
   },
 });
 

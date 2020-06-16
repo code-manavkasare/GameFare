@@ -10,6 +10,7 @@ import groupsReducer from './groupsReducer';
 import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
 import layoutReducer from './layoutReducer';
+import uploadQueueReducer from './uploadQueueReducer';
 
 export default combineReducers({
   globaleVariables: globaleVariablesReducer,
@@ -23,4 +24,5 @@ export default combineReducers({
   createGroup: createGroupReducer,
   message: messageReducer,
   layout: layoutReducer,
+  uploadQueue: uploadQueueReducer
 });

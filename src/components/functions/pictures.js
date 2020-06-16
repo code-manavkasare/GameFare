@@ -188,6 +188,11 @@ const getVideoInfo = async (videoUrl) => {
   const thumbnail = await generateThumbnail(videoUrl);
   videoInfo.thumbnail = thumbnail;
   videoInfo.path = videoUrl;
+  videoInfo.type = 'video';
+  videoInfo.progress = 0;
+  videoInfo.displayInList = true;
+  videoInfo.updateFirebaseAfterUpload = true;
+  videoInfo.date = Date.now()
   return videoInfo;
 };
 
