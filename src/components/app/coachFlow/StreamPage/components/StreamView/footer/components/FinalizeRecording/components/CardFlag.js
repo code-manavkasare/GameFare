@@ -81,7 +81,7 @@ class CardFlag extends Component {
       <ButtonColor
         color={colors.white}
         onPressColor={colors.off}
-        click={() => click()}
+        click={() => (thumbnail ? click() : true)}
         style={styles.button}
         view={() => {
           return (

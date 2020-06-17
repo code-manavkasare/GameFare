@@ -1,6 +1,7 @@
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import RNFS from 'react-native-fs';
+import ImageResizer from 'react-native-image-resizer';
 
 import colors from '../style/colors';
 import {heightCardSession} from '../style/sizes';
@@ -245,6 +246,17 @@ const getVideoUUID = (path) => {
   return videoUUID;
 };
 
+const compressThumbnail = async (initialPath) => {
+  const {path} = await ImageResizer.createResizedImage(
+    initialPath,
+    500,
+    500,
+    'JPEG',
+    50,
+  );
+  return path;
+};
+
 const generateFlagsThumbnail = async ({
   flags,
   source,
@@ -256,37 +268,41 @@ const generateFlagsThumbnail = async ({
     for (var i in flags) {
       const flag = flags[i];
       const flagID = flag.id;
-      const thumbnail = await createThumbnail({
+      let {path: thumbnail} = await createThumbnail({
         url: source,
         timeStamp: flag.time,
       });
+      thumbnail = await compressThumbnail(thumbnail);
 
       thumbnails.push({
-        path: thumbnail.path,
-        localIdentifier: getVideoUUID(thumbnail.path),
+        path: thumbnail,
+        thumbnail: thumbnail,
+        localIdentifier: getVideoUUID(thumbnail),
         storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
         destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
         firebaseUpdates: {},
         displayInList: true,
         progress: 0,
         type: 'image',
-        filename: 'thumbnail',
+        filename: 'Thumbnail',
         updateFirebaseAfterUpload: true,
         date: Date.now(),
       });
     }
   }
-  const thumbnailFullVideo = await createThumbnail({
+  let {path: thumbnailFullVideo} = await createThumbnail({
     url: source,
     timeStamp: 500,
   });
+  thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
   thumbnails.push({
-    path: thumbnailFullVideo.path,
-    localIdentifier: getVideoUUID(thumbnailFullVideo.path),
+    path: thumbnailFullVideo,
+    localIdentifier: getVideoUUID(thumbnailFullVideo),
     storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
     destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
     firebaseUpdates: {},
-    filename: 'thumbnail',
+    thumbnail: thumbnailFullVideo,
+    filename: 'Thumbnail full video',
     displayInList: true,
     progress: 0,
     type: 'image',

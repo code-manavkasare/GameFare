@@ -32,9 +32,6 @@ class FinalizeRecording extends Component {
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
   }
-  componentDidUpdate(prevProps) {
-    console.log('componentDidUpdate', prevProps.route.params);
-  }
   static getDerivedStateFromProps(props, state) {
     if (!isEqual(props.route.params.member, state.member))
       return {member: props.route.params.member};
@@ -48,13 +45,12 @@ class FinalizeRecording extends Component {
     const {recording} = member;
     const that = this;
 
-    console.log('confirm', member);
-    console.log('coachSessionID', coachSessionID);
     var infoFlags = Object.values(flagsSelected).reduce(function(result, item) {
       const snipetTime = that.itemsRef[item.id].getState('snipetTime');
       result[item.id] = {
         id: item.id,
         time: item.time,
+        thumbnail: item.thumbnail,
         startTime: Math.max(0, item.time - snipetTime * 1000),
         stopTime: Math.min(
           recording.stopTimestamp - recording.startTimestamp,
@@ -64,7 +60,6 @@ class FinalizeRecording extends Component {
       return result;
     }, {});
     let updates = {};
-    console.log('infoGroups', infoFlags);
     updates[
       `coachSessions/${coachSessionID}/members/${
         member.id
@@ -120,6 +115,7 @@ class FinalizeRecording extends Component {
                   [flag.id]: {
                     time: flag.time,
                     id: flag.id,
+                    thumbnail: flag.thumbnail,
                   },
                 };
               this.setState({flagsSelected});
@@ -133,7 +129,6 @@ class FinalizeRecording extends Component {
   finalizeRecording() {
     const {member, flagsSelected} = this.state;
     const {recording} = member;
-    console.log('recording', recording);
     const {flags} = recording;
     return (
       <View style={[{minHeight: 800}]}>
@@ -152,6 +147,7 @@ class FinalizeRecording extends Component {
                 ['fullVideo']: {
                   id: 'fullVideo',
                   time: 0,
+                  thumbnail: recording.thumbnail,
                 },
               },
             });

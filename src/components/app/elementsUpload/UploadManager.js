@@ -31,7 +31,6 @@ class UploadManager extends Component {
 
     const uploadInstruction = status === 'uploading';
     const readyTask = (task && task.progress === 0) || init;
-    console.log('processQueue', uploadInstruction, readyTask);
 
     if (uploadInstruction && readyTask) {
       switch (task.type) {
@@ -59,9 +58,8 @@ class UploadManager extends Component {
     const task = queue[index];
     const {firebaseUpdates, destinationFile} = task;
 
-    let updates = firebaseUpdates;
+    let updates = {...firebaseUpdates};
     updates[destinationFile] = url;
-    console.log('databaseUpdates', updates);
     database()
       .ref()
       .update(updates);
@@ -74,22 +72,17 @@ class UploadManager extends Component {
     if (imageInfo.simulator) return;
 
     const {storageDestination} = imageInfo;
-
-    console.log('Image info: ', imageInfo);
-
     const imageUrl = await this.uploadImage(
       //  'file:///' +
       imageInfo.path,
       storageDestination,
       'image.jpg',
     );
-    console.log('Image URL: ', imageUrl);
 
     uploadQueueAction('setJobProgress', {index: index, progress: 1});
 
     if (imageInfo.updateFirebaseAfterUpload)
       await this.databaseUpdates(imageUrl);
-    console.log('Image uploaded.');
   };
 
   uploadVideoAtQueueIndex = async (index) => {
@@ -100,15 +93,12 @@ class UploadManager extends Component {
 
     const {storageDestination} = videoInfo;
 
-    console.log('Video info: ', videoInfo);
-
     if (videoInfo.uploadThumbnail) {
       const thumbnailUrl = await this.uploadImage(
         'file:///' + videoInfo.thumbnail,
         storageDestination,
         'thumbnail.jpg',
       );
-      console.log('Thumbnail URL: ', thumbnailUrl);
     }
 
     uploadQueueAction('setJobProgress', {index: index, progress: 0.2});
@@ -119,17 +109,14 @@ class UploadManager extends Component {
       'archive.mp4',
       index,
     );
-    console.log('Video URL: ', videoUrl);
 
     uploadQueueAction('setJobProgress', {index: index, progress: 1});
 
     if (videoInfo.updateFirebaseAfterUpload)
       await this.databaseUpdates(videoUrl);
-    console.log('Video uploaded.');
   };
 
   uploadImage = async (path, destination, name) => {
-    console.log('uploadImage', path, destination);
     const videoRef = storage()
       .ref(destination)
       .child(name);
@@ -138,7 +125,6 @@ class UploadManager extends Component {
       cacheControl: 'no-store',
     });
     let url = await videoRef.getDownloadURL();
-    console.log('url', url);
     return new Promise((resolve, reject) => {
       if (url) resolve(url);
       else reject(url);
@@ -182,7 +168,6 @@ class UploadManager extends Component {
           reject(error);
         },
         async () => {
-          console.log('Upload complete');
           var url = await videoRef.getDownloadURL();
           resolve(url);
         },
