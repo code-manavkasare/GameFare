@@ -15,12 +15,6 @@ class QueueList extends Component {
     super(props);
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-
-  componentDidMount() {
-    const {queue} = this.props.uploadQueue;
-    console.log('im the queue! :) ', this.props.uploadQueue);
-  }
-
   header() {
     const {status} = this.props.uploadQueue;
 

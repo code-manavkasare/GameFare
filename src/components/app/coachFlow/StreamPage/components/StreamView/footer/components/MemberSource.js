@@ -41,16 +41,13 @@ class VideoSourcePopup extends Component {
       if (
         !isEqual(prevRecording.uploadRequest, recording.uploadRequest) &&
         recording.uploadRequest &&
-        !recording.uploadRequest.uploadLaunched
+        !recording.uploadRequest.uploadLaunched &&
+        memberID === userID
       ) {
         const {uploadRequest} = recording;
         const {flagsSelected} = uploadRequest;
-        console.log('upload requeated !!!!!!', member, recording);
-        console.log('flagsSelected', flagsSelected);
 
         const membersSession = getMembers();
-        console.log('membersSession', membersSession);
-
         const videosToUpload = await arrayUploadFromSnipets({
           flagsSelected,
           recording,
@@ -59,8 +56,6 @@ class VideoSourcePopup extends Component {
           members: membersSession,
           userID,
         });
-        console.log('videosToUpload', videosToUpload);
-
         await database()
           .ref()
           .update({

@@ -29,22 +29,24 @@ class UploadButton extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.status);
     const {status} = this.props;
     if (status === 'uploading') this.showButton();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.props.status);
     const {expanded} = this.state;
-    const {status} = this.props;
+    const {status, queue} = this.props;
     if (expanded !== prevState.expanded) {
       if (expanded) this.open();
       else this.close();
     }
     if (status !== prevProps.status) {
       if (status === 'empty') this.hideButton();
-      if (status === 'uploading') this.showButton();
+      if (
+        status === 'uploading' &&
+        queue.filter((task) => task.displayInList).length > 0
+      )
+        this.showButton();
     }
   }
 
@@ -125,7 +127,6 @@ class UploadButton extends Component {
   expandableView() {
     const {expanded} = this.state;
     const {currentScreenSize, expandableViewStyle, expandableView} = this.props;
-    console.log(currentScreenSize);
     const translateY = this.scaleCard.interpolate({
       inputRange: [0, 1],
       outputRange: [-50, 0],
@@ -212,6 +213,7 @@ const mapStateToProps = (state) => {
   return {
     currentScreenSize: state.layout.currentScreenSize,
     status: state.uploadQueue.status,
+    queue: state.uploadQueue.queue,
     UploadButton,
   };
 };

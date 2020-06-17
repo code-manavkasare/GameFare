@@ -54,14 +54,17 @@ class TaskCard extends Component {
 
   taskInfo() {
     const {task} = this.props;
+    const {type, filename} = task;
     return (
       <View>
         <Text style={{...styleApp.title, fontSize: 15}}>
-          {this.formatDuration(
-            task.duration
-              ? task.duration
-              : (task.stopTime - task.startTime) / 1000,
-          )}
+          {type === 'image'
+            ? filename
+            : this.formatDuration(
+                task.duration
+                  ? task.duration
+                  : (task.stopTime - task.startTime) / 1000,
+              )}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15}}>
           {this.formatDate(task.date)}
