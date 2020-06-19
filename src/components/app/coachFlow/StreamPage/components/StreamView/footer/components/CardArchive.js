@@ -125,7 +125,10 @@ export default class CardArchive extends Component {
       <View style={[styles.cardArchive, style]}>
         {archive ? (
           <View style={styleApp.fullSize}>
-            <AsyncImage mainImage={thumbnail} style={styleApp.fullSize} />
+            <AsyncImage
+              mainImage={thumbnail ? thumbnail : ''}
+              style={styleApp.fullSize}
+            />
 
             <View
               pointerEvents="none"

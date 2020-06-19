@@ -12,6 +12,10 @@ import {
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
+import Mixpanel from 'react-native-mixpanel';
+import {mixPanelToken} from '../../database/firebase/tokens';
+Mixpanel.sharedInstanceWithToken(mixPanelToken);
+
 import {clickNotification} from '../../../../NavigationService';
 import AsyncImage from '../image/AsyncImage';
 
@@ -59,8 +63,10 @@ class Notification extends Component {
       this.close(initialTranslateY);
     });
   }
-  close(translateValue) {
-    Animated.timing(this.translateYNotif, timing(translateValue, 200)).start();
+  close(translateValue, click) {
+    Animated.timing(this.translateYNotif, timing(translateValue, 200)).start(
+      () => click && click(),
+    );
   }
   static getDerivedStateFromProps(props, state) {
     if (props.notification.senderID !== props.userID)
@@ -84,8 +90,14 @@ class Notification extends Component {
           style={styleApp.fullSize}
           activeOpacity={1}
           onPress={() => {
-            this.close(initialTranslateY);
-            clickNotification(notification);
+            const {userID} = this.props;
+            console.log('clickNotification')
+            this.close(initialTranslateY, () =>
+              clickNotification(notification),
+            );
+            Mixpanel.trackWithProperties('Click on notification' + title, {
+              userID,
+            });
           }}>
           <Row style={styleApp.marginView}>
             <Col size={15} style={styleApp.center2}>

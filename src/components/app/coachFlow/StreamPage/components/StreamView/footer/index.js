@@ -33,7 +33,10 @@ class Footer extends Component {
       videoBeingShared,
       otPublisherRef,
       members,
+      publishVideo,
+      publishAudio
     } = this.props;
+    console.log('render footer ');
     return (
       <Animated.View
         style={[
@@ -50,6 +53,8 @@ class Footer extends Component {
           clickReview={(val) => this.pastSessionsRef.open(val)}
           otPublisherRef={otPublisherRef}
           members={members}
+          publishVideo={publishVideo}
+          publishAudio={publishAudio}
           coachSessionID={this.props.coachSessionID}
         />
 

@@ -18,21 +18,8 @@ class AddFlagButton extends Component {
     super(props);
     this.state = {};
   }
-  async componentDidUpdate(prevProps, prevState) {
-    const {userID, member, takeSnapShotCameraView} = this.props;
-    // if (
-    //   this.numberFlags(prevProps) !== this.numberFlags(this.props) &&
-    //   this.numberFlags(this.props) &&
-    //   member.id === userID
-    // ) {
-    //   const uriSnapshot = await takeSnapShotCameraView();
-    //   console.log('uriSnapshot', uriSnapshot);
-    // }
-  }
   addFlag = async () => {
     const {coachSessionID, member} = this.props;
-    console.log('add flags', member);
-    console.log('coachSessionID', coachSessionID);
     const flagID = generateID();
     let updates = {};
     updates[
@@ -45,8 +32,6 @@ class AddFlagButton extends Component {
         member.id
       }/recording/flags/${flagID}/time`
     ] = Date.now() - member.recording.startTimestamp;
-
-    console.log('addFlag', updates);
 
     await database()
       .ref()

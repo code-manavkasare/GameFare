@@ -14,6 +14,10 @@ import ButtonColor from '../../../../layout/Views/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import AllIcons from '../../../../layout/icons/AllIcons';
 
+import Mixpanel from 'react-native-mixpanel';
+import {mixPanelToken} from '../../../../database/firebase/tokens';
+Mixpanel.sharedInstanceWithToken(mixPanelToken);
+
 class HeaderListStream extends Component {
   constructor(props) {
     super(props);
@@ -76,6 +80,10 @@ class HeaderListStream extends Component {
                   objectID: objectID,
                   autoOpen: true,
                   // prevObjectID: 'teub',
+                });
+                Mixpanel.trackWithProperties('Create new session ' + objectID, {
+                  userID,
+                  objectID,
                 });
 
                 await database()

@@ -56,7 +56,7 @@ import {
 
 import WatchVideoPage from '../../../WatchVideoPage/index';
 import MembersView from './components/MembersView';
-import UploadButton from '../../../../elementsUpload/UploadButton'
+import UploadButton from '../../../../elementsUpload/UploadButton';
 import Footer from './footer/index';
 import CardStreamView from './components/CardStreamView';
 import axios from 'axios';
@@ -217,6 +217,7 @@ class StreamPage extends Component {
     }
     return {};
   }
+
   componentDidUpdate(prevProps, prevState) {
     const {portrait} = this.props.currentScreenSize;
     const {userID, coachSessionID} = this.props;
@@ -252,11 +253,17 @@ class StreamPage extends Component {
       coachSessionID,
       closeCurrentSession,
       currentScreenSize,
+      userID,
     } = this.props;
     const {sessionInfo} = this.state;
-    console.log('open session',nextVal)
-    console.log('sessionID',coachSessionID)
+    console.log('open session', nextVal);
+
+    console.log('sessionID', coachSessionID);
     if (nextVal) {
+      Mixpanel.trackWithProperties('Open session: ' + coachSessionID, {
+        userID,
+        coachSessionID,
+      });
       ////// close current opened session
       const currentOpenSession = sessionInfo.objectID;
       if (currentOpenSession && currentOpenSession !== coachSessionID) {
@@ -265,6 +272,7 @@ class StreamPage extends Component {
         timeout(300);
       }
       /////////////////////////
+
       await coachAction('setSessionInfo', {
         objectID: coachSessionID,
         scrollDisabled: true,
@@ -291,6 +299,10 @@ class StreamPage extends Component {
         this.popupPermissionRecording();
       });
     } else {
+      Mixpanel.trackWithProperties('hangup session: ' + coachSessionID, {
+        userID,
+        coachSessionID,
+      });
       await layoutAction('setLayout', {isFooterVisible: true});
       await StatusBar.setBarStyle('dark-content', true);
       Animated.timing(this.animatedPage, openStream(0, 230)).start(async () => {
@@ -298,10 +310,12 @@ class StreamPage extends Component {
           pageFullScreen: false,
           coordinates: {x: 0, y: 0},
         });
-        this.props.coachAction('setSessionInfo', {
-          scrollDisabled: false,
-          // autoOpen: false,
-        });
+        const {sessionInfo} = this.props;
+        if (sessionInfo.objectID === coachSessionID)
+          this.props.coachAction('setSessionInfo', {
+            scrollDisabled: false,
+            // autoOpen: false,
+          });
       });
     }
   }
@@ -620,6 +634,8 @@ class StreamPage extends Component {
           onRef={(ref) => (this.footerRef = ref)}
           members={coachSession.members}
           coachSessionID={this.props.coachSessionID}
+          publishAudio={publishAudio}
+          publishVideo={publishVideo}
         />
       </Animated.View>
     );
@@ -663,6 +679,7 @@ class StreamPage extends Component {
       currentScreenSize,
     );
     const {translateXStream, translateXCard} = this.animatedValues();
+    console.log('render shared element');
     return (
       <View style={styleContainerStreamView}>
         <CardStreamView
@@ -703,21 +720,22 @@ class StreamPage extends Component {
             setState={this.setState.bind(this)}
             state={this.state}
           />
-          {
-          isConnected && 
-          <UploadButton
-            backdrop
-            style={{
-              ...styles.uploadButton, 
-              top: currentScreenSize.portrait ? 
-                (marginTopApp+55) : (marginTopAppLandscape+75)}}
-            expandableView
-            expandableViewStyle={{
-              width: currentScreenSize.currentWidth*0.7, 
-              minHeight:150,
-            }}
-          />
-          }
+          {isConnected && (
+            <UploadButton
+              backdrop
+              style={{
+                ...styles.uploadButton,
+                top: currentScreenSize.portrait
+                  ? marginTopApp + 55
+                  : marginTopAppLandscape + 75,
+              }}
+              expandableView
+              expandableViewStyle={{
+                width: currentScreenSize.currentWidth * 0.7,
+                minHeight: 150,
+              }}
+            />
+          )}
 
           {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
@@ -814,7 +832,7 @@ const styles = StyleSheet.create({
     paddingRight: '5%',
     position: 'absolute',
     zIndex: 15,
-    width:'100%'
+    width: '100%',
   },
 });
 

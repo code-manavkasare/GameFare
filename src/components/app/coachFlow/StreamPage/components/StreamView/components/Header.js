@@ -17,6 +17,7 @@ class HeaderStreamView extends Component {
   }
   AddMembers = (objectID) => {
     const {navigate} = NavigationService;
+    // const {currentMembers: members} = this.props;
     navigate('PickMembers', {
       usersSelected: {},
       selectMultiple: true,
@@ -28,7 +29,7 @@ class HeaderStreamView extends Component {
       onGoBack: async (members) => {
         for (var i in Object.values(members)) {
           let member = Object.values(members)[i];
-          member.isConnected = false;
+          // member.isConnected = false;
           member.invitationTimeStamp = Date.now();
           await database()
             .ref('coachSessions/' + objectID + '/members/' + member.id)

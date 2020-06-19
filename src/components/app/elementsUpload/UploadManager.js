@@ -180,7 +180,6 @@ const mapStateToProps = (state) => {
   return {
     uploadQueue: state.uploadQueue,
     userID: state.user.userID,
-    UploadManager,
   };
 };
 

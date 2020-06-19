@@ -42,8 +42,8 @@ class BottomButton extends Component {
       recording: false,
       recordingSelf: false,
       recordingUser: undefined,
-      publishVideo: !__DEV__,
-      publishAudio: !__DEV__,
+      publishVideo: this.props.publishVideo,
+      publishAudio: this.props.publishAudio,
       unreadVideos: 0,
       seenVideos: 0,
       finalizeRecordingMember: false,
@@ -424,7 +424,7 @@ class BottomButton extends Component {
     return (
       <VideoSourcePopup
         onRef={(ref) => (this.videoSourcePopupRef = ref)}
-        members={members ? members : []}
+        members={members ? Object.values(members) : []}
         coachSessionID={coachSessionID}
         close={() => {}}
         selectMember={selectMember.bind(this)}
