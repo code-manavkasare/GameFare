@@ -214,7 +214,6 @@ const mapStateToProps = (state) => {
     currentScreenSize: state.layout.currentScreenSize,
     status: state.uploadQueue.status,
     queue: state.uploadQueue.queue,
-    UploadButton,
   };
 };
 

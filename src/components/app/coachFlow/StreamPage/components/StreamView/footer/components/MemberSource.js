@@ -10,23 +10,18 @@ import database from '@react-native-firebase/database';
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
 import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
-import {
-  generateSnippetsFromFlags,
-  arrayUploadFromSnipets,
-} from '../../../../../../../functions/videoManagement';
-import {getVideoUUID} from '../../../../../../../functions/coach';
+import {arrayUploadFromSnipets} from '../../../../../../../functions/videoManagement';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-class VideoSourcePopup extends Component {
+class MemberSource extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
       member: {},
     };
-    this.scaleCard = new Animated.Value(0);
   }
 
   componentDidMount() {
@@ -61,9 +56,6 @@ class VideoSourcePopup extends Component {
           .update({
             [`coachSessions/${coachSessionID}/members/${memberID}/recording/uploadRequest/uploadLaunched`]: true,
           });
-
-        /// TODO add flagsWithSnippets in uploadList
-        // this.props.uploadAction(videosToUpload)
         uploadQueueAction('enqueueFilesUpload', videosToUpload);
       }
     }
@@ -194,10 +186,8 @@ const styles = StyleSheet.create({
   },
 });
 
-VideoSourcePopup.propTypes = {
-  members: PropTypes.array.isRequired,
+MemberSource.propTypes = {
   selectMember: PropTypes.func,
-  close: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
@@ -209,4 +199,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {uploadQueueAction},
-)(VideoSourcePopup);
+)(MemberSource);

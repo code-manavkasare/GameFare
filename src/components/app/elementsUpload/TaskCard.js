@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     uploadQueue: state.uploadQueue,
-    TaskCard,
   };
 };
 

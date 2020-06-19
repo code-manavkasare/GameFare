@@ -46,10 +46,12 @@ class StreamTab extends Component {
   };
   componentDidUpdate = (prevProps, prevState) => {
     const {params} = this.props.route;
-    if (
-      prevProps.route.params?.objectID !== params?.objectID &&
-      params?.objectID
-    )
+    console.log(
+      'component did update steeam page',
+      params,
+      prevProps.route.params,
+    );
+    if (prevProps.route.params?.date !== params?.date && params?.date)
       this.openSession(params.objectID);
   };
   openSession = async (objectID) => {

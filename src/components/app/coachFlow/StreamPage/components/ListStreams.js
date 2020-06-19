@@ -49,7 +49,6 @@ class ListStreams extends Component {
     for (i = 0; i < 15; i++) {
       try {
         this.itemsRef[objectID].open(true);
-
         break;
       } catch (err) {
         console.log('error !!!!!', err);
@@ -115,7 +114,6 @@ const mapStateToProps = (state) => {
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
     sessionInfo: state.coach.sessionInfo,
-    ListStreams,
   };
 };
 
