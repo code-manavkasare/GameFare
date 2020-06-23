@@ -71,7 +71,7 @@ class MemberSource extends Component {
 
     const optionsTimer = {
       container: styles.viewRecordingTime,
-      text: [styleApp.text, {color: colors.white, fontSize: 14}],
+      text: [styleApp.text, {color: colors.white, fontSize: 12}],
     };
     return (
       <Stopwatch
@@ -89,7 +89,7 @@ class MemberSource extends Component {
     return (
       <Col
         size={30}
-        style={styleApp.center}
+        style={styleApp.center3}
         activeOpacity={0.7}
         onPress={() => selectMember(member)}>
         {recording && recording.isRecording ? (
@@ -97,7 +97,7 @@ class MemberSource extends Component {
         ) : (
           <View style={styles.recordButton}>
             <Text
-              style={[styleApp.textBold, {color: colors.white, fontSize: 14}]}>
+              style={[styleApp.textBold, {color: colors.white, fontSize: 12}]}>
               Record
             </Text>
           </View>
@@ -114,12 +114,12 @@ class MemberSource extends Component {
     return (
       <View key={member.id} style={styles.cardUser}>
         <Row>
-          <Col size={15} style={styleApp.center2}>
+          <Col size={20} style={styleApp.center2}>
             <ImageUser user={member} />
           </Col>
 
-          <Col size={40} style={[styleApp.center2]}>
-            <Text style={styles.nameText} numberOfLines={1}>
+          <Col size={35} style={[styleApp.center2]}>
+            <Text style={[styles.nameText, {fontSize: 13}]} numberOfLines={1}>
               {userID === member.id
                 ? 'Your Camera'
                 : firstname + ' ' + lastname}
@@ -149,8 +149,6 @@ const styles = StyleSheet.create({
   cardUser: {
     height: 55,
     width: '100%',
-    // paddingLeft: 20,
-    // paddingRight: 20,
     marginBottom: 10,
   },
   imgUser: {
@@ -166,17 +164,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   viewRecordingTime: {
-    width: 75,
-    height: 35,
+    width: '100%',
+    height: 32,
     borderRadius: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
     ...styleApp.center,
     backgroundColor: colors.red,
   },
   recordButton: {
-    width: 75,
-    height: 35,
+    width: '100%',
+    height: 32,
     borderRadius: 5,
     ...styleApp.center,
+    paddingLeft: 10,
+    paddingRight: 10,
     backgroundColor: colors.greyDark,
   },
   nameText: {

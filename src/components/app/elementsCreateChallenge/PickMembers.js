@@ -177,7 +177,11 @@ class PickMembers extends React.Component {
     const {displaySwitch} = route.params;
     const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
     return (
-      <View style={{marginTop: heightHeaderHome + marginTop}}>
+      <View
+        style={{
+          marginTop: heightHeaderHome + marginTop,
+          height: currentHeight - heightHeaderHome - 20,
+        }}>
         {displaySwitch && (
           <View style={styleApp.marginView}>
             {this.switch('GameFare', 'Contacts', 'contacts', async (val) => {
@@ -187,31 +191,30 @@ class PickMembers extends React.Component {
           </View>
         )}
         {this.searchInput()}
-        <View>
-          <ScrollView
-            keyboardShouldPersistTaps={'always'}
-            style={[styles.scrollViewUsers, {minHeight: currentHeight}]}>
-            {this.state.loader ? (
-              <View style={[styleApp.center, {height: 200}]}>
-                <Loader size={55} color={colors.primary} />
-              </View>
-            ) : contacts ? (
-              <ListContacts
-                selectUser={(selected, user, selectedUsers) =>
-                  this.selectUser(selected, user, selectedUsers)
-                }
-                onRef={(ref) => (this.listContactRef = ref)}
-                usersSelected={usersSelected}
-                selectContact={(contact) => true}
-              />
-            ) : (
-              this.state.users.map((user, i) =>
-                this.cardUser(user, i, usersSelected),
-              )
-            )}
-            <View style={{height: currentWidth}} />
-          </ScrollView>
-        </View>
+
+        <ScrollView
+          keyboardShouldPersistTaps={'always'}
+          style={styles.scrollViewUsers}>
+          {this.state.loader ? (
+            <View style={[styleApp.center, {height: 200}]}>
+              <Loader size={55} color={colors.primary} />
+            </View>
+          ) : contacts ? (
+            <ListContacts
+              selectUser={(selected, user, selectedUsers) =>
+                this.selectUser(selected, user, selectedUsers)
+              }
+              onRef={(ref) => (this.listContactRef = ref)}
+              usersSelected={usersSelected}
+              selectContact={(contact) => true}
+            />
+          ) : (
+            this.state.users.map((user, i) =>
+              this.cardUser(user, i, usersSelected),
+            )
+          )}
+          <View style={{height: 90}} />
+        </ScrollView>
       </View>
     );
   }
@@ -293,6 +296,7 @@ const styles = StyleSheet.create({
   },
   scrollViewUsers: {
     paddingTop: 10,
+    height: '100%',
   },
   searchBar: {
     backgroundColor: colors.off2,

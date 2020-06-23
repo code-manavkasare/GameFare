@@ -32,9 +32,12 @@ class CardFlag extends Component {
     return this.state[state];
   }
   addSnipetTime(addingValue) {
-    const {snipetTime} = this.state;
+    const {snipetTime, flag} = this.state;
+    const {thumbnail} = flag;
+    const {flagsSelected, click} = this.props;
     let newVal = snipetTime + addingValue;
-    if (newVal < 0) newVal = 0;
+    if (newVal < 5) newVal = 5;
+    if (!flagsSelected[flag.id] && thumbnail) click();
     this.setState({snipetTime: newVal});
   }
   selectTime = () => {
@@ -56,7 +59,9 @@ class CardFlag extends Component {
           />
         </Col>
         <Col size={15} style={styleApp.center}>
-          <Text style={styleApp.textBold}>{snipetTime}sec</Text>
+          <Text style={[styleApp.textBold, {fontSize: 13}]}>
+            {snipetTime}sec
+          </Text>
         </Col>
         <Col
           size={10}
@@ -100,10 +105,13 @@ class CardFlag extends Component {
                   </View>
                 )}
               </Col>
-              <Col size={20} style={styleApp.center2}>
-                <Text style={styleApp.text}>{(time / 1000).toFixed(1)}sec</Text>
+              <Col size={55} style={[styleApp.center2, {paddingLeft: 10}]}>
+                <Text style={[styleApp.text, {fontSize: 12}]}>
+                  {(time / 1000).toFixed(1)}sec
+                </Text>
+                {this.selectTime()}
               </Col>
-              <Col size={35}>{this.selectTime()}</Col>
+              {/* <Col size={35}>{this.selectTime()}</Col> */}
 
               <Col size={15} style={styleApp.center3}>
                 <AllIcons
@@ -136,7 +144,7 @@ const styles = StyleSheet.create({
   },
   img: {
     height: 60,
-    width: 100,
+    width: '100%',
     borderRadius: 6,
     borderWidth: 1,
     borderColor: colors.off,

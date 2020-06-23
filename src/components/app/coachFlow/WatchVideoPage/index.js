@@ -46,6 +46,10 @@ class WatchVideoPage extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.currentSessionID === nextProps.coachSessionID) return true;
+    return false;
+  }
   video(props, state) {
     const {sharedVideos} = props;
     const {archiveID, videoSource} = state;
@@ -296,6 +300,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
+    currentSessionID: state.coach.sessionInfo.objectID,
   };
 };
 

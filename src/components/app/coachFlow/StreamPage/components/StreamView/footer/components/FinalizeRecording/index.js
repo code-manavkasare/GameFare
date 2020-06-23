@@ -107,6 +107,7 @@ class FinalizeRecording extends Component {
             onRef={(ref) => (this.itemsRef[flag.id] = ref)}
             click={() => {
               let {flagsSelected} = this.state;
+              console.log('clicl');
               delete flagsSelected['fullVideo'];
               if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
               else
@@ -118,6 +119,7 @@ class FinalizeRecording extends Component {
                     thumbnail: flag.thumbnail,
                   },
                 };
+              console.log('flagsSelected', flagsSelected);
               this.setState({flagsSelected});
             }}
           />
