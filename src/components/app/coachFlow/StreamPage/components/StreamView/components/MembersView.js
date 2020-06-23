@@ -12,7 +12,6 @@ import {
   heightHeaderHome,
   marginTopAppLandscape,
 } from '../../../../../../style/sizes';
-import {navigate} from '../../../../../../../../NavigationService';
 import AddFlagButton from '../footer/components/AddFlagButton';
 
 class MembersView extends Component {
@@ -36,19 +35,26 @@ class MembersView extends Component {
       </Row>
     );
   }
-  membersView() {
-    const {userID, members, hide, currentScreenSize} = this.props;
-    console.log('members view', members, hide);
-    if (!members || hide) return null;
-    const membersDisplay = Object.values(members).filter(
-      (member) => member.isConnected && member.id !== userID,
-    );
+  marginTop() {
+    const {currentScreenSize} = this.props;
     const {portrait} = currentScreenSize;
     let marginTop = marginTopApp;
     if (!portrait) marginTop = marginTopAppLandscape;
-    console.log('membersDisplay', membersDisplay);
+    return marginTop;
+  }
+  membersView() {
+    const {userID, members} = this.props;
+    if (!members) return null;
+    const membersDisplay = Object.values(members).filter(
+      (member) => member.isConnected && member.id !== userID,
+    );
+
     return (
-      <View style={[styles.listMembers, {top: heightHeaderHome + marginTop}]}>
+      <View
+        style={[
+          styles.listMembers,
+          {top: heightHeaderHome + this.marginTop()},
+        ]}>
         {membersDisplay.map((member) => this.cardMember(member))}
       </View>
     );

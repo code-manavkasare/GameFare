@@ -331,14 +331,14 @@ class HeaderBackButton extends Component {
           <Col size={15} style={styleApp.center}>
             {imgHeader && imgHeader}
           </Col>
-          <Col size={20} style={styles.center} />
-          <Col size={15} style={[styleApp.center3]}>
+          <Col size={11} style={styles.center} />
+          <Col size={18} style={[styleApp.center3]}>
             {this.buttonOffset2()}
           </Col>
-          <Col size={15} style={[styleApp.center3]}>
+          <Col size={18} style={[styleApp.center3]}>
             {this.buttonOffset()}
           </Col>
-          <Col size={15} style={[styleApp.center3]}>
+          <Col size={18} style={[styleApp.center3]}>
             {this.button2()}
           </Col>
         </Row>

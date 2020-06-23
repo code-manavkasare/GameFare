@@ -195,20 +195,6 @@ class StreamPage extends Component {
     }
     if (coachSessionID === objectID && autoOpen) this.open(true);
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    if (!isEqual(nextState, this.state)) return true;
-    if (nextProps.userConnected !== this.props.userConnected) return true;
-    if (!isEqual(nextProps.settings, this.props.settings)) return true;
-    if (!isEqual(nextProps.currentScreenSize, this.props.currentScreenSize))
-      return true;
-    if (
-      nextProps.sessionInfo.objectID === this.props.coachSessionID &&
-      nextProps.sessionInfo.scrollDisabled ===
-        this.props.sessionInfo.scrollDisabled
-    )
-      return true;
-    return false;
-  }
   static getDerivedStateFromProps(props, state) {
     if (props.sessionInfo !== state.sessionInfo) {
       return {
@@ -260,16 +246,12 @@ class StreamPage extends Component {
 
     console.log('sessionID', coachSessionID);
     if (nextVal) {
-      Mixpanel.trackWithProperties('Open session: ' + coachSessionID, {
-        userID,
-        coachSessionID,
-      });
       ////// close current opened session
       const currentOpenSession = sessionInfo.objectID;
       if (currentOpenSession && currentOpenSession !== coachSessionID) {
         await closeCurrentSession(currentOpenSession);
         // we await a bit so that the stream is 100% sure detroyed.
-        timeout(300);
+        timeout(120);
       }
       /////////////////////////
 
@@ -294,9 +276,13 @@ class StreamPage extends Component {
         open: true,
       });
       await layoutAction('setLayout', {isFooterVisible: false});
-      Animated.spring(this.animatedPage, native(1, 250)).start(async () => {
+      Animated.timing(this.animatedPage, openStream(1, 220)).start(async () => {
         this.refreshTokenMember();
         this.popupPermissionRecording();
+        Mixpanel.trackWithProperties('Open session: ' + coachSessionID, {
+          userID,
+          coachSessionID,
+        });
       });
     } else {
       Mixpanel.trackWithProperties('hangup session: ' + coachSessionID, {
@@ -314,7 +300,6 @@ class StreamPage extends Component {
         if (sessionInfo.objectID === coachSessionID)
           this.props.coachAction('setSessionInfo', {
             scrollDisabled: false,
-            // autoOpen: false,
           });
       });
     }
@@ -352,7 +337,6 @@ class StreamPage extends Component {
       });
   }
   async refreshTokenMember() {
-    console.log('refreshTokenMember');
     const {coachSession} = this.state;
     const member = this.member(coachSession);
     if (!member || !coachSession) return;

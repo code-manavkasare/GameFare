@@ -145,6 +145,7 @@ class CardStream extends Component {
                 <ImageUser
                   key={member.id}
                   user={member}
+                  onClick={() => true}
                   styleImgProps={styleImg}
                 />
               </View>
