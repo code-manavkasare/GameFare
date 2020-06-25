@@ -29,7 +29,7 @@ class InitialPage extends Component {
       .ref('variables')
       .once('value');
     variables = variables.val();
-    await this.props.globaleVariablesAction(variables);
+    await this.props.globaleVariablesAction('setVariables', variables);
     await this.goToHomePageDirectlyFromRefLink();
     await StatusBar.setBarStyle('dark-content', true);
     await StatusBar.setHidden(false, true);

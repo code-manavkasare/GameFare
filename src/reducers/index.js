@@ -11,9 +11,11 @@ import messageReducer from './messageReducer';
 import coachReducer from './coachReducer';
 import layoutReducer from './layoutReducer';
 import uploadQueueReducer from './uploadQueueReducer';
+import appSettingsReducer from './appSettingsReducer';
 
 export default combineReducers({
   globaleVariables: globaleVariablesReducer,
+  appSettings: appSettingsReducer,
   user: userReducer,
   coach: coachReducer,
   historicSearch: historicSearchReducer,

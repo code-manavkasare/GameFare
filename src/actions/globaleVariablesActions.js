@@ -1,17 +1,18 @@
 import {
-    SET_VARIABLES
+    SET_VARIABLES,
+    TOGGLE_BATTERY_SAVER,
   } from './types';
-  
+
   const setVariables = (value) => ({
     type: SET_VARIABLES,
-    value:value
-  }); 
-  
-  
-  export const globaleVariablesAction = (value) =>{
-    return async function(dispatch){
-      await dispatch(setVariables(value))
-      return true
-    }
-  }
-  
+    value: value,
+  });
+
+  export const globaleVariablesAction = (val, data) =>{
+    return async function(dispatch) {
+      if (val === 'setVariables') {
+        await dispatch(setVariables(data));
+      }
+      return true;
+    };
+  };
