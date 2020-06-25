@@ -12,11 +12,11 @@ import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager'
 
-import {globaleVariablesAction} from './src/actions/globaleVariablesActions';
 import {userAction} from './src/actions/userActions';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
+import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -96,6 +96,7 @@ class App extends Component {
     return (
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
+        <BatterySaveDimmer />
         <OrientationListener />
         <Notification />
         <UploadManager />
@@ -116,5 +117,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {globaleVariablesAction, userAction},
+  {userAction},
 )(App);
