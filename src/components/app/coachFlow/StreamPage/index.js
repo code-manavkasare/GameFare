@@ -61,19 +61,9 @@ class StreamTab extends Component {
   };
   StreamTab = (currentHeight) => {
     const {permissionsCamera, initialLoader} = this.state;
-    let {userConnected} = this.props;
+    const {userConnected} = this.props;
     return (
       <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
-        <View style={{height: offsetBottomHeaderStream / 2}} />
-        <HeaderListStream
-          userConnected={userConnected}
-          hideButtonNewSession={!userConnected || !permissionsCamera}
-          closeSession={async (currentSessionID) => {
-            return this.listStreamRef.closeSession(currentSessionID);
-          }}
-        />
-
-        <View style={{height: offsetBottomHeaderStream / 2}} />
         {userConnected && <ButtonNotification displayBeforeLoader={true} />}
         {userConnected && initialLoader && this.viewLoader()}
 
@@ -95,11 +85,19 @@ class StreamTab extends Component {
   };
 
   render() {
-    const {sessionInfo, currentScreenSize} = this.props;
+    const {permissionsCamera} = this.state;
+    const {sessionInfo, currentScreenSize, userConnected} = this.props;
     const {scrollDisabled} = sessionInfo;
     const {currentHeight, portrait} = currentScreenSize;
     return (
       <View style={styleApp.stylePage}>
+        <HeaderListStream
+          userConnected={userConnected}
+          hideButtonNewSession={!userConnected || !permissionsCamera}
+          closeSession={async (currentSessionID) => {
+            return this.listStreamRef.closeSession(currentSessionID);
+          }}
+        />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -118,7 +116,7 @@ class StreamTab extends Component {
 const styles = StyleSheet.create({
   containerTabPage: {
     ...styleApp.fullSize,
-    paddingTop: marginTopApp,
+    paddingTop: 10,
   },
   titlePage: {
     ...styleApp.title,

@@ -4,14 +4,8 @@ import isEqual from 'lodash.isequal';
 
 import {connect} from 'react-redux';
 
-import StreamView from './StreamView/index';
+import CardStreamView from './CardStreamView';
 
-import {
-  heightCardSession,
-  marginTopApp,
-  heightHeaderStream,
-  offsetBottomHeaderStream,
-} from '../../../../style/sizes';
 import {timeout} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
 
@@ -40,26 +34,23 @@ class ListStreams extends Component {
         Object.values(prevState.coachSessions).length !==
           Object.values(this.state.coachSessions).length &&
         this.props.sessionInfo.objectID
-      )
-        return this.itemsRef[this.props.sessionInfo.objectID].reOpen();
+      ) {
+        console.log('reopen');
+      }
     }
   }
   async openSession(objectID) {
     var i;
     for (i = 0; i < 15; i++) {
       try {
-        this.itemsRef[objectID].open(true);
+        console.log('open session,', objectID);
         break;
       } catch (err) {
         console.log('error !!!!!', err);
-        await timeout(600);
       }
     }
   }
-  closeSession(objectID) {
-    console.log('closeSession', objectID);
-    return this.itemsRef[objectID].endCoachSession(true);
-  }
+
   sessionsArray = () => {
     let {coachSessions} = this.state;
     if (!coachSessions) return [];
@@ -69,7 +60,7 @@ class ListStreams extends Component {
   };
   list = () => {
     const coachSessions = this.sessionsArray();
-    const {AnimatedHeaderValue, userConnected, permissionsCamera} = this.props;
+    const {userConnected, permissionsCamera} = this.props;
     if (!userConnected || !permissionsCamera || !coachSessions) return null;
     if (Object.values(coachSessions).length === 0)
       return (
@@ -77,31 +68,9 @@ class ListStreams extends Component {
           You don't have any session yet.
         </Text>
       );
-    return Object.values(coachSessions).map((session, i) => {
-      const {sessionInfo} = this.props;
-      const {objectID} = sessionInfo;
-      const zIndex = objectID === session.id ? 20 : 0;
-      return (
-        <View key={session.id} style={{position: 'relative', zIndex: zIndex}}>
-          <StreamView
-            index={Number(i)}
-            offsetScrollView={
-              marginTopApp + heightHeaderStream + offsetBottomHeaderStream + 55
-            }
-            heightCardSession={heightCardSession}
-            coachSessionID={session.id}
-            timestamp={session.timestamp}
-            getScrollY={() => {
-              return AnimatedHeaderValue._value;
-            }}
-            closeCurrentSession={async (currentSessionID) => {
-              return this.itemsRef[currentSessionID].endCoachSession(true);
-            }}
-            onRef={(ref) => (this.itemsRef[session.id] = ref)}
-          />
-        </View>
-      );
-    });
+    return Object.values(coachSessions).map((session, i) => (
+      <CardStreamView coachSessionID={session.id} key={session.id} />
+    ));
   };
 
   render() {

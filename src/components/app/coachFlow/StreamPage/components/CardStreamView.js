@@ -4,22 +4,26 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 
-import {heightCardSession} from '../../../../../../style/sizes';
-import {navigate} from '../../../../../../../../NavigationService';
-import AllIcons from '../../../../../../layout/icons/AllIcons';
-import ButtonColor from '../../../../../../layout/Views/Button';
-import colors from '../../../../../../style/colors';
-import styleApp from '../../../../../../style/style';
-import {date, time} from '../../../../../../layout/date/date';
-import ImageUser from '../../../../../../layout/image/ImageUser';
-import {coachAction} from '../../.././../../../../actions/coachActions';
+import {heightCardSession} from '../../../../style/style';
+import {navigate} from '../../../../../../NavigationService';
+import AllIcons from '../../../../layout/icons/AllIcons';
+import ButtonColor from '../../../../layout/Views/Button';
+import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
+import {date, time} from '../../../../layout/date/date';
+import ImageUser from '../../../../layout/image/ImageUser';
+import {coachAction} from '../../.././../../actions/coachActions';
 
 class CardStream extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      clickEnabled: true,
+      session: false,
     };
+  }
+  componentDidMount() {
+    // TODO add the on Value function from firebase 
+    // -> this.props.coachSessionID
   }
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
@@ -54,7 +58,7 @@ class CardStream extends Component {
         view={() => {
           return (
             <Image
-              source={require('../../../../../../../img/icons/endCall.png')}
+              source={require('../../../../../img/icons/endCall.png')}
               style={{width: 17, height: 17}}
             />
           );
@@ -155,74 +159,59 @@ class CardStream extends Component {
       </View>
     );
   }
+  open() {}
   cardStream() {
-    const {
-      isConnected,
-      open,
-      timestamp,
-      opacityCard,
-      translateXCard,
-      coordinates,
-    } = this.props;
-    const {clickEnabled} = this.state;
-
-    const dateFormat = new Date(timestamp).toString();
+    const {coachSessionID} = this.props;
+    // const {isConnected, timestamp} = this.props;
+    // const dateFormat = new Date(timestamp).toString();
     return (
-      <Animated.View
-        style={[
-          styles.card,
-          {
-            opacity: opacityCard,
-            top: coordinates.y,
-            transform: [{translateX: translateXCard}],
-          },
-        ]}>
-        <ButtonColor
-          color={colors.white}
-          onPressColor={colors.off}
-          click={() => {
-            if (clickEnabled) open(true);
-            else this.setState({clickEnabled: true});
-          }}
-          style={[styleApp.fullSize, styleApp.marginView]}
-          view={() => {
-            return (
-              <Row>
-                {isConnected && this.viewLive()}
-                <Col size={60}>
-                  <Text
-                    style={[
-                      styleApp.text,
-                      {fontSize: 14, marginTop: 15, marginBottom: 5},
-                    ]}>
-                    {date(dateFormat)} at {time(dateFormat)}
-                  </Text>
+      <ButtonColor
+        color={colors.white}
+        onPressColor={colors.off}
+        click={() => this.open()}
+        style={styles.card}
+        view={() => {
+          return (
+            <View>
+              <Text>{coachSessionID}</Text>
+            </View>
+          );
+          return (
+            <Row>
+              {isConnected && this.viewLive()}
+              <Col size={60}>
+                <Text
+                  style={[
+                    styleApp.text,
+                    {fontSize: 14, marginTop: 15, marginBottom: 5},
+                  ]}>
+                  {date(dateFormat)} at {time(dateFormat)}
+                </Text>
 
-                  {this.viewMembers()}
+                {this.viewMembers()}
+              </Col>
+              {isConnected ? (
+                <Col size={20} style={styleApp.center3}>
+                  {this.buttonEndCall()}
                 </Col>
-                {isConnected ? (
-                  <Col size={20} style={styleApp.center3}>
-                    {this.buttonEndCall()}
-                  </Col>
-                ) : (
-                  <Col size={20} />
-                )}
-                <Col size={15} style={styleApp.center3}>
-                  {this.buttonDelete()}
-                </Col>
-                <Col size={5} style={styleApp.center3}>
-                  <AllIcons
-                    name="keyboard-arrow-right"
-                    type="mat"
-                    color={colors.grey}
-                    size={15}
-                  />
-                </Col>
-              </Row>
-            );
-          }}
-        />
-      </Animated.View>
+              ) : (
+                <Col size={20} />
+              )}
+              <Col size={15} style={styleApp.center3}>
+                {this.buttonDelete()}
+              </Col>
+              <Col size={5} style={styleApp.center3}>
+                <AllIcons
+                  name="keyboard-arrow-right"
+                  type="mat"
+                  color={colors.grey}
+                  size={15}
+                />
+              </Col>
+            </Row>
+          );
+        }}
+      />
     );
   }
   render() {
@@ -232,13 +221,11 @@ class CardStream extends Component {
 
 const styles = StyleSheet.create({
   card: {
-    position: 'absolute',
-    zIndex: 1,
+    height: 100,
     width: '100%',
     backgroundColor: colors.white,
     borderTopWidth: 1,
     borderColor: colors.off,
-    height: heightCardSession,
   },
   divider: {
     height: 1,

@@ -9,7 +9,7 @@ import {coachAction} from '../../../../../actions/coachActions';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import {width, heightHeaderStream} from '../../../../style/sizes';
+import {width, heightHeaderStream, marginTopApp} from '../../../../style/sizes';
 import ButtonColor from '../../../../layout/Views/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import AllIcons from '../../../../layout/icons/AllIcons';
@@ -110,7 +110,10 @@ class HeaderListStream extends Component {
 
 const styles = StyleSheet.create({
   header: {
+    marginTop: marginTopApp,
     height: heightHeaderStream,
+    borderBottomWidth: 1,
+    borderColor: colors.off,
     paddingLeft: '5%',
     paddingRight: '5%',
   },

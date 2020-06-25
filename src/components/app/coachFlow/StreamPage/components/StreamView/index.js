@@ -58,7 +58,6 @@ import WatchVideoPage from '../../../WatchVideoPage/index';
 import MembersView from './components/MembersView';
 import UploadButton from '../../../../elementsUpload/UploadButton';
 import Footer from './footer/index';
-import CardStreamView from './components/CardStreamView';
 import axios from 'axios';
 
 const getPositionView = (
@@ -666,19 +665,6 @@ class StreamPage extends Component {
     console.log('render shared element');
     return (
       <View style={styleContainerStreamView}>
-        <CardStreamView
-          coachSessionID={coachSessionID}
-          endCoachSession={this.endCoachSession.bind(this)}
-          open={this.open.bind(this)}
-          members={coachSession.members}
-          translateXCard={translateXCard}
-          timestamp={timestamp}
-          sessionInfo={sessionInfo}
-          opacityCard={this.opacityCard}
-          isConnected={isConnected}
-          coordinates={coordinates}
-        />
-
         <Animated.View
           ref={(ref) => {
             this.streamViewRef = ref;
