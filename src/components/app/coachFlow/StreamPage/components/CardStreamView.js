@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 
-import {heightCardSession} from '../../../../style/style';
 import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import ButtonColor from '../../../../layout/Views/Button';
