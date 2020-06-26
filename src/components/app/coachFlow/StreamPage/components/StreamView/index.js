@@ -161,10 +161,8 @@ class StreamPage extends Component {
         });
       },
     };
-    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
-  async componentDidMount() {}
   static getDerivedStateFromProps(props, state) {
     console.log('yewwwwwww', props.route);
     if (props.route.params.coachSessionID !== state.coachSessionID) {

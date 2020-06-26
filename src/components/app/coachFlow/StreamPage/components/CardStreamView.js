@@ -20,12 +20,39 @@ class CardStream extends Component {
     super(props);
     this.state = {
       session: false,
+      loader: true,
     };
   }
   componentDidMount() {
-    // TODO add the on Value function from firebase
-    // -> this.props.coachSessionID
+    this.loadCoachSession();
   }
+  async loadCoachSession() {
+    await this.setState({loader: true});
+    const {userID, coachSessionID} = this.props;
+
+    const that = this;
+    console.log('start load session', coachSessionID);
+    database()
+      .ref('coachSessions/' + coachSessionID)
+      .on('value', async function(snap) {
+        let session = snap.val();
+        const {sessionInfo} = that.props;
+        if (!session) return null;
+
+        console.log('session loaded', session);
+        if (sessionInfo.objectID === coachSessionID) {
+          console.log('hepppa update');
+        }
+
+        // that.openVideoShared(session);
+        return that.setState({
+          session: session,
+          loader: false,
+          error: false,
+        });
+      });
+  }
+
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
     navigate('Alert', {
@@ -160,8 +187,11 @@ class CardStream extends Component {
       </View>
     );
   }
-  open() {
-    const {coachSessionID, layoutAction} = this.props;
+  async open() {
+    const {coachSessionID, layoutAction, coachAction} = this.props;
+    await coachAction('setSessionInfo', {
+      objectID: coachSessionID,
+    });
     layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
       screen: 'Session',
@@ -169,12 +199,15 @@ class CardStream extends Component {
     });
   }
   cardStream() {
-    const {coachSessionID} = this.props;
+    const {coachSessionID, sessionInfo} = this.props;
+
     // const {isConnected, timestamp} = this.props;
     // const dateFormat = new Date(timestamp).toString();
     return (
       <ButtonColor
-        color={colors.white}
+        color={
+          sessionInfo.objectID === coachSessionID ? colors.red : colors.white
+        }
         onPressColor={colors.off}
         click={() => this.open()}
         style={styles.card}
