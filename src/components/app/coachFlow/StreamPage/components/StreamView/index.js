@@ -268,7 +268,6 @@ class StreamPage extends Component {
     }
   }
   async endCoachSession(hangup) {
-    if (hangup) await this.open(false);
     await this.setState({open: false, isConnected: false});
     const {coachSessionID, userID} = this.props;
     Mixpanel.trackWithProperties('End Session ' + coachSessionID, {
@@ -460,24 +459,6 @@ class StreamPage extends Component {
       </View>
     );
   }
-  animatedValues() {
-    const {currentWidth} = this.props.currentScreenSize;
-    const translateXStream = this.animatedPage.interpolate({
-      inputRange: [0, 1],
-      outputRange: [currentWidth, 0],
-      extrapolate: 'clamp',
-    });
-    const translateXCard = this.animatedPage.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, -currentWidth],
-      extrapolate: 'clamp',
-    });
-
-    return {
-      translateXStream,
-      translateXCard,
-    };
-  }
   session() {
     const {coachSession, isConnected, loader, open, sessionInfo} = this.state;
 
@@ -498,7 +479,6 @@ class StreamPage extends Component {
               : false
           }
           opacityHeader={this.opacityHeader}
-          open={this.open.bind(this)}
           setState={this.setState.bind(this)}
           state={this.state}
         />

@@ -44,7 +44,6 @@ class HeaderStreamView extends Component {
       coachSessionID,
       organizerID,
       userID,
-      open,
       setState,
       state,
       permissionOtherUserToRecord,
@@ -62,9 +61,7 @@ class HeaderStreamView extends Component {
         icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '70'}
-        clickButton1={async () => {
-          open(false);
-        }}
+        clickButton1={() => NavigationService.navigate('Stream')}
         nobackgroundColorIcon1={true}
         sizeIcon1={18}
         colorIcon1={colors.white}
