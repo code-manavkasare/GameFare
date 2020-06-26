@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import NavigationService from '../../../../../../../../NavigationService';
+import {layoutAction} from '../../../../../../../actions/layoutActions';
 
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
 import colors from '../../../../../../style/colors';
@@ -61,7 +62,11 @@ class HeaderStreamView extends Component {
         icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '70'}
-        clickButton1={() => NavigationService.navigate('Stream')}
+        clickButton1={() => {
+          const {layoutAction} = this.props;
+          layoutAction('setLayout', {isFooterVisible: true});
+          NavigationService.navigate('Stream');
+        }}
         nobackgroundColorIcon1={true}
         sizeIcon1={18}
         colorIcon1={colors.white}
@@ -107,5 +112,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {},
+  {layoutAction},
 )(HeaderStreamView);

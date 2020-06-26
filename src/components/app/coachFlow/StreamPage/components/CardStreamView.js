@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 
+import {layoutAction} from '../../../../../actions/layoutActions';
+
 import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import ButtonColor from '../../../../layout/Views/Button';
@@ -159,7 +161,8 @@ class CardStream extends Component {
     );
   }
   open() {
-    const {coachSessionID} = this.props;
+    const {coachSessionID, layoutAction} = this.props;
+    layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {coachSessionID: coachSessionID});
   }
   cardStream() {
@@ -259,5 +262,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, layoutAction},
 )(CardStream);

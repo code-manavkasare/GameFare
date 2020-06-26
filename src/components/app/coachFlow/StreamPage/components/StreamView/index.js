@@ -512,7 +512,7 @@ class StreamPage extends Component {
           coachSessionID={coachSessionID}
         />
 
-        {loader && this.loaderView(' ')}
+        {/* {loader && this.loaderView(' ')} */}
       </View>
     );
   }

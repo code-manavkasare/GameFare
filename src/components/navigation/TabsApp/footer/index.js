@@ -55,6 +55,7 @@ class Footer extends React.Component {
     } else if (prevProps.activeTab !== this.props.activeTab) {
       const {routes} = this.props.state;
       const index = routes.map((e) => e.name).indexOf(this.props.activeTab);
+      console.log('activeTab', this.props.activeTab);
       return this.translateBlueView(index, routes.length - 1);
     }
   };
