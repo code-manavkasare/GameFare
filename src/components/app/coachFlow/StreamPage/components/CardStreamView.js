@@ -49,7 +49,7 @@ class CardStream extends Component {
 
         this.setState({
           session: session,
-          loader: false,
+          loading: false,
           error: false,
         });
       }.bind(this),
