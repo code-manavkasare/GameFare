@@ -131,6 +131,7 @@ class StreamPage extends Component {
           .update({
             streamIdTokBox: streamId,
             connectionIdTokbox: connectionId,
+            connectionTimeStamp: Date.now(),
             portrait: portrait,
             isConnected: true,
           });
