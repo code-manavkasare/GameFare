@@ -19,7 +19,6 @@ import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
 
-let coachSession = require('./components/testSession.json');
 import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
@@ -32,7 +31,6 @@ import {navigate} from '../../../../../../../NavigationService';
 
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
-import {native, openStream} from '../../../../../animations/animations';
 
 import {coachAction} from '../../../../../../actions/coachActions';
 import {userAction} from '../../../../../../actions/userActions';
@@ -49,7 +47,6 @@ import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
 import {
   heightHeaderHome,
-  heightCardSession,
   marginTopApp,
   marginTopAppLandscape,
   ratio,
@@ -67,7 +64,7 @@ class StreamPage extends Component {
     this.state = {
       loader: true,
       isConnected: false,
-      coachSession: coachSession,
+      coachSession: false,
       coachSessionID: false,
       error: false,
       cameraFront: true,
@@ -164,13 +161,18 @@ class StreamPage extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    console.log('yewwwwwww', props.route);
-    if (props.route.params.coachSessionID !== state.coachSessionID) {
+    console.log('yewwwwwww', props);
+    // if (props.route.params.coachSessionID !== state.coachSessionID)
+    //   return {
+    //     coachSessionID: props.route.params.coachSessionID,
+    //     open: true,
+    //   };
+    if (!isEqual(props.currentSession, state.coachSession))
       return {
-        coachSessionID: props.route.params.coachSessionID,
-        open: true,
+        coachSession: props.currentSession,
+        open: props.currentSession ? true : false,
+        coachSessionID: props.currentSessionID,
       };
-    }
     return {};
   }
 
@@ -457,12 +459,12 @@ class StreamPage extends Component {
     );
   }
   session() {
-    const {coachSession, isConnected, loader, open, sessionInfo} = this.state;
+    const {coachSession, isConnected, open} = this.state;
 
     const {index, coachSessionID, timestamp, currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-
+    if (!open) return null;
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
@@ -497,7 +499,7 @@ class StreamPage extends Component {
 
         {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
-        <WatchVideoPage
+        {/* <WatchVideoPage
           state={this.state}
           onRef={(ref) => (this.watchVideoRef = ref)}
           translateYFooter={this.translateYFooter}
@@ -506,7 +508,7 @@ class StreamPage extends Component {
           videoBeingShared={videoBeingShared}
           sharedVideos={coachSession.sharedVideos}
           coachSessionID={coachSessionID}
-        />
+        /> */}
 
         {/* {loader && this.loaderView(' ')} */}
       </View>
@@ -581,7 +583,8 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     currentScreenSize: state.layout.currentScreenSize,
-    sessionInfo: state.coach.sessionInfo,
+    currentSessionID: state.coach.currentSessionID,
+    currentSession: state.coach.currentSession,
   };
 };
 

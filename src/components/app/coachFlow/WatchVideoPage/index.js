@@ -300,7 +300,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
-    currentSessionID: state.coach.sessionInfo.objectID,
+    currentSessionID: state.coach.currentSessionID,
   };
 };
 

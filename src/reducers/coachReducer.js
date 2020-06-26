@@ -39,7 +39,10 @@ const coachReducer = (state = initialState, action) => {
     case SET_CURRENT_SESSION:
       return {
         ...state,
-        currentSession: {...state.currentSession, ...action.currentSession},
+        currentSession: action.currentSession,
+        currentSessionID: action.currentSession
+          ? action.currentSession.objectID
+          : false,
       };
     case SET_CURRENT_COACHSESSION_ID:
       return {...state, currentSessionID: action.currentSessionID};

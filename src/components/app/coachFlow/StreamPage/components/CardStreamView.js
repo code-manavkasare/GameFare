@@ -36,13 +36,12 @@ class CardStream extends Component {
         'value',
         async function(snap) {
           let session = snap.val();
-          const {sessionInfo} = this.props;
+          const {currentSessionID} = this.props;
           if (!session) return null;
 
           console.log('session loaded', session);
-          if (sessionInfo.objectID === coachSessionID) {
-            console.log('hepppa update');
-          }
+          if (currentSessionID === coachSessionID)
+            await coachAction('setCurrentSession', session);
 
           // that.openVideoShared(session);
           this.setState({
@@ -189,8 +188,10 @@ class CardStream extends Component {
     );
   }
   async open() {
+    const {session} = this.state;
     const {coachSessionID, layoutAction, coachAction} = this.props;
-    await coachAction('setCurrentSessionID', coachSessionID);
+    await coachAction('setCurrentSession', session);
+
     layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
       screen: 'Session',
