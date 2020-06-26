@@ -26,31 +26,32 @@ class CardStream extends Component {
   componentDidMount() {
     this.loadCoachSession();
   }
+
   async loadCoachSession() {
     await this.setState({loader: true});
-    const {userID, coachSessionID} = this.props;
-
-    const that = this;
-    console.log('start load session', coachSessionID);
+    const {coachSessionID} = this.props;
     database()
-      .ref('coachSessions/' + coachSessionID)
-      .on('value', async function(snap) {
-        let session = snap.val();
-        const {sessionInfo} = that.props;
-        if (!session) return null;
+      .ref(`coachSessions/${coachSessionID}`)
+      .on(
+        'value',
+        async function(snap) {
+          let session = snap.val();
+          const {sessionInfo} = this.props;
+          if (!session) return null;
 
-        console.log('session loaded', session);
-        if (sessionInfo.objectID === coachSessionID) {
-          console.log('hepppa update');
-        }
+          console.log('session loaded', session);
+          if (sessionInfo.objectID === coachSessionID) {
+            console.log('hepppa update');
+          }
 
-        // that.openVideoShared(session);
-        return that.setState({
-          session: session,
-          loader: false,
-          error: false,
-        });
-      });
+          // that.openVideoShared(session);
+          this.setState({
+            session: session,
+            loader: false,
+            error: false,
+          });
+        }.bind(this),
+      );
   }
 
   deleteSession = () => {
@@ -189,9 +190,7 @@ class CardStream extends Component {
   }
   async open() {
     const {coachSessionID, layoutAction, coachAction} = this.props;
-    await coachAction('setSessionInfo', {
-      objectID: coachSessionID,
-    });
+    await coachAction('setCurrentSessionID', coachSessionID);
     layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
       screen: 'Session',
@@ -199,15 +198,13 @@ class CardStream extends Component {
     });
   }
   cardStream() {
-    const {coachSessionID, sessionInfo} = this.props;
+    const {coachSessionID, currentSessionID} = this.props;
 
     // const {isConnected, timestamp} = this.props;
     // const dateFormat = new Date(timestamp).toString();
     return (
       <ButtonColor
-        color={
-          sessionInfo.objectID === coachSessionID ? colors.red : colors.white
-        }
+        color={currentSessionID === coachSessionID ? colors.red : colors.white}
         onPressColor={colors.off}
         click={() => this.open()}
         style={styles.card}
@@ -292,7 +289,7 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
-    sessionInfo: state.coach.sessionInfo,
+    currentSessionID: state.coach.currentSessionID,
   };
 };
 

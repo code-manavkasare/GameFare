@@ -3,25 +3,19 @@ import {
   SET_COACH_SESSION_DATA,
   SET_COACH_SESSION_SETTINGS,
   SET_CURRENT_COACHSESSION_ID,
-  SET_SESSION_INFO,
+  SET_CURRENT_SESSION,
   SET_COACH_SESSION_DRAW_SETTINGS,
 } from '../actions/types';
 import colors from '../components/style/colors';
 
 const initialState = {
-  currentSession:false,
+  currentSession: {},
   currentSessionID: false,
   settingsDraw: {
     color: colors.red,
     clear: false,
     undo: false,
     touchEnabled: true,
-  },
-  settings: {
-    permissionOtherUserToRecord: 'none',
-  },
-  sessionInfo: {
-    objectID: false,
   },
 };
 
@@ -42,13 +36,13 @@ const coachReducer = (state = initialState, action) => {
         ...state,
         settingsDraw: {...state.settingsDraw, ...action.settingsDraw},
       };
-    case SET_CURRENT_SESSION_ID:
-      return {...state,currentSession:}
-    case SET_SESSION_INFO:
+    case SET_CURRENT_SESSION:
       return {
         ...state,
-        sessionInfo: {...state.sessionInfo, ...action.sessionInfo},
+        currentSession: {...state.currentSession, ...action.currentSession},
       };
+    case SET_CURRENT_COACHSESSION_ID:
+      return {...state, currentSessionID: action.currentSessionID};
     case RESET_COACH_DATA:
       return initialState;
     default:
