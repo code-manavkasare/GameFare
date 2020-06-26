@@ -5,19 +5,11 @@ import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 
 import {createCoachSession, timeout} from '../../../../functions/coach';
+import {logMixpanel} from '../../../../database/mixpanel';
 import {coachAction} from '../../../../../actions/coachActions';
 
 import colors from '../../../../style/colors';
-import styleApp from '../../../../style/style';
-import {width, heightHeaderStream, marginTopApp} from '../../../../style/sizes';
-import ButtonColor from '../../../../layout/Views/Button';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
-import Loader from '../../../../layout/loaders/Loader';
-import AllIcons from '../../../../layout/icons/AllIcons';
-
-import Mixpanel from 'react-native-mixpanel';
-import {mixPanelToken} from '../../../../database/firebase/tokens';
-Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 class HeaderListStream extends Component {
   constructor(props) {
@@ -27,20 +19,15 @@ class HeaderListStream extends Component {
     };
   }
   async newSession() {
-    const {navigation, userConnected} = this.props;
-    if (!userConnected) return navigation.navigate('SignIn');
-    const {userID, infoUser, coachAction, sessionInfo} = this.props;
-    const {objectID: prevObjectID} = sessionInfo;
+    const {userID, infoUser, coachAction} = this.props;
     await this.setState({loader: true});
 
     const objectID = await createCoachSession({
       id: userID,
       info: infoUser,
     });
-    await coachAction('setSessionInfo', {
-      objectID: objectID,
-    });
-    Mixpanel.trackWithProperties('Create new session ' + objectID, {
+    await coachAction('setCurrentSessionID', objectID);
+    logMixpanel('Create new session ' + objectID, {
       userID,
       objectID,
     });
@@ -82,35 +69,11 @@ class HeaderListStream extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  header: {
-    marginTop: marginTopApp,
-    height: heightHeaderStream,
-    borderBottomWidth: 1,
-    borderColor: colors.off,
-    paddingLeft: '5%',
-    paddingRight: '5%',
-  },
-  buttonNewSession: {
-    ...styleApp.center,
-    borderRadius: 22.5,
-    height: 45,
-    width: 45,
-  },
-  rowButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    // marginTop: 20,
-    width: width,
-  },
-});
-
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
-    sessionInfo: state.coach.sessionInfo,
   };
 };
 
