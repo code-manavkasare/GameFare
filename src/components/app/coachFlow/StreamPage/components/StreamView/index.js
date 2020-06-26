@@ -68,29 +68,24 @@ class StreamPage extends Component {
       loader: true,
       isConnected: false,
       coachSession: coachSession,
+      coachSessionID: false,
       error: false,
       cameraFront: true,
       watchVideo: false,
       publishAudio: !__DEV__,
       publishVideo: !__DEV__,
-      pageFullScreen: false,
       open: false,
-      coordinates: {x: 0, y: 0},
       portrait: true,
-      sessionInfo: this.props.sessionInfo,
     };
     this.translateYFooter = new Animated.Value(0);
-    this.animatedPage = new Animated.Value(0);
-    this.opacityHeader = new Animated.Value(1);
-    this.opacityStreamView = new Animated.Value(1);
-    this.opacityCard = new Animated.Value(1);
     this.otSessionRef = React.createRef();
     this.otPublisherRef = React.createRef();
     this.watchVideoRef = React.createRef();
 
     this.sessionEventHandlers = {
       streamCreated: (event) => {
-        const {userID, coachSessionID} = this.props;
+        const {coachSessionID} = this.state;
+        const {userID} = this.props;
         console.log('sessionEventHandlers streamCreated ' + coachSessionID);
         Mixpanel.trackWithProperties(
           'sessionEventHandlers streamCreated ' + coachSessionID,
@@ -102,7 +97,8 @@ class StreamPage extends Component {
         );
       },
       sessionConnected: async (event) => {
-        const {userID, coachSessionID, currentScreenSize} = this.props;
+        const {coachSessionID} = this.state;
+        const {userID, currentScreenSize} = this.props;
         console.log('sessionEventHandlers sessionConnected ' + coachSessionID);
         Mixpanel.trackWithProperties(
           'sessionEventHandlers sessionConnected ' + coachSessionID,
@@ -118,7 +114,8 @@ class StreamPage extends Component {
 
     this.publisherEventHandlers = {
       streamCreated: async (event) => {
-        const {userID, coachSessionID, currentScreenSize} = this.props;
+        const {coachSessionID} = this.state;
+        const {userID, currentScreenSize} = this.props;
         const {portrait} = currentScreenSize;
         const {streamId, connectionId} = event;
         console.log('publisherEventHandlers streamCreated ' + coachSessionID);
@@ -145,7 +142,8 @@ class StreamPage extends Component {
         });
       },
       streamDestroyed: async (event) => {
-        const {userID, coachSessionID, currentScreenSize} = this.props;
+        const {coachSessionID} = this.state;
+        const {userID, currentScreenSize} = this.props;
         const {streamId, connectionId} = event;
         console.log('publisherEventHandlers streamDestroyed ' + coachSessionID);
         Mixpanel.trackWithProperties(
@@ -168,9 +166,11 @@ class StreamPage extends Component {
 
   async componentDidMount() {}
   static getDerivedStateFromProps(props, state) {
-    if (props.sessionInfo !== state.sessionInfo) {
+    console.log('yewwwwwww', props.route);
+    if (props.route.params.coachSessionID !== state.coachSessionID) {
       return {
-        sessionInfo: props.sessionInfo,
+        coachSessionID: props.route.params.coachSessionID,
+        open: true,
       };
     }
     return {};
@@ -443,7 +443,6 @@ class StreamPage extends Component {
 
         <Footer
           translateYFooter={this.translateYFooter}
-          opacityHeader={this.opacityHeader}
           setState={this.setState.bind(this)}
           watchVideoRef={this.watchVideoRef}
           endCoachSession={this.endCoachSession.bind(this)}
@@ -478,7 +477,6 @@ class StreamPage extends Component {
               ? this.member(coachSession)?.permissionOtherUserToRecord
               : false
           }
-          opacityHeader={this.opacityHeader}
           setState={this.setState.bind(this)}
           state={this.state}
         />

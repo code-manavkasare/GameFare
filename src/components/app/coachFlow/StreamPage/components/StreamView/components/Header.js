@@ -48,7 +48,6 @@ class HeaderStreamView extends Component {
       setState,
       state,
       permissionOtherUserToRecord,
-      opacityHeader,
     } = this.props;
     const {isConnected} = state;
     return (
@@ -58,7 +57,6 @@ class HeaderStreamView extends Component {
         colorLoader={'white'}
         sizeLoader={40}
         initialBorderColorIcon={'transparent'}
-        opacityHeader={opacityHeader}
         icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '70'}

@@ -17,6 +17,7 @@ import styleApp from '../../../style/style';
 import {
   marginTopApp,
   heightFooter,
+  heightHeaderHome,
   offsetBottomHeaderStream,
 } from '../../../style/sizes';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
@@ -93,6 +94,7 @@ class StreamTab extends Component {
       <View style={styleApp.stylePage}>
         <HeaderListStream
           userConnected={userConnected}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
           closeSession={async (currentSessionID) => {
             return this.listStreamRef.closeSession(currentSessionID);
@@ -103,7 +105,7 @@ class StreamTab extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.StreamTab(currentHeight)}
           marginBottomScrollView={0}
-          marginTop={portrait ? -marginTopApp : 0}
+          marginTop={heightHeaderHome}
           scrollDisabled={scrollDisabled}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}

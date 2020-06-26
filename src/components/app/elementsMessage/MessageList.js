@@ -188,9 +188,11 @@ class MessageTab extends React.Component {
             inputRange={[5, 10]}
             initialBorderColorIcon={colors.white}
             initialBackgroundColor={'white'}
+            initialBorderColorHeader={colors.white}
+            initialTitleOpacity={0}
+            initialBorderWidth={1}
             typeIcon2={'font'}
             sizeIcon2={17}
-            initialTitleOpacity={0}
             icon2={userConnected && 'edit'}
             clickButton2={() =>
               userConnected ? navigate('NewConversation') : navigate('SignIn')

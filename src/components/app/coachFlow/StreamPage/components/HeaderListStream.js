@@ -11,6 +11,7 @@ import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 import {width, heightHeaderStream, marginTopApp} from '../../../../style/sizes';
 import ButtonColor from '../../../../layout/Views/Button';
+import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 import Loader from '../../../../layout/loaders/Loader';
 import AllIcons from '../../../../layout/icons/AllIcons';
 
@@ -25,81 +26,55 @@ class HeaderListStream extends Component {
       loader: false,
     };
   }
+  async newSession() {
+    const {navigation, userConnected} = this.props;
+    if (!userConnected) return navigation.navigate('SignIn');
+    const {userID, infoUser, coachAction, sessionInfo} = this.props;
+    const {objectID: prevObjectID} = sessionInfo;
+    await this.setState({loader: true});
 
+    const objectID = await createCoachSession({
+      id: userID,
+      info: infoUser,
+    });
+    await coachAction('setSessionInfo', {
+      objectID: objectID,
+      autoOpen: true,
+      // prevObjectID: 'teub',
+    });
+    Mixpanel.trackWithProperties('Create new session ' + objectID, {
+      userID,
+      objectID,
+    });
+
+    await database()
+      .ref(`users/${userID}/coachSessions/${objectID}`)
+      .set({
+        id: objectID,
+        timestamp: Date.now(),
+      });
+
+    this.setState({loader: false});
+  }
   header = () => {
-    const {
-      userConnected,
-      navigation,
-      coachAction,
-      closeSession,
-      hideButtonNewSession,
-    } = this.props;
+    const {hideButtonNewSession, AnimatedHeaderValue} = this.props;
     const {loader} = this.state;
     return (
-      <Row style={styles.header}>
-        <Col size={85} style={styleApp.center2}>
-          <Text style={[styleApp.title, {fontSize: 18}]}>
-            Stream your performance
-          </Text>
-        </Col>
-
-        {!hideButtonNewSession && (
-          <Col size={15} style={styleApp.center3}>
-            <ButtonColor
-              view={() => {
-                return loader ? (
-                  <Loader size={35} color={colors.white} />
-                ) : (
-                  <AllIcons
-                    name="plus"
-                    color={colors.white}
-                    size={18}
-                    type="font"
-                  />
-                );
-              }}
-              color={colors.green}
-              style={styles.buttonNewSession}
-              click={async () => {
-                if (!userConnected) return navigation.navigate('SignIn');
-                const {userID, infoUser, coachAction, sessionInfo} = this.props;
-                const {objectID: prevObjectID} = sessionInfo;
-                await this.setState({loader: true});
-
-                const currentOpenSession = sessionInfo.objectID;
-                if (currentOpenSession) {
-                  await closeSession(currentOpenSession);
-                  // we await a bit so that the stream is 100% sure detroyed.
-                  timeout(300);
-                }
-                const objectID = await createCoachSession({
-                  id: userID,
-                  info: infoUser,
-                });
-                await coachAction('setSessionInfo', {
-                  objectID: objectID,
-                  autoOpen: true,
-                  // prevObjectID: 'teub',
-                });
-                Mixpanel.trackWithProperties('Create new session ' + objectID, {
-                  userID,
-                  objectID,
-                });
-
-                await database()
-                  .ref(`users/${userID}/coachSessions/${objectID}`)
-                  .set({
-                    id: objectID,
-                    timestamp: Date.now(),
-                  });
-
-                this.setState({loader: false});
-              }}
-              onPressColor={colors.greenClick}
-            />
-          </Col>
-        )}
-      </Row>
+      <HeaderBackButton
+        AnimatedHeaderValue={AnimatedHeaderValue}
+        textHeader={'Your sessions'}
+        inputRange={[5, 10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialBorderColorHeader={colors.white}
+        initialTitleOpacity={1}
+        initialBorderWidth={1}
+        icon2={!hideButtonNewSession && 'plus'}
+        sizeIcon2={20}
+        colorIcon2={colors.green}
+        typeIcon2="font"
+        clickButton2={() => this.props.navigation.goBack()}
+      />
     );
   };
 

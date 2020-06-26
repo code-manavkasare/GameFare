@@ -163,7 +163,10 @@ class CardStream extends Component {
   open() {
     const {coachSessionID, layoutAction} = this.props;
     layoutAction('setLayout', {isFooterVisible: false});
-    navigate('Session', {coachSessionID: coachSessionID});
+    navigate('Session', {
+      screen: 'Session',
+      params: {coachSessionID: coachSessionID},
+    });
   }
   cardStream() {
     const {coachSessionID} = this.props;
