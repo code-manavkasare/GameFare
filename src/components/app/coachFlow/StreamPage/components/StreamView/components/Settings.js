@@ -38,16 +38,12 @@ class Settings extends Component {
   }
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
-    // this.getCourtCalibration();'
-    console.log('routes', this.props.route);
   }
   settingsSwitch(value, onValueChange, description) {
     return (
-      <Row>
+      <Row style={{marginTop: 10}}>
         <Col size={80} style={styleApp.center2}>
-          <Text style={styleApp.text}>
-            {description}
-          </Text>
+          <Text style={styleApp.text}>{description}</Text>
         </Col>
         <Col size={20} style={styleApp.center3}>
           <Switch
@@ -63,7 +59,9 @@ class Settings extends Component {
   }
   settings() {
     let {settings, userID} = this.props;
-    if (!settings) {settings = {};}
+    if (!settings) {
+      settings = {};
+    }
     const {permissionOtherUserToRecord} = this.state;
     const {batterySaver} = this.props;
     const that = this;
@@ -82,14 +80,14 @@ class Settings extends Component {
                 permissionOtherUserToRecord: !permissionOtherUserToRecord,
               });
           },
-          'Allow call participants to remotely trigger a recording'
+          'Allow call participants to remotely trigger a recording',
         )}
         {this.settingsSwitch(
           batterySaver,
           async () => {
             that.props.appSettingsAction('toggleBatterySaver');
           },
-          'Turn on battery saver mode'
+          'Turn on battery saver mode',
         )}
       </View>
     );

@@ -39,8 +39,6 @@ class HeaderListStream extends Component {
     });
     await coachAction('setSessionInfo', {
       objectID: objectID,
-      autoOpen: true,
-      // prevObjectID: 'teub',
     });
     Mixpanel.trackWithProperties('Create new session ' + objectID, {
       userID,
@@ -66,6 +64,7 @@ class HeaderListStream extends Component {
         inputRange={[5, 10]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
+        loader={loader}
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
