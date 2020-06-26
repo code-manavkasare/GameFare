@@ -5,6 +5,8 @@ import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import moment from 'moment'
 
+import {layoutAction} from '../../../../../actions/layoutActions';
+
 import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import ButtonColor from '../../../../layout/Views/Button';
@@ -25,25 +27,42 @@ class CardStream extends Component {
       loading: true
     };
   }
+  
   componentDidMount() {
-    const {coachSessionID, userID} = this.props;
+    this.loadCoachSession();
+  }
+
+  async loadCoachSession() {
+    const {coachSessionID} = this.props;
     database()
     .ref(`coachSessions/${coachSessionID}`)
-    .on('value', async function(snap) {
-      let session = snap.val(); 
-      if (!session) return null;
-      this.setState({
-        session, 
-        loading: false
-      })
-    }.bind(this));
+    .on(
+      'value',
+      async function(snap) {
+        let session = snap.val();
+        const {currentSessionID} = this.props;
+        if (!session) return null;
+
+        console.log('session loaded', session);
+        if (currentSessionID === coachSessionID)
+          await coachAction('setCurrentSession', session);
+
+        this.setState({
+          session: session,
+          loader: false,
+          error: false,
+        });
+      }.bind(this),
+    );
 
     // rerender the component every 60 seconds (is there a better way?)
     this.interval = setInterval(() => this.setState({ time: Date.now() }), 60000);
   }
+
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+  
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
     navigate('Alert', {
@@ -178,7 +197,17 @@ class CardStream extends Component {
       </View>
     );
   }
-  open() {}
+  async open() {
+    const {session} = this.state;
+    const {coachSessionID, layoutAction, coachAction} = this.props;
+    await coachAction('setCurrentSession', session);
+
+    layoutAction('setLayout', {isFooterVisible: false});
+    navigate('Session', {
+      screen: 'Session',
+      params: {coachSessionID: coachSessionID},
+    });
+  }
 
   loading () {
     return (
@@ -348,13 +377,14 @@ class CardStream extends Component {
   }
 
   cardStream() {
-    const {coachSessionID} = this.props;
+    const {coachSessionID, currentSessionID} = this.props;
+
     // const {isConnected, timestamp} = this.props;
     const {session, loading} = this.state;
     // const dateFormat = new Date(timestamp).toString();
     return (
       <ButtonColor
-        color={colors.white}
+        color={currentSessionID === coachSessionID ? colors.red : colors.white}
         onPressColor={colors.off}
         click={() => this.open()}
         style={styles.card}
@@ -463,11 +493,11 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
-    sessionInfo: state.coach.sessionInfo,
+    currentSessionID: state.coach.currentSessionID,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, layoutAction},
 )(CardStream);

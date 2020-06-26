@@ -189,46 +189,6 @@ const isEven = (n) => {
   return !(n & 1);
 };
 
-const styleStreamView = (
-  index,
-  coordinates,
-  pageFullScreen,
-  currentScreenSize,
-) => {
-  let styleContainerStreamView = {
-    marginTop: 0,
-    width: currentScreenSize.currentWidth,
-    overflow: 'hidden',
-    borderRadius: 0,
-    height: heightCardSession,
-  };
-  let styleCard = {
-    height: '100%',
-    width: '100%',
-    position: 'relative',
-  };
-  if (pageFullScreen) {
-    styleCard = {
-      position: 'absolute',
-      height: currentScreenSize.currentHeight,
-      width: currentScreenSize.currentWidth,
-      top: 0,
-      backgroundColor: colors.greyDark,
-    };
-    styleContainerStreamView = {
-      position: 'absolute',
-      zIndex: 50,
-      top: -coordinates.y,
-      left: -coordinates.x,
-      height: currentScreenSize.currentHeight,
-      width: currentScreenSize.currentWidth,
-      borderRadius: 10,
-      // backgroundColor: colors.red,
-    };
-  }
-  return {styleContainerStreamView, styleCard};
-};
-
 const getVideoSharing = (session, personSharingScreen) => {
   if (!session) return false;
   if (!personSharingScreen) return false;
@@ -332,7 +292,6 @@ module.exports = {
   getMember,
   isUserAdmin,
   isEven,
-  styleStreamView,
   getVideoSharing,
   startRemoteRecording,
   stopRemoteRecording,

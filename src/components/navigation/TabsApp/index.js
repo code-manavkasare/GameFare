@@ -6,6 +6,7 @@ import Footer from './footer/index';
 
 import MessageList from '../../app/elementsMessage/MessageList';
 import Stream from './components/Stream';
+import Session from './components/Session';
 import Profile from './components/Profile';
 
 import colors from '../../style/colors';
@@ -65,6 +66,14 @@ function TabsApp() {
             type: 'moon',
             size: 21,
           },
+        }}
+      />
+      <Tab.Screen
+        name="Session"
+        component={Session}
+        options={{
+          pageStack: 'Session',
+          label: 'Session',
         }}
       />
     </Tab.Navigator>

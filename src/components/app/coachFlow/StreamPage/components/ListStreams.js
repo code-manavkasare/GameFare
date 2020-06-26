@@ -5,8 +5,6 @@ import isEqual from 'lodash.isequal';
 import {connect} from 'react-redux';
 
 import CardStreamView from './CardStreamView';
-
-import {timeout} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
 
 class ListStreams extends Component {
@@ -28,29 +26,6 @@ class ListStreams extends Component {
     }
     return {};
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.coachSessions && this.state.coachSessions) {
-      if (
-        Object.values(prevState.coachSessions).length !==
-          Object.values(this.state.coachSessions).length &&
-        this.props.sessionInfo.objectID
-      ) {
-        console.log('reopen');
-      }
-    }
-  }
-  async openSession(objectID) {
-    var i;
-    for (i = 0; i < 15; i++) {
-      try {
-        console.log('open session,', objectID);
-        break;
-      } catch (err) {
-        console.log('error !!!!!', err);
-      }
-    }
-  }
-
   sessionsArray = () => {
     let {coachSessions} = this.state;
     if (!coachSessions) return [];
@@ -74,7 +49,7 @@ class ListStreams extends Component {
   };
 
   render() {
-    return <View>{this.list()}</View>;
+    return this.list();
   }
 }
 

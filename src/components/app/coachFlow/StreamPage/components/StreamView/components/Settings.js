@@ -7,6 +7,7 @@ import FadeInView from 'react-native-fade-in-view';
 
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
 import {coachAction} from '../../../../../../../actions/coachActions';
+import {appSettingsAction} from '../../../../../../../actions/appSettingsActions';
 
 import {
   heightFooter,
@@ -37,41 +38,57 @@ class Settings extends Component {
   }
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
-    // this.getCourtCalibration();'
-    console.log('routes', this.props.route);
+  }
+  settingsSwitch(value, onValueChange, description) {
+    return (
+      <Row style={{marginTop: 10}}>
+        <Col size={80} style={styleApp.center2}>
+          <Text style={styleApp.text}>{description}</Text>
+        </Col>
+        <Col size={20} style={styleApp.center3}>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={'white'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={onValueChange}
+            value={value}
+          />
+        </Col>
+      </Row>
+    );
   }
   settings() {
     let {settings, userID} = this.props;
-    if (!settings) settings = {};
+    if (!settings) {
+      settings = {};
+    }
     const {permissionOtherUserToRecord} = this.state;
+    const {batterySaver} = this.props;
+    const that = this;
     return (
       <View style={styleApp.marginView}>
-        <Row>
-          <Col size={80} style={styleApp.center2}>
-            <Text style={styleApp.text}>
-              Allow call participants to remotely trigger a recording
-            </Text>
-          </Col>
-          <Col size={20} style={styleApp.center3}>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={'white'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={async () => {
-                const {coachSessionID} = this.props.route.params;
-                await this.setState({
-                  permissionOtherUserToRecord: !permissionOtherUserToRecord,
-                });
-                database()
-                  .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-                  .update({
-                    permissionOtherUserToRecord: !permissionOtherUserToRecord,
-                  });
-              }}
-              value={permissionOtherUserToRecord}
-            />
-          </Col>
-        </Row>
+        {this.settingsSwitch(
+          permissionOtherUserToRecord,
+          async () => {
+            const {coachSessionID} = that.props.route.params;
+            await that.setState({
+              permissionOtherUserToRecord: !permissionOtherUserToRecord,
+            });
+            database()
+              .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+              .update({
+                permissionOtherUserToRecord: !permissionOtherUserToRecord,
+              });
+          },
+          'Allow call participants to remotely trigger a recording',
+        )}
+        {this.settingsSwitch(
+          batterySaver,
+          async () => {
+            that.props.appSettingsAction('toggleBatterySaver');
+          },
+          'Turn on battery saver mode',
+        )}
       </View>
     );
   }
@@ -132,10 +149,11 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
     settings: state.user.infoUser.settings,
+    batterySaver: state.appSettings.batterySaver,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, appSettingsAction},
 )(Settings);

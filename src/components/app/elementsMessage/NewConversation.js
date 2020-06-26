@@ -164,8 +164,8 @@ class NewConversation extends React.Component {
           textHeader={'Add participants'}
           inputRange={[0, 0]}
           initialBorderColorIcon={colors.white}
-          initialBorderColorHeader={colors.borderColor}
-          initialBorderWidth={0}
+          initialBorderColorHeader={colors.white}
+          initialBorderWidth={1}
           initialBackgroundColor={'white'}
           typeIcon2={'font'}
           sizeIcon2={17}

@@ -17,6 +17,7 @@ import styleApp from '../../../style/style';
 import {
   marginTopApp,
   heightFooter,
+  heightHeaderHome,
   offsetBottomHeaderStream,
 } from '../../../style/sizes';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
@@ -86,13 +87,13 @@ class StreamTab extends Component {
 
   render() {
     const {permissionsCamera} = this.state;
-    const {sessionInfo, currentScreenSize, userConnected} = this.props;
-    const {scrollDisabled} = sessionInfo;
-    const {currentHeight, portrait} = currentScreenSize;
+    const {currentScreenSize, userConnected} = this.props;
+    const {currentHeight} = currentScreenSize;
     return (
       <View style={styleApp.stylePage}>
         <HeaderListStream
           userConnected={userConnected}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
           closeSession={async (currentSessionID) => {
             return this.listStreamRef.closeSession(currentSessionID);
@@ -103,8 +104,7 @@ class StreamTab extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.StreamTab(currentHeight)}
           marginBottomScrollView={0}
-          marginTop={portrait ? -marginTopApp : 0}
-          scrollDisabled={scrollDisabled}
+          marginTop={heightHeaderHome}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />
@@ -132,7 +132,6 @@ const mapStateToProps = (state) => {
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     currentScreenSize: state.layout.currentScreenSize,
-    sessionInfo: state.coach.sessionInfo,
   };
 };
 
