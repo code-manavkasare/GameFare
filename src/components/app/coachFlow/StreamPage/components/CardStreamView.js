@@ -3,66 +3,62 @@ import {View, Text, StyleSheet, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
-import moment from 'moment'
+import moment from 'moment';
 
 import {layoutAction} from '../../../../../actions/layoutActions';
 
 import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import ButtonColor from '../../../../layout/Views/Button';
-import Loader from '../../../../layout/loaders/Loader'
+import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 import {date, time} from '../../../../layout/date/date';
 import ImageUser from '../../../../layout/image/ImageUser';
 import {coachAction} from '../../.././../../actions/coachActions';
-import AsyncImage from '../../../../layout/image/AsyncImage'
-import { act } from 'react-test-renderer';
+import AsyncImage from '../../../../layout/image/AsyncImage';
 
 class CardStream extends Component {
   constructor(props) {
     super(props);
     this.state = {
       session: false,
-      loading: true
+      loading: true,
     };
   }
-  
+
   componentDidMount() {
     this.loadCoachSession();
   }
 
   async loadCoachSession() {
-    const {coachSessionID} = this.props;
+    const {coachSessionID, coachAction} = this.props;
     database()
-    .ref(`coachSessions/${coachSessionID}`)
-    .on(
-      'value',
-      async function(snap) {
-        let session = snap.val();
-        const {currentSessionID} = this.props;
-        if (!session) return null;
+      .ref(`coachSessions/${coachSessionID}`)
+      .on(
+        'value',
+        async function(snap) {
+          let session = snap.val();
+          const {currentSessionID} = this.props;
+          if (!session) return null;
 
-        console.log('session loaded', session);
-        if (currentSessionID === coachSessionID)
-          await coachAction('setCurrentSession', session);
+          console.log('session loaded', session);
+          if (currentSessionID === coachSessionID)
+            await coachAction('setCurrentSession', session);
 
-        this.setState({
-          session: session,
-          loading: false,
-          error: false,
-        });
-      }.bind(this),
-    );
-
-    // rerender the component every 60 seconds (is there a better way?)
-    this.interval = setInterval(() => this.setState({ time: Date.now() }), 60000);
+          this.setState({
+            session: session,
+            loading: false,
+            error: false,
+          });
+        }.bind(this),
+      );
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-  
+
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
     navigate('Alert', {
@@ -86,7 +82,7 @@ class CardStream extends Component {
     });
   };
   buttonEndCall() {
-    const endCoachSession = () => {}
+    const endCoachSession = () => {};
     return (
       <ButtonColor
         color={colors.red}
@@ -209,148 +205,167 @@ class CardStream extends Component {
     });
   }
 
-  loading () {
-    return (
-      <View>
-        {/* <Loader size={55} color={colors.greyDark} /> */}
-      </View>
-    )
+  loading() {
+    return <View>{/* <Loader size={55} color={colors.greyDark} /> */}</View>;
   }
 
   getSortedMembers() {
-    const {userID} = this.props
-    let {members} = this.state.session
-    members = Object.values(members)
-    if (members.length !== 1) members = members
-      .sort((a, b) => {
-        if (!a) return -1
-        else if (!b) return 1
-        else if (a.id === userID) return 1
-        else if (b.id === userID) return -1
-        else if (a.invitationTimeStamp === undefined) return -1
-        else if (a.isConnected && !b.isConnected) return 1
-        else if (!a.isConnected && b.isConnected) return -1 
-        else if (a.invitationTimeStamp > b.invitationTimeStamp) return -1
-        else if (a.invitationTimeStamp < b.invitationTimeStamp) return 1
-        else if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) return 1
-        else if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) return -1 })
-      .filter(a => a.id !== userID)
-    console.log(members.length, 'members')
-    for (var member in members) {
-      console.log(members[member].info.firstname, members[member].info.lastname)
-    }
-    console.log('')
-    return members
+    const {userID} = this.props;
+    let {members} = this.state.session;
+    members = Object.values(members);
+    if (members.length !== 1)
+      members = members
+        .sort((a, b) => {
+          if (!a) return -1;
+          else if (!b) return 1;
+          else if (a.id === userID) return 1;
+          else if (b.id === userID) return -1;
+          else if (a.invitationTimeStamp === undefined) return -1;
+          else if (a.isConnected && !b.isConnected) return 1;
+          else if (!a.isConnected && b.isConnected) return -1;
+          else if (a.invitationTimeStamp > b.invitationTimeStamp) return -1;
+          else if (a.invitationTimeStamp < b.invitationTimeStamp) return 1;
+          else if (a.disconnectionTimeStamp > b.disconnectionTimeStamp)
+            return 1;
+          else if (a.disconnectionTimeStamp < b.disconnectionTimeStamp)
+            return -1;
+        })
+        .filter((a) => a.id !== userID);
+    return members;
   }
 
   memberPictures() {
-    const members = this.getSortedMembers()
-    const length = members.length
-    const sizeImg = (length > 1) ? 45 * scale: 63 * scale;
+    const members = this.getSortedMembers();
+    const length = members.length;
+    const sizeImg = length > 1 ? 45 * scale : 63 * scale;
     const styleImg = {
       height: sizeImg,
       width: sizeImg,
       borderRadius: sizeImg,
       borderWidth: 4 * scale,
-      borderColor:colors.white,
-      overflow: 'hidden'
+      borderColor: colors.white,
+      overflow: 'hidden',
     };
-    const styleByIndex = (i) => { 
-      if (length > 1) return {
-        position: 'absolute',
-        top:
-          //left picture 
-          ((i==0) ? 25 * scale : 
-          //top picture
-          (i==1) ? 8 * scale : 
-          //additional
-          38 * scale ) + 
-          ((length == 2) ? 8 * scale : 0 * scale),
-        left:
-          //left picture
-          (i==0) ? 12 * scale : 
-          //top picture
-          (i==1) ? 38 * scale : 
-          //additional
-          38 * scale
-      }}
+    const styleByIndex = (i) => {
+      if (length > 1)
+        return {
+          position: 'absolute',
+          top:
+            //left picture
+            (i == 0
+              ? 25 * scale
+              : //top picture
+              i == 1
+              ? 8 * scale
+              : //additional
+                38 * scale) + (length == 2 ? 8 * scale : 0 * scale),
+          left:
+            //left picture
+            i == 0
+              ? 12 * scale
+              : //top picture
+              i == 1
+              ? 38 * scale
+              : //additional
+                38 * scale,
+        };
+    };
 
     return (
       <View style={{...styleApp.center, ...styleApp.fullSize}}>
-        { length > 2 &&
+        {length > 2 && (
           <View style={{...styleImg, ...styleByIndex(-1)}}>
-            {this.userCircle(length-2)}
+            {this.userCircle(length - 2)}
           </View>
-        }
-        { members.splice(0, 2).map((member, i) => (
+        )}
+        {members.splice(0, 2).map((member, i) => (
           <View style={{...styleImg, ...styleByIndex(i)}}>
             {this.userCircle(member)}
           </View>
         ))}
       </View>
-    )
+    );
   }
 
   userCircle(member) {
-    if (member.info && member.info.picture) return (
-      <AsyncImage 
-        style={{...styleApp.fullSize, borderRadius:100}}
-        mainImage={member.info.picture}
-        imgInitial={member.info.picture}
-      />
-    ) 
-    else return (
-      <View style={{
-        ...styleApp.fullSize, 
-        ...styleApp.center, 
-        backgroundColor:colors.greyDark, borderRadius:100
-      }}>
-        <Text style={styles.placeholderText}>
-          { member.info ? 
-          member.info.firstname[0] + member.info.lastname[0]
-          : '+' + member }
-        </Text>
-      </View>
-    )
+    if (member.info && member.info.picture)
+      return (
+        <AsyncImage
+          style={{...styleApp.fullSize, borderRadius: 100}}
+          mainImage={member.info.picture}
+          imgInitial={member.info.picture}
+        />
+      );
+    else
+      return (
+        <View
+          style={{
+            ...styleApp.fullSize,
+            ...styleApp.center,
+            backgroundColor: colors.greyDark,
+            borderRadius: 100,
+          }}>
+          <Text style={styles.placeholderText}>
+            {member.info
+              ? member.info.firstname[0] + member.info.lastname[0]
+              : '+' + member}
+          </Text>
+        </View>
+      );
   }
 
   sessionInfo() {
     return (
       <View style={{...styleApp.fullSize, ...styleApp.center7}}>
-        <Text style={{...styleApp.text, color:colors.black}}>{this.sessionTitle()}</Text>
-        <Text style={{...styleApp.text, fontSize:14, color:colors.greyDark, marginTop:3}}>{this.sessionDate()}</Text>
+        <Text style={{...styleApp.text, color: colors.black}}>
+          {this.sessionTitle()}
+        </Text>
+        <Text
+          style={{
+            ...styleApp.text,
+            fontSize: 14,
+            color: colors.greyDark,
+            marginTop: 3,
+          }}>
+          {this.sessionDate()}
+        </Text>
       </View>
-    )
+    );
   }
 
   sessionTitle() {
-    const {session} = this.state
-    const {userID} = this.props
-    if (session.title) return session.title
-    const members = this.getSortedMembers()
+    const {session} = this.state;
+    const {userID} = this.props;
+    if (session.title) return session.title;
+    const members = this.getSortedMembers();
     if (!members) return;
-    if (members[0].id === userID) return "Just you"
-    let names = members[0].info ? members[0].info.firstname + ' ' + members[0].info.lastname : ''
-    if (members.length > 1) names += 
-      members[1].info ? ', ' + members[1].info.firstname + ' ' + members[1].info.lastname : ''
-    if (members.length > 2) names += ', and ' + (members.length - 2) + ' others'
-    return names
+    if (members[0].id === userID) return 'Just you';
+    let names = members[0].info
+      ? members[0].info.firstname + ' ' + members[0].info.lastname
+      : '';
+    if (members.length > 1)
+      names += members[1].info
+        ? ', ' + members[1].info.firstname + ' ' + members[1].info.lastname
+        : '';
+    if (members.length > 2)
+      names += ', and ' + (members.length - 2) + ' others';
+    return names;
   }
 
   sessionDate() {
-    const members = Object.values(this.state.session.members)
-    const activeMembers = members.filter(m => m.isConnected)
-    if (activeMembers.length > 0) return 'Active now'
+    const members = Object.values(this.state.session.members);
+    const activeMembers = members.filter((m) => m.isConnected);
+    if (activeMembers.length > 0) return 'Active now';
 
     const lastActive = members.sort((a, b) => {
-      if (!a.disconnectionTimeStamp) return 1
-      if (!b.disconnectionTimeStamp) return -1
-      if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) return 1
-      if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) return -1
-      else return 0
-    })[0].disconnectionTimeStamp
-    
-    return this.formatDate(lastActive)
+      if (!a.disconnectionTimeStamp) return 1;
+      if (!b.disconnectionTimeStamp) return -1;
+      if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) return 1;
+      if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) return -1;
+      else return 0;
+    })[0].disconnectionTimeStamp;
+
+    return this.formatDate(lastActive);
   }
 
   formatDate(date) {
@@ -373,7 +388,7 @@ class CardStream extends Component {
           type="font"
         />
       </View>
-    )
+    );
   }
 
   cardStream() {
@@ -389,19 +404,15 @@ class CardStream extends Component {
         click={() => this.open()}
         style={styles.card}
         view={() => {
-          return (
-            loading ? 
-            this.loading() :
+          return loading ? (
+            this.loading()
+          ) : (
             <Row>
-              <Col size={30}>
-                {this.memberPictures()}
-              </Col>
+              <Col size={30}>{this.memberPictures()}</Col>
               <Col size={55} style={styleApp.center}>
                 {this.sessionInfo()}
               </Col>
-              <Col size={15} >
-                {this.expansionButton()}
-              </Col>
+              <Col size={15}>{this.expansionButton()}</Col>
             </Row>
           );
           return (
@@ -447,7 +458,7 @@ class CardStream extends Component {
   }
 }
 
-const scale = 1.2
+const scale = 1.2;
 
 const styles = StyleSheet.create({
   card: {
@@ -457,17 +468,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: colors.off,
   },
-  placeholderText:{
-    ...styleApp.textBold, 
-    fontSize:17, 
-    color:colors.greyLight, 
-    letterSpacing:1, 
-    top:1,
-    left:1,
+  placeholderText: {
+    ...styleApp.textBold,
+    fontSize: 17,
+    color: colors.greyLight,
+    letterSpacing: 1,
+    top: 1,
+    left: 1,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.4,
-    shadowRadius: 7
+    shadowRadius: 7,
   },
   divider: {
     height: 1,

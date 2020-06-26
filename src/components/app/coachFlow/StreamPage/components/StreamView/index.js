@@ -468,7 +468,7 @@ class StreamPage extends Component {
   session() {
     const {coachSession, isConnected, open} = this.state;
 
-    const {coachSessionID, currentScreenSize} = this.props;
+    const {currentSessionID: coachSessionID, currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!open) return null;
