@@ -30,9 +30,8 @@ class Footer extends React.Component {
   }
   async notificationHandler() {
     const {layoutAction, userID} = this.props;
-  
+
     const unsubscribe = messaging().onMessage((remoteMessage) => {
-    
       if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
         return layoutAction('setLayout', {notification: remoteMessage});
     });
@@ -51,13 +50,12 @@ class Footer extends React.Component {
     if (notificationOpen) return clickNotification(notificationOpen);
   }
   componentDidUpdate = (prevProps, prevState) => {
-
     if (prevProps.isFooterVisible !== this.props.isFooterVisible) {
       return this.translateFooter(this.props.isFooterVisible);
     } else if (prevProps.activeTab !== this.props.activeTab) {
       const {routes} = this.props.state;
       const index = routes.map((e) => e.name).indexOf(this.props.activeTab);
-      return this.translateBlueView(index, routes.length);
+      return this.translateBlueView(index, routes.length - 1);
     }
   };
   translateFooter = (open) => {
@@ -101,7 +99,7 @@ class Footer extends React.Component {
             style={[
               {transform: [{translateX: this.translateXMovingView}]},
               styles.absoluteButtonMoving,
-              {width: widthFooter / state.routes.length},
+              {width: widthFooter / (state.routes.length - 1)},
             ]}>
             <View style={styles.roundBlueView} />
           </Animated.View>
@@ -114,6 +112,7 @@ class Footer extends React.Component {
               displayPastille,
               pageStack,
             } = options;
+            if (label === 'Session') return null;
             const isFocused = state.index === index;
             return (
               <Col style={[styleApp.center]} key={index}>
@@ -127,7 +126,7 @@ class Footer extends React.Component {
                   signInToPass={signInToPass}
                   icon={icon}
                   index={index}
-                  numberRoutes={state.routes.length}
+                  numberRoutes={state.routes.length - 1}
                   translateBlueView={this.translateBlueView.bind(this)}
                   label={label}
                 />

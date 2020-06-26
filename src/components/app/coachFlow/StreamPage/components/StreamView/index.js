@@ -18,6 +18,8 @@ import Config from 'react-native-config';
 import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
+
+let coachSession = require('./components/testSession.json');
 import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
@@ -39,7 +41,6 @@ import {
   isUserAlone,
   isSomeoneSharingScreen,
   userPartOfSession,
-  styleStreamView,
   getVideoSharing,
   timeout,
 } from '../../../../../functions/coach';
@@ -60,30 +61,13 @@ import UploadButton from '../../../../elementsUpload/UploadButton';
 import Footer from './footer/index';
 import axios from 'axios';
 
-const getPositionView = (
-  offsetScrollView,
-  widthCardSession,
-  heightCardSession,
-  index,
-  getScrollY,
-) => {
-  const numberCardPerRow = 1;
-  var remainder = index % numberCardPerRow;
-  let x = widthCardSession * remainder;
-  let y =
-    offsetScrollView +
-    heightCardSession * Math.floor(index / numberCardPerRow) -
-    getScrollY;
-  return {x, y};
-};
-
 class StreamPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: true,
       isConnected: false,
-      coachSession: false,
+      coachSession: coachSession,
       error: false,
       cameraFront: true,
       watchVideo: false,
@@ -182,18 +166,7 @@ class StreamPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
-  async componentDidMount() {
-    this.props.onRef(this);
-    this.loadCoachSession();
-
-    const {coachSessionID, closeCurrentSession} = this.props;
-    const {sessionInfo} = this.props;
-    const {autoOpen, objectID, prevObjectID} = sessionInfo;
-    if (prevObjectID && prevObjectID !== coachSessionID) {
-      await closeCurrentSession(prevObjectID);
-    }
-    if (coachSessionID === objectID && autoOpen) this.open(true);
-  }
+  async componentDidMount() {}
   static getDerivedStateFromProps(props, state) {
     if (props.sessionInfo !== state.sessionInfo) {
       return {
@@ -222,85 +195,6 @@ class StreamPage extends Component {
       this.state.coachSession.vonageSessionId
     ) {
       this.refreshTokenMember();
-    }
-  }
-  reOpen() {
-    const {pageFullScreen} = this.state;
-    if (pageFullScreen) this.open(true);
-  }
-  async open(nextVal) {
-    const {
-      layoutAction,
-      getScrollY,
-      index,
-      offsetScrollView,
-      coachAction,
-      coachSessionID,
-      closeCurrentSession,
-      currentScreenSize,
-      userID,
-    } = this.props;
-    const {sessionInfo} = this.state;
-    console.log('open session', nextVal);
-
-    console.log('sessionID', coachSessionID);
-    if (nextVal) {
-      ////// close current opened session
-      const currentOpenSession = sessionInfo.objectID;
-      if (currentOpenSession && currentOpenSession !== coachSessionID) {
-        await closeCurrentSession(currentOpenSession);
-        // we await a bit so that the stream is 100% sure detroyed.
-        timeout(120);
-      }
-      /////////////////////////
-
-      await coachAction('setSessionInfo', {
-        objectID: coachSessionID,
-        scrollDisabled: true,
-        autoOpen: true,
-      });
-      const {x, y} = getPositionView(
-        offsetScrollView,
-        currentScreenSize.currentWidth,
-        heightCardSession,
-        index,
-        getScrollY(),
-      );
-
-      await StatusBar.setBarStyle('light-content', true);
-
-      await this.setState({
-        coordinates: {x: x, y: y},
-        pageFullScreen: true,
-        open: true,
-      });
-      await layoutAction('setLayout', {isFooterVisible: false});
-      Animated.timing(this.animatedPage, openStream(1, 220)).start(async () => {
-        this.refreshTokenMember();
-        this.popupPermissionRecording();
-        Mixpanel.trackWithProperties('Open session: ' + coachSessionID, {
-          userID,
-          coachSessionID,
-        });
-      });
-    } else {
-      Mixpanel.trackWithProperties('hangup session: ' + coachSessionID, {
-        userID,
-        coachSessionID,
-      });
-      await layoutAction('setLayout', {isFooterVisible: true});
-      await StatusBar.setBarStyle('dark-content', true);
-      Animated.timing(this.animatedPage, openStream(0, 230)).start(async () => {
-        this.setState({
-          pageFullScreen: false,
-          coordinates: {x: 0, y: 0},
-        });
-        const {sessionInfo} = this.props;
-        if (sessionInfo.objectID === coachSessionID)
-          this.props.coachAction('setSessionInfo', {
-            scrollDisabled: false,
-          });
-      });
     }
   }
   popupPermissionRecording() {
@@ -362,43 +256,10 @@ class StreamPage extends Component {
     if (members) return members[userID];
     return {};
   }
-  async loadCoachSession() {
-    await this.setState({loader: true});
-    const {userID, coachSessionID} = this.props;
-
-    const that = this;
-    console.log('start load session', coachSessionID);
-    database()
-      .ref('coachSessions/' + coachSessionID)
-      .on('value', async function(snap) {
-        let session = snap.val();
-        if (!session) return null;
-        if (!session.info)
-          return that.setState({
-            error: {
-              message: 'This session does exist anymore.',
-            },
-            coachSession: false,
-            loader: false,
-          });
-
-        that.openVideoShared(session);
-        return that.setState({
-          coachSession: session,
-          loader: false,
-          error: false,
-        });
-      });
-  }
   openVideoShared(session) {
-    const {pageFullScreen} = this.state;
     const {userID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(session);
-    if (
-      personSharingScreen &&
-      pageFullScreen &&
-      userID !== personSharingScreen
-    ) {
+    if (personSharingScreen && userID !== personSharingScreen) {
       const video = getVideoSharing(session, personSharingScreen);
       this.watchVideoRef.open({
         watchVideo: true,
@@ -418,17 +279,15 @@ class StreamPage extends Component {
     return true;
   }
   loaderView(text, hideLoader) {
-    const {pageFullScreen} = this.state;
     const styleText = {
       ...styleApp.textBold,
       color: colors.white,
       fontSize: 20,
       marginBottom: 25,
     };
-    if (!pageFullScreen) return null;
     return (
       <View style={[styleApp.center, styles.loaderSessionTokBox]}>
-        {pageFullScreen && <Text style={styleText}>{text}</Text>}
+        {<Text style={styleText}>{text}</Text>}
         {!hideLoader && <Loader size={55} color={colors.white} />}
       </View>
     );
@@ -511,17 +370,7 @@ class StreamPage extends Component {
     );
   }
   styleSession() {
-    const {pageFullScreen} = this.state;
     const {currentScreenSize} = this.props;
-    if (!pageFullScreen) {
-      return {
-        height: 0,
-        marginTop: 0,
-        width: 0,
-        marginLeft: width,
-        borderRadius: 6,
-      };
-    }
     return {
       height: currentScreenSize.currentHeight,
       width: currentScreenSize.currentWidth,
@@ -539,13 +388,7 @@ class StreamPage extends Component {
     };
   }
   streamPage() {
-    const {
-      coachSession,
-      isConnected,
-      publishAudio,
-      publishVideo,
-      pageFullScreen,
-    } = this.state;
+    const {coachSession, isConnected, publishAudio, publishVideo} = this.state;
     const {userID, userConnected, coachSessionID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
@@ -560,8 +403,7 @@ class StreamPage extends Component {
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
     return (
-      <Animated.View
-        style={[styleApp.fullSize, {opacity: this.opacityStreamView}]}>
+      <View style={styleApp.fullSize}>
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
           : !isConnected
@@ -593,12 +435,7 @@ class StreamPage extends Component {
                 eventHandlers={this.publisherEventHandlers}
               />
 
-              <OTSubscriber
-                style={
-                  pageFullScreen
-                    ? styles.OTSubscriber
-                    : {height: 0, width: 0, position: 'absolute', marginTop: 60}
-                }>
+              <OTSubscriber style={styles.OTSubscriber}>
                 {this.renderSubscribers}
               </OTSubscriber>
             </OTSession>
@@ -620,7 +457,7 @@ class StreamPage extends Component {
           publishAudio={publishAudio}
           publishVideo={publishVideo}
         />
-      </Animated.View>
+      </View>
     );
   }
   animatedValues() {
@@ -641,113 +478,70 @@ class StreamPage extends Component {
       translateXCard,
     };
   }
-  sharedElement() {
-    const {
-      coachSession,
-      isConnected,
-      loader,
-      coordinates,
-      pageFullScreen,
-      open,
-      sessionInfo,
-    } = this.state;
+  session() {
+    const {coachSession, isConnected, loader, open, sessionInfo} = this.state;
 
     const {index, coachSessionID, timestamp, currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-    const {styleContainerStreamView, styleCard} = styleStreamView(
-      index,
-      coordinates,
-      pageFullScreen,
-      currentScreenSize,
-    );
-    const {translateXStream, translateXCard} = this.animatedValues();
-    console.log('render shared element');
+
     return (
-      <View style={styleContainerStreamView}>
-        <Animated.View
-          ref={(ref) => {
-            this.streamViewRef = ref;
-          }}
-          style={[
-            styleCard,
-            pageFullScreen && {
-              transform: [{translateX: translateXStream}],
-            },
-          ]}>
-          <KeepAwake />
+      <View style={styleApp.stylePage}>
+        <KeepAwake />
 
-          <Header
-            coachSessionID={coachSessionID}
-            organizerID={coachSession && coachSession.info.organizer}
-            permissionOtherUserToRecord={
-              coachSession
-                ? this.member(coachSession)?.permissionOtherUserToRecord
-                : false
-            }
-            opacityHeader={this.opacityHeader}
-            open={this.open.bind(this)}
-            setState={this.setState.bind(this)}
-            state={this.state}
+        <Header
+          coachSessionID={coachSessionID}
+          organizerID={coachSession && coachSession.info.organizer}
+          permissionOtherUserToRecord={
+            coachSession
+              ? this.member(coachSession)?.permissionOtherUserToRecord
+              : false
+          }
+          opacityHeader={this.opacityHeader}
+          open={this.open.bind(this)}
+          setState={this.setState.bind(this)}
+          state={this.state}
+        />
+        {isConnected && (
+          <UploadButton
+            backdrop
+            style={{
+              ...styles.uploadButton,
+              top: currentScreenSize.portrait
+                ? marginTopApp + 55
+                : marginTopAppLandscape + 75,
+            }}
+            expandableView
+            expandableViewStyle={{
+              width: currentScreenSize.currentWidth * 0.7,
+              minHeight: 150,
+            }}
           />
-          {isConnected && (
-            <UploadButton
-              backdrop
-              style={{
-                ...styles.uploadButton,
-                top: currentScreenSize.portrait
-                  ? marginTopApp + 55
-                  : marginTopAppLandscape + 75,
-              }}
-              expandableView
-              expandableViewStyle={{
-                width: currentScreenSize.currentWidth * 0.7,
-                minHeight: 150,
-              }}
-            />
-          )}
+        )}
 
-          {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
+        {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
 
-          <WatchVideoPage
-            state={this.state}
-            onRef={(ref) => (this.watchVideoRef = ref)}
-            translateYFooter={this.translateYFooter}
-            setState={this.setState.bind(this)}
-            personSharingScreen={personSharingScreen}
-            videoBeingShared={videoBeingShared}
-            sharedVideos={coachSession.sharedVideos}
-            coachSessionID={coachSessionID}
-          />
+        <WatchVideoPage
+          state={this.state}
+          onRef={(ref) => (this.watchVideoRef = ref)}
+          translateYFooter={this.translateYFooter}
+          setState={this.setState.bind(this)}
+          personSharingScreen={personSharingScreen}
+          videoBeingShared={videoBeingShared}
+          sharedVideos={coachSession.sharedVideos}
+          coachSessionID={coachSessionID}
+        />
 
-          {loader && this.loaderView(' ')}
-        </Animated.View>
+        {loader && this.loaderView(' ')}
       </View>
     );
   }
   render() {
-    const {coachSessionID} = this.props;
-    const {sessionInfo} = this.state;
-    const {objectID, autoOpen} = sessionInfo;
-    return (
-      <View
-        style={[
-          styles.col,
-          {zIndex: objectID === coachSessionID && autoOpen ? 20 : 3},
-        ]}>
-        {this.sharedElement()}
-      </View>
-    );
+    return this.session();
   }
 }
 
 const styles = StyleSheet.create({
-  col: {
-    height: heightCardSession,
-    width: '100%',
-    flexDirection: 'column',
-    position: 'relative',
-  },
   viewStream: {
     ...styleApp.fullSize,
     position: 'absolute',

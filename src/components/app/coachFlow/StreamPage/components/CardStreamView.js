@@ -21,7 +21,7 @@ class CardStream extends Component {
     };
   }
   componentDidMount() {
-    // TODO add the on Value function from firebase 
+    // TODO add the on Value function from firebase
     // -> this.props.coachSessionID
   }
   deleteSession = () => {
@@ -158,7 +158,10 @@ class CardStream extends Component {
       </View>
     );
   }
-  open() {}
+  open() {
+    const {coachSessionID} = this.props;
+    navigate('Session', {coachSessionID: coachSessionID});
+  }
   cardStream() {
     const {coachSessionID} = this.props;
     // const {isConnected, timestamp} = this.props;
