@@ -32,11 +32,13 @@ export default {
   off: '#eaeaea',
   off2: '#FAFAFA',
   white: '#FFFFFF',
+  black: '#000000',
 
   inputOff: '#C4C4C6',
 
   borderColor: '#A7A7AA',
   grey: '#D8D8D8',
+  greyLight: '#EDEDED',
   greyDark: '#AEAEAE',
   transparentGrey: 'rgba(0,0,0,0.5)',
 

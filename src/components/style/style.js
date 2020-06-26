@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  center7: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
   divider: {
     height: 1,
     width: '90%',
