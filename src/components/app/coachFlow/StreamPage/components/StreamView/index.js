@@ -267,15 +267,22 @@ class StreamPage extends Component {
       });
     }
   }
-  async endCoachSession(hangup) {
-    await this.setState({open: false, isConnected: false});
-    const {coachSessionID, userID} = this.props;
+  async endCoachSession() {
+    await this.setState({open: false, isConnected: false, coachSession: false});
+    const {coachSessionID, userID, coachAction} = this.props;
     Mixpanel.trackWithProperties('End Session ' + coachSessionID, {
       userID,
       coachSessionID,
       date: new Date(),
     });
+    await coachAction('setCurrentSession', false);
+    this.close();
     return true;
+  }
+  close() {
+    const {layoutAction} = this.props;
+    layoutAction('setLayout', {isFooterVisible: true});
+    navigate('Stream');
   }
   loaderView(text, hideLoader) {
     const styleText = {
@@ -461,7 +468,7 @@ class StreamPage extends Component {
   session() {
     const {coachSession, isConnected, open} = this.state;
 
-    const {index, coachSessionID, timestamp, currentScreenSize} = this.props;
+    const {coachSessionID, currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!open) return null;
@@ -472,6 +479,7 @@ class StreamPage extends Component {
         <Header
           coachSessionID={coachSessionID}
           organizerID={coachSession && coachSession.info.organizer}
+          close={this.close.bind(this)}
           permissionOtherUserToRecord={
             coachSession
               ? this.member(coachSession)?.permissionOtherUserToRecord
@@ -497,9 +505,9 @@ class StreamPage extends Component {
           />
         )}
 
-        {open && <View style={styles.viewStream}>{this.streamPage()}</View>}
+        <View style={styles.viewStream}>{this.streamPage()}</View>
 
-        {/* <WatchVideoPage
+        <WatchVideoPage
           state={this.state}
           onRef={(ref) => (this.watchVideoRef = ref)}
           translateYFooter={this.translateYFooter}
@@ -508,7 +516,7 @@ class StreamPage extends Component {
           videoBeingShared={videoBeingShared}
           sharedVideos={coachSession.sharedVideos}
           coachSessionID={coachSessionID}
-        /> */}
+        />
 
         {/* {loader && this.loaderView(' ')} */}
       </View>

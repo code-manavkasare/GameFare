@@ -48,6 +48,7 @@ class HeaderStreamView extends Component {
       setState,
       state,
       permissionOtherUserToRecord,
+      close,
     } = this.props;
     const {isConnected} = state;
     return (
@@ -60,11 +61,7 @@ class HeaderStreamView extends Component {
         icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '70'}
-        clickButton1={() => {
-          const {layoutAction} = this.props;
-          layoutAction('setLayout', {isFooterVisible: true});
-          NavigationService.navigate('Stream');
-        }}
+        clickButton1={() => close()}
         nobackgroundColorIcon1={true}
         sizeIcon1={18}
         colorIcon1={colors.white}
