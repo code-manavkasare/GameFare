@@ -9,9 +9,7 @@ import {
 import colors from '../components/style/colors';
 
 const initialState = {
-  coachSession: {
-    objectID: false,
-  },
+  currentSession:false,
   currentSessionID: false,
   settingsDraw: {
     color: colors.red,
@@ -24,9 +22,6 @@ const initialState = {
   },
   sessionInfo: {
     objectID: false,
-    prevObjectID: false,
-    autoOpen: false,
-    scrollDisabled: false,
   },
 };
 
@@ -47,6 +42,8 @@ const coachReducer = (state = initialState, action) => {
         ...state,
         settingsDraw: {...state.settingsDraw, ...action.settingsDraw},
       };
+    case SET_CURRENT_SESSION_ID:
+      return {...state,currentSession:}
     case SET_SESSION_INFO:
       return {
         ...state,
