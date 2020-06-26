@@ -1,4 +1,4 @@
-import {SET_VARIABLES} from '../actions/types';
+import {SET_VARIABLES, TOGGLE_BATTERY_SAVER} from '../actions/types';
 
 const initialState = {
   tabs: {
@@ -20,7 +20,7 @@ const initialState = {
 const globaleVariablesReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_VARIABLES:
-      return action.value;
+      return {...action.value, batterySaver: false};
     default:
       return state;
   }
