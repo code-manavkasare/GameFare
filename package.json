@@ -39,7 +39,7 @@
     "emoji-utils": "^1.0.1",
     "fast-deep-equal": "^3.1.1",
     "gamefare-camera-kit": "^1.1.2",
-    "gamefare-local-opentok": "git+https://gitlab.com/gamefare/gamefare-local-opentok.git",
+    "gamefare-local-opentok": "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.6",
     "jstz": "^2.1.1",
     "libphonenumber-js": "^1.7.30",
     "lodash": "^4.17.15",
