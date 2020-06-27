@@ -8,7 +8,7 @@ class BatterySaveDimmer extends Component {
     super(props);
     this.state = {
       timeout: null,
-      userBrightness: 1.0,
+      userBrightness: null,
       dimmed: false,
     };
   }
@@ -22,6 +22,7 @@ class BatterySaveDimmer extends Component {
       this.disable();
       return true;
     } else if (this.state.dimmed !== nextState.dimmed) {
+      // need to re-render to detect touches and brighten the screen
       return true;
     } else {
       return false;
@@ -52,6 +53,7 @@ class BatterySaveDimmer extends Component {
       clearTimeout(timeout);
     }
     ScreenBrightness.setBrightness(userBrightness);
+    this.setState(() => {return {dimmed: false, timeout: null, userBrightness: null}})
   }
   enable() {
     let { timeout, userBrightness } = this.state;
