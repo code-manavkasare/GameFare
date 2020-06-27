@@ -66,11 +66,6 @@ class AppSettings extends Component {
     goBack();
   }
   render() {
-    const {currentScreenSize} = this.props;
-    const {portrait} = currentScreenSize;
-    let marginTop = heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
-
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -97,7 +92,7 @@ class AppSettings extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.settings()}
           marginBottomScrollView={0}
-          marginTop={marginTop}
+          marginTop={heightHeaderHome}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />
