@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import database from '@react-native-firebase/database';
 
 import {navigate} from '../../../../../../NavigationService';
 

@@ -15,9 +15,6 @@ class ListStreams extends Component {
     };
     this.itemsRef = [];
   }
-  componentDidMount = () => {
-    this.props.onRef(this);
-  };
   static getDerivedStateFromProps(props, state) {
     if (!isEqual(props.coachSessions, state.coachSessions)) {
       return {

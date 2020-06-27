@@ -1,25 +1,15 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Animated,
-  FlatList,
-  Image,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
+import StatusBar from '@react-native-community/status-bar';
+import database from '@react-native-firebase/database';
 
-import coachAction from '../../../../actions/coachActions';
+import {coachAction} from '../../../../actions/coachActions';
+import {layoutAction} from '../../../../actions/layoutActions';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import {
-  marginTopApp,
-  heightFooter,
-  heightHeaderHome,
-  offsetBottomHeaderStream,
-} from '../../../style/sizes';
+import {heightFooter, heightHeaderHome} from '../../../style/sizes';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import LogoutView from './components/LogoutView';
@@ -27,7 +17,6 @@ import PermissionView from './components/PermissionView';
 
 import ListStreams from './components/ListStreams';
 import Loader from '../../../layout/loaders/Loader';
-import {timeout} from '../../../functions/coach';
 import HeaderListStream from './components/HeaderListStream';
 import ButtonNotification from '../../elementsUser/elementsProfile/ButtonNotification';
 
@@ -51,7 +40,28 @@ class StreamTab extends Component {
       this.openSession(params.objectID);
   };
   openSession = async (objectID) => {
-    this.listStreamRef.openSession(objectID);
+    const {
+      currentSessionID,
+      navigation,
+      layoutAction,
+      coachAction,
+    } = this.props;
+    const {navigate} = navigation;
+    if (currentSessionID !== objectID) {
+      let session = await database
+        .ref(`coachSession/${objectID}`)
+        .once('value');
+      session = session.val();
+      await coachAction('setCurrentSession', false);
+      await coachAction('setCurrentSession', session);
+    }
+
+    await layoutAction('setLayout', {isFooterVisible: false});
+    StatusBar.setBarStyle('light-content', true);
+    navigate('Session', {
+      screen: 'Session',
+      params: {coachSessionID: objectID, date: Date.now()},
+    });
   };
   viewLoader = () => {
     return (
@@ -78,7 +88,6 @@ class StreamTab extends Component {
         ) : null}
         <ListStreams
           permissionsCamera={permissionsCamera}
-          onRef={(ref) => (this.listStreamRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>
@@ -95,9 +104,6 @@ class StreamTab extends Component {
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
-          closeSession={async (currentSessionID) => {
-            return this.listStreamRef.closeSession(currentSessionID);
-          }}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
@@ -132,10 +138,11 @@ const mapStateToProps = (state) => {
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     currentScreenSize: state.layout.currentScreenSize,
+    currentSessionID: state.coach.currentSessionID,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, layoutAction},
 )(StreamTab);
