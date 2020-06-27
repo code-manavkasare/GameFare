@@ -162,12 +162,6 @@ class StreamPage extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    console.log('yewwwwwww', props);
-    // if (props.route.params.coachSessionID !== state.coachSessionID)
-    //   return {
-    //     coachSessionID: props.route.params.coachSessionID,
-    //     open: true,
-    //   };
     if (!isEqual(props.currentSession, state.coachSession))
       return {
         coachSession: props.currentSession,
@@ -179,7 +173,7 @@ class StreamPage extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {portrait} = this.props.currentScreenSize;
-    const {userID, coachSessionID} = this.props;
+    const {userID, currentSessionID: coachSessionID} = this.props;
 
     if (
       portrait !== prevProps.currentScreenSize.portrait &&
