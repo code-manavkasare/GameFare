@@ -209,7 +209,7 @@ class CardStream extends Component {
     await layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
       screen: 'Session',
-      params: {coachSessionID: coachSessionID},
+      params: {coachSessionID: coachSessionID, date: Date.now()},
     });
   }
 

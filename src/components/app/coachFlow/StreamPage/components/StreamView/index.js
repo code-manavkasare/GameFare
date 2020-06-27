@@ -73,6 +73,7 @@ class StreamPage extends Component {
       publishVideo: !__DEV__,
       open: false,
       portrait: true,
+      date: 0,
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -160,6 +161,9 @@ class StreamPage extends Component {
       },
     };
   }
+  componentDidMount() {
+    this.refreshTokenMember();
+  }
 
   static getDerivedStateFromProps(props, state) {
     if (!isEqual(props.currentSession, state.coachSession))
@@ -168,13 +172,14 @@ class StreamPage extends Component {
         open: props.currentSession ? true : false,
         coachSessionID: props.currentSessionID,
       };
-    return {};
+    return {date: Date.now()};
   }
 
   componentDidUpdate(prevProps, prevState) {
     const {portrait} = this.props.currentScreenSize;
     const {userID, currentSessionID: coachSessionID} = this.props;
-
+    console.log('prevState', prevState);
+    console.log('this.state', this.state);
     if (
       portrait !== prevProps.currentScreenSize.portrait &&
       this.state.isConnected
@@ -184,14 +189,15 @@ class StreamPage extends Component {
         .update({
           portrait: portrait,
         });
-    if (!prevState.open && this.state.open) {
-      this.refreshTokenMember();
+    if (prevState.date !== this.state.date && this.state.open) {
       this.popupPermissionRecording();
+      this.refreshTokenMember();
     }
     if (
       !isEqual(prevState.coachSession, this.state.coachSession) &&
       this.state.coachSession
     ) {
+      this.refreshTokenMember();
       this.openVideoShared();
     }
   }
@@ -228,6 +234,7 @@ class StreamPage extends Component {
       });
   }
   async refreshTokenMember() {
+    console.log('refreshTokenMember!');
     const {coachSession} = this.state;
     const member = this.member(coachSession);
     if (!member || !coachSession) return;
