@@ -1,10 +1,6 @@
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
-import RNFS from 'react-native-fs';
 import ImageResizer from 'react-native-image-resizer';
-
-import colors from '../style/colors';
-import {heightCardSession} from '../style/sizes';
 
 import {generateID} from './createEvent';
 
@@ -12,27 +8,31 @@ const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const infoCameraResolution = () => {};
-
-const createCoachSession = async (user) => {
+const createCoachSession = async (user, members) => {
   const coachSessionID = generateID();
+  const allMembers = Object.values(members).reduce(function(result, item) {
+    result[item.id] = true;
+    return result;
+  }, {});
+  const session = {
+    objectID: coachSessionID,
+    tokbox: {
+      sessionID: false,
+      sessionIsCreated: false,
+    },
+    info: {
+      organizer: user.id,
+    },
+    members: {
+      [user.id]: {...user, isConnected: false},
+      ...members,
+    },
+    allMembers: {[user.id]: true, ...allMembers},
+  };
   await database()
-    .ref('coachSessions/' + coachSessionID)
-    .update({
-      objectID: coachSessionID,
-      tokbox: {
-        sessionID: false,
-        sessionIsCreated: false,
-      },
-      info: {
-        organizer: user.id,
-      },
-      members: {
-        [user.id]: {...user, isConnected: false},
-      },
-      allMembers: {[user.id]: true},
-    });
-  return coachSessionID;
+    .ref(`coachSessions/${coachSessionID}`)
+    .update(session);
+  return session;
 };
 
 const isUserAlone = (session) => {

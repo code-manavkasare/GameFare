@@ -13,14 +13,13 @@ import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import Button from '../../../../layout/buttons/Button';
 import ButtonColor from '../../../../layout/Views/Button';
-import Loader from '../../../../layout/loaders/Loader'
+import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 import {date, time} from '../../../../layout/date/date';
 import ImageUser from '../../../../layout/image/ImageUser';
 import {coachAction} from '../../.././../../actions/coachActions';
 import AsyncImage from '../../../../layout/image/AsyncImage'
-import { act } from 'react-test-renderer';
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon);
 
 class CardStream extends Component {
@@ -29,19 +28,18 @@ class CardStream extends Component {
     this.state = {
       session: false,
       loading: true,
-      expanded: false,
     };
     this.expandAnimation = new Animated.Value(0);
     this.expand = this.expand.bind(this)
   }
-  
+
   componentDidMount() {
     this.props.onRef(this);
     this.loadCoachSession();
   }
 
   async loadCoachSession() {
-    const {coachSessionID} = this.props;
+    const {coachSessionID, coachAction} = this.props;
     database()
     .ref(`coachSessions/${coachSessionID}`)
     .on(
@@ -61,15 +59,12 @@ class CardStream extends Component {
         });
       }.bind(this),
     );
-
-    // rerender the component every 60 seconds (is there a better way?)
-    this.interval = setInterval(() => this.setState({ time: Date.now() }), 60000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-  
+
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
     this.expand(0)
@@ -94,7 +89,7 @@ class CardStream extends Component {
     });
   };
   buttonEndCall() {
-    const endCoachSession = () => {}
+    const endCoachSession = () => {};
     return (
       <ButtonColor
         color={colors.red}
@@ -217,24 +212,27 @@ class CardStream extends Component {
 
   async openStream() {
     const {session} = this.state;
-    const {coachSessionID, layoutAction, coachAction} = this.props;
-    
     this.expand(0)
-    await coachAction('setCurrentSession', session);
+    const {
+      coachSessionID,
+      layoutAction,
+      coachAction,
+      currentSessionID,
+    } = this.props;
+    if (currentSessionID !== coachSessionID) {
+      await coachAction('setCurrentSession', false);
+      await coachAction('setCurrentSession', session);
+    }
 
-    layoutAction('setLayout', {isFooterVisible: false});
+    await layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
       screen: 'Session',
-      params: {coachSessionID: coachSessionID},
+      params: {coachSessionID: coachSessionID, date: Date.now()},
     });
   }
 
-  loading () {
-    return (
-      <View>
-        {/* <Loader size={55} color={colors.greyDark} /> */}
-      </View>
-    )
+  loading() {
+    return <View>{/* <Loader size={55} color={colors.greyDark} /> */}</View>;
   }
 
   getSortedMembers() {
@@ -295,7 +293,7 @@ class CardStream extends Component {
           </View>
         ))}
       </View>
-    )
+    );
   }
 
   userCircle(member, style, scale) {
@@ -364,14 +362,14 @@ class CardStream extends Component {
         <Text style={{...styleApp.text, fontSize:14, color:colors.greyDark, marginTop:3}}>{this.sessionDate()}</Text>
         {/* <Text style={{...styleApp.text, fontSize:14, color:colors.greyDark, marginTop:3}}>{coachSessionID}</Text> */}
       </View>
-    )
+    );
   }
 
   sessionTitle() {
-    const {session} = this.state
-    const {userID} = this.props
-    if (session.title) return session.title
-    const members = this.getSortedMembers()
+    const {session} = this.state;
+    const {userID} = this.props;
+    if (session.title) return session.title;
+    const members = this.getSortedMembers();
     if (!members) return;
     if (members[0].id === userID) return "Only you"
     let names = members[0].info ? members[0].info.firstname + ' ' + members[0].info.lastname : ''
@@ -382,19 +380,19 @@ class CardStream extends Component {
   }
 
   sessionDate() {
-    const members = Object.values(this.state.session.members)
-    const activeMembers = members.filter(m => m.isConnected)
-    if (activeMembers.length > 0) return 'Active now'
+    const members = Object.values(this.state.session.members);
+    const activeMembers = members.filter((m) => m.isConnected);
+    if (activeMembers.length > 0) return 'Active now';
 
     const lastActive = members.sort((a, b) => {
-      if (!a.disconnectionTimeStamp) return 1
-      if (!b.disconnectionTimeStamp) return -1
-      if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) return 1
-      if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) return -1
-      else return 0
-    })[0].disconnectionTimeStamp
-    
-    return this.formatDate(lastActive)
+      if (!a.disconnectionTimeStamp) return 1;
+      if (!b.disconnectionTimeStamp) return -1;
+      if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) return 1;
+      if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) return -1;
+      else return 0;
+    })[0].disconnectionTimeStamp;
+
+    return this.formatDate(lastActive);
   }
 
   formatDate(date) {
@@ -421,7 +419,7 @@ class CardStream extends Component {
           size={12}
         />
       </View>
-    )
+    );
   }
 
   cardBody() {
@@ -527,17 +525,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     overflow: 'hidden'
   },
-  placeholderText:{
-    ...styleApp.textBold, 
-    fontSize:17, 
-    color:colors.greyLight, 
-    letterSpacing:1, 
-    top:1,
-    left:1,
+  placeholderText: {
+    ...styleApp.textBold,
+    fontSize: 17,
+    color: colors.greyLight,
+    letterSpacing: 1,
+    top: 1,
+    left: 1,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.4,
-    shadowRadius: 7
+    shadowRadius: 7,
   },
   divider: {
     height: 1,

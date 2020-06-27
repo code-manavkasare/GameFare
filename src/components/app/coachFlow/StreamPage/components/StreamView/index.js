@@ -73,6 +73,7 @@ class StreamPage extends Component {
       publishVideo: !__DEV__,
       open: false,
       portrait: true,
+      date: 0,
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -131,6 +132,7 @@ class StreamPage extends Component {
           .update({
             streamIdTokBox: streamId,
             connectionIdTokbox: connectionId,
+            connectionTimeStamp: Date.now(),
             portrait: portrait,
             isConnected: true,
           });
@@ -159,27 +161,25 @@ class StreamPage extends Component {
       },
     };
   }
+  componentDidMount() {
+    this.refreshTokenMember();
+  }
 
   static getDerivedStateFromProps(props, state) {
-    console.log('yewwwwwww', props);
-    // if (props.route.params.coachSessionID !== state.coachSessionID)
-    //   return {
-    //     coachSessionID: props.route.params.coachSessionID,
-    //     open: true,
-    //   };
     if (!isEqual(props.currentSession, state.coachSession))
       return {
         coachSession: props.currentSession,
         open: props.currentSession ? true : false,
         coachSessionID: props.currentSessionID,
       };
-    return {};
+    return {date: Date.now()};
   }
 
   componentDidUpdate(prevProps, prevState) {
     const {portrait} = this.props.currentScreenSize;
-    const {userID, coachSessionID} = this.props;
-
+    const {userID, currentSessionID: coachSessionID} = this.props;
+    console.log('prevState', prevState);
+    console.log('this.state', this.state);
     if (
       portrait !== prevProps.currentScreenSize.portrait &&
       this.state.isConnected
@@ -189,16 +189,20 @@ class StreamPage extends Component {
         .update({
           portrait: portrait,
         });
+    if (prevState.date !== this.state.date && this.state.open) {
+      this.popupPermissionRecording();
+      this.refreshTokenMember();
+    }
     if (
-      prevState.coachSession.vonageSessionId !==
-        this.state.coachSession.vonageSessionId &&
-      this.state.coachSession.vonageSessionId
+      !isEqual(prevState.coachSession, this.state.coachSession) &&
+      this.state.coachSession
     ) {
       this.refreshTokenMember();
+      this.openVideoShared();
     }
   }
   popupPermissionRecording() {
-    let {userID, coachSessionID} = this.props;
+    let {userID, currentSessionID: coachSessionID} = this.props;
     const {coachSession} = this.state;
 
     const member = this.member(coachSession);
@@ -230,10 +234,11 @@ class StreamPage extends Component {
       });
   }
   async refreshTokenMember() {
+    console.log('refreshTokenMember!');
     const {coachSession} = this.state;
     const member = this.member(coachSession);
     if (!member || !coachSession) return;
-    const {coachSessionID, userID} = this.props;
+    const {currentSessionID: coachSessionID, userID} = this.props;
     if (
       coachSession.vonageSessionId &&
       (member.expireTimeToken < Date.now() || !member.expireTimeToken)
@@ -256,11 +261,12 @@ class StreamPage extends Component {
     if (members) return members[userID];
     return {};
   }
-  openVideoShared(session) {
+  openVideoShared() {
+    const {coachSession} = this.state;
     const {userID} = this.props;
-    const personSharingScreen = isSomeoneSharingScreen(session);
+    const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
-      const video = getVideoSharing(session, personSharingScreen);
+      const video = getVideoSharing(coachSession, personSharingScreen);
       this.watchVideoRef.open({
         watchVideo: true,
         ...video,
@@ -468,7 +474,7 @@ class StreamPage extends Component {
   session() {
     const {coachSession, isConnected, open} = this.state;
 
-    const {coachSessionID, currentScreenSize} = this.props;
+    const {currentSessionID: coachSessionID, currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!open) return null;
