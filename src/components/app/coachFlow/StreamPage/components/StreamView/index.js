@@ -288,6 +288,7 @@ class StreamPage extends Component {
   close() {
     const {layoutAction} = this.props;
     layoutAction('setLayout', {isFooterVisible: true});
+    StatusBar.setBarStyle('dark-content', true);
     navigate('Stream');
   }
   loaderView(text, hideLoader) {

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
+import StatusBar from '@react-native-community/status-bar';
 
 import {layoutAction} from '../../../../../actions/layoutActions';
 
@@ -207,6 +208,7 @@ class CardStream extends Component {
     }
 
     await layoutAction('setLayout', {isFooterVisible: false});
+    StatusBar.setBarStyle('light-content', true);
     navigate('Session', {
       screen: 'Session',
       params: {coachSessionID: coachSessionID, date: Date.now()},
