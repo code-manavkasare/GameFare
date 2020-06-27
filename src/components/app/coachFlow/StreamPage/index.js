@@ -112,7 +112,7 @@ class StreamTab extends Component {
           marginBottomScrollView={0}
           marginTop={heightHeaderHome}
           offsetBottom={heightFooter + 90}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
       </View>
     );

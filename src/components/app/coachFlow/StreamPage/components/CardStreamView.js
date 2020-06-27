@@ -68,7 +68,6 @@ class CardStream extends Component {
 
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
-    this.expand(0);
     navigate('Alert', {
       title: 'Do you want to delete this session?',
       textButton: 'Delete',
@@ -204,8 +203,7 @@ class CardStream extends Component {
   async expand(to) {
     var toVal =
       to !== undefined ? to : this.expandAnimation._value === 0 ? 1 : 0;
-    const {collapseAll} = this.props;
-    if (toVal === 1) collapseAll();
+
     await Animated.parallel([
       Animated.timing(this.expandAnimation, timing(toVal, 120)),
     ]).start(() => {
@@ -215,7 +213,6 @@ class CardStream extends Component {
 
   async openStream() {
     const {session} = this.state;
-    this.expand(0);
     const {
       coachSessionID,
       layoutAction,
@@ -510,7 +507,9 @@ class CardStream extends Component {
       <Animated.View style={{...styles.card, height: transform}}>
         <ButtonColor
           color={
-            currentSessionID === coachSessionID ? colors.red : colors.white
+            currentSessionID === coachSessionID
+              ? colors.greenLight
+              : colors.white
           }
           onPressColor={colors.off}
           click={() => this.expand()}
