@@ -78,7 +78,7 @@ class HeaderListStream extends Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={'Your sessions'}
+        textHeader={'Sessions'}
         inputRange={[5, 10]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
