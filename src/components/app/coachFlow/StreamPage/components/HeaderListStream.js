@@ -1,22 +1,15 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import {Col, Row} from 'react-native-easy-grid';
-import database from '@react-native-firebase/database';
+
+import {navigate} from '../../../../../../NavigationService';
 
 import {createCoachSession, timeout} from '../../../../functions/coach';
+import {logMixpanel} from '../../../../database/mixpanel';
 import {coachAction} from '../../../../../actions/coachActions';
+import {layoutAction} from '../../../../../actions/layoutActions';
 
 import colors from '../../../../style/colors';
-import styleApp from '../../../../style/style';
-import {width, heightHeaderStream} from '../../../../style/sizes';
-import ButtonColor from '../../../../layout/Views/Button';
-import Loader from '../../../../layout/loaders/Loader';
-import AllIcons from '../../../../layout/icons/AllIcons';
-
-import Mixpanel from 'react-native-mixpanel';
-import {mixPanelToken} from '../../../../database/firebase/tokens';
-Mixpanel.sharedInstanceWithToken(mixPanelToken);
+import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 
 class HeaderListStream extends Component {
   constructor(props) {
@@ -25,81 +18,80 @@ class HeaderListStream extends Component {
       loader: false,
     };
   }
+  newSession() {
+    navigate('PickMembers', {
+      usersSelected: {},
+      selectMultiple: true,
+      closeButton: true,
+      loaderOnSubmit: true,
+      contactsOnly: false,
+      displayCurrentUser: false,
+      noUpdateStatusBar: true,
+      titleHeader: 'Select members to add to the session',
+      onGoBack: async (members) => {
+        members = Object.values(members).reduce(function(result, item) {
+          result[item.id] = {
+            id: item.id,
+            info: item.info,
+          };
+          return result;
+        }, {});
+        console.log('members', members);
 
+        const session = await this.createSession(members);
+        console.log('createSession', session);
+        await navigate('StreamPage');
+        return this.openSession(session);
+      },
+    });
+  }
+  async openSession(session) {
+    const {layoutAction, coachAction} = this.props;
+    await coachAction('setCurrentSession', false);
+    await coachAction('setCurrentSession', session);
+    await layoutAction('setLayout', {isFooterVisible: false});
+    navigate('Session', {
+      screen: 'Session',
+      params: {},
+    });
+  }
+  async createSession(members) {
+    const {userID, infoUser} = this.props;
+    const session = await createCoachSession(
+      {
+        id: userID,
+        info: infoUser,
+      },
+      members,
+    );
+    const {objectID} = session;
+    logMixpanel('Create new session ' + objectID, {
+      userID,
+      objectID,
+    });
+
+    return session;
+  }
   header = () => {
-    const {
-      userConnected,
-      navigation,
-      coachAction,
-      closeSession,
-      hideButtonNewSession,
-    } = this.props;
+    const {hideButtonNewSession, AnimatedHeaderValue} = this.props;
     const {loader} = this.state;
     return (
-      <Row style={styles.header}>
-        <Col size={85} style={styleApp.center2}>
-          <Text style={[styleApp.title, {fontSize: 18}]}>
-            Stream your performance
-          </Text>
-        </Col>
-
-        {!hideButtonNewSession && (
-          <Col size={15} style={styleApp.center3}>
-            <ButtonColor
-              view={() => {
-                return loader ? (
-                  <Loader size={35} color={colors.white} />
-                ) : (
-                  <AllIcons
-                    name="plus"
-                    color={colors.white}
-                    size={18}
-                    type="font"
-                  />
-                );
-              }}
-              color={colors.green}
-              style={styles.buttonNewSession}
-              click={async () => {
-                if (!userConnected) return navigation.navigate('SignIn');
-                const {userID, infoUser, coachAction, sessionInfo} = this.props;
-                const {objectID: prevObjectID} = sessionInfo;
-                await this.setState({loader: true});
-
-                const currentOpenSession = sessionInfo.objectID;
-                if (currentOpenSession) {
-                  await closeSession(currentOpenSession);
-                  // we await a bit so that the stream is 100% sure detroyed.
-                  timeout(300);
-                }
-                const objectID = await createCoachSession({
-                  id: userID,
-                  info: infoUser,
-                });
-                await coachAction('setSessionInfo', {
-                  objectID: objectID,
-                  autoOpen: true,
-                  // prevObjectID: 'teub',
-                });
-                Mixpanel.trackWithProperties('Create new session ' + objectID, {
-                  userID,
-                  objectID,
-                });
-
-                await database()
-                  .ref(`users/${userID}/coachSessions/${objectID}`)
-                  .set({
-                    id: objectID,
-                    timestamp: Date.now(),
-                  });
-
-                this.setState({loader: false});
-              }}
-              onPressColor={colors.greenClick}
-            />
-          </Col>
-        )}
-      </Row>
+      <HeaderBackButton
+        AnimatedHeaderValue={AnimatedHeaderValue}
+        textHeader={'Sessions'}
+        inputRange={[5, 10]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        loader={loader}
+        initialBorderColorHeader={colors.white}
+        initialTitleOpacity={1}
+        initialBorderWidth={1}
+        icon2={!hideButtonNewSession && 'plus'}
+        sizeIcon2={20}
+        colorIcon2={colors.green}
+        typeIcon2="font"
+        clickButton2={() => this.newSession()}
+      />
     );
   };
 
@@ -108,36 +100,15 @@ class HeaderListStream extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  header: {
-    height: heightHeaderStream,
-    paddingLeft: '5%',
-    paddingRight: '5%',
-  },
-  buttonNewSession: {
-    ...styleApp.center,
-    borderRadius: 22.5,
-    height: 45,
-    width: 45,
-  },
-  rowButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    // marginTop: 20,
-    width: width,
-  },
-});
-
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
-    sessionInfo: state.coach.sessionInfo,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, layoutAction},
 )(HeaderListStream);

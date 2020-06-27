@@ -28,7 +28,6 @@ class Footer extends Component {
       translateYFooter,
       watchVideoRef,
       endCoachSession,
-      opacityHeader,
       personSharingScreen,
       videoBeingShared,
       otPublisherRef,
@@ -41,7 +40,6 @@ class Footer extends Component {
       <Animated.View
         style={[
           styles.footer,
-          {opacity: opacityHeader},
           {transform: [{translateY: translateYFooter}]},
         ]}>
         <BottomButtons

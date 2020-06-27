@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import NavigationService from '../../../../../../../../NavigationService';
+import {layoutAction} from '../../../../../../../actions/layoutActions';
 
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
 import colors from '../../../../../../style/colors';
@@ -44,11 +45,10 @@ class HeaderStreamView extends Component {
       coachSessionID,
       organizerID,
       userID,
-      open,
       setState,
       state,
       permissionOtherUserToRecord,
-      opacityHeader,
+      close,
     } = this.props;
     const {isConnected} = state;
     return (
@@ -58,13 +58,10 @@ class HeaderStreamView extends Component {
         colorLoader={'white'}
         sizeLoader={40}
         initialBorderColorIcon={'transparent'}
-        opacityHeader={opacityHeader}
         icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '70'}
-        clickButton1={async () => {
-          open(false);
-        }}
+        clickButton1={() => close()}
         nobackgroundColorIcon1={true}
         sizeIcon1={18}
         colorIcon1={colors.white}
@@ -110,5 +107,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {},
+  {layoutAction},
 )(HeaderStreamView);
