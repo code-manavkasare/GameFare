@@ -190,16 +190,19 @@ class StreamPage extends Component {
         .update({
           portrait: portrait,
         });
-    if (
-      prevState.coachSession.vonageSessionId !==
-        this.state.coachSession.vonageSessionId &&
-      this.state.coachSession.vonageSessionId
-    ) {
+    if (!prevState.open && this.state.open) {
       this.refreshTokenMember();
+      this.popupPermissionRecording();
+    }
+    if (
+      !isEqual(prevState.coachSession, this.state.coachSession) &&
+      this.state.coachSession
+    ) {
+      this.openVideoShared();
     }
   }
   popupPermissionRecording() {
-    let {userID, coachSessionID} = this.props;
+    let {userID, currentSessionID: coachSessionID} = this.props;
     const {coachSession} = this.state;
 
     const member = this.member(coachSession);
@@ -234,7 +237,7 @@ class StreamPage extends Component {
     const {coachSession} = this.state;
     const member = this.member(coachSession);
     if (!member || !coachSession) return;
-    const {coachSessionID, userID} = this.props;
+    const {currentSessionID: coachSessionID, userID} = this.props;
     if (
       coachSession.vonageSessionId &&
       (member.expireTimeToken < Date.now() || !member.expireTimeToken)
@@ -257,11 +260,12 @@ class StreamPage extends Component {
     if (members) return members[userID];
     return {};
   }
-  openVideoShared(session) {
+  openVideoShared() {
+    const {coachSession} = this.state;
     const {userID} = this.props;
-    const personSharingScreen = isSomeoneSharingScreen(session);
+    const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
-      const video = getVideoSharing(session, personSharingScreen);
+      const video = getVideoSharing(coachSession, personSharingScreen);
       this.watchVideoRef.open({
         watchVideo: true,
         ...video,

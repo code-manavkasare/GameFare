@@ -195,8 +195,16 @@ class CardStream extends Component {
   }
   async open() {
     const {session} = this.state;
-    const {coachSessionID, layoutAction, coachAction} = this.props;
-    await coachAction('setCurrentSession', session);
+    const {
+      coachSessionID,
+      layoutAction,
+      coachAction,
+      currentSessionID,
+    } = this.props;
+    if (currentSessionID !== coachSessionID) {
+      await coachAction('setCurrentSession', false);
+      await coachAction('setCurrentSession', session);
+    }
 
     layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
