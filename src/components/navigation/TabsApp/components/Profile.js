@@ -6,6 +6,7 @@ import Wallet from '../../../app/elementsUser/elementsProfile/Wallet';
 import BlockedUsersList from '../../../app/elementsUser/elementsProfile/BlockedUsersList';
 import MorePage from '../../../app/MorePage';
 import EditProfilePage from '../../../app/elementsUser/elementsProfile/EditProfilePage';
+import AppSettings from '../../../app/elementsUser/elementsProfile/AppSettings';
 
 const Stack = createStackNavigator();
 const OnBoarding = () => {
@@ -16,6 +17,7 @@ const OnBoarding = () => {
       <Stack.Screen name="VideoLibraryPage" component={VideoLibraryPage} />
       <Stack.Screen name="BlockedUsersList" component={BlockedUsersList} />
       <Stack.Screen name="EditProfilePage" component={EditProfilePage} />
+      <Stack.Screen name="AppSettings" component={AppSettings} />
     </Stack.Navigator>
   );
 };
