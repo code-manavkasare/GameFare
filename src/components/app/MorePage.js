@@ -295,6 +295,7 @@ class MorePage extends Component {
             {this.button('video', 'Video Library', 'VideoLibraryPage')}
             {/* {this.button('credit-card', 'Payment', 'Payments')}
             {this.button('wallet', 'Wallet', 'Wallet')} */}
+            {this.button('cog', 'App Settings', 'AppSettings')}
             <ButtonNotification displayBeforeLoader={true} />
 
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
