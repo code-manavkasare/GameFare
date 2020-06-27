@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
+
+import {navigate} from '../../../../../../NavigationService';
 
 import {createCoachSession, timeout} from '../../../../functions/coach';
 import {logMixpanel} from '../../../../database/mixpanel';
 import {coachAction} from '../../../../../actions/coachActions';
+import {layoutAction} from '../../../../../actions/layoutActions';
 
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
@@ -18,28 +19,59 @@ class HeaderListStream extends Component {
       loader: false,
     };
   }
-  async newSession() {
-    const {userID, infoUser, coachAction} = this.props;
-    await this.setState({loader: true});
+  newSession() {
+    navigate('PickMembers', {
+      usersSelected: {},
+      selectMultiple: true,
+      closeButton: true,
+      loaderOnSubmit: true,
+      contactsOnly: false,
+      displayCurrentUser: false,
+      noUpdateStatusBar: true,
+      titleHeader: 'Select members to add to the session',
+      onGoBack: async (members) => {
+        members = Object.values(members).reduce(function(result, item) {
+          result[item.id] = {
+            id: item.id,
+            info: item.info,
+          };
+          return result;
+        }, {});
+        console.log('members', members);
 
-    const objectID = await createCoachSession({
-      id: userID,
-      info: infoUser,
+        const session = await this.createSession(members);
+        console.log('createSession', session);
+        await navigate('StreamPage');
+        return this.openSession(session);
+      },
     });
-    await coachAction('setCurrentSessionID', objectID);
+  }
+  async openSession(session) {
+    const {layoutAction, coachAction} = this.props;
+    await coachAction('setCurrentSession', false);
+    await coachAction('setCurrentSession', session);
+    await layoutAction('setLayout', {isFooterVisible: false});
+    navigate('Session', {
+      screen: 'Session',
+      params: {},
+    });
+  }
+  async createSession(members) {
+    const {userID, infoUser} = this.props;
+    const session = await createCoachSession(
+      {
+        id: userID,
+        info: infoUser,
+      },
+      members,
+    );
+    const {objectID} = session;
     logMixpanel('Create new session ' + objectID, {
       userID,
       objectID,
     });
 
-    await database()
-      .ref(`users/${userID}/coachSessions/${objectID}`)
-      .set({
-        id: objectID,
-        timestamp: Date.now(),
-      });
-
-    this.setState({loader: false});
+    return session;
   }
   header = () => {
     const {hideButtonNewSession, AnimatedHeaderValue} = this.props;
@@ -59,7 +91,7 @@ class HeaderListStream extends Component {
         sizeIcon2={20}
         colorIcon2={colors.green}
         typeIcon2="font"
-        clickButton2={() => this.props.navigation.goBack()}
+        clickButton2={() => this.newSession()}
       />
     );
   };
@@ -79,5 +111,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, layoutAction},
 )(HeaderListStream);

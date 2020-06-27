@@ -206,7 +206,7 @@ class CardStream extends Component {
       await coachAction('setCurrentSession', session);
     }
 
-    layoutAction('setLayout', {isFooterVisible: false});
+    await layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
       screen: 'Session',
       params: {coachSessionID: coachSessionID},
