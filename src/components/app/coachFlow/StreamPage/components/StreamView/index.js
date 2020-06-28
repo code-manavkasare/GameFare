@@ -71,9 +71,11 @@ class StreamPage extends Component {
       watchVideo: false,
       publishAudio: !__DEV__,
       publishVideo: !__DEV__,
+      // videoSource: 'camera',
       open: false,
       portrait: true,
       date: 0,
+      publisherMount: true
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -401,8 +403,8 @@ class StreamPage extends Component {
     };
   }
   streamPage() {
-    const {coachSession, isConnected, publishAudio, publishVideo} = this.state;
-    const {userID, userConnected, coachSessionID} = this.props;
+    const {coachSession, isConnected, publishAudio, publishVideo, coachSessionID, publisherMount, videoSource} = this.state;
+    const {userID, userConnected} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!coachSession.tokbox) return null;
@@ -436,7 +438,7 @@ class StreamPage extends Component {
               eventHandlers={this.sessionEventHandlers}
               sessionId={sessionID}
               token={member.tokenTokbox}>
-              <OTPublisher
+              {publisherMount && <OTPublisher
                 ref={this.otPublisherRef}
                 style={this.stylePublisher(userIsAlone)}
                 properties={{
@@ -446,7 +448,7 @@ class StreamPage extends Component {
                   publishVideo: publishVideo,
                 }}
                 eventHandlers={this.publisherEventHandlers}
-              />
+              />}
 
               <OTSubscriber style={styles.OTSubscriber}>
                 {this.renderSubscribers}
@@ -465,17 +467,27 @@ class StreamPage extends Component {
           videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.footerRef = ref)}
           members={coachSession.members}
-          coachSessionID={this.props.coachSessionID}
+          coachSessionID={coachSessionID}
           publishAudio={publishAudio}
           publishVideo={publishVideo}
+          recordPublisher={this.recordPublisher.bind(this)}
         />
       </View>
     );
   }
-  session() {
-    const {coachSession, isConnected, open} = this.state;
 
-    const {currentSessionID: coachSessionID, currentScreenSize} = this.props;
+  async recordPublisher(start) {
+    await this.setState({
+      videoSource: (start) ? 'recording' : 'camera',
+      publisherMount: false
+    })
+    await this.setState({publisherMount: true})
+  }
+
+  session() {
+    const {coachSession, isConnected, open, coachSessionID} = this.state;
+
+    const {currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!open) return null;
