@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, AppState } from 'react-native';
 import {connect} from 'react-redux';
 import ScreenBrightness from 'react-native-screen-brightness';
 
@@ -10,6 +10,7 @@ class BatterySaveDimmer extends Component {
       timeout: null,
       userBrightness: null,
       dimmed: false,
+      appState: AppState.currentState,
     };
   }
   shouldComponentUpdate(nextProps, nextState) {
@@ -32,14 +33,22 @@ class BatterySaveDimmer extends Component {
     if (this.props.batterySaver) {
       this.enable();
     }
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
   componentWillUnmount() {
-    const { timeout, userBrightness } = this.state;
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    ScreenBrightness.setBrightness(userBrightness);
+    this.disable();
+    AppState.removeEventListener('change', this._handleAppStateChange);
   }
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      if (this.props.batterySaver) {
+        this.enable();
+      }
+    } else if (this.state.appState.match(/active|foreground/) && nextAppState === 'inactive') {
+      this.disable();
+    }
+    this.setState({appState: nextAppState});
+  };
   render() {
     const { batterySaver } = this.props;
     const { dimmed } = this.state;
@@ -52,7 +61,9 @@ class BatterySaveDimmer extends Component {
     if (timeout) {
       clearTimeout(timeout);
     }
-    ScreenBrightness.setBrightness(userBrightness);
+    if (userBrightness) {
+      ScreenBrightness.setBrightness(userBrightness);
+    }
     this.setState(() => {return {dimmed: false, timeout: null, userBrightness: null}})
   }
   enable() {
