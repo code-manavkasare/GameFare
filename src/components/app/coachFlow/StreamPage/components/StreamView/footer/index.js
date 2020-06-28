@@ -33,7 +33,8 @@ class Footer extends Component {
       otPublisherRef,
       members,
       publishVideo,
-      publishAudio
+      publishAudio,
+      recordPublisher
     } = this.props;
     console.log('render footer ');
     return (
@@ -54,6 +55,7 @@ class Footer extends Component {
           publishVideo={publishVideo}
           publishAudio={publishAudio}
           coachSessionID={this.props.coachSessionID}
+          recordPublisher={recordPublisher}
         />
 
         <VideosView

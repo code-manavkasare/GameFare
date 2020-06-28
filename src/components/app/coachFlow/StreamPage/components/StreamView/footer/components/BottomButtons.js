@@ -185,13 +185,14 @@ class BottomButton extends Component {
   };
   stopRecording = async () => {
     const {
-      otPublisherRef,
       members,
       userID,
       coachSessionID,
       uploadQueueAction,
+      recordPublisher
     } = this.props;
     const messageCallback = async (response) => {
+      await recordPublisher(false)
       if (response.error)
         return Alert.alert(`Error storing recording: ${response.message}`);
       let {videoUrl} = response;
@@ -215,6 +216,7 @@ class BottomButton extends Component {
       }
     };
 
+    const {otPublisherRef} = this.props;
     await otPublisherRef.current.stopRecording(messageCallback);
   };
   publishVideo() {

@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import {View, Text, StyleSheet, Animated, Image, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 import StatusBar from '@react-native-community/status-bar';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import LinearGradient from 'react-native-linear-gradient';
 
 import {layoutAction} from '../../../../../actions/layoutActions';
 
@@ -21,6 +22,7 @@ import {date, time} from '../../../../layout/date/date';
 import ImageUser from '../../../../layout/image/ImageUser';
 import {coachAction} from '../../.././../../actions/coachActions';
 import AsyncImage from '../../../../layout/image/AsyncImage';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const AnimatedIcon = Animated.createAnimatedComponent(FontIcon);
 
 class CardStream extends Component {
@@ -68,8 +70,9 @@ class CardStream extends Component {
 
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
+    this.expand(0)
     navigate('Alert', {
-      title: 'Do you want to delete this session?',
+      title: 'Are you sure you want to delete this session?',
       textButton: 'Delete',
       onGoBack: async () => {
         const {objectID} = this.state.session;
@@ -128,16 +131,12 @@ class CardStream extends Component {
   }
   viewLive() {
     const styleViewLive = {
-      position: 'absolute',
-      top: 0,
-      right: '0%',
+      marginRight:20,
       height: 20,
       width: 40,
       ...styleApp.center,
       backgroundColor: colors.red,
-      borderBottomLeftRadius: 5,
-      // marginTop: 5,
-      borderBottomRightRadius: 5,
+      borderRadius:5,
     };
     const styleText = {...styleApp.textBold, color: colors.white, fontSize: 10};
     return (
@@ -157,7 +156,7 @@ class CardStream extends Component {
     const {members, userID} = this.props;
 
     let membersDisplay = [];
-    if (members)
+    if (members !== undefined)
       membersDisplay = Object.values(members).filter(
         (member) => member.id !== userID,
       );
@@ -203,9 +202,9 @@ class CardStream extends Component {
   async expand(to) {
     var toVal =
       to !== undefined ? to : this.expandAnimation._value === 0 ? 1 : 0;
-
+    if (toVal === this.expandAnimation._value) return;
     await Animated.parallel([
-      Animated.timing(this.expandAnimation, timing(toVal, 120)),
+      Animated.timing(this.expandAnimation, native(toVal, 350)),
     ]).start(() => {
       this.expandAnimation.setValue(toVal);
     });
@@ -219,6 +218,8 @@ class CardStream extends Component {
       coachAction,
       currentSessionID,
     } = this.props;
+
+    this.expand(0)
     if (currentSessionID !== coachSessionID) {
       await coachAction('setCurrentSession', false);
       await coachAction('setCurrentSession', session);
@@ -239,7 +240,7 @@ class CardStream extends Component {
   getSortedMembers() {
     const {userID} = this.props;
     let {members} = this.state.session;
-    members = Object.values(members);
+    members = (members) ? Object.values(members) : []
     if (members.length !== 1)
       members = members
         .sort((a, b) => {
@@ -369,23 +370,16 @@ class CardStream extends Component {
   }
 
   sessionInfo() {
-    const {coachSessionID} = this.props;
     return (
       <View style={{...styleApp.fullSize, ...styleApp.center7}}>
         <Text
-          style={{...styleApp.text, color: colors.black, fontWeight: '600'}}>
+          style={styles.title}>
           {this.sessionTitle()}
         </Text>
         <Text
-          style={{
-            ...styleApp.text,
-            fontSize: 14,
-            color: colors.greyDark,
-            marginTop: 3,
-          }}>
+          style={styles.dateText}>
           {this.sessionDate()}
         </Text>
-        {/* <Text style={{...styleApp.text, fontSize:14, color:colors.greyDark, marginTop:3}}>{coachSessionID}</Text> */}
       </View>
     );
   }
@@ -395,7 +389,7 @@ class CardStream extends Component {
     const {userID} = this.props;
     if (session.title) return session.title;
     const members = this.getSortedMembers();
-    if (!members) return;
+    if (!members || !members[0]) return;
     if (members[0].id === userID) return 'Only you';
     let names = members[0].info
       ? members[0].info.firstname + ' ' + members[0].info.lastname
@@ -410,7 +404,9 @@ class CardStream extends Component {
   }
 
   sessionDate() {
-    const members = Object.values(this.state.session.members);
+    let {members} = this.state.session;
+    if (!members) return this.formatDate(Date.now())
+    members = (members) ? Object.values(members) : []
     const activeMembers = members.filter((m) => m.isConnected);
     if (activeMembers.length > 0) return 'Active now';
 
@@ -436,84 +432,152 @@ class CardStream extends Component {
   }
 
   expansionButton() {
-    const spin = this.expandAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0deg', '180deg'],
-    });
+    const {coachSessionID, currentSessionID} = this.props;
+    const activeSession = coachSessionID === currentSessionID
+
     return (
-      <View style={{...styleApp.fullSize, ...styleApp.center}}>
-        <AnimatedIcon
-          name="chevron-down"
-          color={colors.greyDark}
-          style={{transform: [{rotate: spin}]}}
-          size={12}
-        />
+      <View style={{
+        ...styleApp.fullSize, 
+        ...styleApp.center
+      }}>
+        {(activeSession) ? this.viewLive() : null}
       </View>
     );
   }
 
   cardBody() {
+    const {
+      coachSessionID, 
+      currentSessionID, 
+      currentScreenSize,
+      scale
+    } = this.props;
+    const activeSession = coachSessionID === currentSessionID
+    const width = currentScreenSize.currentWidth
+    const top = (scale*90-45)/2
+
     return (
-      <View style={{height: 35}}>
-        <Row style={styles.buttonArea}>
-          <Col size={30} />
-          <Col size={25}>
-            <ButtonColor
-              onPressColor={colors.redLight}
-              color={colors.red}
-              click={() => this.deleteSession()}
-              style={{
-                height: 35,
-                width: '100%',
-                borderRadius: 5,
-              }}
-              view={() => {
-                return <Text style={styles.buttonText}>Delete</Text>;
-              }}
-            />
+      <View >
+        <Row style={{...styles.buttonArea, width:width/2, top}}>
+          <Col size={50}>
+            <Row style={{justifyContent:'space-around'}}>
+              <ButtonColor
+                onPressColor={colors.greyMidDark}
+                color={colors.greyDark}
+                click={() => {}}
+                style={styles.button}
+                view={() => {
+                  return (
+                  <AllIcons 
+                    type="mat"
+                    name="more-horiz"
+                    size={23}
+                    color={colors.white}
+                  />
+                  )
+                }}
+              />
+              <ButtonColor
+                onPressColor={colors.redLight}
+                color={colors.red}
+                click={() => {(activeSession) ? 
+                  
+                  /// TODO FOR FLORIAN
+                  /// This is if the session is active to 
+                  /// change the delete button to be hangup.
+                  null 
+                  
+                  : this.deleteSession()}}
+                style={styles.button}
+                view={() => {
+                  return (
+                  <AllIcons 
+                    type="mat"
+                    name={(activeSession) ? "call-end" : "close"}
+                    size={22}
+                    color={colors.white}
+                  />);
+                }}
+              />
+              <ButtonColor
+                onPressColor={colors.greenLight}
+                color={colors.green}
+                click={() => this.openStream()}
+                style={styles.button}
+                view={() => {
+                  return (
+                  <AllIcons 
+                    type="mat"
+                    name="call"
+                    size={20}
+                    color={colors.white}
+                  />
+                  );
+                }}
+              />
+            </Row>
           </Col>
-          <Col size={5} />
-          <Col size={25}>
-            <ButtonColor
-              onPressColor={colors.greenLight}
-              color={colors.green}
-              click={() => this.openStream()}
-              style={{
-                height: 35,
-                width: '100%',
-                borderRadius: 5,
-              }}
-              view={() => {
-                return <Text style={styles.buttonText}>Join</Text>;
-              }}
-            />
-          </Col>
-          <Col size={15} />
         </Row>
       </View>
     );
   }
 
-  cardStream() {
-    const {coachSessionID, currentSessionID, scale} = this.props;
-    const {loading} = this.state;
-
-    const transform = this.expandAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [80 * scale, 130 * scale],
-    });
+  backdrop() {
+    const {
+      currentScreenSize,
+      scale
+    } = this.props;
+    let height = 90*scale
+    const width = currentScreenSize.currentWidth/2+90
 
     return (
-      <Animated.View style={{...styles.card, height: transform}}>
+      <TouchableOpacity
+      onPress={() => this.expand(0)}
+      activeOpacity={1}
+      style={{
+        height,
+        width,
+        position:'absolute',
+        zIndex:-1,
+        left:-90,
+      }}>
+        <Row>
+          <Col size={40}>
+            <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+            style={styleApp.fullView} 
+            colors={[colors.white + '00', colors.white]}/>
+          </Col>
+          <Col size={60} style={{backgroundColor:colors.white}} />
+        </Row>
+      </TouchableOpacity>
+    )
+  }
+
+  cardStream() {
+    const {
+      scale, 
+      currentScreenSize,
+      coachSessionID,
+      currentSessionID
+    } = this.props;
+    const {loading} = this.state;
+    const activeSession = coachSessionID === currentSessionID
+    const width = currentScreenSize.currentWidth
+
+    const translateX = this.expandAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [width+90, width/2]
+    })
+
+    let height = 90*scale
+
+    return (
+      <Animated.View style={{...styles.card, height}}>
         <ButtonColor
-          color={
-            currentSessionID === coachSessionID
-              ? colors.greenLight
-              : colors.white
-          }
+          color={colors.white}
           onPressColor={colors.off}
           click={() => this.expand()}
-          style={{...styles.card, height: 80 * scale}}
+          style={{...styles.card, height}}
           view={() => {
             return loading ? (
               this.loading()
@@ -523,12 +587,27 @@ class CardStream extends Component {
                 <Col size={55} style={styleApp.center}>
                   {this.sessionInfo()}
                 </Col>
-                <Col size={15}>{this.expansionButton()}</Col>
+                <Col size={15}>
+                  <View style={{
+                    ...styleApp.fullSize, 
+                    ...styleApp.center
+                  }}>
+                    {(activeSession) ? this.viewLive() : null}
+                  </View>
+                </Col>
               </Row>
             );
           }}
         />
+        <Animated.View 
+          style={{
+            position:'absolute',
+            transform:[{translateX}],
+            // opacity:this.expandAnimation
+          }}>
         {this.cardBody()}
+        {this.backdrop()}
+        </Animated.View>
       </Animated.View>
     );
   }
@@ -567,11 +646,25 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 20,
   },
+  title: {
+    ...styleApp.text, 
+    color: colors.black, 
+    fontWeight: '600'
+  },
+  dateText: {
+    ...styleApp.text,
+    fontSize: 14,
+    color: colors.greyDark,
+    marginTop: 3,
+  },
   button: {
-    ...styleApp.center,
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: 45,
+    width: 45,
+    borderRadius: 25,
+    shadowColor: colors.black,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 9,
   },
   buttonText: {
     ...styleApp.textBold,
@@ -579,10 +672,8 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   buttonArea: {
-    paddingTop: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 35,
   },
 });
 
