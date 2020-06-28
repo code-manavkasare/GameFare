@@ -12,6 +12,10 @@ import {layoutAction} from '../../../../../actions/layoutActions';
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 
+import Mixpanel from 'react-native-mixpanel';
+import {mixPanelToken} from '../../../../database/firebase/tokens';
+Mixpanel.sharedInstanceWithToken(mixPanelToken);
+
 class HeaderListStream extends Component {
   constructor(props) {
     super(props);
