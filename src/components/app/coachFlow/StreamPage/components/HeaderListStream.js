@@ -96,7 +96,7 @@ class HeaderListStream extends Component {
         initialTitleOpacity={1}
         initialBorderWidth={1}
         icon2={!hideButtonNewSession && 'plus'}
-        sizeIcon2={20}
+        sizeIcon2={27}
         colorIcon2={colors.green}
         typeIcon2="font"
         clickButton2={() => this.newSession()}
