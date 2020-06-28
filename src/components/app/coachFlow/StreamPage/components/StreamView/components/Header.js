@@ -36,7 +36,7 @@ class HeaderStreamView extends Component {
             .ref('coachSessions/' + objectID + '/members/' + member.id)
             .update(member);
         }
-        return navigate('Stream');
+        return navigate('Session');
       },
     });
   };
