@@ -230,6 +230,9 @@ class PickMembers extends React.Component {
       loaderOnSubmit,
       onGoBack,
       noUpdateStatusBar,
+      icon2,
+      text2,
+      clickButton2,
     } = route.params;
     const {currentHeight} = this.props.currentScreenSize;
     return (
@@ -244,7 +247,14 @@ class PickMembers extends React.Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           icon1={closeButton ? 'times' : 'arrow-left'}
-          text2={'Next'}
+          icon2={icon2}
+          text2={text2}
+          clickButton2={async () => {
+            await this.setState({loaderHeader: true});
+            if (!noUpdateStatusBar)
+              StatusBar.setBarStyle('light-content', true);
+            clickButton2();
+          }}
           clickButton1={() => {
             if (!noUpdateStatusBar)
               StatusBar.setBarStyle('light-content', true);

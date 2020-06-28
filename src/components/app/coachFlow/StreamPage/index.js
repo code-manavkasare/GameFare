@@ -48,8 +48,8 @@ class StreamTab extends Component {
     } = this.props;
     const {navigate} = navigation;
     if (currentSessionID !== objectID) {
-      let session = await database
-        .ref(`coachSession/${objectID}`)
+      let session = await database()
+        .ref(`coachSessions/${objectID}`)
         .once('value');
       session = session.val();
       await coachAction('setCurrentSession', false);

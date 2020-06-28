@@ -21,7 +21,10 @@ import Communications from 'react-native-communications';
 import ScrollView from '../layout/scrollViews/ScrollView2';
 import sizes from '../style/sizes';
 import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
-import NavigationService, {navigate} from '../../../NavigationService';
+import NavigationService, {
+  navigate,
+  clickNotification,
+} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
@@ -353,6 +356,33 @@ class MorePage extends Component {
           'url',
           'https://www.getgamefare.com/terms',
         )}
+
+        {/* {this.button2({
+          text: 'Test notif open session',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () =>
+            clickNotification({
+              action: 'Stream',
+              screen: 'StreamPage',
+              objectID: '2v2aij5loe2kbxfv0n4',
+              notUniqueStack: 'true',
+              typeNavigation: 'navigate',
+              date: Date.now(),
+              data: {
+                action: 'Stream',
+                screen: 'StreamPage',
+                objectID: '2v2aij5loe2kbxfv0n4',
+                notUniqueStack: 'true',
+                typeNavigation: 'navigate',
+                date: Date.now(),
+              },
+            }),
+        })} */}
 
         {/* {__DEV__ && (
           <View>

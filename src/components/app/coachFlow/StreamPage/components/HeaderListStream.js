@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import StatusBar from '@react-native-community/status-bar';
 
 import {navigate} from '../../../../../../NavigationService';
 
@@ -27,7 +28,15 @@ class HeaderListStream extends Component {
       contactsOnly: false,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
-      titleHeader: 'Select members to add to the session',
+      titleHeader: 'Select members',
+      text2: 'Skip',
+      icon2: 'text',
+      clickButton2: async () => {
+        const session = await this.createSession({});
+        StatusBar.setBarStyle('light-content', true);
+        await navigate('StreamPage');
+        return this.openSession(session);
+      },
       onGoBack: async (members) => {
         members = Object.values(members).reduce(function(result, item) {
           result[item.id] = {
@@ -39,7 +48,7 @@ class HeaderListStream extends Component {
         console.log('members', members);
 
         const session = await this.createSession(members);
-        console.log('createSession', session);
+        StatusBar.setBarStyle('light-content', true);
         await navigate('StreamPage');
         return this.openSession(session);
       },
