@@ -162,7 +162,7 @@ class BottomButton extends Component {
       updateTimestamp(coachSessionID, userID, Date.now());
     };
     const permissionLibrary = await permission('library');
-    if (!permissionLibrary)
+    if (!permissionLibrary) {
       return navigate('Alert', {
         textButton: 'Open Settings',
         title:
@@ -179,9 +179,10 @@ class BottomButton extends Component {
           />
         ),
       });
-
-    const {otPublisherRef} = this.props;
-    await otPublisherRef.current.startRecording(messageCallback);
+    } else {
+      const {otPublisherRef} = this.props;
+      await otPublisherRef.current.startRecording(messageCallback);
+    }
   };
   stopRecording = async () => {
     const {
@@ -189,10 +190,10 @@ class BottomButton extends Component {
       userID,
       coachSessionID,
       uploadQueueAction,
-      recordPublisher
+      recordPublisher,
     } = this.props;
     const messageCallback = async (response) => {
-      await recordPublisher(false)
+      await recordPublisher(false);
       if (response.error)
         return Alert.alert(`Error storing recording: ${response.message}`);
       let {videoUrl} = response;

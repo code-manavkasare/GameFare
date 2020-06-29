@@ -457,7 +457,7 @@ class CardStream extends Component {
         <Row style={{...styles.buttonArea, width: width / 2, top}}>
           <Col size={50}>
             <Row style={{justifyContent: 'space-around'}}>
-              <ButtonColor
+              {/* <ButtonColor
                 onPressColor={colors.off}
                 color={colors.white}
                 click={() => {}}
@@ -472,7 +472,8 @@ class CardStream extends Component {
                     />
                   );
                 }}
-              />
+              /> */}
+              <View style={styles.button} />
               <ButtonColor
                 onPressColor={activeSession ? colors.redLight : colors.white}
                 color={activeSession ? colors.red : colors.white}
