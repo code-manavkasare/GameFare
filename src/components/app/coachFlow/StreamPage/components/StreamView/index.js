@@ -43,6 +43,8 @@ import {
   timeout,
 } from '../../../../../functions/coach';
 
+import {permission} from '../../../../../functions/pictures';
+
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
 import {
@@ -75,7 +77,7 @@ class StreamPage extends Component {
       open: false,
       portrait: true,
       date: 0,
-      publisherMount: true
+      publisherMount: true,
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -203,6 +205,7 @@ class StreamPage extends Component {
       this.openVideoShared();
     }
   }
+  async permissionLibrary() {}
   popupPermissionRecording() {
     let {userID, currentSessionID: coachSessionID} = this.props;
     const {coachSession} = this.state;
@@ -211,6 +214,7 @@ class StreamPage extends Component {
     if (!member) return;
     const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
+      permission('library');
       return database()
         .ref(`coachSessions/${coachSessionID}/members/${userID}`)
         .update({
@@ -403,7 +407,15 @@ class StreamPage extends Component {
     };
   }
   streamPage() {
-    const {coachSession, isConnected, publishAudio, publishVideo, coachSessionID, publisherMount, videoSource} = this.state;
+    const {
+      coachSession,
+      isConnected,
+      publishAudio,
+      publishVideo,
+      coachSessionID,
+      publisherMount,
+      videoSource,
+    } = this.state;
     const {userID, userConnected} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
@@ -438,17 +450,19 @@ class StreamPage extends Component {
               eventHandlers={this.sessionEventHandlers}
               sessionId={sessionID}
               token={member.tokenTokbox}>
-              {publisherMount && <OTPublisher
-                ref={this.otPublisherRef}
-                style={this.stylePublisher(userIsAlone)}
-                properties={{
-                  cameraPosition,
-                  videoSource: 'camera',
-                  publishAudio: publishAudio,
-                  publishVideo: publishVideo,
-                }}
-                eventHandlers={this.publisherEventHandlers}
-              />}
+              {publisherMount && (
+                <OTPublisher
+                  ref={this.otPublisherRef}
+                  style={this.stylePublisher(userIsAlone)}
+                  properties={{
+                    cameraPosition,
+                    videoSource: 'camera',
+                    publishAudio: publishAudio,
+                    publishVideo: publishVideo,
+                  }}
+                  eventHandlers={this.publisherEventHandlers}
+                />
+              )}
 
               <OTSubscriber style={styles.OTSubscriber}>
                 {this.renderSubscribers}
@@ -478,10 +492,10 @@ class StreamPage extends Component {
 
   async recordPublisher(start) {
     await this.setState({
-      videoSource: (start) ? 'recording' : 'camera',
-      publisherMount: false
-    })
-    await this.setState({publisherMount: true})
+      videoSource: start ? 'recording' : 'camera',
+      publisherMount: false,
+    });
+    await this.setState({publisherMount: true});
   }
 
   session() {
