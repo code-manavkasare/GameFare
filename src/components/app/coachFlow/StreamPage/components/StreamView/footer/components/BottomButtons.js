@@ -67,7 +67,7 @@ class BottomButton extends Component {
         queue.addJob('startRecording');
       } else {
         console.log('Queueing stop recording!');
-        queue.addJob('stopRecording');
+        queue.addJob('stopRecording', {discardFile: false});
       }
     }
     if (finalizeRecordingMember) {
@@ -184,7 +184,7 @@ class BottomButton extends Component {
       await otPublisherRef.current.startRecording(messageCallback);
     }
   };
-  stopRecording = async () => {
+  stopRecording = async (payload) => {
     const {
       members,
       userID,
@@ -192,6 +192,7 @@ class BottomButton extends Component {
       uploadQueueAction,
       recordPublisher,
     } = this.props;
+    const {discardFile} = payload
     const messageCallback = async (response) => {
       await recordPublisher(false);
       if (response.error)
@@ -204,16 +205,18 @@ class BottomButton extends Component {
         )[0];
         const {id: memberID, recording} = member;
         console.log('recording', recording);
-        const thumbnails = await generateFlagsThumbnail({
-          flags: recording.flags,
-          source: videoUrl,
-          coachSessionID,
-          memberID: memberID,
-        });
-        console.log('thumbnails', thumbnails);
-        // TODO-UPLOAD push thumbnails to upload
-        // call new uploadReducer add thumbnails array
-        uploadQueueAction('enqueueFilesUpload', thumbnails);
+        if (!discardFile) {
+          const thumbnails = await generateFlagsThumbnail({
+            flags: recording.flags,
+            source: videoUrl,
+            coachSessionID,
+            memberID: memberID,
+          });
+          console.log('thumbnails', thumbnails);
+          // TODO-UPLOAD push thumbnails to upload
+          // call new uploadReducer add thumbnails array
+          uploadQueueAction('enqueueFilesUpload', thumbnails);
+        }
       }
     };
 
@@ -381,7 +384,17 @@ class BottomButton extends Component {
     );
   }
   buttonEndCall() {
-    const {endCoachSession} = this.props;
+    const endCoachSession = async function () {
+      const {endCoachSession, members, userID} = this.props
+      const {recording} = this.state
+      const self = members[userID]
+      const cloudRecording = recording && self && self.recording && self.recording.isRecording
+      if (cloudRecording) {
+        queue.addJob('stopRecording', {discardFile: true});
+        this.stopRemoteRecording(self)
+      }
+      endCoachSession(true)
+    }.bind(this)
     return (
       <ButtonColor
         view={() => {
@@ -393,7 +406,7 @@ class BottomButton extends Component {
           );
         }}
         color={colors.title + '70'}
-        click={async () => endCoachSession(true)}
+        click={async () => endCoachSession()}
         style={styles.buttonRound}
         onPressColor={colors.redLight}
       />
