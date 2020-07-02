@@ -12,7 +12,6 @@ import database from '@react-native-firebase/database';
 import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
 
-
 import {resetDataCoachSession} from './coachActions';
 
 import {subscribeToTopics} from '../components/functions/notifications';
@@ -91,9 +90,10 @@ export const userAction = (val, data) => {
       await database()
         .ref('users/' + data.userID)
         .off('value');
+      await dispatch(resetDataCoachSession());
       await dispatch(resetUserInfo());
       await dispatch(resetMessages());
-      await dispatch(resetDataCoachSession());
+
       return true;
     } else if (val === 'setLayoutSettings') {
       return dispatch(setLayoutSettings(data));

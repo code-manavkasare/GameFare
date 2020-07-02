@@ -46,10 +46,15 @@ class ProfilePage extends Component {
     this.setState({isBlocked: block});
   };
 
-  picture = (pictureUrl) => {
+  picture = (pictureUrl, firstname, lastname) => {
     if (pictureUrl) {
       return <AsyncImage style={styles.asyncImage} mainImage={pictureUrl} />;
-    } else return <View style={styles.asyncImage} />;
+    } else
+      return (
+        <View style={styles.asyncImage}>
+          <Text style={styleApp.text}>{firstname[0] + lastname[0]}</Text>
+        </View>
+      );
   };
 
   button = (text, color, block) => {
@@ -81,7 +86,7 @@ class ProfilePage extends Component {
       <View style={styleApp.marginView}>
         <Row>
           <Col style={styleApp.center2} size={35}>
-            {this.picture(picture)}
+            {this.picture(picture, firstname, lastname)}
           </Col>
           <Col size={65}>
             <Text style={[styleApp.title, {fontSize: 22}]}>
@@ -106,7 +111,7 @@ class ProfilePage extends Component {
           inputRange={[5, 10]}
           loader={loader}
           initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'}
+          initialBackgroundColor={'white'} 
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           icon1={'arrow-left'}
@@ -135,11 +140,13 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   asyncImage: {
+    ...styleApp.center,
     width: 110,
     height: 110,
-    borderColor: colors.off,
+    borderColor: colors.grey,
+    borderWidth: 1,
     borderRadius: 6,
-    backgroundColor: colors.grey,
+    backgroundColor: colors.off2,
   },
 });
 
