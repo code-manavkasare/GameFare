@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   },
   buttonStartStreaming: {
     ...styleApp.center,
-    backgroundColor: colors.greyDark,
+    backgroundColor: colors.red,
     opacity: 0.8,
     overflow: 'hidden',
     height: 40,

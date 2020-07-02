@@ -52,7 +52,10 @@ class Draw extends Component {
   undo = (idLastDrawing) => {
     const {drawings} = this.state;
 
-    if (!idLastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
+    if (!idLastDrawing) {
+      const lastDrawing = getLastDrawing(drawings);
+      if (lastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
+    }
     if (idLastDrawing) {
       try {
         const newDrawing = Object.values(drawings)

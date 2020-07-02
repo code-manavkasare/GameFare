@@ -115,7 +115,9 @@ class CardFlag extends Component {
 
               <Col size={15} style={styleApp.center3}>
                 <AllIcons
-                  name={flagsSelected[flag.id] ? 'check-circle' : 'circle'}
+                  name={
+                    flagsSelected[flag.id] ? 'check-circle' : 'check-circle'
+                  }
                   type="font"
                   color={flagsSelected[flag.id] ? colors.green : colors.off}
                   size={22}
