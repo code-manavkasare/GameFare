@@ -181,7 +181,11 @@ class StreamPage extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {portrait} = this.props.currentScreenSize;
-    const {userID, currentSessionID: coachSessionID} = this.props;
+    const {
+      userID,
+      currentSessionID: coachSessionID,
+      userConnected,
+    } = this.props;
     console.log('prevState', prevState);
     console.log('this.state', this.state);
     if (
@@ -193,16 +197,19 @@ class StreamPage extends Component {
         .update({
           portrait: portrait,
         });
-    if (prevState.date !== this.state.date && this.state.open) {
-      this.popupPermissionRecording();
-      this.refreshTokenMember();
-    }
-    if (
-      !isEqual(prevState.coachSession, this.state.coachSession) &&
-      this.state.coachSession
-    ) {
-      this.refreshTokenMember();
-      this.openVideoShared();
+
+    if (userConnected) {
+      if (prevState.date !== this.state.date && this.state.open) {
+        this.popupPermissionRecording();
+        this.refreshTokenMember();
+      }
+      if (
+        !isEqual(prevState.coachSession, this.state.coachSession) &&
+        this.state.coachSession
+      ) {
+        this.refreshTokenMember();
+        this.openVideoShared();
+      }
     }
   }
   async permissionLibrary() {}
@@ -416,13 +423,12 @@ class StreamPage extends Component {
       publisherMount,
       videoSource,
     } = this.state;
-    const {userID, userConnected} = this.props;
+    const {userID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!coachSession.tokbox) return null;
 
     const {sessionID} = coachSession.tokbox;
-    if (!userConnected) return null;
     if (!sessionID) return this.loaderView('Room creation');
 
     const member = userPartOfSession(coachSession, userID);
@@ -499,7 +505,9 @@ class StreamPage extends Component {
   }
 
   session() {
+    const {userConnected, currentSessionID} = this.props;
     const {coachSession, isConnected, open, coachSessionID} = this.state;
+    if (!userConnected || !currentSessionID) return null;
 
     const {currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
@@ -511,7 +519,7 @@ class StreamPage extends Component {
 
         <Header
           coachSessionID={coachSessionID}
-          organizerID={coachSession && coachSession.info.organizer}
+          organizerID={coachSession && coachSession?.info.organizer}
           close={this.close.bind(this)}
           permissionOtherUserToRecord={
             coachSession

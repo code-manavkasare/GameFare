@@ -66,42 +66,47 @@ class MemberSource extends Component {
       return {member: props.member};
     return {};
   }
-  timer = (startTimeRecording) => {
-    const timerRecording = Number(new Date()) - startTimeRecording;
 
-    const optionsTimer = {
-      container: styles.viewRecordingTime,
-      text: [styleApp.text, {color: colors.white, fontSize: 12}],
+  timer() {
+    const {member} = this.state;
+    const {recording} = member;
+    const isRecording = recording && recording.isRecording;
+
+    const timer = () => {
+      const {startTimeRecording} = recording;
+      const timerRecording = Number(new Date()) - startTimeRecording;
+
+      const optionsTimer = {
+        container: styles.viewRecordingTime,
+        text: [styleApp.text, {color: colors.title, fontSize: 12}],
+      };
+      return (
+        <Stopwatch
+          laps
+          start={true}
+          startTime={timerRecording < 0 ? 0 : timerRecording}
+          options={optionsTimer}
+        />
+      );
     };
-    return (
-      <Stopwatch
-        laps
-        start={true}
-        startTime={timerRecording < 0 ? 0 : timerRecording}
-        options={optionsTimer}
-      />
-    );
-  };
+    if (isRecording) return timer(recording.startTimestamp);
+  }
   buttonRecord() {
     const {member} = this.state;
     const {recording} = member;
     const {selectMember} = this.props;
+    const isRecording = recording && recording.isRecording;
     return (
       <Col
-        size={30}
+        size={10}
         style={styleApp.center3}
         activeOpacity={0.7}
         onPress={() => selectMember(member)}>
-        {recording && recording.isRecording ? (
-          this.timer(recording.startTimestamp)
-        ) : (
-          <View style={styles.recordButton}>
-            <Text
-              style={[styleApp.textBold, {color: colors.white, fontSize: 12}]}>
-              Record
-            </Text>
-          </View>
-        )}
+        <View style={styles.containerRecording}>
+          <View
+            style={isRecording ? styles.recordButtonOn : styles.recordButtonOff}
+          />
+        </View>
       </Col>
     );
   }
@@ -114,12 +119,12 @@ class MemberSource extends Component {
     return (
       <View key={member.id} style={styles.cardUser}>
         <Row>
-          <Col size={20} style={styleApp.center2}>
+          <Col size={15} style={styleApp.center2}>
             <ImageUser user={member} />
           </Col>
 
-          <Col size={35} style={[styleApp.center2]}>
-            <Text style={[styles.nameText, {fontSize: 13}]} numberOfLines={1}>
+          <Col size={35} style={styleApp.center2}>
+            <Text style={[styleApp.text, {fontSize: 13}]}>
               {userID === member.id
                 ? 'Your Camera'
                 : firstname + ' ' + lastname}
@@ -133,6 +138,10 @@ class MemberSource extends Component {
               disableSnapShot={true}
               takeSnapShotCameraView={takeSnapShotCameraView}
             />
+          </Col>
+
+          <Col size={25} style={styleApp.center}>
+            {this.timer()}
           </Col>
 
           {this.buttonRecord()}
@@ -170,21 +179,32 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5,
     ...styleApp.center,
+  },
+  containerRecording: {
+    width: 40,
+    height: 40,
+    ...styleApp.center,
+    borderWidth: 3,
+    borderRadius: 20,
+    borderColor: colors.off,
+  },
+  recordButtonOff: {
+    width: 30,
+    height: 30,
+    ...styleApp.center,
+    paddingLeft: 10,
+    borderRadius: 20,
+    paddingRight: 10,
     backgroundColor: colors.red,
   },
-  recordButton: {
-    width: '100%',
-    height: 32,
+  recordButtonOn: {
+    width: 20,
+    height: 20,
     borderRadius: 5,
     ...styleApp.center,
     paddingLeft: 10,
     paddingRight: 10,
-    backgroundColor: colors.greyDark,
-  },
-  nameText: {
-    ...styleApp.text,
-    paddingRight: 15,
-    marginLeft: -5,
+    backgroundColor: colors.red,
   },
 });
 

@@ -475,7 +475,7 @@ class CardStream extends Component {
               /> */}
               <View style={styles.button} />
               <ButtonColor
-                onPressColor={activeSession ? colors.redLight : colors.white}
+                onPressColor={activeSession ? colors.redLight : colors.off}
                 color={activeSession ? colors.red : colors.white}
                 click={() => {
                   activeSession ? this.hangup() : this.deleteSession();
@@ -484,8 +484,8 @@ class CardStream extends Component {
                 view={() => {
                   return (
                     <AllIcons
-                      type={activeSession ? 'mat' : 'font'}
-                      name={activeSession ? 'call-end' : 'door-open'}
+                      type={activeSession ? 'mat' : 'moon'}
+                      name={activeSession ? 'call-end' : 'bin'}
                       size={20}
                       color={activeSession ? colors.white : colors.title}
                     />

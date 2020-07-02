@@ -124,6 +124,10 @@ const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/startTimestamp`
   ] = timestamp;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/stopTimestamp`
+  ] = null;
+
   database()
     .ref()
     .update(updates);

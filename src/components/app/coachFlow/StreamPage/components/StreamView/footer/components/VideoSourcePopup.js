@@ -15,6 +15,8 @@ import {native} from '../../../../../../../animations/animations';
 import colors from '../../../../../../../style/colors';
 import sizes from '../../../../../../../style/sizes';
 import styleApp from '../../../../../../../style/style';
+import ButtonColor from '../../../../../../../layout/Views/Button';
+import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
 class VideoSourcePopup extends Component {
   constructor(props) {
@@ -93,6 +95,22 @@ class VideoSourcePopup extends Component {
           },
         ]}>
         <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
+        <ButtonColor
+          view={() => {
+            return (
+              <AllIcons
+                name="times"
+                size={11}
+                color={colors.title}
+                type="font"
+              />
+            );
+          }}
+          click={() => this.close()}
+          color={colors.white}
+          style={styles.buttonClose}
+          onPressColor={colors.off}
+        />
         <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
         {members?.map((member) => (
           <MemberSource
@@ -145,6 +163,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
     zIndex: 1,
+  },
+  buttonClose: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    height: 35,
+    width: 35,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.off2,
   },
   fullPage: {
     position: 'absolute',
