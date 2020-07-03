@@ -60,6 +60,7 @@ class FinalizeRecording extends Component {
       return result;
     }, {});
     let updates = {};
+    updates[`coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`] = true
     updates[
       `coachSessions/${coachSessionID}/members/${
         member.id
