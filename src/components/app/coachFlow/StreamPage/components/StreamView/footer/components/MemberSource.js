@@ -96,7 +96,10 @@ class MemberSource extends Component {
     const {recording} = member;
     const {selectMember} = this.props;
     const isRecording = recording && recording.isRecording;
+    const isEnabled = recording && recording.enabled !== undefined && recording.enabled == false
+
     return (
+      !isEnabled ?
       <Col
         size={10}
         style={styleApp.center3}
@@ -108,6 +111,8 @@ class MemberSource extends Component {
           />
         </View>
       </Col>
+      : 
+      <Col size={10} />
     );
   }
 

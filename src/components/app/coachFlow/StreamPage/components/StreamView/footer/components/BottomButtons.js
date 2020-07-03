@@ -20,6 +20,7 @@ import {
   stopRemoteRecording,
   updateTimestamp,
   generateFlagsThumbnail,
+  toggleCloudRecording
 } from '../../../../../../../functions/coach';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
@@ -144,11 +145,13 @@ class BottomButton extends Component {
   stopRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
+    toggleCloudRecording(coachSessionID, recordingUser, false)
     stopRemoteRecording(recordingUser, coachSessionID, userID);
     navigate('FinalizeRecording', {
       member: member,
       coachSessionID: coachSessionID,
       onGoBack: () => {
+        toggleCloudRecording(coachSessionID, recordingUser, true)
         return this.setState({finalizeRecordingMember: false});
       },
     });
@@ -240,13 +243,13 @@ class BottomButton extends Component {
             </Animated.View>
           );
         }}
-        color={publishVideo ? colors.green : colors.redLight}
+        color={publishVideo ? colors.title + '70' : colors.red + '70'}
         click={async () => {
           await this.setState({publishVideo: !publishVideo});
           setState({publishVideo: !publishVideo});
         }}
         style={styles.buttonRound}
-        onPressColor={publishVideo ? colors.redLight : colors.greenLight}
+        onPressColor={publishVideo ? colors.red + '70' : colors.title + '70'}
       />
     );
   }
@@ -267,13 +270,13 @@ class BottomButton extends Component {
             </Animated.View>
           );
         }}
-        color={publishAudio ? colors.green : colors.redLight}
+        color={publishAudio ? colors.title + '70' : colors.red + '70'}
         click={async () => {
           await this.setState({publishAudio: !publishAudio});
           setState({publishAudio: !publishAudio});
         }}
         style={styles.buttonRound}
-        onPressColor={publishAudio ? colors.redLight : colors.greenLight}
+        onPressColor={publishAudio ? colors.red + '70' : colors.title + '70'}
       />
     );
   }
