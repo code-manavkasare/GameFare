@@ -144,7 +144,7 @@ class BottomButton extends Component {
   stopRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
-    stopRemoteRecording(recordingUser, coachSessionID, userID);
+    await stopRemoteRecording(recordingUser, coachSessionID, userID);
     navigate('FinalizeRecording', {
       member: member,
       coachSessionID: coachSessionID,
@@ -416,6 +416,7 @@ class BottomButton extends Component {
 
   recordingSelector() {
     const {members, coachSessionID} = this.props;
+
 
     const selectMember = (member) => {
       if (member.recording && member.recording.isRecording) {

@@ -159,7 +159,7 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
     .update(updates);
 };
 
-const stopRemoteRecording = (memberID, sessionIDFirebase) => {
+const stopRemoteRecording = async (memberID, sessionIDFirebase) => {
   let updates = {};
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
@@ -167,9 +167,10 @@ const stopRemoteRecording = (memberID, sessionIDFirebase) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/stopTimestamp`
   ] = Date.now();
-  database()
+  await database()
     .ref()
     .update(updates);
+  return true;
 };
 
 const getMember = (session, userID) => {
