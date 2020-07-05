@@ -20,6 +20,7 @@ import {
   stopRemoteRecording,
   updateTimestamp,
   generateFlagsThumbnail,
+  timeout,
 } from '../../../../../../../functions/coach';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
@@ -145,14 +146,8 @@ class BottomButton extends Component {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
     await stopRemoteRecording(recordingUser, coachSessionID, userID);
-    navigate('FinalizeRecording', {
-      member: member,
-      coachSessionID: coachSessionID,
-      onGoBack: () => {
-        return this.setState({finalizeRecordingMember: false});
-      },
-    });
-    this.setState({finalizeRecordingMember: member.id});
+    await this.setState({finalizeRecordingMember: member.id});
+    return true;
   };
   startRecording = async () => {
     const {coachSessionID, userID} = this.props;
@@ -417,13 +412,10 @@ class BottomButton extends Component {
   recordingSelector() {
     const {members, coachSessionID} = this.props;
 
-
     const selectMember = (member) => {
-      if (member.recording && member.recording.isRecording) {
-        this.stopRemoteRecording(member);
-      } else {
-        this.startRemoteRecording(member);
-      }
+      if (member.recording && member.recording.isRecording)
+        return this.stopRemoteRecording(member);
+      return this.startRemoteRecording(member);
     };
     return (
       <VideoSourcePopup
