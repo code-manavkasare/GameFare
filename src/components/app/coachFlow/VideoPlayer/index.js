@@ -138,7 +138,7 @@ export default class VideoPlayer extends Component {
     const {paused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     if (updateVideoInfoCloud && !noUpdateInCloud)
-      return updateVideoInfoCloud({paused: true});
+      await updateVideoInfoCloud({paused: true});
     return this.setState({paused: true, prevPaused: paused});
   };
   playPauseButton = (paused) => {
