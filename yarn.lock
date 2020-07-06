@@ -4438,7 +4438,7 @@ gamefare-camera-kit@^1.1.2:
   dependencies:
     lodash "^4.14.2"
 
-"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.8":
+"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.9":
   version "0.0.8"
   resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#c413a1be305ba636511aa370d015119d17fa3746"
   dependencies:

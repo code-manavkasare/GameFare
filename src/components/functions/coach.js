@@ -119,6 +119,14 @@ const stopRecording = (sessionIDFirebase) => {
     .update(updates);
 };
 
+const toggleCloudRecording = (sessionIDFirebase, memberID, enable) => {
+  let updates = {};
+  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/enabled`] = enable
+  database()
+    .ref()
+    .update(updates)
+}
+
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
   updates[
@@ -299,6 +307,7 @@ module.exports = {
   getVideoSharing,
   startRemoteRecording,
   stopRemoteRecording,
+  toggleCloudRecording,
   updateTimestamp,
   generateFlagsThumbnail,
   getVideoUUID,
