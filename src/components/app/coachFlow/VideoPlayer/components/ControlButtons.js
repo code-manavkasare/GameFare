@@ -67,7 +67,12 @@ export default class ControlButtons extends Component {
         // color={colors.grey}
         click={async () => {
           const currentTime = this.currentTimeRef.getCurrentTime();
-          if (totalTime === currentTime && paused) {
+          console.log(
+            'currentTime',
+            currentTime.toFixed(2),
+            totalTime.toFixed(2),
+          );
+          if (totalTime - currentTime < 0.05 && paused) {
             await seek(0);
             await this.setState({currentTime: 0});
           }
