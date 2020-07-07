@@ -106,7 +106,12 @@ class MemberSource extends Component {
           <Loader size={25} color={colors.red} />
         </Col>
       );
-    return (
+    const isEnabled =
+      recording &&
+      recording.enabled !== undefined &&
+      recording.enabled == false;
+
+    return !isEnabled ? (
       <Col
         size={10}
         style={styleApp.center3}
@@ -134,6 +139,8 @@ class MemberSource extends Component {
           />
         </View>
       </Col>
+    ) : (
+      <Col size={10} />
     );
   }
 

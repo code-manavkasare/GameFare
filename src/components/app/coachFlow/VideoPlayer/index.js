@@ -131,14 +131,13 @@ export default class VideoPlayer extends Component {
       currentTime: SliderTime,
       paused: prevPaused,
     });
-
     return true;
   };
   onSlidingStart = async () => {
     const {paused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     if (updateVideoInfoCloud && !noUpdateInCloud)
-      return updateVideoInfoCloud({paused: true});
+      await updateVideoInfoCloud({paused: true});
     return this.setState({paused: true, prevPaused: paused});
   };
   playPauseButton = (paused) => {
