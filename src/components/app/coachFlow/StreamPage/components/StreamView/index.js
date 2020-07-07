@@ -139,6 +139,7 @@ class StreamPage extends Component {
             connectionTimeStamp: Date.now(),
             portrait: portrait,
             isConnected: true,
+            recording: {enabled: true}
           });
         this.setState({
           isConnected: true,
@@ -490,18 +491,9 @@ class StreamPage extends Component {
           coachSessionID={coachSessionID}
           publishAudio={publishAudio}
           publishVideo={publishVideo}
-          recordPublisher={this.recordPublisher.bind(this)}
         />
       </View>
     );
-  }
-
-  async recordPublisher(start) {
-    await this.setState({
-      videoSource: start ? 'recording' : 'camera',
-      publisherMount: false,
-    });
-    await this.setState({publisherMount: true});
   }
 
   session() {
