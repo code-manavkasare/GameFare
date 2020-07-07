@@ -11,9 +11,12 @@ import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
 import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
 import {arrayUploadFromSnipets} from '../../../../../../../functions/videoManagement';
+import {timeout} from '../../../../../../../functions/coach';
+import {navigate} from '../../../../../../../../../NavigationService';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
+import Loader from '../../../../../../../layout/loaders/Loader';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -21,6 +24,7 @@ class MemberSource extends Component {
     this.state = {
       visible: false,
       member: {},
+      loader: false,
     };
   }
 
@@ -92,26 +96,47 @@ class MemberSource extends Component {
     if (isRecording) return timer(recording.startTimestamp);
   }
   buttonRecord() {
-    const {member} = this.state;
+    const {member, loader} = this.state;
     const {recording} = member;
-    const {selectMember} = this.props;
+    const {selectMember, coachSessionID} = this.props;
     const isRecording = recording && recording.isRecording;
-    const isEnabled = recording && recording.enabled !== undefined && recording.enabled == false
+    if (loader)
+      return (
+        <Col style={styleApp.center} size={10}>
+          <Loader size={25} color={colors.red} />
+        </Col>
+      );
+    const isEnabled = recording && recording.enabled === false;
 
-    return (
-      !isEnabled ?
+    return !isEnabled ? (
       <Col
         size={10}
         style={styleApp.center3}
         activeOpacity={0.7}
-        onPress={() => selectMember(member)}>
+        onPress={async () => {
+          const isStopingRecording =
+            member.recording && member.recording.isRecording;
+          if (isStopingRecording) await this.setState({loader: true});
+          await selectMember(member);
+          if (isStopingRecording) {
+            
+            await navigate('FinalizeRecording', {
+              member: member,
+              coachSessionID: coachSessionID,
+              onGoBack: () => {
+                return this.setState({finalizeRecordingMember: false});
+              },
+            });
+            this.setState({loader: false});
+          }
+        }}>
         <View style={styles.containerRecording}>
           <View
             style={isRecording ? styles.recordButtonOn : styles.recordButtonOff}
           />
         </View>
       </Col>
-      : 
+    ) : (
       <Col size={10} />
     );
   }

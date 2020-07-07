@@ -60,7 +60,9 @@ class FinalizeRecording extends Component {
       return result;
     }, {});
     let updates = {};
-    updates[`coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`] = true
+    updates[
+      `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
+    ] = true;
     updates[
       `coachSessions/${coachSessionID}/members/${
         member.id
@@ -76,6 +78,19 @@ class FinalizeRecording extends Component {
 
     this.goBack();
   };
+  async close() {
+    const {route} = this.props;
+    const {member} = this.state;
+    const {coachSessionID} = route.params;
+    let updates = {};
+    updates[
+      `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
+    ] = true;
+    await database()
+      .ref()
+      .update(updates);
+    this.goBack();
+  }
   async goBack() {
     const {navigation, route} = this.props;
     const {goBack} = navigation;
@@ -133,6 +148,7 @@ class FinalizeRecording extends Component {
     const {member, flagsSelected} = this.state;
     const {recording} = member;
     const {flags} = recording;
+    console.log('recording', recording);
     return (
       <View style={[{minHeight: 800}]}>
         {this.flagList(flags)}
@@ -157,7 +173,10 @@ class FinalizeRecording extends Component {
           }}
           disableSelectTime={true}
           flag={{
-            time: recording.stopTimestamp - recording.startTimestamp,
+            time:
+              recording.stopTimestamp - recording.startTimestamp
+                ? recording.stopTimestamp - recording.startTimestamp
+                : '',
             fullVideo: true,
             thumbnail: recording.thumbnail,
             id: 'fullVideo',
@@ -180,7 +199,7 @@ class FinalizeRecording extends Component {
           initialTitleOpacity={1}
           icon1="times"
           icon2={null}
-          clickButton1={() => this.goBack()}
+          clickButton1={() => this.close()}
         />
 
         <ScrollView

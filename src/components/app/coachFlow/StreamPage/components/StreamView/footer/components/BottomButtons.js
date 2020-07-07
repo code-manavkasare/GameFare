@@ -20,7 +20,7 @@ import {
   stopRemoteRecording,
   updateTimestamp,
   generateFlagsThumbnail,
-  toggleCloudRecording
+  toggleCloudRecording,
 } from '../../../../../../../functions/coach';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
@@ -145,17 +145,11 @@ class BottomButton extends Component {
   stopRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
-    toggleCloudRecording(coachSessionID, recordingUser, false)
-    stopRemoteRecording(recordingUser, coachSessionID, userID);
-    navigate('FinalizeRecording', {
-      member: member,
-      coachSessionID: coachSessionID,
-      onGoBack: () => {
-        toggleCloudRecording(coachSessionID, recordingUser, true)
-        return this.setState({finalizeRecordingMember: false});
-      },
-    });
-    this.setState({finalizeRecordingMember: member.id});
+    await toggleCloudRecording(coachSessionID, recordingUser, false);
+    await stopRemoteRecording(recordingUser, coachSessionID, userID);
+
+    await this.setState({finalizeRecordingMember: member.id});
+    return true;
   };
   startRecording = async () => {
     const {coachSessionID, userID} = this.props;
@@ -195,7 +189,7 @@ class BottomButton extends Component {
       uploadQueueAction,
       recordPublisher,
     } = this.props;
-    const {discardFile} = payload
+    const {discardFile} = payload;
     const messageCallback = async (response) => {
       await recordPublisher(false);
       if (response.error)
@@ -387,17 +381,18 @@ class BottomButton extends Component {
     );
   }
   buttonEndCall() {
-    const endCoachSession = async function () {
-      const {endCoachSession, members, userID} = this.props
-      const {recording} = this.state
-      const self = members[userID]
-      const cloudRecording = recording && self && self.recording && self.recording.isRecording
+    const endCoachSession = async function() {
+      const {endCoachSession, members, userID} = this.props;
+      const {recording} = this.state;
+      const self = members[userID];
+      const cloudRecording =
+        recording && self && self.recording && self.recording.isRecording;
       if (cloudRecording) {
         queue.addJob('stopRecording', {discardFile: true});
-        this.stopRemoteRecording(self)
+        this.stopRemoteRecording(self);
       }
-      endCoachSession(true)
-    }.bind(this)
+      endCoachSession(true);
+    }.bind(this);
     return (
       <ButtonColor
         view={() => {
@@ -434,11 +429,9 @@ class BottomButton extends Component {
     const {members, coachSessionID} = this.props;
 
     const selectMember = (member) => {
-      if (member.recording && member.recording.isRecording) {
-        this.stopRemoteRecording(member);
-      } else {
-        this.startRemoteRecording(member);
-      }
+      if (member.recording && member.recording.isRecording)
+        return this.stopRemoteRecording(member);
+      return this.startRemoteRecording(member);
     };
     return (
       <VideoSourcePopup
