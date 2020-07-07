@@ -106,10 +106,7 @@ class MemberSource extends Component {
           <Loader size={25} color={colors.red} />
         </Col>
       );
-    const isEnabled =
-      recording &&
-      recording.enabled !== undefined &&
-      recording.enabled == false;
+    const isEnabled = recording && recording.enabled === false;
 
     return !isEnabled ? (
       <Col
@@ -122,8 +119,8 @@ class MemberSource extends Component {
           if (isStopingRecording) await this.setState({loader: true});
           await selectMember(member);
           if (isStopingRecording) {
-            await timeout(1500);
-            navigate('FinalizeRecording', {
+            
+            await navigate('FinalizeRecording', {
               member: member,
               coachSessionID: coachSessionID,
               onGoBack: () => {
