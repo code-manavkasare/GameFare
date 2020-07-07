@@ -76,8 +76,7 @@ class StreamPage extends Component {
       // videoSource: 'camera',
       open: false,
       portrait: true,
-      date: 0,
-      publisherMount: true,
+      date: 0
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -421,7 +420,6 @@ class StreamPage extends Component {
       publishAudio,
       publishVideo,
       coachSessionID,
-      publisherMount,
       videoSource,
     } = this.state;
     const {userID} = this.props;
@@ -457,20 +455,17 @@ class StreamPage extends Component {
               eventHandlers={this.sessionEventHandlers}
               sessionId={sessionID}
               token={member.tokenTokbox}>
-              {publisherMount && (
-                <OTPublisher
-                  ref={this.otPublisherRef}
-                  style={this.stylePublisher(userIsAlone)}
-                  properties={{
-                    cameraPosition,
-                    videoSource: 'camera',
-                    publishAudio: publishAudio,
-                    publishVideo: publishVideo,
-                  }}
-                  eventHandlers={this.publisherEventHandlers}
-                />
-              )}
-
+              <OTPublisher
+                ref={this.otPublisherRef}
+                style={this.stylePublisher(userIsAlone)}
+                properties={{
+                  cameraPosition,
+                  videoSource: 'camera',
+                  publishAudio: publishAudio,
+                  publishVideo: publishVideo,
+                }}
+                eventHandlers={this.publisherEventHandlers}
+              />
               <OTSubscriber style={styles.OTSubscriber}>
                 {this.renderSubscribers}
               </OTSubscriber>
