@@ -4438,9 +4438,9 @@ gamefare-camera-kit@^1.1.2:
   dependencies:
     lodash "^4.14.2"
 
-"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.10":
-  version "0.0.8"
-  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#3fe1f17b95d1802c4047525ef366f82643adac65"
+"gamefare-local-opentok@git+https://gitlab.com/gamefare/gamefare-local-opentok.git":
+  version "0.0.10"
+  resolved "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#a668cb794c90c86e59143e1a86b25c204f7a477e"
   dependencies:
     axios "^0.19.0"
     prop-types "^15.7.2"
