@@ -186,12 +186,10 @@ class BottomButton extends Component {
       members,
       userID,
       coachSessionID,
-      uploadQueueAction,
-      recordPublisher,
+      uploadQueueAction
     } = this.props;
     const {discardFile} = payload;
     const messageCallback = async (response) => {
-      await recordPublisher(false);
       if (response.error)
         return Alert.alert(`Error storing recording: ${response.message}`);
       let {videoUrl} = response;
