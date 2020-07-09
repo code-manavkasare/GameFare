@@ -60,6 +60,8 @@ import UploadButton from '../../../../elementsUpload/UploadButton';
 import Footer from './footer/index';
 import axios from 'axios';
 
+import NetInfo from '@react-native-community/netinfo';
+
 class StreamPage extends Component {
   constructor(props) {
     super(props);
@@ -76,7 +78,9 @@ class StreamPage extends Component {
       // videoSource: 'camera',
       open: false,
       portrait: true,
-      date: 0
+      date: 0,
+      netInfoConnected: true,
+      netInfoUnsubscribe: null,
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -167,6 +171,15 @@ class StreamPage extends Component {
   }
   componentDidMount() {
     this.refreshTokenMember();
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log('net info', state);
+      this.setState({netInfoConnected: state.isInternetReachable});
+    });
+    this.setState({netInfoUnsubscribe: unsubscribe});
+  }
+
+  componentWillUnmount() {
+    this.state.netInfoUnsubscribe();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -186,8 +199,6 @@ class StreamPage extends Component {
       currentSessionID: coachSessionID,
       userConnected,
     } = this.props;
-    console.log('prevState', prevState);
-    console.log('this.state', this.state);
     if (
       portrait !== prevProps.currentScreenSize.portrait &&
       this.state.isConnected
@@ -429,6 +440,11 @@ class StreamPage extends Component {
 
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
+
+    const {netInfoConnected} = this.state;
+    if (!netInfoConnected) {
+      return this.loaderView('Network disconnected');
+    }
 
     const member = userPartOfSession(coachSession, userID);
 
