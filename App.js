@@ -96,7 +96,7 @@ class App extends Component {
     return (
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
-        <BatterySaveDimmer />
+        {/* <BatterySaveDimmer /> */}
         <OrientationListener />
         <Notification />
         <UploadManager />
