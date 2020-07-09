@@ -3,7 +3,6 @@ import {View, Text, StyleSheet, Animated, Easing} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
-import {Stopwatch} from 'react-native-stopwatch-timer';
 import isEqual from 'lodash.isequal';
 import database from '@react-native-firebase/database';
 
@@ -11,12 +10,12 @@ import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
 import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
 import {arrayUploadFromSnipets} from '../../../../../../../functions/videoManagement';
-import {timeout} from '../../../../../../../functions/coach';
 import {navigate} from '../../../../../../../../../NavigationService';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
+import Timer from './Timer'
 
 class MemberSource extends Component {
   constructor(props) {
@@ -76,21 +75,16 @@ class MemberSource extends Component {
     const {recording} = member;
     const isRecording = recording && recording.isRecording;
 
-    const timer = () => {
-      const {startTimeRecording} = recording;
-      const timerRecording = Number(new Date()) - startTimeRecording;
-
+    const timer = (startTimestamp) => {
       const optionsTimer = {
         container: styles.viewRecordingTime,
         text: [styleApp.text, {color: colors.title, fontSize: 12}],
       };
       return (
-        <Stopwatch
-          laps
-          start={true}
-          startTime={timerRecording < 0 ? 0 : timerRecording}
+        <Timer 
+          startTime={startTimestamp < 0 ? 0 : startTimestamp} 
           options={optionsTimer}
-        />
+          />
       );
     };
     if (isRecording) return timer(recording.startTimestamp);
