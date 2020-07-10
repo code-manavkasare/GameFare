@@ -48,13 +48,13 @@ class AppSettings extends Component {
     const {batterySaver} = this.props;
     return (
       <View style={styleApp.marginView}>
-        {this.settingsSwitch(
+        {/* {this.settingsSwitch(
           batterySaver,
           async () => {
             this.props.appSettingsAction('toggleBatterySaver');
           },
           'Battery saver',
-        )}
+        )} */}
       </View>
     );
   }
