@@ -186,8 +186,6 @@ class StreamPage extends Component {
       currentSessionID: coachSessionID,
       userConnected,
     } = this.props;
-    console.log('prevState', prevState);
-    console.log('this.state', this.state);
     if (
       portrait !== prevProps.currentScreenSize.portrait &&
       this.state.isConnected
