@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
+import Orientation from 'react-native-orientation-locker';
 
 import {coachAction} from '../../actions/coachActions';
 import {layoutAction} from '../../actions/layoutActions';
@@ -41,6 +42,12 @@ class MorePage extends Component {
     super(props);
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  componentDidMount() {
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.lockToPortrait();
+    });
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;

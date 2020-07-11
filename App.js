@@ -10,15 +10,18 @@ import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
-import UploadManager from './src/components/app/elementsUpload/UploadManager'
+import UploadManager from './src/components/app/elementsUpload/UploadManager';
 
 import {userAction} from './src/actions/userActions';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
-import OrientationListener from './src/components/hoc/orientationListener';
+
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
 import * as Sentry from '@sentry/react-native';
+
+import Orientation from 'react-native-orientation-locker';
+Orientation.lockToPortrait();
 
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
@@ -97,7 +100,7 @@ class App extends Component {
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
         {/* <BatterySaveDimmer /> */}
-        <OrientationListener />
+
         <Notification />
         <UploadManager />
       </NavigationContainer>

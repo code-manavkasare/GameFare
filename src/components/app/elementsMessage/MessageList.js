@@ -2,6 +2,7 @@ import React from 'react';
 import {AppState, View, Text, Dimensions, Image, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {keys} from 'ramda';
+import Orientation from 'react-native-orientation-locker';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
@@ -31,6 +32,10 @@ class MessageTab extends React.Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.lockToPortrait();
+    });
     if (this.props.userConnected) this.loadDiscussions();
     AppState.addEventListener('change', this._handleAppStateChange);
   }

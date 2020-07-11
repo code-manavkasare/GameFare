@@ -50,14 +50,14 @@ class Footer extends React.Component {
     if (notificationOpen) return clickNotification(notificationOpen);
   }
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.isFooterVisible !== this.props.isFooterVisible) {
-      return this.translateFooter(this.props.isFooterVisible);
-    } else if (prevProps.activeTab !== this.props.activeTab) {
-      const {routes} = this.props.state;
-      const index = routes.map((e) => e.name).indexOf(this.props.activeTab);
-      console.log('activeTab', this.props.activeTab);
-      return this.translateBlueView(index, routes.length - 1);
-    }
+    // if (prevProps.isFooterVisible !== this.props.isFooterVisible) {
+    //   return this.translateFooter(this.props.isFooterVisible);
+    // } else if (prevProps.activeTab !== this.props.activeTab) {
+    //   const {routes} = this.props.state;
+    //   const index = routes.map((e) => e.name).indexOf(this.props.activeTab);
+    //   console.log('activeTab', this.props.activeTab);
+    //   return this.translateBlueView(index, routes.length - 1);
+    // }
   };
   translateFooter = (open) => {
     return Animated.timing(
@@ -84,7 +84,10 @@ class Footer extends React.Component {
       navigation,
       colors,
       currentScreenSize,
+      isFooterVisible,
     } = this.props;
+    console.log('render footer', this.props);
+    if (!isFooterVisible) return null;
     const {currentWidth, portrait} = currentScreenSize;
     return (
       <Animated.View
