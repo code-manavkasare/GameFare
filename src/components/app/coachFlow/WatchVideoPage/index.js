@@ -156,7 +156,6 @@ class WatchVideoPage extends Component {
     const video = this.video(this.props, this.state);
     const drawingEnable =
       personSharingScreen && archiveID === videoBeingShared.id;
-    console.log('render watch video page', drawingOpen);
     return (
       <Animated.View
         style={[

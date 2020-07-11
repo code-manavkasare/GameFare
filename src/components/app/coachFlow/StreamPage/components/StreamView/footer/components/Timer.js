@@ -17,8 +17,12 @@ export default class Timer extends Component {
     this.updateTime()
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.timeout)
+  }
+
   updateTime() {
-    setTimeout(() => {this.setState({now: Date.now()})}, 1000)
+    this.timeout = setTimeout(() => {this.setState({now: Date.now()})}, 1000)
   }
 
   static getDerivedStateFromProps(props, state) {
