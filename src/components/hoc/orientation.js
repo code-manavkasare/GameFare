@@ -28,8 +28,6 @@ function unlocked(WrappedComponent) {
     }
     componentDidMount() {
       const {navigation} = this.props;
-      console.log('profile mounted', navigation);
-
       this.focusListener = navigation.addListener('focus', () => {
         console.log('bim focus profile');
         Orientation.unlockAllOrientations();
