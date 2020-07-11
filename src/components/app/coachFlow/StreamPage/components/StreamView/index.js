@@ -18,8 +18,8 @@ import Config from 'react-native-config';
 import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
-
 import StatusBar from '@react-native-community/status-bar';
+import Orientation from 'react-native-orientation-locker';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -142,7 +142,7 @@ class StreamPage extends Component {
             connectionTimeStamp: Date.now(),
             portrait: portrait,
             isConnected: true,
-            recording: {enabled: true}
+            recording: {enabled: true},
           });
         this.setState({
           isConnected: true,
@@ -170,12 +170,17 @@ class StreamPage extends Component {
     };
   }
   componentDidMount() {
+    console.log('componentDidMount stream view');
+    const {navigation} = this.props;
     this.refreshTokenMember();
-    const unsubscribe = NetInfo.addEventListener(state => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
       console.log('net info', state);
       this.setState({netInfoConnected: state.isInternetReachable});
     });
     this.setState({netInfoUnsubscribe: unsubscribe});
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.unlockAllOrientations();
+    });
   }
 
   componentWillUnmount() {
@@ -516,8 +521,9 @@ class StreamPage extends Component {
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!open) return null;
+    console.log('render stream view !!');
     return (
-      <View style={styleApp.stylePage}>
+      <View style={[styleApp.stylePage, {backgroundColor: 'red'}]}>
         <KeepAwake />
 
         <Header

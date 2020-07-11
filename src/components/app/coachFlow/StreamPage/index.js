@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import StatusBar from '@react-native-community/status-bar';
 import database from '@react-native-firebase/database';
+import Orientation from 'react-native-orientation-locker';
 
 import {coachAction} from '../../../../actions/coachActions';
 import {layoutAction} from '../../../../actions/layoutActions';
@@ -31,8 +32,12 @@ class StreamTab extends Component {
     this.openSession = this.openSession.bind(this);
   }
   componentDidMount = () => {
+    const {navigation} = this.props;
     const {params} = this.props.route;
     if (params?.objectID) this.openSession(params.objectID);
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.lockToPortrait();
+    });
   };
   componentDidUpdate = (prevProps, prevState) => {
     const {params} = this.props.route;

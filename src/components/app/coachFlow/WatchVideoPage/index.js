@@ -41,7 +41,7 @@ class WatchVideoPage extends Component {
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
-    this.translateYPage = new Animated.Value(height * 2);
+    this.translateYPage = new Animated.Value(1000);
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -93,10 +93,7 @@ class WatchVideoPage extends Component {
     }
 
     Animated.parallel([
-      Animated.spring(
-        this.translateYPage,
-        native(watchVideo ? 0 : height, 200),
-      ),
+      Animated.spring(this.translateYPage, native(watchVideo ? 0 : 1000, 200)),
     ]).start(async () => {
       if (!watchVideo) {
         this.translateXPage.setValue(currentWidth);
@@ -161,8 +158,8 @@ class WatchVideoPage extends Component {
         style={[
           styles.page,
           {
-            width: currentWidth,
-            height: currentHeight,
+            width: '100%',
+            height: '100%',
             transform: [
               {translateX: this.translateXPage},
               {translateY: this.translateYPage},

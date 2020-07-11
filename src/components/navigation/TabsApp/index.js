@@ -74,6 +74,9 @@ function TabsApp() {
         options={{
           pageStack: 'Session',
           label: 'Session',
+          cardStyle: {
+            backgroundColor: 'transparent',
+          },
         }}
       />
     </Tab.Navigator>

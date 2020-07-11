@@ -12,6 +12,7 @@ import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
 import StatusBar from '@react-native-community/status-bar';
+import Orientation from 'react-native-orientation-locker';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -48,6 +49,10 @@ class PickMembers extends React.Component {
   async componentDidMount() {
     this.changeSearch('');
     StatusBar.setBarStyle('dark-content', true);
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.lockToPortrait();
+    });
   }
   static getDerivedStateFromProps(props, state) {
     const {route} = props;
