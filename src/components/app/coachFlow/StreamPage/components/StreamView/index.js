@@ -411,13 +411,7 @@ class StreamPage extends Component {
       </View>
     );
   }
-  styleSession() {
-    const {currentScreenSize} = this.props;
-    return {
-      height: currentScreenSize.currentHeight,
-      width: currentScreenSize.currentWidth,
-    };
-  }
+
   stylePublisher(userIsAlone) {
     if (userIsAlone) return styles.OTPublisherAlone;
 
@@ -436,7 +430,6 @@ class StreamPage extends Component {
       publishAudio,
       publishVideo,
       coachSessionID,
-      videoSource,
     } = this.state;
     const {userID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
@@ -468,7 +461,7 @@ class StreamPage extends Component {
           coachSessionID={coachSessionID}
         />
         {!publishVideo && this.pausedView(userIsAlone)}
-        <View style={this.styleSession()}>
+        <View style={styleApp.fullSize}>
           {member.tokenTokbox && (
             <OTSession
               apiKey={Config.OPENTOK_API}
@@ -521,9 +514,8 @@ class StreamPage extends Component {
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!open) return null;
-    console.log('render stream view !!');
     return (
-      <View style={[styleApp.stylePage, {backgroundColor: 'red'}]}>
+      <View style={styleApp.stylePage}>
         <KeepAwake />
 
         <Header
