@@ -121,15 +121,18 @@ export default class VideoPlayer extends Component {
     const {currentTime} = info;
     if (!paused) this.controlButtonRef.setCurrentTime(currentTime);
   };
-  onSlidingComplete = async (SliderTime) => {
+  onSlidingComplete = async (SliderTime, forcePlay) => {
     const {prevPaused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
     if (isCloudUpdating)
-      await updateVideoInfoCloud({currentTime: SliderTime, paused: prevPaused});
+      await updateVideoInfoCloud({
+        currentTime: SliderTime,
+        paused: forcePlay ? forcePlay : prevPaused,
+      });
     await this.setState({
       currentTime: SliderTime,
-      paused: prevPaused,
+      paused: forcePlay ? forcePlay : prevPaused,
     });
     return true;
   };
@@ -280,7 +283,8 @@ export default class VideoPlayer extends Component {
                       onBuffer={this.onBuffer}
                       paused={paused}
                       onProgress={(info) => !paused && this.onProgress(info)}
-                      onEnd={() => {
+                      onEnd={(callback) => {
+                        console.log('end reached', callback);
                         this.togglePlayPause(true);
                         this.controlButtonRef.setCurrentTime(totalTime, true);
                       }}

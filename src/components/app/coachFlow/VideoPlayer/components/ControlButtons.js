@@ -50,7 +50,7 @@ export default class ControlButtons extends Component {
     return this.currentTimeRef.getCurrentTime();
   }
   playPauseButton = () => {
-    const {togglePlayPause, totalTime, seek} = this.props;
+    const {togglePlayPause, totalTime, seek, onSlidingComplete} = this.props;
     const {paused} = this.state;
     return (
       <ButtonColor
@@ -67,13 +67,9 @@ export default class ControlButtons extends Component {
         // color={colors.grey}
         click={async () => {
           const currentTime = this.currentTimeRef.getCurrentTime();
-          console.log(
-            'currentTime',
-            currentTime.toFixed(2),
-            totalTime.toFixed(2),
-          );
           if (totalTime - currentTime < 0.05 && paused) {
             await seek(0);
+            await onSlidingComplete(0, true);
             await this.setState({currentTime: 0});
           }
           await this.setState({paused: !paused});
