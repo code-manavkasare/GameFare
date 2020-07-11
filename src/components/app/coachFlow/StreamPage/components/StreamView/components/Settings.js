@@ -82,13 +82,13 @@ class Settings extends Component {
           },
           'Allow call participants to remotely trigger a recording',
         )}
-        {this.settingsSwitch(
+        {/* {this.settingsSwitch(
           batterySaver,
           async () => {
             that.props.appSettingsAction('toggleBatterySaver');
           },
           'Turn on battery saver mode',
-        )}
+        )} */}
       </View>
     );
   }
