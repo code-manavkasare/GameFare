@@ -15,7 +15,7 @@ import {navigate} from '../../../../../../../../../NavigationService';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
-import Timer from './Timer'
+import Timer from './Timer';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -81,16 +81,16 @@ class MemberSource extends Component {
         text: [styleApp.text, {color: colors.title, fontSize: 12}],
       };
       return (
-        <Timer 
-          startTime={startTimestamp < 0 ? 0 : startTimestamp} 
+        <Timer
+          startTime={startTimestamp < 0 ? 0 : startTimestamp}
           options={optionsTimer}
-          />
+        />
       );
     };
     if (isRecording) return timer(recording.startTimestamp);
   }
   buttonRecord() {
-    const {member, loader} = this.state;
+    let {member, loader} = this.state;
     const {recording} = member;
     const {selectMember, coachSessionID} = this.props;
     const isRecording = recording && recording.isRecording;
@@ -113,7 +113,10 @@ class MemberSource extends Component {
           if (isStopingRecording) await this.setState({loader: true});
           await selectMember(member);
           if (isStopingRecording) {
-            
+            let newRecording = member.recording;
+            newRecording.stopTimestamp = Date.now();
+            member.recording = newRecording;
+            console.log('sjdhfdfhgdkfhgjdfg', member);
             await navigate('FinalizeRecording', {
               member: member,
               coachSessionID: coachSessionID,

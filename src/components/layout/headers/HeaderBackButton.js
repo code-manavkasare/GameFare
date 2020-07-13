@@ -161,7 +161,7 @@ class HeaderBackButton extends Component {
             }}
             click={() => clickButtonOffset()}
             color={colorIconOffset}
-            style={[styleApp.center, styleApp.fullSize]}
+            style={styles.buttonRight}
             onPressColor={colors.off}
           />
         </Animated.View>

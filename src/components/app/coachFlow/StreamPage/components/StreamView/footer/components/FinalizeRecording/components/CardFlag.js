@@ -11,13 +11,14 @@ import AsyncImage from '../../../../../../../../../layout/image/AsyncImage';
 import colors from '../../../../../../../../../style/colors';
 import styleApp from '../../../../../../../../../style/style';
 import Loader from '../../../../../../../../../layout/loaders/Loader';
+import {duration} from '../../../../../../../../../functions/date';
 
 class CardFlag extends Component {
   constructor(props) {
     super(props);
     this.state = {
       flag: this.props.flag,
-      snipetTime: 30,
+      snipetTime: 15,
       selected: false,
     };
   }
@@ -79,9 +80,13 @@ class CardFlag extends Component {
     );
   };
   cardFlag = () => {
-    const {flagsSelected, click} = this.props;
-    const {flag} = this.state;
-    const {thumbnail, time} = flag;
+    const {flagsSelected, click, totalTime} = this.props;
+    console.log('totalTime', totalTime);
+    const {flag, snipetTime} = this.state;
+    const {thumbnail, time, id} = flag;
+    const flagTime = Number((time / 1000).toFixed(0));
+    const startTime = Math.max(0, flagTime - snipetTime);
+    const endTime = Math.min(flagTime + snipetTime, totalTime);
     return (
       <ButtonColor
         color={colors.white}
@@ -106,12 +111,26 @@ class CardFlag extends Component {
                 )}
               </Col>
               <Col size={55} style={[styleApp.center2, {paddingLeft: 10}]}>
-                <Text style={[styleApp.text, {fontSize: 12}]}>
-                  {(time / 1000).toFixed(1)}sec
+                <Text style={[styleApp.title, {fontSize: 17}]}>
+                  {id !== 'fullVideo'
+                    ? duration(endTime - startTime)
+                    : duration(flagTime)}{' '}
+                  <Text style={{fontWeight: 'normal', fontSize: 12}}>
+                    (duration)
+                  </Text>
                 </Text>
-                {this.selectTime()}
+                {id !== 'fullVideo' && (
+                  <Text style={[styleApp.textBold, {fontSize: 14}]}>
+                    <Text style={{fontWeight: 'normal', fontSize: 12}}>
+                      from
+                    </Text>{' '}
+                    {duration(startTime)}{' '}
+                    <Text style={{fontWeight: 'normal', fontSize: 12}}>to</Text>{' '}
+                    {duration(endTime)}
+                  </Text>
+                )}
+                {/* {this.selectTime()} */}
               </Col>
-              {/* <Col size={35}>{this.selectTime()}</Col> */}
 
               <Col size={15} style={styleApp.center3}>
                 <AllIcons

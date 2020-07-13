@@ -79,7 +79,6 @@ class StreamTab extends Component {
     const {permissionsCamera, initialLoader} = this.state;
     return (
       <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
-        <ButtonNotification displayBeforeLoader={true} />
         {initialLoader && this.viewLoader()}
 
         {!permissionsCamera ? (

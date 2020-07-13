@@ -101,45 +101,45 @@ class FinalizeRecording extends Component {
   }
   flagList(flags) {
     if (!flags) return null;
-    const {flagsSelected} = this.state;
+    const {member, flagsSelected} = this.state;
+    const {recording} = member;
+    console.log('recording', recording);
     return (
       <View>
         <View style={styleApp.marginView}>
-          <Text style={styleApp.title}>
-            Pick the video segments you’d like to upload!
-          </Text>
-          <Text style={[styleApp.text, {marginTop: 10, marginBottom: 10}]}>
-            You can pick the duration of the video upload on either side of the
-            highlight flag you placed. A setting of 30 seconds means the video
-            will be 1min long, and will start 30 seconds prior to the highlight
-            flag and end 30 seconds after it.
-          </Text>
+          <Text style={styleApp.title}>Highlights</Text>
         </View>
-        {Object.values(flags).map((flag) => (
-          <CardFlag
-            key={flag.id}
-            flag={flag}
-            flagsSelected={flagsSelected}
-            onRef={(ref) => (this.itemsRef[flag.id] = ref)}
-            click={() => {
-              let {flagsSelected} = this.state;
-              console.log('clicl');
-              delete flagsSelected['fullVideo'];
-              if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
-              else
-                flagsSelected = {
-                  ...flagsSelected,
-                  [flag.id]: {
-                    time: flag.time,
-                    id: flag.id,
-                    thumbnail: flag.thumbnail,
-                  },
-                };
-              console.log('flagsSelected', flagsSelected);
-              this.setState({flagsSelected});
-            }}
-          />
-        ))}
+        {Object.values(flags)
+          .sort((a, b) => a.time - b.time)
+          .map((flag) => (
+            <CardFlag
+              key={flag.id}
+              flag={flag}
+              totalTime={(
+                (recording.stopTimestamp - recording.startTimestamp) /
+                1000
+              ).toFixed(0)}
+              flagsSelected={flagsSelected}
+              onRef={(ref) => (this.itemsRef[flag.id] = ref)}
+              click={() => {
+                let {flagsSelected} = this.state;
+                console.log('clicl');
+                delete flagsSelected['fullVideo'];
+                if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
+                else
+                  flagsSelected = {
+                    ...flagsSelected,
+                    [flag.id]: {
+                      time: flag.time,
+                      id: flag.id,
+                      thumbnail: flag.thumbnail,
+                    },
+                  };
+                console.log('flagsSelected', flagsSelected);
+                this.setState({flagsSelected});
+              }}
+            />
+          ))}
         <View style={{height: 20}} />
       </View>
     );
@@ -192,7 +192,7 @@ class FinalizeRecording extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Finalize record'}
+          textHeader={'Upload recording'}
           inputRange={[5, 10]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}

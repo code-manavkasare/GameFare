@@ -3,6 +3,8 @@ import {Platform, PermissionsAndroid, Dimensions} from 'react-native';
 import moment from 'moment';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
+import {seconds, minutes} from './coach';
+
 async function getPermissionCalendar() {
   if (Platform.OS === 'ios') {
     var permission = await request(PERMISSIONS.IOS.CALENDARS);
@@ -17,4 +19,11 @@ function isDatePast(date) {
   return moment().valueOf() > moment(date).valueOf();
 }
 
-module.exports = {getPermissionCalendar, isDatePast};
+const duration = (value) => {
+  const min = minutes(value);
+  console.log('min', min);
+  if (min === 0) return seconds(value) + 'sec';
+  return minutes(value) + 'min' + seconds(value) + 'sec';
+};
+
+module.exports = {getPermissionCalendar, isDatePast, duration};

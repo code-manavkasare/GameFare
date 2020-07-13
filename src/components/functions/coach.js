@@ -75,7 +75,7 @@ const minutes = (time) => {
 const seconds = (time, displayMilliseconds) => {
   let sec = (time % 60).toFixed(0);
   if (displayMilliseconds) sec = Math.floor(time % 60).toFixed(0);
-  if (sec.length === 1) return '0' + sec;
+  if (sec.length === 1 && Number(sec) !== 0) return '0' + sec;
   return sec;
 };
 
@@ -338,4 +338,6 @@ module.exports = {
   generateFlagsThumbnail,
   getVideoUUID,
   openSession,
+  minutes,
+  seconds,
 };

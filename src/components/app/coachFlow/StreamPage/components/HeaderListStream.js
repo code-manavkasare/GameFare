@@ -92,11 +92,16 @@ class HeaderListStream extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
-        icon1={'hat-wizard'}
-        typeIcon1="font"
-        sizeIcon1={20}
+        icon1={'whistle'}
+        typeIcon1="moon"
+        sizeIcon1={30}
         colorIcon1={colors.title}
         clickButton1={() => navigate('Coaches')}
+        iconOffset={'bell'}
+        typeIconOffset="font"
+        sizeIconOffset={23}
+        colorIconOffset={colors.white}
+        clickButtonOffset={() => navigate('NotificationPage')}
         icon2={!hideButtonNewSession && 'plus'}
         sizeIcon2={23}
         colorIcon2={colors.title}
