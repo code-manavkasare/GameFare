@@ -40,7 +40,7 @@ import {
   isSomeoneSharingScreen,
   userPartOfSession,
   getVideoSharing,
-  timeout,
+  getMember,
 } from '../../../../../functions/coach';
 
 import {permission} from '../../../../../functions/pictures';
@@ -233,7 +233,7 @@ class StreamPage extends Component {
     let {userID, currentSessionID: coachSessionID} = this.props;
     const {coachSession} = this.state;
 
-    const member = this.member(coachSession);
+    const member = getMember(coachSession, userID);
     if (!member) return;
     const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
@@ -244,8 +244,7 @@ class StreamPage extends Component {
           permissionOtherUserToRecord: nextVal,
         });
     };
-
-    if (permissionOtherUserToRecord === undefined)
+    if (permissionOtherUserToRecord === undefined && coachSessionID)
       return navigate('Alert', {
         textButton: 'Allow',
         title:
@@ -263,16 +262,16 @@ class StreamPage extends Component {
       });
   }
   async refreshTokenMember() {
-    console.log('refreshTokenMember!');
     const {coachSession} = this.state;
-    const member = this.member(coachSession);
-    if (!member || !coachSession) return;
     const {currentSessionID: coachSessionID, userID} = this.props;
+    const member = getMember(coachSession, userID);
+
+    if (!member || !coachSession) return;
+
     if (
       coachSession.vonageSessionId &&
       (member.expireTimeToken < Date.now() || !member.expireTimeToken)
     ) {
-      console.log('updateSessionTokenUser', coachSession.vonageSessionId);
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
       await axios.get(url, {
         params: {
@@ -284,12 +283,7 @@ class StreamPage extends Component {
       });
     }
   }
-  member(session) {
-    const {userID} = this.props;
-    const members = session.members;
-    if (members) return members[userID];
-    return {};
-  }
+
   openVideoShared() {
     const {coachSession} = this.state;
     const {userID} = this.props;
@@ -506,7 +500,7 @@ class StreamPage extends Component {
   }
 
   session() {
-    const {userConnected, currentSessionID} = this.props;
+    const {userConnected, currentSessionID, userID} = this.props;
     const {coachSession, isConnected, open, coachSessionID} = this.state;
     if (!userConnected || !currentSessionID) return null;
 
@@ -524,12 +518,13 @@ class StreamPage extends Component {
           close={this.close.bind(this)}
           permissionOtherUserToRecord={
             coachSession
-              ? this.member(coachSession)?.permissionOtherUserToRecord
+              ? getMember(coachSession, userID)?.permissionOtherUserToRecord
               : false
           }
           setState={this.setState.bind(this)}
           state={this.state}
         />
+
         {isConnected && (
           <UploadButton
             backdrop

@@ -14,6 +14,8 @@ import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import AddMembers from '../app/elementsCreateChallenge/PickMembers';
 
+import Coaches from './MainApp/components/Coaches';
+
 import CourtCalibration from './MainApp/components/CourtCalibration';
 
 import Alert from '../layout/alerts/Alert';
@@ -72,9 +74,19 @@ function InitialStack() {
         }}
       />
 
+      {/* <Stack.Screen name="ProfilePage" component={ProfilePage} /> */}
+
       <Stack.Screen
         name="PickMembers"
         component={AddMembers}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="Coaches"
+        component={Coaches}
         options={{
           gestureEnabled: false,
         }}

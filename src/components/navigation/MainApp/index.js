@@ -12,12 +12,10 @@ import JoinEvent from './components/JoinEvent';
 import JoinGroup from './components/JoinGroup';
 
 import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
-
 import Conversation from '../../app/elementsMessage/Conversation';
 
 import Webview from '../../layout/Views/Webview';
 import NotificationPage from '../../app/elementsUser/elementsProfile/NotificationPage';
-
 
 const Stack = createStackNavigator();
 const MainApp = () => {

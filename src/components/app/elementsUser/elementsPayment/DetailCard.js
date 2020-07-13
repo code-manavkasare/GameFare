@@ -54,10 +54,7 @@ class ListEvent extends Component {
             {defaultCard && dataCard.id === defaultCard.id && (
               <View style={styleApp.viewSport}>
                 <Text
-                  style={[
-                    styleApp.text,
-                    {fontSize: 12, color: colors.white},
-                  ]}>
+                  style={[styleApp.text, {fontSize: 12, color: colors.white}]}>
                   Default
                 </Text>
               </View>
@@ -104,7 +101,7 @@ class ListEvent extends Component {
     const {params} = this.props.route;
     const {data: dataCard} = params;
     if (data === 'delete') {
-      this.props.navigation.navigate('Alert', {
+      this.props.navigation.push('Alert', {
         title: 'Do you want to delete this payment method?',
         subtitle:
           dataCard.brand === 'applePay'

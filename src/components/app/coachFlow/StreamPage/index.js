@@ -77,15 +77,12 @@ class StreamTab extends Component {
   };
   StreamTab = (currentHeight) => {
     const {permissionsCamera, initialLoader} = this.state;
-    const {userConnected} = this.props;
     return (
       <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
-        {userConnected && <ButtonNotification displayBeforeLoader={true} />}
-        {userConnected && initialLoader && this.viewLoader()}
+        <ButtonNotification displayBeforeLoader={true} />
+        {initialLoader && this.viewLoader()}
 
-        {!userConnected ? (
-          <LogoutView />
-        ) : !permissionsCamera ? (
+        {!permissionsCamera ? (
           <PermissionView
             initialLoader={initialLoader}
             setState={this.setState.bind(this)}
@@ -94,6 +91,7 @@ class StreamTab extends Component {
         <ListStreams
           permissionsCamera={permissionsCamera}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
+          newSession={() => this.HeaderRef.newSession()}
         />
       </View>
     );
@@ -103,12 +101,14 @@ class StreamTab extends Component {
     const {permissionsCamera} = this.state;
     const {currentScreenSize, userConnected} = this.props;
     const {currentHeight} = currentScreenSize;
+    if (!userConnected) return <LogoutView />;
     return (
       <View style={styleApp.stylePage}>
         <HeaderListStream
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
+          onRef={(ref) => (this.HeaderRef = ref)}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}

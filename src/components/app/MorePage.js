@@ -166,6 +166,7 @@ class MorePage extends Component {
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
+        nextNavigation: () => navigate('StreamPage'),
       });
     } else {
       this.props.navigation.navigate(page);
@@ -303,12 +304,13 @@ class MorePage extends Component {
             <Text style={styles.title}>Account parameters</Text>
             <View style={styleApp.divider} />
             {this.button('video', 'Video Library', 'VideoLibraryPage')}
-            {/* {this.button('credit-card', 'Payment', 'Payments')}
-            {this.button('wallet', 'Wallet', 'Wallet')} */}
+
             {this.button('cog', 'App Settings', 'AppSettings')}
             <ButtonNotification displayBeforeLoader={true} />
 
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
+            {this.button('credit-card', 'Payment', 'Payments')}
+            {this.button('wallet', 'Wallet', 'Wallet')}
           </View>
         ) : (
           <View style={styleApp.center}>
@@ -317,9 +319,9 @@ class MorePage extends Component {
               style={{height: 100, width: 100, marginBottom: 20}}
             />
 
-            <Text style={styleApp.text}>
+            {/* <Text style={styleApp.text}>
               Sign in to start improving your tennis skills.
-            </Text>
+            </Text> */}
 
             <Button
               backgroundColor="green"

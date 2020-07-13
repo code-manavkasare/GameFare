@@ -1,6 +1,8 @@
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import ImageResizer from 'react-native-image-resizer';
+import axios from 'axios';
+import Config from 'react-native-config';
 
 import {generateID} from './createEvent';
 
@@ -10,6 +12,7 @@ const timeout = (ms) => {
 
 const createCoachSession = async (user, members) => {
   const coachSessionID = generateID();
+  console.log('bim on cre une convo', user, members);
   const allMembers = Object.values(members).reduce(function(result, item) {
     result[item.id] = true;
     return result;
@@ -121,11 +124,13 @@ const stopRecording = (sessionIDFirebase) => {
 
 const toggleCloudRecording = (sessionIDFirebase, memberID, enable) => {
   let updates = {};
-  updates[`coachSessions/${sessionIDFirebase}/members/${memberID}/recording/enabled`] = enable
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/enabled`
+  ] = enable;
   database()
     .ref()
-    .update(updates)
-}
+    .update(updates);
+};
 
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
@@ -292,6 +297,26 @@ const generateFlagsThumbnail = async ({
   return thumbnails;
 };
 
+const openSession = async (user, members) => {
+  const urlGetSession = `${
+    Config.FIREBASE_CLOUD_FUNCTIONS_URL
+  }getSessionsFromMembers`;
+
+  let allMembers = Object.values(members).map((member) => member.id);
+  allMembers.push(user.id);
+  console.log('allMembers', allMembers, members);
+  let response = await axios.get(urlGetSession, {
+    params: {
+      arrayIdsUsers: allMembers,
+    },
+  });
+  let session = response.data.session;
+  console.log('response!!!!!', session);
+  if (session) return session;
+  session = await createCoachSession(user, members);
+  return session;
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -312,4 +337,5 @@ module.exports = {
   updateTimestamp,
   generateFlagsThumbnail,
   getVideoUUID,
+  openSession,
 };

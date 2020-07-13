@@ -283,7 +283,7 @@ class ListEvent extends Component {
                   }
                   maxLength={field.maxLength ? field.maxLength : null}
                   autoCompleteType={
-                    field.autoCompleteType ? field.textContentType : null
+                    field.autoCompleteType ? field.autoCompleteType : null
                   }
                   ref={(input) => {
                     this.inputs[field.id] = input;
