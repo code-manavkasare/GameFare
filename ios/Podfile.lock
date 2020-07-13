@@ -149,7 +149,7 @@ PODS:
     - glog
   - gamefare-camera-kit (1.1.2):
     - React
-  - gamefare-local-opentok (0.0.10):
+  - gamefare-local-opentok (0.0.12):
     - OpenTok
     - React
   - glog (0.3.5)
@@ -556,7 +556,7 @@ PODS:
     - React
   - RNCMaskedView (0.1.7):
     - React
-  - RNDateTimePicker (2.2.1):
+  - RNDateTimePicker (2.4.2):
     - React
   - RNDeviceInfo (5.5.1):
     - React
@@ -1071,7 +1071,7 @@ SPEC CHECKSUMS:
   FlipperKit: 6dc9b8f4ef60d9e5ded7f0264db299c91f18832e
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   gamefare-camera-kit: 09c3fd74dc7eb4af3996c910150654cf88f55141
-  gamefare-local-opentok: 913766b96f73f62012bc5a734208087d7b54ce64
+  gamefare-local-opentok: bb660333dff3c18e16ef558ae2595d235f49d68d
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
   GoogleDataTransport: 653963cf5be60fb59cf051e070f0836fdc305f81
@@ -1159,7 +1159,7 @@ SPEC CHECKSUMS:
   RNAwesomeCardIO: caa47eefd8b6ae1986af25df3b86f9d8fbae9bb8
   RNCAsyncStorage: 3c304d1adfaea02ec732ac218801cb13897aa8c0
   RNCMaskedView: 76c40a1d41c3e2535df09246a2b5487f04de0814
-  RNDateTimePicker: 1a251f8b276abda796d8119a96bcd1763a76f6b0
+  RNDateTimePicker: bacbf754c3298b061c7eaa0a5352cbb2ede8d5a2
   RNDeviceInfo: 017aa2fd29a437fba26807cbe2fa51a149da70cd
   RNFastImage: 9b0c22643872bb7494c8d87bbbb66cc4c0d9e7a2
   RNFBApp: a8a70521201eb3e75761e5495ebf3be319a3a9bc

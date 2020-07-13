@@ -6,6 +6,8 @@ import Footer from './footer/index';
 
 import MessageList from '../../app/elementsMessage/MessageList';
 import Stream from './components/Stream';
+
+import VideoLibraryPage from '../../app/videoLibraryPage';
 import Session from './components/Session';
 import Profile from './components/Profile';
 
@@ -35,6 +37,21 @@ function TabsApp() {
             name: 'video-camera',
             type: 'moon',
             size: 21,
+          },
+        }}
+      />
+
+      <Tab.Screen
+        name="VideoLibraryPage"
+        component={VideoLibraryPage}
+        options={{
+          pageStack: 'VideoLibraryPage',
+          label: 'VideoLibraryPage',
+          signInToPass: false,
+          icon: {
+            name: 'film',
+            type: 'font',
+            size: 22,
           },
         }}
       />

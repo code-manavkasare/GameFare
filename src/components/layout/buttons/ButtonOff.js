@@ -100,7 +100,7 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
   buttonSubmit: {
-    height: 56,
+    height: 62,
     backgroundColor: colors.primary,
     borderRadius: 3,
     width: '100%',
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     shadowColor: '#46474B',
     shadowOffset: {width: 0, height: 0},
     shadowRadius: 15,
-    shadowOpacity: 0,
+    shadowOpacity: 0.04,
   },
   textButtonOn: {
     ...styleApp.text,

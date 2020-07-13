@@ -180,6 +180,19 @@ const sendSMSFunction = async (phoneNumbers, message) => {
   });
 };
 
+const openDiscussion = async (arrayUsers) => {
+  const users = arrayUsers.map((user) => user.id);
+  var discussion = await searchDiscussion(users, users.length);
+
+  if (!discussion) {
+    discussion = await createDiscussion(users, 'General', false);
+    if (!discussion) {
+      return false;
+    }
+  }
+  return discussion;
+};
+
 export {
   createDiscussion,
   createDiscussionEventGroup,
@@ -187,6 +200,7 @@ export {
   sendNewMessage,
   loadMyDiscusions,
   checkMessageRead,
+  openDiscussion,
   titleConversation,
   sendSMSFunction,
   nameOtherMemberConversation,

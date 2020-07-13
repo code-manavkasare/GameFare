@@ -228,29 +228,29 @@ class VideoLibraryPage extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          initialBorderWidth={0.3}
+          initialBorderWidth={1}
+          icon1={selectableMode ? 'times' : 'cloud-upload-alt'}
+          // colorIcon2={colors.white}
+          icon2={selectableMode ? 'trash-alt' : 'text'}
+          text2={'Select'}
           typeIcon2={'font'}
           sizeIcon2={17}
-          icon1={selectableMode ? 'times' : 'arrow-left'}
-          icon2={selectableMode ? 'user-plus' : 'cloud-upload-alt'}
-          typeIconOffset={'font'}
-          colorIconOffset={colors.white}
-          sizeIconOffset={17}
-          iconOffset={selectableMode ? 'trash-alt' : 'text'}
-          textOffset={'Select'}
-          clickButton1={() =>
-            selectableMode ? this.setState({selectableMode: false}) : goBack()
-          }
+          sizeIcon1={22}
           clickButton2={() =>
-            selectableMode
-              ? this.pickMembersToShareVideosWith()
-              : this.uploadVideo()
-          }
-          clickButtonOffset={() =>
             selectableMode
               ? this.deleteVideos()
               : this.setState({selectableMode: true})
           }
+          clickButton1={() =>
+            selectableMode
+              ? this.setState({selectableMode: false})
+              : this.uploadVideo()
+          }
+          iconOffset={selectableMode && 'user-plus'}
+          typeIconOffset="font"
+          sizeIconOffset={16}
+          colorIconOffset={colors.white}
+          clickButtonOffset={() => this.pickMembersToShareVideosWith()}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}

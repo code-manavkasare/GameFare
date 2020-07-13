@@ -14,6 +14,7 @@ import MatIcon from 'react-native-vector-icons/MaterialIcons';
 import Button from '../buttons/Button';
 import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
+import Loader from '../loaders/Loader';
 import AlertAddImage from './AlertAddImage';
 
 import colors from '../../style/colors';
@@ -54,11 +55,12 @@ export default class Alert extends Component {
   }
   async click() {
     const {route} = this.props;
-    const {close, onGoBack} = route.params;
+    const {close, onGoBack, nextNavigation} = route.params;
     if (!close) {
       this.setState({loader: true});
       await onGoBack();
     }
+    if (nextNavigation) return nextNavigation();
     return this.close();
   }
   async optionClick(operation) {
@@ -85,6 +87,9 @@ export default class Alert extends Component {
       listOptions,
       close,
       onGoBack,
+      componentAdded,
+      disableClickOnBackdrop,
+      disableCloseButton,
     } = this.props.route.params;
     const closable = close !== undefined ? close : true;
     return (
@@ -95,20 +100,20 @@ export default class Alert extends Component {
             {backgroundColor: colors.title + '80', opacity: this.opacityVoile},
           ]}>
           <TouchableOpacity
-            onPress={() => this.close()}
+            onPress={() => !disableClickOnBackdrop && this.close()}
             activeOpacity={1}
             style={styleApp.fullSize}
           />
         </Animated.View>
         <View style={styles.viewModal}>
-          {closable ? (
+          {closable && (
             <TouchableOpacity
               style={styles.buttonClose}
               activeOpacity={0.5}
               onPress={() => this.close()}>
               <MatIcon name="close" color={'#4a4a4a'} size={24} />
             </TouchableOpacity>
-          ) : null}
+          )}
 
           {icon && <View style={styles.viewIcon}>{icon}</View>}
 
@@ -120,6 +125,12 @@ export default class Alert extends Component {
           </Row>
 
           <View style={styleApp.divider} />
+
+          {componentAdded && (
+            <View style={[styleApp.marginView, {marginTop: 15}]}>
+              {componentAdded}
+            </View>
+          )}
 
           {// CASE 1: Two options given (YES / NO Style)
           displayList === 'addImage' ? (
@@ -135,21 +146,25 @@ export default class Alert extends Component {
                   backgroundColor={'red'}
                   disabled={false}
                   onPressColor={colors.redLight}
-                  text={listOptions[1].title || 'No'}
+                  text={listOptions[0].title || 'No'}
                   click={() => this.optionClick(listOptions[0].operation)}
-                  loader={this.state.loader}
+                  loader={listOptions[0].loader}
                 />
               </Col>
               <Col size={10} />
               <Col size={45} style={styles.viewButton}>
-                <Button
-                  backgroundColor={'green'}
-                  disabled={false}
-                  onPressColor={colors.greenLight}
-                  text={listOptions[0].title || 'Yes'}
-                  click={() => this.optionClick(listOptions[1].operation)}
-                  loader={this.state.loader}
-                />
+                {listOptions[1].button ? (
+                  listOptions[1].button
+                ) : (
+                  <Button
+                    backgroundColor={'green'}
+                    disabled={listOptions[1].disabled}
+                    onPressColor={colors.greenLight}
+                    text={listOptions[1].title || 'Yes'}
+                    click={() => this.optionClick(listOptions[1].operation)}
+                    loader={listOptions[1].loader}
+                  />
+                )}
               </Col>
             </Row>
           ) : // CASE 2: More than two options available (All blue buttons)

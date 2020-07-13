@@ -12,7 +12,6 @@ import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 import StatusBar from '@react-native-community/status-bar';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {layoutAction} from '../../../../../actions/layoutActions';
@@ -21,18 +20,17 @@ import {native, timing} from '../../../../animations/animations';
 import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 
-import {timeout} from '../../../../functions/coach';
+import {timeout, getMember} from '../../../../functions/coach';
+import CoachPopups from './StreamView/components/CoachPopups';
 
 import ButtonColor from '../../../../layout/Views/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import {date, time} from '../../../../layout/date/date';
+
 import ImageUser from '../../../../layout/image/ImageUser';
 import {coachAction} from '../../.././../../actions/coachActions';
 import AsyncImage from '../../../../layout/image/AsyncImage';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-const AnimatedIcon = Animated.createAnimatedComponent(FontIcon);
 
 class CardStream extends Component {
   constructor(props) {
@@ -79,7 +77,6 @@ class CardStream extends Component {
 
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
-    // this.expand(0);
     navigate('Alert', {
       title: 'Do you want to leave this session?',
       textButton: 'Leave',
@@ -203,7 +200,7 @@ class CardStream extends Component {
     });
   }
 
-  async openStream() {
+  async openStream(forceOpen) {
     const {session} = this.state;
     const {
       coachSessionID,
@@ -212,7 +209,10 @@ class CardStream extends Component {
       currentSessionID,
     } = this.props;
 
-    // this.expand(0);
+    const isSessionFree = this.coachPopupsRef.isSessionFree();
+    if (!isSessionFree && !forceOpen)
+      return this.coachPopupsRef.openMemberAcceptCharge();
+
     if (currentSessionID !== coachSessionID) {
       if (currentSessionID) {
         await this.setState({loader: true});
@@ -555,8 +555,10 @@ class CardStream extends Component {
       currentScreenSize,
       coachSessionID,
       currentSessionID,
+      isConnected,
+      userID,
     } = this.props;
-    const {loading} = this.state;
+    const {loading, session} = this.state;
     const activeSession = coachSessionID === currentSessionID;
     const width = currentScreenSize.currentWidth;
 
@@ -566,6 +568,9 @@ class CardStream extends Component {
     });
 
     let height = 90 * scale;
+
+    let member = getMember(session, userID);
+    if (!member) member = {};
 
     return (
       <Animated.View style={{...styles.card, height}}>
@@ -600,11 +605,20 @@ class CardStream extends Component {
           style={{
             position: 'absolute',
             transform: [{translateX}],
-            // opacity:this.expandAnimation
           }}>
           {this.cardBody()}
           {this.backdrop()}
         </Animated.View>
+
+        <CoachPopups
+          isConnected={member.isConnected && activeSession}
+          members={session.members}
+          coachSessionID={coachSessionID}
+          member={getMember(session, userID)}
+          open={this.openStream.bind(this)}
+          close={this.hangup.bind(this)}
+          onRef={(ref) => (this.coachPopupsRef = ref)}
+        />
       </Animated.View>
     );
   }
@@ -679,6 +693,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
     currentSessionID: state.coach.currentSessionID,
+    userConnected: state.user.userConnected,
   };
 };
 

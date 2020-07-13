@@ -12,12 +12,13 @@ import styleApp from '../../../style/style';
 import {heightHeaderHome} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
+import {openDiscussion} from '../../../functions/message';
 
 class ProfilePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: true,
+      loader: false,
       userProfile: {
         info: {
           firstname: '',
@@ -38,7 +39,7 @@ class ProfilePage extends Component {
     if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
       isBlocked = true;
     }
-    this.setState({userProfile, isBlocked, loader: false});
+    this.setState({userProfile, isBlocked});
   };
 
   blockUnblockUser = async (block) => {
@@ -80,8 +81,32 @@ class ProfilePage extends Component {
         : this.button('Block User', colors.red, true);
     }
   };
+  async requestSession() {
+    const {userID, navigation, infoUser} = this.props;
+    const {objectID: profileUserID, info} = this.state.userProfile;
+    await this.setState({loader: true});
+
+    const discussion = await openDiscussion([
+      {id: userID, info: infoUser.userInfo},
+      {id: profileUserID, info},
+    ]);
+    console.log('nim discussion', discussion);
+    await navigation.navigate('Conversation', {
+      data: discussion,
+      myConversation: true,
+      back: true,
+    });
+    return this.setState({loader: false});
+  }
   profilePage() {
-    const {firstname, lastname, picture} = this.state.userProfile.info;
+    const {
+      firstname,
+      lastname,
+      picture,
+      coach,
+      currencyRate,
+      hourlyRate,
+    } = this.state.userProfile.info;
     return (
       <View style={styleApp.marginView}>
         <Row>
@@ -92,9 +117,28 @@ class ProfilePage extends Component {
             <Text style={[styleApp.title, {fontSize: 22}]}>
               {firstname} {lastname}
             </Text>
+            {coach && (
+              <Text style={[styleApp.subtitle, {fontSize: 15}]}>
+                {currencyRate} ${hourlyRate} / hour
+              </Text>
+            )}
           </Col>
         </Row>
         <View style={{height: 40}} />
+        {coach && (
+          <ButtonColor
+            view={() => (
+              <Text style={[styleApp.textBold, {color: colors.white}]}>
+                Request a session
+              </Text>
+            )}
+            style={{height: 45, borderRadius: 5, marginBottom: 20}}
+            click={() => this.requestSession()}
+            color={colors.primary}
+            onPressColor={colors.primary2}
+          />
+        )}
+
         {this.blockButton()}
       </View>
     );
@@ -107,11 +151,11 @@ class ProfilePage extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Profile Page'}
+          textHeader={''}
           inputRange={[5, 10]}
           loader={loader}
           initialBorderColorIcon={'white'}
-          initialBackgroundColor={'white'} 
+          initialBackgroundColor={'white'}
           initialBorderColorHeader={colors.grey}
           initialTitleOpacity={1}
           icon1={'arrow-left'}

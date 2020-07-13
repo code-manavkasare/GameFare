@@ -111,7 +111,7 @@ class ListEvent extends Component {
     );
   }
   openBankAccount(bankAccount) {
-    return this.props.navigation.navigate('Alert', {
+    return this.props.navigation.push('Alert', {
       title: 'Do you want to remove this bank account?',
       subtitle: bankAccount.routing_number + ' ••••' + bankAccount.last4,
       textButton: 'Remove',

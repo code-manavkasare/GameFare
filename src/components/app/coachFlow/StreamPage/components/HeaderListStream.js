@@ -4,7 +4,7 @@ import StatusBar from '@react-native-community/status-bar';
 
 import {navigate} from '../../../../../../NavigationService';
 
-import {createCoachSession, timeout} from '../../../../functions/coach';
+import {openSession} from '../../../../functions/coach';
 import {logMixpanel} from '../../../../database/mixpanel';
 import {coachAction} from '../../../../../actions/coachActions';
 import {layoutAction} from '../../../../../actions/layoutActions';
@@ -22,6 +22,9 @@ class HeaderListStream extends Component {
     this.state = {
       loader: false,
     };
+  }
+  componentDidMount() {
+    this.props.onRef(this);
   }
   newSession() {
     navigate('PickMembers', {
@@ -50,8 +53,14 @@ class HeaderListStream extends Component {
           return result;
         }, {});
         console.log('members', members);
-
-        const session = await this.createSession(members);
+        const {userID, infoUser} = this.props;
+        const session = await openSession(
+          {
+            id: userID,
+            info: infoUser,
+          },
+          members,
+        );
         StatusBar.setBarStyle('light-content', true);
         await navigate('StreamPage');
         return this.openSession(session);
@@ -68,30 +77,14 @@ class HeaderListStream extends Component {
       params: {},
     });
   }
-  async createSession(members) {
-    const {userID, infoUser} = this.props;
-    const session = await createCoachSession(
-      {
-        id: userID,
-        info: infoUser,
-      },
-      members,
-    );
-    const {objectID} = session;
-    logMixpanel('Create new session ' + objectID, {
-      userID,
-      objectID,
-    });
 
-    return session;
-  }
   header = () => {
     const {hideButtonNewSession, AnimatedHeaderValue} = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={'Sessions'}
+        textHeader={''}
         inputRange={[5, 10]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
@@ -99,9 +92,14 @@ class HeaderListStream extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
+        icon1={'hat-wizard'}
+        typeIcon1="font"
+        sizeIcon1={20}
+        colorIcon1={colors.title}
+        clickButton1={() => navigate('Coaches')}
         icon2={!hideButtonNewSession && 'plus'}
-        sizeIcon2={27}
-        colorIcon2={colors.green}
+        sizeIcon2={23}
+        colorIcon2={colors.title}
         typeIcon2="font"
         clickButton2={() => this.newSession()}
       />

@@ -3,6 +3,7 @@ import {Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import AllIcons from '../../../layout/icons/AllIcons';
+import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
 import {cardIcon} from './iconCard';
@@ -56,7 +57,7 @@ class CardCreditCard extends Component {
             </Row>
           );
         }}
-        click={() => this.props.navigate('Payments', {pageFrom: 'Checkout'})}
+        click={() => navigate('Payments', {pageFrom: 'Checkout'})}
         color="white"
         style={[styleApp.cardSelect]}
         onPressColor={colors.off}

@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import isEqual from 'lodash.isequal';
 
 import {connect} from 'react-redux';
 
 import CardStreamView from './CardStreamView';
 import styleApp from '../../../../style/style';
+import colors from '../../../../style/colors';
+import Button from '../../../../layout/buttons/Button';
 
 class ListStreams extends Component {
   constructor(props) {
@@ -31,14 +33,46 @@ class ListStreams extends Component {
     });
   };
   list = () => {
+    const styleViewLiveLogo = {
+      ...styleApp.center,
+      backgroundColor: colors.off,
+      height: 45,
+      width: 45,
+      borderRadius: 22.5,
+      borderWidth: 1,
+      borderColor: colors.grey,
+      marginTop: -100,
+      marginLeft: 65,
+    };
     const coachSessions = this.sessionsArray();
-    const {userConnected, permissionsCamera} = this.props;
+    const {userConnected, permissionsCamera, newSession} = this.props;
     if (!userConnected || !permissionsCamera || !coachSessions) return null;
     if (Object.values(coachSessions).length === 0)
       return (
-        <Text style={[styleApp.text, {paddingLeft: '5%'}]}>
-          You don't have any sessions yet.
-        </Text>
+        <View style={[styleApp.marginView, styleApp.center]}>
+          <View style={[styleApp.center, {marginBottom: 80}]}>
+            <Image
+              source={require('../../../../../img/images/racket.png')}
+              style={{height: 80, width: 80, marginTop: 30}}
+            />
+            <View style={styleViewLiveLogo}>
+              <Image
+                source={require('../../../../../img/images/live-news.png')}
+                style={{
+                  height: 27,
+                  width: 27,
+                }}
+              />
+            </View>
+          </View>
+
+          <Button
+            text={'Create your first session'}
+            backgroundColor={'green'}
+            onPressColor={colors.greenLight}
+            click={async () => newSession()}
+          />
+        </View>
       );
     return Object.values(coachSessions).map((session, i) => (
       <CardStreamView

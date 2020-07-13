@@ -1,0 +1,130 @@
+import React, {Component} from 'react';
+import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {connect} from 'react-redux';
+import StatusBar from '@react-native-community/status-bar';
+
+import {coachAction} from '../../../actions/coachActions';
+import {layoutAction} from '../../../actions/layoutActions';
+import {autocompleteSearchUsers} from '../../../components/functions/users';
+
+import colors from '../../style/colors';
+import styleApp from '../../style/style';
+import {heightFooter, heightHeaderHome} from '../../style/sizes';
+import ScrollView from '../../layout/scrollViews/ScrollView2';
+import PlaceHolder from '../../placeHolders/CardConversation';
+
+import Loader from '../../layout/loaders/Loader';
+import HeaderCoachingTab from './components/HeaderCoachingTab';
+import CardCoach from './components/CardCoach';
+
+class StreamTab extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      coaches: [],
+      loader: true,
+      search: '',
+    };
+    this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  async componentDidMount() {
+    this.searchCoach('');
+  }
+  async searchCoach(search) {
+    const {blockedByUsers, userID} = this.props;
+    console.log('search coach', userID);
+    const coaches = await autocompleteSearchUsers(
+      search,
+      userID,
+      false,
+      blockedByUsers ? Object.keys(blockedByUsers) : false,
+      true,
+    );
+    this.setState({loader: false, coaches: coaches});
+  }
+  componentDidUpdate = (prevProps, prevState) => {};
+
+  viewLoader = () => {
+    return (
+      <View style={[{height: 120}, styleApp.center]}>
+        <Loader size={55} color={colors.primary} />
+      </View>
+    );
+  };
+  CoachingTab = (currentHeight) => {
+    const {loader, coaches} = this.state;
+    if (loader)
+      return (
+        <View>
+          <PlaceHolder />
+        </View>
+      );
+
+    return (
+      <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
+        {coaches.map((coach) => (
+          <CardCoach coach={coach} key={coach.objectID} />
+        ))}
+      </View>
+    );
+  };
+
+  render() {
+    const {permissionsCamera} = this.state;
+    const {currentScreenSize, userConnected} = this.props;
+    const {currentHeight} = currentScreenSize;
+    return (
+      <View style={styleApp.stylePage}>
+        <HeaderCoachingTab
+          userConnected={userConnected}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          hideButtonNewSession={!userConnected || !permissionsCamera}
+        />
+        <ScrollView
+          onRef={(ref) => (this.scrollViewRef = ref)}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          contentScrollView={() => this.CoachingTab(currentHeight)}
+          marginBottomScrollView={0}
+          marginTop={heightHeaderHome}
+          offsetBottom={heightFooter + 90}
+          showsVerticalScrollIndicator={true}
+          refreshControl={true}
+          refresh={async () => {
+            await this.setState({loader: true});
+            const {search} = this.state;
+            this.searchCoach(search);
+          }}
+        />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  containerTabPage: {
+    ...styleApp.fullSize,
+    paddingTop: 10,
+  },
+  titlePage: {
+    ...styleApp.title,
+    color: colors.title,
+    marginBottom: 10,
+    marginLeft: 20,
+  },
+});
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userID,
+    infoUser: state.user.infoUser.userInfo,
+    userConnected: state.user.userConnected,
+    currentScreenSize: state.layout.currentScreenSize,
+    currentSessionID: state.coach.currentSessionID,
+    blockedByUsers: state.user.infoUser.blockedByUsers,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {coachAction, layoutAction},
+)(StreamTab);

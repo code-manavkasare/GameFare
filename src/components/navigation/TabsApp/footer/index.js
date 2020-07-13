@@ -17,7 +17,7 @@ import {native} from '../../../animations/animations';
 import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
 
-const widthFooter = 220;
+const widthFooter = 290;
 
 class Footer extends React.Component {
   constructor(props) {
@@ -85,9 +85,10 @@ class Footer extends React.Component {
       colors,
       currentScreenSize,
       isFooterVisible,
+      userConnected,
     } = this.props;
     console.log('render footer', this.props);
-    if (!isFooterVisible) return null;
+    if (!isFooterVisible || !userConnected) return null;
     const {currentWidth, portrait} = currentScreenSize;
     return (
       <Animated.View
@@ -181,6 +182,7 @@ const mapStateToProps = (state) => {
     activeTab: state.layout.activeTab,
     currentScreenSize: state.layout.currentScreenSize,
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 
