@@ -1,4 +1,4 @@
-import {indexUsers} from '../database/algolia';
+import {indexUsers, client} from '../database/algolia';
 
 const autocompleteSearchUsers = async (
   search,
@@ -7,6 +7,7 @@ const autocompleteSearchUsers = async (
   blockedByUsers,
   searchCoaches,
 ) => {
+  await client.clearCache();
   let filters = `NOT objectID:${userID}`;
   console.log('userID', userID);
   if ((!userID || userID === '' || searchCurrentUser) && !blockedByUsers) {

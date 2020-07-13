@@ -10,9 +10,12 @@ import {
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 import {includes} from 'ramda';
+import StatusBar from '@react-native-community/status-bar';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import {coachAction} from '../../../actions/coachActions';
+import {layoutAction} from '../../../actions/layoutActions';
 import CardUploading from './components/CardUploading';
 import {
   addVideoToMember,
@@ -21,6 +24,7 @@ import {
 import {navigate} from '../../../../NavigationService';
 
 import ScrollView from '../../layout/scrollViews/ScrollView2';
+import Button from '../../layout/buttons/Button';
 
 import {
   sortVideos,
@@ -28,6 +32,7 @@ import {
   goToSettings,
   getVideoInfo,
 } from '../../functions/pictures';
+import {openSession} from '../../functions/coach';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -84,6 +89,33 @@ class VideoLibraryPage extends Component {
     }
     this.setState({selectedVideos: [], selectableMode: false});
   };
+  async openSession() {
+    await this.setState({loader: true});
+    const {
+      userID,
+      infoUser,
+      coachAction,
+      layoutAction,
+      currentSessionID,
+    } = this.props;
+    const session = await openSession(
+      {
+        id: userID,
+        info: infoUser,
+      },
+      {},
+    );
+    if (currentSessionID !== session.objectID)
+      await coachAction('setCurrentSession', false);
+    await coachAction('setCurrentSession', session);
+    await layoutAction('setLayout', {isFooterVisible: false});
+    StatusBar.setBarStyle('light-content', true);
+    navigate('Session', {
+      screen: 'Session',
+      params: {},
+    });
+    await this.setState({loader: false});
+  }
 
   listVideos() {
     const {
@@ -93,32 +125,67 @@ class VideoLibraryPage extends Component {
       uploadingVideosArray,
       videosArray,
     } = this.state;
-
+    const isListEmpty =
+      videosArray.length === 0 && uploadingVideosArray.length === 0;
     return (
-      <View style={styles.container}>
+      <View style={styleApp.marginView}>
         {this.uploadingVideosList()}
-        {loader ? (
-          this.placehoder()
-        ) : videosArray.length === 0 && uploadingVideosArray.length === 0 ? (
-          <Text style={[styleApp.text, styleApp.marginView, {marginTop: 0}]}>
-            You have no video in your cloud yet. Start today by uploading some
-            or record yourself !
-          </Text>
-        ) : (
-          videosArray.map((video) => {
-            const isSelected = includes(video.id, selectedVideos);
-            return (
-              <CardArchive
-                selectableMode={selectableMode}
-                isSelected={isSelected}
-                selectVideo={this.selectVideo}
-                style={styles.cardArchive}
-                archive={video}
-                key={video.id}
-                noUpdateStatusBar={true}
+        {isListEmpty ? (
+          <View>
+            <View style={styleApp.center}>
+              <Image
+                source={require('../../../img/images/video-library.png')}
+                style={{
+                  height: 100,
+                  width: 100,
+                  marginBottom: 30,
+                }}
               />
-            );
-          })
+            </View>
+
+            <Button
+              text={'Upload video'}
+              icon={{
+                name: 'cloud-upload-alt',
+                size: 22,
+                type: 'font',
+                color: colors.white,
+              }}
+              backgroundColor={'green'}
+              onPressColor={colors.greenLight}
+              click={async () => this.uploadVideo()}
+            />
+            <View style={{height: 20}} />
+            <Button
+              text={'Record session'}
+              icon={{
+                name: 'video',
+                size: 22,
+                type: 'font',
+                color: colors.white,
+              }}
+              backgroundColor={'blue'}
+              onPressColor={colors.blueLight}
+              click={() => this.openSession()}
+            />
+          </View>
+        ) : (
+          <View style={styles.container}>
+            {videosArray.map((video) => {
+              const isSelected = includes(video.id, selectedVideos);
+              return (
+                <CardArchive
+                  selectableMode={selectableMode}
+                  isSelected={isSelected}
+                  selectVideo={this.selectVideo}
+                  style={styles.cardArchive}
+                  archive={video}
+                  key={video.id}
+                  noUpdateStatusBar={true}
+                />
+              );
+            })}
+          </View>
         )}
       </View>
     );
@@ -216,22 +283,29 @@ class VideoLibraryPage extends Component {
 
   render() {
     const {goBack} = this.props.navigation;
-    const {selectableMode, selectedVideos} = this.state;
-    const {userID} = this.props;
+    const {
+      selectableMode,
+      videosArray,
+      uploadingVideosArray,
+      loader,
+    } = this.state;
+    const isListEmpty =
+      videosArray.length === 0 && uploadingVideosArray.length === 0;
 
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={selectableMode ? 'Select Videos' : 'Video Library'}
+          textHeader={selectableMode ? 'Select Videos' : ''}
           inputRange={[5, 10]}
+          loader={loader}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           initialBorderWidth={1}
           icon1={selectableMode ? 'times' : 'cloud-upload-alt'}
           // colorIcon2={colors.white}
-          icon2={selectableMode ? 'trash-alt' : 'text'}
+          icon2={isListEmpty ? null : selectableMode ? 'trash-alt' : 'text'}
           text2={'Select'}
           typeIcon2={'font'}
           sizeIcon2={17}
@@ -270,12 +344,11 @@ class VideoLibraryPage extends Component {
 const styles = StyleSheet.create({
   container: {
     marginTop: 10,
-    marginLeft: 0,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   cardArchive: {
-    width: width / 2 - 10,
+    width: (width * 0.9) / 2 - 10,
     height: 150,
     borderRadius: 4,
     overflow: 'hidden',
@@ -283,12 +356,12 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   CardUploading: {
-    width: width / 2 - 10,
+    width: (width * 0.9) / 2 - 10,
     height: 150,
     borderRadius: 4,
     overflow: 'hidden',
     backgroundColor: 'white',
-    margin: 5,
+    margin: 8,
   },
 });
 
@@ -296,7 +369,12 @@ const mapStateToProps = (state) => {
   return {
     archivedStreams: state.user.infoUser.archivedStreams,
     userID: state.user.userID,
+    currentSessionID: state.coach.currentSessionID,
+    infoUser: state.user.infoUser.userInfo,
   };
 };
 
-export default connect(mapStateToProps)(VideoLibraryPage);
+export default connect(
+  mapStateToProps,
+  {coachAction, layoutAction},
+)(VideoLibraryPage);

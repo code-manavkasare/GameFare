@@ -4,6 +4,8 @@ import isEqual from 'lodash.isequal';
 
 import {connect} from 'react-redux';
 
+import {navigate} from '../../../../../../NavigationService';
+
 import CardStreamView from './CardStreamView';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
@@ -67,10 +69,29 @@ class ListStreams extends Component {
           </View>
 
           <Button
-            text={'Create your first session'}
+            text={'Start a video chat'}
+            icon={{
+              name: 'plus',
+              size: 18,
+              type: 'font',
+              color: colors.white,
+            }}
             backgroundColor={'green'}
             onPressColor={colors.greenLight}
             click={async () => newSession()}
+          />
+          <View style={{height: 20}} />
+          <Button
+            text={'Find a coach'}
+            icon={{
+              name: 'whistle',
+              size: 27,
+              type: 'moon',
+              color: colors.white,
+            }}
+            backgroundColor={'blue'}
+            onPressColor={colors.blueLight}
+            click={() => navigate('Coaches')}
           />
         </View>
       );

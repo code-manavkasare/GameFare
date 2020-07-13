@@ -4,7 +4,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import {openSettings} from 'react-native-permissions';
 
-import ButtonColor from '../../../layout/Views/Button';
+import Button from '../../../layout/buttons/Button';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -45,14 +45,20 @@ class NotificationPage extends Component {
 
   button = (text, color, click) => {
     return (
-      <ButtonColor
-        view={() => (
-          <Text style={[styleApp.textBold, {color: colors.white}]}>{text}</Text>
-        )}
-        style={{height: 45, borderRadius: 5}}
-        click={() => click()}
-        color={color}
-        onPressColor={color}
+      <Button
+        backgroundColor={'green'}
+        onPressColor={colors.greenLight}
+        enabled={true}
+        text={text}
+        icon={{
+          name: 'cog',
+          size: 22,
+          type: 'font',
+          color: colors.white,
+        }}
+        styleButton={styles.buttonSignIn}
+        loader={false}
+        click={async () => click()}
       />
     );
   };
@@ -74,10 +80,12 @@ class NotificationPage extends Component {
       <View style={styleApp.marginView}>
         <Row>
           <Col size={65}>
-            <Text style={[styleApp.title, {fontSize: 18}]}>
-              You have currently {permission ? 'enabled' : 'disabled'}{' '}
-              notifications for GameFare. You {permission ? 'will' : "won't"} be
-              alerted for the following events:
+            <Text style={[styleApp.title, {fontSize: 18, marginBottom: 5}]}>
+              Notifications are {permission ? 'enabled' : 'disabled'}.
+            </Text>
+            <Text style={styleApp.text}>
+              You {permission ? 'will' : "won't"} be alerted for the following
+              events:
             </Text>
           </Col>
         </Row>
@@ -86,7 +94,7 @@ class NotificationPage extends Component {
         {this.rowIcon('video', 'Invitation to a new session')}
         {this.rowIcon('plug', 'Someone connects to one of your sessions')}
         <View style={{height: 40}} />
-        {this.button('Edit settings', colors.green, () => openSettings())}
+        {this.button('Settings', colors.green, () => openSettings())}
       </View>
     );
   }

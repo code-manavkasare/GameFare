@@ -45,6 +45,12 @@ export default class LogoutView extends Component {
           onPressColor={colors.greenLight}
           enabled={true}
           text="Sign in to start"
+          icon={{
+            name: 'user-circle',
+            size: 27,
+            type: 'font',
+            color: colors.white,
+          }}
           styleButton={styles.buttonSignIn}
           loader={false}
           click={async () => navigate('SignIn')}

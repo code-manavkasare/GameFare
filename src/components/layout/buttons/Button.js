@@ -5,13 +5,14 @@ import {
   Platform,
   TouchableOpacity,
   Dimensions,
-  Easing,
+  View,
   Animated,
 } from 'react-native';
 import colors from '../../style/colors';
 import Loader from '../loaders/Loader';
 import {timing} from '../../animations/animations';
 import styleApp from '../../style/style';
+import AllIcon from '../icons/AllIcons';
 const {width} = Dimensions.get('screen');
 
 export default class Button extends Component {
@@ -73,26 +74,44 @@ export default class Button extends Component {
       Animated.timing(this.state.backgroundColorAnimation, timing(0, 100)),
     ]).start();
   }
+  iconView() {
+    const {icon} = this.props;
+    const {name, size, type, color} = icon;
+    const containerIcon = {
+      ...styleApp.center,
+      position: 'absolute',
+      height: '100%',
+      width: 70,
+    };
+    return (
+      <View style={containerIcon}>
+        <AllIcon name={name} size={size} type={type} color={color} />
+      </View>
+    );
+  }
   render() {
     var color = this.state.backgroundColorAnimation.interpolate({
       inputRange: [0, 300],
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()],
     });
-    const {click, disabled, loader, text} = this.props;
+    const {click, disabled, loader, text, icon} = this.props;
     return (
       <Animated.View style={[this.styleButton(), {backgroundColor: color}]}>
         <TouchableOpacity
           activeOpacity={1}
-          style={[styleApp.center, {width: '100%', height: '100%'}]}
+          style={[{width: '100%', height: '100%'}]}
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
           disabled={disabled}
           onPress={() => !loader && click()}>
-          {loader ? (
-            <Loader size={38} color={colors.white} />
-          ) : (
-            <Text style={this.styleText()}>{text}</Text>
-          )}
+          {icon && this.iconView()}
+          <View style={[styleApp.center, styleApp.fullSize]}>
+            {loader ? (
+              <Loader size={38} color={colors.white} />
+            ) : (
+              <Text style={this.styleText()}>{text}</Text>
+            )}
+          </View>
         </TouchableOpacity>
       </Animated.View>
     );
