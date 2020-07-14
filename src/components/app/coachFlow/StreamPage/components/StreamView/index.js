@@ -104,7 +104,6 @@ class StreamPage extends Component {
       sessionConnected: async (event) => {
         const {coachSessionID} = this.state;
         const {userID, currentScreenSize} = this.props;
-        console.log('sessionEventHandlers sessionConnected ' + coachSessionID);
         Mixpanel.trackWithProperties(
           'sessionEventHandlers sessionConnected ' + coachSessionID,
           {
@@ -170,11 +169,9 @@ class StreamPage extends Component {
     };
   }
   componentDidMount() {
-    console.log('componentDidMount stream view');
     const {navigation} = this.props;
     this.refreshTokenMember();
     const unsubscribe = NetInfo.addEventListener((state) => {
-      console.log('net info', state);
       this.setState({netInfoConnected: state.isInternetReachable});
     });
     this.setState({netInfoUnsubscribe: unsubscribe});

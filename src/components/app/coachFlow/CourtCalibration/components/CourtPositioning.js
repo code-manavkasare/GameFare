@@ -64,7 +64,6 @@ class CourtPositioning extends Component {
     );
     const {data} = responseCourtCalibration;
 
-    console.log('responseCourtCalibration', data);
     this.setState({loader: false, error: data.message});
   }
   courtCalibration() {

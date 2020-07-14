@@ -35,7 +35,6 @@ export default class AsyncImage extends Component {
     //   await this.setState({checkToken: checkToken});
     //   this.setState({initialLoader: false});
     // } catch (err) {
-    //   console.log('error image cached', err);
     // }
     this.setState({checkToken: true, initialLoader: false});
   }

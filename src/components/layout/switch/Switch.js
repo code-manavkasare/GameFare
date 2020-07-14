@@ -110,7 +110,6 @@ export default class Switch extends Component {
       ],
       extrapolate: 'clamp',
     });
-    console.log('this.props switch', this.props);
     return (
       <View style={{height: height, width: '100%'}}>
         <Animated.View

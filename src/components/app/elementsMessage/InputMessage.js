@@ -64,9 +64,7 @@ class InputMessage extends React.Component {
   async openPicturesView() {
     if (!this.state.showImages) {
       await this.textInputRef.blur();
-      console.log('opemPicture');
       const imagesUser = await getPhotoUser();
-      console.log('opemPicture2', imagesUser);
       return this.setState({imagesUser: imagesUser, showImages: true});
     }
     return this.setState({showImages: false});

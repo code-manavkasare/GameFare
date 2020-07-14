@@ -45,7 +45,6 @@ function createTeamsFromCaptains(captains) {
 
 async function createChallengeObj(challenge, userID, infoUser) {
   let teams = {};
-  console.log('createChallengeObj', challenge);
   if (challenge.teamsData.typeChallengeTeam) teams = challenge.teamsData.teams;
   else {
     const idTeamOponent = generateID();
@@ -113,7 +112,6 @@ async function createChallenge(challenge, userID, infoUser) {
   if (!pictureUri) return false;
 
   let newChallenge = await createChallengeObj(challenge, userID, infoUser);
-  console.log('newChallenge', newChallenge);
   // return false;
 
   newChallenge.images = [pictureUri];

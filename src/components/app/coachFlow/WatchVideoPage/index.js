@@ -78,7 +78,6 @@ class WatchVideoPage extends Component {
 
     if (watchVideo) {
       await this.translateXPage.setValue(0);
-      console.log('open video');
       if (videoSource) {
         let closeDrawing = {};
         if (videoSource !== source) closeDrawing = {drawingOpen: false};
@@ -184,10 +183,7 @@ class WatchVideoPage extends Component {
           backgroundColorIconOffset={
             !drawingOpen ? colors.secondary : colors.title + '70'
           }
-          clickButton2={() => {
-            console.log('click button 2');
-            this.setState({drawingOpen: true});
-          }}
+          clickButton2={() => this.setState({drawingOpen: true})}
           sizeIcon2={24}
           typeIcon2="mat"
           colorIcon2={colors.white}

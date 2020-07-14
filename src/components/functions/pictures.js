@@ -34,7 +34,6 @@ const permission = async (type) => {
   } else if (type === 'notification') {
     if (Platform.OS === 'ios') {
       const {status, settings} = await checkNotifications();
-      console.log('status', status, settings);
       if (status !== 'granted') return false;
       return true;
     }

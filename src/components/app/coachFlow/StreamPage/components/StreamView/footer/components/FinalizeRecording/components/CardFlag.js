@@ -81,7 +81,6 @@ class CardFlag extends Component {
   };
   cardFlag = () => {
     const {flagsSelected, click, totalTime} = this.props;
-    console.log('totalTime', totalTime);
     const {flag, snipetTime} = this.state;
     const {thumbnail, time, id} = flag;
     const flagTime = Number((time / 1000).toFixed(0));

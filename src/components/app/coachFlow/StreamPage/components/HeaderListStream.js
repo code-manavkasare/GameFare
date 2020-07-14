@@ -38,34 +38,31 @@ class HeaderListStream extends Component {
       titleHeader: 'Select members',
       text2: 'Skip',
       icon2: 'text',
-      clickButton2: async () => {
-        const session = await this.createSession({});
-        StatusBar.setBarStyle('light-content', true);
-        await navigate('StreamPage');
-        return this.openSession(session);
+      clickButton2: () => {
+        return this.createSession({});
       },
-      onGoBack: async (members) => {
-        members = Object.values(members).reduce(function(result, item) {
-          result[item.id] = {
-            id: item.id,
-            info: item.info,
-          };
-          return result;
-        }, {});
-        console.log('members', members);
-        const {userID, infoUser} = this.props;
-        const session = await openSession(
-          {
-            id: userID,
-            info: infoUser,
-          },
-          members,
-        );
-        StatusBar.setBarStyle('light-content', true);
-        await navigate('StreamPage');
-        return this.openSession(session);
-      },
+      onGoBack: (members) => this.createSession(members),
     });
+  }
+  async createSession(members) {
+    members = Object.values(members).reduce(function(result, item) {
+      result[item.id] = {
+        id: item.id,
+        info: item.info,
+      };
+      return result;
+    }, {});
+    const {userID, infoUser} = this.props;
+    const session = await openSession(
+      {
+        id: userID,
+        info: infoUser,
+      },
+      members,
+    );
+    StatusBar.setBarStyle('light-content', true);
+    await navigate('StreamPage');
+    return this.openSession(session);
   }
   async openSession(session) {
     const {layoutAction, coachAction} = this.props;

@@ -25,14 +25,11 @@ class CoachPopups extends Component {
   }
   getInfoCoach(props) {
     const {members, userID} = props;
-    console.log('members', members);
     if (!members) return false;
     const coaches = Object.values(members).filter(
       (member) =>
         member.id !== userID && member.info.coach && member.isConnected,
     );
-    console.log('coaches', coaches);
-    console.log('members', members);
     if (coaches.length !== 0) return coaches[0];
     return false;
   }
@@ -46,7 +43,6 @@ class CoachPopups extends Component {
       currentSessionID,
     } = this.props;
     await timeout(200);
-    console.log('componentDidUpdate', member);
     if (coachSessionID === currentSessionID) {
       if (
         this.props.isConnected &&
@@ -81,10 +77,11 @@ class CoachPopups extends Component {
       userID,
       close,
       open,
+      closeStream,
       defaultCard,
       tokenCusStripe,
+      card,
     } = this.props;
-    console.log('openMemberAcceptCharge', this.props);
     const coach = this.getInfoCoach(this.props);
 
     const {hourlyRate, currencyRate} = coach.info;
@@ -118,6 +115,8 @@ class CoachPopups extends Component {
       listOptions: [
         {
           title: 'Decline',
+          // forceNavigation: true,
+          // operation: () => !card && closeStream(),
         },
         {
           title: 'Accept',
@@ -135,7 +134,6 @@ class CoachPopups extends Component {
   openCoachIsCharging() {
     const {coachSessionID, infoUser, userID} = this.props;
     const {hourlyRate, currencyRate} = infoUser;
-    console.log('openCoachIsCharging', this.props);
     const setChargingSession = async (val) => {
       let updates = {};
       updates[
@@ -165,7 +163,7 @@ class CoachPopups extends Component {
       disableClickOnBackdrop: true,
       listOptions: [
         {
-          operation: () => setChargingSession(true),
+          operation: () => setChargingSession(false),
         },
         {
           operation: () => setChargingSession(true),

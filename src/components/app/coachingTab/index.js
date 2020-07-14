@@ -32,7 +32,6 @@ class StreamTab extends Component {
   }
   async searchCoach(search) {
     const {blockedByUsers, userID} = this.props;
-    console.log('search coach', userID);
     const coaches = await autocompleteSearchUsers(
       search,
       userID,

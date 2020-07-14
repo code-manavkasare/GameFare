@@ -116,7 +116,6 @@ class MemberSource extends Component {
             let newRecording = member.recording;
             newRecording.stopTimestamp = Date.now();
             member.recording = newRecording;
-            console.log('sjdhfdfhgdkfhgjdfg', member);
             await navigate('FinalizeRecording', {
               member: member,
               coachSessionID: coachSessionID,

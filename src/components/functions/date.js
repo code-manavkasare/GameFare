@@ -21,9 +21,8 @@ function isDatePast(date) {
 
 const duration = (value) => {
   const min = minutes(value);
-  console.log('min', min);
-  if (min === 0) return seconds(value) + 'sec';
-  return minutes(value) + 'min' + seconds(value) + 'sec';
+  if (min === 0) return seconds(value) + ' sec';
+  return minutes(value) + ' min ' + seconds(value) + ' sec';
 };
 
 module.exports = {getPermissionCalendar, isDatePast, duration};
