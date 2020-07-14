@@ -63,11 +63,12 @@ export default class Alert extends Component {
     if (nextNavigation) return nextNavigation();
     return this.close();
   }
-  async optionClick(operation) {
+  async optionClick(operation, forceNavigation) {
     const {navigation} = this.props;
     if (operation) {
       await operation();
     }
+    if (forceNavigation) return;
     navigation.goBack();
   }
   async close() {
@@ -147,7 +148,12 @@ export default class Alert extends Component {
                   disabled={false}
                   onPressColor={colors.redLight}
                   text={listOptions[0].title || 'No'}
-                  click={() => this.optionClick(listOptions[0].operation)}
+                  click={() =>
+                    this.optionClick(
+                      listOptions[0].operation,
+                      listOptions[0].forceNavigation,
+                    )
+                  }
                   loader={listOptions[0].loader}
                 />
               </Col>

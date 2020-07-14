@@ -135,60 +135,6 @@ class CardStream extends Component {
       </View>
     );
   }
-  viewMembers() {
-    const styleRow = {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      flex: 1,
-    };
-    const sizeImg = 40;
-    const styleText = {...styleApp.text, color: colors.greyDark, fontSize: 15};
-    const {members, userID} = this.props;
-
-    let membersDisplay = [];
-    if (members !== undefined)
-      membersDisplay = Object.values(members).filter(
-        (member) => member.id !== userID,
-      );
-    return (
-      <View style={styleRow}>
-        {membersDisplay.length === 0 ? (
-          <Text style={styleText}>No one else is part of this room.</Text>
-        ) : (
-          membersDisplay.map((member) => {
-            const styleImg = {
-              height: sizeImg,
-              width: sizeImg,
-              borderRadius: sizeImg / 2,
-            };
-            const styleImgContainer = {
-              height: sizeImg,
-              width: sizeImg + 2,
-              overflow: 'hidden',
-              ...styleApp.center2,
-            };
-            const styleVoile = {
-              ...styleImg,
-              position: 'absolute',
-              backgroundColor: colors.off + '90',
-              zIndex: 10,
-            };
-            return (
-              <View key={member.id} style={styleImgContainer}>
-                {!member.isConnected && <View style={styleVoile} />}
-                <ImageUser
-                  key={member.id}
-                  user={member}
-                  onClick={() => true}
-                  styleImgProps={styleImg}
-                />
-              </View>
-            );
-          })
-        )}
-      </View>
-    );
-  }
   async expand(to) {
     var toVal =
       to !== undefined ? to : this.expandAnimation._value === 0 ? 1 : 0;
@@ -297,9 +243,7 @@ class CardStream extends Component {
         {members
           .splice(0, 2)
           .reverse()
-          .map((member, i) => (
-            <View>{this.userCircle(member, styleByIndex(i), scale)}</View>
-          ))}
+          .map((member, i) => this.userCircle(member, styleByIndex(i), scale))}
       </View>
     );
   }
@@ -320,7 +264,7 @@ class CardStream extends Component {
     };
 
     return (
-      <View>
+      <View key={member.id ? member.id : -1}>
         <View style={{...style}}>
           <View style={{...styleImg}}>
             {member.info && member.info.picture ? (
@@ -440,7 +384,12 @@ class CardStream extends Component {
   async hangup() {
     const {coachAction} = this.props;
     await coachAction('setCurrentSession', false);
+    await navigate('Stream');
   }
+  // async closeStream() {
+  //   const {coachAction} = this.props;
+  //   await coachAction('setCurrentSession', false);
+  // }
   cardBody() {
     const {
       coachSessionID,
@@ -613,6 +562,7 @@ class CardStream extends Component {
         <CoachPopups
           isConnected={member.isConnected && activeSession}
           members={session.members}
+          card={true}
           coachSessionID={coachSessionID}
           member={getMember(session, userID)}
           open={this.openStream.bind(this)}

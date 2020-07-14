@@ -83,7 +83,6 @@ export default class RowPlusMinus extends Component {
     );
   }
   render() {
-    console.log('render row plus minus', this.props);
     return this.row();
   }
 }

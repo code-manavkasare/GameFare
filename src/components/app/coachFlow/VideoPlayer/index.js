@@ -284,7 +284,6 @@ export default class VideoPlayer extends Component {
                       paused={paused}
                       onProgress={(info) => !paused && this.onProgress(info)}
                       onEnd={(callback) => {
-                        console.log('end reached', callback);
                         this.togglePlayPause(true);
                         this.controlButtonRef.setCurrentTime(totalTime, true);
                       }}

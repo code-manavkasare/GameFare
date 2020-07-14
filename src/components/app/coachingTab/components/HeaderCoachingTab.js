@@ -49,7 +49,6 @@ class HeaderListStream extends Component {
           };
           return result;
         }, {});
-        console.log('members', members);
 
         const session = await this.createSession(members);
         StatusBar.setBarStyle('light-content', true);

@@ -12,7 +12,6 @@ const timeout = (ms) => {
 
 const createCoachSession = async (user, members) => {
   const coachSessionID = generateID();
-  console.log('bim on cre une convo', user, members);
   const allMembers = Object.values(members).reduce(function(result, item) {
     result[item.id] = true;
     return result;
@@ -75,7 +74,7 @@ const minutes = (time) => {
 const seconds = (time, displayMilliseconds) => {
   let sec = (time % 60).toFixed(0);
   if (displayMilliseconds) sec = Math.floor(time % 60).toFixed(0);
-  if (sec.length === 1 && Number(sec) !== 0) return '0' + sec;
+  // if (sec.length === 1 && Number(sec) !== 0) return '0 ' + sec;
   return sec;
 };
 

@@ -51,7 +51,6 @@ export default class PinchableBox extends Component {
     }
   };
   onPan({nativeEvent: {scale}}) {
-    // console.log('onPan', scale);
   }
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {

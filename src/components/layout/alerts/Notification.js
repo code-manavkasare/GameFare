@@ -91,7 +91,6 @@ class Notification extends Component {
           activeOpacity={1}
           onPress={() => {
             const {userID} = this.props;
-            console.log('clickNotification')
             this.close(initialTranslateY, () =>
               clickNotification(notification),
             );

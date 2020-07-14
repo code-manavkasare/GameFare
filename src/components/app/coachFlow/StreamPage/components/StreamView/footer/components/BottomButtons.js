@@ -62,12 +62,9 @@ class BottomButton extends Component {
     const {members} = this.props;
 
     if (recordingSelf !== prevState.recordingSelf) {
-      console.log('Recieved recording instruction!');
       if (recordingSelf) {
-        console.log('Queueing start recording!');
         queue.addJob('startRecording');
       } else {
-        console.log('Queueing stop recording!');
         queue.addJob('stopRecording', {discardFile: false});
       }
     }
@@ -114,13 +111,11 @@ class BottomButton extends Component {
         recordingMember = members[m];
     }
     if (recordingMember === undefined && !newState.recordingSelf) {
-      console.log('No one is recording');
       newState = {
         ...newState,
         recording: false,
       };
     } else {
-      console.log('Someone is recording');
       newState = {
         ...newState,
         recording: true,
@@ -139,7 +134,6 @@ class BottomButton extends Component {
   startRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
-    console.log(userID, 'start recording');
     await startRemoteRecording(recordingUser, coachSessionID, userID);
   };
   stopRemoteRecording = async (member) => {
@@ -199,7 +193,6 @@ class BottomButton extends Component {
           (member) => member.id === userID,
         )[0];
         const {id: memberID, recording} = member;
-        console.log('recording', recording);
         if (!discardFile) {
           const thumbnails = await generateFlagsThumbnail({
             flags: recording.flags,
@@ -207,9 +200,7 @@ class BottomButton extends Component {
             coachSessionID,
             memberID: memberID,
           });
-          console.log('thumbnails', thumbnails);
-          // TODO-UPLOAD push thumbnails to upload
-          // call new uploadReducer add thumbnails array
+
           uploadQueueAction('enqueueFilesUpload', thumbnails);
         }
       }

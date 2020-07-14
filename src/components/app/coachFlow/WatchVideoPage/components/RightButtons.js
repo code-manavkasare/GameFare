@@ -98,13 +98,7 @@ class RightButtons extends Component {
     );
   }
   undo = async (idLastDrawing) => {
-    const {
-      videoBeingShared,
-      coachSessionID,
-      archiveID,
-    } = this.props;
-    console.log('videoBeingShared?.drawings', videoBeingShared?.drawings);
-    console.log('idLastDrawing', idLastDrawing);
+    const {videoBeingShared, coachSessionID, archiveID} = this.props;
     if (videoBeingShared?.drawings) {
       if (!idLastDrawing)
         idLastDrawing = getLastDrawing(videoBeingShared.drawings).id;
@@ -114,7 +108,6 @@ class RightButtons extends Component {
         )
         .remove();
     } else {
-      console.log('ici,');
       this.props.drawViewRef.undo();
     }
   };

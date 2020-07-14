@@ -10,7 +10,6 @@
 // // write the file
 // RNFS.writeFile(path, JSON.stringify(allCountry), 'utf8')
 //   .then((success) => {
-//     console.log('FILE WRITTEN!',path);
 //   })
 //   .catch((err) => {
 //   });

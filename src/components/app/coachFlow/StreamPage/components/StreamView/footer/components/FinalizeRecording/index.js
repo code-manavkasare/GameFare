@@ -86,7 +86,7 @@ class FinalizeRecording extends Component {
     updates[
       `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
     ] = true;
-    await database()
+    database()
       .ref()
       .update(updates);
     this.goBack();
@@ -103,7 +103,6 @@ class FinalizeRecording extends Component {
     if (!flags) return null;
     const {member, flagsSelected} = this.state;
     const {recording} = member;
-    console.log('recording', recording);
     return (
       <View>
         <View style={styleApp.marginView}>
@@ -115,15 +114,13 @@ class FinalizeRecording extends Component {
             <CardFlag
               key={flag.id}
               flag={flag}
-              totalTime={(
-                (recording.stopTimestamp - recording.startTimestamp) /
-                1000
-              ).toFixed(0)}
+              totalTime={
+                (recording.stopTimestamp - recording.startTimestamp) / 1000
+              }
               flagsSelected={flagsSelected}
               onRef={(ref) => (this.itemsRef[flag.id] = ref)}
               click={() => {
                 let {flagsSelected} = this.state;
-                console.log('clicl');
                 delete flagsSelected['fullVideo'];
                 if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
                 else
@@ -135,7 +132,6 @@ class FinalizeRecording extends Component {
                       thumbnail: flag.thumbnail,
                     },
                   };
-                console.log('flagsSelected', flagsSelected);
                 this.setState({flagsSelected});
               }}
             />
@@ -148,7 +144,6 @@ class FinalizeRecording extends Component {
     const {member, flagsSelected} = this.state;
     const {recording} = member;
     const {flags} = recording;
-    console.log('recording', recording);
     return (
       <View style={[{minHeight: 800}]}>
         {this.flagList(flags)}

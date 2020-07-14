@@ -22,7 +22,6 @@ iphone 11 -> 12
 
 const getResolutions = (cameraFront) => {
   const deviceID = getDeviceFormated();
-  console.log('deviceID', deviceID);
   if (deviceID === 7) {
     if (cameraFront)
       return [
