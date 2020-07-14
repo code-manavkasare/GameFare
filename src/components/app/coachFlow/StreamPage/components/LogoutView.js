@@ -33,7 +33,7 @@ export default class LogoutView extends Component {
         ]}>
         <Video
           repeat={true}
-          source={require('../../../../../img/videos/test.mp4')} // Can be a URL or a local file.
+          source={require('../../../../../img/videos/intro.mp4')} // Can be a URL or a local file.
           ref={(ref) => {
             this.player = ref;
           }} // Store reference
