@@ -149,7 +149,7 @@ PODS:
     - glog
   - gamefare-camera-kit (1.1.2):
     - React
-  - gamefare-local-opentok (0.0.12):
+  - gamefare-local-opentok (0.0.14):
     - OpenTok
     - React
   - glog (0.3.5)
@@ -1071,7 +1071,7 @@ SPEC CHECKSUMS:
   FlipperKit: 6dc9b8f4ef60d9e5ded7f0264db299c91f18832e
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   gamefare-camera-kit: 09c3fd74dc7eb4af3996c910150654cf88f55141
-  gamefare-local-opentok: bb660333dff3c18e16ef558ae2595d235f49d68d
+  gamefare-local-opentok: e882d4a3da71bcf2ac5834064429efdd95d11868
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
   GoogleDataTransport: 653963cf5be60fb59cf051e070f0836fdc305f81
@@ -1193,4 +1193,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: dbb9db82f78b1947ee10466b8b76a9b3b893391d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.9.1

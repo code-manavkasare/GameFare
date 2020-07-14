@@ -149,7 +149,8 @@ class BottomButton extends Component {
     const {coachSessionID, userID} = this.props;
     const messageCallback = async (response) => {
       if (response.error)
-        return console.log(`Error initializing recording: ${response.message}`);
+        if (response.message === 'INIT_ERR') return this.startRecording()
+        else return console.log(`Error initializing recording: ${response.message}`)
       updateTimestamp(coachSessionID, userID, Date.now());
     };
     const permissionLibrary = await permission('library');
