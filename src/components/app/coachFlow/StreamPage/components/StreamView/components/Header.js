@@ -49,6 +49,7 @@ class HeaderStreamView extends Component {
       state,
       permissionOtherUserToRecord,
       close,
+      chargeForSession,
     } = this.props;
     const {isConnected} = state;
     return (
@@ -87,6 +88,7 @@ class HeaderStreamView extends Component {
           NavigationService.navigate('Settings', {
             coachSessionID: coachSessionID,
             permissionOtherUserToRecord: permissionOtherUserToRecord,
+            chargeForSession: chargeForSession,
           })
         }
       />

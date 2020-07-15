@@ -1,10 +1,22 @@
+import React, {Component} from 'react';
+
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import ImageResizer from 'react-native-image-resizer';
 import axios from 'axios';
 import Config from 'react-native-config';
+import StatusBar from '@react-native-community/status-bar';
+import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
+import {store} from '../../../reduxStore';
+import {setCurrentSession} from '../../actions/coachActions';
+import {setLayout} from '../../actions/layoutActions';
+import {navigate} from '../../../NavigationService';
+
+import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
+import ImageUser from '../layout/image/ImageUser';
+import ButtonAcceptPayment from '../layout/buttons/ButtonAcceptPayment';
 
 const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -297,23 +309,108 @@ const generateFlagsThumbnail = async ({
 };
 
 const openSession = async (user, members) => {
-  const urlGetSession = `${
-    Config.FIREBASE_CLOUD_FUNCTIONS_URL
-  }getSessionsFromMembers`;
+  const allSessions = store.getState().coach.allSessions;
 
   let allMembers = Object.values(members).map((member) => member.id);
   allMembers.push(user.id);
-  console.log('allMembers', allMembers, members);
-  let response = await axios.get(urlGetSession, {
-    params: {
-      arrayIdsUsers: allMembers,
-    },
-  });
-  let session = response.data.session;
-  console.log('response!!!!!', session);
-  if (session) return session;
+
+  let session = Object.values(allSessions).filter((session) =>
+    isEqual(Object.keys(session.members).sort(), allMembers.sort()),
+  );
+
+  if (session.length !== 0) return session[0];
   session = await createCoachSession(user, members);
   return session;
+};
+
+const isSessionFree = (session) => {
+  const coach = infoCoach(session.members);
+  if (!coach) return true;
+  return !coach.chargeForSession;
+};
+
+const infoCoach = (members) => {
+  if (!members) return false;
+  const userID = store.getState().user.userID;
+  const coaches = Object.values(members).filter(
+    (member) => member.id !== userID && member.info.coach && member.isConnected,
+  );
+  if (coaches.length !== 0) return coaches[0];
+  return false;
+};
+
+const openMemberAcceptCharge = async (session) => {
+  const userID = store.getState().user.userID;
+  const tokenCusStripe = store.getState().user.infoUser.wallet.tokenCusStripe;
+  const defaultCard = store.getState().user.infoUser.wallet.defaultCard;
+  const {objectID} = session;
+  const coach = infoCoach(session.members);
+
+  const {hourlyRate, currencyRate} = coach.info;
+  const setAcceptCharge = async (val) => {
+    let updates = {};
+    updates[`coachSessions/${objectID}/members/${userID}/acceptCharge`] = val;
+    updates[`coachSessions/${objectID}/members/${userID}/payment`] = {
+      tokenStripe: tokenCusStripe,
+      cardID: defaultCard.id,
+    };
+    await database()
+      .ref()
+      .update(updates);
+
+    finalizeOpening(session);
+  };
+  // if (forceCloseSession) await close();
+  navigate('Alert', {
+    textButton: 'Allow',
+    title: 'This session requires a payment.',
+    subtitle: `Your coach's hourly rate is ${currencyRate}$${hourlyRate}. You will be charged $${(
+      hourlyRate / 60
+    ).toFixed(1)}/min spent on the session.`,
+    displayList: true,
+    disableClickOnBackdrop: true,
+    close: false,
+    icon: <ImageUser user={coach} />,
+    componentAdded: <CardCreditCard />,
+    listOptions: [
+      {
+        title: 'Decline',
+      },
+      {
+        title: 'Accept',
+        disabled: !defaultCard,
+        button: (
+          <ButtonAcceptPayment
+            click={() => setAcceptCharge(true)}
+            textButton="Accept"
+          />
+        ),
+      },
+    ],
+  });
+};
+
+const finalizeOpening = async (session) => {
+  const currentSessionID = store.getState().coach.currentSessionID;
+  if (currentSessionID !== session.objectID) {
+    if (currentSessionID) {
+      await store.dispatch(setCurrentSession(false));
+      await timeout(100);
+    }
+    await store.dispatch(setCurrentSession(session));
+  }
+  await store.dispatch(setLayout({isFooterVisible: false}));
+
+  StatusBar.setBarStyle('light-content', true);
+  navigate('Session', {
+    screen: 'Session',
+    params: {coachSessionID: session.objectID, date: Date.now()},
+  });
+};
+
+const sessionOpening = async (session) => {
+  if (!isSessionFree(session)) return openMemberAcceptCharge(session);
+  finalizeOpening(session);
 };
 
 module.exports = {
@@ -339,4 +436,6 @@ module.exports = {
   openSession,
   minutes,
   seconds,
+  infoCoach,
+  sessionOpening,
 };

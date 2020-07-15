@@ -33,6 +33,7 @@ class Settings extends Component {
       loader: true,
       permissionOtherUserToRecord: this.props.route.params
         .permissionOtherUserToRecord,
+      chargeForSession: this.props.route.params.chargeForSession,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
@@ -58,11 +59,11 @@ class Settings extends Component {
     );
   }
   settings() {
-    let {settings, userID} = this.props;
+    let {settings, userID, infoUser} = this.props;
     if (!settings) {
       settings = {};
     }
-    const {permissionOtherUserToRecord} = this.state;
+    const {permissionOtherUserToRecord, chargeForSession} = this.state;
     const {batterySaver} = this.props;
     const that = this;
     return (
@@ -82,6 +83,23 @@ class Settings extends Component {
           },
           'Allow call participants to remotely trigger a recording',
         )}
+        <View style={{height: 20}} />
+        {infoUser.coach &&
+          this.settingsSwitch(
+            chargeForSession,
+            async () => {
+              const {coachSessionID} = that.props.route.params;
+              await that.setState({
+                chargeForSession: !chargeForSession,
+              });
+              database()
+                .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+                .update({
+                  chargeForSession: !chargeForSession,
+                });
+            },
+            'Charge players for the session',
+          )}
         {/* {this.settingsSwitch(
           batterySaver,
           async () => {
@@ -147,6 +165,7 @@ const styles = StyleSheet.create({});
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    infoUser: state.user.infoUser.userInfo,
     currentScreenSize: state.layout.currentScreenSize,
     settings: state.user.infoUser.settings,
     batterySaver: state.appSettings.batterySaver,

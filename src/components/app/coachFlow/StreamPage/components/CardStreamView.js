@@ -11,16 +11,16 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import moment from 'moment';
-import StatusBar from '@react-native-community/status-bar';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {layoutAction} from '../../../../../actions/layoutActions';
+import {coachAction} from '../../.././../../actions/coachActions';
 
 import {native, timing} from '../../../../animations/animations';
 import {navigate} from '../../../../../../NavigationService';
 import AllIcons from '../../../../layout/icons/AllIcons';
 
-import {timeout, getMember} from '../../../../functions/coach';
+import {sessionOpening, getMember} from '../../../../functions/coach';
 import CoachPopups from './StreamView/components/CoachPopups';
 
 import ButtonColor from '../../../../layout/Views/Button';
@@ -28,8 +28,6 @@ import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 
-import ImageUser from '../../../../layout/image/ImageUser';
-import {coachAction} from '../../.././../../actions/coachActions';
 import AsyncImage from '../../../../layout/image/AsyncImage';
 
 class CardStream extends Component {
@@ -62,6 +60,9 @@ class CardStream extends Component {
           if (currentSessionID === coachSessionID)
             await coachAction('setCurrentSession', session);
 
+          coachAction('setAllSessions', {
+            [coachSessionID]: session,
+          });
           this.setState({
             session: session,
             loading: false,
@@ -70,11 +71,6 @@ class CardStream extends Component {
         }.bind(this),
       );
   }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   deleteSession = () => {
     const {userID, coachSessionID} = this.props;
     navigate('Alert', {
@@ -99,26 +95,6 @@ class CardStream extends Component {
       },
     });
   };
-  buttonEndCall() {
-    const endCoachSession = () => {};
-    return (
-      <ButtonColor
-        color={colors.red}
-        onPressColor={colors.redLight}
-        click={() => endCoachSession()}
-        style={styles.button}
-        view={() => {
-          return (
-            <Image
-              source={require('../../../../../img/icons/endCall.png')}
-              style={{width: 17, height: 17}}
-            />
-          );
-        }}
-      />
-    );
-  }
-
   viewLive() {
     const styleViewLive = {
       marginRight: 20,
@@ -148,33 +124,7 @@ class CardStream extends Component {
 
   async openStream(forceOpen) {
     const {session} = this.state;
-    const {
-      coachSessionID,
-      layoutAction,
-      coachAction,
-      currentSessionID,
-    } = this.props;
-
-    const isSessionFree = this.coachPopupsRef.isSessionFree();
-    if (!isSessionFree && !forceOpen)
-      return this.coachPopupsRef.openMemberAcceptCharge();
-
-    if (currentSessionID !== coachSessionID) {
-      if (currentSessionID) {
-        await this.setState({loader: true});
-        await timeout(700);
-        await coachAction('setCurrentSession', false);
-        await this.setState({loader: false});
-      }
-      await coachAction('setCurrentSession', session);
-    }
-
-    await layoutAction('setLayout', {isFooterVisible: false});
-    StatusBar.setBarStyle('light-content', true);
-    navigate('Session', {
-      screen: 'Session',
-      params: {coachSessionID: coachSessionID, date: Date.now()},
-    });
+    sessionOpening(session);
   }
 
   loading() {
@@ -442,8 +392,8 @@ class CardStream extends Component {
                 }}
               />
               <ButtonColor
-                onPressColor={activeSession ? colors.off : colors.greenLight}
-                color={activeSession ? colors.white : colors.green}
+                onPressColor={colors.greenLight}
+                color={colors.green}
                 click={() => this.openStream()}
                 style={[styles.button, {shadowOpacity: 0}]}
                 view={() => {
@@ -453,9 +403,9 @@ class CardStream extends Component {
                   ) : (
                     <AllIcons
                       type="mat"
-                      name={activeSession ? 'keyboard-arrow-right' : 'call'}
+                      name={'call'}
                       size={22}
-                      color={activeSession ? colors.title : colors.white}
+                      color={colors.white}
                     />
                   );
                 }}
@@ -504,7 +454,6 @@ class CardStream extends Component {
       currentScreenSize,
       coachSessionID,
       currentSessionID,
-      isConnected,
       userID,
     } = this.props;
     const {loading, session} = this.state;
@@ -561,6 +510,7 @@ class CardStream extends Component {
 
         <CoachPopups
           isConnected={member.isConnected && activeSession}
+          session={session}
           members={session.members}
           card={true}
           coachSessionID={coachSessionID}
@@ -573,7 +523,7 @@ class CardStream extends Component {
     );
   }
   render() {
-    return <View>{this.cardStream()}</View>;
+    return this.cardStream();
   }
 }
 

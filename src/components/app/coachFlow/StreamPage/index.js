@@ -1,12 +1,8 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
-
-import {coachAction} from '../../../../actions/coachActions';
-import {layoutAction} from '../../../../actions/layoutActions';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -19,7 +15,7 @@ import PermissionView from './components/PermissionView';
 import ListStreams from './components/ListStreams';
 import Loader from '../../../layout/loaders/Loader';
 import HeaderListStream from './components/HeaderListStream';
-import ButtonNotification from '../../elementsUser/elementsProfile/ButtonNotification';
+import {sessionOpening} from '../../../functions/coach';
 
 class StreamTab extends Component {
   constructor(props) {
@@ -39,34 +35,17 @@ class StreamTab extends Component {
       Orientation.lockToPortrait();
     });
   };
-  componentDidUpdate = (prevProps, prevState) => {
+  componentDidUpdate = (prevProps) => {
     const {params} = this.props.route;
     if (prevProps.route.params?.date !== params?.date && params?.date)
       this.openSession(params.objectID);
   };
   openSession = async (objectID) => {
-    const {
-      currentSessionID,
-      navigation,
-      layoutAction,
-      coachAction,
-    } = this.props;
-    const {navigate} = navigation;
-    if (currentSessionID !== objectID) {
-      let session = await database()
-        .ref(`coachSessions/${objectID}`)
-        .once('value');
-      session = session.val();
-      await coachAction('setCurrentSession', false);
-      await coachAction('setCurrentSession', session);
-    }
-
-    await layoutAction('setLayout', {isFooterVisible: false});
-    StatusBar.setBarStyle('light-content', true);
-    navigate('Session', {
-      screen: 'Session',
-      params: {coachSessionID: objectID, date: Date.now()},
-    });
+    let session = await database()
+      .ref(`coachSessions/${objectID}`)
+      .once('value');
+    session = session.val();
+    sessionOpening(session);
   };
   viewLoader = () => {
     return (
@@ -148,5 +127,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction, layoutAction},
+  {},
 )(StreamTab);

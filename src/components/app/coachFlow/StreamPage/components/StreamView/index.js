@@ -518,6 +518,7 @@ class StreamPage extends Component {
               ? getMember(coachSession, userID)?.permissionOtherUserToRecord
               : false
           }
+          chargeForSession={getMember(coachSession, userID)?.chargeForSession}
           setState={this.setState.bind(this)}
           state={this.state}
         />

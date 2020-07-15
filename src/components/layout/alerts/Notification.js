@@ -26,7 +26,7 @@ import {timeout} from '../../functions/coach';
 
 import {marginTopApp} from '../../style/sizes';
 
-const heightNotif = 100;
+const heightNotif = 130;
 
 const initialTranslateY = -marginTopApp - heightNotif - 20;
 
@@ -77,8 +77,11 @@ class Notification extends Component {
   }
   render() {
     const {currentWidth, notification} = this.props;
-    let {body, title, picture} = notification.notification;
-    const styleImg = {height: 40, width: 40, borderRadius: 5};
+    if (!notification) return null;
+    const {picture} = notification.data;
+    let {body, title} = notification.notification;
+    if (body.length > 80) body = body.slice(0, 80) + '...';
+    const styleImg = {height: 50, width: 50, borderRadius: 5};
     return (
       <Animated.View
         style={[
@@ -99,7 +102,7 @@ class Notification extends Component {
             });
           }}>
           <Row style={styleApp.marginView}>
-            <Col size={15} style={styleApp.center2}>
+            <Col size={20} style={styleApp.center2}>
               {!picture ? (
                 <Image
                   source={require('../../../img/logos/logoios.png')}
@@ -109,7 +112,7 @@ class Notification extends Component {
                 <AsyncImage mainImage={picture} style={styleImg} />
               )}
             </Col>
-            <Col size={85} style={styleApp.center2}>
+            <Col size={80} style={styleApp.center2}>
               <Text style={styles.title}>{title}</Text>
               <Text style={styles.subtitle}>{body}</Text>
             </Col>
@@ -145,17 +148,23 @@ const styles = StyleSheet.create({
     ...styleApp.center,
     position: 'absolute',
     bottom: -20,
-    height: 50,
-    paddingTop: 30,
+    height: 20,
+    paddingTop: 0,
+    //backgroundColor: 'red',
   },
   swipableRectangle: {
-    height: 3,
-    width: 80,
+    height: 4,
+    width: 50,
     borderRadius: 2.5,
     backgroundColor: colors.transparentGrey,
   },
-  subtitle: {...styleApp.title, fontSize: 12, color: colors.greyDark},
-  title: {...styleApp.title, fontSize: 14},
+  subtitle: {
+    ...styleApp.text,
+    fontSize: 14,
+    color: colors.title,
+    marginTop: 3,
+  },
+  title: {...styleApp.title, fontSize: 15},
 });
 
 const mapStateToProps = (state) => {
