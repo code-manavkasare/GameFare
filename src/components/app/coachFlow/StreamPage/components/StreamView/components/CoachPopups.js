@@ -54,8 +54,10 @@ class CoachPopups extends Component {
         coach.isConnected &&
         coach.chargeForSession &&
         member.isConnected
-      )
-        return openMemberAcceptCharge(session);
+      ) {
+        console.log('bim !!!!!!!');
+        return openMemberAcceptCharge(session, true);
+      }
     }
   }
   isSessionFree() {

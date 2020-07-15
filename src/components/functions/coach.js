@@ -338,8 +338,11 @@ const infoCoach = (members) => {
   if (coaches.length !== 0) return coaches[0];
   return false;
 };
-
-const openMemberAcceptCharge = async (session) => {
+const closeSession = async () => {
+  await store.dispatch(setCurrentSession(false));
+  await navigate('Stream');
+};
+const openMemberAcceptCharge = async (session, forceCloseSession) => {
   const userID = store.getState().user.userID;
   const tokenCusStripe = store.getState().user.infoUser.wallet.tokenCusStripe;
   const defaultCard = store.getState().user.infoUser.wallet.defaultCard;
@@ -360,7 +363,7 @@ const openMemberAcceptCharge = async (session) => {
 
     finalizeOpening(session);
   };
-  // if (forceCloseSession) await close();
+  if (forceCloseSession) await closeSession();
   navigate('Alert', {
     textButton: 'Allow',
     title: 'This session requires a payment.',
@@ -438,4 +441,5 @@ module.exports = {
   seconds,
   infoCoach,
   sessionOpening,
+  openMemberAcceptCharge,
 };
