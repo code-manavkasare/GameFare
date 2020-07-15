@@ -65,9 +65,10 @@ export default class LogoutView extends Component {
 
 const styles = StyleSheet.create({
   video: {
-    height: height + 200,
+    height: height + 110,
     width: width + 100,
-    marginTop: -100,
+    marginLeft: -30,
+    marginTop: -60,
     position: 'absolute',
     zIndex: -1,
     marginBottom: 0,

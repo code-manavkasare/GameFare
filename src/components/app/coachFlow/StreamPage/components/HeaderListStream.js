@@ -1,20 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
-
 import {navigate} from '../../../../../../NavigationService';
 
-import {openSession} from '../../../../functions/coach';
-import {logMixpanel} from '../../../../database/mixpanel';
-import {coachAction} from '../../../../../actions/coachActions';
-import {layoutAction} from '../../../../../actions/layoutActions';
-
+import {openSession, sessionOpening} from '../../../../functions/coach';
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
-
-import Mixpanel from 'react-native-mixpanel';
-import {mixPanelToken} from '../../../../database/firebase/tokens';
-Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 class HeaderListStream extends Component {
   constructor(props) {
@@ -60,21 +50,9 @@ class HeaderListStream extends Component {
       },
       members,
     );
-    StatusBar.setBarStyle('light-content', true);
-    await navigate('StreamPage');
-    return this.openSession(session);
+    console.log('bimm session', session);
+    return sessionOpening(session);
   }
-  async openSession(session) {
-    const {layoutAction, coachAction} = this.props;
-    await coachAction('setCurrentSession', false);
-    await coachAction('setCurrentSession', session);
-    await layoutAction('setLayout', {isFooterVisible: false});
-    navigate('Session', {
-      screen: 'Session',
-      params: {},
-    });
-  }
-
   header = () => {
     const {hideButtonNewSession, AnimatedHeaderValue} = this.props;
     const {loader} = this.state;
@@ -123,5 +101,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction, layoutAction},
+  {},
 )(HeaderListStream);

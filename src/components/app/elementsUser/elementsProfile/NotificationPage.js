@@ -64,7 +64,7 @@ class NotificationPage extends Component {
   };
   rowIcon(icon, text) {
     return (
-      <Row style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row style={{paddingTop: 5, paddingBottom: 5, marginBottom: 10}}>
         <Col size={15} style={styleApp.center2}>
           <AllIcons name={icon} color={colors.grey} type="font" size={20} />
         </Col>
@@ -80,7 +80,7 @@ class NotificationPage extends Component {
       <View style={styleApp.marginView}>
         <Row>
           <Col size={65}>
-            <Text style={[styleApp.title, {fontSize: 18, marginBottom: 5}]}>
+            <Text style={[styleApp.title, {fontSize: 21, marginBottom: 5}]}>
               Notifications are {permission ? 'enabled' : 'disabled'}.
             </Text>
             <Text style={styleApp.text}>
@@ -106,7 +106,7 @@ class NotificationPage extends Component {
       <View style={styleApp.stylePage}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={'Notification center'}
+          textHeader={''}
           inputRange={[5, 10]}
           loader={loader}
           initialBorderColorIcon={'white'}

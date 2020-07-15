@@ -7,8 +7,9 @@ const initialState = {
   activeTab: 'Profile',
   notification: {
     notification: {
-      image: '',
+      body: '',
     },
+    data: {},
   },
   currentScreenSize: {
     currentWidth: width,

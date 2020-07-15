@@ -5,6 +5,7 @@ import {
   SET_CURRENT_COACHSESSION_ID,
   SET_CURRENT_SESSION,
   SET_COACH_SESSION_DRAW_SETTINGS,
+  SET_ALL_SESSIONS,
 } from '../actions/types';
 import colors from '../components/style/colors';
 
@@ -17,6 +18,7 @@ const initialState = {
     undo: false,
     touchEnabled: true,
   },
+  allSessions: {},
 };
 
 const coachReducer = (state = initialState, action) => {
@@ -43,6 +45,14 @@ const coachReducer = (state = initialState, action) => {
         currentSessionID: action.currentSession
           ? action.currentSession.objectID
           : false,
+      };
+    case SET_ALL_SESSIONS:
+      return {
+        ...state,
+        allSessions: {
+          ...state.allSessions,
+          ...action.allSessions,
+        },
       };
     case SET_CURRENT_COACHSESSION_ID:
       return {...state, currentSessionID: action.currentSessionID};

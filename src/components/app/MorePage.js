@@ -458,6 +458,38 @@ class MorePage extends Component {
                 });
               },
             })}
+            {this.button2({
+          text: 'Test notif appears',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () => {
+            const {layoutAction} = this.props;
+            layoutAction('setLayout', {
+              notification: {
+                data: {
+                  action: 'Stream',
+                  screen: 'StreamPage',
+                  objectID: 'yrhyg3a4nrik9v83hjx',
+                  typeNavigation: 'navigate',
+                  notUniqueStack: 'true',
+                  date: Date.now(),
+                  picture:
+                    'https://images.pexels.com/photos/1115804/pexels-photo-1115804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+                },
+                notification: {
+                  title: 'Marroco has invited you to a video chat ',
+                  timestamp: Date.now(),
+                  body:
+                    'Click on this notification to join. Click on this notification to join. Click on this notification to join. Click on this notification to join.c ',
+                },
+              },
+            });
+          },
+        })}
           </View>
         )} */}
 

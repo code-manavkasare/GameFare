@@ -1,12 +1,12 @@
 import {SET_LAYOUT} from './types';
 
-const setLayout = (value) => ({
+export const setLayout = (value) => ({
   type: SET_LAYOUT,
   value,
 });
 
 export const layoutAction = (val, data) => {
-  return async function (dispatch) {
+  return async function(dispatch) {
     if (val === 'setLayout') {
       await dispatch(setLayout(data));
     }
