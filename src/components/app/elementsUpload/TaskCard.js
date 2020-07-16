@@ -11,12 +11,12 @@ import {Row, Col} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import * as Progress from 'react-native-progress';
 import Swipeout from 'react-native-swipeout';
-import moment from 'moment';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
+import {formatDate, formatDuration} from '../../functions/date'
 
 class TaskCard extends Component {
   thumbnail() {
@@ -60,14 +60,14 @@ class TaskCard extends Component {
         <Text style={{...styleApp.title, fontSize: 15}}>
           {type === 'image'
             ? filename
-            : this.formatDuration(
+            : formatDuration(
                 task.duration
                   ? task.duration
                   : (task.stopTime - task.startTime) / 1000,
               )}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15}}>
-          {this.formatDate(task.date)}
+          {formatDate(task.date)}
         </Text>
       </View>
     );
@@ -96,38 +96,7 @@ class TaskCard extends Component {
           </Col>
         </Row>
       </View>
-      // <Swipeout
-      //   key={id}
-      //   style={{height: 80}}
-      //   backgroundColor="transparent"
-      //   right={[
-      //     {
-      //       type: 'delete',
-      //       component: this.deleteButton(),
-      //       onPress: () => {
-      //         this.deleteJob(index);
-      //       },
-      //     },
-      //   ]}>
-
-      // </Swipeout>
     );
-  }
-
-  formatDate(date) {
-    let justNow = moment(Date.now()).subtract(1, 'minute');
-    let earlier = moment(Date.now()).subtract(7, 'days');
-    let lastYear = moment(Date.now()).subtract(1, 'year');
-    if (date > justNow) return 'Just now';
-    else if (date > earlier) return moment(date).fromNow();
-    else if (date > lastYear) return moment(date).format('ddd, MMM DD');
-    else return moment(date).format('MMMM YYYY');
-  }
-
-  formatDuration(duration) {
-    if (duration > 60)
-      return Math.round(duration / 60).toString() + ' minutes long';
-    else return Math.round(duration).toString() + ' seconds long';
   }
 
   deleteJob(index) {

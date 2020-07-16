@@ -9,7 +9,7 @@ import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import PastSessions from './PastSessions';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 import {coachAction} from '../../../../../../../../actions/coachActions';
-import {timing} from '../../../../../../../animations/animations';
+import {native} from '../../../../../../../animations/animations';
 import {
   timeout,
   isSomeoneSharingScreen,
@@ -32,10 +32,10 @@ class VideoViews extends Component {
   open(val) {
     if (val)
       return Animated.parallel([
-        Animated.timing(this.animateView, timing(1, 200)),
+        Animated.timing(this.animateView, native(1, 200)),
       ]).start();
     return Animated.parallel([
-      Animated.timing(this.animateView, timing(0, 200)),
+      Animated.timing(this.animateView, native(0, 200)),
     ]).start();
   }
   async startLiveReview() {}
@@ -119,11 +119,12 @@ class VideoViews extends Component {
     );
   }
   sessions() {
-    const {heightView} = this.animationView();
+    const {translateY} = this.animationView();
     const {openVideo,personSharingScreen} = this.props;
 
     const styleViewVideos = {
-      height: heightView,
+      transform: [{translateY}],
+      height: 170,
       width: '100%',
     };
     return (
@@ -138,12 +139,12 @@ class VideoViews extends Component {
     );
   }
   animationView() {
-    const heightView = this.animateView.interpolate({
+    const translateY = this.animateView.interpolate({
       inputRange: [0, 1],
       extrapolate: 'clamp',
-      outputRange: [0, 170],
+      outputRange: [170, 0],
     });
-    return {heightView};
+    return {translateY};
   }
   render() {
     return this.sessions();

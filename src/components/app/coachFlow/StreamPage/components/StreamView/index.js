@@ -118,7 +118,7 @@ class StreamPage extends Component {
 
     this.publisherEventHandlers = {
       streamCreated: async (event) => {
-        const {coachSessionID} = this.state;
+        const {coachSessionID, publishVideo} = this.state;
         const {userID, currentScreenSize} = this.props;
         const {portrait} = currentScreenSize;
         const {streamId, connectionId} = event;
@@ -141,6 +141,7 @@ class StreamPage extends Component {
             connectionTimeStamp: Date.now(),
             portrait: portrait,
             isConnected: true,
+            publishVideo,
             recording: {enabled: true},
           });
         this.setState({
@@ -337,19 +338,25 @@ class StreamPage extends Component {
       currentWidth,
       portrait,
     } = this.props.currentScreenSize;
-    return subscribers.map((streamId, index) => {
-      const member = Object.values(coachSession.members).filter(
-        (member) => member.streamIdTokBox === streamId,
-      )[0];
+
+    const members = subscribers.map((streamId) => {
+      return Object.values(coachSession.members).filter((member) => {
+        return member.streamIdTokBox === streamId
+      })[0]
+    }).filter(member => member !== undefined)
+    let length = members.length
+
+    return members.map((member, index) => {
+      let streamId = member?.streamIdTokBox
 
       let ratioVideo = ratio(16, 9);
       if (member?.portrait) ratioVideo = ratio(9, 16);
 
       let styleSubscriber = {
         ...styleApp.center,
-        height: currentHeight / subscribers.length,
+        height: currentHeight / length,
         width: currentWidth,
-        top: index * (currentHeight / subscribers.length),
+        top: index * (currentHeight / length),
         position: 'absolute',
         backgroundColor: colors.title,
       };
@@ -357,8 +364,8 @@ class StreamPage extends Component {
         styleSubscriber = {
           ...styleApp.center,
           height: currentHeight,
-          width: currentWidth / subscribers.length,
-          left: index * (currentWidth / subscribers.length),
+          width: currentWidth / length,
+          left: index * (currentWidth / length),
           position: 'absolute',
           backgroundColor: colors.title,
         };
@@ -371,13 +378,25 @@ class StreamPage extends Component {
       }
       return (
         <View key={streamId} style={styleSubscriber}>
-          <OTSubscriberView streamId={streamId} style={{width: w, height: h}} />
+          {
+          member?.publishVideo == true ? 
+          <OTSubscriberView streamId={streamId} style={{width: w, height: h}} /> : 
+          member?.publishVideo == false ?
+          <View style={{...styleApp.center, ...styles.pausedView, width:w, height:h}}>
+            <Text
+              style={[styleApp.textBold, {color: colors.white}]}>
+              Paused
+            </Text>
+          </View> : 
+          null
+          }
         </View>
       );
-    });
+    })
   };
   pausedView(userIsAlone) {
     let style = this.stylePublisher(userIsAlone);
+    const {portrait} = this.props.currentScreenSize;
 
     style = {
       ...style,
@@ -390,7 +409,7 @@ class StreamPage extends Component {
     if (!userIsAlone)
       styleTextAlone = {
         fontSize: 9,
-        marginBottom: 27,
+        marginBottom: (portrait) ? 5 : 0,
       };
 
     return (
@@ -409,9 +428,12 @@ class StreamPage extends Component {
     const {portrait} = this.props.currentScreenSize;
     let marginTop = marginTopApp;
     if (!portrait) marginTop = marginTopAppLandscape;
+    let width = portrait ? 70 : 142
+    let height = portrait ? 123 : 80
     return {
+      height, width,
       ...styles.OTSubscriberNotAlone,
-      top: marginTop + (heightHeaderHome - 48) / 2,
+      top: marginTop + (heightHeaderHome),
     };
   }
   streamPage() {
@@ -580,9 +602,7 @@ const styles = StyleSheet.create({
     zIndex: 8,
   },
   OTSubscriberNotAlone: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    borderRadius: 18,
     overflow: 'hidden',
     position: 'absolute',
     right: '5%',

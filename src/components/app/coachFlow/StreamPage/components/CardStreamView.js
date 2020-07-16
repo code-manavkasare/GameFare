@@ -261,6 +261,7 @@ class CardStream extends Component {
       borderWidth: 4 * scale,
       borderColor: colors.white,
       overflow: 'hidden',
+      backgroundColor:colors.grey,
     };
 
     return (
@@ -269,7 +270,8 @@ class CardStream extends Component {
           <View style={{...styleImg}}>
             {member.info && member.info.picture ? (
               <AsyncImage
-                style={{...styleApp.fullSize, borderRadius}}
+                style={{...styleApp.fullSize, borderRadius, 
+                  backgroundColor:colors.grey}}
                 mainImage={member.info.picture}
                 imgInitial={member.info.picture}
               />

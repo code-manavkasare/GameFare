@@ -28,7 +28,7 @@ class CoachPopups extends Component {
     if (!members) return false;
     const coaches = Object.values(members).filter(
       (member) =>
-        member.id !== userID && member.info.coach && member.isConnected,
+        member.id !== userID && member?.info?.coach && member.isConnected,
     );
     if (coaches.length !== 0) return coaches[0];
     return false;
