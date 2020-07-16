@@ -23,8 +23,6 @@ const uploadQueueReducer = (state = initialState, action) => {
     case ENQUEUE_FILES_UPLOAD:
       let appendedQueue = state.queue;
       appendedQueue = appendedQueue.concat(action.value);
-      console.log('action.value', action.value);
-      console.log('enqueueFilesUpload', appendedQueue);
       return {...state, queue: appendedQueue, status: 'uploading'};
     case DEQUEUE_FILE_UPLOAD:
       let decreasedQueue = state.queue;

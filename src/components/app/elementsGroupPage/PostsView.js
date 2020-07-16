@@ -35,7 +35,6 @@ export default class Posts extends Component {
   async load() {
     let discussions = this.props.data.discussions;
     if (!discussions) discussions = [];
-    console.log('getdiscussions', discussions);
     let {results} = await indexDiscussions.getObjects(discussions);
     if (!results) results = [];
     if (results.filter((convo) => !convo).length !== 0) return this.load();

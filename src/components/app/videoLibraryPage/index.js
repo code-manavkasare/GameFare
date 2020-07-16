@@ -106,7 +106,7 @@ class VideoLibraryPage extends Component {
       {},
     );
     if (currentSessionID !== session.objectID)
-      await coachAction('setCurrentSession', false);
+      await coachAction('unsetCurrentSession');
     await coachAction('setCurrentSession', session);
     await layoutAction('setLayout', {isFooterVisible: false});
     StatusBar.setBarStyle('light-content', true);
@@ -207,7 +207,6 @@ class VideoLibraryPage extends Component {
   uploadVideo = async () => {
     const {navigate} = this.props.navigation;
     const permissionLibrary = await permission('library');
-    console.log('permissionLibrary', permissionLibrary);
     if (!permissionLibrary)
       return navigate('Alert', {
         textButton: 'Open Settings',
@@ -229,10 +228,8 @@ class VideoLibraryPage extends Component {
       compressVideoPreset: __DEV__ ? 'MediumQuality' : 'HighestQuality',
     }).catch((err) => console.log('error', err));
     let uploadingVideosArray = videos;
-    console.log('uploadingVideosArray', uploadingVideosArray);
 
     const testVideo = await getVideoInfo(uploadingVideosArray[0].path);
-    console.log('testVideo', testVideo);
 
     await Promise.all(
       videos.map(async (video, i) => {
@@ -243,7 +240,6 @@ class VideoLibraryPage extends Component {
         // return newVideo;
       }),
     );
-    console.log('videos', uploadingVideosArray);
 
     this.setState({uploadingVideosArray});
   };

@@ -140,7 +140,6 @@ class LocationSelector extends Component {
   async getCurrentLocation() {
     const {setState} = this.props;
     var CurrentLocation = await currentLocation();
-    console.log('CurrentLocation', CurrentLocation);
     if (!CurrentLocation.response) {
       await setState({loader: false});
       return NavigationService.navigate('Alert', {

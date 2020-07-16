@@ -5,11 +5,16 @@ import {
   SET_CURRENT_COACHSESSION_ID,
   SET_CURRENT_SESSION,
   SET_COACH_SESSION_DRAW_SETTINGS,
+  END_CURRENT_SESSION,
+  UNSET_CURRENT_SESSION,
+  SET_RECORDING,
   SET_ALL_SESSIONS,
 } from '../actions/types';
 import colors from '../components/style/colors';
 
 const initialState = {
+  endCurrentSession: false,
+  recording: false,
   currentSession: {},
   currentSessionID: false,
   settingsDraw: {
@@ -23,6 +28,8 @@ const initialState = {
 
 const coachReducer = (state = initialState, action) => {
   switch (action.type) {
+    case END_CURRENT_SESSION:
+      return {...state, endCurrentSession: true};
     case SET_COACH_SESSION_DATA:
       return {
         ...state,
@@ -46,6 +53,14 @@ const coachReducer = (state = initialState, action) => {
           ? action.currentSession.objectID
           : false,
       };
+    case UNSET_CURRENT_SESSION:
+      // needs to be called after 'END_CURRENT_SESSION' instruction seen through
+      return {
+        ...state,
+        endCurrentSession: false,
+        currentSession: {},
+        currentSessionID: false,
+      };
     case SET_ALL_SESSIONS:
       return {
         ...state,
@@ -56,6 +71,8 @@ const coachReducer = (state = initialState, action) => {
       };
     case SET_CURRENT_COACHSESSION_ID:
       return {...state, currentSessionID: action.currentSessionID};
+    case SET_RECORDING:
+      return {...state, recording: action.recording};
     case RESET_COACH_DATA:
       return initialState;
     default:

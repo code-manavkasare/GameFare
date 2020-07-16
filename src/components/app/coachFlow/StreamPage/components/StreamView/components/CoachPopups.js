@@ -55,7 +55,6 @@ class CoachPopups extends Component {
         coach.chargeForSession &&
         member.isConnected
       ) {
-        console.log('bim !!!!!!!');
         return openMemberAcceptCharge(session, true);
       }
     }

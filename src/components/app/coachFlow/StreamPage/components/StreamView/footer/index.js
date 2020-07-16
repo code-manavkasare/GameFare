@@ -27,7 +27,6 @@ class Footer extends Component {
       setState,
       translateYFooter,
       watchVideoRef,
-      endCoachSession,
       personSharingScreen,
       videoBeingShared,
       otPublisherRef,
@@ -45,7 +44,6 @@ class Footer extends Component {
           setState={setState}
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
-          endCoachSession={endCoachSession}
           onRef={(ref) => (this.bottomButtonRef = ref)}
           clickReview={(val) => this.pastSessionsRef.open(val)}
           otPublisherRef={otPublisherRef}

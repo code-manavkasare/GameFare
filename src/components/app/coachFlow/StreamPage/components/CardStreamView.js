@@ -333,13 +333,8 @@ class CardStream extends Component {
   }
   async hangup() {
     const {coachAction} = this.props;
-    await coachAction('setCurrentSession', false);
-    await navigate('Stream');
+    await coachAction('endCurrentSession');
   }
-  // async closeStream() {
-  //   const {coachAction} = this.props;
-  //   await coachAction('setCurrentSession', false);
-  // }
   cardBody() {
     const {
       coachSessionID,

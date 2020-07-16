@@ -33,7 +33,6 @@ class BlockedUsersList extends Component {
     if (!select) {
       selectedUsers[user.objectID] = user;
     } else delete selectedUsers[user.objectID];
-    console.log('selectedUsers: ', selectedUsers);
 
     this.setState({selectedUsers});
   }

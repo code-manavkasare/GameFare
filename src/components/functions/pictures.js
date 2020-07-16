@@ -177,7 +177,6 @@ const getLastVideo = async () => {
 
 const generateThumbnail = async (videoPath) => {
   const thumbnail = await RNThumbnail.get(videoPath);
-  console.log('generate thumbanul', thumbnail);
   return thumbnail.path;
 };
 

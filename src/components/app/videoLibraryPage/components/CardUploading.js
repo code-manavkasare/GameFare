@@ -87,17 +87,14 @@ class CardUploading extends Component {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           if (isNaN(progress)) progress = 0;
-          console.log('progress thumbnal', progress);
           await that.setState({
             progress: (progress.toFixed(0) / 100) * 0.2,
             status: 'uploading',
           });
           switch (snapshot.state) {
             case storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused');
               break;
             case storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running');
               break;
           }
         },
@@ -106,9 +103,7 @@ class CardUploading extends Component {
           reject(error);
         },
         async () => {
-          console.log('Upload thumbnail complete');
           var url = await videoRef.getDownloadURL();
-          console.log('url: ', url);
           resolve(url);
         },
       ),
@@ -133,18 +128,14 @@ class CardUploading extends Component {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           if (isNaN(progress)) progress = 0;
-          console.log('progress', progress);
 
           await that.setState({
             progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
-            status: 'uploading',
           });
           switch (snapshot.state) {
             case storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused');
               break;
             case storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload video is running');
               break;
           }
         },
@@ -153,9 +144,7 @@ class CardUploading extends Component {
           reject(error);
         },
         async () => {
-          console.log('Upload complete');
           var url = await videoRef.getDownloadURL();
-          console.log('url: ', url);
           resolve(url);
         },
       ),
@@ -170,7 +159,6 @@ class CardUploading extends Component {
     const {duration, size} = videoInfo;
 
     const id = videoInfo.localIdentifier.split('/')[0];
-    console.log('videoInfo', videoInfo);
 
     const destinationCloud = `archivedStreams/${id}`;
     const thumbnailUrl = await this.uploadThumbnail(
@@ -178,13 +166,11 @@ class CardUploading extends Component {
       destinationCloud,
       'thumbnail.jpg',
     );
-    console.log('thumbnailUrl', thumbnailUrl);
     const videoUrl = await this.uploadVideoFirebase(
       videoInfo,
       destinationCloud,
       'archive.mp4',
     );
-    console.log('videoUrl: ', videoUrl);
 
     let updates = {};
     const startTimestamp = Date.now();

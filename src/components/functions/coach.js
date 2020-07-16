@@ -304,7 +304,6 @@ const generateFlagsThumbnail = async ({
       [`coachSessions/${coachSessionID}/members/${memberID}/recording/localSource`]: source,
     });
 
-  console.log('generate thumbanuls', thumbnails);
   return thumbnails;
 };
 
@@ -397,7 +396,9 @@ const finalizeOpening = async (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   if (currentSessionID !== session.objectID) {
     if (currentSessionID) {
-      await store.dispatch(setCurrentSession(false));
+      // what to do in the case where user is in a session already and maybe recording?
+      // simply unsetting the current session means recording is lost -- Ethan
+      await store.dispatch(unsetCurrentSession());
       await timeout(100);
     }
     await store.dispatch(setCurrentSession(session));
