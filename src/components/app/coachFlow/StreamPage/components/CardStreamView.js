@@ -31,8 +31,6 @@ import styleApp from '../../../../style/style';
 
 import AsyncImage from '../../../../layout/image/AsyncImage';
 
-const { width } = Dimensions.get('screen');
-
 class CardStream extends Component {
   constructor(props) {
     super(props);
@@ -345,6 +343,7 @@ class CardStream extends Component {
       scale,
     } = this.props;
     const activeSession = coachSessionID === currentSessionID;
+    const {width} = Dimensions.get('screen');
     const top = (scale * 90 - 45) / 2;
 
     return (
@@ -416,8 +415,8 @@ class CardStream extends Component {
   backdrop() {
     const {scale} = this.props;
     let height = 90 * scale;
-    console.log
-    const backdropWidth = width / 2 + 90;
+    const {width} = Dimensions.get('screen');
+    const currentWidth = width / 2 + 90;
 
     return (
       <TouchableOpacity
@@ -425,7 +424,7 @@ class CardStream extends Component {
         activeOpacity={1}
         style={{
           height,
-          backdropWidth,
+          width: currentWidth,
           position: 'absolute',
           zIndex: -1,
           left: -90,
@@ -454,6 +453,7 @@ class CardStream extends Component {
     } = this.props;
     const {loading, session} = this.state;
     const activeSession = coachSessionID === currentSessionID;
+    const {width} = Dimensions.get('screen');
 
     const translateX = this.expandAnimation.interpolate({
       inputRange: [0, 1],
