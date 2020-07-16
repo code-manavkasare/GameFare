@@ -25,4 +25,20 @@ const duration = (value) => {
   return minutes(value) + ' min ' + seconds(value) + ' sec';
 };
 
-module.exports = {getPermissionCalendar, isDatePast, duration};
+const formatDate = (date) => {
+  let justNow = moment(Date.now()).subtract(1, 'minute');
+  let earlier = moment(Date.now()).subtract(7, 'days');
+  let lastYear = moment(Date.now()).subtract(1, 'year');
+  if (date > justNow) return 'Just now';
+  else if (date > earlier) return moment(date).fromNow();
+  else if (date > lastYear) return moment(date).format('ddd, MMM DD');
+  else return moment(date).format('MMMM YYYY');
+}
+
+const formatDuration = (duration) => {
+  if (duration > 60)
+    return Math.round(duration / 60).toString() + ' minute' + ((Math.round(duration/60) !== 1) ? 's' : '') + ' long';
+  else return Math.round(duration).toString() + ' second' + ((Math.round(duration) !== 1) ? 's' : '') + ' long';
+}
+
+module.exports = {getPermissionCalendar, isDatePast, duration, formatDate, formatDuration};

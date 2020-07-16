@@ -104,7 +104,6 @@ class AppSettings extends Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
     batterySaver: state.appSettings.batterySaver,
   };
 };

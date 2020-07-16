@@ -3,13 +3,9 @@ import {View, Text, StyleSheet, Animated, Image, Alert} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import queue, {Worker} from 'react-native-job-queue';
-import VideoSourcePopup from './VideoSourcePopup';
-import database from '@react-native-firebase/database';
+import RecordingMenu from './RecordingMenu';
 
-import {
-  navigate,
-  setParams,
-} from '../../../../../../../../../NavigationService';
+import { navigate } from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
@@ -20,7 +16,7 @@ import {
   stopRemoteRecording,
   updateTimestamp,
   generateFlagsThumbnail,
-  toggleCloudRecording,
+  toggleVideoPublish
 } from '../../../../../../../functions/coach';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
@@ -62,9 +58,12 @@ class BottomButton extends Component {
     this.configureQueue();
   }
   componentDidUpdate(prevProps, prevState) {
-    const {endCurrentSession} = this.props.coach;
+    const {endCurrentSession, currentSessionReconnecting} = this.props.coach;
     if (!prevProps.coach.endCurrentSession && endCurrentSession) {
       this.onEndCurrentSession();
+    }
+    if (currentSessionReconnecting && this.videoSourcePopupRef.state.visible) {
+      this.videoSourcePopupRef.close();
     }
     const {
       finalizeRecordingMember,
@@ -79,21 +78,12 @@ class BottomButton extends Component {
     } else if (shouldStopRecording && !prevState.shouldStopRecording) {
       queue.addJob('stopRecording', {discardFile: discardFile});
     }
-    if (finalizeRecordingMember) {
-      if (
-        !isEqual(
-          members[finalizeRecordingMember],
-          prevProps.members[finalizeRecordingMember],
-        )
-      )
-        return setParams({params: {member: members[finalizeRecordingMember]}});
-    }
   }
   static getDerivedStateFromProps(props, state) {
     const {members, userID, archivedStreams, coach} = props;
-    const {seenVideos} = state;
+    const {recordingSelf, seenVideos, finalizeRecordingMember} = state;
+    const member = members ? members[userID] : undefined;
     var newState = {};
-    // update unread video count
     const archivedVideosLength = archivedStreams
       ? Object.values(archivedStreams).length
       : 0;
@@ -123,14 +113,21 @@ class BottomButton extends Component {
       if (members[m].recording && members[m].recording.isRecording)
         newState = {...newState, anyMemberRecording: true};
     }
+
+    if (finalizeRecordingMember && !isEqual(
+          members[finalizeRecordingMember.id],
+          finalizeRecordingMember))
+        newState = {
+          ...newState,
+          finalizeRecordingMember: members[finalizeRecordingMember.id]
+        }
+
     return newState;
   }
   configureQueue() {
     queue.removeWorker('startRecording');
     queue.removeWorker('stopRecording');
-    queue.addWorker(
-      new Worker('startRecording', this.startRecording.bind(this)),
-    );
+    queue.addWorker(new Worker('startRecording', this.startRecording.bind(this)));
     queue.addWorker(new Worker('stopRecording', this.stopRecording.bind(this)));
   }
   startRemoteRecording = async (member) => {
@@ -140,10 +137,12 @@ class BottomButton extends Component {
   };
   stopRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
+    const {portrait} = member
     const recordingUser = member.id;
-    await toggleCloudRecording(coachSessionID, recordingUser, false);
-    await stopRemoteRecording(recordingUser, coachSessionID, userID);
-    await this.setState({finalizeRecordingMember: member.id});
+    await stopRemoteRecording(recordingUser, coachSessionID, portrait, userID);
+
+    await this.setState({finalizeRecordingMember: member});
+    return true;
   };
   startRecording = async (prevStartError = false) => {
     const {coachSessionID, userID} = this.props;
@@ -196,14 +195,22 @@ class BottomButton extends Component {
         )[0];
         const {id: memberID, recording} = member;
         if (!discardFile) {
+          const {userIDrequesting} = recording;
           const thumbnails = await generateFlagsThumbnail({
             flags: recording.flags,
             source: videoUrl,
             coachSessionID,
             memberID: memberID,
           });
+
+          if (userIDrequesting === userID) this.videoSourcePopupRef.openExportQueue(member, thumbnails) 
           uploadQueueAction('enqueueFilesUpload', thumbnails);
         }
+      } else {
+        const member = members[userID]
+        const {recording} = member;
+        const {userIDrequesting} = recording;
+        if (userIDrequesting === userID) this.videoSourcePopupRef.openExportQueue(member) 
       }
     };
     const {otPublisherRef, coachAction} = this.props;
@@ -211,7 +218,7 @@ class BottomButton extends Component {
     coachAction('setRecording', false);
   };
   publishVideo() {
-    const {setState} = this.props;
+    const {setState, coachSessionID, userID} = this.props;
     const {publishVideo} = this.state;
     return (
       <ButtonColor
@@ -231,6 +238,7 @@ class BottomButton extends Component {
         click={async () => {
           await this.setState({publishVideo: !publishVideo});
           setState({publishVideo: !publishVideo});
+          toggleVideoPublish(coachSessionID, userID, !publishVideo)
         }}
         style={styles.buttonRound}
         onPressColor={publishVideo ? colors.red + '70' : colors.title + '70'}
@@ -313,7 +321,9 @@ class BottomButton extends Component {
           view={() => insideViewButton()}
           click={async () => {
             if (currentSessionReconnecting) return;
-            return this.videoSourcePopupRef.open();
+            return (this.videoSourcePopupRef.state.visible) ? 
+              this.videoSourcePopupRef.close() :
+              this.videoSourcePopupRef.open();
           }}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}
@@ -420,6 +430,7 @@ class BottomButton extends Component {
   }
   recordingSelector() {
     const {members, coachSessionID} = this.props;
+    const {finalizeRecordingMember} = this.state;
 
     const selectMember = (member) => {
       if (member.recording && member.recording.isRecording)
@@ -427,12 +438,13 @@ class BottomButton extends Component {
       return this.startRemoteRecording(member);
     };
     return (
-      <VideoSourcePopup
+      <RecordingMenu
         onRef={(ref) => (this.videoSourcePopupRef = ref)}
         members={members ? Object.values(members) : []}
         coachSessionID={coachSessionID}
         close={() => {}}
         selectMember={selectMember.bind(this)}
+        finalizeRecordingMember={finalizeRecordingMember}
       />
     );
   }
@@ -469,7 +481,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 55,
     borderWidth: 3,
-    borderColor: colors.white,
+    borderColor: colors.off,
     width: 55,
     borderRadius: 42.5,
   },

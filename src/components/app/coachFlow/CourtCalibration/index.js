@@ -113,13 +113,10 @@ class CourtCalibration extends Component {
     );
   }
   render() {
-    const {currentScreenSize, navigation, route} = this.props;
+    const {navigation, route} = this.props;
     const {navigate} = navigation;
     const {angleSelected} = this.state;
     const {noUpdateStatusBar, archive} = route.params;
-    const {portrait} = currentScreenSize;
-    let marginTop = heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
 
     return (
       <View style={styleApp.stylePage}>
@@ -154,7 +151,7 @@ class CourtCalibration extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.courtCalibration()}
           marginBottomScrollView={0}
-          marginTop={marginTop}
+          marginTop={heightHeaderHome}
           offsetBottom={heightFooter + 90}
           showsVerticalScrollIndicator={false}
         />
@@ -200,7 +197,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

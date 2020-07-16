@@ -15,7 +15,7 @@ import UploadManager from './src/components/app/elementsUpload/UploadManager';
 import {userAction} from './src/actions/userActions';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
-
+import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
 import * as Sentry from '@sentry/react-native';
@@ -100,7 +100,7 @@ class App extends Component {
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
         {/* <BatterySaveDimmer /> */}
-
+        <OrientationListener />
         <Notification />
         <UploadManager />
       </NavigationContainer>

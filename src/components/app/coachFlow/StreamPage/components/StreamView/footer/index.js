@@ -6,6 +6,7 @@ import isEqual from 'lodash.isequal';
 
 import BottomButtons from './components/BottomButtons';
 import VideosView from './components/VideosView';
+import {native} from '../../../../../../animations/animations';
 
 class Footer extends Component {
   constructor(props) {
@@ -22,6 +23,13 @@ class Footer extends Component {
       !isEqual(nextProps.members, this.props.members)
     );
   };
+  openPastSessions(val) {
+    let {translateYFooter} = this.props
+    Animated.parallel([
+      Animated.timing(translateYFooter, native(val ? 1 : 0, 200)),
+    ]).start();
+    this.pastSessionsRef.open(val)
+  }
   footer() {
     const {
       setState,
@@ -34,18 +42,23 @@ class Footer extends Component {
       publishVideo,
       publishAudio
     } = this.props;
+    const translateY = translateYFooter.interpolate({
+      inputRange: [0, 1],
+      extrapolate: 'clamp',
+      outputRange: [170, 0],
+    });
     return (
       <Animated.View
         style={[
           styles.footer,
-          {transform: [{translateY: translateYFooter}]},
+          {transform: [{translateY}]},
         ]}>
         <BottomButtons
           setState={setState}
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.bottomButtonRef = ref)}
-          clickReview={(val) => this.pastSessionsRef.open(val)}
+          clickReview={(val) => this.openPastSessions(val)}
           otPublisherRef={otPublisherRef}
           members={members}
           publishVideo={publishVideo}

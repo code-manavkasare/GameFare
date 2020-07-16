@@ -11,7 +11,7 @@ import AsyncImage from '../../../../../../../../../layout/image/AsyncImage';
 import colors from '../../../../../../../../../style/colors';
 import styleApp from '../../../../../../../../../style/style';
 import Loader from '../../../../../../../../../layout/loaders/Loader';
-import {duration} from '../../../../../../../../../functions/date';
+import {formatDuration, duration} from '../../../../../../../../../functions/date';
 
 class CardFlag extends Component {
   constructor(props) {
@@ -110,13 +110,10 @@ class CardFlag extends Component {
                 )}
               </Col>
               <Col size={55} style={[styleApp.center2, {paddingLeft: 10}]}>
-                <Text style={[styleApp.title, {fontSize: 17}]}>
+                <Text style={[styleApp.textBold, {fontSize: 13}]}>
                   {id !== 'fullVideo'
-                    ? duration(endTime - startTime)
-                    : duration(flagTime)}{' '}
-                  <Text style={{fontWeight: 'normal', fontSize: 12}}>
-                    (duration)
-                  </Text>
+                    ? formatDuration(endTime - startTime)
+                    : formatDuration(flagTime)}{' '}
                 </Text>
                 {id !== 'fullVideo' && (
                   <Text style={[styleApp.textBold, {fontSize: 14}]}>

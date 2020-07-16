@@ -25,9 +25,8 @@ class ScrollViewPage extends Component {
     this.scrollRef.props.scrollToEnd({animated: false});
   }
   styleScrollView() {
-    let {marginTop, marginBottomScrollView, currentScreenSize} = this.props;
-    let {portrait} = currentScreenSize;
-    const marginTopAdded = portrait ? marginTopApp : marginTopAppLandscape;
+    let {marginTop, marginBottomScrollView} = this.props;
+    const marginTopAdded = marginTopApp;
     if (!marginTop) marginTop = 0;
     return {
       marginTop: marginTop + marginTopAdded,
@@ -106,9 +105,7 @@ class ScrollViewPage extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    currentScreenSize: state.layout.currentScreenSize,
-  };
+  return {};
 };
 
 export default connect(

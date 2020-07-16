@@ -31,13 +31,15 @@ export default class Timer extends Component {
       while (s.length < size) s = "0" + s;
       return s;
     }
-    let duration = state.now - props.startTime
+    var duration = state.now - props.startTime
+    if (duration < 0) duration = 0
     let ms = duration % 1000
     let sec = ((duration - ms) / 1000) % 60
     let min = ((duration - ms - (sec * 1000)) / 60000) % 60
     let hours = ((duration - ms - (sec * 1000) - (min * 60000)) / 3600000) % 24
     return {
-      time: `${pad(hours, 2)}:${pad(min, 2)}:${pad(sec, 2)}`
+      time:  ((hours > 0) ? `${pad(hours, 2)}:` : ``) + 
+        `${pad(min, 2)}:${pad(sec, 2)}`
     }
   }
 

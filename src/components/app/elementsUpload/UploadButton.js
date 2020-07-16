@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Image,
+  Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {Row, Col} from 'react-native-easy-grid';
@@ -126,7 +127,8 @@ class UploadButton extends Component {
 
   expandableView() {
     const {expanded} = this.state;
-    const {currentScreenSize, expandableViewStyle, expandableView} = this.props;
+    const {width} = Dimensions.get('screen');
+    const {expandableViewStyle, expandableView} = this.props;
     const translateY = this.scaleCard.interpolate({
       inputRange: [0, 1],
       outputRange: [-50, 0],
@@ -139,8 +141,7 @@ class UploadButton extends Component {
           style={{
             ...expandableViewStyle,
             ...styles.expandableView,
-            left:
-              currentScreenSize.currentWidth - expandableViewStyle.width - 20,
+            left: width - expandableViewStyle.width - 20,
             opacity: this.scaleCard,
             transform: [{translateY: translateY}],
           }}>
@@ -151,11 +152,11 @@ class UploadButton extends Component {
   }
 
   streamButtonView() {
-    const {currentScreenSize, style} = this.props;
-    const {portrait, currentWidth} = currentScreenSize;
+    const {style} = this.props;
+    const {width} = Dimensions.get('screen');
     const translateX = this.buttonAnimation.interpolate({
       inputRange: [0, 1],
-      outputRange: [currentWidth, 0],
+      outputRange: [width, 0],
       extrapolate: 'clamp',
     });
     return (
@@ -211,7 +212,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    currentScreenSize: state.layout.currentScreenSize,
     status: state.uploadQueue.status,
     queue: state.uploadQueue.queue,
   };

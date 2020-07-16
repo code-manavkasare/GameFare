@@ -82,15 +82,15 @@ class InitialPage extends Component {
   };
 
   loader() {
-    const {currentWidth, currentHeight} = this.props.currentScreenSize;
+    const {height, width} = Dimensions.get('screen');
     return (
       <FadeInView
         duration={200}
-        style={[styleApp.center, {height: currentHeight}]}>
+        style={[styleApp.center, {height: height}]}>
         <View
           style={[
             styleApp.center,
-            {height: 100, width: currentWidth, marginBottom: 0},
+            {height: 100, width: width, marginBottom: 0},
           ]}>
           <Animated.Image
             style={{width: 40, height: 40, position: 'absolute'}}
@@ -117,7 +117,6 @@ const mapStateToProps = (state) => {
     variables: state.globaleVariables,
     sportSelected: state.historicSearch.sport,
     leagueSelected: state.historicSearch.league,
-    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

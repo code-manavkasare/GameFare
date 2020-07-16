@@ -10,6 +10,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import MemberSource from './MemberSource';
+import ExportQueue from './FinalizeRecording/components/ExportQueue';
 import {native} from '../../../../../../../animations/animations';
 
 import colors from '../../../../../../../style/colors';
@@ -18,11 +19,12 @@ import styleApp from '../../../../../../../style/style';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-class VideoSourcePopup extends Component {
+class RecordingMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
+      members: []
     };
     this.scaleCard = new Animated.Value(0);
     this.itemsRef = [];
@@ -30,6 +32,12 @@ class VideoSourcePopup extends Component {
 
   componentDidMount() {
     this.props.onRef(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {members, visible} = this.state
+    if (members === undefined) this.close()
+    if (!this.exportQueueRef.state.visible && !prevState.visible && visible) this.open()
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -47,23 +55,31 @@ class VideoSourcePopup extends Component {
   }
 
   open() {
+    const {members} = this.state
     this.setState({visible: true});
-    return Animated.parallel([
-      Animated.timing(this.scaleCard, native(1)),
-    ]).start();
+    if (members.length > 0)
+      return Animated.parallel([
+        Animated.timing(this.scaleCard, native(0.5, 300)),
+      ]).start();
   }
 
   close() {
-    this.setState({visible: false});
-    return Animated.parallel([
-      Animated.timing(this.scaleCard, native(0)),
-    ]).start();
+    if (this.exportQueueRef.state.visible) 
+      this.exportQueueRef.close()
+    else {
+      this.setState({visible: false});
+      return Animated.parallel([
+        Animated.timing(this.scaleCard, native(0, 300)),
+      ]).start();
+    }
   }
   backdrop() {
     const {visible} = this.state;
 
     return (
-      <TouchableWithoutFeedback onPress={() => this.close()}>
+      <TouchableWithoutFeedback onPress={() => {
+        this.close()
+      }}>
         <View
           pointerEvents={visible ? 'auto' : 'none'}
           style={styles.fullPage}
@@ -72,14 +88,33 @@ class VideoSourcePopup extends Component {
     );
   }
 
+  openExportQueue(member, thumbnails) {
+    const {members} = this.state
+    const {length} = members
+    const adjusted = (70 / (350 - (length-1)*65))/2 + 0.5
+    Animated.parallel([
+      Animated.timing(this.scaleCard, native(
+        (member.recording?.flags) ? 1 : adjusted, 300
+      )),
+    ]).start();
+    this.exportQueueRef.open(member, thumbnails)
+  }
+
+  newPositionByHeight() {
+    const {members} = this.state
+    const {length} = members
+    return (length-1)*65
+  }
+
   render() {
     const {visible, members} = this.state;
-    const {members: propsMembers} = this.props;
+    const {members: propsMembers, currentScreenSize, userID, finalizeRecordingMember} = this.props;
     const {selectMember, coachSessionID} = this.props;
+    const width = currentScreenSize.currentWidth;
 
     const translateY = this.scaleCard.interpolate({
-      inputRange: [0, 1],
-      outputRange: [30, 0],
+      inputRange: [0, 0.5, 1],
+      outputRange: [1000 + sizes.offsetFooterStreaming, 350, this.newPositionByHeight()],
       extrapolate: 'clamp',
     });
 
@@ -88,19 +123,14 @@ class VideoSourcePopup extends Component {
         pointerEvents={visible ? 'auto' : 'none'}
         style={[
           styles.square,
-          styleApp.center,
-          {
-            opacity: this.scaleCard,
-            transform: [{translateY: translateY}],
-          },
+          { width, transform: [{translateY: translateY}] },
         ]}>
-        <Text style={[styleApp.text, styles.text]}>Choose a video source</Text>
         <ButtonColor
           view={() => {
             return (
               <AllIcons
                 name="times"
-                size={11}
+                size={13}
                 color={colors.title}
                 type="font"
               />
@@ -111,7 +141,9 @@ class VideoSourcePopup extends Component {
           style={styles.buttonClose}
           onPressColor={colors.off}
         />
-        <View style={[styleApp.divider2, {marginTop: 10, marginBottom: 5}]} />
+
+        <Text style={[styleApp.text, styles.text]}>Record</Text>
+        <View style={[{width:'90%', marginHorizontal:'5%', marginTop: 5, marginBottom: -10}]}>
         {members?.map((member) => (
           <MemberSource
             member={member}
@@ -121,75 +153,78 @@ class VideoSourcePopup extends Component {
             getMembers={() => {
               return propsMembers;
             }}
-            selectMember={(member) => selectMember(member)}
+            selectMember={async (member) => {
+              var sourceRef = this.itemsRef[member.id]
+              const isStopingRecording =
+                member.recording && member.recording.isRecording;
+              if (isStopingRecording) await sourceRef.setState({loader: true});
+              if (isStopingRecording && member.id !== userID) this.openExportQueue(member)
+              await selectMember(member);
+              sourceRef.setState({loader:false})
+            }}
           />
         ))}
-        <View style={styles.triangle} />
+        </View>
+        
+        <ExportQueue
+          onRef={(ref) => {this.exportQueueRef = ref}}
+          onClose={() => {this.open()}}
+          coachSessionID = {coachSessionID}
+          finalizeRecordingMember={finalizeRecordingMember}
+        />
         {this.backdrop()}
       </Animated.View>
     );
   }
 }
 
-const triangleBase = 21;
 
 const styles = StyleSheet.create({
   square: {
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    width: sizes.width - 50,
-    bottom: 100 + sizes.offsetFooterStreaming,
+    paddingBottom:450 + sizes.offsetFooterStreaming,
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    bottom: 0,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.2,
     shadowRadius: 10,
-    zIndex: 2,
-  },
-  triangle: {
-    borderLeftWidth: triangleBase / 1.5,
-    borderRightWidth: triangleBase / 1.5,
-    borderTopWidth: triangleBase,
-    backgroundColor: 'transparent',
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: colors.white,
-    position: 'absolute',
-    bottom: -triangleBase,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 12},
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    zIndex: 1,
+    zIndex: -1,
   },
   buttonClose: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: 15,
+    right: '5%',
     height: 35,
     width: 35,
+    zIndex:2,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.off2,
   },
   fullPage: {
     position: 'absolute',
     width: sizes.width,
     height: 200000,
+    top:-sizes.height,
     backgroundColor: 'transparent',
     zIndex: -1,
   },
   text: {
-    marginTop: 15,
+    marginTop: 20,
+    marginBottom:5,
+    fontSize: 21,
     marginHorizontal: 'auto',
-    textAlign: 'center',
+    textAlign: 'left',
+    marginLeft:'5%',
     fontWeight: 'bold',
+    color:colors.black
   },
 });
 
-VideoSourcePopup.propTypes = {
+RecordingMenu.propTypes = {
   members: PropTypes.array.isRequired,
   selectMember: PropTypes.func,
   close: PropTypes.func,
@@ -198,7 +233,8 @@ VideoSourcePopup.propTypes = {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 
-export default connect(mapStateToProps)(VideoSourcePopup);
+export default connect(mapStateToProps)(RecordingMenu);

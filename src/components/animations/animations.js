@@ -20,7 +20,7 @@ function native(toValue, duration, delay) {
     delay: delay ? delay : 0,
     friction: 90,
     tension: 80,
-    easing: Easing.ease,
+    easing: Easing.inOut(Easing.cubic),
     useNativeDriver: true,
     restSpeedThreshold: 3,
     restDisplacementThreshold: 0.1,
