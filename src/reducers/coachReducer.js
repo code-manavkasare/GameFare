@@ -60,6 +60,7 @@ const coachReducer = (state = initialState, action) => {
       return {
         ...state,
         endCurrentSession: false,
+        reconnecting: false,
         currentSession: {},
         currentSessionID: false,
       };

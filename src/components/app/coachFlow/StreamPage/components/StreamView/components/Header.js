@@ -50,6 +50,7 @@ class HeaderStreamView extends Component {
       permissionOtherUserToRecord,
       close,
       chargeForSession,
+      currentSessionReconnecting,
     } = this.props;
     const {isConnected} = state;
     return (
@@ -75,17 +76,20 @@ class HeaderStreamView extends Component {
         iconOffset={isConnected && 'cog'}
         typeIconOffset="font"
         sizeIconOffset={18}
+        colorIconOffset={currentSessionReconnecting ? colors.greyDark : colors.white}
         backgroundColorIconOffset={colors.title + '70'}
         iconOffset2={
           isConnected && isUserAdmin(organizerID, userID) && 'person-add'
         }
         typeIconOffset2="mat"
         sizeIconOffset2={23}
-        clickButtonOffset2={() => this.AddMembers(coachSessionID)}
+        colorIconOffset2={currentSessionReconnecting ? colors.greyDark : colors.white}
+        clickButtonOffset2={() => currentSessionReconnecting ? null : this.AddMembers(coachSessionID)}
         backgroundColorIconOffset2={colors.title + '70'}
         initialTitleOpacity={1}
-        clickButtonOffset={() =>
-          NavigationService.navigate('Settings', {
+        clickButtonOffset={() => currentSessionReconnecting
+          ? null
+          : NavigationService.navigate('Settings', {
             coachSessionID: coachSessionID,
             permissionOtherUserToRecord: permissionOtherUserToRecord,
             chargeForSession: chargeForSession,
@@ -104,6 +108,7 @@ const styles = StyleSheet.create({});
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
+    currentSessionReconnecting: state.coach.reconnecting,
   };
 };
 

@@ -149,18 +149,13 @@ class HeaderBackButton extends Component {
               ) : (
                 <AllIcons
                   name={iconOffset}
-                  color={
-                    colorIconOffset === colors.white
-                      ? colors.title
-                      : colors.white
-                  }
+                  color={colorIconOffset ? colorIconOffset : colors.title}
                   size={sizeIconOffset}
                   type={typeIconOffset}
                 />
               );
             }}
             click={() => clickButtonOffset()}
-            color={colorIconOffset}
             style={styles.buttonRight}
             onPressColor={colors.off}
           />
@@ -204,18 +199,13 @@ class HeaderBackButton extends Component {
               ) : (
                 <AllIcons
                   name={iconOffset2}
-                  color={
-                    colorIconOffset2 === colors.white
-                      ? colors.title
-                      : colors.white
-                  }
+                  color={colorIconOffset2 ? colorIconOffset2 : colors.title}
                   size={sizeIconOffset2}
                   type={typeIconOffset2}
                 />
               );
             }}
             click={() => clickButtonOffset2()}
-            color={colorIconOffset2}
             style={[styleApp.center, styleApp.fullSize]}
             onPressColor={colors.off}
           />

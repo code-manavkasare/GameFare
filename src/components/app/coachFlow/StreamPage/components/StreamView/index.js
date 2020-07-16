@@ -172,7 +172,7 @@ class StreamPage extends Component {
       },
       streamDestroyed: (event) => {
         const {coachSessionID} = this.state;
-        const {userID, currentScreenSize} = this.props;
+        const {userID} = this.props;
         const {streamId, connectionId} = event;
         Mixpanel.trackWithProperties(
           'publisherEventHandlers streamDestroyed ' + coachSessionID,
@@ -188,7 +188,7 @@ class StreamPage extends Component {
     };
   }
   componentDidMount() {
-    const {navigation, coachAction} = this.props;
+    const {navigation} = this.props;
     this.refreshTokenMember();
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();

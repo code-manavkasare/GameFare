@@ -34,7 +34,7 @@ import {
   goToSettings,
 } from '../../../../../../../functions/pictures';
 import isEqual from 'lodash.isequal';
-import { coachAction } from '../../../../../../../../actions/coachActions';
+import {coachAction} from '../../../../../../../../actions/coachActions';
 
 class BottomButton extends Component {
   constructor(props) {
@@ -62,11 +62,16 @@ class BottomButton extends Component {
     this.configureQueue();
   }
   componentDidUpdate(prevProps, prevState) {
-    const { endCurrentSession } = this.props.coach;
+    const {endCurrentSession} = this.props.coach;
     if (!prevProps.coach.endCurrentSession && endCurrentSession) {
       this.onEndCurrentSession();
     }
-    const {finalizeRecordingMember, shouldStartRecording, shouldStopRecording, discardFile} = this.state;
+    const {
+      finalizeRecordingMember,
+      shouldStartRecording,
+      shouldStopRecording,
+      discardFile,
+    } = this.state;
     const {members} = this.props;
 
     if (shouldStartRecording && !prevState.shouldStartRecording) {
@@ -87,7 +92,7 @@ class BottomButton extends Component {
   static getDerivedStateFromProps(props, state) {
     const {members, userID, archivedStreams, coach} = props;
     const {seenVideos} = state;
-    var newState = {}
+    var newState = {};
     // update unread video count
     const archivedVideosLength = archivedStreams
       ? Object.values(archivedStreams).length
@@ -105,7 +110,11 @@ class BottomButton extends Component {
       } else if (!firebaseSelf.recording.isRecording && coach.recording) {
         newState = {...newState, shouldStopRecording: true};
       } else {
-        newState = {...newState, shouldStopRecording: false, shouldStartRecording: false}
+        newState = {
+          ...newState,
+          shouldStopRecording: false,
+          shouldStartRecording: false,
+        };
       }
     }
     // are any members of session recording?
@@ -143,7 +152,9 @@ class BottomButton extends Component {
         if (response.message === 'INIT_ERR' && !prevStartError) {
           return this.startRecording(true);
         } else {
-          return console.log(`Error initializing recording: ${response.message}`);
+          return console.log(
+            `Error initializing recording: ${response.message}`,
+          );
         }
       }
       updateTimestamp(coachSessionID, userID, Date.now());
@@ -173,12 +184,7 @@ class BottomButton extends Component {
     }
   };
   stopRecording = async (payload) => {
-    const {
-      members,
-      userID,
-      coachSessionID,
-      uploadQueueAction
-    } = this.props;
+    const {members, userID, coachSessionID, uploadQueueAction} = this.props;
     const {discardFile} = payload;
     const messageCallback = async (response) => {
       if (response.error)
@@ -278,7 +284,7 @@ class BottomButton extends Component {
   };
   buttonRecord() {
     const {anyMemberRecording} = this.state;
-
+    const {currentSessionReconnecting} = this.props;
 
     this.indicatorAnimation();
 
@@ -286,9 +292,11 @@ class BottomButton extends Component {
       return (
         <Animated.View
           style={[
-            !anyMemberRecording
-              ? styles.buttonStartStreaming
-              : styles.buttonStopStreaming,
+            currentSessionReconnecting
+              ? styles.buttonReconnecting
+              : !anyMemberRecording
+                ? styles.buttonStartStreaming
+                : styles.buttonStopStreaming,
           ]}>
           <Animated.View
             style={[
@@ -304,6 +312,7 @@ class BottomButton extends Component {
         <ButtonColor
           view={() => insideViewButton()}
           click={async () => {
+            if (currentSessionReconnecting) return;
             return this.videoSourcePopupRef.open();
           }}
           style={styles.whiteButtonRecording}
@@ -314,8 +323,11 @@ class BottomButton extends Component {
   }
   contentVideo() {
     const {showPastSessionsPicker} = this.state;
-    const {clickReview, archivedStreams} = this.props;
-
+    const {
+      clickReview,
+      archivedStreams,
+      currentSessionReconnecting,
+    } = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -323,7 +335,9 @@ class BottomButton extends Component {
             <Animated.View style={styleApp.center}>
               <AllIcons
                 type={'font'}
-                color={colors.white}
+                color={
+                  currentSessionReconnecting ? colors.greyDark : colors.white
+                }
                 size={showPastSessionsPicker ? 19 : 22}
                 name={'film'}
               />
@@ -349,6 +363,7 @@ class BottomButton extends Component {
         }}
         color={colors.title + '70'}
         click={async () => {
+          if (currentSessionReconnecting) return;
           this.setState({
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
             unreadVideos: 0,
@@ -458,6 +473,15 @@ const styles = StyleSheet.create({
     width: 55,
     borderRadius: 42.5,
   },
+  buttonReconnecting: {
+    ...styleApp.center,
+    backgroundColor: colors.darkGray,
+    opacity: 0.5,
+    overflow: 'hidden',
+    height: 40,
+    width: 40,
+    borderRadius: 40,
+  },
   buttonStartStreaming: {
     ...styleApp.center,
     backgroundColor: colors.red,
@@ -521,6 +545,8 @@ const mapStateToProps = (state) => {
     infoUser: state.user.infoUser.userInfo,
     coach: state.coach,
     archivedStreams: state.user.infoUser.archivedStreams,
+    currentSessionConnected: state.coach.connected,
+    currentSessionReconnecting: state.coach.reconnecting,
   };
 };
 
