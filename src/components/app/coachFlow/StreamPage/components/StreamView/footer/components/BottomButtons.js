@@ -72,7 +72,7 @@ class BottomButton extends Component {
     }
   }
   static getDerivedStateFromProps(props, state) {
-    const {members, userID, archivedStreams} = props;
+    const {members, userID, archivedStreams, coach} = props;
     const {recordingSelf, seenVideos, finalizeRecordingMember} = state;
     const member = members ? members[userID] : undefined;
 
