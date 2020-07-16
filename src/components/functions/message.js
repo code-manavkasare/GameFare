@@ -38,11 +38,12 @@ const createDiscussionEventGroup = (
 };
 
 async function createDiscussion(members, nameDiscussion, firstMessageExists) {
+  console.log('createDiscussion', members);
   const membersObj = Object.values(members).reduce(function(result, item) {
     result[item.id] = item;
     return result;
   }, {});
-  var newDiscussion = discussionObj(
+  let newDiscussion = discussionObj(
     membersObj,
     nameDiscussion,
     firstMessageExists,
@@ -51,8 +52,14 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
   const {key} = await database()
     .ref('discussions/')
     .push(newDiscussion);
-  newDiscussion.objectID = key;
-  newDiscussion.id = key;
+  console.log('key', key);
+
+  newDiscussion = {
+    ...newDiscussion,
+    objectID: key,
+    id: key,
+  };
+  console.log('newDiscussion', newDiscussion);
   return newDiscussion;
 }
 
@@ -183,9 +190,9 @@ const sendSMSFunction = async (phoneNumbers, message) => {
 const openDiscussion = async (arrayUsers) => {
   const users = arrayUsers.map((user) => user.id);
   var discussion = await searchDiscussion(users, users.length);
-
+  console.log('bim seardh discussion', discussion);
   if (!discussion) {
-    discussion = await createDiscussion(users, 'General', false);
+    discussion = await createDiscussion(arrayUsers, 'General', false);
     if (!discussion) {
       return false;
     }

@@ -106,8 +106,8 @@ class StreamPage extends Component {
       },
       sessionDisconnected: (event) => {
         // user disconnected from session or loss of signal and could not reconnect
-        const { reconnecting } = this.state;
-        const { coachAction } = this.props;
+        const {reconnecting} = this.state;
+        const {coachAction} = this.props;
         if (reconnecting) {
           this.setState({reconnecting: false});
           Alert.alert('Signal loss, could not connect to session.');
@@ -120,25 +120,25 @@ class StreamPage extends Component {
       },
       error: (event) => {
         // cannot use variables from closure (i.e. coachSessionID) as component may be unmounted when this is called
-        console.log('ERROR - StreamView: connecting to session, or session dropped due to an error after successful connection -- ', event);
-        Mixpanel.trackWithProperties(
-          'ERROR: sessionEventHandlers error',
-          {
-            event,
-            date: new Date(),
-          },
+        console.log(
+          'ERROR - StreamView: connecting to session, or session dropped due to an error after successful connection -- ',
+          event,
         );
+        Mixpanel.trackWithProperties('ERROR: sessionEventHandlers error', {
+          event,
+          date: new Date(),
+        });
       },
       otrnError: (event) => {
         // cannot use variables from closure as component may be unmounted when this is called
-        console.log('OTRN ERROR - StreamView: error in communication between native OTSession instance and JS component -- ', event);
-        Mixpanel.trackWithProperties(
-          'ERROR: sessionEventHandlers otrnError ',
-          {
-            event,
-            date: new Date(),
-          },
+        console.log(
+          'OTRN ERROR - StreamView: error in communication between native OTSession instance and JS component -- ',
+          event,
         );
+        Mixpanel.trackWithProperties('ERROR: sessionEventHandlers otrnError ', {
+          event,
+          date: new Date(),
+        });
       },
     };
 
@@ -198,7 +198,7 @@ class StreamPage extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    newState = {date: Date.now()};
+    let newState = {date: Date.now()};
     if (!isEqual(props.currentSession, state.coachSession))
       newState = {
         ...newState,
@@ -210,14 +210,21 @@ class StreamPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const unrenderConditionPrev = !prevProps.recording && prevProps.endCurrentSession;
-    const unrenderConditionThis = !this.props.recording && this.props.endCurrentSession;
+    const unrenderConditionPrev =
+      !prevProps.recording && prevProps.endCurrentSession;
+    const unrenderConditionThis =
+      !this.props.recording && this.props.endCurrentSession;
     if (!unrenderConditionPrev && unrenderConditionThis) {
       this.endCoachSession();
     } else {
-      const { isConnected } = this.state;
-      const { userID, currentSessionID, userConnected, currentScreenSize } = this.props;
-      const { portrait } = currentScreenSize;
+      const {isConnected} = this.state;
+      const {
+        userID,
+        currentSessionID,
+        userConnected,
+        currentScreenSize,
+      } = this.props;
+      const {portrait} = currentScreenSize;
       if (portrait !== prevProps.currentScreenSize.portrait && isConnected) {
         database()
           .ref(`coachSessions/${currentSessionID}/members/${userID}`)
@@ -239,7 +246,6 @@ class StreamPage extends Component {
         }
       }
     }
-
   }
   async permissionLibrary() {}
   popupPermissionRecording() {

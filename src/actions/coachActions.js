@@ -46,7 +46,7 @@ export const setCurrentSessionID = (coachSessionID) => ({
   currentSessionID: coachSessionID,
 });
 
-const endCurrentSession = () => ({
+export const endCurrentSession = () => ({
   type: END_CURRENT_SESSION,
 });
 

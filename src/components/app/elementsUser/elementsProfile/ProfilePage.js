@@ -13,6 +13,7 @@ import {heightHeaderHome} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import {openDiscussion} from '../../../functions/message';
+import {openMemberAcceptCharge} from '../../../functions/coach';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -82,20 +83,24 @@ class ProfilePage extends Component {
     }
   };
   async requestSession() {
+    const {userProfile} = this.state;
     const {userID, navigation, infoUser} = this.props;
-    const {objectID: profileUserID, info} = this.state.userProfile;
+    const {objectID: profileUserID, info} = userProfile;
     await this.setState({loader: true});
 
     const discussion = await openDiscussion([
       {id: userID, info: infoUser.userInfo},
       {id: profileUserID, info},
     ]);
-    await navigation.navigate('Conversation', {
-      data: discussion,
-      myConversation: true,
-      back: true,
-    });
-    return this.setState({loader: false});
+    console.log('discussion', discussion);
+    this.setState({loader: false});
+    openMemberAcceptCharge({...userProfile, isCoach: true}, false, () =>
+      navigation.navigate('Conversation', {
+        data: discussion,
+        myConversation: true,
+        back: true,
+      }),
+    );
   }
   profilePage() {
     const {

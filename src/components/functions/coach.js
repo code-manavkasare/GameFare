@@ -10,7 +10,7 @@ import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
 import {store} from '../../../reduxStore';
-import {setCurrentSession} from '../../actions/coachActions';
+import {setCurrentSession, endCurrentSession} from '../../actions/coachActions';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
@@ -338,15 +338,21 @@ const infoCoach = (members) => {
   return false;
 };
 const closeSession = async () => {
-  await store.dispatch(setCurrentSession(false));
+  await store.dispatch(endCurrentSession());
   await navigate('Stream');
 };
-const openMemberAcceptCharge = async (session, forceCloseSession) => {
+const openMemberAcceptCharge = async (
+  session,
+  forceCloseSession,
+  alternateAcceptCharge,
+) => {
   const userID = store.getState().user.userID;
   const tokenCusStripe = store.getState().user.infoUser.wallet.tokenCusStripe;
   const defaultCard = store.getState().user.infoUser.wallet.defaultCard;
   const {objectID} = session;
-  const coach = infoCoach(session.members);
+  let coach = {};
+  if (session.isCoach) coach = session;
+  else coach = infoCoach(session.members);
 
   const {hourlyRate, currencyRate} = coach.info;
   const setAcceptCharge = async (val) => {
@@ -383,7 +389,11 @@ const openMemberAcceptCharge = async (session, forceCloseSession) => {
         disabled: !defaultCard,
         button: (
           <ButtonAcceptPayment
-            click={() => setAcceptCharge(true)}
+            click={() =>
+              alternateAcceptCharge
+                ? alternateAcceptCharge()
+                : setAcceptCharge(true)
+            }
             textButton="Accept"
           />
         ),
