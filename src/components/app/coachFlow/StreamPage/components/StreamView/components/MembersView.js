@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     left: '5%',
-    zIndex: 6,
+    zIndex: 1,
   },
   cardMember: {
     height: 35,

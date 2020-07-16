@@ -129,9 +129,7 @@ class NewConversation extends React.Component {
     );
   }
   newConversationPage(selectedUsers) {
-    const {portrait} = this.props;
     let marginTopAdd = marginTopApp;
-    if (!portrait) marginTopAdd = marginTopAppLandscape;
     return (
       <View style={{marginTop: heightHeaderHome + marginTopAdd}}>
         {this.searchInput(selectedUsers)}
@@ -217,7 +215,6 @@ const mapStateToProps = (state) => {
     blockedByUsers: state.user.infoUser.blockedByUsers,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    portrait: state.layout.currentScreenSize.portrait,
   };
 };
 

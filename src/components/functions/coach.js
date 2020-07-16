@@ -143,6 +143,16 @@ const toggleCloudRecording = (sessionIDFirebase, memberID, enable) => {
     .update(updates);
 };
 
+toggleVideoPublish = (sessionIDFirebase, memberID, enable) => {
+  let updates = {};
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/publishVideo`
+  ] = enable;
+  database()
+    .ref()
+    .update(updates);
+}
+
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
   updates[
@@ -151,6 +161,9 @@ const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/stopTimestamp`
   ] = null;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/dispatched`
+  ] = false;
 
   database()
     .ref()
@@ -165,6 +178,9 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/startTimestamp`
   ] = Date.now();
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/dispatched`
+  ] = true;
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/userIDrequesting`
   ] = selfID;
@@ -183,7 +199,7 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
     .update(updates);
 };
 
-const stopRemoteRecording = async (memberID, sessionIDFirebase) => {
+const stopRemoteRecording = async (memberID, sessionIDFirebase, portrait, userID) => {
   let updates = {};
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
@@ -191,6 +207,15 @@ const stopRemoteRecording = async (memberID, sessionIDFirebase) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/stopTimestamp`
   ] = Date.now();
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/enabled`
+  ] = false;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/portrait`
+  ] = portrait;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/userIDrequesting`
+  ] = userID;
   await database()
     .ref()
     .update(updates);
@@ -238,10 +263,10 @@ const getVideoUUID = (path) => {
 const compressThumbnail = async (initialPath) => {
   const {path} = await ImageResizer.createResizedImage(
     initialPath,
-    500,
-    500,
+    300,
+    300,
     'JPEG',
-    50,
+    80,
   );
   return path;
 };
@@ -270,7 +295,7 @@ const generateFlagsThumbnail = async ({
         storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
         destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
         firebaseUpdates: {},
-        displayInList: true,
+        displayInList: false,
         progress: 0,
         type: 'image',
         filename: 'Thumbnail',
@@ -292,7 +317,7 @@ const generateFlagsThumbnail = async ({
     firebaseUpdates: {},
     thumbnail: thumbnailFullVideo,
     filename: 'Thumbnail full video',
-    displayInList: true,
+    displayInList: false,
     progress: 0,
     type: 'image',
     updateFirebaseAfterUpload: true,
@@ -444,6 +469,7 @@ module.exports = {
   startRemoteRecording,
   stopRemoteRecording,
   toggleCloudRecording,
+  toggleVideoPublish,
   updateTimestamp,
   generateFlagsThumbnail,
   getVideoUUID,

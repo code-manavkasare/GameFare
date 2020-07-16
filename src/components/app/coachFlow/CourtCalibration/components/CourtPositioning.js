@@ -121,12 +121,10 @@ class CourtPositioning extends Component {
     );
   }
   render() {
-    const {currentScreenSize, navigation, route} = this.props;
+    const {navigation, route} = this.props;
     const {loader} = this.state;
     const {goBack} = navigation;
-    const {portrait} = currentScreenSize;
     let marginTop = heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
 
     return (
       <View style={styleApp.stylePage}>
@@ -199,7 +197,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 
