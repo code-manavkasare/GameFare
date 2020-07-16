@@ -17,6 +17,8 @@ import Loader from '../../../layout/loaders/Loader';
 import HeaderListStream from './components/HeaderListStream';
 import {sessionOpening} from '../../../functions/coach';
 
+const { height } = Dimensions.get('screen');
+
 class StreamTab extends Component {
   constructor(props) {
     super(props);
@@ -77,8 +79,7 @@ class StreamTab extends Component {
 
   render() {
     const {permissionsCamera} = this.state;
-    const {currentScreenSize, userConnected} = this.props;
-    const {currentHeight} = currentScreenSize;
+    const {userConnected} = this.props;
     if (!userConnected) return <LogoutView />;
     return (
       <View style={styleApp.stylePage}>
@@ -91,7 +92,7 @@ class StreamTab extends Component {
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={() => this.StreamTab(currentHeight)}
+          contentScrollView={() => this.StreamTab(height)}
           marginBottomScrollView={0}
           marginTop={heightHeaderHome}
           offsetBottom={heightFooter + 90}
@@ -120,7 +121,6 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
-    currentScreenSize: state.layout.currentScreenSize,
     currentSessionID: state.coach.currentSessionID,
   };
 };

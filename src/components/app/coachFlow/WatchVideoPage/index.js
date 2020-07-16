@@ -72,8 +72,8 @@ class WatchVideoPage extends Component {
       return this.open(false);
   }
   async open(videoData) {
+    const {width} = Dimensions.get('screen');
     const {watchVideo, source, thumbnail, archiveID} = videoData;
-    const {currentWidth} = this.props.currentScreenSize;
     const {videoSource} = this.state;
 
     if (watchVideo) {
@@ -95,7 +95,7 @@ class WatchVideoPage extends Component {
       Animated.spring(this.translateYPage, native(watchVideo ? 0 : 1000, 200)),
     ]).start(async () => {
       if (!watchVideo) {
-        this.translateXPage.setValue(currentWidth);
+        this.translateXPage.setValue(width);
         this.videoPlayerRef.togglePlayPause(true);
       }
       if (watchVideo && !videoSource) {
@@ -136,7 +136,6 @@ class WatchVideoPage extends Component {
     const {
       personSharingScreen,
       userID,
-      currentScreenSize,
       coachSessionID,
       videoBeingShared,
     } = this.props;
@@ -147,7 +146,6 @@ class WatchVideoPage extends Component {
       sizeVideo,
       drawingOpen,
     } = this.state;
-    const {currentWidth, currentHeight} = currentScreenSize;
     const myVideo = this.isMyVideo(this.props);
     const video = this.video(this.props, this.state);
     const drawingEnable =
@@ -291,7 +289,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
     currentSessionID: state.coach.currentSessionID,
   };
 };

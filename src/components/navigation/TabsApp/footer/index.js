@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
@@ -73,19 +73,18 @@ class Footer extends React.Component {
       descriptors,
       navigation,
       colors,
-      currentScreenSize,
       isFooterVisible,
       userConnected,
     } = this.props;
     if (!isFooterVisible || !userConnected) return null;
-    const {currentWidth, portrait} = currentScreenSize;
+    const {width} = Dimensions.get('screen');
     return (
       <Animated.View
         style={[
           styles.footer,
           styleApp.center3,
-          {bottom: portrait ? marginBottomApp : marginBottomAppLandscade},
-          {marginLeft: (currentWidth - widthFooter) / 2},
+          {bottom: marginBottomApp},
+          {marginLeft: (width - widthFooter) / 2},
           {transform: [{translateY: this.translateYFooter}]},
         ]}>
         <Row style={{width: '100%'}}>
@@ -169,7 +168,6 @@ const mapStateToProps = (state) => {
   return {
     isFooterVisible: state.layout.isFooterVisible,
     activeTab: state.layout.activeTab,
-    currentScreenSize: state.layout.currentScreenSize,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
   };

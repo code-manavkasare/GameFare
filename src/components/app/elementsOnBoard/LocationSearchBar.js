@@ -298,7 +298,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     historicSearchLocation: state.historicSearch.historicSearchLocation,
-    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 
