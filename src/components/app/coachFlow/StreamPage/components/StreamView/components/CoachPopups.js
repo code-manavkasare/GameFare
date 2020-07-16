@@ -50,7 +50,8 @@ class CoachPopups extends Component {
       const coach = this.getInfoCoach(this.props);
 
       if (
-        !isEqual(prevCoach.isConnected, coach.isConnected) &&
+        (!isEqual(prevCoach.isConnected, coach.isConnected) ||
+          !isEqual(prevCoach.chargeForSession, coach.chargeForSession)) &&
         coach.isConnected &&
         coach.chargeForSession &&
         member.isConnected

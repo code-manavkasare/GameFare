@@ -32,7 +32,8 @@ export default class LogoutView extends Component {
           },
         ]}>
         <Video
-          repeat={true}
+          // repeat={true}
+          volume={0}
           source={require('../../../../../img/videos/intro.mp4')} // Can be a URL or a local file.
           ref={(ref) => {
             this.player = ref;
@@ -65,10 +66,9 @@ export default class LogoutView extends Component {
 
 const styles = StyleSheet.create({
   video: {
-    height: height + 110,
+    height: height + 300,
     width: width + 100,
-    marginLeft: -30,
-    marginTop: -60,
+    marginTop: -marginTopApp - 120,
     position: 'absolute',
     zIndex: -1,
     marginBottom: 0,
