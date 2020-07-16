@@ -49,14 +49,12 @@ class EditProfilePage extends Component {
     const {firstname, lastname, pictureUri, pictureUrl} = this.state;
 
     let newProfilePictureUrl = false;
-    console.log('profilePictureUrl', pictureUri);
     if (pictureUri) {
       newProfilePictureUrl = await uploadPictureFirebase(
         pictureUri,
         'users/' + userID + '/userInfo/',
       );
     }
-    console.log('newProfilePictureUrl', newProfilePictureUrl);
 
     await database()
       .ref('users/' + userID + '/userInfo/')

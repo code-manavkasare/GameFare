@@ -50,7 +50,6 @@ class HeaderListStream extends Component {
       },
       members,
     );
-    console.log('bimm session', session);
     return sessionOpening(session);
   }
   header = () => {

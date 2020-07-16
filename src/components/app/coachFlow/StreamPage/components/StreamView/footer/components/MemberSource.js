@@ -80,6 +80,7 @@ class MemberSource extends Component {
         container: styles.viewRecordingTime,
         text: [styleApp.text, {color: colors.title, fontSize: 12}],
       };
+      // Timer the source of a 'react state update after unmount' warning
       return (
         <Timer
           startTime={startTimestamp < 0 ? 0 : startTimestamp}

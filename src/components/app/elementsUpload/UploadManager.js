@@ -149,17 +149,14 @@ class UploadManager extends Component {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           if (isNaN(progress)) progress = 0;
-          console.log('Video upload progress...', progress);
           uploadQueueAction('setJobProgress', {
             index: index,
             progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
           });
           switch (snapshot.state) {
             case storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused');
               break;
             case storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload video is running');
               break;
           }
         },

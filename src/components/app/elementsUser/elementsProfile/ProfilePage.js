@@ -90,7 +90,6 @@ class ProfilePage extends Component {
       {id: userID, info: infoUser.userInfo},
       {id: profileUserID, info},
     ]);
-    console.log('nim discussion', discussion);
     await navigation.navigate('Conversation', {
       data: discussion,
       myConversation: true,

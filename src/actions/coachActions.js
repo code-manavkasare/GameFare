@@ -6,6 +6,9 @@ import {
   SET_CURRENT_COACHSESSION_ID,
   SET_SESSION_INFO,
   SET_COACH_SESSION_DRAW_SETTINGS,
+  END_CURRENT_SESSION,
+  UNSET_CURRENT_SESSION,
+  SET_RECORDING,
   SET_ALL_SESSIONS,
 } from './types';
 
@@ -43,6 +46,19 @@ export const setCurrentSessionID = (coachSessionID) => ({
   currentSessionID: coachSessionID,
 });
 
+const endCurrentSession = () => ({
+  type: END_CURRENT_SESSION,
+});
+
+const unsetCurrentSession = () => ({
+  type: UNSET_CURRENT_SESSION,
+});
+
+const setRecording = (recording) => ({
+  type: SET_RECORDING,
+  recording: recording,
+});
+
 export const setAllSessions = (value) => ({
   type: SET_ALL_SESSIONS,
   allSessions: value,
@@ -66,6 +82,12 @@ export const coachAction = (val, data) => {
       await dispatch(setAllSessions(data));
     } else if (val === 'reset') {
       await dispatch(resetDataCoachSession());
+    } else if (val === 'endCurrentSession') {
+      await dispatch(endCurrentSession());
+    } else if (val === 'unsetCurrentSession') {
+      await dispatch(unsetCurrentSession());
+    } else if (val === 'setRecording') {
+      await dispatch(setRecording(data));
     }
     return true;
   };

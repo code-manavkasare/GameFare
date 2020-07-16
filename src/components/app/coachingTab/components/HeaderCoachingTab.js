@@ -59,7 +59,7 @@ class HeaderListStream extends Component {
   }
   async openSession(session) {
     const {layoutAction, coachAction} = this.props;
-    await coachAction('setCurrentSession', false);
+    await coachAction('unsetCurrentSession');
     await coachAction('setCurrentSession', session);
     await layoutAction('setLayout', {isFooterVisible: false});
     navigate('Session', {
