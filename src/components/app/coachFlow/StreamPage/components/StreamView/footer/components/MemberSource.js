@@ -16,6 +16,7 @@ import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
 import Timer from './Timer';
+import { request } from 'react-native-permissions';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -70,15 +71,19 @@ class MemberSource extends Component {
     return {};
   }
 
+  loading(val) { this.setState({loader: val}) }
+
   timer() {
     const {member} = this.state;
     const {recording} = member;
+    const {dispatched} = recording;
     const isRecording = recording && recording.isRecording;
 
     const timer = (startTimestamp) => {
+      if (dispatched) return null
       const optionsTimer = {
         container: styles.viewRecordingTime,
-        text: [styleApp.text, {color: colors.title, fontSize: 12}],
+        text: [styleApp.textBold, {color: colors.black, fontSize: 12, marginTop:1}],
       };
       // Timer the source of a 'react state update after unmount' warning
       return (
@@ -95,37 +100,25 @@ class MemberSource extends Component {
     const {recording} = member;
     const {selectMember, coachSessionID} = this.props;
     const isRecording = recording && recording.isRecording;
-    if (loader)
+    const isDisabled = recording?.enabled === false || member?.publishVideo === false;
+    if (loader || (isRecording && recording?.dispatched))
       return (
-        <Col style={styleApp.center} size={10}>
-          <Loader size={25} color={colors.red} />
+        <Col 
+        size={10}
+        style={styleApp.center3}>
+          <View style={{...styles.containerRecording}}>
+            <Loader size={35} color={colors.red} />
+          </View>
         </Col>
       );
-    const isEnabled = recording && recording.enabled === false;
 
-    return !isEnabled ? (
+    return (!isDisabled || isRecording) ? (
       <Col
         size={10}
         style={styleApp.center3}
         activeOpacity={0.7}
         onPress={async () => {
-          const isStopingRecording =
-            member.recording && member.recording.isRecording;
-          if (isStopingRecording) await this.setState({loader: true});
           await selectMember(member);
-          if (isStopingRecording) {
-            let newRecording = member.recording;
-            newRecording.stopTimestamp = Date.now();
-            member.recording = newRecording;
-            await navigate('FinalizeRecording', {
-              member: member,
-              coachSessionID: coachSessionID,
-              onGoBack: () => {
-                return this.setState({finalizeRecordingMember: false});
-              },
-            });
-            this.setState({loader: false});
-          }
         }}>
         <View style={styles.containerRecording}>
           <View
@@ -134,7 +127,15 @@ class MemberSource extends Component {
         </View>
       </Col>
     ) : (
-      <Col size={10} />
+      <Col 
+      size={10}
+      style={styleApp.center3}>
+        <View style={{...styles.containerRecording}}>
+          <View
+            style={styles.recordButtonDisabled}
+          />
+        </View>
+      </Col>
     );
   }
 
@@ -150,14 +151,18 @@ class MemberSource extends Component {
             <ImageUser user={member} />
           </Col>
 
+          <Col size={2}/>
+
           <Col size={35} style={styleApp.center2}>
-            <Text style={[styleApp.text, {fontSize: 13}]}>
+            <Text style={[styleApp.text, {fontSize: 14}]}>
               {userID === member.id
                 ? 'Your Camera'
                 : firstname + ' ' + lastname}
             </Text>
+            {this.timer()}
           </Col>
 
+          <Col size={15}/>
           <Col size={15}>
             <AddFlagButton
               coachSessionID={coachSessionID}
@@ -167,9 +172,7 @@ class MemberSource extends Component {
             />
           </Col>
 
-          <Col size={25} style={styleApp.center}>
-            {this.timer()}
-          </Col>
+          <Col size={8}/>
 
           {this.buttonRecord()}
         </Row>
@@ -216,8 +219,8 @@ const styles = StyleSheet.create({
     borderColor: colors.off,
   },
   recordButtonOff: {
-    width: 30,
-    height: 30,
+    width: 28,
+    height: 28,
     ...styleApp.center,
     paddingLeft: 10,
     borderRadius: 20,
@@ -232,6 +235,15 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     backgroundColor: colors.red,
+  },
+  recordButtonDisabled: {
+    width: 28,
+    height: 28,
+    ...styleApp.center,
+    paddingLeft: 10,
+    borderRadius: 20,
+    paddingRight: 10,
+    backgroundColor: colors.greyLight,
   },
 });
 

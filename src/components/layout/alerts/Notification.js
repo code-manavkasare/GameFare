@@ -8,6 +8,7 @@ import {
   Animated,
   View,
   Image,
+  Dimensions,
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
@@ -76,7 +77,8 @@ class Notification extends Component {
     return {};
   }
   render() {
-    const {currentWidth, notification} = this.props;
+    const {notification} = this.props;
+    const {width} = Dimensions.get('screen');
     if (!notification) return null;
     const {picture} = notification.data;
     let {body, title} = notification.notification;
@@ -86,7 +88,7 @@ class Notification extends Component {
       <Animated.View
         style={[
           styles.notification,
-          {width: currentWidth},
+          {width: width},
           {transform: [{translateY: this.translateYNotif}]},
         ]}>
         <TouchableOpacity
@@ -123,7 +125,7 @@ class Notification extends Component {
           style={[
             styles.swipableView,
             {
-              width: currentWidth,
+              width: width,
             },
           ]}>
           <View style={styles.swipableRectangle} />
@@ -170,7 +172,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     notification: state.layout.notification,
-    currentWidth: state.layout.currentScreenSize.currentWidth,
     userID: state.user.userID,
   };
 };

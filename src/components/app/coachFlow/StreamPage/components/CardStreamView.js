@@ -6,6 +6,7 @@ import {
   Animated,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
@@ -211,6 +212,7 @@ class CardStream extends Component {
       borderWidth: 4 * scale,
       borderColor: colors.white,
       overflow: 'hidden',
+      backgroundColor:colors.grey,
     };
 
     return (
@@ -219,7 +221,8 @@ class CardStream extends Component {
           <View style={{...styleImg}}>
             {member.info && member.info.picture ? (
               <AsyncImage
-                style={{...styleApp.fullSize, borderRadius}}
+                style={{...styleApp.fullSize, borderRadius, 
+                  backgroundColor:colors.grey}}
                 mainImage={member.info.picture}
                 imgInitial={member.info.picture}
               />
@@ -339,11 +342,10 @@ class CardStream extends Component {
     const {
       coachSessionID,
       currentSessionID,
-      currentScreenSize,
       scale,
     } = this.props;
     const activeSession = coachSessionID === currentSessionID;
-    const width = currentScreenSize.currentWidth;
+    const {width} = Dimensions.get('screen');
     const top = (scale * 90 - 45) / 2;
 
     return (
@@ -413,9 +415,10 @@ class CardStream extends Component {
   }
 
   backdrop() {
-    const {currentScreenSize, scale} = this.props;
+    const {scale} = this.props;
     let height = 90 * scale;
-    const width = currentScreenSize.currentWidth / 2 + 90;
+    const {width} = Dimensions.get('screen');
+    const currentWidth = width / 2 + 90;
 
     return (
       <TouchableOpacity
@@ -423,7 +426,7 @@ class CardStream extends Component {
         activeOpacity={1}
         style={{
           height,
-          width,
+          width: currentWidth,
           position: 'absolute',
           zIndex: -1,
           left: -90,
@@ -446,14 +449,13 @@ class CardStream extends Component {
   cardStream() {
     const {
       scale,
-      currentScreenSize,
       coachSessionID,
       currentSessionID,
       userID,
     } = this.props;
     const {loading, session} = this.state;
     const activeSession = coachSessionID === currentSessionID;
-    const width = currentScreenSize.currentWidth;
+    const {width} = Dimensions.get('screen');
 
     const translateX = this.expandAnimation.interpolate({
       inputRange: [0, 1],
@@ -586,7 +588,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    currentScreenSize: state.layout.currentScreenSize,
     currentSessionID: state.coach.currentSessionID,
     userConnected: state.user.userConnected,
   };

@@ -92,13 +92,13 @@ class PickMembers extends React.Component {
     });
   };
   switch(textOn, textOff, state, click) {
-    const {currentWidth} = this.props.currentScreenSize;
+    const {width} = Dimensions.get('screen');
     return (
       <Switch
         textOn={textOn}
         textOff={textOff}
         finalColorOn={colors.primary}
-        translateXTo={currentWidth / 2 - 20}
+        translateXTo={width / 2 - 20}
         height={50}
         state={this.state[state]}
         setState={(val) => click(val)}
@@ -173,19 +173,15 @@ class PickMembers extends React.Component {
   }
   pickMembers(usersSelected) {
     const {contacts} = this.state;
-    const {
-      currentHeight,
-      portrait,
-      currentWidth,
-    } = this.props.currentScreenSize;
+    const {height} = Dimensions.get('screen');
     const {route} = this.props;
     const {displaySwitch} = route.params;
-    const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
+    const marginTop = marginTopApp;
     return (
       <View
         style={{
           marginTop: heightHeaderHome + marginTop,
-          height: currentHeight - heightHeaderHome - 20,
+          height: height - heightHeaderHome - 20,
         }}>
         {displaySwitch && (
           <View style={styleApp.marginView}>
@@ -239,9 +235,9 @@ class PickMembers extends React.Component {
       text2,
       clickButton2,
     } = route.params;
-    const {currentHeight} = this.props.currentScreenSize;
+    const {height} = Dimensions.get('screen');
     return (
-      <View style={{backgroundColor: colors.white, height: currentHeight}}>
+      <View style={{backgroundColor: colors.white, height: height}}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={titleHeader}
@@ -333,7 +329,6 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     captains: state.createChallengeData.captains,
-    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

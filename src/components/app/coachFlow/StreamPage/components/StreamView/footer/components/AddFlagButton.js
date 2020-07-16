@@ -18,7 +18,7 @@ class AddFlagButton extends Component {
     super(props);
     this.state = {};
   }
-  addFlag = async () => {
+  addFlag = () => {
     const {coachSessionID, member} = this.props;
     const flagID = generateID();
     let updates = {};
@@ -33,7 +33,7 @@ class AddFlagButton extends Component {
       }/recording/flags/${flagID}/time`
     ] = Date.now() - member.recording.startTimestamp;
 
-    await database()
+    database()
       .ref()
       .update(updates);
   };
@@ -49,7 +49,7 @@ class AddFlagButton extends Component {
     const {member} = this.props;
     const {recording} = member;
     const numberFlags = this.numberFlags(this.props);
-    if (!recording?.isRecording) return <Col size={10} />;
+    if (!recording?.isRecording || !recording?.startTimestamp) return <Col size={10} />;
     return (
       <ButtonColor
         view={() => {
@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0,
     borderColor: colors.off,
-    // backgroundColor: colors.white,
   },
 });
 

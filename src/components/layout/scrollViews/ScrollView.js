@@ -28,9 +28,8 @@ class ScrollViewPage extends PureComponent {
     this.props.onRef(this);
   }
   styleScrollView() {
-    let {marginTop, currentScreenSize} = this.props;
-    let {portrait} = currentScreenSize;
-    const marginTopAdded = portrait ? marginTopApp : marginTopAppLandscape;
+    let {marginTop} = this.props;
+    const marginTopAdded = marginTopApp;
     return {
       marginTop: marginTop + marginTopAdded,
     };
@@ -99,9 +98,7 @@ class ScrollViewPage extends PureComponent {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    currentScreenSize: state.layout.currentScreenSize,
-  };
+  return {};
 };
 
 export default connect(
