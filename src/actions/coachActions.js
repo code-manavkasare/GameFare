@@ -10,6 +10,7 @@ import {
   UNSET_CURRENT_SESSION,
   SET_RECORDING,
   SET_ALL_SESSIONS,
+  SET_CURRENT_SESSION_RECONNECTING,
 } from './types';
 
 const setCoachSession = (value) => ({
@@ -64,6 +65,11 @@ export const setAllSessions = (value) => ({
   allSessions: value,
 });
 
+const setCurrentSessionReconnecting = (value) => ({
+  type: SET_CURRENT_SESSION_RECONNECTING,
+  reconnecting: value,
+});
+
 export const coachAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'setCoachSession') {
@@ -88,6 +94,8 @@ export const coachAction = (val, data) => {
       await dispatch(unsetCurrentSession());
     } else if (val === 'setRecording') {
       await dispatch(setRecording(data));
+    } else if (val === 'setCurrentSessionReconnecting') {
+      await dispatch(setCurrentSessionReconnecting(data));
     }
     return true;
   };
