@@ -35,9 +35,14 @@ export default class Alert extends Component {
   async componentDidMount() {
     await timeout(300);
     this.openVoile(true);
+    const {navigation, coachAction} = this.props;
   }
+
   openVoile(val) {
-    Animated.timing(this.opacityVoile, timing(val ? 1 : 0, 200)).start();
+    Animated.timing(
+      this.opacityVoile,
+      timing(val ? 1 : 0, val ? 200 : 30),
+    ).start();
   }
   title() {
     const {title} = this.props.route.params;
@@ -64,6 +69,7 @@ export default class Alert extends Component {
     return this.close();
   }
   async optionClick(operation, forceNavigation) {
+    this.openVoile(false);
     const {navigation} = this.props;
     if (operation) {
       await operation();

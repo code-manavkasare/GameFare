@@ -7,19 +7,31 @@ import {blockUnblockUser} from '../../../database/firebase/users';
 
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
+import Button from '../../../layout/buttons/Button';
+
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import {heightHeaderHome} from '../../../style/sizes';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import {openDiscussion} from '../../../functions/message';
-import {openMemberAcceptCharge} from '../../../functions/coach';
+import {openMemberAcceptCharge, capitalize} from '../../../functions/coach';
+
+import {
+  BadgesView,
+  PriceView,
+  FocusView,
+} from '../../coachingTab/components/ComponentsCard';
+
+import {getOnceValue} from '../../../database/firebase/methods';
 
 class ProfilePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loader: false,
+      initialLoader: true,
+      loaderMessage: false,
       userProfile: {
         info: {
           firstname: '',
@@ -32,15 +44,34 @@ class ProfilePage extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-
-  componentDidMount = () => {
+  static getDerivedStateFromProps(props, state) {
+    const {route} = props;
+    const user = route.params.user;
+    const {initialLoader, userProfile} = state;
+    if (initialLoader) {
+      return {userProfile: user, initialLoader: false};
+    }
+    return {userProfile: userProfile};
+  }
+  componentDidMount = async () => {
     const {infoUser, route} = this.props;
     const userProfile = route.params.user;
     let isBlocked = false;
-    if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
+    if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.objectID]) {
       isBlocked = true;
     }
-    this.setState({userProfile, isBlocked});
+    const userInfo = await getOnceValue(
+      `users/${userProfile.objectID}/userInfo`,
+    );
+    console.log('userInfo', route.params.user);
+    console.log('userInfo', userInfo);
+    this.setState({
+      userProfile: {
+        id: userProfile.objectID,
+        info: userInfo,
+      },
+      isBlocked,
+    });
   };
 
   blockUnblockUser = async (block) => {
@@ -59,60 +90,66 @@ class ProfilePage extends Component {
       );
   };
 
-  button = (text, color, block) => {
-    return (
-      <ButtonColor
-        view={() => (
-          <Text style={[styleApp.textBold, {color: colors.white}]}>{text}</Text>
-        )}
-        style={{height: 45, borderRadius: 5}}
-        click={() => this.blockUnblockUser(block)}
-        color={color}
-        onPressColor={color}
-      />
-    );
-  };
-
   blockButton = () => {
     const {isBlocked, userProfile} = this.state;
     const {userID} = this.props;
     if (userID !== userProfile.id) {
-      return isBlocked
-        ? this.button('Unblock User', colors.green, false)
-        : this.button('Block User', colors.red, true);
+      return (
+        <Button
+          text={isBlocked ? 'Unblock' : 'Block user'}
+          icon={{
+            name: 'hand-paper',
+            size: 22,
+            type: 'font',
+            color: colors.title,
+          }}
+          styleButton={{borderWidth: 0}}
+          textButton={{color: colors.title}}
+          color={colors.white}
+          onPressColor={colors.off}
+          click={() => this.blockUnblockUser(!isBlocked)}
+        />
+      );
     }
   };
   async requestSession() {
     const {userProfile} = this.state;
     const {userID, navigation, infoUser} = this.props;
     const {objectID: profileUserID, info} = userProfile;
-    await this.setState({loader: true});
+    await this.setState({loaderMessage: true});
 
     const discussion = await openDiscussion([
       {id: userID, info: infoUser.userInfo},
       {id: profileUserID, info},
     ]);
     console.log('discussion', discussion);
-    this.setState({loader: false});
+    this.setState({loaderMessage: false});
     openMemberAcceptCharge({...userProfile, isCoach: true}, false, () =>
       navigation.navigate('Conversation', {
         data: discussion,
         myConversation: true,
         back: true,
+        message: "Hi, I'd like to book a video session with you. Thanks!",
       }),
     );
   }
   profilePage() {
+    const {loaderMessage} = this.state;
     const {
       firstname,
       lastname,
       picture,
       coach,
-      currencyRate,
+      focusAreas,
       hourlyRate,
+      gender,
+      badges,
+      biography,
+      levelCoached,
     } = this.state.userProfile.info;
+    console.log('focusAreas', this.state.userProfile);
     return (
-      <View style={styleApp.marginView}>
+      <View style={[styleApp.marginView, styleApp.stylePage]}>
         <Row>
           <Col style={styleApp.center2} size={35}>
             {this.picture(picture, firstname, lastname)}
@@ -121,27 +158,71 @@ class ProfilePage extends Component {
             <Text style={[styleApp.title, {fontSize: 22}]}>
               {firstname} {lastname}
             </Text>
-            {coach && (
-              <Text style={[styleApp.subtitle, {fontSize: 15}]}>
-                {currencyRate} ${hourlyRate} / hour
-              </Text>
-            )}
+            {BadgesView({badges})}
+            {PriceView({
+              hourlyRate,
+            })}
           </Col>
         </Row>
-        <View style={{height: 40}} />
+        <View style={styleApp.divider} />
+        {FocusView({
+          list: focusAreas,
+          icon: {
+            name: 'address-card',
+            color: colors.title,
+            size: 18,
+            type: 'font',
+          },
+        })}
+        {gender &&
+          FocusView({
+            list: [capitalize(gender)],
+            icon: {
+              name: gender === 'male' ? 'mars' : 'venus',
+              color: colors.title,
+              size: 23,
+              type: 'font',
+            },
+          })}
+        {levelCoached &&
+          FocusView({
+            list: [capitalize(levelCoached)],
+            icon: {
+              name: 'balance-scale',
+              color: colors.title,
+              size: 21,
+              type: 'font',
+            },
+          })}
+        {biography &&
+          FocusView({
+            list: [biography],
+            icon: {
+              name: 'align-left',
+              color: colors.title,
+              size: 23,
+              type: 'font',
+            },
+          })}
+        <View style={styleApp.divider} />
+        <View style={{height: 30}} />
         {coach && (
-          <ButtonColor
-            view={() => (
-              <Text style={[styleApp.textBold, {color: colors.white}]}>
-                Request a session
-              </Text>
-            )}
-            style={{height: 45, borderRadius: 5, marginBottom: 20}}
+          <Button
+            text={'Request a session'}
+            loader={loaderMessage}
+            icon={{
+              name: 'speech',
+              size: 22,
+              type: 'moon',
+              color: colors.white,
+            }}
+            backgroundColor={'blue'}
+            onPressColor={colors.blueLight}
             click={() => this.requestSession()}
-            color={colors.primary}
-            onPressColor={colors.primary2}
           />
         )}
+
+        <View style={[{height: 10}]} />
 
         {this.blockButton()}
       </View>

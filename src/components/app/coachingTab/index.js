@@ -52,18 +52,29 @@ class StreamTab extends Component {
   };
   CoachingTab = (currentHeight) => {
     const {loader, coaches} = this.state;
-    if (loader)
-      return (
-        <View>
-          <PlaceHolder />
-        </View>
-      );
 
     return (
       <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
-        {coaches.map((coach) => (
-          <CardCoach coach={coach} key={coach.objectID} />
-        ))}
+        <View style={styleApp.marginView}>
+          <Text style={styleApp.title}>Find a coach and book a session</Text>
+          <Text style={[styleApp.text, {marginTop: 10, marginBottom: 20}]}>
+            Connect live with a coach through an in-app video call. Only pay for
+            time spent in session.
+          </Text>
+        </View>
+
+        {loader ? (
+          <View>
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+            <PlaceHolder />
+          </View>
+        ) : (
+          coaches.map((coach) => (
+            <CardCoach coach={coach} key={coach.objectID} />
+          ))
+        )}
       </View>
     );
   };
@@ -102,7 +113,7 @@ class StreamTab extends Component {
 const styles = StyleSheet.create({
   containerTabPage: {
     ...styleApp.fullSize,
-    paddingTop: 10,
+    paddingTop: 0,
   },
   titlePage: {
     ...styleApp.title,

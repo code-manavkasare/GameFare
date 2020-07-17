@@ -109,7 +109,7 @@ class MessageTab extends React.Component {
 
   render() {
     const {infoUser, userID, navigation, route} = this.props;
-    const {back} = route.params;
+    const {back, message} = route.params;
     const {conversation, loader} = this.state;
     const user = userObject(infoUser, userID);
 
@@ -131,6 +131,7 @@ class MessageTab extends React.Component {
           user={user}
           onRef={(ref) => (this.conversationRef = ref)}
           messageAction={this.props.messageAction}
+          initialMessage={message ? message : ''}
           discussion={conversation}
         />
       </View>
