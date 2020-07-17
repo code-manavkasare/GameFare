@@ -9,12 +9,14 @@ import {
   UNSET_CURRENT_SESSION,
   SET_RECORDING,
   SET_ALL_SESSIONS,
+  SET_CURRENT_SESSION_RECONNECTING,
 } from '../actions/types';
 import colors from '../components/style/colors';
 
 const initialState = {
   endCurrentSession: false,
   recording: false,
+  reconnecting: false,
   currentSession: {},
   currentSessionID: false,
   settingsDraw: {
@@ -58,6 +60,7 @@ const coachReducer = (state = initialState, action) => {
       return {
         ...state,
         endCurrentSession: false,
+        reconnecting: false,
         currentSession: {},
         currentSessionID: false,
       };
@@ -73,6 +76,8 @@ const coachReducer = (state = initialState, action) => {
       return {...state, currentSessionID: action.currentSessionID};
     case SET_RECORDING:
       return {...state, recording: action.recording};
+    case SET_CURRENT_SESSION_RECONNECTING:
+      return {...state, reconnecting: action.reconnecting};
     case RESET_COACH_DATA:
       return initialState;
     default:

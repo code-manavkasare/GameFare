@@ -22,7 +22,7 @@ import isEqual from 'lodash.isequal';
 import StatusBar from '@react-native-community/status-bar';
 import Orientation from 'react-native-orientation-locker';
 
-const {height, width} = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 import Mixpanel from 'react-native-mixpanel';
 import {mixPanelToken} from '../../../../../database/firebase/tokens';
@@ -67,7 +67,6 @@ class StreamPage extends Component {
     this.state = {
       loader: true,
       isConnected: false,
-      reconnecting: false,
       coachSession: false,
       coachSessionID: false,
       error: false,
@@ -102,21 +101,20 @@ class StreamPage extends Component {
       sessionReconnecting: (event) => {
         // loss of signal, session is trying to reconnect,
         // will either send sessionReconnected or sessionDisconnected after this
-        this.setState({reconnecting: true});
+        const {coachAction} = this.props;
+        coachAction('setCurrentSessionReconnecting', true);
       },
       sessionDisconnected: (event) => {
         // user disconnected from session or loss of signal and could not reconnect
-        const {reconnecting} = this.state;
-        const {coachAction} = this.props;
+        const {coachAction, reconnecting} = this.props;
         if (reconnecting) {
-          this.setState({reconnecting: false});
           Alert.alert('Signal loss, could not connect to session.');
           coachAction('endCurrentSession');
         }
       },
       sessionReconnected: (event) => {
-        // signal found, successfully reconnected
-        this.setState({reconnecting: false});
+        const {coachAction} = this.props;
+        coachAction('setCurrentSessionReconnecting', false);
       },
       error: (event) => {
         // cannot use variables from closure (i.e. coachSessionID) as component may be unmounted when this is called
@@ -175,7 +173,7 @@ class StreamPage extends Component {
       },
       streamDestroyed: (event) => {
         const {coachSessionID} = this.state;
-        const {userID, currentScreenSize} = this.props;
+        const {userID} = this.props;
         const {streamId, connectionId} = event;
         Mixpanel.trackWithProperties(
           'publisherEventHandlers streamDestroyed ' + coachSessionID,
@@ -191,7 +189,7 @@ class StreamPage extends Component {
     };
   }
   componentDidMount() {
-    const {navigation, coachAction} = this.props;
+    const {navigation} = this.props;
     this.refreshTokenMember();
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
@@ -463,9 +461,8 @@ class StreamPage extends Component {
       publishAudio,
       publishVideo,
       coachSessionID,
-      reconnecting,
     } = this.state;
-    const {userID} = this.props;
+    const {userID, reconnecting} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!coachSession.tokbox) return null;
@@ -674,6 +671,7 @@ const mapStateToProps = (state) => {
     currentSession: state.coach.currentSession,
     endCurrentSession: state.coach.endCurrentSession,
     recording: state.coach.recording,
+    reconnecting: state.coach.reconnecting,
   };
 };
 
