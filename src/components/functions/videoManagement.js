@@ -46,7 +46,7 @@ const arrayUploadFromSnipets = async ({
   members,
   userID,
 }) => {
-  if (!flagsSelected['fullVideo']) {
+  if (!(`${userID}-fullVideo` in flagsSelected)) {
     const flagsWithSnippets = await generateSnippetsFromFlags(
       recording.localSource,
       flagsSelected,
