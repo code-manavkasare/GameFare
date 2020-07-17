@@ -34,6 +34,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  shadowWeak: {
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.06,
+    shadowRadius: 7,
+  },
   divider: {
     height: 1,
     width: '90%',

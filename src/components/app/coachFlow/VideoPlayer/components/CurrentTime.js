@@ -25,7 +25,7 @@ export default class LogoutView extends Component {
     const {currentTime} = this.state;
     return (
       <Text style={[styleApp.textBold, {color: colors.white}]}>
-        {displayTime(currentTime, true)}
+        {displayTime(currentTime)}
       </Text>
     );
   }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Easing, ScrollView} from 'react-native';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 import database from '@react-native-firebase/database';
 
 import {native} from '../../../../../../../../../animations/animations'
@@ -19,7 +18,7 @@ class ExportQueue extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      member: undefined,
+      members: {},
       visible: false,
       flagsSelected: {},
       loader: false,
@@ -33,48 +32,71 @@ class ExportQueue extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {isConnected} = this.state.member
-    if (prevState.member.isConnected && !isConnected) {
+    let {members} = this.state
+    for (var member in members) {
+      let isConnected = members[member]?.isConnected
+      if (prevState.members[member]?.isConnected && !isConnected)
+        delete members[member]
+    }
+    if (members?.length === 0 && prevState.members?.length > 0) {
       this.close()
     }
   }
 
   static getDerivedStateFromProps(props, state) {
-    newState = {}
-    if (!isEqual(props.finalizeRecordingMember, state.member))
-      newState = {...newState, member: props.finalizeRecordingMember};
-    return newState;
+
   }
 
-  async open(member, thumbnails) {
-    await this.setState({visible: true, 
-      flagsSelected: {
-        ['fullVideo']: {
-          id: 'fullVideo',
-          time: 0
-        }}
-      });
+  async open(member, thumbnails, update) {
+    let {members, flagsSelected} = this.state
+    members[`${member.id}`] = member
+    flagsSelected[`${member.id}-fullVideo`] = {
+      time: 0,
+      id: `${member.id}-fullVideo`,
+      source: member.id,
+    }
+    await this.setState({visible: true, flagsSelected});
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(1, 300)),
     ]).start();
   }
 
-  close() {
-    this.setState({visible: false});
+  updateMember(member) {
+    let {members} = this.state
+    members[`${member.id}`] = member
+    this.setState({members})
+  }
+
+  close(ignore) {
     this.props.onClose()
     Animated.parallel([
       Animated.timing(this.scaleCard, native(0, 300)),
     ]).start();
 
-    const {member} = this.state;
-    const {coachSessionID} = this.props;
-    let updates = {};
-    updates[
-      `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
-    ] = true;
-    database()
-      .ref()
-      .update(updates);
+    if (!ignore) {
+      const {members} = this.state;
+      const {coachSessionID} = this.props;
+      let updates = {};
+      for (m in members) {
+      let member = members[m]
+      if (member !== undefined && member.id !== undefined)
+          updates[
+            `coachSessions/${coachSessionID}/members/${members[m].id}/recording/enabled`
+          ] = true;
+      }
+      if (Object.values(updates).length > 0) {
+        database()
+          .ref()
+          .update(updates);
+      }
+      this.itemsRef = []
+      this.setState({
+        members: {},
+        visible: false,
+        flagsSelected: {},
+        loader: false,
+      });
+    }
   }
 
   backdrop() {
@@ -91,122 +113,181 @@ class ExportQueue extends Component {
   }
 
   confirm = async () => {
-    this.close()
-    const {flagsSelected, member} = this.state;
+    this.close(true)
+    const {flagsSelected: allFlags, members} = this.state;
     const {coachSessionID, userID} = this.props;
-    const {recording} = member;
 
-    var infoFlags = flagsSelected && Object.values(flagsSelected).reduce(function(result, item) {
-      const snipetTime = this.itemsRef[item.id].getState('snipetTime');
-      result[item.id] = {
-        id: item.id,
-        time: item.time,
-        thumbnail: item.thumbnail,
-        startTime: Math.max(0, item.time - snipetTime * 1000),
-        stopTime: Math.min(
-          recording.stopTimestamp - recording.startTimestamp,
-          item.time + snipetTime * 1000,
-        ),
-      };
-      return result;
-    }.bind(this), {});
     let updates = {};
-    updates[
-      `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
-    ] = true;
-    updates[
-      `coachSessions/${coachSessionID}/members/${
-        member.id
-      }/recording/uploadRequest`
-    ] = {
-      flagsSelected: infoFlags,
-      date: Date.now(),
-      userRequested: userID,
-    };
-    await database()
-      .ref()
-      .update(updates);
+    for (var m in members) {
+      let member = members[m]
+      if (member !== undefined && member.id !== undefined) {
+        let recording = member?.recording
+        let flagsSelected = allFlags && Object.values(allFlags).filter((flag) => flag.source === members[m].id)
+
+        var infoFlags = flagsSelected && Object.values(flagsSelected).reduce(function(result, item) {
+          const snipetTime = this.itemsRef[item.id].getState('snipetTime');
+          result[item.id] = {
+            id: item.id,
+            time: item.time,
+            thumbnail: item.thumbnail,
+            startTime: Math.max(0, item.time - snipetTime * 1000),
+            stopTime: Math.min(
+              recording?.stopTimestamp - recording?.startTimestamp,
+              item.time + snipetTime * 1000,
+            ),
+          };
+          return result;
+        }.bind(this), {});
+        console.log(infoFlags)
+        updates[
+          `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
+        ] = true;
+        updates[
+          `coachSessions/${coachSessionID}/members/${
+            member.id
+          }/recording/uploadRequest`
+        ] = {
+          flagsSelected: infoFlags,
+          date: Date.now(),
+          userRequested: userID,
+        };
+      } 
+    }
+
+    this.setState({
+      members: {},
+      visible: false,
+      flagsSelected: {},
+      loader: false,
+    });
+    
+    if (Object.values(updates).length > 0) {
+      await database()
+        .ref()
+        .update(updates);
+    }
   };
 
   fullVideos() {
-    const {member, flagsSelected} = this.state
-    const {recording} = member
-    const flags = recording?.flags
+    const {flagsSelected, members, visible} = this.state
+    let flags = {}
+    let recordings = []
+    for (var member in members) {
+      flags = {...flags, ...members[member]?.recording?.flags}
+      recordings.push(members[member]?.recording)
+    }
+    if (recordings.length < 1) return null
     return (
       <View>
-        {flags && <Text style={styles.subtitle}>Full Video</Text>}
+        {flags && Object.values(flags).length > 0 && 
+        <Text style={styles.subtitle}>
+        Full Video{(recordings.length > 1) ? 's' : ''}
+        </Text>}
         <View style={{height:90}}>
-          {recording && <CardFlag
-            flagsSelected={flagsSelected}
-            onRef={(ref) => (this.itemsRef['fullVideo'] = ref)}
-            click={() => {
-              if (flagsSelected['fullVideo'])
-                return this.setState({flagsSelected: {}});
-              return this.setState({
-                flagsSelected: {
-                  ['fullVideo']: {
-                    id: 'fullVideo',
-                    time: 0,
-                    thumbnail: recording.thumbnail,
-                  },
-                },
-              });
-            }}
-            disableSelectTime={true}
-            flag={{
-              time:
-                recording.stopTimestamp - recording.startTimestamp
-                  ? recording.stopTimestamp - recording.startTimestamp
-                  : '',
-              fullVideo: true,
-              thumbnail: recording.thumbnail,
-              id: 'fullVideo',
-            }}
-          />}
+          <ScrollView
+          horizontal
+          scrollEnabled={(recordings.length > 1)}
+          style={{
+            height:'100%',
+            paddingLeft:'5%'
+          }}
+          showsHorizontalScrollIndicator={false}> 
+            {Object.values(members)
+              .map((member) => {
+                  const recording = member?.recording
+                  let flagId = `${member.id}-fullVideo`
+                  return recording && recording?.stopTimestamp &&
+                  <CardFlag
+                    flagsSelected={flagsSelected}
+                    onRef={(ref) => (this.itemsRef[flagId] = ref)}
+                    click={() => {
+                      let {flagsSelected} = this.state;
+                      if (flagsSelected[flagId]) delete flagsSelected[flagId];
+                      else
+                        flagsSelected = {
+                          ...flagsSelected,
+                          [flagId]: {
+                            time: 0,
+                            id: flagId,
+                            thumbnail: recording.thumbnail,
+                            source: member.id,
+                          },
+                        };
+                      this.setState({flagsSelected});
+                    }}
+                    disableSelectTime={true}
+                    flag={{
+                      time:
+                        recording.stopTimestamp - recording.startTimestamp
+                          ? recording.stopTimestamp - recording.startTimestamp
+                          : '',
+                      fullVideo: true,
+                      thumbnail: recording.thumbnail,
+                      id: flagId,
+                      portrait: recording.portrait
+                    }}
+                    memberPicture = {member?.info?.picture}
+                    startTimestamp = {recording.startTimestamp}
+                  />
+              })}
+          </ScrollView>
         </View>
       </View>
     )
   }
 
   highlights() {
-    const {member, flagsSelected} = this.state
-    const {recording} = member
-    const flags = recording?.flags
-    if (!flags) return null
-
+    const {flagsSelected, members} = this.state
+    let flags = {}
+    for (var member in members) {
+      flags = {...flags, ...members[member]?.recording?.flags}
+    }
+    if (flags && Object.values(flags).length < 1) return null
     return (
       <View>
       <Text style={styles.subtitle}>Highlights</Text>
         <View style={{minHeight: 90, maxHeight:150}}>
-          <ScrollView style={{height:'100%'}} showsVerticalScrollIndicator={false} > 
-            {Object.values(flags)
-              .sort((a, b) => a.time - b.time)
-              .map((flag) => (
-                <CardFlag
-                  key={flag.id}
-                  flag={flag}
-                  totalTime={
-                    (recording.stopTimestamp - recording.startTimestamp) / 1000
-                  }
-                  flagsSelected={flagsSelected}
-                  onRef={(ref) => (this.itemsRef[flag.id] = ref)}
-                  click={() => {
-                    let {flagsSelected} = this.state;
-                    // delete flagsSelected['fullVideo'];
-                    if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
-                    else
-                      flagsSelected = {
-                        ...flagsSelected,
-                        [flag.id]: {
-                          time: flag.time,
-                          id: flag.id,
-                          thumbnail: flag.thumbnail,
-                        },
-                      };
-                    this.setState({flagsSelected});
-                  }}
-                />
-              ))}
+          <ScrollView
+          horizontal
+          style={{
+            height:'100%',
+            paddingLeft:'5%'
+          }}
+          showsHorizontalScrollIndicator={false}> 
+            {Object.values(members)
+              .map((member) => {
+                const recording = member?.recording
+                return recording?.flags && Object.values(recording.flags)
+                .sort((a, b) => a.time - b.time)
+                .map((flag) => (
+                  <CardFlag
+                    key={flag.id}
+                    flag={flag}
+                    totalTime={
+                      (recording.stopTimestamp - recording.startTimestamp) / 1000
+                    }
+                    flagsSelected={flagsSelected}
+                    onRef={(ref) => (this.itemsRef[flag.id] = ref)}
+                    click={() => {
+                      let {flagsSelected} = this.state;
+                      if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
+                      else
+                        flagsSelected = {
+                          ...flagsSelected,
+                          [flag.id]: {
+                            time: flag.time,
+                            id: flag.id,
+                            thumbnail: flag.thumbnail,
+                            source: member.id
+                          },
+                        };
+                      this.setState({flagsSelected});
+                    }}
+                    memberPicture = {member?.info?.picture}
+                    startTimestamp = {recording.startTimestamp}
+                  />
+                ))
+              })}
           </ScrollView>
         </View>
       </View>
@@ -259,7 +340,7 @@ class ExportQueue extends Component {
             text={
               'Confirm upload'
             }
-            disabled={Object.values(flagsSelected).length === 0}
+            disabled={flagsSelected && Object.values(flagsSelected).length === 0}
             backgroundColor={'green'}
             loader={loader}
             onPressColor={colors.greenLight}

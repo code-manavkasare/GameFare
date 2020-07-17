@@ -11,7 +11,7 @@ import AsyncImage from '../../../../../../../../../layout/image/AsyncImage';
 import colors from '../../../../../../../../../style/colors';
 import styleApp from '../../../../../../../../../style/style';
 import Loader from '../../../../../../../../../layout/loaders/Loader';
-import {formatDuration, duration} from '../../../../../../../../../functions/date';
+import {formatDuration, formatDate, duration} from '../../../../../../../../../functions/date';
 
 class CardFlag extends Component {
   constructor(props) {
@@ -80,7 +80,7 @@ class CardFlag extends Component {
     );
   };
   cardFlag = () => {
-    const {flagsSelected, click, totalTime} = this.props;
+    const {flagsSelected, click, totalTime, memberPicture, startTimestamp} = this.props;
     const {flag, snipetTime} = this.state;
     const {thumbnail, time, id} = flag;
     const flagTime = Number((time / 1000).toFixed(0));
@@ -89,54 +89,44 @@ class CardFlag extends Component {
     return (
       <ButtonColor
         color={colors.white}
-        onPressColor={colors.off}
-        click={() => (thumbnail ? click() : true)}
-        style={styles.button}
+        onPressColor={colors.off2}
+        click={() => click()}
+        style={{
+          ...styles.button,
+          borderWidth: 1,
+          borderColor: flagsSelected[flag.id] ? colors.green : (colors.off + '00')
+        }}
         view={() => {
           return (
-            <Row>
+            <Row style={{width:'100%'}}>
               <Col size={30} style={styleApp.center2}>
-                {thumbnail ? (
-                  <AsyncImage mainImage={thumbnail} style={styles.img} />
-                ) : (
-                  <View
-                    style={[
-                      styles.img,
-                      styleApp.center,
-                      {backgroundColor: colors.off2},
-                    ]}>
-                    <Loader size={30} color={colors.title} />
-                  </View>
-                )}
-              </Col>
-              <Col size={55} style={[styleApp.center2, {paddingLeft: 10}]}>
-                <Text style={[styleApp.textBold, {fontSize: 13}]}>
-                  {id !== 'fullVideo'
-                    ? formatDuration(endTime - startTime)
-                    : formatDuration(flagTime)}{' '}
-                </Text>
-                {id !== 'fullVideo' && (
-                  <Text style={[styleApp.textBold, {fontSize: 14}]}>
-                    <Text style={{fontWeight: 'normal', fontSize: 12}}>
-                      from
-                    </Text>{' '}
-                    {duration(startTime)}{' '}
-                    <Text style={{fontWeight: 'normal', fontSize: 12}}>to</Text>{' '}
-                    {duration(endTime)}
-                  </Text>
-                )}
-                {/* {this.selectTime()} */}
-              </Col>
-
-              <Col size={15} style={styleApp.center3}>
-                <AllIcons
-                  name={
-                    flagsSelected[flag.id] ? 'check-circle' : 'check-circle'
+                <View
+                  style={[
+                    styles.img,
+                    styleApp.center, 
+                    {backgroundColor: colors.greyLight},
+                  ]}>
+                  {thumbnail ? (
+                    <AsyncImage mainImage={thumbnail} style={styles.img} />
+                  ) : (
+                      <Loader size={30} color={colors.grey} />
+                  )}
+                </View>
+                <View style={styles.memberPictureContainer}>
+                  {memberPicture &&
+                  <AsyncImage mainImage={memberPicture} style={styles.memberPicture} />
                   }
-                  type="font"
-                  color={flagsSelected[flag.id] ? colors.green : colors.off}
-                  size={22}
-                />
+                </View>
+              </Col>
+              <Col size={70} style={[styleApp.center2, {paddingLeft: 10}]}>
+                {startTimestamp ? <Text style={[styleApp.text, {fontSize: 12}]}>
+                {formatDate(startTimestamp)}
+                </Text> : null}
+                <Text style={[styleApp.textBold, {fontSize: 12}]}>
+                  {!id.includes('fullVideo') && endTime
+                    ? (duration(startTime) + ' to ' + duration(endTime))
+                    : flagTime ? formatDuration(flagTime) : 'Loading...' }
+                </Text>
               </Col>
             </Row>
           );
@@ -153,19 +143,36 @@ class CardFlag extends Component {
 const styles = StyleSheet.create({
   button: {
     height: 70,
+    width:190,
+    minWidth:190,
     marginTop: 10,
     paddingTop: 10,
     paddingBottom: 10,
-    paddingLeft: '5%',
-    paddingRight: '5%',
+    marginRight:5,
+    paddingRight:5,
+    borderRadius:10,
+    paddingLeft:5
   },
   img: {
+    ...styleApp.shadowWeak,
     height: 60,
     width: '100%',
     borderRadius: 6,
-    borderWidth: 1,
-    borderColor: colors.off,
   },
+  memberPicture: {
+    ...styleApp.fullSize,
+    borderRadius: 30,
+  },
+  memberPictureContainer: {
+    ...styleApp.shadowWeak,
+    height:20,
+    width:20,
+    borderRadius: 30,
+    // overflow: 'hidden',
+    position:'absolute',
+    bottom:-7,
+    right:-2
+  }
 });
 
 const mapStateToProps = (state) => {
