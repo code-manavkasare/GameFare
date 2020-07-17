@@ -91,7 +91,7 @@ class RecordingMenu extends Component {
   openExportQueue(member, thumbnails) {
     const {members} = this.state
     const {length} = members
-    const adjusted = (70 / (350 - (length-1)*65))/2 + 0.5
+    const adjusted = ((170 - (length-1)*65) / (350 - (length-1)*65))/2 + 0.5
     Animated.parallel([
       Animated.timing(this.scaleCard, native(
         (member.recording?.flags) ? 1 : adjusted, 300
