@@ -322,6 +322,7 @@ class BottomButton extends Component {
         <ButtonColor
           view={() => insideViewButton()}
           click={async () => {
+            if (currentSessionReconnecting) return;
             return (this.videoSourcePopupRef.state.visible) ? 
               this.videoSourcePopupRef.close() :
               this.videoSourcePopupRef.open();
