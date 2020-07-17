@@ -38,7 +38,7 @@ class InputMessage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: '',
+      inputValue: this.props.initialMessage,
       images: {},
       imagesUser: [],
       showImages: false,
@@ -46,6 +46,8 @@ class InputMessage extends React.Component {
   }
   componentDidMount() {
     this.props.onRef(this);
+    const {initialMessage} = this.props;
+    if (initialMessage !== '') this.textInputRef.focus();
   }
   async sendNewMessage(user, input, images) {
     if (!this.props.userConnected) return NavigationService.navigate('SignIn');
@@ -145,6 +147,7 @@ class InputMessage extends React.Component {
           }}
           enableScrollToCaret
           value={this.state.inputValue}
+          // autofocus={initialMessage === '' ? false : true}
           placeholder={this.placeholderInput()}
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
