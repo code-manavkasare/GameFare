@@ -14,6 +14,7 @@ import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
 import {displayTime, timeout} from '../../../../../../../functions/coach';
 import {date} from '../../../../../../../layout/date/date';
+import {formatDate, formatDuration} from '../../../../../../../functions/date';
 import {resolutionP} from '../../../../../../../functions/pictures';
 import Loader from '../../../../../../../layout/loaders/Loader';
 
@@ -129,25 +130,24 @@ export default class CardArchive extends Component {
               mainImage={thumbnail ? thumbnail : ''}
               style={styleApp.fullSize}
             />
-
+            <View style={styles.resolution}>
+              <Text
+                style={[
+                  styleApp.title,
+                  {color: colors.white, fontSize: 12},
+                ]}>
+                {resolutionP(size)}
+              </Text>
+            </View>
             <View
               pointerEvents="none"
               style={{
                 ...styles.viewText,
+                ...styleApp.fullSize,
                 ...styleApp.marginView,
-                top: 10,
               }}>
               <Row>
-                <Col size={80} style={styleApp.center2}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {color: colors.white, fontSize: 15},
-                    ]}>
-                    {resolutionP(size)} • {displayTime(durationSeconds)}
-                  </Text>
-                </Col>
-                <Col size={20} style={styleApp.center3}>
+                <Col style={styleApp.center}>
                   {loader ? (
                     <Loader size={25} color={colors.white} />
                   ) : selectableMode ? (
@@ -161,69 +161,27 @@ export default class CardArchive extends Component {
                   ) : (
                     <AllIcons
                       type={'font'}
-                      color={colors.white}
+                      color={colors.grey + '99'}
                       size={25}
-                      name={'play-circle'}
+                      name={'play'}
                     />
                   )}
                 </Col>
               </Row>
             </View>
-            {/* <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => this.openStatistics()}
-              style={{
-                ...styles.viewText,
-                ...styleApp.marginView,
-                top: 40,
-                width: '100%',
-              }}>
-              <Row>
-                <Col size={35} style={styleApp.center2}>
-                  <Switch
-                    trackColor={colors.title}
-                    thumbColor={doAnalytics ? colors.white : colors.off}
-                    ios_backgroundColor={colors.greyDark}
-                    onValueChange={() => {
-                      navigate('CourtCalibration', {
-                        archive: archive,
-                        noUpdateStatusBar: noUpdateStatusBar,
-                      });
-                      return this.setState({doAnalytics: !doAnalytics});
-                    }}
-                    value={doAnalytics}
-                  />
-                </Col>
-                <Col size={45} style={styleApp.center2}>
-                  <Text
-                    style={[
-                      styleApp.title,
-                      {color: colors.white, fontSize: 13},
-                    ]}>
-                    Analytics
-                  </Text>
-                </Col>
-                <Col size={20} style={styleApp.center3}>
-                  <AllIcons
-                    type={'mat'}
-                    color={colors.white}
-                    size={25}
-                    name={'keyboard-arrow-right'}
-                  />
-                </Col>
-              </Row>
-            </TouchableOpacity> */}
             <View
               pointerEvents="none"
               style={{...styles.viewText, bottom: 5, left: 5}}>
-              <Row />
-              <Text
-                style={[styleApp.text, {color: colors.white, fontSize: 12}]}>
-                {date(
-                  new Date(startTimestamp).toString(),
-                  'ddd, MMM Do • h:mm a',
-                )}
-              </Text>
+              <Col>
+                <Text
+                  style={[styleApp.text, {color: colors.white, fontSize: 13}]}>
+                  {formatDuration(durationSeconds*1000, true)}
+                </Text>
+                <Text
+                  style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
+                    {formatDate(startTimestamp)}
+                </Text>
+              </Col>
             </View>
 
             <ButtonColor
@@ -273,4 +231,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 5,
   },
+  resolution: {
+    zIndex:5,
+    position:'absolute',
+    padding:7,
+    top:0,
+    right:0,
+    backgroundColor: colors.greenLight,
+    opacity: 0.8,
+    borderBottomLeftRadius: 5
+  }
 });

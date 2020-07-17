@@ -10,7 +10,7 @@ import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
 import {store} from '../../../reduxStore';
-import {setCurrentSession, endCurrentSession} from '../../actions/coachActions';
+import {setCurrentSession, endCurrentSession, unsetCurrentSession} from '../../actions/coachActions';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
@@ -102,16 +102,21 @@ const milliSeconds = (time) => {
 };
 
 const displayTime = (time, displayMilliseconds) => {
+  function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+  }
   if (displayMilliseconds)
     return (
-      minutes(time) +
+      pad(minutes(time), 2) +
       ':' +
-      seconds(time, displayMilliseconds) +
+      pad(seconds(time, displayMilliseconds), 2) +
       ':' +
-      milliSeconds(time)
+      pad(milliSeconds(time), 2)
     );
 
-  return minutes(time) + ':' + seconds(time);
+  return pad(minutes(time), 2) + ':' + pad(seconds(time), 2);
 };
 
 const startRecording = (sessionIDFirebase, streamMemberId) => {
@@ -151,7 +156,7 @@ toggleVideoPublish = (sessionIDFirebase, memberID, enable) => {
   database()
     .ref()
     .update(updates);
-};
+}
 
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
@@ -199,12 +204,7 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
     .update(updates);
 };
 
-const stopRemoteRecording = async (
-  memberID,
-  sessionIDFirebase,
-  portrait,
-  userID,
-) => {
+const stopRemoteRecording = async (memberID, sessionIDFirebase, portrait, userID) => {
   let updates = {};
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
@@ -362,7 +362,7 @@ const infoCoach = (members) => {
   if (!members) return false;
   const userID = store.getState().user.userID;
   const coaches = Object.values(members).filter(
-    (member) => member.id !== userID && member.info.coach && member.isConnected,
+    (member) => member.id !== userID && member?.info?.coach && member.isConnected,
   );
   if (coaches.length !== 0) return coaches[0];
   return false;

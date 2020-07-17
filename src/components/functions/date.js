@@ -35,10 +35,24 @@ const formatDate = (date) => {
   else return moment(date).format('MMMM YYYY');
 }
 
-const formatDuration = (duration) => {
-  if (duration > 60)
-    return Math.round(duration / 60).toString() + ' minute' + ((Math.round(duration/60) !== 1) ? 's' : '') + ' long';
-  else return Math.round(duration).toString() + ' second' + ((Math.round(duration) !== 1) ? 's' : '') + ' long';
+const formatDuration = (duration, numerical) => {
+  if (!numerical) {
+    if (duration > 60)
+      return Math.round(duration / 60).toString() + ' minute' + ((Math.round(duration/60) !== 1) ? 's' : '') + ' long';
+    else return Math.round(duration).toString() + ' second' + ((Math.round(duration) !== 1) ? 's' : '') + ' long';
+  }
+  function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+  }
+  if (duration < 0) duration = 0
+  let ms = duration % 1000
+  let sec = ((duration - ms) / 1000) % 60
+  let min = ((duration - ms - (sec * 1000)) / 60000) % 60
+  let hours = ((duration - ms - (sec * 1000) - (min * 60000)) / 3600000) % 24
+  return ((hours > 0) ? `${pad(hours, 2)}:` : ``) + 
+      `${pad(min, 2)}:${pad(sec, 2)}`
 }
 
 module.exports = {getPermissionCalendar, isDatePast, duration, formatDate, formatDuration};

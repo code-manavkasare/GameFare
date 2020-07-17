@@ -51,7 +51,7 @@ export const endCurrentSession = () => ({
   type: END_CURRENT_SESSION,
 });
 
-const unsetCurrentSession = () => ({
+export const unsetCurrentSession = () => ({
   type: UNSET_CURRENT_SESSION,
 });
 

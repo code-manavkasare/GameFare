@@ -83,7 +83,9 @@ class BottomButton extends Component {
     const {members, userID, archivedStreams, coach} = props;
     const {recordingSelf, seenVideos, finalizeRecordingMember} = state;
     const member = members ? members[userID] : undefined;
+
     var newState = {};
+
     const archivedVideosLength = archivedStreams
       ? Object.values(archivedStreams).length
       : 0;
