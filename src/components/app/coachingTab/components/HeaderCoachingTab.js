@@ -90,7 +90,7 @@ class HeaderListStream extends Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={'Coaches'}
+        textHeader={''}
         inputRange={[5, 10]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}

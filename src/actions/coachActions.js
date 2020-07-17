@@ -10,6 +10,7 @@ import {
   UNSET_CURRENT_SESSION,
   SET_RECORDING,
   SET_ALL_SESSIONS,
+  SET_CURRENT_SESSION_RECONNECTING,
 } from './types';
 
 const setCoachSession = (value) => ({
@@ -50,7 +51,7 @@ export const endCurrentSession = () => ({
   type: END_CURRENT_SESSION,
 });
 
-const unsetCurrentSession = () => ({
+export const unsetCurrentSession = () => ({
   type: UNSET_CURRENT_SESSION,
 });
 
@@ -62,6 +63,11 @@ const setRecording = (recording) => ({
 export const setAllSessions = (value) => ({
   type: SET_ALL_SESSIONS,
   allSessions: value,
+});
+
+const setCurrentSessionReconnecting = (value) => ({
+  type: SET_CURRENT_SESSION_RECONNECTING,
+  reconnecting: value,
 });
 
 export const coachAction = (val, data) => {
@@ -88,6 +94,8 @@ export const coachAction = (val, data) => {
       await dispatch(unsetCurrentSession());
     } else if (val === 'setRecording') {
       await dispatch(setRecording(data));
+    } else if (val === 'setCurrentSessionReconnecting') {
+      await dispatch(setCurrentSessionReconnecting(data));
     }
     return true;
   };

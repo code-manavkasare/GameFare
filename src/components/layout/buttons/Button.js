@@ -75,7 +75,7 @@ export default class Button extends Component {
     ]).start();
   }
   iconView() {
-    const {icon} = this.props;
+    const {icon, loader} = this.props;
     const {name, size, type, color} = icon;
     const containerIcon = {
       ...styleApp.center,
@@ -85,7 +85,11 @@ export default class Button extends Component {
     };
     return (
       <View style={containerIcon}>
-        <AllIcon name={name} size={size} type={type} color={color} />
+        {loader ? (
+          <Loader size={34} color={colors.white} />
+        ) : (
+          <AllIcon name={name} size={size} type={type} color={color} />
+        )}
       </View>
     );
   }
@@ -106,7 +110,7 @@ export default class Button extends Component {
           onPress={() => !loader && click()}>
           {icon && this.iconView()}
           <View style={[styleApp.center, styleApp.fullSize]}>
-            {loader ? (
+            {loader && !icon ? (
               <Loader size={38} color={colors.white} />
             ) : (
               <Text style={this.styleText()}>{text}</Text>

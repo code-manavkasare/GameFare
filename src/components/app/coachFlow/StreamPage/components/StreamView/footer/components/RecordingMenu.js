@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import isEqual from 'lodash.isequal';
 
 import MemberSource from './MemberSource';
 import ExportQueue from './FinalizeRecording/components/ExportQueue';
@@ -25,9 +24,7 @@ class RecordingMenu extends Component {
     super(props);
     this.state = {
       visible: false,
-      members: [],
-      exportingMembers: {},
-      memberUpdate: undefined
+      members: []
     };
     this.scaleCard = new Animated.Value(0);
     this.itemsRef = [];
@@ -38,29 +35,14 @@ class RecordingMenu extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {members, visible, memberUpdate} = this.state
+    const {members, visible} = this.state
     if (members === undefined) this.close()
     if (!this.exportQueueRef.state.visible && !prevState.visible && visible) this.open()
-    if (memberUpdate !== undefined) this.updateMember(memberUpdate)
-  }
-
-  updateMember(member) {
-    this.state.memberUpdate = undefined
-    this.state.exportingMembers[member?.id] = member
-    this.exportQueueRef.updateMember(member)
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {userID, finalizeRecordingMember} = props;
-    const {exportingMembers} = state;
-
-    let newState = {}
-
-    if (!isEqual(exportingMembers[finalizeRecordingMember?.id], finalizeRecordingMember))
-      newState = {memberUpdate: finalizeRecordingMember}
-
+    const {userID} = props;
     return {
-      ...newState, 
       members: props.members
         ? Object.values(props.members).filter((member) => {
             return (
@@ -82,10 +64,8 @@ class RecordingMenu extends Component {
   }
 
   close() {
-    if (this.exportQueueRef.state.visible) {
+    if (this.exportQueueRef.state.visible) 
       this.exportQueueRef.close()
-      this.setState({exportingMembers: {}});
-    }
     else {
       this.setState({visible: false});
       return Animated.parallel([
@@ -109,19 +89,14 @@ class RecordingMenu extends Component {
   }
 
   openExportQueue(member, thumbnails) {
-    let {members, exportingMembers} = this.state
+    const {members} = this.state
     const {length} = members
     const adjusted = ((170 - (length-1)*65) / (350 - (length-1)*65))/2 + 0.5
     Animated.parallel([
       Animated.timing(this.scaleCard, native(
-        (member.recording?.flags || 
-          (this.exportQueueRef.state.members && Object.values(this.exportQueueRef.state.members).filter(
-            (m) => m?.recording?.flags ).length > 0)) ? 
-        1 : adjusted, 300
+        (member.recording?.flags) ? 1 : adjusted, 300
       )),
     ]).start();
-    exportingMembers[`${member.id}`] = member
-    this.setState({exportingMembers})
     this.exportQueueRef.open(member, thumbnails)
   }
 
@@ -131,14 +106,42 @@ class RecordingMenu extends Component {
     return (length-1)*65
   }
 
-  memberList() {
+  render() {
     const {visible, members} = this.state;
     const {members: propsMembers, currentScreenSize, userID, finalizeRecordingMember} = this.props;
     const {selectMember, coachSessionID} = this.props;
     const width = currentScreenSize.currentWidth;
 
+    const translateY = this.scaleCard.interpolate({
+      inputRange: [0, 0.5, 1],
+      outputRange: [1000 + sizes.offsetFooterStreaming, 350, this.newPositionByHeight()],
+      extrapolate: 'clamp',
+    });
+
     return (
-      <View>
+      <Animated.View
+        pointerEvents={visible ? 'auto' : 'none'}
+        style={[
+          styles.square,
+          { width, transform: [{translateY: translateY}] },
+        ]}>
+        <ButtonColor
+          view={() => {
+            return (
+              <AllIcons
+                name="times"
+                size={13}
+                color={colors.title}
+                type="font"
+              />
+            );
+          }}
+          click={() => this.close()}
+          color={colors.white}
+          style={styles.buttonClose}
+          onPressColor={colors.off}
+        />
+
         <Text style={[styleApp.text, styles.text]}>Record</Text>
         <View style={[{width:'90%', marginHorizontal:'5%', marginTop: 5, marginBottom: -10}]}>
         {members?.map((member) => (
@@ -162,58 +165,15 @@ class RecordingMenu extends Component {
           />
         ))}
         </View>
-      </View>
-    )
-  }
-
-  render() {
-    const {visible, members} = this.state;
-    const {members: propsMembers, currentScreenSize, userID, finalizeRecordingMember} = this.props;
-    const {selectMember, coachSessionID} = this.props;
-    const width = currentScreenSize.currentWidth;
-
-    const translateY = this.scaleCard.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [1000 + sizes.offsetFooterStreaming, 350, this.newPositionByHeight()],
-      extrapolate: 'clamp',
-    });
-
-    return (
-      <View style={{zIndex: -1}}>
-        <Animated.View
-          pointerEvents={visible ? 'auto' : 'none'}
-          style={[
-            styles.square,
-            { width, transform: [{translateY: translateY}] },
-          ]}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  name="times"
-                  size={13}
-                  color={colors.title}
-                  type="font"
-                />
-              );
-            }}
-            click={() => this.close()}
-            color={colors.white}
-            style={styles.buttonClose}
-            onPressColor={colors.off}
-          />
-          {this.memberList()}
-          <ExportQueue
-            onRef={(ref) => {this.exportQueueRef = ref}}
-            onClose={() => {
-              this.open()
-              this.setState({exportingMembers: {}})
-            }}
-            coachSessionID = {coachSessionID}
-          />
-          {this.backdrop()}
-        </Animated.View>
-      </View>
+        
+        <ExportQueue
+          onRef={(ref) => {this.exportQueueRef = ref}}
+          onClose={() => {this.open()}}
+          coachSessionID = {coachSessionID}
+          finalizeRecordingMember={finalizeRecordingMember}
+        />
+        {this.backdrop()}
+      </Animated.View>
     );
   }
 }

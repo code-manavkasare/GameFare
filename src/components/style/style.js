@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    width: '90%',
+    width: '100%',
     marginTop: 10,
-    marginLeft: '5%',
+    // marginLeft: '5%',
     marginBottom: 10,
     backgroundColor: colors.off,
   },

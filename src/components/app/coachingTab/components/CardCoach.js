@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, View, Image} from 'react-native';
 import StatusBar from '@react-native-community/status-bar';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
@@ -16,6 +16,8 @@ import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import ButtonColor from '../../../layout/Views/Button';
 import ImageUser from '../../../layout/image/ImageUser';
 
+import {PriceView, BadgesView} from './ComponentsCard';
+
 class CardCoach extends Component {
   constructor(props) {
     super(props);
@@ -23,14 +25,15 @@ class CardCoach extends Component {
       loader: false,
     };
   }
-
   card = () => {
     const {coach} = this.props;
+    const {badges, lastname, firstname, hourlyRate} = coach.info;
+    console.log('badges', badges);
     return (
       <ButtonColor
         view={() => {
           return (
-            <Row>
+            <Row style={{flex: 1}}>
               <Col size={20} style={styleApp.center2}>
                 <ImageUser
                   user={coach}
@@ -38,17 +41,20 @@ class CardCoach extends Component {
                   styleImgProps={styles.imgUser}
                 />
               </Col>
-              <Col
-                size={60}
-                style={[styleApp.center2, {paddingLeft: 5, paddingRight: 5}]}>
-                <Text style={[styleApp.title, {fontSize: 18}]}>
-                  {coach.info.firstname} {coach.info.lastname}
-                </Text>
-                <Text style={[styleApp.subtitle, {fontSize: 15}]}>
-                  {coach.info.currencyRate} ${coach.info.hourlyRate} / hour
-                </Text>
+              <Col size={60} style={[styleApp.center2]}>
+                <Row style={{height: 30}}>
+                  <Col>
+                    <Text style={[styleApp.title, {fontSize: 18}]}>
+                      {firstname} {lastname}
+                    </Text>
+                  </Col>
+                </Row>
+
+                {BadgesView({badges})}
               </Col>
+
               <Col size={10} style={styleApp.center3}>
+                {PriceView({hourlyRate: hourlyRate})}
                 <AllIcons
                   name="keyboard-arrow-right"
                   type="mat"
@@ -61,7 +67,7 @@ class CardCoach extends Component {
         }}
         click={() => navigate('ProfilePage', {user: coach})}
         color={colors.white}
-        style={styleApp.cardConversation}
+        style={[styleApp.cardConversation, {height: 120}]}
         onPressColor={colors.off}
       />
     );

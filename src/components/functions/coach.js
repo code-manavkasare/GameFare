@@ -10,7 +10,7 @@ import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
 import {store} from '../../../reduxStore';
-import {setCurrentSession, endCurrentSession} from '../../actions/coachActions';
+import {setCurrentSession, endCurrentSession, unsetCurrentSession} from '../../actions/coachActions';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
@@ -384,7 +384,7 @@ const openMemberAcceptCharge = async (
   if (session.isCoach) coach = session;
   else coach = infoCoach(session.members);
 
-  const {hourlyRate, currencyRate} = coach.info;
+  const {hourlyRate, currencyRate, firstname} = coach.info;
   const setAcceptCharge = async (val) => {
     let updates = {};
     updates[`coachSessions/${objectID}/members/${userID}/acceptCharge`] = val;
@@ -404,7 +404,9 @@ const openMemberAcceptCharge = async (
     title: 'This session requires a payment.',
     subtitle: `Your coach's hourly rate is ${currencyRate}$${hourlyRate}. You will be charged $${(
       hourlyRate / 60
-    ).toFixed(1)}/min spent on the session.`,
+    ).toFixed(
+      1,
+    )} for every minute connected with ${firstname} in a video session.`,
     displayList: true,
     disableClickOnBackdrop: true,
     close: false,
@@ -453,8 +455,14 @@ const finalizeOpening = async (session) => {
 };
 
 const sessionOpening = async (session) => {
-  if (!isSessionFree(session)) return openMemberAcceptCharge(session);
+  const currentSessionID = store.getState().coach.currentSessionID;
+  if (!isSessionFree(session) && currentSessionID !== session.objectID)
+    return openMemberAcceptCharge(session);
   finalizeOpening(session);
+};
+
+const capitalize = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 module.exports = {
@@ -484,4 +492,5 @@ module.exports = {
   infoCoach,
   sessionOpening,
   openMemberAcceptCharge,
+  capitalize,
 };

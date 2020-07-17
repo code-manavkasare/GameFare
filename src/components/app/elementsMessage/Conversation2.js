@@ -58,10 +58,12 @@ class Conversation2 extends Component {
     });
   }
   renderContent() {
+    const {initialMessage, discussion, user} = this.props;
     return (
       <InputMessage
-        discussion={this.props.discussion}
-        user={this.props.user}
+        discussion={discussion}
+        user={user}
+        initialMessage={initialMessage}
         onRef={(ref) => (this.inputRef = ref)}
       />
     );
