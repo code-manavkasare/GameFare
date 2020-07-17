@@ -10,7 +10,7 @@ import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
 import {store} from '../../../reduxStore';
-import {setCurrentSession, endCurrentSession} from '../../actions/coachActions';
+import {setCurrentSession, endCurrentSession, unsetCurrentSession} from '../../actions/coachActions';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
