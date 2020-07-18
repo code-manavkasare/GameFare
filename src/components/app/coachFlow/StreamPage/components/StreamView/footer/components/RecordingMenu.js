@@ -108,7 +108,7 @@ class RecordingMenu extends Component {
 
   render() {
     const {visible, members} = this.state;
-    const {members: propsMembers, currentScreenSize, userID, finalizeRecordingMember} = this.props;
+    const {members: propsMembers, currentScreenSize, userID} = this.props;
     const {selectMember, coachSessionID} = this.props;
     const width = currentScreenSize.currentWidth;
 
@@ -170,7 +170,7 @@ class RecordingMenu extends Component {
           onRef={(ref) => {this.exportQueueRef = ref}}
           onClose={() => {this.open()}}
           coachSessionID = {coachSessionID}
-          finalizeRecordingMember={finalizeRecordingMember}
+          members = {members}
         />
         {this.backdrop()}
       </Animated.View>

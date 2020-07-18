@@ -19,9 +19,13 @@ class ExportQueue extends Component {
     super(props);
     this.state = {
       members: {},
+      flags: undefined,
+      recordings: undefined,
+      exportingMembers: [],
       visible: false,
       flagsSelected: {},
       loader: false,
+      selfThumbnails: undefined
     };
     this.itemsRef = [];
     this.scaleCard = new Animated.Value(0);
@@ -44,27 +48,48 @@ class ExportQueue extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-
+    const {exportingMembers, selfThumbnails} = state
+    const {userID} = props
+    let members = props.members.filter((m) => exportingMembers.includes(m?.id))
+    if (selfThumbnails) {
+      let selfIndex = members.findIndex((m) => m?.id === userID)
+      console.log(selfThumbnails)
+      console.log(selfIndex)
+      for (var thumbnail in selfThumbnails) {
+        let {filename, path} = selfThumbnails[thumbnail]
+        if (filename == "Thumbnail full video") {
+          members[selfIndex].recording.thumbnail = path
+        } 
+      }
+    }
+    let flags = {}
+    let recordings = []
+    for (var member in members) {
+      flags = {...flags, ...members[member]?.recording?.flags}
+      recordings.push(members[member]?.recording)
+    }
+    console.log(recordings)
+    return {members, flags, recordings}
   }
 
-  async open(member, thumbnails, update) {
-    let {members, flagsSelected} = this.state
-    members[`${member.id}`] = member
+  async open(member, selfThumbnails) {
+    let {flagsSelected, exportingMembers} = this.state
     flagsSelected[`${member.id}-fullVideo`] = {
       time: 0,
       id: `${member.id}-fullVideo`,
       source: member.id,
     }
-    await this.setState({visible: true, flagsSelected});
+    if (exportingMembers.findIndex((m) => m === member.id) === -1)
+      exportingMembers.push(member.id)
+    await this.setState({
+      visible: true, 
+      flagsSelected,
+      exportingMembers,
+      selfThumbnails
+    });
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(1, 300)),
     ]).start();
-  }
-
-  updateMember(member) {
-    let {members} = this.state
-    members[`${member.id}`] = member
-    this.setState({members})
   }
 
   close(ignore) {
@@ -169,13 +194,7 @@ class ExportQueue extends Component {
   };
 
   fullVideos() {
-    const {flagsSelected, members, visible} = this.state
-    let flags = {}
-    let recordings = []
-    for (var member in members) {
-      flags = {...flags, ...members[member]?.recording?.flags}
-      recordings.push(members[member]?.recording)
-    }
+    const {flagsSelected, members, visible, flags, recordings} = this.state
     if (recordings.length < 1) return null
     return (
       <View>
@@ -192,11 +211,12 @@ class ExportQueue extends Component {
             paddingLeft:'5%'
           }}
           showsHorizontalScrollIndicator={false}> 
+          {/* {members && <Text>asdfasdfasdfasdfad</Text>} */}
             {Object.values(members)
               .map((member) => {
                   const recording = member?.recording
                   let flagId = `${member.id}-fullVideo`
-                  return recording && recording?.stopTimestamp &&
+                  return recording &&
                   <CardFlag
                     flagsSelected={flagsSelected}
                     onRef={(ref) => (this.itemsRef[flagId] = ref)}
@@ -216,6 +236,7 @@ class ExportQueue extends Component {
                       this.setState({flagsSelected});
                     }}
                     disableSelectTime={true}
+                    size={flags && Object.values(flags).length > 0 ? 'lg' : 'sm'}
                     flag={{
                       time:
                         recording.stopTimestamp - recording.startTimestamp
@@ -237,11 +258,7 @@ class ExportQueue extends Component {
   }
 
   highlights() {
-    const {flagsSelected, members} = this.state
-    let flags = {}
-    for (var member in members) {
-      flags = {...flags, ...members[member]?.recording?.flags}
-    }
+    const {flagsSelected, members, flags, recordings} = this.state
     if (flags && Object.values(flags).length < 1) return null
     return (
       <View>
