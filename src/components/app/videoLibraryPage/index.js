@@ -319,7 +319,7 @@ class VideoLibraryPage extends Component {
           iconOffset={selectableMode && 'user-plus'}
           typeIconOffset="font"
           sizeIconOffset={16}
-          colorIconOffset={colors.white}
+          colorIconOffset={colors.title}
           clickButtonOffset={() => this.pickMembersToShareVideosWith()}
         />
         <ScrollView

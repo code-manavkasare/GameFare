@@ -10,7 +10,11 @@ import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
 import {store} from '../../../reduxStore';
-import {setCurrentSession, endCurrentSession, unsetCurrentSession} from '../../actions/coachActions';
+import {
+  setCurrentSession,
+  endCurrentSession,
+  unsetCurrentSession,
+} from '../../actions/coachActions';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
@@ -343,9 +347,11 @@ const openSession = async (user, members) => {
   let allMembers = Object.values(members).map((member) => member.id);
   allMembers.push(user.id);
 
-  let session = Object.values(allSessions).filter((session) =>
-    isEqual(Object.keys(session.members).sort(), allMembers.sort()),
-  );
+  let session = Object.values(allSessions)
+    .filter((session) => session.members)
+    .filter((session) =>
+      isEqual(Object.keys(session.members).sort(), allMembers.sort()),
+    );
 
   if (session.length !== 0) return session[0];
   session = await createCoachSession(user, members);

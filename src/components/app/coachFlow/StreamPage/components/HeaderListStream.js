@@ -74,7 +74,7 @@ class HeaderListStream extends Component {
         iconOffset={'bell'}
         typeIconOffset="font"
         sizeIconOffset={23}
-        colorIconOffset={colors.white}
+        colorIconOffset={colors.title}
         clickButtonOffset={() => navigate('NotificationPage')}
         icon2={!hideButtonNewSession && 'plus'}
         sizeIcon2={23}
