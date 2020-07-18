@@ -164,14 +164,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   memberPictureContainer: {
-    ...styleApp.shadowWeak,
-    height:20,
-    width:20,
+    height:24,
+    width:24,
     borderRadius: 30,
+    borderWidth:2.5,
+    borderColor: colors.white,
     // overflow: 'hidden',
     position:'absolute',
-    bottom:-7,
-    right:-2
+    bottom:-9,
+    right:-10
   }
 });
 
