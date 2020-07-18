@@ -115,7 +115,7 @@ class ProfilePage extends Component {
   async requestSession() {
     const {userProfile} = this.state;
     const {userID, navigation, infoUser} = this.props;
-    const {objectID: profileUserID, info} = userProfile;
+    const {id: profileUserID, info} = userProfile;
     await this.setState({loaderMessage: true});
 
     const discussion = await openDiscussion([

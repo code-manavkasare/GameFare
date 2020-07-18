@@ -145,7 +145,7 @@ class BottomButton extends Component {
 
     await this.setState({finalizeRecordingMember: member});
     return true;
-  };
+};
   startRecording = async (prevStartError = false) => {
     const {coachSessionID, userID} = this.props;
     const messageCallback = async (response) => {
