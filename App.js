@@ -56,6 +56,7 @@ class App extends Component {
   configureSentry = () => {
     Sentry.init({
       dsn: 'https://edb7dcfee75b46ad9ad45bc0193f6c0d@sentry.io/2469968',
+      enableAutoSessionTracking: true,
       attachStacktrace: true,
       environment: Config.ENV,
     });
