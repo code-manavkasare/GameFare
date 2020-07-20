@@ -53,8 +53,6 @@ class ExportQueue extends Component {
     let members = props.members.filter((m) => exportingMembers.includes(m?.id))
     if (selfThumbnails) {
       let selfIndex = members.findIndex((m) => m?.id === userID)
-      console.log(selfThumbnails)
-      console.log(selfIndex)
       for (var thumbnail in selfThumbnails) {
         let {filename, path} = selfThumbnails[thumbnail]
         if (filename == "Thumbnail full video") {
@@ -68,7 +66,6 @@ class ExportQueue extends Component {
       flags = {...flags, ...members[member]?.recording?.flags}
       recordings.push(members[member]?.recording)
     }
-    console.log(recordings)
     return {members, flags, recordings}
   }
 
@@ -163,7 +160,6 @@ class ExportQueue extends Component {
           };
           return result;
         }.bind(this), {});
-        console.log(infoFlags)
         updates[
           `coachSessions/${coachSessionID}/members/${member.id}/recording/enabled`
         ] = true;

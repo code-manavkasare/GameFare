@@ -101,7 +101,7 @@ class MemberSource extends Component {
     const {selectMember, coachSessionID} = this.props;
     const isRecording = recording && recording.isRecording;
     const isDisabled = recording?.enabled === false || member?.publishVideo === false;
-    if (loader || (isRecording && recording?.dispatched))
+    if (loader || recording?.dispatched)
       return (
         <Col 
         size={10}

@@ -56,7 +56,6 @@ const coachReducer = (state = initialState, action) => {
           : false,
       };
     case UNSET_CURRENT_SESSION:
-      // needs to be called after 'END_CURRENT_SESSION' instruction seen through
       return {
         ...state,
         endCurrentSession: false,

@@ -48,7 +48,6 @@ const BadgesView = (props) => {
         <Text style={[styleApp.text, {fontSize: 15}]}>
           {badges &&
             badges.map((badge, key) => {
-              console.log('badge', badge, key, badges.length);
               if (badges.length != 1 && badges.length != Number(key) + 1)
                 return badge + ', ';
               return badge;

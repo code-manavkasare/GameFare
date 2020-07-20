@@ -28,7 +28,6 @@ class CardCoach extends Component {
   card = () => {
     const {coach} = this.props;
     const {badges, lastname, firstname, hourlyRate} = coach.info;
-    console.log('badges', badges);
     return (
       <ButtonColor
         view={() => {

@@ -44,7 +44,6 @@ const resetUploadQueue = () => ({
 });
 
 export const uploadQueueAction = (val, data) => {
-  // console.log('UPLOAD FILE ACTION', val, data)
   return async function(dispatch) {
     if (val === 'enqueueFileUpload') {
       await dispatch(enqueueFileUpload(data));
