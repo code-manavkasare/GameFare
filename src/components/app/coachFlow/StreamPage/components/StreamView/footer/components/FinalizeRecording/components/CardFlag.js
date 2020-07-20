@@ -79,8 +79,16 @@ class CardFlag extends Component {
       </Row>
     );
   };
+  buttonStyle(flagsSelected, size) {
+    const {flag} = this.state;
+    let style = (size === 'sm') ? {...styles.button} : {...styles.buttonLg}
+    return {
+      ...style,
+      borderColor: flagsSelected[flag.id] ? colors.green : (colors.off + '00')
+    }
+  }
   cardFlag = () => {
-    const {flagsSelected, click, totalTime, memberPicture, startTimestamp} = this.props;
+    const {flagsSelected, click, totalTime, memberPicture, startTimestamp, size} = this.props;
     const {flag, snipetTime} = this.state;
     const {thumbnail, time, id} = flag;
     const flagTime = Number((time / 1000).toFixed(0));
@@ -91,12 +99,9 @@ class CardFlag extends Component {
         color={colors.white}
         onPressColor={colors.off2}
         click={() => click()}
-        style={{
-          ...styles.button,
-          borderWidth: 1,
-          borderColor: flagsSelected[flag.id] ? colors.green : (colors.off + '00')
-        }}
+        style={this.buttonStyle(flagsSelected, size)}
         view={() => {
+          if (size === 'sm')
           return (
             <Row style={{width:'100%'}}>
               <Col size={30} style={styleApp.center2}>
@@ -129,7 +134,42 @@ class CardFlag extends Component {
                 </Text>
               </Col>
             </Row>
-          );
+          ) 
+          else return (
+            <Col style={{...styleApp.fullSize}}>
+              <Row size={80} style={styleApp.center2}>
+                <View
+                  style={[
+                    styles.imgLg,
+                    styleApp.center, 
+                    {backgroundColor: colors.greyLight},
+                  ]}>
+                  {thumbnail ? (
+                    <AsyncImage mainImage={thumbnail} style={styles.imgLg} />
+                  ) : (
+                      <Loader size={30} color={colors.grey} />
+                  )}
+                </View>
+                <View style={styles.memberPictureContainerLg}>
+                  {memberPicture &&
+                  <AsyncImage mainImage={memberPicture} style={styles.memberPicture} />
+                  }
+                </View>
+              </Row>
+              <Row size={20} style={[styleApp.center2, {paddingLeft: 10}]}>
+                <Col style={{...styleApp.center2}}>
+                  {startTimestamp ? <Text style={[styleApp.text, {fontSize: 12}]}>
+                  {formatDate(startTimestamp)}
+                  </Text> : null}
+                  <Text style={[styleApp.textBold, {fontSize: 12}]}>
+                    {!id.includes('fullVideo') && endTime
+                      ? (duration(startTime) + ' to ' + duration(endTime))
+                      : flagTime ? formatDuration(flagTime) : 'Loading...' }
+                  </Text>
+                </Col>
+              </Row>
+            </Col>
+          )
         }}
       />
     );
@@ -151,12 +191,31 @@ const styles = StyleSheet.create({
     marginRight:5,
     paddingRight:5,
     borderRadius:10,
-    paddingLeft:5
+    paddingLeft:5,
+    borderWidth: 1,
+  },
+  buttonLg: {
+    height: '90%',
+    width:190,
+    minWidth:190,
+    marginTop: 10,
+    paddingTop: 10,
+    paddingBottom: 5,
+    marginRight:15,
+    paddingRight:10,
+    borderRadius:10,
+    paddingLeft:10,
+    borderWidth: 1,
   },
   img: {
     ...styleApp.shadowWeak,
-    height: 60,
+    height: '100%',
     width: '100%',
+    borderRadius: 6,
+  },
+  imgLg: {
+    ...styleApp.shadowWeak,
+    ...styleApp.fullSize,
     borderRadius: 6,
   },
   memberPicture: {
@@ -169,10 +228,19 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth:2.5,
     borderColor: colors.white,
-    // overflow: 'hidden',
     position:'absolute',
     bottom:-9,
     right:-10
+  },
+  memberPictureContainerLg: {
+    height:34,
+    width:34,
+    borderRadius: 30,
+    borderWidth:3,
+    borderColor: colors.white,
+    position:'absolute',
+    bottom:-8,
+    right:-5
   }
 });
 
