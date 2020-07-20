@@ -133,7 +133,6 @@ class BottomButton extends Component {
     queue.addWorker(new Worker('stopRecording', this.stopRecording.bind(this)));
   }
   startRemoteRecording = async (member) => {
-    console.log('startRemoteRecording');
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
     await startRemoteRecording(recordingUser, coachSessionID, userID);
