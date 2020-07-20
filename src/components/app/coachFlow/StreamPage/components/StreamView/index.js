@@ -197,15 +197,16 @@ class StreamPage extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let newState = {date: Date.now()};
+    // let newState = {date: Date.now()};
     if (!isEqual(props.currentSession, state.coachSession))
-      newState = {
-        ...newState,
+      return {
+        // ...newState,
         coachSession: props.currentSession,
         open: props.currentSession ? true : false,
+        isConnected: false,
         coachSessionID: props.currentSessionID,
       };
-    return newState;
+    return {};
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -358,15 +359,17 @@ class StreamPage extends Component {
       portrait,
     } = this.props.currentScreenSize;
 
-    const members = subscribers.map((streamId) => {
-      return Object.values(coachSession.members).filter((member) => {
-        return member.streamIdTokBox === streamId
-      })[0]
-    }).filter(member => member !== undefined)
-    let length = members.length
+    const members = subscribers
+      .map((streamId) => {
+        return Object.values(coachSession.members).filter((member) => {
+          return member.streamIdTokBox === streamId;
+        })[0];
+      })
+      .filter((member) => member !== undefined);
+    let length = members.length;
 
     return members.map((member, index) => {
-      let streamId = member?.streamIdTokBox
+      let streamId = member?.streamIdTokBox;
 
       let ratioVideo = ratio(16, 9);
       if (member?.portrait) ratioVideo = ratio(9, 16);
@@ -397,21 +400,27 @@ class StreamPage extends Component {
       }
       return (
         <View key={streamId} style={styleSubscriber}>
-          {
-          member?.publishVideo == true ? 
-          <OTSubscriberView streamId={streamId} style={{width: w, height: h}} /> : 
-          member?.publishVideo == false ?
-          <View style={{...styleApp.center, ...styles.pausedView, width:w, height:h}}>
-            <Text
-              style={[styleApp.textBold, {color: colors.white}]}>
-              Paused
-            </Text>
-          </View> : 
-          null
-          }
+          {member?.publishVideo == true ? (
+            <OTSubscriberView
+              streamId={streamId}
+              style={{width: w, height: h}}
+            />
+          ) : member?.publishVideo == false ? (
+            <View
+              style={{
+                ...styleApp.center,
+                ...styles.pausedView,
+                width: w,
+                height: h,
+              }}>
+              <Text style={[styleApp.textBold, {color: colors.white}]}>
+                Paused
+              </Text>
+            </View>
+          ) : null}
         </View>
       );
-    })
+    });
   };
   pausedView(userIsAlone) {
     let style = this.stylePublisher(userIsAlone);
@@ -428,7 +437,7 @@ class StreamPage extends Component {
     if (!userIsAlone)
       styleTextAlone = {
         fontSize: 9,
-        marginBottom: (portrait) ? 5 : 0,
+        marginBottom: portrait ? 5 : 0,
       };
 
     return (
@@ -446,12 +455,13 @@ class StreamPage extends Component {
     const {portrait} = this.props.currentScreenSize;
     let marginTop = marginTopApp;
     if (!portrait) marginTop = marginTopAppLandscape;
-    let width = portrait ? 70 : 142
-    let height = portrait ? 123 : 80
+    let width = portrait ? 70 : 142;
+    let height = portrait ? 123 : 80;
     return {
-      height, width,
+      height,
+      width,
       ...styles.OTSubscriberNotAlone,
-      top: marginTop + (heightHeaderHome),
+      top: marginTop + heightHeaderHome,
     };
   }
   streamPage() {

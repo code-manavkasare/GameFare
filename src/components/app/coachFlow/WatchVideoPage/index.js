@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
+let {height, width} = Dimensions.get('screen');
+height = Math.max(height, width);
 import database from '@react-native-firebase/database';
 
 import VideoPlayer from '../VideoPlayer/index';
@@ -41,7 +42,7 @@ class WatchVideoPage extends Component {
     };
     this.translateXPage = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
-    this.translateYPage = new Animated.Value(1000);
+    this.translateYPage = new Animated.Value(height);
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -92,7 +93,10 @@ class WatchVideoPage extends Component {
     }
 
     Animated.parallel([
-      Animated.spring(this.translateYPage, native(watchVideo ? 0 : 1000, 200)),
+      Animated.spring(
+        this.translateYPage,
+        native(watchVideo ? 0 : height, 200),
+      ),
     ]).start(async () => {
       if (!watchVideo) {
         this.translateXPage.setValue(width);
@@ -185,6 +189,7 @@ class WatchVideoPage extends Component {
           sizeIcon2={24}
           typeIcon2="mat"
           colorIcon2={colors.white}
+          colorIconOffset={colors.white}
           initialTitleOpacity={1}
           clickButton1={() => {
             if (

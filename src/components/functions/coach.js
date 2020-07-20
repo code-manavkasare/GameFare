@@ -107,8 +107,8 @@ const milliSeconds = (time) => {
 
 const displayTime = (time, displayMilliseconds) => {
   function pad(num, size) {
-    var s = num+"";
-    while (s.length < size) s = "0" + s;
+    var s = num + '';
+    while (s.length < size) s = '0' + s;
     return s;
   }
   if (displayMilliseconds)
@@ -160,7 +160,7 @@ toggleVideoPublish = (sessionIDFirebase, memberID, enable) => {
   database()
     .ref()
     .update(updates);
-}
+};
 
 const updateTimestamp = (sessionIDFirebase, memberID, timestamp) => {
   let updates = {};
@@ -208,7 +208,12 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
     .update(updates);
 };
 
-const stopRemoteRecording = async (memberID, sessionIDFirebase, portrait, userID) => {
+const stopRemoteRecording = async (
+  memberID,
+  sessionIDFirebase,
+  portrait,
+  userID,
+) => {
   let updates = {};
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/isRecording`
@@ -368,7 +373,8 @@ const infoCoach = (members) => {
   if (!members) return false;
   const userID = store.getState().user.userID;
   const coaches = Object.values(members).filter(
-    (member) => member.id !== userID && member?.info?.coach && member.isConnected,
+    (member) =>
+      member.id !== userID && member?.info?.coach && member.isConnected,
   );
   if (coaches.length !== 0) return coaches[0];
   return false;
@@ -447,7 +453,7 @@ const finalizeOpening = async (session) => {
       // what to do in the case where user is in a session already and maybe recording?
       // simply unsetting the current session means recording is lost -- Ethan
       await store.dispatch(unsetCurrentSession());
-      await timeout(100);
+      await timeout(200);
     }
     await store.dispatch(setCurrentSession(session));
   }
