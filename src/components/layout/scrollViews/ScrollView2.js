@@ -6,7 +6,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import colors from '../../style/colors';
 import sizes, {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
 
-class ScrollViewPage extends Component {
+class ScrollViewPage2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -111,4 +111,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)(ScrollViewPage);
+)(ScrollViewPage2);

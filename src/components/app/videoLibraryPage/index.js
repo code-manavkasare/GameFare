@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
   Animated,
+  Dimensions,
+  FlatList,
   Image,
+  StyleSheet,
+  View,
 } from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
@@ -22,8 +22,6 @@ import {
   deleteVideoFromLibrary,
 } from '../../database/firebase/videosManagement.js';
 import {navigate} from '../../../../NavigationService';
-
-import ScrollView from '../../layout/scrollViews/ScrollView2';
 import Button from '../../layout/buttons/Button';
 
 import {
@@ -119,7 +117,6 @@ class VideoLibraryPage extends Component {
 
   listVideos() {
     const {
-      loader,
       selectableMode,
       selectedVideos,
       uploadingVideosArray,
@@ -127,8 +124,13 @@ class VideoLibraryPage extends Component {
     } = this.state;
     const isListEmpty =
       videosArray.length === 0 && uploadingVideosArray.length === 0;
+
     return (
-      <View style={styleApp.marginView}>
+      <View
+        style={[
+          styleApp.marginView,
+          {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
+        ]}>
         {this.uploadingVideosList()}
         {isListEmpty ? (
           <View>
@@ -170,26 +172,34 @@ class VideoLibraryPage extends Component {
             />
           </View>
         ) : (
-          <View style={styles.container}>
-            {videosArray.map((video) => {
-              const isSelected = includes(video.id, selectedVideos);
-              return (
-                <CardArchive
-                  selectableMode={selectableMode}
-                  isSelected={isSelected}
-                  selectVideo={this.selectVideo}
-                  style={styles.cardArchive}
-                  archive={video}
-                  key={video.id}
-                  noUpdateStatusBar={true}
-                />
-              );
-            })}
-          </View>
+          <FlatList
+            data={videosArray}
+            renderItem={this.renderCardArchive}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={10}
+          />
         )}
       </View>
     );
   }
+
+  renderCardArchive = (video) => {
+    const {selectableMode, selectedVideos} = this.state;
+    const isSelected = includes(video.item.id, selectedVideos);
+    return (
+      <CardArchive
+        selectableMode={selectableMode}
+        isSelected={isSelected}
+        selectVideo={this.selectVideo}
+        style={styles.cardArchive}
+        archive={video.item}
+        key={video.item.id}
+        noUpdateStatusBar={true}
+      />
+    );
+  };
 
   selectVideo = (id, isSelected) => {
     let {selectedVideos} = this.state;
@@ -322,16 +332,7 @@ class VideoLibraryPage extends Component {
           colorIconOffset={colors.title}
           clickButtonOffset={() => this.pickMembersToShareVideosWith()}
         />
-        <ScrollView
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={this.listVideos.bind(this)}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottomScrollView={0}
-          refreshControl={false}
-          marginTop={sizes.heightHeaderHome}
-          offsetBottom={sizes.heightFooter + 70}
-          showsVerticalScrollIndicator={true}
-        />
+        {this.listVideos()}
       </View>
     );
   }
