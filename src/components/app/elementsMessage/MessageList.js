@@ -81,6 +81,7 @@ class MessageTab extends React.Component {
       this.state.searchInput,
       this.props.blockedUsers,
     );
+    console.log('discussions !!!!', discussions);
     await this.props.messageAction('setConversations', discussions);
     this.setState({loader: false});
   };

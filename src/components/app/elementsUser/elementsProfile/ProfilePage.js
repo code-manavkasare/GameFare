@@ -55,19 +55,18 @@ class ProfilePage extends Component {
   }
   componentDidMount = async () => {
     const {infoUser, route} = this.props;
-    const userProfile = route.params.user;
+    let userProfile = route.params.user;
+    if (!userProfile.id) userProfile.id = userProfile.objectID;
     let isBlocked = false;
-    if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.objectID]) {
+    if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
       isBlocked = true;
     }
-    const userInfo = await getOnceValue(
-      `users/${userProfile.objectID}/userInfo`,
-    );
+    const userInfo = await getOnceValue(`users/${userProfile.id}/userInfo`);
     console.log('userInfo', route.params.user);
     console.log('userInfo', userInfo);
     this.setState({
       userProfile: {
-        id: userProfile.objectID,
+        id: userProfile.id,
         info: userInfo,
       },
       isBlocked,
@@ -85,7 +84,7 @@ class ProfilePage extends Component {
     } else
       return (
         <View style={styles.asyncImage}>
-          <Text style={styleApp.text}>{firstname[0] + lastname[0]}</Text>
+          <Text style={styleApp.textBold}>{firstname[0] + lastname[0]}</Text>
         </View>
       );
   };
@@ -159,12 +158,13 @@ class ProfilePage extends Component {
               {firstname} {lastname}
             </Text>
             {BadgesView({badges})}
-            {PriceView({
-              hourlyRate,
-            })}
+            {coach &&
+              PriceView({
+                hourlyRate,
+              })}
           </Col>
         </Row>
-        <View style={styleApp.divider} />
+        {coach && <View style={styleApp.divider} />}
         {FocusView({
           list: focusAreas,
           icon: {
