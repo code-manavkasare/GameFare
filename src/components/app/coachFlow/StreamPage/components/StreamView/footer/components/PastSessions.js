@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Image} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 import {connect} from 'react-redux';
 

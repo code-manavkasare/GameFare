@@ -17,7 +17,7 @@ import Loader from '../../layout/loaders/Loader';
 import HeaderCoachingTab from './components/HeaderCoachingTab';
 import CardCoach from './components/CardCoach';
 
-class StreamTab extends Component {
+class CoachingTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -136,4 +136,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {coachAction, layoutAction},
-)(StreamTab);
+)(CoachingTab);

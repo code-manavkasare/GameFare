@@ -1,12 +1,4 @@
 import React, {Component} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Animated,
-  Image,
-  Easing,
-  TouchableOpacity,
-} from 'react-native';
 import LottieView from 'lottie-react-native';
 import colors from '../../style/colors';
 
