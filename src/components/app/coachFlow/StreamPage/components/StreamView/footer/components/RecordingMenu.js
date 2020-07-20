@@ -93,9 +93,7 @@ class RecordingMenu extends Component {
     const {length} = members
     const adjusted = ((170 - (length-1)*65) / (350 - (length-1)*65))/2 + 0.5
     Animated.parallel([
-      Animated.timing(this.scaleCard, native(
-        (member.recording?.flags) ? 1 : adjusted, 300
-      )),
+      Animated.timing(this.scaleCard, native(1, 300)),
     ]).start();
     this.exportQueueRef.open(member, thumbnails)
   }

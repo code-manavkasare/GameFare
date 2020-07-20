@@ -47,6 +47,19 @@ class ExportQueue extends Component {
     }
   }
 
+  resetState() {
+    this.setState({
+      members: {},
+      flags: undefined,
+      recordings: undefined,
+      exportingMembers: [],
+      visible: false,
+      flagsSelected: {},
+      loader: false,
+      selfThumbnails: undefined
+    })
+  }
+
   static getDerivedStateFromProps(props, state) {
     const {exportingMembers, selfThumbnails} = state
     const {userID} = props
@@ -112,12 +125,7 @@ class ExportQueue extends Component {
           .update(updates);
       }
       this.itemsRef = []
-      this.setState({
-        members: {},
-        visible: false,
-        flagsSelected: {},
-        loader: false,
-      });
+      this.resetState()
     }
   }
 
@@ -175,12 +183,7 @@ class ExportQueue extends Component {
       } 
     }
 
-    this.setState({
-      members: {},
-      visible: false,
-      flagsSelected: {},
-      loader: false,
-    });
+    this.resetState()
     
     if (Object.values(updates).length > 0) {
       await database()
@@ -192,20 +195,22 @@ class ExportQueue extends Component {
   fullVideos() {
     const {flagsSelected, members, visible, flags, recordings} = this.state
     if (recordings.length < 1) return null
+    const noFlags = (flags && Object.values(flags).length === 0)
     return (
       <View>
-        {flags && Object.values(flags).length > 0 && 
+        {!noFlags && 
         <Text style={styles.subtitle}>
         Full Video{(recordings.length > 1) ? 's' : ''}
         </Text>}
-        <View style={{height:90}}>
+        <View style={{height:(noFlags) ? 300 : 90}}>
           <ScrollView
           horizontal
           scrollEnabled={(recordings.length > 1)}
           style={{
             height:'100%',
-            paddingLeft:'5%'
+            paddingLeft:'5%',
           }}
+          contentContainerStyle={{ paddingRight:50 }}
           showsHorizontalScrollIndicator={false}> 
           {/* {members && <Text>asdfasdfasdfasdfad</Text>} */}
             {Object.values(members)
@@ -232,7 +237,7 @@ class ExportQueue extends Component {
                       this.setState({flagsSelected});
                     }}
                     disableSelectTime={true}
-                    size={flags && Object.values(flags).length > 0 ? 'lg' : 'sm'}
+                    size={noFlags ? 'lg' : 'sm'}
                     flag={{
                       time:
                         recording.stopTimestamp - recording.startTimestamp
@@ -259,7 +264,7 @@ class ExportQueue extends Component {
     return (
       <View>
       <Text style={styles.subtitle}>Highlights</Text>
-        <View style={{minHeight: 90, maxHeight:150}}>
+        <View style={{minHeight: 90}}>
           <ScrollView
           horizontal
           style={{
@@ -342,9 +347,10 @@ class ExportQueue extends Component {
         onPressColor={colors.off}
       />
         <Text style={styles.text}>Export</Text>
+        <View style={{height:300}}>
         {this.fullVideos()}
         {this.highlights()}
-
+        </View>
         <View style={[styleApp.marginView]}>
           <Button
             styleButton={{height:45, marginTop:15}}
