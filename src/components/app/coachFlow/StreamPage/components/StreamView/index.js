@@ -197,15 +197,13 @@ class StreamPage extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    // let newState = {date: Date.now()};
-    if (!isEqual(props.currentSession, state.coachSession))
+    if (!isEqual(props.currentSession, state.coachSession)) {
       return {
-        // ...newState,
         coachSession: props.currentSession,
         open: props.currentSession ? true : false,
-        isConnected: false,
         coachSessionID: props.currentSessionID,
       };
+    }
     return {};
   }
 

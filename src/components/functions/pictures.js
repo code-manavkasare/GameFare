@@ -109,7 +109,6 @@ async function pickLibrary() {
 }
 
 async function uploadPictureFirebase(localUri, destination) {
-  console.log('starte upload pictue', localUri);
   try {
     let imageName = 'groupPicture';
     const imageRef = storage().ref(destination + '/' + imageName);

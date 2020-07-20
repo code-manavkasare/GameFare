@@ -67,7 +67,6 @@ class OrientationListener extends React.Component {
     }
     const {currentHeight, currentWidth} = this.currentScreenSize(portrait);
     const {layoutAction} = this.props;
-    console.log('portrait set screen', portrait);
     layoutAction('setLayout', {
       currentScreenSize: {currentHeight, currentWidth, portrait},
     });
