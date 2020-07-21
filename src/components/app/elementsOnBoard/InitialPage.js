@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import database from '@react-native-firebase/database';
-import {View, StyleSheet, Dimensions, Animated} from 'react-native';
+import {View, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import branch from 'react-native-branch';
 import FadeInView from 'react-native-fade-in-view';
@@ -25,17 +25,9 @@ class InitialPage extends Component {
     this.translateXText = new Animated.Value(90);
   }
   async componentDidMount() {
-    var variables = await database()
-      .ref('variables')
-      .once('value');
-    variables = variables.val();
-    await this.props.globaleVariablesAction('setVariables', variables);
     await this.goToHomePageDirectlyFromRefLink();
     await StatusBar.setBarStyle('dark-content', true);
     await StatusBar.setHidden(false, true);
-    // if (this.props.sportSelected !== '' && this.props.leagueSelected !== '') {
-    //   return this.props.navigation.navigate('TabsApp');
-    // }
     return this.props.navigation.navigate('TabsApp');
   }
 
@@ -84,9 +76,7 @@ class InitialPage extends Component {
   loader() {
     const {height, width} = Dimensions.get('screen');
     return (
-      <FadeInView
-        duration={200}
-        style={[styleApp.center, {height: height}]}>
+      <FadeInView duration={200} style={[styleApp.center, {height: height}]}>
         <View
           style={[
             styleApp.center,
