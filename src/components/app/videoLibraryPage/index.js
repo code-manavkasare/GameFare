@@ -177,6 +177,7 @@ class VideoLibraryPage extends Component {
             renderItem={this.renderCardArchive}
             keyExtractor={(item) => item.id}
             numColumns={2}
+            contentContainerStyle={{paddingBottom: 150}}
             showsVerticalScrollIndicator={false}
             initialNumToRender={10}
           />
