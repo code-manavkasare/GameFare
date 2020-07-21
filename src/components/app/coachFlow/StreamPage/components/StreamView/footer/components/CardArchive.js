@@ -14,7 +14,7 @@ import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
 import {displayTime, timeout} from '../../../../../../../functions/coach';
 import {date} from '../../../../../../../layout/date/date';
-import {formatDate, formatDuration} from '../../../../../../../functions/date';
+import {FormatDate, formatDuration} from '../../../../../../../functions/date';
 import {resolutionP} from '../../../../../../../functions/pictures';
 import Loader from '../../../../../../../layout/loaders/Loader';
 
@@ -179,7 +179,7 @@ export default class CardArchive extends Component {
                 </Text>
                 <Text
                   style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
-                    {formatDate(startTimestamp)}
+                    <FormatDate date={startTimestamp} />
                 </Text>
               </Col>
             </View>

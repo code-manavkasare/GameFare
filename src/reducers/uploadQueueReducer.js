@@ -47,7 +47,7 @@ const uploadQueueReducer = (state = initialState, action) => {
       try {
         progressQueue[action.index]['progress'] = action.progress;
       } catch {
-        break;
+        return state
       }
       return {
         ...state,

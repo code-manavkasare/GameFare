@@ -11,7 +11,7 @@ import AsyncImage from '../../../../../../../../../layout/image/AsyncImage';
 import colors from '../../../../../../../../../style/colors';
 import styleApp from '../../../../../../../../../style/style';
 import Loader from '../../../../../../../../../layout/loaders/Loader';
-import {formatDuration, formatDate, duration} from '../../../../../../../../../functions/date';
+import {formatDuration, FormatDate, duration} from '../../../../../../../../../functions/date';
 
 class CardFlag extends Component {
   constructor(props) {
@@ -88,7 +88,7 @@ class CardFlag extends Component {
     }
   }
   cardFlag = () => {
-    const {flagsSelected, click, totalTime, memberPicture, startTimestamp, size} = this.props;
+    const {flagsSelected, click, totalTime, memberPicture, stopTimestamp, size} = this.props;
     const {flag, snipetTime} = this.state;
     const {thumbnail, time, id} = flag;
     const flagTime = Number((time / 1000).toFixed(0));
@@ -124,13 +124,13 @@ class CardFlag extends Component {
                 </View>
               </Col>
               <Col size={70} style={[styleApp.center2, {paddingLeft: 10}]}>
-                {startTimestamp ? <Text style={[styleApp.text, {fontSize: 12}]}>
-                {formatDate(startTimestamp)}
+                {stopTimestamp ? <Text style={[styleApp.text, {fontSize: 12}]}>
+                <FormatDate date={stopTimestamp} />
                 </Text> : null}
                 <Text style={[styleApp.textBold, {fontSize: 12}]}>
                   {!id.includes('fullVideo') && endTime
                     ? (duration(startTime) + ' to ' + duration(endTime))
-                    : flagTime ? formatDuration(flagTime) : 'Loading...' }
+                    : flagTime && stopTimestamp ? formatDuration(flagTime) : 'Loading...' }
                 </Text>
               </Col>
             </Row>
@@ -158,8 +158,8 @@ class CardFlag extends Component {
               </Row>
               <Row size={20} style={[styleApp.center2, {paddingLeft: 10}]}>
                 <Col style={{...styleApp.center2}}>
-                  {startTimestamp ? <Text style={[styleApp.text, {fontSize: 12}]}>
-                  {formatDate(startTimestamp)}
+                  {stopTimestamp ? <Text style={[styleApp.text, {fontSize: 12}]}>
+                  <FormatDate date={stopTimestamp} />
                   </Text> : null}
                   <Text style={[styleApp.textBold, {fontSize: 12}]}>
                     {!id.includes('fullVideo') && endTime
@@ -182,12 +182,12 @@ class CardFlag extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    height: 70,
+    height: 90,
     width:190,
     minWidth:190,
     marginTop: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
     marginRight:5,
     paddingRight:5,
     borderRadius:10,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     borderWidth:2.5,
     borderColor: colors.white,
     position:'absolute',
-    bottom:-9,
+    bottom:-5,
     right:-10
   },
   memberPictureContainerLg: {

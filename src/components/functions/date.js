@@ -25,16 +25,6 @@ const duration = (value) => {
   return minutes(value) + ' min ' + seconds(value) + ' sec';
 };
 
-const formatDate = (date) => {
-  let justNow = moment(Date.now()).subtract(1, 'minute');
-  let earlier = moment(Date.now()).subtract(7, 'days');
-  let lastYear = moment(Date.now()).subtract(1, 'year');
-  if (date > justNow) return 'Just now';
-  else if (date > earlier) return moment(date).fromNow();
-  else if (date > lastYear) return moment(date).format('ddd, MMM DD');
-  else return moment(date).format('MMMM YYYY');
-}
-
 const formatDuration = (duration, numerical) => {
   if (!numerical) {
     if (duration > 60)
@@ -55,4 +45,46 @@ const formatDuration = (duration, numerical) => {
       `${pad(min, 2)}:${pad(sec, 2)}`
 }
 
-module.exports = {getPermissionCalendar, isDatePast, duration, formatDate, formatDuration};
+class FormatDate extends Component {
+  //// Required props: date
+  // This component re-renders every 60 seconds
+  // and formats the date in a nice way
+
+  // Within 1 minute : 'Just now'
+  // Within 7 days   : '{x} {'minutes','hours','days'} ago'
+  //    eg. 10 minutes ago, 10 hours ago, 10 days ago, etc
+  // Within 1 year   : '{day of week}, {month} {day}'
+  //    eg. 'Mon, Jul 20', 'Wed, Aug 5'
+  // Earlier         : '{month} {year}'
+  //    eg. 'Jul 2018', 'Jan 2017'
+
+  constructor(props) {
+    super(props)
+  }
+  componentDidMount() {
+    this.interval = setInterval( () => this.tick(), 60000 );
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+  tick() {
+    const {date} = this.props
+    let earlier = moment(Date.now()).subtract(7, 'days');
+    if (date > earlier) this.setState({});
+  }
+  formatDate = (date) => {
+    let justNow = moment(Date.now()).subtract(1, 'minute');
+    let earlier = moment(Date.now()).subtract(7, 'days');
+    let lastYear = moment(Date.now()).subtract(1, 'year');
+    if (date > justNow) return 'Just now';
+    else if (date > earlier) return moment(date).fromNow();
+    else if (date > lastYear) return moment(date).format('ddd, MMM DD');
+    else return moment(date).format('MMMM YYYY');
+  }
+  render () {
+    const {date} = this.props
+    return this.formatDate(date)
+  }
+}
+
+module.exports = {getPermissionCalendar, isDatePast, duration, FormatDate, formatDuration};
