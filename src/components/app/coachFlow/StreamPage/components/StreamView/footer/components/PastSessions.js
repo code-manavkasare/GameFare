@@ -1,37 +1,19 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 
 import {connect} from 'react-redux';
 
 import CardArchive from './CardArchive';
-import ScrollViewX from '../../../../../../../layout/scrollViews/ScrollViewX';
 import colors from '../../../../../../../style/colors';
+import styleApp from '../../../../../../../style/style';
+import {FlatList} from 'react-native-gesture-handler';
 
 class PastSessions extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  listSessions(sessions) {
-    const {openVideo} = this.props;
 
-    return Object.values(sessions).map((archive, i) => (
-      <CardArchive
-        style={styles.cardArchive}
-        archive={archive}
-        key={archive.id}
-        openVideo={(source, thumbnail) => {
-          openVideo({
-            watchVideo: true,
-            thumbnail: thumbnail,
-            source: source,
-            myVideo: true,
-            archiveID: archive.id,
-          });
-        }}
-      />
-    ));
-  }
   arraySessions() {
     let {archivedStreams} = this.props;
     if (!archivedStreams) archivedStreams = {};
@@ -39,29 +21,55 @@ class PastSessions extends Component {
       .sort((a, b) => a.startTimestamp - b.startTimestamp)
       .reverse();
   }
+
+  noArchiveMessage = () => {
+    return (
+      <View style={[{flex: 1}, styleApp.center]}>
+        <Image
+          source={require('../../../../../../../../img/images/shelve.png')}
+          style={styles.iconNoArchive}
+        />
+        <Text style={[styleApp.text, styles.textNoArchive]}>
+          {"You haven't recorded any session yet."}
+        </Text>
+      </View>
+    );
+  };
+
+  renderCardArchiveSessions = (archive) => {
+    const {openVideo} = this.props;
+    return (
+      <CardArchive
+        style={styles.cardArchive}
+        archive={archive.item}
+        key={archive.item.id}
+        openVideo={(source, thumbnail) => {
+          openVideo({
+            watchVideo: true,
+            thumbnail: thumbnail,
+            source: source,
+            myVideo: true,
+            archiveID: archive.item.id,
+          });
+        }}
+      />
+    );
+  };
+
   render() {
     const sessions = this.arraySessions();
-    return (
-      <ScrollViewX
-        loader={this.state.loader}
-        backgroundTransparent={true}
-        events={sessions}
-        width="100%"
-        styleButtonEmpty={{
-          button: {
-            height: '100%',
-            backgroundColor: 'red',
-          },
-          text: {
-            color: colors.white,
-          },
-        }}
-        undisplayEmptyList={false}
-        placeHolder={styles.placeHolderScrollViewX}
-        imageNoEvent="group"
-        messageNoEvent={"You haven't recorded any session yet."}
-        content={() => this.listSessions(sessions)}
-        onRef={(ref) => (this.scrollViewRef1 = ref)}
+    return sessions.length === 0 ? (
+      this.noArchiveMessage()
+    ) : (
+      <FlatList
+        data={sessions}
+        renderItem={this.renderCardArchiveSessions}
+        keyExtractor={(item) => item.id}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{paddingLeft: 20}}
+        initialNumToRender={2}
+        ListEmptyComponent={this.noArchiveMessage}
       />
     );
   }
@@ -85,6 +93,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
     backgroundColor: colors.title,
+  },
+  textNoArchive: {
+    color: colors.white,
+    marginTop: 5,
+    fontSize: 14,
+  },
+  iconNoArchive: {
+    width: 55,
+    height: 55,
+    marginBottom: 15,
   },
 });
 
