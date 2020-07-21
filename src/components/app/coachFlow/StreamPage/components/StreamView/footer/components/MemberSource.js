@@ -36,11 +36,12 @@ class MemberSource extends Component {
     const {coachSessionID, uploadQueueAction, getMembers, userID} = this.props;
     const {recording, id: memberID} = member;
     const {recording: prevRecording} = prevState.member;
-    if (recording && prevRecording) {
+    if (recording?.uploadRequest && prevRecording) {
       if (
-        !isEqual(prevRecording.uploadRequest, recording.uploadRequest) &&
-        recording.uploadRequest &&
-        !recording.uploadRequest.uploadLaunched &&
+        !isEqual(prevRecording.uploadRequest ? 
+          Object.keys(prevRecording.uploadRequest) : {}, 
+          Object.keys(recording.uploadRequest)) &&
+        !recording.uploadRequest?.uploadLaunched &&
         memberID === userID
       ) {
         const {uploadRequest} = recording;
@@ -143,6 +144,7 @@ class MemberSource extends Component {
     const {member} = this.state;
     const {userID, coachSessionID, takeSnapShotCameraView} = this.props;
     const {firstname, lastname} = member.info;
+    const {recording} = member;
 
     return (
       <View key={member.id} style={styles.cardUser}>
@@ -164,12 +166,12 @@ class MemberSource extends Component {
 
           <Col size={15}/>
           <Col size={15}>
-            <AddFlagButton
+            {!recording?.dispatched && <AddFlagButton
               coachSessionID={coachSessionID}
               member={member}
               disableSnapShot={true}
               takeSnapShotCameraView={takeSnapShotCameraView}
-            />
+            />}
           </Col>
 
           <Col size={8}/>

@@ -16,7 +16,7 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
-import {formatDate, formatDuration} from '../../functions/date'
+import {FormatDate, formatDuration} from '../../functions/date'
 
 class TaskCard extends Component {
   thumbnail() {
@@ -67,7 +67,7 @@ class TaskCard extends Component {
               )}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15}}>
-          {formatDate(task.date)}
+          <FormatDate date={task.date} />
         </Text>
       </View>
     );

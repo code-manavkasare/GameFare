@@ -202,6 +202,9 @@ const startRemoteRecording = (memberID, sessionIDFirebase, selfID) => {
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/thumbnail`
   ] = null;
+  updates[
+    `coachSessions/${sessionIDFirebase}/members/${memberID}/recording/localSource`
+  ] = null;
 
   database()
     .ref()

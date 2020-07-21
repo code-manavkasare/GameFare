@@ -1,9 +1,9 @@
 import {Component} from 'react';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
-import storage from '@react-native-firebase/storage';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
+import {uploadImage, uploadVideo} from '../../functions/upload'
 
 class UploadManager extends Component {
   constructor(props) {
@@ -72,7 +72,7 @@ class UploadManager extends Component {
     if (imageInfo.simulator) return;
 
     const {storageDestination} = imageInfo;
-    const imageUrl = await this.uploadImage(
+    const imageUrl = await uploadImage(
       //  'file:///' +
       imageInfo.path,
       storageDestination,
@@ -94,7 +94,7 @@ class UploadManager extends Component {
     const {storageDestination} = videoInfo;
 
     if (videoInfo.uploadThumbnail) {
-      const thumbnailUrl = await this.uploadImage(
+      const thumbnailUrl = await uploadImage(
         'file:///' + videoInfo.thumbnail,
         storageDestination,
         'thumbnail.jpg',
@@ -103,73 +103,18 @@ class UploadManager extends Component {
 
     uploadQueueAction('setJobProgress', {index: index, progress: 0.2});
 
-    const videoUrl = await this.uploadVideo(
+    const videoUrl = await uploadVideo(
       videoInfo,
       storageDestination,
       'archive.mp4',
       index,
+      uploadQueueAction
     );
 
     uploadQueueAction('setJobProgress', {index: index, progress: 1});
 
     if (videoInfo.updateFirebaseAfterUpload)
       await this.databaseUpdates(videoUrl);
-  };
-
-  uploadImage = async (path, destination, name) => {
-    const videoRef = storage()
-      .ref(destination)
-      .child(name);
-    await videoRef.putFile(path, {
-      contentType: 'image/jpeg',
-      cacheControl: 'no-store',
-    });
-    let url = await videoRef.getDownloadURL();
-    return new Promise((resolve, reject) => {
-      if (url) resolve(url);
-      else reject(url);
-    });
-  };
-
-  uploadVideo = async (videoInfo, destination, name, index) => {
-    const {path} = videoInfo;
-    const {uploadQueueAction} = this.props;
-
-    const videoRef = storage()
-      .ref(destination)
-      .child(name);
-    const uploadTask = videoRef.putFile(path, {
-      contentType: 'video',
-      cacheControl: 'no-store',
-    });
-    return new Promise((resolve, reject) =>
-      uploadTask.on(
-        'state_changed',
-        async function(snapshot) {
-          let progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (isNaN(progress)) progress = 0;
-          uploadQueueAction('setJobProgress', {
-            index: index,
-            progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
-          });
-          switch (snapshot.state) {
-            case storage.TaskState.PAUSED: // or 'paused'
-              break;
-            case storage.TaskState.RUNNING: // or 'running'
-              break;
-          }
-        },
-        function(error) {
-          console.log(error);
-          reject(error);
-        },
-        async () => {
-          var url = await videoRef.getDownloadURL();
-          resolve(url);
-        },
-      ),
-    );
   };
 }
 

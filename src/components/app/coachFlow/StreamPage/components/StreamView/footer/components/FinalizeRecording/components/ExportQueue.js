@@ -75,11 +75,13 @@ class ExportQueue extends Component {
     }
     let flags = {}
     let recordings = []
+    let loader = false
     for (var member in members) {
       flags = {...flags, ...members[member]?.recording?.flags}
       recordings.push(members[member]?.recording)
+      if (!members[member]?.recording?.localSource) loader = true
     }
-    return {members, flags, recordings}
+    return {members, flags, recordings, loader}
   }
 
   async open(member, selfThumbnails) {
@@ -118,6 +120,9 @@ class ExportQueue extends Component {
           updates[
             `coachSessions/${coachSessionID}/members/${members[m].id}/recording/enabled`
           ] = true;
+          updates[
+            `coachSessions/${coachSessionID}/members/${members[m].id}/recording/uploadRequest`
+          ] = {};
       }
       if (Object.values(updates).length > 0) {
         database()
@@ -202,7 +207,7 @@ class ExportQueue extends Component {
         <Text style={styles.subtitle}>
         Full Video{(recordings.length > 1) ? 's' : ''}
         </Text>}
-        <View style={{height:(noFlags) ? 300 : 90}}>
+        <View style={{height:(noFlags) ? 300 : 110}}>
           <ScrollView
           horizontal
           scrollEnabled={(recordings.length > 1)}
@@ -249,7 +254,7 @@ class ExportQueue extends Component {
                       portrait: recording.portrait
                     }}
                     memberPicture = {member?.info?.picture}
-                    startTimestamp = {recording.startTimestamp}
+                    stopTimestamp = {recording.stopTimestamp}
                   />
               })}
           </ScrollView>
@@ -264,7 +269,7 @@ class ExportQueue extends Component {
     return (
       <View>
       <Text style={styles.subtitle}>Highlights</Text>
-        <View style={{minHeight: 90}}>
+        <View style={{minHeight: 110}}>
           <ScrollView
           horizontal
           style={{
@@ -302,7 +307,8 @@ class ExportQueue extends Component {
                       this.setState({flagsSelected});
                     }}
                     memberPicture = {member?.info?.picture}
-                    startTimestamp = {recording.startTimestamp}
+                    stopTimestamp = {recording.stopTimestamp}
+                    size={'sm'}
                   />
                 ))
               })}
@@ -356,12 +362,11 @@ class ExportQueue extends Component {
             styleButton={{height:45, marginTop:15}}
             textButton={{fontSize:15}}
             styleText={{fontSize:15}}
-            text={
-              'Confirm upload'
-            }
+            text={'Confirm upload'}
             disabled={flagsSelected && Object.values(flagsSelected).length === 0}
             backgroundColor={'green'}
             loader={loader}
+            loaderSize={30}
             onPressColor={colors.greenLight}
             click={() => this.confirm()}
           />

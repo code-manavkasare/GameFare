@@ -98,7 +98,7 @@ export default class Button extends Component {
       inputRange: [0, 300],
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()],
     });
-    const {click, disabled, loader, text, icon} = this.props;
+    const {click, disabled, loader, text, icon, loaderSize} = this.props;
     return (
       <Animated.View style={[this.styleButton(), {backgroundColor: color}]}>
         <TouchableOpacity
@@ -111,7 +111,7 @@ export default class Button extends Component {
           {icon && this.iconView()}
           <View style={[styleApp.center, styleApp.fullSize]}>
             {loader && !icon ? (
-              <Loader size={38} color={colors.white} />
+              <Loader size={loaderSize ? loaderSize : 38} color={colors.white} />
             ) : (
               <Text style={this.styleText()}>{text}</Text>
             )}
