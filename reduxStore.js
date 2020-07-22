@@ -8,6 +8,14 @@ import rootReducer from './src/reducers';
 import thunk from 'redux-thunk';
 import AsyncStorage from '@react-native-community/async-storage';
 
+const middlewares = [thunk];
+
+if (__DEV__) {
+  const createDebugger = require('redux-flipper').default;
+  middlewares.push(createDebugger());
+  console.log('middlewares: ', middlewares);
+}
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -30,6 +38,6 @@ const composeEnhancers = composeWithDevTools({realtime: true});
 
 export const store = createStore(
   pReducer,
-  composeEnhancers(applyMiddleware(thunk)),
+  composeEnhancers(applyMiddleware(...middlewares)),
 );
 export const persistor = persistStore(store);
