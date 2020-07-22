@@ -15,14 +15,23 @@ import Button from '../../../../layout/buttons/Button';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 import {marginTopApp, marginBottomApp} from '../../../../style/sizes';
+import {timeout} from '../../../../functions/coach';
+import Loader from '../../../../layout/loaders/Loader';
 
 export default class LogoutView extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      paused: true,
+      displayVideo: false,
+    };
   }
-  async componentDidMount() {}
+  async componentDidMount() {
+    await timeout(700);
+    this.setState({displayVideo: true});
+  }
   logoutView() {
+    const {paused, displayVideo} = this.state;
     return (
       <View
         style={[
@@ -31,15 +40,24 @@ export default class LogoutView extends Component {
             height: height,
           },
         ]}>
-        <Video
-          // repeat={true}
-          volume={0}
-          source={require('../../../../../img/videos/intro.mp4')} // Can be a URL or a local file.
-          ref={(ref) => {
-            this.player = ref;
-          }} // Store reference
-          style={styles.video}
-        />
+        {paused && (
+          <View style={[styleApp.fullSize, styleApp.center]}>
+            <Loader color={colors.primary} size={40} />
+          </View>
+        )}
+        {displayVideo && (
+          <Video
+            // repeat={true}
+            paused={paused}
+            volume={0}
+            source={require('../../../../../img/videos/intro.mp4')} // Can be a URL or a local file.
+            ref={(ref) => {
+              this.player = ref;
+            }} 
+            onLoad={() => this.setState({paused: false})}
+            style={styles.video}
+          />
+        )}
 
         <Button
           backgroundColor="green"

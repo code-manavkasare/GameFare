@@ -99,9 +99,9 @@ class PhoneFields extends Component {
     const {phoneNumber} = this.state;
     return (
       <TextInput
-        style={[styleApp.input, {fontSize: 17}]}
+        style={[styleApp.textBold, {fontSize: 17}]}
         placeholder={placeholder(code, callingCode)}
-        placeholderTextColor={'#AFAFAF'}
+        placeholderTextColor={colors.greyMidDark}
         autoCapitalize="none"
         underlineColorAndroid="rgba(0,0,0,0)"
         autoCorrect={true}
@@ -139,7 +139,7 @@ class PhoneFields extends Component {
             styleApp.center,
             {borderBottomWidth: 0, borderColor: '#EAEAEA'},
           ]}>
-          <Text style={[styleApp.input, {fontSize: 17}]}>
+          <Text style={[styleApp.textBold, {fontSize: 17}]}>
             +{this.props.country.callingCode}
           </Text>
         </Col>
