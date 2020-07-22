@@ -202,9 +202,10 @@ class StreamPage extends Component {
         coachSession: props.currentSession,
         open: props.currentSession ? true : false,
         coachSessionID: props.currentSessionID,
+        date: Date.now(),
       };
     }
-    return {};
+    return {date: Date.now()};
   }
 
   componentDidUpdate(prevProps, prevState) {

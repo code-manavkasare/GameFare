@@ -131,7 +131,12 @@ export default class Alert extends Component {
             </Col>
           </Row>
 
-          <View style={styleApp.divider} />
+          <View
+            style={[
+              styleApp.divider,
+              {marginLeft: '5%', width: '90%', marginTop: 20},
+            ]}
+          />
 
           {componentAdded && (
             <View style={[styleApp.marginView, {marginTop: 15}]}>
