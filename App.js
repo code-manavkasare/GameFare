@@ -1,13 +1,15 @@
 import 'react-native-gesture-handler';
-
+import * as Sentry from '@sentry/react-native';
 import React, {Component} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-
+import NetInfo from '@react-native-community/netinfo';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
+import Orientation from 'react-native-orientation-locker';
+
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
@@ -18,9 +20,6 @@ import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
-import * as Sentry from '@sentry/react-native';
-
-import Orientation from 'react-native-orientation-locker';
 Orientation.lockToPortrait();
 
 if (__DEV__) {
@@ -45,6 +44,15 @@ class App extends Component {
       this.autoSignIn();
       refreshTokenOnDatabase(userID);
     }
+
+    NetInfo.addEventListener((state) => {
+      if (state.isConnected) {
+        if (userID !== '') {
+          this.autoSignIn();
+          refreshTokenOnDatabase(userID);
+        }
+      }
+    });
   }
 
   componentDidUpdate = () => {
