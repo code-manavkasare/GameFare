@@ -34,7 +34,7 @@ const uploadVideo = async (videoInfo, destination, name, index, uploadAction) =>
         if (isNaN(progress)) progress = 0;
         if (uploadAction) uploadAction('setJobProgress', {
           index: index,
-          progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
+          progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.7,
         });
         switch (snapshot.state) {
           case storage.TaskState.PAUSED: // or 'paused'

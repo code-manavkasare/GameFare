@@ -385,11 +385,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    top:40,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
+    top:60,
+    ...styleApp.shadow,
     zIndex: 2,
   },
   buttonClose: {
@@ -427,7 +424,7 @@ const styles = StyleSheet.create({
     width: sizes.width,
     height: 200000,
     top:-sizes.height,
-    backgroundColor: 'transparent',
+    backgroundColor: 'green',
     zIndex: -1,
   },
 });
