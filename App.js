@@ -47,7 +47,7 @@ class App extends Component {
     }
 
     NetInfo.addEventListener((state) => {
-      if (state.isConnected && userID !== '' && isBindToFirebase) {
+      if (state.isConnected && userID !== '' && !isBindToFirebase) {
         this.autoSignIn();
         refreshTokenOnDatabase(userID);
       }
@@ -107,7 +107,6 @@ class App extends Component {
     if (!isBindToFirebase)
       await NetInfo.fetch().then(async (state) => {
         if (state.isConnected) {
-          console.log('setStore to false');
           await this.props.globaleVariablesAction('setFirebaseBindingsState', {
             isBindToFirebase: true,
           });
