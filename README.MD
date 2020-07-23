@@ -92,7 +92,12 @@ for prod environment
 
 ## Debugging
 
-We use Reactotron for debugging please install the software from github page : https://github.com/infinitered/reactotron/releases
+We use Flipper for debugging for debugging please install the software from flipper page : https://fbflipper.com
+After that, check that all dependencies has been installed with flipper doctor (top right icon looking like a band aid). All ios should be ticked.
+Then plugins clicking `Manage Plugins`, bottom left of flipper, and add `redux-debugger`, if there is two version add the latest one.
+
+You should be good to debug ! Start the app and flipper together, you should see the app. If not relead multiple time and check if there is an error message under `Manage Plugins => Plugins Status`
+
 We also use ESLint, be sure to have it installed on your VSCode extension
 
 ## Deploying

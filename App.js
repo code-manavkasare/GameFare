@@ -23,10 +23,6 @@ import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
 Orientation.lockToPortrait();
 
-if (__DEV__) {
-  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
-}
-
 const MyTheme = {
   ...DefaultTheme,
   colors: {
