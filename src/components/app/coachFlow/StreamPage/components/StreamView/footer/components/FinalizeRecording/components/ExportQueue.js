@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     width: sizes.width,
     height: 200000,
     top:-sizes.height,
-    backgroundColor: 'green',
+    backgroundColor: 'transparent',
     zIndex: -1,
   },
 });
