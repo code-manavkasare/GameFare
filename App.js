@@ -15,6 +15,7 @@ import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
 
 import {userAction} from './src/actions/userActions';
+import {globaleVariablesAction} from './src/actions/globaleVariablesActions.js';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
@@ -35,24 +36,23 @@ const MyTheme = {
 
 class App extends Component {
   async componentDidMount() {
-    const {userID} = this.props;
+    const {isBindToFirebase, userID} = this.props;
     if (!__DEV__) {
       this.configureSentry();
     }
-    SplashScreen.hide();
+
     if (userID !== '') {
-      this.autoSignIn();
-      refreshTokenOnDatabase(userID);
+      await this.autoSignIn();
+      await refreshTokenOnDatabase(userID);
     }
 
     NetInfo.addEventListener((state) => {
-      if (state.isConnected) {
-        if (userID !== '') {
-          this.autoSignIn();
-          refreshTokenOnDatabase(userID);
-        }
+      if (state.isConnected && userID !== '' && isBindToFirebase) {
+        this.autoSignIn();
+        refreshTokenOnDatabase(userID);
       }
     });
+    SplashScreen.hide();
   }
 
   componentDidUpdate = () => {
@@ -84,23 +84,35 @@ class App extends Component {
   };
 
   async autoSignIn() {
+    const {countryCode, isBindToFirebase, phoneNumber, userID} = this.props;
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
+
     const promiseAxios = await axios.get(url, {
       params: {
-        phone: this.props.phoneNumber,
-        countryCode: '+' + this.props.countryCode,
+        phone: phoneNumber,
+        countryCode: '+' + countryCode,
         giftAmount: 0,
       },
     });
 
     if (promiseAxios.data.response !== false) {
       await this.props.userAction('signIn', {
-        userID: this.props.userID,
+        userID: userID,
         firebaseSignInToken: promiseAxios.data.firebaseSignInToken,
-        phoneNumber: this.props.phoneNumber,
-        countryCode: this.props.countryCode,
+        phoneNumber: phoneNumber,
+        countryCode: countryCode,
       });
     }
+
+    if (!isBindToFirebase)
+      await NetInfo.fetch().then(async (state) => {
+        if (state.isConnected) {
+          console.log('setStore to false');
+          await this.props.globaleVariablesAction('setFirebaseBindingsState', {
+            isBindToFirebase: true,
+          });
+        }
+      });
     return true;
   }
 
@@ -119,6 +131,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    isBindToFirebase: state.globaleVariables.isBindToFirebase,
     userConnected: state.user.userConnected,
     userInfo: state.user.infoUser.userInfo,
     userID: state.user.userIDSaved,
@@ -129,5 +142,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {userAction},
+  {userAction, globaleVariablesAction},
 )(App);

@@ -1,6 +1,7 @@
-import {SET_VARIABLES, TOGGLE_BATTERY_SAVER} from '../actions/types';
+import {SET_VARIABLES, SET_FIREBASE_BINDINGS_STATE} from '../actions/types';
 
 const initialState = {
+  isBindToFirebase: false,
   tabs: {
     home: {},
   },
@@ -21,6 +22,8 @@ const globaleVariablesReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_VARIABLES:
       return {...action.value, batterySaver: false};
+    case SET_FIREBASE_BINDINGS_STATE:
+      return {...state, isBindToFirebase: action.value.isBindToFirebase};
     default:
       return state;
   }
