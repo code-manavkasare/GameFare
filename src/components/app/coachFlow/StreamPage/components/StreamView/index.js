@@ -463,6 +463,25 @@ class StreamPage extends Component {
       top: marginTop + heightHeaderHome,
     };
   }
+  header() {
+    const {userID} = this.props;
+    const {coachSession, coachSessionID} = this.state;
+    return (
+      <Header
+        coachSessionID={coachSessionID}
+        organizerID={coachSession && coachSession?.info.organizer}
+        close={this.close.bind(this)}
+        permissionOtherUserToRecord={
+          coachSession
+            ? getMember(coachSession, userID)?.permissionOtherUserToRecord
+            : false
+        }
+        chargeForSession={getMember(coachSession, userID)?.chargeForSession}
+        setState={this.setState.bind(this)}
+        state={this.state}
+      />
+    )
+  }
   streamPage() {
     const {
       coachSession,
@@ -474,7 +493,7 @@ class StreamPage extends Component {
     const {userID, reconnecting} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-    if (!coachSession.tokbox) return null;
+    if (!coachSession.tokbox) null
 
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
@@ -484,7 +503,8 @@ class StreamPage extends Component {
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
     return (
-      <View style={styleApp.fullSize}>
+      <View style={styles.viewStream}>
+        {this.header()}
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
           : !isConnected
@@ -522,6 +542,7 @@ class StreamPage extends Component {
           )}
         </View>
 
+        {member && isConnected && 
         <Footer
           translateYFooter={this.translateYFooter}
           setState={this.setState.bind(this)}
@@ -535,6 +556,7 @@ class StreamPage extends Component {
           publishAudio={publishAudio}
           publishVideo={publishVideo}
         />
+        }
         {reconnecting && (
           <View
             style={[
@@ -560,21 +582,6 @@ class StreamPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
-
-        <Header
-          coachSessionID={coachSessionID}
-          organizerID={coachSession && coachSession?.info.organizer}
-          close={this.close.bind(this)}
-          permissionOtherUserToRecord={
-            coachSession
-              ? getMember(coachSession, userID)?.permissionOtherUserToRecord
-              : false
-          }
-          chargeForSession={getMember(coachSession, userID)?.chargeForSession}
-          setState={this.setState.bind(this)}
-          state={this.state}
-        />
-
         {isConnected && (
           <UploadButton
             backdrop
@@ -592,7 +599,7 @@ class StreamPage extends Component {
           />
         )}
 
-        <View style={styles.viewStream}>{this.streamPage()}</View>
+        {this.streamPage()}
 
         <WatchVideoPage
           state={this.state}
@@ -618,7 +625,7 @@ const styles = StyleSheet.create({
   viewStream: {
     ...styleApp.fullSize,
     position: 'absolute',
-    zIndex: -1,
+    zIndex: 0,
   },
   pausedView: {
     height: '100%',
@@ -650,7 +657,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.primary2,
     width: '100%',
-    zIndex: 10,
+    zIndex: 9,
     opacity: 1,
   },
   loaderView: {
@@ -658,7 +665,7 @@ const styles = StyleSheet.create({
     width: width,
     backgroundColor: colors.red,
     opacity: 0.4,
-    zIndex: 30,
+    zIndex: 5,
     position: 'absolute',
   },
   uploadButton: {

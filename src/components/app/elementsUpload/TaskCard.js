@@ -23,30 +23,14 @@ class TaskCard extends Component {
     const {task} = this.props;
     return (
       <View style={styles.fullCenter}>
+        <View style={{...styles.thumbnail}}>
         {task.thumbnail ? (
           <Image source={{uri: task.thumbnail}} style={styles.thumbnail} />
         ) : (
-          <View style={styles.placeholderContainer}>
-            <Image
-              source={require('../../../img/icons/technology.png')}
-              style={styles.placeholder}
-            />
-          </View>
+          <View style={styles.placeholderContainer} />
         )}
+        </View>
         <View style={{position: 'absolute'}}>
-          <Progress.Circle
-            color={colors.primary}
-            size={70}
-            progress={task.progress}
-            borderWidth={0}
-            borderColor={colors.white}
-            textStyle={styles.textProgress}
-            showsText={true}
-            formatText={() => {
-              if (task.progress === 0) return '';
-              return `${Math.round(task.progress * 100)}%`;
-            }}
-          />
         </View>
       </View>
     );
@@ -54,10 +38,13 @@ class TaskCard extends Component {
 
   taskInfo() {
     const {task} = this.props;
+    const {currentScreenSize, members} = this.props;
+
     const {type, filename} = task;
+    const {currentWidth: width} = currentScreenSize;
     return (
-      <View>
-        <Text style={{...styleApp.title, fontSize: 15}}>
+      <View style={{width:'100%'}}>
+        <Text style={{...styleApp.title, fontSize: 15, marginBottom:5}}>
           {type === 'image'
             ? filename
             : formatDuration(
@@ -66,9 +53,20 @@ class TaskCard extends Component {
                   : (task.stopTime - task.startTime) / 1000,
               )}
         </Text>
-        <Text style={{...styleApp.text, fontSize: 15}}>
+        <Text style={{...styleApp.text, fontSize: 15, marginBottom:15}}>
           <FormatDate date={task.date} />
         </Text>
+        <Progress.Bar
+          color={colors.primaryLight}
+          width={width*0.65}
+          progress={task.progress}
+          borderWidth={0}
+          unfilledColor={colors.grey}
+          formatText={() => {
+            if (task.progress === 0) return '';
+            return `${Math.round(task.progress * 100)}%`;
+          }}
+        />
       </View>
     );
   }
@@ -88,10 +86,11 @@ class TaskCard extends Component {
     const {task, index} = this.props;
     const id = task.localIdentifier;
     return (
-      <View style={styles.card}>
+      <View style={{...styles.card, opacity: (task.progress === 0) ? 0.6 : 1}}>
         <Row>
-          <Col size={35}>{this.thumbnail()}</Col>
-          <Col size={65} style={styles.taskInfo}>
+          <Col size={15}>{this.thumbnail()}</Col>
+          <Col size={5} />
+          <Col size={80} style={styles.taskInfo}>
             {this.taskInfo()}
           </Col>
         </Row>
@@ -113,11 +112,15 @@ const styles = StyleSheet.create({
   card: {
     ...styleApp.marginView,
     height: 80,
+    marginTop:15,
+    marginBottom:5
   },
   thumbnail: {
-    height: 60,
-    width: 60,
-    borderRadius: 40,
+    width:50,
+    height:70,
+    ...styleApp.shadow,
+    borderRadius: 6,
+    backgroundColor:colors.greyDark
   },
   textProgress: {
     ...styleApp.textBold,
@@ -146,6 +149,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     uploadQueue: state.uploadQueue,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

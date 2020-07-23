@@ -10,6 +10,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import MemberSource from './MemberSource';
+import UploadMenu from './UploadMenu';
 import ExportQueue from './FinalizeRecording/components/ExportQueue';
 import {native} from '../../../../../../../animations/animations';
 
@@ -26,7 +27,8 @@ class RecordingMenu extends Component {
       visible: false,
       members: []
     };
-    this.scaleCard = new Animated.Value(0);
+    this.menuAnimation = new Animated.Value(0);
+    this.uploadReveal = new Animated.Value(0);
     this.itemsRef = [];
   }
 
@@ -37,7 +39,7 @@ class RecordingMenu extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {members, visible} = this.state
     if (members === undefined) this.close()
-    if (!this.exportQueueRef.state.visible && !prevState.visible && visible) this.open()
+    if (!this.exportQueueRef?.state.visible && !prevState.visible && visible) this.open()
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -59,70 +61,51 @@ class RecordingMenu extends Component {
     this.setState({visible: true});
     if (members.length > 0)
       return Animated.parallel([
-        Animated.timing(this.scaleCard, native(0.5, 300)),
+        Animated.timing(this.uploadReveal, native(0, 300)),
+        Animated.timing(this.menuAnimation, native(0.5, 300)),
       ]).start();
   }
 
-  close() {
-    if (this.exportQueueRef.state.visible) 
-      this.exportQueueRef.close()
-    else {
-      this.setState({visible: false});
+  close(hideUploadMenu) {
+    const { state: exportQueueState } = this.exportQueueRef
+    const { state: uploadQueueState } = this.uploadQueueRef
+
+    const animateSelf = (action) => {
       return Animated.parallel([
-        Animated.timing(this.scaleCard, native(0, 300)),
-      ]).start();
+        Animated.timing(
+          action === 'close' ? 
+          this.menuAnimation : this.uploadReveal, 
+          native(0, 300)
+        )]).start()
+    }
+
+    if (exportQueueState?.visible) {
+      this.exportQueueRef?.close()
+    } else if (!hideUploadMenu && uploadQueueState?.visible) {
+      this.uploadQueueRef?.close()
+      animateSelf('remain')
+    } else if (hideUploadMenu && !uploadQueueState?.visible) {
+      this.uploadQueueRef?.setState({visible: false})
+      animateSelf('remain')
+    } else {
+      this.setState({visible: false});
+      animateSelf('close')
     }
   }
-  backdrop() {
-    const {visible} = this.state;
 
-    return (
-      <TouchableWithoutFeedback onPress={() => {
-        this.close()
-      }}>
-        <View
-          pointerEvents={visible ? 'auto' : 'none'}
-          style={styles.fullPage}
-        />
-      </TouchableWithoutFeedback>
-    );
-  }
-
-  openExportQueue(member, thumbnails) {
-    const {members} = this.state
-    const {length} = members
-    const adjusted = ((170 - (length-1)*65) / (350 - (length-1)*65))/2 + 0.5
-    Animated.parallel([
-      Animated.timing(this.scaleCard, native(1, 300)),
-    ]).start();
-    this.exportQueueRef.open(member, thumbnails)
-  }
-
-  newPositionByHeight() {
-    const {members} = this.state
-    const {length} = members
-    return (length-1)*65
-  }
-
-  render() {
-    const {visible, members} = this.state;
-    const {members: propsMembers, currentScreenSize, userID} = this.props;
-    const {selectMember, coachSessionID} = this.props;
-    const width = currentScreenSize.currentWidth;
-
-    const translateY = this.scaleCard.interpolate({
+  closeButton() {
+    const opacity = this.menuAnimation.interpolate({
       inputRange: [0, 0.5, 1],
-      outputRange: [1000 + sizes.offsetFooterStreaming, 350, this.newPositionByHeight()],
+      outputRange: [0, 1, 0],
       extrapolate: 'clamp',
     });
 
     return (
-      <Animated.View
-        pointerEvents={visible ? 'auto' : 'none'}
-        style={[
-          styles.square,
-          { width, transform: [{translateY: translateY}] },
-        ]}>
+      <Animated.View 
+        style={{
+          ...styles.buttonClose,
+          opacity
+        }}>
         <ButtonColor
           view={() => {
             return (
@@ -136,40 +119,111 @@ class RecordingMenu extends Component {
           }}
           click={() => this.close()}
           color={colors.white}
-          style={styles.buttonClose}
           onPressColor={colors.off}
         />
+      </Animated.View>
+    )
+  }
 
-        <Text style={[styleApp.text, styles.text]}>Record</Text>
-        <View style={[{width:'90%', marginHorizontal:'5%', marginTop: 5, marginBottom: -10}]}>
-        {members?.map((member) => (
-          <MemberSource
-            member={member}
-            key={member.id}
-            coachSessionID={coachSessionID}
-            onRef={(ref) => (this.itemsRef[member.id] = ref)}
-            getMembers={() => {
-              return propsMembers;
-            }}
-            selectMember={async (member) => {
-              var sourceRef = this.itemsRef[member.id]
-              const isStopingRecording =
-                member.recording && member.recording.isRecording;
-              if (isStopingRecording) await sourceRef.setState({loader: true});
-              if (isStopingRecording && member.id !== userID) this.openExportQueue(member)
-              await selectMember(member);
-              sourceRef.setState({loader:false})
-            }}
-          />
-        ))}
-        </View>
-        
-        <ExportQueue
-          onRef={(ref) => {this.exportQueueRef = ref}}
-          onClose={() => {this.open()}}
-          coachSessionID = {coachSessionID}
-          members = {members}
+  backdrop() {
+    const {visible} = this.state;
+
+    return (
+      visible && <TouchableWithoutFeedback 
+      disabled={!visible}
+      onPress={() => {
+        this.close()
+      }}>
+        <View
+          pointerEvents={visible ? 'auto' : 'none'}
+          style={styles.fullPage}
         />
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  openExportQueue(member, thumbnails) {
+    Animated.parallel([
+      Animated.timing(this.menuAnimation, native(1, 300)),
+    ]).start();
+    this.exportQueueRef.open(member, thumbnails)
+  }
+
+  openUploadQueue() {
+    if (this.exportQueueRef.state.visible) 
+      return this.exportQueueRef.close()
+    Animated.parallel([
+      Animated.timing(this.uploadReveal, native(1, 300))
+    ]).start();
+    this.uploadQueueRef.open()
+  }
+
+  render() {
+    const {visible, members} = this.state;
+    const {members: propsMembers, currentScreenSize, userID} = this.props;
+    const {selectMember, coachSessionID} = this.props;
+    const {currentWidth: width, currentHeight: height} = currentScreenSize;
+    const {length} = members
+
+    const parentTranslateY = this.menuAnimation.interpolate({
+      inputRange: [0, 0.5, 1],
+      outputRange: [1000 + sizes.offsetFooterStreaming, 350, (length-1)*65-10],
+      extrapolate: 'clamp',
+    });
+
+    const recordingTranslateY = this.uploadReveal.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 400]
+    })
+
+    return (
+      <Animated.View style={{zIndex:-1, width, transform: [{translateY: parentTranslateY}]}}>
+        <UploadMenu
+          onRef={(ref) => {this.uploadQueueRef = ref}}
+          openUploadQueue={() => {this.openUploadQueue()}}
+          members={members}
+          coachSessionID={coachSessionID}
+          close={(pass) => {this.close(pass)}}
+        />
+        <Animated.View
+          pointerEvents={visible ? 'auto' : 'none'}
+          style={{
+            ...styles.menuContainer, 
+            width,
+            transform: [{translateY: recordingTranslateY}]
+          }}>
+          <Text style={styles.text}>Record</Text>
+          {this.closeButton()}
+          <View style={[{width:'90%', marginHorizontal:'5%', marginTop: 5, marginBottom: -10}]}>
+          {members?.map((member) => (
+            <MemberSource
+              member={member}
+              key={member.id}
+              coachSessionID={coachSessionID}
+              onRef={(ref) => (this.itemsRef[member.id] = ref)}
+              getMembers={() => {
+                return propsMembers;
+              }}
+              selectMember={async (member) => {
+                var sourceRef = this.itemsRef[member.id]
+                const isStopingRecording =
+                  member.recording && member.recording.isRecording;
+                if (isStopingRecording) await sourceRef.setState({loader: true});
+                if (isStopingRecording && member.id !== userID) this.openExportQueue(member)
+                await selectMember(member);
+                sourceRef.setState({loader:false})
+              }}
+            />
+          ))}
+          </View>
+          
+          <ExportQueue
+            onRef={(ref) => {this.exportQueueRef = ref}}
+            onClose={() => {this.open()}}
+            coachSessionID = {coachSessionID}
+            members = {members}
+          />
+        </Animated.View>
         {this.backdrop()}
       </Animated.View>
     );
@@ -178,7 +232,7 @@ class RecordingMenu extends Component {
 
 
 const styles = StyleSheet.create({
-  square: {
+  menuContainer: {
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
@@ -187,11 +241,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     bottom: 0,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    zIndex: -1,
+    zIndex: 1,
+    ...styleApp.shadow
   },
   buttonClose: {
     position: 'absolute',
@@ -201,16 +252,19 @@ const styles = StyleSheet.create({
     width: 35,
     zIndex:2,
     borderRadius: 20,
+    overflow:'hidden'
   },
   fullPage: {
     position: 'absolute',
+    ...styleApp.fullSize,
     width: sizes.width,
     height: 200000,
-    top:-sizes.height,
+    bottom:0,
     backgroundColor: 'transparent',
     zIndex: -1,
   },
   text: {
+    ...styleApp.text,
     marginTop: 20,
     marginBottom:5,
     fontSize: 21,

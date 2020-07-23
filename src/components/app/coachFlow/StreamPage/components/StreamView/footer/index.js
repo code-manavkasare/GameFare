@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     flex: 1,
-    zIndex: 5,
+    zIndex: 11,
   },
   cameraView: {
     height: 120,

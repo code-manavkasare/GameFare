@@ -79,10 +79,12 @@ class UploadManager extends Component {
       'image.jpg',
     );
 
-    uploadQueueAction('setJobProgress', {index: index, progress: 1});
+    uploadQueueAction('setJobProgress', {index: index, progress: 0.9});
 
     if (imageInfo.updateFirebaseAfterUpload)
       await this.databaseUpdates(imageUrl);
+
+    uploadQueueAction('setJobProgress', {index: index, progress: 1});
   };
 
   uploadVideoAtQueueIndex = async (index) => {
@@ -92,7 +94,7 @@ class UploadManager extends Component {
     if (videoInfo.simulator) return;
 
     const {storageDestination} = videoInfo;
-
+    console.log(videoInfo.filename)
     if (videoInfo.uploadThumbnail) {
       const thumbnailUrl = await uploadImage(
         'file:///' + videoInfo.thumbnail,
@@ -111,10 +113,12 @@ class UploadManager extends Component {
       uploadQueueAction
     );
 
-    uploadQueueAction('setJobProgress', {index: index, progress: 1});
+    uploadQueueAction('setJobProgress', {index: index, progress: 0.9});
 
     if (videoInfo.updateFirebaseAfterUpload)
       await this.databaseUpdates(videoUrl);
+      
+    uploadQueueAction('setJobProgress', {index: index, progress: 1});
   };
 }
 
