@@ -6,11 +6,15 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Animated
 } from 'react-native';
 import Video from 'react-native-video';
+import StatusBar from '@react-native-community/status-bar';
+
 const {height, width} = Dimensions.get('screen');
 
 import {navigate} from '../../../../../../NavigationService';
+import {native} from '../../../../animations/animations';
 import Button from '../../../../layout/buttons/Button';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
@@ -25,32 +29,63 @@ export default class LogoutView extends Component {
       paused: true,
       displayVideo: false,
     };
+    this.fadeInAnimation = new Animated.Value(1)
   }
   async componentDidMount() {
-    await timeout(700);
+    await StatusBar.setBarStyle('dark-content', true);
     this.setState({displayVideo: true});
+    await timeout(500);
+    this.fadeIn()
   }
+
+  fadeIn() {
+    Animated.timing(
+      this.fadeInAnimation, 
+      native(0, 600))
+    .start()
+  }
+
+  loader() {
+    return (
+      <Animated.View style={{...styles.loadingView, opacity: this.fadeInAnimation}}>
+        <View
+          style={[
+            styleApp.center,
+            {height: 100, width: width, marginBottom: 0},
+          ]}>
+          <Animated.Image
+            style={{width: 40, height: 40, position: 'absolute'}}
+            source={require('../../../../../img/logos/logoWhite.png')}
+          />
+        </View>
+        <View style={{position: 'absolute'}}>
+          <Loader color={colors.white} size={100} type={2} speed={2.2} />
+        </View>
+      </Animated.View>
+    )
+  }
+
   logoutView() {
     const {paused, displayVideo} = this.state;
+    const opacity = this.fadeInAnimation.interpolate({
+      inputRange:[0,1],
+      outputRange:[1,0]
+    })
     return (
       <View
         style={[
-          styleApp.marginView,
+          styleApp.fullSize,
           {
-            height: height,
+            height: height
           },
         ]}>
-        {paused && (
-          <View style={[styleApp.fullSize, styleApp.center]}>
-            <Loader color={colors.primary} size={40} />
-          </View>
-        )}
+        {this.loader()}
         {displayVideo && (
           <Video
-            // repeat={true}
+            repeat={true}
             paused={paused}
             volume={0}
-            source={require('../../../../../img/videos/intro.mp4')} // Can be a URL or a local file.
+            source={require('../../../../../img/videos/intro-loop.mp4')} // Can be a URL or a local file.
             ref={(ref) => {
               this.player = ref;
             }} 
@@ -58,22 +93,29 @@ export default class LogoutView extends Component {
             style={styles.video}
           />
         )}
-
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.greenLight}
-          enabled={true}
-          text="Sign in to start"
-          icon={{
-            name: 'user-circle',
-            size: 27,
-            type: 'font',
-            color: colors.white,
-          }}
-          styleButton={styles.buttonSignIn}
-          loader={false}
-          click={async () => navigate('SignIn')}
-        />
+        <Animated.View style={{ ...styles.logoContainer, opacity }}>
+          <Animated.Image
+            style={{width: 230, height: 50, position: 'absolute'}}
+            source={require('../../../../../img/logos/logoTitle.png')}
+          />
+        </Animated.View>
+        <Animated.View style={{ ...styles.buttonContainer, opacity }}>
+          <Button
+            backgroundColor="green"
+            onPressColor={colors.greenLight}
+            enabled={true}
+            text="Sign in to start"
+            icon={{
+              name: 'user-circle',
+              size: 27,
+              type: 'font',
+              color: colors.white,
+            }}
+            styleButton={styles.buttonSignIn}
+            loader={false}
+            click={async () => navigate('SignIn')}
+          />
+        </Animated.View>
       </View>
     );
   }
@@ -84,20 +126,38 @@ export default class LogoutView extends Component {
 
 const styles = StyleSheet.create({
   video: {
-    height: height + 300,
-    width: width + 100,
-    marginTop: -marginTopApp - 120,
+    height: height,
+    width: height*(9/16),
+    top: 0,
     position: 'absolute',
     zIndex: -1,
     marginBottom: 0,
   },
   buttonSignIn: {
     ...styleApp.shade,
-    marginLeft: '5%',
-    position: 'absolute',
-    bottom: marginBottomApp + 15,
     borderWidth: 0,
     borderColor: colors.off,
     borderRadius: 10,
   },
+  buttonContainer: {
+    marginLeft: '5%',
+    marginRight:'5%',
+    position: 'absolute',
+    bottom: marginBottomApp + 15,
+    width:'90%'
+  },
+  logoContainer: {
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    height:height*0.12,
+    top:marginTopApp,
+    position:'absolute'
+  },
+  loadingView: {
+    ...styleApp.fullSize, 
+    ...styleApp.center, 
+    width, 
+    position:'absolute', 
+    backgroundColor: colors.blue
+  }
 });

@@ -27,6 +27,7 @@ const MainApp = () => {
         component={TabsApp}
         options={{
           gestureEnabled: false,
+          animationEnabled: false,
         }}
       />
       <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
