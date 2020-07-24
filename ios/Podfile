@@ -99,23 +99,22 @@ def shared_pods
   # Mapbox
   pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+  use_native_modules!
+  flipper_pods()
 end
 
 target 'gamefare' do
   shared_pods
   target 'gamefareTests' do
     inherit! :complete
-    # Pods for testingf
+    # Pods for testing
   end
-  use_native_modules!
-
 end
 
 target 'gamefare-dev' do
   shared_pods
-  use_native_modules!
-  flipper_pods()
-  post_install do |installer|
-    flipper_post_install(installer)
-  end
+end
+
+post_install do |installer|
+  flipper_post_install(installer)
 end
