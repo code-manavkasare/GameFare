@@ -36,6 +36,7 @@ class App extends Component {
     if (!__DEV__) {
       this.configureSentry();
     }
+    SplashScreen.hide();
 
     if (userID !== '') {
       await this.autoSignIn();
@@ -48,7 +49,6 @@ class App extends Component {
         refreshTokenOnDatabase(userID);
       }
     });
-    SplashScreen.hide();
   }
 
   componentDidUpdate = () => {
