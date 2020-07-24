@@ -44,7 +44,9 @@ class App extends Component {
     }
 
     NetInfo.addEventListener((state) => {
-      if (state.isConnected && userID !== '' && !isBindToFirebase) {
+      console.log('stateNetInfo: ', state);
+      // if (state.isConnected && userID !== '' && !isBindToFirebase) { //TODO solve problem not triggering the bindings on reconnection
+      if (state.isConnected && userID !== '') {
         this.autoSignIn();
         refreshTokenOnDatabase(userID);
       }
