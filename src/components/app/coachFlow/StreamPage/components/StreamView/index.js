@@ -162,6 +162,7 @@ class StreamPage extends Component {
             streamIdTokBox: streamId,
             connectionIdTokbox: connectionId,
             connectionTimeStamp: Date.now(),
+            disconnectionTimeStamp: false,
             portrait: portrait,
             isConnected: true,
             publishVideo,
@@ -480,7 +481,7 @@ class StreamPage extends Component {
         setState={this.setState.bind(this)}
         state={this.state}
       />
-    )
+    );
   }
   streamPage() {
     const {
@@ -493,7 +494,7 @@ class StreamPage extends Component {
     const {userID, reconnecting} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-    if (!coachSession.tokbox) null
+    if (!coachSession.tokbox) null;
 
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
@@ -542,21 +543,21 @@ class StreamPage extends Component {
           )}
         </View>
 
-        {member && isConnected && 
-        <Footer
-          translateYFooter={this.translateYFooter}
-          setState={this.setState.bind(this)}
-          watchVideoRef={this.watchVideoRef}
-          otPublisherRef={this.otPublisherRef}
-          personSharingScreen={personSharingScreen}
-          videoBeingShared={videoBeingShared}
-          onRef={(ref) => (this.footerRef = ref)}
-          members={coachSession.members}
-          coachSessionID={coachSessionID}
-          publishAudio={publishAudio}
-          publishVideo={publishVideo}
-        />
-        }
+        {member && isConnected && (
+          <Footer
+            translateYFooter={this.translateYFooter}
+            setState={this.setState.bind(this)}
+            watchVideoRef={this.watchVideoRef}
+            otPublisherRef={this.otPublisherRef}
+            personSharingScreen={personSharingScreen}
+            videoBeingShared={videoBeingShared}
+            onRef={(ref) => (this.footerRef = ref)}
+            members={coachSession.members}
+            coachSessionID={coachSessionID}
+            publishAudio={publishAudio}
+            publishVideo={publishVideo}
+          />
+        )}
         {reconnecting && (
           <View
             style={[
