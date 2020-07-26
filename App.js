@@ -9,6 +9,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
+import {offlineActionTypes} from 'react-native-offline';
 
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
@@ -53,9 +54,12 @@ class App extends Component {
     });
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     if (!__DEV__) {
       this.configureSentry();
+    }
+    if (prevProps.networkIsConnected !== this.props.networkIsConnected) {
+      alert('IsConnected: ' + this.props.networkIsConnected);
     }
   };
 
@@ -134,6 +138,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userIDSaved,
     phoneNumber: state.user.phoneNumber,
     countryCode: state.user.countryCode,
+    networkIsConnected: state.network.isConnected,
   };
 };
 
