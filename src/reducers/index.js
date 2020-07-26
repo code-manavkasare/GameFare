@@ -1,4 +1,6 @@
 import {combineReducers} from 'redux';
+import {reducer as network} from 'react-native-offline';
+
 import globaleVariablesReducer from './globaleVariablesReducer';
 import userReducer from './userReducer';
 import historicSearchReducer from './historicSearchReducer';
@@ -26,5 +28,6 @@ export default combineReducers({
   createGroup: createGroupReducer,
   message: messageReducer,
   layout: layoutReducer,
-  uploadQueue: uploadQueueReducer
+  uploadQueue: uploadQueueReducer,
+  network,
 });

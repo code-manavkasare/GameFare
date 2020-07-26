@@ -1,7 +1,7 @@
-import {createStore, applyMiddleware, compose} from 'redux';
+import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
 import {persistStore, persistReducer} from 'redux-persist';
-// const { REHYDRATE }  = require('redux-persist/constants')
-// import storage from 'redux-persist/lib/storage';
+import {reducer as network} from 'react-native-offline';
+import {composeWithDevTools} from 'remote-redux-devtools';
 
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import rootReducer from './src/reducers';
@@ -31,7 +31,6 @@ const persistConfig = {
   ],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };
-import {composeWithDevTools} from 'remote-redux-devtools';
 
 const pReducer = persistReducer(persistConfig, rootReducer);
 const composeEnhancers = composeWithDevTools({realtime: true});
