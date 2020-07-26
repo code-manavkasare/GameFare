@@ -1,10 +1,11 @@
 import {
-  SET_USER_INFO,
-  RESET_USER_INFO,
-  RESET_USER_MESSAGES,
-  SET_LAYOUT_SETTINGS,
   HIDE_FOOTER_APP,
   RESET_COACH_DATA,
+  RESET_USER_INFO,
+  RESET_USER_MESSAGES,
+  SET_ARCHIVE_FIREBASE_BIND_STATUS,
+  SET_LAYOUT_SETTINGS,
+  SET_USER_INFO,
 } from './types';
 
 import auth from '@react-native-firebase/auth';
@@ -13,6 +14,7 @@ import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
 
 import {resetDataCoachSession} from './coachActions';
+import {setArchive} from './archivesActions';
 
 import {subscribeToTopics} from '../components/functions/notifications';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
@@ -40,6 +42,12 @@ const hideFooterApp = () => ({
   type: HIDE_FOOTER_APP,
 });
 
+const setArchiveFirebaseBindStatus = (id, isBinded) => ({
+  type: SET_ARCHIVE_FIREBASE_BIND_STATUS,
+  archiveId: id,
+  isBindedToFirebase: isBinded,
+});
+
 // const resetDataCoachSession = () => ({
 //   type: RESET_COACH_DATA,
 // });
@@ -59,7 +67,9 @@ export const userAction = (val, data) => {
       return database()
         .ref('users/' + userID)
         .on('value', function(snap) {
+          console.log('user info updated');
           var infoUser = snap.val();
+          console.log('infoUserarchive: ', infoUser.archivedStreams);
 
           var userConnected = false;
           var userIDSaved = '';
@@ -78,6 +88,16 @@ export const userAction = (val, data) => {
             countryCode: data.countryCode,
             userIDSaved: userIDSaved,
           };
+
+          for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
+            database()
+              .ref(`archivedStreams/${archiveInfo.id}`)
+              .on('value', function(snap) {
+                const archive = snap.val();
+                dispatch(setArchive(archive));
+                dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+              });
+          }
 
           if (infoUserToPushSaved !== infoUserToPush) {
             infoUserToPushSaved = infoUserToPush;
