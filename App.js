@@ -2,14 +2,12 @@ import 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
 import React, {Component} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import NetInfo from '@react-native-community/netinfo';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
-import {offlineActionTypes} from 'react-native-offline';
 
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
@@ -33,33 +31,30 @@ const MyTheme = {
 
 class App extends Component {
   async componentDidMount() {
-    const {isBindToFirebase, userID} = this.props;
+    const {userID} = this.props;
     if (!__DEV__) {
       this.configureSentry();
     }
+
     SplashScreen.hide();
 
     if (userID !== '') {
       await this.autoSignIn();
       await refreshTokenOnDatabase(userID);
     }
-
-    NetInfo.addEventListener((state) => {
-      console.log('stateNetInfo: ', state);
-      // if (state.isConnected && userID !== '' && !isBindToFirebase) { //TODO solve problem not triggering the bindings on reconnection
-      if (state.isConnected && userID !== '') {
-        this.autoSignIn();
-        refreshTokenOnDatabase(userID);
-      }
-    });
   }
 
   componentDidUpdate = (prevProps) => {
+    const {networkIsConnected, userID, isBindToFirebase} = this.props;
+
     if (!__DEV__) {
       this.configureSentry();
     }
-    if (prevProps.networkIsConnected !== this.props.networkIsConnected) {
-      alert('IsConnected: ' + this.props.networkIsConnected);
+    if (prevProps.networkIsConnected !== networkIsConnected) {
+      if (networkIsConnected && userID !== '' && !isBindToFirebase) {
+        this.autoSignIn();
+        refreshTokenOnDatabase(userID);
+      }
     }
   };
 
@@ -86,7 +81,13 @@ class App extends Component {
   };
 
   async autoSignIn() {
-    const {countryCode, isBindToFirebase, phoneNumber, userID} = this.props;
+    const {
+      countryCode,
+      isBindToFirebase,
+      networkIsConnected,
+      phoneNumber,
+      userID,
+    } = this.props;
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
 
     const promiseAxios = await axios.get(url, {
@@ -106,14 +107,12 @@ class App extends Component {
       });
     }
 
-    if (!isBindToFirebase)
-      await NetInfo.fetch().then(async (state) => {
-        if (state.isConnected) {
-          await this.props.globaleVariablesAction('setFirebaseBindingsState', {
-            isBindToFirebase: true,
-          });
-        }
+    if (!isBindToFirebase && networkIsConnected) {
+      await this.props.globaleVariablesAction('setFirebaseBindingsState', {
+        isBindToFirebase: true,
       });
+    }
+
     return true;
   }
 
