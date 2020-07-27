@@ -10,13 +10,15 @@ import {
   RESET_USER_INFO,
   RESET_USER_MESSAGES,
   SET_ARCHIVE_FIREBASE_BIND_STATUS,
+  SET_COACH_SESSION_FIREBASE_BIND_STATUS,
   SET_LAYOUT_SETTINGS,
   SET_USER_INFO,
 } from './types';
 
 import {store} from '../../reduxStore.js';
 import {resetDataCoachSession} from './coachActions';
-import {setArchive} from './archivesActions';
+import {setArchive} from './archivesActions.js';
+import {setAllSessions} from './coachActions.js';
 
 import {subscribeToTopics} from '../components/functions/notifications';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
@@ -50,6 +52,12 @@ const setArchiveFirebaseBindStatus = (id, isBinded) => ({
   isBindedToFirebase: isBinded,
 });
 
+const setCoachSessionFirebaseBindStatus = (id, isBinded) => ({
+  type: SET_COACH_SESSION_FIREBASE_BIND_STATUS,
+  coachSessionId: id,
+  isBindedToFirebase: isBinded,
+});
+
 // const resetDataCoachSession = () => ({
 //   type: RESET_COACH_DATA,
 // });
@@ -57,19 +65,26 @@ const setArchiveFirebaseBindStatus = (id, isBinded) => ({
 var infoUserToPushSaved = '';
 
 const filterArchivesBindToFirebase = (archives) => {
-  const filteredArchived = mergeDeepLeft(
-    archives,
-    store.getState().user.infoUser.archivedStreams,
-  );
-  return filteredArchived;
+  const archivesFromStore = store.getState().user.infoUser.archivedStreams;
+  if (archives && archivesFromStore) {
+    const filteredArchives = mergeDeepLeft(archives, archivesFromStore);
+    return filteredArchives;
+  } else {
+    return {};
+  }
 };
 
 const filterCoachSessionBindToFirebase = (coachSessions) => {
-  const filteredArchived = mergeDeepLeft(
-    coachSessions,
-    store.getState().user.infoUser.coachSessions,
-  );
-  return filteredArchived;
+  const coachSessionsFromStore = store.getState().user.infoUser.coachSessions;
+  if (coachSessions && coachSessionsFromStore) {
+    const filteredCoachSessions = mergeDeepLeft(
+      coachSessions,
+      coachSessionsFromStore,
+    );
+    return filteredCoachSessions;
+  } else {
+    return {};
+  }
 };
 
 const userAction = (val, data) => {
@@ -93,6 +108,10 @@ const userAction = (val, data) => {
             infoUser.archivedStreams,
           );
 
+          infoUser.coachSessions = filterCoachSessionBindToFirebase(
+            infoUser.coachSessions,
+          );
+
           var userConnected = false;
           var userIDSaved = '';
           if (infoUser.profileCompleted) {
@@ -111,16 +130,6 @@ const userAction = (val, data) => {
             userIDSaved: userIDSaved,
           };
 
-          for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
-            database()
-              .ref(`archivedStreams/${archiveInfo.id}`)
-              .on('value', function(snap) {
-                const archive = snap.val();
-                dispatch(setArchive(archive));
-                dispatch(setArchiveFirebaseBindStatus(archive.id, true));
-              });
-          }
-
           if (infoUserToPushSaved !== infoUserToPush) {
             infoUserToPushSaved = infoUserToPush;
             dispatch(setUserInfo(infoUserToPush));
@@ -137,6 +146,26 @@ const userAction = (val, data) => {
                     const archive = snapshot.val();
                     dispatch(setArchive(archive));
                     dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+                  });
+              }
+            }
+          }
+
+          if (infoUser.coachSessions) {
+            for (const coachSession of Object.values(infoUser.coachSessions)) {
+              const coachSessionFromStore = store.getState().user.infoUser
+                .coachSessions[coachSession.id];
+              if (!coachSessionFromStore.isBindedToFirebase) {
+                database()
+                  .ref(`coachSessions/${coachSession.id}`)
+                  .on('value', function(snapshot) {
+                    const coachSessionFirebase = snapshot.val();
+                    dispatch(
+                      setAllSessions({[coachSession.id]: coachSessionFirebase}),
+                    );
+                    dispatch(
+                      setCoachSessionFirebaseBindStatus(coachSession.id, true),
+                    );
                   });
               }
             }
@@ -163,4 +192,8 @@ const userAction = (val, data) => {
   };
 };
 
-export {userAction, setArchiveFirebaseBindStatus};
+export {
+  userAction,
+  setArchiveFirebaseBindStatus,
+  setCoachSessionFirebaseBindStatus,
+};
