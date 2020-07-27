@@ -1,3 +1,9 @@
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import messaging from '@react-native-firebase/messaging';
+import Mixpanel from 'react-native-mixpanel';
+import {mergeDeepLeft} from 'ramda';
+
 import {
   HIDE_FOOTER_APP,
   RESET_COACH_DATA,
@@ -8,11 +14,7 @@ import {
   SET_USER_INFO,
 } from './types';
 
-import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
-import messaging from '@react-native-firebase/messaging';
-import Mixpanel from 'react-native-mixpanel';
-
+import {store} from '../../reduxStore.js';
 import {resetDataCoachSession} from './coachActions';
 import {setArchive} from './archivesActions';
 
@@ -54,7 +56,23 @@ const setArchiveFirebaseBindStatus = (id, isBinded) => ({
 
 var infoUserToPushSaved = '';
 
-export const userAction = (val, data) => {
+const filterArchivesBindToFirebase = (archives) => {
+  const filteredArchived = mergeDeepLeft(
+    archives,
+    store.getState().user.infoUser.archivedStreams,
+  );
+  return filteredArchived;
+};
+
+const filterCoachSessionBindToFirebase = (coachSessions) => {
+  const filteredArchived = mergeDeepLeft(
+    coachSessions,
+    store.getState().user.infoUser.coachSessions,
+  );
+  return filteredArchived;
+};
+
+const userAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'signIn') {
       const user = await auth().signInWithCustomToken(data.firebaseSignInToken);
@@ -70,6 +88,10 @@ export const userAction = (val, data) => {
           console.log('user info updated');
           var infoUser = snap.val();
           console.log('infoUserarchive: ', infoUser.archivedStreams);
+
+          infoUser.archivedStreams = filterArchivesBindToFirebase(
+            infoUser.archivedStreams,
+          );
 
           var userConnected = false;
           var userIDSaved = '';
@@ -103,6 +125,23 @@ export const userAction = (val, data) => {
             infoUserToPushSaved = infoUserToPush;
             dispatch(setUserInfo(infoUserToPush));
           }
+
+          if (infoUser.archivedStreams) {
+            for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
+              const archiveInfoFromStore = store.getState().user.infoUser
+                .archivedStreams[archiveInfo.id];
+              if (!archiveInfoFromStore.isBindedToFirebase) {
+                database()
+                  .ref(`archivedStreams/${archiveInfo.id}`)
+                  .on('value', function(snapshot) {
+                    const archive = snapshot.val();
+                    dispatch(setArchive(archive));
+                    dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+                  });
+              }
+            }
+          }
+
           return userConnected;
         });
     } else if (val === 'logout') {
@@ -123,3 +162,5 @@ export const userAction = (val, data) => {
     return true;
   };
 };
+
+export {userAction, setArchiveFirebaseBindStatus};
