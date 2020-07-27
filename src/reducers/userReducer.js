@@ -4,6 +4,7 @@ import {
   SET_LAYOUT_SETTINGS,
   HIDE_FOOTER_APP,
   SET_ARCHIVE_FIREBASE_BIND_STATUS,
+  SET_COACH_SESSION_FIREBASE_BIND_STATUS,
 } from '../actions/types';
 
 const initialState = {
@@ -46,6 +47,20 @@ const userReducer = (state = initialState, action) => {
             ...state.infoUser.archivedStreams,
             [action.archiveId]: {
               ...state.infoUser.archivedStreams[action.archiveId],
+              isBindedToFirebase: action.isBindedToFirebase,
+            },
+          },
+        },
+      };
+    case SET_COACH_SESSION_FIREBASE_BIND_STATUS:
+      return {
+        ...state,
+        infoUser: {
+          ...state.infoUser,
+          coachSessions: {
+            ...state.infoUser.coachSessions,
+            [action.coachSessionId]: {
+              ...state.infoUser.coachSessions[action.coachSessionId],
               isBindedToFirebase: action.isBindedToFirebase,
             },
           },
