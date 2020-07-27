@@ -69,6 +69,8 @@ const filterArchivesBindToFirebase = (archives) => {
   if (archives && archivesFromStore) {
     const filteredArchives = mergeDeepLeft(archives, archivesFromStore);
     return filteredArchives;
+  } else if (archives) {
+    return archives;
   } else {
     return {};
   }
@@ -82,6 +84,8 @@ const filterCoachSessionBindToFirebase = (coachSessions) => {
       coachSessionsFromStore,
     );
     return filteredCoachSessions;
+  } else if (coachSessions) {
+    return coachSessions;
   } else {
     return {};
   }
