@@ -108,13 +108,13 @@ const userAction = (val, data) => {
           var infoUser = snap.val();
           console.log('infoUserarchive: ', infoUser.archivedStreams);
 
-          infoUser.archivedStreams = filterArchivesBindToFirebase(
-            infoUser.archivedStreams,
-          );
+          // infoUser.archivedStreams = filterArchivesBindToFirebase(
+          //   infoUser.archivedStreams,
+          // );
 
-          infoUser.coachSessions = filterCoachSessionBindToFirebase(
-            infoUser.coachSessions,
-          );
+          // infoUser.coachSessions = filterCoachSessionBindToFirebase(
+          //   infoUser.coachSessions,
+          // );
 
           var userConnected = false;
           var userIDSaved = '';
@@ -139,41 +139,41 @@ const userAction = (val, data) => {
             dispatch(setUserInfo(infoUserToPush));
           }
 
-          if (infoUser.archivedStreams) {
-            for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
-              const archiveInfoFromStore = store.getState().user.infoUser
-                .archivedStreams[archiveInfo.id];
-              if (!archiveInfoFromStore.isBindedToFirebase) {
-                database()
-                  .ref(`archivedStreams/${archiveInfo.id}`)
-                  .on('value', function(snapshot) {
-                    const archive = snapshot.val();
-                    dispatch(setArchive(archive));
-                    dispatch(setArchiveFirebaseBindStatus(archive.id, true));
-                  });
-              }
-            }
-          }
+          // if (infoUser.archivedStreams) {
+          //   for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
+          //     const archiveInfoFromStore = store.getState().user.infoUser
+          //       .archivedStreams[archiveInfo.id];
+          //     if (!archiveInfoFromStore.isBindedToFirebase) {
+          //       database()
+          //         .ref(`archivedStreams/${archiveInfo.id}`)
+          //         .on('value', function(snapshot) {
+          //           const archive = snapshot.val();
+          //           dispatch(setArchive(archive));
+          //           dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+          //         });
+          //     }
+          //   }
+          // }
 
-          if (infoUser.coachSessions) {
-            for (const coachSession of Object.values(infoUser.coachSessions)) {
-              const coachSessionFromStore = store.getState().user.infoUser
-                .coachSessions[coachSession.id];
-              if (!coachSessionFromStore.isBindedToFirebase) {
-                database()
-                  .ref(`coachSessions/${coachSession.id}`)
-                  .on('value', function(snapshot) {
-                    const coachSessionFirebase = snapshot.val();
-                    dispatch(
-                      setAllSessions({[coachSession.id]: coachSessionFirebase}),
-                    );
-                    dispatch(
-                      setCoachSessionFirebaseBindStatus(coachSession.id, true),
-                    );
-                  });
-              }
-            }
-          }
+          // if (infoUser.coachSessions) {
+          //   for (const coachSession of Object.values(infoUser.coachSessions)) {
+          //     const coachSessionFromStore = store.getState().user.infoUser
+          //       .coachSessions[coachSession.id];
+          //     if (!coachSessionFromStore.isBindedToFirebase) {
+          //       database()
+          //         .ref(`coachSessions/${coachSession.id}`)
+          //         .on('value', function(snapshot) {
+          //           const coachSessionFirebase = snapshot.val();
+          //           dispatch(
+          //             setAllSessions({[coachSession.id]: coachSessionFirebase}),
+          //           );
+          //           dispatch(
+          //             setCoachSessionFirebaseBindStatus(coachSession.id, true),
+          //           );
+          //         });
+          //     }
+          //   }
+          // }
 
           return userConnected;
         });
