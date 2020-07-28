@@ -1,12 +1,14 @@
 import {ProcessingManager} from 'react-native-video-processing';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import {uploadImage} from '../functions/upload';
-import {getVideoUUID} from './coach';
-import {getVideoInfo} from './pictures';
+import database from '@react-native-firebase/database';
+
+import {generateID} from './createEvent';
+import {getVideoInfo, getVideoUUID} from './pictures';
 
 const generateSnippetsFromFlags = async (source, flags) => {
   for (var f in flags) {
-    let flag = flags[f]
+    let flag = flags[f];
     const {id, startTime, stopTime} = flag;
     const trimOptions = {
       startTime: startTime / 1000,
@@ -26,7 +28,7 @@ const generateSnippetsFromFlags = async (source, flags) => {
   return flags;
 };
 
-const updatesMember = ({members, destinationCloud, userID, uuid}) => {
+const shareVideoWithMembers = (members, destinationCloud, userID, videoID) => {
   let updates = {};
   Object.values(members).map((member) => {
     const memberID = member.id;
@@ -34,24 +36,54 @@ const updatesMember = ({members, destinationCloud, userID, uuid}) => {
     updates[`${destinationCloud}/members/${member.id}/timestamp`] = timeStamp;
     updates[`${destinationCloud}/members/${memberID}/id`] = memberID;
     updates[`${destinationCloud}/members/${memberID}/invitedBy`] = userID;
-    updates[`users/${memberID}/${destinationCloud}/id`] = uuid;
+    updates[`users/${memberID}/${destinationCloud}/id`] = videoID;
     updates[`users/${memberID}/${destinationCloud}/startTimestamp`] = timeStamp;
     updates[`users/${memberID}/${destinationCloud}/uploadedByUser`] = true;
+    updates[`users/${memberID}/archivedStreams/uploading/${videoID}`] = {}
   });
   return updates;
 };
 
-const arrayUploadFromSnipets = async ({
+const generateProgressUpdates = (members, userID, videoID, thumbnail, durationSeconds, index) => {
+  console.log('generating updates', thumbnail)
+  let constructor = {};
+  let uploadPaths = [];
+  Object.values(members).map((member) => {
+    const memberID = member.id
+    const timeStamp = Date.now()
+    let path = `users/${memberID}/archivedStreams/uploading/${videoID}`
+    constructor[path] = {
+      filename: videoID,
+      hostUser: userID,
+      thumbnail,
+      durationSeconds,
+      date: Date.now(),
+      progress: 0,
+      index
+    }
+    uploadPaths.push(path)
+  })
+  database()
+    .ref()
+    .update(constructor);
+  return {
+    constructor,
+    uploadPaths
+  };
+};
+
+const arrayUploadFromSnippets = async ({
   flagsSelected,
   recording,
-  coachSessionID,
   memberID,
   members,
   userID,
 }) => {
   let snippets = [];
-  let flags = Object.values(flagsSelected)
-    .filter((flag) => {return flag?.id !== `${userID}-fullVideo`})
+  let flags = Object.values(flagsSelected).filter((flag) => {
+    return flag?.id !== `${userID}-fullVideo`;
+  });
+  let index = 0;
   if (flags.length > 0) {
     const flagsWithSnippets = await generateSnippetsFromFlags(
       recording.localSource,
@@ -59,106 +91,139 @@ const arrayUploadFromSnipets = async ({
     );
     for (var i in flagsWithSnippets) {
       const flag = flagsWithSnippets[i];
-      const {snippetLocalPath, id, startTime, stopTime} = flag;
-      let {thumbnail} = flag;
-      const uuid = getVideoUUID(snippetLocalPath);
-      const destinationCloud = `archivedStreams/${uuid}`;
-      const updateMembers = updatesMember({
+      const {snippetLocalPath, startTime, stopTime, thumbnail} = flag;
+      let thumbnailUploaded = (thumbnail && thumbnail.substring(0,4) === "http") ? true : false;
+      let videoInfo = await getVideoInfo(snippetLocalPath, !thumbnailUploaded);
+      console.log('videoInfo', videoInfo)
+      const destinationCloud = `archivedStreams/${videoInfo.id}`;
+      if (thumbnailUploaded) {
+        videoInfo.thumbnail = thumbnail
+      } else if (videoInfo.thumbnail) {
+        console.log(videoInfo.thumbnail)
+        videoInfo.thumbnail = await uploadImage(
+          'file:///' + videoInfo.thumbnail,
+          destinationCloud,
+          'thumbnail.jpg'
+        )
+        thumbnailUploaded = true
+      }
+      const updateMembers = shareVideoWithMembers(
         members,
         destinationCloud,
         userID,
-        uuid,
-      }); 
-      if (!thumbnail) {
-        let {path: localThumbnail} = await createThumbnail({
-          url: snippetLocalPath,
-          timeStamp: flag.time, 
-        });
-        thumbnail = await uploadImage(
-          localThumbnail,
-          destinationCloud,
-          'thumbnail.jpg',
-        );
-      }
-      const videoInfo = await getVideoInfo(snippetLocalPath);
-      const duration = videoInfo?.duration ?? (stopTime - startTime);
+        videoInfo.id,
+      );
+      const progressUpdates = generateProgressUpdates(
+        members,
+        userID,
+        videoInfo.id,
+        videoInfo.thumbnail,
+        videoInfo.durationSeconds,
+        index
+      )
       snippets.push({
-        path: snippetLocalPath,
-        localIdentifier: getVideoUUID(snippetLocalPath),
+        ...videoInfo,
+        localIdentifier: videoInfo.id,
         storageDestination: destinationCloud,
         destinationFile: `${destinationCloud}/url`,
         firebaseUpdates: {
-          [`${destinationCloud}/durationSeconds`]: duration,
-          [`${destinationCloud}/id`]: uuid,
+          [`${destinationCloud}/durationSeconds`]: videoInfo.durationSeconds,
+          [`${destinationCloud}/id`]: videoInfo.id,
           [`${destinationCloud}/uploadedByUser`]: true,
           [`${destinationCloud}/sourceUser`]: memberID,
           [`${destinationCloud}/size`]: videoInfo.size,
-          [`${destinationCloud}/thumbnail`]: thumbnail ? thumbnail : false,
           [`${destinationCloud}/startTimestamp`]: Date.now(),
+          [`${destinationCloud}/thumbnail`]: videoInfo.thumbnail,
           ...updateMembers,
         },
+        progressUpdates,
         type: 'video',
-        duration: duration,
         displayInList: true,
-        thumbnail: thumbnail ? thumbnail : false,
-        filename: uuid,
+        filename: videoInfo.id,
         progress: 0,
         updateFirebaseAfterUpload: true,
         date: Date.now(),
+        uploadThumbnail: !thumbnailUploaded,
       });
+      index++;
     }
-  } 
+  }
   if (flagsSelected[`${userID}-fullVideo`]) {
-    const {localSource, startTimestamp, stopTimestamp} = recording;
-    let {thumbnail} = recording
-    const uuid = getVideoUUID(localSource);
-    const videoInfo = await getVideoInfo(localSource);
-    const duration = videoInfo?.duration ?? 
-      ((stopTimestamp - startTimestamp) / 1000);
-    const destinationCloud = `archivedStreams/${uuid}`;
-    const updateMembers = updatesMember({
+    const {localSource, thumbnail} = recording;
+    let thumbnailUploaded = thumbnail ? true : false;
+    let videoInfo = await getVideoInfo(localSource, !thumbnailUploaded);
+    if (thumbnailUploaded) {
+      videoInfo.thumbnail = thumbnail
+    } else if (videoInfo.thumbnail) {
+      console.log(videoInfo.thumbnail)
+      videoInfo.thumbnail = await uploadImage(
+        'file:///' + videoInfo.thumbnail,
+        destinationCloud,
+        'thumbnail.jpg'
+      )
+      thumbnailUploaded = true
+    }
+    const destinationCloud = `archivedStreams/${videoInfo.id}`;
+    const updateMembers = shareVideoWithMembers(
       members,
       destinationCloud,
       userID,
-      uuid,
+      videoInfo.id,
+    );
+    const progressUpdates = generateProgressUpdates(
+      members,
+      userID,
+      videoInfo.id,
+      videoInfo.thumbnail,
+      videoInfo.durationSeconds,
+      index
+    )
+    snippets.push({
+      ...videoInfo,
+      storageDestination: destinationCloud,
+      destinationFile: `${destinationCloud}/url`,
+      displayInList: true,
+      firebaseUpdates: {
+        [`${destinationCloud}/durationSeconds`]: videoInfo.durationSeconds,
+        [`${destinationCloud}/id`]: videoInfo.id,
+        [`${destinationCloud}/size`]: videoInfo.size,
+        [`${destinationCloud}/uploadedByUser`]: true,
+        [`${destinationCloud}/sourceUser`]: memberID,
+        [`${destinationCloud}/startTimestamp`]: Date.now(),
+        [`${destinationCloud}/thumbnail`]: videoInfo.thumbnail,
+        ...updateMembers,
+      },
+      progressUpdates,
+      type: 'video',
+      filename: videoInfo.id,
+      progress: 0,
+      updateFirebaseAfterUpload: true,
+      date: Date.now(),
+      uploadThumbnail: !thumbnailUploaded,
     });
-    if (!thumbnail) {
-      let {path: localThumbnail} = await createThumbnail({
-        url: localSource,
-        timeStamp: 500,
-      });
-      thumbnail = await uploadImage(
-        localThumbnail,
-        destinationCloud,
-        'thumbnail.jpg',
-      );
-    }
-    snippets.push ({
-        path: localSource,
-        duration,
-        localIdentifier: getVideoUUID(localSource),
-        storageDestination: destinationCloud,
-        destinationFile: `${destinationCloud}/url`,
-        displayInList: true,
-        firebaseUpdates: {
-          [`${destinationCloud}/durationSeconds`]: duration,
-          [`${destinationCloud}/id`]: uuid,
-          [`${destinationCloud}/size`]: videoInfo.size,
-          [`${destinationCloud}/uploadedByUser`]: true,
-          [`${destinationCloud}/sourceUser`]: memberID,
-          [`${destinationCloud}/thumbnail`]: thumbnail ? thumbnail : '',
-          [`${destinationCloud}/startTimestamp`]: Date.now(),
-          ...updateMembers,
-        },
-        type: 'video',
-        filename: uuid,
-        progress: 0,
-        thumbnail: thumbnail ? thumbnail : false,
-        updateFirebaseAfterUpload: true,
-        date: Date.now(),
-      })
   }
+  console.log('snippets', snippets);
   return snippets;
 };
 
-export {generateSnippetsFromFlags, arrayUploadFromSnipets};
+const addVideo = async (video) => {
+  if (!video.id) video.id = getVideoUUID(video.url);
+  await store.dispatch(addVideos({[video.id]: video}));
+};
+
+const recordVideo = async () => {
+  await store.dispatch(setLayout({isFooterVisible: false}));
+  navigate('LocalSession', {screen: 'LocalSession'});
+};
+
+const removeVideo = (videoID) => {
+  return store.dispatch(deleteVideo(videoID));
+};
+
+export {
+  generateSnippetsFromFlags,
+  arrayUploadFromSnippets,
+  addVideo,
+  removeVideo,
+  recordVideo,
+};

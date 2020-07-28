@@ -28,7 +28,7 @@ class RecordingMenu extends Component {
       members: []
     };
     this.menuAnimation = new Animated.Value(0);
-    this.uploadReveal = new Animated.Value(0);
+    this.peekUploadMenu = new Animated.Value(0);
     this.itemsRef = [];
   }
 
@@ -61,7 +61,7 @@ class RecordingMenu extends Component {
     this.setState({visible: true});
     if (members.length > 0)
       return Animated.parallel([
-        Animated.timing(this.uploadReveal, native(0, 300)),
+        Animated.timing(this.peekUploadMenu, native(0, 300)),
         Animated.timing(this.menuAnimation, native(0.5, 300)),
       ]).start();
   }
@@ -74,7 +74,7 @@ class RecordingMenu extends Component {
       return Animated.parallel([
         Animated.timing(
           action === 'close' ? 
-          this.menuAnimation : this.uploadReveal, 
+          this.menuAnimation : this.peekUploadMenu, 
           native(0, 300)
         )]).start()
     }
@@ -91,6 +91,25 @@ class RecordingMenu extends Component {
       this.setState({visible: false});
       animateSelf('close')
     }
+  }
+
+  openExportQueue(member, thumbnails) {
+    Animated.parallel([
+      Animated.timing(this.menuAnimation, native(1, 300)),
+    ]).start();
+    this.exportQueueRef.open(member, thumbnails)
+  }
+
+  openUploadQueue() {
+    if (this.exportQueueRef.state.visible) {
+      this.exportQueueRef.close()
+    }
+    if (this.state.visible) {
+      Animated.parallel([
+        Animated.timing(this.peekUploadMenu, native(1, 300))
+      ]).start();
+    }
+    this.uploadQueueRef.open(this.state.visible ? 1 : 0)
   }
 
   closeButton() {
@@ -142,22 +161,6 @@ class RecordingMenu extends Component {
     );
   }
 
-  openExportQueue(member, thumbnails) {
-    Animated.parallel([
-      Animated.timing(this.menuAnimation, native(1, 300)),
-    ]).start();
-    this.exportQueueRef.open(member, thumbnails)
-  }
-
-  openUploadQueue() {
-    if (this.exportQueueRef.state.visible) 
-      return this.exportQueueRef.close()
-    Animated.parallel([
-      Animated.timing(this.uploadReveal, native(1, 300))
-    ]).start();
-    this.uploadQueueRef.open()
-  }
-
   render() {
     const {visible, members} = this.state;
     const {members: propsMembers, currentScreenSize, userID} = this.props;
@@ -171,7 +174,7 @@ class RecordingMenu extends Component {
       extrapolate: 'clamp',
     });
 
-    const recordingTranslateY = this.uploadReveal.interpolate({
+    const recordingTranslateY = this.peekUploadMenu.interpolate({
       inputRange: [0, 1],
       outputRange: [0, 400]
     })
