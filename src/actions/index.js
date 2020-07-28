@@ -12,3 +12,4 @@ export * from './layoutActions';
 export * from './uploadQueueActions';
 export * from './appSettingsActions';
 export * from './archivesActions.js';
+export * from './coachSessionsActions.js';

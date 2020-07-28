@@ -1,5 +1,8 @@
 import database from '@react-native-firebase/database';
 
+import {store} from '../../../../reduxStore';
+import {deleteArchive} from '../../../actions/archivesActions';
+
 const addVideoToMember = async (ownerId, userId, videoId) => {
   const date = Date.now();
   let updates = {};
@@ -21,6 +24,8 @@ const addVideoToMember = async (ownerId, userId, videoId) => {
 const deleteVideoFromLibrary = async (userId, videoIdArray) => {
   let updates = {};
   for (const videoId of videoIdArray) {
+    console.log('videoId: ', videoId);
+    store.dispatch(deleteArchive(videoId));
     updates[`users/${userId}/archivedStreams/${videoId}`] = null;
     updates[`archivedStreams/${videoId}/members/${userId}`] = null;
   }
