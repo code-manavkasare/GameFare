@@ -14,7 +14,6 @@ import Swipeout from 'react-native-swipeout';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {timing, native, nativeAsJS} from '../../animations/animations';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 import {FormatDate, formatDuration} from '../../functions/date'
