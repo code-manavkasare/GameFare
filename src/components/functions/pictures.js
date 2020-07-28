@@ -179,17 +179,28 @@ const generateThumbnail = async (videoPath) => {
   return thumbnail.path;
 };
 
-const getVideoInfo = async (videoUrl) => {
-  let videoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  console.log('videoInfo', videoInfo);
-  const thumbnail = await generateThumbnail(videoUrl);
-  videoInfo.thumbnail = thumbnail;
-  videoInfo.path = videoUrl;
-  videoInfo.type = 'video';
-  videoInfo.progress = 0;
-  videoInfo.displayInList = true;
-  videoInfo.updateFirebaseAfterUpload = true;
-  videoInfo.date = Date.now()
+const getVideoUUID = (path) => {
+  if (!path) return 'simulator';
+  const videoUUID = path
+    ? path.split('/')[path.split('/').length - 1].split('.')[0]
+    : generateID();
+  return videoUUID;
+};
+
+const getVideoInfo = async (videoUrl, createThumbnail=false) => {
+  const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
+  const thumbnail = createThumbnail ? await generateThumbnail(videoUrl) : undefined;
+  const id = getVideoUUID(videoUrl);
+  const videoInfo = {
+    id: id,
+    local: true,
+    thumbnail: thumbnail,
+    url: videoUrl,
+    durationSeconds: pmVideoInfo.duration,
+    bitrate: pmVideoInfo.bitrate,
+    frameRate: pmVideoInfo.frameRate,
+    size: pmVideoInfo.size,
+  }
   return videoInfo;
 };
 
@@ -214,4 +225,5 @@ module.exports = {
   permission,
   goToSettings,
   resolutionP,
+  getVideoUUID,
 };

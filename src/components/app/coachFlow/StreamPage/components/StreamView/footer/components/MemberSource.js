@@ -9,7 +9,7 @@ import database from '@react-native-firebase/database';
 import ImageUser from '../../../../../../../layout/image/ImageUser';
 import AddFlagButton from './AddFlagButton';
 import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
-import {arrayUploadFromSnipets} from '../../../../../../../functions/videoManagement';
+import {arrayUploadFromSnippets} from '../../../../../../../functions/videoManagement';
 import {navigate} from '../../../../../../../../../NavigationService';
 
 import colors from '../../../../../../../style/colors';
@@ -45,10 +45,21 @@ class MemberSource extends Component {
         memberID === userID
       ) {
         const {uploadRequest} = recording;
-        const {flagsSelected} = uploadRequest;
-
+        let {flagsSelected} = uploadRequest
+        if (prevRecording?.uploadRequest?.flagsSelected) {
+          const newClipKeys = Object.keys(flagsSelected)
+            .filter((clip) => 
+              !prevRecording.uploadRequest.flagsSelected[clip])
+          let newFlags = {}
+          for (let id in newClipKeys) {
+            newFlags[id] = flagsSelected[id]
+          }
+          flagsSelected = newFlags
+        }
+        
         const membersSession = getMembers();
-        const videosToUpload = await arrayUploadFromSnipets({
+        console.log('met with request to upload')
+        const videosToUpload = await arrayUploadFromSnippets({
           flagsSelected,
           recording,
           coachSessionID,
@@ -77,7 +88,7 @@ class MemberSource extends Component {
   timer() {
     const {member} = this.state;
     const {recording} = member;
-    const {dispatched} = recording;
+    const dispatched = recording?.dispatched
     const isRecording = recording && recording.isRecording;
 
     const timer = (startTimestamp) => {

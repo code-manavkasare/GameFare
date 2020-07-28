@@ -24,74 +24,41 @@ class UploadMenu extends Component {
     this.state = {
       visible: false,
       totalProgress: 0,
-      taskLength: 0
+      taskLength: 0,
+      cloudQueue: []
     }
     this.uploadReveal = new Animated.Value(-1);
   }
 
   componentDidMount() {
-    console.log('totalProgress', this.state.totalProgress)
     this.props.onRef(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const {taskLength} = prevState
-    const {status, queue} = this.props.uploadQueue;
-    const {status: prevStatus, queue: prevQueue} = prevProps.uploadQueue;
-    const displayLength = queue.filter((task) => task.displayInList).length
-    if (status !== prevStatus || (displayLength > 0 && taskLength === 0)) {
-      console.log('lengths', displayLength, taskLength)
-      if (displayLength === 0 && taskLength > 0) 
-        this.display(0)
-      if (
-        status === 'uploading' &&
-        displayLength > 0) this.display(1)
-      if (displayLength > taskLength) {
-        console.log('task length', displayLength)
-        this.setState({taskLength: displayLength})
-      }
-    }
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    const {queue} = props.uploadQueue;
-    const {taskLength: prevTaskLength} = state;
-    const displayQueue = queue.filter((task) => task.displayInList)
-    const taskLength = (displayQueue.length > prevTaskLength) ? 
-      displayQueue.length : prevTaskLength
-    let sum = 0
-    for (var task in displayQueue) {
-      sum += displayQueue[task]?.progress
-    }
-    sum += taskLength - displayQueue.length
-    const totalProgress = sum / taskLength
-    return {
-      totalProgress: totalProgress ? totalProgress : 0
-    }
-  }
-
-  display(val) {
+  display(val, taskLength) {
     const {visible} = this.state
     
     if (val === 0) {
+      this.setState({totalProgress: 1})
       setTimeout(() => {
         Animated.parallel([
           Animated.timing(this.uploadReveal, native(-1, 300))
         ]).start();
+        this.setState({visible: false})
         this.props.close(true)
-        this.setState({taskLength: 0})
-      }, 1000)
+      }, 1500)
     } else if (!visible) {
-      Animated.parallel([
-        Animated.timing(this.uploadReveal, native(0, 300))
-      ]).start();
+      this.props.openUploadQueue()
+    }
+    if (taskLength && taskLength > this.state.taskLength) {
+      this.setState({taskLength})
     }
   }
 
-  open() {
+  open(val) {
+    console.log('opening')
     this.setState({visible: true})
     Animated.parallel([
-      Animated.timing(this.uploadReveal, native(1, 300))
+      Animated.timing(this.uploadReveal, native(val ? val : 0, 300))
     ]).start();
   }
 
@@ -139,16 +106,12 @@ class UploadMenu extends Component {
     return(
       <Animated.View style={{...styles.progressContainer, width}}>
         <Progress.Bar
-          color={colors.blueLight}
+          color={colors.blue}
           width={null}
           progress={totalProgress}
           borderWidth={0}
           height={6}
           unfilledColor={colors.white}
-          formatText={() => {
-            if (totalProgress === 0) return '';
-            return `${Math.round(totalProgress * 100)}%`;
-          }}
         />
       </Animated.View>
     )
@@ -177,7 +140,12 @@ class UploadMenu extends Component {
           <Text style={styles.text}>Uploading</Text>
         </TouchableWithoutFeedback>
         <View style={{height:350, width:'100%'}}>
-          <QueueList />
+          <QueueList 
+            onFetch={(cloudQueue) => {this.setState({cloudQueue})}}
+            onClose={() => {this.display(0)}}
+            onOpen={(taskLength) => {this.display(1, taskLength)}}
+            totalProgress={(totalProgress) => {this.setState({totalProgress})}}
+          />
         </View>
       </Animated.View>
     )

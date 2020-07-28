@@ -20,6 +20,7 @@ class UploadManager extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const {queue} = this.props.uploadQueue;
     this.processQueue(false);
   }
 
@@ -41,7 +42,6 @@ class UploadManager extends Component {
         default:
           break;
       }
-      await this.completeTask(index);
     }
   };
 
@@ -53,25 +53,27 @@ class UploadManager extends Component {
     uploadQueueAction('dequeueFileUpload', index);
   }
 
-  databaseUpdates(url) {
-    const {queue, index} = this.props.uploadQueue;
-    const task = queue[index];
-    const {firebaseUpdates, destinationFile} = task;
-
-    let updates = {...firebaseUpdates};
-    updates[destinationFile] = url;
-    database()
-      .ref()
-      .update(updates);
+  databaseUpdates(url, task) {
+    const firebaseUpdates = task?.firebaseUpdates;
+    const destinationFile = task?.destinationFile
+    if (firebaseUpdates && destinationFile) {
+      let updates = {...firebaseUpdates}
+      updates[destinationFile] = url;
+      database()
+        .ref()
+        .update(updates);
+    }
   }
 
   uploadImageAtQueueIndex = async (index) => {
     const {uploadQueue, uploadQueueAction} = this.props;
     const imageInfo = uploadQueue.queue[index];
 
-    if (imageInfo.simulator) return;
+    if (!imageInfo || imageInfo?.simulator) return;
 
     const {storageDestination} = imageInfo;
+    console.log('uploading image')
+    console.log(imageInfo)
     const imageUrl = await uploadImage(
       //  'file:///' +
       imageInfo.path,
@@ -79,46 +81,54 @@ class UploadManager extends Component {
       'image.jpg',
     );
 
-    uploadQueueAction('setJobProgress', {index: index, progress: 0.9});
+    uploadQueueAction('setJobProgress', {index: index, progress: 1});
+
+    await this.completeTask(index);
 
     if (imageInfo.updateFirebaseAfterUpload)
-      await this.databaseUpdates(imageUrl);
-
-    uploadQueueAction('setJobProgress', {index: index, progress: 1});
+      await this.databaseUpdates(imageUrl, imageInfo);
   };
 
   uploadVideoAtQueueIndex = async (index) => {
     const {uploadQueue, uploadQueueAction} = this.props;
-    const videoInfo = uploadQueue.queue[index];
-
+    let videoInfo = uploadQueue.queue[index];
     if (videoInfo.simulator) return;
-
     const {storageDestination} = videoInfo;
-    console.log(videoInfo.filename)
+    let {progressUpdates} = videoInfo;
     if (videoInfo.uploadThumbnail) {
+      console.log('videoInfo', videoInfo)
       const thumbnailUrl = await uploadImage(
         'file:///' + videoInfo.thumbnail,
         storageDestination,
         'thumbnail.jpg',
       );
+      videoInfo.firebaseUpdates = {
+        ...videoInfo.firebaseUpdates,
+        [`${storageDestination}/thumbnail`]: thumbnailUrl,
+      }
     }
-
+    if (progressUpdates?.uploadPaths) {
+      let constructor = {...progressUpdates.constructor}
+      await database()
+        .ref()
+        .update(constructor);
+    }
     uploadQueueAction('setJobProgress', {index: index, progress: 0.2});
-
     const videoUrl = await uploadVideo(
       videoInfo,
       storageDestination,
       'archive.mp4',
       index,
-      uploadQueueAction
+      uploadQueueAction,
+      progressUpdates
     );
-
-    uploadQueueAction('setJobProgress', {index: index, progress: 0.9});
-
-    if (videoInfo.updateFirebaseAfterUpload)
-      await this.databaseUpdates(videoUrl);
-      
+    console.log('video uploaded');
     uploadQueueAction('setJobProgress', {index: index, progress: 1});
+    
+    if (videoInfo.updateFirebaseAfterUpload) {
+      await this.databaseUpdates(videoUrl, videoInfo);
+    }
+    await this.completeTask(index);
   };
 }
 

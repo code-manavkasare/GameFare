@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  Animated,
   StyleSheet,
   Image,
+  Animated,
   TouchableHighlight,
 } from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
@@ -14,13 +14,45 @@ import Swipeout from 'react-native-swipeout';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
+import {timing, native, nativeAsJS} from '../../animations/animations';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 import {FormatDate, formatDuration} from '../../functions/date'
+import AllIcons from '../../layout/icons/AllIcons';
+
+/*
+Task Object: (required keys)
+  {
+    thumbnail: url,
+    durationSeconds: int,
+    date: int,
+    progress: int
+  }
+*/
 
 class TaskCard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      task: {}
+    }
+  }
+
+  componentDidMount() {
+    this.props.onRef(this)
+  }
+
+  static getDerivedStateFromProps (props, state) {
+    const {task} = props;
+    let stateTask = {...task}
+    if (!task.progress) stateTask.progress = 0
+    return {
+      task: stateTask
+    }
+  }
+
   thumbnail() {
-    const {task} = this.props;
+    const {task} = this.state;
     return (
       <View style={styles.fullCenter}>
         <View style={{...styles.thumbnail}}>
@@ -30,14 +62,12 @@ class TaskCard extends Component {
           <View style={styles.placeholderContainer} />
         )}
         </View>
-        <View style={{position: 'absolute'}}>
-        </View>
       </View>
     );
   }
 
   taskInfo() {
-    const {task} = this.props;
+    const {task} = this.state;
     const {currentScreenSize, members} = this.props;
 
     const {type, filename} = task;
@@ -47,11 +77,7 @@ class TaskCard extends Component {
         <Text style={{...styleApp.title, fontSize: 15, marginBottom:5}}>
           {type === 'image'
             ? filename
-            : formatDuration(
-                task.duration
-                  ? task.duration
-                  : (task.stopTime - task.startTime) / 1000,
-              )}
+            : formatDuration(task.durationSeconds)}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15, marginBottom:15}}>
           <FormatDate date={task.date} />
@@ -83,10 +109,13 @@ class TaskCard extends Component {
   }
 
   render() {
-    const {task, index} = this.props;
-    const id = task.localIdentifier;
+    const {index} = this.props;
+    const {task} = this.state;
     return (
-      <View style={{...styles.card, opacity: (task.progress === 0) ? 0.6 : 1}}>
+      <View style={{
+        ...styles.card,
+        opacity: (task.progress !== 0 || index === 0) ? 1 : 0.7
+      }}>
         <Row>
           <Col size={15}>{this.thumbnail()}</Col>
           <Col size={5} />
@@ -99,7 +128,8 @@ class TaskCard extends Component {
   }
 
   deleteJob(index) {
-    const {uploadQueueAction, task} = this.props;
+    const {uploadQueueAction} = this.props;
+    const {task} = this.state
     if (task.progress === 0) uploadQueueAction('dequeueFileUpload', index);
   }
 }
@@ -111,9 +141,9 @@ const styles = StyleSheet.create({
   },
   card: {
     ...styleApp.marginView,
-    height: 80,
-    marginTop:15,
-    marginBottom:5
+    paddingTop:15,
+    paddingBottom:15,
+    overflow: 'hidden'
   },
   thumbnail: {
     width:50,
@@ -139,6 +169,13 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     tintColor: colors.grey,
+  },
+  complete: {
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    position: 'absolute',
+    backgroundColor:colors.greyLight+'40',
+    opacity:0.8
   },
   taskInfo: {
     paddingLeft: 10,

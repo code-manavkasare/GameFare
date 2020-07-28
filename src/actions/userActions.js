@@ -104,9 +104,9 @@ const userAction = (val, data) => {
       return database()
         .ref('users/' + userID)
         .on('value', function(snap) {
-          console.log('user info updated');
+          // console.log('user info updated');
           var infoUser = snap.val();
-          console.log('infoUserarchive: ', infoUser.archivedStreams);
+          // console.log('infoUserarchive: ', infoUser.archivedStreams);
 
           // infoUser.archivedStreams = filterArchivesBindToFirebase(
           //   infoUser.archivedStreams,
