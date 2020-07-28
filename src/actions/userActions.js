@@ -6,7 +6,6 @@ import {mergeDeepLeft} from 'ramda';
 
 import {
   HIDE_FOOTER_APP,
-  RESET_COACH_DATA,
   RESET_USER_INFO,
   RESET_USER_MESSAGES,
   SET_ARCHIVE_FIREBASE_BIND_STATUS,
@@ -17,8 +16,8 @@ import {
 
 import {store} from '../../reduxStore.js';
 import {resetDataCoachSession} from './coachActions';
-import {setArchive} from './archivesActions.js';
-import {setAllSessions} from './coachActions.js';
+import {resetArchives, setArchive} from './archivesActions.js';
+import {resetSessions, setSession} from './coachSessionsActions.js';
 
 import {subscribeToTopics} from '../components/functions/notifications';
 const mixPanelToken = 'f850115393f202af278e9024c2acc738';
@@ -58,37 +57,47 @@ const setCoachSessionFirebaseBindStatus = (id, isBinded) => ({
   isBindedToFirebase: isBinded,
 });
 
-// const resetDataCoachSession = () => ({
-//   type: RESET_COACH_DATA,
-// });
-
 var infoUserToPushSaved = '';
 
 const filterArchivesBindToFirebase = (archives) => {
   const archivesFromStore = store.getState().user.infoUser.archivedStreams;
-  if (archives && archivesFromStore) {
-    const filteredArchives = mergeDeepLeft(archives, archivesFromStore);
-    return filteredArchives;
-  } else if (archives) {
+  if (!archivesFromStore && archives) {
     return archives;
-  } else {
+  }
+  if (!archivesFromStore && !archives) {
     return {};
   }
+
+  let filteredArchives = {};
+  for (const archive of Object.values(archives)) {
+    const archiveFromStore = {...archivesFromStore[archive.id]};
+    if (archiveFromStore) {
+      filteredArchives[archive.id] = mergeDeepLeft(archive, archiveFromStore);
+    }
+  }
+  return filteredArchives;
 };
 
 const filterCoachSessionBindToFirebase = (coachSessions) => {
   const coachSessionsFromStore = store.getState().user.infoUser.coachSessions;
-  if (coachSessions && coachSessionsFromStore) {
-    const filteredCoachSessions = mergeDeepLeft(
-      coachSessions,
-      coachSessionsFromStore,
-    );
-    return filteredCoachSessions;
-  } else if (coachSessions) {
+  if (!coachSessionsFromStore && coachSessions) {
     return coachSessions;
-  } else {
+  }
+  if (!coachSessionsFromStore && !coachSessions) {
     return {};
   }
+
+  let filteredCoachSessions = {};
+  for (const coachSession of Object.values(coachSessions)) {
+    const coachSessionFromStore = {...coachSessionsFromStore[coachSession.id]};
+    if (coachSessionFromStore) {
+      filteredCoachSessions[coachSession.id] = mergeDeepLeft(
+        coachSession,
+        coachSessionFromStore,
+      );
+    }
+  }
+  return filteredCoachSessions;
 };
 
 const userAction = (val, data) => {
@@ -103,16 +112,15 @@ const userAction = (val, data) => {
 
       return database()
         .ref('users/' + userID)
-        .on('value', function(snap) {
-          console.log('user info updated');
+        .on('value', async function(snap) {
           var infoUser = snap.val();
-          console.log('infoUserarchive: ', infoUser.archivedStreams);
 
-          // infoUser.archivedStreams = filterArchivesBindToFirebase(
+          //Uncomment for store set up
+          // infoUser.archivedStreams = await filterArchivesBindToFirebase(
           //   infoUser.archivedStreams,
           // );
 
-          // infoUser.coachSessions = filterCoachSessionBindToFirebase(
+          // infoUser.coachSessions = await filterCoachSessionBindToFirebase(
           //   infoUser.coachSessions,
           // );
 
@@ -139,6 +147,7 @@ const userAction = (val, data) => {
             dispatch(setUserInfo(infoUserToPush));
           }
 
+          //Uncomment for store set up
           // if (infoUser.archivedStreams) {
           //   for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
           //     const archiveInfoFromStore = store.getState().user.infoUser
@@ -164,9 +173,7 @@ const userAction = (val, data) => {
           //         .ref(`coachSessions/${coachSession.id}`)
           //         .on('value', function(snapshot) {
           //           const coachSessionFirebase = snapshot.val();
-          //           dispatch(
-          //             setAllSessions({[coachSession.id]: coachSessionFirebase}),
-          //           );
+          //           dispatch(setSession(coachSessionFirebase));
           //           dispatch(
           //             setCoachSessionFirebaseBindStatus(coachSession.id, true),
           //           );
@@ -183,6 +190,8 @@ const userAction = (val, data) => {
         .ref('users/' + data.userID)
         .off('value');
       await dispatch(resetDataCoachSession());
+      await dispatch(resetArchives());
+      await dispatch(resetSessions());
       await dispatch(resetUserInfo());
       await dispatch(resetMessages());
 

@@ -15,6 +15,7 @@ import layoutReducer from './layoutReducer';
 import uploadQueueReducer from './uploadQueueReducer';
 import appSettingsReducer from './appSettingsReducer';
 import archivesReducer from './archivesReducer.js';
+import coachSessionsReducer from './coachSessionsReducer.js';
 
 export default combineReducers({
   globaleVariables: globaleVariablesReducer,
@@ -31,5 +32,6 @@ export default combineReducers({
   layout: layoutReducer,
   uploadQueue: uploadQueueReducer,
   archives: archivesReducer,
+  coachSessions: coachSessionsReducer,
   network,
 });
