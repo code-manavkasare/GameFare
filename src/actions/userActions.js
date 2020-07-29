@@ -115,14 +115,13 @@ const userAction = (val, data) => {
         .on('value', async function(snap) {
           var infoUser = snap.val();
 
-          //Uncomment for store set up
           infoUser.archivedStreams = await filterArchivesBindToFirebase(
             infoUser.archivedStreams,
           );
 
-          // infoUser.coachSessions = await filterCoachSessionBindToFirebase(
-          //   infoUser.coachSessions,
-          // );
+          infoUser.coachSessions = await filterCoachSessionBindToFirebase(
+            infoUser.coachSessions,
+          );
 
           var userConnected = false;
           var userIDSaved = '';
@@ -147,7 +146,6 @@ const userAction = (val, data) => {
             dispatch(setUserInfo(infoUserToPush));
           }
 
-          //Uncomment for store set up
           if (infoUser.archivedStreams) {
             for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
               const archiveInfoFromStore = store.getState().user.infoUser
@@ -164,23 +162,23 @@ const userAction = (val, data) => {
             }
           }
 
-          // if (infoUser.coachSessions) {
-          //   for (const coachSession of Object.values(infoUser.coachSessions)) {
-          //     const coachSessionFromStore = store.getState().user.infoUser
-          //       .coachSessions[coachSession.id];
-          //     if (!coachSessionFromStore.isBindedToFirebase) {
-          //       database()
-          //         .ref(`coachSessions/${coachSession.id}`)
-          //         .on('value', function(snapshot) {
-          //           const coachSessionFirebase = snapshot.val();
-          //           dispatch(setSession(coachSessionFirebase));
-          //           dispatch(
-          //             setCoachSessionFirebaseBindStatus(coachSession.id, true),
-          //           );
-          //         });
-          //     }
-          //   }
-          // }
+          if (infoUser.coachSessions) {
+            for (const coachSession of Object.values(infoUser.coachSessions)) {
+              const coachSessionFromStore = store.getState().user.infoUser
+                .coachSessions[coachSession.id];
+              if (!coachSessionFromStore.isBindedToFirebase) {
+                database()
+                  .ref(`coachSessions/${coachSession.id}`)
+                  .on('value', function(snapshot) {
+                    const coachSessionFirebase = snapshot.val();
+                    dispatch(setSession(coachSessionFirebase));
+                    dispatch(
+                      setCoachSessionFirebaseBindStatus(coachSession.id, true),
+                    );
+                  });
+              }
+            }
+          }
 
           return userConnected;
         });
