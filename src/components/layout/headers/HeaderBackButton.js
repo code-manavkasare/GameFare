@@ -10,6 +10,7 @@ import colors from '../../style/colors';
 import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
 import styleApp from '../../style/style';
+import AsyncImage from '../image/AsyncImage';
 
 class HeaderBackButton extends Component {
   constructor(props) {
@@ -78,6 +79,7 @@ class HeaderBackButton extends Component {
       sizeIcon1,
       typeIcon1,
       nobackgroundColorIcon1,
+      onPressColorIcon1,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
     if (icon1)
@@ -94,7 +96,16 @@ class HeaderBackButton extends Component {
           ]}>
           <ButtonColor
             view={() => {
-              return (
+              return typeIcon1 === 'image' ? (
+                <AsyncImage
+                  mainImage={icon1}
+                  style={{
+                    width: sizeIcon1,
+                    height: sizeIcon1,
+                    borderRadius: sizeIcon1 / 2,
+                  }}
+                />
+              ) : (
                 <AllIcons
                   name={icon1}
                   color={colorIcon1 ? colorIcon1 : colors.title}
@@ -104,6 +115,48 @@ class HeaderBackButton extends Component {
               );
             }}
             click={() => this.props.clickButton1()}
+            color={backgroundColorIcon1 ? backgroundColorIcon1 : 'white'}
+            style={[styles.buttonRight]}
+            onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
+          />
+        </Animated.View>
+      );
+    return null;
+  }
+  button11() {
+    const {
+      icon11,
+      backgroundColorIcon1,
+      colorIcon11,
+      sizeIcon11,
+      typeIcon11,
+      nobackgroundColorIcon1,
+    } = this.props;
+    const {borderColorIcon} = this.animatedValues();
+    if (icon11)
+      return (
+        <Animated.View
+          style={[
+            styles.animatedButtonStyle,
+            {
+              backgroundColor: backgroundColorIcon1
+                ? backgroundColorIcon1
+                : colors.white,
+              borderColor: borderColorIcon,
+            },
+          ]}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name={icon11}
+                  color={colorIcon11 ? colorIcon11 : colors.title}
+                  size={sizeIcon11 ? sizeIcon11 : 15}
+                  type={typeIcon11 ? typeIcon11 : 'font'}
+                />
+              );
+            }}
+            click={() => this.props.clickButton11()}
             color={nobackgroundColorIcon1 ? null : 'white'}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
@@ -180,6 +233,7 @@ class HeaderBackButton extends Component {
       colorIconOffset2,
       sizeIconOffset2,
       typeIconOffset2,
+      nobackgroundColorIcon1,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
     if (iconOffset2)
@@ -195,6 +249,7 @@ class HeaderBackButton extends Component {
             },
           ]}>
           <ButtonColor
+            color={nobackgroundColorIcon1 ? null : 'white'}
             view={() => {
               return iconOffset2 === 'text' ? (
                 <Text style={styleApp.textBold}>{textOffset2}</Text>
@@ -321,7 +376,7 @@ class HeaderBackButton extends Component {
             {this.button1()}
           </Col>
           <Col size={15} style={styleApp.center}>
-            {imgHeader && imgHeader}
+            {imgHeader ? imgHeader : this.button11()}
           </Col>
           <Col size={11} style={styles.center} />
           <Col size={18} style={[styleApp.center3]}>

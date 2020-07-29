@@ -68,6 +68,7 @@ export default class VideoPlayer extends Component {
         paused: !props.myVideo ? props.paused : false,
         playRate: props.playRate,
         currentTime: 0,
+        loader: true,
         totalTime: false,
         placeHolderImg: props.placeHolderImg,
       };

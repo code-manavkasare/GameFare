@@ -8,7 +8,7 @@ import {
   RESET_UPLOAD_QUEUE,
 } from './types';
 
-const enqueueFileUpload = (value) => ({
+export const enqueueFileUpload = (value) => ({
   type: ENQUEUE_FILE_UPLOAD,
   value: value,
 });

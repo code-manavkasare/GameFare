@@ -187,20 +187,24 @@ const getVideoUUID = (path) => {
   return videoUUID;
 };
 
-const getVideoInfo = async (videoUrl, createThumbnail=false) => {
+const getVideoInfo = async (videoUrl, createThumbnail) => {
+  console.log('');
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  const thumbnail = createThumbnail ? await generateThumbnail(videoUrl) : undefined;
+  const thumbnail = createThumbnail
+    ? await generateThumbnail(videoUrl)
+    : undefined;
   const id = getVideoUUID(videoUrl);
   const videoInfo = {
     id: id,
     local: true,
+    id: id,
     thumbnail: thumbnail,
     url: videoUrl,
     durationSeconds: pmVideoInfo.duration,
     bitrate: pmVideoInfo.bitrate,
     frameRate: pmVideoInfo.frameRate,
     size: pmVideoInfo.size,
-  }
+  };
   return videoInfo;
 };
 

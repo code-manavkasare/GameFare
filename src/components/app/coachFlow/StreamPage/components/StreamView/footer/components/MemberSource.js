@@ -58,7 +58,6 @@ class MemberSource extends Component {
         }
         
         const membersSession = getMembers();
-        console.log('met with request to upload')
         const videosToUpload = await arrayUploadFromSnippets({
           flagsSelected,
           recording,

@@ -443,6 +443,7 @@ const styles = StyleSheet.create({
   },
   stylePage: {
     flex: 1,
+    minHeight: height,
     borderLeftWidth: 0,
     borderRadius: 0,
     borderColor: colors.off,

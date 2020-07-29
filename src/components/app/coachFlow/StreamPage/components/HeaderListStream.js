@@ -53,34 +53,40 @@ class HeaderListStream extends Component {
     return sessionOpening(session);
   }
   header = () => {
-    const {hideButtonNewSession, AnimatedHeaderValue} = this.props;
+    const {hideButtonNewSession, AnimatedHeaderValue, infoUser} = this.props;
+
     const {loader} = this.state;
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={''}
+        textHeader={'Teams'}
         inputRange={[5, 10]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         loader={loader}
         initialBorderColorHeader={colors.white}
-        initialTitleOpacity={1}
+        initialTitleOpacity={0}
         initialBorderWidth={1}
-        icon1={'whistle'}
-        typeIcon1="moon"
-        sizeIcon1={30}
-        colorIcon1={colors.title}
-        clickButton1={() => navigate('Coaches')}
-        iconOffset={'bell'}
-        typeIconOffset="font"
-        sizeIconOffset={23}
-        colorIconOffset={colors.title}
-        clickButtonOffset={() => navigate('NotificationPage')}
-        icon2={!hideButtonNewSession && 'plus'}
+        // icon1={'whistle'}
+        // typeIcon1="moon"
+        // sizeIcon1={30}
+        // colorIcon1={colors.title}
+        // clickButton1={() => navigate('Coaches')}
+        // icon1={!hideButtonNewSession && 'plus'}
+        // typeIcon1="font"
+        // sizeIcon1={22}
+        // colorIcon1={colors.title}
+        // clickButton1={() => this.newSession()}
+        icon2={'bell'}
+        typeIcon2="font"
         sizeIcon2={23}
         colorIcon2={colors.title}
-        typeIcon2="font"
-        clickButton2={() => this.newSession()}
+        clickButton2={() => navigate('NotificationPage')}
+        icon1={infoUser.picture ? infoUser.picture : 'profileFooter'}
+        sizeIcon1={31}
+        colorIcon1={colors.title}
+        typeIcon1={infoUser.picture ? 'image' : 'moon'}
+        clickButton1={() => navigate('MorePage')}
       />
     );
   };

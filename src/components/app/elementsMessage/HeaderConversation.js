@@ -62,13 +62,13 @@ class HeaderConversation extends React.Component {
         inputRange={[50, 80]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
-        typeIcon2={'mat'}
+        typeIcon2={'moon'}
         initialBorderWidth={1}
         initialBorderColorHeader={colors.off}
         sizeIcon2={26}
         initialTitleOpacity={1}
         icon1={'arrow-left'}
-        icon2={'videocam'}
+        icon2={'film'}
         clickButton1={() =>
           back ? navigation.goBack() : navigation.dangerouslyGetParent().pop()
         }

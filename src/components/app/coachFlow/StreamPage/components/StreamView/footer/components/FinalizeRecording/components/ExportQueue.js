@@ -67,9 +67,9 @@ class ExportQueue extends Component {
     if (selfThumbnails) {
       let selfIndex = members.findIndex((m) => m?.id === userID)
       for (var thumbnail in selfThumbnails) {
-        let {filename, path} = selfThumbnails[thumbnail]
+        let {filename, url} = selfThumbnails[thumbnail]
         if (filename == "Thumbnail full video") {
-          members[selfIndex].recording.thumbnail = path
+          members[selfIndex].recording.thumbnail = url
         } 
       }
     }
@@ -148,6 +148,7 @@ class ExportQueue extends Component {
   }
 
   confirm = async () => {
+    console.log('export queue confirm');
     this.close(true)
     const {flagsSelected: allFlags, members} = this.state;
     const {coachSessionID, userID} = this.props;
@@ -217,7 +218,6 @@ class ExportQueue extends Component {
           }}
           contentContainerStyle={{ paddingRight:50 }}
           showsHorizontalScrollIndicator={false}> 
-          {/* {members && <Text>asdfasdfasdfasdfad</Text>} */}
             {Object.values(members)
               .map((member) => {
                   const recording = member?.recording

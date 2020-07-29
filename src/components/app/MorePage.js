@@ -20,6 +20,7 @@ import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Communications from 'react-native-communications';
 
 import ScrollView from '../layout/scrollViews/ScrollView2';
+import HeaderBackButton from '../layout/headers/HeaderBackButton';
 import sizes from '../style/sizes';
 import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
 import NavigationService, {
@@ -228,7 +229,7 @@ class MorePage extends Component {
   profile() {
     const {infoUser, userConnected} = this.props;
     return (
-      <View style={{marginTop: 20}}>
+      <View style={{marginTop: 0}}>
         {userConnected ? (
           <View>
             <TouchableOpacity
@@ -302,8 +303,7 @@ class MorePage extends Component {
             })}
 
             <Text style={styles.title}>Account parameters</Text>
-            <View style={styleApp.divider} />
-            {this.button('video', 'Video Library', 'VideoLibraryPage')}
+            <View style={styles.divider} />
 
             {this.button('cog', 'App Settings', 'AppSettings')}
             <ButtonNotification displayBeforeLoader={true} />
@@ -336,11 +336,11 @@ class MorePage extends Component {
         )}
 
         <Text style={styles.title}>Assistance</Text>
-        <View style={styleApp.divider} />
+        <View style={styles.divider} />
         {this.button('envelope', 'Email', 'Alert', 'email')}
 
         <Text style={styles.title}>Social media</Text>
-        <View style={styleApp.divider} />
+        <View style={styles.divider} />
         {this.button(
           'instagram',
           'Visit us on Instagram',
@@ -350,7 +350,7 @@ class MorePage extends Component {
         )}
 
         <Text style={styles.title}>Legal</Text>
-        <View style={styleApp.divider} />
+        <View style={styles.divider} />
         {this.button(
           false,
           'Privacy policy',
@@ -505,15 +505,32 @@ class MorePage extends Component {
     return true;
   }
   render() {
+    const {infoUser} = this.props;
+    const {goBack} = this.props.navigation;
     return (
       <View style={[styleApp.stylePage]}>
+        <HeaderBackButton
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          textHeader={infoUser.firstname + ' ' + infoUser.lastname}
+          inputRange={[2, 5]}
+          initialBorderColorIcon={'white'}
+          initialBackgroundColor={'white'}
+          initialBorderColorHeader={colors.white}
+          initialTitleOpacity={0}
+          initialBorderWidth={1}
+          icon1={'arrow-left'}
+          typeIcon1="font"
+          sizeIcon1={17}
+          colorIcon1={colors.title}
+          clickButton1={() => goBack()}
+        />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={0}
-          offsetBottom={sizes.heightFooter + 90}
+          marginTop={sizes.heightHeaderHome}
+          offsetBottom={70}
           showsVerticalScrollIndicator={true}
         />
       </View>
@@ -531,6 +548,11 @@ const styles = StyleSheet.create({
     borderColor: colors.borderColor,
     backgroundColor: 'white',
     borderBottomWidth: 0,
+  },
+  divider: {
+    ...styleApp.divider,
+    marginLeft: '5%',
+    width: '90%',
   },
   buttonLogin: {
     //  marginRight: '5%',

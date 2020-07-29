@@ -82,33 +82,34 @@ class Footer extends React.Component {
       <Animated.View
         style={[
           styles.footer,
-          styleApp.center3,
-          {bottom: marginBottomApp},
-          {marginLeft: (width - widthFooter) / 2},
+          // styleApp.center3,
+          {bottom: 0},
+          // {marginLeft: (width - widthFooter) / 2},
           {transform: [{translateY: this.translateYFooter}]},
         ]}>
         <Row style={{width: '100%'}}>
-          <Animated.View
+          {/* <Animated.View
             style={[
               {transform: [{translateX: this.translateXMovingView}]},
               styles.absoluteButtonMoving,
-              {width: widthFooter / (state.routes.length - 1)},
+              {width: widthFooter / (state.routes.length - 2)},
             ]}>
             <View style={styles.roundBlueView} />
-          </Animated.View>
+          </Animated.View> */}
           {state.routes.map((route, index) => {
             const {options} = descriptors[route.key];
             const {
               icon,
               label,
+              hideInFooter,
               signInToPass,
               displayPastille,
               pageStack,
             } = options;
-            if (label === 'Session') return null;
+            if (hideInFooter) return null;
             const isFocused = state.index === index;
             return (
-              <Col style={[styleApp.center]} key={index}>
+              <Col key={index}>
                 <ButtonFooter
                   navigation={navigation}
                   isFocused={isFocused}
@@ -119,7 +120,7 @@ class Footer extends React.Component {
                   signInToPass={signInToPass}
                   icon={icon}
                   index={index}
-                  numberRoutes={state.routes.length - 1}
+                  numberRoutes={state.routes.length - 2}
                   translateBlueView={this.translateBlueView.bind(this)}
                   label={label}
                 />
@@ -140,13 +141,13 @@ const styles = StyleSheet.create({
     ...styleApp.shade,
     flexDirection: 'row',
     backgroundColor: 'white',
-    height: heightFooter,
+    height: heightFooter + marginBottomApp,
     position: 'absolute',
     zIndex: 0,
-    width: widthFooter,
+    width: '100%',
 
-    borderWidth: 1,
-    borderRadius: heightFooter / 2,
+    borderTopWidth: 1,
+    borderRadius: 0,
     // overflow: 'hidden',
     borderColor: colors.off,
   },

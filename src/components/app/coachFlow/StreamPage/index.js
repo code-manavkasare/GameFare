@@ -3,11 +3,17 @@ import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
+import {Row, Col} from 'react-native-easy-grid';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import {heightFooter, heightHeaderHome} from '../../../style/sizes';
+import sizes, {
+  heightFooter,
+  heightHeaderHome,
+  marginBottomApp,
+} from '../../../style/sizes';
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
+import ButtonColor from '../../../layout/Views/Button';
 
 import LogoutView from './components/LogoutView';
 import PermissionView from './components/PermissionView';
@@ -17,7 +23,7 @@ import Loader from '../../../layout/loaders/Loader';
 import HeaderListStream from './components/HeaderListStream';
 import {sessionOpening} from '../../../functions/coach';
 
-const { height } = Dimensions.get('screen');
+const {height} = Dimensions.get('screen');
 
 class StreamTab extends Component {
   constructor(props) {
@@ -58,8 +64,30 @@ class StreamTab extends Component {
   };
   StreamTab = (currentHeight) => {
     const {permissionsCamera, initialLoader} = this.state;
+
     return (
-      <View style={[styles.containerTabPage, {minHeight: currentHeight - 100}]}>
+      <View style={[styleApp.stylePage, {minHeight: currentHeight - 100}]}>
+        <Row style={[styleApp.marginView, {height: 35}]}>
+          <Col style={styleApp.center2}>
+            <Text style={[styleApp.title]}>Teams</Text>
+          </Col>
+          <Col style={styleApp.center3}>
+            <ButtonColor
+              view={() => {
+                return (
+                  <Text style={[styleApp.textBold, {color: colors.primary}]}>
+                    New team
+                  </Text>
+                );
+              }}
+              style={{width: 100, borderRadius: 5, height: 30}}
+              click={() => this.HeaderRef.newSession()}
+              color={colors.white}
+              onPressColor={colors.off}
+            />
+          </Col>
+        </Row>
+        <View style={[styleApp.divider, {marginBottom: 0}]} />
         {initialLoader && this.viewLoader()}
 
         {!permissionsCamera ? (
@@ -93,9 +121,9 @@ class StreamTab extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.StreamTab(height)}
-          marginBottomScrollView={0}
+          marginBottomScrollView={sizes.heightFooter + sizes.marginBottomApp}
           marginTop={heightHeaderHome}
-          offsetBottom={heightFooter + 90}
+          offsetBottom={30}
           showsVerticalScrollIndicator={true}
         />
       </View>

@@ -187,7 +187,7 @@ const sendSMSFunction = async (phoneNumbers, message) => {
   });
 };
 
-const openDiscussion = async (arrayUsers) => {
+const openDiscussion = async (arrayUsers,idDiscussion) => {
   const users = arrayUsers.map((user) => user.id);
   var discussion = await searchDiscussion(users, users.length);
   console.log('bim seardh discussion', discussion);
@@ -197,6 +197,7 @@ const openDiscussion = async (arrayUsers) => {
       return false;
     }
   }
+  
   return discussion;
 };
 

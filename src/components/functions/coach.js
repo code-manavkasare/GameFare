@@ -9,6 +9,7 @@ import StatusBar from '@react-native-community/status-bar';
 import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
+import {getVideoUUID} from './pictures';
 import {store} from '../../../reduxStore';
 import {
   setCurrentSession,
@@ -269,13 +270,13 @@ const getVideoSharing = (session, personSharingScreen) => {
   return session.sharedVideos[videoIDSharing];
 };
 
-const getVideoUUID = (path) => {
-  if (!path) return 'simulator';
-  const videoUUID = path
-    ? path.split('/')[path.split('/').length - 1].split('.')[0]
-    : generateID();
-  return videoUUID;
-};
+// const getVideoUUID = (path) => {
+//   if (!path) return 'simulator';
+//   const videoUUID = path
+//     ? path.split('/')[path.split('/').length - 1].split('.')[0]
+//     : generateID();
+//   return videoUUID;
+// };
 
 const compressThumbnail = async (initialPath) => {
   const {path} = await ImageResizer.createResizedImage(
@@ -294,6 +295,7 @@ const generateFlagsThumbnail = async ({
   memberID,
   coachSessionID,
 }) => {
+  console.log(flags, source, memberID, coachSessionID);
   let thumbnails = [];
   if (flags) {
     for (var i in flags) {
@@ -304,9 +306,8 @@ const generateFlagsThumbnail = async ({
         timeStamp: flag.time,
       });
       thumbnail = await compressThumbnail(thumbnail);
-
       thumbnails.push({
-        path: thumbnail,
+        url: thumbnail,
         thumbnail: thumbnail,
         localIdentifier: getVideoUUID(thumbnail),
         storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
@@ -327,7 +328,7 @@ const generateFlagsThumbnail = async ({
   });
   thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
   thumbnails.push({
-    path: thumbnailFullVideo,
+    url: thumbnailFullVideo,
     localIdentifier: getVideoUUID(thumbnailFullVideo),
     storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
     destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
@@ -345,7 +346,6 @@ const generateFlagsThumbnail = async ({
     .update({
       [`coachSessions/${coachSessionID}/members/${memberID}/recording/localSource`]: source,
     });
-
   return thumbnails;
 };
 
@@ -480,6 +480,31 @@ const capitalize = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+const deleteSession = (session) => {
+  const {objectID} = session;
+  const userID = store.getState().user.userID;
+  navigate('Alert', {
+    title: 'Do you want to leave this session?',
+    textButton: 'Leave',
+    colorButton: 'red',
+    onPressColor: colors.redLight,
+    onGoBack: async () => {
+      let updates = {};
+      updates[`users/${userID}/coachSessions/${coachSessionID}`] = null;
+      updates[`coachSessions/${coachSessionID}/members/${userID}`] = null;
+      updates[`coachSessions/${coachSessionID}/allMembers/${userID}`] = null;
+      await database()
+        .ref()
+        .update(updates);
+      if (objectID === coachSessionID)
+        await coachAction('setSessionInfo', {
+          objectID: false,
+        });
+      return true;
+    },
+  });
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -508,4 +533,5 @@ module.exports = {
   sessionOpening,
   openMemberAcceptCharge,
   capitalize,
+  deleteSession,
 };

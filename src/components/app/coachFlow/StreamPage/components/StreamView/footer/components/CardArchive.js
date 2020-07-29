@@ -13,8 +13,12 @@ import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
 import {displayTime, timeout} from '../../../../../../../functions/coach';
-import {date} from '../../../../../../../layout/date/date';
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
+import {
+  removeVideo,
+  uploadVideoAlert,
+  openVideoPlayer,
+} from '../../../../../../../functions/videoManagement';
 import {resolutionP} from '../../../../../../../functions/pictures';
 import Loader from '../../../../../../../layout/loaders/Loader';
 
@@ -48,7 +52,8 @@ export default class CardArchive extends Component {
 
   async componentDidMount() {
     const {archive: archiveData} = this.props;
-    this.loadArchive(archiveData.id);
+    if (!archiveData.local) this.loadArchive(archiveData.id);
+    else this.setState({archive: archiveData});
   }
   async loadArchive(archiveID) {
     let archive = await database()
@@ -68,30 +73,15 @@ export default class CardArchive extends Component {
     );
   }
 
-  openVideo = async (url, thumbnail) => {
+  openVideo = async () => {
     const {openVideo} = this.props;
+    const {archive} = this.state;
     if (openVideo) {
-      openVideo(url, thumbnail);
+      openVideo(archive.id);
     } else {
-      this.setState({loader: true, displayVideoPlayer: true});
+      openVideoPlayer(archive, true);
     }
   };
-
-  openStatistics() {
-    const {noUpdateStatusBar} = this.props;
-    const {archive} = this.state;
-    navigate('CourtCalibration', {
-      screen: 'CameraAngle',
-      params: {
-        archive: archive,
-        noUpdateStatusBar: noUpdateStatusBar,
-        onGoBack: async () => {
-          await this.setState({doAnalytics: true});
-          return true;
-        },
-      },
-    });
-  }
 
   videoFullscreen = () => {
     const {archive, videoFullscren, displayVideoPlayer, paused} = this.state;
@@ -117,25 +107,99 @@ export default class CardArchive extends Component {
       );
     }
   };
+  buttonClose() {
+    const {archive: archiveData} = this.props;
+    if (archiveData.local)
+      return (
+        <ButtonColor
+          view={() => (
+            <AllIcons name="times" type="font" color={colors.white} size={15} />
+          )}
+          click={() => removeVideo(archiveData)}
+          color={colors.greyDark + '40'}
+          onPressColor={colors.grey + '40'}
+          style={[
+            {
+              position: 'absolute',
+              height: 30,
+              width: 30,
+              top: 5,
+              left: 5,
+              zIndex: 20,
+            },
+          ]}
+        />
+      );
+    return null;
+  }
+  buttonUpload() {
+    const {archive: archiveData} = this.props;
+    if (archiveData.local)
+      return (
+        <ButtonColor
+          view={() => (
+            <AllIcons name="cloud" type="font" color={colors.white} size={15} />
+          )}
+          click={() => uploadVideoAlert(archiveData)}
+          color={colors.greyDark + '40'}
+          onPressColor={colors.grey + '40'}
+          style={[
+            {
+              position: 'absolute',
+              height: 30,
+              width: 30,
+              top: 5,
+              left: 40,
+              zIndex: 20,
+            },
+          ]}
+        />
+      );
+    return null;
+  }
+  snippetIndicator() {
+    const {archive} = this.props;
+    if (archive.snippets && Object.values(archive.snippets).length > 0) {
+      return (
+        <View style={{
+          position: 'absolute',
+          height: 30,
+          width: 30,
+          bottom: 0,
+          right: 5,
+          zIndex: 20,
+        }}>
+          <AllIcons 
+            name="flag"
+            type="font"
+            color={colors.white}
+            size={15}
+          />
+        </View>
+
+      );
+    } else {
+      return null;
+    }
+  }
   cardArchive(archive) {
     const {isSelected, style, selectableMode, selectVideo} = this.props;
-    const {id, thumbnail, url, startTimestamp, size, durationSeconds} = archive;
+    const {id, thumbnail, url, startTimestamp, size, durationSeconds, snippets} = archive;
     const {loader} = this.state;
-
     return (
       <View style={[styles.cardArchive, style]}>
         {archive ? (
           <View style={styleApp.fullSize}>
+            {this.buttonClose()}
+            {this.buttonUpload()}
+            {this.snippetIndicator()}
             <AsyncImage
               mainImage={thumbnail ? thumbnail : ''}
               style={styleApp.fullSize}
             />
             <View style={styles.resolution}>
               <Text
-                style={[
-                  styleApp.title,
-                  {color: colors.white, fontSize: 12},
-                ]}>
+                style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
                 {resolutionP(size)}
               </Text>
             </View>
@@ -175,11 +239,14 @@ export default class CardArchive extends Component {
               <Col>
                 <Text
                   style={[styleApp.text, {color: colors.white, fontSize: 13}]}>
-                  {formatDuration(durationSeconds*1000, true)}
+                  {formatDuration(durationSeconds * 1000, true)}
                 </Text>
                 <Text
-                  style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
-                    <FormatDate date={startTimestamp} />
+                  style={[
+                    styleApp.textBold,
+                    {color: colors.white, fontSize: 13},
+                  ]}>
+                  <FormatDate date={startTimestamp} />
                 </Text>
               </Col>
             </View>
@@ -196,7 +263,7 @@ export default class CardArchive extends Component {
               click={() =>
                 selectableMode
                   ? selectVideo(id, !isSelected)
-                  : this.openVideo(url, thumbnail)
+                  : this.openVideo()
               }
               color={colors.greyDark + '40'}
               onPressColor={colors.grey + '40'}
@@ -232,13 +299,13 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   resolution: {
-    zIndex:5,
-    position:'absolute',
-    padding:7,
-    top:0,
-    right:0,
+    zIndex: 5,
+    position: 'absolute',
+    padding: 7,
+    top: 0,
+    right: 0,
     backgroundColor: colors.greenLight,
     opacity: 0.8,
-    borderBottomLeftRadius: 5
-  }
+    borderBottomLeftRadius: 5,
+  },
 });
