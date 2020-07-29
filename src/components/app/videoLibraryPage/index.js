@@ -244,13 +244,14 @@ class VideoLibraryPage extends Component {
 
     await Promise.all(
       videos.map(async (video, i) => {
-        let newVideo = await getVideoInfo(video.path);
+        let newVideo = await getVideoInfo(video.path, true);
         newVideo.path = video.path;
         newVideo.localIdentifier = video.localIdentifier;
         uploadingVideosArray[i] = newVideo;
-        // return newVideo;
+        return newVideo;
       }),
     );
+    console.log('uploadingVideosArray', uploadingVideosArray);
 
     this.setState({uploadingVideosArray});
   };
