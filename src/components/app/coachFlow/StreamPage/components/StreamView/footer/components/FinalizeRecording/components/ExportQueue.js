@@ -148,7 +148,6 @@ class ExportQueue extends Component {
   }
 
   confirm = async () => {
-    console.log('export queue confirm');
     this.close(true)
     const {flagsSelected: allFlags, members} = this.state;
     const {coachSessionID, userID} = this.props;

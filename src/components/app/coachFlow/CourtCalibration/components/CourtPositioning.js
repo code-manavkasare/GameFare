@@ -77,7 +77,6 @@ class CourtPositioning extends Component {
     thumbnailsAnalytics = [
       'https://firebasestorage.googleapis.com/v0/b/gamefare-dev-cfc88.appspot.com/o/test%2Ftest.png?alt=media&token=e7d2ea0e-950c-4956-be98-5f257f356ea0',
     ];
-    console.log('render court calibration', archive);
     return (
       <View style={styleApp.marginView}>
         {/* <Row>

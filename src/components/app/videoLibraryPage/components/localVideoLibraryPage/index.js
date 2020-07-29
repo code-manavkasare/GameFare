@@ -13,11 +13,7 @@ import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
 import {includes} from 'ramda';
 
-import CardArchive from '../../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
-
 import {navigate} from '../../../../../../NavigationService';
-import Button from '../../../../layout/buttons/Button';
-
 import {sortVideos} from '../../../../functions/pictures';
 import {
   addVideo,
@@ -27,7 +23,11 @@ import {
 import sizes from '../../../../style/sizes';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
+
+import Button from '../../../../layout/buttons/Button';
 import HeaderVideoLibrary from './components/HeaderLocalVideoLibrary';
+import CardArchive from '../../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+
 const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {
@@ -109,7 +109,7 @@ class VideoLibraryPage extends Component {
         {!isListEmpty && (
           <FlatList
             data={videosArray}
-            renderItem={this.renderCardArchive}
+            renderItem={(data) => this.renderCardArchive(data.item)}
             keyExtractor={(item) => item.id}
             numColumns={2}
             scrollEnabled={false}
@@ -125,26 +125,19 @@ class VideoLibraryPage extends Component {
     navigate('ExpandedSnippetsView', {id});
   }
 
-  renderCardArchive = (video) => {
+  renderCardArchive(video) {
     const {selectableMode, selectedVideos} = this.state;
-    const {id, snippets} = video.item;
+    const {id, snippets} = video;
     const isSelected = includes(id, selectedVideos);
-    // return (
-    //   <View style={styles.cardArchive} key={video.item.id}>
-    //     <Text style={{color: 'white'}}>{video.item.id}</Text>
-    //     <TouchableOpacity onPress={() => removeVideo(video.item.id)}>
-    //       <Text style={{color: 'white', marginTop: 10}}>Remove</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // );
     if (snippets && Object.values(snippets).length > 0) {
       return (
         <CardArchive
+          local={true}
           selectableMode={selectableMode}
           isSelected={isSelected}
           style={styles.cardArchive}
-          archive={video.item}
-          key={video.item.id}
+          id={id}
+          key={id}
           noUpdateStatusBar={true}
           openVideo={(id) => this.openVideoWithSnippets(id)}
         />
@@ -152,11 +145,12 @@ class VideoLibraryPage extends Component {
     } else {
       return (
         <CardArchive
+          local={true}
           selectableMode={selectableMode}
           isSelected={isSelected}
           style={styles.cardArchive}
-          archive={video.item}
-          key={video.item.id}
+          id={id}
+          key={id}
           noUpdateStatusBar={true}
         />
       );

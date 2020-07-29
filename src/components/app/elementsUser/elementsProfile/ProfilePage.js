@@ -62,8 +62,6 @@ class ProfilePage extends Component {
       isBlocked = true;
     }
     const userInfo = await getOnceValue(`users/${userProfile.id}/userInfo`);
-    console.log('userInfo', route.params.user);
-    console.log('userInfo', userInfo);
     this.setState({
       userProfile: {
         id: userProfile.id,
@@ -121,7 +119,6 @@ class ProfilePage extends Component {
       {id: userID, info: infoUser.userInfo},
       {id: profileUserID, info},
     ]);
-    console.log('discussion', discussion);
     this.setState({loaderMessage: false});
     openMemberAcceptCharge({...userProfile, isCoach: true}, false, () =>
       navigation.navigate('Conversation', {
@@ -146,7 +143,6 @@ class ProfilePage extends Component {
       biography,
       levelCoached,
     } = this.state.userProfile.info;
-    console.log('focusAreas', this.state.userProfile);
     return (
       <View style={[styleApp.marginView, styleApp.stylePage]}>
         <Row>

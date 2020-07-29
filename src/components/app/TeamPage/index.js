@@ -28,7 +28,6 @@ class TeamPage extends Component {
 
   groupPage() {
     const {session} = this.props;
-    console.log('render group page', session);
     return (
       <View style={styleApp.stylePage}>
         {buttonPlay(session)}

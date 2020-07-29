@@ -33,7 +33,6 @@ class SnippetsView extends Component {
       return null;
     }
     const {snippets} = video;
-    console.log('SnippetsView listVideos', video);
     if (!snippets) {
       throw 'Error: expandedSnippetsView, !snippets';
     }
@@ -46,7 +45,7 @@ class SnippetsView extends Component {
         <Text style={[styleApp.title, {marginTop: 10, marginBottom: 10}]}>Flags</Text>
         <FlatList
           data={Object.values(snippets)}
-          renderItem={(snippet) => this.renderCardArchive(snippet.item)}
+          renderItem={(data) => this.renderCardArchive(data.item)}
           keyExtractor={(item) => item.id}
           numColumns={2}
           scrollEnabled={false}
@@ -58,17 +57,35 @@ class SnippetsView extends Component {
     );
   }
   renderCardArchive(video) {
-    return (
-      <CardArchive
-        selectableMode={false}
-        isSelected={false}
-        selectVideo={() => null}
-        style={styles.cardArchive}
-        archive={video}
-        key={video.id}
-        noUpdateStatusBar={true}
-      />
-    );
+    if (video.snippet) {
+      return (
+        <CardArchive
+          local={true}
+          parent={video.parent}
+          selectableMode={false}
+          isSelected={false}
+          selectVideo={() => null}
+          style={styles.cardArchive}
+          id={video.id}
+          key={video.id}
+          noUpdateStatusBar={true}
+        />
+      );
+    } else {
+      return (
+        <CardArchive
+          local={true}
+          selectableMode={false}
+          isSelected={false}
+          selectVideo={() => null}
+          style={styles.cardArchive}
+          id={video.id}
+          key={video.id}
+          noUpdateStatusBar={true}
+        />
+      );
+    }
+
   }
   render() {
 

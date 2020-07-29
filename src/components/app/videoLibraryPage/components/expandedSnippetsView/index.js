@@ -28,7 +28,6 @@ export default class ExpandedSnippetsView extends Component {
     if (!id) {
       throw "Error: expandedSnippetsView: !id"
     }
-    console.log('ExpandedSnippetsView route params', id);
     this.setState({id, loader: false});
   }
   render() {

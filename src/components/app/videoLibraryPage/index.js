@@ -265,7 +265,7 @@ class VideoLibraryPage extends Component {
         isSelected={isSelected}
         selectVideo={(id, selected) => this.selectVideo(id, selected)}
         style={styles.cardArchive}
-        archive={video.item}
+        id={video.item.id}
         key={video.item.id}
         noUpdateStatusBar={true}
       />

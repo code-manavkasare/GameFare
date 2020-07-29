@@ -23,7 +23,6 @@ const middlewares = [networkMiddleware, thunk];
 if (__DEV__) {
   const createDebugger = require('redux-flipper').default;
   middlewares.push(createDebugger());
-  console.log('middlewares: ', middlewares);
 }
 
 const persistConfig = {

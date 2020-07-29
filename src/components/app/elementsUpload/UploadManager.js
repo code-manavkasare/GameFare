@@ -25,7 +25,6 @@ class UploadManager extends Component {
   }
 
   processQueue = async (init) => {
-    console.log('processing queue');
     const {uploadQueueAction} = this.props;
     const {queue, status, index} = this.props.uploadQueue;
     if (index === undefined) uploadQueueAction('resetUploadQueue');
@@ -35,7 +34,6 @@ class UploadManager extends Component {
     const readyTask = (task && task.progress === 0) || init;
 
     if (uploadInstruction && readyTask) {
-      console.log('uploadInstruction && readyTask');
       switch (task.type) {
         case 'video':
           await this.uploadVideoAtQueueIndex(index);
@@ -75,8 +73,6 @@ class UploadManager extends Component {
     if (!imageInfo || imageInfo?.simulator) return;
 
     const {storageDestination} = imageInfo;
-    console.log('uploading image');
-    console.log(imageInfo);
     const imageUrl = await uploadImage(
       //  'file:///' +
       imageInfo.url,
@@ -99,7 +95,6 @@ class UploadManager extends Component {
     const {storageDestination} = videoInfo;
     let {progressUpdates} = videoInfo;
     if (videoInfo.uploadThumbnail) {
-      console.log('videoInfo', videoInfo);
       const thumbnailUrl = await uploadImage(
         'file:///' + videoInfo.thumbnail,
         storageDestination,
@@ -125,7 +120,6 @@ class UploadManager extends Component {
       uploadQueueAction,
       progressUpdates,
     );
-    console.log('video uploaded');
     uploadQueueAction('setJobProgress', {index: index, progress: 1});
 
     if (videoInfo.updateFirebaseAfterUpload) {

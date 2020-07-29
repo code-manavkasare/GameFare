@@ -41,7 +41,7 @@ class PastSessions extends Component {
     return (
       <CardArchive
         style={styles.cardArchive}
-        archive={archive.item}
+        id={archive.item.id}
         key={archive.item.id}
         openVideo={({url, thumbnail}) => {
           openVideo({

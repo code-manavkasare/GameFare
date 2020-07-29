@@ -70,7 +70,6 @@ const generateProgressUpdates = (
   durationSeconds,
   index,
 ) => {
-  console.log('generating updates', thumbnail);
   let constructor = {};
   let uploadPaths = [];
   Object.values(members).map((member) => {
@@ -226,7 +225,6 @@ const arrayUploadFromSnippets = async ({
       uploadThumbnail: !thumbnailUploaded,
     });
   }
-  console.log('snippets', snippets);
   return snippets;
 };
 
@@ -241,7 +239,6 @@ const makeSnippet = async (source, flag) => {
     startTime: startTime / 1000,
     endTime: stopTime / 1000,
   };
-  console.log('trimOptions', trimOptions);
   if (!source) {
     return new Promise((resolve) => resolve('simulator'));
     s;
@@ -391,7 +388,6 @@ const makeVideoFlag = (timestamp, source, maxDuration = 30000) => {
     stopTime:
       timestamp + halfDuration < maxMilli ? timestamp + halfDuration : maxMilli,
   };
-  console.log('made flag', flag);
   return flag;
 };
 
