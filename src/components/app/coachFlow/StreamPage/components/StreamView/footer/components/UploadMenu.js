@@ -55,7 +55,6 @@ class UploadMenu extends Component {
   }
 
   open(val) {
-    console.log('opening')
     this.setState({visible: true})
     Animated.parallel([
       Animated.timing(this.uploadReveal, native(val ? val : 0, 300))

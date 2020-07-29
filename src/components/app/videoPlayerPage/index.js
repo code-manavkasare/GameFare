@@ -31,7 +31,6 @@ class VideoPlayerPage extends Component {
     const {userID, navigation} = this.props;
     const {goBack} = navigation;
     const {archive} = this.state;
-    console.log('archive', archive);
     const {url, id, thumbnail} = archive;
     return (
       <View style={[styleApp.stylePage, {backgroundColor: colors.title}]}>

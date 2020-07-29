@@ -75,14 +75,12 @@ export default class Alert extends Component {
       await operation();
     }
     if (forceNavigation) return;
-    console.log('navigating back...');
     navigation.goBack();
   }
   async close() {
     this.openVoile(false);
     await timeout(130);
     const {navigation} = this.props;
-    console.log('navigating back...');
     navigation.goBack();
   }
   render() {

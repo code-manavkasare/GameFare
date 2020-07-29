@@ -11,7 +11,6 @@ const archivesReducer = (state = initialState, action) => {
       return {...state, [archive.id]: archive};
     case DELETE_ARCHIVE:
       const {archiveId} = action;
-      console.log('archiveId DELETE_ARCHIVE: ', archiveId);
       return dissoc(archiveId, state);
     case RESET_ARCHIVES:
       return initialState;

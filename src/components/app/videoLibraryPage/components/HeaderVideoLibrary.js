@@ -16,7 +16,6 @@ class HeaderVideoLibrary extends Component {
     this.state = {};
   }
   addVideo() {
-    console.log('addVideo');
     addvideo();
   }
   pickMembersToShareVideosWith = () => {

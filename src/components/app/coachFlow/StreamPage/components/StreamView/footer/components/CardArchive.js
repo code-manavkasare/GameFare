@@ -27,7 +27,9 @@ import styleApp from '../../../../../../../style/style';
 
 class CardArchive extends Component {
   static propTypes = {
-    archive: PropTypes.object.isRequired,
+    id: PropTypes.string.isRequired,
+    local: PropTypes.bool,
+    parent: PropTypes.string,
     openVideo: PropTypes.func,
     style: PropTypes.object,
     selectableMode: PropTypes.bool,
@@ -35,6 +37,8 @@ class CardArchive extends Component {
     selectVideo: PropTypes.func,
   };
   static defaultProps = {
+    local: false,
+    parent: null,
     selectableMode: false,
     isSelected: false,
   };
@@ -62,7 +66,7 @@ class CardArchive extends Component {
 
   openVideo = async () => {
     const {openVideo} = this.props;
-    const {archive} = this.state;
+    const {archive} = this.props;
     if (openVideo) {
       openVideo(archive.id);
     } else {
@@ -270,8 +274,7 @@ class CardArchive extends Component {
     );
   }
   render() {
-    const {archive} = this.props;
-
+    const {archive, id, local} = this.props;
     return archive ? (
       <View>
         {this.cardArchive(archive)}
@@ -302,7 +305,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    archive: state.archives[props.archive.id],
+    archive: props.local ?
+      props.parent ? 
+        state.localVideoLibrary.videoLibrary[props.parent].snippets[props.id] : 
+        state.localVideoLibrary.videoLibrary[props.id] : 
+      state.archives[props.id],
   };
 };
 

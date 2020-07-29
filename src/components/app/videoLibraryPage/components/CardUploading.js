@@ -206,7 +206,6 @@ class CardUploading extends Component {
     await database()
       .ref()
       .update(updates);
-    console.log('videoUploaded');
 
     if (dismiss) dismiss(videoInfo);
     this.open(false);
@@ -215,7 +214,6 @@ class CardUploading extends Component {
   render() {
     const {style, size} = this.props;
     const {progress, videoInfo, status} = this.state;
-    // console.log('videoInfo', videoInfo);
     return (
       <Animated.View
         style={[

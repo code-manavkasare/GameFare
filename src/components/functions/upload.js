@@ -23,7 +23,6 @@ const updateProgress = async (progressUpdates, progress) => {
     let constructor = {...progressUpdates.constructor[path], progress};
     updates[path] = constructor;
   });
-  console.log('updates', updates);
   if (Object.values(updates).length !== 0)
     await database()
       .ref()
@@ -67,7 +66,6 @@ const uploadVideo = async (
           progressUpdates?.uploadPaths &&
           (progress > progressBuffer || progress === 1)
         ) {
-          console.log('progress update', progress);
           await updateProgress(progressUpdates, progress);
           progressBuffer += progressDelta;
         }
