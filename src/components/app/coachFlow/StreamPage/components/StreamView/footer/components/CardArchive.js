@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {View, Text, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import database from '@react-native-firebase/database';
 import PropTypes from 'prop-types';
 import Video from 'react-native-video';
 import {Col, Row} from 'react-native-easy-grid';
@@ -25,7 +25,7 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-export default class CardArchive extends Component {
+class CardArchive extends Component {
   static propTypes = {
     archive: PropTypes.object.isRequired,
     openVideo: PropTypes.func,
@@ -41,7 +41,6 @@ export default class CardArchive extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      archive: false,
       videoFullscren: false,
       paused: true,
       displayVideoPlayer: false,
@@ -50,18 +49,6 @@ export default class CardArchive extends Component {
     };
   }
 
-  async componentDidMount() {
-    const {archive: archiveData} = this.props;
-    if (!archiveData.local) this.loadArchive(archiveData.id);
-    else this.setState({archive: archiveData});
-  }
-  async loadArchive(archiveID) {
-    let archive = await database()
-      .ref('archivedStreams/' + archiveID)
-      .once('value');
-    archive = archive.val();
-    if (archive) await this.setState({archive: archive});
-  }
   placeholder() {
     return (
       <LinearGradient
@@ -84,7 +71,8 @@ export default class CardArchive extends Component {
   };
 
   videoFullscreen = () => {
-    const {archive, videoFullscren, displayVideoPlayer, paused} = this.state;
+    const {archive} = this.props;
+    const {videoFullscren, displayVideoPlayer, paused} = this.state;
     if (displayVideoPlayer) {
       return (
         <Video
@@ -282,13 +270,15 @@ export default class CardArchive extends Component {
     );
   }
   render() {
-    const {archive} = this.state;
+    const {archive} = this.props;
 
-    return (
+    return archive ? (
       <View>
         {this.cardArchive(archive)}
         {this.videoFullscreen()}
       </View>
+    ) : (
+      <View />
     );
   }
 }
@@ -309,3 +299,11 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 5,
   },
 });
+
+const mapStateToProps = (state, props) => {
+  return {
+    archive: state.archives[props.archive.id],
+  };
+};
+
+export default connect(mapStateToProps)(CardArchive);
