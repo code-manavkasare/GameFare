@@ -48,7 +48,6 @@ const setParams = ({routeKey, params}) => {
 };
 
 const clickNotification = async (notification) => {
-  console.log('notification', notification);
   var {action, typeNavigation} = notification;
   if (!notification.action) var {action, typeNavigation} = notification.data;
   if (typeNavigation === 'navigate')

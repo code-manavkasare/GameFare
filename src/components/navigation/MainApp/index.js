@@ -14,8 +14,11 @@ import JoinGroup from './components/JoinGroup';
 import ProfilePage from '../../app/elementsUser/elementsProfile/ProfilePage';
 import Conversation from '../../app/elementsMessage/Conversation';
 
+import Profile from './components/Profile';
+
 import Webview from '../../layout/Views/Webview';
 import NotificationPage from '../../app/elementsUser/elementsProfile/NotificationPage';
+import TeamPage from '../../app/TeamPage/index';
 
 const Stack = createStackNavigator();
 const MainApp = () => {
@@ -45,6 +48,9 @@ const MainApp = () => {
       <Stack.Screen name="Webview" component={Webview} />
 
       <Stack.Screen name="NotificationPage" component={NotificationPage} />
+      <Stack.Screen name="TeamPage" component={TeamPage} />
+
+      <Stack.Screen name="MorePage" component={Profile} />
     </Stack.Navigator>
   );
 };

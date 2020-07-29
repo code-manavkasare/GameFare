@@ -75,12 +75,14 @@ export default class Alert extends Component {
       await operation();
     }
     if (forceNavigation) return;
+    console.log('navigating back...');
     navigation.goBack();
   }
   async close() {
     this.openVoile(false);
     await timeout(130);
     const {navigation} = this.props;
+    console.log('navigating back...');
     navigation.goBack();
   }
   render() {
@@ -178,7 +180,11 @@ export default class Alert extends Component {
                     disabled={listOptions[1].disabled}
                     onPressColor={colors.greenLight}
                     text={listOptions[1].title || 'Yes'}
-                    click={() => this.optionClick(listOptions[1].operation)}
+                    click={() => this.optionClick(
+                      listOptions[1].operation,
+                      listOptions[1].forceNavigation,
+                      )
+                    }
                     loader={listOptions[1].loader}
                   />
                 )}

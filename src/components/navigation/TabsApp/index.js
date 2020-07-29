@@ -3,13 +3,15 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Footer from './footer/index';
-
+import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import MessageList from '../../app/elementsMessage/MessageList';
 import Stream from './components/Stream';
 
 import VideoLibraryPage from '../../app/videoLibraryPage';
 import Session from './components/Session';
-import Profile from './components/Profile';
+
+import LocalSession from './components/LocalSession';
+import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
@@ -23,7 +25,7 @@ function TabsApp() {
       tabBar={(props) => (
         <Footer
           {...props}
-          colors={{active: colors.white, inactive: colors.greyDark}}
+          colors={{active: colors.primary, inactive: colors.greyDark}}
         />
       )}>
       <Tab.Screen
@@ -31,25 +33,10 @@ function TabsApp() {
         component={Stream}
         options={{
           pageStack: 'StreamPage',
-          label: 'Stream',
+          label: 'Teams',
           signInToPass: false,
           icon: {
-            name: 'video-camera',
-            type: 'moon',
-            size: 21,
-          },
-        }}
-      />
-
-      <Tab.Screen
-        name="VideoLibraryPage"
-        component={VideoLibraryPage}
-        options={{
-          pageStack: 'VideoLibraryPage',
-          label: 'VideoLibraryPage',
-          signInToPass: false,
-          icon: {
-            name: 'film',
+            name: 'users',
             type: 'font',
             size: 22,
           },
@@ -57,21 +44,54 @@ function TabsApp() {
       />
 
       <Tab.Screen
+        name="LocalSession"
+        component={LocalSession}
+        options={{
+          // hideInFooter: true,
+          pageStack: 'LocalSession',
+          // label: 'LocalSession',
+          icon: {
+            name: 'video-camera',
+            type: 'moon',
+            size: 20,
+          },
+          cardStyle: {
+            backgroundColor: 'transparent',
+          },
+        }}
+      />
+
+      <Tab.Screen
+        name="VideoLibrary"
+        component={VideoLibrary}
+        options={{
+          pageStack: 'VideoLibrary',
+          label: 'Watch',
+          signInToPass: false,
+          icon: {
+            name: 'tv',
+            type: 'font',
+            size: 22,
+          },
+        }}
+      />
+
+      {/* <Tab.Screen
         name="MessageList"
         component={MessageList}
         options={{
           displayPastille: true,
-          label: 'Message',
+          label: 'Chat',
           pageStack: 'MessageList',
           signInToPass: false,
           icon: {
             name: 'speech',
             type: 'moon',
-            size: 21,
+            size: 19,
           },
         }}
-      />
-      <Tab.Screen
+      /> */}
+      {/* <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -81,16 +101,30 @@ function TabsApp() {
           icon: {
             name: 'profileFooter',
             type: 'moon',
-            size: 21,
+            size: 19,
           },
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Session"
         component={Session}
         options={{
+          hideInFooter: true,
           pageStack: 'Session',
           label: 'Session',
+          cardStyle: {
+            backgroundColor: 'transparent',
+          },
+        }}
+      />
+
+      <Tab.Screen
+        name="VideoPlayerPage"
+        component={VideoPlayerPage}
+        options={{
+          hideInFooter: true,
+          pageStack: 'VideoPlayerPage',
+          label: 'VideoPlayerPage',
           cardStyle: {
             backgroundColor: 'transparent',
           },

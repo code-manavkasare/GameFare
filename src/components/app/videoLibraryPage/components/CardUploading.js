@@ -112,12 +112,12 @@ class CardUploading extends Component {
 
   uploadVideoFirebase = async (videoInfo, destination, name) => {
     const that = this;
-    const {path} = videoInfo;
+    const {url} = videoInfo;
 
     const videoRef = storage()
       .ref(destination)
       .child(name);
-    const uploadTask = videoRef.putFile(path, {
+    const uploadTask = videoRef.putFile(url, {
       contentType: 'video',
       cacheControl: 'no-store',
     });

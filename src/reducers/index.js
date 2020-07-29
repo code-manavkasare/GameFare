@@ -14,6 +14,7 @@ import coachReducer from './coachReducer';
 import layoutReducer from './layoutReducer';
 import uploadQueueReducer from './uploadQueueReducer';
 import appSettingsReducer from './appSettingsReducer';
+import localVideoLibraryReducer from './localVideoLibraryReducer';
 import archivesReducer from './archivesReducer.js';
 import coachSessionsReducer from './coachSessionsReducer.js';
 
@@ -31,6 +32,7 @@ export default combineReducers({
   message: messageReducer,
   layout: layoutReducer,
   uploadQueue: uploadQueueReducer,
+  localVideoLibrary: localVideoLibraryReducer,
   archives: archivesReducer,
   coachSessions: coachSessionsReducer,
   network,

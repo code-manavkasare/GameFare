@@ -219,11 +219,9 @@ export default class ControlButtons extends Component {
                   />
                 </Col>
                 <Col style={styleApp.center3}>
-                  {totalTime !== 0 && (
-                    <Text style={styles.textTime}>
-                      {displayTime(totalTime)}
-                    </Text>
-                  )}
+                  <Text style={styles.textTime}>
+                    {totalTime && displayTime(totalTime)}
+                  </Text>
                 </Col>
               </Row>
             )}
