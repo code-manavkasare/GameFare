@@ -116,9 +116,9 @@ const userAction = (val, data) => {
           var infoUser = snap.val();
 
           //Uncomment for store set up
-          // infoUser.archivedStreams = await filterArchivesBindToFirebase(
-          //   infoUser.archivedStreams,
-          // );
+          infoUser.archivedStreams = await filterArchivesBindToFirebase(
+            infoUser.archivedStreams,
+          );
 
           // infoUser.coachSessions = await filterCoachSessionBindToFirebase(
           //   infoUser.coachSessions,
@@ -148,21 +148,21 @@ const userAction = (val, data) => {
           }
 
           //Uncomment for store set up
-          // if (infoUser.archivedStreams) {
-          //   for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
-          //     const archiveInfoFromStore = store.getState().user.infoUser
-          //       .archivedStreams[archiveInfo.id];
-          //     if (!archiveInfoFromStore.isBindedToFirebase) {
-          //       database()
-          //         .ref(`archivedStreams/${archiveInfo.id}`)
-          //         .on('value', function(snapshot) {
-          //           const archive = snapshot.val();
-          //           dispatch(setArchive(archive));
-          //           dispatch(setArchiveFirebaseBindStatus(archive.id, true));
-          //         });
-          //     }
-          //   }
-          // }
+          if (infoUser.archivedStreams) {
+            for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
+              const archiveInfoFromStore = store.getState().user.infoUser
+                .archivedStreams[archiveInfo.id];
+              if (!archiveInfoFromStore.isBindedToFirebase) {
+                database()
+                  .ref(`archivedStreams/${archiveInfo.id}`)
+                  .on('value', function(snapshot) {
+                    const archive = snapshot.val();
+                    dispatch(setArchive(archive));
+                    dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+                  });
+              }
+            }
+          }
 
           // if (infoUser.coachSessions) {
           //   for (const coachSession of Object.values(infoUser.coachSessions)) {
