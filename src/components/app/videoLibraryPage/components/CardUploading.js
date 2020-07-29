@@ -156,7 +156,7 @@ class CardUploading extends Component {
     const {videoInfo} = this.state;
     const {userID, dismiss} = this.props;
     let {members} = this.props;
-    const {duration, size} = videoInfo;
+    const {durationSeconds, size} = videoInfo;
 
     const id = videoInfo.localIdentifier.split('/')[0];
 
@@ -175,7 +175,7 @@ class CardUploading extends Component {
     let updates = {};
     const startTimestamp = Date.now();
 
-    updates[`${destinationCloud}/durationSeconds`] = duration;
+    updates[`${destinationCloud}/durationSeconds`] = durationSeconds;
     updates[`${destinationCloud}/id`] = id;
     updates[`${destinationCloud}/url`] = videoUrl;
     updates[`${destinationCloud}/uploadedByUser`] = true;
