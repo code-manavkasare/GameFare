@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
+import PropTypes from 'prop-types';
 
 import {coachAction} from '../../.././../../actions/coachActions';
 import {navigate} from '../../../../../../NavigationService';
@@ -22,17 +23,21 @@ import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 
 class CardStream extends Component {
+  static propTypes = {
+    coachSessionId: PropTypes.string.isRequired,
+  };
   constructor(props) {
     super(props);
     this.state = {
       session: false,
-      loading: true,
+      loading: false,
     };
   }
 
   componentDidMount() {
     this.props.onRef(this);
-    this.loadCoachSession();
+    // this.loadCoachSession();
+    console.log('sessionInfo', this.props.session);
   }
 
   async loadCoachSession() {
@@ -54,15 +59,15 @@ class CardStream extends Component {
           });
           this.setState({
             session: session,
-            loading: false,
+            loading: false, //To verify why this is needed
             error: false,
           });
         }.bind(this),
       );
   }
 
-  async openStream(forceOpen) {
-    const {session} = this.state;
+  async openStream() {
+    const {session} = this.props;
     sessionOpening(session);
   }
 
@@ -76,8 +81,8 @@ class CardStream extends Component {
   }
 
   cardStream() {
-    const {coachSessionID, currentSessionID, userID} = this.props;
-    const {loading, session} = this.state;
+    const {coachSessionID, currentSessionID, userID, session} = this.props;
+    const {loading} = this.state;
     const activeSession = coachSessionID === currentSessionID;
 
     let member = getMember(session, userID);
@@ -145,9 +150,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
+    session: state.coachSessions[props.coachSessionID],
     currentSessionID: state.coach.currentSessionID,
     userConnected: state.user.userConnected,
   };

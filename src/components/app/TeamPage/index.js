@@ -1,22 +1,12 @@
 import React, {Component} from 'react';
-import {
-  Animated,
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
+import {Animated, View} from 'react-native';
 import {connect} from 'react-redux';
 import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import {Col, Row} from 'react-native-easy-grid';
 
-import {openSession} from '../../functions/coach';
 import sizes from '../../style/sizes';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {navigate} from '../../../../NavigationService';
 import HeaderTeamPage from './components/HeaderTeamPage';
 
 import {
@@ -24,10 +14,10 @@ import {
   sessionTitle,
   sessionDate,
   viewLive,
-  buttonPlay
+  buttonPlay,
 } from './components/elements';
 
-class VideoLibraryPage extends Component {
+class TeamPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -86,16 +76,15 @@ class VideoLibraryPage extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
 const mapStateToProps = (state, props) => {
   const {coachSessionID} = props.route.params;
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    session: state.coach.allSessions[coachSessionID],
+    session: state.coachSessions[coachSessionID],
   };
 };
 export default connect(
   mapStateToProps,
   {},
-)(VideoLibraryPage);
+)(TeamPage);
