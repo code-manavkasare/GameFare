@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ProcessingManager} from 'react-native-video-processing';
 import StatusBar from '@react-native-community/status-bar';
-
+import RNFS from 'react-native-fs';
 import database from '@react-native-firebase/database';
 
 import {createThumbnail} from 'react-native-create-thumbnail';
@@ -231,7 +231,7 @@ const arrayUploadFromSnippets = async ({
 const makeSnippet = async (source, flag) => {
   // source is GFVideo object, flag from makeVideoFlag
   // makeSnippet returns promise that resolves to local URL of snippet
-  const {startTime, stopTime} = flag;
+  const {startTime, stopTime, flagTime} = flag;
   if (startTime < 0 || stopTime > source.durationSeconds * 1000) {
     throw 'ERROR: videoManagement.makeSnippet, flag out of range of source video';
   }
@@ -244,7 +244,7 @@ const makeSnippet = async (source, flag) => {
     s;
   } else {
     const url = await ProcessingManager.trim(source.url, trimOptions);
-    const info = await getVideoInfo(url, true);
+    const info = await getVideoInfo(url, true, flagTime);
     // make custom thumbnail here, change above true to false
     return {...info, snippet: true, parent: source.id};
   }
@@ -284,6 +284,7 @@ const removeVideo = (archive) => {
       await store.dispatch(deleteSnippet({id, parent}));
       return true;
     };
+    removeLocalVideo(url);
   }
 
   navigate('Alert', {
@@ -391,6 +392,50 @@ const makeVideoFlag = (timestamp, source, maxDuration = 30000) => {
   return flag;
 };
 
+const removeLocalVideo = async (path) => {
+  const filePath = path.split('///').pop(); // removes leading file:///
+
+  RNFS.exists(filePath).then((res) => {
+    if (res) {
+      RNFS.unlink(filePath).then(() => console.log('FILE DELETED'));
+    }
+  });
+};
+
+const alertStopRecording = (archive) => {
+  const userID = store.getState().user.userID;
+  const infoUser = store.getState().user.infoUser.userInfo;
+  const {durationSeconds, thumbnail, url, id, size, snippet, parent} = archive;
+
+  navigate('Alert', {
+    title: `Do you want to upload this footage?`,
+    displayList: true,
+    subtitle: formatDuration(durationSeconds * 1000, true),
+    icon: (
+      <AsyncImage
+        mainImage={thumbnail}
+        style={{width: 40, height: 40, borderRadius: 20}}
+      />
+    ),
+    listOptions: [
+      {
+        title: 'Upload video',
+        operation: () => this.uploadVideo(),
+      },
+      {
+        title: 'Record video',
+        forceNavigation: true,
+        operation: () => recordVideo(),
+      },
+      {
+        title: 'Cancel',
+        forceNavigation: true,
+        operation: () => true,
+      },
+    ],
+  });
+};
+
 export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
@@ -402,4 +447,6 @@ export {
   addVideoWithFlags,
   makeVideoFlag,
   makeSnippet,
+  removeLocalVideo,
+  alertStopRecording,
 };

@@ -79,11 +79,11 @@ class HeaderListStream extends Component {
         // clickButton1={() => this.newSession()}
         icon2={'bell'}
         typeIcon2="font"
-        sizeIcon2={23}
+        sizeIcon2={24}
         colorIcon2={colors.title}
         clickButton2={() => navigate('NotificationPage')}
         icon1={infoUser.picture ? infoUser.picture : 'profileFooter'}
-        sizeIcon1={31}
+        sizeIcon1={infoUser.picture ? 31 : 23}
         colorIcon1={colors.title}
         typeIcon1={infoUser.picture ? 'image' : 'moon'}
         clickButton1={() => navigate('MorePage')}

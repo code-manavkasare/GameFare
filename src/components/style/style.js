@@ -56,9 +56,10 @@ const styles = StyleSheet.create({
   },
   divider2: {
     height: 1,
-    width: '100%',
-    // marginTop: 20,
-    // marginBottom: 20,
+    width: '90%',
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: '5%',
     backgroundColor: colors.off,
   },
   cardEventSM: {

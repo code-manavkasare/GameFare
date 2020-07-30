@@ -14,6 +14,7 @@ import {
   addVideo,
   makeVideoFlag,
   addVideoWithFlags,
+  alertStopRecording,
 } from '../functions/videoManagement';
 import {layoutAction} from '../../actions/layoutActions';
 
@@ -78,12 +79,14 @@ class Camera extends Component {
   async stopRecording(saveVideo) {
     if (this.camera && this.state.isRecording) {
       const {promiseRecording} = this.state;
-      this.camera.stopRecording();
-      this.setState({isRecording: false, startRecordingTime: null});
+      await this.camera.stopRecording();
+      // await this.setState({isRecording: false, startRecordingTime: null});
       if (saveVideo) {
-        this.saveRecording(await promiseRecording);
+        const videoInfo = await this.saveRecording(await promiseRecording);
       }
-      this.setState({promiseRecording: null});
+      // await this.setState({promiseRecording: null});
+      alertStopRecording(videoInfo);
+      return true;
     }
   }
   async saveRecording(recording) {
@@ -98,6 +101,7 @@ class Camera extends Component {
     } else {
       addVideo(videoInfo);
     }
+    return videoInfo;
   }
   close() {
     this.stopRecording(false);
@@ -138,6 +142,7 @@ class Camera extends Component {
           icon1={'arrow-left'}
           typeIcon1="font"
           backgroundColorIcon1={colors.title + '70'}
+          onPressColorIcon1={colors.title + '30'}
           clickButton1={() => this.close()}
           nobackgroundColorIcon1={true}
           sizeIcon1={18}

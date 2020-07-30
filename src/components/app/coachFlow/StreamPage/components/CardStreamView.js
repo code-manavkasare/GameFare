@@ -101,11 +101,11 @@ class CardStream extends Component {
             ) : (
               <Row style={{paddingTop: 5, paddingBottom: 10}}>
                 <Col size={30}>{imageCardTeam(session)}</Col>
-                <Col size={60} style={styleApp.center2}>
+                <Col size={55} style={styleApp.center2}>
                   {sessionTitle(session)}
                   {sessionDate(session)}
                 </Col>
-                <Col size={15} style={styleApp.center}>
+                <Col size={20} style={styleApp.center}>
                   {viewLive(session)}
                 </Col>
               </Row>

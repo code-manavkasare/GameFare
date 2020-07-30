@@ -13,6 +13,7 @@ import {getVideoUUID} from './pictures';
 import {store} from '../../../reduxStore';
 import {
   setCurrentSession,
+  setCurrentSessionID,
   endCurrentSession,
   unsetCurrentSession,
 } from '../../actions/coachActions';
@@ -456,9 +457,9 @@ const finalizeOpening = async (session) => {
       // what to do in the case where user is in a session already and maybe recording?
       // simply unsetting the current session means recording is lost -- Ethan
       await store.dispatch(unsetCurrentSession());
-      await timeout(200);
+      await timeout(100);
     }
-    await store.dispatch(setCurrentSession(session));
+    await store.dispatch(setCurrentSessionID(session.objectID));
   }
   await store.dispatch(setLayout({isFooterVisible: false}));
 
