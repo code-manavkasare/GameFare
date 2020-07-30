@@ -187,10 +187,10 @@ const userAction = (val, data) => {
       await database()
         .ref('users/' + data.userID)
         .off('value');
+      await dispatch(resetUserInfo());
       await dispatch(resetDataCoachSession());
       await dispatch(resetArchives());
       await dispatch(resetSessions());
-      await dispatch(resetUserInfo());
       await dispatch(resetMessages());
 
       return true;
