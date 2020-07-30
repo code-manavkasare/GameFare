@@ -174,7 +174,7 @@ const getLastVideo = async () => {
   return edges[0].node.image;
 };
 
-const generateThumbnail = async (videoPath) => {
+const generateThumbnail = async (videoPath,timeStamp) => {
   const thumbnail = await RNThumbnail.get(videoPath);
   return thumbnail.path;
 };
@@ -187,11 +187,11 @@ const getVideoUUID = (path) => {
   return videoUUID;
 };
 
-const getVideoInfo = async (videoUrl, createThumbnail) => {
+const getVideoInfo = async (videoUrl, createThumbnail,timeStamp) => {
   console.log('');
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
   const thumbnail = createThumbnail
-    ? await generateThumbnail(videoUrl)
+    ? await generateThumbnail(videoUrl,timeStamp)
     : undefined;
   const id = getVideoUUID(videoUrl);
   const videoInfo = {

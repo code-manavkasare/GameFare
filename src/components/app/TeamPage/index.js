@@ -15,6 +15,8 @@ import {
   sessionDate,
   viewLive,
   buttonPlay,
+  hangupButton,
+  listPlayers,
 } from './components/elements';
 
 class TeamPage extends Component {
@@ -31,16 +33,15 @@ class TeamPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         {buttonPlay(session)}
-        <Row style={{flex: 0, paddingTop: 10}}>
-          <Col size={30}>{imageCardTeam(session)}</Col>
+
+        <Row style={{flex: 0, paddingTop: 10, ...styleApp.marginView}}>
           <Col size={60} style={styleApp.center2}>
-            {sessionTitle(session)}
-            {sessionDate(session)}
-          </Col>
-          <Col size={15} style={styleApp.center}>
-            {viewLive(session)}
+            {/* {sessionTitle(session)} */}
+            {/* {sessionDate(session)} */}
           </Col>
         </Row>
+        {/* <View style={styleApp.divider2} /> */}
+        {listPlayers(session)}
       </View>
     );
   }

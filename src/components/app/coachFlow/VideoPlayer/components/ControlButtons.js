@@ -31,6 +31,7 @@ export default class ControlButtons extends Component {
   }
   setCurrentTime(currentTime, forceUpdate) {
     const {paused} = this.state;
+    // console.log('setCurrentTime', currentTime);
     if (!paused || forceUpdate) {
       this.sliderRef.setCurrentTime(currentTime);
       this.currentTimeRef.setCurrentTime(currentTime);
@@ -178,7 +179,7 @@ export default class ControlButtons extends Component {
       totalTime,
     } = this.props;
     if (!heightControlBar) heightControlBar = initialHeightControlBar;
-
+    console.log('render totalTime', totalTime, Number(totalTime) !== 0);
     return (
       <Animated.View
         style={[
@@ -220,7 +221,7 @@ export default class ControlButtons extends Component {
                 </Col>
                 <Col style={styleApp.center3}>
                   <Text style={styles.textTime}>
-                    {totalTime && displayTime(totalTime)}
+                    {totalTime && totalTime !== 0 ? displayTime(totalTime) : ''}
                   </Text>
                 </Col>
               </Row>

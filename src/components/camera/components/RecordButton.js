@@ -7,6 +7,8 @@ import ButtonColor from '../../layout/Views/Button';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import {native} from '../../animations/animations';
+import Loader from '../../layout/loaders/Loader';
+
 import Timer from '../../app/coachFlow/StreamPage/components/StreamView/footer/components/Timer';
 
 export default class RecordButton extends Component {
@@ -21,6 +23,7 @@ export default class RecordButton extends Component {
       renderTimer: false,
       startRecordingTime: null,
       isRecording: false,
+      loader: false,
     };
     this.recordingIndicator = {
       color: new Animated.Value(0),
@@ -54,20 +57,26 @@ export default class RecordButton extends Component {
     }
   }
   insideRecordButton() {
-    const {isRecording} = this.state;
+    const {isRecording, loader} = this.state;
     return (
       <Animated.View
         style={[
-          isRecording
+          loader
+            ? {...styleApp.fullSize, ...styleApp.center}
+            : isRecording
             ? styles.buttonStartRecording
             : styles.buttonStopRecording,
         ]}>
-        <Animated.View
-          style={[
-            styles.recordingOverlay,
-            {opacity: this.recordingIndicator.color},
-          ]}
-        />
+        {loader ? (
+          <Loader size={40} color={colors.white} />
+        ) : (
+          <Animated.View
+            style={[
+              styles.recordingOverlay,
+              {opacity: this.recordingIndicator.color},
+            ]}
+          />
+        )}
       </Animated.View>
     );
   }
@@ -97,12 +106,13 @@ export default class RecordButton extends Component {
       return null;
     }
   }
-  clickRecord() {
+  async clickRecord() {
     const {isRecording} = this.state;
     const {startRecording, stopRecording} = this.props;
     if (isRecording) {
-      stopRecording();
-      this.setState({isRecording: false});
+      await this.setState({loader: true, isRecording: false});
+      await stopRecording();
+      this.setState({loader: false});
     } else {
       startRecording();
       this.setState({
@@ -174,6 +184,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.title + '70',
     bottom: 100,
     width: 80,
+    borderRadius: 4,
     height: 30,
   },
 });

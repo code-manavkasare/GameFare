@@ -42,7 +42,7 @@ class HeaderGroupPage extends Component {
         return navigate('VideoLibraryPage');
       },
     });
-  };
+  }
 
   render() {
     const {loaderMessage} = this.state;

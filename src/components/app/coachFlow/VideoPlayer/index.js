@@ -50,6 +50,7 @@ export default class VideoPlayer extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     const {currentTime, totalTime, source} = this.state;
+
     if (
       prevState.source !== source ||
       prevState.totalTime !== totalTime ||
@@ -120,7 +121,10 @@ export default class VideoPlayer extends Component {
   onProgress = async (info) => {
     const paused = this.controlButtonRef.getPaused();
     const {currentTime} = info;
-    if (!paused) this.controlButtonRef.setCurrentTime(currentTime);
+    if (!paused) {
+      // console.log('on progress', currentTime);
+      this.controlButtonRef.setCurrentTime(currentTime);
+    }
   };
   onSlidingComplete = async (SliderTime, forcePlay) => {
     const {prevPaused} = this.state;
@@ -131,13 +135,15 @@ export default class VideoPlayer extends Component {
         currentTime: SliderTime,
         paused: forcePlay ? forcePlay : prevPaused,
       });
+    console.log('onSlidingComplete', prevPaused);
     await this.setState({
       currentTime: SliderTime,
-      paused: forcePlay ? forcePlay : prevPaused,
+      paused: forcePlay ? forcePlay : !prevPaused?false:true,
     });
     return true;
   };
   onSlidingStart = async () => {
+    console.log('onSlidingStart');
     const {paused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     if (updateVideoInfoCloud && !noUpdateInCloud)
@@ -212,7 +218,7 @@ export default class VideoPlayer extends Component {
       loader,
       muted,
     } = this.state;
-
+    console.log('render vieo player');
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {loader && this.fullScreenLoader()}
@@ -280,7 +286,7 @@ export default class VideoPlayer extends Component {
                       onFullscreenPlayerDidDismiss={(event) => {
                         this.setState({fullscreen: false});
                       }}
-                      progressUpdateInterval={10}
+                      progressUpdateInterval={30}
                       onBuffer={this.onBuffer}
                       paused={paused}
                       onProgress={(info) => !paused && this.onProgress(info)}

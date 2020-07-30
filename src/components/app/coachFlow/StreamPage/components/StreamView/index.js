@@ -66,9 +66,6 @@ class StreamPage extends Component {
     super(props);
     this.state = {
       loader: true,
-      isConnected: false,
-      coachSession: false,
-      coachSessionID: false,
       error: false,
       cameraFront: true,
       watchVideo: false,
@@ -85,19 +82,7 @@ class StreamPage extends Component {
     this.watchVideoRef = React.createRef();
 
     this.sessionEventHandlers = {
-      sessionConnected: (event) => {
-        const {coachSessionID} = this.state;
-        const {userID} = this.props;
-        Mixpanel.trackWithProperties(
-          'sessionEventHandlers sessionConnected ' + coachSessionID,
-          {
-            userID,
-            coachSessionID,
-            event,
-            date: new Date(),
-          },
-        );
-      },
+      sessionConnected: (event) => {},
       sessionReconnecting: (event) => {
         // loss of signal, session is trying to reconnect,
         // will either send sessionReconnected or sessionDisconnected after this
@@ -108,7 +93,6 @@ class StreamPage extends Component {
         // user disconnected from session or loss of signal and could not reconnect
         const {coachAction, reconnecting} = this.props;
         if (reconnecting) {
-          Alert.alert('Signal loss, could not connect to session.');
           coachAction('endCurrentSession');
         }
       },
@@ -142,22 +126,22 @@ class StreamPage extends Component {
 
     this.publisherEventHandlers = {
       streamCreated: async (event) => {
-        const {coachSessionID, publishVideo} = this.state;
-        const {userID, currentScreenSize} = this.props;
+        const {publishVideo} = this.state;
+        const {userID, currentScreenSize, currentSessionID} = this.props;
         const {portrait} = currentScreenSize;
         const {streamId, connectionId} = event;
         Mixpanel.trackWithProperties(
-          'publisherEventHandlers streamCreated ' + coachSessionID,
+          'publisherEventHandlers streamCreated ' + currentSessionID,
           {
             userID,
-            coachSessionID,
+            currentSessionID,
             streamId,
             connectionId,
             date: new Date(),
           },
         );
         await database()
-          .ref(`coachSessions/${coachSessionID}/members/${userID}`)
+          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
           .update({
             streamIdTokBox: streamId,
             connectionIdTokbox: connectionId,
@@ -168,19 +152,15 @@ class StreamPage extends Component {
             publishVideo,
             recording: {enabled: true},
           });
-        this.setState({
-          isConnected: true,
-        });
       },
       streamDestroyed: (event) => {
-        const {coachSessionID} = this.state;
-        const {userID} = this.props;
+        const {userID, currentSessionID} = this.props;
         const {streamId, connectionId} = event;
         Mixpanel.trackWithProperties(
-          'publisherEventHandlers streamDestroyed ' + coachSessionID,
+          'publisherEventHandlers streamDestroyed ' + currentSessionID,
           {
             userID,
-            coachSessionID,
+            currentSessionID,
             streamId,
             connectionId,
             date: new Date(),
@@ -202,7 +182,6 @@ class StreamPage extends Component {
       return {
         coachSession: props.currentSession,
         open: props.currentSession ? true : false,
-        coachSessionID: props.currentSessionID,
         date: Date.now(),
       };
     }
@@ -217,7 +196,6 @@ class StreamPage extends Component {
     if (!unrenderConditionPrev && unrenderConditionThis) {
       this.endCoachSession();
     } else {
-      const {isConnected} = this.state;
       const {
         userID,
         currentSessionID,
@@ -225,7 +203,10 @@ class StreamPage extends Component {
         currentScreenSize,
       } = this.props;
       const {portrait} = currentScreenSize;
-      if (portrait !== prevProps.currentScreenSize.portrait && isConnected) {
+      if (
+        portrait !== prevProps.currentScreenSize.portrait &&
+        currentSessionID
+      ) {
         database()
           .ref(`coachSessions/${currentSessionID}/members/${userID}`)
           .update({
@@ -247,12 +228,10 @@ class StreamPage extends Component {
       }
     }
   }
-  async permissionLibrary() {}
   popupPermissionRecording() {
-    let {userID, currentSessionID: coachSessionID} = this.props;
-    const {coachSession} = this.state;
+    let {userID, currentSessionID: coachSessionID, session} = this.props;
 
-    const member = getMember(coachSession, userID);
+    const member = getMember(session, userID);
     if (!member) return;
     const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
@@ -315,13 +294,7 @@ class StreamPage extends Component {
     }
   }
   async endCoachSession() {
-    await this.setState({open: false, isConnected: false, coachSession: false});
-    const {coachSessionID, userID, coachAction} = this.props;
-    Mixpanel.trackWithProperties('End Session ' + coachSessionID, {
-      userID,
-      coachSessionID,
-      date: new Date(),
-    });
+    const {coachAction} = this.props;
     await coachAction('unsetCurrentSession');
     this.close();
     return true;
@@ -465,19 +438,18 @@ class StreamPage extends Component {
     };
   }
   header() {
-    const {userID} = this.props;
-    const {coachSession, coachSessionID} = this.state;
+    const {userID, session, currentSessionID} = this.props;
     return (
       <Header
-        coachSessionID={coachSessionID}
-        organizerID={coachSession && coachSession?.info.organizer}
+        coachSessionID={currentSessionID}
+        organizerID={session && session?.info.organizer}
         close={this.close.bind(this)}
         permissionOtherUserToRecord={
-          coachSession
-            ? getMember(coachSession, userID)?.permissionOtherUserToRecord
+          session
+            ? getMember(session, userID)?.permissionOtherUserToRecord
             : false
         }
-        chargeForSession={getMember(coachSession, userID)?.chargeForSession}
+        chargeForSession={getMember(session, userID)?.chargeForSession}
         setState={this.setState.bind(this)}
         state={this.state}
       />
@@ -485,22 +457,25 @@ class StreamPage extends Component {
   }
   streamPage() {
     const {
-      coachSession,
-      isConnected,
-      publishAudio,
-      publishVideo,
-      coachSessionID,
-    } = this.state;
-    const {userID, reconnecting} = this.props;
+      currentSessionID,
+      session: coachSession,
+      reconnecting,
+      userID,
+    } = this.props;
+    console.log('coachSession bim', coachSession);
+
+    const {publishAudio, publishVideo} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
     if (!coachSession.tokbox) null;
-
+    // return this.header();
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
 
     const member = userPartOfSession(coachSession, userID);
-
+    const {isConnected} = member;
+    console.log('isConnected', isConnected);
+    console.log('member', member);
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
     return (
@@ -514,7 +489,7 @@ class StreamPage extends Component {
 
         <MembersView
           members={coachSession.members}
-          coachSessionID={coachSessionID}
+          coachSessionID={currentSessionID}
         />
         {!publishVideo && this.pausedView(userIsAlone)}
         <View style={styleApp.fullSize}>
@@ -553,7 +528,7 @@ class StreamPage extends Component {
             videoBeingShared={videoBeingShared}
             onRef={(ref) => (this.footerRef = ref)}
             members={coachSession.members}
-            coachSessionID={coachSessionID}
+            coachSessionID={currentSessionID}
             publishAudio={publishAudio}
             publishVideo={publishVideo}
           />
@@ -572,14 +547,20 @@ class StreamPage extends Component {
     );
   }
   session() {
-    const {userConnected, currentSessionID, userID} = this.props;
-    const {coachSession, isConnected, open, coachSessionID} = this.state;
-    if (!userConnected || !currentSessionID) return null;
+    const {
+      currentSessionID,
+      userID,
+      session: coachSession,
+      userConnected,
+      currentScreenSize,
+    } = this.props;
+    const member = userPartOfSession(coachSession, userID);
+    const {isConnected} = member;
+    if (!userConnected || !currentSessionID) return this.loaderView(' ');
 
-    const {currentScreenSize} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-    if (!open) return null;
+
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
@@ -603,14 +584,15 @@ class StreamPage extends Component {
         {this.streamPage()}
 
         <WatchVideoPage
-          state={this.state}
+          // state={this.state}
+          coachSession={coachSession}
           onRef={(ref) => (this.watchVideoRef = ref)}
           translateYFooter={this.translateYFooter}
           setState={this.setState.bind(this)}
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
           sharedVideos={coachSession.sharedVideos}
-          coachSessionID={coachSessionID}
+          coachSessionID={currentSessionID}
         />
 
         {/* {loader && this.loaderView(' ')} */}
@@ -679,12 +661,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     currentScreenSize: state.layout.currentScreenSize,
     currentSessionID: state.coach.currentSessionID,
+    session: state.coachSessions[state.coach.currentSessionID],
     currentSession: state.coach.currentSession,
     endCurrentSession: state.coach.endCurrentSession,
     recording: state.coach.recording,

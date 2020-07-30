@@ -11,6 +11,7 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import {store} from '../../../../../reduxStore';
+import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening} from '../../../functions/coach';
 
 const imageCardTeam = (session) => {
@@ -128,7 +129,7 @@ const titleSession = (session) => {
   if (session.title) return session.title;
   const members = getSortedMembers(session.members);
   if (!members || !members[0]) return;
-  if (members[0].id === userID) return 'Only you';
+  if (members[0].id === userID) return 'You';
   let names = members[0].info
     ? members[0].info.firstname + ' ' + members[0].info.lastname
     : '';
@@ -157,9 +158,9 @@ const dateSession = (session) => {
 
   return formatDate(lastActive);
 };
-const sessionTitle = (session) => {
+const sessionTitle = (session, styleText) => {
   return (
-    <Text style={[styleApp.title, {fontSize: 17}]}>
+    <Text style={[styleApp.title, {fontSize: 17}, styleText]}>
       {titleSession(session)}
     </Text>
   );
@@ -220,21 +221,100 @@ buttonPlay = (session) => {
                   styleApp.fullSize,
                   {
                     position: 'absolute',
-                    backgroundColor: colors.off + '30',
-                    paddingLeft: 30,
-                    paddingTop: 30,
+                    backgroundColor: colors.off + '0',
                   },
                 ]}>
-                {viewLive(session)}
+                <Row
+                  style={[styleApp.marginView, {paddingTop: 10, height: 60}]}>
+                  <Col style={styleApp.center2}>{viewLive(session)}</Col>
+                  <Col style={styleApp.center3}>{hangupButton(session)}</Col>
+                </Row>
               </View>
             </View>
           );
         }}
-        color={colors.transparentGrey}
+        color={colors.off}
         style={[styleApp.center, styleApp.fullSize]}
         click={() => sessionOpening(session)}
-        onPressColor={colors.title}
+        onPressColor={colors.off2}
       />
+    </View>
+  );
+};
+
+hangupButton = (session) => {
+  const currentSessionID = store.getState().coach.currentSessionID;
+  const activeSession = session.objectID === currentSessionID;
+  if (!activeSession) return null;
+  const styleViewLive = {
+    height: 40,
+    width: 40,
+    ...styleApp.center,
+    borderRadius: 20,
+  };
+  const styleText = {...styleApp.textBold, color: colors.white, fontSize: 10};
+  return (
+    <ButtonColor
+      view={() => {
+        return (
+          <AllIcons
+            name="phone-slash"
+            size={15}
+            type="font"
+            color={colors.white}
+          />
+        );
+      }}
+      color={colors.red}
+      style={styleViewLive}
+      click={() => store.dispatch(unsetCurrentSession())}
+      onPressColor={colors.redLight}
+    />
+  );
+};
+
+const listPlayers = (session) => {
+  const {members} = session;
+  return (
+    <View>
+      <View style={styleApp.marginView}>
+        <Text style={[styleApp.title, {marginTop: 20, marginBottom: 10}]}>
+          Players ({Object.values(members).length})
+        </Text>
+      </View>
+
+      <View style={styleApp.divider2} />
+
+      {Object.values(members).map((member) => (
+        <ButtonColor
+          key={member.id}
+          view={() => {
+            return (
+              <Row>
+                <Col size={30} style={styleApp.center}>
+                  {imageCardTeam({members: {[member.id]: member}})}
+                </Col>
+                <Col size={60} style={styleApp.center2}>
+                  {sessionTitle({members: {[member.id]: member}})}
+                  {sessionDate({members: {[member.id]: member}})}
+                </Col>
+                <Col size={15} style={styleApp.center}>
+                  {viewLive({members: {[member.id]: member}})}
+                </Col>
+              </Row>
+            );
+          }}
+          color={colors.white}
+          style={{
+            ...styleApp.marginView,
+            flex: 1,
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+          click={() => true}
+          onPressColor={colors.off2}
+        />
+      ))}
     </View>
   );
 };
@@ -244,5 +324,7 @@ module.exports = {
   sessionTitle,
   sessionDate,
   viewLive,
+  hangupButton,
   buttonPlay,
+  listPlayers,
 };

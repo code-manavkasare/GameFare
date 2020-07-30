@@ -153,22 +153,17 @@ class CardArchive extends Component {
     const {archive} = this.props;
     if (archive.snippets && Object.values(archive.snippets).length > 0) {
       return (
-        <View style={{
-          position: 'absolute',
-          height: 30,
-          width: 30,
-          bottom: 0,
-          right: 5,
-          zIndex: 20,
-        }}>
-          <AllIcons 
-            name="flag"
-            type="font"
-            color={colors.white}
-            size={15}
-          />
+        <View
+          style={{
+            position: 'absolute',
+            height: 30,
+            width: 30,
+            bottom: 0,
+            right: 5,
+            zIndex: 20,
+          }}>
+          <AllIcons name="flag" type="font" color={colors.white} size={15} />
         </View>
-
       );
     } else {
       return null;
@@ -176,7 +171,15 @@ class CardArchive extends Component {
   }
   cardArchive(archive) {
     const {isSelected, style, selectableMode, selectVideo} = this.props;
-    const {id, thumbnail, url, startTimestamp, size, durationSeconds, snippets} = archive;
+    const {
+      id,
+      thumbnail,
+      url,
+      startTimestamp,
+      size,
+      durationSeconds,
+      snippets,
+    } = archive;
     const {loader} = this.state;
     return (
       <View style={[styles.cardArchive, style]}>
@@ -253,9 +256,7 @@ class CardArchive extends Component {
                 return <Row style={styleRow} />;
               }}
               click={() =>
-                selectableMode
-                  ? selectVideo(id, !isSelected)
-                  : this.openVideo()
+                selectableMode ? selectVideo(id, !isSelected) : this.openVideo()
               }
               color={colors.greyDark + '40'}
               onPressColor={colors.grey + '40'}
@@ -305,11 +306,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    archive: props.local ?
-      props.parent ? 
-        state.localVideoLibrary.videoLibrary[props.parent].snippets[props.id] : 
-        state.localVideoLibrary.videoLibrary[props.id] : 
-      state.archives[props.id],
+    archive: props.local
+      ? props.parent
+        ? state.localVideoLibrary.videoLibrary[props.parent].snippets[props.id]
+        : state.localVideoLibrary.videoLibrary[props.id]
+      : state.archives[props.id],
   };
 };
 
