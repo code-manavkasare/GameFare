@@ -351,7 +351,7 @@ const generateFlagsThumbnail = async ({
 };
 
 const openSession = async (user, members) => {
-  const allSessions = store.getState().coach.allSessions;
+  const allSessions = store.getState().coachSessions;
 
   let allMembers = Object.values(members).map((member) => member.id);
   allMembers.push(user.id);
