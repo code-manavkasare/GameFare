@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  Image,
-  Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {
   OTSession,
@@ -668,7 +660,7 @@ const mapStateToProps = (state, props) => {
     currentScreenSize: state.layout.currentScreenSize,
     currentSessionID: state.coach.currentSessionID,
     session: state.coachSessions[state.coach.currentSessionID],
-    currentSession: state.coach.currentSession,
+    currentSession: state.coachSessions[state.coach.currentSessionID],
     endCurrentSession: state.coach.endCurrentSession,
     recording: state.coach.recording,
     reconnecting: state.coach.reconnecting,

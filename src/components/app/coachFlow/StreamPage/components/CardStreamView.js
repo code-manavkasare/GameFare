@@ -36,34 +36,6 @@ class CardStream extends Component {
 
   componentDidMount() {
     this.props.onRef(this);
-    // this.loadCoachSession();
-    console.log('sessionInfo', this.props.session);
-  }
-
-  async loadCoachSession() {
-    const {coachSessionID, coachAction} = this.props;
-    database()
-      .ref(`coachSessions/${coachSessionID}`)
-      .on(
-        'value',
-        async function(snap) {
-          let session = snap.val();
-          const {currentSessionID} = this.props;
-          if (!session) return null;
-
-          if (currentSessionID === coachSessionID)
-            await coachAction('setCurrentSession', session);
-
-          coachAction('setAllSessions', {
-            [coachSessionID]: session,
-          });
-          this.setState({
-            session: session,
-            loading: false, //To verify why this is needed
-            error: false,
-          });
-        }.bind(this),
-      );
   }
 
   async openStream() {
