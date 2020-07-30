@@ -22,7 +22,6 @@ import {
   marginTopAppLandscape,
 } from '../../style/sizes';
 import Loader from '../../layout/loaders/Loader';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import Button from '../../layout/buttons/Button';
 import Switch from '../../layout/switch/Switch';
 import ListContacts from '../elementsEventCreate/elementsContacts/ListContacts';
@@ -32,94 +31,55 @@ import CardUserSelect from '../../layout/cards/CardUserSelect';
 import {createChallengeAction} from '../../../actions/createChallengeActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 
-// proposed change in route params
-// usersSelected: Object -- pre-selected users
-// selectMultiple: Boolean -- allow selection of multiple users
-// closeButton: Boolean -- Show a close button true by default?,
-// loaderOnSubmit: Boolean -- ??,
-// contactsOnly: Boolean, --> pickContacts: Boolean -- if true show switch and allow selection of phone contacts
-// displayCurrentUser: Boolean -- display current user in list,
-// noUpdateStatusBar: Boolean -- do we ever do this?,
-// titleHeader: 'Select members to share video with',
-// onSubmitSelection: Function -- params 'members' and 'contacts', arrays of gamefare users or phone contacts
+const {height} = Dimensions.get('screen');
 
 class PickMembers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: true,
-      loaderHeader: false,
+      loadingUsers: true,
+      loadingContacts: true,
       loaderButton: false,
       users: [],
-      usersSelected: this.props.route.params.usersSelected,
+      contacts: [],
+      usersSelected: {},
+      contactsSelected: {},
       searchInput: '',
-      contacts: false,
+      selectingContacts: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   async componentDidMount() {
-    this.changeSearch('');
-    StatusBar.setBarStyle('dark-content', true);
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.lockToPortrait();
-    });
+    this.searchUsers('');
+    this.setState({usersSelected: this.props.usersSelected})
   }
-  static getDerivedStateFromProps(props, state) {
-    const {route} = props;
-    const {contactsOnly} = route.params;
-    if (contactsOnly) return {contacts: true};
-    return {};
-  }
-  async changeSearch(search) {
-    const {blockedByUsers, route} = this.props;
-    const {displayCurrentUser} = route.params;
-
+  async searchUsers(search) {
+    const {displayCurrentUser, blockedByUsers, userID} = this.props;
     const users = await autocompleteSearchUsers(
       search,
-      this.props.userID,
+      userID,
       displayCurrentUser,
       blockedByUsers ? Object.keys(blockedByUsers) : false,
     );
-    return this.setState({users: users, loader: false});
+    this.setState({users: users, loadingUsers: false});
   }
-  changeSearchContacts = (search) => {
+  searchContacts = (search) => {
     if (search.toLowerCase() === '') {
-      return this.listContactRef.setState({
+      this.listContactRef.setState({
         contacts: this.listContactRef.getContacts(),
       });
+    } else {
+      this.listContactRef.setState({
+        contacts: this.listContactRef
+          .getContacts()
+          .filter(
+            (contact) =>
+              contact.info.firstname.toLowerCase().search(search.toLowerCase()) !== -1 ||
+              contact.info.lastname.toLowerCase().search(search.toLowerCase()) !== -1,
+          ),
+      });
     }
-    return this.listContactRef.setState({
-      contacts: this.listContactRef
-        .getContacts()
-        .filter(
-          (contact) =>
-            contact.info.firstname
-              .toLowerCase()
-              .search(search.toLowerCase()) !== -1 ||
-            contact.info.lastname.toLowerCase().search(search.toLowerCase()) !==
-              -1,
-        ),
-    });
   };
-  switch(textOn, textOff, state, click) {
-    const {width} = Dimensions.get('screen');
-    return (
-      <Switch
-        textOn={textOn}
-        textOff={textOff}
-        finalColorOn={colors.primary}
-        translateXTo={width / 2 - 20}
-        height={50}
-        state={this.state[state]}
-        setState={(val) => click(val)}
-      />
-    );
-  }
-  next(usersSelected) {
-    if (Object.values(usersSelected).length === 0) return true;
-    return this.props.navigation.navigate('PickInfos');
-  }
   async selectUser(select, user, selectedUsers) {
     const {route} = this.props;
     const {selectMultiple, onGoBack} = route.params;
@@ -145,7 +105,7 @@ class PickMembers extends React.Component {
     return this.setState({usersSelected: usersSelected});
   }
   searchInput() {
-    const {contacts} = this.state;
+    const {selectingContacts} = this.state;
     return (
       <View style={styles.searchInputRow}>
         <Row style={styles.searchBar}>
@@ -162,9 +122,9 @@ class PickMembers extends React.Component {
               underlineColorAndroid="rgba(0,0,0,0)"
               autoCorrect={true}
               onChangeText={(text) =>
-                contacts
-                  ? this.changeSearchContacts(text)
-                  : this.changeSearch(text)
+                selectingContacts
+                  ? this.searchContacts(text)
+                  : this.searchUsers(text)
               }
             />
           </Col>
@@ -182,50 +142,71 @@ class PickMembers extends React.Component {
       />
     );
   }
-  pickMembers(usersSelected) {
-    const {contacts} = this.state;
-    const {height} = Dimensions.get('screen');
-    const {route} = this.props;
-    const {displaySwitch} = route.params;
-    const marginTop = marginTopApp;
+  selectContact(contact) {
+    console.log('contact', contact);
+  }
+  selectingContacts() {
+    const {contacts, loadingContacts, contactsSelected} = this.state;
+    if (loadingContacts) {
+      return (
+        <View style={[styleApp.center, {height: 200}]}>
+          <Loader size={55} color={colors.primary} />
+        </View>
+      );
+    }
+    return (
+      <ListContacts
+        selectUser={(selected, user, contactsSelected) =>
+          this.selectUser(selected, user, selectedUsers)
+        }
+        searchText={''}
+        onRef={(ref) => this.listContactRef = ref}
+        contactsSelected={contactsSelected}
+        selectContact={(contact) => this.selectContact(contact)}
+      />
+    );
+  }
+  selectingUsers() {
+    const {users, loadingUsers, usersSelected} = this.state;
+    if (loadingUsers) {
+      return (
+        <View style={[styleApp.center, {height: 200}]}>
+          <Loader size={55} color={colors.primary} />
+        </View>
+      );
+    }
+    return users.map((user, i) => this.cardUser(user, i, usersSelected));
+  }
+  pickMembers() {
+    const {allowSelectContacts} = this.props;
+    const {selectingContacts} = this.state;
     return (
       <View
         style={{
-          marginTop: heightHeaderHome + marginTop,
+          marginTop: heightHeaderHome + marginTopApp,
           height: height - heightHeaderHome - 20,
         }}>
-        {displaySwitch && (
+        {allowSelectContacts && (
           <View style={styleApp.marginView}>
-            {this.switch('GameFare', 'Contacts', 'contacts', async (val) => {
-              await this.setState({contacts: val});
-              return true;
-            })}
+            <Switch
+              textOn={'GameFare'}
+              textOff={'Contacts'}
+              finalColorOn={colors.primary}
+              translateXTo={width / 2 - 20}
+              height={50}
+              state={selectingContacts}
+              setState={async (val) => {
+                console.log('val', val);
+                await this.setState({selectingContacts: val});
+              }}
+            />
           </View>
         )}
         {this.searchInput()}
-
         <ScrollView
           keyboardShouldPersistTaps={'always'}
           style={styles.scrollViewUsers}>
-          {this.state.loader ? (
-            <View style={[styleApp.center, {height: 200}]}>
-              <Loader size={55} color={colors.primary} />
-            </View>
-          ) : contacts ? (
-            <ListContacts
-              selectUser={(selected, user, selectedUsers) =>
-                this.selectUser(selected, user, selectedUsers)
-              }
-              onRef={(ref) => (this.listContactRef = ref)}
-              usersSelected={usersSelected}
-              selectContact={(contact) => true}
-            />
-          ) : (
-            this.state.users.map((user, i) =>
-              this.cardUser(user, i, usersSelected),
-            )
-          )}
-          <View style={{height: 90}} />
+          {selectingContacts ? this.selectContacts() : this.selectUsers()}
         </ScrollView>
       </View>
     );
@@ -248,32 +229,7 @@ class PickMembers extends React.Component {
     } = route.params;
     const {height} = Dimensions.get('screen');
     return (
-      <View style={{backgroundColor: colors.white, height: height}}>
-        <HeaderBackButton
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={titleHeader}
-          inputRange={[0, 0]}
-          initialBorderColorIcon={colors.white}
-          initialBorderColorHeader={colors.borderColor}
-          initialBorderWidth={0}
-          initialBackgroundColor={'white'}
-          initialTitleOpacity={1}
-          icon1={closeButton ? 'times' : 'arrow-left'}
-          icon2={icon2}
-          text2={text2}
-          clickButton2={async () => {
-            await this.setState({loaderHeader: true});
-            if (!noUpdateStatusBar)
-              StatusBar.setBarStyle('light-content', true);
-            clickButton2();
-          }}
-          clickButton1={() => {
-            if (!noUpdateStatusBar)
-              StatusBar.setBarStyle('light-content', true);
-            goBack();
-          }}
-          loader={this.state.loaderHeader}
-        />
+      <View>
         {this.pickMembers(usersSelected)}
         {!usersSelected
           ? null
