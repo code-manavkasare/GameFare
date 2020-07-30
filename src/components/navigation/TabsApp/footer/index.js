@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: heightFooter + marginBottomApp,
     position: 'absolute',
-    zIndex: 0,
+    zIndex: 1,
     width: '100%',
 
     borderTopWidth: 1,

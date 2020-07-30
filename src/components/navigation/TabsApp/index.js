@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import Footer from './footer/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
@@ -15,6 +16,7 @@ import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
+// const Tab = createMaterialTopTabNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabsApp() {

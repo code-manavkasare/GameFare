@@ -96,7 +96,7 @@ class ListStreams extends Component {
         </View>
       );
     return Object.values(coachSessions).map((session, i) => (
-      <CardStreamView
+      !session ? null : <CardStreamView
         coachSessionID={session.id}
         key={session.id}
         scale={1}

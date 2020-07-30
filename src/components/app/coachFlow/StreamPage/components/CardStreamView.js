@@ -107,7 +107,7 @@ class CardStream extends Component {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
-
+    maxHeight:90,
     backgroundColor: colors.white,
     flex: 1,
   },

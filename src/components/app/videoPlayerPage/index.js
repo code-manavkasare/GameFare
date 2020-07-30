@@ -15,13 +15,13 @@ class VideoPlayerPage extends Component {
     super(props);
     this.state = {
       loader: false,
-      archive: this.props.route.params.archive,
+      // archive: this.props.route.params.archive,
+      archive: {}
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {}
   static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.route.params.archive, state.archive))
+    if (props.route?.params?.archive && !isEqual(props.route.params.archive, state.archive))
       return {
         archive: props.route.params.archive,
       };

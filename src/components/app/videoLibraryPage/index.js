@@ -59,7 +59,9 @@ class VideoLibraryPage extends Component {
     });
   }
   static getDerivedStateFromProps(props) {
-    const videosArray = sortVideos(props.archivedStreams);
+    const cloudVideosArray = sortVideos(props.archivedStreams);
+    const localVideosArray = sortVideos(props.videoLibrary);
+    const videosArray = localVideosArray.concat(cloudVideosArray);
     return {videosArray};
   }
   uploadingVideosList() {
@@ -192,7 +194,7 @@ class VideoLibraryPage extends Component {
   listVideos() {
     const {uploadingVideosArray, videosArray} = this.state;
     return (
-      <View>
+      <View style={{marginTop:72+sizes.marginTopApp}}>
         <QueueList localList={true} onOpen={() => true} onClose={() => true} />
         <LocalVideoLibrary />
 
@@ -237,7 +239,7 @@ class VideoLibraryPage extends Component {
             />
           </View>
         ) : (
-          <View style={styleApp.marginView}>
+          <View style={{paddingLeft:'5%', paddingBottom:170+sizes.marginBottomApp}}>
             <Text style={[styleApp.title, {marginBottom: 20}]}>
               GameFare library {!this.noVideos() && `(${videosArray.length})`}
             </Text>
@@ -246,7 +248,7 @@ class VideoLibraryPage extends Component {
               renderItem={(video) => this.renderCardArchive(video)}
               keyExtractor={(item) => item.id}
               numColumns={2}
-              scrollEnabled={false}
+              scrollEnabled={true}
               contentContainerStyle={{paddingBottom: 0}}
               showsVerticalScrollIndicator={true}
               initialNumToRender={10}
@@ -258,16 +260,20 @@ class VideoLibraryPage extends Component {
   }
   renderCardArchive(video) {
     const {selectableMode, selectedVideos} = this.state;
+    const {local, snippets, id} = video.item;
     const isSelected = includes(video.item.id, selectedVideos);
     return (
       <CardArchive
+        local={local ? true : false}
         selectableMode={selectableMode}
         isSelected={isSelected}
         selectVideo={(id, selected) => this.selectVideo(id, selected)}
         style={styles.cardArchive}
-        id={video.item.id}
-        key={video.item.id}
+        id={id}
+        key={id}
         noUpdateStatusBar={true}
+        openVideo={(snippets && Object.values(snippets).length > 0) ? 
+          (id) => this.openVideoWithSnippets(id) : null}
       />
     );
   }
@@ -294,7 +300,8 @@ class VideoLibraryPage extends Component {
           setState={this.setState.bind(this)}
         />
 
-        <ScrollView2
+        {this.listVideos()}
+        {/* <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.listVideos()}
           keyboardAvoidDisable={true}
@@ -306,7 +313,7 @@ class VideoLibraryPage extends Component {
           refreshControl={false}
           offsetBottom={30}
           showsVerticalScrollIndicator={true}
-        />
+        /> */}
       </View>
     );
   }
