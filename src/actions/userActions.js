@@ -45,16 +45,16 @@ const hideFooterApp = () => ({
   type: HIDE_FOOTER_APP,
 });
 
-const setArchiveFirebaseBindStatus = (id, isBinded) => ({
+const setArchiveFirebaseBindStatus = (id, isBind) => ({
   type: SET_ARCHIVE_FIREBASE_BIND_STATUS,
   archiveId: id,
-  isBindedToFirebase: isBinded,
+  isBindToFirebase: isBind,
 });
 
-const setCoachSessionFirebaseBindStatus = (id, isBinded) => ({
+const setCoachSessionFirebaseBindStatus = (id, isBind) => ({
   type: SET_COACH_SESSION_FIREBASE_BIND_STATUS,
   coachSessionId: id,
-  isBindedToFirebase: isBinded,
+  isBindToFirebase: isBind,
 });
 
 var infoUserToPushSaved = '';
@@ -150,13 +150,18 @@ const userAction = (val, data) => {
             for (const archiveInfo of Object.values(infoUser.archivedStreams)) {
               const archiveInfoFromStore = store.getState().user.infoUser
                 .archivedStreams[archiveInfo.id];
-              if (!archiveInfoFromStore.isBindedToFirebase) {
+              if (!archiveInfoFromStore.isBindToFirebase) {
                 database()
                   .ref(`archivedStreams/${archiveInfo.id}`)
                   .on('value', function(snapshot) {
                     const archive = snapshot.val();
                     dispatch(setArchive(archive));
-                    dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+
+                    const archiveInfoFromStore = store.getState().user.infoUser
+                      .archivedStreams[archiveInfo.id];
+                    if (!archiveInfoFromStore.isBindToFirebase) {
+                      dispatch(setArchiveFirebaseBindStatus(archive.id, true));
+                    }
                   });
               }
             }
@@ -166,15 +171,23 @@ const userAction = (val, data) => {
             for (const coachSession of Object.values(infoUser.coachSessions)) {
               const coachSessionFromStore = store.getState().user.infoUser
                 .coachSessions[coachSession.id];
-              if (!coachSessionFromStore.isBindedToFirebase) {
+              if (!coachSessionFromStore.isBindToFirebase) {
                 database()
                   .ref(`coachSessions/${coachSession.id}`)
                   .on('value', function(snapshot) {
                     const coachSessionFirebase = snapshot.val();
                     dispatch(setSession(coachSessionFirebase));
-                    dispatch(
-                      setCoachSessionFirebaseBindStatus(coachSession.id, true),
-                    );
+
+                    const coachSessionFromStore = store.getState().user.infoUser
+                      .coachSessions[coachSession.id];
+                    if (!coachSessionFromStore.isBindToFirebase) {
+                      dispatch(
+                        setCoachSessionFirebaseBindStatus(
+                          coachSession.id,
+                          true,
+                        ),
+                      );
+                    }
                   });
               }
             }

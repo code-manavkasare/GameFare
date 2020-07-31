@@ -47,7 +47,12 @@ class ListStreams extends Component {
       marginLeft: 65,
     };
     const coachSessions = this.sessionsArray();
-    const {userConnected, permissionsCamera, newSession} = this.props;
+    const {
+      coachSessionsData,
+      userConnected,
+      permissionsCamera,
+      newSession,
+    } = this.props;
     if (!userConnected || !permissionsCamera || !coachSessions) return null;
     if (Object.values(coachSessions).length === 0)
       return (
@@ -95,14 +100,18 @@ class ListStreams extends Component {
           />
         </View>
       );
-    return Object.values(coachSessions).map((session, i) => (
-      <CardStreamView
-        coachSessionID={session.id}
-        key={session.id}
-        scale={1}
-        onRef={(ref) => this.itemsRef.push(ref)}
-      />
-    ));
+    return Object.values(coachSessions).map((session, i) => {
+      if (coachSessionsData[session.id]) {
+        return (
+          <CardStreamView
+            coachSessionID={session.id}
+            key={session.id}
+            scale={1}
+            onRef={(ref) => this.itemsRef.push(ref)}
+          />
+        );
+      }
+    });
   };
 
   render() {
@@ -112,6 +121,7 @@ class ListStreams extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    coachSessionsData: state.coachSessions,
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
     sessionInfo: state.coach.sessionInfo,
