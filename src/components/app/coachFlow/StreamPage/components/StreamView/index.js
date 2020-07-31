@@ -460,6 +460,7 @@ class StreamPage extends Component {
     const {publishAudio, publishVideo} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
+    if (!coachSession?.tokbox) null;
     // return this.header();
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
