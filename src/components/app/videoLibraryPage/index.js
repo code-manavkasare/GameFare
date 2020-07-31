@@ -257,19 +257,22 @@ class VideoLibraryPage extends Component {
     );
   }
   renderCardArchive(video) {
+    const {archives} = this.props;
     const {selectableMode, selectedVideos} = this.state;
     const isSelected = includes(video.item.id, selectedVideos);
-    return (
-      <CardArchive
-        selectableMode={selectableMode}
-        isSelected={isSelected}
-        selectVideo={(id, selected) => this.selectVideo(id, selected)}
-        style={styles.cardArchive}
-        id={video.item.id}
-        key={video.item.id}
-        noUpdateStatusBar={true}
-      />
-    );
+    if (archives[video.item.id]) {
+      return (
+        <CardArchive
+          selectableMode={selectableMode}
+          isSelected={isSelected}
+          selectVideo={(id, selected) => this.selectVideo(id, selected)}
+          style={styles.cardArchive}
+          id={video.item.id}
+          key={video.item.id}
+          noUpdateStatusBar={true}
+        />
+      );
+    }
   }
 
   render() {
@@ -337,6 +340,7 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
+    archives: state.archives,
     archivedStreams: state.user.infoUser.archivedStreams,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
