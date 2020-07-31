@@ -47,7 +47,7 @@ const userReducer = (state = initialState, action) => {
             ...state.infoUser.archivedStreams,
             [action.archiveId]: {
               ...state.infoUser.archivedStreams[action.archiveId],
-              isBindedToFirebase: action.isBindedToFirebase,
+              isBindToFirebase: action.isBindToFirebase,
             },
           },
         },
@@ -61,7 +61,7 @@ const userReducer = (state = initialState, action) => {
             ...state.infoUser.coachSessions,
             [action.coachSessionId]: {
               ...state.infoUser.coachSessions[action.coachSessionId],
-              isBindedToFirebase: action.isBindedToFirebase,
+              isBindToFirebase: action.isBindToFirebase,
             },
           },
         },

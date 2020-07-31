@@ -456,6 +456,7 @@ class StreamPage extends Component {
     } = this.props;
     console.log('coachSession bim', coachSession);
 
+    if (!coachSession && !coachSession.tokbox) null;
     const {publishAudio, publishVideo} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
@@ -592,7 +593,11 @@ class StreamPage extends Component {
     );
   }
   render() {
-    return this.session();
+    if (this.props.session) {
+      return this.session();
+    } else {
+      return this.loaderView('Room creation');
+    }
   }
 }
 
