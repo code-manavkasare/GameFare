@@ -20,6 +20,8 @@ import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
+import refreshPhoneContactsStore from './src/components/functions/phoneContacts';
+
 Orientation.lockToPortrait();
 
 const MyTheme = {
@@ -41,6 +43,7 @@ class App extends Component {
     if (userID !== '') {
       await this.autoSignIn();
       await refreshTokenOnDatabase(userID);
+      refreshPhoneContactsStore();
     }
   }
 
@@ -54,6 +57,7 @@ class App extends Component {
       if (networkIsConnected && userID !== '' && !isBindToFirebase) {
         this.autoSignIn();
         refreshTokenOnDatabase(userID);
+        refreshPhoneContactsStore();
       }
     }
   };

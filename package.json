@@ -42,7 +42,7 @@
     "gamefare-camera-kit": "^1.1.2",
     "gamefare-local-opentok": "git+https://gitlab.com/gamefare/gamefare-local-opentok.git#0.0.14",
     "jstz": "^2.1.1",
-    "libphonenumber-js": "^1.7.30",
+    "libphonenumber-js": "^1.7.55",
     "lodash": "^4.17.15",
     "lodash.isequal": "^4.5.0",
     "lottie-ios": "^3.1.8",

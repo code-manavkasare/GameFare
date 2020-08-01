@@ -26,7 +26,7 @@ import Button from '../../../layout/buttons/Button';
 import Switch from '../../../layout/switch/Switch';
 import CardUserSelect from '../../../layout/cards/CardUserSelect';
 import CardContactSelect from '../../../layout/cards/CardContactSelect';
-import {getPhoneContacts} from '../../../functions/phoneContacts';
+import {searchPhoneContacts} from '../../../functions/phoneContacts';
 import {autocompleteSearchUsers} from '../../../functions/users';
 import {createChallengeAction} from '../../../../actions/createChallengeActions';
 
@@ -66,8 +66,8 @@ class PickMembers extends React.Component {
     );
     this.setState({users: users, loadingUsers: false});
   }
-  searchContacts = (search) => {
-    const contacts = getPhoneContacts();
+  async searchContacts(search)  {
+    const contacts = await searchPhoneContacts(search);
     console.log('contacts', contacts);
   };
   async selectUser(selected, user, selectedUsers) {
@@ -165,7 +165,6 @@ class PickMembers extends React.Component {
   pickMembers() {
     const {allowSelectContacts} = this.props;
     const {selectingContacts} = this.state;
-    console.log('pickMembers', this.props);
     return (
       <View
         style={{
