@@ -24,12 +24,11 @@ import {
 import Loader from '../../layout/loaders/Loader';
 import Button from '../../layout/buttons/Button';
 import Switch from '../../layout/switch/Switch';
-import ListContacts from '../elementsEventCreate/elementsContacts/ListContacts';
-
 import CardUserSelect from '../../layout/cards/CardUserSelect';
-
-import {createChallengeAction} from '../../../actions/createChallengeActions';
+import CardContactSelect from '../../layout/cards/CardContactSelect';
+import {getPhoneContacts} from '../../../functions/phoneContacts';
 import {autocompleteSearchUsers} from '../../functions/users';
+import {createChallengeAction} from '../../../actions/createChallengeActions';
 
 const {height} = Dimensions.get('screen');
 
@@ -80,29 +79,24 @@ class PickMembers extends React.Component {
       });
     }
   };
-  async selectUser(select, user, selectedUsers) {
-    const {route} = this.props;
-    const {selectMultiple, onGoBack} = route.params;
-    if (!selectMultiple) {
-      await this.setState({
-        usersSelected: {
-          [user.objectID]: {...user, id: user.objectID},
-        },
-      });
-      return onGoBack(user);
-    }
-
-    let {usersSelected} = this.state;
-    if (!usersSelected) usersSelected = {};
-    if (usersSelected[user.objectID]) {
-      delete usersSelected[user.objectID];
+  async selectUser(selected, user, selectedUsers) {
+    const {allowSelectMultiple, onSelectMembers} = this.props;
+    if (!allowSelectMultiple) {
+      const usersSelected = {[user.objectID]: {...user, id: user.objectID}};
+      await this.setState({usersSelected});
+      onSelectMembers(usersSelected);
     } else {
-      usersSelected = {
-        ...usersSelected,
-        [user.objectID]: {...user, id: user.objectID},
-      };
+      let {usersSelected} = this.state;
+      if (usersSelected[user.objectID]) {
+        delete usersSelected[user.objectID];
+      } else {
+        usersSelected = {
+          ...usersSelected,
+          [user.objectID]: {...user, id: user.objectID},
+        };
+      }
+      this.setState({usersSelected});
     }
-    return this.setState({usersSelected: usersSelected});
   }
   searchInput() {
     const {selectingContacts} = this.state;
@@ -138,7 +132,7 @@ class PickMembers extends React.Component {
         user={user}
         key={user.objectID}
         usersSelected={usersSelected}
-        selectUser={this.selectUser.bind(this)}
+        selectUser={(selected, user, usersSelected) => this.selectUser(selected, user, usersSelected)}
       />
     );
   }
@@ -211,52 +205,30 @@ class PickMembers extends React.Component {
       </View>
     );
   }
-
+  submitButton() {
+    const {usersSelected, contactsSelected} = this.state;
+    const numSelected = Object.values(usersSelected).length + Object.values(contactsSelected).length;
+    if (numSelected == 0) {
+      return null;
+    }
+    return (
+      <FadeInView
+        duration={300}
+        style={[styleApp.footerBooking, styleApp.marginView]}>
+        <Button
+          text={`Confirm ${numSelected} players`}
+          backgroundColor={'green'}
+          onPressColor={colors.greenLight}
+          click={() => onSelectMembers(usersSelected, contactsSelected)}
+        />
+      </FadeInView>
+    );
+  }
   render() {
-    const {goBack} = this.props.navigation;
-    const {usersSelected, loaderButton} = this.state;
-
-    const {route} = this.props;
-    const {
-      titleHeader,
-      closeButton,
-      loaderOnSubmit,
-      onGoBack,
-      noUpdateStatusBar,
-      icon2,
-      text2,
-      clickButton2,
-    } = route.params;
-    const {height} = Dimensions.get('screen');
     return (
       <View>
-        {this.pickMembers(usersSelected)}
-        {!usersSelected
-          ? null
-          : Object.values(usersSelected).length >= 1 && (
-              <FadeInView
-                duration={300}
-                style={[styleApp.footerBooking, styleApp.marginView]}>
-                <Button
-                  text={
-                    'Confirm ' +
-                    Object.values(usersSelected).length +
-                    ' players'
-                  }
-                  loader={loaderButton}
-                  backgroundColor={'green'}
-                  onPressColor={colors.greenLight}
-                  click={async () => {
-                    if (loaderOnSubmit)
-                      await this.setState({loaderButton: true});
-                    await onGoBack(usersSelected);
-                    if (!noUpdateStatusBar)
-                      StatusBar.setBarStyle('light-content', true);
-                    return this.setState({loaderButton: false});
-                  }}
-                />
-              </FadeInView>
-            )}
+        {this.pickMembers()}
+        {this.submitButton()}
       </View>
     );
   }
