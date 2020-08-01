@@ -31,9 +31,11 @@ class UploadManager extends Component {
     const task = queue[index];
 
     const uploadInstruction = status === 'uploading';
-    const readyTask = (task && task.progress === 0) || init;
+    const readyTask = (task && (task.progress === 0 || task.progress === undefined)) || init;
 
     if (uploadInstruction && readyTask) {
+      console.log('TASK!!!')
+      console.log(task, task.type)
       switch (task.type) {
         case 'video':
           await this.uploadVideoAtQueueIndex(index);

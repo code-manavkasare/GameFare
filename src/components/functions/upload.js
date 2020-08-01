@@ -43,7 +43,8 @@ const uploadVideo = async (
   const videoRef = storage()
     .ref(destination)
     .child(name);
-  await updateProgress(progressUpdates, 0.2);
+  if (progressUpdates)
+    await updateProgress(progressUpdates, 0.2);
   const uploadTask = videoRef.putFile(url, {
     contentType: 'video',
     cacheControl: 'no-store',
@@ -57,6 +58,7 @@ const uploadVideo = async (
         let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         if (isNaN(progress)) progress = 0;
         else progress = 0.2 + (Number(progress.toFixed(0)) / 100) * 0.7;
+        console.log('progress:', progress)
         if (uploadAction)
           uploadAction('setJobProgress', {
             index: index,
@@ -82,7 +84,8 @@ const uploadVideo = async (
       },
       async () => {
         var url = await videoRef.getDownloadURL();
-        await updateProgress(progressUpdates, 1);
+        if (progressUpdates)
+          await updateProgress(progressUpdates, 1);
         resolve(url);
       },
     ),

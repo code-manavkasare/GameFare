@@ -177,29 +177,9 @@ class UploadHeader extends Component {
         {headerVisible && 
         <TouchableWithoutFeedback
         onPress={() => this.open(0)}  
-        style={{
-          backgroundColor:colors.white, 
-          borderWidth:1, 
-          borderColor: colors.off, 
-          borderTopWidth:0, 
-          borderBottomLeftRadius: 20, 
-          borderBottomRightRadius: 20, 
-          width:'100%',
-          height:50,
-          zIndex:1
-        }}>
+        style={styles.container}>
           <View
-        style={{
-          backgroundColor:colors.white, 
-          borderWidth:1, 
-          borderColor: colors.off, 
-          borderTopWidth:0, 
-          borderBottomLeftRadius: 20, 
-          borderBottomRightRadius: 20, 
-          width:'100%',
-          height:50,
-          zIndex:1
-        }}>
+            style={styles.container}>
             {this.totalProgress('header')}
             <Text style={styles.headerText}>Uploading</Text>
           </View>
@@ -212,6 +192,17 @@ class UploadHeader extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor:colors.white, 
+    borderWidth:1, 
+    borderColor: colors.off, 
+    borderTopWidth:0, 
+    borderBottomLeftRadius: 20, 
+    borderBottomRightRadius: 20, 
+    width:'100%',
+    height:50,
+    zIndex:1
+  },
   menuContainer: {
     position: 'absolute',
     alignSelf: 'center',
@@ -220,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    zIndex: 3,
+    zIndex: 4,
     ...styleApp.shadow
   },
   text: {
