@@ -55,10 +55,12 @@ export default class PickMembersPage extends React.Component {
       this.beforeRemoveListener();
     }
   }
-  onSelectMembers(members, contacts) {
-    const {onSelectMembers} = this.props.route.params;
-    onSelectMembers(members, contacts);
-    this.close();
+  async onSelectMembers(members, contacts) {
+    const {onSelectMembers, noNavigation} = this.props.route.params;
+    await onSelectMembers(members, contacts);
+    if (!noNavigation) {
+      this.close();
+    }
   }
   close() {
     this.props.navigation.pop();
@@ -72,7 +74,9 @@ export default class PickMembersPage extends React.Component {
       text2,
       displayCurrentUser,
       allowSelectMultiple,
-      allowSelectContacts,
+      selectFromGamefare,
+      selectFromContacts,
+      clickButton2,
     } = route.params;
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
@@ -88,7 +92,8 @@ export default class PickMembersPage extends React.Component {
         <PickMembers
           displayCurrentUser={displayCurrentUser}
           allowSelectMultiple={allowSelectMultiple}
-          allowSelectContacts={allowSelectContacts}
+          selectFromGamefare={selectFromGamefare}
+          selectFromContacts={selectFromContacts}
           onSelectMembers={(members, contacts) => this.onSelectMembers(members, contacts)}
         />
       </View>

@@ -48,6 +48,12 @@ class PickMembers extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+  static getDerivedStateFromProps(props, state) {
+    if (props.selectFromContacts && !props.selectFromGamefare) {
+      return {selectingContacts: true};
+    }
+    return {};
+  }
   async componentDidMount() {
     this.searchUsers('');
     this.searchContacts('');
@@ -179,15 +185,16 @@ class PickMembers extends React.Component {
     return users.map((user, i) => this.cardUser(user, i, usersSelected));
   }
   pickMembers() {
-    const {allowSelectContacts} = this.props;
+    const {selectFromGamefare, selectFromContacts} = this.props;
     const {selectingContacts} = this.state;
+    console.log('pickMembers', selectFromGamefare, selectFromContacts, selectingContacts);
     return (
       <View
         style={{
           marginTop: heightHeaderHome + marginTopApp,
           height: height - heightHeaderHome - 20,
         }}>
-        {allowSelectContacts && (
+        {selectFromGamefare && selectFromContacts && (
           <View style={[styleApp.marginView, {marginBottom: 5}]}>
             <Switch
               textOn={'GameFare'}
@@ -207,7 +214,8 @@ class PickMembers extends React.Component {
         <ScrollView
           keyboardShouldPersistTaps={'always'}
           style={styles.scrollViewUsers}>
-          {selectingContacts ? this.contactList() : this.userList()}
+          {selectFromContacts && selectingContacts && this.contactList()}
+          {selectFromGamefare && !selectingContacts && this.userList()}
         </ScrollView>
       </View>
     );

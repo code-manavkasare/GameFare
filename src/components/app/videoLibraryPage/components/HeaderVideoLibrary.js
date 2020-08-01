@@ -20,13 +20,12 @@ class HeaderVideoLibrary extends Component {
   }
   pickMembersToShareVideosWith = () => {
     const {userID, selectedVideos, setState} = this.props;
-
     navigate('PickMembers', {
       usersSelected: {},
       allowSelectMultiple: true,
-      allowSelectContacts: true,
+      selectFromGamefare: true,
+      selectFromContacts: true,
       closeButton: true,
-      loaderOnSubmit: true,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
       titleHeader: 'Select members to share video with',
