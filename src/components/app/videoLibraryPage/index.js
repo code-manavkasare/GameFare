@@ -17,11 +17,13 @@ import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/co
 import CardUploading from './components/CardUploading';
 import {
   addVideoToMember,
-  deleteVideoFromLibrary,
+  deleteVideoFromLibrary
 } from '../../database/firebase/videosManagement.js';
 import Button from '../../layout/buttons/Button';
 import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import QueueList from '../elementsUpload/QueueList';
+import UploadHeader from './components/localVideoLibraryPage/components/UploadHeader'
+import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 
 import {
   sortVideos,
@@ -31,7 +33,7 @@ import {
 } from '../../functions/pictures';
 import {openSession} from '../../functions/coach';
 import sizes from '../../style/sizes';
-import {recordVideo} from '../../functions/videoManagement';
+import {recordVideo, shareVideoWithMembers} from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
@@ -59,7 +61,9 @@ class VideoLibraryPage extends Component {
     });
   }
   static getDerivedStateFromProps(props) {
-    const videosArray = sortVideos(props.archivedStreams);
+    const cloudVideosArray = sortVideos(props.archivedStreams);
+    const localVideosArray = sortVideos(props.videoLibrary);
+    const videosArray = localVideosArray.concat(cloudVideosArray);
     return {videosArray};
   }
   uploadingVideosList() {
@@ -120,7 +124,8 @@ class VideoLibraryPage extends Component {
     this.setState({selectedVideos});
   }
   async uploadVideo() {
-    const {navigate} = this.props.navigation;
+    const {uploadQueueAction, navigation, userID} = this.props
+    const {navigate} = navigation;
     const permissionLibrary = await permission('library');
     if (!permissionLibrary)
       return navigate('Alert', {
@@ -140,21 +145,43 @@ class VideoLibraryPage extends Component {
     const videos = await MediaPicker.openPicker({
       multiple: true,
       mediaType: 'video',
-      compressVideoPreset: __DEV__ ? 'MediumQuality' : 'HighestQuality',
+      compressVideoPreset: 'HighestQuality',
     }).catch((err) => console.log('error', err));
     let uploadingVideosArray = videos;
-
-    await Promise.all(
-      videos.map(async (video, i) => {
-        let newVideo = await getVideoInfo(video.path);
-        newVideo.path = video.path;
-        newVideo.localIdentifier = video.localIdentifier;
-        uploadingVideosArray[i] = newVideo;
-        return newVideo;
-      }),
+    if (videos)
+      await Promise.all(
+        videos.map(async (video, i) => {
+          let newVideo = await getVideoInfo(video.path, true, 0);
+          const destinationCloud = `archivedStreams/${newVideo.id}`;
+          const updateMembers = await shareVideoWithMembers(
+            {user: {id: userID}},
+            destinationCloud,
+            userID,
+            newVideo.id,
+          );
+          newVideo.path = video.path;
+          newVideo.localIdentifier = video.localIdentifier;
+          newVideo.type = 'video';
+          newVideo.displayInList = true;
+          newVideo.updateFirebaseAfterUpload = true;
+          newVideo.date = video.creationDate ? video.creationDate : Date.now();
+          newVideo.destinationFile = `${destinationCloud}/url`;
+          newVideo.firebaseUpdates = {
+            [`${destinationCloud}/durationSeconds`]: newVideo.durationSeconds,
+            [`${destinationCloud}/id`]: newVideo.id,
+            [`${destinationCloud}/size`]: newVideo.size,
+            [`${destinationCloud}/uploadedByUser`]: true,
+            [`${destinationCloud}/sourceUser`]: userID,
+            [`${destinationCloud}/startTimestamp`]: Date.now(),
+            [`${destinationCloud}/thumbnail`]: newVideo.thumbnail,
+            ...updateMembers
+          }
+          uploadingVideosArray[i] = newVideo;
+          return newVideo;
+        }),
     );
 
-    this.setState({uploadingVideosArray});
+    uploadQueueAction('enqueueFilesUpload', uploadingVideosArray)
   }
   async addVideo() {
     const {navigate, layoutAction} = this.props.navigation;
@@ -191,10 +218,10 @@ class VideoLibraryPage extends Component {
   }
   listVideos() {
     const {uploadingVideosArray, videosArray} = this.state;
+    const {videoLibrary: localVideos} = this.props;
     return (
-      <View>
-        <QueueList localList={true} onOpen={() => true} onClose={() => true} />
-        <LocalVideoLibrary />
+      <View style={{marginTop:72+sizes.marginTopApp, zIndex:10}}>
+        {/* <QueueList localList={true} onOpen={() => true} onClose={() => true} /> */}
 
         <View style={styleApp.marginView}>{this.uploadingVideosList()}</View>
         {this.noVideos() ? (
@@ -237,19 +264,29 @@ class VideoLibraryPage extends Component {
             />
           </View>
         ) : (
-          <View style={styleApp.marginView}>
-            <Text style={[styleApp.title, {marginBottom: 20}]}>
-              GameFare library {!this.noVideos() && `(${videosArray.length})`}
-            </Text>
+          <View style={{paddingBottom:150+sizes.marginBottomApp}}>
+            <View style={{backgroundColor:colors.white, borderBottomWidth:1, borderColor:colors.off, zIndex:2, paddingLeft:'5%'}}>
+              <Text style={[styleApp.title, {marginBottom: 11, zIndex:2}]}>
+                GameFare Library {!this.noVideos() && `(${videosArray.length})`}
+              </Text>
+              {
+                localVideos && Object.values(localVideos).length > 0 &&
+                <Text style={[styleApp.text, {marginTop:-5, marginBottom: 11, zIndex:2}]}>
+                  Awaiting Upload ({Object.values(localVideos).length})
+                </Text>
+              } 
+            </View>
+            <UploadHeader />
             <FlatList
+              style={{zIndex:0, paddingLeft:'5%', paddingRight:'5%', paddingTop:15}}
               data={videosArray}
               renderItem={(video) => this.renderCardArchive(video)}
               keyExtractor={(item) => item.id}
               numColumns={2}
-              scrollEnabled={false}
+              scrollEnabled={true}
               contentContainerStyle={{paddingBottom: 0}}
               showsVerticalScrollIndicator={true}
-              initialNumToRender={10}
+              initialNumToRender={7}
             />
           </View>
         )}
@@ -258,16 +295,20 @@ class VideoLibraryPage extends Component {
   }
   renderCardArchive(video) {
     const {selectableMode, selectedVideos} = this.state;
+    const {local, snippets, id} = video.item;
     const isSelected = includes(video.item.id, selectedVideos);
     return (
       <CardArchive
-        selectableMode={selectableMode}
+        local={local ? true : false}
+        selectableMode={!local && selectableMode}
         isSelected={isSelected}
         selectVideo={(id, selected) => this.selectVideo(id, selected)}
         style={styles.cardArchive}
-        id={video.item.id}
-        key={video.item.id}
+        id={id}
+        key={id}
         noUpdateStatusBar={true}
+        openVideo={(snippets && Object.values(snippets).length > 0) ? 
+          (id) => this.openVideoWithSnippets(id) : null}
       />
     );
   }
@@ -294,7 +335,8 @@ class VideoLibraryPage extends Component {
           setState={this.setState.bind(this)}
         />
 
-        <ScrollView2
+        {this.listVideos()}
+        {/* <ScrollView2
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.listVideos()}
           keyboardAvoidDisable={true}
@@ -306,7 +348,7 @@ class VideoLibraryPage extends Component {
           refreshControl={false}
           offsetBottom={30}
           showsVerticalScrollIndicator={true}
-        />
+        /> */}
       </View>
     );
   }
@@ -337,6 +379,7 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
+    archives: state.archives,
     archivedStreams: state.user.infoUser.archivedStreams,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
@@ -345,5 +388,5 @@ const mapStateToProps = (state) => {
 };
 export default connect(
   mapStateToProps,
-  {},
+  {uploadQueueAction},
 )(VideoLibraryPage);

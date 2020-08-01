@@ -37,23 +37,25 @@ class PastSessions extends Component {
   };
 
   renderCardArchiveSessions = (archive) => {
-    const {openVideo} = this.props;
-    return (
-      <CardArchive
-        style={styles.cardArchive}
-        id={archive.item.id}
-        key={archive.item.id}
-        openVideo={({url, thumbnail}) => {
-          openVideo({
-            watchVideo: true,
-            thumbnail: thumbnail,
-            source: url,
-            myVideo: true,
-            archiveID: archive.item.id,
-          });
-        }}
-      />
-    );
+    const {archives, openVideo} = this.props;
+    if (archives[archive.item.id]) {
+      return (
+        <CardArchive
+          style={styles.cardArchive}
+          id={archive.item.id}
+          key={archive.item.id}
+          openVideo={({url, thumbnail}) => {
+            openVideo({
+              watchVideo: true,
+              thumbnail: thumbnail,
+              source: url,
+              myVideo: true,
+              archiveID: archive.item.id,
+            });
+          }}
+        />
+      );
+    }
   };
 
   render() {
@@ -109,6 +111,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     archivedStreams: state.user.infoUser.archivedStreams,
+    archives: state.archives,
   };
 };
 

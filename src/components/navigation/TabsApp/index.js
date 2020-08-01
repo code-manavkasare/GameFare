@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import Footer from './footer/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
@@ -15,11 +16,13 @@ import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
+// const Tab = createMaterialTopTabNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabsApp() {
   return (
     <Tab.Navigator
+      lazy
       initialRouteName="Stream"
       keyboardHidesTabBar={false}
       tabBar={(props) => (
@@ -47,9 +50,7 @@ function TabsApp() {
         name="LocalSession"
         component={LocalSession}
         options={{
-          // hideInFooter: true,
           pageStack: 'LocalSession',
-          // label: 'LocalSession',
           icon: {
             name: 'video-camera',
             type: 'moon',
@@ -76,42 +77,12 @@ function TabsApp() {
         }}
       />
 
-      {/* <Tab.Screen
-        name="MessageList"
-        component={MessageList}
-        options={{
-          displayPastille: true,
-          label: 'Chat',
-          pageStack: 'MessageList',
-          signInToPass: false,
-          icon: {
-            name: 'speech',
-            type: 'moon',
-            size: 19,
-          },
-        }}
-      /> */}
-      {/* <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          label: 'Profile',
-          pageStack: 'MorePage',
-          signInToPass: false,
-          icon: {
-            name: 'profileFooter',
-            type: 'moon',
-            size: 19,
-          },
-        }}
-      /> */}
       <Tab.Screen
         name="Session"
         component={Session}
         options={{
+          gestureEnabled: false,
           hideInFooter: true,
-          pageStack: 'Session',
-          label: 'Session',
           cardStyle: {
             backgroundColor: 'transparent',
           },
@@ -122,14 +93,14 @@ function TabsApp() {
         name="VideoPlayerPage"
         component={VideoPlayerPage}
         options={{
+          gestureEnabled: false,
           hideInFooter: true,
-          pageStack: 'VideoPlayerPage',
-          label: 'VideoPlayerPage',
           cardStyle: {
             backgroundColor: 'transparent',
           },
         }}
       />
+
     </Tab.Navigator>
   );
 }

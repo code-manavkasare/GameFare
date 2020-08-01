@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {View, Text, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -25,7 +25,7 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-class CardArchive extends Component {
+class CardArchive extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
     local: PropTypes.bool,
@@ -52,7 +52,6 @@ class CardArchive extends Component {
       doAnalytics: false,
     };
   }
-
   placeholder() {
     return (
       <LinearGradient

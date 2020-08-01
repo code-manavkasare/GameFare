@@ -80,12 +80,12 @@ class Camera extends Component {
     if (this.camera && this.state.isRecording) {
       const {promiseRecording} = this.state;
       await this.camera.stopRecording();
-      // await this.setState({isRecording: false, startRecordingTime: null});
+      await this.setState({isRecording: false, startRecordingTime: null});
       if (saveVideo) {
         const videoInfo = await this.saveRecording(await promiseRecording);
+        alertStopRecording(videoInfo);
       }
-      // await this.setState({promiseRecording: null});
-      alertStopRecording(videoInfo);
+      await this.setState({promiseRecording: null});
       return true;
     }
   }

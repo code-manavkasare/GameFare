@@ -61,6 +61,7 @@ class CardStream extends Component {
     if (!member) member = {};
 
     return (
+      session ?
       <Animated.View style={styles.card}>
         <ButtonColor
           color={colors.white}
@@ -97,6 +98,7 @@ class CardStream extends Component {
           onRef={(ref) => (this.coachPopupsRef = ref)}
         />
       </Animated.View>
+      : null
     );
   }
   render() {
@@ -107,7 +109,7 @@ class CardStream extends Component {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
-
+    maxHeight:100,
     backgroundColor: colors.white,
     flex: 1,
   },

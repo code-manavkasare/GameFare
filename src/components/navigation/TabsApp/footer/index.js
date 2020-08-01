@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
+import { BlurView, VibrancyView } from "@react-native-community/blur";
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
@@ -77,6 +78,7 @@ class Footer extends React.Component {
       userConnected,
     } = this.props;
     if (!isFooterVisible || !userConnected) return null;
+    // if (!userConnected) return null;
     const {width} = Dimensions.get('screen');
     return (
       <Animated.View
@@ -87,7 +89,7 @@ class Footer extends React.Component {
           // {marginLeft: (width - widthFooter) / 2},
           {transform: [{translateY: this.translateYFooter}]},
         ]}>
-        <Row style={{width: '100%'}}>
+        <Row style={styles.footerBody}>
           {/* <Animated.View
             style={[
               {transform: [{translateX: this.translateXMovingView}]},
@@ -127,6 +129,11 @@ class Footer extends React.Component {
               </Col>
             );
           })}
+          {/* {<BlurView
+            style={{position:'absolute', zIndex:-1, ...styleApp.fullSize, top:0}}
+            blurType="light"
+            blurAmount={20}
+          />} */}
         </Row>
       </Animated.View>
     );
@@ -138,18 +145,24 @@ class Footer extends React.Component {
 
 const styles = StyleSheet.create({
   footer: {
-    ...styleApp.shade,
+    ...styleApp.shadowWeak,
     flexDirection: 'row',
-    backgroundColor: 'white',
     height: heightFooter + marginBottomApp,
     position: 'absolute',
-    zIndex: 0,
+    zIndex: 1,
     width: '100%',
-
-    borderTopWidth: 1,
-    borderRadius: 0,
-    // overflow: 'hidden',
+    borderRadius: 40,
+    borderWidth: 1,
+    borderBottomWidth:0,
     borderColor: colors.off,
+  },
+  footerBody: {
+    ...styleApp.fullSize,
+    borderRadius: 40,
+    borderBottomLeftRadius:1,
+    borderBottomRightRadius: 1,
+    borderColor: colors.off,
+    overflow: 'hidden'
   },
   absoluteButtonMoving: {
     ...styleApp.center,

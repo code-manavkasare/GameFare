@@ -23,6 +23,7 @@ import {setLayout} from '../../actions/layoutActions';
 import {FormatDate, formatDuration} from './date';
 import AsyncImage from '../layout/image/AsyncImage';
 import colors from '../style/colors';
+import styleApp from '../style/style'
 
 const generateSnippetsFromFlags = async (source, flags) => {
   for (var f in flags) {
@@ -330,7 +331,7 @@ const uploadVideoAlert = (archive) => {
     icon: (
       <AsyncImage
         mainImage={thumbnail}
-        style={{width: 40, height: 40, borderRadius: 20}}
+        style={{...styleApp.fullSize}}
       />
     ),
     textButton: 'Upload',
@@ -449,4 +450,5 @@ export {
   makeSnippet,
   removeLocalVideo,
   alertStopRecording,
+  shareVideoWithMembers
 };

@@ -456,10 +456,11 @@ class StreamPage extends Component {
     } = this.props;
     console.log('coachSession bim', coachSession);
 
+    if (!coachSession && !coachSession.tokbox) null;
     const {publishAudio, publishVideo} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-    if (!coachSession.tokbox) null;
+    if (!coachSession?.tokbox) null;
     // return this.header();
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
@@ -592,7 +593,11 @@ class StreamPage extends Component {
     );
   }
   render() {
-    return this.session();
+    if (this.props.session) {
+      return this.session();
+    } else {
+      return this.loaderView('Room creation');
+    }
   }
 }
 
