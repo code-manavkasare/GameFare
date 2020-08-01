@@ -100,18 +100,17 @@ class ListStreams extends Component {
           />
         </View>
       );
-    return Object.values(coachSessions).map((session, i) => {
-      if (coachSessionsData[session.id]) {
-        return (
-          <CardStreamView
-            coachSessionID={session.id}
-            key={session.id}
-            scale={1}
-            onRef={(ref) => this.itemsRef.push(ref)}
-          />
-        );
-      }
-    });
+    return (
+      <View style={{marginTop:10}}>
+      {Object.values(coachSessions).map((session, i) => (
+        !session ? null : <CardStreamView
+          coachSessionID={session.id}
+          key={session.id}
+          scale={1}
+          onRef={(ref) => this.itemsRef.push(ref)}
+        />))}
+      </View>
+    );
   };
 
   render() {

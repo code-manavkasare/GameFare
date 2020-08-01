@@ -193,10 +193,10 @@ class VideoLibraryPage extends Component {
   }
   listVideos() {
     const {uploadingVideosArray, videosArray} = this.state;
+    const {videoLibrary: localVideos} = this.props;
     return (
       <View style={{marginTop:72+sizes.marginTopApp}}>
         <QueueList localList={true} onOpen={() => true} onClose={() => true} />
-        <LocalVideoLibrary />
 
         <View style={styleApp.marginView}>{this.uploadingVideosList()}</View>
         {this.noVideos() ? (
@@ -241,8 +241,14 @@ class VideoLibraryPage extends Component {
         ) : (
           <View style={{paddingLeft:'5%', paddingBottom:170+sizes.marginBottomApp}}>
             <Text style={[styleApp.title, {marginBottom: 20}]}>
-              GameFare library {!this.noVideos() && `(${videosArray.length})`}
+              GameFare Library {!this.noVideos() && `(${videosArray.length})`}
             </Text>
+            {
+              localVideos && Object.values(localVideos).length > 0 &&
+              <Text style={[styleApp.text, {marginTop:-10, marginBottom: 10}]}>
+                Awaiting Upload ({Object.values(localVideos).length})
+              </Text>
+            }
             <FlatList
               data={videosArray}
               renderItem={(video) => this.renderCardArchive(video)}

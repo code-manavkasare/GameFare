@@ -16,12 +16,13 @@ import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
-// const Tab = createMaterialTopTabNavigator();
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
+// const Tab = createBottomTabNavigator();
 
 function TabsApp() {
   return (
     <Tab.Navigator
+      lazy
       initialRouteName="Stream"
       keyboardHidesTabBar={false}
       tabBar={(props) => (
@@ -49,9 +50,7 @@ function TabsApp() {
         name="LocalSession"
         component={LocalSession}
         options={{
-          // hideInFooter: true,
           pageStack: 'LocalSession',
-          // label: 'LocalSession',
           icon: {
             name: 'video-camera',
             type: 'moon',
@@ -107,31 +106,6 @@ function TabsApp() {
           },
         }}
       /> */}
-      <Tab.Screen
-        name="Session"
-        component={Session}
-        options={{
-          hideInFooter: true,
-          pageStack: 'Session',
-          label: 'Session',
-          cardStyle: {
-            backgroundColor: 'transparent',
-          },
-        }}
-      />
-
-      <Tab.Screen
-        name="VideoPlayerPage"
-        component={VideoPlayerPage}
-        options={{
-          hideInFooter: true,
-          pageStack: 'VideoPlayerPage',
-          label: 'VideoPlayerPage',
-          cardStyle: {
-            backgroundColor: 'transparent',
-          },
-        }}
-      />
     </Tab.Navigator>
   );
 }
