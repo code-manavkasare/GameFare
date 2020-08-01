@@ -9,7 +9,6 @@ const autocompleteSearchUsers = async (
 ) => {
   await client.clearCache();
   let filters = `NOT objectID:${userID}`;
-  console.log('userID', userID);
   if ((!userID || userID === '' || searchCurrentUser) && !blockedByUsers) {
     filters = '';
   }

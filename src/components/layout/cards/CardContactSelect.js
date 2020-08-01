@@ -56,8 +56,7 @@ export default class CardContactSelect extends Component {
         click={() => select(contact)}
         color="white"
         style={[
-          styles.cardUser,
-          marginOnScrollView && {paddingLeft: 0, paddingRight: 0},
+          styles.cardContact,
         ]}
         onPressColor={colors.off2}
       />

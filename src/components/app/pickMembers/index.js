@@ -61,8 +61,7 @@ export default class PickMembersPage extends React.Component {
     this.close();
   }
   close() {
-    const {pop} = this.props.navigation;
-    pop();
+    this.props.navigation.pop();
   }
   render() {
     const {route} = this.props;

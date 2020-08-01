@@ -38,6 +38,7 @@ const persistConfig = {
     'globaleVariables',
     'uploadQueue',
     'network',
+    'phoneContacts',
   ],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };

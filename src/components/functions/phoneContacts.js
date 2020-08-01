@@ -24,7 +24,7 @@ function makeContact(contact, defaultCountryCode) {
   // { id, firstname, lastname, picture, phoneNumber, countryCode }
   let mobileNumber = getMobileNumber(contact);
   if (mobileNumber[0] !== '+') {
-    mobileNumber = `+${defaultCountryCode} ${mobileNumber}`;
+    mobileNumber = `${defaultCountryCode} ${mobileNumber}`;
   }
   let parsedNumber = parsePhoneNumberFromString(mobileNumber);
   if (parsedNumber) {
@@ -43,28 +43,29 @@ function makeContact(contact, defaultCountryCode) {
 
 function refreshPhoneContactsStore() {
   Contacts.getAll((err, contacts) => {
-    if (err) {
-      throw err
-    } else {
-      const userCountryCode = store.getState().user.infoUser.userInfo;
-      console.log('userCountryCode', userCountryCode);
+    if (!err) {
+      const userCountryCode = store.getState().user.infoUser.userInfo.countryCode;
       filteredContacts = contacts
         .filter((contact) => contact.phoneNumbers.length !== 0)
-        .map((contact) => makeContact(contact, 1))
+        .map((contact) => makeContact(contact, userCountryCode))
         .filter((x) => x); // filters out null from makeContact
-        // .sort((a, b) => {
-        //   let textA = a.lastname.toUpperCase();
-        //   let textB = b.lastname.toUpperCase();
-        //   return textA < textB ? -1 : textA > textB ? 1 : 0;
-        // });
-        store.dispatch(populatePhoneContacts(filteredContacts));
+      store.dispatch(populatePhoneContacts(filteredContacts));
     }
   });
 }
 
-function searchPhoneContacts(searchString) {
-  return store.getState().phoneContacts.contacts;
+function searchPhoneContacts(search) {
+  const contacts = store.getState().phoneContacts.contacts;
+  if (search === '' || !search) {
+    return contacts;
+  } else {
+    return contacts.filter((contact) =>
+      contact.firstname.toLowerCase()
+        .search(search.toLowerCase()) !== -1 ||
+      contact.lastname.toLowerCase()
+        .search(search.toLowerCase()) !== -1
+    );
+  }
 }
-
 
 module.exports = {refreshPhoneContactsStore, searchPhoneContacts};

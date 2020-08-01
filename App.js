@@ -20,7 +20,7 @@ import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 
-import refreshPhoneContactsStore from './src/components/functions/phoneContacts';
+import {refreshPhoneContactsStore} from './src/components/functions/phoneContacts';
 
 Orientation.lockToPortrait();
 

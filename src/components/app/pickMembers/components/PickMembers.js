@@ -68,7 +68,7 @@ class PickMembers extends React.Component {
   }
   async searchContacts(search)  {
     const contacts = await searchPhoneContacts(search);
-    console.log('contacts', contacts);
+    this.setState({contacts, loadingContacts: false});
   };
   async selectUser(selected, user, selectedUsers) {
     const {allowSelectMultiple, onSelectMembers} = this.props;
@@ -127,8 +127,34 @@ class PickMembers extends React.Component {
       />
     );
   }
-  selectContact(contact) {
-    console.log('contact', contact);
+  cardContact(contact, i, contactsSelected) {
+    return (
+      <CardContactSelect
+        contact={contact}
+        key={i}
+        selected={contactsSelected[contact.id]}
+        select={(contact) => this.selectContact(contact)}
+      />
+    );
+  }
+  async selectContact(contact) {
+    const {allowSelectMultiple, onSelectMembers} = this.props;
+    if (!allowSelectMultiple) {
+      const contactsSelected = {[contact.id]: {...contact}};
+      await this.setState({contactsSelected});
+      onSelectMembers(usersSelected, contactsSelected);
+    } else {
+      let {contactsSelected} = this.state;
+      if (contactsSelected[contact.id]) {
+        delete contactsSelected[contact.id];
+      } else {
+        contactsSelected = {
+          ...contactsSelected,
+          [contact.id]: {...contact},
+        };
+      }
+      this.setState({contactsSelected});
+    }
   }
   contactList() {
     const {contacts, loadingContacts, contactsSelected} = this.state;
@@ -139,17 +165,7 @@ class PickMembers extends React.Component {
         </View>
       );
     }
-    return (
-      <ListContacts
-        selectUser={(selected, user, contactsSelected) =>
-          this.selectUser(selected, user, selectedUsers)
-        }
-        searchText={''}
-        onRef={(ref) => this.listContactRef = ref}
-        contactsSelected={contactsSelected}
-        selectContact={(contact) => this.selectContact(contact)}
-      />
-    );
+    return contacts.map((contact, i) => this.cardContact(contact, i, contactsSelected));
   }
   userList() {
     const {users, loadingUsers, usersSelected} = this.state;
