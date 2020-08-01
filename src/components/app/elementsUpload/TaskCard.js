@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   card: {
     ...styleApp.marginView,
     paddingTop:15,
+    height:100,
     paddingBottom:15,
     overflow: 'hidden'
   },

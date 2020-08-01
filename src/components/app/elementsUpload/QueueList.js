@@ -241,6 +241,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 200,
     width: '100%',
+    zIndex:2,
   },
   rocket: {
     height: 60,

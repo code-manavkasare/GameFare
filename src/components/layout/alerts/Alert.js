@@ -46,15 +46,26 @@ export default class Alert extends Component {
   }
   title() {
     const {title} = this.props.route.params;
-    return <Text style={styleApp.title}>{title}</Text>;
+    if (title) 
+      return <Text style={styleApp.title}>{title}</Text>;
+    return null;
   }
   subtitle() {
     const {subtitle} = this.props.route.params;
     if (subtitle)
       return (
-        <Text style={[styleApp.text, {fontSize: 15, marginTop: 20}]}>
-          {subtitle}
-        </Text>
+        <View>
+          <Text style={[styleApp.text, {fontSize: 15, marginTop: 20}]}>
+            {subtitle}
+          </Text>
+
+          <View
+            style={[
+              styleApp.divider,
+              {width: '100%', marginTop: 20, marginBottom:-5},
+            ]}
+          />
+        </View>
       );
     return null;
   }
@@ -122,21 +133,18 @@ export default class Alert extends Component {
             </TouchableOpacity>
           )}
 
-          {icon && <View style={styles.viewIcon}>{icon}</View>}
-
           <Row style={styles.rowTitleSubtitle}>
-            <Col>
+            <Col size={icon ? 85 : 100}>
               {this.title()}
               {this.subtitle()}
             </Col>
+            {icon && 
+            <Col size={15} style={styleApp.center}>
+              <View style={styles.viewIcon}>
+                {icon}
+              </View>
+            </Col>}
           </Row>
-
-          <View
-            style={[
-              styleApp.divider,
-              {marginLeft: '5%', width: '90%', marginTop: 20},
-            ]}
-          />
 
           {componentAdded && (
             <View style={[styleApp.marginView, {marginTop: 15}]}>
@@ -197,17 +205,20 @@ export default class Alert extends Component {
                   <ButtonColor
                     key={i}
                     view={() => {
-                      const {name, size, type, color} = icon;
                       return (
                         <Row>
-                          <Col size={20} style={styleApp.center}>
-                            <AllIcons
-                              name={name}
-                              type={type}
-                              color={color}
-                              size={size}
-                            />
-                          </Col>
+                          {icon ? () => {
+                            const {name, size, type, color} = icon;
+                            return (
+                              <Col size={20} style={styleApp.center}>
+                                <AllIcons
+                                  name={name}
+                                  type={type}
+                                  color={color}
+                                  size={size}
+                                />
+                              </Col>
+                          )} : null}
                           <Col size={60} style={styleApp.center2}>
                             <Text style={styleApp.text}>{title}</Text>
                           </Col>
@@ -257,11 +268,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     position: 'absolute',
     flex: 1,
-    // borderTopRightRadius: 30,
-    // borderTopLeftRadius: 30,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
     backgroundColor: 'white',
     borderWidth: 1,
     paddingTop: 10,
+    paddingBottom:10,
     borderColor: colors.off,
     width: '100%',
     // shadowColor: '#46474B',
@@ -273,7 +285,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: '5%',
     paddingRight: '5%',
-    width: '85%',
+    width: '100%',
     marginBottom: 9,
     marginTop: 17,
   },
@@ -289,15 +301,16 @@ const styles = StyleSheet.create({
     borderRadius: 13,
   },
   viewIcon: {
-    position: 'absolute',
-    width: 26,
-    height: 26,
-    right: '12%',
-    top: 25,
+    // position: 'absolute',
+    width: 39,
+    height: 69,
+    // right: '12%',
+    marginTop: 45,
     zIndex: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 13,
+    borderRadius: 4,
+    overflow: 'hidden'
   },
   buttonArea: {
     paddingLeft: '5%',

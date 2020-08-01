@@ -56,7 +56,7 @@ export default class VideoPlayer extends Component {
       prevState.totalTime !== totalTime ||
       prevState.currentTime !== currentTime
     ) {
-      this.controlButtonRef.setCurrentTime(currentTime, true);
+      this.controlButtonRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
     }
 
@@ -123,7 +123,7 @@ export default class VideoPlayer extends Component {
     const {currentTime} = info;
     if (!paused) {
       // console.log('on progress', currentTime);
-      this.controlButtonRef.setCurrentTime(currentTime);
+      this.controlButtonRef?.setCurrentTime(currentTime);
     }
   };
   onSlidingComplete = async (SliderTime, forcePlay) => {
@@ -292,7 +292,7 @@ export default class VideoPlayer extends Component {
                       onProgress={(info) => !paused && this.onProgress(info)}
                       onEnd={(callback) => {
                         this.togglePlayPause(true);
-                        this.controlButtonRef.setCurrentTime(totalTime, true);
+                        this.controlButtonRef?.setCurrentTime(totalTime, true);
                       }}
                     />
                   )}

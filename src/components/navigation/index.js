@@ -19,6 +19,9 @@ import Coaches from './MainApp/components/Coaches';
 
 import CourtCalibration from './MainApp/components/CourtCalibration';
 
+import VideoPlayerPage from '../app/videoPlayerPage/index';
+import Session from './TabsApp/components/Session';
+
 import Alert from '../layout/alerts/Alert';
 
 const Stack = createStackNavigator();

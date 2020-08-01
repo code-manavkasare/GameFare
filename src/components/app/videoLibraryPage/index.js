@@ -22,6 +22,7 @@ import {
 import Button from '../../layout/buttons/Button';
 import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import QueueList from '../elementsUpload/QueueList';
+import UploadHeader from './components/localVideoLibraryPage/components/UploadHeader'
 
 import {
   sortVideos,
@@ -193,10 +194,10 @@ class VideoLibraryPage extends Component {
   }
   listVideos() {
     const {uploadingVideosArray, videosArray} = this.state;
+    const {videoLibrary: localVideos} = this.props;
     return (
-      <View style={{marginTop:72+sizes.marginTopApp}}>
-        <QueueList localList={true} onOpen={() => true} onClose={() => true} />
-        <LocalVideoLibrary />
+      <View style={{marginTop:72+sizes.marginTopApp, zIndex:10}}>
+        {/* <QueueList localList={true} onOpen={() => true} onClose={() => true} /> */}
 
         <View style={styleApp.marginView}>{this.uploadingVideosList()}</View>
         {this.noVideos() ? (
@@ -239,11 +240,21 @@ class VideoLibraryPage extends Component {
             />
           </View>
         ) : (
-          <View style={{paddingLeft:'5%', paddingBottom:170+sizes.marginBottomApp}}>
-            <Text style={[styleApp.title, {marginBottom: 20}]}>
-              GameFare library {!this.noVideos() && `(${videosArray.length})`}
-            </Text>
+          <View style={{paddingBottom:150+sizes.marginBottomApp}}>
+            <View style={{backgroundColor:colors.white, borderBottomWidth:1, borderColor:colors.off, zIndex:2, paddingLeft:'5%'}}>
+              <Text style={[styleApp.title, {marginBottom: 11, zIndex:2}]}>
+                GameFare Library {!this.noVideos() && `(${videosArray.length})`}
+              </Text>
+              {
+                localVideos && Object.values(localVideos).length > 0 &&
+                <Text style={[styleApp.text, {marginTop:-5, marginBottom: 11, zIndex:2}]}>
+                  Awaiting Upload ({Object.values(localVideos).length})
+                </Text>
+              } 
+            </View>
+            <UploadHeader />
             <FlatList
+              style={{zIndex:0, paddingLeft:'5%', paddingRight:'5%', paddingTop:15}}
               data={videosArray}
               renderItem={(video) => this.renderCardArchive(video)}
               keyExtractor={(item) => item.id}
@@ -263,22 +274,21 @@ class VideoLibraryPage extends Component {
     const {selectableMode, selectedVideos} = this.state;
     const {local, snippets, id} = video.item;
     const isSelected = includes(video.item.id, selectedVideos);
-    if (archives[video.item.id]) {
-      return (
-        <CardArchive
-          local={local ? true : false}
-          selectableMode={!local && selectableMode}
-          isSelected={isSelected}
-          selectVideo={(id, selected) => this.selectVideo(id, selected)}
-          style={styles.cardArchive}
-          id={id}
-          key={id}
-          noUpdateStatusBar={true}
-          openVideo={(snippets && Object.values(snippets).length > 0) ? 
-            (id) => this.openVideoWithSnippets(id) : null}
-        />
-      );
-    }
+    // if (video.item)
+    return (
+      <CardArchive
+        local={local ? true : false}
+        selectableMode={!local && selectableMode}
+        isSelected={isSelected}
+        selectVideo={(id, selected) => this.selectVideo(id, selected)}
+        style={styles.cardArchive}
+        id={id}
+        key={id}
+        noUpdateStatusBar={true}
+        openVideo={(snippets && Object.values(snippets).length > 0) ? 
+          (id) => this.openVideoWithSnippets(id) : null}
+      />
+    );
   }
 
   render() {

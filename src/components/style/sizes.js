@@ -33,7 +33,7 @@ if (Platform.OS === 'ios') {
   marginBottomApp = 10;
   heightHeaderFilter = 100;
   heightFooterBooking = 82;
-  heightFooter = 70;
+  heightFooter = 75;
   marginTopApp = 20;
   heightHeaderHomeSearch = 130;
   initialHeightControlBar = 80;
