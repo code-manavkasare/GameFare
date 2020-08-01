@@ -12,7 +12,7 @@ import DateSelector from '../app/elementsEventCreate/DateSelector';
 
 import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
-import AddMembers from '../app/elementsCreateChallenge/PickMembers';
+import PickMembersPage from '../app/pickMembers';
 import LocalVideoLibrary from '../app/videoLibraryPage/components/localVideoLibraryPage/index';
 
 import Coaches from './MainApp/components/Coaches';
@@ -79,7 +79,7 @@ function InitialStack() {
 
       <Stack.Screen
         name="PickMembers"
-        component={AddMembers}
+        component={PickMembersPage}
         options={{
           gestureEnabled: false,
         }}

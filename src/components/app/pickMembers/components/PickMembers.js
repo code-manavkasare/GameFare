@@ -14,23 +14,23 @@ import FadeInView from 'react-native-fade-in-view';
 import StatusBar from '@react-native-community/status-bar';
 import Orientation from 'react-native-orientation-locker';
 
-import styleApp from '../../style/style';
-import colors from '../../style/colors';
+import styleApp from '../../../style/style';
+import colors from '../../../style/colors';
 import {
   heightHeaderHome,
   marginTopApp,
   marginTopAppLandscape,
-} from '../../style/sizes';
-import Loader from '../../layout/loaders/Loader';
-import Button from '../../layout/buttons/Button';
-import Switch from '../../layout/switch/Switch';
-import CardUserSelect from '../../layout/cards/CardUserSelect';
-import CardContactSelect from '../../layout/cards/CardContactSelect';
+} from '../../../style/sizes';
+import Loader from '../../../layout/loaders/Loader';
+import Button from '../../../layout/buttons/Button';
+import Switch from '../../../layout/switch/Switch';
+import CardUserSelect from '../../../layout/cards/CardUserSelect';
+import CardContactSelect from '../../../layout/cards/CardContactSelect';
 import {getPhoneContacts} from '../../../functions/phoneContacts';
-import {autocompleteSearchUsers} from '../../functions/users';
-import {createChallengeAction} from '../../../actions/createChallengeActions';
+import {autocompleteSearchUsers} from '../../../functions/users';
+import {createChallengeAction} from '../../../../actions/createChallengeActions';
 
-const {height} = Dimensions.get('screen');
+const {height, width} = Dimensions.get('screen');
 
 class PickMembers extends React.Component {
   constructor(props) {
@@ -50,7 +50,11 @@ class PickMembers extends React.Component {
   }
   async componentDidMount() {
     this.searchUsers('');
-    this.setState({usersSelected: this.props.usersSelected})
+    this.searchContacts('');
+    const {usersSelected} = this.props;
+    if (usersSelected) {
+      this.setState({usersSelected});
+    }
   }
   async searchUsers(search) {
     const {displayCurrentUser, blockedByUsers, userID} = this.props;
@@ -63,21 +67,8 @@ class PickMembers extends React.Component {
     this.setState({users: users, loadingUsers: false});
   }
   searchContacts = (search) => {
-    if (search.toLowerCase() === '') {
-      this.listContactRef.setState({
-        contacts: this.listContactRef.getContacts(),
-      });
-    } else {
-      this.listContactRef.setState({
-        contacts: this.listContactRef
-          .getContacts()
-          .filter(
-            (contact) =>
-              contact.info.firstname.toLowerCase().search(search.toLowerCase()) !== -1 ||
-              contact.info.lastname.toLowerCase().search(search.toLowerCase()) !== -1,
-          ),
-      });
-    }
+    const contacts = getPhoneContacts();
+    console.log('contacts', contacts);
   };
   async selectUser(selected, user, selectedUsers) {
     const {allowSelectMultiple, onSelectMembers} = this.props;
@@ -139,7 +130,7 @@ class PickMembers extends React.Component {
   selectContact(contact) {
     console.log('contact', contact);
   }
-  selectingContacts() {
+  contactList() {
     const {contacts, loadingContacts, contactsSelected} = this.state;
     if (loadingContacts) {
       return (
@@ -160,7 +151,7 @@ class PickMembers extends React.Component {
       />
     );
   }
-  selectingUsers() {
+  userList() {
     const {users, loadingUsers, usersSelected} = this.state;
     if (loadingUsers) {
       return (
@@ -174,6 +165,7 @@ class PickMembers extends React.Component {
   pickMembers() {
     const {allowSelectContacts} = this.props;
     const {selectingContacts} = this.state;
+    console.log('pickMembers', this.props);
     return (
       <View
         style={{
@@ -181,7 +173,7 @@ class PickMembers extends React.Component {
           height: height - heightHeaderHome - 20,
         }}>
         {allowSelectContacts && (
-          <View style={styleApp.marginView}>
+          <View style={[styleApp.marginView, {marginBottom: 5}]}>
             <Switch
               textOn={'GameFare'}
               textOff={'Contacts'}
@@ -190,8 +182,8 @@ class PickMembers extends React.Component {
               height={50}
               state={selectingContacts}
               setState={async (val) => {
-                console.log('val', val);
-                await this.setState({selectingContacts: val});
+                await this.setState({selectingContacts: val})
+                return true;
               }}
             />
           </View>
@@ -200,13 +192,14 @@ class PickMembers extends React.Component {
         <ScrollView
           keyboardShouldPersistTaps={'always'}
           style={styles.scrollViewUsers}>
-          {selectingContacts ? this.selectContacts() : this.selectUsers()}
+          {selectingContacts ? this.contactList() : this.userList()}
         </ScrollView>
       </View>
     );
   }
   submitButton() {
     const {usersSelected, contactsSelected} = this.state;
+    const {onSelectMembers} = this.props;
     const numSelected = Object.values(usersSelected).length + Object.values(contactsSelected).length;
     if (numSelected == 0) {
       return null;

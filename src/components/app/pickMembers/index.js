@@ -26,12 +26,17 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import PickMembers from './components/PickMembers.js';
 import PickMembersHeader from './components/PickMembersHeader.js';
 
+const {height} = Dimensions.get('screen');
+
 export default class PickMembersPage extends React.Component {
   constructor(props) {
     super(props);
+    this.focusListener = null;
+    this.beforeRemoveListener = null;
   }
   async componentDidMount() {
-    const {noUpdateStatusBar} = this.props.route.params;
+    const {route, navigation} = this.props;
+    const {noUpdateStatusBar} = route.params;
     StatusBar.setBarStyle('dark-content', true);
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
@@ -42,16 +47,25 @@ export default class PickMembersPage extends React.Component {
       });
     }
   }
+  componentWillUnmount() {
+    if (this.focusListener) {
+      this.focusListener();
+    }
+    if (this.beforeRemoveListener) {
+      this.beforeRemoveListener();
+    }
+  }
   onSelectMembers(members, contacts) {
     const {onSelectMembers} = this.props.route.params;
     onSelectMembers(members, contacts);
     this.close();
   }
   close() {
-    const {goBack} = this.props.navigation;
-    goBack();
+    const {pop} = this.props.navigation;
+    pop();
   }
   render() {
+    const {route} = this.props;
     const {
       titleHeader,
       closeButton,
@@ -59,7 +73,7 @@ export default class PickMembersPage extends React.Component {
       text2,
       displayCurrentUser,
       allowSelectMultiple,
-      allowSelectContact,
+      allowSelectContacts,
     } = route.params;
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
@@ -75,9 +89,10 @@ export default class PickMembersPage extends React.Component {
         <PickMembers
           displayCurrentUser={displayCurrentUser}
           allowSelectMultiple={allowSelectMultiple}
-          allowSelectContact={allowSelectContact}
+          allowSelectContacts={allowSelectContacts}
           onSelectMembers={(members, contacts) => this.onSelectMembers(members, contacts)}
         />
       </View>
     );
+  }
 }

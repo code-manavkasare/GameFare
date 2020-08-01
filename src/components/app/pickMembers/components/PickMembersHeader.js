@@ -1,7 +1,8 @@
 import React from 'react';
 import {Animated} from 'react-native';
 import PropTypes from 'prop-types';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import colors from '../../../style/colors';
+import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 export default class PickMembersHeader extends React.Component {
   static propTypes = {
