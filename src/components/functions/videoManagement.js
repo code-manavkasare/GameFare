@@ -450,4 +450,5 @@ export {
   makeSnippet,
   removeLocalVideo,
   alertStopRecording,
+  shareVideoWithMembers
 };
