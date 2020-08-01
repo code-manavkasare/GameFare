@@ -16,8 +16,8 @@ import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
-const Tab = createMaterialTopTabNavigator();
-// const Tab = createBottomTabNavigator();
+// const Tab = createMaterialTopTabNavigator();
+const Tab = createBottomTabNavigator();
 
 function TabsApp() {
   return (
@@ -77,35 +77,30 @@ function TabsApp() {
         }}
       />
 
-      {/* <Tab.Screen
-        name="MessageList"
-        component={MessageList}
+      <Tab.Screen
+        name="Session"
+        component={Session}
         options={{
-          displayPastille: true,
-          label: 'Chat',
-          pageStack: 'MessageList',
-          signInToPass: false,
-          icon: {
-            name: 'speech',
-            type: 'moon',
-            size: 19,
+          gestureEnabled: false,
+          hideInFooter: true,
+          cardStyle: {
+            backgroundColor: 'transparent',
           },
         }}
-      /> */}
-      {/* <Tab.Screen
-        name="Profile"
-        component={Profile}
+      />
+
+      <Tab.Screen
+        name="VideoPlayerPage"
+        component={VideoPlayerPage}
         options={{
-          label: 'Profile',
-          pageStack: 'MorePage',
-          signInToPass: false,
-          icon: {
-            name: 'profileFooter',
-            type: 'moon',
-            size: 19,
+          gestureEnabled: false,
+          hideInFooter: true,
+          cardStyle: {
+            backgroundColor: 'transparent',
           },
         }}
-      /> */}
+      />
+
     </Tab.Navigator>
   );
 }

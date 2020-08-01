@@ -111,28 +111,6 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
-
-      <Stack.Screen
-        name="Session"
-        component={Session}
-        options={{
-          gestureEnabled: false,
-          cardStyle: {
-            backgroundColor: 'transparent',
-          },
-        }}
-      />
-
-      <Stack.Screen
-        name="VideoPlayerPage"
-        component={VideoPlayerPage}
-        options={{
-          gestureEnabled: false,
-          cardStyle: {
-            backgroundColor: 'transparent',
-          },
-        }}
-      />
     </Stack.Navigator>
   );
 }

@@ -119,7 +119,7 @@ class UploadManager extends Component {
       index,
       uploadQueueAction,
       progressUpdates,
-    );
+    )
     uploadQueueAction('setJobProgress', {index: index, progress: 1});
 
     if (videoInfo.updateFirebaseAfterUpload) {
