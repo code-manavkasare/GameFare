@@ -385,6 +385,7 @@ const infoCoach = (members) => {
 };
 const closeSession = async () => {
   await store.dispatch(endCurrentSession());
+  store.dispatch(unsetCurrentSession());
   await navigate('Stream');
 };
 const openMemberAcceptCharge = async (
@@ -454,14 +455,12 @@ const finalizeOpening = async (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   if (currentSessionID !== session.objectID) {
     if (currentSessionID) {
-      // what to do in the case where user is in a session already and maybe recording?
-      // simply unsetting the current session means recording is lost -- Ethan
       await store.dispatch(unsetCurrentSession());
-      await timeout(100);
+      // await timeout(100);
     }
     await store.dispatch(setCurrentSessionID(session.objectID));
   }
-  await store.dispatch(setLayout({isFooterVisible: false}));
+  store.dispatch(setLayout({isFooterVisible: false}));
 
   StatusBar.setBarStyle('light-content', true);
   navigate('Session', {

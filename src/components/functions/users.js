@@ -9,7 +9,6 @@ const autocompleteSearchUsers = async (
 ) => {
   await client.clearCache();
   let filters = `NOT objectID:${userID}`;
-  console.log('userID', userID);
   if ((!userID || userID === '' || searchCurrentUser) && !blockedByUsers) {
     filters = '';
   }
@@ -25,7 +24,6 @@ const autocompleteSearchUsers = async (
   }
   if (searchCoaches && filters === '') filters = `info.coach = 1`;
   else if (searchCoaches) filters = filters + ` AND info.coach = 1`;
-  console.log('filters', filters);
   const {hits} = await indexUsers.search(search, {
     hitsPerPage: 500,
     filters: filters,

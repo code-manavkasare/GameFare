@@ -20,17 +20,21 @@ class HeaderVideoLibrary extends Component {
     navigate('PickMembers', {
       usersSelected: {},
       selectMultiple: true,
-      closeButton: true,
+      closeButton: false,
       loaderOnSubmit: true,
-      contactsOnly: false,
+      contactsOnly: true,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
+      displaySwitch: true,
       titleHeader: 'Select members to share video with',
-      onGoBack: async (members) => {
+      onGoBack: async (members, contacts) => {
         for (const member of Object.values(members)) {
           for (const videoId of selectedVideos) {
             addVideoToMember(userID, member.id, videoId);
           }
+        }
+        for (const contact of Object.values(contacts)) {
+          console.log('contact', contact);
         }
         setState({selectableMode: false, selectedVideos: []});
         return navigate('VideoLibrary');

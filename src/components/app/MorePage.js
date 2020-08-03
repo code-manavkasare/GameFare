@@ -280,24 +280,21 @@ class MorePage extends Component {
               click: () =>
                 navigate('PickMembers', {
                   usersSelected: {},
-                  selectMultiple: true,
+                  allowSelectMultiple: true,
+                  selectFromContacts: true,
                   closeButton: true,
-                  loaderOnSubmit: true,
-                  contactsOnly: true,
                   displayCurrentUser: false,
                   noUpdateStatusBar: true,
                   titleHeader: 'Select your contacts',
-                  onGoBack: async (members) => {
-                    let phoneNumbers = Object.values(members).map(
-                      (member) => member.info.phoneNumber,
-                    );
+                  onSelectMembers: async (users, contacts) => {
+                    let numbers = Object.values(contacts).map(
+                      (contact) => `+${contact.countryCode}${contact.phoneNumber}`
+                    )
                     const {url} = await createBranchUrl({});
-                    const {completed} = await sendSMSFunction(
-                      phoneNumbers,
+                    const {completed, cancelled, error} = await sendSMSFunction(
+                      numbers,
                       'Click here to join the gamefare community. ' + url,
                     );
-                    if (completed) return navigate('Profile');
-                    return true;
                   },
                 }),
             })}

@@ -20,24 +20,25 @@ class HeaderVideoLibrary extends Component {
   }
   pickMembersToShareVideosWith = () => {
     const {userID, selectedVideos, setState} = this.props;
-
     navigate('PickMembers', {
       usersSelected: {},
-      selectMultiple: true,
+      allowSelectMultiple: true,
+      selectFromGamefare: true,
+      selectFromContacts: true,
       closeButton: true,
-      loaderOnSubmit: true,
-      contactsOnly: false,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
       titleHeader: 'Select members to share video with',
-      onGoBack: async (members) => {
-        for (const member of Object.values(members)) {
+      onSelectMembers: (gfUsers, contacts) => {
+        for (const user of Object.values(gfUsers)) {
           for (const videoId of selectedVideos) {
-            addVideoToMember(userID, member.id, videoId);
+            addVideoToMember(userID, user.id, videoId);
           }
         }
+        for (const contact of Object.values(contacts)) {
+          console.log('picked contact', contact);
+        }
         setState({selectableMode: false, selectedVideos: []});
-        return navigate('VideoLibrary');
       },
     });
   };

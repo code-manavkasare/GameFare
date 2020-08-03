@@ -19,19 +19,18 @@ class HeaderListStream extends Component {
   newSession() {
     navigate('PickMembers', {
       usersSelected: {},
-      selectMultiple: true,
+      allowSelectMultiple: true,
+      selectFromGamefare: true,
       closeButton: true,
       loaderOnSubmit: true,
-      contactsOnly: false,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
+      noNavigation: true,
       titleHeader: 'Select members',
       text2: 'Skip',
       icon2: 'text',
-      clickButton2: () => {
-        return this.createSession({});
-      },
-      onGoBack: (members) => this.createSession(members),
+      clickButton2: () => this.createSession({}),
+      onSelectMembers: (users, contacts) => this.createSession(users),
     });
   }
   async createSession(members) {

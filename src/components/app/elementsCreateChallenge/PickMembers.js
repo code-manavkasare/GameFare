@@ -32,6 +32,17 @@ import CardUserSelect from '../../layout/cards/CardUserSelect';
 import {createChallengeAction} from '../../../actions/createChallengeActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 
+// proposed change in route params
+// usersSelected: Object -- pre-selected users
+// selectMultiple: Boolean -- allow selection of multiple users
+// closeButton: Boolean -- Show a close button true by default?,
+// loaderOnSubmit: Boolean -- ??,
+// contactsOnly: Boolean, --> pickContacts: Boolean -- if true show switch and allow selection of phone contacts
+// displayCurrentUser: Boolean -- display current user in list,
+// noUpdateStatusBar: Boolean -- do we ever do this?,
+// titleHeader: 'Select members to share video with',
+// onSubmitSelection: Function -- params 'members' and 'contacts', arrays of gamefare users or phone contacts
+
 class PickMembers extends React.Component {
   constructor(props) {
     super(props);

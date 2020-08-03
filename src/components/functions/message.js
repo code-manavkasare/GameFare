@@ -180,6 +180,7 @@ const sendSMSFunction = async (phoneNumbers, message) => {
     successTypes: ['sent', 'queued'],
     allowAndroidSendWithoutReadPermission: true,
   };
+  console.log('args', args);
   return new Promise((resolve, reject) => {
     SendSMS.send(args, (completed, cancelled, error) => {
       resolve({completed, cancelled, error});
@@ -190,7 +191,6 @@ const sendSMSFunction = async (phoneNumbers, message) => {
 const openDiscussion = async (arrayUsers,idDiscussion) => {
   const users = arrayUsers.map((user) => user.id);
   var discussion = await searchDiscussion(users, users.length);
-  console.log('bim seardh discussion', discussion);
   if (!discussion) {
     discussion = await createDiscussion(arrayUsers, 'General', false);
     if (!discussion) {

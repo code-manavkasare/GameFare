@@ -18,20 +18,20 @@ class HeaderStreamView extends Component {
   }
   AddMembers = (objectID) => {
     const {navigate} = NavigationService;
-    // const {currentMembers: members} = this.props;
     navigate('PickMembers', {
       usersSelected: {},
+      noNavigation: true,
+      selectFromGamefare: true,
       selectMultiple: true,
       closeButton: true,
       loaderOnSubmit: true,
-      contactsOnly: false,
       displayCurrentUser: false,
       titleHeader: 'Add someone to the session',
       onGoBack: async (members) => {
         for (var i in Object.values(members)) {
           let member = Object.values(members)[i];
-          // member.isConnected = false;
           member.invitationTimeStamp = Date.now();
+          // write addMemberToSession(objectID, member) function
           await database()
             .ref('coachSessions/' + objectID + '/members/' + member.id)
             .update(member);
