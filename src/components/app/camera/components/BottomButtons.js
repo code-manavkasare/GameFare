@@ -3,11 +3,11 @@ import {View, StyleSheet, Animated} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
-import ButtonColor from '../../layout/Views/Button';
-import AllIcons from '../../layout/icons/AllIcons';
-import colors from '../../style/colors';
-import styleApp from '../../style/style';
-import {native} from '../../animations/animations';
+import ButtonColor from '../../../layout/Views/Button';
+import AllIcons from '../../../layout/icons/AllIcons';
+import colors from '../../../style/colors';
+import styleApp from '../../../style/style';
+import {native} from '../../../animations/animations';
 
 import RecordButton from './RecordButton';
 

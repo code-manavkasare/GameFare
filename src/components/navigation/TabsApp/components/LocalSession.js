@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Camera from '../../../camera/Camera';
+import Camera from '../../../app/camera/Camera';
 
 const Stack = createStackNavigator();
 const LocalSession = () => {
