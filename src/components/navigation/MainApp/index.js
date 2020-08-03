@@ -3,8 +3,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import OnBoarding from './components/OnBoarding';
 import TabsApp from '../TabsApp/index';
-import CreateChallenge from './components/CreateChallenge';
-import JoinChallenge from './components/JoinChallenge';
 import CreateGroup from './components/CreateGroup';
 import CreateEvent from './components/CreateEvent';
 
@@ -33,8 +31,6 @@ const MainApp = () => {
           animationEnabled: false,
         }}
       />
-      <Stack.Screen name="CreateChallenge" component={CreateChallenge} />
-      <Stack.Screen name="Challenge" component={JoinChallenge} />
 
       <Stack.Screen name="CreateGroup0" component={CreateGroup} />
       <Stack.Screen name="CreateEvent1" component={CreateEvent} />
