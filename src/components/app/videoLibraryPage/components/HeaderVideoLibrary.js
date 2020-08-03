@@ -29,12 +29,11 @@ class HeaderVideoLibrary extends Component {
       displayCurrentUser: false,
       noUpdateStatusBar: true,
       titleHeader: 'Select members to share video with',
-      onSelectMembers: (members, contacts) => {
-        for (const member of Object.values(members)) {
-          console.log('picked member', member);
-          // for (const videoId of selectedVideos) {
-          //   addVideoToMember(userID, member.id, videoId);
-          // }
+      onSelectMembers: (gfUsers, contacts) => {
+        for (const user of Object.values(gfUsers)) {
+          for (const videoId of selectedVideos) {
+            addVideoToMember(userID, user.id, videoId);
+          }
         }
         for (const contact of Object.values(contacts)) {
           console.log('picked contact', contact);

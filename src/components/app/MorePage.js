@@ -287,17 +287,12 @@ class MorePage extends Component {
                   noUpdateStatusBar: true,
                   titleHeader: 'Select your contacts',
                   onSelectMembers: async (users, contacts) => {
-                    let userNumbers = Object.values(users).map(
-                      (user) => user.info.phoneNumber
-                    );
-                    let contactNumbers = Object.values(contacts).map(
+                    let numbers = Object.values(contacts).map(
                       (contact) => `+${contact.countryCode}${contact.phoneNumber}`
                     )
-                    console.log('MorePage', userNumbers, contactNumbers);
                     const {url} = await createBranchUrl({});
-                    console.log('branch url', url);
-                    const {completed} = await sendSMSFunction(
-                      userNumbers + contactNumbers,
+                    const {completed, cancelled, error} = await sendSMSFunction(
+                      numbers,
                       'Click here to join the gamefare community. ' + url,
                     );
                   },

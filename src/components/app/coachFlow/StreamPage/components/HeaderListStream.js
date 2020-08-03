@@ -25,11 +25,12 @@ class HeaderListStream extends Component {
       loaderOnSubmit: true,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
+      noNavigation: true,
       titleHeader: 'Select members',
       text2: 'Skip',
       icon2: 'text',
       clickButton2: () => this.createSession({}),
-      onSelectMembers: (members) => this.createSession(members),
+      onSelectMembers: (users, contacts) => this.createSession(users),
     });
   }
   async createSession(members) {
