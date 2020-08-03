@@ -187,7 +187,6 @@ class PickMembers extends React.Component {
   pickMembers() {
     const {selectFromGamefare, selectFromContacts} = this.props;
     const {selectingContacts} = this.state;
-    console.log('pickMembers', selectFromGamefare, selectFromContacts, selectingContacts);
     return (
       <View
         style={{
