@@ -28,7 +28,6 @@ import CardUserSelect from '../../../layout/cards/CardUserSelect';
 import CardContactSelect from '../../../layout/cards/CardContactSelect';
 import {searchPhoneContacts} from '../../../functions/phoneContacts';
 import {autocompleteSearchUsers} from '../../../functions/users';
-import {createChallengeAction} from '../../../../actions/createChallengeActions';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -282,11 +281,10 @@ const mapStateToProps = (state) => {
     blockedByUsers: state.user.infoUser.blockedByUsers,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    captains: state.createChallengeData.captains,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {createChallengeAction},
+  {},
 )(PickMembers);
