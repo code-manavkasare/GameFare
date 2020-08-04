@@ -23,7 +23,7 @@ import {setLayout} from '../../actions/layoutActions';
 import {FormatDate, formatDuration} from './date';
 import AsyncImage from '../layout/image/AsyncImage';
 import colors from '../style/colors';
-import styleApp from '../style/style'
+import styleApp from '../style/style';
 
 const generateSnippetsFromFlags = async (source, flags) => {
   for (var f in flags) {
@@ -328,12 +328,7 @@ const uploadVideoAlert = (archive) => {
   navigate('Alert', {
     title: 'Do you want to upload this footage?',
     subtitle: formatDuration(durationSeconds * 1000, true),
-    icon: (
-      <AsyncImage
-        mainImage={thumbnail}
-        style={{...styleApp.fullSize}}
-      />
-    ),
+    icon: <AsyncImage mainImage={thumbnail} style={{...styleApp.fullSize}} />,
     textButton: 'Upload',
     colorButton: 'primary',
     onPressColor: colors.primary,
@@ -450,5 +445,5 @@ export {
   makeSnippet,
   removeLocalVideo,
   alertStopRecording,
-  shareVideoWithMembers
+  shareVideoWithMembers,
 };

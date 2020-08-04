@@ -20,7 +20,7 @@ import {
   pickLibrary,
   permission,
 } from '../../functions/pictures';
-import {generateID} from '../../functions/createGroup';
+import {generateID} from '../../functions/createEvent';
 import {
   sendNewMessage,
   nameOtherMemberConversation,
@@ -49,17 +49,12 @@ class InputMessage extends React.Component {
     const {initialMessage} = this.props;
     if (initialMessage !== '') this.textInputRef.focus();
   }
-  async sendNewMessage(user, input, images) {
-    if (!this.props.userConnected) return NavigationService.navigate('SignIn');
+
+  async sendNewMessage(input, images) {
+    const {user, discussion, userConnected} = this.props;
 
     await this.setState({inputValue: '', images: {}});
-
-    await sendNewMessage(
-      this.props.discussion.objectID,
-      this.props.user,
-      input,
-      images,
-    );
+    await sendNewMessage(discussion.objectID, user, input, images);
 
     return true;
   }
@@ -126,7 +121,6 @@ class InputMessage extends React.Component {
     let placeholderInput = '';
     if (discussion.members) {
       placeholderInput = `Send a message to ${nameOtherMemberConversation(
-        discussion,
         userID,
         discussion.members,
       )}`;
@@ -184,10 +178,10 @@ class InputMessage extends React.Component {
             activeOpacity={0.7}
             onPress={() => this.takePicture()}>
             <AllIcons
-              name="add-a-photo"
+              name="camera-retro"
               color={colors.title}
-              type="mat"
-              size={23}
+              type="font"
+              size={21}
             />
           </Col>
           <Col
@@ -196,10 +190,10 @@ class InputMessage extends React.Component {
             activeOpacity={0.7}
             onPress={() => this.openPicturesView()}>
             <AllIcons
-              name="collections"
+              name="image"
               color={!this.state.showImages ? colors.title : colors.primary}
-              type="mat"
-              size={23}
+              type="font"
+              size={24}
             />
           </Col>
           <Col
@@ -216,7 +210,7 @@ class InputMessage extends React.Component {
           </Col>
           <Col size={35} style={styleApp.center2} />
 
-          <Col size={20} style={styleApp.center3}>
+          <Col size={20} style={[styleApp.center3]}>
             <ButtonColor
               view={() => {
                 return (
@@ -235,11 +229,7 @@ class InputMessage extends React.Component {
               }}
               click={() =>
                 this.conditionInputOn() &&
-                this.sendNewMessage(
-                  this.props.user,
-                  this.state.inputValue,
-                  this.state.images,
-                )
+                this.sendNewMessage(this.state.inputValue, this.state.images)
               }
               color={!this.conditionInputOn() ? colors.white : colors.primary}
               style={[
@@ -252,7 +242,7 @@ class InputMessage extends React.Component {
                 },
               ]}
               onPressColor={
-                !this.conditionInputOn() ? colors.white : colors.primary2
+                !this.conditionInputOn() ? colors.white : colors.primaryLight
               }
             />
           </Col>
@@ -309,11 +299,11 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   buttonSend: {
-    paddingRight: 15,
-    paddingLeft: 15,
+    // paddingRight: 15,
+    // paddingLeft: 15,
     borderWidth: 1,
     height: 35,
-    width: 80,
+    width: '100%',
     borderRadius: 5,
     alignSelf: 'center',
   },
@@ -331,8 +321,8 @@ const styles = StyleSheet.create({
     borderColor: colors.white,
   },
   rowUtils: {
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: '5%',
+    paddingRight: '5%',
     height: 50,
   },
 });

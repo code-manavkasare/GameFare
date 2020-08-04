@@ -122,7 +122,6 @@ export default class VideoPlayer extends Component {
     const paused = this.controlButtonRef.getPaused();
     const {currentTime} = info;
     if (!paused) {
-      // console.log('on progress', currentTime);
       this.controlButtonRef?.setCurrentTime(currentTime);
     }
   };

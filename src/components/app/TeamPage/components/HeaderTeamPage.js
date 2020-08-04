@@ -42,7 +42,7 @@ class HeaderGroupPage extends Component {
         return navigate('VideoLibraryPage');
       },
     });
-  }
+  };
 
   render() {
     const {loaderMessage} = this.state;
@@ -63,16 +63,11 @@ class HeaderGroupPage extends Component {
         typeIcon2={'moon'}
         sizeIcon2={21}
         sizeIcon1={17}
-        clickButton2={async () => {
-          await this.setState({loaderMessage: true});
-          // navigate('Conversation', {data: '-MCqk2hmqED4Q3ErEs1L'})
-          await navigate('Alert', {
-            title: 'Work in progress',
-            textButton: 'Ok',
-            close: true,
-          });
-          await this.setState({loaderMessage: false});
-        }}
+        clickButton2={async () =>
+          navigate('Conversation', {
+            coachSessionID: session.objectID,
+          })
+        }
         clickButton1={() => navigation.goBack()}
         iconOffset={'film'}
         typeIconOffset="moon"
@@ -83,9 +78,6 @@ class HeaderGroupPage extends Component {
         typeIcon11="font"
         sizeIcon11={23}
         colorIcon11={colors.title}
-        clickButton11={async () =>
-          navigate('Conversation', {data: '-MCqk2hmqED4Q3ErEs1L'})
-        }
       />
     );
   }

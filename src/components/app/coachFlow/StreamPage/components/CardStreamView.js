@@ -60,8 +60,7 @@ class CardStream extends Component {
     let member = getMember(session, userID);
     if (!member) member = {};
 
-    return (
-      session ?
+    return session ? (
       <Animated.View style={styles.card}>
         <ButtonColor
           color={colors.white}
@@ -75,7 +74,7 @@ class CardStream extends Component {
               <Row style={{paddingTop: 5, paddingBottom: 10}}>
                 <Col size={30}>{imageCardTeam(session)}</Col>
                 <Col size={55} style={styleApp.center2}>
-                  {sessionTitle(session)}
+                  {sessionTitle(session, {}, false)}
                   {sessionDate(session)}
                 </Col>
                 <Col size={20} style={styleApp.center}>
@@ -98,8 +97,7 @@ class CardStream extends Component {
           onRef={(ref) => (this.coachPopupsRef = ref)}
         />
       </Animated.View>
-      : null
-    );
+    ) : null;
   }
   render() {
     return this.cardStream();
@@ -109,7 +107,7 @@ class CardStream extends Component {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
-    maxHeight:100,
+    maxHeight: 100,
     backgroundColor: colors.white,
     flex: 1,
   },
