@@ -9,7 +9,6 @@ const navigate = (routeName, params) => {
       screen: params.screen,
       params: params,
     });
-  console.log('navigate params', params);
   return navigationRef.current?.navigate(routeName, params);
 };
 

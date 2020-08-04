@@ -25,7 +25,6 @@ class CameraPage extends Component {
   }
   componentDidMount() {
     const {navigation, layoutAction, route} = this.props;
-    console.log('camera index', route);
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
       layoutAction('setLayout', {isFooterVisible: false});

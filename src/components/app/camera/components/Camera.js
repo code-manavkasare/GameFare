@@ -31,7 +31,6 @@ export default class Camera extends Component {
   giveRef() {
     const {onRef} = this.props;
     if (onRef) {
-      console.log('camera give ref');
       onRef(this);
     }
   }

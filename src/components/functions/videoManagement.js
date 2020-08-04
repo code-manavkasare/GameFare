@@ -179,7 +179,6 @@ const arrayUploadFromSnippets = async ({
     if (thumbnailUploaded) {
       videoInfo.thumbnail = thumbnail;
     } else if (videoInfo.thumbnail) {
-      console.log(videoInfo.thumbnail);
       videoInfo.thumbnail = await uploadImage(
         'file:///' + videoInfo.thumbnail,
         destinationCloud,
@@ -269,9 +268,8 @@ const addVideo = async (video) => {
   await store.dispatch(addVideos({[video.id]: video}));
 };
 
-const recordVideo = async (noNavigationAfter, processVideo) => {
+const recordVideo = async () => {
   await store.dispatch(setLayout({isFooterVisible: false}));
-  console.log('recordVideo', noNavigationAfter, processVideo);
   navigate('LocalSession');
 };
 
