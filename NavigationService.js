@@ -4,12 +4,12 @@ import {CommonActions, StackActions} from '@react-navigation/native';
 const navigationRef = React.createRef();
 
 const navigate = (routeName, params) => {
-  console.log(routeName)
   if (params?.notUniqueStack)
     return navigationRef.current?.navigate(routeName, {
       screen: params.screen,
       params: params,
     });
+  console.log('navigate params', params);
   return navigationRef.current?.navigate(routeName, params);
 };
 

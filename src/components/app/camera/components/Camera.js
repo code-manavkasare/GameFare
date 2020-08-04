@@ -6,89 +6,82 @@ import {Col, Row} from 'react-native-easy-grid';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
-import Orientation from 'react-native-orientation-locker';
-import StatusBar from '@react-native-community/status-bar';
 
-import {getVideoInfo} from '../../functions/pictures';
-import {
-  addVideo,
-  makeVideoFlag,
-  addVideoWithFlags,
-  alertStopRecording,
-} from '../../../functions/videoManagement';
-import {layoutAction} from '../../../../actions/layoutActions';
+import {getVideoInfo} from '../../../functions/pictures';
+import {addVideo, openVideoPlayer} from '../../../functions/videoManagement';
 
-import BottomButtons from './BottomButtons';
-import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
-
-class Camera extends Component {
+export default class Camera extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cameraReady: false,
       isRecording: false,
       promiseRecording: null,
-      frontCamera: false,
       startRecordingTime: null,
       flags: [],
     };
     this.camera = null;
-    this.animatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
-    const {navigation, layoutAction} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.unlockAllOrientations();
-      layoutAction('setLayout', {isFooterVisible: false});
-      StatusBar.setBarStyle('light-content', true);
-    });
-    this.blurListener = navigation.addListener('blur', () => {
-      layoutAction('setLayout', {isFooterVisible: true});
-      StatusBar.setBarStyle('dark-content', true);
-    });
+  holdRef() {
+    const {onRef} = this.props;
+    if (onRef) {
+      onRef(null);
+    }
+  }
+  giveRef() {
+    const {onRef} = this.props;
+    if (onRef) {
+      console.log('camera give ref');
+      onRef(this);
+    }
   }
   shouldComponentUpdate(prevProps, prevState) {
     return (
       prevState.cameraReady != this.state.cameraReady ||
-      prevState.frontCamera != this.state.frontCamera
+      prevProps.frontCamera != this.props.frontCamera
     );
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.cameraReady && !this.state.cameraReady) {
+      this.holdRef();
+    }
+    if (!prevState.cameraReady && this.state.cameraReady) {
+      this.giveRef();
+    }
   }
   addFlag() {
     const {isRecording, startRecordingTime, flags} = this.state;
     if (isRecording) {
       const flagTimestamp = Date.now() - startRecordingTime;
-      console.log(flagTimestamp);
-      let newFlags = flags.concat(flagTimestamp);
+      const newFlags = flags.concat(flagTimestamp);
       this.setState({flags: newFlags});
     }
   }
   startRecording() {
-    if (this.camera) {
+    const {camera, state} = this;
+    const {isRecording} = state;
+    if (camera && !isRecording) {
+      this.setState({isRecording: true});
       const options = {
         quality: RNCamera.Constants.VideoQuality['720p'],
       };
-      let promise = this.camera.recordAsync(options);
+      let promise = camera.recordAsync(options);
       this.setState({
-        isRecording: true,
         promiseRecording: promise,
         startRecordingTime: Date.now(),
         flags: [],
       });
     }
   }
-  async stopRecording(saveVideo, watchVideo) {
-    if (this.camera && this.state.isRecording) {
-      const {promiseRecording} = this.state;
-      await this.camera.stopRecording();
-      await this.setState({isRecording: false, startRecordingTime: null});
+  async stopRecording(saveVideo) {
+    const {camera, state} = this;
+    const {promiseRecording, isRecording} = state;
+    if (camera && isRecording) {
+      await camera.stopRecording();
       if (saveVideo) {
-        const videoInfo = await this.saveRecording(await promiseRecording);
-        if (watchVideo) {
-          na
-        }
+        this.saveRecording(await promiseRecording);
       }
-      await this.setState({promiseRecording: null});
-      return true;
+      this.setState({promiseRecording: null, isRecording: false, startRecordingTime: null});
     }
   }
   async saveRecording(recording) {
@@ -96,27 +89,31 @@ class Camera extends Component {
     let videoInfo = await getVideoInfo(recording.uri, true);
     if (flags.length > 0) {
       videoInfo = {...videoInfo, flags};
+      this.setState({flags: []});
     }
     addVideo(videoInfo);
-    return videoInfo;
-  }
-  close() {
-    this.stopRecording(false);
-    const {layoutAction, navigation} = this.props;
-    layoutAction('setLayout', {isFooterVisible: true});
-    // navigation.navigate('VideoLibrary');
-    navigation.goBack();
+    openVideoPlayer(videoInfo, true);
   }
   render() {
-    const {cameraReady, frontCamera} = this.state;
+    const {frontCamera, onCameraReady} = this.props;
     return (
-      <View style={styles.container}>
+      <View style={styleApp.flexColumnBlack}>
         <RNCamera
-          onCameraReady={() => this.setState({cameraReady: true})}
+          onCameraReady={() => {
+            this.setState({cameraReady: true});
+            if (onCameraReady) {
+              onCameraReady(true);
+            }
+          }}
           onMountError={(error) => console.log('RNCamera mount error: ', error)}
-          onStatusChange={(status) =>
-            console.log('RNCamera status change: ', status)
-          }
+          onStatusChange={(status) => {
+            if (status.cameraStatus !== 'READY') {
+              this.setState({cameraReady: false});
+              if (onCameraReady) {
+                onCameraReady(false);
+              }
+            }
+          }}
           ref={(ref) => {
             this.camera = ref;
           }}
@@ -129,86 +126,15 @@ class Camera extends Component {
           flashMode={RNCamera.Constants.FlashMode.off}
           pictureSize={'1280x720'} // this prop stops flickering when stop and start recording
         />
-        <HeaderBackButton
-          AnimatedHeaderValue={this.animatedHeaderValue}
-          inputRange={[5, 10]}
-          colorLoader={'white'}
-          sizeLoader={40}
-          initialBorderColorIcon={'transparent'}
-          initialTitleOpacity={0}
-          icon1={'arrow-left'}
-          typeIcon1="font"
-          backgroundColorIcon1={colors.title + '70'}
-          onPressColorIcon1={colors.title + '30'}
-          clickButton1={() => this.close()}
-          nobackgroundColorIcon1={true}
-          sizeIcon1={18}
-          colorIcon1={colors.white}
-          icon2={'switchCam'}
-          backgroundColorIcon2={colors.title + '70'}
-          clickButton2={() => this.setState({frontCamera: !frontCamera})}
-          sizeIcon2={20}
-          typeIcon2="moon"
-          colorIcon2={colors.white}
-        />
-        {cameraReady && (
-          <Row style={styles.recordButtonContainer}>
-            <BottomButtons
-              addFlag={() => this.addFlag()}
-              startRecording={() => this.startRecording()}
-              stopRecording={() => this.stopRecording(true, true)}
-            />
-          </Row>
-        )}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'black',
-  },
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  capture: {
-    flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
-  recordButtonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    height: sizes.heightFooter + sizes.marginBottomApp,
-    paddingTop: 0,
-    width: '100%',
-    paddingBottom: 20,
-    backgroundColor: 'transparent',
-  },
-  viewRecordingTime: {
-    width: '100%',
-    height: 32,
-    borderRadius: 5,
-    paddingLeft: 5,
-    paddingRight: 5,
-    ...styleApp.center,
-  },
 });
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {layoutAction},
-)(Camera);

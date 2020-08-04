@@ -269,9 +269,10 @@ const addVideo = async (video) => {
   await store.dispatch(addVideos({[video.id]: video}));
 };
 
-const recordVideo = async () => {
+const recordVideo = async (noNavigationAfter, processVideo) => {
   await store.dispatch(setLayout({isFooterVisible: false}));
-  navigate('LocalSession', {screen: 'LocalSession'});
+  console.log('recordVideo', noNavigationAfter, processVideo);
+  navigate('LocalSession');
 };
 
 const removeVideo = (archive) => {
@@ -426,7 +427,11 @@ const alertStopRecording = (archive) => {
       {
         title: 'Record video',
         forceNavigation: true,
-        operation: () => recordVideo(),
+        operation: () => {
+          recordVideo(true, (videoInfo) => {
+            openVideoPlayer(videoInfo, true);
+          });
+        },
       },
       {
         title: 'Cancel',

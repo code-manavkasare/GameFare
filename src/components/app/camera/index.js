@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import {RNCamera} from 'react-native-camera';
 import {Col, Row} from 'react-native-easy-grid';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -9,13 +8,6 @@ import sizes from '../../style/sizes';
 import Orientation from 'react-native-orientation-locker';
 import StatusBar from '@react-native-community/status-bar';
 
-import {getVideoInfo} from '../../functions/pictures';
-import {
-  addVideo,
-  makeVideoFlag,
-  addVideoWithFlags,
-  alertStopRecording,
-} from '../../functions/videoManagement';
 import {layoutAction} from '../../../actions/layoutActions';
 
 import BottomButtons from './components/BottomButtons';
@@ -26,55 +18,48 @@ class CameraPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        frontCamera: false,
+      frontCamera: true,
+      cameraReady: false,
     };
     this.animatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const {navigation, layoutAction} = this.props;
+    const {navigation, layoutAction, route} = this.props;
+    console.log('camera index', route);
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
       layoutAction('setLayout', {isFooterVisible: false});
       StatusBar.setBarStyle('light-content', true);
     });
-    this.blurListener = navigation.addListener('blur', () => {
-      layoutAction('setLayout', {isFooterVisible: true});
-      StatusBar.setBarStyle('dark-content', true);
-    });
   }
   componentWillUnmount() {
     this.focusListener();
-    this.blurListener();
   }
-  async afterSave(videoInfo) {
-    const {processRecording, noNavigation} = this.props.route.params;
-    if (processRecording) {
-      await processRecording(videoInfo);
-    }
-    if (!noNavigation) {
-      this.close();
-    }
+  flipCamera() {
+    this.setState({frontCamera: !this.state.frontCamera});
   }
   close() {
-    this.camera.stopRecording(false);
-    const {layoutAction, navigation} = this.props;
+    const {props, camera} = this;
+    const {layoutAction, navigation} = props;
+    if (camera) {
+      camera.stopRecording(false);
+    }
     layoutAction('setLayout', {isFooterVisible: true});
-    navigation.pop();
+    navigation.goBack();
   }
   render() {
     const {state, camera} = this;
-    const {frontCamera} = state;
+    const {frontCamera, cameraReady} = state;
     return (
-      <View style={styles.container}>
+      <View style={styleApp.flexColumnBlack}>
         <Camera
-          ref={(ref) => {
+          onRef={(ref) => {
             this.camera = ref;
           }}
-          style={styles.preview}
+          onCameraReady={(cameraReady) => this.setState({cameraReady})}
           frontCamera={frontCamera}
-          afterSave={(videoInfo) => this.afterSave(videoInfo)}
         />
-        <HeaderBackButton
+        {cameraReady && <HeaderBackButton
           AnimatedHeaderValue={this.animatedHeaderValue}
           inputRange={[5, 10]}
           colorLoader={'white'}
@@ -91,59 +76,38 @@ class CameraPage extends Component {
           colorIcon1={colors.white}
           icon2={'switchCam'}
           backgroundColorIcon2={colors.title + '70'}
-          clickButton2={() => this.setState({frontCamera: !frontCamera})}
+          clickButton2={() => this.flipCamera()}
           sizeIcon2={20}
           typeIcon2="moon"
           colorIcon2={colors.white}
-        />
-        <Row style={styles.recordButtonContainer}>
+        />}
+        {cameraReady && <Row style={styles.bottomButtonsContainer}>
           <BottomButtons
             addFlag={() => camera.addFlag()}
             startRecording={() => camera.startRecording()}
             stopRecording={() => camera.stopRecording(true, true)}
           />
-        </Row>
+        </Row>}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'black',
-  },
   preview: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  capture: {
-    flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
-  recordButtonContainer: {
+  bottomButtonsContainer: {
     position: 'absolute',
     bottom: 0,
     height: sizes.heightFooter + sizes.marginBottomApp,
+    marginTop: 5,
     paddingTop: 0,
     width: '100%',
     paddingBottom: 20,
     backgroundColor: 'transparent',
-  },
-  viewRecordingTime: {
-    width: '100%',
-    height: 32,
-    borderRadius: 5,
-    paddingLeft: 5,
-    paddingRight: 5,
-    ...styleApp.center,
   },
 });
 
@@ -154,4 +118,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {layoutAction},
-)(Camera);
+)(CameraPage);

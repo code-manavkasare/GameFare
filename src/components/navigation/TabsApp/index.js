@@ -16,6 +16,8 @@ import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
+import {openVideoPlayer} from '../../functions/videoManagement';
+
 // const Tab = createMaterialTopTabNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -58,6 +60,12 @@ function TabsApp() {
           },
           cardStyle: {
             backgroundColor: 'transparent',
+          },
+        }}
+        initialParams={{
+          noNavigation: true,
+          processVideo: (videoInfo) => {
+            openVideoPlayer(videoInfo, true);
           },
         }}
       />
