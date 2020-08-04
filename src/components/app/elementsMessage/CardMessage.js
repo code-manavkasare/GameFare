@@ -110,31 +110,60 @@ export default class CardMessage extends React.Component {
       user: this.props.message.currentMessage.user,
     });
   };
+  displayPictureUser = (props) => {
+    const {currentMessage, previousMessage} = props;
+    if (!previousMessage) return true;
+    const {timeStamp, user: currentUser} = currentMessage;
+    const {timeStamp: previousTimeStamp, user: previousUser} = previousMessage;
+    if (currentUser.id !== previousUser.id) return true;
+    if (timeStamp - previousTimeStamp > 120000) return true;
+    return false;
+  };
   renderMessage(props) {
+    const {currentMessage, previousMessage} = props;
+    const {user, timeStamp, text} = currentMessage;
+    const displayPictureUser = this.displayPictureUser(props);
     return (
-      <View style={styleApp.cardMessage}>
+      <View
+        style={[
+          styles.cardMessage,
+          {
+            paddingTop: displayPictureUser ? 20 : 0,
+            paddingBottom: displayPictureUser ? 0 : 0,
+          },
+        ]}>
         {this.rowDay(props)}
         <Row>
           <Col
             size={20}
             activeOpacity={1}
-            onPress={() => this.goToProfilePage()}>
-            <AsyncImage
-              style={{width: 45, height: 45, borderRadius: 5}}
-              mainImage={messageAvatar(props.currentMessage.user.info)}
-              imgInitial={messageAvatar(props.currentMessage.user.info)}
-            />
+            onPress={() =>
+              !user.info.noProfileClick &&
+              displayPictureUser &&
+              this.goToProfilePage()
+            }>
+            {displayPictureUser && (
+              <AsyncImage
+                style={{width: 45, height: 45, borderRadius: 5}}
+                mainImage={messageAvatar(user.info)}
+                imgInitial={messageAvatar(user.info)}
+              />
+            )}
           </Col>
-          <Col size={80} style={[styleApp.center2, {marginBottom: 10}]}>
-            <Text
-              style={[styleApp.text, {fontSize: 16}]}
-              onPress={() => this.goToProfilePage()}>
-              {messageName(props.currentMessage.user.info)}{' '}
-              <Text style={{color: colors.grey, fontSize: 12}}>
-                {moment(props.currentMessage.timeStamp).format('h:mm a')}
+          <Col size={80} style={styleApp.center2}>
+            {displayPictureUser && (
+              <Text
+                style={[styleApp.title, {fontSize: 16}]}
+                onPress={() =>
+                  !user.info.noProfileClick && this.goToProfilePage()
+                }>
+                {messageName(user.info)}{' '}
+                <Text style={{color: colors.grey, fontSize: 12}}>
+                  {moment(timeStamp).format('h:mm a')}
+                </Text>
               </Text>
-            </Text>
-            {props.currentMessage.text !== '' && (
+            )}
+            {text !== '' && (
               <Hyperlink
                 // linkDefault={true}
                 onPress={(url) => this.clickLink(url, this.state.viewUrl)}
@@ -142,9 +171,9 @@ export default class CardMessage extends React.Component {
                 <Text
                   style={[
                     styleApp.smallText,
-                    {marginTop: 5, fontSize: 14, marginBottom: 10},
+                    {marginTop: 5, fontSize: 14, marginBottom: 0},
                   ]}>
-                  {props.currentMessage.text}
+                  {text}
                 </Text>
               </Hyperlink>
             )}
@@ -269,5 +298,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingBottom: 10,
     paddingTop: 10,
+  },
+  cardMessage: {
+    flex: 1,
+    width: '100%',
+    marginBottom: 5,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
 });

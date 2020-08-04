@@ -8,10 +8,10 @@ import {
   SET_TEAMS_DATA,
 } from '../actions/types';
 
-import {generateID} from '../components/functions/createEvent';
+// import {generateID} from '../components/functions/createEvent';
 
-const idTeam1 = generateID();
-const idTeam2 = generateID();
+// const idTeam1 = generateID();
+// const idTeam2 = generateID();
 
 const initialState = {
   info: {
@@ -30,23 +30,23 @@ const initialState = {
     end: '',
   },
   location: {},
-  teamsData: {
-    typeChallengeTeam: false,
-    oponent: {},
-    allMembers: {},
-    teams: {
-      [idTeam1]: {
-        id: idTeam1,
-        name: 'Team 1',
-        createdAt: Number(new Date()),
-      },
-      [idTeam2]: {
-        id: idTeam2,
-        name: 'Team 2',
-        createdAt: Number(new Date()),
-      },
-    },
-  },
+  // teamsData: {
+  //   typeChallengeTeam: false,
+  //   oponent: {},
+  //   allMembers: {},
+  //   teams: {
+  //     [idTeam1]: {
+  //       id: idTeam1,
+  //       name: 'Team 1',
+  //       createdAt: Number(new Date()),
+  //     },
+  //     [idTeam2]: {
+  //       id: idTeam2,
+  //       name: 'Team 2',
+  //       createdAt: Number(new Date()),
+  //     },
+  //   },
+  // },
 };
 
 const createChallengeReducer = (state = initialState, action) => {

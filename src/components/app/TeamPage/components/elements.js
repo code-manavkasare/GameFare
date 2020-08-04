@@ -6,16 +6,21 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import {styles} from './style';
+
 import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
+import CardConversation from '../../elementsMessage/CardConversation';
+import ExpandableView from '../../../layout/Views/ExpandableView';
+
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening} from '../../../functions/coach';
 
-const imageCardTeam = (session) => {
-  const scale = 1;
+const imageCardTeam = (session, size, hideDots) => {
+  let scale = 1;
+  if (size) scale = 0.7;
   const members = getSortedMembers(session.members);
   const length = members.length;
   const styleByIndex = (i) => {
@@ -28,8 +33,10 @@ const imageCardTeam = (session) => {
         left: i == 0 ? -40 * scale : i == 1 ? -10 * scale : -10 * scale,
       };
   };
+  let styleContainer = {};
+  // if (size) styleContainer = {height: size, width: size};
   return (
-    <View style={{flex: 1, ...styleApp.center}}>
+    <View style={{flex: 1, ...styleApp.center, ...styleContainer}}>
       {length > 2 && (
         <View>
           {userCircle(
@@ -49,13 +56,14 @@ const imageCardTeam = (session) => {
             styleByIndex(i),
             scale,
             Object.values(session.members).length - 1,
+            hideDots,
           ),
         )}
     </View>
   );
 };
 
-const userCircle = (member, style, scale, length) => {
+const userCircle = (member, style, scale, length, hideDots) => {
   let borderRadius = 100;
   let sizeImg = length > 1 ? 45 * scale : 63 * scale;
   const styleImg = {
@@ -69,7 +77,7 @@ const userCircle = (member, style, scale, length) => {
   };
 
   return (
-    <View key={member.id ? member.id : -1} style={{}}>
+    <View key={member.id ? member.id : -1}>
       <View style={{...style}}>
         <View style={{...styleImg}}>
           {member.info && member.info.picture ? (
@@ -102,7 +110,7 @@ const userCircle = (member, style, scale, length) => {
             </View>
           )}
         </View>
-        {member.info ? (
+        {!hideDots && member.info && (
           <View
             style={{
               position: 'absolute',
@@ -118,26 +126,36 @@ const userCircle = (member, style, scale, length) => {
               borderColor: colors.white,
             }}
           />
-        ) : null}
+        )}
       </View>
     </View>
   );
 };
 
-const titleSession = (session) => {
+const titleSession = (session, size, allMembers) => {
   const userID = store.getState().user.userID;
   if (session.title) return session.title;
   const members = getSortedMembers(session.members);
   if (!members || !members[0]) return;
   if (members[0].id === userID) return 'You';
-  let names = members[0].info
-    ? members[0].info.firstname + ' ' + members[0].info.lastname
-    : '';
-  if (members.length > 1)
-    names += members[1].info
-      ? ', ' + members[1].info.firstname + ' ' + members[1].info.lastname
-      : '';
-  if (members.length > 2) names += ', and ' + (members.length - 2) + ' others';
+  let names = '';
+  for (var i in members) {
+    const {firstname, lastname} = members[i].info;
+    let endCharacter = ', ';
+    if (members.length === Number(i) + 1) endCharacter = '';
+    else if (
+      (!allMembers && Number(i) === 1) ||
+      (!allMembers && members.length > 2 && Number(i) === 2)
+    )
+      endCharacter = ', and ' + (members.length - 2) + ' others';
+
+    names += firstname + ' ' + lastname + endCharacter;
+    if (!allMembers && Number(i) === 1) break;
+  }
+
+  // if (allMembers) names += ' and You';
+
+  if (size) return names.slice(0, 20) + '...';
   return names;
 };
 
@@ -158,10 +176,10 @@ const dateSession = (session) => {
 
   return formatDate(lastActive);
 };
-const sessionTitle = (session, styleText) => {
+const sessionTitle = (session, styleText, allMembers) => {
   return (
     <Text style={[styleApp.title, {fontSize: 17}, styleText]}>
-      {titleSession(session)}
+      {titleSession(session, false, allMembers)}
     </Text>
   );
 };
@@ -183,7 +201,7 @@ const formatDate = (date) => {
   else return moment(date).format('MMMM YYYY');
 };
 
-viewLive = (session) => {
+const viewLive = (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   const activeSession = session.objectID === currentSessionID;
   if (!activeSession) return null;
@@ -208,7 +226,7 @@ viewLive = (session) => {
   );
 };
 
-buttonPlay = (session) => {
+const buttonPlay = (session) => {
   return (
     <View style={{height: 160}}>
       <ButtonColor
@@ -242,7 +260,7 @@ buttonPlay = (session) => {
   );
 };
 
-hangupButton = (session) => {
+const hangupButton = (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   const activeSession = session.objectID === currentSessionID;
   if (!activeSession) return null;
@@ -273,50 +291,132 @@ hangupButton = (session) => {
   );
 };
 
-const listPlayers = (session) => {
-  const {members} = session;
+const viewWithTitle = ({view, title, icon, badge}) => {
+  const {name, size, color, type} = icon;
   return (
-    <View>
-      <View style={styleApp.marginView}>
-        <Text style={[styleApp.title, {marginTop: 20, marginBottom: 10}]}>
-          Players ({Object.values(members).length})
-        </Text>
-      </View>
+    <View
+      style={{backgroundColor: colors.white, marginTop: 20, marginBottom: 10}}>
+      <Row style={styleApp.marginView}>
+        <Col size={15} style={styleApp.center2}>
+          <AllIcons name={name} type={type} color={color} size={size} />
+          {badge && (
+            <View
+              style={{
+                ...styleApp.center,
+                position: 'absolute',
+                width: 23,
+                borderRadius: 20,
+                height: 23,
+                top: -10,
+                left: 10,
+                borderWidth: 1,
+                borderColor: colors.white,
+                backgroundColor: colors.primary,
+              }}>
+              <Text
+                style={[styleApp.title, {color: colors.white, fontSize: 11}]}>
+                {badge}
+              </Text>
+            </View>
+          )}
+        </Col>
+        <Col size={85} style={styleApp.center2}>
+          <Text style={[styleApp.title]}>{title}</Text>
+        </Col>
+      </Row>
 
       <View style={styleApp.divider2} />
-
-      {Object.values(members).map((member) => (
-        <ButtonColor
-          key={member.id}
-          view={() => {
-            return (
-              <Row>
-                <Col size={30} style={styleApp.center}>
-                  {imageCardTeam({members: {[member.id]: member}})}
-                </Col>
-                <Col size={60} style={styleApp.center2}>
-                  {sessionTitle({members: {[member.id]: member}})}
-                  {sessionDate({members: {[member.id]: member}})}
-                </Col>
-                <Col size={15} style={styleApp.center}>
-                  {viewLive({members: {[member.id]: member}})}
-                </Col>
-              </Row>
-            );
-          }}
-          color={colors.white}
-          style={{
-            ...styleApp.marginView,
-            flex: 1,
-            paddingTop: 10,
-            paddingBottom: 10,
-          }}
-          click={() => true}
-          onPressColor={colors.off2}
-        />
-      ))}
+      {view}
     </View>
   );
+};
+
+const listPlayers = (session) => {
+  const {members} = session;
+
+  return viewWithTitle({
+    title: `Players`,
+    icon: {
+      name: 'profileFooter',
+      type: 'moon',
+      color: colors.title,
+      size: 20,
+    },
+    badge: Object.values(members).length,
+    view: (
+      <ExpandableView
+        lengthList={Object.values(members).length}
+        heightCard={80}
+        list={Object.values(members)
+
+          .sort((a, b) => {
+            if (!a.connectionTimeStamp) a.connectionTimeStamp = 0;
+            if (!b.connectionTimeStamp) b.connectionTimeStamp = 0;
+            return b.connectionTimeStamp - a.connectionTimeStamp;
+          })
+          .map((member) => (
+            <ButtonColor
+              key={member.id}
+              view={() => {
+                return (
+                  <Row>
+                    <Col size={30} style={styleApp.center}>
+                      {imageCardTeam({members: {[member.id]: member}})}
+                    </Col>
+                    <Col size={60} style={styleApp.center2}>
+                      {sessionTitle({members: {[member.id]: member}}, {}, true)}
+                      {sessionDate({members: {[member.id]: member}})}
+                    </Col>
+                    <Col size={15} style={styleApp.center}>
+                      {viewLive({members: {[member.id]: member}})}
+                    </Col>
+                  </Row>
+                );
+              }}
+              color={colors.white}
+              style={{
+                ...styleApp.marginView,
+                height: 80,
+                paddingTop: 10,
+                paddingBottom: 10,
+              }}
+              click={() => true}
+              onPressColor={colors.off2}
+            />
+          ))}
+      />
+    ),
+  });
+};
+
+const conversationView = (session) => {
+  const {objectID} = session;
+  return viewWithTitle({
+    view: <CardConversation objectID={objectID} />,
+    title: 'Chat',
+    icon: {
+      name: 'speech',
+      type: 'moon',
+      color: colors.title,
+      size: 20,
+    },
+  });
+};
+
+const contentView = (session) => {
+  const {objectID, contents} = session;
+
+  return viewWithTitle({
+    view: <View style={{height: 20}}>{/* <Text>card content </Text> */}</View>,
+    title: `Contents ${contents ? Object.values(contents).length : ''}`,
+    badge: contents ? Object.values(contents).length : 6,
+    icon: {
+      name: 'video-camera',
+      type: 'moon',
+      color: colors.title,
+      size: 20,
+    },
+  });
 };
 
 module.exports = {
@@ -327,4 +427,7 @@ module.exports = {
   hangupButton,
   buttonPlay,
   listPlayers,
+  titleSession,
+  conversationView,
+  contentView,
 };

@@ -49,7 +49,8 @@ class HeaderListStream extends Component {
       },
       members,
     );
-    return sessionOpening(session);
+    console.log('session!', session);
+    // return sessionOpening(session);
   }
   header = () => {
     const {hideButtonNewSession, AnimatedHeaderValue, infoUser} = this.props;

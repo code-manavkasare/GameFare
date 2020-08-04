@@ -375,10 +375,10 @@ class HeaderBackButton extends Component {
           <Col size={15} style={styleApp.center2} activeOpacity={0.4}>
             {this.button1()}
           </Col>
-          <Col size={15} style={styleApp.center}>
+          <Col size={20} style={[styleApp.center2, {marginLeft: -10}]}>
             {imgHeader ? imgHeader : this.button11()}
           </Col>
-          <Col size={11} style={styles.center} />
+          <Col size={6} style={styles.center} />
           <Col size={18} style={[styleApp.center3]}>
             {this.buttonOffset2()}
           </Col>

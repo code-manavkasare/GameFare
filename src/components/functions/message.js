@@ -4,6 +4,17 @@ import {includes} from 'ramda';
 import {indexDiscussions, client} from '../database/algolia';
 import SendSMS from 'react-native-sms';
 
+import {store} from '../../../reduxStore';
+import {setConversation} from '../../actions/conversationsActions';
+
+const generateID = () => {
+  return (
+    Math.random()
+      .toString(36)
+      .substring(2) + Date.now().toString(36)
+  );
+};
+
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {
     title: nameDiscussion,
@@ -65,13 +76,13 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
 
 async function sendNewMessage(discusssionID, user, text, images) {
   await database()
-    .ref('discussions/' + discusssionID + '/messages')
+    .ref('messagesCoachSession/' + discusssionID)
     .push({
       user: user,
       text: text,
       images: images,
       createdAt: new Date(),
-      timeStamp: moment().valueOf(),
+      timeStamp: Date.now(),
       usersRead: {
         [user.id]: true,
       },
@@ -133,16 +144,9 @@ async function loadMyDiscusions(userID, searchInput, blockedUsers) {
   return discussions;
 }
 
-function checkMessageRead(message, userID) {
-  if (!message) return false;
-  if (!message.usersRead) return false;
-  if (!message.usersRead[userID]) return false;
-  return true;
-}
-
-function nameOtherMemberConversation(conversation, userID, members) {
-  if (conversation.type === 'group') return conversation.title;
-  if (conversation.numberMembers > 2) return 'the group';
+function nameOtherMemberConversation(userID, members) {
+  if (Object.values(members).length === 1) return 'yourself';
+  if (Object.values(members).length > 2) return 'the team';
   const infoMember = Object.values(members).filter(
     (user) => user.id !== userID,
   )[0].info;
@@ -152,26 +156,6 @@ function nameOtherMemberConversation(conversation, userID, members) {
   }
   return infoMember.firstname + ' ' + infoMember.lastname;
 }
-
-const titleConversation = (conversation, userID, members) => {
-  if (members === {}) return '';
-  let title = '';
-  if (conversation.type === 'group') title = conversation.title;
-  else if (conversation.numberMembers === 2)
-    title = nameOtherMemberConversation(conversation, userID, members);
-  else {
-    const membersFiltered = Object.values(members).filter(
-      (member) => member.id !== userID,
-    );
-    for (var i in membersFiltered) {
-      if (i === '0') title = membersFiltered[i].info.firstname;
-      else title = title + ', ' + membersFiltered[i].info.firstname;
-    }
-  }
-
-  if (title.length > 20) title = title.slice(0, 20) + '...';
-  return title;
-};
 
 const sendSMSFunction = async (phoneNumbers, message) => {
   let args = {
@@ -188,7 +172,7 @@ const sendSMSFunction = async (phoneNumbers, message) => {
   });
 };
 
-const openDiscussion = async (arrayUsers,idDiscussion) => {
+const openDiscussion = async (arrayUsers, idDiscussion) => {
   const users = arrayUsers.map((user) => user.id);
   var discussion = await searchDiscussion(users, users.length);
   if (!discussion) {
@@ -197,8 +181,52 @@ const openDiscussion = async (arrayUsers,idDiscussion) => {
       return false;
     }
   }
-  
+
   return discussion;
+};
+
+const bindConversation = (conversationId) => {
+  const gamefareUser = store.getState().message.gamefareUser;
+  console.log('bindConversation', conversationId);
+  database()
+    .ref('messagesCoachSession/' + conversationId)
+    // .limitToLast(2)
+    .on('value', async function(snap) {
+      let messages = snap.val();
+
+      if (!messages)
+        messages = {
+          ['noMessage']: {
+            user: gamefareUser,
+            text: 'Write the first message.',
+            createdAt: new Date(),
+            id: 'noMessage',
+            timeStamp: moment().valueOf(),
+          },
+        };
+      messages = Object.keys(messages)
+        .map((id) => ({
+          id,
+          ...messages[id],
+        }))
+        .sort((a, b) => a.timeStamp - b.timeStamp)
+        .reverse()
+        .reduce(function(result, item) {
+          result[item.id] = item;
+          return result;
+        }, {});
+      console.log('conversationId', conversationId);
+      console.log('bindConversation', messages);
+      console.log('store.getState().message', store.getState().message);
+      store.dispatch(setConversation({messages, objectID: conversationId}));
+    });
+};
+
+const unbindConversation = (conversationId) => {
+  console.log('unbindConversation', conversationId);
+  database()
+    .ref('discussions/' + conversationId)
+    .off();
 };
 
 export {
@@ -207,9 +235,9 @@ export {
   searchDiscussion,
   sendNewMessage,
   loadMyDiscusions,
-  checkMessageRead,
   openDiscussion,
-  titleConversation,
   sendSMSFunction,
   nameOtherMemberConversation,
+  bindConversation,
+  unbindConversation,
 };

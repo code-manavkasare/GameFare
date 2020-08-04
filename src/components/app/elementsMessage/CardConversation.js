@@ -2,9 +2,6 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
-import moment from 'moment';
-import database from '@react-native-firebase/database';
-import isEqual from 'lodash.isequal';
 
 import {historicSearchAction} from '../../../actions/historicSearchActions';
 import {messageAction} from '../../../actions/messageActions';
@@ -15,8 +12,8 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
 
-import ImageConversation from '../../layout/image/ImageConversation';
-import {checkMessageRead, titleConversation} from '../../functions/message';
+import {bindConversation} from '../../functions/message';
+import ImageUser from '../../layout/image/ImageUser';
 
 class CardConversation extends React.Component {
   constructor(props) {
@@ -30,181 +27,66 @@ class CardConversation extends React.Component {
     };
   }
   async componentDidMount() {
-    let conversation = this.props.conversations[this.props.discussionID];
-    if (!conversation) conversation = this.props.discussion;
-    const {gamefareUser, userID} = this.props;
-    let {lastMessage} = conversation;
-
-    if (!lastMessage)
-      lastMessage = {
-        user: gamefareUser,
-        text: 'Write the first message.',
-        createdAt: new Date(),
-        id: 'noMessage',
-        timeStamp: moment().valueOf(),
-      };
-    const members = await this.getMembers();
-    const title = await titleConversation(conversation, userID, members);
-    this.setState({lastMessage, members, title, membersFetched: true});
-  }
-  getMembers = async () => {
-    const {discussionID} = this.props;
-
-    const discussionMembersSnapshot = await database()
-      .ref(`discussions/${discussionID}/members`)
-      .limitToFirst(3)
-      .once('value');
-
-    let discussionMembersFiltered = discussionMembersSnapshot.val();
-    if (!discussionMembersFiltered) discussionMembersFiltered = {};
-    delete discussionMembersFiltered[this.props.userID];
-    return discussionMembersFiltered;
-  };
-
-  componentWillReceiveProps(nextProps) {
-    const conversation = this.props.conversations[this.props.discussionID];
-    const conversationNext = nextProps.conversations[nextProps.discussionID];
-    if (
-      !isEqual(conversation, conversationNext) &&
-      conversationNext.lastMessage
-    )
-      return this.setState({
-        lastMessage: conversationNext.lastMessage,
-      });
+    const {objectID} = this.props;
+    bindConversation(objectID);
   }
 
-  lastMessage(lastMessage) {
-    if (!lastMessage) return <View style={styles.placeholderLastMessage} />;
-    else if (!lastMessage)
-      return <View style={styles.placeholderLastMessage} />;
-
-    return (
-      <Text
-        style={[
-          !checkMessageRead(lastMessage, this.props.userID)
-            ? styleApp.input
-            : styleApp.smallText,
-          styles.textUnread,
-        ]}>
-        {lastMessage.text === '' && lastMessage.images
-          ? Object.values(lastMessage.images).length + ' file sent'
-          : !lastMessage.text
-          ? 'Send the first message.'
-          : lastMessage.text}
-      </Text>
-    );
-  }
-
-  async clickCard(conversation, lastMessage) {
-    const {navigation} = this.props;
-    if (this.props.myConversation && lastMessage.id !== 'noMessage') {
-      await database()
-        .ref(
-          'discussions/' +
-            conversation.objectID +
-            '/messages/' +
-            lastMessage.id +
-            '/usersRead/',
-        )
-        .update({[this.props.userID]: true});
-    }
+  async clickCard() {
+    const {objectID} = this.props;
     navigate('Conversation', {
-      data: conversation,
-      myConversation: this.props.myConversation,
+      coachSessionID: objectID,
     });
   }
 
   cardConversation(conversation, lastMessage, i) {
-    const {members, title} = this.state;
+    const {messages} = this.props;
+
     return (
       <ButtonColor
         key={i}
         view={() => {
+          if (!messages) return <PlaceHolder />;
+          let lastMessage = Object.values(messages)[0];
+          const {user, text} = lastMessage;
+
           return (
-            <Row
-              style={{
-                // backgroundColor: 'red',
-                ...styleApp.fullSize,
-                width: '100%',
-              }}>
-              <Col size={20} style={styleApp.center2}>
-                <ImageConversation
-                  members={members}
-                  conversation={conversation}
-                  style={styles.roundImage}
-                  sizeSmallImg={35}
+            <Row>
+              <Col size={30} style={styleApp.center}>
+                <ImageUser
+                  onClick={() => true}
+                  user={user}
+                  styleImgProps={{height: 45, width: 45, borderRadius: 30}}
                 />
               </Col>
-              <Col
-                size={60}
-                style={[styleApp.center2, {paddingLeft: 5, paddingRight: 5}]}>
-                <Text style={[styleApp.titleSmall, {fontSize: 18}]}>{title}</Text>
-                {this.lastMessage(lastMessage)}
-              </Col>
-              <Col size={5} style={styleApp.center2}>
-                {!checkMessageRead(lastMessage, this.props.userID) && (
-                  <View style={styles.dotUnread} />
-                )}
+              <Col size={75} style={styleApp.center2}>
+                <Text style={[styleApp.title, {fontSize: 17}]}>
+                  {user.info.firstname} {user.info.lastname}
+                </Text>
+                <Text style={styleApp.text}>{lastMessage.text}</Text>
               </Col>
             </Row>
           );
         }}
         click={() => this.clickCard(conversation, lastMessage)}
-        color="white"
+        color={colors.white}
         style={styleApp.cardConversation}
         onPressColor={colors.off}
       />
     );
   }
   render() {
-    let conversation = this.props.conversations[this.props.discussionID];
-    const {lastMessage, membersFetched} = this.state;
-
-    if (!conversation) conversation = this.props.discussion;
-    if (!conversation) return null;
-    if (!membersFetched) return <PlaceHolder />;
-
-    return this.cardConversation(
-      conversation ? conversation : this.props.discussion,
-      lastMessage,
-      this.props.index,
-    );
+    return this.cardConversation();
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
-    conversations: state.message.conversations,
+    messages: state.conversations[props.objectID],
     userID: state.user.userID,
-    gamefareUser: state.message.gamefareUser,
   };
 };
 
-const styles = StyleSheet.create({
-  roundImage: {
-    ...styleApp.center,
-    backgroundColor: colors.off2,
-    width: 55,
-    height: 55,
-    borderRadius: 27.5,
-    borderWidth: 0,
-    borderColor: colors.borderColor,
-  },
-  dotUnread: {
-    backgroundColor: colors.blue,
-    height: 15,
-    width: 15,
-    borderRadius: 10,
-  },
-  placeholderLastMessage: {
-    height: 15,
-    width: '80%',
-    borderRadius: 4,
-    marginTop: 4,
-    backgroundColor: colors.off2,
-  },
-  textUnread: {fontSize: 13, marginTop: 2, color: colors.title},
-});
+const styles = StyleSheet.create({});
 
 export default connect(
   mapStateToProps,

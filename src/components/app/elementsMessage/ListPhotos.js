@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 
-import {generateID} from '../../functions/createGroup';
+import {generateID} from '../../functions/createEvent';
 
 import CardContent from './CardContent';
 import {goToSettings} from '../../functions/pictures';
