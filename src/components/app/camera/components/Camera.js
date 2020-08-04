@@ -3,9 +3,9 @@ import {StyleSheet, View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {RNCamera} from 'react-native-camera';
 import {Col, Row} from 'react-native-easy-grid';
-import styleApp from '../../style/style';
-import colors from '../../style/colors';
-import sizes from '../../style/sizes';
+import styleApp from '../../../style/style';
+import colors from '../../../style/colors';
+import sizes from '../../../style/sizes';
 import Orientation from 'react-native-orientation-locker';
 import StatusBar from '@react-native-community/status-bar';
 
@@ -15,11 +15,11 @@ import {
   makeVideoFlag,
   addVideoWithFlags,
   alertStopRecording,
-} from '../../functions/videoManagement';
-import {layoutAction} from '../../../actions/layoutActions';
+} from '../../../functions/videoManagement';
+import {layoutAction} from '../../../../actions/layoutActions';
 
-import BottomButtons from './components/BottomButtons';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import BottomButtons from './BottomButtons';
+import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 class Camera extends Component {
   constructor(props) {
@@ -84,7 +84,7 @@ class Camera extends Component {
       if (saveVideo) {
         const videoInfo = await this.saveRecording(await promiseRecording);
         if (watchVideo) {
-
+          na
         }
       }
       await this.setState({promiseRecording: null});
