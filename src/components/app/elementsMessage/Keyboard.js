@@ -12,13 +12,12 @@ import {
 import {KeyboardRegistry} from 'react-native-keyboard-input';
 import CameraRoll from '@react-native-community/cameraroll';
 import {pickLibrary} from '../../functions/pictures';
-import {generateID} from '../../functions/createGroup';
+import {generateID} from '../../functions/createEvent';
 
 import AllIcons from '../../layout/icons/AllIcons';
 import ButtonColor from '../../layout/Views/Button';
 import StyleApp from '../../style/style';
 const {height, width} = Dimensions.get('screen');
-import {Col, Row} from 'react-native-easy-grid';
 
 import CardContent from './CardContent';
 import colors from '../../style/colors';
@@ -93,7 +92,7 @@ class KeyboardView extends Component {
           style={[styles.keyboardContainer]}
           showsHorizontalScrollIndicator={false}>
           {this.state.pictures === 'loading' ? (
-            <View style={{height: 100, backgroundColor: 'yellow'}}></View>
+            <View style={{height: 100, backgroundColor: 'yellow'}} />
           ) : (
             this.state.pictures.map((data, i) => this.buttonImage(data, i))
           )}

@@ -13,13 +13,13 @@ import {indexEvents} from '../database/algolia';
 import {options, stripe} from '../functions/stripe';
 import {createDiscussionEventGroup} from '../functions/message';
 
-function generateID() {
+const generateID = () => {
   return (
     Math.random()
       .toString(36)
       .substring(2) + Date.now().toString(36)
   );
-}
+};
 
 async function addMemberDiscussion(discussionID, member) {
   await database()

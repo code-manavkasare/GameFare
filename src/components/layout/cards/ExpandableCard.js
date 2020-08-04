@@ -241,6 +241,8 @@ export default class ExpandableCard extends Component {
               this.expandClose(option),
             ),
           )}
+
+        
       </Animated.View>
     );
   }

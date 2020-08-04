@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {StyleSheet, View, Dimensions} from 'react-native';
+import {StyleSheet, View, FlatList} from 'react-native';
 import PropTypes from 'prop-types';
-import InvertibleScrollView from 'react-native-invertible-scroll-view';
+
 import {KeyboardAccessoryView} from 'react-native-keyboard-input';
 import {includes} from 'ramda';
 
@@ -11,10 +11,9 @@ import InputMessage from './InputMessage';
 import './Keyboard';
 import CardMessage from './CardMessage';
 
-class Conversation2 extends Component {
-  static propTypes = {
-    message: PropTypes.string,
-  };
+import {bindConversation, unbindConversation} from '../../functions/message';
+
+class ListMessages extends Component {
   constructor(props) {
     super(props);
     this.onKeyboardItemSelected = this.onKeyboardItemSelected.bind(this);
@@ -33,6 +32,9 @@ class Conversation2 extends Component {
   }
   componentDidMount() {
     this.props.onRef(this);
+    const {objectID} = this.props;
+  
+    bindConversation(objectID);
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.messages !== this.props.messages)
@@ -58,10 +60,10 @@ class Conversation2 extends Component {
     });
   }
   renderContent() {
-    const {initialMessage, discussion, user} = this.props;
+    const {initialMessage, session, user} = this.props;
     return (
       <InputMessage
-        discussion={discussion}
+        discussion={session}
         user={user}
         initialMessage={initialMessage}
         onRef={(ref) => (this.inputRef = ref)}
@@ -69,40 +71,58 @@ class Conversation2 extends Component {
     );
   }
   filterBlockedUserMessage = (message, i) => {
-    const {blockedUsers} = this.props;
+    const {blockedUsers, user, navigation, session} = this.props;
+    let {messages} = this.props;
+    if (!messages) messages = {};
     if (blockedUsers && includes(message.user.id, Object.keys(blockedUsers))) {
       return null;
     } else {
       return (
         <CardMessage
-          navigation={this.props.navigation}
+          navigation={navigation}
           message={{
-            previousMessage: this.props.messages[i + 1]
-              ? this.props.messages[i + 1]
+            previousMessage: Object.values(messages)[i + 1]
+              ? Object.values(messages)[i + 1]
               : null,
             currentMessage: message,
           }}
-          discussion={this.props.discussion}
-          user={this.props.user}
-          key={i}
+          discussion={session}
+          user={user}
+          key={message.id}
           index={i}
         />
       );
     }
   };
+  messagesArray = () => {
+    let {messages} = this.props;
+    if (!messages) messages = {};
+    return Object.values(messages);
+  };
   render() {
     return (
       <View style={styles.container}>
-        <InvertibleScrollView
+        <FlatList
+          data={this.messagesArray()}
+          renderItem={(message) =>
+            this.filterBlockedUserMessage(message.item, message.index)
+          }
           keyboardDismissMode="interactive"
-          style={styles.messageScrollView}
-          ref={(ref) => (this.listViewRef = ref)}
-          inverted>
-          {this.props.messages.map((message, i) =>
-            this.filterBlockedUserMessage(message, i),
-          )}
-          <View style={{height: 70}} />
-        </InvertibleScrollView>
+          keyExtractor={(item) => item.timeStamp}
+          inverted
+          numColumns={1}
+          scrollEnabled={true}
+          // style={{width: '100%'}}
+          contentContainerStyle={{
+            paddingTop: 30,
+            paddingBottom: 30,
+          }}
+          showsVerticalScrollIndicator={true}
+          // initialNumToRender={1}
+          // windowSize={5}
+          onEndReached={this.endReached}
+          onEndReachedThreshold={0.7}
+        />
 
         <KeyboardAccessoryView
           renderContent={this.renderContent}
@@ -124,14 +144,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+    width: '100%',
   },
   messageScrollView: {paddingBottom: 20, paddingTop: 30, flex: 1},
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     blockedUsers: state.user.infoUser.blockedUsers,
+    messages: state.conversations[props.objectID],
   };
 };
 
-export default connect(mapStateToProps)(Conversation2);
+export default connect(mapStateToProps)(ListMessages);

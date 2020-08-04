@@ -17,6 +17,8 @@ import {
   buttonPlay,
   hangupButton,
   listPlayers,
+  conversationView,
+  contentView,
 } from './components/elements';
 
 class TeamPage extends Component {
@@ -34,14 +36,17 @@ class TeamPage extends Component {
       <View style={styleApp.stylePage}>
         {buttonPlay(session)}
 
-        <Row style={{flex: 0, paddingTop: 10, ...styleApp.marginView}}>
-          <Col size={60} style={styleApp.center2}>
-            {/* {sessionTitle(session)} */}
-            {/* {sessionDate(session)} */}
-          </Col>
-        </Row>
-        {/* <View style={styleApp.divider2} /> */}
+        {/* <View style={[styleApp.marginView, {marginTop: 10}]}>
+          {sessionTitle(session, {}, true)}
+        </View> */}
+
+        {contentView(session)}
+
+        {conversationView(session)}
+
         {listPlayers(session)}
+
+      
       </View>
     );
   }
@@ -62,7 +67,7 @@ class TeamPage extends Component {
           onRef={(ref) => (this.scrollViewRef = ref)}
           contentScrollView={() => this.groupPage()}
           keyboardAvoidDisable={true}
-          marginBottomScrollView={sizes.heightFooter + sizes.marginBottomApp}
+          marginBottomScrollView={0}
           marginTop={sizes.heightHeaderHome}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           marginBottom={0}

@@ -17,6 +17,7 @@ import appSettingsReducer from './appSettingsReducer';
 import localVideoLibraryReducer from './localVideoLibraryReducer';
 import archivesReducer from './archivesReducer.js';
 import coachSessionsReducer from './coachSessionsReducer.js';
+import conversationsReducer from './conversationsReducer';
 import phoneContactsReducer from './phoneContactsReducer.js';
 
 export default combineReducers({
@@ -37,5 +38,6 @@ export default combineReducers({
   archives: archivesReducer,
   coachSessions: coachSessionsReducer,
   network,
+  conversations: conversationsReducer,
   phoneContacts: phoneContactsReducer,
 });

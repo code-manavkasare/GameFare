@@ -1,16 +1,10 @@
 import {
-  SET_CONVERSATION,
   SET_CONVERSATIONS,
   SET_INPUT,
   ADD_IMAGE,
   DELETE_MY_CONVERSATION,
 } from './types';
 import {loadMyDiscusions} from '../components/functions/message';
-
-const setConversation = (value) => ({
-  type: SET_CONVERSATION,
-  conversation: value,
-});
 
 const setConversations = (value) => ({
   type: SET_CONVERSATIONS,
@@ -34,9 +28,7 @@ const deleteMyConversation = (value) => ({
 
 export const messageAction = (val, data) => {
   return async function(dispatch) {
-    if (val === 'setConversation') {
-      await dispatch(setConversation(data));
-    } else if (val === 'setConversations') {
+    if (val === 'setConversations') {
       await dispatch(setConversations(data));
     } else if (val === 'loadConversations') {
       const discussions = await loadMyDiscusions(data.userID);

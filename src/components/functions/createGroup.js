@@ -7,17 +7,7 @@ import {
   refreshTokenOnDatabase,
 } from '../functions/notifications';
 import {createDiscussionEventGroup} from '../functions/message';
-
-function generateID() {
-  return (
-    Math.random()
-      .toString(36)
-      .substring(2, 15) +
-    Math.random()
-      .toString(36)
-      .substring(2, 15)
-  );
-}
+import {generateID} from './createEvent';
 
 async function createGroup(data, userID, infoUser) {
   var pictureUri = await uploadPictureFirebase(
@@ -87,4 +77,4 @@ async function subscribeUserToGroup(
   return user;
 }
 
-module.exports = {createGroup, generateID, subscribeUserToGroup};
+module.exports = {createGroup, subscribeUserToGroup};

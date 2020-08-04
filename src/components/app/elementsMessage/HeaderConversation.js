@@ -2,14 +2,12 @@ import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 
-import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
 import {openSession, sessionOpening} from '../../functions/coach';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
-import ImageConversation from '../../layout/image/ImageConversation';
-import {titleConversation} from '../../functions/message';
+import {titleSession, imageCardTeam} from '../TeamPage/components/elements';
 
 class HeaderConversation extends React.Component {
   constructor(props) {
@@ -18,46 +16,23 @@ class HeaderConversation extends React.Component {
       loader: false,
     };
   }
-
   async openSession() {
-    const {conversation, infoUser, userID} = this.props;
-    await this.setState({loader: true});
-
-    const session = await openSession(
-      {id: userID, info: infoUser},
-      conversation.members,
-    );
-
+    const {session} = this.props;
     sessionOpening(session);
-    await this.setState({loader: false});
   }
   header() {
     const {
+      session,
       navigation,
-      conversation,
-      userID,
       AnimatedHeaderValue,
       loader: propsLoader,
-      back,
     } = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={
-          !propsLoader &&
-          titleConversation(conversation, userID, conversation.members)
-        }
-        imgHeader={
-          !propsLoader && (
-            <ImageConversation
-              members={conversation.members}
-              conversation={conversation}
-              style={styleApp.roundView2}
-              sizeSmallImg={25}
-            />
-          )
-        }
+        textHeader={titleSession(session, 'small')}
+        imgHeader={imageCardTeam(session, 60, true)}
         loader={loader || propsLoader}
         inputRange={[50, 80]}
         initialBorderColorIcon={'white'}
@@ -69,9 +44,7 @@ class HeaderConversation extends React.Component {
         initialTitleOpacity={1}
         icon1={'arrow-left'}
         icon2={'film'}
-        clickButton1={() =>
-          back ? navigation.goBack() : navigation.dangerouslyGetParent().pop()
-        }
+        clickButton1={() => navigation.goBack()}
         clickButton2={() => this.openSession()}
       />
     );
@@ -80,8 +53,6 @@ class HeaderConversation extends React.Component {
     return this.header();
   }
 }
-
-const styles = StyleSheet.create({});
 
 const mapStateToProps = (state) => {
   return {

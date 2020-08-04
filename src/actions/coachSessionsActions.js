@@ -18,4 +18,4 @@ const deleteSession = (sessionId) => {
   return {type: DELETE_SESSION, sessionId};
 };
 
-export {deleteSession, resetSessions, setSession};
+module.exports = {deleteSession, resetSessions, setSession};

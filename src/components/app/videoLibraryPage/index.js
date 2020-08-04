@@ -23,7 +23,7 @@ import {
 import Button from '../../layout/buttons/Button';
 import ScrollView2 from '../../layout/scrollViews/ScrollView2';
 import QueueList from '../elementsUpload/QueueList';
-import UploadHeader from './components/localVideoLibraryPage/components/UploadHeader'
+import UploadHeader from './components/localVideoLibraryPage/components/UploadHeader';
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 
 import {
@@ -34,7 +34,10 @@ import {
 } from '../../functions/pictures';
 import {openSession} from '../../functions/coach';
 import sizes from '../../style/sizes';
-import {recordVideo, shareVideoWithMembers} from '../../functions/videoManagement';
+import {
+  recordVideo,
+  shareVideoWithMembers,
+} from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
@@ -125,7 +128,7 @@ class VideoLibraryPage extends Component {
     this.setState({selectedVideos});
   }
   async uploadVideo() {
-    const {uploadQueueAction, navigation, userID} = this.props
+    const {uploadQueueAction, navigation, userID} = this.props;
     const {navigate} = navigation;
     const permissionLibrary = await permission('library');
     if (!permissionLibrary)
@@ -175,27 +178,27 @@ class VideoLibraryPage extends Component {
             [`${destinationCloud}/sourceUser`]: userID,
             [`${destinationCloud}/startTimestamp`]: Date.now(),
             [`${destinationCloud}/thumbnail`]: newVideo.thumbnail,
-            ...updateMembers
-          }
+            ...updateMembers,
+          };
           uploadingVideosArray[i] = newVideo;
           return newVideo;
         }),
-    );
+      );
 
-    uploadQueueAction('enqueueFilesUpload', uploadingVideosArray)
+    uploadQueueAction('enqueueFilesUpload', uploadingVideosArray);
   }
   async addVideo() {
     const {navigate, layoutAction} = this.props.navigation;
     navigate('Alert', {
-      title: `Select an option.`,
+      title: `New video`,
       displayList: true,
       listOptions: [
         {
-          title: 'Upload video',
+          title: 'Select',
           operation: () => this.uploadVideo(),
         },
         {
-          title: 'Record video',
+          title: 'Record',
           forceNavigation: true,
           operation: () => {
             recordVideo(true, (videoInfo) => {
@@ -225,9 +228,7 @@ class VideoLibraryPage extends Component {
     const {uploadingVideosArray, videosArray} = this.state;
     const {videoLibrary: localVideos} = this.props;
     return (
-      <View style={{marginTop:72+sizes.marginTopApp, zIndex:10}}>
-        {/* <QueueList localList={true} onOpen={() => true} onClose={() => true} /> */}
-
+      <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
         <View style={styleApp.marginView}>{this.uploadingVideosList()}</View>
         {this.noVideos() ? (
           <View style={styleApp.marginView}>
@@ -269,27 +270,51 @@ class VideoLibraryPage extends Component {
             />
           </View>
         ) : (
-          <View style={{paddingBottom:150+sizes.marginBottomApp}}>
-            <View style={{backgroundColor:colors.white, borderBottomWidth:1, borderColor:colors.off, zIndex:2, paddingLeft:'5%'}}>
-              <Text style={[styleApp.title, {marginBottom: 11, zIndex:2}]}>
-                GameFare Library {!this.noVideos() && `(${videosArray.length})`}
-              </Text>
-              {
-                localVideos && Object.values(localVideos).length > 0 &&
-                <Text style={[styleApp.text, {marginTop:-5, marginBottom: 11, zIndex:2}]}>
-                  Awaiting Upload ({Object.values(localVideos).length})
-                </Text>
-              } 
-            </View>
+          <View>
             <UploadHeader />
             <FlatList
-              style={{zIndex:0, paddingLeft:'5%', paddingRight:'5%', paddingTop:15}}
+              ListHeaderComponent={
+                <View
+                  style={{
+                    backgroundColor: colors.white,
+                    borderBottomWidth: 0,
+                    borderColor: colors.off,
+                  }}>
+                  <Text style={[styleApp.title, {marginBottom: 11, zIndex: 2}]}>
+                    GameFare Library{' '}
+                    {!this.noVideos() && `(${videosArray.length})`}
+                  </Text>
+                  {localVideos && Object.values(localVideos).length > 0 && (
+                    <Text
+                      style={[styleApp.text, {marginBottom: 11, zIndex: 2}]}>
+                      Awaiting Upload ({Object.values(localVideos).length})
+                    </Text>
+                  )}
+                </View>
+              }
               data={videosArray}
               renderItem={(video) => this.renderCardArchive(video)}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: this.AnimatedHeaderValue,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: false},
+              )}
               keyExtractor={(item) => item.id}
               numColumns={2}
               scrollEnabled={true}
-              contentContainerStyle={{paddingBottom: 0}}
+              contentContainerStyle={{
+                paddingBottom: 150,
+                paddingLeft: '5%',
+                paddingRight: '5%',
+                paddingTop: 0,
+              }}
               showsVerticalScrollIndicator={true}
               initialNumToRender={7}
             />
@@ -312,21 +337,17 @@ class VideoLibraryPage extends Component {
         id={id}
         key={id}
         noUpdateStatusBar={true}
-        openVideo={(snippets && Object.values(snippets).length > 0) ? 
-          (id) => this.openVideoWithSnippets(id) : null}
+        openVideo={
+          snippets && Object.values(snippets).length > 0
+            ? (id) => this.openVideoWithSnippets(id)
+            : null
+        }
       />
     );
   }
 
   render() {
-    const {
-      selectableMode,
-      videosArray,
-      uploadingVideosArray,
-      loader,
-      selectedVideos,
-    } = this.state;
-
+    const {selectableMode, loader, selectedVideos} = this.state;
     return (
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
@@ -341,19 +362,6 @@ class VideoLibraryPage extends Component {
         />
 
         {this.listVideos()}
-        {/* <ScrollView2
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          contentScrollView={() => this.listVideos()}
-          keyboardAvoidDisable={true}
-          marginBottomScrollView={sizes.heightFooter + sizes.marginBottomApp}
-          marginTop={sizes.heightHeaderHome}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          marginBottom={0}
-          colorRefresh={colors.title}
-          refreshControl={false}
-          offsetBottom={30}
-          showsVerticalScrollIndicator={true}
-        /> */}
       </View>
     );
   }
