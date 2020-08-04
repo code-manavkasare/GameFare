@@ -179,7 +179,6 @@ const arrayUploadFromSnippets = async ({
     if (thumbnailUploaded) {
       videoInfo.thumbnail = thumbnail;
     } else if (videoInfo.thumbnail) {
-      console.log(videoInfo.thumbnail);
       videoInfo.thumbnail = await uploadImage(
         'file:///' + videoInfo.thumbnail,
         destinationCloud,
@@ -271,7 +270,7 @@ const addVideo = async (video) => {
 
 const recordVideo = async () => {
   await store.dispatch(setLayout({isFooterVisible: false}));
-  navigate('LocalSession', {screen: 'LocalSession'});
+  navigate('LocalSession');
 };
 
 const removeVideo = (archive) => {
@@ -421,7 +420,11 @@ const alertStopRecording = (archive) => {
       {
         title: 'Record video',
         forceNavigation: true,
-        operation: () => recordVideo(),
+        operation: () => {
+          recordVideo(true, (videoInfo) => {
+            openVideoPlayer(videoInfo, true);
+          });
+        },
       },
       {
         title: 'Cancel',

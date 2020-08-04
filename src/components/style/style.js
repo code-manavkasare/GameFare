@@ -497,6 +497,16 @@ const styles = StyleSheet.create({
     marginTop: 40,
     borderColor: colors.grey,
   },
+  flexColumnBlack: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'black',
+  },
+  flexColumnWhite: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'white',
+  },
 });
 
 export default styles;

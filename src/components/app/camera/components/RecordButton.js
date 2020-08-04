@@ -3,13 +3,13 @@ import {View, StyleSheet, Animated} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
-import ButtonColor from '../../layout/Views/Button';
-import colors from '../../style/colors';
-import styleApp from '../../style/style';
-import {native} from '../../animations/animations';
-import Loader from '../../layout/loaders/Loader';
+import ButtonColor from '../../../layout/Views/Button';
+import colors from '../../../style/colors';
+import styleApp from '../../../style/style';
+import {native} from '../../../animations/animations';
+import Loader from '../../../layout/loaders/Loader';
 
-import Timer from '../../app/coachFlow/StreamPage/components/StreamView/footer/components/Timer';
+import Timer from '../../../app/coachFlow/StreamPage/components/StreamView/footer/components/Timer';
 
 export default class RecordButton extends Component {
   static propTypes = {

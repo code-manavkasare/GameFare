@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Camera from '../../../camera/Camera';
+import CameraPage from '../../../app/camera';
 
 const Stack = createStackNavigator();
 const LocalSession = () => {
   return (
     <Stack.Navigator initialRouteName="RecordLocalSession" headerMode="none">
-      <Stack.Screen name="RecordLocalSession" component={Camera} />
+      <Stack.Screen name="RecordLocalSession" component={CameraPage} />
     </Stack.Navigator>
   );
 };

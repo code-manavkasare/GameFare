@@ -18,6 +18,7 @@ import CardUploading from './components/CardUploading';
 import {
   addVideoToMember,
   deleteVideoFromLibrary,
+  openVideoPlayer,
 } from '../../database/firebase/videosManagement.js';
 import Button from '../../layout/buttons/Button';
 import ScrollView2 from '../../layout/scrollViews/ScrollView2';
@@ -199,7 +200,11 @@ class VideoLibraryPage extends Component {
         {
           title: 'Record',
           forceNavigation: true,
-          operation: () => recordVideo(),
+          operation: () => {
+            recordVideo(true, (videoInfo) => {
+              openVideoPlayer(videoInfo, true);
+            });
+          },
         },
       ],
     });
