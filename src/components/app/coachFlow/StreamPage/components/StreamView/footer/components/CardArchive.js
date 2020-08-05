@@ -38,7 +38,6 @@ class CardArchive extends PureComponent {
   };
   static defaultProps = {
     local: false,
-    parent: null,
     selectableMode: false,
     isSelected: false,
   };
@@ -173,23 +172,18 @@ class CardArchive extends PureComponent {
     const {
       id,
       thumbnail,
-      url,
       startTimestamp,
       size,
       durationSeconds,
-      snippets,
     } = archive;
     const {loader} = this.state;
     return (
       <View style={[styles.cardArchive, style]}>
         {archive ? (
           <View style={styleApp.fullSize}>
-            {this.buttonClose()}
-            {this.buttonUpload()}
-            {this.snippetIndicator()}
             <AsyncImage
-              mainImage={thumbnail ? thumbnail : ''}
               style={styleApp.fullSize}
+              mainImage={thumbnail ? thumbnail : ''}
             />
             <View style={styles.resolution}>
               <Text
@@ -274,7 +268,7 @@ class CardArchive extends PureComponent {
     );
   }
   render() {
-    const {archive, id, local} = this.props;
+    const {archive} = this.props;
     return archive ? (
       <View>
         {this.cardArchive(archive)}
@@ -306,9 +300,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     archive: props.local
-      ? props.parent
-        ? state.localVideoLibrary.videoLibrary[props.parent].snippets[props.id]
-        : state.localVideoLibrary.videoLibrary[props.id]
+      ? state.localVideoLibrary.videoLibrary[props.id]
       : state.archives[props.id],
   };
 };

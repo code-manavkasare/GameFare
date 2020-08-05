@@ -42,8 +42,6 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
-import LocalVideoLibrary from './components/localVideoLibraryPage/index';
-import ExpandedSnippetsView from './components/expandedSnippetsView';
 const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {
@@ -54,9 +52,9 @@ class VideoLibraryPage extends Component {
       loader: false,
       uploadingVideosArray: [],
       selectableMode: false,
-      selectedVideos: [],
+      selectedFirebaseVideos: [],
+      selectedLocalVideos: [],
     };
-    this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     const {navigation} = this.props;
@@ -65,9 +63,11 @@ class VideoLibraryPage extends Component {
     });
   }
   static getDerivedStateFromProps(props) {
-    const cloudVideosArray = sortVideos(props.archivedStreams);
-    const localVideosArray = sortVideos(props.videoLibrary);
-    const videosArray = localVideosArray.concat(cloudVideosArray);
+    const allVideos = {
+      ...props.archivedStreams,
+      ...props.videoLibrary,
+    }
+    const videosArray = sortVideos(allVideos);
     return {videosArray};
   }
   uploadingVideosList() {
@@ -88,19 +88,53 @@ class VideoLibraryPage extends Component {
       })
     );
   }
-  deleteVideos() {
-    const {selectedVideos} = this.state;
-    const numberVideos = selectedVideos.length;
+  shareSelectedVideos() {
+    const {userID} = this.props;
+    const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
+    navigate('PickMembers', {
+      usersSelected: {},
+      allowSelectMultiple: true,
+      selectFromGamefare: true,
+      selectFromContacts: true,
+      closeButton: true,
+      displayCurrentUser: false,
+      noUpdateStatusBar: true,
+      titleHeader: 'Select members to share video(s) with',
+      onSelectMembers: (users, contacts) => {
+        for (const user of Object.values(users)) {
+          for (const videoId of selectedFirebaseVideos) {
+            addVideoToMember(userID, user.id, videoId);
+          }
+          for (const videoId of selectedLocalVideos) {
+            console.log('error sharing local video', videoId);
+          }
+        }
+        for (const contact of Object.values(contacts)) {
+          console.log('error sharing with contact', contact);
+        }
+        this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
+      },
+    });
+  }
+  deleteSelectedVideos() {
+    const {userID} = this.props;
+    const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
+    const numberVideos = selectedFirebaseVideos.length + selectedLocalVideos.length;
     if (numberVideos !== 0) {
       navigate('Alert', {
         title: `Are you sure you want to delete this video? This action cannot be undone.`,
         textButton: `Delete (${numberVideos})`,
-        onGoBack: async () => {
-          deleteVideoFromLibrary(this.props.userID, selectedVideos);
+        onGoBack: () => {
+          if (selectedFirebaseVideos.length > 0) {
+            deleteVideoFromLibrary(userID, selectedFirebaseVideos);
+          }
+          if (selectedLocalVideos.length > 0) {
+            console.log('delete local videos', selectedLocalVideos);
+          }
         },
       });
     }
-    this.setState({selectedVideos: [], selectableMode: false});
+    this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
   }
   async openSession() {
     await this.setState({loader: true});
@@ -115,17 +149,21 @@ class VideoLibraryPage extends Component {
     await this.setState({loader: false});
     finalizeOpening(session);
   }
-  selectVideo(id, isSelected) {
-    let {selectedVideos} = this.state;
+  selectVideo(id, isSelected, local) {
+    let {selectedFirebaseVideos, selectedLocalVideos} = this.state;
     if (isSelected) {
-      selectedVideos.push(id);
+      if (local) {
+        selectedLocalVideos.push(id);
+      } else {
+        selectedFirebaseVideos.push(id);
+      }
     } else {
-      const index = selectedVideos.indexOf(id);
+      const index = local ? selectedLocalVideos.indexOf(id) : selectedFirebaseVideos.indexOf(id);
       if (index > -1) {
-        selectedVideos.splice(index, 1);
+        local ? selectedLocalVideos.splice(index, 1) : selectedFirebaseVideos.splice(index, 1);
       }
     }
-    this.setState({selectedVideos});
+    this.setState({selectedFirebaseVideos, selectedLocalVideos});
   }
   async uploadVideo() {
     const {uploadQueueAction, navigation, userID} = this.props;
@@ -188,7 +226,7 @@ class VideoLibraryPage extends Component {
     uploadQueueAction('enqueueFilesUpload', uploadingVideosArray);
   }
   async addVideo() {
-    const {navigate, layoutAction} = this.props.navigation;
+    const {navigate} = this.props.navigation;
     navigate('Alert', {
       title: `New video`,
       displayList: true,
@@ -200,11 +238,7 @@ class VideoLibraryPage extends Component {
         {
           title: 'Record',
           forceNavigation: true,
-          operation: () => {
-            recordVideo(true, (videoInfo) => {
-              openVideoPlayer(videoInfo, true);
-            });
-          },
+          operation: () => recordVideo(),
         },
       ],
     });
@@ -217,16 +251,13 @@ class VideoLibraryPage extends Component {
   }
   noVideos() {
     const {uploadingVideosArray, videosArray} = this.state;
-    const {videoLibrary} = this.props;
     return (
       videosArray.length === 0 &&
-      uploadingVideosArray.length === 0 &&
-      (!videoLibrary || Object.keys(videoLibrary).length === 0)
+      uploadingVideosArray.length === 0
     );
   }
   listVideos() {
-    const {uploadingVideosArray, videosArray} = this.state;
-    const {videoLibrary: localVideos} = this.props;
+    const {videosArray} = this.state;
     return (
       <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
         <View style={styleApp.marginView}>{this.uploadingVideosList()}</View>
@@ -257,7 +288,7 @@ class VideoLibraryPage extends Component {
             />
             <View style={{height: 20}} />
             <Button
-              text={'Record session'}
+              text={'Record video'}
               icon={{
                 name: 'video',
                 size: 22,
@@ -266,12 +297,12 @@ class VideoLibraryPage extends Component {
               }}
               backgroundColor={'blue'}
               onPressColor={colors.blueLight}
-              click={() => this.openSession()}
+              click={() => recordVideo()}
             />
           </View>
         ) : (
           <View>
-            <UploadHeader />
+            {/* <UploadHeader /> */}
             <FlatList
               ListHeaderComponent={
                 <View
@@ -281,15 +312,9 @@ class VideoLibraryPage extends Component {
                     borderColor: colors.off,
                   }}>
                   <Text style={[styleApp.title, {marginBottom: 11, zIndex: 2}]}>
-                    GameFare Library{' '}
-                    {!this.noVideos() && `(${videosArray.length})`}
+                    GameFare Library
+                    {!this.noVideos() && ` (${videosArray.length})`}
                   </Text>
-                  {localVideos && Object.values(localVideos).length > 0 && (
-                    <Text
-                      style={[styleApp.text, {marginBottom: 11, zIndex: 2}]}>
-                      Awaiting Upload ({Object.values(localVideos).length})
-                    </Text>
-                  )}
                 </View>
               }
               data={videosArray}
@@ -324,24 +349,19 @@ class VideoLibraryPage extends Component {
     );
   }
   renderCardArchive(video) {
-    const {selectableMode, selectedVideos} = this.state;
-    const {local, snippets, id} = video.item;
-    const isSelected = includes(video.item.id, selectedVideos);
+    const {selectableMode, selectedFirebaseVideos, selectedLocalVideos} = this.state;
+    const {local, id} = video.item;
+    const isSelected = local ? includes(video.item.id, selectedLocalVideos) : includes(video.item.id, selectedFirebaseVideos);
     return (
       <CardArchive
         local={local ? true : false}
-        selectableMode={!local && selectableMode}
+        selectableMode={selectableMode}
         isSelected={isSelected}
-        selectVideo={(id, selected) => this.selectVideo(id, selected)}
+        selectVideo={(id, selected) => this.selectVideo(id, selected, local)}
         style={styles.cardArchive}
         id={id}
         key={id}
         noUpdateStatusBar={true}
-        openVideo={
-          snippets && Object.values(snippets).length > 0
-            ? (id) => this.openVideoWithSnippets(id)
-            : null
-        }
       />
     );
   }
@@ -352,13 +372,16 @@ class VideoLibraryPage extends Component {
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
           loader={loader}
+          toggleSelect={() => {
+            console.log('toggleSelect', !selectableMode);
+            this.setState({selectableMode: !selectableMode});
+          }}
           selectableMode={selectableMode}
           isListEmpty={this.noVideos()}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
           selectedVideos={selectedVideos}
-          uploadVideo={this.addVideo.bind(this)}
-          deleteVideos={this.deleteVideos.bind(this)}
-          setState={this.setState.bind(this)}
+          add={() => this.addVideo()}
+          remove={() => this.deleteSelectedVideos()}
+          share={() => this.shareSelectedVideos()}
         />
 
         {this.listVideos()}
