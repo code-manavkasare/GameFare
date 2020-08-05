@@ -131,14 +131,7 @@ class CardArchive extends PureComponent {
                       color={colors.green}
                       solid={isSelected ? true : false}
                     />
-                  ) : (
-                    <AllIcons
-                      type={'font'}
-                      color={colors.grey + '99'}
-                      size={25}
-                      name={'play'}
-                    />
-                  )}
+                  ) : null }
                 </Col>
               </Row>
             </View>
