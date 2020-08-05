@@ -42,7 +42,6 @@ class UploadHeader extends Component {
       }, 1500)
     } else if (!expanded) {
       if (!headerVisible) this.setState({})
-      console.log('val, taskLength', val, taskLength);
       this.setState({
         headerVisible: val === 0 ? false : true,
         totalProgress: !headerVisible ? 0 : totalProgress
@@ -54,7 +53,6 @@ class UploadHeader extends Component {
   }
 
   open(val) {
-    console.log('opening')
     this.setState({expanded: true})
     Animated.parallel([
       Animated.timing(this.uploadReveal, native(val ? val : 0, 300))
@@ -62,7 +60,6 @@ class UploadHeader extends Component {
   }
 
   close() {
-    console.log('closing');
     Animated.parallel([
       Animated.timing(this.uploadReveal, native(-1, 300))
     ]).start(() => {
