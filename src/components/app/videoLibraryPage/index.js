@@ -37,6 +37,8 @@ import sizes from '../../style/sizes';
 import {
   recordVideo,
   shareVideoWithMembers,
+  removeLocalVideos,
+  uploadLocalVideos,
 } from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -91,36 +93,40 @@ class VideoLibraryPage extends Component {
   shareSelectedVideos() {
     const {userID} = this.props;
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
-    navigate('PickMembers', {
-      usersSelected: {},
-      allowSelectMultiple: true,
-      selectFromGamefare: true,
-      selectFromContacts: true,
-      closeButton: true,
-      displayCurrentUser: false,
-      noUpdateStatusBar: true,
-      titleHeader: 'Select members to share video(s) with',
-      onSelectMembers: (users, contacts) => {
-        for (const user of Object.values(users)) {
-          for (const videoId of selectedFirebaseVideos) {
-            addVideoToMember(userID, user.id, videoId);
+    const numberVideos = selectedFirebaseVideos.length + selectedLocalVideos.length;
+    if (numberVideos > 0) {
+      navigate('PickMembers', {
+        usersSelected: {},
+        allowSelectMultiple: true,
+        selectFromGamefare: true,
+        selectFromContacts: true,
+        closeButton: true,
+        displayCurrentUser: false,
+        noUpdateStatusBar: true,
+        titleHeader: 'Select members to share video(s) with',
+        onSelectMembers: (users, contacts) => {
+          for (const user of Object.values(users)) {
+            for (const videoId of selectedFirebaseVideos) {
+              addVideoToMember(userID, user.id, videoId);
+            }
+            uploadLocalVideos(selectedLocalVideos);
+            // for (const videoId of selectedLocalVideos) {
+            //   addVideoToMember(userID, user.id, videoId);
+            // }
           }
-          for (const videoId of selectedLocalVideos) {
-            console.log('error sharing local video', videoId);
+          for (const contact of Object.values(contacts)) {
+            console.log('error sharing with contact', contact);
           }
-        }
-        for (const contact of Object.values(contacts)) {
-          console.log('error sharing with contact', contact);
-        }
-        this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
-      },
-    });
+          this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
+        },
+      });
+    }
   }
   deleteSelectedVideos() {
     const {userID} = this.props;
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
     const numberVideos = selectedFirebaseVideos.length + selectedLocalVideos.length;
-    if (numberVideos !== 0) {
+    if (numberVideos > 0) {
       navigate('Alert', {
         title: `Are you sure you want to delete this video? This action cannot be undone.`,
         textButton: `Delete (${numberVideos})`,
@@ -129,7 +135,7 @@ class VideoLibraryPage extends Component {
             deleteVideoFromLibrary(userID, selectedFirebaseVideos);
           }
           if (selectedLocalVideos.length > 0) {
-            console.log('delete local videos', selectedLocalVideos);
+            removeLocalVideos(selectedLocalVideos);
           }
         },
       });
@@ -302,7 +308,7 @@ class VideoLibraryPage extends Component {
           </View>
         ) : (
           <View>
-            {/* <UploadHeader /> */}
+            <UploadHeader />
             <FlatList
               ListHeaderComponent={
                 <View
@@ -372,10 +378,7 @@ class VideoLibraryPage extends Component {
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
           loader={loader}
-          toggleSelect={() => {
-            console.log('toggleSelect', !selectableMode);
-            this.setState({selectableMode: !selectableMode});
-          }}
+          toggleSelect={() => this.setState({selectableMode: !selectableMode})}
           selectableMode={selectableMode}
           isListEmpty={this.noVideos()}
           selectedVideos={selectedVideos}

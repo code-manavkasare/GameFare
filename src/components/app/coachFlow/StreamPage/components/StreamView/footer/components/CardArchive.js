@@ -97,32 +97,7 @@ class CardArchive extends PureComponent {
       );
     }
   };
-  buttonClose() {
-    const {archive: archiveData} = this.props;
-    if (archiveData.local)
-      return (
-        <ButtonColor
-          view={() => (
-            <AllIcons name="times" type="font" color={colors.white} size={15} />
-          )}
-          click={() => removeVideo(archiveData)}
-          color={colors.greyDark + '40'}
-          onPressColor={colors.grey + '40'}
-          style={[
-            {
-              position: 'absolute',
-              height: 30,
-              width: 30,
-              top: 5,
-              left: 5,
-              zIndex: 20,
-            },
-          ]}
-        />
-      );
-    return null;
-  }
-  buttonUpload() {
+  ico() {
     const {archive: archiveData} = this.props;
     if (archiveData.local)
       return (
@@ -147,9 +122,9 @@ class CardArchive extends PureComponent {
       );
     return null;
   }
-  snippetIndicator() {
-    const {archive} = this.props;
-    if (archive.snippets && Object.values(archive.snippets).length > 0) {
+  cloudIndicator() {
+    const {local} = this.props.archive;
+    if (!local) {
       return (
         <View
           style={{
@@ -160,7 +135,7 @@ class CardArchive extends PureComponent {
             right: 5,
             zIndex: 20,
           }}>
-          <AllIcons name="flag" type="font" color={colors.white} size={15} />
+          <AllIcons name="cloud" type="font" color={colors.white} size={15} />
         </View>
       );
     } else {
@@ -185,6 +160,7 @@ class CardArchive extends PureComponent {
               style={styleApp.fullSize}
               mainImage={thumbnail ? thumbnail : ''}
             />
+            {this.cloudIndicator()}
             <View style={styles.resolution}>
               <Text
                 style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
