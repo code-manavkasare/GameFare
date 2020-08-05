@@ -300,7 +300,6 @@ const uploadLocalVideo = async (id) => {
   const infoUser = store.getState().user.infoUser.userInfo;
   if (videoInfo) {
     const {durationSeconds, thumbnail, url, id, size} = videoInfo;
-    console.log('uploadLocalVideo', url);
     const destinationCloud = `archivedStreams/${id}`;
     const updateMembers = shareVideoWithMembers(
       {
