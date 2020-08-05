@@ -44,11 +44,7 @@ class CardArchive extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      videoFullscren: false,
-      paused: true,
-      displayVideoPlayer: false,
       loader: false,
-      doAnalytics: false,
     };
   }
   placeholder() {
@@ -71,57 +67,6 @@ class CardArchive extends PureComponent {
       openVideoPlayer(archive, true);
     }
   };
-
-  videoFullscreen = () => {
-    const {archive} = this.props;
-    const {videoFullscren, displayVideoPlayer, paused} = this.state;
-    if (displayVideoPlayer) {
-      return (
-        <Video
-          source={{uri: archive.url}}
-          fullscreen={videoFullscren}
-          paused={paused}
-          style={{position: 'absolute', width: 0, height: 0}}
-          onLoad={async (callback) => {
-            await timeout(1000);
-            this.setState({videoFullscren: true, loader: false, paused: false});
-          }}
-          onFullscreenPlayerDidDismiss={(event) => {
-            this.setState({
-              videoFullscren: false,
-              paused: true,
-              displayVideoPlayer: false,
-            });
-          }}
-        />
-      );
-    }
-  };
-  ico() {
-    const {archive: archiveData} = this.props;
-    if (archiveData.local)
-      return (
-        <ButtonColor
-          view={() => (
-            <AllIcons name="cloud" type="font" color={colors.white} size={15} />
-          )}
-          click={() => uploadVideoAlert(archiveData)}
-          color={colors.greyDark + '40'}
-          onPressColor={colors.grey + '40'}
-          style={[
-            {
-              position: 'absolute',
-              height: 30,
-              width: 30,
-              top: 5,
-              left: 40,
-              zIndex: 20,
-            },
-          ]}
-        />
-      );
-    return null;
-  }
   cloudIndicator() {
     const {local} = this.props.archive;
     if (!local) {
@@ -248,7 +193,6 @@ class CardArchive extends PureComponent {
     return archive ? (
       <View>
         {this.cardArchive(archive)}
-        {this.videoFullscreen()}
       </View>
     ) : (
       <View />
