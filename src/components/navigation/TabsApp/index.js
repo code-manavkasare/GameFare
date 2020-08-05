@@ -62,12 +62,6 @@ function TabsApp() {
             backgroundColor: 'transparent',
           },
         }}
-        initialParams={{
-          noNavigation: true,
-          processVideo: (videoInfo) => {
-            openVideoPlayer(videoInfo, true);
-          },
-        }}
       />
 
       <Tab.Screen

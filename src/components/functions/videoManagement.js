@@ -273,35 +273,19 @@ const recordVideo = async () => {
   navigate('LocalSession');
 };
 
-const removeVideo = (archive) => {
-  const {durationSeconds, thumbnail, url, id, snippet, parent} = archive;
-  let onGoBack = async () => {
-    await store.dispatch(deleteVideo(id));
-    return true;
-  };
-  if (snippet) {
-    onGoBack = async () => {
-      await store.dispatch(deleteSnippet({id, parent}));
-      return true;
-    };
-    removeLocalVideo(url);
+const removeLocalVideo = (id) => {
+  videoInfo = store.getState().localVideoLibrary.videoLibrary[id];
+  if (videoInfo) {
+    store.dispatch(deleteVideo(id));
+    if (videoInfo.url) {
+      deleteLocalVideoFile(videoInfo.url);
+    }
   }
-
-  navigate('Alert', {
-    title: 'Do you want to remove this footage?',
-    subtitle: formatDuration(durationSeconds * 1000, true),
-    icon: (
-      <AsyncImage
-        mainImage={thumbnail}
-        style={{width: 40, height: 40, borderRadius: 20}}
-      />
-    ),
-    textButton: 'Remove',
-    colorButton: 'red',
-    onPressColor: colors.redLight,
-    onGoBack: () => onGoBack(),
-  });
 };
+
+const removeLocalVideos = (localVideos) => {
+  localVideos.map((id) => removeLocalVideo(id));
+}
 
 const openVideoPlayer = async (video, open, goBack) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
@@ -310,20 +294,61 @@ const openVideoPlayer = async (video, open, goBack) => {
   return goBack();
 };
 
-const uploadVideoAlert = (archive) => {
+const uploadLocalVideo = async (id) => {
+  const videoInfo = store.getState().localVideoLibrary.videoLibrary[id];
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
-  const {durationSeconds, thumbnail, url, id, size, snippet, parent} = archive;
-  const destinationCloud = `archivedStreams/${id}`;
-  const updateMembers = shareVideoWithMembers(
-    {
-      [userID]: {id: userID, info: infoUser},
-    },
-    destinationCloud,
-    userID,
-    id,
-  );
+  if (videoInfo) {
+    const {durationSeconds, thumbnail, url, id, size} = videoInfo;
+    const destinationCloud = `archivedStreams/${id}`;
+    const updateMembers = shareVideoWithMembers(
+      {
+        [userID]: {id: userID, info: infoUser},
+      },
+      destinationCloud,
+      userID,
+      id,
+    );
+    await store.dispatch(deleteVideo(id));
+    await store.dispatch(
+      enqueueFileUpload({
+        path: url,
+        localIdentifier: id,
+        id,
+        type: 'video',
+        thumbnail,
+        uploadThumbnail: true,
+        durationSeconds,
+        progressUpdates: {},
+        url,
+        storageDestination: destinationCloud,
+        firebaseUpdates: {
+          [`${destinationCloud}/durationSeconds`]: durationSeconds,
+          [`${destinationCloud}/id`]: id,
+          [`${destinationCloud}/uploadedByUser`]: true,
+          [`${destinationCloud}/sourceUser`]: userID,
+          [`${destinationCloud}/size`]: size,
+          [`${destinationCloud}/startTimestamp`]: Date.now(),
+          [`${destinationCloud}/thumbnail`]: thumbnail,
+          ...updateMembers,
+        },
+        destinationFile: `${destinationCloud}/url`,
+        size,
+        updateFirebaseAfterUpload: true,
+        date: Date.now(),
+        progress: 0,
+        displayInList: true,
+      }),
+    );
+  }
 
+}
+
+const uploadLocalVideos = (localVideos) => {
+  localVideos.map((id) => uploadLocalVideo(id));
+}
+const uploadVideoAlert = (archive) => {
+  const {durationSeconds, thumbnail, id} = archive;
   navigate('Alert', {
     title: 'Do you want to upload this footage?',
     subtitle: formatDuration(durationSeconds * 1000, true),
@@ -331,45 +356,7 @@ const uploadVideoAlert = (archive) => {
     textButton: 'Upload',
     colorButton: 'primary',
     onPressColor: colors.primary,
-    onGoBack: async () => {
-      if (snippet) {
-        await store.dispatch(deleteSnippet({id, parent}));
-      } else {
-        await store.dispatch(deleteVideo(id));
-      }
-      await store.dispatch(
-        enqueueFileUpload({
-          path: url,
-          localIdentifier: id,
-          id,
-          type: 'video',
-          thumbnail,
-          uploadThumbnail: true,
-          durationSeconds,
-          progressUpdates: {},
-          url,
-          storageDestination: destinationCloud,
-          firebaseUpdates: {
-            [`${destinationCloud}/durationSeconds`]: durationSeconds,
-            [`${destinationCloud}/id`]: id,
-            [`${destinationCloud}/uploadedByUser`]: true,
-            [`${destinationCloud}/sourceUser`]: userID,
-            [`${destinationCloud}/size`]: size,
-            [`${destinationCloud}/startTimestamp`]: Date.now(),
-            [`${destinationCloud}/thumbnail`]: thumbnail,
-            ...updateMembers,
-          },
-          destinationFile: `${destinationCloud}/url`,
-          size,
-          updateFirebaseAfterUpload: true,
-          date: Date.now(),
-          progress: 0,
-          displayInList: true,
-        }),
-      );
-
-      return true;
-    },
+    onGoBack: () => uploadLocalVideo(id),
   });
 };
 
@@ -387,7 +374,7 @@ const makeVideoFlag = (timestamp, source, maxDuration = 30000) => {
   return flag;
 };
 
-const removeLocalVideo = async (path) => {
+const deleteLocalVideoFile = async (path) => {
   const filePath = path.split('///').pop(); // removes leading file:///
 
   RNFS.exists(filePath).then((res) => {
@@ -439,14 +426,16 @@ export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
   addVideo,
-  removeVideo,
+  removeLocalVideo,
+  removeLocalVideos,
+  uploadLocalVideo,
+  uploadLocalVideos,
   recordVideo,
   uploadVideoAlert,
   openVideoPlayer,
   addVideoWithFlags,
   makeVideoFlag,
   makeSnippet,
-  removeLocalVideo,
   alertStopRecording,
   shareVideoWithMembers,
 };

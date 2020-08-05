@@ -24,7 +24,7 @@ class CameraPage extends Component {
     this.animatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const {navigation, layoutAction, route} = this.props;
+    const {navigation, layoutAction} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
       layoutAction('setLayout', {isFooterVisible: false});
@@ -58,7 +58,7 @@ class CameraPage extends Component {
           onCameraReady={(cameraReady) => this.setState({cameraReady})}
           frontCamera={frontCamera}
         />
-        {cameraReady && <HeaderBackButton
+        <HeaderBackButton
           AnimatedHeaderValue={this.animatedHeaderValue}
           inputRange={[5, 10]}
           colorLoader={'white'}
@@ -79,7 +79,7 @@ class CameraPage extends Component {
           sizeIcon2={20}
           typeIcon2="moon"
           colorIcon2={colors.white}
-        />}
+        />
         {cameraReady && <Row style={styles.bottomButtonsContainer}>
           <BottomButtons
             addFlag={() => camera.addFlag()}
