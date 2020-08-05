@@ -14,16 +14,13 @@ import {includes} from 'ramda';
 import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
-import CardUploading from './components/CardUploading';
 import {
   addVideoToMember,
   deleteVideoFromLibrary,
-  openVideoPlayer,
 } from '../../database/firebase/videosManagement.js';
 import Button from '../../layout/buttons/Button';
-import ScrollView2 from '../../layout/scrollViews/ScrollView2';
-import QueueList from '../elementsUpload/QueueList';
-import UploadHeader from './components/localVideoLibraryPage/components/UploadHeader';
+
+import UploadHeader from './components/UploadHeader';
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 
 import {
@@ -32,13 +29,13 @@ import {
   goToSettings,
   getVideoInfo,
 } from '../../functions/pictures';
-import {openSession} from '../../functions/coach';
 import sizes from '../../style/sizes';
 import {
   recordVideo,
-  shareVideoWithMembers,
+  openVideoPlayer,
   removeLocalVideos,
   uploadLocalVideos,
+  addVideo,
 } from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -52,7 +49,6 @@ class VideoLibraryPage extends Component {
     this.state = {
       videosArray: [],
       loader: false,
-      uploadingVideosArray: [],
       selectableMode: false,
       selectedFirebaseVideos: [],
       selectedLocalVideos: [],
@@ -71,24 +67,6 @@ class VideoLibraryPage extends Component {
     }
     const videosArray = sortVideos(allVideos);
     return {videosArray};
-  }
-  uploadingVideosList() {
-    const {uploadingVideosArray} = this.state;
-    return (
-      uploadingVideosArray.length > 0 &&
-      uploadingVideosArray.map((uploadingVideo, i) => {
-        return (
-          <CardUploading
-            key={uploadingVideo.localIdentifier}
-            style={styles.CardUploading}
-            videoInfo={uploadingVideo}
-            uploadOnMount={true}
-            dismiss={(videoUploaded) => this.dismissUploadCard(videoUploaded)}
-            onRef={(ref) => (this.cardUploadingRef = ref)}
-          />
-        );
-      })
-    );
   }
   shareSelectedVideos() {
     const {userID} = this.props;
@@ -110,9 +88,9 @@ class VideoLibraryPage extends Component {
               addVideoToMember(userID, user.id, videoId);
             }
             uploadLocalVideos(selectedLocalVideos);
-            // for (const videoId of selectedLocalVideos) {
-            //   addVideoToMember(userID, user.id, videoId);
-            // }
+            for (const videoId of selectedLocalVideos) {
+              addVideoToMember(userID, user.id, videoId);
+            }
           }
           for (const contact of Object.values(contacts)) {
             console.log('error sharing with contact', contact);
@@ -142,19 +120,6 @@ class VideoLibraryPage extends Component {
     }
     this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
   }
-  async openSession() {
-    await this.setState({loader: true});
-    const {userID, infoUser} = this.props;
-    const session = await openSession(
-      {
-        id: userID,
-        info: infoUser,
-      },
-      {},
-    );
-    await this.setState({loader: false});
-    finalizeOpening(session);
-  }
   selectVideo(id, isSelected, local) {
     let {selectedFirebaseVideos, selectedLocalVideos} = this.state;
     if (isSelected) {
@@ -171,15 +136,15 @@ class VideoLibraryPage extends Component {
     }
     this.setState({selectedFirebaseVideos, selectedLocalVideos});
   }
-  async uploadVideo() {
-    const {uploadQueueAction, navigation, userID} = this.props;
+  async addFromCameraRoll() {
+    const {navigation} = this.props;
     const {navigate} = navigation;
     const permissionLibrary = await permission('library');
     if (!permissionLibrary)
       return navigate('Alert', {
         textButton: 'Open Settings',
         title:
-          'You need to allow access to your library before uploading videos.',
+          'You need to allow access to your library before adding videos from the camera roll.',
         colorButton: 'blue',
         onPressColor: colors.blueLight,
         onGoBack: () => goToSettings(),
@@ -195,41 +160,17 @@ class VideoLibraryPage extends Component {
       mediaType: 'video',
       compressVideoPreset: 'HighestQuality',
     }).catch((err) => console.log('error', err));
-    let uploadingVideosArray = videos;
-    if (videos)
-      await Promise.all(
-        videos.map(async (video, i) => {
-          let newVideo = await getVideoInfo(video.path, true, 0);
-          const destinationCloud = `archivedStreams/${newVideo.id}`;
-          const updateMembers = await shareVideoWithMembers(
-            {user: {id: userID}},
-            destinationCloud,
-            userID,
-            newVideo.id,
-          );
-          newVideo.path = video.path;
-          newVideo.localIdentifier = video.localIdentifier;
-          newVideo.type = 'video';
-          newVideo.displayInList = true;
-          newVideo.updateFirebaseAfterUpload = true;
-          newVideo.date = video.creationDate ? video.creationDate : Date.now();
-          newVideo.destinationFile = `${destinationCloud}/url`;
-          newVideo.firebaseUpdates = {
-            [`${destinationCloud}/durationSeconds`]: newVideo.durationSeconds,
-            [`${destinationCloud}/id`]: newVideo.id,
-            [`${destinationCloud}/size`]: newVideo.size,
-            [`${destinationCloud}/uploadedByUser`]: true,
-            [`${destinationCloud}/sourceUser`]: userID,
-            [`${destinationCloud}/startTimestamp`]: Date.now(),
-            [`${destinationCloud}/thumbnail`]: newVideo.thumbnail,
-            ...updateMembers,
-          };
-          uploadingVideosArray[i] = newVideo;
-          return newVideo;
-        }),
-      );
-
-    uploadQueueAction('enqueueFilesUpload', uploadingVideosArray);
+    if (videos) {
+      if (videos.length === 1) {
+        let newVideo = await getVideoInfo(videos[0].path, true, 0);
+        await addVideo(newVideo);
+        openVideoPlayer(newVideo, true);
+      }
+      videos.map(async (video) => {
+        let newVideo = await getVideoInfo(video.path, true, 0);
+        addVideo(newVideo);
+      });
+    }
   }
   async addVideo() {
     const {navigate} = this.props.navigation;
@@ -239,7 +180,8 @@ class VideoLibraryPage extends Component {
       listOptions: [
         {
           title: 'Select',
-          operation: () => this.uploadVideo(),
+          forceNavigation: true,
+          operation: () => this.addFromCameraRoll(),
         },
         {
           title: 'Record',
@@ -249,109 +191,91 @@ class VideoLibraryPage extends Component {
       ],
     });
   }
-  dismissUploadCard(videoUploaded) {
-    let {uploadingVideosArray} = this.state;
-    const index = uploadingVideosArray.indexOf(videoUploaded);
-    uploadingVideosArray.splice(index, 1);
-    this.setState({uploadingVideosArray});
-  }
+
   noVideos() {
-    const {uploadingVideosArray, videosArray} = this.state;
     return (
-      videosArray.length === 0 &&
-      uploadingVideosArray.length === 0
+      <View style={styleApp.marginView}>
+        <View style={styleApp.center}>
+          <Image
+            source={require('../../../img/images/video-library.png')}
+            style={{
+              height: 100,
+              width: 100,
+              marginBottom: 30,
+            }}
+          />
+        </View>
+        <Button
+          text={'Add from library'}
+          icon={{
+            name: 'film',
+            size: 22,
+            type: 'font',
+            color: colors.white,
+          }}
+          backgroundColor={'green'}
+          onPressColor={colors.greenLight}
+          click={() => this.addFromCameraRoll()}
+        />
+        <View style={{height: 20}} />
+        <Button
+          text={'Record video'}
+          icon={{
+            name: 'video',
+            size: 22,
+            type: 'font',
+            color: colors.white,
+          }}
+          backgroundColor={'blue'}
+          onPressColor={colors.blueLight}
+          click={() => recordVideo()}
+        />
+      </View>
     );
   }
+
   listVideos() {
     const {videosArray} = this.state;
     return (
-      <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
-        <View style={styleApp.marginView}>{this.uploadingVideosList()}</View>
-        {this.noVideos() ? (
-          <View style={styleApp.marginView}>
-            <View style={styleApp.center}>
-              <Image
-                source={require('../../../img/images/video-library.png')}
-                style={{
-                  height: 100,
-                  width: 100,
-                  marginBottom: 30,
-                }}
-              />
-            </View>
-
-            <Button
-              text={'Upload video'}
-              icon={{
-                name: 'cloud-upload-alt',
-                size: 22,
-                type: 'font',
-                color: colors.white,
-              }}
-              backgroundColor={'green'}
-              onPressColor={colors.greenLight}
-              click={() => this.uploadVideo()}
-            />
-            <View style={{height: 20}} />
-            <Button
-              text={'Record video'}
-              icon={{
-                name: 'video',
-                size: 22,
-                type: 'font',
-                color: colors.white,
-              }}
-              backgroundColor={'blue'}
-              onPressColor={colors.blueLight}
-              click={() => recordVideo()}
-            />
+      <FlatList
+        ListHeaderComponent={
+          <View
+            style={{
+              backgroundColor: colors.white,
+              borderBottomWidth: 0,
+              borderColor: colors.off,
+            }}>
+            <Text style={[styleApp.title, {marginBottom: 11, zIndex: 2}]}>
+              GameFare Library{` (${videosArray.length})`}
+            </Text>
           </View>
-        ) : (
-          <View>
-            <UploadHeader />
-            <FlatList
-              ListHeaderComponent={
-                <View
-                  style={{
-                    backgroundColor: colors.white,
-                    borderBottomWidth: 0,
-                    borderColor: colors.off,
-                  }}>
-                  <Text style={[styleApp.title, {marginBottom: 11, zIndex: 2}]}>
-                    GameFare Library
-                    {!this.noVideos() && ` (${videosArray.length})`}
-                  </Text>
-                </View>
-              }
-              data={videosArray}
-              renderItem={(video) => this.renderCardArchive(video)}
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        y: this.AnimatedHeaderValue,
-                      },
-                    },
-                  },
-                ],
-                {useNativeDriver: false},
-              )}
-              keyExtractor={(item) => item.id}
-              numColumns={2}
-              scrollEnabled={true}
-              contentContainerStyle={{
-                paddingBottom: 150,
-                paddingLeft: '5%',
-                paddingRight: '5%',
-                paddingTop: 0,
-              }}
-              showsVerticalScrollIndicator={true}
-              initialNumToRender={7}
-            />
-          </View>
+        }
+        data={videosArray}
+        renderItem={(video) => this.renderCardArchive(video)}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: this.AnimatedHeaderValue,
+                },
+              },
+            },
+          ],
+          {useNativeDriver: false},
         )}
-      </View>
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        scrollEnabled={true}
+        contentContainerStyle={{
+          paddingBottom: 150,
+          paddingLeft: '5%',
+          paddingRight: '5%',
+          paddingTop: 0,
+        }}
+        showsVerticalScrollIndicator={true}
+        initialNumToRender={7}
+      />
     );
   }
   renderCardArchive(video) {
@@ -373,21 +297,23 @@ class VideoLibraryPage extends Component {
   }
 
   render() {
-    const {selectableMode, loader, selectedVideos} = this.state;
+    const {videosArray, selectableMode, loader, selectedVideos} = this.state;
     return (
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
           loader={loader}
           toggleSelect={() => this.setState({selectableMode: !selectableMode})}
           selectableMode={selectableMode}
-          isListEmpty={this.noVideos()}
+          isListEmpty={videosArray.length === 0}
           selectedVideos={selectedVideos}
           add={() => this.addVideo()}
           remove={() => this.deleteSelectedVideos()}
           share={() => this.shareSelectedVideos()}
         />
-
-        {this.listVideos()}
+        <UploadHeader />
+        <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
+          {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
+        </View>
       </View>
     );
   }

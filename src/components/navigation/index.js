@@ -13,7 +13,6 @@ import DateSelector from '../app/elementsEventCreate/DateSelector';
 import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import PickMembersPage from '../app/pickMembers';
-import LocalVideoLibrary from '../app/videoLibraryPage/components/localVideoLibraryPage/index';
 
 import Coaches from './MainApp/components/Coaches';
 
@@ -83,14 +82,6 @@ function InitialStack() {
       <Stack.Screen
         name="PickMembers"
         component={PickMembersPage}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="LocalVideoLibrary"
-        component={LocalVideoLibrary}
         options={{
           gestureEnabled: false,
         }}

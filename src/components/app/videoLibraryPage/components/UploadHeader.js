@@ -10,13 +10,13 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import * as Progress from 'react-native-progress';
 
-import colors from '../../../../../style/colors';
-import sizes from '../../../../../style/sizes';
-import styleApp from '../../../../../style/style';
-import {native} from '../../../../../animations/animations';
-import ButtonColor from '../../../../../layout/Views/Button';
-import AllIcons from '../../../../../layout/icons/AllIcons';
-import QueueList from '../../../../elementsUpload/QueueList';
+import colors from '../../../style/colors';
+import sizes from '../../../style/sizes';
+import styleApp from '../../../style/style';
+import {native} from '../../../animations/animations';
+import ButtonColor from '../../../layout/Views/Button';
+import AllIcons from '../../../layout/icons/AllIcons';
+import QueueList from '../../elementsUpload/QueueList';
 
 class UploadHeader extends Component {
   constructor(props) {
@@ -53,7 +53,6 @@ class UploadHeader extends Component {
   }
 
   open(val) {
-    console.log('opening')
     this.setState({expanded: true})
     Animated.parallel([
       Animated.timing(this.uploadReveal, native(val ? val : 0, 300))
