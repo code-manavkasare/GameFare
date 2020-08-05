@@ -64,7 +64,7 @@ const filterArchivesBindToFirebase = (archives) => {
   if (!archivesFromStore && archives) {
     return archives;
   }
-  if (!archivesFromStore && !archives) {
+  if (!archives) {
     return {};
   }
 

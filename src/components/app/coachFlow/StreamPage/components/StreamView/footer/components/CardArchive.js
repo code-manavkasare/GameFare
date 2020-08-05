@@ -38,18 +38,13 @@ class CardArchive extends PureComponent {
   };
   static defaultProps = {
     local: false,
-    parent: null,
     selectableMode: false,
     isSelected: false,
   };
   constructor(props) {
     super(props);
     this.state = {
-      videoFullscren: false,
-      paused: true,
-      displayVideoPlayer: false,
       loader: false,
-      doAnalytics: false,
     };
   }
   placeholder() {
@@ -72,85 +67,9 @@ class CardArchive extends PureComponent {
       openVideoPlayer(archive, true);
     }
   };
-
-  videoFullscreen = () => {
-    const {archive} = this.props;
-    const {videoFullscren, displayVideoPlayer, paused} = this.state;
-    if (displayVideoPlayer) {
-      return (
-        <Video
-          source={{uri: archive.url}}
-          fullscreen={videoFullscren}
-          paused={paused}
-          style={{position: 'absolute', width: 0, height: 0}}
-          onLoad={async (callback) => {
-            await timeout(1000);
-            this.setState({videoFullscren: true, loader: false, paused: false});
-          }}
-          onFullscreenPlayerDidDismiss={(event) => {
-            this.setState({
-              videoFullscren: false,
-              paused: true,
-              displayVideoPlayer: false,
-            });
-          }}
-        />
-      );
-    }
-  };
-  buttonClose() {
-    const {archive: archiveData} = this.props;
-    if (archiveData.local)
-      return (
-        <ButtonColor
-          view={() => (
-            <AllIcons name="times" type="font" color={colors.white} size={15} />
-          )}
-          click={() => removeVideo(archiveData)}
-          color={colors.greyDark + '40'}
-          onPressColor={colors.grey + '40'}
-          style={[
-            {
-              position: 'absolute',
-              height: 30,
-              width: 30,
-              top: 5,
-              left: 5,
-              zIndex: 20,
-            },
-          ]}
-        />
-      );
-    return null;
-  }
-  buttonUpload() {
-    const {archive: archiveData} = this.props;
-    if (archiveData.local)
-      return (
-        <ButtonColor
-          view={() => (
-            <AllIcons name="cloud" type="font" color={colors.white} size={15} />
-          )}
-          click={() => uploadVideoAlert(archiveData)}
-          color={colors.greyDark + '40'}
-          onPressColor={colors.grey + '40'}
-          style={[
-            {
-              position: 'absolute',
-              height: 30,
-              width: 30,
-              top: 5,
-              left: 40,
-              zIndex: 20,
-            },
-          ]}
-        />
-      );
-    return null;
-  }
-  snippetIndicator() {
-    const {archive} = this.props;
-    if (archive.snippets && Object.values(archive.snippets).length > 0) {
+  cloudIndicator() {
+    const {local} = this.props.archive;
+    if (!local) {
       return (
         <View
           style={{
@@ -161,7 +80,7 @@ class CardArchive extends PureComponent {
             right: 5,
             zIndex: 20,
           }}>
-          <AllIcons name="flag" type="font" color={colors.white} size={15} />
+          <AllIcons name="cloud" type="font" color={colors.white} size={15} />
         </View>
       );
     } else {
@@ -173,24 +92,20 @@ class CardArchive extends PureComponent {
     const {
       id,
       thumbnail,
-      url,
       startTimestamp,
       size,
       durationSeconds,
-      snippets,
     } = archive;
     const {loader} = this.state;
     return (
       <View style={[styles.cardArchive, style]}>
         {archive ? (
           <View style={styleApp.fullSize}>
-            {this.buttonClose()}
-            {this.buttonUpload()}
-            {this.snippetIndicator()}
             <AsyncImage
-              mainImage={thumbnail ? thumbnail : ''}
               style={styleApp.fullSize}
+              mainImage={thumbnail ? thumbnail : ''}
             />
+            {this.cloudIndicator()}
             <View style={styles.resolution}>
               <Text
                 style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
@@ -274,11 +189,10 @@ class CardArchive extends PureComponent {
     );
   }
   render() {
-    const {archive, id, local} = this.props;
+    const {archive} = this.props;
     return archive ? (
       <View>
         {this.cardArchive(archive)}
-        {this.videoFullscreen()}
       </View>
     ) : (
       <View />
@@ -306,9 +220,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     archive: props.local
-      ? props.parent
-        ? state.localVideoLibrary.videoLibrary[props.parent].snippets[props.id]
-        : state.localVideoLibrary.videoLibrary[props.id]
+      ? state.localVideoLibrary.videoLibrary[props.id]
       : state.archives[props.id],
   };
 };
