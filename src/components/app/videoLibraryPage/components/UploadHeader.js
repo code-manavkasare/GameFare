@@ -10,13 +10,13 @@ import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import * as Progress from 'react-native-progress';
 
-import colors from '../../../../../style/colors';
-import sizes from '../../../../../style/sizes';
-import styleApp from '../../../../../style/style';
-import {native} from '../../../../../animations/animations';
-import ButtonColor from '../../../../../layout/Views/Button';
-import AllIcons from '../../../../../layout/icons/AllIcons';
-import QueueList from '../../../../elementsUpload/QueueList';
+import colors from '../../../style/colors';
+import sizes from '../../../style/sizes';
+import styleApp from '../../../style/style';
+import {native} from '../../../animations/animations';
+import ButtonColor from '../../../layout/Views/Button';
+import AllIcons from '../../../layout/icons/AllIcons';
+import QueueList from '../../elementsUpload/QueueList';
 
 class UploadHeader extends Component {
   constructor(props) {
@@ -42,6 +42,7 @@ class UploadHeader extends Component {
       }, 1500)
     } else if (!expanded) {
       if (!headerVisible) this.setState({})
+      console.log('val, taskLength', val, taskLength);
       this.setState({
         headerVisible: val === 0 ? false : true,
         totalProgress: !headerVisible ? 0 : totalProgress
@@ -61,6 +62,7 @@ class UploadHeader extends Component {
   }
 
   close() {
+    console.log('closing');
     Animated.parallel([
       Animated.timing(this.uploadReveal, native(-1, 300))
     ]).start(() => {
