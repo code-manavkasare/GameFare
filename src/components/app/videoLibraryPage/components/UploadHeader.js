@@ -123,14 +123,14 @@ class UploadHeader extends Component {
 
     const uploadTranslateY = this.uploadReveal.interpolate({
       inputRange: [-1, 0],
-      outputRange: [400, 0]
+      outputRange: [500, 0]
     })
 
     return (
       <Animated.View style={{
         ...styles.menuContainer, 
         width, 
-        bottom: -height+100,
+        bottom: -height,
         transform: [{translateY: uploadTranslateY}]
       }}>
       {this.closeButton()}
@@ -172,9 +172,9 @@ class UploadHeader extends Component {
   render() {
     const {headerVisible} = this.state;
     return (
-      <View style={{zIndex:10}}>
-        {headerVisible && 
-        <TouchableWithoutFeedback
+      <View style={{zIndex:10, marginBottom:-10}}>
+        {/* {headerVisible && */}
+        {<TouchableWithoutFeedback
         onPress={() => this.open(0)}  
         style={styles.container}>
           <View
@@ -195,11 +195,10 @@ const styles = StyleSheet.create({
     backgroundColor:colors.white, 
     borderWidth:1, 
     borderColor: colors.off, 
-    borderTopWidth:0, 
-    borderBottomLeftRadius: 20, 
-    borderBottomRightRadius: 20, 
+    borderTopWidth:1, 
     width:'100%',
     height:50,
+    top:60 + sizes.marginTopApp,
     zIndex:1
   },
   menuContainer: {

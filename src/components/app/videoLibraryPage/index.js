@@ -244,6 +244,8 @@ class VideoLibraryPage extends Component {
               backgroundColor: colors.white,
               borderBottomWidth: 0,
               borderColor: colors.off,
+              paddingTop:25,
+              marginTop:-12
             }}>
             <Text style={[styleApp.title, {marginBottom: 11, zIndex: 2}]}>
               GameFare Library{` (${videosArray.length})`}
