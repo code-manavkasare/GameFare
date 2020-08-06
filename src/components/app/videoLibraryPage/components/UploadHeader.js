@@ -173,8 +173,8 @@ class UploadHeader extends Component {
     const {headerVisible} = this.state;
     return (
       <View style={{zIndex:10, marginBottom:-10}}>
-        {/* {headerVisible && */}
-        {<TouchableWithoutFeedback
+        {headerVisible &&
+        <TouchableWithoutFeedback
         onPress={() => this.open(0)}  
         style={styles.container}>
           <View
