@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
-import { BlurView, VibrancyView } from "@react-native-community/blur";
+import {BlurView, VibrancyView} from '@react-native-community/blur';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
@@ -151,18 +151,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     width: '100%',
-    borderRadius: 40,
+    borderRadius: 35,
     borderWidth: 1,
-    borderBottomWidth:0,
+    borderBottomWidth: 0,
     borderColor: colors.off,
   },
   footerBody: {
     ...styleApp.fullSize,
-    borderRadius: 40,
-    borderBottomLeftRadius:1,
+    borderRadius: 35,
+    borderBottomLeftRadius: 1,
     borderBottomRightRadius: 1,
     borderColor: colors.off,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   absoluteButtonMoving: {
     ...styleApp.center,

@@ -3,22 +3,21 @@ import {connect} from 'react-redux';
 import {View, Text, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
-import Video from 'react-native-video';
+
 import {Col, Row} from 'react-native-easy-grid';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import {navigate} from '../../../../../../../../../NavigationService';
+import {
+  bindArchive,
+  unbindArchive,
+} from '../../../../../../../functions/archive';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
-import {displayTime, timeout} from '../../../../../../../functions/coach';
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
-import {
-  removeVideo,
-  uploadVideoAlert,
-  openVideoPlayer,
-} from '../../../../../../../functions/videoManagement';
+import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 import {resolutionP} from '../../../../../../../functions/pictures';
 import Loader from '../../../../../../../layout/loaders/Loader';
 
@@ -46,6 +45,15 @@ class CardArchive extends PureComponent {
     this.state = {
       loader: false,
     };
+  }
+  componentDidMount() {
+    const {local, id} = this.props;
+    if (!local) bindArchive(id);
+  }
+  componentWillUnmount() {
+    const {id, local} = this.props;
+    console.log('bin unmount card archive', id);
+    if (!local) unbindArchive(id);
   }
   placeholder() {
     return (
@@ -89,107 +97,88 @@ class CardArchive extends PureComponent {
   }
   cardArchive(archive) {
     const {isSelected, style, selectableMode, selectVideo} = this.props;
-    const {
-      id,
-      thumbnail,
-      startTimestamp,
-      size,
-      durationSeconds,
-    } = archive;
+    const {id, thumbnail, startTimestamp, size, durationSeconds} = archive;
     const {loader} = this.state;
     return (
       <View style={[styles.cardArchive, style]}>
-        {archive ? (
-          <View style={styleApp.fullSize}>
-            <AsyncImage
-              style={styleApp.fullSize}
-              mainImage={thumbnail ? thumbnail : ''}
-            />
-            {this.cloudIndicator()}
-            <View style={styles.resolution}>
-              <Text
-                style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
-                {resolutionP(size)}
-              </Text>
-            </View>
-            <View
-              pointerEvents="none"
-              style={{
-                ...styles.viewText,
-                ...styleApp.fullSize,
-                ...styleApp.marginView,
-              }}>
-              <Row>
-                <Col style={styleApp.center}>
-                  {loader ? (
-                    <Loader size={25} color={colors.white} />
-                  ) : selectableMode ? (
-                    <AllIcons
-                      name={isSelected ? 'check-circle' : 'circle'}
-                      type="font"
-                      size={25}
-                      color={colors.green}
-                      solid={isSelected ? true : false}
-                    />
-                  ) : null }
-                </Col>
-              </Row>
-            </View>
-            <View
-              pointerEvents="none"
-              style={{...styles.viewText, bottom: 5, left: 5}}>
-              <Col>
-                <Text
-                  style={[styleApp.text, {color: colors.white, fontSize: 13}]}>
-                  {formatDuration(durationSeconds * 1000, true)}
-                </Text>
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    {color: colors.white, fontSize: 13},
-                  ]}>
-                  <FormatDate date={startTimestamp} />
-                </Text>
-              </Col>
-            </View>
+        <AsyncImage
+          style={styleApp.fullSize}
+          mainImage={thumbnail ? thumbnail : ''}
+        />
+        {this.cloudIndicator()}
+        <View style={styles.resolution}>
+          <Text style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
+            {resolutionP(size)}
+          </Text>
+        </View>
+        <View
+          pointerEvents="none"
+          style={{
+            ...styles.viewText,
+            ...styleApp.fullSize,
+            ...styleApp.marginView,
+          }}>
+          <Row>
+            <Col style={styleApp.center}>
+              {loader ? (
+                <Loader size={25} color={colors.white} />
+              ) : selectableMode ? (
+                <AllIcons
+                  name={isSelected ? 'check-circle' : 'circle'}
+                  type="font"
+                  size={25}
+                  color={colors.green}
+                  solid={isSelected ? true : false}
+                />
+              ) : null}
+            </Col>
+          </Row>
+        </View>
 
-            <ButtonColor
-              view={() => {
-                const styleRow = {
-                  position: 'absolute',
-                  bottom: 20,
-                  width: '100%',
-                };
-                return <Row style={styleRow} />;
-              }}
-              click={() =>
-                selectableMode ? selectVideo(id, !isSelected) : this.openVideo()
-              }
-              color={colors.greyDark + '40'}
-              onPressColor={colors.grey + '40'}
-              style={[
-                styleApp.fullSize,
-                styleApp.center,
-                styleApp.marginView,
-                {position: 'absolute'},
-              ]}
-            />
-          </View>
-        ) : (
-          this.placeholder()
-        )}
+        <View
+          pointerEvents="none"
+          style={{...styles.viewText, bottom: 5, left: 5}}>
+          <Col>
+            <Text style={[styleApp.text, {color: colors.white, fontSize: 13}]}>
+              {formatDuration(durationSeconds * 1000, true)}
+            </Text>
+            <Text
+              style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
+              <FormatDate date={startTimestamp} />
+            </Text>
+          </Col>
+        </View>
+
+        <ButtonColor
+          view={() => {
+            const styleRow = {
+              position: 'absolute',
+              bottom: 20,
+              width: '100%',
+            };
+            return <Row style={styleRow} />;
+          }}
+          click={() =>
+            selectableMode ? selectVideo(id, !isSelected) : this.openVideo()
+          }
+          color={colors.greyDark + '40'}
+          onPressColor={colors.grey + '40'}
+          style={[
+            styleApp.fullSize,
+            styleApp.center,
+            styleApp.marginView,
+            {position: 'absolute'},
+          ]}
+        />
       </View>
     );
   }
   render() {
     const {archive} = this.props;
-    return archive ? (
-      <View>
-        {this.cardArchive(archive)}
-      </View>
-    ) : (
-      <View />
-    );
+
+    if (!archive) return this.placeholder();
+
+    return <View>{this.cardArchive(archive)}</View>;
   }
 }
 

@@ -17,6 +17,7 @@ import Profile from './components/Profile';
 import Webview from '../../layout/Views/Webview';
 import NotificationPage from '../../app/elementsUser/elementsProfile/NotificationPage';
 import TeamPage from '../../app/TeamPage/index';
+import VideoPlayerPage from '../../app/videoPlayerPage/index';
 
 const Stack = createStackNavigator();
 const MainApp = () => {
@@ -47,6 +48,8 @@ const MainApp = () => {
       <Stack.Screen name="TeamPage" component={TeamPage} />
 
       <Stack.Screen name="MorePage" component={Profile} />
+
+      <Stack.Screen name="VideoPlayerPage" component={VideoPlayerPage} />
     </Stack.Navigator>
   );
 };

@@ -9,7 +9,6 @@ export default class HeaderVideoLibrary extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.AnimatedHeaderValue = new Animated.Value(0);
   }
   render() {
     const {
@@ -20,10 +19,11 @@ export default class HeaderVideoLibrary extends Component {
       add,
       remove,
       share,
+      AnimatedHeaderValue,
     } = this.props;
     return (
       <HeaderBackButton
-        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={selectableMode ? 'Select Videos' : ''}
         inputRange={[5, 10]}
         loader={loader}
@@ -33,12 +33,12 @@ export default class HeaderVideoLibrary extends Component {
         initialBorderWidth={1}
         icon1={selectableMode ? 'times' : 'plus'}
         sizeIcon1={22}
-        clickButton1={() => selectableMode ? toggleSelect() : add()}
+        clickButton1={() => (selectableMode ? toggleSelect() : add())}
         icon2={isListEmpty ? null : selectableMode ? 'trash-alt' : 'text'}
         text2={'Select'}
         typeIcon2={'font'}
         sizeIcon2={17}
-        clickButton2={() => !selectableMode ? toggleSelect() : remove()}
+        clickButton2={() => (!selectableMode ? toggleSelect() : remove())}
         iconOffset={selectableMode && 'user-plus'}
         typeIconOffset="font"
         sizeIconOffset={16}

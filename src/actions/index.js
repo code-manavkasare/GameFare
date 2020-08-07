@@ -14,5 +14,4 @@ export * from './appSettingsActions';
 export * from './localVideoLibraryActions';
 export * from './archivesActions.js';
 export * from './coachSessionsActions.js';
-import * from './conversationsActions';
 export * from './phoneContactsActions.js';

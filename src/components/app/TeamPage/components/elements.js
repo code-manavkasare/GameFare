@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Image} from 'react-native';
+import {Text, StyleSheet, View, Animated, FlatList} from 'react-native';
 import moment from 'moment';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
+import {heightHeaderHome, height} from '../../../style/sizes';
 import {styles} from './style';
 
 import {getSortedMembers} from '../../../functions/session';
@@ -12,11 +13,14 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import CardConversation from '../../elementsMessage/CardConversation';
-import ExpandableView from '../../../layout/Views/ExpandableView';
+import Loader from '../../../layout/loaders/Loader';
+import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening} from '../../../functions/coach';
+import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import isEqual from 'lodash.isequal';
 
 const imageCardTeam = (session, size, hideDots) => {
   let scale = 1;
@@ -159,7 +163,7 @@ const titleSession = (session, size, allMembers) => {
   return names;
 };
 
-const dateSession = (session) => {
+const dateSession = ({session, messages}) => {
   let {members} = session;
   if (!members) return formatDate(Date.now());
   members = members ? Object.values(members) : [];
@@ -174,6 +178,17 @@ const dateSession = (session) => {
     else return 0;
   })[0].disconnectionTimeStamp;
 
+  console.log('lastActive', lastActive);
+
+  let dateLastMessage = 0;
+  const lastMessage = lastMessageObject(messages);
+  if (lastMessage) dateLastMessage = lastMessage.timeStamp;
+
+  console.log('dateLastMessage', dateLastMessage);
+
+  if ((!lastActive && dateLastMessage > 0) || dateLastMessage > lastActive)
+    return formatDate(dateLastMessage);
+
   return formatDate(lastActive);
 };
 const sessionTitle = (session, styleText, allMembers) => {
@@ -183,10 +198,46 @@ const sessionTitle = (session, styleText, allMembers) => {
     </Text>
   );
 };
-const sessionDate = (session) => {
+const sessionDate = ({session, messages}) => {
   return (
-    <Text style={[styleApp.text, {color: colors.greyDark, marginTop: 5}]}>
-      {dateSession(session)}
+    <Text
+      style={[
+        styleApp.text,
+        {color: colors.title, marginTop: 5, fontSize: 11},
+      ]}>
+      {dateSession({session, messages})}
+    </Text>
+  );
+};
+
+const lastMessageObject = (messages) => {
+  if (!messages) return false;
+  if (Object.keys(messages)[0] === 'noMessage') return false;
+  return Object.values(messages)[0];
+};
+
+const lastMessage = (messages) => {
+  const lastMessage = lastMessageObject(messages);
+  if (!lastMessage) return null;
+
+  const {user, timeStamp, images} = lastMessage;
+  let {text} = lastMessage;
+
+  if (images)
+    text = `${Object.values(images).length} file${
+      Object.values(images).length === 1 ? '' : 's'
+    }`;
+  if (text.length > 50) text = text.slice(0, 50) + '...';
+  return (
+    <Text
+      style={[
+        styleApp.text,
+        {color: colors.subtitle, marginTop: 5, fontSize: 11},
+      ]}>
+      <Text style={{fontWeight: 'bold', color: colors.greyDark}}>
+        {user.info.firstname}:{' '}
+      </Text>
+      {text}
     </Text>
   );
 };
@@ -198,10 +249,10 @@ const formatDate = (date) => {
   if (date > justNow) return 'Just now';
   else if (date > earlier) return moment(date).fromNow();
   else if (date > lastYear) return moment(date).format('ddd, MMM DD');
-  else return moment(date).format('MMMM YYYY');
+  else return moment(date).format('D/M/YYYY');
 };
 
-const viewLive = (session) => {
+const viewLive = (session, style) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   const activeSession = session.objectID === currentSessionID;
   if (!activeSession) return null;
@@ -211,6 +262,9 @@ const viewLive = (session) => {
     width: 50,
     ...styleApp.center,
     borderRadius: 15,
+    borderWidth: 2,
+    borderColor: colors.white,
+    ...style,
   };
   const styleText = {...styleApp.textBold, color: colors.white, fontSize: 10};
   return (
@@ -291,103 +345,243 @@ const hangupButton = (session) => {
   );
 };
 
-const viewWithTitle = ({view, title, icon, badge}) => {
+const rowTitle = ({icon, badge, title}) => {
   const {name, size, color, type} = icon;
+  const styleBadge = {
+    ...styleApp.center,
+    position: 'absolute',
+    width: 23,
+    borderRadius: 20,
+    height: 23,
+    top: -15,
+    left: 55,
+    borderWidth: 1,
+    borderColor: colors.white,
+    backgroundColor: colors.primary,
+  };
   return (
-    <View
-      style={{backgroundColor: colors.white, marginTop: 20, marginBottom: 10}}>
-      <Row style={styleApp.marginView}>
-        <Col size={15} style={styleApp.center2}>
+    <View>
+      <Row style={[{marginBottom: 10}]}>
+        <Col size={30} style={styleApp.center}>
           <AllIcons name={name} type={type} color={color} size={size} />
           {badge && (
-            <View
-              style={{
-                ...styleApp.center,
-                position: 'absolute',
-                width: 23,
-                borderRadius: 20,
-                height: 23,
-                top: -10,
-                left: 10,
-                borderWidth: 1,
-                borderColor: colors.white,
-                backgroundColor: colors.primary,
-              }}>
+            <View style={styleBadge}>
               <Text
-                style={[styleApp.title, {color: colors.white, fontSize: 11}]}>
+                style={[
+                  styleApp.textBold,
+                  {color: colors.white, fontSize: 10},
+                ]}>
                 {badge}
               </Text>
             </View>
           )}
         </Col>
-        <Col size={85} style={styleApp.center2}>
+        <Col size={75} style={styleApp.center2}>
           <Text style={[styleApp.title]}>{title}</Text>
         </Col>
       </Row>
+      <View style={[styleApp.divider]} />
+    </View>
+  );
+};
 
-      <View style={styleApp.divider2} />
+const viewWithTitle = ({view, title, icon, badge}) => {
+  return (
+    <View style={{paddingTop: 30}}>
+      {rowTitle({icon, badge, title})}
+
       {view}
     </View>
   );
 };
 
-const listPlayers = (session) => {
-  const {members} = session;
-
-  return viewWithTitle({
-    title: `Players`,
-    icon: {
-      name: 'profileFooter',
-      type: 'moon',
-      color: colors.title,
-      size: 20,
-    },
-    badge: Object.values(members).length,
-    view: (
-      <ExpandableView
-        lengthList={Object.values(members).length}
-        heightCard={80}
-        list={Object.values(members)
-
-          .sort((a, b) => {
-            if (!a.connectionTimeStamp) a.connectionTimeStamp = 0;
-            if (!b.connectionTimeStamp) b.connectionTimeStamp = 0;
-            return b.connectionTimeStamp - a.connectionTimeStamp;
-          })
-          .map((member) => (
-            <ButtonColor
-              key={member.id}
-              view={() => {
-                return (
-                  <Row>
-                    <Col size={30} style={styleApp.center}>
-                      {imageCardTeam({members: {[member.id]: member}})}
-                    </Col>
-                    <Col size={60} style={styleApp.center2}>
-                      {sessionTitle({members: {[member.id]: member}}, {}, true)}
-                      {sessionDate({members: {[member.id]: member}})}
-                    </Col>
-                    <Col size={15} style={styleApp.center}>
-                      {viewLive({members: {[member.id]: member}})}
-                    </Col>
-                  </Row>
-                );
-              }}
-              color={colors.white}
-              style={{
-                ...styleApp.marginView,
-                height: 80,
-                paddingTop: 10,
-                paddingBottom: 10,
-              }}
-              click={() => true}
-              onPressColor={colors.off2}
-            />
-          ))}
-      />
-    ),
-  });
+const ListContents = (props) => {
+  const {session} = props;
+  let {contents} = session;
+  if (!contents) contents = {};
+  console.log('contents', contents);
+  return (
+    <FlatListComponent
+      list={Object.keys(contents)}
+      cardList={({item}) => (
+        <CardArchive id={item} style={styleApp.cardArchive} key={item} />
+      )}
+      numColumns={2}
+      incrementRendering={8}
+      header={rowTitle({
+        icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},
+        badge:
+          Object.keys(contents).length === 0
+            ? false
+            : Object.keys(contents).length,
+        title: '',
+      })}
+    />
+  );
 };
+
+const ListPlayers = (props) => {
+  const {session, messages} = props;
+  let {members} = session;
+  if (!members) members = {};
+  members = Object.values(members).sort((a, b) => {
+    if (!a.connectionTimeStamp) a.connectionTimeStamp = 0;
+    if (!b.connectionTimeStamp) b.connectionTimeStamp = 0;
+    return b.connectionTimeStamp - a.connectionTimeStamp;
+  });
+  return (
+    <FlatListComponent
+      list={Object.values(members)}
+      cardList={({item: member}) => (
+        <ButtonColor
+          key={member.id}
+          view={() => {
+            console.log('member', member, messages);
+            return (
+              <Row>
+                <Col size={30} style={styleApp.center}>
+                  {imageCardTeam({members: {[member.id]: member}})}
+                </Col>
+                <Col size={60} style={styleApp.center2}>
+                  {sessionTitle({members: {[member.id]: member}}, {}, true)}
+                  {sessionDate({
+                    session: {members: {[member.id]: member}},
+                    messages:
+                      messages &&
+                      Object.values(messages).filter(
+                        (message) => message.user.id === member.id,
+                      ),
+                  })}
+                </Col>
+                <Col size={15} style={styleApp.center}>
+                  {viewLive({members: {[member.id]: member}})}
+                </Col>
+              </Row>
+            );
+          }}
+          color={colors.white}
+          style={{
+            ...styleApp.marginView,
+            height: 80,
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+          click={() => true}
+          onPressColor={colors.off2}
+        />
+      )}
+      numColumns={1}
+      incrementRendering={20}
+      header={rowTitle({
+        icon: {
+          name: 'profileFooter',
+          type: 'moon',
+          color: colors.title,
+          size: 20,
+        },
+        badge: Object.keys(members).length,
+        title: '',
+      })}
+    />
+  );
+};
+
+class FlatListComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      numberToRender: this.props.incrementRendering,
+    };
+    this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  shouldComponentUpdate(prevProps, prevState) {
+    if (!isEqual(prevState, this.state)) return true;
+    if (isEqual(this.props, prevProps)) return false;
+    return true;
+  }
+  onEndReached() {
+    const {list, incrementRendering} = this.props;
+    const {numberToRender} = this.state;
+    const lengthList = list.length;
+
+    this.setState({
+      numberToRender:
+        numberToRender + incrementRendering > lengthList
+          ? lengthList
+          : numberToRender + incrementRendering,
+    });
+  }
+  render() {
+    const {numberToRender} = this.state;
+    let {
+      list,
+      cardList,
+      numColumns,
+      header,
+      AnimatedHeaderValue,
+      paddingBottom,
+      inverted,
+    } = this.props;
+    const styleContainerList = {
+      width: '100%',
+      ...styleApp.marginView,
+      paddingTop: 35,
+      backgroundColor: colors.white,
+      paddingBottom: 60,
+      minHeight: height,
+    };
+
+    const containerStyle = {
+      paddingBottom: paddingBottom ? paddingBottom : 0,
+      backgroundColor: 'white',
+    };
+
+    const viewLoader = () => {
+      return (
+        <View style={[styleApp.center, {height: 35, marginTop: 20}]}>
+          <Loader size={40} color={colors.grey} />
+        </View>
+      );
+    };
+
+    return (
+      <View style={containerStyle}>
+        <FlatList
+          data={list.slice(0, numberToRender)}
+          renderItem={({item}) => cardList({item})}
+          ListFooterComponent={() =>
+            list.length !== numberToRender && list.length !== 0 && viewLoader()
+          }
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode="interactive"
+          keyExtractor={(item) => (item.id ? item.id : item)}
+          numColumns={numColumns}
+          scrollEnabled={true}
+          inverted={inverted}
+          contentContainerStyle={styleContainerList}
+          ListHeaderComponent={header}
+          showsVerticalScrollIndicator={true}
+          onEndReached={() => this.onEndReached()}
+          onEndReachedThreshold={0.7}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: AnimatedHeaderValue
+                      ? AnimatedHeaderValue
+                      : this.AnimatedHeaderValue,
+                  },
+                },
+              },
+            ],
+            {useNativeDriver: false},
+          )}
+        />
+      </View>
+    );
+  }
+}
 
 const conversationView = (session) => {
   const {objectID} = session;
@@ -408,8 +602,8 @@ const contentView = (session) => {
 
   return viewWithTitle({
     view: <View style={{height: 20}}>{/* <Text>card content </Text> */}</View>,
-    title: `Contents ${contents ? Object.values(contents).length : ''}`,
-    badge: contents ? Object.values(contents).length : 6,
+    title: ``,
+    badge: contents ? Object.values(contents).length : false,
     icon: {
       name: 'video-camera',
       type: 'moon',
@@ -426,8 +620,12 @@ module.exports = {
   viewLive,
   hangupButton,
   buttonPlay,
-  listPlayers,
+  ListPlayers,
   titleSession,
   conversationView,
   contentView,
+  lastMessage,
+  ListContents,
+  rowTitle,
+  FlatListComponent,
 };

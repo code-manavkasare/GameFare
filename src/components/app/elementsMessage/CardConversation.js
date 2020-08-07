@@ -11,26 +11,13 @@ import PlaceHolder from '../../placeHolders/CardConversation';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import ButtonColor from '../../layout/Views/Button';
-
-import {bindConversation} from '../../functions/message';
 import ImageUser from '../../layout/image/ImageUser';
 
 class CardConversation extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      events: [],
-      lastMessage: null,
-      members: {},
-      membersFetched: false,
-      title: '',
-    };
+    this.state = {};
   }
-  async componentDidMount() {
-    const {objectID} = this.props;
-    bindConversation(objectID);
-  }
-
   async clickCard() {
     const {objectID} = this.props;
     navigate('Conversation', {
@@ -82,7 +69,6 @@ class CardConversation extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     messages: state.conversations[props.objectID],
-    userID: state.user.userID,
   };
 };
 

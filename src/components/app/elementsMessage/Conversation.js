@@ -4,8 +4,9 @@ import {connect} from 'react-redux';
 
 import {messageAction} from '../../../actions/messageActions';
 
-import ListMessages from './ListMessages';
 import {userObject} from '../../functions/users';
+
+import MyTabs from '../../navigation/MainApp/components/TeamPage';
 
 import HeaderConversation from './HeaderConversation';
 import styleApp from '../../style/style';
@@ -19,14 +20,9 @@ class MessageTab extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-
-  async setConversation(data) {
-    await this.props.messageAction('setConversation', data);
-  }
-
   render() {
-    const {infoUser, userID, navigation, session, route} = this.props;
-    const {initialMessage} = route.params;
+    const {infoUser, userID, navigation, session, route, messages} = this.props;
+    const {initialMessage, coachSessionID: objectID} = route.params;
     const {loader} = this.state;
     const user = userObject(infoUser, userID);
 
@@ -41,14 +37,7 @@ class MessageTab extends React.Component {
         />
         <View style={{height: sizes.heightHeaderHome}} />
 
-        <ListMessages
-          navigation={navigation}
-          user={user}
-          session={session}
-          objectID={session.objectID}
-          onRef={(ref) => (this.conversationRef = ref)}
-          initialMessage={initialMessage ? initialMessage : ''}
-        />
+        {MyTabs({session, initialMessage, user, messages})}
       </View>
     );
   }
@@ -61,10 +50,11 @@ const mapStateToProps = (state, props) => {
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[coachSessionID],
+    messages: state.conversations[coachSessionID],
   };
 };
 
 export default connect(
   mapStateToProps,
-  {messageAction},
+  {},
 )(MessageTab);

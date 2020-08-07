@@ -1,17 +1,16 @@
-import {dissoc} from 'ramda';
-
-import {RESET_CONVERSATIONS, SET_CONVERSATION} from '../actions/types';
+import {
+  RESET_CONVERSATIONS,
+  SET_CONVERSATION,
+  SET_CONVERSATION_BINDED,
+} from '../actions/types';
 
 const initialState = {};
+const initialStateBind = {};
 
 const conversationsReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_CONVERSATION:
-      console.log('SET_CONVERSATION', action);
       const {conversation} = action;
-      // let currentConversation = state[conversation.objectID];
-      // if (!currentConversation) currentConversation = {};
-      // console.log('currentConversation', currentConversation);
       return {
         ...state,
         [conversation.objectID]: conversation.messages,
@@ -23,4 +22,14 @@ const conversationsReducer = (state = initialState, action) => {
   }
 };
 
-export default conversationsReducer;
+const bindedConversationsReducer = (state = initialStateBind, action) => {
+  switch (action.type) {
+    case SET_CONVERSATION_BINDED:
+      const {conversation} = action;
+      return {...state, [conversation.id]: conversation.isBinded};
+    default:
+      return state;
+  }
+};
+
+export {conversationsReducer, bindedConversationsReducer};

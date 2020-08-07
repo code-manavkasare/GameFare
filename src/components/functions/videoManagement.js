@@ -285,11 +285,10 @@ const removeLocalVideo = (id) => {
 
 const removeLocalVideos = (localVideos) => {
   localVideos.map((id) => removeLocalVideo(id));
-}
+};
 
 const openVideoPlayer = async (video, open, goBack) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  await store.dispatch(setLayout({isFooterVisible: !open}));
   if (open) return navigate('VideoPlayerPage', {archive: video});
   return goBack();
 };
@@ -341,12 +340,11 @@ const uploadLocalVideo = async (id) => {
       }),
     );
   }
-
-}
+};
 
 const uploadLocalVideos = (localVideos) => {
   localVideos.map((id) => uploadLocalVideo(id));
-}
+};
 const uploadVideoAlert = (archive) => {
   const {durationSeconds, thumbnail, id} = archive;
   navigate('Alert', {

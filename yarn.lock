@@ -1259,10 +1259,10 @@
     react-is "^16.13.0"
     use-subscription "^1.4.0"
 
-"@react-navigation/material-top-tabs@^5.2.15":
-  version "5.2.15"
-  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-5.2.15.tgz#deb25cc85a6dc36a31142357597926f7e58c6ac7"
-  integrity sha512-0WK+A1TRTmWgexmMCRU9xlBqZd0Rp+oh0OLttwMNIePviYA2WNGI76YSKNFjVta7+K92YcQwWUuRs8mteQM7KQ==
+"@react-navigation/material-top-tabs@^5.2.16":
+  version "5.2.16"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-5.2.16.tgz#96a366f9b2c257c9b46f889b95e4fcb2a9ff0a56"
+  integrity sha512-BRXr646cY0e8SLQpYKdy9+WZD0IvaXpO6Cv4cgos1PjCWltXuqzGkeyy7jkMWkEpgaxtVKijwN3bLNaXBb7Rig==
   dependencies:
     color "^3.1.2"
 
@@ -7279,10 +7279,10 @@ react-native-switch-selector@^2.0.2:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-tab-view@^2.15.0:
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.15.0.tgz#71b0c87f7cb2cde1d740f7130c17f213f2cbcaa0"
-  integrity sha512-rCQPNp0N4t2IZHTVpdb/eddJ9kTLC8QlD/8Ce1+z2Fk3Evk0HPhuhTAW3mfa+thzRXkXYxxsS7QcIjJKs2Wu3w==
+react-native-tab-view@^2.15.1:
+  version "2.15.1"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.15.1.tgz#cf4df4ffdec504263a2e06a6becd8831b9a19ad9"
+  integrity sha512-cDYl1pNWspbEHBjHrHVpIC40h4g8VhZe0CIG0CUKcouX98vHVfAojxhgWuRosq9qMhITHpLKM+7BmBLnhCJ0nw==
 
 react-native-thumbnail@phuochau/react-native-thumbnail:
   version "1.1.3"

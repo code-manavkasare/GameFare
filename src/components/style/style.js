@@ -110,6 +110,11 @@ const styles = StyleSheet.create({
     color: colors.title,
     fontWeight: '700',
   },
+  titleNoColor: {
+    fontSize: 23,
+    fontFamily: font,
+    fontWeight: '700',
+  },
   titleSmall: {
     fontSize: 23,
     fontFamily: font,
@@ -208,6 +213,14 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0},
     shadowRadius: 20,
     shadowOpacity: 0.05,
+  },
+  cardArchive: {
+    width: (width * 0.9) / 2 - 10,
+    height: 150,
+    borderRadius: 4,
+    overflow: 'hidden',
+    backgroundColor: colors.title,
+    margin: 5,
   },
   buttonMap: {
     borderColor: colors.off,

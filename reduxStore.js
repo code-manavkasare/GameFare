@@ -11,10 +11,6 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import AsyncStorage from '@react-native-community/async-storage';
 import thunk from 'redux-thunk';
 
-import {
-  setArchiveFirebaseBindStatus,
-  setCoachSessionFirebaseBindStatus,
-} from './src/actions/userActions.js';
 import rootReducer from './src/reducers';
 
 const networkMiddleware = createNetworkMiddleware();
@@ -29,7 +25,6 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   blacklist: [
-    'conversations',
     'events',
     'message',
     'createChallengeData',
@@ -39,6 +34,9 @@ const persistConfig = {
     'uploadQueue',
     'network',
     'phoneContacts',
+    'bindedArchives',
+    'bindedConversations',
+    'bindedSessions',
   ],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };
@@ -57,21 +55,6 @@ const storeInitializationAfterRehydration = () => {
     const {connectionChange} = offlineActionCreators;
     store.dispatch(connectionChange(isConnected));
   });
-
-  //Initialize Firebase Bindings to false
-  const archivedStreams = store.getState().user.infoUser.archivedStreams;
-  if (archivedStreams) {
-    for (const archive of Object.values(archivedStreams)) {
-      store.dispatch(setArchiveFirebaseBindStatus(archive.id, false));
-    }
-  }
-
-  const coachSessions = store.getState().user.infoUser.coachSessions;
-  if (coachSessions) {
-    for (const coachSession of Object.values(coachSessions)) {
-      store.dispatch(setCoachSessionFirebaseBindStatus(coachSession.id, false));
-    }
-  }
 };
 
 export const persistor = persistStore(store, null, () => {

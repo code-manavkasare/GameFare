@@ -144,7 +144,7 @@ class ProfilePage extends Component {
       levelCoached,
     } = this.state.userProfile.info;
     return (
-      <View style={[styleApp.marginView, styleApp.stylePage]}>
+      <View style={styleApp.marginView}>
         <Row>
           <Col style={styleApp.center2} size={35}>
             {this.picture(picture, firstname, lastname)}
@@ -201,7 +201,7 @@ class ProfilePage extends Component {
             },
           })}
         <View style={styleApp.divider} />
-        <View style={{height: 30}} />
+        {/* <View style={{height: 30}} />
         {coach && (
           <Button
             text={'Request a session'}
@@ -216,7 +216,7 @@ class ProfilePage extends Component {
             onPressColor={colors.blueLight}
             click={() => this.requestSession()}
           />
-        )}
+        )} */}
 
         <View style={[{height: 10}]} />
 
@@ -237,8 +237,9 @@ class ProfilePage extends Component {
           loader={loader}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
-          initialBorderColorHeader={colors.grey}
+          initialBorderColorHeader={colors.white}
           initialTitleOpacity={1}
+          initialBorderWidth={1}
           icon1={'arrow-left'}
           clickButton1={() => this.props.navigation.goBack()}
         />

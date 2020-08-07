@@ -106,7 +106,7 @@ export default class CardMessage extends React.Component {
     return null;
   };
   goToProfilePage = () => {
-    this.props.navigation.navigate('ProfilePage', {
+    NavigationService.navigate('ProfilePage', {
       user: this.props.message.currentMessage.user,
     });
   };
@@ -119,9 +119,27 @@ export default class CardMessage extends React.Component {
     if (timeStamp - previousTimeStamp > 120000) return true;
     return false;
   };
+  viewUserConnect(props) {
+    const {currentMessage} = props;
+    const {user, timeStamp} = currentMessage;
+    return (
+      <View style={[styleApp.center, {height: 15, marginTop: 0}]}>
+        <Text style={[styleApp.subtitle, {fontSize: 12}]}>
+          <AllIcon
+            name="film"
+            size={12}
+            color={styleApp.subtitle.color}
+            type="moon"
+          />
+          {'  '} {messageName(user.info)} connected to the video chat.
+        </Text>
+      </View>
+    );
+  }
   renderMessage(props) {
     const {currentMessage, previousMessage} = props;
-    const {user, timeStamp, text} = currentMessage;
+    const {user, timeStamp, text, type} = currentMessage;
+
     const displayPictureUser = this.displayPictureUser(props);
     return (
       <View
@@ -133,93 +151,99 @@ export default class CardMessage extends React.Component {
           },
         ]}>
         {this.rowDay(props)}
-        <Row>
-          <Col
-            size={20}
-            activeOpacity={1}
-            onPress={() =>
-              !user.info.noProfileClick &&
-              displayPictureUser &&
-              this.goToProfilePage()
-            }>
-            {displayPictureUser && (
-              <AsyncImage
-                style={{width: 45, height: 45, borderRadius: 5}}
-                mainImage={messageAvatar(user.info)}
-                imgInitial={messageAvatar(user.info)}
-              />
-            )}
-          </Col>
-          <Col size={80} style={styleApp.center2}>
-            {displayPictureUser && (
-              <Text
-                style={[styleApp.title, {fontSize: 16}]}
-                onPress={() =>
-                  !user.info.noProfileClick && this.goToProfilePage()
-                }>
-                {messageName(user.info)}{' '}
-                <Text style={{color: colors.grey, fontSize: 12}}>
-                  {moment(timeStamp).format('h:mm a')}
-                </Text>
-              </Text>
-            )}
-            {text !== '' && (
-              <Hyperlink
-                // linkDefault={true}
-                onPress={(url) => this.clickLink(url, this.state.viewUrl)}
-                linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
+        {type === 'connection' ? (
+          this.viewUserConnect(props)
+        ) : (
+          <Row>
+            <Col
+              size={20}
+              activeOpacity={1}
+              onPress={() =>
+                !user.info.noProfileClick &&
+                displayPictureUser &&
+                this.goToProfilePage()
+              }>
+              {displayPictureUser && (
+                <AsyncImage
+                  style={{width: 45, height: 45, borderRadius: 5}}
+                  mainImage={messageAvatar(user.info)}
+                  imgInitial={messageAvatar(user.info)}
+                />
+              )}
+            </Col>
+            <Col size={80} style={styleApp.center2}>
+              {displayPictureUser && (
                 <Text
-                  style={[
-                    styleApp.smallText,
-                    {marginTop: 5, fontSize: 14, marginBottom: 0},
-                  ]}>
-                  {text}
+                  style={[styleApp.title, {fontSize: 16}]}
+                  onPress={() =>
+                    !user.info.noProfileClick && this.goToProfilePage()
+                  }>
+                  {messageName(user.info)}{' '}
+                  <Text style={{color: colors.grey, fontSize: 12}}>
+                    {moment(timeStamp).format('h:mm a')}
+                  </Text>
                 </Text>
-              </Hyperlink>
-            )}
+              )}
+              {text !== '' && (
+                <Hyperlink
+                  // linkDefault={true}
+                  onPress={(url) => this.clickLink(url, this.state.viewUrl)}
+                  linkStyle={{color: colors.blue, fontWeight: 'bold'}}>
+                  <Text
+                    style={[
+                      styleApp.smallText,
+                      {marginTop: 5, fontSize: 14, marginBottom: 0},
+                    ]}>
+                    {text}
+                  </Text>
+                </Hyperlink>
+              )}
 
-            {this.renderImages(
-              props.currentMessage.images,
-              props.currentMessage,
-              this.props.discussion.objectID,
-            )}
+              {this.renderImages(
+                props.currentMessage.images,
+                props.currentMessage,
+                this.props.discussion.objectID,
+              )}
 
-            {this.state.viewUrl && (
-              <ButtonColor
-                view={() => {
-                  return (
-                    <View style={styleApp.fullSize}>
-                      <Row>
-                        <Col>
-                          <AsyncImage
-                            style={styles.urlImg}
-                            mainImage={this.state.viewUrl.$og_image_url}
-                            imgInitial={this.state.viewUrl.$og_image_url}
-                          />
-                        </Col>
-                      </Row>
+              {this.state.viewUrl && (
+                <ButtonColor
+                  view={() => {
+                    return (
+                      <View style={styleApp.fullSize}>
+                        <Row>
+                          <Col>
+                            <AsyncImage
+                              style={styles.urlImg}
+                              mainImage={this.state.viewUrl.$og_image_url}
+                              imgInitial={this.state.viewUrl.$og_image_url}
+                            />
+                          </Col>
+                        </Row>
 
-                      <Text style={styleApp.text}>
-                        {this.state.viewUrl.$og_title}
-                      </Text>
-                      <Text
-                        style={[
-                          styleApp.smallText,
-                          {marginTop: 5, color: colors.greyDark},
-                        ]}>
-                        {this.state.url}
-                      </Text>
-                    </View>
-                  );
-                }}
-                click={() => this.clickLink(this.state.url, this.state.viewUrl)}
-                color={colors.white}
-                style={styles.buttonUrl}
-                onPressColor={colors.off}
-              />
-            )}
-          </Col>
-        </Row>
+                        <Text style={styleApp.text}>
+                          {this.state.viewUrl.$og_title}
+                        </Text>
+                        <Text
+                          style={[
+                            styleApp.smallText,
+                            {marginTop: 5, color: colors.greyDark},
+                          ]}>
+                          {this.state.url}
+                        </Text>
+                      </View>
+                    );
+                  }}
+                  click={() =>
+                    this.clickLink(this.state.url, this.state.viewUrl)
+                  }
+                  color={colors.white}
+                  style={styles.buttonUrl}
+                  onPressColor={colors.off}
+                />
+              )}
+            </Col>
+          </Row>
+        )}
       </View>
     );
   }
@@ -280,7 +304,7 @@ const styles = StyleSheet.create({
   message: {
     flex: 1,
     borderBottomWidth: 0.5,
-    marginBottom: 10,
+    marginBottom: 20,
     borderColor: colors.grey,
   },
   urlImg: {
