@@ -25,7 +25,7 @@ export default class HeaderVideoLibrary extends Component {
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={selectableMode ? 'Select Videos' : ''}
-        inputRange={[5, 10]}
+        inputRange={[20, 25]}
         loader={loader}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}

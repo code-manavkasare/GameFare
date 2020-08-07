@@ -137,7 +137,7 @@ export default class VideoPlayer extends Component {
     console.log('onSlidingComplete', prevPaused);
     await this.setState({
       currentTime: SliderTime,
-      paused: forcePlay ? forcePlay : !prevPaused?false:true,
+      paused: forcePlay ? forcePlay : !prevPaused ? false : true,
     });
     return true;
   };
@@ -266,7 +266,7 @@ export default class VideoPlayer extends Component {
                               setSizeVideo({width, height});
                             },
                             (error) => {
-                              console.error(
+                              console.log(
                                 `Couldn't get the image size: ${error.message}`,
                               );
                             },

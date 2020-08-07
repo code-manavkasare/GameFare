@@ -1,26 +1,22 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated, FlatList} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import moment from 'moment';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import {heightHeaderHome, height} from '../../../style/sizes';
-import {styles} from './style';
 
 import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import CardConversation from '../../elementsMessage/CardConversation';
-import Loader from '../../../layout/loaders/Loader';
-import ScrollView from '../../../layout/scrollViews/ScrollView2';
+import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening} from '../../../functions/coach';
 import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
-import isEqual from 'lodash.isequal';
 
 const imageCardTeam = (session, size, hideDots) => {
   let scale = 1;
@@ -345,7 +341,7 @@ const hangupButton = (session) => {
   );
 };
 
-const rowTitle = ({icon, badge, title}) => {
+const rowTitle = ({icon, badge, title, hideDividerHeader}) => {
   const {name, size, color, type} = icon;
   const styleBadge = {
     ...styleApp.center,
@@ -380,7 +376,11 @@ const rowTitle = ({icon, badge, title}) => {
           <Text style={[styleApp.title]}>{title}</Text>
         </Col>
       </Row>
-      <View style={[styleApp.divider]} />
+      {!hideDividerHeader ? (
+        <View style={[styleApp.divider]} />
+      ) : (
+        <View style={{height: 20}} />
+      )}
     </View>
   );
 };
@@ -408,6 +408,7 @@ const ListContents = (props) => {
       )}
       numColumns={2}
       incrementRendering={8}
+      hideDividerHeader={true}
       header={rowTitle({
         icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},
         badge:
@@ -432,6 +433,7 @@ const ListPlayers = (props) => {
   return (
     <FlatListComponent
       list={Object.values(members)}
+      hideDividerHeader={true}
       cardList={({item: member}) => (
         <ButtonColor
           key={member.id}
@@ -627,5 +629,4 @@ module.exports = {
   lastMessage,
   ListContents,
   rowTitle,
-  FlatListComponent,
 };

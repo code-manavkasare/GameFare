@@ -1,15 +1,12 @@
 import React, {Component} from 'react';
 import {View, Text, Image} from 'react-native';
-import isEqual from 'lodash.isequal';
 
 import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
-import {
-  FlatListComponent,
-  rowTitle,
-} from '../../../TeamPage/components/elements';
+import {rowTitle} from '../../../TeamPage/components/elements';
+import {FlatListComponent} from '../../../../layout/Views/FlatList';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';

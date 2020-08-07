@@ -15,6 +15,7 @@ import {getParams, openUrl} from '../../database/branch';
 import {messageAvatar, messageName} from '../../functions/users';
 import NavigationService from '../../../../NavigationService';
 import AllIcon from '../../layout/icons/AllIcons';
+import CardArchive from '../../app/coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 
 const {height, width} = Dimensions.get('screen');
 export default class CardMessage extends React.Component {
@@ -138,7 +139,7 @@ export default class CardMessage extends React.Component {
   }
   renderMessage(props) {
     const {currentMessage, previousMessage} = props;
-    const {user, timeStamp, text, type} = currentMessage;
+    const {user, timeStamp, text, type, content} = currentMessage;
 
     const displayPictureUser = this.displayPictureUser(props);
     return (
@@ -198,7 +199,15 @@ export default class CardMessage extends React.Component {
                   </Text>
                 </Hyperlink>
               )}
-
+              {type === 'video' && (
+                <CardArchive
+                  id={content}
+                  style={[
+                    styleApp.cardArchive,
+                    {marginTop: 15, marginLeft: -1},
+                  ]}
+                />
+              )}
               {this.renderImages(
                 props.currentMessage.images,
                 props.currentMessage,

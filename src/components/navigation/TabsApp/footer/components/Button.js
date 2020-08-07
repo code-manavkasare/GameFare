@@ -100,7 +100,7 @@ class MainTabIcon extends React.Component {
         }}
         color={colors.white}
         style={styles.button}
-        onPressColor={colors.off}
+        onPressColor={colors.off2}
       />
     );
   }

@@ -7297,6 +7297,11 @@ react-native-vector-icons@6.6.0:
     prop-types "^15.6.2"
     yargs "^13.2.2"
 
+react-native-video-cache@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-video-cache/-/react-native-video-cache-1.0.0.tgz#096cb3974b720ea336fb9175add7894c02dd6dee"
+  integrity sha512-cVVnfDsZz6SCiEf1X5FRSNvc7EbhBjJ2C+My1A4/18erP3LZ0RzmxugcQJ69ssw8GoVno/JYgUXpk7NNKyS3Yw==
+
 react-native-video-processing@Bunhouth/react-native-video-processing:
   version "1.7.4"
   resolved "https://codeload.github.com/Bunhouth/react-native-video-processing/tar.gz/1070469fc98056aeaa5faeeb135cda7cff3c1dfc"

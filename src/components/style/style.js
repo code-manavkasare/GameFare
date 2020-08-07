@@ -215,12 +215,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
   },
   cardArchive: {
-    width: (width * 0.9) / 2 - 10,
-    height: 150,
-    borderRadius: 4,
+    width: width / 2,
+    height: 170,
+    borderRadius: 0,
     overflow: 'hidden',
     backgroundColor: colors.title,
-    margin: 5,
   },
   buttonMap: {
     borderColor: colors.off,
