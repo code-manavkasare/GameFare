@@ -1,11 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  StyleSheet,
-  Animated,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Animated, Image} from 'react-native';
 import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
@@ -22,6 +16,43 @@ import {timing} from '../../../animations/animations';
 import ControlButtons from './components/ControlButtons';
 
 export default class VideoPlayer extends Component {
+  static propTypes = {
+    source: PropTypes.string.isRequired,
+    paused: PropTypes.bool,
+    currentTime: PropTypes.number,
+    updateVideoInfoCloud: PropTypes.func,
+
+    styleContainerVideo: PropTypes.object.isRequired,
+    styleVideo: PropTypes.object.isRequired,
+    heightControlBar: PropTypes.number,
+    sizeControlButton: PropTypes.string,
+    hideFullScreenButton: PropTypes.bool,
+    noUpdateInCloud: PropTypes.bool,
+
+    buttonTopRight: PropTypes.func,
+    placeHolderImg: PropTypes.string,
+
+    onRef: PropTypes.func.isRequired,
+    onPlayPause: PropTypes.func,
+    onSlidingEnd: PropTypes.func,
+    onPlayRateChange: PropTypes.func,
+  };
+  static defaultProps = {
+    onPlayPause: (paused, currentTime) => {
+      console.log(`isPaused :  ${paused} at ${currentTime}`);
+    },
+    onSlidingStart: (currentTime, paused) => {
+      console.log(`onSlidingStart, time: ${currentTime}, paused: ${paused}`);
+    },
+    onSlidingEnd: (SliderTime, paused) => {
+      console.log(`onSlidingEnd, time: ${SliderTime}, paused: ${paused}`);
+    },
+    onPlayRateChange: (playrate, currentTime, paused) => {
+      console.log(
+        `playrate set to : ${playrate}, at ${currentTime} with paused : ${paused}`,
+      );
+    },
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -97,6 +128,7 @@ export default class VideoPlayer extends Component {
   };
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
+    const {onPlayPause} = this.props;
     const currentTime = this.controlButtonRef.getCurrentTime();
     if (forcePause) paused = false;
     const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
@@ -105,14 +137,24 @@ export default class VideoPlayer extends Component {
       if (!paused)
         return updateVideoInfoCloud({paused: true, currentTime, playRate});
       return updateVideoInfoCloud({paused: false});
-    } else this.setState({paused: !paused});
+    } else {
+      this.setState({paused: !paused});
+      onPlayPause(!paused, currentTime);
+    }
   };
 
   updatePlayRate = async (playRate) => {
     let {paused} = this.state;
     const currentTime = this.controlButtonRef.getCurrentTime();
-    const {updateVideoInfoCloud} = this.props;
-    await updateVideoInfoCloud({paused, currentTime, playRate});
+    const {
+      noUpdateInCloud,
+      updateVideoInfoCloud,
+      onPlayRateChange,
+    } = this.props;
+    onPlayRateChange(playRate, currentTime, paused);
+    if (!noUpdateInCloud) {
+      await updateVideoInfoCloud({paused, currentTime, playRate});
+    }
   };
 
   onBuffer = (event) => {
@@ -127,24 +169,27 @@ export default class VideoPlayer extends Component {
   };
   onSlidingComplete = async (SliderTime, forcePlay) => {
     const {prevPaused} = this.state;
-    const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
+    const {updateVideoInfoCloud, noUpdateInCloud, onSlidingEnd} = this.props;
     const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
     if (isCloudUpdating)
       await updateVideoInfoCloud({
         currentTime: SliderTime,
         paused: forcePlay ? forcePlay : prevPaused,
       });
-    console.log('onSlidingComplete', prevPaused);
+    const paused = forcePlay ? forcePlay : !prevPaused ? false : true;
     await this.setState({
       currentTime: SliderTime,
       paused: forcePlay ? forcePlay : !prevPaused ? false : true,
     });
+    onSlidingEnd(SliderTime, paused);
     return true;
   };
   onSlidingStart = async () => {
-    console.log('onSlidingStart');
+    const {onSlidingStart, updateVideoInfoCloud, noUpdateInCloud} = this.props;
     const {paused} = this.state;
-    const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
+    const currentTime = this.controlButtonRef.getCurrentTime();
+
+    onSlidingStart(currentTime, paused);
     if (updateVideoInfoCloud && !noUpdateInCloud)
       await updateVideoInfoCloud({paused: true});
     return this.setState({paused: true, prevPaused: paused});
@@ -217,7 +262,7 @@ export default class VideoPlayer extends Component {
       loader,
       muted,
     } = this.state;
-    console.log('render vieo player');
+    console.log('paused: ', paused);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {loader && this.fullScreenLoader()}
@@ -328,24 +373,3 @@ export default class VideoPlayer extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({});
-
-VideoPlayer.propTypes = {
-  source: PropTypes.string.isRequired,
-  paused: PropTypes.bool,
-  currentTime: PropTypes.number,
-  updateVideoInfoCloud: PropTypes.func,
-
-  styleContainerVideo: PropTypes.object.isRequired,
-  styleVideo: PropTypes.object.isRequired,
-  heightControlBar: PropTypes.number,
-  sizeControlButton: PropTypes.string,
-  hideFullScreenButton: PropTypes.bool,
-  noUpdateInCloud: PropTypes.bool,
-
-  buttonTopRight: PropTypes.func,
-  placeHolderImg: PropTypes.string,
-
-  onRef: PropTypes.func.isRequired,
-};
