@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {StyleSheet, View, FlatList} from 'react-native';
-import PropTypes from 'prop-types';
+import isEqual from 'lodash.isequal';
 
 import {KeyboardAccessoryView} from 'react-native-keyboard-input';
 import {includes} from 'ramda';
@@ -10,8 +10,6 @@ import colors from '../../style/colors';
 import InputMessage from './InputMessage';
 import './Keyboard';
 import CardMessage from './CardMessage';
-
-import {bindConversation, unbindConversation} from '../../functions/message';
 
 class ListMessages extends Component {
   constructor(props) {
@@ -27,20 +25,20 @@ class ListMessages extends Component {
         component: undefined,
         initialProps: undefined,
       },
+      numberMessageDisplay: 15,
       receivedKeyboardData: undefined,
     };
   }
-  componentDidMount() {
-    this.props.onRef(this);
-    const {objectID} = this.props;
-  
-    bindConversation(objectID);
+  shouldComponentUpdate(prevProps, prevState) {
+    const {messages, blockedUsers} = this.props;
+    if (
+      !isEqual(messages, prevProps.messages) ||
+      !isEqual(blockedUsers, prevProps.blockedUsers) ||
+      !isEqual(prevState, this.state)
+    )
+      return true;
+    return false;
   }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.messages !== this.props.messages)
-      this.setState({loader: false});
-  }
-
   resetKeyboardView() {
     this.setState({customKeyboard: {}});
   }
@@ -71,7 +69,7 @@ class ListMessages extends Component {
     );
   }
   filterBlockedUserMessage = (message, i) => {
-    const {blockedUsers, user, navigation, session} = this.props;
+    const {blockedUsers, user, session} = this.props;
     let {messages} = this.props;
     if (!messages) messages = {};
     if (blockedUsers && includes(message.user.id, Object.keys(blockedUsers))) {
@@ -79,7 +77,6 @@ class ListMessages extends Component {
     } else {
       return (
         <CardMessage
-          navigation={navigation}
           message={{
             previousMessage: Object.values(messages)[i + 1]
               ? Object.values(messages)[i + 1]
@@ -94,12 +91,30 @@ class ListMessages extends Component {
       );
     }
   };
+  onEndReached = () => {
+    const {numberMessageDisplay} = this.state;
+    const lengthAllMessages = this.allMessages().length;
+
+    this.setState({
+      numberMessageDisplay:
+        numberMessageDisplay + 20 > lengthAllMessages
+          ? lengthAllMessages
+          : numberMessageDisplay + 20,
+    });
+  };
   messagesArray = () => {
+    const {numberMessageDisplay} = this.state;
+    let {messages} = this.props;
+    if (!messages) messages = {};
+    return Object.values(messages).slice(0, numberMessageDisplay);
+  };
+  allMessages = () => {
     let {messages} = this.props;
     if (!messages) messages = {};
     return Object.values(messages);
   };
   render() {
+    console.log('render flat list message', this.props);
     return (
       <View style={styles.container}>
         <FlatList
@@ -107,20 +122,18 @@ class ListMessages extends Component {
           renderItem={(message) =>
             this.filterBlockedUserMessage(message.item, message.index)
           }
+          keyboardShouldPersistTaps="always"
           keyboardDismissMode="interactive"
           keyExtractor={(item) => item.timeStamp}
           inverted
           numColumns={1}
           scrollEnabled={true}
-          // style={{width: '100%'}}
           contentContainerStyle={{
             paddingTop: 30,
             paddingBottom: 30,
           }}
           showsVerticalScrollIndicator={true}
-          // initialNumToRender={1}
-          // windowSize={5}
-          onEndReached={this.endReached}
+          onEndReached={() => this.onEndReached()}
           onEndReachedThreshold={0.7}
         />
 

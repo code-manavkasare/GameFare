@@ -62,32 +62,11 @@ class StreamTab extends Component {
       </View>
     );
   };
-  StreamTab = (currentHeight) => {
+  StreamTab = () => {
     const {permissionsCamera, initialLoader} = this.state;
 
     return (
-      <View style={[styleApp.stylePage, {minHeight: currentHeight - 100}]}>
-        <Row style={[styleApp.marginView, {height: 35}]}>
-          <Col style={styleApp.center2}>
-            <Text style={[styleApp.title]}>Teams</Text>
-          </Col>
-          <Col style={styleApp.center3}>
-            <ButtonColor
-              view={() => {
-                return (
-                  <Text style={[styleApp.textBold, {color: colors.primary}]}>
-                    New team
-                  </Text>
-                );
-              }}
-              style={{width: 100, borderRadius: 5, height: 30}}
-              click={() => this.HeaderRef.newSession()}
-              color={colors.white}
-              onPressColor={colors.off}
-            />
-          </Col>
-        </Row>
-        <View style={[styleApp.divider, {marginBottom: 0}]} />
+      <View>
         {initialLoader && this.viewLoader()}
 
         {!permissionsCamera ? (
@@ -117,15 +96,14 @@ class StreamTab extends Component {
           hideButtonNewSession={!userConnected || !permissionsCamera}
           onRef={(ref) => (this.HeaderRef = ref)}
         />
-        <ScrollView
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={() => this.StreamTab(height)}
-          marginBottomScrollView={sizes.heightFooter + sizes.marginBottomApp}
-          marginTop={heightHeaderHome}
-          offsetBottom={30}
-          showsVerticalScrollIndicator={true}
-        />
+
+        <View
+          style={{
+            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
+            
+          }}>
+          {this.StreamTab()}
+        </View>
       </View>
     );
   }

@@ -63,30 +63,32 @@ const FocusView = (props) => {
   const {color, size, name, type} = icon;
   if (!list) return null;
   return (
-    <Row style={{paddingTop: 10, paddingBottom: 10}}>
-      <Col size={15} style={styleApp.center2}>
-        <AllIcons name={name} type={type} color={color} size={size} />
-      </Col>
-      <Col size={85} style={styleApp.center2}>
-        <Text style={[styleApp.text, {fontSize: 15}]}>
-          {list &&
-            list.map((item, key) => {
-              if (list.length != 1 && list.length != Number(key) + 1)
-                return item + ', ';
-              return item;
-            })}
-        </Text>
-      </Col>
-    </Row>
+    <View style={styleApp.marginView}>
+      <Row style={{paddingTop: 10, paddingBottom: 10}}>
+        <Col size={15} style={styleApp.center2}>
+          <AllIcons name={name} type={type} color={color} size={size} />
+        </Col>
+        <Col size={85} style={styleApp.center2}>
+          <Text style={[styleApp.text, {fontSize: 15}]}>
+            {list &&
+              list.map((item, key) => {
+                if (list.length != 1 && list.length != Number(key) + 1)
+                  return item + ', ';
+                return item;
+              })}
+          </Text>
+        </Col>
+      </Row>
+    </View>
   );
 };
 
 const PriceView = (props) => {
   const {hourlyRate} = props;
   const style = {
-    position: 'absolute',
-    top: 0,
-    right: 0,
+    // position: 'absolute',
+    // top: 0,
+    // right: 0,
     backgroundColor: colors.off2,
     height: 30,
     width: 70,

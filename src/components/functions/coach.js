@@ -17,6 +17,7 @@ import {
   endCurrentSession,
   unsetCurrentSession,
 } from '../../actions/coachActions';
+import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
@@ -460,7 +461,7 @@ const finalizeOpening = async (session) => {
     }
     await store.dispatch(setCurrentSessionID(session.objectID));
   }
-  store.dispatch(setLayout({isFooterVisible: false}));
+  await store.dispatch(setLayout({isFooterVisible: false}));
 
   StatusBar.setBarStyle('light-content', true);
   navigate('Session', {
@@ -490,19 +491,41 @@ const deleteSession = (session) => {
     onPressColor: colors.redLight,
     onGoBack: async () => {
       let updates = {};
-      updates[`users/${userID}/coachSessions/${coachSessionID}`] = null;
-      updates[`coachSessions/${coachSessionID}/members/${userID}`] = null;
-      updates[`coachSessions/${coachSessionID}/allMembers/${userID}`] = null;
+      updates[`users/${userID}/coachSessions/${objectID}`] = null;
+      updates[`coachSessions/${objectID}/members/${userID}`] = null;
+      updates[`coachSessions/${objectID}/allMembers/${userID}`] = null;
       await database()
         .ref()
         .update(updates);
-      if (objectID === coachSessionID)
+      if (objectID === objectID)
         await coachAction('setSessionInfo', {
           objectID: false,
         });
       return true;
     },
   });
+};
+
+const bindSession = (objectID) => {
+  const isSessionBinded = store.getState().bindedSessions[objectID];
+  if (!isSessionBinded)
+    database()
+      .ref(`coachSessions/${objectID}`)
+      .on('value', function(snapshot) {
+        const coachSessionFirebase = snapshot.val();
+        store.dispatch(setSession(coachSessionFirebase));
+        store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
+      });
+};
+
+const unbindSession = async (objectID) => {
+  const isSessionBinded = store.getState().bindedSessions[objectID];
+  if (isSessionBinded) {
+    await database()
+      .ref(`coachSessions/${objectID}`)
+      .off();
+    store.dispatch(setSessionBinded({id: objectID, isBinded: false}));
+  }
 };
 
 module.exports = {
@@ -534,4 +557,6 @@ module.exports = {
   openMemberAcceptCharge,
   capitalize,
   deleteSession,
+  bindSession,
+  unbindSession,
 };

@@ -18,6 +18,7 @@ import {
   addVideoToMember,
   deleteVideoFromLibrary,
 } from '../../database/firebase/videosManagement.js';
+import {FlatListComponent, rowTitle} from '../TeamPage/components/elements';
 import Button from '../../layout/buttons/Button';
 
 import UploadHeader from './components/UploadHeader';
@@ -53,6 +54,7 @@ class VideoLibraryPage extends Component {
       selectedFirebaseVideos: [],
       selectedLocalVideos: [],
     };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
     const {navigation} = this.props;
@@ -64,14 +66,15 @@ class VideoLibraryPage extends Component {
     const allVideos = {
       ...props.archivedStreams,
       ...props.videoLibrary,
-    }
+    };
     const videosArray = sortVideos(allVideos);
     return {videosArray};
   }
   shareSelectedVideos() {
     const {userID} = this.props;
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
-    const numberVideos = selectedFirebaseVideos.length + selectedLocalVideos.length;
+    const numberVideos =
+      selectedFirebaseVideos.length + selectedLocalVideos.length;
     if (numberVideos > 0) {
       navigate('PickMembers', {
         usersSelected: {},
@@ -95,7 +98,11 @@ class VideoLibraryPage extends Component {
           for (const contact of Object.values(contacts)) {
             console.log('error sharing with contact', contact);
           }
-          this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
+          this.setState({
+            selectedFirebaseVideos: [],
+            selectedLocalVideos: [],
+            selectableMode: false,
+          });
         },
       });
     }
@@ -103,7 +110,8 @@ class VideoLibraryPage extends Component {
   deleteSelectedVideos() {
     const {userID} = this.props;
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
-    const numberVideos = selectedFirebaseVideos.length + selectedLocalVideos.length;
+    const numberVideos =
+      selectedFirebaseVideos.length + selectedLocalVideos.length;
     if (numberVideos > 0) {
       navigate('Alert', {
         title: `Are you sure you want to delete this video? This action cannot be undone.`,
@@ -118,7 +126,11 @@ class VideoLibraryPage extends Component {
         },
       });
     }
-    this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
+    this.setState({
+      selectedFirebaseVideos: [],
+      selectedLocalVideos: [],
+      selectableMode: false,
+    });
   }
   selectVideo(id, isSelected, local) {
     let {selectedFirebaseVideos, selectedLocalVideos} = this.state;
@@ -129,9 +141,13 @@ class VideoLibraryPage extends Component {
         selectedFirebaseVideos.push(id);
       }
     } else {
-      const index = local ? selectedLocalVideos.indexOf(id) : selectedFirebaseVideos.indexOf(id);
+      const index = local
+        ? selectedLocalVideos.indexOf(id)
+        : selectedFirebaseVideos.indexOf(id);
       if (index > -1) {
-        local ? selectedLocalVideos.splice(index, 1) : selectedFirebaseVideos.splice(index, 1);
+        local
+          ? selectedLocalVideos.splice(index, 1)
+          : selectedFirebaseVideos.splice(index, 1);
       }
     }
     this.setState({selectedFirebaseVideos, selectedLocalVideos});
@@ -237,53 +253,40 @@ class VideoLibraryPage extends Component {
   listVideos() {
     const {videosArray} = this.state;
     return (
-      <FlatList
-        ListHeaderComponent={
-          <View
-            style={{
-              backgroundColor: colors.white,
-              borderBottomWidth: 0,
-              borderColor: colors.off,
-              paddingTop:25,
-              marginTop:-12
-            }}>
-            <Text style={[styleApp.title, {marginBottom: 11, zIndex: 2}]}>
-              GameFare Library{` (${videosArray.length})`}
-            </Text>
-          </View>
-        }
-        data={videosArray}
-        renderItem={(video) => this.renderCardArchive(video)}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: this.AnimatedHeaderValue,
-                },
-              },
+      <View>
+        {/* <UploadHeader /> */}
+
+        <FlatListComponent
+          list={videosArray}
+          cardList={({item: video}) => this.renderCardArchive(video)}
+          numColumns={2}
+          incrementRendering={8}
+          paddingBottom={sizes.heightFooter + 30}
+          header={rowTitle({
+            icon: {
+              name: 'galery',
+              type: 'moon',
+              color: colors.title,
+              size: 20,
             },
-          ],
-          {useNativeDriver: false},
-        )}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        scrollEnabled={true}
-        contentContainerStyle={{
-          paddingBottom: 150,
-          paddingLeft: '5%',
-          paddingRight: '5%',
-          paddingTop: 0,
-        }}
-        showsVerticalScrollIndicator={true}
-        initialNumToRender={7}
-      />
+            badge: videosArray.length === 0 ? false : videosArray.length,
+            title: 'Library',
+          })}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+        />
+      </View>
     );
   }
   renderCardArchive(video) {
-    const {selectableMode, selectedFirebaseVideos, selectedLocalVideos} = this.state;
-    const {local, id} = video.item;
-    const isSelected = local ? includes(video.item.id, selectedLocalVideos) : includes(video.item.id, selectedFirebaseVideos);
+    const {
+      selectableMode,
+      selectedFirebaseVideos,
+      selectedLocalVideos,
+    } = this.state;
+    const {local, id} = video;
+    const isSelected = local
+      ? includes(video.id, selectedLocalVideos)
+      : includes(video.id, selectedFirebaseVideos);
     return (
       <CardArchive
         local={local ? true : false}
@@ -304,6 +307,7 @@ class VideoLibraryPage extends Component {
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
           loader={loader}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           toggleSelect={() => this.setState({selectableMode: !selectableMode})}
           selectableMode={selectableMode}
           isListEmpty={videosArray.length === 0}
@@ -312,7 +316,7 @@ class VideoLibraryPage extends Component {
           remove={() => this.deleteSelectedVideos()}
           share={() => this.shareSelectedVideos()}
         />
-        <UploadHeader />
+
         <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
           {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
         </View>

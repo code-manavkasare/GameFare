@@ -1,8 +1,14 @@
 import {dissoc} from 'ramda';
 
-import {DELETE_ARCHIVE, RESET_ARCHIVES, SET_ARCHIVE} from '../actions/types';
+import {
+  DELETE_ARCHIVE,
+  RESET_ARCHIVES,
+  SET_ARCHIVE,
+  SET_ARCHIVE_BINDED,
+} from '../actions/types';
 
 const initialState = {};
+const initialStateBind = {};
 
 const archivesReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -19,4 +25,15 @@ const archivesReducer = (state = initialState, action) => {
   }
 };
 
-export default archivesReducer;
+const bindedArchivesReducer = (state = initialStateBind, action) => {
+  switch (action.type) {
+    case SET_ARCHIVE_BINDED:
+      const {archive} = action;
+      console.log('setArchiveBinded', archive);
+      return {...state, [archive.id]: archive.isBinded};
+    default:
+      return state;
+  }
+};
+
+export {archivesReducer, bindedArchivesReducer};

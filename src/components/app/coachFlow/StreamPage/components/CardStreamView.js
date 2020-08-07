@@ -2,18 +2,24 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import database from '@react-native-firebase/database';
+
 import PropTypes from 'prop-types';
 
 import {coachAction} from '../../.././../../actions/coachActions';
 import {navigate} from '../../../../../../NavigationService';
 
-import {sessionOpening, getMember} from '../../../../functions/coach';
+import {
+  sessionOpening,
+  getMember,
+  bindSession,
+  unbindSession,
+} from '../../../../functions/coach';
 import {
   imageCardTeam,
   sessionTitle,
   sessionDate,
   viewLive,
+  lastMessage,
 } from '../../../TeamPage/components/elements';
 import CoachPopups from './StreamView/components/CoachPopups';
 
@@ -21,6 +27,10 @@ import ButtonColor from '../../../../layout/Views/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
+import {
+  bindConversation,
+  unbindConversation,
+} from '../../../../functions/message';
 
 class CardStream extends Component {
   static propTypes = {
@@ -36,6 +46,14 @@ class CardStream extends Component {
 
   componentDidMount() {
     this.props.onRef(this);
+    const {coachSessionID} = this.props;
+    bindSession(coachSessionID);
+    bindConversation(coachSessionID);
+  }
+  componentWillUnmount() {
+    const {coachSessionID} = this.props;
+    unbindSession(coachSessionID);
+    unbindConversation(coachSessionID);
   }
 
   async openStream() {
@@ -44,7 +62,7 @@ class CardStream extends Component {
   }
 
   loading() {
-    return <View>{/* <Loader size={55} color={colors.greyDark} /> */}</View>;
+    return <View>{<Loader size={55} color={colors.greyDark} />}</View>;
   }
 
   async hangup() {
@@ -53,7 +71,13 @@ class CardStream extends Component {
   }
 
   cardStream() {
-    const {coachSessionID, currentSessionID, userID, session} = this.props;
+    const {
+      coachSessionID,
+      currentSessionID,
+      userID,
+      session,
+      messages,
+    } = this.props;
     const {loading} = this.state;
     const activeSession = coachSessionID === currentSessionID;
 
@@ -65,21 +89,24 @@ class CardStream extends Component {
         <ButtonColor
           color={colors.white}
           onPressColor={colors.off}
-          click={() => navigate('TeamPage', {coachSessionID: coachSessionID})}
+          click={() =>
+            navigate('Conversation', {coachSessionID: coachSessionID})
+          }
           style={[styleApp.fullSize, {paddingTop: 10, paddingBottom: 10}]}
           view={() => {
             return loading ? (
               this.loading()
             ) : (
-              <Row style={{paddingTop: 5, paddingBottom: 10}}>
-                <Col size={30}>{imageCardTeam(session)}</Col>
-                <Col size={55} style={styleApp.center2}>
+              <Row style={{paddingTop: 10, paddingBottom: 10}}>
+                <Col size={30}>
+                  {imageCardTeam(session)}
+                  {viewLive(session, {position: 'absolute', left: 10, top: -4})}
+                </Col>
+                <Col size={55} style={[styleApp.center2, {paddingRight: 6}]}>
                   {sessionTitle(session, {}, false)}
-                  {sessionDate(session)}
+                  {lastMessage(messages)}
                 </Col>
-                <Col size={20} style={styleApp.center}>
-                  {viewLive(session)}
-                </Col>
+                <Col size={20}>{sessionDate({session, messages})}</Col>
               </Row>
             );
           }}
@@ -107,8 +134,6 @@ class CardStream extends Component {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
-    maxHeight: 100,
-    backgroundColor: colors.white,
     flex: 1,
   },
   button: {
@@ -126,6 +151,7 @@ const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
     session: state.coachSessions[props.coachSessionID],
+    messages: state.conversations[props.coachSessionID],
     currentSessionID: state.coach.currentSessionID,
     userConnected: state.user.userConnected,
   };

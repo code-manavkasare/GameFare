@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import Footer from './footer/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
@@ -41,9 +41,9 @@ function TabsApp() {
           label: 'Teams',
           signInToPass: false,
           icon: {
-            name: 'users',
-            type: 'font',
-            size: 22,
+            name: 'user',
+            type: 'moon',
+            size: 26,
           },
         }}
       />
@@ -72,9 +72,9 @@ function TabsApp() {
           label: 'Watch',
           signInToPass: false,
           icon: {
-            name: 'tv',
-            type: 'font',
-            size: 22,
+            name: 'television',
+            type: 'moon',
+            size: 26,
           },
         }}
       />
@@ -91,7 +91,7 @@ function TabsApp() {
         }}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="VideoPlayerPage"
         component={VideoPlayerPage}
         options={{
@@ -101,8 +101,7 @@ function TabsApp() {
             backgroundColor: 'transparent',
           },
         }}
-      />
-
+      /> */}
     </Tab.Navigator>
   );
 }

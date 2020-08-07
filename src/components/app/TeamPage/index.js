@@ -10,9 +10,7 @@ import colors from '../../style/colors';
 import HeaderTeamPage from './components/HeaderTeamPage';
 
 import {
-  imageCardTeam,
-  sessionTitle,
-  sessionDate,
+
   viewLive,
   buttonPlay,
   hangupButton,

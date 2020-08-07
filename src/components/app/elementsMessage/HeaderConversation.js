@@ -39,7 +39,7 @@ class HeaderConversation extends React.Component {
         initialBackgroundColor={'white'}
         typeIcon2={'moon'}
         initialBorderWidth={1}
-        initialBorderColorHeader={colors.off}
+        initialBorderColorHeader={colors.white}
         sizeIcon2={26}
         initialTitleOpacity={1}
         icon1={'arrow-left'}

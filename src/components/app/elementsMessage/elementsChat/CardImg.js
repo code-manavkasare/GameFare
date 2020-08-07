@@ -25,27 +25,17 @@ export default class CardContent extends React.Component {
     };
   }
   componentDidMount() {
-    if (
-      !this.props.image.uploaded &&
-      this.props.user.id === this.props.message.user.id
-    )
-      this.uploadPicture(
-        this.props.image,
-        this.props.discussionID,
-        this.props.message.id,
-      );
+    // if (
+    //   !this.props.image.uploaded &&
+    //   this.props.user.id === this.props.message.user.id
+    // )
+    //   this.uploadPicture(
+    //     this.props.image,
+    //     this.props.discussionID,
+    //     this.props.message.id,
+    //   );
   }
-  componentWillReceiveProps(nextProps) {
-    if (
-      !nextProps.image.uploaded &&
-      nextProps.user.id === nextProps.message.user.id
-    )
-      this.uploadPicture(
-        nextProps.image,
-        nextProps.discussionID,
-        nextProps.message.id,
-      );
-  }
+
   async uploadPicture(image, discussionID, messageID) {
     await this.setState({loader: true});
     const destinationImage =
@@ -79,10 +69,10 @@ export default class CardContent extends React.Component {
     await this.setState({loader: false});
     return true;
   }
-  usersContent() {
-    if (this.props.user.id === this.props.message.user.id) return true;
-    return false;
-  }
+  // usersContent() {
+  //   if (this.props.user.id === this.props.message.user.id) return true;
+  //   return false;
+  // }
   picture(uri, local) {
     return (
       <TouchableOpacity
@@ -129,7 +119,7 @@ export default class CardContent extends React.Component {
                 </View>
               )}
 
-              {this.usersContent() && !image.uploaded ? (
+              {!image.uploaded ? (
                 this.displayImg(image.uri, image.type, true, index)
               ) : !image.uploaded ? (
                 <View

@@ -139,6 +139,7 @@ class InputMessage extends React.Component {
           ref={(r) => {
             this.textInputRef = r;
           }}
+          placeholderTextColor={colors.greyDark}
           enableScrollToCaret
           value={this.state.inputValue}
           // autofocus={initialMessage === '' ? false : true}
@@ -178,21 +179,9 @@ class InputMessage extends React.Component {
             activeOpacity={0.7}
             onPress={() => this.takePicture()}>
             <AllIcons
-              name="camera-retro"
+              name="camera"
               color={colors.title}
-              type="font"
-              size={21}
-            />
-          </Col>
-          <Col
-            size={12}
-            style={styleApp.center2}
-            activeOpacity={0.7}
-            onPress={() => this.openPicturesView()}>
-            <AllIcons
-              name="image"
-              color={!this.state.showImages ? colors.title : colors.primary}
-              type="font"
+              type="moon"
               size={24}
             />
           </Col>
@@ -202,49 +191,70 @@ class InputMessage extends React.Component {
             activeOpacity={0.7}
             onPress={() => this.selectPicture()}>
             <AllIcons
+              name="galery"
+              color={!this.state.showImages ? colors.title : colors.primary}
+              type="moon"
+              size={24}
+            />
+          </Col>
+          {/* <Col
+            size={12}
+            style={styleApp.center2}
+            activeOpacity={0.7}
+            onPress={() => this.selectPicture()}>
+            <AllIcons
               name="dots-menu"
               color={colors.title}
               type="moon"
-              size={16}
+              size={20}
             />
-          </Col>
-          <Col size={35} style={styleApp.center2} />
+          </Col> */}
+          <Col size={50} style={styleApp.center2} />
 
-          <Col size={20} style={[styleApp.center3]}>
-            <ButtonColor
+          <Col
+            size={20}
+            style={styleApp.center3}
+            onPress={() =>
+              this.conditionInputOn() &&
+              this.sendNewMessage(this.state.inputValue, this.state.images)
+            }>
+            <AllIcons
+              name={!this.conditionInputOn() ? 'send' : 'sendFull'}
+              color={!this.conditionInputOn() ? colors.title : colors.primary}
+              type="moon"
+              size={24}
+            />
+            {/* <ButtonColor
               view={() => {
                 return (
-                  <Text
-                    style={[
-                      styleApp.textBold,
-                      {
-                        color: !this.conditionInputOn()
-                          ? colors.greyDark
-                          : colors.white,
-                      },
-                    ]}>
-                    Send
-                  </Text>
+                  <AllIcons
+                    name="send"
+                    color={
+                      !this.conditionInputOn() ? colors.title : colors.white
+                    }
+                    type="moon"
+                    size={20}
+                  />
                 );
               }}
               click={() =>
                 this.conditionInputOn() &&
                 this.sendNewMessage(this.state.inputValue, this.state.images)
               }
-              color={!this.conditionInputOn() ? colors.white : colors.primary}
+              color={this.conditionInputOn() ? colors.primary : colors.white}
               style={[
-                styleApp.center,
+                styleApp.center2,
                 styles.buttonSend,
                 {
-                  borderColor: !this.conditionInputOn()
-                    ? colors.greyDark
-                    : colors.primary,
+                  borderColor: this.conditionInputOn()
+                    ? colors.primary
+                    : colors.off,
                 },
               ]}
               onPressColor={
                 !this.conditionInputOn() ? colors.white : colors.primaryLight
               }
-            />
+            /> */}
           </Col>
         </Row>
 
@@ -285,7 +295,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    ...styleApp.input,
+    ...styleApp.text,
     marginLeft: '5%',
     marginTop: 10,
     marginBottom: 10,
@@ -301,10 +311,10 @@ const styles = StyleSheet.create({
   buttonSend: {
     // paddingRight: 15,
     // paddingLeft: 15,
-    borderWidth: 1,
-    height: 35,
+    borderWidth: 0,
+    height: 40,
     width: '100%',
-    borderRadius: 5,
+    borderRadius: 20,
     alignSelf: 'center',
   },
   buttonCloseImg: {
@@ -323,6 +333,7 @@ const styles = StyleSheet.create({
   rowUtils: {
     paddingLeft: '5%',
     paddingRight: '5%',
+
     height: 50,
   },
 });

@@ -1,8 +1,14 @@
 import {dissoc} from 'ramda';
 
-import {DELETE_SESSION, RESET_SESSIONS, SET_SESSION} from '../actions/types';
+import {
+  DELETE_SESSION,
+  RESET_SESSIONS,
+  SET_SESSION,
+  SET_SESSION_BINDED,
+} from '../actions/types';
 
 const initialState = {};
+const initialStateBind = {};
 
 const coachSessionsReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -20,4 +26,15 @@ const coachSessionsReducer = (state = initialState, action) => {
   }
 };
 
-export default coachSessionsReducer;
+const bindedCoachSessionsReducer = (state = initialStateBind, action) => {
+  switch (action.type) {
+    case SET_SESSION_BINDED:
+      const {session} = action;
+      console.log('setArchiveBinded', session);
+      return {...state, [session.id]: session.isBinded};
+    default:
+      return state;
+  }
+};
+
+export {coachSessionsReducer, bindedCoachSessionsReducer};

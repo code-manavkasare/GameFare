@@ -44,7 +44,7 @@ if (Platform.OS === 'ios') {
     heightPicture = 280;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 75;
+    heightFooter = 80;
     marginTopApp = 35;
     marginBottomApp = 30;
     marginBottomAppLandscade = 20;
@@ -56,7 +56,7 @@ if (Platform.OS === 'ios') {
     heightPicture = 280;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 75;
+    heightFooter = 80;
     marginTopApp = 35;
     marginBottomApp = 35;
     marginBottomAppLandscade = 20;

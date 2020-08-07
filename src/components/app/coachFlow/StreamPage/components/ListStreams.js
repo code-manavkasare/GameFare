@@ -5,30 +5,25 @@ import isEqual from 'lodash.isequal';
 import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../../NavigationService';
-
 import CardStreamView from './CardStreamView';
+import {
+  FlatListComponent,
+  rowTitle,
+} from '../../../TeamPage/components/elements';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
+import sizes from '../../../../style/sizes';
 import Button from '../../../../layout/buttons/Button';
 
 class ListStreams extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      coachSessions: false,
-    };
+    this.state = {};
     this.itemsRef = [];
   }
-  static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.coachSessions, state.coachSessions)) {
-      return {
-        coachSessions: props.coachSessions,
-      };
-    }
-    return {};
-  }
+
   sessionsArray = () => {
-    let {coachSessions} = this.state;
+    let {coachSessions} = this.props;
     if (!coachSessions) return [];
     return Object.values(coachSessions).sort(function(a, b) {
       return b.timestamp - a.timestamp;
@@ -48,7 +43,7 @@ class ListStreams extends Component {
     };
     const coachSessions = this.sessionsArray();
     const {
-      coachSessionsData,
+      AnimatedHeaderValue,
       userConnected,
       permissionsCamera,
       newSession,
@@ -101,18 +96,32 @@ class ListStreams extends Component {
         </View>
       );
     return (
-      <View style={{marginTop: 0}}>
-        {Object.values(coachSessions).map((session, i) =>
-          !session ? null : (
-            <CardStreamView
-              coachSessionID={session.id}
-              key={session.id}
-              scale={1}
-              onRef={(ref) => this.itemsRef.push(ref)}
-            />
-          ),
+      <FlatListComponent
+        list={coachSessions}
+        cardList={({item: session}) => (
+          <CardStreamView
+            coachSessionID={session.id}
+            key={session.id}
+            scale={1}
+            onRef={(ref) => this.itemsRef.push(ref)}
+          />
         )}
-      </View>
+        numColumns={1}
+        inverted={false}
+        incrementRendering={8}
+        paddingBottom={sizes.heightFooter + 30}
+        header={rowTitle({
+          icon: {
+            name: 'user',
+            type: 'moon',
+            color: colors.title,
+            size: 20,
+          },
+          badge: coachSessions.length,
+          title: 'Teams',
+        })}
+        AnimatedHeaderValue={AnimatedHeaderValue}
+      />
     );
   };
 
@@ -123,7 +132,6 @@ class ListStreams extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    coachSessionsData: state.coachSessions,
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
     sessionInfo: state.coach.sessionInfo,

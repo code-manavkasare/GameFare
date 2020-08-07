@@ -5,7 +5,10 @@ import {indexDiscussions, client} from '../database/algolia';
 import SendSMS from 'react-native-sms';
 
 import {store} from '../../../reduxStore';
-import {setConversation} from '../../actions/conversationsActions';
+import {
+  setConversation,
+  setConversationBinded,
+} from '../../actions/conversationsActions';
 
 const generateID = () => {
   return (
@@ -190,7 +193,6 @@ const bindConversation = (conversationId) => {
   console.log('bindConversation', conversationId);
   database()
     .ref('messagesCoachSession/' + conversationId)
-    // .limitToLast(2)
     .on('value', async function(snap) {
       let messages = snap.val();
 
@@ -215,18 +217,27 @@ const bindConversation = (conversationId) => {
           result[item.id] = item;
           return result;
         }, {});
-      console.log('conversationId', conversationId);
-      console.log('bindConversation', messages);
-      console.log('store.getState().message', store.getState().message);
+
       store.dispatch(setConversation({messages, objectID: conversationId}));
+      store.dispatch(
+        setConversationBinded({id: conversationId, isBinded: true}),
+      );
     });
 };
 
-const unbindConversation = (conversationId) => {
+const unbindConversation = async (conversationId) => {
   console.log('unbindConversation', conversationId);
-  database()
-    .ref('discussions/' + conversationId)
-    .off();
+  const isConversationBinded = store.getState().bindedConversations[
+    conversationId
+  ];
+  if (isConversationBinded) {
+    await database()
+      .ref('discussions/' + conversationId)
+      .off();
+    store.dispatch(
+      setConversationBinded({id: conversationId, isBinded: false}),
+    );
+  }
 };
 
 export {
