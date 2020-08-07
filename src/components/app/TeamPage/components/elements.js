@@ -473,7 +473,7 @@ const ListPlayers = (props) => {
         />
       )}
       numColumns={1}
-      incrementRendering={20}
+      incrementRendering={19}
       header={rowTitle({
         icon: {
           name: 'profileFooter',
@@ -487,103 +487,6 @@ const ListPlayers = (props) => {
     />
   );
 };
-
-class FlatListComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      numberToRender: this.props.incrementRendering,
-    };
-    this.AnimatedHeaderValue = new Animated.Value(0);
-  }
-  shouldComponentUpdate(prevProps, prevState) {
-    if (!isEqual(prevState, this.state)) return true;
-    if (isEqual(this.props, prevProps)) return false;
-    return true;
-  }
-  onEndReached() {
-    const {list, incrementRendering} = this.props;
-    const {numberToRender} = this.state;
-    const lengthList = list.length;
-
-    this.setState({
-      numberToRender:
-        numberToRender + incrementRendering > lengthList
-          ? lengthList
-          : numberToRender + incrementRendering,
-    });
-  }
-  render() {
-    const {numberToRender} = this.state;
-    let {
-      list,
-      cardList,
-      numColumns,
-      header,
-      AnimatedHeaderValue,
-      paddingBottom,
-      inverted,
-    } = this.props;
-    const styleContainerList = {
-      width: '100%',
-      ...styleApp.marginView,
-      paddingTop: 35,
-      backgroundColor: colors.white,
-      paddingBottom: 60,
-      minHeight: height,
-    };
-
-    const containerStyle = {
-      paddingBottom: paddingBottom ? paddingBottom : 0,
-      backgroundColor: 'white',
-    };
-
-    const viewLoader = () => {
-      return (
-        <View style={[styleApp.center, {height: 35, marginTop: 20}]}>
-          <Loader size={40} color={colors.grey} />
-        </View>
-      );
-    };
-
-    return (
-      <View style={containerStyle}>
-        <FlatList
-          data={list.slice(0, numberToRender)}
-          renderItem={({item}) => cardList({item})}
-          ListFooterComponent={() =>
-            list.length !== numberToRender && list.length !== 0 && viewLoader()
-          }
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="interactive"
-          keyExtractor={(item) => (item.id ? item.id : item)}
-          numColumns={numColumns}
-          scrollEnabled={true}
-          inverted={inverted}
-          contentContainerStyle={styleContainerList}
-          ListHeaderComponent={header}
-          showsVerticalScrollIndicator={true}
-          onEndReached={() => this.onEndReached()}
-          onEndReachedThreshold={0.7}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: AnimatedHeaderValue
-                      ? AnimatedHeaderValue
-                      : this.AnimatedHeaderValue,
-                  },
-                },
-              },
-            ],
-            {useNativeDriver: false},
-          )}
-        />
-      </View>
-    );
-  }
-}
 
 const conversationView = (session) => {
   const {objectID} = session;
