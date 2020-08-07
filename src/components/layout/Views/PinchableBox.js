@@ -50,8 +50,7 @@ export default class PinchableBox extends Component {
       scaleChange(this._lastScale);
     }
   };
-  onPan({nativeEvent: {scale}}) {
-  }
+  onPan({nativeEvent: {scale}}) {}
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastOffset.x += event.nativeEvent.translationX;
@@ -63,8 +62,9 @@ export default class PinchableBox extends Component {
     }
   };
   resetPosition() {
-    this._translateX.setValue(0);
-    this._translateY.setValue(0);
+    this._lastOffset = {x: 0, y: 0};
+    this._translateX.setOffset(0);
+    this._translateY.setOffset(0);
     this._pinchScale.setValue(1);
     this._baseScale.setValue(1);
     this._lastScale = 1;
@@ -77,7 +77,7 @@ export default class PinchableBox extends Component {
   };
   _onDoubleTap = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      // alert('D0able tap, good job!');
+      this.resetPosition();
     }
   };
   render() {
