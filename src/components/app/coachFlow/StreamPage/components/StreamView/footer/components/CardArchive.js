@@ -52,7 +52,6 @@ class CardArchive extends PureComponent {
   }
   componentWillUnmount() {
     const {id, local} = this.props;
-    console.log('bin unmount card archive', id);
     if (!local) unbindArchive(id);
   }
   placeholder() {
@@ -69,6 +68,7 @@ class CardArchive extends PureComponent {
   openVideo = async () => {
     const {openVideo} = this.props;
     const {archive} = this.props;
+    console.log('open video', archive);
     if (openVideo) {
       openVideo(archive.id);
     } else {
@@ -106,11 +106,11 @@ class CardArchive extends PureComponent {
           mainImage={thumbnail ? thumbnail : ''}
         />
         {this.cloudIndicator()}
-        <View style={styles.resolution}>
+        {/* <View style={styles.resolution}>
           <Text style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
             {resolutionP(size)}
           </Text>
-        </View>
+        </View> */}
         <View
           pointerEvents="none"
           style={{

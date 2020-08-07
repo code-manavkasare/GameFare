@@ -18,7 +18,8 @@ import {
   addVideoToMember,
   deleteVideoFromLibrary,
 } from '../../database/firebase/videosManagement.js';
-import {FlatListComponent, rowTitle} from '../TeamPage/components/elements';
+import {rowTitle} from '../TeamPage/components/elements';
+import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
 import UploadHeader from './components/UploadHeader';
@@ -254,14 +255,14 @@ class VideoLibraryPage extends Component {
     const {videosArray} = this.state;
     return (
       <View>
-        {/* <UploadHeader /> */}
+        <UploadHeader />
 
         <FlatListComponent
           list={videosArray}
           cardList={({item: video}) => this.renderCardArchive(video)}
           numColumns={2}
           incrementRendering={8}
-          paddingBottom={sizes.heightFooter + 30}
+          paddingBottom={sizes.heightFooter - 25}
           header={rowTitle({
             icon: {
               name: 'galery',
@@ -271,6 +272,7 @@ class VideoLibraryPage extends Component {
             },
             badge: videosArray.length === 0 ? false : videosArray.length,
             title: 'Library',
+            hideDividerHeader: true,
           })}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
@@ -332,12 +334,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   cardArchive: {
-    width: (width * 0.9) / 2 - 10,
-    height: 150,
-    borderRadius: 4,
+    // width: (width * 0.9) / 2 - 10,
+    width: width / 2,
+    height: 170,
+    borderRadius: 0,
     overflow: 'hidden',
     backgroundColor: colors.title,
-    margin: 5,
+    // margin: 5,
   },
   CardUploading: {
     width: (width * 0.9) / 2 - 10,

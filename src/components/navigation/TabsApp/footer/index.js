@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   footerBody: {
     ...styleApp.fullSize,
-    borderRadius: 35,
+    borderRadius: 33,
     borderBottomLeftRadius: 1,
     borderBottomRightRadius: 1,
     borderColor: colors.off,
