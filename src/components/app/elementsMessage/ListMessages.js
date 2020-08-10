@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {StyleSheet, View, FlatList} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import isEqual from 'lodash.isequal';
 
 import {KeyboardAccessoryView} from 'react-native-keyboard-input';
@@ -10,6 +10,7 @@ import colors from '../../style/colors';
 import InputMessage from './InputMessage';
 import './Keyboard';
 import CardMessage from './CardMessage';
+import {FlatListComponent} from '../../layout/Views/FlatList';
 
 class ListMessages extends Component {
   constructor(props) {
@@ -25,7 +26,6 @@ class ListMessages extends Component {
         component: undefined,
         initialProps: undefined,
       },
-      numberMessageDisplay: 15,
       receivedKeyboardData: undefined,
     };
   }
@@ -91,50 +91,30 @@ class ListMessages extends Component {
       );
     }
   };
-  onEndReached = () => {
-    const {numberMessageDisplay} = this.state;
-    const lengthAllMessages = this.allMessages().length;
 
-    this.setState({
-      numberMessageDisplay:
-        numberMessageDisplay + 20 > lengthAllMessages
-          ? lengthAllMessages
-          : numberMessageDisplay + 20,
-    });
-  };
   messagesArray = () => {
-    const {numberMessageDisplay} = this.state;
-    let {messages} = this.props;
-    if (!messages) messages = {};
-    return Object.values(messages).slice(0, numberMessageDisplay);
-  };
-  allMessages = () => {
     let {messages} = this.props;
     if (!messages) messages = {};
     return Object.values(messages);
   };
+
   render() {
     console.log('render flat list message', this.props);
+
     return (
       <View style={styles.container}>
-        <FlatList
-          data={this.messagesArray()}
-          renderItem={(message) =>
-            this.filterBlockedUserMessage(message.item, message.index)
+        <FlatListComponent
+          list={this.messagesArray()}
+          cardList={({item, index}) =>
+            this.filterBlockedUserMessage(item, index)
           }
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="interactive"
-          keyExtractor={(item) => item.timeStamp}
-          inverted
+          inverted={true}
           numColumns={1}
-          scrollEnabled={true}
-          contentContainerStyle={{
-            paddingTop: 30,
-            paddingBottom: 30,
-          }}
-          showsVerticalScrollIndicator={true}
-          onEndReached={() => this.onEndReached()}
-          onEndReachedThreshold={0.7}
+          incrementRendering={20}
+          header={<View />}
+          initialNumberToRender={20}
+          paddingBottom={133}
+          hideDividerHeader={true}
         />
 
         <KeyboardAccessoryView

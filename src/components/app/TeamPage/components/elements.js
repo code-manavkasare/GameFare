@@ -10,12 +10,13 @@ import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
+import {navigate} from '../../../../../NavigationService';
 import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
-import {sessionOpening} from '../../../functions/coach';
+import {sessionOpening, addMembersToSession} from '../../../functions/coach';
 import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 
 const imageCardTeam = (session, size, hideDots) => {
@@ -160,7 +161,8 @@ const titleSession = (session, size, allMembers) => {
 };
 
 const dateSession = ({session, messages}) => {
-  let {members} = session;
+  let {members, createdAt} = session;
+  console.log('members', session);
   if (!members) return formatDate(Date.now());
   members = members ? Object.values(members) : [];
   const activeMembers = members.filter((m) => m.isConnected);
@@ -174,13 +176,11 @@ const dateSession = ({session, messages}) => {
     else return 0;
   })[0].disconnectionTimeStamp;
 
-  console.log('lastActive', lastActive);
-
   let dateLastMessage = 0;
   const lastMessage = lastMessageObject(messages);
   if (lastMessage) dateLastMessage = lastMessage.timeStamp;
 
-  console.log('dateLastMessage', dateLastMessage);
+  if (!lastActive && !dateLastMessage) return formatDate(createdAt);
 
   if ((!lastActive && dateLastMessage > 0) || dateLastMessage > lastActive)
     return formatDate(dateLastMessage);
@@ -239,6 +239,7 @@ const lastMessage = (messages) => {
 };
 
 const formatDate = (date) => {
+  console.log('formatdate,', date);
   let justNow = moment(Date.now()).subtract(1, 'minute');
   let earlier = moment(Date.now()).subtract(7, 'days');
   let lastYear = moment(Date.now()).subtract(1, 'year');
@@ -341,7 +342,7 @@ const hangupButton = (session) => {
   );
 };
 
-const rowTitle = ({icon, badge, title, hideDividerHeader}) => {
+const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
   const {name, size, color, type} = icon;
   const styleBadge = {
     ...styleApp.center,
@@ -354,6 +355,11 @@ const rowTitle = ({icon, badge, title, hideDividerHeader}) => {
     borderWidth: 1,
     borderColor: colors.white,
     backgroundColor: colors.primary,
+  };
+  const styleButton = {
+    height: 34,
+    width: '100%',
+    borderRadius: 5,
   };
   return (
     <View>
@@ -372,8 +378,29 @@ const rowTitle = ({icon, badge, title, hideDividerHeader}) => {
             </View>
           )}
         </Col>
-        <Col size={75} style={styleApp.center2}>
+        <Col size={55} style={styleApp.center2}>
           <Text style={[styleApp.title]}>{title}</Text>
+        </Col>
+        <Col size={20} style={styleApp.center3}>
+          {button && (
+            <ButtonColor
+              view={() => {
+                return (
+                  <Text
+                    style={[
+                      styleApp.textBold,
+                      {color: colors.white, fontSize: 14},
+                    ]}>
+                    {button.text}
+                  </Text>
+                );
+              }}
+              color={colors.primary}
+              style={styleButton}
+              click={() => button.click()}
+              onPressColor={colors.primaryLight}
+            />
+          )}
         </Col>
       </Row>
       {!hideDividerHeader ? (
@@ -399,7 +426,7 @@ const ListContents = (props) => {
   const {session} = props;
   let {contents} = session;
   if (!contents) contents = {};
-  console.log('contents', contents);
+  console.log('content');
   return (
     <FlatListComponent
       list={Object.keys(contents)}
@@ -407,10 +434,20 @@ const ListContents = (props) => {
         <CardArchive id={item} style={styleApp.cardArchive} key={item} />
       )}
       numColumns={2}
-      incrementRendering={8}
+      incrementRendering={4}
+      initialNumberToRender={8}
       hideDividerHeader={true}
       header={rowTitle({
         icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},
+        hideDividerHeader: true,
+        button: {
+          text: 'Add',
+          click: () =>
+            navigate('SelectVideosFromLibrary', {
+              selectableMode: true,
+              selectOnly: true,
+            }),
+        },
         badge:
           Object.keys(contents).length === 0
             ? false
@@ -423,7 +460,7 @@ const ListContents = (props) => {
 
 const ListPlayers = (props) => {
   const {session, messages} = props;
-  let {members} = session;
+  let {members, objectID} = session;
   if (!members) members = {};
   members = Object.values(members).sort((a, b) => {
     if (!a.connectionTimeStamp) a.connectionTimeStamp = 0;
@@ -434,11 +471,12 @@ const ListPlayers = (props) => {
     <FlatListComponent
       list={Object.values(members)}
       hideDividerHeader={true}
+      initialNumberToRender={20}
+      incrementRendering={6}
       cardList={({item: member}) => (
         <ButtonColor
           key={member.id}
           view={() => {
-            console.log('member', member, messages);
             return (
               <Row>
                 <Col size={30} style={styleApp.center}>
@@ -473,7 +511,6 @@ const ListPlayers = (props) => {
         />
       )}
       numColumns={1}
-      incrementRendering={19}
       header={rowTitle({
         icon: {
           name: 'profileFooter',
@@ -481,6 +518,11 @@ const ListPlayers = (props) => {
           color: colors.title,
           size: 20,
         },
+        button: {
+          text: 'Add',
+          click: () => addMembersToSession(objectID, 'Conversation'),
+        },
+        hideDividerHeader: true,
         badge: Object.keys(members).length,
         title: '',
       })}

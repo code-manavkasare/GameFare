@@ -7,6 +7,7 @@ import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
+import {newSession} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
@@ -39,12 +40,7 @@ class ListStreams extends Component {
       marginLeft: 65,
     };
     const coachSessions = this.sessionsArray();
-    const {
-      AnimatedHeaderValue,
-      userConnected,
-      permissionsCamera,
-      newSession,
-    } = this.props;
+    const {AnimatedHeaderValue, userConnected, permissionsCamera} = this.props;
     if (!userConnected || !permissionsCamera || !coachSessions) return null;
     if (Object.values(coachSessions).length === 0)
       return (
@@ -105,7 +101,8 @@ class ListStreams extends Component {
         )}
         numColumns={1}
         inverted={false}
-        incrementRendering={8}
+        incrementRendering={6}
+        initialNumberToRender={8}
         paddingBottom={sizes.heightFooter + 30}
         header={rowTitle({
           icon: {
@@ -113,6 +110,10 @@ class ListStreams extends Component {
             type: 'moon',
             color: colors.title,
             size: 20,
+          },
+          button: {
+            text: 'New',
+            click: () => newSession(),
           },
           badge: coachSessions.length,
           title: 'Teams',

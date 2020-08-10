@@ -34,7 +34,7 @@ import {
 
 class CardStream extends Component {
   static propTypes = {
-    coachSessionId: PropTypes.string.isRequired,
+    coachSessionId: PropTypes.string,
   };
   constructor(props) {
     super(props);

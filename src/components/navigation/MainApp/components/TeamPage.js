@@ -37,6 +37,7 @@ const MyTabs = ({session, user, initialMessage, messages}) => {
         labelStyle: {...styleApp.titleNoColor, fontSize: 12},
         style: {backgroundColor: colors.white, height: 50, marginTop: 35},
         indicatorStyle: {backgroundColor: colors.primary},
+        scrollEnabled: false,
         showIcon: false,
         iconStyle: {position: 'absolute'},
       }}>

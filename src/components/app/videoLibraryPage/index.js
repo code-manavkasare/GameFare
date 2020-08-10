@@ -48,10 +48,13 @@ const {height, width} = Dimensions.get('screen');
 class VideoLibraryPage extends Component {
   constructor(props) {
     super(props);
+    const {params} = props.route;
+
     this.state = {
       videosArray: [],
       loader: false,
-      selectableMode: false,
+      selectableMode: params ? params.selectableMode : false,
+      selectOnly: params ? params.selectOnly : false,
       selectedFirebaseVideos: [],
       selectedLocalVideos: [],
     };
@@ -252,43 +255,44 @@ class VideoLibraryPage extends Component {
   }
 
   listVideos() {
-    const {videosArray} = this.state;
+    const {videosArray, selectOnly} = this.state;
     return (
-      <View>
-        <UploadHeader />
+      <View style={styleApp.fullSize}>
+        {!selectOnly && <UploadHeader />}
 
         <FlatListComponent
           list={videosArray}
           cardList={({item: video}) => this.renderCardArchive(video)}
           numColumns={2}
-          incrementRendering={8}
-          paddingBottom={sizes.heightFooter - 25}
-          header={rowTitle({
-            icon: {
-              name: 'galery',
-              type: 'moon',
-              color: colors.title,
-              size: 20,
-            },
-            badge: videosArray.length === 0 ? false : videosArray.length,
-            title: 'Library',
-            hideDividerHeader: true,
-          })}
+          incrementRendering={4}
+          initialNumberToRender={8}
+          paddingBottom={selectOnly ? 0 : sizes.heightFooter}
+          header={
+            !selectOnly &&
+            rowTitle({
+              icon: {
+                name: 'galery',
+                type: 'moon',
+                color: colors.title,
+                size: 20,
+              },
+              badge: videosArray.length === 0 ? false : videosArray.length,
+              title: 'Library',
+              hideDividerHeader: true,
+            })
+          }
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>
     );
   }
   renderCardArchive(video) {
-    const {
-      selectableMode,
-      selectedFirebaseVideos,
-      selectedLocalVideos,
-    } = this.state;
+    const {selectableMode, selectedFirebaseVideos} = this.state;
     const {local, id} = video;
-    const isSelected = local
-      ? includes(video.id, selectedLocalVideos)
-      : includes(video.id, selectedFirebaseVideos);
+    const isSelected =
+      // local
+      // ? includes(video.id, selectedLocalVideos)
+      includes(video.id, selectedFirebaseVideos);
     return (
       <CardArchive
         local={local ? true : false}
@@ -304,7 +308,15 @@ class VideoLibraryPage extends Component {
   }
 
   render() {
-    const {videosArray, selectableMode, loader, selectedVideos} = this.state;
+    const {navigation} = this.props;
+    const {
+      videosArray,
+      selectableMode,
+      loader,
+      selectedVideos,
+      selectedFirebaseVideos,
+      selectOnly,
+    } = this.state;
     return (
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
@@ -312,6 +324,8 @@ class VideoLibraryPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           toggleSelect={() => this.setState({selectableMode: !selectableMode})}
           selectableMode={selectableMode}
+          navigation={navigation}
+          selectOnly={selectOnly}
           isListEmpty={videosArray.length === 0}
           selectedVideos={selectedVideos}
           add={() => this.addVideo()}
@@ -319,9 +333,31 @@ class VideoLibraryPage extends Component {
           share={() => this.shareSelectedVideos()}
         />
 
-        <View style={{marginTop: sizes.heightHeaderHome + sizes.marginTopApp}}>
+        <View
+          style={{
+            marginTop: selectOnly
+              ? sizes.heightHeaderHome
+              : sizes.heightHeaderHome + sizes.marginTopApp,
+          }}>
           {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
         </View>
+
+        {selectOnly && selectedFirebaseVideos.length !== 0 && (
+          <View style={[styleApp.footerBooking, styleApp.marginView]}>
+            <Button
+              text={`Confirm ${selectedFirebaseVideos.length} videos`}
+              backgroundColor={'green'}
+              onPressColor={colors.greenLight}
+              click={() =>
+                navigation.navigate('Alert', {
+                  title: 'Work in progress',
+                  textButton: 'Ok',
+                  close: true,
+                })
+              }
+            />
+          </View>
+        )}
       </View>
     );
   }
@@ -341,14 +377,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: colors.title,
     // margin: 5,
-  },
-  CardUploading: {
-    width: (width * 0.9) / 2 - 10,
-    height: 150,
-    borderRadius: 4,
-    overflow: 'hidden',
-    backgroundColor: 'white',
-    margin: 8,
+    borderWidth: 1,
+    borderColor: colors.white,
   },
 });
 const mapStateToProps = (state) => {

@@ -14,9 +14,8 @@ class FlatListComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numberToRender: this.props.incrementRendering,
+      numberToRender: props.initialNumberToRender,
     };
-    this.fetchEnabled = true;
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   shouldComponentUpdate(prevProps, prevState) {
@@ -28,18 +27,13 @@ class FlatListComponent extends Component {
     const {list, incrementRendering} = this.props;
     const {numberToRender} = this.state;
     const lengthList = list.length;
-    const currentFetchEnabled = this.fetchEnabled;
-    this.fetchEnabled = false;
-    console.log('onEndReached', this.fetchEnabled);
-    if (currentFetchEnabled)
-      this.setState({
-        numberToRender:
-          numberToRender + incrementRendering > lengthList
-            ? lengthList
-            : numberToRender + incrementRendering,
-      });
-    await timeout(200);
-    this.fetchEnabled = true;
+
+    this.setState({
+      numberToRender:
+        numberToRender + incrementRendering > lengthList
+          ? lengthList
+          : numberToRender + incrementRendering,
+    });
   }
   render() {
     const {numberToRender} = this.state;
@@ -53,22 +47,17 @@ class FlatListComponent extends Component {
       inverted,
     } = this.props;
     let styleContainerList = {
-      width: '100%',
-
       paddingTop: 35,
       backgroundColor: colors.white,
       paddingBottom: 60,
       minHeight: height,
-    };
-    // if (numColumns !== 1)
-    styleContainerList = {
-      ...styleContainerList,
-      //   ...styleApp.marginView,
+      width: '100%',
     };
 
     const containerStyle = {
       paddingBottom: paddingBottom ? paddingBottom : 0,
-      backgroundColor: 'white',
+      backgroundColor: colors.white,
+      width: '100%',
     };
 
     const viewLoader = () => {
@@ -78,28 +67,30 @@ class FlatListComponent extends Component {
         </View>
       );
     };
+    console.log('render list ', list);
 
     return (
       <View style={containerStyle}>
         <FlatList
           data={list.slice(0, numberToRender)}
-          renderItem={({item}) => cardList({item})}
+          renderItem={({item, index}) => cardList({item, index})}
           ListFooterComponent={() =>
-            list.length !== numberToRender && list.length !== 0 && viewLoader()
+            list.length > numberToRender && list.length !== 0 && viewLoader()
           }
+          scrollIndicatorInsets={{right: 1}}
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="interactive"
-          keyExtractor={(item) => (item.id ? item.id : item)}
+          keyExtractor={(item) => (item.id ? item.id : item.toString())}
           numColumns={numColumns}
           scrollEnabled={true}
+          removeClippedSubviews={true}
           inverted={inverted}
           contentContainerStyle={styleContainerList}
           ListHeaderComponent={header}
           ListHeaderComponentStyle={styleApp.marginView}
-          
           showsVerticalScrollIndicator={true}
           onEndReached={() => this.onEndReached()}
-          onEndReachedThreshold={0.7}
+          onEndReachedThreshold={0.9}
           onScroll={Animated.event(
             [
               {

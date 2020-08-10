@@ -30,7 +30,6 @@ const bindedCoachSessionsReducer = (state = initialStateBind, action) => {
   switch (action.type) {
     case SET_SESSION_BINDED:
       const {session} = action;
-      console.log('setArchiveBinded', session);
       return {...state, [session.id]: session.isBinded};
     default:
       return state;

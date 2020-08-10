@@ -29,7 +29,6 @@ const bindedArchivesReducer = (state = initialStateBind, action) => {
   switch (action.type) {
     case SET_ARCHIVE_BINDED:
       const {archive} = action;
-      console.log('setArchiveBinded', archive);
       return {...state, [archive.id]: archive.isBinded};
     default:
       return state;

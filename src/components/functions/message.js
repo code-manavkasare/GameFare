@@ -52,7 +52,6 @@ const createDiscussionEventGroup = (
 };
 
 async function createDiscussion(members, nameDiscussion, firstMessageExists) {
-  console.log('createDiscussion', members);
   const membersObj = Object.values(members).reduce(function(result, item) {
     result[item.id] = item;
     return result;
@@ -167,7 +166,7 @@ const sendSMSFunction = async (phoneNumbers, message) => {
     successTypes: ['sent', 'queued'],
     allowAndroidSendWithoutReadPermission: true,
   };
-  console.log('args', args);
+
   return new Promise((resolve, reject) => {
     SendSMS.send(args, (completed, cancelled, error) => {
       resolve({completed, cancelled, error});
@@ -190,7 +189,6 @@ const openDiscussion = async (arrayUsers, idDiscussion) => {
 
 const bindConversation = (conversationId) => {
   const gamefareUser = store.getState().message.gamefareUser;
-  console.log('bindConversation', conversationId);
   database()
     .ref('messagesCoachSession/' + conversationId)
     .on('value', async function(snap) {
@@ -226,7 +224,6 @@ const bindConversation = (conversationId) => {
 };
 
 const unbindConversation = async (conversationId) => {
-  console.log('unbindConversation', conversationId);
   const isConversationBinded = store.getState().bindedConversations[
     conversationId
   ];
