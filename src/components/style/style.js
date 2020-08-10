@@ -216,6 +216,8 @@ const styles = StyleSheet.create({
   },
   cardArchive: {
     width: width / 2,
+    borderWidth: 1,
+    borderColor: colors.white,
     height: 170,
     borderRadius: 0,
     overflow: 'hidden',

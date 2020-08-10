@@ -66,7 +66,7 @@ class StreamTab extends Component {
     const {permissionsCamera, initialLoader} = this.state;
 
     return (
-      <View>
+      <View style={styleApp.fullSize}>
         {initialLoader && this.viewLoader()}
 
         {!permissionsCamera ? (
@@ -78,7 +78,6 @@ class StreamTab extends Component {
         <ListStreams
           permissionsCamera={permissionsCamera}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          newSession={() => this.HeaderRef.newSession()}
         />
       </View>
     );
@@ -100,7 +99,6 @@ class StreamTab extends Component {
         <View
           style={{
             marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
-            
           }}>
           {this.StreamTab()}
         </View>

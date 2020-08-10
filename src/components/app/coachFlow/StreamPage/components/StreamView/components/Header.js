@@ -8,7 +8,10 @@ import {layoutAction} from '../../../../../../../actions/layoutActions';
 
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
 import colors from '../../../../../../style/colors';
-import {isUserAdmin} from '../../../../../../functions/coach';
+import {
+  isUserAdmin,
+  addMembersToSession,
+} from '../../../../../../functions/coach';
 
 class HeaderStreamView extends Component {
   constructor(props) {
@@ -16,30 +19,6 @@ class HeaderStreamView extends Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  AddMembers = (objectID) => {
-    const {navigate} = NavigationService;
-    navigate('PickMembers', {
-      usersSelected: {},
-      noNavigation: true,
-      selectFromGamefare: true,
-      selectMultiple: true,
-      closeButton: true,
-      loaderOnSubmit: true,
-      displayCurrentUser: false,
-      titleHeader: 'Add someone to the session',
-      onGoBack: async (members) => {
-        for (var i in Object.values(members)) {
-          let member = Object.values(members)[i];
-          member.invitationTimeStamp = Date.now();
-          // write addMemberToSession(objectID, member) function
-          await database()
-            .ref('coachSessions/' + objectID + '/members/' + member.id)
-            .update(member);
-        }
-        return navigate('Session');
-      },
-    });
-  };
   header() {
     const {
       coachSessionID,
@@ -91,7 +70,9 @@ class HeaderStreamView extends Component {
           currentSessionReconnecting ? colors.greyDark : colors.white
         }
         clickButtonOffset2={() =>
-          currentSessionReconnecting ? null : this.AddMembers(coachSessionID)
+          currentSessionReconnecting
+            ? null
+            : addMembersToSession(coachSessionID, 'Session')
         }
         backgroundColorIconOffset2={colors.title + '70'}
         initialTitleOpacity={1}

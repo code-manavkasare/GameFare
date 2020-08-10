@@ -19,7 +19,7 @@ import {
 } from '../../actions/coachActions';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
-import {navigate} from '../../../NavigationService';
+import {navigate, goBack} from '../../../NavigationService';
 
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
 import ImageUser from '../layout/image/ImageUser';
@@ -44,6 +44,7 @@ const createCoachSession = async (user, members) => {
     info: {
       organizer: user.id,
     },
+    createdAt: Date.now(),
     members: {
       [user.id]: {...user, isConnected: false},
       ...members,
@@ -470,6 +471,43 @@ const finalizeOpening = async (session) => {
   });
 };
 
+const newSession = () => {
+  navigate('PickMembers', {
+    usersSelected: {},
+    allowSelectMultiple: true,
+    selectFromGamefare: true,
+    closeButton: true,
+    loaderOnSubmit: true,
+    displayCurrentUser: false,
+    noUpdateStatusBar: true,
+    noNavigation: true,
+    titleHeader: 'Select members',
+    text2: 'Skip',
+    icon2: 'text',
+    clickButton2: () => createSession({}),
+    onSelectMembers: (users, contacts) => createSession(users),
+  });
+};
+const createSession = async (members) => {
+  const {userID, infoUser} = store.getState().user;
+  members = Object.values(members).reduce(function(result, item) {
+    result[item.id] = {
+      id: item.id,
+      info: item.info,
+    };
+    return result;
+  }, {});
+
+  const {objectID} = await openSession(
+    {
+      id: userID,
+      info: infoUser.userInfo,
+    },
+    members,
+  );
+  navigate('Conversation', {coachSessionID: objectID});
+};
+
 const sessionOpening = async (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   if (!isSessionFree(session) && currentSessionID !== session.objectID)
@@ -528,6 +566,32 @@ const unbindSession = async (objectID) => {
   }
 };
 
+const addMembersToSession = (objectID, navigateTo) => {
+  let noUpdateStatusBar = true;
+  if (navigateTo === 'Session') noUpdateStatusBar = false;
+  navigate('PickMembers', {
+    usersSelected: {},
+    noNavigation: true,
+    selectFromGamefare: true,
+    selectMultiple: true,
+    noUpdateStatusBar: noUpdateStatusBar,
+    closeButton: true,
+    loaderOnSubmit: true,
+    displayCurrentUser: false,
+    titleHeader: 'Add someone to the session',
+    onGoBack: async (members) => {
+      for (var i in Object.values(members)) {
+        let member = Object.values(members)[i];
+        member.invitationTimeStamp = Date.now();
+        await database()
+          .ref('coachSessions/' + objectID + '/members/' + member.id)
+          .update(member);
+      }
+      return goBack();
+    },
+  });
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -559,4 +623,6 @@ module.exports = {
   deleteSession,
   bindSession,
   unbindSession,
+  newSession,
+  addMembersToSession,
 };

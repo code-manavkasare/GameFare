@@ -31,7 +31,7 @@ const pop = (number) => {
 };
 
 const goBack = () => {
-  navigationRef.dispatch(CommonActions.back());
+  navigationRef.dispatch(CommonActions.goBack());
 };
 
 const dismiss = () => {

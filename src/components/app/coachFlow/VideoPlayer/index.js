@@ -74,7 +74,7 @@ export default class VideoPlayer extends Component {
   async componentDidMount() {
     this.props.onRef(this);
     const {currentTime} = this.state;
-    await timeout(1000);
+    // await timeout(1000);
     this.setState({displayVideo: true});
     if (currentTime !== 0) this.seek(currentTime);
   }
