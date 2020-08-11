@@ -82,7 +82,6 @@ class VideoPlayerPage extends Component {
     for (const action of recordedActions) {
       const {isPreviewing} = this.state;
       if (isPreviewing) {
-        console.log('action', action);
         switch (action.type) {
           case 'play':
             await this.isTimestampReached(action.timestamp).then(() => {
@@ -108,7 +107,6 @@ class VideoPlayerPage extends Component {
           case 'willSeek':
             //Useful to wait for seek methods
             await this.isTimestampReached(action.timestamp).then(() => {
-              console.log('willSeek');
             });
             break;
           case 'seek':

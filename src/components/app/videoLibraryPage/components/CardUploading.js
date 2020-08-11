@@ -158,7 +158,7 @@ class CardUploading extends Component {
     let {members} = this.props;
     const {durationSeconds, size} = videoInfo;
 
-    const id = videoInfo.localIdentifier.split('/')[0];
+    const id = videoInfo.localID.split('/')[0];
 
     const destinationCloud = `archivedStreams/${id}`;
     const thumbnailUrl = await this.uploadThumbnail(

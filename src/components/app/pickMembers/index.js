@@ -57,13 +57,18 @@ export default class PickMembersPage extends React.Component {
   }
   async onSelectMembers(members, contacts) {
     const {onSelectMembers, noNavigation} = this.props.route.params;
-    await onSelectMembers(members, contacts);
+    onSelectMembers(members, contacts);
     if (!noNavigation) {
-      this.close();
+      this.close(false);
     }
   }
-  close() {
-    this.props.navigation.pop();
+  close(cancel) {
+    const {popNum} = this.props.route.params;
+    if (popNum && !cancel) {
+      this.props.navigation.pop(popNum)
+    } else {
+      this.props.navigation.pop();
+    }
   }
   render() {
     const {route} = this.props;
@@ -78,13 +83,12 @@ export default class PickMembersPage extends React.Component {
       selectFromContacts,
       clickButton2,
     } = route.params;
-    console.log('params', route.params);
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
         <PickMembersHeader
           title={titleHeader}
           icon1={closeButton ? 'times' : 'arrow-left'}
-          clickButton1={() => this.close()}
+          clickButton1={() => this.close(true)}
           icon2={icon2}
           text2={text2}
           clickButton2={() => clickButton2()}

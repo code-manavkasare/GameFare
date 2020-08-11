@@ -108,34 +108,6 @@ async function pickLibrary() {
   return promise;
 }
 
-async function uploadPictureFirebase(localUri, destination) {
-  try {
-    let imageName = 'groupPicture';
-    const imageRef = storage().ref(destination + '/' + imageName);
-    await imageRef.putFile(localUri);
-    var url = imageRef.getDownloadURL();
-    return url;
-  } catch (error) {
-    console.log('error upload', error);
-    return false;
-  }
-}
-
-async function uploadVideoFirebase(image, destination) {
-  try {
-    let imageName = 'content.mp4';
-    const imageRef = storage()
-      .ref(destination)
-      .child(imageName);
-    await imageRef.put(image.uri, {contentType: 'video'});
-    var url = await imageRef.getDownloadURL();
-    return url;
-  } catch (err) {
-    console.log('error upload', err);
-    return false;
-  }
-}
-
 async function getPhotoUser() {
   const permissionLibrary = await permission('library');
   console.log('permissionLibrary', permissionLibrary);
@@ -174,7 +146,7 @@ const getLastVideo = async () => {
   return edges[0].node.image;
 };
 
-const generateThumbnail = async (videoPath,timeStamp) => {
+const generateThumbnail = async (videoPath, timestamp) => {
   const thumbnail = await RNThumbnail.get(videoPath);
   return thumbnail.path;
 };
@@ -187,23 +159,22 @@ const getVideoUUID = (path) => {
   return videoUUID;
 };
 
-const getVideoInfo = async (videoUrl, createThumbnail,timeStamp) => {
-  console.log('');
+const getVideoInfo = async (videoUrl, thumbnail, timestamp) => {
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  const thumbnail = createThumbnail
-    ? await generateThumbnail(videoUrl,timeStamp)
-    : undefined;
+  if (!thumbnail || thumbnail === '') {
+    thumbnail = await generateThumbnail(videoUrl, timestamp ? timestamp : 0);
+  }
   const id = getVideoUUID(videoUrl);
   const videoInfo = {
-    id: id,
-    local: true,
-    id: id,
-    thumbnail: thumbnail,
+    id,
+    thumbnail,
     url: videoUrl,
+    local: true,
     durationSeconds: pmVideoInfo.duration,
     bitrate: pmVideoInfo.bitrate,
     frameRate: pmVideoInfo.frameRate,
     size: pmVideoInfo.size,
+    startTimestamp: Date.now(),
   };
   return videoInfo;
 };
@@ -220,8 +191,6 @@ module.exports = {
   pickLibrary,
   resize,
   rotateImage,
-  uploadPictureFirebase,
-  uploadVideoFirebase,
   getPhotoUser,
   sortVideos,
   getVideoInfo,

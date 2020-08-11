@@ -90,7 +90,6 @@ class CardStream extends Component {
           color={colors.white}
           onPressColor={colors.off}
           click={() => {
-            console.log('convo', coachSessionID);
             navigate('Conversation', {coachSessionID: coachSessionID});
           }}
           style={[styleApp.fullSize, {paddingTop: 10, paddingBottom: 10}]}

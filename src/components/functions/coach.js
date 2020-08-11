@@ -298,53 +298,43 @@ const generateFlagsThumbnail = async ({
   memberID,
   coachSessionID,
 }) => {
-  console.log(flags, source, memberID, coachSessionID);
-  let thumbnails = [];
-  if (flags) {
-    for (var i in flags) {
-      const flag = flags[i];
-      const flagID = flag.id;
-      let {path: thumbnail} = await createThumbnail({
-        url: source,
-        timeStamp: flag.time,
-      });
-      thumbnail = await compressThumbnail(thumbnail);
-      thumbnails.push({
-        url: thumbnail,
-        thumbnail: thumbnail,
-        localIdentifier: getVideoUUID(thumbnail),
-        storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
-        destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${flagID}/thumbnail`,
-        firebaseUpdates: {},
-        displayInList: false,
-        progress: 0,
-        type: 'image',
-        filename: 'Thumbnail',
-        updateFirebaseAfterUpload: true,
-        date: Date.now(),
-      });
-    }
-  }
+  // creates thumbnails for full video and flags, sets up clip selection for user who stopped recording
+  console.log('flags', flags);
+  let thumbnails =
+    !flags || Object.keys(flags).length === 0
+      ? []
+      : await Promise.all(
+          Object.values(flags).map(async (flag) => {
+            const {id, time} = flag;
+            let {path: thumbnail} = await createThumbnail({
+              url: source,
+              timeStamp: time,
+            });
+            thumbnail = await compressThumbnail(thumbnail);
+            return {
+              type: 'image',
+              url: thumbnail,
+              storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${id}`,
+              displayInList: false,
+              progress: 0,
+              date: Date.now(),
+            };
+          }),
+        );
   let {path: thumbnailFullVideo} = await createThumbnail({
     url: source,
     timeStamp: 500,
   });
   thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
   thumbnails.push({
+    type: 'image',
     url: thumbnailFullVideo,
-    localIdentifier: getVideoUUID(thumbnailFullVideo),
-    storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
-    destinationFile: `coachSessions/${coachSessionID}/members/${memberID}/recording/thumbnail`,
-    firebaseUpdates: {},
-    thumbnail: thumbnailFullVideo,
-    filename: 'Thumbnail full video',
+    storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording`,
     displayInList: false,
     progress: 0,
-    type: 'image',
-    updateFirebaseAfterUpload: true,
     date: Date.now(),
   });
-  await database()
+  database()
     .ref()
     .update({
       [`coachSessions/${coachSessionID}/members/${memberID}/recording/localSource`]: source,

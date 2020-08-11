@@ -17,7 +17,7 @@ import {FlatListComponent} from '../../../layout/Views/FlatList';
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening, addMembersToSession} from '../../../functions/coach';
-import {addVideosToTeam} from '../../../functions/videoManagement';
+import {shareVideosWithTeam} from '../../../functions/videoManagement';
 import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 
 const imageCardTeam = (session, size, hideDots) => {
@@ -163,7 +163,6 @@ const titleSession = (session, size, allMembers) => {
 
 const dateSession = ({session, messages}) => {
   let {members, createdAt} = session;
-  console.log('members', session);
   if (!members) return formatDate(Date.now());
   members = members ? Object.values(members) : [];
   const activeMembers = members.filter((m) => m.isConnected);
@@ -241,7 +240,6 @@ const lastMessage = (messages) => {
 };
 
 const formatDate = (date) => {
-  console.log('formatdate,', date);
   let justNow = moment(Date.now()).subtract(1, 'minute');
   let earlier = moment(Date.now()).subtract(7, 'days');
   let lastYear = moment(Date.now()).subtract(1, 'year');
@@ -428,7 +426,6 @@ const ListContents = (props) => {
   const {session} = props;
   let {contents, objectID} = session;
   if (!contents) contents = {};
-  console.log('render content', contents);
   return (
     <FlatListComponent
       list={Object.values(contents).sort(function(a, b) {
@@ -451,7 +448,7 @@ const ListContents = (props) => {
               selectableMode: true,
               selectOnly: true,
               confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
-                addVideosToTeam(
+                shareVideosWithTeam(
                   selectedLocalVideos,
                   selectedFirebaseVideos,
                   objectID,

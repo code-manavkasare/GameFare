@@ -227,9 +227,9 @@ const bindConversation = (conversationId) => {
         }, {});
 
       store.dispatch(setConversation({messages, objectID: conversationId}));
-      store.dispatch(
-        setConversationBinded({id: conversationId, isBinded: true}),
-      );
+      // store.dispatch(
+      //   setConversationBinded({id: conversationId, isBinded: true}),
+      // );
     });
 };
 
@@ -241,9 +241,9 @@ const unbindConversation = async (conversationId) => {
     await database()
       .ref('discussions/' + conversationId)
       .off();
-    store.dispatch(
-      setConversationBinded({id: conversationId, isBinded: false}),
-    );
+    // store.dispatch(
+    //   setConversationBinded({id: conversationId, isBinded: false}),
+    // );
   }
 };
 

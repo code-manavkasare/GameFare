@@ -27,18 +27,18 @@ import styleApp from '../../../../../../../style/style';
 class CardArchive extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
-    local: PropTypes.bool,
-    parent: PropTypes.string,
+    local: PropTypes.bool.isRequired,
     openVideo: PropTypes.func,
     style: PropTypes.object,
     selectableMode: PropTypes.bool,
     isSelected: PropTypes.bool,
     selectVideo: PropTypes.func,
+    allowPlay: PropTypes.bool,
   };
   static defaultProps = {
-    local: false,
     selectableMode: false,
     isSelected: false,
+    allowPlay: true,
   };
   constructor(props) {
     super(props);
@@ -66,17 +66,21 @@ class CardArchive extends PureComponent {
   }
 
   openVideo = async () => {
-    const {openVideo} = this.props;
+    const {openVideo, allowPlay} = this.props;
     const {archive} = this.props;
-    console.log('open video', archive);
-    if (openVideo) {
-      openVideo(archive.id);
-    } else {
-      openVideoPlayer(archive, true);
+    const {url} = archive;
+    if (url !== '') {
+      if (openVideo) {
+        openVideo(archive.id);
+      } else {
+        if (allowPlay) {
+          openVideoPlayer(archive, true);
+        }
+      }
     }
   };
   cloudIndicator() {
-    const {local} = this.props.archive;
+    const {local, url} = this.props.archive;
     if (!local) {
       return (
         <View
@@ -88,7 +92,7 @@ class CardArchive extends PureComponent {
             right: 5,
             zIndex: 20,
           }}>
-          <AllIcons name="cloud" type="font" color={colors.white} size={15} />
+          <AllIcons name={url === '' ? 'upload' : 'cloud'} type="font" color={colors.white} size={15} />
         </View>
       );
     } else {

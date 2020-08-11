@@ -4,9 +4,8 @@ import {View, StyleSheet, Animated, Text, Image} from 'react-native';
 import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../NavigationService';
-import {addVideoToMember} from '../../../database/firebase/videosManagement.js';
+import {shareCloudVideo} from '../../../database/firebase/videosManagement.js';
 import {sessionOpening} from '../../../functions/coach';
-import {addvideo} from '../../../functions/videoManagement';
 
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -35,7 +34,7 @@ class HeaderGroupPage extends Component {
       onGoBack: async (members) => {
         for (const member of Object.values(members)) {
           for (const videoId of selectedVideos) {
-            addVideoToMember(userID, member.id, videoId);
+            shareCloudVideo(member.id, videoId);
           }
         }
         setState({selectableMode: false, selectedVideos: []});

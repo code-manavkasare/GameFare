@@ -1,6 +1,8 @@
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 
+import {updateCloudProgress} from '../database/firebase/videosManagement';
+
 const uploadImage = async (path, destination, name) => {
   if (!path) return;
   const videoRef = storage()
@@ -17,65 +19,48 @@ const uploadImage = async (path, destination, name) => {
   });
 };
 
-const updateProgress = async (progressUpdates, progress) => {
-  let updates = {};
-  progressUpdates?.uploadPaths?.map((path) => {
-    let constructor = {...progressUpdates.constructor[path], progress};
-    updates[path] = constructor;
-  });
-  if (Object.values(updates).length !== 0)
-    await database()
-      .ref()
-      .update(updates);
-  return;
-};
-
-const uploadVideo = async (
-  videoInfo,
-  destination,
-  name,
-  index,
-  uploadAction,
-  progressUpdates,
-) => {
-  const {url} = videoInfo;
+const uploadVideo = async (uploadTask, uploadQueueAction, index) => {
+  const {
+    videoInfo,
+    cloudID,
+    storageDestination,
+    subscribedToProgress,
+  } = uploadTask;
+  const {url, durationSeconds} = videoInfo;
   if (!url) return;
   const videoRef = storage()
-    .ref(destination)
-    .child(name);
-  if (progressUpdates)
-    await updateProgress(progressUpdates, 0.2);
-  const uploadTask = videoRef.putFile(url, {
+    .ref(storageDestination)
+    .child('archive.mp4');
+  if (subscribedToProgress?.length > 0) {
+    updateCloudProgress(cloudID, subscribedToProgress, 0.2);
+  }
+  const uploading = videoRef.putFile(url, {
     contentType: 'video',
     cacheControl: 'no-store',
   });
-  const progressDelta = 5 / videoInfo.durationSeconds;
+  const progressDelta = 5 / durationSeconds;
   let progressBuffer = progressDelta < 1 ? progressDelta : 0.7;
   return new Promise((resolve, reject) =>
-    uploadTask.on(
+    uploading.on(
       'state_changed',
       async function(snapshot) {
-        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        if (isNaN(progress)) progress = 0;
-        else progress = 0.2 + (Number(progress.toFixed(0)) / 100) * 0.7;
-        console.log('progress:', progress)
-        if (uploadAction)
-          uploadAction('setJobProgress', {
-            index: index,
-            progress,
-          });
-        if (
-          progressUpdates?.uploadPaths &&
-          (progress > progressBuffer || progress === 1)
-        ) {
-          await updateProgress(progressUpdates, progress);
-          progressBuffer += progressDelta;
-        }
-        switch (snapshot.state) {
-          case storage.TaskState.PAUSED: // or 'paused'
-            break;
-          case storage.TaskState.RUNNING: // or 'running'
-            break;
+        if (snapshot.error) {
+          console.log('UPLOAD ERROR', snapshot.error);
+        } else {
+          let progress = (snapshot.bytesTransferred / snapshot.totalBytes);
+          if (uploadQueueAction && progress !== 0) {
+            uploadQueueAction('setJobProgress', {
+              index: index,
+              progress,
+            });
+          }
+          if (
+            subscribedToProgress?.length > 0 &&
+            (progress > progressBuffer || progress === 1)
+          ) {
+            updateCloudProgress(cloudID, subscribedToProgress, progress);
+            progressBuffer += progressDelta;
+          }
         }
       },
       function(error) {
@@ -84,12 +69,12 @@ const uploadVideo = async (
       },
       async () => {
         var url = await videoRef.getDownloadURL();
-        if (progressUpdates)
-          await updateProgress(progressUpdates, 1);
+        if (subscribedToProgress?.length > 0)
+          updateCloudProgress(cloudID, subscribedToProgress, 1);
         resolve(url);
       },
     ),
   );
 };
 
-module.exports = {uploadVideo, uploadImage, updateProgress};
+module.exports = {uploadVideo, uploadImage};

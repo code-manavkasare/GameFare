@@ -23,6 +23,8 @@ import Session from './TabsApp/components/Session';
 
 import Alert from '../layout/alerts/Alert';
 
+import ShareVideo from '../app/shareVideo';
+
 const Stack = createStackNavigator();
 function InitialStack() {
   return (
@@ -96,8 +98,8 @@ function InitialStack() {
       />
 
       <Stack.Screen
-        name="CourtCalibration"
-        component={CourtCalibration}
+        name="ShareVideo"
+        component={ShareVideo}
         options={{
           gestureEnabled: false,
         }}

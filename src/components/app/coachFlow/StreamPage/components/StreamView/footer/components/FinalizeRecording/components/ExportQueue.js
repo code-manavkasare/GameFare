@@ -56,7 +56,7 @@ class ExportQueue extends Component {
       visible: false,
       flagsSelected: {},
       loader: false,
-      selfThumbnails: undefined
+      selfThumbnails: undefined,
     })
   }
 

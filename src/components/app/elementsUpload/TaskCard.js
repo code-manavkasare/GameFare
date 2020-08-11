@@ -55,8 +55,8 @@ class TaskCard extends Component {
     return (
       <View style={styles.fullCenter}>
         <View style={{...styles.thumbnail}}>
-        {task.thumbnail ? (
-          <Image source={{uri: task.thumbnail}} style={styles.thumbnail} />
+        {task.videoInfo.thumbnail ? (
+          <Image source={{uri: task.videoInfo.thumbnail}} style={styles.thumbnail} />
         ) : (
           <View style={styles.placeholderContainer} />
         )}
@@ -67,16 +67,16 @@ class TaskCard extends Component {
 
   taskInfo() {
     const {task} = this.state;
-    const {currentScreenSize, members} = this.props;
+    const {currentScreenSize} = this.props;
 
-    const {type, filename} = task;
+    const {type, taskName} = task;
     const {currentWidth: width} = currentScreenSize;
     return (
       <View style={{width:'100%'}}>
         <Text style={{...styleApp.title, fontSize: 15, marginBottom:5}}>
           {type === 'image'
-            ? filename
-            : formatDuration(task.durationSeconds)}
+            ? taskName
+            : formatDuration(task.videoInfo.durationSeconds)}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15, marginBottom:15}}>
           <FormatDate date={task.date} />
@@ -110,6 +110,7 @@ class TaskCard extends Component {
   render() {
     const {index} = this.props;
     const {task} = this.state;
+    if (task.type === 'image') return null;
     return (
       <View style={{
         ...styles.card,

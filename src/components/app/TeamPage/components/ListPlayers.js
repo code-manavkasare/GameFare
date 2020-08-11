@@ -24,8 +24,6 @@ class ListPlayers extends Component {
   }
   render() {
     const {session, messages} = this.props;
-    // console.log('render mebers', session);
-    // return null;
     return (
       <View
         style={{
