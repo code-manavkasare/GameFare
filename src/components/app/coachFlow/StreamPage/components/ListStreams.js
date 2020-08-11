@@ -103,7 +103,7 @@ class ListStreams extends Component {
         inverted={false}
         incrementRendering={6}
         initialNumberToRender={8}
-        paddingBottom={sizes.heightFooter + 30}
+        paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
         header={rowTitle({
           icon: {
             name: 'user',

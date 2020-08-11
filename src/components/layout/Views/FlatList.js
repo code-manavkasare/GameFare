@@ -23,6 +23,12 @@ class FlatListComponent extends Component {
     if (isEqual(this.props, prevProps)) return false;
     return true;
   }
+  static getDerivedStateFromProps(props, state) {
+    if (props.list.length > state.numberToRender)
+      return {
+        numberToRender: props.list.length,
+      };
+  }
   async onEndReached() {
     const {list, incrementRendering} = this.props;
     const {numberToRender} = this.state;
@@ -45,9 +51,9 @@ class FlatListComponent extends Component {
       AnimatedHeaderValue,
       paddingBottom,
       inverted,
+      styleContainer,
     } = this.props;
     let styleContainerList = {
-      paddingTop: 35,
       backgroundColor: colors.white,
       paddingBottom: 60,
       minHeight: height,
@@ -55,7 +61,8 @@ class FlatListComponent extends Component {
     };
 
     const containerStyle = {
-      paddingBottom: paddingBottom ? paddingBottom : 0,
+      ...styleContainer,
+      paddingBottom: paddingBottom ? paddingBottom : 60,
       backgroundColor: colors.white,
       width: '100%',
     };
@@ -67,46 +74,42 @@ class FlatListComponent extends Component {
         </View>
       );
     };
-    console.log('render list ', list);
-
     return (
-      <View style={containerStyle}>
-        <FlatList
-          data={list.slice(0, numberToRender)}
-          renderItem={({item, index}) => cardList({item, index})}
-          ListFooterComponent={() =>
-            list.length > numberToRender && list.length !== 0 && viewLoader()
-          }
-          scrollIndicatorInsets={{right: 1}}
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="interactive"
-          keyExtractor={(item) => (item.id ? item.id : item.toString())}
-          numColumns={numColumns}
-          scrollEnabled={true}
-          removeClippedSubviews={true}
-          inverted={inverted}
-          contentContainerStyle={styleContainerList}
-          ListHeaderComponent={header}
-          ListHeaderComponentStyle={styleApp.marginView}
-          showsVerticalScrollIndicator={true}
-          onEndReached={() => this.onEndReached()}
-          onEndReachedThreshold={0.9}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: AnimatedHeaderValue
-                      ? AnimatedHeaderValue
-                      : this.AnimatedHeaderValue,
-                  },
+      <FlatList
+        data={list.slice(0, numberToRender)}
+        renderItem={({item, index}) => cardList({item, index})}
+        ListFooterComponent={() =>
+          list.length > numberToRender && list.length !== 0 && viewLoader()
+        }
+        scrollIndicatorInsets={{right: 1}}
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="interactive"
+        keyExtractor={(item) => (item.id ? item.id : item.toString())}
+        numColumns={numColumns}
+        scrollEnabled={true}
+        removeClippedSubviews={true}
+        inverted={inverted}
+        contentContainerStyle={containerStyle}
+        ListHeaderComponent={header}
+        ListHeaderComponentStyle={styleApp.marginView}
+        showsVerticalScrollIndicator={true}
+        onEndReached={() => this.onEndReached()}
+        onEndReachedThreshold={0.9}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: AnimatedHeaderValue
+                    ? AnimatedHeaderValue
+                    : this.AnimatedHeaderValue,
                 },
               },
-            ],
-            {useNativeDriver: false},
-          )}
-        />
-      </View>
+            },
+          ],
+          {useNativeDriver: false},
+        )}
+      />
     );
   }
 }

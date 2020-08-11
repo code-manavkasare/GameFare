@@ -137,15 +137,16 @@ class CardArchive extends PureComponent {
 
         <View
           pointerEvents="none"
-          style={{...styles.viewText, bottom: 5, left: 5}}>
+          style={{...styles.viewText, bottom: 5, left: 10}}>
           <Col>
-            <Text style={[styleApp.text, {color: colors.white, fontSize: 13}]}>
+            <Text
+              style={[styleApp.textBold, {color: colors.white, fontSize: 14}]}>
               {formatDuration(durationSeconds * 1000, true)}
             </Text>
-            <Text
+            {/* <Text
               style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
               <FormatDate date={startTimestamp} />
-            </Text>
+            </Text> */}
           </Col>
         </View>
 
@@ -156,7 +157,16 @@ class CardArchive extends PureComponent {
               bottom: 20,
               width: '100%',
             };
-            return <Row style={styleRow} />;
+            return (
+              !selectableMode && (
+                <AllIcons
+                  name="play"
+                  type="font"
+                  color={colors.white}
+                  size={18}
+                />
+              )
+            );
           }}
           click={() =>
             selectableMode ? selectVideo(id, !isSelected) : this.openVideo()

@@ -76,13 +76,23 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
   return newDiscussion;
 }
 
-async function sendNewMessage(discusssionID, user, text, images) {
+const sendNewMessage = async ({
+  objectID,
+  user,
+  text,
+  images,
+  type,
+  content,
+}) => {
+  console.log('sendNewMessage', {objectID, user, text, images, type, content});
   await database()
-    .ref('messagesCoachSession/' + discusssionID)
+    .ref('messagesCoachSession/' + objectID)
     .push({
-      user: user,
-      text: text,
-      images: images,
+      user,
+      text,
+      type,
+      images,
+      content,
       createdAt: new Date(),
       timeStamp: Date.now(),
       usersRead: {
@@ -90,7 +100,7 @@ async function sendNewMessage(discusssionID, user, text, images) {
       },
     });
   return true;
-}
+};
 
 async function searchDiscussion(ids, numberMembers) {
   // await indexDiscussions.clearCache();

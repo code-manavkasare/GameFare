@@ -17,6 +17,7 @@ import {FlatListComponent} from '../../../layout/Views/FlatList';
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening, addMembersToSession} from '../../../functions/coach';
+import {addVideosToTeam} from '../../../functions/videoManagement';
 import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 
 const imageCardTeam = (session, size, hideDots) => {
@@ -216,7 +217,7 @@ const lastMessage = (messages) => {
   const lastMessage = lastMessageObject(messages);
   if (!lastMessage) return null;
 
-  const {user, timeStamp, images} = lastMessage;
+  const {user, timeStamp, images, type} = lastMessage;
   let {text} = lastMessage;
 
   if (images)
@@ -224,6 +225,7 @@ const lastMessage = (messages) => {
       Object.values(images).length === 1 ? '' : 's'
     }`;
   if (text.length > 50) text = text.slice(0, 50) + '...';
+  if (type === 'video') text = '1 video shared.';
   return (
     <Text
       style={[
@@ -350,7 +352,7 @@ const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
     width: 23,
     borderRadius: 20,
     height: 23,
-    top: -15,
+    top: -10,
     left: 55,
     borderWidth: 1,
     borderColor: colors.white,
@@ -363,7 +365,7 @@ const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
   };
   return (
     <View>
-      <Row style={[{marginBottom: 10}]}>
+      <Row style={[{marginBottom: 10, marginTop: 30}]}>
         <Col size={30} style={styleApp.center}>
           <AllIcons name={name} type={type} color={color} size={size} />
           {badge && (
@@ -424,14 +426,16 @@ const viewWithTitle = ({view, title, icon, badge}) => {
 
 const ListContents = (props) => {
   const {session} = props;
-  let {contents} = session;
+  let {contents, objectID} = session;
   if (!contents) contents = {};
-  console.log('content');
+  console.log('render content', contents);
   return (
     <FlatListComponent
-      list={Object.keys(contents)}
+      list={Object.values(contents).sort(function(a, b) {
+        return b.timeStamp - a.timeStamp;
+      })}
       cardList={({item}) => (
-        <CardArchive id={item} style={styleApp.cardArchive} key={item} />
+        <CardArchive id={item.id} style={styleApp.cardArchive} key={item.id} />
       )}
       numColumns={2}
       incrementRendering={4}
@@ -446,6 +450,12 @@ const ListContents = (props) => {
             navigate('SelectVideosFromLibrary', {
               selectableMode: true,
               selectOnly: true,
+              confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
+                addVideosToTeam(
+                  selectedLocalVideos,
+                  selectedFirebaseVideos,
+                  objectID,
+                ),
             }),
         },
         badge:

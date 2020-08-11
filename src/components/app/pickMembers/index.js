@@ -78,6 +78,7 @@ export default class PickMembersPage extends React.Component {
       selectFromContacts,
       clickButton2,
     } = route.params;
+    console.log('params', route.params);
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
         <PickMembersHeader
@@ -94,7 +95,9 @@ export default class PickMembersPage extends React.Component {
           allowSelectMultiple={allowSelectMultiple}
           selectFromGamefare={selectFromGamefare}
           selectFromContacts={selectFromContacts}
-          onSelectMembers={(members, contacts) => this.onSelectMembers(members, contacts)}
+          onSelectMembers={(members, contacts) =>
+            this.onSelectMembers(members, contacts)
+          }
         />
       </View>
     );

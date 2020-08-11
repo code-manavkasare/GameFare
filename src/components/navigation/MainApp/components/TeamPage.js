@@ -30,6 +30,7 @@ const MyTabs = ({session, user, initialMessage, messages}) => {
         </View>
       )}
       initialLayout={initialLayout}
+      sceneContainerStyle={{backgroundColor: colors.white}}
       tabBarOptions={{
         activeTintColor: colors.primary,
         inactiveTintColor: colors.greyDark,

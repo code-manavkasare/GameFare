@@ -18,6 +18,7 @@ import {
   addVideoToMember,
   deleteVideoFromLibrary,
 } from '../../database/firebase/videosManagement.js';
+import {addVideosToTeam} from '../../functions/videoManagement';
 import {rowTitle} from '../TeamPage/components/elements';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
@@ -266,7 +267,9 @@ class VideoLibraryPage extends Component {
           numColumns={2}
           incrementRendering={4}
           initialNumberToRender={8}
-          paddingBottom={selectOnly ? 0 : sizes.heightFooter}
+          paddingBottom={
+            selectOnly ? 0 : sizes.heightFooter + sizes.marginBottomApp + 20
+          }
           header={
             !selectOnly &&
             rowTitle({
@@ -308,13 +311,14 @@ class VideoLibraryPage extends Component {
   }
 
   render() {
-    const {navigation} = this.props;
+    const {navigation, route} = this.props;
+
     const {
       videosArray,
       selectableMode,
       loader,
-      selectedVideos,
       selectedFirebaseVideos,
+      selectedLocalVideos,
       selectOnly,
     } = this.state;
     return (
@@ -327,7 +331,6 @@ class VideoLibraryPage extends Component {
           navigation={navigation}
           selectOnly={selectOnly}
           isListEmpty={videosArray.length === 0}
-          selectedVideos={selectedVideos}
           add={() => this.addVideo()}
           remove={() => this.deleteSelectedVideos()}
           share={() => this.shareSelectedVideos()}
@@ -335,9 +338,7 @@ class VideoLibraryPage extends Component {
 
         <View
           style={{
-            marginTop: selectOnly
-              ? sizes.heightHeaderHome
-              : sizes.heightHeaderHome + sizes.marginTopApp,
+            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
           }}>
           {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
         </View>
@@ -347,14 +348,18 @@ class VideoLibraryPage extends Component {
             <Button
               text={`Confirm ${selectedFirebaseVideos.length} videos`}
               backgroundColor={'green'}
+              loader={loader}
               onPressColor={colors.greenLight}
-              click={() =>
-                navigation.navigate('Alert', {
-                  title: 'Work in progress',
-                  textButton: 'Ok',
-                  close: true,
-                })
-              }
+              click={async () => {
+                await this.setState({loader: true});
+
+                await route.params.confirmVideo(
+                  selectedLocalVideos,
+                  selectedFirebaseVideos,
+                );
+
+                return navigation.goBack();
+              }}
             />
           </View>
         )}

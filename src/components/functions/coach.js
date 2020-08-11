@@ -578,6 +578,7 @@ const addMembersToSession = (objectID, navigateTo) => {
     closeButton: true,
     loaderOnSubmit: true,
     displayCurrentUser: false,
+    selectFromContacts: true,
     titleHeader: 'Add someone to the session',
     onGoBack: async (members) => {
       for (var i in Object.values(members)) {
