@@ -35,7 +35,6 @@ const localVideoLibraryReducer = (state = initialState, action) => {
           result[item.id] = item;
           return result;
         }, {});
-      console.log('currentSnippets', currentSnippets);
       return {
         ...state,
         videoLibrary: {

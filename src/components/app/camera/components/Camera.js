@@ -8,7 +8,7 @@ import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 
 import {getVideoInfo} from '../../../functions/pictures';
-import {addVideo, openVideoPlayer} from '../../../functions/videoManagement';
+import {addLocalVideo, openVideoPlayer} from '../../../functions/videoManagement';
 
 export default class Camera extends Component {
   constructor(props) {
@@ -85,12 +85,12 @@ export default class Camera extends Component {
   }
   async saveRecording(recording) {
     const {flags} = this.state;
-    let videoInfo = await getVideoInfo(recording.uri, true);
+    let videoInfo = await getVideoInfo(recording.uri);
     if (flags.length > 0) {
       videoInfo = {...videoInfo, flags};
       this.setState({flags: []});
     }
-    addVideo(videoInfo);
+    addLocalVideo(videoInfo);
     openVideoPlayer(videoInfo, true);
   }
   render() {

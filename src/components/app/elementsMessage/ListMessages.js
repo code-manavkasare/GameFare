@@ -99,8 +99,6 @@ class ListMessages extends Component {
   };
 
   render() {
-    console.log('render flat list message', this.props);
-
     return (
       <View style={styles.container}>
         <FlatListComponent

@@ -198,6 +198,7 @@ class BottomButton extends Component {
         const {id: memberID, recording} = member;
         if (!discardFile) {
           const {userIDrequesting} = recording;
+          // create firebase object here
           const thumbnails = await generateFlagsThumbnail({
             flags: recording.flags,
             source: videoUrl,

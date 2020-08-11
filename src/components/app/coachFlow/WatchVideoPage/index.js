@@ -150,7 +150,6 @@ class WatchVideoPage extends Component {
       sizeVideo,
       drawingOpen,
     } = this.state;
-    console.log('videoSource', videoSource);
     const myVideo = this.isMyVideo(this.props);
     const video = this.video(this.props, this.state);
     const drawingEnable =

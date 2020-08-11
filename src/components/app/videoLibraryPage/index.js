@@ -15,10 +15,9 @@ import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 import {
-  addVideoToMember,
-  deleteVideoFromLibrary,
+  deleteCloudVideo,
 } from '../../database/firebase/videosManagement.js';
-import {addVideosToTeam} from '../../functions/videoManagement';
+import {shareVideosWithTeam} from '../../functions/videoManagement';
 import {rowTitle} from '../TeamPage/components/elements';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
@@ -36,9 +35,8 @@ import sizes from '../../style/sizes';
 import {
   recordVideo,
   openVideoPlayer,
-  removeLocalVideos,
-  uploadLocalVideos,
-  addVideo,
+  addLocalVideo,
+  removeLocalVideo,
 } from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -50,7 +48,6 @@ class VideoLibraryPage extends Component {
   constructor(props) {
     super(props);
     const {params} = props.route;
-
     this.state = {
       videosArray: [],
       loader: false,
@@ -76,39 +73,14 @@ class VideoLibraryPage extends Component {
     return {videosArray};
   }
   shareSelectedVideos() {
-    const {userID} = this.props;
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
-    const numberVideos =
-      selectedFirebaseVideos.length + selectedLocalVideos.length;
+    const {navigation} = this.props;
+    const numberVideos = selectedFirebaseVideos.length + selectedLocalVideos.length;
     if (numberVideos > 0) {
-      navigate('PickMembers', {
-        usersSelected: {},
-        allowSelectMultiple: true,
-        selectFromGamefare: true,
-        selectFromContacts: true,
-        closeButton: true,
-        displayCurrentUser: false,
-        noUpdateStatusBar: true,
-        titleHeader: 'Select members to share video(s) with',
-        onSelectMembers: (users, contacts) => {
-          for (const user of Object.values(users)) {
-            for (const videoId of selectedFirebaseVideos) {
-              addVideoToMember(userID, user.id, videoId);
-            }
-            uploadLocalVideos(selectedLocalVideos);
-            for (const videoId of selectedLocalVideos) {
-              addVideoToMember(userID, user.id, videoId);
-            }
-          }
-          for (const contact of Object.values(contacts)) {
-            console.log('error sharing with contact', contact);
-          }
-          this.setState({
-            selectedFirebaseVideos: [],
-            selectedLocalVideos: [],
-            selectableMode: false,
-          });
-        },
+      this.setState({selectedFirebaseVideos: [], selectedLocalVideos: [], selectableMode: false});
+      navigation.push('ShareVideo', {
+        firebaseVideos: selectedFirebaseVideos,
+        localVideos: selectedLocalVideos,
       });
     }
   }
@@ -123,10 +95,10 @@ class VideoLibraryPage extends Component {
         textButton: `Delete (${numberVideos})`,
         onGoBack: () => {
           if (selectedFirebaseVideos.length > 0) {
-            deleteVideoFromLibrary(userID, selectedFirebaseVideos);
+            selectedFirebaseVideos.map((videoID) => deleteCloudVideo(videoID));
           }
           if (selectedLocalVideos.length > 0) {
-            removeLocalVideos(selectedLocalVideos);
+            selectedLocalVideos.map((videoID) => removeLocalVideo(videoID));
           }
         },
       });
@@ -183,13 +155,13 @@ class VideoLibraryPage extends Component {
     }).catch((err) => console.log('error', err));
     if (videos) {
       if (videos.length === 1) {
-        let newVideo = await getVideoInfo(videos[0].path, true, 0);
-        await addVideo(newVideo);
+        let newVideo = await getVideoInfo(videos[0].path);
+        await addLocalVideo(newVideo);
         openVideoPlayer(newVideo, true);
       }
       videos.map(async (video) => {
-        let newVideo = await getVideoInfo(video.path, true, 0);
-        addVideo(newVideo);
+        let newVideo = await getVideoInfo(video.path);
+        addLocalVideo(newVideo);
       });
     }
   }
@@ -290,15 +262,15 @@ class VideoLibraryPage extends Component {
     );
   }
   renderCardArchive(video) {
-    const {selectableMode, selectedFirebaseVideos} = this.state;
+    const {selectableMode, selectedFirebaseVideos, selectedLocalVideos} = this.state;
     const {local, id} = video;
     const isSelected =
-      // local
-      // ? includes(video.id, selectedLocalVideos)
-      includes(video.id, selectedFirebaseVideos);
+      local
+      ? includes(video.id, selectedLocalVideos)
+      : includes(video.id, selectedFirebaseVideos);
     return (
       <CardArchive
-        local={local ? true : false}
+        local={local}
         selectableMode={selectableMode}
         isSelected={isSelected}
         selectVideo={(id, selected) => this.selectVideo(id, selected, local)}
@@ -343,10 +315,10 @@ class VideoLibraryPage extends Component {
           {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
         </View>
 
-        {selectOnly && selectedFirebaseVideos.length !== 0 && (
+        {selectOnly && (selectedFirebaseVideos.length !== 0 || selectedLocalVideos.length !== 0) && (
           <View style={[styleApp.footerBooking, styleApp.marginView]}>
             <Button
-              text={`Confirm ${selectedFirebaseVideos.length} videos`}
+              text={`Confirm ${selectedFirebaseVideos.length + selectedLocalVideos.length} videos`}
               backgroundColor={'green'}
               loader={loader}
               onPressColor={colors.greenLight}

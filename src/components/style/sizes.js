@@ -1,6 +1,5 @@
 import {Platform, Dimensions} from 'react-native';
 const {height, width} = Dimensions.get('screen');
-console.log('height!', height);
 var marginTopHeader = 7;
 var heightPicture = 280;
 var heightFooterBooking = 80;

@@ -161,7 +161,7 @@ export default class VideoPlayer extends Component {
     this.setState({videoLoaded: !event.isBuffering});
   };
   onProgress = async (info) => {
-    const paused = this.controlButtonRef.getPaused();
+    const paused = this.controlButtonRef?.getPaused();
     const {currentTime} = info;
     if (!paused) {
       this.controlButtonRef?.setCurrentTime(currentTime);
@@ -262,7 +262,6 @@ export default class VideoPlayer extends Component {
       loader,
       muted,
     } = this.state;
-    console.log('paused: ', paused);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {loader && this.fullScreenLoader()}

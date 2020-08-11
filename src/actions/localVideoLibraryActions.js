@@ -16,7 +16,7 @@ export const deleteSnippet = (value) => ({
   parent: value.parent,
 })
 
-export const localVideoLibrary = (val, data) => {
+export const localVideoLibraryAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'addVideos') {
       await dispatch(addVideos(data));

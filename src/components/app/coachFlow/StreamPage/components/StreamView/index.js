@@ -454,7 +454,6 @@ class StreamPage extends Component {
       reconnecting,
       userID,
     } = this.props;
-    console.log('coachSession bim', coachSession);
 
     if (!coachSession && !coachSession.tokbox) null;
     const {publishAudio, publishVideo} = this.state;
@@ -467,8 +466,6 @@ class StreamPage extends Component {
 
     const member = userPartOfSession(coachSession, userID);
     const {isConnected} = member;
-    console.log('isConnected', isConnected);
-    console.log('member', member);
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
     return (
