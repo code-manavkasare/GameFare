@@ -89,9 +89,10 @@ class CardStream extends Component {
         <ButtonColor
           color={colors.white}
           onPressColor={colors.off}
-          click={() =>
-            navigate('Conversation', {coachSessionID: coachSessionID})
-          }
+          click={() => {
+            console.log('convo', coachSessionID);
+            navigate('Conversation', {coachSessionID: coachSessionID});
+          }}
           style={[styleApp.fullSize, {paddingTop: 10, paddingBottom: 10}]}
           view={() => {
             return loading ? (

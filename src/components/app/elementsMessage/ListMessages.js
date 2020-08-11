@@ -111,6 +111,7 @@ class ListMessages extends Component {
           inverted={true}
           numColumns={1}
           incrementRendering={20}
+          styleContainer={{paddingTop: 20}}
           header={<View />}
           initialNumberToRender={20}
           paddingBottom={133}

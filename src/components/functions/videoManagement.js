@@ -18,6 +18,7 @@ import {
   deleteVideo,
   deleteSnippet,
 } from '../../actions/localVideoLibraryActions';
+import {sendNewMessage} from './message';
 import {enqueueFileUpload} from '../../actions/uploadQueueActions';
 import {setLayout} from '../../actions/layoutActions';
 import {FormatDate, formatDuration} from './date';
@@ -420,6 +421,47 @@ const alertStopRecording = (archive) => {
   });
 };
 
+const addVideosToTeam = async (localVideos, firebaseVideos, objectID) => {
+  const userID = store.getState().user.userID;
+  const infoUser = store.getState().user.infoUser.userInfo;
+  const videosToUpload = localVideos.map(
+    (id) => store.getState().localVideoLibrary.videoLibrary[id],
+  );
+  let cloudVideos = [];
+  // cloudVideos = await Promise.all(videosToUpload.map((video) => uploadLocalVideo(video)));
+  let allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
+  let updates = {};
+  for (let i in firebaseVideos) {
+    console.log('shareCloudVideo', firebaseVideos[i]);
+    console.log('send message');
+    const videoID = firebaseVideos[i];
+    await sendNewMessage({
+      objectID,
+      user: {
+        id: userID,
+        info: infoUser,
+      },
+      text: '',
+      type: 'video',
+      content: videoID,
+    });
+    // await send Message
+  }
+
+  await database()
+    .ref(`coachSessions/${objectID}/contents`)
+    .update(
+      Object.values(firebaseVideos).reduce(function(result, item) {
+        result[item] = {
+          id: item,
+          timeStamp: Date.now(),
+        };
+        return result;
+      }, {}),
+    );
+  return allVideos;
+};
+
 export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
@@ -436,4 +478,5 @@ export {
   makeSnippet,
   alertStopRecording,
   shareVideoWithMembers,
+  addVideosToTeam,
 };

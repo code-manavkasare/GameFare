@@ -17,9 +17,7 @@ const bindArchive = (archiveID) => {
       .on('value', async function(snap) {
         let archive = snap.val();
         let {url} = archive;
-        console.log('data got', archive);
         if (!currentArchive) url = await convertToProxyURL(url);
-        console.log('bim url local proxy', url);
         store.dispatch(
           setArchive({
             ...archive,

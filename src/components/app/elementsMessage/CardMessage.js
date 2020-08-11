@@ -204,7 +204,7 @@ export default class CardMessage extends React.Component {
                   id={content}
                   style={[
                     styleApp.cardArchive,
-                    {marginTop: 15, marginLeft: -1},
+                    {marginTop: 15, marginLeft: -1, borderRadius: 6},
                   ]}
                 />
               )}

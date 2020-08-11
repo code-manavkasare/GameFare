@@ -25,7 +25,7 @@ class MessageTab extends React.Component {
     const {initialMessage, coachSessionID: objectID} = route.params;
     const {loader} = this.state;
     const user = userObject(infoUser, userID);
-
+    console.log('render conversation');
     return (
       <View style={styleApp.stylePage}>
         <HeaderConversation

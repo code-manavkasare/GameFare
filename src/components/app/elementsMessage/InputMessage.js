@@ -50,11 +50,13 @@ class InputMessage extends React.Component {
     if (initialMessage !== '') this.textInputRef.focus();
   }
 
-  async sendNewMessage(input, images) {
-    const {user, discussion, userConnected} = this.props;
+  async sendNewMessage() {
+    const {inputValue, images} = this.state;
+    const {user, discussion} = this.props;
+    const {objectID} = discussion;
 
     await this.setState({inputValue: '', images: {}});
-    await sendNewMessage(discussion.objectID, user, input, images);
+    await sendNewMessage({objectID, user, text: inputValue, images});
 
     return true;
   }
@@ -214,47 +216,13 @@ class InputMessage extends React.Component {
           <Col
             size={20}
             style={styleApp.center3}
-            onPress={() =>
-              this.conditionInputOn() &&
-              this.sendNewMessage(this.state.inputValue, this.state.images)
-            }>
+            onPress={() => this.conditionInputOn() && this.sendNewMessage()}>
             <AllIcons
               name={!this.conditionInputOn() ? 'send' : 'sendFull'}
               color={!this.conditionInputOn() ? colors.title : colors.primary}
               type="moon"
               size={24}
             />
-            {/* <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                    name="send"
-                    color={
-                      !this.conditionInputOn() ? colors.title : colors.white
-                    }
-                    type="moon"
-                    size={20}
-                  />
-                );
-              }}
-              click={() =>
-                this.conditionInputOn() &&
-                this.sendNewMessage(this.state.inputValue, this.state.images)
-              }
-              color={this.conditionInputOn() ? colors.primary : colors.white}
-              style={[
-                styleApp.center2,
-                styles.buttonSend,
-                {
-                  borderColor: this.conditionInputOn()
-                    ? colors.primary
-                    : colors.off,
-                },
-              ]}
-              onPressColor={
-                !this.conditionInputOn() ? colors.white : colors.primaryLight
-              }
-            /> */}
           </Col>
         </Row>
 
