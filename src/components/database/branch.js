@@ -4,6 +4,8 @@ import colors from '../style/colors';
 import {Alert, Linking} from 'react-native';
 import branch from 'react-native-branch';
 import {date} from '../layout/date/date';
+import {store} from '../../../reduxStore';
+
 
 async function getParams(link) {
   try {
@@ -123,8 +125,39 @@ const createBranchUrl = async (dataObj, action, image) => {
   return {url, description, title, image, action, objectID: dataObj.objectID};
 };
 
+const createShareVideosBranchUrl = async (videos) => {
+  let name = store.getState().user.infoUser.userInfo.firstname;
+  let description = 'See the video shared with you!';
+  if (name) {
+    description = `See the video ${name} shared with you!`;
+  }
+  let branchUniversalObject = await branch.createBranchUniversalObject(
+    'canonicalIdentifier',
+    {
+      contentDescription: description,
+      title: 'Join GameFare',
+      contentMetadata: {
+        customMetadata: {
+          ...videos,
+          type: 'ShareVideos',
+          $uri_redirect_mode: '1',
+        },
+      },
+    },
+  );
+  let linkProperties = {feature: 'share', channel: 'GameFare'};
+  let controlParams = {$desktop_url: 'http://getgamefare.com'};
+  let {url} = await branchUniversalObject.generateShortUrl(
+    linkProperties,
+    controlParams,
+  )
+  return url;
+}
+
+
 module.exports = {
   getParams,
   openUrl,
   createBranchUrl,
+  createShareVideosBranchUrl,
 };
