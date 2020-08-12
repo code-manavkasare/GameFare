@@ -20,13 +20,14 @@ import {
   marginTopApp,
 } from '../../style/sizes';
 
-import {shareVideosWithPeople} from '../../functions/videoManagement';
+import {shareVideosWithPeople, shareVideosWithTeam} from '../../functions/videoManagement';
+import {openSession} from '../../functions/coach';
 import AllIcons from '../../layout/icons/AllIcons';
 import ButtonColor from '../../layout/Views/Button';
 import ShareVideoHeader from './components/ShareVideoHeader';
 import ShareVideoPreview from './components/ShareVideoPreview';
 
-export default class ShareVideoPage extends React.Component {
+class ShareVideoPage extends React.Component {
   constructor(props) {
     super(props);
     this.focusListener = null;
@@ -46,9 +47,9 @@ export default class ShareVideoPage extends React.Component {
     this.props.navigation.pop();
   }
   shareWithFriends() {
-    const {navigation, route} = this.props;
+    const {navigation, route, user} = this.props;
     const {firebaseVideos, localVideos} = route.params;
-    const {push} = navigation;
+    const {push, navigate} = navigation;
     push('PickMembers', {
       usersSelected: {},
       allowSelectMultiple: true,
@@ -58,9 +59,13 @@ export default class ShareVideoPage extends React.Component {
       displayCurrentUser: false,
       noUpdateStatusBar: true,
       titleHeader: 'Select members to share video(s) with',
-      popNum: 2,
-      onSelectMembers: (users, contacts) => {
-        shareVideosWithPeople(localVideos, firebaseVideos, users, contacts);
+      noNavigation: true,
+      onSelectMembers: async (members, contacts) => {
+        const {objectID} = await openSession(user, members);
+        console.log('objectID', objectID);
+        shareVideosWithTeam(localVideos, firebaseVideos, objectID);
+        navigate('Conversation', {coachSessionID: objectID});
+        //shareVideosWithPeople(localVideos, firebaseVideos, users, contacts);
       }
     });
   }
@@ -128,3 +133,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+
+const mapStateToProps = (state) => {
+  return {
+    user: {id: state.user.userID, info: state.user.infoUser},
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(ShareVideoPage);

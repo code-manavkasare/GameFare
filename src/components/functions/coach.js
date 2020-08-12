@@ -54,6 +54,8 @@ const createCoachSession = async (user, members) => {
   await database()
     .ref(`coachSessions/${coachSessionID}`)
     .update(session);
+  await store.dispatch(setSession(session));
+  bindSession(session.objectID)
   return session;
 };
 
@@ -480,14 +482,14 @@ const newSession = () => {
 };
 const createSession = async (members) => {
   const {userID, infoUser} = store.getState().user;
-  members = Object.values(members).reduce(function(result, item) {
-    result[item.id] = {
-      id: item.id,
-      info: item.info,
-    };
-    return result;
-  }, {});
-
+  if (members) {
+    members = Object.values(members).reduce((result, member) => {
+      return {
+        ...result,
+        [member.id]: member,
+      }
+    }, {});
+  }
   const {objectID} = await openSession(
     {
       id: userID,
