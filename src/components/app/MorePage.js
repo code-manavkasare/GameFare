@@ -282,7 +282,6 @@ class MorePage extends Component {
                   usersSelected: {},
                   allowSelectMultiple: true,
                   selectFromContacts: true,
-                  closeButton: true,
                   displayCurrentUser: false,
                   noUpdateStatusBar: true,
                   titleHeader: 'Select your contacts',

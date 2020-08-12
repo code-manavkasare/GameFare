@@ -20,6 +20,7 @@ import {
   marginTopApp,
 } from '../../style/sizes';
 
+import {createShareVideosBranchUrl} from '../../database/branch';
 import {shareVideosWithPeople, shareVideosWithTeam} from '../../functions/videoManagement';
 import {openSession} from '../../functions/coach';
 import AllIcons from '../../layout/icons/AllIcons';
@@ -46,25 +47,33 @@ class ShareVideoPage extends React.Component {
   close() {
     this.props.navigation.pop();
   }
-  shareWithFriends() {
+  async shareWithFriends() {
     const {navigation, route, user} = this.props;
     const {firebaseVideos, localVideos} = route.params;
     const {push, navigate} = navigation;
+    let branchLink = '';
+    if (firebaseVideos.length > 0) {
+      const branchMetadata = firebaseVideos.reduce((result, video) => {
+        return {
+          ...result,
+          [video.id]: video,
+        };
+      });
+      branchLink = await createShareVideosBranchUrl(branchMetadata);
+    }
     push('PickMembers', {
-      usersSelected: {},
       allowSelectMultiple: true,
       selectFromSessions: false,
       selectFromGamefare: true,
-      closeButton: true,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
       titleHeader: 'Select members to share with',
       noNavigation: true,
+      branchLink,
       onSelectMembers: async (members, sessions) => {
         const {objectID} = await openSession(user, members);
         shareVideosWithTeam(localVideos, firebaseVideos, objectID);
         navigate('Conversation', {coachSessionID: objectID});
-        //shareVideosWithPeople(localVideos, firebaseVideos, users, contacts);
       }
     });
   }
@@ -73,11 +82,9 @@ class ShareVideoPage extends React.Component {
     const {firebaseVideos, localVideos} = route.params;
     const {push, pop, navigate} = navigation;
     push('PickMembers', {
-      usersSelected: {},
       allowSelectMultiple: true,
       selectFromSessions: true,
       selectFromGamefare: false,
-      closeButton: true,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
       titleHeader: 'Select teams to share with',

@@ -117,7 +117,6 @@ class PickMembers extends React.Component {
           [session.objectID]: {...session},
         };
       }
-      console.log('selectSession', sessionsSelected);
       this.setState({sessionsSelected});
     }
   }

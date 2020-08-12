@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Image,
-  ScrollView,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet, Dimensions, Share} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
@@ -21,8 +13,6 @@ import {
   marginTopApp,
   marginTopAppLandscape,
 } from '../../style/sizes';
-import Loader from '../../layout/loaders/Loader';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import PickMembers from './components/PickMembers.js';
 import PickMembersHeader from './components/PickMembersHeader.js';
 
@@ -76,26 +66,40 @@ export default class PickMembersPage extends React.Component {
     const {route} = this.props;
     const {
       titleHeader,
-      closeButton,
-      icon2,
-      text2,
       displayCurrentUser,
       allowSelectMultiple,
       selectFromGamefare,
       selectFromSessions,
+      branchLink,
+      icon2,
+      text2,
       clickButton2,
     } = route.params;
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
-        <PickMembersHeader
+        {branchLink && <PickMembersHeader
           title={titleHeader}
-          icon1={closeButton ? 'times' : 'arrow-left'}
+          icon1={'times'}
+          clickButton1={() => this.close(true)}
+          icon2={branchLink ? 'external-link-alt' : null}
+          clickButton2={() => {
+            if (branchLink && branchLink !== '') {
+              Share.share({
+                url: branchLink,
+              });
+            }
+          }}
+          loader={false}
+        />}
+        {!branchLink && <PickMembersHeader
+          title={titleHeader}
+          icon1={'times'}
           clickButton1={() => this.close(true)}
           icon2={icon2}
           text2={text2}
           clickButton2={() => clickButton2()}
           loader={false}
-        />
+        />}
         <PickMembers
           displayCurrentUser={displayCurrentUser}
           allowSelectMultiple={allowSelectMultiple}
