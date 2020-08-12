@@ -13,6 +13,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
 import StatusBar from '@react-native-community/status-bar';
 import Orientation from 'react-native-orientation-locker';
+import {dissoc} from 'ramda';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -25,9 +26,9 @@ import Loader from '../../../layout/loaders/Loader';
 import Button from '../../../layout/buttons/Button';
 import Switch from '../../../layout/switch/Switch';
 import CardUserSelect from '../../../layout/cards/CardUserSelect';
-import CardContactSelect from '../../../layout/cards/CardContactSelect';
-import {searchPhoneContacts} from '../../../functions/phoneContacts';
+import CardSessionSelect from '../../../layout/cards/CardSessionSelect';
 import {autocompleteSearchUsers} from '../../../functions/users';
+import {searchSessionsForString} from '../../../functions/coach';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -35,27 +36,31 @@ class PickMembers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loadingUsers: true,
-      loadingContacts: true,
+      searchInput: '',
       loaderButton: false,
       users: [],
-      contacts: [],
+      sessions: [],
+      loadingUsers: true,
+      loadingSessions: true,
       usersSelected: {},
-      contactsSelected: {},
-      searchInput: '',
-      selectingContacts: false,
+      sessionsSelected: {},
+      selectingUsers: false,
+      selectingSessions: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.selectFromContacts && !props.selectFromGamefare) {
-      return {selectingContacts: true};
+    const {selectFromGamefare, selectFromSessions} = props;
+    if (selectFromGamefare) {
+      return {selectingUsers: true}
+    } else if (selectFromSessions) {
+      return {selectingSessions: true};
     }
     return {};
   }
   async componentDidMount() {
     this.searchUsers('');
-    this.searchContacts('');
+    this.searchSessions('');
     const {usersSelected} = this.props;
     if (usersSelected) {
       this.setState({usersSelected});
@@ -69,22 +74,24 @@ class PickMembers extends React.Component {
       displayCurrentUser,
       blockedByUsers ? Object.keys(blockedByUsers) : false,
     );
-    this.setState({users: users, loadingUsers: false});
+    this.setState({users, loadingUsers: false});
   }
-  async searchContacts(search)  {
-    const contacts = await searchPhoneContacts(search);
-    this.setState({contacts, loadingContacts: false});
-  };
+  async searchSessions(search) {
+    const {coachSessions} = this.props;
+    const ids = await searchSessionsForString(search);
+    const sessions = ids.map((id) => coachSessions[id]);
+    this.setState({sessions, loadingSessions: false});
+  }
   async selectUser(selected, user, selectedUsers) {
     const {allowSelectMultiple, onSelectMembers} = this.props;
     if (!allowSelectMultiple) {
       const usersSelected = {[user.objectID]: {...user, id: user.objectID}};
-      await this.setState({usersSelected});
-      onSelectMembers(usersSelected);
+      this.setState({usersSelected});
+      onSelectMembers(usersSelected, {});
     } else {
       let {usersSelected} = this.state;
       if (usersSelected[user.objectID]) {
-        delete usersSelected[user.objectID];
+        dissoc(user.objectID, usersSelected);
       } else {
         usersSelected = {
           ...usersSelected,
@@ -94,8 +101,28 @@ class PickMembers extends React.Component {
       this.setState({usersSelected});
     }
   }
+  async selectSession(session) {
+    const {allowSelectMultiple, onSelectMembers} = this.props;
+    if (!allowSelectMultiple) {
+      const sessionsSelected = {[session.objectID]: {...session}};
+      this.setState({sessionsSelected});
+      onSelectMembers({}, sessionsSelected);
+    } else {
+      let {sessionsSelected} = this.state;
+      if (sessionsSelected[session.objectID]) {
+        dissoc(session.objectID, sessionsSelected);
+      } else {
+        sessionsSelected = {
+          ...sessionsSelected,
+          [session.objectID]: {...session},
+        };
+      }
+      console.log('selectSession', sessionsSelected);
+      this.setState({sessionsSelected});
+    }
+  }
   searchInput() {
-    const {selectingContacts} = this.state;
+    const {selectingUsers, selectingSessions} = this.state;
     return (
       <View style={styles.searchInputRow}>
         <Row style={styles.searchBar}>
@@ -112,9 +139,11 @@ class PickMembers extends React.Component {
               underlineColorAndroid="rgba(0,0,0,0)"
               autoCorrect={true}
               onChangeText={(text) =>
-                selectingContacts
-                  ? this.searchContacts(text)
-                  : this.searchUsers(text)
+                selectingUsers
+                  ? this.searchUsers(text)
+                  : selectingSessions
+                    ? this.searchSessions(text)
+                    : null
               }
             />
           </Col>
@@ -132,45 +161,15 @@ class PickMembers extends React.Component {
       />
     );
   }
-  cardContact(contact, i, contactsSelected) {
+  cardSession(session, i, sessionsSelected) {
     return (
-      <CardContactSelect
-        contact={contact}
+      <CardSessionSelect
+        session={session}
         key={i}
-        selected={contactsSelected[contact.id]}
-        select={(contact) => this.selectContact(contact)}
+        selected={sessionsSelected[session.objectID]}
+        select={(session) => this.selectSession(session)}
       />
     );
-  }
-  async selectContact(contact) {
-    const {allowSelectMultiple, onSelectMembers} = this.props;
-    if (!allowSelectMultiple) {
-      const contactsSelected = {[contact.id]: {...contact}};
-      await this.setState({contactsSelected});
-      onSelectMembers(usersSelected, contactsSelected);
-    } else {
-      let {contactsSelected} = this.state;
-      if (contactsSelected[contact.id]) {
-        delete contactsSelected[contact.id];
-      } else {
-        contactsSelected = {
-          ...contactsSelected,
-          [contact.id]: {...contact},
-        };
-      }
-      this.setState({contactsSelected});
-    }
-  }
-  contactList() {
-    const {contacts, loadingContacts, contactsSelected} = this.state;
-    if (loadingContacts) {
-      return (
-        <View style={[styleApp.center, {height: 200}]}>
-          <Loader size={55} color={colors.primary} />
-        </View>
-      );
-    }
-    return contacts.map((contact, i) => this.cardContact(contact, i, contactsSelected));
   }
   userList() {
     const {users, loadingUsers, usersSelected} = this.state;
@@ -183,27 +182,41 @@ class PickMembers extends React.Component {
     }
     return users.map((user, i) => this.cardUser(user, i, usersSelected));
   }
+  sessionList() {
+    const {sessions, loadingSessions, sessionsSelected} = this.state;
+    if (loadingSessions) {
+      return (
+        <View style={[styleApp.center, {height: 200}]}>
+          <Loader size={55} color={colors.primary} />
+        </View>
+      );
+    }
+    return sessions.map((session, i) => this.cardSession(session, i, sessionsSelected));
+  }
   pickMembers() {
-    const {selectFromGamefare, selectFromContacts} = this.props;
-    const {selectingContacts} = this.state;
+    const {selectFromGamefare, selectFromSessions} = this.props;
+    const {selectingUsers, selectingSessions} = this.state;
     return (
       <View
         style={{
           marginTop: heightHeaderHome + marginTopApp,
           height: height - heightHeaderHome - 20,
         }}>
-        {selectFromGamefare && selectFromContacts && (
+        {selectFromGamefare && selectFromSessions && (
           <View style={[styleApp.marginView, {marginBottom: 5}]}>
             <Switch
               textOn={'GameFare'}
-              textOff={'Contacts'}
+              textOff={'Sessions'}
               finalColorOn={colors.primary}
               translateXTo={width / 2 - 20}
               height={50}
-              state={selectingContacts}
-              setState={async (val) => {
-                await this.setState({selectingContacts: val})
-                return true;
+              state={selectingUsers}
+              setState={(val) => {
+                if (val) {
+                  this.setState({selectingUsers: true, selectingSessions: false});
+                } else {
+                  this.setState({selectingUsers: false, selectingSessions: true});
+                }
               }}
             />
           </View>
@@ -212,16 +225,16 @@ class PickMembers extends React.Component {
         <ScrollView
           keyboardShouldPersistTaps={'always'}
           style={styles.scrollViewUsers}>
-          {selectFromContacts && selectingContacts && this.contactList()}
-          {selectFromGamefare && !selectingContacts && this.userList()}
+          {selectFromGamefare && selectingUsers && this.userList()}
+          {selectFromSessions && selectingSessions && this.sessionList()}
         </ScrollView>
       </View>
     );
   }
   submitButton() {
-    const {usersSelected, contactsSelected} = this.state;
+    const {usersSelected, sessionsSelected} = this.state;
     const {onSelectMembers} = this.props;
-    const numSelected = Object.values(usersSelected).length + Object.values(contactsSelected).length;
+    const numSelected = Object.values(usersSelected).length + Object.values(sessionsSelected).length;
     if (numSelected == 0) {
       return null;
     }
@@ -230,10 +243,10 @@ class PickMembers extends React.Component {
         duration={300}
         style={[styleApp.footerBooking, styleApp.marginView]}>
         <Button
-          text={`Confirm ${numSelected} players`}
+          text={`Confirm ${numSelected} selected`}
           backgroundColor={'green'}
           onPressColor={colors.greenLight}
-          click={() => onSelectMembers(usersSelected, contactsSelected)}
+          click={() => onSelectMembers(usersSelected, sessionsSelected)}
         />
       </FadeInView>
     );
@@ -278,6 +291,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
+    coachSessions: state.coachSessions,
     blockedByUsers: state.user.infoUser.blockedByUsers,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,

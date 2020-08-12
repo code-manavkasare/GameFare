@@ -585,6 +585,36 @@ const addMembersToSession = (objectID, navigateTo) => {
   });
 };
 
+const searchSessionsForString = (search) => {
+  const allSessions = store.getState().coachSessions;
+  if (search === '') {
+    return allSessions ? Object.keys(allSessions) : [];
+  } else {
+    const matches = Object.values(allSessions).map((session) => {
+      const names = Object.values(session.members).reduce((result, member) => {
+        let name = '';
+        if (member?.info?.firstname) {
+          name = name + member.info.firstname.toLowerCase();
+        }
+        if (member?.info?.lastname) {
+          name = name + ' ' + member.info.lastname.toLowerCase();
+        }
+        if (name !== '') {
+          result.push(name);
+        }
+        return result;
+      }, []);
+      for (const name of names) {
+        if (name.search(search.toLowerCase()) !== -1) {
+          return session.objectID;
+        }
+      }
+      return null;
+    }).filter(x => x);
+    return matches;
+  }
+}
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -618,4 +648,5 @@ module.exports = {
   unbindSession,
   newSession,
   addMembersToSession,
+  searchSessionsForString,
 };
