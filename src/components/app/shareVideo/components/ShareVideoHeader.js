@@ -20,7 +20,7 @@ export default class ShareVideoHeader extends React.Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={this.AnimatedHeaderValue}
-        textHeader={'Share video(s)'}
+        textHeader={'Share'}
         inputRange={[0, 0]}
         initialBorderColorIcon={colors.white}
         initialBorderColorHeader={colors.borderColor}

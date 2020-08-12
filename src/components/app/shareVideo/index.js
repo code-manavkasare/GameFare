@@ -53,16 +53,15 @@ class ShareVideoPage extends React.Component {
     push('PickMembers', {
       usersSelected: {},
       allowSelectMultiple: true,
+      selectFromSessions: false,
       selectFromGamefare: true,
-      selectFromContacts: false,
       closeButton: true,
       displayCurrentUser: false,
       noUpdateStatusBar: true,
-      titleHeader: 'Select members to share video(s) with',
+      titleHeader: 'Select members to share with',
       noNavigation: true,
-      onSelectMembers: async (members, contacts) => {
+      onSelectMembers: async (members, sessions) => {
         const {objectID} = await openSession(user, members);
-        console.log('objectID', objectID);
         shareVideosWithTeam(localVideos, firebaseVideos, objectID);
         navigate('Conversation', {coachSessionID: objectID});
         //shareVideosWithPeople(localVideos, firebaseVideos, users, contacts);
@@ -70,7 +69,30 @@ class ShareVideoPage extends React.Component {
     });
   }
   shareWithTeams() {
-    console.log('share with teams');
+    const {navigation, route, user} = this.props;
+    const {firebaseVideos, localVideos} = route.params;
+    const {push, pop, navigate} = navigation;
+    push('PickMembers', {
+      usersSelected: {},
+      allowSelectMultiple: true,
+      selectFromSessions: true,
+      selectFromGamefare: false,
+      closeButton: true,
+      displayCurrentUser: false,
+      noUpdateStatusBar: true,
+      titleHeader: 'Select teams to share with',
+      noNavigation: true,
+      onSelectMembers: async (members, sessions) => {
+        for (const {objectID} of Object.values(sessions)) {
+          shareVideosWithTeam(localVideos, firebaseVideos, objectID);
+        }
+        if (Object.keys(sessions).length === 1) {
+          navigate('Conversation', {coachSessionID: Object.values(sessions)[0].objectID});
+        } else {
+         pop(2);
+        }
+      }
+    });
   }
   button(words, icon, action) {
     return (
