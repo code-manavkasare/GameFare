@@ -56,9 +56,9 @@ class ShareVideoPage extends React.Component {
       const branchMetadata = firebaseVideos.reduce((result, video) => {
         return {
           ...result,
-          [video.id]: video,
+          [video]: video,
         };
-      });
+      }, {});
       branchLink = await createShareVideosBranchUrl(branchMetadata);
     }
     push('PickMembers', {
@@ -78,7 +78,7 @@ class ShareVideoPage extends React.Component {
     });
   }
   shareWithTeams() {
-    const {navigation, route, user} = this.props;
+    const {navigation, route} = this.props;
     const {firebaseVideos, localVideos} = route.params;
     const {push, pop, navigate} = navigation;
     push('PickMembers', {
