@@ -126,7 +126,7 @@ const createBranchUrl = async (dataObj, action, image) => {
 };
 
 const createShareVideosBranchUrl = async (videos) => {
-  let name = store.getState().user.infoUser.userInfo.firstname;
+  let name = store.getState().user?.infoUser?.userInfo?.firstname;
   let description = 'See the video shared with you!';
   if (name) {
     description = `See the video ${name} shared with you!`;
@@ -139,7 +139,7 @@ const createShareVideosBranchUrl = async (videos) => {
       contentMetadata: {
         customMetadata: {
           ...videos,
-          type: 'ShareVideos',
+          type: 'videos',
           $uri_redirect_mode: '1',
         },
       },

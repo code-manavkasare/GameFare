@@ -66,6 +66,7 @@ const imageCardTeam = (session, size, hideDots) => {
 };
 
 const userCircle = (member, style, scale, length, hideDots) => {
+  const userID = store.getState().user.userID;
   let borderRadius = 100;
   let sizeImg = length > 1 ? 45 * scale : 63 * scale;
   const styleImg = {
@@ -77,6 +78,18 @@ const userCircle = (member, style, scale, length, hideDots) => {
     overflow: 'hidden',
     backgroundColor: colors.grey,
   };
+  const firstAndLastName =
+    member &&
+    member.info &&
+    member.info.firstname &&
+    member.info.lastname &&
+    member.info.firstname !== '' &&
+    member.info.lastname !== '';
+
+  const altNames =
+    member &&
+    member.info &&
+    member.info.userInfo;
 
   return (
     <View key={member.id ? member.id : -1}>
@@ -105,9 +118,11 @@ const userCircle = (member, style, scale, length, hideDots) => {
                   styleApp.textBold,
                   {fontSize: 11, color: colors.white},
                 ]}>
-                {member.info
+                {firstAndLastName
                   ? member.info.firstname[0] + member.info.lastname[0]
-                  : '+' + member}
+                  : altNames
+                    ? member.info.userInfo.firstname[0] + member.info.userInfo.lastname[0]
+                    : '+' + member}
               </Text>
             </View>
           )}
@@ -140,23 +155,29 @@ const titleSession = (session, size, allMembers) => {
   const members = getSortedMembers(session.members);
   if (!members || !members[0]) return;
   if (members[0].id === userID) return 'You';
-  let names = '';
-  for (var i in members) {
-    const {firstname, lastname} = members[i].info;
-    let endCharacter = ', ';
-    if (members.length === Number(i) + 1) endCharacter = '';
-    else if (
-      (!allMembers && Number(i) === 1) ||
-      (!allMembers && members.length > 2 && Number(i) === 2)
-    )
-      endCharacter = ', and ' + (members.length - 2) + ' others';
-
-    names += firstname + ' ' + lastname + endCharacter;
-    if (!allMembers && Number(i) === 1) break;
-  }
-
-  // if (allMembers) names += ' and You';
-
+  const names = members.reduce((nameString, member, i, members) => {
+    if (member.info && member.info.firstname && member.info.lastname) {
+      const {firstname, lastname} = member.info;
+      if (nameString === '') {
+        return firstname + ' ' + lastname;
+      } else {
+        const numNames = nameString.split(',').length;
+        if (numNames < 2) {
+          return nameString + ', ' + firstname + ' ' + lastname;
+        } else if (numNames === 2) {
+          if (i === members.length - 1) {
+            return nameString + ', and ' + firstname + ' ' + lastname;
+          } else {
+            return nameString + `, and ${members.length - numNames} others`;
+          }
+        } else {
+          return nameString;
+        }
+      }
+    } else {
+      return nameString;
+    }
+  }, '');
   if (size) return names.slice(0, 20) + '...';
   return names;
 };

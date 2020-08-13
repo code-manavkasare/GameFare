@@ -91,7 +91,7 @@ class PickMembers extends React.Component {
     } else {
       let {usersSelected} = this.state;
       if (usersSelected[user.objectID]) {
-        dissoc(user.objectID, usersSelected);
+        usersSelected = dissoc(user.objectID, usersSelected);
       } else {
         usersSelected = {
           ...usersSelected,
@@ -110,7 +110,7 @@ class PickMembers extends React.Component {
     } else {
       let {sessionsSelected} = this.state;
       if (sessionsSelected[session.objectID]) {
-        dissoc(session.objectID, sessionsSelected);
+        sessionsSelected = dissoc(session.objectID, sessionsSelected);
       } else {
         sessionsSelected = {
           ...sessionsSelected,
