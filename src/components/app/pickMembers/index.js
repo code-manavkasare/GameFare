@@ -75,23 +75,22 @@ export default class PickMembersPage extends React.Component {
       text2,
       clickButton2,
     } = route.params;
+    const branchLinkOption = branchLink && branchLink !== '';
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
-        {branchLink && <PickMembersHeader
+        {branchLinkOption && <PickMembersHeader
           title={titleHeader}
           icon1={'times'}
           clickButton1={() => this.close(true)}
-          icon2={branchLink ? 'external-link-alt' : null}
+          icon2={'external-link-alt'}
           clickButton2={() => {
-            if (branchLink && branchLink !== '') {
-              Share.share({
-                url: branchLink,
-              });
-            }
+            Share.share({
+              url: branchLink,
+            });
           }}
           loader={false}
         />}
-        {!branchLink && <PickMembersHeader
+        {!branchLinkOption && <PickMembersHeader
           title={titleHeader}
           icon1={'times'}
           clickButton1={() => this.close(true)}
