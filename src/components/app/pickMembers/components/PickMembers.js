@@ -78,8 +78,8 @@ class PickMembers extends React.Component {
   }
   async searchSessions(search) {
     const {coachSessions} = this.props;
-    const ids = await searchSessionsForString(search);
-    const sessions = ids.map((id) => coachSessions[id]);
+    const ids = searchSessionsForString(search);
+    const sessions = ids.map(id => coachSessions[id]).filter(s => s);
     this.setState({sessions, loadingSessions: false});
   }
   async selectUser(selected, user, selectedUsers) {

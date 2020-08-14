@@ -7,7 +7,7 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 
-import {getVideoInfo} from '../../../functions/pictures';
+import {getVideoInfo, getNewVideoSavePath} from '../../../functions/pictures';
 import {addLocalVideo, openVideoPlayer} from '../../../functions/videoManagement';
 
 export default class Camera extends Component {
@@ -62,6 +62,7 @@ export default class Camera extends Component {
     if (camera && !isRecording) {
       this.setState({isRecording: true});
       const options = {
+        path: getNewVideoSavePath(),
         quality: RNCamera.Constants.VideoQuality['720p'],
       };
       let promise = camera.recordAsync(options);

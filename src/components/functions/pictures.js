@@ -10,6 +10,8 @@ import ImagePicker from 'react-native-image-picker';
 import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
 import RNThumbnail from 'react-native-thumbnail';
+import {DocumentDirectoryPath} from 'react-native-fs';
+import {generateID} from '../functions/createEvent';
 
 const options = {
   quality: 1.0,
@@ -186,6 +188,10 @@ const resolutionP = (size) => {
   return width + 'p';
 };
 
+const getNewVideoSavePath = () => {
+  return DocumentDirectoryPath + '/' + generateID() + '.mp4';
+}
+
 module.exports = {
   takePicture,
   pickLibrary,
@@ -199,4 +205,5 @@ module.exports = {
   goToSettings,
   resolutionP,
   getVideoUUID,
+  getNewVideoSavePath,
 };

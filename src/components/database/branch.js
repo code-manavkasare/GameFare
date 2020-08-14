@@ -126,32 +126,34 @@ const createBranchUrl = async (dataObj, action, image) => {
 };
 
 const createShareVideosBranchUrl = async (videos) => {
-  let name = store.getState().user?.infoUser?.userInfo?.firstname;
-  let description = 'See the video shared with you!';
-  if (name) {
-    description = `See the video ${name} shared with you!`;
-  }
-  let branchUniversalObject = await branch.createBranchUniversalObject(
-    'canonicalIdentifier',
-    {
-      contentDescription: description,
-      title: 'Join GameFare',
-      contentMetadata: {
-        customMetadata: {
-          ...videos,
-          type: 'videos',
-          $uri_redirect_mode: '1',
+  if (videos && Object.keys(videos).length > 0) {
+    const firstVideo = store.getState().archives[Object.keys(videos)[0]];
+    const thumbnail = firstVideo?.thumbnail;
+    const description = 'See the video I shared with you!';
+    const branchUniversalObject = await branch.createBranchUniversalObject(
+      'canonicalIdentifier',
+      {
+        contentDescription: description,
+        title: description,
+        contentMetadata: {
+          customMetadata: {
+            ...videos,
+            type: 'videos',
+            $uri_redirect_mode: '1',
+            $og_image_url: thumbnail,
+          },
         },
       },
-    },
-  );
-  let linkProperties = {feature: 'share', channel: 'GameFare'};
-  let controlParams = {$desktop_url: 'http://getgamefare.com'};
-  let {url} = await branchUniversalObject.generateShortUrl(
-    linkProperties,
-    controlParams,
-  )
-  return url;
+    );
+    const linkProperties = {feature: 'share', channel: 'GameFare'};
+    const controlParams = {$desktop_url: 'http://getgamefare.com'};
+    const {url} = await branchUniversalObject.generateShortUrl(
+      linkProperties,
+      controlParams,
+    )
+    return url;
+  }
+  return null;
 }
 
 
