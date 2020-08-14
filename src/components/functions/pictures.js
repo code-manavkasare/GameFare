@@ -11,7 +11,7 @@ import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
 import RNThumbnail from 'react-native-thumbnail';
 import {DocumentDirectoryPath} from 'react-native-fs';
-import {generateID} from '../functions/createEvent';
+import {generateID} from '../functions/utility';
 
 const options = {
   quality: 1.0,
