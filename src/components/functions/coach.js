@@ -587,10 +587,12 @@ const addMembersToSession = (objectID, navigateTo) => {
 
 const searchSessionsForString = (search) => {
   const allSessions = store.getState().coachSessions;
+  const userSessions = store.getState().user.infoUser.coachSessions;
   if (search === '') {
-    return allSessions ? Object.keys(allSessions) : [];
+    return userSessions ? Object.keys(userSessions) : [];
   } else {
-    const matches = Object.values(allSessions).map((session) => {
+    const matches = Object.keys(userSessions).map((id) => {
+      const session = allSessions[id];
       const names = Object.values(session.members).reduce((result, member) => {
         let name = '';
         if (member?.info?.firstname) {
@@ -606,7 +608,7 @@ const searchSessionsForString = (search) => {
       }, []);
       for (const name of names) {
         if (name.search(search.toLowerCase()) !== -1) {
-          return session.objectID;
+          return id;
         }
       }
       return null;
