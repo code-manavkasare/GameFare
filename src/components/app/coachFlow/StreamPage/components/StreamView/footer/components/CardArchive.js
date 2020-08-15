@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
@@ -27,7 +27,7 @@ import styleApp from '../../../../../../../style/style';
 class CardArchive extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
-    local: PropTypes.bool.isRequired,
+    local: PropTypes.bool,
     openVideo: PropTypes.func,
     style: PropTypes.object,
     selectableMode: PropTypes.bool,
@@ -55,12 +55,13 @@ class CardArchive extends PureComponent {
     if (!local) unbindArchive(id);
   }
   placeholder() {
+    const {style} = this.props;
     return (
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         colors={[colors.off, colors.off2]}
-        style={styleApp.fullSize}
+        style={[styles.cardArchive, style]}
       />
     );
   }
@@ -68,16 +69,10 @@ class CardArchive extends PureComponent {
   openVideo = async () => {
     const {openVideo, allowPlay} = this.props;
     const {archive} = this.props;
-    const {url} = archive;
-    if (url !== '') {
-      if (openVideo) {
-        openVideo(archive.id);
-      } else {
-        if (allowPlay) {
-          openVideoPlayer(archive, true);
-        }
-      }
-    }
+    const {url, id, thumbnail} = archive;
+    console.log('open video page', archive);
+    if (!openVideo) return navigate('VideoPlayerPage', {archive});
+    if (url !== '') openVideo({url, thumbnail});
   };
   cloudIndicator() {
     const {local, url} = this.props.archive;
@@ -92,7 +87,12 @@ class CardArchive extends PureComponent {
             right: 5,
             zIndex: 20,
           }}>
-          <AllIcons name={url === '' ? 'upload' : 'cloud'} type="font" color={colors.white} size={15} />
+          <AllIcons
+            name={url === '' ? 'upload' : 'cloud'}
+            type="font"
+            color={colors.white}
+            size={15}
+          />
         </View>
       );
     } else {
@@ -101,14 +101,25 @@ class CardArchive extends PureComponent {
   }
   cardArchive(archive) {
     const {isSelected, style, selectableMode, selectVideo} = this.props;
-    const {id, thumbnail, startTimestamp, size, durationSeconds} = archive;
+    const {
+      id,
+      thumbnail,
+      startTimestamp,
+      size,
+      durationSeconds,
+      local,
+    } = archive;
     const {loader} = this.state;
     return (
       <View style={[styles.cardArchive, style]}>
-        <AsyncImage
-          style={styleApp.fullSize}
-          mainImage={thumbnail ? thumbnail : ''}
-        />
+        {local ? (
+          <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
+        ) : (
+          <AsyncImage
+            style={styleApp.fullSize}
+            mainImage={thumbnail ? thumbnail : ''}
+          />
+        )}
         {this.cloudIndicator()}
         {/* <View style={styles.resolution}>
           <Text style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
@@ -131,7 +142,7 @@ class CardArchive extends PureComponent {
                   name={isSelected ? 'check-circle' : 'circle'}
                   type="font"
                   size={25}
-                  color={colors.green}
+                  color={colors.white}
                   solid={isSelected ? true : false}
                 />
               ) : null}
@@ -156,11 +167,6 @@ class CardArchive extends PureComponent {
 
         <ButtonColor
           view={() => {
-            const styleRow = {
-              position: 'absolute',
-              bottom: 20,
-              width: '100%',
-            };
             return (
               !selectableMode && (
                 <AllIcons
@@ -173,7 +179,9 @@ class CardArchive extends PureComponent {
             );
           }}
           click={() =>
-            selectableMode ? selectVideo(id, !isSelected) : this.openVideo()
+            selectableMode
+              ? selectVideo(id, !isSelected, local)
+              : this.openVideo()
           }
           color={colors.greyDark + '40'}
           onPressColor={colors.grey + '40'}
@@ -192,7 +200,7 @@ class CardArchive extends PureComponent {
 
     if (!archive) return this.placeholder();
 
-    return <View>{this.cardArchive(archive)}</View>;
+    return this.cardArchive(archive);
   }
 }
 
@@ -215,7 +223,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
-    archive: props.local
+    archive: props.nativeArchive
+      ? props.nativeArchive
+      : props.local
       ? state.localVideoLibrary.videoLibrary[props.id]
       : state.archives[props.id],
   };

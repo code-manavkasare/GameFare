@@ -116,7 +116,7 @@ class ListStreams extends Component {
             click: () => newSession(),
           },
           badge: coachSessions.length,
-          title: 'Teams',
+          title: 'Chat',
         })}
         AnimatedHeaderValue={AnimatedHeaderValue}
       />

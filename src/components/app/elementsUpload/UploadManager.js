@@ -30,10 +30,14 @@ class UploadManager extends Component {
       uploadQueueAction('resetUploadQueue');
     } else {
       const task = queue[index];
+      console.log('task', task);
       const startTask =
         (task && (task.progress === 0 || task.progress === undefined)) || init;
       if (status === 'uploading' && startTask) {
-        await uploadQueueAction('setJobProgress', {index: index, progress: .01});
+        await uploadQueueAction('setJobProgress', {
+          index: index,
+          progress: 0.01,
+        });
         switch (task.type) {
           case 'video':
             await this.uploadVideoAtQueueIndex(index);
@@ -59,38 +63,35 @@ class UploadManager extends Component {
     const uploadTask = uploadQueue.queue[index];
     if (uploadTask) {
       const {storageDestination, url} = uploadTask;
-      const imageUrl = await uploadImage(
-        url,
-        storageDestination,
-        'image.jpg',
-      );
+      const imageUrl = await uploadImage(url, storageDestination, 'image.jpg');
       uploadQueueAction('setJobProgress', {index: index, progress: 1});
       await this.completeTask(index);
-      database().ref().update({
-        [`${storageDestination}/thumbnail`]: imageUrl,
-      });
+      database()
+        .ref()
+        .update({
+          [`${storageDestination}/thumbnail`]: imageUrl,
+        });
     }
   };
 
   uploadVideoAtQueueIndex = async (index) => {
-    const {uploadQueue, uploadQueueAction, localVideoLibraryAction} = this.props;
+    const {
+      uploadQueue,
+      uploadQueueAction,
+      localVideoLibraryAction,
+    } = this.props;
     const uploadTask = uploadQueue.queue[index];
     if (uploadTask) {
-      const {
-        videoInfo,
-        storageDestination,
-      } = uploadTask;
-      const videoUrl = await uploadVideo(
-        uploadTask,
-        uploadQueueAction,
-        index,
-      );
+      const {videoInfo, storageDestination} = uploadTask;
+      const videoUrl = await uploadVideo(uploadTask, uploadQueueAction, index);
       uploadQueueAction('setJobProgress', {index: index, progress: 1});
       localVideoLibraryAction('deleteVideo', videoInfo.id);
       await this.completeTask(index);
-      database().ref().update({
-        [`${storageDestination}/url`]: videoUrl,
-      });
+      database()
+        .ref()
+        .update({
+          [`${storageDestination}/url`]: videoUrl,
+        });
     }
   };
 }

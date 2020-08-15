@@ -25,6 +25,7 @@ import {
   sendNewMessage,
   nameOtherMemberConversation,
 } from '../../functions/message';
+import {selectVideosFromLibrary} from '../../functions/coach';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -133,6 +134,8 @@ class InputMessage extends React.Component {
   };
   renderInput() {
     const {showImages} = this.state;
+    const {discussion} = this.props;
+    const {objectID} = discussion;
     return (
       <View style={styles.keyboardContainer}>
         <AutoGrowingTextInput
@@ -175,7 +178,7 @@ class InputMessage extends React.Component {
         ) : null}
 
         <Row style={styles.rowUtils}>
-          <Col
+          {/* <Col
             size={12}
             style={styleApp.center2}
             activeOpacity={0.7}
@@ -186,12 +189,12 @@ class InputMessage extends React.Component {
               type="moon"
               size={24}
             />
-          </Col>
+          </Col> */}
           <Col
             size={12}
             style={styleApp.center2}
             activeOpacity={0.7}
-            onPress={() => this.selectPicture()}>
+            onPress={() => selectVideosFromLibrary(objectID)}>
             <AllIcons
               name="galery"
               color={!this.state.showImages ? colors.title : colors.primary}

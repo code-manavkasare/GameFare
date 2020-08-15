@@ -58,7 +58,7 @@ class ListMessages extends Component {
     });
   }
   renderContent() {
-    const {initialMessage, session, user} = this.props;
+    const {initialMessage, session, user, objectID} = this.props;
     return (
       <InputMessage
         discussion={session}

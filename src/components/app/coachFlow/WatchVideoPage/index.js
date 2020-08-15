@@ -76,7 +76,7 @@ class WatchVideoPage extends Component {
     const {width} = Dimensions.get('screen');
     const {watchVideo, source, thumbnail, archiveID} = videoData;
     const {videoSource} = this.state;
-
+    console.log('videoData', videoData);
     if (watchVideo) {
       await this.translateXPage.setValue(0);
       if (videoSource) {
@@ -154,6 +154,7 @@ class WatchVideoPage extends Component {
     const video = this.video(this.props, this.state);
     const drawingEnable =
       personSharingScreen && archiveID === videoBeingShared.id;
+    console.log('videoSource', videoSource);
     return (
       <Animated.View
         style={[
@@ -258,7 +259,7 @@ class WatchVideoPage extends Component {
           onRef={(ref) => (this.videoPlayerRef = ref)}
         />
 
-        {/* <RightButtons
+        <RightButtons
           state={this.props.state}
           archiveID={archiveID}
           onRef={(ref) => (this.rightButtonsRef = ref)}
@@ -269,7 +270,7 @@ class WatchVideoPage extends Component {
           personSharingScreen={personSharingScreen}
           setState={this.setState.bind(this)}
           openVideo={(videoData) => this.open(videoData)}
-        /> */}
+        />
       </Animated.View>
     );
   }

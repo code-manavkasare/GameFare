@@ -23,17 +23,18 @@ class FlatListComponent extends Component {
     if (isEqual(this.props, prevProps)) return false;
     return true;
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.list.length > state.numberToRender)
-      return {
-        numberToRender: props.list.length,
-      };
-  }
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.list.length > state.numberToRender)
+  //     return {
+  //       numberToRender: props.list.length,
+  //     };
+  //   return {};
+  // }
   async onEndReached() {
     const {list, incrementRendering} = this.props;
     const {numberToRender} = this.state;
     const lengthList = list.length;
-
+    console.log('onEndReached', numberToRender);
     this.setState({
       numberToRender:
         numberToRender + incrementRendering > lengthList
@@ -52,19 +53,15 @@ class FlatListComponent extends Component {
       paddingBottom,
       inverted,
       styleContainer,
+      horizontal,
     } = this.props;
-    let styleContainerList = {
-      backgroundColor: colors.white,
-      paddingBottom: 60,
-      minHeight: height,
-      width: '100%',
-    };
 
     const containerStyle = {
       ...styleContainer,
       paddingBottom: paddingBottom ? paddingBottom : 60,
       backgroundColor: colors.white,
-      width: '100%',
+
+      width: horizontal ? list.length * 100 : '100%',
     };
 
     const viewLoader = () => {
@@ -74,6 +71,8 @@ class FlatListComponent extends Component {
         </View>
       );
     };
+    console.log('numberToRender', numberToRender);
+    console.log('render flatlst', list.slice(0, numberToRender));
     return (
       <FlatList
         data={list.slice(0, numberToRender)}
@@ -87,14 +86,21 @@ class FlatListComponent extends Component {
         keyExtractor={(item) => (item.id ? item.id : item.toString())}
         numColumns={numColumns}
         scrollEnabled={true}
-        removeClippedSubviews={true}
+        horizontal={horizontal}
+        // removeClippedSubviews={true}
         inverted={inverted}
         contentContainerStyle={containerStyle}
         ListHeaderComponent={header}
         ListHeaderComponentStyle={styleApp.marginView}
         showsVerticalScrollIndicator={true}
+        showsHorizontalScrollIndicator={false}
         onEndReached={() => this.onEndReached()}
-        onEndReachedThreshold={0.9}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={
+          <View>
+            <Text>To be done</Text>
+          </View>
+        }
         onScroll={Animated.event(
           [
             {

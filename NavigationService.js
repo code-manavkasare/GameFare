@@ -31,10 +31,11 @@ const pop = (number) => {
 };
 
 const goBack = () => {
-  navigationRef.dispatch(CommonActions.goBack());
+  navigationRef.current?.dispatch(CommonActions.goBack());
 };
 
 const dismiss = () => {
+  console.log('')
   navigationRef.dangerouslyGetParent().pop();
 };
 

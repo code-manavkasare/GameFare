@@ -10,6 +10,9 @@ import ImagePicker from 'react-native-image-picker';
 import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
 import RNThumbnail from 'react-native-thumbnail';
+import RNFS from 'react-native-fs';
+
+import {store} from '../../../reduxStore';
 import {DocumentDirectoryPath} from 'react-native-fs';
 import {generateID} from '../functions/utility';
 
@@ -147,6 +150,48 @@ const getLastVideo = async () => {
   console.log('edges', edges);
   return edges[0].node.image;
 };
+const ge10tLastVideo = async () => {
+  const userID = store.getState().user.userID;
+  const {edges} = await CameraRoll.getPhotos({
+    first: 10,
+    assetType: 'Videos',
+  });
+  console.log('edges', edges);
+
+  let videos = [];
+  for (var i in edges) {
+    const video = edges[i];
+    const {uri} = video.node.image;
+    const appleId = uri.substring(5, 41);
+    // const videoInfo = await getNativeVideoInfo(appleId);
+
+    const destPath = RNFS.DocumentDirectoryPath + '/' + appleId;
+    const path = await RNFS.copyAssetsVideoIOS(
+      `assets-library://asset/asset.${'mov'}?id=${appleId}&ext=${'mov'}`,
+      destPath,
+    );
+    const videoInfo = await getVideoInfo(path);
+    console.log('videoInfo', videoInfo);
+    videos.push(videoInfo);
+  }
+  console.log('videos', videos);
+  return videos;
+};
+
+const getNativeVideoInfo = async (videoID) => {
+  const ext = 'MOV';
+  var videoUri = `assets-library://asset/asset.${ext}?id=${videoID}&ext=${ext}`;
+  console.log('videoUri', videoUri);
+  let videoInfo = await getVideoInfo(videoUri);
+  console.log('videoInfo', videoInfo);
+
+  videoInfo.id = videoID;
+  videoInfo.local = true;
+  videoInfo.thumbnail = videoUri;
+
+  videoInfo.fromNativeLibrary = true;
+  return videoInfo;
+};
 
 const generateThumbnail = async (videoPath, timestamp) => {
   const thumbnail = await RNThumbnail.get(videoPath);
@@ -190,7 +235,7 @@ const resolutionP = (size) => {
 
 const getNewVideoSavePath = () => {
   return DocumentDirectoryPath + '/' + generateID() + '.mp4';
-}
+};
 
 module.exports = {
   takePicture,
@@ -205,5 +250,7 @@ module.exports = {
   goToSettings,
   resolutionP,
   getVideoUUID,
+  ge10tLastVideo,
+  getNativeVideoInfo,
   getNewVideoSavePath,
 };
