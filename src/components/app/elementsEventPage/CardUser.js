@@ -149,7 +149,7 @@ export default class CardUser extends Component {
                   ) : (
                     <View style={styleApp.roundView2}>
                       <Text style={[styleApp.input, {fontSize: 11}]}>
-                        {user.info.firstname[0] + user.info.lastname[0]}
+                        {user?.info?.firstname[0] + user.info.lastname[0]}
                       </Text>
                     </View>
                   )}

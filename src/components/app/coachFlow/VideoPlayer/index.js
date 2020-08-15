@@ -14,6 +14,7 @@ import styleApp from '../../../style/style';
 import {timeout} from '../../../functions/coach';
 import {timing} from '../../../animations/animations';
 import ControlButtons from './components/ControlButtons';
+import VisualSeekbar from './components/VisualSeekbar';
 
 export default class VideoPlayer extends Component {
   static propTypes = {
@@ -59,7 +60,7 @@ export default class VideoPlayer extends Component {
       loader: true,
       source: this.props.source,
       paused: this.props.paused,
-      prevPaused: false,
+      prevPaused: undefined,
       placeHolderImg: this.props.placeHolderImg,
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
       totalTime: 0,
@@ -74,7 +75,6 @@ export default class VideoPlayer extends Component {
   async componentDidMount() {
     this.props.onRef(this);
     const {currentTime} = this.state;
-    // await timeout(1000);
     this.setState({displayVideo: true});
     if (currentTime !== 0) this.seek(currentTime);
   }
@@ -89,9 +89,10 @@ export default class VideoPlayer extends Component {
     ) {
       this.controlButtonRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
+      this.visualSeekbarRef.toggleVisible(true);
     }
 
-    if (prevState.source !== source) this.PinchableBoxRef.resetPosition();
+    if (prevState.source !== source) this.PinchableBoxRef?.resetPosition();
   }
   static getDerivedStateFromProps(props, state) {
     if (props.source !== state.source) {
@@ -120,7 +121,7 @@ export default class VideoPlayer extends Component {
     return {};
   }
   getState() {
-    return {...this.state, currentTime: this.controlButtonRef.getCurrentTime()};
+    return {...this.state, currentTime: this.controlButtonRef?.getCurrentTime()};
   }
   seek = (time) => {
     const player = this.player;
@@ -129,7 +130,7 @@ export default class VideoPlayer extends Component {
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
     const {onPlayPause} = this.props;
-    const currentTime = this.controlButtonRef.getCurrentTime();
+    const currentTime = this.visualSeekbarRef?.getCurrentTime();
     if (forcePause) paused = false;
     const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
 
@@ -145,7 +146,7 @@ export default class VideoPlayer extends Component {
 
   updatePlayRate = async (playRate) => {
     let {paused} = this.state;
-    const currentTime = this.controlButtonRef.getCurrentTime();
+    const currentTime = this.controlButtonRef?.getCurrentTime();
     const {
       noUpdateInCloud,
       updateVideoInfoCloud,
@@ -164,7 +165,7 @@ export default class VideoPlayer extends Component {
     const paused = this.controlButtonRef?.getPaused();
     const {currentTime} = info;
     if (!paused) {
-      this.controlButtonRef?.setCurrentTime(currentTime);
+      this.visualSeekbarRef?.setCurrentTime(currentTime);
     }
   };
   onSlidingComplete = async (SliderTime, forcePlay) => {
@@ -179,7 +180,8 @@ export default class VideoPlayer extends Component {
     const paused = forcePlay ? forcePlay : !prevPaused ? false : true;
     await this.setState({
       currentTime: SliderTime,
-      paused: forcePlay ? forcePlay : !prevPaused ? false : true,
+      paused,
+      prevPaused: undefined,
     });
     onSlidingEnd(SliderTime, paused);
     return true;
@@ -187,12 +189,12 @@ export default class VideoPlayer extends Component {
   onSlidingStart = async () => {
     const {onSlidingStart, updateVideoInfoCloud, noUpdateInCloud} = this.props;
     const {paused} = this.state;
-    const currentTime = this.controlButtonRef.getCurrentTime();
+    const currentTime = this.controlButtonRef?.getCurrentTime();
 
     onSlidingStart(currentTime, paused);
     if (updateVideoInfoCloud && !noUpdateInCloud)
       await updateVideoInfoCloud({paused: true});
-    return this.setState({paused: true, prevPaused: paused});
+    return this.setState({paused: true});
   };
   playPauseButton = (paused) => {
     const styleButton = {height: 45, width: '100%'};
@@ -233,8 +235,9 @@ export default class VideoPlayer extends Component {
   clickVideo() {
     Animated.timing(
       this.opacityControlBar,
-      timing(!this.opacityControlBar._value, 200),
+      timing(this.opacityControlBar._value ? 0 : 1, 200),
     ).start();
+    this.visualSeekbarRef?.toggleVisible()
   }
   render() {
     const {
@@ -252,6 +255,7 @@ export default class VideoPlayer extends Component {
     const {
       currentTime,
       paused,
+      prevPaused,
       fullscreen,
       playRate,
       placeHolderImg,
@@ -278,7 +282,7 @@ export default class VideoPlayer extends Component {
             style={[
               styleApp.fullSize,
               styleApp.center,
-              {backgroundColor: colors.grey + '00'},
+              {backgroundColor: colors.black},
             ]}>
             <PinchableBox
               styleContainer={[styleApp.fullSize, styleApp.center]}
@@ -315,7 +319,6 @@ export default class VideoPlayer extends Component {
                               );
                             },
                           );
-
                         await this.setState({
                           totalTime: callback.duration,
                           videoLoaded: true,
@@ -346,7 +349,7 @@ export default class VideoPlayer extends Component {
           </View>
         )}
 
-        {displayVideo && (
+        {/* {displayVideo && (
           <ControlButtons
             onRef={(ref) => (this.controlButtonRef = ref)}
             heightControlBar={heightControlBar}
@@ -364,6 +367,25 @@ export default class VideoPlayer extends Component {
             updatePlayRate={(playRate) => {
               return this.updatePlayRate(playRate);
             }}
+            onSlidingComplete={this.onSlidingComplete.bind(this)}
+            onSlidingStart={this.onSlidingStart.bind(this)}
+          />
+        )} */}
+
+        {displayVideo && (
+          <VisualSeekbar 
+            onRef={(ref) => (this.visualSeekbarRef = ref)}
+            togglePlayPause={this.togglePlayPause.bind(this)}
+            currentTime={currentTime}
+            totalTime={totalTime}
+            paused={paused}
+            prevPaused={prevPaused}
+            seek={async (time, fineSeek) => {
+              if (!paused) await this.setState({paused:true, prevPaused:false})
+              else if (prevPaused === undefined) 
+                this.setState({prevPaused: true})
+              if (fineSeek) this.setState({prevPaused: undefined})
+              this.player.seek(time, 33)}}
             onSlidingComplete={this.onSlidingComplete.bind(this)}
             onSlidingStart={this.onSlidingStart.bind(this)}
           />

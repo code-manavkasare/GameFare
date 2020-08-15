@@ -54,8 +54,8 @@ class VideoPlayerPage extends Component {
       paused: true,
       playRate: 1,
     });
-    this.videoPlayerRef.controlButtonRef.setCurrentTime(0, true);
-    this.videoPlayerRef.player.seek(0);
+    this.videoPlayerRef?.controlButtonRef?.setCurrentTime(0, true);
+    this.videoPlayerRef?.player?.seek(0);
   };
   isTimestampReached = async (timestampToWait) => {
     while (true) {
@@ -195,8 +195,8 @@ class VideoPlayerPage extends Component {
         colorIcon2={colors.white}
         initialTitleOpacity={1}
         clickButton1={() => {
-          this.videoPlayerRef.togglePlayPause(true);
-          this.videoPlayerRef.PinchableBoxRef.resetPosition();
+          this.videoPlayerRef?.togglePlayPause(true);
+          this.videoPlayerRef?.PinchableBoxRef?.resetPosition();
           this.resetPlayer();
           this.setState({recordedActions: []});
           openVideoPlayer({}, false, () => goBack());
@@ -273,6 +273,7 @@ class VideoPlayerPage extends Component {
     const {userID, navigation} = this.props;
     const {archive, isRecording} = this.state;
     const {url, id, thumbnail} = archive;
+    console.log(archive)
     const {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart} = this;
     const propsWhenRecording = isRecording
       ? {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart}

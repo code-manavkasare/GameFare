@@ -30,7 +30,7 @@ export default class CardContactSelect extends Component {
                 ) : (
                   <View style={[styleApp.center, styles.imgContact]}>
                     <Text style={[styleApp.text, {fontSize: 12}]}>
-                      {contact.firstname[0]}
+                      {contact?.firstname[0]}
                       {contact.lastname !== '' ? contact.lastname[0] : ''}
                     </Text>
                   </View>

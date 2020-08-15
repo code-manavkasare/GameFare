@@ -148,7 +148,7 @@ class CardGroup extends React.Component {
             left: i * 15,
           }}>
           <Text style={[styleApp.textBold, {fontSize: 10}]}>
-            {member.info.firstname[0] + member.info.lastname[0]}
+            {member?.info?.firstname[0] + member.info.lastname[0]}
           </Text>
         </View>
       );

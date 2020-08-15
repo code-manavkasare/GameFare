@@ -77,7 +77,7 @@ class CardEvent extends React.Component {
               styleApp.text,
               {fontSize: 10, fontFamily: 'OpenSans-Bold'},
             ]}>
-            {member.info.firstname[0] + member.info.lastname[0]}
+            {member?.info?.firstname[0] + member.info.lastname[0]}
           </Text>
         </View>
       );

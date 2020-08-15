@@ -155,13 +155,13 @@ class CardArchive extends PureComponent {
           style={{...styles.viewText, bottom: 5, left: 10}}>
           <Col>
             <Text
-              style={[styleApp.textBold, {color: colors.white, fontSize: 14}]}>
+              style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
               {formatDuration(durationSeconds * 1000, true)}
             </Text>
-            {/* <Text
-              style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
-              <FormatDate date={startTimestamp} />
-            </Text> */}
+            <Text
+              style={[styleApp.textBold, {color: colors.white, fontSize: 11}]}>
+              <FormatDate date={startTimestamp} short />
+            </Text>
           </Col>
         </View>
 

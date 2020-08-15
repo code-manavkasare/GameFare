@@ -13,14 +13,14 @@ function timing(toValue, duration, delay) {
   };
 }
 
-function native(toValue, duration, delay) {
+function native(toValue, duration, delay, easing) {
   return {
     toValue: toValue,
     duration: duration ? duration : 220,
     delay: delay ? delay : 0,
     friction: 90,
     tension: 80,
-    easing: Easing.inOut(Easing.cubic),
+    easing: easing ? easing : Easing.inOut(Easing.cubic),
     useNativeDriver: true,
     restSpeedThreshold: 3,
     restDisplacementThreshold: 0.1,
