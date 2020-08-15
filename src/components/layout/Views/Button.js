@@ -29,16 +29,21 @@ export default class Button extends Component {
       return Animated.parallel([
         Animated.timing(this.state.backgroundColorAnimation, timing(300, 100)),
       ]).start();
+    if (this.interval) clearInterval(this.interval)
     return Animated.parallel([
       Animated.timing(this.state.backgroundColorAnimation, timing(0, 100)),
     ]).start();
+  }
+  onLongPress() {
+    this.props.click()
+    this.interval = setInterval( () => this.props.click(), 250 );
   }
   render() {
     var color = this.state.backgroundColorAnimation.interpolate({
       inputRange: [0, 300],
       outputRange: [this.props.color, this.props.onPressColor],
     });
-    const {pointerEvents} = this.props;
+    const {pointerEvents, enableLongPress} = this.props;
     return (
       <Animated.View
         pointerEvents={pointerEvents}
@@ -48,6 +53,7 @@ export default class Button extends Component {
           style={[styleApp.center, {width: '100%', height: '100%'}]}
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
+          onLongPress={enableLongPress ? () => this.onLongPress() : null}
           onPress={() => this.props.click()}>
           {this.props.view()}
         </TouchableOpacity>

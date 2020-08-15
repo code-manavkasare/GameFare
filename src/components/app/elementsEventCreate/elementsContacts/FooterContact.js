@@ -137,7 +137,7 @@ class FooterContact extends Component {
       <View style={[styleApp.center, {height: 70, width: 50, marginTop: 2}]}>
         <View style={[styleApp.center, styles.roundViewContact]}>
           <Text style={[styleApp.text, {fontSize: 11}]}>
-            {contact.info.firstname[0]}
+            {contact?.info?.firstname[0]}
             {contact.info.lastname[0] ? contact.info.lastname[0] : ''}
           </Text>
           {this.buttonClose(contact)}

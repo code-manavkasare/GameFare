@@ -7,6 +7,8 @@ import {
   TapGestureHandler,
 } from 'react-native-gesture-handler';
 
+import {native} from '../../animations/animations';
+
 export default class PinchableBox extends Component {
   _baseScale = new Animated.Value(1);
   _pinchScale = new Animated.Value(1);
@@ -30,20 +32,23 @@ export default class PinchableBox extends Component {
     [
       {
         nativeEvent: {
-          translationX: this._translateX,
-          translationY: this._translateY,
+          // translationX: this._translateX,
+          // translationY: this._translateY,
         },
       },
     ],
     {
       useNativeDriver: true,
+      listener: (event) => {
+        this._translateX.setValue(event.nativeEvent.translationX + this._lastOffset.x)
+        this._translateY.setValue(event.nativeEvent.translationY + this._lastOffset.y)
+      }
     },
   );
 
   onPinchHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastScale *= event.nativeEvent.scale;
-
       this._baseScale.setValue(this._lastScale);
       this._pinchScale.setValue(1);
       const {scaleChange} = this.props;
@@ -53,21 +58,27 @@ export default class PinchableBox extends Component {
   onPan({nativeEvent: {scale}}) {}
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      this._lastOffset.x += event.nativeEvent.translationX;
-      this._lastOffset.y += event.nativeEvent.translationY;
-      this._translateX.setOffset(this._lastOffset.x);
-      this._translateX.setValue(0);
-      this._translateY.setOffset(this._lastOffset.y);
-      this._translateY.setValue(0);
+      this._lastOffset.x = this._translateX._value
+      this._lastOffset.y = this._translateY._value
     }
   };
   resetPosition() {
     this._lastOffset = {x: 0, y: 0};
-    this._translateX.setOffset(0);
-    this._translateY.setOffset(0);
+    this._translateX.setValue(0);
+    this._translateY.setValue(0);
     this._pinchScale.setValue(1);
     this._baseScale.setValue(1);
     this._lastScale = 1;
+  }
+  animateReset() {
+    Animated.parallel([
+      Animated.timing(this._translateX, native(0, 300)),
+      Animated.timing(this._translateY, native(0, 300)),
+      Animated.timing(this._pinchScale, native(1, 300)),
+      Animated.timing(this._baseScale, native(1, 300))
+    ]).start()
+    this._lastScale = 1;
+    this._lastOffset = {x: 0, y: 0};
   }
   _onSingleTap = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
@@ -77,7 +88,7 @@ export default class PinchableBox extends Component {
   };
   _onDoubleTap = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      this.resetPosition();
+      this.animateReset()
     }
   };
   render() {

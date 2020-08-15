@@ -102,15 +102,16 @@ class UploadHeader extends Component {
     const {currentScreenSize} = this.props;
     const {currentWidth: width} = currentScreenSize;
     const {totalProgress} = this.state;
+    const maxWidth = width*0.5
     const style =
       type === 'header'
-        ? {...styles.progressHeader, width}
-        : {...styles.progressContainer, width};
+        ? {...styles.progressHeader, maxWidth}
+        : {...styles.progressContainer, maxWidth};
     return (
       <Animated.View style={style}>
         <Progress.Bar
           color={colors.blue}
-          width={null}
+          width={200}
           progress={totalProgress}
           borderWidth={0}
           height={6}
@@ -194,13 +195,15 @@ class UploadHeader extends Component {
 
   render() {
     const {headerVisible} = this.state;
+    const {currentScreenSize} = this.props;
+    const {currentWidth: width} = currentScreenSize;
+    const maxWidth = 0.5*width;
     return (
-      <View style={{zIndex: 10, marginBottom: -10, position: 'absolute'}}>
+      <View style={{zIndex: 10, marginBottom: -10, position:'absolute', width, ...styleApp.center}}>
         {headerVisible && (
           <TouchableWithoutFeedback
-            onPress={() => this.open(0)}
-            style={styles.container}>
-            <View style={styles.container}>
+            onPress={() => this.open(0)}>
+            <View style={{...styles.container, maxWidth}}>
               {this.totalProgress('header')}
               <Text style={styles.headerText}>Uploading</Text>
             </View>
@@ -215,20 +218,21 @@ class UploadHeader extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.off,
-    borderTopWidth: 1,
-    width: '100%',
-    height: 50,
-    top: 60 + sizes.marginTopApp,
-    zIndex: 1,
+    ...styleApp.shadowWeak,
+    backgroundColor:colors.white, 
+    borderWidth:1, 
+    borderColor: colors.off, 
+    width:200,
+    height:50,
+    top:sizes.marginTopApp+8,
+    zIndex:1,
+    borderRadius:25
   },
   menuContainer: {
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingBottom: 100 + sizes.offsetFooterStreaming,
+    paddingBottom:150 + sizes.offsetFooterStreaming,
     backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -250,11 +254,13 @@ const styles = StyleSheet.create({
     ...styleApp.text,
     marginTop: 15,
     marginBottom: 5,
-    fontSize: 18,
+    fontSize: 16,
     marginHorizontal: 'auto',
-    textAlign: 'left',
-    marginLeft: '5%',
-    fontWeight: 'bold',
+    textAlign: 'center',
+    width:'100%',
+    height:40,
+    position:'absolute',
+    fontWeight: '700',
     color: colors.black,
   },
   buttonClose: {
@@ -282,11 +288,13 @@ const styles = StyleSheet.create({
   progressHeader: {
     opacity: 0.6,
     overflow: 'hidden',
-    height: 25,
-    position: 'absolute',
-    width: '102%',
-    left: '-1%',
-    top: 0,
+    borderColor: colors.off, 
+    paddingTop:42,
+    height: '100%',
+    borderRadius:25,
+    width:'100%',
+    left: 0,
+    bottom: 0,
     zIndex: 1,
   },
 });

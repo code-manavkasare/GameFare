@@ -245,14 +245,12 @@ class VideoLibraryPage extends Component {
     const {videosArray, selectOnly, selectedLocalVideos} = this.state;
     return (
       <View style={styleApp.fullSize}>
-        {!selectOnly && <UploadHeader />}
-
         <FlatListComponent
           list={videosArray}
           cardList={({item: video}) => this.renderCardArchive(video)}
-          numColumns={2}
-          incrementRendering={4}
-          initialNumberToRender={8}
+          numColumns={3}
+          incrementRendering={12}
+          initialNumberToRender={12}
           paddingBottom={
             selectOnly ? 0 : sizes.heightFooter + sizes.marginBottomApp + 20
           }
@@ -334,7 +332,7 @@ class VideoLibraryPage extends Component {
 
         <View
           style={{
-            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
+            marginTop: sizes.heightHeaderHome + sizes.marginTopApp, zIndex: 10
           }}>
           {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
         </View>
@@ -375,7 +373,7 @@ const styles = StyleSheet.create({
   },
   cardArchive: {
     // width: (width * 0.9) / 2 - 10,
-    width: width / 2,
+    width: width / 3,
     height: 170,
     borderRadius: 0,
     overflow: 'hidden',

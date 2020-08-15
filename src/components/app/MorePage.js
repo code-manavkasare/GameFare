@@ -251,7 +251,7 @@ class MorePage extends Component {
                         {backgroundColor: colors.off},
                       ]}>
                       <Text style={[styleApp.input, {fontSize: 20}]}>
-                        {infoUser.firstname[0] + infoUser.lastname[0]}
+                        {infoUser?.firstname[0] + infoUser.lastname[0]}
                       </Text>
                     </View>
                   )}

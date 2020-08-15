@@ -4,6 +4,7 @@ import {View, StyleSheet, Animated, Text, Image} from 'react-native';
 
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import UploadHeader from './UploadHeader';
 
 export default class HeaderVideoLibrary extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ export default class HeaderVideoLibrary extends Component {
       navigation,
     } = this.props;
     return (
+    <View style={{zIndex:11}}>
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={selectableMode ? 'Select Videos' : ''}
@@ -59,6 +61,8 @@ export default class HeaderVideoLibrary extends Component {
         colorIconOffset={colors.title}
         clickButtonOffset={() => share()}
       />
+      <UploadHeader />
+    </View>
     );
   }
 }

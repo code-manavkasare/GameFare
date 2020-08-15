@@ -32,7 +32,7 @@ export default class ImageConversation extends Component {
     return (
       <View style={[style, styleApp.center, {backgroundColor: colors.off}]}>
         <Text style={[styleApp.input, {fontSize: 11}]}>
-          {member.info.firstname[0] + member.info.lastname[0]}
+          {member?.info?.firstname[0] + member.info.lastname[0]}
         </Text>
       </View>
     );

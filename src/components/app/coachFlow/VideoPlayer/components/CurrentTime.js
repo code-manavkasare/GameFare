@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Text} from 'react-native';
+import {isEqual} from 'lodash';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
@@ -10,6 +11,7 @@ export default class LogoutView extends Component {
     super(props);
     this.state = {
       currentTime: this.props.currentTime,
+      overrideStyle: {}
     };
   }
   async componentDidMount() {
@@ -21,11 +23,17 @@ export default class LogoutView extends Component {
   getCurrentTime() {
     return this.state.currentTime;
   }
+  overrideStyle(overrideStyle) {
+    const {overrideStyle: prevStyle} = this.state;
+    if (!isEqual(overrideStyle, prevStyle))
+      this.setState({overrideStyle})
+  }
   currentTime() {
-    const {currentTime} = this.state;
+    const {currentTime, overrideStyle} = this.state;
+    const {style} = this.props;
     return (
-      <Text style={[styleApp.textBold, {color: colors.white}]}>
-        {displayTime(currentTime)}
+      <Text style={[styleApp.textBold, {...style, ...overrideStyle, color: colors.white}]}>
+        {currentTime > 0 ? displayTime(currentTime) : displayTime(0)}
       </Text>
     );
   }

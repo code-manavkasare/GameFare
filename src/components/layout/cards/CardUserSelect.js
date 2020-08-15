@@ -36,7 +36,7 @@ export default class CardUserSelect extends Component {
                 ) : (
                   <View style={[styleApp.center, styles.imgUser]}>
                     <Text style={[styleApp.text, {fontSize: 12}]}>
-                      {user.info.firstname[0]}
+                      {user?.info?.firstname[0]}
                       {user.info.lastname !== '' ? user.info.lastname[0] : ''}
                     </Text>
                   </View>
