@@ -20,6 +20,8 @@ import TeamPage from '../../app/TeamPage/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import SelectVideosFromLibrary from '../../app/videoLibraryPage/index';
 
+import SessionSettings from '../../app/TeamPage/components/SessionSettings';
+
 const Stack = createStackNavigator();
 const MainApp = () => {
   return (
@@ -56,6 +58,8 @@ const MainApp = () => {
         name="SelectVideosFromLibrary"
         component={SelectVideosFromLibrary}
       />
+
+      <Stack.Screen name="SessionSettings" component={SessionSettings} />
     </Stack.Navigator>
   );
 };

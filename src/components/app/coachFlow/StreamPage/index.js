@@ -86,7 +86,7 @@ class StreamTab extends Component {
   render() {
     const {permissionsCamera} = this.state;
     const {userConnected} = this.props;
-    if (!userConnected) return <LogoutView />;
+    
     return (
       <View style={styleApp.stylePage}>
         <HeaderListStream

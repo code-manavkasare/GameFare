@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
-import {StyleSheet, Text, Animated, View} from 'react-native';
+import {StyleSheet, Text, Animated, View, TouchableOpacity} from 'react-native';
 import {Grid, Row, Col} from 'react-native-easy-grid';
 
-import sizes, {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
+import sizes, {
+  marginTopApp,
+  marginTopAppLandscape,
+  width,
+} from '../../style/sizes';
 import Loader from '../loaders/Loader';
 import colors from '../../style/colors';
 import ButtonColor from '../Views/Button';
@@ -172,6 +176,7 @@ class HeaderBackButton extends Component {
       borderRadius: 23.8,
       borderWidth: 1,
       overFlow: 'hidden',
+      ...styleApp.center,
     };
     const {
       clickButtonOffset,
@@ -182,6 +187,7 @@ class HeaderBackButton extends Component {
       sizeIconOffset,
       typeIconOffset,
       nobackgroundColorIcon1,
+      customOffset,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
     if (iconOffset)
@@ -196,24 +202,28 @@ class HeaderBackButton extends Component {
                 : colors.white,
             },
           ]}>
-          <ButtonColor
-            color={nobackgroundColorIcon1 ? null : 'white'}
-            view={() => {
-              return iconOffset === 'text' ? (
-                <Text style={styleApp.textBold}>{textOffset}</Text>
-              ) : (
-                <AllIcons
-                  name={iconOffset}
-                  color={colorIconOffset ? colorIconOffset : colors.title}
-                  size={sizeIconOffset}
-                  type={typeIconOffset}
-                />
-              );
-            }}
-            click={() => clickButtonOffset()}
-            style={styles.buttonRight}
-            onPressColor={colors.off}
-          />
+          {iconOffset === 'custom' ? (
+            customOffset
+          ) : (
+            <ButtonColor
+              color={nobackgroundColorIcon1 ? null : 'white'}
+              view={() => {
+                return iconOffset === 'text' ? (
+                  <Text style={styleApp.textBold}>{textOffset}</Text>
+                ) : (
+                  <AllIcons
+                    name={iconOffset}
+                    color={colorIconOffset ? colorIconOffset : colors.title}
+                    size={sizeIconOffset}
+                    type={typeIconOffset}
+                  />
+                );
+              }}
+              click={() => clickButtonOffset()}
+              style={styles.buttonRight}
+              onPressColor={colors.off}
+            />
+          )}
         </Animated.View>
       );
   }
@@ -282,6 +292,7 @@ class HeaderBackButton extends Component {
       typeIcon2,
       text2Off,
       text2,
+      badgeIcon2,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
     if (loader)
@@ -322,7 +333,7 @@ class HeaderBackButton extends Component {
                   name={icon2}
                   color={colorIcon2 ? colorIcon2 : colors.title}
                   size={sizeIcon2 ? sizeIcon2 : 15}
-                  type={typeIcon2 ? typeIcon2: 'font'}
+                  type={typeIcon2 ? typeIcon2 : 'font'}
                 />
               );
             }}
@@ -333,6 +344,11 @@ class HeaderBackButton extends Component {
               backgroundColorIcon2 ? backgroundColorIcon2 : colors.off
             }
           />
+          {badgeIcon2 && (
+            <View style={{position: 'absolute', top: -0, left: -5}}>
+              {badgeIcon2}
+            </View>
+          )}
         </Animated.View>
       );
   }
@@ -342,6 +358,7 @@ class HeaderBackButton extends Component {
       currentScreenSize,
       opacityHeader,
       textHeader,
+      clickImgHeader,
     } = this.props;
     const {portrait} = currentScreenSize;
     const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
@@ -366,17 +383,31 @@ class HeaderBackButton extends Component {
     return (
       <Animated.View style={styleHeader}>
         <Row>
-          <View style={styles.rowTextHeader}>
-            <Animated.Text
-              style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
-              {textHeader}
-            </Animated.Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => clickImgHeader && clickImgHeader()}
+            activeOpacity={0.7}
+            style={[styles.rowTextHeader, {zIndex: imgHeader ? 10 : -1}]}>
+            <Row>
+              {imgHeader && (
+                <Col size={20} style={styleApp.center2}>
+                  {imgHeader}
+                </Col>
+              )}
+              <Col
+                size={75}
+                style={imgHeader ? styleApp.center2 : styleApp.center}>
+                <Animated.Text
+                  style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
+                  {textHeader}
+                </Animated.Text>
+              </Col>
+            </Row>
+          </TouchableOpacity>
           <Col size={15} style={styleApp.center2} activeOpacity={0.4}>
             {this.button1()}
           </Col>
           <Col size={20} style={[styleApp.center2, {marginLeft: -10}]}>
-            {imgHeader ? imgHeader : this.button11()}
+            {this.button11()}
           </Col>
           <Col size={6} style={styles.center} />
           <Col size={18} style={[styleApp.center3]}>
@@ -405,7 +436,7 @@ const styles = StyleSheet.create({
     paddingRight: '5%',
     borderBottomWidth: 1,
     position: 'absolute',
-    zIndex: 10,
+    zIndex: 9,
   },
   buttonRight: {
     ...styleApp.center,
@@ -423,10 +454,10 @@ const styles = StyleSheet.create({
     // overFlow: 'hidden',
   },
   rowTextHeader: {
-    ...styleApp.center,
     height: '100%',
     position: 'absolute',
-    width: '100%',
+    width: width * 0.9 - 100,
+    marginLeft: 50,
   },
 });
 

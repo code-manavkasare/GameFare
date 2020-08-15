@@ -202,10 +202,12 @@ export default class CardMessage extends React.Component {
               {type === 'video' && (
                 <CardArchive
                   id={content}
-                  style={[
-                    styleApp.cardArchive,
-                    {marginTop: 15, marginLeft: -1, borderRadius: 6},
-                  ]}
+                  style={{
+                    ...styleApp.cardArchive,
+                    marginTop: 15,
+                    marginLeft: -1,
+                    borderRadius: 6,
+                  }}
                 />
               )}
               {this.renderImages(

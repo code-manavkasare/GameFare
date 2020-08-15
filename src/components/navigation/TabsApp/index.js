@@ -25,7 +25,7 @@ function TabsApp() {
   return (
     <Tab.Navigator
       lazy
-      initialRouteName="Stream"
+      initialRouteName="VideoLibrary"
       keyboardHidesTabBar={false}
       tabBar={(props) => (
         <Footer
@@ -34,14 +34,14 @@ function TabsApp() {
         />
       )}>
       <Tab.Screen
-        name="Stream"
-        component={Stream}
+        name="VideoLibrary"
+        component={VideoLibrary}
         options={{
-          pageStack: 'StreamPage',
-          label: 'Teams',
+          pageStack: 'VideoLibrary',
+          label: 'Library',
           signInToPass: false,
           icon: {
-            name: 'user',
+            name: 'television',
             type: 'moon',
             size: 26,
           },
@@ -65,14 +65,14 @@ function TabsApp() {
       />
 
       <Tab.Screen
-        name="VideoLibrary"
-        component={VideoLibrary}
+        name="Stream"
+        component={Stream}
         options={{
-          pageStack: 'VideoLibrary',
-          label: 'Watch',
+          pageStack: 'StreamPage',
+          label: 'Chat',
           signInToPass: false,
           icon: {
-            name: 'television',
+            name: 'user',
             type: 'moon',
             size: 26,
           },

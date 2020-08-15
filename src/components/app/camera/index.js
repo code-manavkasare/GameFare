@@ -30,6 +30,9 @@ class CameraPage extends Component {
       layoutAction('setLayout', {isFooterVisible: false});
       StatusBar.setBarStyle('light-content', true);
     });
+    this.focusListener = navigation.addListener('blur', () => {
+      StatusBar.setBarStyle('dark-content', true);
+    });
   }
   componentWillUnmount() {
     this.focusListener();
@@ -80,13 +83,15 @@ class CameraPage extends Component {
           typeIcon2="moon"
           colorIcon2={colors.white}
         />
-        {cameraReady && <Row style={styles.bottomButtonsContainer}>
-          <BottomButtons
-            addFlag={() => camera.addFlag()}
-            startRecording={() => camera.startRecording()}
-            stopRecording={() => camera.stopRecording(true, true)}
-          />
-        </Row>}
+        {cameraReady && (
+          <Row style={styles.bottomButtonsContainer}>
+            <BottomButtons
+              addFlag={() => camera.addFlag()}
+              startRecording={() => camera.startRecording()}
+              stopRecording={() => camera.stopRecording(true, true)}
+            />
+          </Row>
+        )}
       </View>
     );
   }

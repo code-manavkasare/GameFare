@@ -17,9 +17,10 @@ import {
   endCurrentSession,
   unsetCurrentSession,
 } from '../../actions/coachActions';
+import {shareVideosWithTeam} from './videoManagement';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
-import {navigate, goBack} from '../../../NavigationService';
+import {navigate, goBack, dismiss} from '../../../NavigationService';
 
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
 import ImageUser from '../layout/image/ImageUser';
@@ -55,7 +56,7 @@ const createCoachSession = async (user, members) => {
     .ref(`coachSessions/${coachSessionID}`)
     .update(session);
   await store.dispatch(setSession(session));
-  bindSession(session.objectID)
+  bindSession(session.objectID);
   return session;
 };
 
@@ -323,10 +324,7 @@ const generateFlagsThumbnail = async ({
             };
           }),
         );
-  let {path: thumbnailFullVideo} = await createThumbnail({
-    url: source,
-    timeStamp: 500,
-  });
+  x;
   thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
   thumbnails.push({
     type: 'image',
@@ -487,7 +485,7 @@ const createSession = async (members) => {
       return {
         ...result,
         [member.id]: member,
-      }
+      };
     }, {});
   }
   const {objectID} = await openSession(
@@ -565,14 +563,14 @@ const addMembersToSession = (objectID, navigateTo) => {
     usersSelected: {},
     noNavigation: true,
     selectFromGamefare: true,
-    selectMultiple: true,
+    allowSelectMultiple: true,
     noUpdateStatusBar: noUpdateStatusBar,
     closeButton: true,
     loaderOnSubmit: true,
     displayCurrentUser: false,
     selectFromContacts: true,
     titleHeader: 'Add someone to the session',
-    onGoBack: async (members) => {
+    onSelectMembers: async (members, contacts) => {
       for (var i in Object.values(members)) {
         let member = Object.values(members)[i];
         member.invitationTimeStamp = Date.now();
@@ -591,31 +589,49 @@ const searchSessionsForString = (search) => {
   if (search === '') {
     return userSessions ? Object.keys(userSessions) : [];
   } else {
-    const matches = Object.keys(userSessions).map((id) => {
-      const session = allSessions[id];
-      const names = Object.values(session.members).reduce((result, member) => {
-        let name = '';
-        if (member?.info?.firstname) {
-          name = name + member.info.firstname.toLowerCase();
+    const matches = Object.keys(userSessions)
+      .map((id) => {
+        const session = allSessions[id];
+        const names = Object.values(session.members).reduce(
+          (result, member) => {
+            let name = '';
+            if (member?.info?.firstname) {
+              name = name + member.info.firstname.toLowerCase();
+            }
+            if (member?.info?.lastname) {
+              name = name + ' ' + member.info.lastname.toLowerCase();
+            }
+            if (name !== '') {
+              result.push(name);
+            }
+            return result;
+          },
+          [],
+        );
+        for (const name of names) {
+          if (name.search(search.toLowerCase()) !== -1) {
+            return id;
+          }
+          return null;
         }
-        if (member?.info?.lastname) {
-          name = name + ' ' + member.info.lastname.toLowerCase();
-        }
-        if (name !== '') {
-          result.push(name);
-        }
-        return result;
-      }, []);
-      for (const name of names) {
-        if (name.search(search.toLowerCase()) !== -1) {
-          return id;
-        }
-      }
-      return null;
-    }).filter(x => x);
+      })
+      .filter((x) => x);
     return matches;
   }
-}
+};
+
+const selectVideosFromLibrary = (coachSessionID) => {
+  navigate('SelectVideosFromLibrary', {
+    selectableMode: true,
+    selectOnly: true,
+    confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
+      shareVideosWithTeam(
+        selectedLocalVideos,
+        selectedFirebaseVideos,
+        coachSessionID,
+      ),
+  });
+};
 
 module.exports = {
   createCoachSession,
@@ -651,4 +667,5 @@ module.exports = {
   newSession,
   addMembersToSession,
   searchSessionsForString,
+  selectVideosFromLibrary,
 };

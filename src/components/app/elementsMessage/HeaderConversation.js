@@ -5,9 +5,15 @@ import {connect} from 'react-redux';
 import colors from '../../style/colors';
 
 import {openSession, sessionOpening} from '../../functions/coach';
+import {navigate} from '../../../../NavigationService';
 
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
-import {titleSession, imageCardTeam} from '../TeamPage/components/elements';
+import {
+  titleSession,
+  imageCardTeam,
+  viewLive,
+  hangupButton,
+} from '../TeamPage/components/elements';
 
 class HeaderConversation extends React.Component {
   constructor(props) {
@@ -33,6 +39,9 @@ class HeaderConversation extends React.Component {
         AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={titleSession(session, 'small')}
         imgHeader={imageCardTeam(session, 60, true)}
+        clickImgHeader={() =>
+          navigate('SessionSettings', {objectID: session.objectID})
+        }
         loader={loader || propsLoader}
         inputRange={[50, 80]}
         initialBorderColorIcon={'white'}
@@ -46,6 +55,9 @@ class HeaderConversation extends React.Component {
         icon2={'film'}
         clickButton1={() => navigation.goBack()}
         clickButton2={() => this.openSession()}
+        badgeIcon2={viewLive(session, {height: 20, width: 20}, true)}
+        iconOffset="custom"
+        customOffset={hangupButton(session)}
       />
     );
   }

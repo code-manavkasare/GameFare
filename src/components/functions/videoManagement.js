@@ -2,23 +2,28 @@ import React, {Component} from 'react';
 import {ProcessingManager} from 'react-native-video-processing';
 import StatusBar from '@react-native-community/status-bar';
 import RNFS from 'react-native-fs';
+import {Image} from 'react-native';
 
 import database from '@react-native-firebase/database';
+import {createThumbnail} from 'react-native-create-thumbnail';
+import RNAssetThumbnail from 'react-native-asset-thumbnail';
 
 import {getVideoInfo, getVideoUUID} from './pictures';
 
 import {navigate} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
-import {
-  addVideos,
-  deleteVideo,
-} from '../../actions/localVideoLibraryActions';
+import {addVideos, deleteVideo} from '../../actions/localVideoLibraryActions';
 import {sendNewMessage} from './message';
 import {enqueueFileUpload} from '../../actions/uploadQueueActions';
 import {setLayout} from '../../actions/layoutActions';
 
-import {shareCloudVideo, createCloudVideo, setCloudThumbnail} from '../database/firebase/videosManagement';
+import {
+  shareCloudVideo,
+  createCloudVideo,
+  setCloudThumbnail,
+} from '../database/firebase/videosManagement';
+import {getNativeVideoInfo} from '../functions/pictures';
 
 import {FormatDate, formatDuration} from './date';
 import AsyncImage from '../layout/image/AsyncImage';
@@ -133,8 +138,9 @@ const openVideoPlayer = async (video, open, goBack) => {
 };
 
 const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
+  console.log('uploadLocalVideo', videoInfo);
   const cloudVideo = await createCloudVideo(videoInfo);
-  const {thumbnail} = videoInfo;
+  let {thumbnail, url, fromNativeLibrary, id} = videoInfo;
   if (thumbnail) {
     if (thumbnail.substring(0, 4) === 'http') {
       setCloudThumbnail(cloudVideo.id, videoInfo.thumbnail);
@@ -145,7 +151,7 @@ const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
           url: thumbnail,
           storageDestination: `archivedStreams/${cloudVideo.id}`,
           displayInList: false,
-        })
+        }),
       );
     }
   }
@@ -158,7 +164,7 @@ const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
       shareProgressWith,
       displayInList: true,
       progress: 0,
-    })
+    }),
   );
   return cloudVideo;
 };
@@ -172,9 +178,18 @@ const deleteLocalVideoFile = async (path) => {
   });
 };
 
-const shareVideosWithPeople = async (localVideos, firebaseVideos, users, contacts) => {
-  const videosToUpload = localVideos.map((id) => store.getState().localVideoLibrary.videoLibrary[id]);
-  const cloudVideos = await Promise.all(videosToUpload.map((video) => uploadLocalVideo(video)));
+const shareVideosWithPeople = async (
+  localVideos,
+  firebaseVideos,
+  users,
+  contacts,
+) => {
+  const videosToUpload = localVideos.map(
+    (id) => store.getState().localVideoLibrary.videoLibrary[id],
+  );
+  const cloudVideos = await Promise.all(
+    videosToUpload.map((video) => uploadLocalVideo(video)),
+  );
   let allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
   Object.values(users).map((user) => {
     allVideos.map((videoID) => {
@@ -184,15 +199,26 @@ const shareVideosWithPeople = async (localVideos, firebaseVideos, users, contact
   Object.values(contacts).map((contact) => {
     console.log('contact share is null operation', contact);
   });
-}
+};
 
 const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
+  console.log('localVideos', localVideos);
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
-  const videosToUpload = localVideos.map(
-    (id) => store.getState().localVideoLibrary.videoLibrary[id],
+
+  let videosToUpload = [];
+  for (var j in localVideos) {
+    const idLocalVideo = localVideos[j];
+    let videoInfo = store.getState().localVideoLibrary.videoLibrary[
+      idLocalVideo
+    ];
+    videosToUpload.push(videoInfo);
+  }
+  console.log('videosToUpload', videosToUpload);
+
+  const cloudVideos = await Promise.all(
+    videosToUpload.map((video) => uploadLocalVideo(video)),
   );
-  const cloudVideos = await Promise.all(videosToUpload.map((video) => uploadLocalVideo(video)));
   let allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
   for (let i in allVideos) {
     const videoID = allVideos[i];

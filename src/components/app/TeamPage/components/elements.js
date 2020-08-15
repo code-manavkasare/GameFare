@@ -16,8 +16,12 @@ import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
-import {sessionOpening, addMembersToSession} from '../../../functions/coach';
-import {shareVideosWithTeam} from '../../../functions/videoManagement';
+import {
+  sessionOpening,
+  addMembersToSession,
+  selectVideosFromLibrary,
+} from '../../../functions/coach';
+
 import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 
 const imageCardTeam = (session, size, hideDots) => {
@@ -42,7 +46,7 @@ const imageCardTeam = (session, size, hideDots) => {
       {length > 2 && (
         <View>
           {userCircle(
-            length - 2,
+            length - 1,
             styleByIndex(-1),
             scale,
             Object.values(session.members).length - 1,
@@ -86,10 +90,7 @@ const userCircle = (member, style, scale, length, hideDots) => {
     member.info.firstname !== '' &&
     member.info.lastname !== '';
 
-  const altNames =
-    member &&
-    member.info &&
-    member.info.userInfo;
+  const altNames = member && member.info && member.info.userInfo;
 
   return (
     <View key={member.id ? member.id : -1}>
@@ -121,8 +122,9 @@ const userCircle = (member, style, scale, length, hideDots) => {
                 {firstAndLastName
                   ? member.info.firstname[0] + member.info.lastname[0]
                   : altNames
-                    ? member.info.userInfo.firstname[0] + member.info.userInfo.lastname[0]
-                    : '+' + member}
+                  ? member.info.userInfo.firstname[0] +
+                    member.info.userInfo.lastname[0]
+                  : '+' + member}
               </Text>
             </View>
           )}
@@ -270,7 +272,7 @@ const formatDate = (date) => {
   else return moment(date).format('D/M/YYYY');
 };
 
-const viewLive = (session, style) => {
+const viewLive = (session, style, hideText) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   const activeSession = session.objectID === currentSessionID;
   if (!activeSession) return null;
@@ -288,7 +290,7 @@ const viewLive = (session, style) => {
   return (
     <ButtonColor
       view={() => {
-        return <Text style={styleText}>Live</Text>;
+        return <Text style={styleText}>{!hideText && 'Live'}</Text>;
       }}
       color={colors.red}
       style={styleViewLive}
@@ -464,17 +466,7 @@ const ListContents = (props) => {
         hideDividerHeader: true,
         button: {
           text: 'Add',
-          click: () =>
-            navigate('SelectVideosFromLibrary', {
-              selectableMode: true,
-              selectOnly: true,
-              confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
-                shareVideosWithTeam(
-                  selectedLocalVideos,
-                  selectedFirebaseVideos,
-                  objectID,
-                ),
-            }),
+          click: () => selectVideosFromLibrary(objectID),
         },
         badge:
           Object.keys(contents).length === 0

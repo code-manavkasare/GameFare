@@ -167,7 +167,7 @@ class MorePage extends Component {
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
-        nextNavigation: () => navigate('StreamPage'),
+        nextNavigation: () => navigate('VideoLibrary'),
       });
     } else {
       this.props.navigation.navigate(page);
@@ -287,8 +287,9 @@ class MorePage extends Component {
                   titleHeader: 'Select your contacts',
                   onSelectMembers: async (users, contacts) => {
                     let numbers = Object.values(contacts).map(
-                      (contact) => `+${contact.countryCode}${contact.phoneNumber}`
-                    )
+                      (contact) =>
+                        `+${contact.countryCode}${contact.phoneNumber}`,
+                    );
                     const {url} = await createBranchUrl({});
                     const {completed, cancelled, error} = await sendSMSFunction(
                       numbers,

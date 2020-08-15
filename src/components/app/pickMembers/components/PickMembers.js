@@ -21,6 +21,8 @@ import {
   heightHeaderHome,
   marginTopApp,
   marginTopAppLandscape,
+  marginBottomApp,
+  heightFooter,
 } from '../../../style/sizes';
 import Loader from '../../../layout/loaders/Loader';
 import Button from '../../../layout/buttons/Button';
@@ -52,7 +54,7 @@ class PickMembers extends React.Component {
   static getDerivedStateFromProps(props, state) {
     const {selectFromGamefare, selectFromSessions} = props;
     if (selectFromGamefare) {
-      return {selectingUsers: true}
+      return {selectingUsers: true};
     } else if (selectFromSessions) {
       return {selectingSessions: true};
     }
@@ -141,8 +143,8 @@ class PickMembers extends React.Component {
                 selectingUsers
                   ? this.searchUsers(text)
                   : selectingSessions
-                    ? this.searchSessions(text)
-                    : null
+                  ? this.searchSessions(text)
+                  : null
               }
             />
           </Col>
@@ -156,7 +158,9 @@ class PickMembers extends React.Component {
         user={user}
         key={user.objectID}
         usersSelected={usersSelected}
-        selectUser={(selected, user, usersSelected) => this.selectUser(selected, user, usersSelected)}
+        selectUser={(selected, user, usersSelected) =>
+          this.selectUser(selected, user, usersSelected)
+        }
       />
     );
   }
@@ -190,7 +194,9 @@ class PickMembers extends React.Component {
         </View>
       );
     }
-    return sessions.map((session, i) => this.cardSession(session, i, sessionsSelected));
+    return sessions.map((session, i) =>
+      this.cardSession(session, i, sessionsSelected),
+    );
   }
   pickMembers() {
     const {selectFromGamefare, selectFromSessions} = this.props;
@@ -199,7 +205,7 @@ class PickMembers extends React.Component {
       <View
         style={{
           marginTop: heightHeaderHome + marginTopApp,
-          height: height - heightHeaderHome - 20,
+          height: height - heightHeaderHome,
         }}>
         {selectFromGamefare && selectFromSessions && (
           <View style={[styleApp.marginView, {marginBottom: 5}]}>
@@ -212,9 +218,15 @@ class PickMembers extends React.Component {
               state={selectingUsers}
               setState={(val) => {
                 if (val) {
-                  this.setState({selectingUsers: true, selectingSessions: false});
+                  this.setState({
+                    selectingUsers: true,
+                    selectingSessions: false,
+                  });
                 } else {
-                  this.setState({selectingUsers: false, selectingSessions: true});
+                  this.setState({
+                    selectingUsers: false,
+                    selectingSessions: true,
+                  });
                 }
               }}
             />
@@ -223,9 +235,10 @@ class PickMembers extends React.Component {
         {this.searchInput()}
         <ScrollView
           keyboardShouldPersistTaps={'always'}
-          style={styles.scrollViewUsers}>
-          {selectFromGamefare && selectingUsers && this.userList()}
-          {selectFromSessions && selectingSessions && this.sessionList()}
+          // style={styles.scrollViewUsers}
+        >
+          {selectFromContacts && selectingContacts && this.contactList()}
+          {selectFromGamefare && !selectingContacts && this.userList()}
         </ScrollView>
       </View>
     );
@@ -233,7 +246,9 @@ class PickMembers extends React.Component {
   submitButton() {
     const {usersSelected, sessionsSelected} = this.state;
     const {onSelectMembers} = this.props;
-    const numSelected = Object.values(usersSelected).length + Object.values(sessionsSelected).length;
+    const numSelected =
+      Object.values(usersSelected).length +
+      Object.values(contactsSelected).length;
     if (numSelected == 0) {
       return null;
     }
@@ -252,7 +267,7 @@ class PickMembers extends React.Component {
   }
   render() {
     return (
-      <View>
+      <View style={styleApp.stylePage}>
         {this.pickMembers()}
         {this.submitButton()}
       </View>
@@ -272,7 +287,9 @@ const styles = StyleSheet.create({
   },
   scrollViewUsers: {
     paddingTop: 10,
-    height: '100%',
+    flex: 1,
+    paddingBottom: 80,
+    height: 300,
   },
   searchBar: {
     backgroundColor: colors.off2,
