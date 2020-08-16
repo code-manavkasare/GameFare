@@ -13,6 +13,7 @@ import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {imageCardTeam, sessionTitle} from './elements';
 import RowIcon from '../../../layout/rows/RowIcon';
+import {deleteSession} from '../../../functions/coach';
 
 import isEqual from 'lodash.isequal';
 
@@ -23,7 +24,8 @@ class SessionSettings extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   settings() {
-    const {session, messages, navigation} = this.props;
+    const {session, navigation, route} = this.props;
+    const {objectID} = route.params;
     return (
       <View style={{minHeight: sizes.height}}>
         <View style={styleApp.marginView}>
@@ -41,15 +43,7 @@ class SessionSettings extends Component {
           label="Leave this conversation"
           icon={{name: 'sign-out-alt', type: 'font', size: 20}}
           colorText={colors.red}
-          click={() =>
-            navigation.navigate('Alert', {
-              title: 'Do you want to leave this conversation?',
-              textButton: 'Leave',
-              onGoBack: () => true,
-              colorButton: 'red',
-              onPressColor: colors.redLight,
-            })
-          }
+          click={() => deleteSession(objectID)}
         />
       </View>
     );
@@ -97,7 +91,7 @@ const mapStateToProps = (state, props) => {
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[objectID],
-    messages: state.conversations[objectID],
+    // messages: state.conversations[objectID],
   };
 };
 

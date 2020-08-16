@@ -25,6 +25,7 @@ import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
 import ImageUser from '../layout/image/ImageUser';
 import ButtonAcceptPayment from '../layout/buttons/ButtonAcceptPayment';
+import colors from '../style/colors';
 
 const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -375,10 +376,10 @@ const infoCoach = (members) => {
   if (coaches.length !== 0) return coaches[0];
   return false;
 };
-const closeSession = async () => {
+const closeSession = async ({noNavigation}) => {
   await store.dispatch(endCurrentSession());
   store.dispatch(unsetCurrentSession());
-  await navigate('Stream');
+  if (!noNavigation) await navigate('Stream');
 };
 const openMemberAcceptCharge = async (
   session,
@@ -515,15 +516,20 @@ const capitalize = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const deleteSession = (session) => {
-  const {objectID} = session;
+const deleteSession = (objectID) => {
   const userID = store.getState().user.userID;
+
   navigate('Alert', {
-    title: 'Do you want to leave this session?',
+    title: 'Do you want to leave this conversation?',
     textButton: 'Leave',
     colorButton: 'red',
     onPressColor: colors.redLight,
+    nextNavigation: () => {
+      console.log('nextNavigation');
+      navigate('Stream');
+    },
     onGoBack: async () => {
+      const currentSessionID = store.getState().coach.currentSessionID;
       let updates = {};
       updates[`users/${userID}/coachSessions/${objectID}`] = null;
       updates[`coachSessions/${objectID}/members/${userID}`] = null;
@@ -531,10 +537,9 @@ const deleteSession = (session) => {
       await database()
         .ref()
         .update(updates);
-      if (objectID === objectID)
-        await coachAction('setSessionInfo', {
-          objectID: false,
-        });
+      console.log('updates', updates);
+      if (objectID === currentSessionID)
+        await closeSession({noNavigation: true});
       return true;
     },
   });
