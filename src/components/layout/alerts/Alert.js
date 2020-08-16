@@ -46,8 +46,7 @@ export default class Alert extends Component {
   }
   title() {
     const {title} = this.props.route.params;
-    if (title) 
-      return <Text style={styleApp.title}>{title}</Text>;
+    if (title) return <Text style={styleApp.title}>{title}</Text>;
     return null;
   }
   subtitle() {
@@ -62,7 +61,7 @@ export default class Alert extends Component {
           <View
             style={[
               styleApp.divider,
-              {width: '100%', marginTop: 20, marginBottom:-5},
+              {width: '100%', marginTop: 20, marginBottom: -5},
             ]}
           />
         </View>
@@ -76,6 +75,7 @@ export default class Alert extends Component {
       this.setState({loader: true});
       await onGoBack();
     }
+    console.log('nextNavigation!', nextNavigation);
     if (nextNavigation) return nextNavigation();
     return this.close();
   }
@@ -138,12 +138,11 @@ export default class Alert extends Component {
               {this.title()}
               {this.subtitle()}
             </Col>
-            {icon && 
-            <Col size={15} style={styleApp.center}>
-              <View style={styles.viewIcon}>
-                {icon}
-              </View>
-            </Col>}
+            {icon && (
+              <Col size={15} style={styleApp.center}>
+                <View style={styles.viewIcon}>{icon}</View>
+              </Col>
+            )}
           </Row>
 
           {componentAdded && (
@@ -186,9 +185,10 @@ export default class Alert extends Component {
                     disabled={listOptions[1].disabled}
                     onPressColor={colors.greenLight}
                     text={listOptions[1].title || 'Yes'}
-                    click={() => this.optionClick(
-                      listOptions[1].operation,
-                      listOptions[1].forceNavigation,
+                    click={() =>
+                      this.optionClick(
+                        listOptions[1].operation,
+                        listOptions[1].forceNavigation,
                       )
                     }
                     loader={listOptions[1].loader}
@@ -207,18 +207,21 @@ export default class Alert extends Component {
                     view={() => {
                       return (
                         <Row>
-                          {icon ? () => {
-                            const {name, size, type, color} = icon;
-                            return (
-                              <Col size={20} style={styleApp.center}>
-                                <AllIcons
-                                  name={name}
-                                  type={type}
-                                  color={color}
-                                  size={size}
-                                />
-                              </Col>
-                          )} : null}
+                          {icon
+                            ? () => {
+                                const {name, size, type, color} = icon;
+                                return (
+                                  <Col size={20} style={styleApp.center}>
+                                    <AllIcons
+                                      name={name}
+                                      type={type}
+                                      color={color}
+                                      size={size}
+                                    />
+                                  </Col>
+                                );
+                              }
+                            : null}
                           <Col size={60} style={styleApp.center2}>
                             <Text style={styleApp.text}>{title}</Text>
                           </Col>
@@ -273,7 +276,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     paddingTop: 10,
-    paddingBottom:10,
+    paddingBottom: 10,
     borderColor: colors.off,
     width: '100%',
     // shadowColor: '#46474B',
@@ -310,7 +313,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 4,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   buttonArea: {
     paddingLeft: '5%',
