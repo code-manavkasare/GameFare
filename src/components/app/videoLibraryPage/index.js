@@ -332,7 +332,8 @@ class VideoLibraryPage extends Component {
 
         <View
           style={{
-            marginTop: sizes.heightHeaderHome + sizes.marginTopApp, zIndex: 10
+            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
+            zIndex: 10,
           }}>
           {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
         </View>

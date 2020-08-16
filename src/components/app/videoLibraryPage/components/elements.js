@@ -32,14 +32,19 @@ const pickerlocalVideos = ({
   return (
     <View>
       {rowTitle({
-        icon: {name: 'images', type: 'font', color: colors.title, size: 20},
+        icon: {
+          name: 'video-camera',
+          type: 'moon',
+          color: colors.title,
+          size: 20,
+        },
         hideDividerHeader: false,
         button: {
           text: 'Select',
           click: () => addFromCameraRoll({selectOnly: true}),
         },
         // badge: 0,
-        title: 'Ios',
+        title: 'Camera roll',
       })}
 
       <View style={{marginLeft: '-5%', marginBottom: -10, width: '110%'}} />

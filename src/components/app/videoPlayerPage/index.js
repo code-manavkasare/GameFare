@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
+import Orientation from 'react-native-orientation-locker';
 
 import VideoPlayer from '../coachFlow/VideoPlayer/index';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -29,6 +30,15 @@ class VideoPlayerPage extends Component {
       archive: {},
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  componentDidMount() {
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      Orientation.unlockAllOrientations();
+    });
+    // this.focusListener = navigation.addListener('blur', () => {
+    //   Orientation.lockToPortrait();
+    // });
   }
   static getDerivedStateFromProps(props, state) {
     if (
@@ -106,8 +116,7 @@ class VideoPlayerPage extends Component {
             break;
           case 'willSeek':
             //Useful to wait for seek methods
-            await this.isTimestampReached(action.timestamp).then(() => {
-            });
+            await this.isTimestampReached(action.timestamp).then(() => {});
             break;
           case 'seek':
             this.videoPlayerRef.setState({
@@ -273,7 +282,7 @@ class VideoPlayerPage extends Component {
     const {userID, navigation} = this.props;
     const {archive, isRecording} = this.state;
     const {url, id, thumbnail} = archive;
-    console.log(archive)
+    console.log(archive);
     const {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart} = this;
     const propsWhenRecording = isRecording
       ? {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart}

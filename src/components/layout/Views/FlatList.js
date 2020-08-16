@@ -97,8 +97,10 @@ class FlatListComponent extends Component {
         onEndReached={() => this.onEndReached()}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={
-          <View>
-            <Text>To be done</Text>
+          <View style={styleApp.marginView}>
+            <Text style={styleApp.text}>
+              Empty list view (work in progress)
+            </Text>
           </View>
         }
         onScroll={Animated.event(

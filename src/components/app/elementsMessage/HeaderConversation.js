@@ -50,10 +50,15 @@ class HeaderConversation extends React.Component {
         initialBorderWidth={1}
         initialBorderColorHeader={colors.white}
         sizeIcon2={26}
+        sizeIcon1={17}
         initialTitleOpacity={1}
         icon1={'arrow-left'}
         icon2={'film'}
-        clickButton1={() => navigation.goBack()}
+        clickButton1={() => {
+          // const {route} = this.props
+          // const {currentRouteName} = route.params;
+          navigation.navigate('Stream');
+        }}
         clickButton2={() => this.openSession()}
         badgeIcon2={viewLive(session, {height: 20, width: 20}, true)}
         iconOffset="custom"

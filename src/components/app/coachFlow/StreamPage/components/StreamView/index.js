@@ -292,10 +292,13 @@ class StreamPage extends Component {
     return true;
   }
   close() {
-    const {layoutAction, navigation} = this.props;
+    const {layoutAction, navigation, route, currentSessionID} = this.props;
+    const {currentRouteName} = route.params;
+
     layoutAction('setLayout', {isFooterVisible: true});
     StatusBar.setBarStyle('dark-content', true);
-    navigation.goBack();
+
+    navigation.navigate(currentRouteName, {coachSessionID: currentSessionID});
   }
   loaderView(text, hideLoader) {
     const styleText = {
