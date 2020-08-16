@@ -6,7 +6,6 @@ import {Image} from 'react-native';
 
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
-import RNAssetThumbnail from 'react-native-asset-thumbnail';
 
 import {getVideoInfo, getVideoUUID} from './pictures';
 

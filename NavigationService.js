@@ -34,8 +34,20 @@ const goBack = () => {
   navigationRef.current?.dispatch(CommonActions.goBack());
 };
 
+const getCurrentRoute = () => {
+  let currentRoute = navigationRef.current.getCurrentRoute().name;
+  if (
+    currentRoute === 'Chat' ||
+    currentRoute === 'Content' ||
+    currentRoute === 'Players'
+  )
+    currentRoute = 'Conversation';
+  console.log('currentRoute', currentRoute);
+  return currentRoute;
+};
+
 const dismiss = () => {
-  console.log('')
+  console.log('');
   navigationRef.dangerouslyGetParent().pop();
 };
 
@@ -67,4 +79,5 @@ module.exports = {
   navigationRef,
   setParams,
   clickNotification,
+  getCurrentRoute,
 };

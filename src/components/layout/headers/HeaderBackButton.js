@@ -386,15 +386,15 @@ class HeaderBackButton extends Component {
           <TouchableOpacity
             onPress={() => clickImgHeader && clickImgHeader()}
             activeOpacity={0.7}
-            style={[styles.rowTextHeader, {zIndex: imgHeader ? 10 : -1}]}>
+            style={imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader}>
             <Row>
               {imgHeader && (
-                <Col size={20} style={styleApp.center2}>
+                <Col size={25} style={styleApp.center2}>
                   {imgHeader}
                 </Col>
               )}
               <Col
-                size={75}
+                size={70}
                 style={imgHeader ? styleApp.center2 : styleApp.center}>
                 <Animated.Text
                   style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
@@ -456,8 +456,15 @@ const styles = StyleSheet.create({
   rowTextHeader: {
     height: '100%',
     position: 'absolute',
-    width: width * 0.9 - 100,
+    width: width * 0.9,
+    zIndex: -1,
+  },
+  rowTextImgHeader: {
+    height: '100%',
+    position: 'absolute',
+    width: width * 0.9 - 170,
     marginLeft: 50,
+    zIndex: 10,
   },
 });
 

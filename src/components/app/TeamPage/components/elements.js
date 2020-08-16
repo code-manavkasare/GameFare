@@ -151,7 +151,7 @@ const userCircle = (member, style, scale, length, hideDots) => {
   );
 };
 
-const titleSession = (session, size, allMembers) => {
+const titleSession = (session, size) => {
   const userID = store.getState().user.userID;
   if (session.title) return session.title;
   const members = getSortedMembers(session.members);
@@ -210,10 +210,10 @@ const dateSession = ({session, messages}) => {
 
   return formatDate(lastActive);
 };
-const sessionTitle = (session, styleText, allMembers) => {
+const sessionTitle = (session, styleText) => {
   return (
     <Text style={[styleApp.title, {fontSize: 17}, styleText]}>
-      {titleSession(session, false, allMembers)}
+      {titleSession(session, false)}
     </Text>
   );
 };

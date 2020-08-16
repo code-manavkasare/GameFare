@@ -20,7 +20,7 @@ import {
 import {shareVideosWithTeam} from './videoManagement';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
-import {navigate, goBack, dismiss} from '../../../NavigationService';
+import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
 import ImageUser from '../layout/image/ImageUser';
@@ -445,6 +445,8 @@ const openMemberAcceptCharge = async (
 
 const finalizeOpening = async (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
+  const currentRouteName = getCurrentRoute();
+
   if (currentSessionID !== session.objectID) {
     if (currentSessionID) {
       await store.dispatch(unsetCurrentSession());
@@ -457,7 +459,11 @@ const finalizeOpening = async (session) => {
   StatusBar.setBarStyle('light-content', true);
   navigate('Session', {
     screen: 'Session',
-    params: {coachSessionID: session.objectID, date: Date.now()},
+    params: {
+      coachSessionID: session.objectID,
+      date: Date.now(),
+      currentRouteName,
+    },
   });
 };
 

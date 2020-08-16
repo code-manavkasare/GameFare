@@ -11,6 +11,8 @@ import {goBack} from '../../../../../NavigationService';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import {imageCardTeam, sessionTitle} from './elements';
+import RowIcon from '../../../layout/rows/RowIcon';
 
 import isEqual from 'lodash.isequal';
 
@@ -21,10 +23,34 @@ class SessionSettings extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   settings() {
-    const {session, messages} = this.props;
+    const {session, messages, navigation} = this.props;
     return (
-      <View>
-        <Text>{session.objectID}</Text>
+      <View style={{minHeight: sizes.height}}>
+        <View style={styleApp.marginView}>
+          <Row style={{flex: 0, paddingTop: 20, paddingBottom: 20}}>
+            <Col size={25} style={styleApp.center2}>
+              {imageCardTeam(session)}
+            </Col>
+            <Col size={75} style={styleApp.center2}>
+              {sessionTitle(session)}
+            </Col>
+          </Row>
+        </View>
+        <View style={styleApp.divider2} />
+        <RowIcon
+          label="Leave this conversation"
+          icon={{name: 'sign-out-alt', type: 'font', size: 20}}
+          colorText={colors.red}
+          click={() =>
+            navigation.navigate('Alert', {
+              title: 'Do you want to leave this conversation?',
+              textButton: 'Leave',
+              onGoBack: () => true,
+              colorButton: 'red',
+              onPressColor: colors.redLight,
+            })
+          }
+        />
       </View>
     );
   }
