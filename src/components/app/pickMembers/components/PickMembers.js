@@ -11,8 +11,6 @@ import {
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
-import StatusBar from '@react-native-community/status-bar';
-import Orientation from 'react-native-orientation-locker';
 import {dissoc} from 'ramda';
 
 import styleApp from '../../../style/style';
@@ -235,10 +233,9 @@ class PickMembers extends React.Component {
         {this.searchInput()}
         <ScrollView
           keyboardShouldPersistTaps={'always'}
-          // style={styles.scrollViewUsers}
         >
-          {selectFromContacts && selectingContacts && this.contactList()}
-          {selectFromGamefare && !selectingContacts && this.userList()}
+          {selectFromSessions && selectingSessions && this.sessionList()}
+          {selectFromGamefare && selectingUsers && this.userList()}
         </ScrollView>
       </View>
     );
@@ -248,7 +245,7 @@ class PickMembers extends React.Component {
     const {onSelectMembers} = this.props;
     const numSelected =
       Object.values(usersSelected).length +
-      Object.values(contactsSelected).length;
+      Object.values(sessionsSelected).length;
     if (numSelected == 0) {
       return null;
     }

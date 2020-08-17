@@ -2,6 +2,7 @@ import {
   ADD_VIDEOS_LOCAL_LIBRARY,
   DELETE_VIDEO_LOCAL_LIBRARY,
   DELETE_SNIPPET_LOCAL_LIBRARY,
+  HIDE_VIDEO_LOCAL_LIBRARY,
 } from '../actions/types';
 
 const initialState = {
@@ -43,6 +44,18 @@ const localVideoLibraryReducer = (state = initialState, action) => {
             ...state.videoLibrary[action.parent],
             snippets: currentSnippets,
           }
+        }
+      }
+    case HIDE_VIDEO_LOCAL_LIBRARY:
+      const video = state.videoLibrary[action.videoID];
+      return {
+        ...state,
+        videoLibrary: {
+          ...state.videoLibrary,
+          [action.videoID]: {
+            ...video,
+            hidden: true,
+          },
         }
       }
     default:

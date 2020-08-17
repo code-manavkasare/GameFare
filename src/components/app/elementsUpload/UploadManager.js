@@ -30,22 +30,24 @@ class UploadManager extends Component {
       uploadQueueAction('resetUploadQueue');
     } else {
       const task = queue[index];
-      console.log('task', task);
-      const startTask =
-        (task && (task.progress === 0 || task.progress === undefined)) || init;
-      if (status === 'uploading' && startTask) {
-        await uploadQueueAction('setJobProgress', {
-          index: index,
-          progress: 0.01,
-        });
-        switch (task.type) {
-          case 'video':
-            await this.uploadVideoAtQueueIndex(index);
-          case 'image':
-            await this.uploadImageAtQueueIndex(index);
-          default:
-            console.log('ERROR: UploadManager -- upload task of unknown type');
-            break;
+      if (task) {
+        const startTask = (task.progress === 0 || task.progress === undefined) || init;
+        if (status === 'uploading' && startTask) {
+          await uploadQueueAction('setJobProgress', {
+            index: index,
+            progress: 0.01,
+          });
+          switch (task.type) {
+            case 'video':
+              await this.uploadVideoAtQueueIndex(index);
+              break;
+            case 'image':
+              await this.uploadImageAtQueueIndex(index);
+              break;
+            default:
+              console.log(`ERROR: UploadManager -- upload task of unknown type ${task.type}`);
+              break;
+          }
         }
       }
     }

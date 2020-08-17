@@ -5,18 +5,14 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 
 import Footer from './footer/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
-import MessageList from '../../app/elementsMessage/MessageList';
 import Stream from './components/Stream';
 
-import VideoLibraryPage from '../../app/videoLibraryPage';
 import Session from './components/Session';
 
 import LocalSession from './components/LocalSession';
 import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
-
-import {openVideoPlayer} from '../../functions/videoManagement';
 
 // const Tab = createMaterialTopTabNavigator();
 const Tab = createBottomTabNavigator();

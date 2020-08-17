@@ -12,7 +12,7 @@ import {getVideoInfo, getVideoUUID} from './pictures';
 import {navigate} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
-import {addVideos, deleteVideo} from '../../actions/localVideoLibraryActions';
+import {addVideos, deleteVideo, hideVideo} from '../../actions/localVideoLibraryActions';
 import {sendNewMessage} from './message';
 import {enqueueFileUpload} from '../../actions/uploadQueueActions';
 import {setLayout} from '../../actions/layoutActions';
@@ -137,8 +137,8 @@ const openVideoPlayer = async (video, open, goBack) => {
 };
 
 const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
-  console.log('uploadLocalVideo', videoInfo);
   const cloudVideo = await createCloudVideo(videoInfo);
+  store.dispatch(hideVideo(videoInfo.id));
   let {thumbnail, url, fromNativeLibrary, id} = videoInfo;
   if (thumbnail) {
     if (thumbnail.substring(0, 4) === 'http') {
@@ -201,20 +201,9 @@ const shareVideosWithPeople = async (
 };
 
 const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
-  console.log('localVideos', localVideos);
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
-
-  let videosToUpload = [];
-  for (var j in localVideos) {
-    const idLocalVideo = localVideos[j];
-    let videoInfo = store.getState().localVideoLibrary.videoLibrary[
-      idLocalVideo
-    ];
-    videosToUpload.push(videoInfo);
-  }
-  console.log('videosToUpload', videosToUpload);
-
+  const videosToUpload = localVideos?.map(id => store.getState().localVideoLibrary.videoLibrary[id]);
   const cloudVideos = await Promise.all(
     videosToUpload.map((video) => uploadLocalVideo(video)),
   );

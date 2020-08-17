@@ -26,11 +26,11 @@ class VideoPlayerPage extends Component {
       recordedActions: [],
       loader: false,
       isPreviewing: false,
-      // archive: this.props.route.params.archive,
       archive: {},
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
+
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
@@ -39,7 +39,8 @@ class VideoPlayerPage extends Component {
     // this.focusListener = navigation.addListener('blur', () => {
     //   Orientation.lockToPortrait();
     // });
-  }
+  };
+
   static getDerivedStateFromProps(props, state) {
     if (
       props.route?.params?.archive &&
@@ -49,15 +50,18 @@ class VideoPlayerPage extends Component {
         archive: props.route.params.archive,
       };
     return {};
-  }
+  };
+
   startRecording = () => {
     this.resetPlayer();
     this.setState({isRecording: true, recordedActions: []});
   };
+
   stopRecording = () => {
     this.resetPlayer();
     this.setState({isRecording: false});
   };
+
   resetPlayer = () => {
     this.videoPlayerRef.setState({
       currentTime: 0,
@@ -67,6 +71,7 @@ class VideoPlayerPage extends Component {
     this.videoPlayerRef?.visualSeekBarRef?.setCurrentTime(0, true);
     this.videoPlayerRef?.player?.seek(0);
   };
+
   isTimestampReached = async (timestampToWait) => {
     while (true) {
       const {isPreviewing} = this.state;
@@ -131,6 +136,7 @@ class VideoPlayerPage extends Component {
 
     await this.setState({isPreviewing: false});
   };
+
   onPlayPause = (paused, currentTime) => {
     const {recordedActions} = this.state;
     recordedActions.push({
@@ -139,6 +145,7 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
+
   onPlayRateChange = (playRate, timestamp) => {
     const {recordedActions} = this.state;
     recordedActions.push({
@@ -148,6 +155,7 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
+
   onSlidingStart = (timestamp) => {
     const {recordedActions} = this.state;
     recordedActions.push({
@@ -156,6 +164,7 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
+
   onSlidingEnd = (seekTime) => {
     const {recordedActions} = this.state;
     recordedActions.push({
@@ -164,6 +173,7 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
+
   header = () => {
     const {isEditMode} = this.state;
     const {goBack} = this.props.navigation;
@@ -214,10 +224,12 @@ class VideoPlayerPage extends Component {
       />
     );
   };
+
   getMarginTop = () => {
     const {portrait} = this.props;
     return heightHeaderHome + (portrait ? marginTopApp : marginTopAppLandscape);
   };
+
   buttonPreview = () => {
     const {isEditMode, isPreviewing, isRecording, recordedActions} = this.state;
     const style = {
@@ -250,6 +262,7 @@ class VideoPlayerPage extends Component {
       );
     }
   };
+
   buttonRecording = () => {
     const {isEditMode, isRecording} = this.state;
     const style = {
@@ -278,11 +291,11 @@ class VideoPlayerPage extends Component {
       )
     ) : null;
   };
+
   watchVideoView() {
     const {userID, navigation} = this.props;
     const {archive, isRecording} = this.state;
     const {url, id, thumbnail} = archive;
-    console.log(archive);
     const {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart} = this;
     const propsWhenRecording = isRecording
       ? {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart}
@@ -312,6 +325,7 @@ class VideoPlayerPage extends Component {
       </View>
     );
   }
+
   render() {
     return this.watchVideoView();
   }

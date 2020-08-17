@@ -75,7 +75,6 @@ export default class Alert extends Component {
       this.setState({loader: true});
       await onGoBack();
     }
-    console.log('nextNavigation!', nextNavigation);
     if (nextNavigation) return nextNavigation();
     return this.close();
   }

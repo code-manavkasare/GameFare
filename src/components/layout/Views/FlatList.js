@@ -34,7 +34,6 @@ class FlatListComponent extends Component {
     const {list, incrementRendering} = this.props;
     const {numberToRender} = this.state;
     const lengthList = list.length;
-    console.log('onEndReached', numberToRender);
     this.setState({
       numberToRender:
         numberToRender + incrementRendering > lengthList
@@ -71,8 +70,6 @@ class FlatListComponent extends Component {
         </View>
       );
     };
-    console.log('numberToRender', numberToRender);
-    console.log('render flatlst', list.slice(0, numberToRender));
     return (
       <FlatList
         data={list.slice(0, numberToRender)}

@@ -70,7 +70,7 @@ class VideoLibraryPage extends Component {
       ...props.archivedStreams,
       ...props.videoLibrary,
     };
-    const videosArray = sortVideos(allVideos);
+    const videosArray = sortVideos(allVideos).filter(video => !video?.hidden);
     return {videosArray};
   }
   shareSelectedVideos() {
@@ -116,7 +116,6 @@ class VideoLibraryPage extends Component {
     });
   }
   selectVideo(id, isSelected, local) {
-    console.log('id', id, isSelected, local);
     let {selectedFirebaseVideos, selectedLocalVideos} = this.state;
     if (isSelected) {
       if (local) {

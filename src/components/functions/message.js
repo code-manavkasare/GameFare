@@ -65,7 +65,6 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
   const {key} = await database()
     .ref('discussions/')
     .push(newDiscussion);
-  console.log('key', key);
 
   newDiscussion = {
     ...newDiscussion,

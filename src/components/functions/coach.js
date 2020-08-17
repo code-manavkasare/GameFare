@@ -303,7 +303,6 @@ const generateFlagsThumbnail = async ({
   coachSessionID,
 }) => {
   // creates thumbnails for full video and flags, sets up clip selection for user who stopped recording
-  console.log('flags', flags);
   let thumbnails =
     !flags || Object.keys(flags).length === 0
       ? []
@@ -525,7 +524,6 @@ const deleteSession = (objectID) => {
     colorButton: 'red',
     onPressColor: colors.redLight,
     nextNavigation: () => {
-      console.log('nextNavigation');
       navigate('Stream');
     },
     onGoBack: async () => {
@@ -537,7 +535,6 @@ const deleteSession = (objectID) => {
       await database()
         .ref()
         .update(updates);
-      console.log('updates', updates);
       if (objectID === currentSessionID)
         await closeSession({noNavigation: true});
       return true;
@@ -571,19 +568,14 @@ const addMembersToSession = (objectID, navigateTo) => {
   let noUpdateStatusBar = true;
   if (navigateTo === 'Session') noUpdateStatusBar = false;
   navigate('PickMembers', {
-    usersSelected: {},
     noNavigation: true,
     selectFromGamefare: true,
     allowSelectMultiple: true,
     noUpdateStatusBar: noUpdateStatusBar,
-    closeButton: true,
-    loaderOnSubmit: true,
     displayCurrentUser: false,
-    selectFromContacts: true,
     titleHeader: 'Add someone to the session',
-    onSelectMembers: async (members, contacts) => {
-      for (var i in Object.values(members)) {
-        let member = Object.values(members)[i];
+    onSelectMembers: async (members, sessions) => {
+      for (const member of Object.values(members)) {
         member.invitationTimeStamp = Date.now();
         await database()
           .ref('coachSessions/' + objectID + '/members/' + member.id)

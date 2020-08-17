@@ -70,9 +70,13 @@ class CardArchive extends PureComponent {
     const {openVideo, allowPlay} = this.props;
     const {archive} = this.props;
     const {url, id, thumbnail} = archive;
-    console.log('open video page', archive);
-    if (!openVideo) return navigate('VideoPlayerPage', {archive});
-    if (url !== '') openVideo({url, thumbnail});
+    if (url !== '') {
+      if (!openVideo) {
+        navigate('VideoPlayerPage', {archive});
+      } else {
+        openVideo({url, thumbnail});
+      }
+    }
   };
   cloudIndicator() {
     const {local, url} = this.props.archive;
@@ -87,12 +91,14 @@ class CardArchive extends PureComponent {
             right: 5,
             zIndex: 20,
           }}>
-          <AllIcons
-            name={url === '' ? 'upload' : 'cloud'}
-            type="font"
-            color={colors.white}
-            size={15}
-          />
+          {url === ''
+            ? <Loader size={25} color={colors.white} />
+            : <AllIcons
+                name={url === '' ? 'upload' : 'cloud'}
+                type="font"
+                color={colors.white}
+                size={15}
+              />}
         </View>
       );
     } else {
