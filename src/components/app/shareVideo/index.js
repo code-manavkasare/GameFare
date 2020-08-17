@@ -36,7 +36,7 @@ class ShareVideoPage extends React.Component {
   async componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
-      StatusBar.setBarStyle('light-content', true);
+      StatusBar.setBarStyle('dark-content', true);
     });
   }
   componentWillUnmount() {

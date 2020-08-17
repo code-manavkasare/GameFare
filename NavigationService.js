@@ -42,12 +42,10 @@ const getCurrentRoute = () => {
     currentRoute === 'Players'
   )
     currentRoute = 'Conversation';
-  console.log('currentRoute', currentRoute);
   return currentRoute;
 };
 
 const dismiss = () => {
-  console.log('');
   navigationRef.dangerouslyGetParent().pop();
 };
 

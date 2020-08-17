@@ -1,7 +1,6 @@
 import database from '@react-native-firebase/database';
 
 const getOnceValue = async (ref) => {
-  console.log('ref', ref);
   const objectSnap = await database()
     .ref(ref)
     .once('value');

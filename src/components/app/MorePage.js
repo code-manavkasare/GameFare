@@ -8,6 +8,7 @@ import {
   Image,
   Animated,
   TouchableOpacity,
+  Share,
 } from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
@@ -277,26 +278,10 @@ class MorePage extends Component {
                 size: 20,
                 color: colors.title,
               },
-              click: () =>
-                navigate('PickMembers', {
-                  usersSelected: {},
-                  allowSelectMultiple: true,
-                  selectFromContacts: true,
-                  displayCurrentUser: false,
-                  noUpdateStatusBar: true,
-                  titleHeader: 'Select your contacts',
-                  onSelectMembers: async (users, contacts) => {
-                    let numbers = Object.values(contacts).map(
-                      (contact) =>
-                        `+${contact.countryCode}${contact.phoneNumber}`,
-                    );
-                    const {url} = await createBranchUrl({});
-                    const {completed, cancelled, error} = await sendSMSFunction(
-                      numbers,
-                      'Click here to join the gamefare community. ' + url,
-                    );
-                  },
-                }),
+              click: async () => {
+                const {url} = await createBranchUrl({});
+                Share.share({url});
+              },
             })}
 
             <Text style={styles.title}>Account parameters</Text>

@@ -27,9 +27,9 @@ export default class PickMembersPage extends React.Component {
   async componentDidMount() {
     const {route, navigation} = this.props;
     const {noUpdateStatusBar} = route.params;
-    StatusBar.setBarStyle('dark-content', true);
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
+      StatusBar.setBarStyle('dark-content', true);
     });
     if (!noUpdateStatusBar) {
       this.beforeRemoveListener = navigation.addListener('beforeRemove', () => {

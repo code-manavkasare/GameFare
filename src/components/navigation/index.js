@@ -7,16 +7,10 @@ import SignIn from './SignIn/index';
 import ListCountry from '../login/elementsFlags/ListCountry';
 import Payments from './MainApp/components/Payments';
 
-import LocationSelector from '../app/elementsEventCreate/LocationSelector';
-import DateSelector from '../app/elementsEventCreate/DateSelector';
-
-import Contacts from './MainApp/components/Contacts';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import PickMembersPage from '../app/pickMembers';
 
 import Coaches from './MainApp/components/Coaches';
-
-import CourtCalibration from './MainApp/components/CourtCalibration';
 
 import VideoPlayerPage from '../app/videoPlayerPage/index';
 import Session from './TabsApp/components/Session';
@@ -56,11 +50,6 @@ function InitialStack() {
           gestureEnabled: false,
         }}
       />
-
-      <Stack.Screen name="Location" component={LocationSelector} />
-      <Stack.Screen name="Date" component={DateSelector} />
-
-      <Stack.Screen name="Contacts" component={Contacts} />
 
       <Stack.Screen
         name="NewConversation"
