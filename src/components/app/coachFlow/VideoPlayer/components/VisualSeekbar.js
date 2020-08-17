@@ -26,43 +26,45 @@ import {displayTime} from '../../../../functions/coach';
 
 const {initialHeightControlBar} = sizes;
 
-class VisualSeekbar extends Component {
+class VisualSeekBar extends Component {
   constructor(props) {
     super(props);
     const {
-      alwaysVisible, 
+      alwaysVisible,
       currentScreenSize,
       currentTime,
       totalTime,
     } = this.props;
     const {currentWidth: screenWidth} = currentScreenSize;
 
-    this.state = {    
-      visible: (alwaysVisible) ? true : false,
+    this.state = {
+      visible: alwaysVisible ? true : false,
       totalTime: 0,
       fullscreen: false,
       showSpeedSet: false,
       paused: this.props.paused ? this.props.paused : false,
 
       //Dynamic for zoom of seekbar
-      seekbarBounds: [0.05*screenWidth, 0.95*screenWidth]
+      seekbarBounds: [0.05 * screenWidth, 0.95 * screenWidth],
     };
     //Static for playhead
-    this.playheadPosBounds = [0.05*screenWidth, 0.95*screenWidth]
+    this.playheadPosBounds = [0.05 * screenWidth, 0.95 * screenWidth];
     const {seekbarBounds} = this.state;
-    const initialPlayhead = Number(currentTime/totalTime * 
-      (seekbarBounds[1]-seekbarBounds[0]) + seekbarBounds[0])
-    this.playheadPosition = new Animated.Value(initialPlayhead ? initialPlayhead : this.playheadPosBounds[0]);
+    const initialPlayhead = Number(
+      (currentTime / totalTime) * (seekbarBounds[1] - seekbarBounds[0]) +
+        seekbarBounds[0],
+    );
+    this.playheadPosition = new Animated.Value(
+      initialPlayhead ? initialPlayhead : this.playheadPosBounds[0],
+    );
     this._lastPlayheadPos = this.playheadPosBounds[0];
     this._translateY = new Animated.Value(0);
 
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) =>
-        true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
       onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) =>
-        true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
       onPanResponderGrant: (evt, gestureState) => {
         // The gesture has started. Show visual feedback so the user knows
@@ -70,7 +72,6 @@ class VisualSeekbar extends Component {
         // gestureState.d{x,y} will be set to zero now
       },
       onPanResponderMove: (evt, gestureState) => {
-        
         // console.log('\n\n\n\n\n\nGestureState')
         // console.log(gestureState)
         // console.log('dx', gestureState.dx)
@@ -79,29 +80,37 @@ class VisualSeekbar extends Component {
         // console.log('movey', gestureState.moveY)
 
         /// PLAYHEAD POSITIONAL MANAGEMENT
+
         const {nativeEvent: event} = evt;
         // console.log(event)
         const touches = evt.nativeEvent.touches;
 
         const {moveX, dx, vx} = gestureState;
-        const originX = moveX - dx
-        if (originX > this._lastPlayheadPos - 20 &&
-            originX < this._lastPlayheadPos + 20) {
-          const playheadToValue = 
-              (this._lastPlayheadPos+dx < this.playheadPosBounds[0]) ? this.playheadPosBounds[0]
-            : (this._lastPlayheadPos+dx > this.playheadPosBounds[1]) ? this.playheadPosBounds[1]
-            : (this._lastPlayheadPos+dx)
-          
-          this.movePlayhead(playheadToValue, true)
+        const originX = moveX - dx;
+        if (
+          originX > this._lastPlayheadPos - 20 &&
+          originX < this._lastPlayheadPos + 20
+        ) {
+          const playheadToValue =
+            this._lastPlayheadPos + dx < this.playheadPosBounds[0]
+              ? this.playheadPosBounds[0]
+              : this._lastPlayheadPos + dx > this.playheadPosBounds[1]
+              ? this.playheadPosBounds[1]
+              : this._lastPlayheadPos + dx;
+
+          this.movePlayhead(playheadToValue, true);
         }
       },
-      onPanResponderTerminationRequest: (evt, gestureState) =>
-        true,
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderStart: (evt, gestureState) => {
+        const {onSlidingStart} = this.props;
+        onSlidingStart(this.getCurrentTime());
+      },
       onPanResponderRelease: (evt, gestureState) => {
-        const {onSlidingComplete, togglePlayPause} = this.props;
+        const {onSlidingComplete} = this.props;
         if (this.playheadPosition._value !== this._lastPlayheadPos) {
           this._lastPlayheadPos = this.playheadPosition._value;
-          onSlidingComplete(0)
+          onSlidingComplete(this.getCurrentTime());
         }
       },
       onPanResponderTerminate: (evt, gestureState) => {
@@ -112,20 +121,19 @@ class VisualSeekbar extends Component {
         // Returns whether this component should block native components from becoming the JS
         // responder. Returns true by default. Is currently only supported on android.
         return true;
-      }
-    })
+      },
+    });
   }
   componentDidMount() {
     this.props.onRef(this);
   }
   toggleVisible(force) {
     const {visible: visibleState} = this.state;
-    const visible = (force !== undefined) ? !force : visibleState 
+    const visible = force !== undefined ? !force : visibleState;
     Animated.parallel([
-      Animated.timing(this._translateY, native(
-        (visible ? 0 : 1), 150))
-    ]).start()
-    this.setState({visible: !visible})
+      Animated.timing(this._translateY, native(visible ? 0 : 1, 150)),
+    ]).start();
+    this.setState({visible: !visible});
   }
   setCurrentTime(currentTime, forceUpdate) {
     const {paused} = this.state;
@@ -135,35 +143,45 @@ class VisualSeekbar extends Component {
       this.currentTimeRef.setCurrentTime(currentTime);
 
       const {seekbarBounds} = this.state;
-      const playheadPosition = currentTime/totalTime * 
-        (seekbarBounds[1]-seekbarBounds[0]) + seekbarBounds[0]
-      this.movePlayhead(playheadPosition, false)
+      const playheadPosition =
+        (currentTime / totalTime) * (seekbarBounds[1] - seekbarBounds[0]) +
+        seekbarBounds[0];
+      this.movePlayhead(playheadPosition, false);
     }
   }
   movePlayhead(toValue, updateVideoOnSeek) {
     const {seek, totalTime, paused, onSlidingStart} = this.props;
     const {currentWidth} = this.props.currentScreenSize;
 
-    this.playheadPosition.setValue(toValue)
+    this.playheadPosition.setValue(toValue);
 
     if (!updateVideoOnSeek) {
       this._lastPlayheadPos = this.playheadPosition._value;
     } else {
       const {seekbarBounds} = this.state;
-      const newTime = 
-        (toValue - seekbarBounds[0])/(seekbarBounds[1] - seekbarBounds[0])*totalTime
+      const newTime =
+        ((toValue - seekbarBounds[0]) / (seekbarBounds[1] - seekbarBounds[0])) *
+        totalTime;
       if (!paused) {
-        onSlidingStart(newTime)
+        onSlidingStart(newTime);
       }
-      seek(newTime)
+      seek(newTime);
       this.currentTimeRef.setCurrentTime(newTime);
     }
 
     // current time position change
-    if (this.playheadPosition._value > currentWidth-90) 
-      this.currentTimeRef.overrideStyle({left: null, right: 5, textAlign: 'right'})
-    else 
-      this.currentTimeRef.overrideStyle({left: 5, right: null, textAlign: 'left'})
+    if (this.playheadPosition._value > currentWidth - 90)
+      this.currentTimeRef.overrideStyle({
+        left: null,
+        right: 5,
+        textAlign: 'right',
+      });
+    else
+      this.currentTimeRef.overrideStyle({
+        left: 5,
+        right: null,
+        textAlign: 'left',
+      });
   }
   static getDerivedStateFromProps(props, state) {
     if (props.paused !== state.paused)
@@ -179,90 +197,90 @@ class VisualSeekbar extends Component {
     return this.currentTimeRef.getCurrentTime();
   }
 
-  speedButton() {
-    const {showSpeedSet} = this.state;
-    const {updatePlayRate, playRate, setState} = this.props;
-    const speeds = [
-      {
-        label: '0.25',
-        value: 0.25,
-      },
-      {
-        label: '0.5',
-        value: 0.5,
-      },
-      {
-        label: 'Normal',
-        value: 1,
-      },
-      {
-        label: '1.5',
-        value: 1.5,
-      },
-      {
-        label: '2',
-        value: 2,
-      },
-    ];
-    const buttonSpeed = (speed, i) => {
-      return (
-        <ButtonColor
-          key={i}
-          view={() => {
-            return (
-              <Text
-                style={[
-                  styleApp.text,
-                  {
-                    color: playRate === speed.value ? colors.red : colors.white,
-                  },
-                ]}>
-                {speed.label}
-              </Text>
-            );
-          }}
-          click={async () => {
-            this.setState({showSpeedSet: false});
-            setState({playRate: speed.value});
-            updatePlayRate(speed.value);
-          }}
-          style={{height: 30, width: '100%'}}
-          onPressColor={colors.off}
-        />
-      );
-    };
-    return (
-      <View style={styleApp.fullSize}>
-        {showSpeedSet && (
-          <FadeInView
-            duration={250}
-            style={[
-              styles.viewSpeedSet,
-              {height: speeds.length * 30, top: -(speeds.length * 30 + 25)},
-            ]}>
-            {speeds.map((speed, i) => buttonSpeed(speed, i))}
-            <View style={styles.triangleSpeedView} />
-          </FadeInView>
-        )}
-        <ButtonColor
-          view={() => {
-            return (
-              <AllIcons
-                name={'ellipsis-v'}
-                color={colors.white}
-                size={20}
-                type="font"
-              />
-            );
-          }}
-          // color={colors.off2}
-          click={() => this.setState({showSpeedSet: !showSpeedSet})}
-          style={{height: 45, width: '100%'}}
-          onPressColor={colors.off}
-        />
-      </View>
-    );
-  }
+  // speedButton() {
+  //   const {showSpeedSet} = this.state;
+  //   const {updatePlayRate, playRate, setState} = this.props;
+  //   const speeds = [
+  //     {
+  //       label: '0.25',
+  //       value: 0.25,
+  //     },
+  //     {
+  //       label: '0.5',
+  //       value: 0.5,
+  //     },
+  //     {
+  //       label: 'Normal',
+  //       value: 1,
+  //     },
+  //     {
+  //       label: '1.5',
+  //       value: 1.5,
+  //     },
+  //     {
+  //       label: '2',
+  //       value: 2,
+  //     },
+  //   ];
+  //   const buttonSpeed = (speed, i) => {
+  //     return (
+  //       <ButtonColor
+  //         key={i}
+  //         view={() => {
+  //           return (
+  //             <Text
+  //               style={[
+  //                 styleApp.text,
+  //                 {
+  //                   color: playRate === speed.value ? colors.red : colors.white,
+  //                 },
+  //               ]}>
+  //               {speed.label}
+  //             </Text>
+  //           );
+  //         }}
+  //         click={async () => {
+  //           this.setState({showSpeedSet: false});
+  //           setState({playRate: speed.value});
+  //           updatePlayRate(speed.value);
+  //         }}
+  //         style={{height: 30, width: '100%'}}
+  //         onPressColor={colors.off}
+  //       />
+  //     );
+  //   };
+  //   return (
+  //     <View style={styleApp.fullSize}>
+  //       {showSpeedSet && (
+  //         <FadeInView
+  //           duration={250}
+  //           style={[
+  //             styles.viewSpeedSet,
+  //             {height: speeds.length * 30, top: -(speeds.length * 30 + 25)},
+  //           ]}>
+  //           {speeds.map((speed, i) => buttonSpeed(speed, i))}
+  //           <View style={styles.triangleSpeedView} />
+  //         </FadeInView>
+  //       )}
+  //       <ButtonColor
+  //         view={() => {
+  //           return (
+  //             <AllIcons
+  //               name={'ellipsis-v'}
+  //               color={colors.white}
+  //               size={20}
+  //               type="font"
+  //             />
+  //           );
+  //         }}
+  //         // color={colors.off2}
+  //         click={() => this.setState({showSpeedSet: !showSpeedSet})}
+  //         style={{height: 45, width: '100%'}}
+  //         onPressColor={colors.off}
+  //       />
+  //     </View>
+  //   );
+  // }
   controlButtons() {
     let {heightControlBar} = this.props;
     const {
@@ -299,6 +317,7 @@ class VisualSeekbar extends Component {
                     this.currentTimeRef.setCurrentTime(value)
                   }
                   onSlidingStart={async (SliderTime) => {
+                    console.log('slidingStartVisualSeekBar: ', SliderTime);
                     onSlidingStart(SliderTime);
                   }}
                   onSlidingComplete={(SliderTime) =>
@@ -348,11 +367,11 @@ class VisualSeekbar extends Component {
   backdrop() {
     return (
       <BlurView
-        style={{position:'absolute', zIndex:-1, ...styleApp.fullSize, top:0}}
+        style={{position: 'absolute', zIndex: -1, ...styleApp.fullSize, top: 0}}
         blurType="dark"
         blurAmount={20}
       />
-    )
+    );
   }
 
   seekbar() {
@@ -361,72 +380,106 @@ class VisualSeekbar extends Component {
     const {seekbarBounds} = this.state;
 
     //TODO Alter according to zoom level (0.9 * width is 1.0x zoom level)
-    const width = seekbarBounds[1] - seekbarBounds[0]
+    const width = seekbarBounds[1] - seekbarBounds[0];
 
     const playheadTimes = totalTime && [
-      (this.playheadPosBounds[0] - seekbarBounds[0])/(seekbarBounds[1] - seekbarBounds[0]) * totalTime,
-      (this.playheadPosBounds[1] - seekbarBounds[1])/(seekbarBounds[1] - seekbarBounds[0]) * totalTime + totalTime
-    ]
+      ((this.playheadPosBounds[0] - seekbarBounds[0]) /
+        (seekbarBounds[1] - seekbarBounds[0])) *
+        totalTime,
+      ((this.playheadPosBounds[1] - seekbarBounds[1]) /
+        (seekbarBounds[1] - seekbarBounds[0])) *
+        totalTime +
+        totalTime,
+    ];
 
     return (
-    <View style={{width:'100%', height: 125, paddingTop:30}}>
-      <View
-        style={{width:'100%', height:80}}
-        {...this.panResponder.panHandlers}>
-        <Animated.View style={{
-          height:40, width, backgroundColor:colors.grey+'40', marginTop:5,
-          transform: [{translateX: seekbarBounds[0]}]
-        }}>
-
-        </Animated.View>
-        <View style={{paddingHorizontal:'5%', marginTop:5}}>
-          <Row style={{height:35}}>
-            <Col>
-              <Text style={{...styles.textTime, textAlign:'left', marginLeft:5}}>
-                {playheadTimes[0] !== undefined ? displayTime(playheadTimes[0]) : ''}
-              </Text>
-              <View style={{...styles.boundLines, left:0}}/>
-            </Col>
-            <Col>
-              <Text style={{...styles.textTime, textAlign:'right', marginRight:5}}>
-                {playheadTimes[1] !== undefined ? displayTime(playheadTimes[1]) : ''}
-              </Text>
-              <View style={{...styles.boundLines, right:0}}/>
-            </Col>
-          </Row>
-        </View>
-        <Animated.View style={{
-          position:'absolute', 
-          height:60,
-          transform: [{translateX: this.playheadPosition}]}}
-          >
-          <View style={styles.playhead}/>
-          <CurrentTime
-            onRef={(ref) => (this.currentTimeRef = ref)}
-            currentTime={currentTime}
+      <View style={{width: '100%', height: 125, paddingTop: 30}}>
+        <View
+          style={{width: '100%', height: 80}}
+          {...this.panResponder.panHandlers}>
+          <Animated.View
             style={{
-              left:5,
-              fontSize: 12, 
-              position:'absolute', 
-              bottom:-2, 
-              width:90
+              height: 40,
+              width,
+              backgroundColor: colors.grey + '40',
+              marginTop: 5,
+              transform: [{translateX: seekbarBounds[0]}],
             }}
           />
-        </Animated.View>
+          <View style={{paddingHorizontal: '5%', marginTop: 5}}>
+            <Row style={{height: 35}}>
+              <Col>
+                <Text
+                  style={{
+                    ...styles.textTime,
+                    textAlign: 'left',
+                    marginLeft: 5,
+                  }}>
+                  {playheadTimes[0] !== undefined
+                    ? displayTime(playheadTimes[0])
+                    : ''}
+                </Text>
+                <View style={{...styles.boundLines, left: 0}} />
+              </Col>
+              <Col>
+                <Text
+                  style={{
+                    ...styles.textTime,
+                    textAlign: 'right',
+                    marginRight: 5,
+                  }}>
+                  {playheadTimes[1] !== undefined
+                    ? displayTime(playheadTimes[1])
+                    : ''}
+                </Text>
+                <View style={{...styles.boundLines, right: 0}} />
+              </Col>
+            </Row>
+          </View>
+          <Animated.View
+            style={{
+              position: 'absolute',
+              height: 60,
+              transform: [{translateX: this.playheadPosition}],
+            }}>
+            <View style={styles.playhead} />
+            <CurrentTime
+              onRef={(ref) => (this.currentTimeRef = ref)}
+              currentTime={currentTime}
+              style={{
+                left: 5,
+                fontSize: 12,
+                position: 'absolute',
+                bottom: -2,
+                width: 90,
+              }}
+            />
+          </Animated.View>
+        </View>
       </View>
-    </View>);
+    );
   }
 
   playPauseButton = () => {
-    const {togglePlayPause, totalTime, seek, onSlidingComplete, prevPaused} = this.props;
+    const {
+      togglePlayPause,
+      totalTime,
+      seek,
+      onSlidingComplete,
+      prevPaused,
+    } = this.props;
     const {paused} = this.state;
-    console.log('\npaused', paused, 'prev', prevPaused)
+    console.log('\npaused', paused, 'prev', prevPaused);
     return (
       <ButtonColor
         view={() => {
           return (
             <AllIcons
-              name={((paused && prevPaused === undefined) || (paused && prevPaused)) ? 'play' : 'pause'}
+              name={
+                (paused && prevPaused === undefined) || (paused && prevPaused)
+                  ? 'play'
+                  : 'pause'
+              }
               color={colors.white}
               size={20}
               type="font"
@@ -453,10 +506,14 @@ class VisualSeekbar extends Component {
     const {togglePlayPause, totalTime, seek, onSlidingComplete} = this.props;
     const {paused} = this.state;
     const {threshold, forward} = options;
-    const iconName = 
-      (threshold === 'frame') ? 
-      (forward) ? 'angle-right' : 'angle-left' :
-      (forward) ? 'angle-double-right' : 'angle-double-left'
+    const iconName =
+      threshold === 'frame'
+        ? forward
+          ? 'angle-right'
+          : 'angle-left'
+        : forward
+        ? 'angle-double-right'
+        : 'angle-double-left';
     return (
       <ButtonColor
         enableLongPress
@@ -472,16 +529,20 @@ class VisualSeekbar extends Component {
         }}
         click={async () => {
           const currentTime = this.currentTimeRef.getCurrentTime();
-          const fps = 30
-          const rate = 1/fps
-          let newTime = 
-          (threshold === 'frame') ? 
-          (forward) ? currentTime + rate : currentTime - rate :
-          (forward) ? currentTime + threshold : currentTime - threshold
-          if (newTime > totalTime) newTime = totalTime
-          if (newTime < 0) newTime = 0
+          const fps = 30;
+          const rate = 1 / fps;
+          let newTime =
+            threshold === 'frame'
+              ? forward
+                ? currentTime + rate
+                : currentTime - rate
+              : forward
+              ? currentTime + threshold
+              : currentTime - threshold;
+          if (newTime > totalTime) newTime = totalTime;
+          if (newTime < 0) newTime = 0;
           seek(newTime, true);
-          await this.setCurrentTime(newTime, true)
+          await this.setCurrentTime(newTime, true);
           await this.setState({currentTime: newTime, paused: true});
         }}
         style={{height: 45, width: '100%'}}
@@ -492,22 +553,45 @@ class VisualSeekbar extends Component {
 
   speedButton() {
     return (
-      <Row style={{...styleApp.center, position:'absolute', height:20, top:-25, width:'100%'}}>
+      <Row
+        style={{
+          ...styleApp.center,
+          position: 'absolute',
+          height: 20,
+          top: -25,
+          width: '100%',
+        }}>
         <ButtonColor
-        enableLongPress
-        view={() => {
-          return (
-            <View style={{...styleApp.shadowWeak, ...styleApp.center, width:40, height:20, borderRadius:15, backgroundColor:colors.greenStrong}}>
-              <Text style={{...styleApp.textBold, fontSize:12, color:colors.white, textAlign:'center'}}>
-                1x
-              </Text>
-            </View>
-          );
-        }}
-        click={async () => {console.log('clicky')}}
-      />
+          enableLongPress
+          view={() => {
+            return (
+              <View
+                style={{
+                  ...styleApp.shadowWeak,
+                  ...styleApp.center,
+                  width: 40,
+                  height: 20,
+                  borderRadius: 15,
+                  backgroundColor: colors.greenStrong,
+                }}>
+                <Text
+                  style={{
+                    ...styleApp.textBold,
+                    fontSize: 12,
+                    color: colors.white,
+                    textAlign: 'center',
+                  }}>
+                  1x
+                </Text>
+              </View>
+            );
+          }}
+          click={async () => {
+            console.log('clicky');
+          }}
+        />
       </Row>
-    )
+    );
   }
 
   controlBar() {
@@ -515,61 +599,53 @@ class VisualSeekbar extends Component {
       {threshold: 10, forward: false},
       {threshold: 'frame', forward: false},
       {threshold: 'frame', forward: true},
-      {threshold: 10, forward: true}
-    ]
+      {threshold: 10, forward: true},
+    ];
 
     return (
-    <View style={{width:'100%', height:50}}>
-      <Row>
-        <Col>
-        </Col>
-        <Col>
-          {this.fineSeekButton(fineSeekConfig[0])}
-        </Col>
-        <Col>
-          {this.fineSeekButton(fineSeekConfig[1])}
-        </Col>
-        <Col>
-          {this.playPauseButton()}
-        </Col>
-        <Col>
-          {this.fineSeekButton(fineSeekConfig[2])}
-        </Col>
-        <Col>
-          {this.fineSeekButton(fineSeekConfig[3])}
-        </Col>
-        <Col>
-        </Col>
-      </Row>
-      {this.speedButton()}
-    </View>);
+      <View style={{width: '100%', height: 50}}>
+        <Row>
+          <Col />
+          <Col>{this.fineSeekButton(fineSeekConfig[0])}</Col>
+          <Col>{this.fineSeekButton(fineSeekConfig[1])}</Col>
+          <Col>{this.playPauseButton()}</Col>
+          <Col>{this.fineSeekButton(fineSeekConfig[2])}</Col>
+          <Col>{this.fineSeekButton(fineSeekConfig[3])}</Col>
+          <Col />
+        </Row>
+        {this.speedButton()}
+      </View>
+    );
   }
 
   controlsBody() {
     const {style, currentScreenSize} = this.props;
-    const {currentHeight, currentWidth: width} = currentScreenSize
-    const height = (style?.height ? style.height : 175) + sizes.marginBottomApp
-    const top = currentHeight - height 
+    const {currentHeight, currentWidth: width} = currentScreenSize;
+    const height = (style?.height ? style.height : 175) + sizes.marginBottomApp;
+    const top = currentHeight - height;
     const translateY = this._translateY.interpolate({
       inputRange: [0, 1],
-      outputRange: [height, 0]
-    })
+      outputRange: [height, 0],
+    });
 
     return (
-      <Animated.View style={{
-        position: 'absolute',
-        overflow: 'hidden',
-        borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,
-        minHeight:175,
-        top, height, width,
-        transform: [{translateY}]
-      }}>
-      {this.seekbar()}
-      {this.controlBar()}
-      {this.backdrop()}
+      <Animated.View
+        style={{
+          position: 'absolute',
+          overflow: 'hidden',
+          borderTopRightRadius: 25,
+          borderTopLeftRadius: 25,
+          minHeight: 175,
+          top,
+          height,
+          width,
+          transform: [{translateY}],
+        }}>
+        {this.seekbar()}
+        {this.controlBar()}
+        {this.backdrop()}
       </Animated.View>
-    )
+    );
   }
 
   render() {
@@ -589,17 +665,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
   },
   slideVideo: {
-    width: '100%', 
-    height: 40, 
-    marginTop: 0
+    width: '100%',
+    height: 40,
+    marginTop: 0,
   },
   textTime: {
-    ...styleApp.textBold, 
-    fontSize: 12, 
+    ...styleApp.textBold,
+    fontSize: 12,
     color: colors.white,
-    top:15,
-    textAlign:'right',
-    color:colors.greyDark
+    top: 15,
+    textAlign: 'right',
+    color: colors.greyDark,
   },
   viewSpeedSet: {
     position: 'absolute',
@@ -637,21 +713,21 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   playhead: {
-    width:2,
-    marginLeft:-1.5, 
-    height:'100%', 
-    backgroundColor:colors.white
+    width: 2,
+    marginLeft: -1.5,
+    height: '100%',
+    backgroundColor: colors.white,
   },
   boundLines: {
-    width:1, 
-    height:73, 
-    position:'absolute', 
-    top:-45, 
-    backgroundColor:colors.greyDark + '40'
-  }
+    width: 1,
+    height: 73,
+    position: 'absolute',
+    top: -45,
+    backgroundColor: colors.greyDark + '40',
+  },
 });
 
-VisualSeekbar.propTypes = {
+VisualSeekBar.propTypes = {
   paused: PropTypes.bool,
   currentTime: PropTypes.number,
 
@@ -671,4 +747,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)(VisualSeekbar);
+)(VisualSeekBar);

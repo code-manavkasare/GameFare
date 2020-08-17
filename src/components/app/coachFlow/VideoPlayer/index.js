@@ -14,7 +14,7 @@ import styleApp from '../../../style/style';
 import {timeout} from '../../../functions/coach';
 import {timing} from '../../../animations/animations';
 import ControlButtons from './components/ControlButtons';
-import VisualSeekbar from './components/VisualSeekbar';
+import VisualSeekBar from './components/VisualSeekbar';
 
 export default class VideoPlayer extends Component {
   static propTypes = {
@@ -87,9 +87,9 @@ export default class VideoPlayer extends Component {
       prevState.totalTime !== totalTime ||
       prevState.currentTime !== currentTime
     ) {
-      this.controlButtonRef?.setCurrentTime(currentTime, true);
+      this.visualSeekBarRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
-      this.visualSeekbarRef.toggleVisible(true);
+      this.visualSeekBarRef.toggleVisible(true);
     }
 
     if (prevState.source !== source) this.PinchableBoxRef?.resetPosition();
@@ -121,7 +121,10 @@ export default class VideoPlayer extends Component {
     return {};
   }
   getState() {
-    return {...this.state, currentTime: this.controlButtonRef?.getCurrentTime()};
+    return {
+      ...this.state,
+      currentTime: this.visualSeekBarRef?.getCurrentTime(),
+    };
   }
   seek = (time) => {
     const player = this.player;
@@ -130,7 +133,7 @@ export default class VideoPlayer extends Component {
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
     const {onPlayPause} = this.props;
-    const currentTime = this.visualSeekbarRef?.getCurrentTime();
+    const currentTime = this.visualSeekBarRef?.getCurrentTime();
     if (forcePause) paused = false;
     const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
 
@@ -146,7 +149,7 @@ export default class VideoPlayer extends Component {
 
   updatePlayRate = async (playRate) => {
     let {paused} = this.state;
-    const currentTime = this.controlButtonRef?.getCurrentTime();
+    const currentTime = this.visualSeekBarRef?.getCurrentTime();
     const {
       noUpdateInCloud,
       updateVideoInfoCloud,
@@ -162,10 +165,10 @@ export default class VideoPlayer extends Component {
     this.setState({videoLoaded: !event.isBuffering});
   };
   onProgress = async (info) => {
-    const paused = this.controlButtonRef?.getPaused();
+    const paused = this.visualSeekBarRef?.getPaused();
     const {currentTime} = info;
     if (!paused) {
-      this.visualSeekbarRef?.setCurrentTime(currentTime);
+      this.visualSeekBarRef?.setCurrentTime(currentTime);
     }
   };
   onSlidingComplete = async (SliderTime, forcePlay) => {
@@ -189,7 +192,7 @@ export default class VideoPlayer extends Component {
   onSlidingStart = async () => {
     const {onSlidingStart, updateVideoInfoCloud, noUpdateInCloud} = this.props;
     const {paused} = this.state;
-    const currentTime = this.controlButtonRef?.getCurrentTime();
+    const currentTime = this.visualSeekBarRef?.getCurrentTime();
 
     onSlidingStart(currentTime, paused);
     if (updateVideoInfoCloud && !noUpdateInCloud)
@@ -237,7 +240,7 @@ export default class VideoPlayer extends Component {
       this.opacityControlBar,
       timing(this.opacityControlBar._value ? 0 : 1, 200),
     ).start();
-    this.visualSeekbarRef?.toggleVisible()
+    this.visualSeekBarRef?.toggleVisible();
   }
   render() {
     const {
@@ -338,7 +341,7 @@ export default class VideoPlayer extends Component {
                       onProgress={(info) => !paused && this.onProgress(info)}
                       onEnd={(callback) => {
                         this.togglePlayPause(true);
-                        this.controlButtonRef?.setCurrentTime(totalTime, true);
+                        this.visualSeekBarRef?.setCurrentTime(totalTime, true);
                       }}
                     />
                   )}
@@ -351,7 +354,7 @@ export default class VideoPlayer extends Component {
 
         {/* {displayVideo && (
           <ControlButtons
-            onRef={(ref) => (this.controlButtonRef = ref)}
+            onRef={(ref) => (this.visualSeekBarRef = ref)}
             heightControlBar={heightControlBar}
             sizeControlButton={sizeControlButton}
             hideFullScreenButton={hideFullScreenButton}
@@ -373,19 +376,21 @@ export default class VideoPlayer extends Component {
         )} */}
 
         {displayVideo && (
-          <VisualSeekbar 
-            onRef={(ref) => (this.visualSeekbarRef = ref)}
+          <VisualSeekBar
+            onRef={(ref) => (this.visualSeekBarRef = ref)}
             togglePlayPause={this.togglePlayPause.bind(this)}
             currentTime={currentTime}
             totalTime={totalTime}
             paused={paused}
             prevPaused={prevPaused}
             seek={async (time, fineSeek) => {
-              if (!paused) await this.setState({paused:true, prevPaused:false})
-              else if (prevPaused === undefined) 
-                this.setState({prevPaused: true})
-              if (fineSeek) this.setState({prevPaused: undefined})
-              this.player.seek(time, 33)}}
+              if (!paused)
+                await this.setState({paused: true, prevPaused: false});
+              else if (prevPaused === undefined)
+                this.setState({prevPaused: true});
+              if (fineSeek) this.setState({prevPaused: undefined});
+              this.player.seek(time, 33);
+            }}
             onSlidingComplete={this.onSlidingComplete.bind(this)}
             onSlidingStart={this.onSlidingStart.bind(this)}
           />
