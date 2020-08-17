@@ -476,7 +476,7 @@ PODS:
     - React
   - react-native-screen-brightness (2.0.0-alpha):
     - React
-  - react-native-slider (2.0.9):
+  - react-native-slider (3.0.3):
     - React
   - react-native-sms (1.11.0):
     - React
@@ -1148,7 +1148,7 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: f0ca1a8e5031dab6b74bfb4ab33a17ed2c2fcb0d
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-screen-brightness: 9eefe6db96a5d757e63cdfce8e48d7c9039f2af2
-  react-native-slider: e51492f1264d882a8815b71c5870f8978e52887d
+  react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
   react-native-sms: 31fbb9d6ebb565ad32e409eaf9dc70329936a129
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5

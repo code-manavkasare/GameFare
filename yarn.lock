@@ -1177,10 +1177,10 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-5.9.5.tgz#3bad0d855d2e813be085ec305139d4175c512ccc"
   integrity sha512-PbSsRmhRwYIMdeVJTf9gJtvW0TVq/hmgz1xyjsrTIsQ7QS7wbMEiv1Eb/M/y6AEEsdUped5Axm5xykq9TGISHg==
 
-"@react-native-community/slider@^2.0.8":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.9.tgz#bf74045c96f1fb22e3ec961e321300c230c63990"
-  integrity sha512-6GHUKXxiDSs75VZQRa6B+nxo8rqpIEcegZ1iCSQG4aW2oSVepceqDol+0y3/KaBt5WMpD4KybLw8ZZqkT6olaQ==
+"@react-native-community/slider@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-3.0.3.tgz#830167fd757ba70ac638747ba3169b2dbae60330"
+  integrity sha512-8IeHfDwJ9/CTUwFs6x90VlobV3BfuPgNLjTgC6dRZovfCWigaZwVNIFFJnHBakK3pW2xErAPwhdvNR4JeNoYbw==
 
 "@react-native-community/status-bar@^1.0.3":
   version "1.0.3"

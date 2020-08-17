@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
 import PropTypes from 'prop-types';
 
 import colors from '../../../../style/colors';
-import styleApp from '../../../../style/style';
 
 export default class SliderVideo extends Component {
   constructor(props) {

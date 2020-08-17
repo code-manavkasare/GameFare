@@ -64,13 +64,13 @@ class VideoPlayerPage extends Component {
       paused: true,
       playRate: 1,
     });
-    this.videoPlayerRef?.controlButtonRef?.setCurrentTime(0, true);
+    this.videoPlayerRef?.visualSeekBarRef?.setCurrentTime(0, true);
     this.videoPlayerRef?.player?.seek(0);
   };
   isTimestampReached = async (timestampToWait) => {
     while (true) {
       const {isPreviewing} = this.state;
-      const currentTime = this.videoPlayerRef.controlButtonRef.getCurrentTime();
+      const currentTime = this.videoPlayerRef.visualSeekBarRef?.getCurrentTime();
       if (
         (timestampToWait < currentTime + 0.01 &&
           timestampToWait > currentTime - 0.01) ||
