@@ -3,6 +3,7 @@ import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
 import Orientation from 'react-native-orientation-locker';
+import {Player, Recorder} from '@react-native-community/audio-toolkit';
 
 import VideoPlayer from '../coachFlow/VideoPlayer/index';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
@@ -26,6 +27,9 @@ class VideoPlayerPage extends Component {
       recordedActions: [],
       loader: false,
       isPreviewing: false,
+      audioPlayer: null,
+      audioRecorder: null,
+      audioFilePath: null,
       archive: {},
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
@@ -39,7 +43,7 @@ class VideoPlayerPage extends Component {
     // this.focusListener = navigation.addListener('blur', () => {
     //   Orientation.lockToPortrait();
     // });
-  };
+  }
 
   static getDerivedStateFromProps(props, state) {
     if (
@@ -50,16 +54,27 @@ class VideoPlayerPage extends Component {
         archive: props.route.params.archive,
       };
     return {};
-  };
-
-  startRecording = () => {
+  }
+  startRecording = async () => {
     this.resetPlayer();
-    this.setState({isRecording: true, recordedActions: []});
+    await this.setState({
+      isRecording: true,
+      recordedActions: [],
+      audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
+        if (err) {
+          console.log(err);
+        }
+        this.setState({audioFilePath: fsPath});
+      }),
+    });
+    this.state.audioRecorder.record();
   };
 
   stopRecording = () => {
+    this.state.audioRecorder.stop(() => {
+      this.setState({isRecording: false, recorder: null});
+    });
     this.resetPlayer();
-    this.setState({isRecording: false});
   };
 
   resetPlayer = () => {
@@ -90,7 +105,10 @@ class VideoPlayerPage extends Component {
   };
 
   previewRecording = async () => {
-    await this.setState({isPreviewing: true});
+    await this.setState({
+      isPreviewing: true,
+      audioPlayer: new Player('audio.mp4').play(),
+    });
     await this.resetPlayer();
     const {recordedActions} = this.state;
 
@@ -136,7 +154,12 @@ class VideoPlayerPage extends Component {
 
     await this.setState({isPreviewing: false});
   };
-
+  cancelPreviewRecording = async () => {
+    await this.state.audioPlayer.stop(() => {
+      this.setState({isPreviewing: false, audioPlayer: null});
+    });
+    await this.resetPlayer();
+  };
   onPlayPause = (paused, currentTime) => {
     const {recordedActions} = this.state;
     recordedActions.push({
@@ -245,10 +268,7 @@ class VideoPlayerPage extends Component {
           styleButton={style}
           text="Cancel Preview"
           textButton={{fontSize: 13}}
-          click={async () => {
-            await this.setState({isPreviewing: false});
-            await this.resetPlayer();
-          }}
+          click={() => this.cancelPreviewRecording()}
         />
       ) : (
         <Button
