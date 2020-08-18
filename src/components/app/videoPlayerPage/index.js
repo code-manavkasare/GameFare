@@ -85,6 +85,7 @@ class VideoPlayerPage extends Component {
     });
     this.videoPlayerRef?.visualSeekBarRef?.setCurrentTime(0, true);
     this.videoPlayerRef?.player?.seek(0);
+    this.videoPlayerRef?.PinchableBoxRef?.resetPosition();
   };
 
   isTimestampReached = async (timestampToWait) => {
@@ -146,6 +147,12 @@ class VideoPlayerPage extends Component {
               currentTime: action.timestamp,
             });
             break;
+          case 'zoom':
+            this.videoPlayerRef.PinchableBoxRef.setNewScale(action.scale);
+            break;
+          case 'drag':
+            this.videoPlayerRef.PinchableBoxRef.setNewPosition(action.position);
+            break;
           default:
             console.log(`case ${action.type} not handled`);
         }
@@ -165,6 +172,22 @@ class VideoPlayerPage extends Component {
     recordedActions.push({
       type: paused ? 'pause' : 'play',
       timestamp: currentTime,
+    });
+    this.setState({recordedActions});
+  };
+  onScaleChange = (scale) => {
+    const {recordedActions} = this.state;
+    recordedActions.push({
+      type: 'zoom',
+      scale,
+    });
+    this.setState({recordedActions});
+  };
+  onPositionChange = async (position) => {
+    const {recordedActions} = await this.state;
+    recordedActions.push({
+      type: 'drag',
+      position: {...position},
     });
     this.setState({recordedActions});
   };
@@ -316,9 +339,23 @@ class VideoPlayerPage extends Component {
     const {userID, navigation} = this.props;
     const {archive, isRecording} = this.state;
     const {url, id, thumbnail} = archive;
-    const {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart} = this;
+    const {
+      onPlayPause,
+      onPlayRateChange,
+      onScaleChange,
+      onPositionChange,
+      onSlidingEnd,
+      onSlidingStart,
+    } = this;
     const propsWhenRecording = isRecording
-      ? {onPlayPause, onPlayRateChange, onSlidingEnd, onSlidingStart}
+      ? {
+          onPlayPause,
+          onPlayRateChange,
+          onScaleChange,
+          onPositionChange,
+          onSlidingEnd,
+          onSlidingStart,
+        }
       : {};
     return (
       <View style={[styleApp.stylePage, {backgroundColor: colors.title}]}>
