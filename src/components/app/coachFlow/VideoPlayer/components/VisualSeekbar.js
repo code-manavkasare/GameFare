@@ -1,17 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, PanResponder} from 'react-native';
-import {BlurView, VibrancyView} from '@react-native-community/blur';
+import {BlurView} from '@react-native-community/blur';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
-import FadeInView from 'react-native-fade-in-view';
-import {
-  PinchGestureHandler,
-  PanGestureHandler,
-  State,
-  TapGestureHandler,
-} from 'react-native-gesture-handler';
-import {isEqual, transform} from 'lodash';
 
 import Slider from './Slider';
 import AllIcons from '../../../../layout/icons/AllIcons';
@@ -42,6 +35,7 @@ class VisualSeekBar extends Component {
       totalTime: 0,
       fullscreen: false,
       showSpeedSet: false,
+      screenWidth,
       paused: this.props.paused ? this.props.paused : false,
 
       //Dynamic for zoom of seekbar
@@ -127,6 +121,39 @@ class VisualSeekBar extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
+  componentDidUpdate(prevProps, prevState) {
+    const {currentScreenSize} = this.props;
+    const {currentWidth: screenWidth} = currentScreenSize;
+    this.playheadPosBounds = [0.05 * screenWidth, 0.95 * screenWidth];
+    console.log('this state seekbarbounds', this.state.seekbarBounds);
+  }
+  static getDerivedStateFromProps(props, state) {
+    const {currentScreenSize} = props;
+    const {currentWidth: screenWidth} = currentScreenSize;
+    const {screenWidth: prevScreenWidth, seekbarBounds} = state;
+
+    let newState = {};
+    if (prevScreenWidth !== screenWidth) {
+      const oldBounds = [
+        seekbarBounds[0] / prevScreenWidth,
+        seekbarBounds[1] / prevScreenWidth,
+      ];
+      newState = {
+        ...newState,
+        screenWidth,
+        seekbarBounds: [oldBounds[0] * screenWidth, oldBounds[1] * screenWidth],
+      };
+    }
+    if (props.paused !== state.paused) {
+      newState = {
+        ...newState,
+        paused: props.paused,
+      };
+    }
+    return {
+      ...newState,
+    };
+  }
   toggleVisible(force) {
     const {visible: visibleState} = this.state;
     const visible = force !== undefined ? !force : visibleState;
@@ -170,25 +197,19 @@ class VisualSeekBar extends Component {
     }
 
     // current time position change
-    if (this.playheadPosition._value > currentWidth - 90)
+    if (this.playheadPosition._value > currentWidth - 90) {
       this.currentTimeRef.overrideStyle({
         left: null,
         right: 5,
         textAlign: 'right',
       });
-    else
+    } else {
       this.currentTimeRef.overrideStyle({
         left: 5,
         right: null,
         textAlign: 'left',
       });
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.paused !== state.paused)
-      return {
-        paused: props.paused,
-      };
-    return {};
+    }
   }
   getPaused() {
     return this.state.paused;
@@ -293,7 +314,9 @@ class VisualSeekBar extends Component {
       onSlidingStart,
       totalTime,
     } = this.props;
-    if (!heightControlBar) heightControlBar = initialHeightControlBar;
+    if (!heightControlBar) {
+      heightControlBar = initialHeightControlBar;
+    }
     return (
       <Animated.View
         style={[
@@ -365,18 +388,17 @@ class VisualSeekBar extends Component {
   }
 
   backdrop() {
-    return (
-      <BlurView
-        style={{position: 'absolute', zIndex: -1, ...styleApp.fullSize, top: 0}}
-        blurType="dark"
-        blurAmount={20}
-      />
-    );
+    const styleBlurView = {
+      position: 'absolute',
+      zIndex: -1,
+      ...styleApp.fullSize,
+      top: 0,
+    };
+    return <BlurView style={styleBlurView} blurType="dark" blurAmount={20} />;
   }
 
   seekbar() {
-    const {currentTime, currentScreenSize, totalTime} = this.props;
-    const {currentWidth} = currentScreenSize;
+    const {currentTime, totalTime} = this.props;
     const {seekbarBounds} = this.state;
 
     //TODO Alter according to zoom level (0.9 * width is 1.0x zoom level)
@@ -393,7 +415,7 @@ class VisualSeekBar extends Component {
     ];
 
     return (
-      <View style={{width: '100%', height: 125, paddingTop: 30}}>
+      <View style={{width: '100%', height: 125, paddingTop: 35}}>
         <View
           style={{width: '100%', height: 80}}
           {...this.panResponder.panHandlers}>
@@ -406,33 +428,36 @@ class VisualSeekBar extends Component {
               transform: [{translateX: seekbarBounds[0]}],
             }}
           />
-          <View style={{paddingHorizontal: '5%', marginTop: 5}}>
-            <Row style={{height: 35}}>
+          <View
+            style={{
+              paddingHorizontal: '5%',
+              position: 'absolute',
+              width: '100%',
+            }}>
+            <Row style={{height: 15}}>
               <Col>
                 <Text
                   style={{
                     ...styles.textTime,
                     textAlign: 'left',
-                    marginLeft: 5,
+                    marginLeft: -5,
                   }}>
                   {playheadTimes[0] !== undefined
                     ? displayTime(playheadTimes[0])
                     : ''}
                 </Text>
-                <View style={{...styles.boundLines, left: 0}} />
               </Col>
               <Col>
                 <Text
                   style={{
                     ...styles.textTime,
                     textAlign: 'right',
-                    marginRight: 5,
+                    marginRight: -5,
                   }}>
                   {playheadTimes[1] !== undefined
                     ? displayTime(playheadTimes[1])
                     : ''}
                 </Text>
-                <View style={{...styles.boundLines, right: 0}} />
               </Col>
             </Row>
           </View>
@@ -450,7 +475,7 @@ class VisualSeekBar extends Component {
                 left: 5,
                 fontSize: 12,
                 position: 'absolute',
-                bottom: -2,
+                bottom: -4,
                 width: 90,
               }}
             />
@@ -539,8 +564,12 @@ class VisualSeekBar extends Component {
               : forward
               ? currentTime + threshold
               : currentTime - threshold;
-          if (newTime > totalTime) newTime = totalTime;
-          if (newTime < 0) newTime = 0;
+          if (newTime > totalTime) {
+            newTime = totalTime;
+          }
+          if (newTime < 0) {
+            newTime = 0;
+          }
           seek(newTime, true);
           await this.setCurrentTime(newTime, true);
           await this.setState({currentTime: newTime, paused: true});
@@ -553,7 +582,7 @@ class VisualSeekBar extends Component {
 
   speedButton() {
     return (
-      <Row
+      <View
         style={{
           ...styleApp.center,
           position: 'absolute',
@@ -562,7 +591,6 @@ class VisualSeekBar extends Component {
           width: '100%',
         }}>
         <ButtonColor
-          enableLongPress
           view={() => {
             return (
               <View
@@ -590,7 +618,7 @@ class VisualSeekBar extends Component {
             console.log('clicky');
           }}
         />
-      </Row>
+      </View>
     );
   }
 
@@ -603,15 +631,18 @@ class VisualSeekBar extends Component {
     ];
 
     return (
-      <View style={{width: '100%', height: 50}}>
-        <Row>
-          <Col />
+      <View
+        style={{
+          ...styleApp.center,
+          width: '100%',
+          height: 50,
+        }}>
+        <Row style={{width: 300}}>
           <Col>{this.fineSeekButton(fineSeekConfig[0])}</Col>
           <Col>{this.fineSeekButton(fineSeekConfig[1])}</Col>
           <Col>{this.playPauseButton()}</Col>
           <Col>{this.fineSeekButton(fineSeekConfig[2])}</Col>
           <Col>{this.fineSeekButton(fineSeekConfig[3])}</Col>
-          <Col />
         </Row>
         {this.speedButton()}
       </View>
@@ -622,7 +653,7 @@ class VisualSeekBar extends Component {
     const {style, currentScreenSize} = this.props;
     const {currentHeight, currentWidth: width} = currentScreenSize;
     const height = (style?.height ? style.height : 175) + sizes.marginBottomApp;
-    const top = currentHeight - height;
+    const bottom = 0;
     const translateY = this._translateY.interpolate({
       inputRange: [0, 1],
       outputRange: [height, 0],
@@ -636,7 +667,7 @@ class VisualSeekBar extends Component {
           borderTopRightRadius: 25,
           borderTopLeftRadius: 25,
           minHeight: 175,
-          top,
+          bottom,
           height,
           width,
           transform: [{translateY}],
@@ -672,8 +703,7 @@ const styles = StyleSheet.create({
   textTime: {
     ...styleApp.textBold,
     fontSize: 12,
-    color: colors.white,
-    top: 15,
+    top: -20,
     textAlign: 'right',
     color: colors.greyDark,
   },
@@ -720,10 +750,11 @@ const styles = StyleSheet.create({
   },
   boundLines: {
     width: 1,
-    height: 73,
+    height: 10,
     position: 'absolute',
-    top: -45,
-    backgroundColor: colors.greyDark + '40',
+    top: -5,
+    backgroundColor: colors.greyDark,
+    opacity: 0.2,
   },
 });
 

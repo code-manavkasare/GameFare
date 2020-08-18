@@ -189,8 +189,8 @@ class CardArchive extends PureComponent {
               ? selectVideo(id, !isSelected, local)
               : this.openVideo()
           }
-          color={colors.greyDark + '40'}
-          onPressColor={colors.grey + '40'}
+          color={'transparent'}
+          onPressColor={colors.grey + '20'}
           style={[
             styleApp.fullSize,
             styleApp.center,

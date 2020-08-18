@@ -26,11 +26,13 @@ import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer
 
 const imageCardTeam = (session, size, hideDots) => {
   let scale = 1;
-  if (size) scale = 0.7;
+  if (size) {
+    scale = 0.7;
+  }
   const members = getSortedMembers(session.members);
   const length = members.length;
   const styleByIndex = (i) => {
-    if (length > 1)
+    if (length > 1) {
       return {
         position: 'absolute',
         top:
@@ -38,6 +40,7 @@ const imageCardTeam = (session, size, hideDots) => {
           (length == 2 ? 8 * scale : 0 * scale),
         left: i == 0 ? -40 * scale : i == 1 ? -10 * scale : -10 * scale,
       };
+    }
   };
   let styleContainer = {};
   // if (size) styleContainer = {height: size, width: size};
@@ -153,10 +156,16 @@ const userCircle = (member, style, scale, length, hideDots) => {
 
 const titleSession = (session, size) => {
   const userID = store.getState().user.userID;
-  if (session.title) return session.title;
+  if (session.title) {
+    return session.title;
+  }
   const members = getSortedMembers(session.members);
-  if (!members || !members[0]) return;
-  if (members[0].id === userID) return 'You';
+  if (!members || !members[0]) {
+    return;
+  }
+  if (members[0].id === userID) {
+    return 'You';
+  }
   const names = members.reduce((nameString, member, i, members) => {
     if (member.info && member.info.firstname && member.info.lastname) {
       const {firstname, lastname} = member.info;
@@ -170,7 +179,7 @@ const titleSession = (session, size) => {
           if (i === members.length - 1) {
             return nameString + ', and ' + firstname + ' ' + lastname;
           } else {
-            return nameString + `, and ${members.length - numNames} others`;
+            return nameString + `, and ${members.length - numNames + 1} others`;
           }
         } else {
           return nameString;
@@ -180,33 +189,53 @@ const titleSession = (session, size) => {
       return nameString;
     }
   }, '');
-  if (size) return names.slice(0, 20) + '...';
+  if (size) {
+    return names.slice(0, 20) + '...';
+  }
   return names;
 };
 
 const dateSession = ({session, messages}) => {
   let {members, createdAt} = session;
-  if (!members) return formatDate(Date.now());
+  if (!members) {
+    return formatDate(Date.now());
+  }
   members = members ? Object.values(members) : [];
   const activeMembers = members.filter((m) => m.isConnected);
-  if (activeMembers.length > 0) return 'Active now';
+  if (activeMembers.length > 0) {
+    return 'Active now';
+  }
 
   const lastActive = members.sort((a, b) => {
-    if (!a.disconnectionTimeStamp) return 1;
-    if (!b.disconnectionTimeStamp) return -1;
-    if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) return 1;
-    if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) return -1;
-    else return 0;
+    if (!a.disconnectionTimeStamp) {
+      return 1;
+    }
+    if (!b.disconnectionTimeStamp) {
+      return -1;
+    }
+    if (a.disconnectionTimeStamp < b.disconnectionTimeStamp) {
+      return 1;
+    }
+    if (a.disconnectionTimeStamp > b.disconnectionTimeStamp) {
+      return -1;
+    } else {
+      return 0;
+    }
   })[0].disconnectionTimeStamp;
 
   let dateLastMessage = 0;
   const lastMessage = lastMessageObject(messages);
-  if (lastMessage) dateLastMessage = lastMessage.timeStamp;
+  if (lastMessage) {
+    dateLastMessage = lastMessage.timeStamp;
+  }
 
-  if (!lastActive && !dateLastMessage) return formatDate(createdAt);
+  if (!lastActive && !dateLastMessage) {
+    return formatDate(createdAt);
+  }
 
-  if ((!lastActive && dateLastMessage > 0) || dateLastMessage > lastActive)
+  if ((!lastActive && dateLastMessage > 0) || dateLastMessage > lastActive) {
     return formatDate(dateLastMessage);
+  }
 
   return formatDate(lastActive);
 };
@@ -230,24 +259,35 @@ const sessionDate = ({session, messages}) => {
 };
 
 const lastMessageObject = (messages) => {
-  if (!messages) return false;
-  if (Object.keys(messages)[0] === 'noMessage') return false;
+  if (!messages) {
+    return false;
+  }
+  if (Object.keys(messages)[0] === 'noMessage') {
+    return false;
+  }
   return Object.values(messages)[0];
 };
 
 const lastMessage = (messages) => {
   const lastMessage = lastMessageObject(messages);
-  if (!lastMessage) return null;
+  if (!lastMessage) {
+    return null;
+  }
 
   const {user, timeStamp, images, type} = lastMessage;
   let {text} = lastMessage;
 
-  if (images)
+  if (images) {
     text = `${Object.values(images).length} file${
       Object.values(images).length === 1 ? '' : 's'
     }`;
-  if (text.length > 50) text = text.slice(0, 50) + '...';
-  if (type === 'video') text = '1 video shared.';
+  }
+  if (text.length > 50) {
+    text = text.slice(0, 50) + '...';
+  }
+  if (type === 'video') {
+    text = '1 video shared.';
+  }
   return (
     <Text
       style={[
@@ -266,16 +306,23 @@ const formatDate = (date) => {
   let justNow = moment(Date.now()).subtract(1, 'minute');
   let earlier = moment(Date.now()).subtract(7, 'days');
   let lastYear = moment(Date.now()).subtract(1, 'year');
-  if (date > justNow) return 'Just now';
-  else if (date > earlier) return moment(date).fromNow();
-  else if (date > lastYear) return moment(date).format('ddd, MMM DD');
-  else return moment(date).format('D/M/YYYY');
+  if (date > justNow) {
+    return 'Just now';
+  } else if (date > earlier) {
+    return moment(date).fromNow();
+  } else if (date > lastYear) {
+    return moment(date).format('ddd, MMM DD');
+  } else {
+    return moment(date).format('D/M/YYYY');
+  }
 };
 
 const viewLive = (session, style, hideText) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   const activeSession = session.objectID === currentSessionID;
-  if (!activeSession) return null;
+  if (!activeSession) {
+    return null;
+  }
   const styleViewLive = {
     marginRight: 20,
     height: 24,
@@ -337,7 +384,9 @@ const buttonPlay = (session) => {
 const hangupButton = (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
   const activeSession = session.objectID === currentSessionID;
-  if (!activeSession) return null;
+  if (!activeSession) {
+    return null;
+  }
   const styleViewLive = {
     height: 40,
     width: 40,
@@ -371,18 +420,22 @@ const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
     ...styleApp.center,
     position: 'absolute',
     width: 23,
+    paddingTop: 1,
+    paddingLeft: 1,
     borderRadius: 20,
     height: 23,
-    top: -10,
+    top: -7,
     left: 55,
-    borderWidth: 1,
-    borderColor: colors.white,
     backgroundColor: colors.primary,
   };
   const styleButton = {
     height: 34,
     width: '100%',
     borderRadius: 5,
+  };
+  const styleBadgeText = {
+    fontSize:
+      badge && !isNaN(badge) ? (badge > 999 ? 8 : badge > 99 ? 9 : 10) : 10,
   };
   return (
     <View>
@@ -394,7 +447,7 @@ const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
               <Text
                 style={[
                   styleApp.textBold,
-                  {color: colors.white, fontSize: 10},
+                  {...styleBadgeText, color: colors.white},
                 ]}>
                 {badge}
               </Text>
@@ -448,7 +501,9 @@ const viewWithTitle = ({view, title, icon, badge}) => {
 const ListContents = (props) => {
   const {session} = props;
   let {contents, objectID} = session;
-  if (!contents) contents = {};
+  if (!contents) {
+    contents = {};
+  }
   return (
     <FlatListComponent
       list={Object.values(contents).sort(function(a, b) {
@@ -481,10 +536,16 @@ const ListContents = (props) => {
 const ListPlayers = (props) => {
   const {session, messages} = props;
   let {members, objectID} = session;
-  if (!members) members = {};
+  if (!members) {
+    members = {};
+  }
   members = Object.values(members).sort((a, b) => {
-    if (!a.connectionTimeStamp) a.connectionTimeStamp = 0;
-    if (!b.connectionTimeStamp) b.connectionTimeStamp = 0;
+    if (!a.connectionTimeStamp) {
+      a.connectionTimeStamp = 0;
+    }
+    if (!b.connectionTimeStamp) {
+      b.connectionTimeStamp = 0;
+    }
     return b.connectionTimeStamp - a.connectionTimeStamp;
   });
   return (
@@ -569,7 +630,7 @@ const contentView = (session) => {
 
   return viewWithTitle({
     view: <View style={{height: 20}}>{/* <Text>card content </Text> */}</View>,
-    title: ``,
+    title: '',
     badge: contents ? Object.values(contents).length : false,
     icon: {
       name: 'video-camera',
