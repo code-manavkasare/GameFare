@@ -78,7 +78,9 @@ export default class VideoPlayer extends Component {
     this.props.onRef(this);
     const {currentTime} = this.state;
     this.setState({displayVideo: true});
-    if (currentTime !== 0) this.seek(currentTime);
+    if (currentTime !== 0) {
+      this.seek(currentTime);
+    }
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -94,7 +96,9 @@ export default class VideoPlayer extends Component {
       this.visualSeekBarRef.toggleVisible(true);
     }
 
-    if (prevState.source !== source) this.PinchableBoxRef?.resetPosition();
+    if (prevState.source !== source) {
+      this.PinchableBoxRef?.resetPosition();
+    }
   }
   static getDerivedStateFromProps(props, state) {
     if (props.source !== state.source) {
@@ -136,12 +140,15 @@ export default class VideoPlayer extends Component {
     let {paused, playRate} = this.state;
     const {onPlayPause} = this.props;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
-    if (forcePause) paused = false;
+    if (forcePause) {
+      paused = false;
+    }
     const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
 
     if (!noUpdateInCloud) {
-      if (!paused)
+      if (!paused) {
         return updateVideoInfoCloud({paused: true, currentTime, playRate});
+      }
       return updateVideoInfoCloud({paused: false});
     } else {
       this.setState({paused: !paused});
@@ -177,11 +184,12 @@ export default class VideoPlayer extends Component {
     const {prevPaused} = this.state;
     const {updateVideoInfoCloud, noUpdateInCloud, onSlidingEnd} = this.props;
     const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
-    if (isCloudUpdating)
+    if (isCloudUpdating) {
       await updateVideoInfoCloud({
         currentTime: SliderTime,
         paused: forcePlay ? forcePlay : prevPaused,
       });
+    }
     const paused = forcePlay ? forcePlay : !prevPaused ? false : true;
     await this.setState({
       currentTime: SliderTime,
@@ -197,8 +205,9 @@ export default class VideoPlayer extends Component {
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
 
     onSlidingStart(currentTime, paused);
-    if (updateVideoInfoCloud && !noUpdateInCloud)
+    if (updateVideoInfoCloud && !noUpdateInCloud) {
       await updateVideoInfoCloud({paused: true});
+    }
     return this.setState({paused: true});
   };
   playPauseButton = (paused) => {
@@ -244,6 +253,18 @@ export default class VideoPlayer extends Component {
     ).start();
     this.visualSeekBarRef?.toggleVisible();
   }
+  onSeek = async (time, fineSeek) => {
+    const {paused, prevPaused} = this.state;
+    if (!paused) {
+      await this.setState({paused: true, prevPaused: false});
+    } else if (prevPaused === undefined) {
+      this.setState({prevPaused: true});
+    }
+    if (fineSeek) {
+      this.setState({prevPaused: undefined});
+    }
+    this.player.seek(time, 33);
+  };
   render() {
     const {
       onScaleChange,
@@ -316,7 +337,7 @@ export default class VideoPlayer extends Component {
                       rate={playRate}
                       onLoad={async (callback) => {
                         const {setSizeVideo} = this.props;
-                        if (setSizeVideo)
+                        if (setSizeVideo) {
                           Image.getSize(
                             placeHolderImg,
                             (width, height) => {
@@ -328,6 +349,7 @@ export default class VideoPlayer extends Component {
                               );
                             },
                           );
+                        }
                         await this.setState({
                           totalTime: callback.duration,
                           videoLoaded: true,
@@ -389,16 +411,13 @@ export default class VideoPlayer extends Component {
             totalTime={totalTime}
             paused={paused}
             prevPaused={prevPaused}
-            seek={async (time, fineSeek) => {
-              if (!paused)
-                await this.setState({paused: true, prevPaused: false});
-              else if (prevPaused === undefined)
-                this.setState({prevPaused: true});
-              if (fineSeek) this.setState({prevPaused: undefined});
-              this.player.seek(time, 33);
-            }}
+            seek={this.onSeek.bind(this)}
             onSlidingComplete={this.onSlidingComplete.bind(this)}
             onSlidingStart={this.onSlidingStart.bind(this)}
+            playRate={playRate}
+            updatePlayRate={(rate) => {
+              return this.updatePlayRate(rate);
+            }}
           />
         )}
       </Animated.View>
