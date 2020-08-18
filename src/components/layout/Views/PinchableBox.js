@@ -6,10 +6,24 @@ import {
   State,
   TapGestureHandler,
 } from 'react-native-gesture-handler';
+import PropTypes from 'prop-types';
 
 import {native} from '../../animations/animations';
 
 export default class PinchableBox extends Component {
+  static PropTypes = {
+    onPinch: PropTypes.func,
+    onDrag: PropTypes.func,
+  };
+  static defaultProps = {
+    onPinch: (scale) => {
+      console.log(`isPinched, new scale :  ${scale}`);
+    },
+    onDrag: (position) => {
+      const {x, y} = position;
+      console.log(`isDragged, new position :  x :${x}, y :${y}`);
+    },
+  };
   _baseScale = new Animated.Value(1);
   _pinchScale = new Animated.Value(1);
   scale = Animated.multiply(this._baseScale, this._pinchScale);
@@ -40,45 +54,56 @@ export default class PinchableBox extends Component {
     {
       useNativeDriver: true,
       listener: (event) => {
-        this._translateX.setValue(event.nativeEvent.translationX + this._lastOffset.x)
-        this._translateY.setValue(event.nativeEvent.translationY + this._lastOffset.y)
-      }
+        const newPosition = {
+          x: event.nativeEvent.translationX + this._lastOffset.x,
+          y: event.nativeEvent.translationY + this._lastOffset.y,
+        };
+
+        this.setNewPosition(newPosition);
+      },
     },
   );
 
   onPinchHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastScale *= event.nativeEvent.scale;
-      this._baseScale.setValue(this._lastScale);
-      this._pinchScale.setValue(1);
-      const {scaleChange} = this.props;
-      scaleChange(this._lastScale);
+      this.setNewScale(this._lastScale);
     }
   };
+  setNewScale = (scale) => {
+    this._pinchScale.setValue(1);
+    this._baseScale.setValue(scale);
+    //utility of this two line after ?
+    const {scaleChange} = this.props;
+    scaleChange(scale);
+
+    this.props.onPinch(scale);
+  };
+  setNewPosition = (position) => {
+    this._translateX.setValue(position.x);
+    this._translateY.setValue(position.y);
+  };
+
   onPan({nativeEvent: {scale}}) {}
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      this._lastOffset.x = this._translateX._value
-      this._lastOffset.y = this._translateY._value
+      this._lastOffset.x = this._translateX._value;
+      this._lastOffset.y = this._translateY._value;
+      this.props.onDrag(this._lastOffset);
     }
   };
   resetPosition() {
-    this._lastOffset = {x: 0, y: 0};
-    this._translateX.setValue(0);
-    this._translateY.setValue(0);
-    this._pinchScale.setValue(1);
-    this._baseScale.setValue(1);
-    this._lastScale = 1;
-  }
-  animateReset() {
+    const {onDrag, onPinch} = this.props;
     Animated.parallel([
       Animated.timing(this._translateX, native(0, 300)),
       Animated.timing(this._translateY, native(0, 300)),
       Animated.timing(this._pinchScale, native(1, 300)),
-      Animated.timing(this._baseScale, native(1, 300))
-    ]).start()
+      Animated.timing(this._baseScale, native(1, 300)),
+    ]).start();
     this._lastScale = 1;
     this._lastOffset = {x: 0, y: 0};
+    onDrag(this._lastOffset);
+    onPinch(this._lastScale);
   }
   _onSingleTap = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
@@ -88,7 +113,7 @@ export default class PinchableBox extends Component {
   };
   _onDoubleTap = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      this.animateReset()
+      this.resetPosition();
     }
   };
   render() {

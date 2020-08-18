@@ -37,6 +37,8 @@ export default class VideoPlayer extends Component {
     onPlayPause: PropTypes.func,
     onSlidingEnd: PropTypes.func,
     onPlayRateChange: PropTypes.func,
+    onScaleChange: PropTypes.func,
+    onPositionChange: PropTypes.func,
   };
   static defaultProps = {
     onPlayPause: (paused, currentTime) => {
@@ -244,6 +246,8 @@ export default class VideoPlayer extends Component {
   }
   render() {
     const {
+      onScaleChange,
+      onPositionChange,
       styleContainerVideo,
       styleVideo,
       componentOnTop,
@@ -291,6 +295,8 @@ export default class VideoPlayer extends Component {
               styleContainer={[styleApp.fullSize, styleApp.center]}
               onRef={(ref) => (this.PinchableBoxRef = ref)}
               scaleChange={(val) => setScale && setScale(val)}
+              onPinch={onScaleChange}
+              onDrag={onPositionChange}
               singleTouch={() => this.clickVideo()}
               component={() => (
                 <View style={[styleApp.fullSize, styleApp.center]}>
