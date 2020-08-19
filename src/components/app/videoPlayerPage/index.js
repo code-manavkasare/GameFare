@@ -56,7 +56,7 @@ class VideoPlayerPage extends Component {
     return {};
   }
   startRecording = async () => {
-    this.resetPlayer();
+    this.videoPlayerRef?.PinchableBoxRef?.resetPosition();
     await this.setState({
       isRecording: true,
       recordedActions: [],
@@ -68,6 +68,7 @@ class VideoPlayerPage extends Component {
       }),
     });
     this.state.audioRecorder.record();
+    this.initialiseRecordingWithPlayerCurrentState();
   };
 
   stopRecording = () => {
@@ -75,6 +76,13 @@ class VideoPlayerPage extends Component {
       this.setState({isRecording: false, recorder: null});
     });
     this.resetPlayer();
+  };
+
+  initialiseRecordingWithPlayerCurrentState = () => {
+    const currentTime = this.videoPlayerRef.visualSeekBarRef?.getCurrentTime();
+    this.onSlidingEnd(currentTime);
+    //this.onPlayRateChange(); updatePlayrate on start when new player UI is finished
+    this.onPlayPause(false, currentTime);
   };
 
   resetPlayer = () => {
@@ -110,7 +118,6 @@ class VideoPlayerPage extends Component {
       isPreviewing: true,
       audioPlayer: new Player('audio.mp4').play(),
     });
-    await this.resetPlayer();
     const {recordedActions} = this.state;
 
     for (const action of recordedActions) {
