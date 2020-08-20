@@ -173,7 +173,10 @@ export default class ControlBar extends Component {
   }
 
   speedSelector() {
-    const speedCol = (speed) => <Col>{this.speedButton(speed)}</Col>;
+    const speedCol = (speed) => (
+      <Col key={speed}>{this.speedButton(speed)}</Col>
+    );
+
     return <Row>{this.speedConfig.map(speedCol)}</Row>;
   }
 

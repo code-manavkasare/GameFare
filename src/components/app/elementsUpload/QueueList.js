@@ -43,7 +43,7 @@ class QueueList extends Component {
       .on('value', this.firebaseCallback.bind(this));
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     const {userID} = this.props;
     database()
       .ref(`users/${userID}/archivedStreams/uploading`)
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 200,
     width: '100%',
-    zIndex:2,
+    zIndex: 2,
   },
   rocket: {
     height: 60,

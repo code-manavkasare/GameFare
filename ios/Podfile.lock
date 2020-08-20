@@ -484,13 +484,13 @@ PODS:
     - React
   - react-native-statusbar (1.0.3):
     - React
-  - react-native-video (4.4.5):
+  - react-native-video (5.1.0-alpha8):
     - React
-    - react-native-video/Video (= 4.4.5)
+    - react-native-video/Video (= 5.1.0-alpha8)
   - react-native-video-cache (1.0.0):
     - KTVHTTPCache (~> 2.0.0)
     - React
-  - react-native-video/Video (4.4.5):
+  - react-native-video/Video (5.1.0-alpha8):
     - React
   - React-RCTActionSheet (0.62.2):
     - React-Core/RCTActionSheetHeaders (= 0.62.2)
@@ -1157,7 +1157,7 @@ SPEC CHECKSUMS:
   react-native-sms: 31fbb9d6ebb565ad32e409eaf9dc70329936a129
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-statusbar: ee9cc04cf942791e3d10597280d0e1adc876b9e5
-  react-native-video: eee541262ada11bc7ffe8ec5508e6a877937c462
+  react-native-video: dbb8df4f0bbdf80de6797c90fcad8bc12b19401d
   react-native-video-cache: 90b8857673151d2618fc61030f14d755d1e92d4e
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
