@@ -71,7 +71,6 @@ async function createDiscussion(members, nameDiscussion, firstMessageExists) {
     objectID: key,
     id: key,
   };
-  console.log('newDiscussion', newDiscussion);
   return newDiscussion;
 }
 
@@ -83,7 +82,6 @@ const sendNewMessage = async ({
   type,
   content,
 }) => {
-  console.log('sendNewMessage', {objectID, user, text, images, type, content});
   await database()
     .ref('messagesCoachSession/' + objectID)
     .push({

@@ -54,6 +54,7 @@ class VideoLibraryPage extends Component {
       loader: false,
       selectableMode: params ? params.selectableMode : false,
       selectOnly: params ? params.selectOnly : false,
+      selectOne: params ? params.selectOnly && params.selectOne : false,
       selectedFirebaseVideos: [],
       selectedLocalVideos: [],
     };
@@ -116,12 +117,21 @@ class VideoLibraryPage extends Component {
     });
   }
   selectVideo(id, isSelected, local) {
-    let {selectedFirebaseVideos, selectedLocalVideos} = this.state;
+    let {selectedFirebaseVideos, selectedLocalVideos, selectOne} = this.state;
     if (isSelected) {
-      if (local) {
-        selectedLocalVideos.push(id);
+      if (selectOne) {
+        if (local) {
+          selectedLocalVideos = [id];
+          selectedFirebaseVideos = [];
+        } else {
+          selectedLocalVideos = [];
+          selectedFirebaseVideos = [id];        }
       } else {
-        selectedFirebaseVideos.push(id);
+        if (local) {
+          selectedLocalVideos.push(id);
+        } else {
+          selectedFirebaseVideos.push(id);
+        }
       }
     } else {
       const index = local

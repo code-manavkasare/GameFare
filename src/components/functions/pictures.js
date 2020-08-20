@@ -115,7 +115,6 @@ async function pickLibrary() {
 
 async function getPhotoUser() {
   const permissionLibrary = await permission('library');
-  console.log('permissionLibrary', permissionLibrary);
   if (!permissionLibrary) return false;
   const {edges} = await CameraRoll.getPhotos({
     first: 80,
@@ -123,17 +122,6 @@ async function getPhotoUser() {
   });
   return edges;
 }
-
-// const getLastVideo = async (limitToLast) => {
-//   const permissionLibrary = await permission('library');
-//   console.log('permissionLibrary', permissionLibrary);
-//   if (!permissionLibrary) return false;
-//   const {edges} = await CameraRoll.getPhotos({
-//     first: limitToLast,
-//     assetType: 'Videos',
-//   });
-//   return edges;
-// };
 
 const sortVideos = (videos) => {
   if (!videos) videos = {};
@@ -147,7 +135,6 @@ const getLastVideo = async () => {
     first: 1,
     assetType: 'Videos',
   });
-  console.log('edges', edges);
   return edges[0].node.image;
 };
 const ge10tLastVideo = async () => {
@@ -156,7 +143,6 @@ const ge10tLastVideo = async () => {
     first: 10,
     assetType: 'Videos',
   });
-  console.log('edges', edges);
 
   let videos = [];
   for (var i in edges) {
@@ -171,19 +157,15 @@ const ge10tLastVideo = async () => {
       destPath,
     );
     const videoInfo = await getVideoInfo(path);
-    console.log('videoInfo', videoInfo);
     videos.push(videoInfo);
   }
-  console.log('videos', videos);
   return videos;
 };
 
 const getNativeVideoInfo = async (videoID) => {
   const ext = 'MOV';
   var videoUri = `assets-library://asset/asset.${ext}?id=${videoID}&ext=${ext}`;
-  console.log('videoUri', videoUri);
   let videoInfo = await getVideoInfo(videoUri);
-  console.log('videoInfo', videoInfo);
 
   videoInfo.id = videoID;
   videoInfo.local = true;

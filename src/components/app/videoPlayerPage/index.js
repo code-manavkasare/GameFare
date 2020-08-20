@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
 import Orientation from 'react-native-orientation-locker';
 import {Player, Recorder} from '@react-native-community/audio-toolkit';
 
 import VideoPlayer from '../coachFlow/VideoPlayer/index';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
+import VideoPlayerHeader from './components/VideoPlayerHeader';
 import Button from '../../layout/buttons/Button';
 
 import colors from '../../style/colors';
@@ -16,7 +16,10 @@ import {
   heightHeaderHome,
   marginTopAppLandscape,
 } from '../../style/sizes';
-import {openVideoPlayer} from '../../functions/videoManagement';
+import {
+  openVideoPlayer,
+  getFirebaseVideoByID,
+} from '../../functions/videoManagement';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
@@ -24,15 +27,28 @@ class VideoPlayerPage extends Component {
     this.state = {
       isEditMode: false,
       isRecording: false,
+      recordingStartTime: null,
       recordedActions: [],
       loader: false,
       isPreviewing: false,
+      previewStartTime: null,
       audioPlayer: null,
       audioRecorder: null,
       audioFilePath: null,
-      archive: {},
+      landscape: false,
+      archives: [],
+      disableControls: false,
     };
-    this.AnimatedHeaderValue = new Animated.Value(0);
+    this.videoPlayerRefs = [];
+    this.focusListener = null;
+  }
+
+  _orientationListener(o) {
+    if (o === 'LANDSCAPE-LEFT' || o === 'LANDSCAPE-RIGHT') {
+      this.setState({landscape: true});
+    } else {
+      this.setState({landscape: false});
+    }
   }
 
   componentDidMount() {
@@ -40,26 +56,33 @@ class VideoPlayerPage extends Component {
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
     });
-    // this.focusListener = navigation.addListener('blur', () => {
-    //   Orientation.lockToPortrait();
-    // });
+    Orientation.addOrientationListener(this._orientationListener.bind(this));
+  }
+
+  componentWillUnmount() {
+    if (this.focusListener) {
+      this.focusListener();
+    }
+    Orientation.removeOrientationListener(this._orientationListener.bind(this));
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (
-      props.route?.params?.archive &&
-      !isEqual(props.route.params.archive, state.archive)
-    )
+    if (props.route?.params?.archives && state.archives.length === 0) {
       return {
-        archive: props.route.params.archive,
+        archives: props.route.params.archives,
       };
+    }
     return {};
   }
+
   startRecording = async () => {
-    this.videoPlayerRef?.PinchableBoxRef?.resetPosition();
+    this.videoPlayerRefs.forEach((ref) => {
+      ref?.PinchableBoxRef?.resetPosition();
+    });
     await this.setState({
       isRecording: true,
       recordedActions: [],
+      recordingStartTime: Date.now(),
       audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
         if (err) {
           console.log(err);
@@ -73,207 +96,280 @@ class VideoPlayerPage extends Component {
 
   stopRecording = () => {
     this.state.audioRecorder.stop(() => {
-      this.setState({isRecording: false, recorder: null});
+      this.setState({
+        isRecording: false,
+        recorder: null,
+        recordingStartTime: null,
+      });
     });
-    this.resetPlayer();
+    this.resetPlayers();
+  };
+
+  resetPlayers = () => {
+    this.videoPlayerRefs.forEach((ref) => {
+      ref?.setState({
+        currentTime: 0,
+        paused: true,
+        playRate: 1,
+      });
+      ref?.visualSeekBarRef?.setCurrentTime(0, true);
+      ref?.player?.seek(0);
+      ref?.PinchableBoxRef?.resetPosition();
+    });
   };
 
   initialiseRecordingWithPlayerCurrentState = () => {
-    const currentTime = this.videoPlayerRef.visualSeekBarRef?.getCurrentTime();
-    this.onSlidingEnd(currentTime);
-    //this.onPlayRateChange(); updatePlayrate on start when new player UI is finished
-    this.onPlayPause(false, currentTime);
-  };
-
-  resetPlayer = () => {
-    this.videoPlayerRef.setState({
-      currentTime: 0,
-      paused: true,
-      playRate: 1,
+    this.videoPlayerRefs.forEach((ref, i) => {
+      const currentTime = ref.visualSeekBarRef?.getCurrentTime();
+      this.onSlidingEnd(i, currentTime);
+      //this.onPlayRateChange(); updatePlayrate on start when new player UI is finished
+      // this.onPlayPause(i, false, currentTime);
     });
-    this.videoPlayerRef?.visualSeekBarRef?.setCurrentTime(0, true);
-    this.videoPlayerRef?.player?.seek(0);
-    this.videoPlayerRef?.PinchableBoxRef?.resetPosition();
   };
 
-  isTimestampReached = async (timestampToWait) => {
+  waitForAction = async (action) => {
     while (true) {
-      const {isPreviewing} = this.state;
-      const currentTime = this.videoPlayerRef.visualSeekBarRef?.getCurrentTime();
-      if (
-        (timestampToWait < currentTime + 0.01 &&
-          timestampToWait > currentTime - 0.01) ||
-        !isPreviewing
-      ) {
+      const {isPreviewing, previewStartTime} = this.state;
+      const timeLeft =
+        action.startRecordingOffset - (Date.now() - previewStartTime);
+      if (timeLeft < 50 || !isPreviewing) {
         return true;
       }
       await new Promise((resolve) => {
-        setTimeout(resolve, 10);
+        setTimeout(resolve, timeLeft > 1500 ? 1000 : 10);
       });
     }
   };
 
+  // isTimestampReached = async (timestampToWait, index) => {
+  //   console.log('isTimestampReached', timestampToWait, index);
+  //   while (true) {
+  //     const {isPreviewing} = this.state;
+  //     const currentTime = this.videoPlayerRefs[index].visualSeekBarRef?.getCurrentTime();
+  //     if (
+  //       (timestampToWait < currentTime + 0.01 &&
+  //         timestampToWait > currentTime - 0.01) ||
+  //       !isPreviewing
+  //     ) {
+  //       return true;
+  //     }
+  //     await new Promise((resolve) => {
+  //       setTimeout(resolve, 10);
+  //     });
+  //   }
+  // };
+
   previewRecording = async () => {
     await this.setState({
       isPreviewing: true,
+      previewStartTime: Date.now(),
       audioPlayer: new Player('audio.mp4').play(),
+      disableControls: true,
     });
     const {recordedActions} = this.state;
-
     for (const action of recordedActions) {
       const {isPreviewing} = this.state;
       if (isPreviewing) {
-        switch (action.type) {
+        const {type, index} = action;
+        switch (type) {
           case 'play':
-            await this.isTimestampReached(action.timestamp).then(() => {
-              this.videoPlayerRef.setState({
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].setState({
+                currentTime: action.timestamp,
                 paused: false,
               });
             });
             break;
           case 'pause':
-            await this.isTimestampReached(action.timestamp).then(() => {
-              this.videoPlayerRef.setState({
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].setState({
+                currentTime: action.timestamp,
                 paused: true,
               });
             });
             break;
           case 'changePlayRate':
-            await this.isTimestampReached(action.timestamp).then(() => {
-              this.videoPlayerRef.setState({
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].setState({
                 playRate: action.playRate,
               });
             });
             break;
-          case 'willSeek':
-            //Useful to wait for seek methods
-            await this.isTimestampReached(action.timestamp).then(() => {});
-            break;
+          // case 'willSeek':
+          //   //Useful to wait for seek methods
+          //   await this.waitForAction(action).then(() => {});
+          //   break;
           case 'seek':
-            this.videoPlayerRef.setState({
-              currentTime: action.timestamp,
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].setState({
+                currentTime: action.timestamp,
+              });
             });
             break;
           case 'zoom':
-            this.videoPlayerRef.PinchableBoxRef.setNewScale(action.scale);
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].PinchableBoxRef.setNewScale(
+                action.scale,
+              );
+            });
             break;
           case 'drag':
-            this.videoPlayerRef.PinchableBoxRef.setNewPosition(action.position);
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].PinchableBoxRef.setNewPosition(
+                action.position,
+              );
+            });
             break;
+          // case 'addVideo':
+          //   await this.waitForAction(action).then(() => {
+          //     const addedArchive = getFirebaseVideoByID(action.videoID);
+          //     let {archives} = this.state;
+          //     archives.push(addedArchive);
+          //     this.setState({archives});
+          //   });
+          //   break;
           default:
             console.log(`case ${action.type} not handled`);
         }
       }
     }
 
-    await this.setState({isPreviewing: false});
+    await this.setState({isPreviewing: false, disableControls: false});
   };
   cancelPreviewRecording = async () => {
     await this.state.audioPlayer.stop(() => {
-      this.setState({isPreviewing: false, audioPlayer: null});
+      this.setState({
+        isPreviewing: false,
+        previewStartTime: null,
+        audioPlayer: null,
+        disableControls: false,
+      });
     });
-    await this.resetPlayer();
+    await this.resetPlayers();
   };
-  onPlayPause = (paused, currentTime) => {
-    const {recordedActions} = this.state;
+  onPlayPause = (i, paused, currentTime) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
     recordedActions.push({
       type: paused ? 'pause' : 'play',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
       timestamp: currentTime,
     });
     this.setState({recordedActions});
   };
-  onScaleChange = (scale) => {
-    const {recordedActions} = this.state;
+  onScaleChange = (i, scale) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
     recordedActions.push({
       type: 'zoom',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
       scale,
     });
     this.setState({recordedActions});
   };
-  onPositionChange = async (position) => {
-    const {recordedActions} = await this.state;
+  onPositionChange = (i, position) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
     recordedActions.push({
       type: 'drag',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
       position: {...position},
     });
     this.setState({recordedActions});
   };
-
-  onPlayRateChange = (playRate, timestamp) => {
-    const {recordedActions} = this.state;
+  onPlayRateChange = (i, playRate, timestamp) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
     recordedActions.push({
       type: 'changePlayRate',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
       playRate,
       timestamp,
     });
     this.setState({recordedActions});
   };
-
-  onSlidingStart = (timestamp) => {
-    const {recordedActions} = this.state;
-    recordedActions.push({
-      type: 'willSeek',
-      timestamp,
-    });
-    this.setState({recordedActions});
-  };
-
-  onSlidingEnd = (seekTime) => {
-    const {recordedActions} = this.state;
+  // onSlidingStart = (i, timestamp) => {
+  //   let {recordedActions} = this.state;
+  //   const {recordingStartTime} = this.state;
+  //   recordedActions.push({
+  //     type: 'willSeek',
+  //     index: i,
+  //     startRecordingOffset: Date.now() - recordingStartTime,
+  //     timestamp,
+  //   });
+  //   this.setState({recordedActions});
+  // };
+  onSlidingEnd = (i, seekTime) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
     recordedActions.push({
       type: 'seek',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
       timestamp: seekTime,
     });
     this.setState({recordedActions});
   };
 
+  // onAddVideo = (videoID) => {
+  //   const {recordedActions, recordingStartTime} = this.state;
+  //   recordedActions.push({
+  //     type: 'addVideo',
+  //     startRecordingOffset: Date.now() - recordingStartTime,
+  //     id: videoID,
+  //   })
+  // }
+
   header = () => {
-    const {isEditMode} = this.state;
-    const {goBack} = this.props.navigation;
-    const sharedProps = {
-      inputRange: [5, 10],
-      colorLoader: 'white',
-      AnimatedHeaderValue: this.AnimatedHeaderValue,
-      sizeLoader: 40,
-      initialTitleOpacity: 1,
-      onPressColorIcon1: colors.greyDark + '70',
-      nobackgroundColorIcon1: false,
-      backgroundColorIcon1: colors.title + '70',
-      initialBorderColorIcon: 'transparent',
-      sizeIcon1: 16,
-      colorIcon1: colors.white,
-      typeIcon1: 'font',
-    };
-    return isEditMode ? (
-      <HeaderBackButton
-        textHeader={'Edit Mode'}
-        icon1="times"
-        clickButton1={() => {
-          this.setState({isEditMode: false, isRecording: false});
-        }}
-        {...sharedProps}
-      />
-    ) : (
-      <HeaderBackButton
-        icon1="arrow-left"
-        typeIcon1="font"
-        icon2={'text'}
-        text2={'Edit'}
-        backgroundColorIcon2={colors.green}
-        backgroundColorIconOffset={colors.title + '70'}
-        clickButton2={() => this.setState({isEditMode: true})}
-        sizeIcon2={24}
-        typeIcon2="mat"
-        colorIcon2={colors.white}
-        initialTitleOpacity={1}
-        clickButton1={() => {
-          this.videoPlayerRef?.togglePlayPause(true);
-          this.videoPlayerRef?.PinchableBoxRef?.resetPosition();
-          this.resetPlayer();
+    const {isEditMode, isRecording, isPreviewing} = this.state;
+    const {goBack, navigate} = this.props.navigation;
+    return (
+      <VideoPlayerHeader
+        isEditMode={isEditMode}
+        isRecording={isRecording}
+        isPreviewing={isPreviewing}
+        close={() => {
+          for (const videoPlayerRef of this.videoPlayerRefs) {
+            videoPlayerRef?.togglePlayPause(true);
+            videoPlayerRef?.PinchableBoxRef?.resetPosition();
+          }
+          this.resetPlayers();
           this.setState({recordedActions: []});
           openVideoPlayer({}, false, () => goBack());
         }}
-        {...sharedProps}
+        editModeOn={() => {
+          this.setState({isEditMode: true});
+        }}
+        editModeOff={() => {
+          this.setState({isEditMode: false, isRecording: false});
+        }}
+        addVideo={() => {
+          navigate('SelectVideosFromLibrary', {
+            selectableMode: true,
+            selectOnly: true,
+            selectOne: true,
+            confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) => {
+              let addedArchive = null;
+              if (selectedLocalVideos.length >= 1) {
+                const id = selectedLocalVideos[0];
+                addedArchive = getLocalVideoByID(id);
+              } else if (selectedFirebaseVideos.length >= 1) {
+                const id = selectedFirebaseVideos[0];
+                addedArchive = getFirebaseVideoByID(id);
+              }
+              if (addedArchive) {
+                let {archives} = this.state;
+                archives.push(addedArchive);
+                this.setState({archives});
+                // this.onAddVideo(addedArchive.id);
+              }
+            },
+          });
+        }}
       />
     );
   };
@@ -342,10 +438,33 @@ class VideoPlayerPage extends Component {
     ) : null;
   };
 
-  watchVideoView() {
-    const {userID, navigation} = this.props;
-    const {archive, isRecording} = this.state;
-    const {url, id, thumbnail} = archive;
+  playerStyleByIndex = (i, total) => {
+    const {landscape} = this.state;
+    const {height, width} = Dimensions.get('screen');
+    let style = {position: 'absolute'};
+    if (landscape) {
+      style = {
+        ...style,
+        left: 0 + i * (width / total),
+        height: height,
+        width: width / total,
+      };
+    } else {
+      style = {
+        ...style,
+        bottom: 0 + i * (height / total),
+        width: width,
+        height: height / total,
+      };
+    }
+    return style;
+  };
+
+  singlePlayer = (archive, i) => {
+    const numArchives = this.state.archives.length;
+    const {url, thumbnail} = archive;
+    const {userID} = this.props;
+    const {isRecording, disableControls} = this.state;
     const {
       onPlayPause,
       onPlayRateChange,
@@ -364,15 +483,16 @@ class VideoPlayerPage extends Component {
           onSlidingStart,
         }
       : {};
+    const playerStyle = this.playerStyleByIndex(i, numArchives);
+    const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
     return (
-      <View style={[styleApp.stylePage, {backgroundColor: colors.title}]}>
-        {this.header()}
-        {this.buttonRecording()}
-        {this.buttonPreview()}
-
+      <View style={playerStyle}>
         <VideoPlayer
+          disableControls={disableControls}
+          seekbarSize={seekbarSize}
+          width={playerStyle.width}
           source={url}
-          index={id}
+          index={i}
           resizeMode="contain"
           userID={userID}
           setSizeVideo={(sizeVideo) => {
@@ -384,15 +504,29 @@ class VideoPlayerPage extends Component {
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
           styleVideo={styleApp.fullSize}
           {...propsWhenRecording}
-          onRef={(ref) => (this.videoPlayerRef = ref)}
+          onRef={(ref) => {
+            this.videoPlayerRefs[i] = ref;
+          }}
         />
       </View>
     );
-  }
+  };
 
-  render() {
-    return this.watchVideoView();
-  }
+  watchVideosView = () => {
+    const {archives} = this.state;
+    return (
+      <View style={[styleApp.stylePage, {backgroundColor: colors.title}]}>
+        {this.header()}
+        {this.buttonRecording()}
+        {this.buttonPreview()}
+        {archives.map((archive, i) => this.singlePlayer(archive, i))}
+      </View>
+    );
+  };
+
+  render = () => {
+    return this.watchVideosView();
+  };
 }
 
 const styles = StyleSheet.create({

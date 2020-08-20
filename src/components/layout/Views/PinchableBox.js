@@ -16,13 +16,8 @@ export default class PinchableBox extends Component {
     onDrag: PropTypes.func,
   };
   static defaultProps = {
-    onPinch: (scale) => {
-      console.log(`isPinched, new scale :  ${scale}`);
-    },
-    onDrag: (position) => {
-      const {x, y} = position;
-      console.log(`isDragged, new position :  x :${x}, y :${y}`);
-    },
+    onPinch: (scale) => null,
+    onDrag: (position) => null,
   };
   _baseScale = new Animated.Value(1);
   _pinchScale = new Animated.Value(1);

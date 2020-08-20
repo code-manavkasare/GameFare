@@ -186,7 +186,6 @@ class HeaderBackButton extends Component {
       colorIconOffset,
       sizeIconOffset,
       typeIconOffset,
-      nobackgroundColorIcon1,
       customOffset,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
@@ -206,7 +205,6 @@ class HeaderBackButton extends Component {
             customOffset
           ) : (
             <ButtonColor
-              color={nobackgroundColorIcon1 ? null : 'white'}
               view={() => {
                 return iconOffset === 'text' ? (
                   <Text style={styleApp.textBold}>{textOffset}</Text>
@@ -214,8 +212,8 @@ class HeaderBackButton extends Component {
                   <AllIcons
                     name={iconOffset}
                     color={colorIconOffset ? colorIconOffset : colors.title}
-                    size={sizeIconOffset}
-                    type={typeIconOffset}
+                    size={sizeIconOffset ? sizeIconOffset: 15}
+                    type={typeIconOffset ? typeIconOffset: 'font'}
                   />
                 );
               }}

@@ -172,7 +172,7 @@ const titleSession = (session, size) => {
       if (nameString === '') {
         return firstname + ' ' + lastname;
       } else {
-        const numNames = nameString.split(',').length;
+        const numNames = nameString.split(',').length - 1;
         if (numNames < 2) {
           return nameString + ', ' + firstname + ' ' + lastname;
         } else if (numNames === 2) {
