@@ -18,7 +18,6 @@ export default class ExpandableView extends Component {
   }
 
   async expand() {
-    console.log('this.open', this.open);
     if (this.open === 0) {
       await Animated.parallel([
         Animated.timing(this.expanded, timing(1, 100)),

@@ -72,7 +72,7 @@ class CardArchive extends PureComponent {
     const {url, id, thumbnail} = archive;
     if (url !== '') {
       if (!openVideo) {
-        navigate('VideoPlayerPage', {archive});
+        navigate('VideoPlayerPage', {archives:[archive]});
       } else {
         openVideo({url, thumbnail});
       }

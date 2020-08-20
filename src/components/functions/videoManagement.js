@@ -62,14 +62,12 @@ const arrayUploadFromSnippets = async ({
   let flags = Object.values(flagsSelected).filter((flag) => {
     return flag?.id !== `${userID}-fullVideo`;
   });
-  console.log('flags', flags);
   if (flags.length > 0) {
     const flagsWithSnippets = await generateSnippetsFromFlags(
       recording.localSource,
       flags,
     );
     for (const flag of flagsWithSnippets) {
-      console.log('flag', flag);
       let {snippetLocalPath, thumbnail} = flag;
       const videoInfo = await getVideoInfo(snippetLocalPath, thumbnail);
       const cloudVideo = await uploadLocalVideo(videoInfo, members);
@@ -132,7 +130,8 @@ const recordVideo = async () => {
 
 const openVideoPlayer = async (video, open, goBack) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  if (open) return navigate('VideoPlayerPage', {archive: video});
+  const {id} = video;
+  if (open) return navigate('VideoPlayerPage', {archives: [video]});
   return goBack();
 };
 
@@ -235,6 +234,14 @@ const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
   return allVideos;
 };
 
+const getFirebaseVideoByID = (id) => {
+  return store.getState().archives[id];
+}
+
+const getLocalVideoByID = (id) => {
+  return store.getState().localVideoLibrary.videoLibrary[id];
+}
+
 export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
@@ -245,4 +252,5 @@ export {
   openVideoPlayer,
   shareVideosWithPeople,
   shareVideosWithTeam,
+  getFirebaseVideoByID
 };
