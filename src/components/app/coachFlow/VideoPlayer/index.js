@@ -61,7 +61,7 @@ export default class VideoPlayer extends Component {
       videoLoaded: false,
       fullscreen: false,
       playRate: 1,
-      muted: __DEV__,
+      muted: __DEV__ ? true : false,
       displayVideo: false,
     };
     this.opacityControlBar = new Animated.Value(1);
