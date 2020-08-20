@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
-import isEqual from 'lodash.isequal';
 import Orientation from 'react-native-orientation-locker';
 import {Player, Recorder} from '@react-native-community/audio-toolkit';
 
@@ -84,20 +83,20 @@ class VideoPlayerPage extends Component {
       isRecording: true,
       recordedActions: [],
       recordingStartTime: Date.now(),
-      // audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
-      //   if (err) {
-      //     console.log(err);
-      //   }
-      //   console.log(fsPath);
-      //   this.setState({audioFilePath: fsPath});
-      // }),
+      audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(fsPath);
+        this.setState({audioFilePath: fsPath});
+      }),
     });
-    // this.state.audioRecorder.record();
+    this.state.audioRecorder.record();
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
   stopRecording = () => {
-    // this.state.audioRecorder.stop();
+    this.state.audioRecorder.stop();
     this.setState({
       isRecording: false,
       recordingStartTime: null,
