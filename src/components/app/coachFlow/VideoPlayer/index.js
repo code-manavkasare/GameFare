@@ -11,9 +11,7 @@ import PinchableBox from '../../../layout/Views/PinchableBox';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import {timeout} from '../../../functions/coach';
 import {timing} from '../../../animations/animations';
-import ControlButtons from './components/ControlButtons';
 import VisualSeekBar from './components/VisualSeekbar';
 
 export default class VideoPlayer extends Component {
@@ -303,6 +301,7 @@ export default class VideoPlayer extends Component {
       loader,
       muted,
     } = this.state;
+    console.log('paused: ', paused);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {loader && this.fullScreenLoader()}

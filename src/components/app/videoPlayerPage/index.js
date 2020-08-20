@@ -19,6 +19,7 @@ import {
 import {
   openVideoPlayer,
   getFirebaseVideoByID,
+  getLocalVideoByID,
 } from '../../functions/videoManagement';
 
 class VideoPlayerPage extends Component {
@@ -83,24 +84,23 @@ class VideoPlayerPage extends Component {
       isRecording: true,
       recordedActions: [],
       recordingStartTime: Date.now(),
-      audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
-        if (err) {
-          console.log(err);
-        }
-        this.setState({audioFilePath: fsPath});
-      }),
+      // audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
+      //   if (err) {
+      //     console.log(err);
+      //   }
+      //   console.log(fsPath);
+      //   this.setState({audioFilePath: fsPath});
+      // }),
     });
-    this.state.audioRecorder.record();
+    // this.state.audioRecorder.record();
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
   stopRecording = () => {
-    this.state.audioRecorder.stop(() => {
-      this.setState({
-        isRecording: false,
-        recorder: null,
-        recordingStartTime: null,
-      });
+    // this.state.audioRecorder.stop();
+    this.setState({
+      isRecording: false,
+      recordingStartTime: null,
     });
     this.resetPlayers();
   };
@@ -121,8 +121,9 @@ class VideoPlayerPage extends Component {
   initialiseRecordingWithPlayerCurrentState = () => {
     this.videoPlayerRefs.forEach((ref, i) => {
       const currentTime = ref.visualSeekBarRef?.getCurrentTime();
+      const playRate = ref.state?.playRate;
       this.onSlidingEnd(i, currentTime);
-      //this.onPlayRateChange(); updatePlayrate on start when new player UI is finished
+      this.onPlayRateChange(i, playRate, currentTime);
       // this.onPlayPause(i, false, currentTime);
     });
   };
@@ -471,7 +472,7 @@ class VideoPlayerPage extends Component {
       onScaleChange,
       onPositionChange,
       onSlidingEnd,
-      onSlidingStart,
+      // onSlidingStart,
     } = this;
     const propsWhenRecording = isRecording
       ? {
@@ -480,13 +481,13 @@ class VideoPlayerPage extends Component {
           onScaleChange,
           onPositionChange,
           onSlidingEnd,
-          onSlidingStart,
+          // onSlidingStart,
         }
       : {};
     const playerStyle = this.playerStyleByIndex(i, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
     return (
-      <View style={playerStyle}>
+      <View style={playerStyle} key={archive.id}>
         <VideoPlayer
           disableControls={disableControls}
           seekbarSize={seekbarSize}

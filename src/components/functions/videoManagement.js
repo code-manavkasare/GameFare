@@ -12,7 +12,11 @@ import {getVideoInfo, getVideoUUID} from './pictures';
 import {navigate} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
-import {addVideos, deleteVideo, hideVideo} from '../../actions/localVideoLibraryActions';
+import {
+  addVideos,
+  deleteVideo,
+  hideVideo,
+} from '../../actions/localVideoLibraryActions';
 import {sendNewMessage} from './message';
 import {enqueueFileUpload} from '../../actions/uploadQueueActions';
 import {setLayout} from '../../actions/layoutActions';
@@ -114,7 +118,7 @@ const addLocalVideo = async (video) => {
 };
 
 const removeLocalVideo = (id) => {
-  videoInfo = store.getState().localVideoLibrary.videoLibrary[id];
+  const videoInfo = store.getState().localVideoLibrary.videoLibrary[id];
   if (videoInfo) {
     store.dispatch(deleteVideo(id));
     if (videoInfo.url) {
@@ -130,7 +134,6 @@ const recordVideo = async () => {
 
 const openVideoPlayer = async (video, open, goBack) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  const {id} = video;
   if (open) return navigate('VideoPlayerPage', {archives: [video]});
   return goBack();
 };
@@ -202,7 +205,9 @@ const shareVideosWithPeople = async (
 const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
-  const videosToUpload = localVideos?.map(id => store.getState().localVideoLibrary.videoLibrary[id]);
+  const videosToUpload = localVideos?.map(
+    (id) => store.getState().localVideoLibrary.videoLibrary[id],
+  );
   const cloudVideos = await Promise.all(
     videosToUpload.map((video) => uploadLocalVideo(video)),
   );
@@ -236,11 +241,11 @@ const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
 
 const getFirebaseVideoByID = (id) => {
   return store.getState().archives[id];
-}
+};
 
 const getLocalVideoByID = (id) => {
   return store.getState().localVideoLibrary.videoLibrary[id];
-}
+};
 
 export {
   generateSnippetsFromFlags,
@@ -252,5 +257,6 @@ export {
   openVideoPlayer,
   shareVideosWithPeople,
   shareVideosWithTeam,
-  getFirebaseVideoByID
+  getFirebaseVideoByID,
+  getLocalVideoByID,
 };

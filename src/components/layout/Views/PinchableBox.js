@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import {native} from '../../animations/animations';
 
 export default class PinchableBox extends Component {
-  static PropTypes = {
+  static propTypes = {
     onPinch: PropTypes.func,
     onDrag: PropTypes.func,
   };
