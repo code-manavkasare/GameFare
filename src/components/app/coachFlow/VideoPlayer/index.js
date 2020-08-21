@@ -37,6 +37,8 @@ export default class VideoPlayer extends Component {
     onPlayRateChange: PropTypes.func,
     onScaleChange: PropTypes.func,
     onPositionChange: PropTypes.func,
+
+    linkedPlayers: PropTypes.array,
   };
   static defaultProps = {
     onPlayPause: (i, paused, currentTime) => null,
@@ -61,6 +63,7 @@ export default class VideoPlayer extends Component {
       playRate: 1,
       muted: __DEV__ ? true : false,
       displayVideo: false,
+      slidingStartTime: null,
     };
     this.opacityControlBar = new Animated.Value(1);
   }
@@ -126,15 +129,22 @@ export default class VideoPlayer extends Component {
     const player = this.player;
     player.seek(time, 0);
   };
+  seekDiff = async (diffTime) => {
+    const {currentTime} = this.state;
+    this.player.seek(currentTime + diffTime, 33);
+  }
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
-    const {onPlayPause, index} = this.props;
+    const {
+      onPlayPause,
+      index,
+      noUpdateInCloud,
+      updateVideoInfoCloud,
+    } = this.props;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
     if (forcePause) {
       paused = false;
     }
-    const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
-
     if (!noUpdateInCloud) {
       if (!paused) {
         return updateVideoInfoCloud({paused: true, currentTime, playRate});
@@ -142,10 +152,14 @@ export default class VideoPlayer extends Component {
       return updateVideoInfoCloud({paused: false});
     } else {
       this.setState({paused: !paused});
-      console.log('onPlayPause paused: ', !paused);
       onPlayPause(index, !paused, currentTime);
     }
   };
+  toggleLinkedPlayPause = async (forcePause) => {
+    const {linkedPlayers} = this.props;
+    this.togglePlayPause(forcePause);
+    linkedPlayers?.forEach((playerRef) => playerRef.togglePlayPause(forcePause));
+  }
 
   updatePlayRate = async (playRate) => {
     let {paused} = this.state;
@@ -198,6 +212,12 @@ export default class VideoPlayer extends Component {
     onSlidingEnd(index, sliderTime, paused);
     return true;
   };
+  onLinkedSlidingComplete = async (sliderTime, forcePlay) => {
+    const {linkedPlayers} = this.props;
+    const {slidingStartTime} = this.state;
+    this.onSlidingComplete(sliderTime, forcePlay);
+    linkedPlayers?.forEach((playerRef) => playerRef.seekDiff(sliderTime - slidingStartTime));
+  }
   onSlidingStart = async () => {
     const {
       onSlidingStart,
@@ -207,12 +227,11 @@ export default class VideoPlayer extends Component {
     } = this.props;
     const {paused} = this.state;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
-
     onSlidingStart(index, currentTime, paused);
     if (updateVideoInfoCloud && !noUpdateInCloud) {
       await updateVideoInfoCloud({paused: true});
     }
-    return this.setState({paused: true});
+    return this.setState({paused: true, slidingStartTime: currentTime});
   };
   onSeek = async (time, fineSeek) => {
     const {paused, prevPaused} = this.state;
@@ -226,26 +245,7 @@ export default class VideoPlayer extends Component {
     }
     this.player.seek(time, 33);
   };
-  playPauseButton = (paused) => {
-    const styleButton = {height: 45, width: '100%'};
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            <AllIcons
-              name={paused ? 'play' : 'pause'}
-              color={colors.white}
-              size={20}
-              type="font"
-            />
-          );
-        }}
-        click={() => this.togglePlayPause()}
-        style={styleButton}
-        onPressColor={colors.off}
-      />
-    );
-  };
+
   fullScreen() {
     const {fullscreen} = this.state;
     this.setState({fullscreen: !fullscreen});
@@ -301,7 +301,6 @@ export default class VideoPlayer extends Component {
       loader,
       muted,
     } = this.state;
-    console.log('paused: ', paused);
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {loader && this.fullScreenLoader()}
@@ -393,7 +392,7 @@ export default class VideoPlayer extends Component {
             disableControls={disableControls}
             onRef={(ref) => (this.visualSeekBarRef = ref)}
             size={seekbarSize}
-            togglePlayPause={this.togglePlayPause.bind(this)}
+            togglePlayPause={this.toggleLinkedPlayPause.bind(this)}
             currentTime={currentTime}
             totalTime={totalTime}
             paused={paused}
@@ -401,7 +400,7 @@ export default class VideoPlayer extends Component {
             updatePlayRate={(rate) => this.updatePlayRate(rate)}
             seek={this.onSeek.bind(this)}
             onSlidingComplete={(sliderTime, forcePlay) =>
-              this.onSlidingComplete(sliderTime, forcePlay)
+              this.onLinkedSlidingComplete(sliderTime, forcePlay)
             }
             onSlidingStart={() => this.onSlidingStart()}
             width={width}

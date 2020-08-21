@@ -34,6 +34,7 @@ class VideoPlayerPage extends Component {
       previewStartTime: null,
       landscape: false,
       archives: [],
+      linkedPlayers: [], // each archive has a corresponding set of linkedPlayers
       disableControls: false,
     };
     this.videoPlayerRefs = [];
@@ -67,6 +68,7 @@ class VideoPlayerPage extends Component {
     if (props.route?.params?.archives && state.archives.length === 0) {
       return {
         archives: props.route.params.archives,
+        linkedPlayers: props.route.params.archives.map((x) => new Set()),
       };
     }
     return {};
@@ -93,6 +95,67 @@ class VideoPlayerPage extends Component {
     });
     this.resetPlayers();
   };
+
+  playersAreLinked = (indexA, indexB) => {
+    const {linkedPlayers} = this.state;
+    return linkedPlayers[indexA].has(indexB);
+  }
+
+  linkPlayers = (a, b) => {
+    let {linkedPlayers} = this.state;
+    // union op
+    const all = new Set();
+    all.add(a);
+    all.add(b);
+    for (const elem of linkedPlayers[a]) {
+      all.add(elem);
+    }
+    for (const elem of linkedPlayers[b]) {
+      all.add(elem);
+    }
+    for (const elem of all) {
+      linkedPlayers[elem] = new Set([...all].filter(i => i !== elem));
+    }
+    this.setState({linkedPlayers});
+  }
+
+  unlinkPlayers = (a, b) => {
+    // a < b always true
+    let {linkedPlayers} = this.state;
+    const all = new Set();
+    all.add(a);
+    for (const elem of linkedPlayers[a]) {
+      all.add(elem);
+    }
+    const lower = new Set();
+    for (const elem of all) {
+      if (elem <= a) {
+        lower.add(elem);
+      }
+    }
+    const higher = new Set();
+    for (const elem of all) {
+      if (elem >= b) {
+        higher.add(elem);
+      }
+    }
+    for (const elem of all) {
+      if (elem <= a) {
+        linkedPlayers[elem] = new Set([...lower].filter(i => i !== elem));
+      } else {
+        linkedPlayers[elem] = new Set([...higher].filter(i => i !== elem));
+      }
+    }
+    this.setState({linkedPlayers});
+  }
+
+  toggleLink = (indexA, indexB) => {
+    if (this.playersAreLinked(indexA, indexB)) {
+      this.unlinkPlayers(indexA, indexB);
+    } else {
+      this.linkPlayers(indexA, indexB);
+    }
+  }
 
   resetPlayers = () => {
     this.videoPlayerRefs.forEach((ref) => {
@@ -131,24 +194,6 @@ class VideoPlayerPage extends Component {
     }
   };
 
-  // isTimestampReached = async (timestampToWait, index) => {
-  //   console.log('isTimestampReached', timestampToWait, index);
-  //   while (true) {
-  //     const {isPreviewing} = this.state;
-  //     const currentTime = this.videoPlayerRefs[index].visualSeekBarRef?.getCurrentTime();
-  //     if (
-  //       (timestampToWait < currentTime + 0.01 &&
-  //         timestampToWait > currentTime - 0.01) ||
-  //       !isPreviewing
-  //     ) {
-  //       return true;
-  //     }
-  //     await new Promise((resolve) => {
-  //       setTimeout(resolve, 10);
-  //     });
-  //   }
-  // };
-
   previewRecording = async () => {
     await this.setState({
       isPreviewing: true,
@@ -185,10 +230,6 @@ class VideoPlayerPage extends Component {
               });
             });
             break;
-          // case 'willSeek':
-          //   //Useful to wait for seek methods
-          //   await this.waitForAction(action).then(() => {});
-          //   break;
           case 'seek':
             await this.waitForAction(action).then(() => {
               this.videoPlayerRefs[index].setState({
@@ -210,14 +251,6 @@ class VideoPlayerPage extends Component {
               );
             });
             break;
-          // case 'addVideo':
-          //   await this.waitForAction(action).then(() => {
-          //     const addedArchive = getFirebaseVideoByID(action.videoID);
-          //     let {archives} = this.state;
-          //     archives.push(addedArchive);
-          //     this.setState({archives});
-          //   });
-          //   break;
           default:
             console.log(`case ${action.type} not handled`);
         }
@@ -281,17 +314,6 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
-  // onSlidingStart = (i, timestamp) => {
-  //   let {recordedActions} = this.state;
-  //   const {recordingStartTime} = this.state;
-  //   recordedActions.push({
-  //     type: 'willSeek',
-  //     index: i,
-  //     startRecordingOffset: Date.now() - recordingStartTime,
-  //     timestamp,
-  //   });
-  //   this.setState({recordedActions});
-  // };
   onSlidingEnd = (i, seekTime) => {
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
@@ -303,15 +325,6 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
-
-  // onAddVideo = (videoID) => {
-  //   const {recordedActions, recordingStartTime} = this.state;
-  //   recordedActions.push({
-  //     type: 'addVideo',
-  //     startRecordingOffset: Date.now() - recordingStartTime,
-  //     id: videoID,
-  //   })
-  // }
 
   header = () => {
     const {isEditMode, isRecording, isPreviewing} = this.state;
@@ -351,10 +364,10 @@ class VideoPlayerPage extends Component {
                 addedArchive = getFirebaseVideoByID(id);
               }
               if (addedArchive) {
-                let {archives} = this.state;
+                let {archives, linkedPlayers} = this.state;
                 archives.push(addedArchive);
-                this.setState({archives});
-                // this.onAddVideo(addedArchive.id);
+                linkedPlayers.push(new Set());
+                this.setState({archives, linkedPlayers});
               }
             },
           });
@@ -453,7 +466,7 @@ class VideoPlayerPage extends Component {
     const numArchives = this.state.archives.length;
     const {url, thumbnail} = archive;
     const {userID} = this.props;
-    const {isRecording, disableControls} = this.state;
+    const {isRecording, disableControls, linkedPlayers} = this.state;
     const {
       onPlayPause,
       onPlayRateChange,
@@ -492,6 +505,7 @@ class VideoPlayerPage extends Component {
           placeHolderImg={thumbnail}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
           styleVideo={styleApp.fullSize}
+          linkedPlayers={[...linkedPlayers[i]].map(index => this.videoPlayerRefs[index])}
           {...propsWhenRecording}
           onRef={(ref) => {
             this.videoPlayerRefs[i] = ref;
@@ -499,6 +513,65 @@ class VideoPlayerPage extends Component {
         />
       </View>
     );
+  };
+
+  linkButtonStyleByIndex = (i, total) => {
+    const {landscape} = this.state;
+    const {height, width} = Dimensions.get('screen');
+    let style = {position: 'absolute'};
+    if (landscape) {
+      const gap = width / (total + 1);
+      style = {
+        ...style,
+        right: gap * (i + 1) - 15,
+        top: (height / 2) - 25,
+        height: 50,
+        width: 50,
+      };
+    } else {
+      const gap = height / (total + 1);
+      style = {
+        ...style,
+        bottom: gap * (i + 1) - 25,
+        left: (width / 2) - 25,
+        width: 50,
+        height: 50,
+      };
+    }
+    return style;
+  };
+
+  linkButtons = () => {
+    const {archives} = this.state;
+    const adjPairs = archives.map((archive, i) => {
+      return i === archives.length - 1
+        ? null
+        : {
+            a: i,
+            b: i + 1,
+          };
+    }).filter(x => x);
+    const buttons = adjPairs.map(({a, b}, i) => {
+      const linkButtonContainer = this.linkButtonStyleByIndex(i, adjPairs.length);
+      return (
+        <View style={linkButtonContainer}>
+          <Button
+            backgroundColor=""
+            onPressColor={colors.green}
+            styleButton={styles.buttonLink}
+            icon={{
+              name: this.playersAreLinked(a, b) ? 'link' : 'unlink',
+              type: 'font',
+              size: 20,
+              color: 'white',
+            }}
+            click={() => this.toggleLink(a, b)}
+          />
+        </View>
+
+      );
+    });
+    return buttons;
   };
 
   watchVideosView = () => {
@@ -514,6 +587,8 @@ class VideoPlayerPage extends Component {
         {this.buttonRecording()}
         {this.buttonPreview()}
         {archives.map((archive, i) => this.singlePlayer(archive, i))}
+        {this.linkButtons()}
+
       </View>
     );
   };
@@ -531,6 +606,11 @@ const styles = StyleSheet.create({
     width: 110,
     right: '5%',
     borderRadius: 15,
+  },
+  buttonLink: {
+    borderRadius: 15,
+    height: '100%',
+    width: '100%',
   },
 });
 
