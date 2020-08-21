@@ -106,16 +106,22 @@ class VideoPlayerPage extends Component {
     this.resetPlayers();
   };
 
+  playersAreLinked = (indexA, indexB) => {
+    const {linkedPlayers} = this.state;
+    return linkedPlayers[indexA].indexOf(indexB) !== -1;
+  }
+
   toggleLink = (indexA, indexB) => {
     let {linkedPlayers} = this.state;
-    if (linkedPlayers[indexA].indexOf(indexB) !== -1) {
-      console.log('linking', indexA, indexB);
-      linkedPlayers[indexA].push(indexB);
-      linkedPlayers[indexB].push(indexA);
-    } else {
+    if (this.playersAreLinked(indexA, indexB)) {
       console.log('unlinking', indexA, indexB);
       linkedPlayers[indexA] = linkedPlayers[indexA].filter(i => i !== indexB);
       linkedPlayers[indexB] = linkedPlayers[indexB].filter(i => i !== indexA);
+    } else {
+      console.log('linking', indexA, indexB);
+      linkedPlayers[indexA].push(indexB);
+      linkedPlayers[indexB].push(indexA);
+
     }
     console.log('linkedPlayers', linkedPlayers);
     this.setState({linkedPlayers});
@@ -329,10 +335,10 @@ class VideoPlayerPage extends Component {
                 addedArchive = getFirebaseVideoByID(id);
               }
               if (addedArchive) {
-                let {archives} = this.state;
+                let {archives, linkedPlayers} = this.state;
                 archives.push(addedArchive);
-                this.setState({archives});
-                // this.onAddVideo(addedArchive.id);
+                linkedPlayers.push([]);
+                this.setState({archives, linkedPlayers});
               }
             },
           });
@@ -484,20 +490,20 @@ class VideoPlayerPage extends Component {
     const {height, width} = Dimensions.get('screen');
     let style = {position: 'absolute'};
     if (landscape) {
-      const gap = width / total;
+      const gap = width / (total + 1);
       style = {
         ...style,
-        left: gap * (i + 1),
-        bottom: height / 2,
+        right: gap * (i + 1) - 15,
+        top: (height / 2) - 25,
         height: 50,
         width: 50,
       };
     } else {
-      const gap = height / total;
+      const gap = height / (total + 1);
       style = {
         ...style,
-        bottom: gap * (i + 1),
-        left: width / 2,
+        bottom: gap * (i + 1) - 25,
+        left: (width / 2) - 25,
         width: 50,
         height: 50,
       };
@@ -506,7 +512,7 @@ class VideoPlayerPage extends Component {
   };
 
   linkButtons = () => {
-    const {archives, linkedPlayers} = this.state;
+    const {archives} = this.state;
     const adjPairs = archives.map((archive, i) => {
       return i === archives.length - 1
         ? null
@@ -515,22 +521,29 @@ class VideoPlayerPage extends Component {
             b: i + 1,
           };
     }).filter(x => x);
+    console.log('adj pairs', adjPairs);
     const buttons = adjPairs.map(({a, b}, i) => {
       const style = this.linkButtonStyleByIndex(i, adjPairs.length);
-      <Button
-        backgroundColor="red"
-        onPressColor={colors.green}
-        styleButton={style}
-        text="link"
-        textButton={{fontSize: 13}}
-        click={() => this.toggleLink(a, b)}
-      />
+      console.log('style', style);
+      return (
+        <View style={style}>
+          <Button
+            backgroundColor=""
+            onPressColor={colors.green}
+            styleButton={{borderRadius: 15, height: '100%', width: '100%'}}
+            icon={{
+              name: this.playersAreLinked(a, b) ? 'link' : 'unlink',
+              type: 'font',
+              size: 20,
+              color: 'white',
+            }}
+            click={() => this.toggleLink(a, b)}
+          />
+        </View>
+
+      );
     });
     return buttons;
-    // for each adjacent pair
-    // if pair is unlinked, show broken chain
-    // if pair linked, show complete chain green
-    // onClick toggle link
   };
 
   watchVideosView = () => {
@@ -540,8 +553,9 @@ class VideoPlayerPage extends Component {
         {this.header()}
         {this.buttonRecording()}
         {this.buttonPreview()}
-        {this.linkButtons()}
         {archives.map((archive, i) => this.singlePlayer(archive, i))}
+        {this.linkButtons()}
+
       </View>
     );
   };
