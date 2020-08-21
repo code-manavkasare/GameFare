@@ -71,7 +71,7 @@ class VideoPlayerPage extends Component {
     if (props.route?.params?.archives && state.archives.length === 0) {
       return {
         archives: props.route.params.archives,
-        linkedPlayers: props.route.params.archives.map((x) => []),
+        linkedPlayers: props.route.params.archives.map((x) => new Set()),
       };
     }
     return {};
@@ -108,23 +108,63 @@ class VideoPlayerPage extends Component {
 
   playersAreLinked = (indexA, indexB) => {
     const {linkedPlayers} = this.state;
-    return linkedPlayers[indexA].indexOf(indexB) !== -1;
+    return linkedPlayers[indexA].has(indexB);
+  }
+
+  linkPlayers = (a, b) => {
+    let {linkedPlayers} = this.state;
+    // union op
+    const all = new Set();
+    all.add(a);
+    all.add(b);
+    for (const elem of linkedPlayers[a]) {
+      all.add(elem);
+    }
+    for (const elem of linkedPlayers[b]) {
+      all.add(elem);
+    }
+    for (const elem of all) {
+      linkedPlayers[elem] = new Set([...all].filter(i => i !== elem));
+    }
+    this.setState({linkedPlayers});
+  }
+
+  unlinkPlayers = (a, b) => {
+    // a < b always true
+    let {linkedPlayers} = this.state;
+    const all = new Set();
+    all.add(a);
+    for (const elem of linkedPlayers[a]) {
+      all.add(elem);
+    }
+    const lower = new Set();
+    for (const elem of all) {
+      if (elem <= a) {
+        lower.add(elem);
+      }
+    }
+    const higher = new Set();
+    for (const elem of all) {
+      if (elem >= b) {
+        higher.add(elem);
+      }
+    }
+    for (const elem of all) {
+      if (elem <= a) {
+        linkedPlayers[elem] = new Set([...lower].filter(i => i !== elem));
+      } else {
+        linkedPlayers[elem] = new Set([...higher].filter(i => i !== elem));
+      }
+    }
+    this.setState({linkedPlayers});
   }
 
   toggleLink = (indexA, indexB) => {
-    let {linkedPlayers} = this.state;
     if (this.playersAreLinked(indexA, indexB)) {
-      console.log('unlinking', indexA, indexB);
-      linkedPlayers[indexA] = linkedPlayers[indexA].filter(i => i !== indexB);
-      linkedPlayers[indexB] = linkedPlayers[indexB].filter(i => i !== indexA);
+      this.unlinkPlayers(indexA, indexB);
     } else {
-      console.log('linking', indexA, indexB);
-      linkedPlayers[indexA].push(indexB);
-      linkedPlayers[indexB].push(indexA);
-
+      this.linkPlayers(indexA, indexB);
     }
-    console.log('linkedPlayers', linkedPlayers);
-    this.setState({linkedPlayers});
   }
 
   resetPlayers = () => {
@@ -337,7 +377,7 @@ class VideoPlayerPage extends Component {
               if (addedArchive) {
                 let {archives, linkedPlayers} = this.state;
                 archives.push(addedArchive);
-                linkedPlayers.push([]);
+                linkedPlayers.push(new Set());
                 this.setState({archives, linkedPlayers});
               }
             },
@@ -437,7 +477,7 @@ class VideoPlayerPage extends Component {
     const numArchives = this.state.archives.length;
     const {url, thumbnail} = archive;
     const {userID} = this.props;
-    const {isRecording, disableControls} = this.state;
+    const {isRecording, disableControls, linkedPlayers} = this.state;
     const {
       onPlayPause,
       onPlayRateChange,
@@ -476,6 +516,7 @@ class VideoPlayerPage extends Component {
           placeHolderImg={thumbnail}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
           styleVideo={styleApp.fullSize}
+          linkedPlayers={[...linkedPlayers[i]].map(index => this.videoPlayerRefs[index])}
           {...propsWhenRecording}
           onRef={(ref) => {
             this.videoPlayerRefs[i] = ref;
@@ -521,16 +562,14 @@ class VideoPlayerPage extends Component {
             b: i + 1,
           };
     }).filter(x => x);
-    console.log('adj pairs', adjPairs);
     const buttons = adjPairs.map(({a, b}, i) => {
-      const style = this.linkButtonStyleByIndex(i, adjPairs.length);
-      console.log('style', style);
+      const linkButtonContainer = this.linkButtonStyleByIndex(i, adjPairs.length);
       return (
-        <View style={style}>
+        <View style={linkButtonContainer}>
           <Button
             backgroundColor=""
             onPressColor={colors.green}
-            styleButton={{borderRadius: 15, height: '100%', width: '100%'}}
+            styleButton={styles.buttonLink}
             icon={{
               name: this.playersAreLinked(a, b) ? 'link' : 'unlink',
               type: 'font',
@@ -573,6 +612,11 @@ const styles = StyleSheet.create({
     width: 110,
     right: '5%',
     borderRadius: 15,
+  },
+  buttonLink: {
+    borderRadius: 15,
+    height: '100%',
+    width: '100%',
   },
 });
 
