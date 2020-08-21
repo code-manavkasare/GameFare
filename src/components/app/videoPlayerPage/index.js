@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
-import {Player, Recorder} from '@react-native-community/audio-toolkit';
 
 import VideoPlayer from '../coachFlow/VideoPlayer/index';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
 import Button from '../../layout/buttons/Button';
+import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
@@ -32,9 +32,6 @@ class VideoPlayerPage extends Component {
       loader: false,
       isPreviewing: false,
       previewStartTime: null,
-      audioPlayer: null,
-      audioRecorder: null,
-      audioFilePath: null,
       landscape: false,
       archives: [],
       disableControls: false,
@@ -83,20 +80,13 @@ class VideoPlayerPage extends Component {
       isRecording: true,
       recordedActions: [],
       recordingStartTime: Date.now(),
-      audioRecorder: await new Recorder('audio.mp4').prepare((err, fsPath) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(fsPath);
-        this.setState({audioFilePath: fsPath});
-      }),
     });
-    this.state.audioRecorder.record();
+    this.AudioRecorderPlayerRef.startRecording();
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
   stopRecording = () => {
-    this.state.audioRecorder.stop();
+    this.AudioRecorderPlayerRef.stopRecording();
     this.setState({
       isRecording: false,
       recordingStartTime: null,
@@ -163,9 +153,9 @@ class VideoPlayerPage extends Component {
     await this.setState({
       isPreviewing: true,
       previewStartTime: Date.now(),
-      audioPlayer: new Player('audio.mp4').play(),
       disableControls: true,
     });
+    this.AudioRecorderPlayerRef.playRecord();
     const {recordedActions} = this.state;
     for (const action of recordedActions) {
       const {isPreviewing} = this.state;
@@ -237,13 +227,12 @@ class VideoPlayerPage extends Component {
     await this.setState({isPreviewing: false, disableControls: false});
   };
   cancelPreviewRecording = async () => {
-    await this.state.audioPlayer.stop(() => {
-      this.setState({
-        isPreviewing: false,
-        previewStartTime: null,
-        audioPlayer: null,
-        disableControls: false,
-      });
+    this.AudioRecorderPlayerRef.stopPlayingRecord();
+    this.setState({
+      isPreviewing: false,
+      previewStartTime: null,
+      audioPlayer: null,
+      disableControls: false,
     });
     await this.resetPlayers();
   };
@@ -517,6 +506,11 @@ class VideoPlayerPage extends Component {
     return (
       <View style={[styleApp.stylePage, {backgroundColor: colors.title}]}>
         {this.header()}
+        <AudioRecorderPlayer
+          onRef={(ref) => {
+            this.AudioRecorderPlayerRef = ref;
+          }}
+        />
         {this.buttonRecording()}
         {this.buttonPreview()}
         {archives.map((archive, i) => this.singlePlayer(archive, i))}
