@@ -37,6 +37,8 @@ export default class VideoPlayer extends Component {
     onPlayRateChange: PropTypes.func,
     onScaleChange: PropTypes.func,
     onPositionChange: PropTypes.func,
+
+    linkedPlayers: PropTypes.array,
   };
   static defaultProps = {
     onPlayPause: (i, paused, currentTime) => null,
@@ -128,13 +130,18 @@ export default class VideoPlayer extends Component {
   };
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
-    const {onPlayPause, index} = this.props;
+    const {
+      onPlayPause,
+      index,
+      linkedPlayers,
+      noUpdateInCloud,
+      updateVideoInfoCloud,
+    } = this.props;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
     if (forcePause) {
       paused = false;
     }
-    const {noUpdateInCloud, updateVideoInfoCloud} = this.props;
-
+    linkedPlayers?.forEach((playerRef) => playerRef.togglePlayPause(forcePause));
     if (!noUpdateInCloud) {
       if (!paused) {
         return updateVideoInfoCloud({paused: true, currentTime, playRate});

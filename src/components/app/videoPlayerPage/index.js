@@ -37,6 +37,7 @@ class VideoPlayerPage extends Component {
       audioFilePath: null,
       landscape: false,
       archives: [],
+      linkedPlayers: [], // each archive has a corresponding set of linkedPlayers
       disableControls: false,
     };
     this.videoPlayerRefs = [];
@@ -70,6 +71,7 @@ class VideoPlayerPage extends Component {
     if (props.route?.params?.archives && state.archives.length === 0) {
       return {
         archives: props.route.params.archives,
+        linkedPlayers: props.route.params.archives.map((x) => []),
       };
     }
     return {};
@@ -103,6 +105,21 @@ class VideoPlayerPage extends Component {
     });
     this.resetPlayers();
   };
+
+  toggleLink = (indexA, indexB) => {
+    let {linkedPlayers} = this.state;
+    if (linkedPlayers[indexA].indexOf(indexB) !== -1) {
+      console.log('linking', indexA, indexB);
+      linkedPlayers[indexA].push(indexB);
+      linkedPlayers[indexB].push(indexA);
+    } else {
+      console.log('unlinking', indexA, indexB);
+      linkedPlayers[indexA] = linkedPlayers[indexA].filter(i => i !== indexB);
+      linkedPlayers[indexB] = linkedPlayers[indexB].filter(i => i !== indexA);
+    }
+    console.log('linkedPlayers', linkedPlayers);
+    this.setState({linkedPlayers});
+  }
 
   resetPlayers = () => {
     this.videoPlayerRefs.forEach((ref) => {
@@ -141,24 +158,6 @@ class VideoPlayerPage extends Component {
     }
   };
 
-  // isTimestampReached = async (timestampToWait, index) => {
-  //   console.log('isTimestampReached', timestampToWait, index);
-  //   while (true) {
-  //     const {isPreviewing} = this.state;
-  //     const currentTime = this.videoPlayerRefs[index].visualSeekBarRef?.getCurrentTime();
-  //     if (
-  //       (timestampToWait < currentTime + 0.01 &&
-  //         timestampToWait > currentTime - 0.01) ||
-  //       !isPreviewing
-  //     ) {
-  //       return true;
-  //     }
-  //     await new Promise((resolve) => {
-  //       setTimeout(resolve, 10);
-  //     });
-  //   }
-  // };
-
   previewRecording = async () => {
     await this.setState({
       isPreviewing: true,
@@ -195,10 +194,6 @@ class VideoPlayerPage extends Component {
               });
             });
             break;
-          // case 'willSeek':
-          //   //Useful to wait for seek methods
-          //   await this.waitForAction(action).then(() => {});
-          //   break;
           case 'seek':
             await this.waitForAction(action).then(() => {
               this.videoPlayerRefs[index].setState({
@@ -220,14 +215,6 @@ class VideoPlayerPage extends Component {
               );
             });
             break;
-          // case 'addVideo':
-          //   await this.waitForAction(action).then(() => {
-          //     const addedArchive = getFirebaseVideoByID(action.videoID);
-          //     let {archives} = this.state;
-          //     archives.push(addedArchive);
-          //     this.setState({archives});
-          //   });
-          //   break;
           default:
             console.log(`case ${action.type} not handled`);
         }
@@ -292,17 +279,6 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
-  // onSlidingStart = (i, timestamp) => {
-  //   let {recordedActions} = this.state;
-  //   const {recordingStartTime} = this.state;
-  //   recordedActions.push({
-  //     type: 'willSeek',
-  //     index: i,
-  //     startRecordingOffset: Date.now() - recordingStartTime,
-  //     timestamp,
-  //   });
-  //   this.setState({recordedActions});
-  // };
   onSlidingEnd = (i, seekTime) => {
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
@@ -314,15 +290,6 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
-
-  // onAddVideo = (videoID) => {
-  //   const {recordedActions, recordingStartTime} = this.state;
-  //   recordedActions.push({
-  //     type: 'addVideo',
-  //     startRecordingOffset: Date.now() - recordingStartTime,
-  //     id: videoID,
-  //   })
-  // }
 
   header = () => {
     const {isEditMode, isRecording, isPreviewing} = this.state;
@@ -512,6 +479,60 @@ class VideoPlayerPage extends Component {
     );
   };
 
+  linkButtonStyleByIndex = (i, total) => {
+    const {landscape} = this.state;
+    const {height, width} = Dimensions.get('screen');
+    let style = {position: 'absolute'};
+    if (landscape) {
+      const gap = width / total;
+      style = {
+        ...style,
+        left: gap * (i + 1),
+        bottom: height / 2,
+        height: 50,
+        width: 50,
+      };
+    } else {
+      const gap = height / total;
+      style = {
+        ...style,
+        bottom: gap * (i + 1),
+        left: width / 2,
+        width: 50,
+        height: 50,
+      };
+    }
+    return style;
+  };
+
+  linkButtons = () => {
+    const {archives, linkedPlayers} = this.state;
+    const adjPairs = archives.map((archive, i) => {
+      return i === archives.length - 1
+        ? null
+        : {
+            a: i,
+            b: i + 1,
+          };
+    }).filter(x => x);
+    const buttons = adjPairs.map(({a, b}, i) => {
+      const style = this.linkButtonStyleByIndex(i, adjPairs.length);
+      <Button
+        backgroundColor="red"
+        onPressColor={colors.green}
+        styleButton={style}
+        text="link"
+        textButton={{fontSize: 13}}
+        click={() => this.toggleLink(a, b)}
+      />
+    });
+    return buttons;
+    // for each adjacent pair
+    // if pair is unlinked, show broken chain
+    // if pair linked, show complete chain green
+    // onClick toggle link
+  };
+
   watchVideosView = () => {
     const {archives} = this.state;
     return (
@@ -519,6 +540,7 @@ class VideoPlayerPage extends Component {
         {this.header()}
         {this.buttonRecording()}
         {this.buttonPreview()}
+        {this.linkButtons()}
         {archives.map((archive, i) => this.singlePlayer(archive, i))}
       </View>
     );
