@@ -12,13 +12,12 @@ import {
   bindArchive,
   unbindArchive,
 } from '../../../../../../../functions/archive';
+import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
 
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
-import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
-import {resolutionP} from '../../../../../../../functions/pictures';
 import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
@@ -67,15 +66,10 @@ class CardArchive extends PureComponent {
   }
 
   openVideo = async () => {
-    const {openVideo, allowPlay} = this.props;
-    const {archive} = this.props;
-    const {url, id, thumbnail} = archive;
+    const {archive, connectToSession} = this.props;
+    const {url} = archive;
     if (url !== '') {
-      if (!openVideo) {
-        navigate('VideoPlayerPage', {archives:[archive]});
-      } else {
-        openVideo({url, thumbnail});
-      }
+      openVideoPlayer({video: archive, open: true, connectToSession});
     }
   };
   cloudIndicator() {
@@ -91,14 +85,16 @@ class CardArchive extends PureComponent {
             right: 5,
             zIndex: 20,
           }}>
-          {url === ''
-            ? <Loader size={25} color={colors.white} />
-            : <AllIcons
-                name={url === '' ? 'upload' : 'cloud'}
-                type="font"
-                color={colors.white}
-                size={15}
-              />}
+          {url === '' ? (
+            <Loader size={25} color={colors.white} />
+          ) : (
+            <AllIcons
+              name={url === '' ? 'upload' : 'cloud'}
+              type="font"
+              color={colors.white}
+              size={15}
+            />
+          )}
         </View>
       );
     } else {
@@ -106,7 +102,13 @@ class CardArchive extends PureComponent {
     }
   }
   cardArchive(archive) {
-    const {isSelected, style, selectableMode, selectVideo} = this.props;
+    const {
+      isSelected,
+      style,
+      selectableMode,
+      selectVideo,
+      hidePlayIcon,
+    } = this.props;
     const {
       id,
       thumbnail,
@@ -174,7 +176,8 @@ class CardArchive extends PureComponent {
         <ButtonColor
           view={() => {
             return (
-              !selectableMode && (
+              !selectableMode &&
+              !hidePlayIcon && (
                 <AllIcons
                   name="play"
                   type="font"

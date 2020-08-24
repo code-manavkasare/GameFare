@@ -71,7 +71,7 @@ class VideoLibraryPage extends Component {
       ...props.archivedStreams,
       ...props.videoLibrary,
     };
-    const videosArray = sortVideos(allVideos).filter(video => !video?.hidden);
+    const videosArray = sortVideos(allVideos).filter((video) => !video?.hidden);
     return {videosArray};
   }
   shareSelectedVideos() {
@@ -125,7 +125,8 @@ class VideoLibraryPage extends Component {
           selectedFirebaseVideos = [];
         } else {
           selectedLocalVideos = [];
-          selectedFirebaseVideos = [id];        }
+          selectedFirebaseVideos = [id];
+        }
       } else {
         if (local) {
           selectedLocalVideos.push(id);
@@ -176,7 +177,8 @@ class VideoLibraryPage extends Component {
         let newVideo = await getVideoInfo(video.path);
         addLocalVideo(newVideo);
         newVideos.push(newVideo);
-        if (videos.length === 1 && !selectOnly) openVideoPlayer(newVideo, true);
+        if (videos.length === 1 && !selectOnly)
+          openVideoPlayer({video: newVideo, open: true});
       }
       if (selectOnly) {
         let {selectedLocalVideos} = this.state;

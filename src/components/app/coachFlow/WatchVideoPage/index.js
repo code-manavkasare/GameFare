@@ -20,7 +20,7 @@ import {native} from '../../../animations/animations';
 import {coachAction} from '../../../../actions/coachActions';
 
 import RightButtons from './components/RightButtons';
-import ButtonShareVideo from './components/ButtonShareVideo';
+// import ButtonShareVideo from './components/ButtonShareVideo';
 import DrawView from './components/DrawView';
 
 import colors from '../../../style/colors';
@@ -204,7 +204,7 @@ class WatchVideoPage extends Component {
           sizeIconOffset={25}
           clickButtonOffset={() => this.setState({drawingOpen: false})}
         />
-
+        {/* 
         <ButtonShareVideo
           onRef={(ref) => (this.buttonShareRef = ref)}
           archiveID={archiveID}
@@ -215,7 +215,7 @@ class WatchVideoPage extends Component {
           togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
           open={this.open.bind(this)}
           getVideoState={() => this.videoPlayerRef.getState()}
-        />
+        /> */}
         <VideoPlayer
           source={videoSource ? videoSource : ''}
           paused={video.paused}

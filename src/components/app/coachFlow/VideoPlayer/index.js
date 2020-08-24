@@ -16,7 +16,7 @@ import VisualSeekBar from './components/VisualSeekbar';
 
 export default class VideoPlayer extends Component {
   static propTypes = {
-    source: PropTypes.string.isRequired,
+    archive: PropTypes.object.isRequired,
     paused: PropTypes.bool,
     currentTime: PropTypes.number,
     updateVideoInfoCloud: PropTypes.func,
@@ -52,17 +52,18 @@ export default class VideoPlayer extends Component {
     super(props);
     this.state = {
       loader: true,
-      source: this.props.source,
-      paused: this.props.paused,
+
+      paused: this.props.paused ? this.props.paused : false,
       prevPaused: undefined,
-      placeHolderImg: this.props.placeHolderImg,
+
       currentTime: this.props.currentTime ? this.props.currentTime : 0,
-      totalTime: 0,
+
+      videoLoading: true,
       videoLoaded: false,
       fullscreen: false,
       playRate: 1,
       muted: __DEV__ ? true : false,
-      displayVideo: false,
+
       slidingStartTime: null,
     };
     this.opacityControlBar = new Animated.Value(1);
@@ -70,41 +71,22 @@ export default class VideoPlayer extends Component {
   async componentDidMount() {
     this.props.onRef(this);
     const {currentTime} = this.state;
-    this.setState({displayVideo: true});
+
     if (currentTime !== 0) {
       this.seek(currentTime);
     }
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    const {currentTime, totalTime, source} = this.state;
+    const {currentTime} = this.state;
 
-    if (
-      prevState.source !== source ||
-      prevState.totalTime !== totalTime ||
-      prevState.currentTime !== currentTime
-    ) {
+    if (prevState.currentTime !== currentTime) {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
       this.visualSeekBarRef.toggleVisible(true);
     }
-
-    if (prevState.source !== source) {
-      this.PinchableBoxRef?.resetPosition();
-    }
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.source !== state.source) {
-      return {
-        source: props.source,
-        paused: !props.myVideo ? props.paused : false,
-        playRate: props.playRate,
-        currentTime: 0,
-        loader: true,
-        totalTime: false,
-        placeHolderImg: props.placeHolderImg,
-      };
-    }
     if (
       !props.noUpdateInCloud &&
       (props.paused !== state.paused ||
@@ -132,7 +114,7 @@ export default class VideoPlayer extends Component {
   seekDiff = async (diffTime) => {
     const {currentTime} = this.state;
     this.player.seek(currentTime + diffTime, 33);
-  }
+  };
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
     const {
@@ -158,8 +140,10 @@ export default class VideoPlayer extends Component {
   toggleLinkedPlayPause = async (forcePause) => {
     const {linkedPlayers} = this.props;
     this.togglePlayPause(forcePause);
-    linkedPlayers?.forEach((playerRef) => playerRef.togglePlayPause(forcePause));
-  }
+    linkedPlayers?.forEach((playerRef) =>
+      playerRef.togglePlayPause(forcePause),
+    );
+  };
 
   updatePlayRate = async (playRate) => {
     let {paused} = this.state;
@@ -178,7 +162,7 @@ export default class VideoPlayer extends Component {
   };
 
   onBuffer = (event) => {
-    this.setState({videoLoaded: !event.isBuffering});
+    this.setState({videoLoading: event.isBuffering});
   };
   onProgress = async (info) => {
     const paused = this.visualSeekBarRef?.getPaused();
@@ -216,8 +200,10 @@ export default class VideoPlayer extends Component {
     const {linkedPlayers} = this.props;
     const {slidingStartTime} = this.state;
     this.onSlidingComplete(sliderTime, forcePlay);
-    linkedPlayers?.forEach((playerRef) => playerRef.seekDiff(sliderTime - slidingStartTime));
-  }
+    linkedPlayers?.forEach((playerRef) =>
+      playerRef.seekDiff(sliderTime - slidingStartTime),
+    );
+  };
   onSlidingStart = async () => {
     const {
       onSlidingStart,
@@ -256,7 +242,11 @@ export default class VideoPlayer extends Component {
         style={[
           styleApp.fullSize,
           styleApp.center,
-          {backgroundColor: colors.transparent, position: 'absolute'},
+          {
+            backgroundColor: colors.transparent,
+            position: 'absolute',
+            zIndex: 40,
+          },
         ]}>
         <Loader size={60} color={colors.white} />
       </View>
@@ -277,15 +267,16 @@ export default class VideoPlayer extends Component {
       styleVideo,
       componentOnTop,
       buttonTopRight,
-      heightControlBar,
-      sizeControlButton,
-      hideFullScreenButton,
       index,
       setScale,
       width,
       seekbarSize,
       disableControls,
+      pinchEnable,
+      archive,
     } = this.props;
+
+    const {thumbnail, url, durationSeconds} = archive;
 
     const {
       currentTime,
@@ -293,119 +284,109 @@ export default class VideoPlayer extends Component {
       prevPaused,
       fullscreen,
       playRate,
-      placeHolderImg,
-      displayVideo,
-      totalTime,
-      videoLoaded,
-      source,
-      loader,
+      videoLoading,
       muted,
+      videoLoaded,
     } = this.state;
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
-        {loader && this.fullScreenLoader()}
         {buttonTopRight && buttonTopRight()}
-        {placeHolderImg !== '' && !totalTime && (
-          <AsyncImage
-            style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
-            mainImage={placeHolderImg}
-          />
-        )}
 
-        {((displayVideo && source !== '') || __DEV__) && (
-          <View
-            style={[
-              styleApp.fullSize,
-              styleApp.center,
-              {backgroundColor: colors.black},
-            ]}>
-            <PinchableBox
-              styleContainer={[styleApp.fullSize, styleApp.center]}
-              onRef={(ref) => (this.PinchableBoxRef = ref)}
-              scaleChange={(val) => setScale && setScale(val)}
-              onPinch={(scale) => onScaleChange(index, scale)}
-              onDrag={(pos) => onPositionChange(index, pos)}
-              singleTouch={() => this.clickVideo()}
-              component={() => (
-                <View style={[styleApp.fullSize, styleApp.center]}>
-                  {source !== '' && (
-                    <Video
-                      key={index}
-                      source={{uri: source}}
-                      style={[
-                        {
-                          width: '100%',
-                          height: '100%',
-                        },
-                      ]}
-                      ref={(ref) => {
-                        this.player = ref;
-                      }}
-                      rate={playRate}
-                      onLoad={async (callback) => {
-                        const {setSizeVideo} = this.props;
-                        if (setSizeVideo) {
-                          Image.getSize(
-                            placeHolderImg,
-                            (width, height) => {
-                              setSizeVideo({width, height});
-                            },
-                            (error) => {
-                              console.log(
-                                `Couldn't get the image size: ${error.message}`,
-                              );
-                            },
-                          );
-                        }
-                        await this.setState({
-                          totalTime: callback.duration,
-                          videoLoaded: true,
-                          loader: false,
-                        });
-                        const {currentTime} = this.state;
-                        this.seek(currentTime);
-                      }}
-                      muted={muted}
-                      fullscreen={fullscreen}
-                      onFullscreenPlayerDidDismiss={(event) => {
-                        this.setState({fullscreen: false});
-                      }}
-                      progressUpdateInterval={30}
-                      onBuffer={this.onBuffer}
-                      paused={paused}
-                      onProgress={(info) => !paused && this.onProgress(info)}
-                      onEnd={(callback) => {
-                        this.togglePlayPause(true);
-                        this.visualSeekBarRef?.setCurrentTime(totalTime, true);
-                      }}
-                    />
-                  )}
-                  {componentOnTop && componentOnTop()}
-                </View>
-              )}
+        <View
+          style={[
+            styleApp.fullSize,
+            styleApp.center,
+            {backgroundColor: colors.black},
+          ]}>
+          {videoLoading && this.fullScreenLoader()}
+          {!videoLoaded && (
+            <AsyncImage
+              style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
+              mainImage={thumbnail}
             />
-          </View>
-        )}
+          )}
+          <PinchableBox
+            styleContainer={[styleApp.fullSize, styleApp.center]}
+            onRef={(ref) => (this.PinchableBoxRef = ref)}
+            pinchEnable={pinchEnable}
+            scaleChange={(val) => setScale && setScale(val)}
+            onPinch={(scale) => onScaleChange(index, scale)}
+            onDrag={(pos) => onPositionChange(index, pos)}
+            singleTouch={() => this.clickVideo()}
+            component={() => (
+              <View style={[styleApp.fullSize, styleApp.center]}>
+                <Video
+                  key={index}
+                  source={{uri: url}}
+                  style={styleApp.fullSize}
+                  ref={(ref) => {
+                    this.player = ref;
+                  }}
+                  rate={playRate}
+                  onLoad={async (callback) => {
+                    const {setSizeVideo} = this.props;
+                    if (setSizeVideo) {
+                      Image.getSize(
+                        thumbnail,
+                        (width, height) => {
+                          setSizeVideo({width, height});
+                        },
+                        (error) => {
+                          console.log(
+                            `Couldn't get the image size: ${error.message}`,
+                          );
+                        },
+                      );
+                    }
 
-        {displayVideo && (
-          <VisualSeekBar
-            disableControls={disableControls}
-            onRef={(ref) => (this.visualSeekBarRef = ref)}
-            size={seekbarSize}
-            togglePlayPause={this.toggleLinkedPlayPause.bind(this)}
-            currentTime={currentTime}
-            totalTime={totalTime}
-            paused={paused}
-            prevPaused={prevPaused}
-            updatePlayRate={(rate) => this.updatePlayRate(rate)}
-            seek={this.onSeek.bind(this)}
-            onSlidingComplete={(sliderTime, forcePlay) =>
-              this.onLinkedSlidingComplete(sliderTime, forcePlay)
-            }
-            onSlidingStart={() => this.onSlidingStart()}
-            width={width}
+                    await this.setState({
+                      videoLoaded: true,
+                    });
+                    const {currentTime} = this.state;
+                    this.visualSeekBarRef?.toggleVisible(true);
+                    this.seek(currentTime);
+                  }}
+                  muted={muted}
+                  fullscreen={fullscreen}
+                  onFullscreenPlayerDidDismiss={(event) => {
+                    this.setState({fullscreen: false});
+                  }}
+                  progressUpdateInterval={30}
+                  onBuffer={this.onBuffer}
+                  paused={paused}
+                  onProgress={(info) => !paused && this.onProgress(info)}
+                  onEnd={(callback) => {
+                    this.togglePlayPause(true);
+                    this.visualSeekBarRef?.setCurrentTime(
+                      durationSeconds,
+                      true,
+                    );
+                  }}
+                />
+
+                {componentOnTop && componentOnTop()}
+              </View>
+            )}
           />
-        )}
+        </View>
+
+        <VisualSeekBar
+          disableControls={disableControls}
+          onRef={(ref) => (this.visualSeekBarRef = ref)}
+          size={seekbarSize}
+          togglePlayPause={this.toggleLinkedPlayPause.bind(this)}
+          currentTime={currentTime}
+          totalTime={durationSeconds}
+          paused={paused}
+          prevPaused={prevPaused}
+          updatePlayRate={(rate) => this.updatePlayRate(rate)}
+          seek={this.onSeek.bind(this)}
+          onSlidingComplete={(sliderTime, forcePlay) =>
+            this.onLinkedSlidingComplete(sliderTime, forcePlay)
+          }
+          onSlidingStart={() => this.onSlidingStart()}
+          width={width}
+        />
       </Animated.View>
     );
   }

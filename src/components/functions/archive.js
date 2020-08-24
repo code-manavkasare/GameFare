@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import database from '@react-native-firebase/database';
 
 import {store} from '../../../reduxStore';
