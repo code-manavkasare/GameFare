@@ -378,7 +378,13 @@ const infoCoach = (members) => {
 const closeSession = async ({noNavigation}) => {
   await store.dispatch(endCurrentSession());
   store.dispatch(unsetCurrentSession());
-  if (!noNavigation) await navigate('Stream');
+
+  console.log('cest ucu closeSession');
+  if (!noNavigation) {
+    store.dispatch(setLayout({isFooterVisible: true}));
+    StatusBar.setBarStyle('dark-content', true);
+    await navigate('Stream', {screen: 'StreamPage', params: {}});
+  }
 };
 const openMemberAcceptCharge = async (
   session,
@@ -671,4 +677,5 @@ module.exports = {
   addMembersToSession,
   searchSessionsForString,
   selectVideosFromLibrary,
+  closeSession,
 };

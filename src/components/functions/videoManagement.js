@@ -9,7 +9,7 @@ import {createThumbnail} from 'react-native-create-thumbnail';
 
 import {getVideoInfo, getVideoUUID} from './pictures';
 
-import {navigate} from '../../../NavigationService';
+import {navigate, goBack} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
 import {
@@ -132,9 +132,13 @@ const recordVideo = async () => {
   navigate('LocalSession');
 };
 
-const openVideoPlayer = async (video, open, goBack) => {
+const openVideoPlayer = async ({video, open, connectToSession}) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  if (open) return navigate('VideoPlayerPage', {archives: [video]});
+  if (open)
+    return navigate('VideoPlayerPage', {
+      archives: [{id: video.id, local: video.local}],
+      connectToSession,
+    });
   return goBack();
 };
 

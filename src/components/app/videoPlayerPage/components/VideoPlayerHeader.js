@@ -25,7 +25,11 @@ export default class VideoPlayerHeader extends React.Component {
       editModeOff,
       editModeOn,
       close,
+      route,
+      isDrawingEnabled,
+      setState,
     } = this.props;
+    const {connectToSession} = route.params;
     const sharedProps = {
       inputRange: [5, 10],
       colorLoader: 'white',
@@ -39,10 +43,13 @@ export default class VideoPlayerHeader extends React.Component {
       sizeIcon1: 16,
       colorIcon1: colors.white,
       typeIcon1: 'font',
-      iconOffset: isEditMode || isRecording || isPreviewing ? null : 'plus',
-      colorIconOffset: colors.black,
-      backgroundColorIconOffset: colors.green,
-      clickButtonOffset: () => addVideo(),
+
+      backgroundColorIconOffset: colors.title + '70',
+      colorIcon2: colors.white,
+
+      iconOffset: !isEditMode && !connectToSession && 'text',
+      textOffset: 'Edit',
+      clickButtonOffset: () => editModeOn(),
     };
     return isEditMode ? (
       <HeaderBackButton
@@ -55,11 +62,28 @@ export default class VideoPlayerHeader extends React.Component {
       <HeaderBackButton
         icon1={'arrow-left'}
         clickButton1={() => close()}
-        icon2={'text'}
-        text2={'Edit'}
-        backgroundColorIcon2={colors.green}
-        clickButton2={() => editModeOn()}
+        colorIconOffset={colors.white}
+        backgroundColorIcon2={colors.title + '70'}
+        icon2={isEditMode || isRecording || isPreviewing ? null : 'plus'}
+        colorIcon2={colors.white}
+        clickButton2={() => addVideo()}
         {...sharedProps}
+        icon11={'open-with'}
+        colorIcon11={colors.white}
+        typeIcon11={'mat'}
+        backgroundColorIcon11={
+          !isDrawingEnabled ? colors.secondary : colors.title + '70'
+        }
+        sizeIcon11={19}
+        clickButton11={() => setState({isDrawingEnabled: false})}
+        icon12={'gesture'}
+        colorIcon12={colors.white}
+        typeIcon12={'mat'}
+        sizeIcon12={19}
+        backgroundColorIcon12={
+          isDrawingEnabled ? colors.secondary : colors.title + '70'
+        }
+        clickButton12={() => setState({isDrawingEnabled: true})}
       />
     );
   }

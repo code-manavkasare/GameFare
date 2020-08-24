@@ -130,7 +130,7 @@ class HeaderBackButton extends Component {
   button11() {
     const {
       icon11,
-      backgroundColorIcon1,
+      backgroundColorIcon11,
       colorIcon11,
       sizeIcon11,
       typeIcon11,
@@ -143,8 +143,8 @@ class HeaderBackButton extends Component {
           style={[
             styles.animatedButtonStyle,
             {
-              backgroundColor: backgroundColorIcon1
-                ? backgroundColorIcon1
+              backgroundColor: backgroundColorIcon11
+                ? backgroundColorIcon11
                 : colors.white,
               borderColor: borderColorIcon,
             },
@@ -161,7 +161,7 @@ class HeaderBackButton extends Component {
               );
             }}
             click={() => this.props.clickButton11()}
-            color={nobackgroundColorIcon1 ? null : 'white'}
+            color={backgroundColorIcon11 ? backgroundColorIcon11 : 'white'}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
@@ -169,6 +169,48 @@ class HeaderBackButton extends Component {
       );
     return null;
   }
+  button12() {
+    const {
+      icon12,
+      backgroundColorIcon12,
+      colorIcon12,
+      sizeIcon12,
+      typeIcon12,
+    } = this.props;
+    const {borderColorIcon} = this.animatedValues();
+    if (icon12)
+      return (
+        <Animated.View
+          style={[
+            styles.animatedButtonStyle,
+            {
+              backgroundColor: backgroundColorIcon12
+                ? backgroundColorIcon12
+                : colors.white,
+              borderColor: borderColorIcon,
+            },
+          ]}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name={icon12}
+                  color={colorIcon12 ? colorIcon12 : colors.title}
+                  size={sizeIcon12 ? sizeIcon12 : 15}
+                  type={typeIcon12 ? typeIcon12 : 'font'}
+                />
+              );
+            }}
+            click={() => this.props.clickButton12()}
+            color={backgroundColorIcon12 ? backgroundColorIcon12 : 'white'}
+            style={[styles.buttonRight]}
+            onPressColor={colors.off}
+          />
+        </Animated.View>
+      );
+    return null;
+  }
+
   buttonOffset() {
     const styleButton = {
       height: 48,
@@ -207,13 +249,22 @@ class HeaderBackButton extends Component {
             <ButtonColor
               view={() => {
                 return iconOffset === 'text' ? (
-                  <Text style={styleApp.textBold}>{textOffset}</Text>
+                  <Text
+                    style={[
+                      styleApp.textBold,
+                      {
+                        fontSize: 14,
+                        color: colorIconOffset ? colorIconOffset : colors.title,
+                      },
+                    ]}>
+                    {textOffset}
+                  </Text>
                 ) : (
                   <AllIcons
                     name={iconOffset}
                     color={colorIconOffset ? colorIconOffset : colors.title}
-                    size={sizeIconOffset ? sizeIconOffset: 15}
-                    type={typeIconOffset ? typeIconOffset: 'font'}
+                    size={sizeIconOffset ? sizeIconOffset : 15}
+                    type={typeIconOffset ? typeIconOffset : 'font'}
                   />
                 );
               }}
@@ -321,7 +372,12 @@ class HeaderBackButton extends Component {
                   style={[
                     styleApp.textBold,
                     {
-                      color: text2Off ? colors.off : colors.title,
+                      color: colorIcon2
+                        ? colorIcon2
+                        : text2Off
+                        ? colors.off
+                        : colors.title,
+                      fontSize: 14,
                     },
                   ]}>
                   {text2}
@@ -404,11 +460,13 @@ class HeaderBackButton extends Component {
           <Col size={15} style={styleApp.center2} activeOpacity={0.4}>
             {this.button1()}
           </Col>
-          <Col size={20} style={[styleApp.center2, {marginLeft: -10}]}>
+          <Col size={15} style={[styleApp.center2]}>
             {this.button11()}
           </Col>
-          <Col size={6} style={styles.center} />
-          <Col size={18} style={[styleApp.center3]}>
+          <Col size={15} style={[styleApp.center]}>
+            {this.button12()}
+          </Col>
+          <Col size={15} style={[styleApp.center3]}>
             {this.buttonOffset2()}
           </Col>
           <Col size={18} style={[styleApp.center3]}>

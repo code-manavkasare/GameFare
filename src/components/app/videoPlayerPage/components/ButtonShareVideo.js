@@ -3,15 +3,14 @@ import {} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
-import Button from '../../../../layout/buttons/Button';
-import {coachAction} from '../../../../../actions/coachActions';
+import Button from '../../../layout/buttons/Button';
 
-import colors from '../../../../style/colors';
+import colors from '../../../style/colors';
 import {
   marginTopApp,
   heightHeaderHome,
   marginTopAppLandscape,
-} from '../../../../style/sizes';
+} from '../../../style/sizes';
 
 class ButtonShareVideo extends Component {
   constructor(props) {
@@ -25,24 +24,21 @@ class ButtonShareVideo extends Component {
     const {
       userID,
       coachSessionID,
-      coachAction,
+
       archiveID,
       getVideoState,
-      source,
+
       togglePlayPause,
       open,
     } = this.props;
+    return true;
     const stateVideo = getVideoState();
 
     if (value) {
-      await coachAction('setCoachSessionDrawSettings', {
-        touchEnabled: false,
-      });
-
       let updates = {};
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/source`
-      ] = source;
+      // updates[
+      //   `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/source`
+      // ] = source;
       updates[
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/currentTime`
       ] = stateVideo.currentTime;
@@ -89,13 +85,14 @@ class ButtonShareVideo extends Component {
     if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
     const style = {
       position: 'absolute',
-      zIndex: 600,
+      zIndex: 20,
       height: 30,
       width: 110,
       left: '5%',
       borderRadius: 15,
       top: marginTop,
     };
+    console.log('render button startnsharing');
     return (
       <Button
         backgroundColor="green"
@@ -109,13 +106,14 @@ class ButtonShareVideo extends Component {
       />
     );
   }
+
   buttonStop() {
     const {portrait} = this.props;
     let marginTop = marginTopApp + heightHeaderHome;
     if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
     const style = {
       position: 'absolute',
-      zIndex: 600,
+      zIndex: 400,
       height: 30,
       width: 80,
       left: '5%',
@@ -136,13 +134,9 @@ class ButtonShareVideo extends Component {
     );
   }
   button() {
-    const {
-      userID,
-      personSharingScreen,
-      archiveID,
-      videoBeingShared,
-    } = this.props;
-
+    const {userID, archiveID} = this.props;
+    const personSharingScreen = userID;
+    const videoBeingShared = {id: 'sdfdsfsdfsdfds'};
     if (!personSharingScreen) return this.buttonStart();
     if (personSharingScreen !== userID) return null;
     if (videoBeingShared.id === archiveID) return this.buttonStop();
@@ -164,5 +158,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {},
 )(ButtonShareVideo);

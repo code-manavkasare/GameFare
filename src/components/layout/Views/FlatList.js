@@ -53,14 +53,16 @@ class FlatListComponent extends Component {
       inverted,
       styleContainer,
       horizontal,
+      showsHorizontalScrollIndicator,
+      showsVerticalScrollIndicator
     } = this.props;
 
     const containerStyle = {
-      ...styleContainer,
       paddingBottom: paddingBottom ? paddingBottom : 60,
       backgroundColor: colors.white,
 
       width: horizontal ? list.length * 100 : '100%',
+      ...styleContainer,
     };
 
     const viewLoader = () => {
@@ -84,13 +86,20 @@ class FlatListComponent extends Component {
         numColumns={numColumns}
         scrollEnabled={true}
         horizontal={horizontal}
-        // removeClippedSubviews={true}
         inverted={inverted}
         contentContainerStyle={containerStyle}
         ListHeaderComponent={header}
         ListHeaderComponentStyle={styleApp.marginView}
-        showsVerticalScrollIndicator={true}
-        showsHorizontalScrollIndicator={false}
+         showsHorizontalScrollIndicator={
+          showsHorizontalScrollIndicator === undefined
+            ? true
+            : showsHorizontalScrollIndicator
+        }
+        showsVerticalScrollIndicator={
+          showsVerticalScrollIndicator === undefined
+            ? true
+            : showsVerticalScrollIndicator
+        }
         onEndReached={() => this.onEndReached()}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={

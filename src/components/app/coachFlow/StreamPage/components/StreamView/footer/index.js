@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Animated} from 'react-native';
+import {StyleSheet, Animated, View} from 'react-native';
 
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
@@ -23,55 +23,50 @@ class Footer extends Component {
       !isEqual(nextProps.members, this.props.members)
     );
   };
-  openPastSessions(val) {
-    let {translateYFooter} = this.props
-    Animated.parallel([
-      Animated.timing(translateYFooter, native(val ? 1 : 0, 200)),
-    ]).start();
-    this.pastSessionsRef.open(val)
-  }
+
   footer() {
     const {
       setState,
       translateYFooter,
-      watchVideoRef,
+      coachSessionID,
       personSharingScreen,
       videoBeingShared,
       otPublisherRef,
       members,
       publishVideo,
-      publishAudio
+      publishAudio,
     } = this.props;
     const translateY = translateYFooter.interpolate({
       inputRange: [0, 1],
       extrapolate: 'clamp',
-      outputRange: [170, 0],
+      outputRange: [300, 0],
     });
+    console.log('members', members);
     return (
-      <Animated.View
-        style={[
-          styles.footer,
-          {transform: [{translateY}]},
-        ]}>
+      <Animated.View style={[styles.footer, {transform: [{translateY}]}]}>
         <BottomButtons
           setState={setState}
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.bottomButtonRef = ref)}
-          clickReview={(val) => this.openPastSessions(val)}
+          openPastSessions={(val) =>
+            Animated.parallel([
+              Animated.timing(translateYFooter, native(val ? 1 : 0, 300)),
+            ]).start()
+          }
           otPublisherRef={otPublisherRef}
           members={members}
           publishVideo={publishVideo}
           publishAudio={publishAudio}
-          coachSessionID={this.props.coachSessionID}
+          coachSessionID={coachSessionID}
         />
 
         <VideosView
           setState={setState}
           personSharingScreen={personSharingScreen}
           videoBeingShared={videoBeingShared}
+          coachSessionID={coachSessionID}
           onRef={(ref) => (this.pastSessionsRef = ref)}
-          openVideo={(data) => watchVideoRef.open(data)}
         />
       </Animated.View>
     );

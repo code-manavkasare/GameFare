@@ -414,7 +414,15 @@ const hangupButton = (session) => {
   );
 };
 
-const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
+const rowTitle = ({
+  icon,
+  badge,
+  title,
+  hideDividerHeader,
+  button,
+  titleColor,
+  customButtom,
+}) => {
   const {name, size, color, type} = icon;
   const styleBadge = {
     ...styleApp.center,
@@ -455,10 +463,18 @@ const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
           )}
         </Col>
         <Col size={55} style={styleApp.center2}>
-          <Text style={[styleApp.title]}>{title}</Text>
+          <Text
+            style={[
+              styleApp.title,
+              {color: titleColor ? titleColor : colors.title},
+            ]}>
+            {title}
+          </Text>
         </Col>
         <Col size={20} style={styleApp.center3}>
-          {button && (
+          {customButtom ? (
+            customButtom
+          ) : button ? (
             <ButtonColor
               view={() => {
                 return (
@@ -476,7 +492,7 @@ const rowTitle = ({icon, badge, title, hideDividerHeader, button}) => {
               click={() => button.click()}
               onPressColor={colors.primaryLight}
             />
-          )}
+          ) : null}
         </Col>
       </Row>
       {!hideDividerHeader ? (

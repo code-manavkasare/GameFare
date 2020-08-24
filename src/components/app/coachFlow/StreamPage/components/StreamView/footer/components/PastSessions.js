@@ -4,9 +4,11 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 
 import CardArchive from './CardArchive';
-import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
-import {FlatList} from 'react-native-gesture-handler';
+import colors from '../../../../../../../style/colors';
+import {rowTitle} from '../../../../../../TeamPage/components/elements';
+
+import {FlatListComponent} from '../../../../../../../layout/Views/FlatList';
 
 class PastSessions extends Component {
   constructor(props) {
@@ -22,96 +24,69 @@ class PastSessions extends Component {
       .reverse();
   }
 
-  noArchiveMessage = () => {
-    return (
-      <View style={[{flex: 1}, styleApp.center]}>
-        <Image
-          source={require('../../../../../../../../img/images/shelve.png')}
-          style={styles.iconNoArchive}
-        />
-        <Text style={[styleApp.text, styles.textNoArchive]}>
-          {"You haven't recorded any session yet."}
-        </Text>
-      </View>
-    );
-  };
-
-  renderCardArchiveSessions = (archive) => {
-    const {archives, openVideo} = this.props;
-    if (archives[archive.item.id]) {
-      return (
-        <CardArchive
-          style={styles.cardArchive}
-          id={archive.item.id}
-          key={archive.item.id}
-          openVideo={({url, thumbnail}) => {
-            openVideo({
-              watchVideo: true,
-              thumbnail: thumbnail,
-              source: url,
-              myVideo: true,
-              archiveID: archive.item.id,
-            });
-          }}
-        />
-      );
-    }
-  };
-
   render() {
     const sessions = this.arraySessions();
-    return sessions.length === 0 ? (
-      this.noArchiveMessage()
-    ) : (
-      <FlatList
-        data={sessions}
-        renderItem={this.renderCardArchiveSessions}
-        keyExtractor={(item) => item.id}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{paddingLeft: 20}}
-        initialNumToRender={2}
-        ListEmptyComponent={this.noArchiveMessage}
+    const {coachSessionID, videoBeingShared} = this.props;
+
+    return (
+      <FlatListComponent
+        list={sessions}
+        styleContainer={{
+          backgroundColor: 'transparent',
+        }}
+        showsVerticalScrollIndicator={false}
+        cardList={({item}) => (
+          <CardArchive
+            id={item.id}
+            style={{...styleApp.cardArchive3, height: 100}}
+            key={item.id}
+            connectToSession={coachSessionID}
+            hidePlayIcon={true}
+          />
+        )}
+        header={
+          videoBeingShared &&
+          rowTitle({
+            icon: {
+              name: 'satellite-dish',
+              type: 'font',
+              color: colors.white,
+              size: 20,
+            },
+            hideDividerHeader: true,
+            customButtom: (
+              <CardArchive
+                id={videoBeingShared.id}
+                style={{
+                  ...styleApp.cardArchive3,
+                  height: 70,
+                  width: 120,
+                  borderRadius: 5,
+                  borderWidth: 0,
+                }}
+                connectToSession={coachSessionID}
+                hidePlayIcon={true}
+              />
+            ),
+            title: 'Live now',
+            titleColor: colors.white,
+          })
+        }
+        numColumns={3}
+        horizontal={false}
+        incrementRendering={6}
+        initialNumberToRender={12}
+        hideDividerHeader={true}
       />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  placeHolderScrollViewX: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    height: 100,
-    backgroundColor: 'red',
-    paddingTop: 10,
-    marginRight: 20,
-  },
-  cardArchive: {
-    height: 130,
-    width: 250,
-    marginRight: 20,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    backgroundColor: colors.title,
-  },
-  textNoArchive: {
-    color: colors.white,
-    marginTop: 5,
-    fontSize: 14,
-  },
-  iconNoArchive: {
-    width: 55,
-    height: 55,
-    marginBottom: 15,
-  },
-});
+const styles = StyleSheet.create({});
 
 const mapStateToProps = (state) => {
   return {
     archivedStreams: state.user.infoUser.archivedStreams,
-    archives: state.archives,
   };
 };
 

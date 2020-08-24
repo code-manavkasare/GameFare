@@ -47,11 +47,12 @@ import {
   ratio,
 } from '../../../../../style/sizes';
 
-import WatchVideoPage from '../../../WatchVideoPage/index';
+
 import MembersView from './components/MembersView';
 import UploadButton from '../../../../elementsUpload/UploadButton';
 import Footer from './footer/index';
 import axios from 'axios';
+import {openVideoPlayer} from '../../../../../functions/videoManagement';
 
 class StreamPage extends Component {
   constructor(props) {
@@ -186,7 +187,7 @@ class StreamPage extends Component {
     const unrenderConditionThis =
       !this.props.recording && this.props.endCurrentSession;
     if (!unrenderConditionPrev && unrenderConditionThis) {
-      this.endCoachSession();
+      // this.endCoachSession();
     } else {
       const {
         userID,
@@ -279,16 +280,14 @@ class StreamPage extends Component {
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
       const video = getVideoSharing(coachSession, personSharingScreen);
-      this.watchVideoRef.open({
-        watchVideo: true,
-        ...video,
-      });
+      openVideoPlayer({connectToSession: true, video, open: true});
     }
   }
   async endCoachSession() {
     const {coachAction} = this.props;
+
+    // await this.close();
     await coachAction('unsetCurrentSession');
-    this.close();
     return true;
   }
   close() {
@@ -552,8 +551,9 @@ class StreamPage extends Component {
     if (!userConnected || !currentSessionID) return this.loaderView(' ');
 
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
+    console.log('personSharingScreen', personSharingScreen);
     const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-
+    console.log('videoBeingShared', videoBeingShared);
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
@@ -575,20 +575,6 @@ class StreamPage extends Component {
         )}
 
         {this.streamPage()}
-
-        <WatchVideoPage
-          // state={this.state}
-          coachSession={coachSession}
-          onRef={(ref) => (this.watchVideoRef = ref)}
-          translateYFooter={this.translateYFooter}
-          setState={this.setState.bind(this)}
-          personSharingScreen={personSharingScreen}
-          videoBeingShared={videoBeingShared}
-          sharedVideos={coachSession.sharedVideos}
-          coachSessionID={currentSessionID}
-        />
-
-        {/* {loader && this.loaderView(' ')} */}
       </View>
     );
   }

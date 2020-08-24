@@ -4,7 +4,10 @@ import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 
 import VideoPlayer from '../coachFlow/VideoPlayer/index';
+
+import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
+import ButtonShareVideo from './components/ButtonShareVideo';
 import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
@@ -36,6 +39,7 @@ class VideoPlayerPage extends Component {
       archives: [],
       linkedPlayers: [], // each archive has a corresponding set of linkedPlayers
       disableControls: false,
+      isDrawingEnabled: false,
     };
     this.videoPlayerRefs = [];
     this.focusListener = null;
@@ -51,6 +55,7 @@ class VideoPlayerPage extends Component {
 
   componentDidMount() {
     const {navigation} = this.props;
+
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
     });
@@ -99,7 +104,7 @@ class VideoPlayerPage extends Component {
   playersAreLinked = (indexA, indexB) => {
     const {linkedPlayers} = this.state;
     return linkedPlayers[indexA].has(indexB);
-  }
+  };
 
   linkPlayers = (a, b) => {
     let {linkedPlayers} = this.state;
@@ -114,10 +119,10 @@ class VideoPlayerPage extends Component {
       all.add(elem);
     }
     for (const elem of all) {
-      linkedPlayers[elem] = new Set([...all].filter(i => i !== elem));
+      linkedPlayers[elem] = new Set([...all].filter((i) => i !== elem));
     }
     this.setState({linkedPlayers});
-  }
+  };
 
   unlinkPlayers = (a, b) => {
     // a < b always true
@@ -141,13 +146,13 @@ class VideoPlayerPage extends Component {
     }
     for (const elem of all) {
       if (elem <= a) {
-        linkedPlayers[elem] = new Set([...lower].filter(i => i !== elem));
+        linkedPlayers[elem] = new Set([...lower].filter((i) => i !== elem));
       } else {
-        linkedPlayers[elem] = new Set([...higher].filter(i => i !== elem));
+        linkedPlayers[elem] = new Set([...higher].filter((i) => i !== elem));
       }
     }
     this.setState({linkedPlayers});
-  }
+  };
 
   toggleLink = (indexA, indexB) => {
     if (this.playersAreLinked(indexA, indexB)) {
@@ -155,7 +160,7 @@ class VideoPlayerPage extends Component {
     } else {
       this.linkPlayers(indexA, indexB);
     }
-  }
+  };
 
   resetPlayers = () => {
     this.videoPlayerRefs.forEach((ref) => {
@@ -327,21 +332,29 @@ class VideoPlayerPage extends Component {
   };
 
   header = () => {
-    const {isEditMode, isRecording, isPreviewing} = this.state;
-    const {goBack, navigate} = this.props.navigation;
+    const {
+      isEditMode,
+      isRecording,
+      isPreviewing,
+      isDrawingEnabled,
+    } = this.state;
+    const {navigation, route} = this.props;
+    const {navigate} = navigation;
     return (
       <VideoPlayerHeader
         isEditMode={isEditMode}
         isRecording={isRecording}
         isPreviewing={isPreviewing}
+        isDrawingEnabled={isDrawingEnabled}
+        route={route}
         close={() => {
-          for (const videoPlayerRef of this.videoPlayerRefs) {
-            videoPlayerRef?.togglePlayPause(true);
-            videoPlayerRef?.PinchableBoxRef?.resetPosition();
-          }
-          this.resetPlayers();
-          this.setState({recordedActions: []});
-          openVideoPlayer({}, false, () => goBack());
+          // for (const videoPlayerRef of this.videoPlayerRefs) {
+          //   videoPlayerRef?.togglePlayPause(true);
+          //   videoPlayerRef?.PinchableBoxRef?.resetPosition();
+          // }
+          // this.resetPlayers();
+          // this.setState({recordedActions: []});
+          openVideoPlayer({open: false});
         }}
         editModeOn={() => {
           this.setState({isEditMode: true});
@@ -349,6 +362,7 @@ class VideoPlayerPage extends Component {
         editModeOff={() => {
           this.setState({isEditMode: false, isRecording: false});
         }}
+        setState={this.setState.bind(this)}
         addVideo={() => {
           navigate('SelectVideosFromLibrary', {
             selectableMode: true,
@@ -440,33 +454,17 @@ class VideoPlayerPage extends Component {
     ) : null;
   };
 
-  playerStyleByIndex = (i, total) => {
-    const {landscape} = this.state;
-    const {height, width} = Dimensions.get('screen');
-    let style = {position: 'absolute'};
-    if (landscape) {
-      style = {
-        ...style,
-        left: 0 + i * (width / total),
-        height: height,
-        width: width / total,
-      };
-    } else {
-      style = {
-        ...style,
-        bottom: 0 + i * (height / total),
-        width: width,
-        height: height / total,
-      };
-    }
-    return style;
-  };
-
   singlePlayer = (archive, i) => {
+    const {id: archiveID, local} = archive;
     const numArchives = this.state.archives.length;
-    const {url, thumbnail} = archive;
-    const {userID} = this.props;
-    const {isRecording, disableControls, linkedPlayers} = this.state;
+
+    const {
+      isRecording,
+      disableControls,
+      isDrawingEnabled,
+      linkedPlayers,
+    } = this.state;
+
     const {
       onPlayPause,
       onPlayRateChange,
@@ -485,36 +483,42 @@ class VideoPlayerPage extends Component {
           // onSlidingStart,
         }
       : {};
-    const playerStyle = this.playerStyleByIndex(i, numArchives);
-    const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
+
+    const {landscape} = this.state;
+    console.log('sinle player', archiveID);
     return (
-      <View style={playerStyle} key={archive.id}>
-        <VideoPlayer
-          disableControls={disableControls}
-          seekbarSize={seekbarSize}
-          width={playerStyle.width}
-          source={url}
-          index={i}
-          resizeMode="contain"
-          userID={userID}
-          setSizeVideo={(sizeVideo) => {
-            this.setState({sizeVideo: sizeVideo});
-          }}
-          noUpdateInCloud={true}
-          hideFullScreenButton={true}
-          placeHolderImg={thumbnail}
-          styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
-          styleVideo={styleApp.fullSize}
-          linkedPlayers={[...linkedPlayers[i]].map(index => this.videoPlayerRefs[index])}
-          {...propsWhenRecording}
-          onRef={(ref) => {
-            this.videoPlayerRefs[i] = ref;
-          }}
-        />
-      </View>
+      <SinglePlayer
+        index={i}
+        key={archiveID}
+        onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
+        disableControls={disableControls}
+        numArchives={numArchives}
+        isDrawingEnabled={isDrawingEnabled}
+        linkedPlayers={linkedPlayers}
+        id={archiveID}
+        local={local}
+        landscape={landscape}
+        propsWhenRecording={propsWhenRecording}
+        videoPlayerRefs={this.videoPlayerRefs}
+      />
     );
   };
+  buttonSharing = () => {
+    const {route} = this.props;
+    const {connectToSession, archives} = route.params;
+    if (!connectToSession) return null;
 
+    return (
+      <ButtonShareVideo
+        onRef={(ref) => (this.buttonShareRef = ref)}
+        archiveID={archives[0].id}
+        coachSessionID={connectToSession}
+        togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
+        open={(val) => console.log('open', val)}
+        getVideoState={() => this.videoPlayerRef.getState()}
+      />
+    );
+  };
   linkButtonStyleByIndex = (i, total) => {
     const {landscape} = this.state;
     const {height, width} = Dimensions.get('screen');
@@ -524,7 +528,7 @@ class VideoPlayerPage extends Component {
       style = {
         ...style,
         right: gap * (i + 1) - 15,
-        top: (height / 2) - 25,
+        top: height / 2 - 25,
         height: 50,
         width: 50,
       };
@@ -533,7 +537,7 @@ class VideoPlayerPage extends Component {
       style = {
         ...style,
         bottom: gap * (i + 1) - 25,
-        left: (width / 2) - 25,
+        left: width / 2 - 25,
         width: 50,
         height: 50,
       };
@@ -543,16 +547,21 @@ class VideoPlayerPage extends Component {
 
   linkButtons = () => {
     const {archives} = this.state;
-    const adjPairs = archives.map((archive, i) => {
-      return i === archives.length - 1
-        ? null
-        : {
-            a: i,
-            b: i + 1,
-          };
-    }).filter(x => x);
+    const adjPairs = archives
+      .map((archive, i) => {
+        return i === archives.length - 1
+          ? null
+          : {
+              a: i,
+              b: i + 1,
+            };
+      })
+      .filter((x) => x);
     const buttons = adjPairs.map(({a, b}, i) => {
-      const linkButtonContainer = this.linkButtonStyleByIndex(i, adjPairs.length);
+      const linkButtonContainer = this.linkButtonStyleByIndex(
+        i,
+        adjPairs.length,
+      );
       return (
         <View style={linkButtonContainer}>
           <Button
@@ -568,7 +577,6 @@ class VideoPlayerPage extends Component {
             click={() => this.toggleLink(a, b)}
           />
         </View>
-
       );
     });
     return buttons;
@@ -577,8 +585,9 @@ class VideoPlayerPage extends Component {
   watchVideosView = () => {
     const {archives} = this.state;
     return (
-      <View style={[styleApp.stylePage, {backgroundColor: colors.title}]}>
+      <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
         {this.header()}
+        {this.buttonSharing()}
         <AudioRecorderPlayer
           onRef={(ref) => {
             this.AudioRecorderPlayerRef = ref;
@@ -588,7 +597,6 @@ class VideoPlayerPage extends Component {
         {this.buttonPreview()}
         {archives.map((archive, i) => this.singlePlayer(archive, i))}
         {this.linkButtons()}
-
       </View>
     );
   };

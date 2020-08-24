@@ -112,15 +112,19 @@ export default class PinchableBox extends Component {
     }
   };
   render() {
-    const {styleContainer, component} = this.props;
+    const {styleContainer, component, pinchEnable} = this.props;
     return (
       <PanGestureHandler
-        onGestureEvent={this.onPanGestureEvent}
-        onHandlerStateChange={this._onHandlerStateChange}>
+        onGestureEvent={pinchEnable ? this.onPanGestureEvent : () => null}
+        onHandlerStateChange={
+          pinchEnable ? this._onHandlerStateChange : () => null
+        }>
         <Animated.View style={styleContainer}>
           <PinchGestureHandler
-            onGestureEvent={this.onPinchGestureEvent}
-            onHandlerStateChange={this.onPinchHandlerStateChange}>
+            onGestureEvent={pinchEnable ? this.onPinchGestureEvent : () => null}
+            onHandlerStateChange={
+              pinchEnable && this.onPinchHandlerStateChange
+            }>
             <Animated.View style={styleContainer}>
               <TapGestureHandler
                 onHandlerStateChange={this._onSingleTap}
@@ -128,7 +132,9 @@ export default class PinchableBox extends Component {
                 <Animated.View style={styleContainer}>
                   <TapGestureHandler
                     ref={this.doubleTapRef}
-                    onHandlerStateChange={this._onDoubleTap}
+                    onHandlerStateChange={
+                      pinchEnable ? this._onDoubleTap : () => null
+                    }
                     numberOfTaps={2}>
                     <Animated.View
                       collapsable={false}
