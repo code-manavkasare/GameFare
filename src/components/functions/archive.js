@@ -10,13 +10,13 @@ import {navigate} from '../../../NavigationService';
 const bindArchive = (archiveID) => {
   const isArchiveBinded = store.getState().bindedArchives[archiveID];
   const currentArchive = store.getState().archives[archiveID];
-  if (!isArchiveBinded)
+  if (!isArchiveBinded) {
     database()
       .ref('archivedStreams/' + archiveID)
       .on('value', async function(snap) {
         let archive = snap.val();
         let {url} = archive;
-        if (!currentArchive) url = await convertToProxyURL(url);
+        url = await convertToProxyURL(url);
         store.dispatch(
           setArchive({
             ...archive,
@@ -27,6 +27,7 @@ const bindArchive = (archiveID) => {
         );
         store.dispatch(setArchiveBinded({id: archiveID, isBinded: true}));
       });
+  }
 };
 
 const unbindArchive = async (archiveID) => {

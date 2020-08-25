@@ -13,6 +13,7 @@ import styleApp from '../../../../style/style';
 import sizes from '../../../../style/sizes';
 import {displayTime} from '../../../../functions/coach';
 import ControlBar from './ControlBar';
+import Filmstrip from './Filmstrip';
 
 class VisualSeekBar extends Component {
   constructor(props) {
@@ -37,26 +38,30 @@ class VisualSeekBar extends Component {
       paused: this.props.paused ? this.props.paused : false,
 
       //Dynamic for zoom of seekbar
-      seekbarBounds: [0.05 * width, 0.95 * width],
+      seekbar: {
+        xOffset: new Animated.Value(0.05 * width),
+        width: new Animated.Value(0.9 * width),
+      },
     };
     //Static for playhead
     this.playheadPosBounds = [0.05 * width, 0.95 * width];
-    const {seekbarBounds} = this.state;
+    const {seekbar} = this.state;
     const initialPlayhead = Number(
-      (currentTime / totalTime) * (seekbarBounds[1] - seekbarBounds[0]) +
-        seekbarBounds[0],
+      (currentTime / totalTime) * seekbar.width + seekbar.xOffset,
     );
     this.playheadPosition = new Animated.Value(
       initialPlayhead ? initialPlayhead : this.playheadPosBounds[0],
     );
-    this._lastPlayheadPos = this.playheadPosBounds[0];
+
     this._revealSeekbar = new Animated.Value(0);
 
+    this._lastPlayheadPos = this.playheadPosBounds[0];
+    this._lastSeekbar = {
+      xOffset: seekbar.xOffset._value,
+      width: seekbar.width._value,
+    };
+
     this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
         /// PLAYHEAD POSITIONAL MANAGEMENT
         const {disableControls} = this.props;
@@ -65,6 +70,8 @@ class VisualSeekBar extends Component {
         }
         const {moveX, dx} = gestureState;
         const originX = moveX - dx;
+        // console.log(originX);
+        // console.log(this._lastPlayheadPos);
         if (
           originX > this._lastPlayheadPos - 20 &&
           originX < this._lastPlayheadPos + 20
@@ -76,17 +83,23 @@ class VisualSeekBar extends Component {
               ? this.playheadPosBounds[1]
               : this._lastPlayheadPos + dx;
           this.movePlayhead(playheadToValue, true);
+        } else {
+          // this.zoomSeekbar(dx);
         }
       },
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderStart: (evt, gestureState) => {
-        const {disableControls} = this.props;
+        const {disableControls, onSlidingStart} = this.props;
         if (disableControls) {
           return;
         }
-
-        const {onSlidingStart} = this.props;
-        onSlidingStart(this.getCurrentTime());
+        const {moveX, dx} = gestureState;
+        const originX = moveX - dx;
+        if (
+          originX > this._lastPlayheadPos - 20 &&
+          originX < this._lastPlayheadPos + 20
+        ) {
+          onSlidingStart(this.getCurrentTime());
+        }
       },
       onPanResponderRelease: (evt, gestureState) => {
         const {disableControls} = this.props;
@@ -96,10 +109,21 @@ class VisualSeekBar extends Component {
 
         const {onSlidingComplete} = this.props;
         if (this.playheadPosition._value !== this._lastPlayheadPos) {
+          console.log(
+            'sliding complete',
+            this.playheadPosition._value,
+            this._lastPlayheadPos,
+          );
           this._lastPlayheadPos = this.playheadPosition._value;
+          console.log(this._lastPlayheadPos);
           onSlidingComplete(this.getCurrentTime());
         }
       },
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
     });
   }
   componentDidMount() {
@@ -107,7 +131,12 @@ class VisualSeekBar extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     const {width} = this.state;
+    const {seekbar: prevSeekbar, width: prevWidth} = prevState;
     if (width !== prevState.width) {
+      const newSeekbar = {
+        xOffset: (prevSeekbar.xOffset._value / prevWidth) * width,
+        width: (prevSeekbar.width._value / prevWidth) * width,
+      };
       const newBounds = [0.05 * width, 0.95 * width];
       let newValue =
         ((this.playheadPosition._value - this.playheadPosBounds[0]) /
@@ -115,29 +144,20 @@ class VisualSeekBar extends Component {
           (newBounds[1] - newBounds[0]) +
         newBounds[0];
       this.playheadPosition.setValue(newValue);
+      this.state.seekbar.xOffset.setValue(newSeekbar.xOffset);
+      this.state.seekbar.width.setValue(newSeekbar.width);
       this.playheadPosBounds = newBounds;
     }
   }
   static getDerivedStateFromProps(props, state) {
     const {currentScreenSize, width: propsWidth, size} = props;
     const {currentWidth: screenWidth} = currentScreenSize;
-    const {seekbarBounds, width: prevWidth} = state;
 
     const width = (propsWidth ? propsWidth : screenWidth) * 0.96;
     let newState = {
       size: size ? size : 'lg',
       width,
     };
-    if (width !== prevWidth) {
-      const oldBounds = [
-        seekbarBounds[0] / prevWidth,
-        seekbarBounds[1] / prevWidth,
-      ];
-      newState = {
-        ...newState,
-        seekbarBounds: [oldBounds[0] * width, oldBounds[1] * width],
-      };
-    }
     if (props.paused !== state.paused) {
       newState = {
         ...newState,
@@ -166,10 +186,10 @@ class VisualSeekBar extends Component {
       this.sliderRef?.setCurrentTime(currentTime);
       this.currentTimeRef?.setCurrentTime(currentTime);
 
-      const {seekbarBounds} = this.state;
+      const {seekbar} = this.state;
       const playheadPosition =
-        (currentTime / totalTime) * (seekbarBounds[1] - seekbarBounds[0]) +
-        seekbarBounds[0];
+        (currentTime / totalTime) * seekbar.width._value +
+        seekbar.xOffset._value;
       this.movePlayhead(playheadPosition, false);
     }
   }
@@ -177,15 +197,21 @@ class VisualSeekBar extends Component {
     const {seek, totalTime, paused, onSlidingStart} = this.props;
     const {width} = this.state;
 
-    this.playheadPosition.setValue(toValue);
+    // if (toValue >= this.playheadPosBounds[1]) {
+    //   const seekbarOffset =
+    //     this._lastSeekbar.xOffset - (toValue - this._lastPlayheadPos);
+    //   this.state.seekbar.xOffset.setValue(seekbarOffset);
+    //   this._lastSeekbar.xOffset = seekbarOffset;
+    // }
 
+    this.playheadPosition.setValue(toValue);
     if (!updateVideoOnSeek) {
-      this._lastPlayheadPos = this.playheadPosition._value;
+      this._lastPlayheadPos = toValue;
     } else {
-      const {seekbarBounds} = this.state;
+      const {seekbar} = this.state;
       const newTime =
-        ((toValue - seekbarBounds[0]) / (seekbarBounds[1] - seekbarBounds[0])) *
-        totalTime;
+        ((toValue - seekbar.xOffset._value) / seekbar.width._value) * totalTime;
+      // console.log(newTime);
       if (!paused) {
         onSlidingStart(newTime);
       }
@@ -194,8 +220,8 @@ class VisualSeekBar extends Component {
       this.currentTimeRef?.setCurrentTime(newTime);
     }
 
-    // current time position change
-    if (this.playheadPosition._value > width - 90) {
+    // current time position change when the playhead gets too close
+    if (toValue > width - 90) {
       this.currentTimeRef?.overrideStyle({
         left: null,
         right: 5,
@@ -209,6 +235,38 @@ class VisualSeekBar extends Component {
       });
     }
   }
+  zoomSeekbar(dx) {
+    const {width} = this.state;
+
+    const seekbarWidthValue =
+      this._lastSeekbar.width + dx < 0.9 * width
+        ? 0.9 * width
+        : this._lastSeekbar.width + dx > 1000
+        ? 1000
+        : this._lastSeekbar.width + dx;
+    const playheadToValue =
+      ((this._lastPlayheadPos - this._lastSeekbar.xOffset) /
+        this._lastSeekbar.width) *
+        seekbarWidthValue +
+        this._lastSeekbar.xOffset <
+      this.playheadPosBounds[0]
+        ? this.playheadPosBounds[0]
+        : ((this._lastPlayheadPos - this._lastSeekbar.xOffset) /
+            this._lastSeekbar.width) *
+            seekbarWidthValue +
+            this._lastSeekbar.xOffset >
+          this.playheadPosBounds[1]
+        ? this.playheadPosBounds[1]
+        : ((this._lastPlayheadPos - this._lastSeekbar.xOffset) /
+            this._lastSeekbar.width) *
+            seekbarWidthValue +
+          this._lastSeekbar.xOffset;
+
+    this.playheadPosition.setValue(playheadToValue);
+    this.state.seekbar.width.setValue(seekbarWidthValue);
+    this._lastSeekbar.width = seekbarWidthValue;
+    this._lastPlayheadPos = playheadToValue;
+  }
   getPaused() {
     return this.state.paused;
   }
@@ -218,16 +276,18 @@ class VisualSeekBar extends Component {
 
   seekbarMarkers() {
     const {totalTime} = this.props;
-    const {seekbarBounds} = this.state;
+    const {seekbar} = this.state;
 
-    const width = seekbarBounds[1] - seekbarBounds[0];
+    const width = seekbar.width._value;
 
     let playheadTimes = [0, 0];
     if (totalTime) {
       const minTime =
-        ((this.playheadPosBounds[0] - seekbarBounds[0]) / width) * totalTime;
+        ((this.playheadPosBounds[0] - seekbar.xOffset._value) / width) *
+        totalTime;
       const maxTime =
-        ((this.playheadPosBounds[1] - seekbarBounds[1]) / width) * totalTime +
+        ((this.playheadPosBounds[1] - seekbar.xOffset._value + width) / width) *
+          totalTime +
         totalTime;
       playheadTimes = [
         minTime >= 0 ? minTime : 0,
@@ -285,12 +345,9 @@ class VisualSeekBar extends Component {
   }
 
   seekbar() {
-    const {disableControls} = this.props;
-    const {seekbarBounds, size} = this.state;
+    const {disableControls, source} = this.props;
+    const {seekbar, size, width} = this.state;
     const small = size === 'sm';
-
-    //TODO Alter according to zoom level (0.9 * width is 1.0x zoom level)
-    const width = seekbarBounds[1] - seekbarBounds[0];
 
     const seekbarContainerStyle = {
       ...styles.seekbarContainer,
@@ -304,16 +361,26 @@ class VisualSeekBar extends Component {
     const seekbarStyle = {
       height: small ? 7 : 40,
       borderRadius: small ? 5 : 0,
-      width,
+      width: seekbar.width,
       backgroundColor: colors.grey + '40',
       marginTop: 5,
-      left: seekbarBounds[0],
+      transform: [{translateX: seekbar.xOffset}],
     };
 
     return (
       <View style={seekbarContainerStyle}>
         <View style={panHandlerStyle} {...this.panResponder.panHandlers}>
-          <Animated.View style={seekbarStyle} />
+          <Animated.View style={seekbarStyle}>
+            {!small && (
+              <Filmstrip
+                onRef={(ref) => (this.filmstripRef = ref)}
+                source={source}
+                seekbar={seekbar}
+                width={width}
+                height={seekbarStyle.height}
+              />
+            )}
+          </Animated.View>
           {this.seekbarMarkers()}
           {this.playhead()}
         </View>
@@ -356,27 +423,29 @@ class VisualSeekBar extends Component {
     };
 
     return (
-      visible && (
-        <Animated.View style={containerStyle}>
-          {this.seekbar()}
+      // visible && (
+      <Animated.View
+        pointerEvents={visible ? null : 'none'}
+        style={containerStyle}>
+        {this.seekbar()}
 
-          <ControlBar
-            disableControls={disableControls}
-            size={size}
-            getCurrentTime={this.getCurrentTime.bind(this)}
-            setCurrentTime={this.setCurrentTime.bind(this)}
-            togglePlayPause={() => togglePlayPause()}
-            totalTime={totalTime}
-            seek={(time) => seek(time)}
-            onSlidingComplete={(time, force) => onSlidingComplete(time, force)}
-            paused={paused}
-            prevPaused={prevPaused}
-            updatePlayRate={(rate) => updatePlayRate(rate)}
-          />
+        <ControlBar
+          disableControls={disableControls}
+          size={size}
+          getCurrentTime={this.getCurrentTime.bind(this)}
+          setCurrentTime={this.setCurrentTime.bind(this)}
+          togglePlayPause={() => togglePlayPause()}
+          totalTime={totalTime}
+          seek={(time) => seek(time, true)}
+          onSlidingComplete={(time, force) => onSlidingComplete(time, force)}
+          paused={paused}
+          prevPaused={prevPaused}
+          updatePlayRate={(rate) => updatePlayRate(rate)}
+        />
 
-          <BlurView style={styles.blurView} blurType="dark" blurAmount={20} />
-        </Animated.View>
-      )
+        <BlurView style={styles.blurView} blurType="dark" blurAmount={20} />
+      </Animated.View>
+      // )
     );
   }
 

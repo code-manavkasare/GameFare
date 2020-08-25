@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  Animated
+  Animated,
 } from 'react-native';
 import Video from 'react-native-video';
 import StatusBar from '@react-native-community/status-bar';
@@ -29,25 +29,23 @@ export default class LogoutView extends Component {
       paused: true,
       displayVideo: false,
     };
-    this.fadeInAnimation = new Animated.Value(1)
+    this.fadeInAnimation = new Animated.Value(1);
   }
   async componentDidMount() {
     await StatusBar.setBarStyle('dark-content', true);
     this.setState({displayVideo: true});
     await timeout(500);
-    this.fadeIn()
+    this.fadeIn();
   }
 
   fadeIn() {
-    Animated.timing(
-      this.fadeInAnimation, 
-      native(0, 600))
-    .start()
+    Animated.timing(this.fadeInAnimation, native(0, 600)).start();
   }
 
   loader() {
     return (
-      <Animated.View style={{...styles.loadingView, opacity: this.fadeInAnimation}}>
+      <Animated.View
+        style={{...styles.loadingView, opacity: this.fadeInAnimation}}>
         <View
           style={[
             styleApp.center,
@@ -62,21 +60,39 @@ export default class LogoutView extends Component {
           <Loader color={colors.white} size={100} type={2} speed={2.2} />
         </View>
       </Animated.View>
-    )
+    );
   }
 
   logoutView() {
     const {paused, displayVideo} = this.state;
     const opacity = this.fadeInAnimation.interpolate({
-      inputRange:[0,1],
-      outputRange:[1,0]
-    })
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+    });
+
+    const videoStyle = () => {
+      let videoWidth = height * (9 / 16);
+      let videoHeight = height;
+      if (videoWidth < width) {
+        videoWidth = width;
+        videoHeight = width * (16 / 9);
+      }
+      const video = {
+        width: videoWidth,
+        height: videoHeight,
+      };
+      return {
+        ...video,
+        ...styles.video,
+      };
+    };
+
     return (
       <View
         style={[
           styleApp.fullSize,
           {
-            height: height
+            height: height,
           },
         ]}>
         {this.loader()}
@@ -88,18 +104,18 @@ export default class LogoutView extends Component {
             source={require('../../../../../img/videos/intro-loop.mp4')} // Can be a URL or a local file.
             ref={(ref) => {
               this.player = ref;
-            }} 
+            }}
             onLoad={() => this.setState({paused: false})}
-            style={styles.video}
+            style={videoStyle()}
           />
         )}
-        <Animated.View style={{ ...styles.logoContainer, opacity }}>
+        <Animated.View style={{...styles.logoContainer, opacity}}>
           <Animated.Image
             style={{width: 230, height: 50, position: 'absolute'}}
             source={require('../../../../../img/logos/logoTitle.png')}
           />
         </Animated.View>
-        <Animated.View style={{ ...styles.buttonContainer, opacity }}>
+        <Animated.View style={{...styles.buttonContainer, opacity}}>
           <Button
             backgroundColor="green"
             onPressColor={colors.greenLight}
@@ -126,8 +142,6 @@ export default class LogoutView extends Component {
 
 const styles = StyleSheet.create({
   video: {
-    height: height,
-    width: height*(9/16),
     top: 0,
     position: 'absolute',
     zIndex: -1,
@@ -141,23 +155,23 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginLeft: '5%',
-    marginRight:'5%',
+    marginRight: '5%',
     position: 'absolute',
     bottom: marginBottomApp + 15,
-    width:'90%'
+    width: '90%',
   },
   logoContainer: {
     ...styleApp.fullSize,
     ...styleApp.center,
-    height:height*0.12,
-    top:marginTopApp,
-    position:'absolute'
+    height: height * 0.12,
+    top: marginTopApp,
+    position: 'absolute',
   },
   loadingView: {
-    ...styleApp.fullSize, 
-    ...styleApp.center, 
-    width, 
-    position:'absolute', 
-    backgroundColor: colors.blue
-  }
+    ...styleApp.fullSize,
+    ...styleApp.center,
+    width,
+    position: 'absolute',
+    backgroundColor: colors.blue,
+  },
 });
