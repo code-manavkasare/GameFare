@@ -26,7 +26,9 @@ class SinglePlayer extends Component {
   componentDidMount = () => {
     this.props.onRef(this);
     const {local, id} = this.props;
-    if (!local) bindArchive(id);
+    if (!local) {
+      bindArchive(id);
+    }
   };
   playerStyleByIndex = (i, total) => {
     const {landscape} = this.props;
@@ -80,7 +82,9 @@ class SinglePlayer extends Component {
 
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
-    if (!archive) return this.viewLoader(playerStyle);
+    if (!archive) {
+      return this.viewLoader(playerStyle);
+    }
     return (
       <View style={playerStyle}>
         <VideoPlayer

@@ -44,13 +44,15 @@ const generateSnippetsFromFlags = async (source, flags) => {
       saveWithCurrentDate: true,
     };
 
-    if (!source) flags[f].snippetLocalPath = 'simulator';
-    else
+    if (!source) {
+      flags[f].snippetLocalPath = 'simulator';
+    } else {
       await ProcessingManager.trim(source, trimOptions).then(
         (snippetLocalPath) => {
           flags[f].snippetLocalPath = snippetLocalPath;
         },
       );
+    }
   }
   return flags;
 };
@@ -113,7 +115,9 @@ const arrayUploadFromSnippets = async ({
   return snippets;
 };
 const addLocalVideo = async (video) => {
-  if (!video.id) video.id = getVideoUUID(video.url);
+  if (!video.id) {
+    video.id = getVideoUUID(video.url);
+  }
   await store.dispatch(addVideos({[video.id]: video}));
 };
 
@@ -134,11 +138,9 @@ const recordVideo = async () => {
 
 const openVideoPlayer = async ({video, open, connectToSession}) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  if (open)
-    return navigate('VideoPlayerPage', {
-      archives: [{id: video.id, local: video.local}],
-      connectToSession,
-    });
+  if (open) {
+    return navigate('VideoPlayerPage', {archives: [video]});
+  }
   return goBack();
 };
 
@@ -243,6 +245,34 @@ const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
   return allVideos;
 };
 
+const generateThumbnailSet = (source, timeBounds, size, callback) => {
+  if (!source) {
+    return;
+  }
+  console.log(timeBounds, size);
+  const dt = (timeBounds[1] - timeBounds[0]) / size;
+  console.log('dt', dt);
+  const m = timeBounds[0] + dt / 2;
+  console.log('m', m);
+  let thumbnails = [];
+  for (var x = 0; x < size; x++) {
+    let time = (dt * x + m) * 1000;
+    thumbnails.push(
+      createThumbnail({
+        url: source,
+        timeStamp: time,
+      }).then((r) => {
+        // console.log(time, r.path);
+        if (callback) {
+          callback(r);
+        }
+        return r;
+      }),
+    );
+  }
+  return thumbnails;
+};
+
 const getFirebaseVideoByID = (id) => {
   return store.getState().archives[id];
 };
@@ -263,4 +293,5 @@ export {
   shareVideosWithTeam,
   getFirebaseVideoByID,
   getLocalVideoByID,
+  generateThumbnailSet,
 };
