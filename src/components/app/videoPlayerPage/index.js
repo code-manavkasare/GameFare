@@ -158,6 +158,8 @@ class VideoPlayerPage extends Component {
     if (this.playersAreLinked(indexA, indexB)) {
       this.unlinkPlayers(indexA, indexB);
     } else {
+      this.videoPlayerRefs[indexA].togglePlayPause(true);
+      this.videoPlayerRefs[indexB].togglePlayPause(true);
       this.linkPlayers(indexA, indexB);
     }
   };
