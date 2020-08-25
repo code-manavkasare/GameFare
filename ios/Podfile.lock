@@ -468,7 +468,7 @@ PODS:
   - react-native-mixpanel (1.2.0):
     - Mixpanel (~> 3.6.0)
     - React
-  - react-native-netinfo (5.9.5):
+  - react-native-netinfo (5.9.6):
     - React
   - react-native-orientation-locker (1.1.8):
     - React
@@ -561,7 +561,7 @@ PODS:
     - React
   - ReactNativeKeyboardTrackingView (5.7.0):
     - React
-  - rn-fetch-blob (0.11.2):
+  - rn-fetch-blob (0.12.0):
     - React-Core
   - RNAwesomeCardIO (0.8.3):
     - React
@@ -1149,7 +1149,7 @@ SPEC CHECKSUMS:
   react-native-mapbox-gl: 18785637738ca8b25c3633db431d6614ec7fc9bf
   react-native-maps: 6e499eee4eabf422ba8b6f94e993cc768bf35153
   react-native-mixpanel: d644efe1ca33d2646d5cba29e24a13ebc9b37209
-  react-native-netinfo: a53b00d949b6456913aaf507d9dba90c4008c611
+  react-native-netinfo: 38a1e0b3e89b48e4b5833ed475d8df5f049f6f90
   react-native-orientation-locker: f0ca1a8e5031dab6b74bfb4ab33a17ed2c2fcb0d
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-screen-brightness: 9eefe6db96a5d757e63cdfce8e48d7c9039f2af2
@@ -1174,7 +1174,7 @@ SPEC CHECKSUMS:
   ReactNativeAutogrowTextinput: 571f3260e200d91ea22fab160452f26d2fd5d55b
   ReactNativeKeyboardInput: 39fd96d68b71562a722e627a6c58741c8094e103
   ReactNativeKeyboardTrackingView: 02137fac3b2ebd330d74fa54ead48b14750a2306
-  rn-fetch-blob: f525a73a78df9ed5d35e67ea65e79d53c15255bc
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNAwesomeCardIO: 14d78f3e76abaf503068c9f4513ff6c4a516d958
   RNCAsyncStorage: d059c3ee71738c39834a627476322a5a8cd5bf36
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
@@ -1210,6 +1210,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 65d3fd9c5fa8118ceb5ef42fb91f1fa9bae0c141
+PODFILE CHECKSUM: 4f0b3f38a7fbcc9ff1d43e0198aea929d192ab60
 
 COCOAPODS: 1.9.3

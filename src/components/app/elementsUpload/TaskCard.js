@@ -16,7 +16,7 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
-import {FormatDate, formatDuration} from '../../functions/date'
+import {FormatDate, formatDuration} from '../../functions/date';
 import AllIcons from '../../layout/icons/AllIcons';
 
 /*
@@ -33,21 +33,21 @@ class TaskCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      task: {}
-    }
+      task: {},
+    };
   }
 
   componentDidMount() {
-    this.props.onRef(this)
+    this.props.onRef(this);
   }
 
-  static getDerivedStateFromProps (props, state) {
+  static getDerivedStateFromProps(props, state) {
     const {task} = props;
-    let stateTask = {...task}
-    if (!task.progress) stateTask.progress = 0
+    let stateTask = {...task};
+    if (!task.progress) stateTask.progress = 0;
     return {
-      task: stateTask
-    }
+      task: stateTask,
+    };
   }
 
   thumbnail() {
@@ -55,11 +55,14 @@ class TaskCard extends Component {
     return (
       <View style={styles.fullCenter}>
         <View style={{...styles.thumbnail}}>
-        {task.videoInfo.thumbnail ? (
-          <Image source={{uri: task.videoInfo.thumbnail}} style={styles.thumbnail} />
-        ) : (
-          <View style={styles.placeholderContainer} />
-        )}
+          {task?.videoInfo?.thumbnail ? (
+            <Image
+              source={{uri: task.videoInfo.thumbnail}}
+              style={styles.thumbnail}
+            />
+          ) : (
+            <View style={styles.placeholderContainer} />
+          )}
         </View>
       </View>
     );
@@ -72,18 +75,18 @@ class TaskCard extends Component {
     const {type, taskName} = task;
     const {currentWidth: width} = currentScreenSize;
     return (
-      <View style={{width:'100%'}}>
-        <Text style={{...styleApp.title, fontSize: 15, marginBottom:5}}>
+      <View style={{width: '100%'}}>
+        <Text style={{...styleApp.title, fontSize: 15, marginBottom: 5}}>
           {type === 'image'
             ? taskName
-            : formatDuration(task.videoInfo.durationSeconds)}
+            : formatDuration(task?.videoInfo?.durationSeconds)}
         </Text>
-        <Text style={{...styleApp.text, fontSize: 15, marginBottom:15}}>
+        <Text style={{...styleApp.text, fontSize: 15, marginBottom: 15}}>
           <FormatDate date={task.date} />
         </Text>
         <Progress.Bar
           color={colors.primaryLight}
-          width={width*0.65}
+          width={width * 0.65}
           progress={task.progress}
           borderWidth={0}
           unfilledColor={colors.grey}
@@ -112,10 +115,11 @@ class TaskCard extends Component {
     const {task} = this.state;
     if (task.type === 'image') return null;
     return (
-      <View style={{
-        ...styles.card,
-        opacity: (task.progress !== 0 || index === 0) ? 1 : 0.7
-      }}>
+      <View
+        style={{
+          ...styles.card,
+          opacity: task.progress !== 0 || index === 0 ? 1 : 0.7,
+        }}>
         <Row>
           <Col size={15}>{this.thumbnail()}</Col>
           <Col size={5} />
@@ -129,7 +133,7 @@ class TaskCard extends Component {
 
   deleteJob(index) {
     const {uploadQueueAction} = this.props;
-    const {task} = this.state
+    const {task} = this.state;
     if (task.progress === 0) uploadQueueAction('dequeueFileUpload', index);
   }
 }
@@ -141,17 +145,17 @@ const styles = StyleSheet.create({
   },
   card: {
     ...styleApp.marginView,
-    paddingTop:15,
-    height:100,
-    paddingBottom:15,
-    overflow: 'hidden'
+    paddingTop: 15,
+    height: 100,
+    paddingBottom: 15,
+    overflow: 'hidden',
   },
   thumbnail: {
-    width:50,
-    height:70,
+    width: 50,
+    height: 70,
     ...styleApp.shadow,
     borderRadius: 6,
-    backgroundColor:colors.greyDark
+    backgroundColor: colors.greyDark,
   },
   textProgress: {
     ...styleApp.textBold,
@@ -175,8 +179,8 @@ const styles = StyleSheet.create({
     ...styleApp.fullSize,
     ...styleApp.center,
     position: 'absolute',
-    backgroundColor:colors.greyLight+'40',
-    opacity:0.8
+    backgroundColor: colors.greyLight + '40',
+    opacity: 0.8,
   },
   taskInfo: {
     paddingLeft: 10,
