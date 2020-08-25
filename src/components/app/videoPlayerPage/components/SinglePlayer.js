@@ -70,6 +70,7 @@ class SinglePlayer extends Component {
   singlePlayer = () => {
     const {
       archive,
+      id,
       index,
       numArchives,
       userID,
@@ -88,6 +89,7 @@ class SinglePlayer extends Component {
     return (
       <View style={playerStyle}>
         <VideoPlayer
+          archiveId={id}
           disableControls={disableControls}
           seekbarSize={seekbarSize}
           width={playerStyle.width}

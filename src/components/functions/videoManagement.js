@@ -245,24 +245,23 @@ const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
   return allVideos;
 };
 
-const generateThumbnailSet = (source, timeBounds, size, callback) => {
+const generateThumbnailSet = async (source, timeBounds, size, callback) => {
   if (!source) {
     return;
   }
-  console.log(timeBounds, size);
+  // console.log(timeBounds, size);
   const dt = (timeBounds[1] - timeBounds[0]) / size;
-  console.log('dt', dt);
+  // console.log('dt', dt);
   const m = timeBounds[0] + dt / 2;
-  console.log('m', m);
+  // console.log('m', m);
   let thumbnails = [];
   for (var x = 0; x < size; x++) {
     let time = (dt * x + m) * 1000;
     thumbnails.push(
-      createThumbnail({
+      await createThumbnail({
         url: source,
         timeStamp: time,
       }).then((r) => {
-        // console.log(time, r.path);
         if (callback) {
           callback(r);
         }
@@ -270,6 +269,7 @@ const generateThumbnailSet = (source, timeBounds, size, callback) => {
       }),
     );
   }
+  // console.log(thumbnails.length);
   return thumbnails;
 };
 
