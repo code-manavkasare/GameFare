@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Dimensions, View} from 'react-native';
 import {connect} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
 
 import VideoPlayer from '../../coachFlow/VideoPlayer/index';
 import styleApp from '../../../style/style';
@@ -33,19 +32,19 @@ class SinglePlayer extends Component {
   };
   playerStyleByIndex = (i, total) => {
     const {landscape} = this.props;
-    console.log('landscape here !!', landscape);
+    const {height, width} = Dimensions.get('screen');
     let style = {position: 'absolute'};
     if (landscape) {
       style = {
         ...style,
-        left: 0 + i * (width / total),
+        left: i * (width / total),
         height: height,
         width: width / total,
       };
     } else {
       style = {
         ...style,
-        bottom: 0 + i * (height / total),
+        bottom: i * (height / total),
         width: width,
         height: height / total,
       };
@@ -57,6 +56,9 @@ class SinglePlayer extends Component {
   }
   seekDiff(time) {
     this.videoPlayerRef.seekDiff(time);
+  }
+  getSeekBar() {
+    return this.videoPlayerRef?.visualSeekBarRef;
   }
   viewLoader(playerStyle) {
     return (

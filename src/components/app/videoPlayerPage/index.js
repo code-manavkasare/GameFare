@@ -159,6 +159,8 @@ class VideoPlayerPage extends Component {
     if (this.playersAreLinked(indexA, indexB)) {
       this.unlinkPlayers(indexA, indexB);
     } else {
+      this.videoPlayerRefs[indexA].togglePlayPause(true);
+      this.videoPlayerRefs[indexB].togglePlayPause(true);
       this.linkPlayers(indexA, indexB);
     }
   };
@@ -486,17 +488,17 @@ class VideoPlayerPage extends Component {
       : {};
 
     const {landscape} = this.state;
-    console.log('sinle player', archiveID);
     return (
       <SinglePlayer
         index={i}
         key={archiveID}
+        id={archiveID}
+
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
         numArchives={numArchives}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
-        id={archiveID}
         local={local}
         landscape={landscape}
         propsWhenRecording={propsWhenRecording}
