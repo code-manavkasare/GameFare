@@ -3,7 +3,8 @@ import database from '@react-native-firebase/database';
 
 import {store} from '../../../reduxStore';
 import {setArchive, setArchiveBinded} from '../../actions/archivesActions';
-import convertToProxyURL from 'react-native-video-cache';
+// import convertToProxyURL from 'react-native-video-cache';
+import convertToCache from 'react-native-video-cache';
 import {setLayout} from '../../actions/layoutActions';
 import {navigate} from '../../../NavigationService';
 
@@ -16,7 +17,11 @@ const bindArchive = (archiveID) => {
       .on('value', async function(snap) {
         let archive = snap.val();
         let {url} = archive;
-        url = await convertToProxyURL(url);
+        try {
+          url = await convertToCache(url);
+        } catch (e) {
+          console.log(e);
+        }
         store.dispatch(
           setArchive({
             ...archive,

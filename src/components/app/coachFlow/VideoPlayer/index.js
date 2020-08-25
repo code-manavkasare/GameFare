@@ -61,6 +61,7 @@ export default class VideoPlayer extends Component {
 
       videoLoading: true,
       videoLoaded: false,
+      seekbarLoaded: false,
       fullscreen: false,
       playRate: 1,
       muted: __DEV__ ? true : false,
@@ -79,13 +80,25 @@ export default class VideoPlayer extends Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    const {currentTime} = this.state;
+    const {currentTime, videoLoaded, seekbarLoaded} = this.state;
 
     if (prevState.currentTime !== currentTime) {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
       this.visualSeekBarRef.toggleVisible(true);
       this.PinchableBoxRef?.resetPosition();
+    }
+
+    if (
+      videoLoaded &&
+      seekbarLoaded &&
+      (!prevState.videoLoaded || !prevState.seekbarLoaded)
+    ) {
+      setTimeout(() => {
+        this.visualSeekBarRef?.toggleVisible(true);
+        this.seek(currentTime);
+        this.setState({paused: false});
+      }, 200);
     }
   }
 
@@ -241,7 +254,7 @@ export default class VideoPlayer extends Component {
       this.setState({prevPaused: undefined});
     }
     this.player.seek(time, 33);
-    onSeek(currentTime, time);
+    if (onSeek) onSeek(currentTime, time);
   };
   linkedOnSeek = async (time, fineSeek) => {
     const {linkedPlayers} = this.props;
@@ -281,6 +294,7 @@ export default class VideoPlayer extends Component {
   }
   render() {
     const {
+      archiveId,
       onScaleChange,
       onPositionChange,
       styleContainerVideo,
@@ -307,6 +321,7 @@ export default class VideoPlayer extends Component {
       videoLoading,
       muted,
       videoLoaded,
+      seekbarLoaded,
     } = this.state;
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
@@ -318,13 +333,15 @@ export default class VideoPlayer extends Component {
             styleApp.center,
             {backgroundColor: colors.black},
           ]}>
-          {videoLoading && this.fullScreenLoader()}
-          {!videoLoaded && (
-            <AsyncImage
-              style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
-              mainImage={thumbnail}
-            />
-          )}
+          {(videoLoading || !seekbarLoaded) && this.fullScreenLoader()}
+          {!videoLoaded ||
+            (!seekbarLoaded && (
+              <AsyncImage
+                resizeMode={'contain'}
+                style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
+                mainImage={thumbnail}
+              />
+            ))}
           <PinchableBox
             styleContainer={[styleApp.fullSize, styleApp.center]}
             onRef={(ref) => (this.PinchableBoxRef = ref)}
@@ -361,10 +378,8 @@ export default class VideoPlayer extends Component {
 
                     await this.setState({
                       videoLoaded: true,
+                      paused: true,
                     });
-                    const {currentTime} = this.state;
-                    this.visualSeekBarRef?.toggleVisible(true);
-                    this.seek(currentTime);
                   }}
                   muted={muted}
                   fullscreen={fullscreen}
@@ -389,8 +404,9 @@ export default class VideoPlayer extends Component {
             )}
           />
         </View>
-        {(url !== '' || __DEV__) && (
+        {url !== '' && (
           <VisualSeekBar
+            archiveId={archiveId}
             disableControls={disableControls}
             onRef={(ref) => (this.visualSeekBarRef = ref)}
             source={url}
@@ -407,6 +423,9 @@ export default class VideoPlayer extends Component {
             }
             onSlidingStart={() => this.onSlidingStart()}
             width={width}
+            onSeekbarLoad={() => {
+              this.setState({seekbarLoaded: true});
+            }}
           />
         )}
       </Animated.View>

@@ -345,7 +345,7 @@ class VisualSeekBar extends Component {
   }
 
   seekbar() {
-    const {disableControls, source} = this.props;
+    const {disableControls, source, onSeekbarLoad, archiveId} = this.props;
     const {seekbar, size, width} = this.state;
     const small = size === 'sm';
 
@@ -375,9 +375,11 @@ class VisualSeekBar extends Component {
               <Filmstrip
                 onRef={(ref) => (this.filmstripRef = ref)}
                 source={source}
+                archiveId={archiveId}
                 seekbar={seekbar}
                 width={width}
                 height={seekbarStyle.height}
+                onFilmstripLoad={() => onSeekbarLoad()}
               />
             )}
           </Animated.View>

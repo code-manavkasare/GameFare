@@ -56,11 +56,13 @@ export default class AsyncImage extends Component {
   }
   getMainImage() {
     const {mainImage, image} = this.props;
-    if (!mainImage) return image;
+    if (!mainImage) {
+      return image;
+    }
     return mainImage;
   }
   imgDisplay() {
-    const {style, mainImage} = this.props;
+    const {style, mainImage, resizeMode} = this.props;
     if (this.state.checkToken == 'null') {
       return (
         <Animated.View
@@ -70,7 +72,7 @@ export default class AsyncImage extends Component {
             width: style.width,
           }}>
           <FastImage
-            resizeMode={'cover'}
+            resizeMode={resizeMode ? resizeMode : 'cover'}
             onLoadEnd={() => {
               this.enterPictureCached();
               // if (mainImage) {
@@ -92,6 +94,7 @@ export default class AsyncImage extends Component {
     } else {
       return (
         <FastImage
+          resizeMode={resizeMode ? resizeMode : 'cover'}
           source={{
             cache: FastImage.cacheControl.web,
             uri: this.getMainImage(),
