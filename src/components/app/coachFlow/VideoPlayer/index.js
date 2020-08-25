@@ -220,7 +220,8 @@ export default class VideoPlayer extends Component {
     return this.setState({paused: true, slidingStartTime: currentTime});
   };
   onSeek = async (time, fineSeek) => {
-    const {paused, prevPaused} = this.state;
+    const {onSeek} = this.props;
+    const {paused, prevPaused, currentTime} = this.state;
     if (!paused) {
       await this.setState({paused: true, prevPaused: false});
     } else if (prevPaused === undefined) {
@@ -230,6 +231,7 @@ export default class VideoPlayer extends Component {
       this.setState({prevPaused: undefined});
     }
     this.player.seek(time, 33);
+    onSeek(currentTime, time);
   };
   linkedOnSeek = async (time, fineSeek) => {
     const {linkedPlayers} = this.props;

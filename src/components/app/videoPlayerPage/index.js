@@ -491,12 +491,13 @@ class VideoPlayerPage extends Component {
       <SinglePlayer
         index={i}
         key={archiveID}
+        id={archiveID}
+
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
         numArchives={numArchives}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
-        id={archiveID}
         local={local}
         landscape={landscape}
         propsWhenRecording={propsWhenRecording}
