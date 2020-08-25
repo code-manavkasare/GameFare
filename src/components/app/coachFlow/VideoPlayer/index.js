@@ -110,19 +110,27 @@ export default class VideoPlayer extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
+    let newState = {};
     if (
       !props.noUpdateInCloud &&
       (props.paused !== state.paused ||
         props.playRate !== state.playRate ||
         props.currentTime !== state.currentTime)
     ) {
-      return {
+      newState = {
+        ...newState,
         paused: props.paused,
         playRate: props.playRate,
         currentTime: props.currentTime,
       };
     }
-    return {};
+    if (props.seekbarSize === 'sm') {
+      newState = {
+        ...newState,
+        seekbarLoaded: true,
+      };
+    }
+    return newState;
   }
   getState() {
     return {
