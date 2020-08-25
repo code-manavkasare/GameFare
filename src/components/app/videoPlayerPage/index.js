@@ -485,7 +485,6 @@ class VideoPlayerPage extends Component {
       : {};
 
     const {landscape} = this.state;
-    console.log('sinle player', archiveID);
     return (
       <SinglePlayer
         index={i}

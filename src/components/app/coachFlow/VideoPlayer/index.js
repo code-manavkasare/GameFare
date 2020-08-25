@@ -137,7 +137,7 @@ export default class VideoPlayer extends Component {
       onPlayPause(index, !paused, currentTime);
     }
   };
-  toggleLinkedPlayPause = async (forcePause) => {
+  linkedTogglePlayPause = async (forcePause) => {
     const {linkedPlayers} = this.props;
     this.togglePlayPause(forcePause);
     linkedPlayers?.forEach((playerRef) =>
@@ -196,7 +196,7 @@ export default class VideoPlayer extends Component {
     onSlidingEnd(index, sliderTime, paused);
     return true;
   };
-  onLinkedSlidingComplete = async (sliderTime, forcePlay) => {
+  linkedOnSlidingComplete = async (sliderTime, forcePlay) => {
     const {linkedPlayers} = this.props;
     const {slidingStartTime} = this.state;
     this.onSlidingComplete(sliderTime, forcePlay);
@@ -230,6 +230,14 @@ export default class VideoPlayer extends Component {
       this.setState({prevPaused: undefined});
     }
     this.player.seek(time, 33);
+  };
+  linkedOnSeek = async (time, fineSeek) => {
+    const {linkedPlayers} = this.props;
+    const {currentTime} = this.state;
+    linkedPlayers?.forEach((playerRef) =>
+      playerRef.seekDiff(time - currentTime),
+    );
+    this.onSeek(time, fineSeek);
   };
 
   fullScreen() {
@@ -374,15 +382,15 @@ export default class VideoPlayer extends Component {
           disableControls={disableControls}
           onRef={(ref) => (this.visualSeekBarRef = ref)}
           size={seekbarSize}
-          togglePlayPause={this.toggleLinkedPlayPause.bind(this)}
+          togglePlayPause={this.linkedTogglePlayPause.bind(this)}
           currentTime={currentTime}
           totalTime={durationSeconds}
           paused={paused}
           prevPaused={prevPaused}
           updatePlayRate={(rate) => this.updatePlayRate(rate)}
-          seek={this.onSeek.bind(this)}
+          seek={this.linkedOnSeek.bind(this)}
           onSlidingComplete={(sliderTime, forcePlay) =>
-            this.onLinkedSlidingComplete(sliderTime, forcePlay)
+            this.linkedOnSlidingComplete(sliderTime, forcePlay)
           }
           onSlidingStart={() => this.onSlidingStart()}
           width={width}

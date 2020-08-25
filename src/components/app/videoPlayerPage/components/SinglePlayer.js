@@ -31,7 +31,6 @@ class SinglePlayer extends Component {
   };
   playerStyleByIndex = (i, total) => {
     const {landscape} = this.props;
-    console.log('landscape here !!', landscape);
     let style = {position: 'absolute'};
     if (landscape) {
       style = {
@@ -55,6 +54,9 @@ class SinglePlayer extends Component {
   }
   seekDiff(time) {
     this.videoPlayerRef.seekDiff(time);
+  }
+  getSeekBar() {
+    return this.videoPlayerRef?.visualSeekBarRef;
   }
   viewLoader(playerStyle) {
     return (
