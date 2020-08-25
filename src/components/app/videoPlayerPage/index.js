@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
+import convertToProxyURL from 'react-native-video-cache';
 
 import VideoPlayer from '../coachFlow/VideoPlayer/index';
 
@@ -506,7 +507,9 @@ class VideoPlayerPage extends Component {
   buttonSharing = () => {
     const {route} = this.props;
     const {connectToSession, archives} = route.params;
-    if (!connectToSession) return null;
+    if (!connectToSession) {
+      return null;
+    }
 
     return (
       <ButtonShareVideo

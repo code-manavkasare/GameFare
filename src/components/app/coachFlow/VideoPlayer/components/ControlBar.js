@@ -24,7 +24,7 @@ export default class ControlBar extends Component {
       {threshold: 10, forward: true},
     ];
 
-    this.speedConfig = [0.25, 0.5, 1, 2];
+    this.speedConfig = [0.5, 1, 2];
 
     this.focusedSpeedRowOpacity = new Animated.Value(1);
     this.speedSelectorOpacity = new Animated.Value(0);
@@ -43,7 +43,11 @@ export default class ControlBar extends Component {
 
     const buttonView = () => (
       <AllIcons
-        name={paused ? 'play' : 'pause'}
+        name={
+          (paused && prevPaused === undefined) || (paused && prevPaused)
+            ? 'play'
+            : 'pause'
+        }
         color={colors.white}
         size={20}
         type="font"
@@ -144,28 +148,42 @@ export default class ControlBar extends Component {
     };
 
     const onClick = async () => {
+      const middleValueSelected =
+        this.speedConfig.length % 2 === 1 &&
+        speed === this.speedConfig[Math.floor(this.speedConfig.length / 2)];
       if (!speedSelectorVisible) {
         this.setState({speedSelectorVisible: !speedSelectorVisible});
-        Animated.timing(this.focusedSpeedRowOpacity, native(0)).start();
+        const middleSelectedDelays = middleValueSelected ? [100, 0] : [0, 100];
+        Animated.timing(
+          this.focusedSpeedRowOpacity,
+          native(0, 100, middleSelectedDelays[0]),
+        ).start();
         Animated.timing(
           this.speedSelectorOpacity,
-          native(1, false, 150),
+          native(1, 100, middleSelectedDelays[1]),
         ).start();
       } else {
         updatePlayRate(speed);
+        const delay =
+          currentPlaybackSpeed === speed || middleValueSelected ? 0 : 200;
         this.setState({
           currentPlaybackSpeed: speed ? speed : currentPlaybackSpeed,
         });
+
+        const delays = middleValueSelected
+          ? [delay + 100, delay]
+          : [delay, delay + 100];
         Animated.timing(
           this.speedSelectorOpacity,
-          native(0, false, 300),
+          native(0, 100, delays[0]),
         ).start();
         Animated.timing(
           this.focusedSpeedRowOpacity,
-          native(1, false, 450),
-        ).start(() => {
+          native(1, 100, delays[1]),
+        ).start();
+        setTimeout(() => {
           this.setState({speedSelectorVisible: !speedSelectorVisible});
-        });
+        }, delays[1] + 200);
       }
     };
 
@@ -177,7 +195,11 @@ export default class ControlBar extends Component {
       <Col key={speed}>{this.speedButton(speed)}</Col>
     );
 
-    return <Row>{this.speedConfig.map(speedCol)}</Row>;
+    const rowStyle = {
+      maxWidth: this.speedConfig.length * 70,
+    };
+
+    return <Row style={rowStyle}>{this.speedConfig.map(speedCol)}</Row>;
   }
 
   speedRow() {
@@ -248,9 +270,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   speedSelectorRow: {
+    ...styleApp.center,
     width: '100%',
     position: 'absolute',
-    top: 0,
+    top: -2.5,
   },
   focusedSpeedButton: {
     ...styleApp.shadowWeak,

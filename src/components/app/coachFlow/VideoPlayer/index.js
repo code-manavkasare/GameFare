@@ -13,6 +13,7 @@ import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import {timing} from '../../../animations/animations';
 import VisualSeekBar from './components/VisualSeekbar';
+import convertToProxyURL from 'react-native-video-cache';
 
 export default class VideoPlayer extends Component {
   static propTypes = {
@@ -84,8 +85,17 @@ export default class VideoPlayer extends Component {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
       this.visualSeekBarRef.toggleVisible(true);
+      this.PinchableBoxRef?.resetPosition();
     }
   }
+
+  getProxySource = async (src) => {
+    const proxySource = await convertToProxyURL(src);
+    this.setState({proxySource});
+    console.log('proxySource');
+    console.log(proxySource);
+  };
+
   static getDerivedStateFromProps(props, state) {
     if (
       !props.noUpdateInCloud &&
@@ -369,24 +379,26 @@ export default class VideoPlayer extends Component {
             )}
           />
         </View>
-
-        <VisualSeekBar
-          disableControls={disableControls}
-          onRef={(ref) => (this.visualSeekBarRef = ref)}
-          size={seekbarSize}
-          togglePlayPause={this.toggleLinkedPlayPause.bind(this)}
-          currentTime={currentTime}
-          totalTime={durationSeconds}
-          paused={paused}
-          prevPaused={prevPaused}
-          updatePlayRate={(rate) => this.updatePlayRate(rate)}
-          seek={this.onSeek.bind(this)}
-          onSlidingComplete={(sliderTime, forcePlay) =>
-            this.onLinkedSlidingComplete(sliderTime, forcePlay)
-          }
-          onSlidingStart={() => this.onSlidingStart()}
-          width={width}
-        />
+        {(url !== '' || __DEV__) && (
+          <VisualSeekBar
+            disableControls={disableControls}
+            onRef={(ref) => (this.visualSeekBarRef = ref)}
+            source={url}
+            size={seekbarSize}
+            togglePlayPause={this.toggleLinkedPlayPause.bind(this)}
+            currentTime={currentTime}
+            totalTime={durationSeconds}
+            paused={paused}
+            prevPaused={prevPaused}
+            updatePlayRate={(rate) => this.updatePlayRate(rate)}
+            seek={this.onSeek.bind(this)}
+            onSlidingComplete={(sliderTime, forcePlay) =>
+              this.onLinkedSlidingComplete(sliderTime, forcePlay)
+            }
+            onSlidingStart={() => this.onSlidingStart()}
+            width={width}
+          />
+        )}
       </Animated.View>
     );
   }

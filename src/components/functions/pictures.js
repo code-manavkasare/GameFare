@@ -27,19 +27,25 @@ const permission = async (type) => {
   if (type === 'camera') {
     if (Platform.OS === 'ios') {
       var permission = await request(PERMISSIONS.IOS.CAMERA);
-      if (permission !== 'granted') return false;
+      if (permission !== 'granted') {
+        return false;
+      }
       return true;
     }
   } else if (type === 'library') {
     if (Platform.OS === 'ios') {
       var permission = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
-      if (permission !== 'granted') return false;
+      if (permission !== 'granted') {
+        return false;
+      }
       return true;
     }
   } else if (type === 'notification') {
     if (Platform.OS === 'ios') {
       const {status, settings} = await checkNotifications();
-      if (status !== 'granted') return false;
+      if (status !== 'granted') {
+        return false;
+      }
       return true;
     }
   }
@@ -79,7 +85,9 @@ const goToSettings = () => {
 
 async function takePicture() {
   var permissionVal = await permission('camera');
-  if (!permissionVal) return false;
+  if (!permissionVal) {
+    return false;
+  }
 
   let promise = new Promise(function(resolve, reject) {
     // executor (the producing code, "singer")
@@ -97,7 +105,9 @@ async function takePicture() {
 
 async function pickLibrary() {
   var permissionVal = await permission('library');
-  if (!permissionVal) return false;
+  if (!permissionVal) {
+    return false;
+  }
 
   let promise = new Promise(function(resolve, reject) {
     // executor (the producing code, "singer")
@@ -115,7 +125,9 @@ async function pickLibrary() {
 
 async function getPhotoUser() {
   const permissionLibrary = await permission('library');
-  if (!permissionLibrary) return false;
+  if (!permissionLibrary) {
+    return false;
+  }
   const {edges} = await CameraRoll.getPhotos({
     first: 80,
     assetType: 'All',
@@ -124,7 +136,9 @@ async function getPhotoUser() {
 }
 
 const sortVideos = (videos) => {
-  if (!videos) videos = {};
+  if (!videos) {
+    videos = {};
+  }
   return Object.values(videos)
     .sort((a, b) => a.startTimestamp - b.startTimestamp)
     .reverse();
@@ -181,7 +195,9 @@ const generateThumbnail = async (videoPath, timestamp) => {
 };
 
 const getVideoUUID = (path) => {
-  if (!path) return 'simulator';
+  if (!path) {
+    return 'simulator';
+  }
   const videoUUID = path
     ? path.split('/')[path.split('/').length - 1].split('.')[0]
     : generateID();
@@ -209,9 +225,13 @@ const getVideoInfo = async (videoUrl, thumbnail, timestamp) => {
 };
 
 const resolutionP = (size) => {
-  if (!size) return '720p';
+  if (!size) {
+    return '720p';
+  }
   const {height, width} = size;
-  if (width > height) return height + 'p';
+  if (width > height) {
+    return height + 'p';
+  }
   return width + 'p';
 };
 
