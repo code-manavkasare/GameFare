@@ -22,7 +22,9 @@ import {
   openVideoPlayer,
   getFirebaseVideoByID,
   getLocalVideoByID,
+  uploadLocalVideo,
 } from '../../functions/videoManagement';
+import {shareCloudVideoWithCoachSession} from '../../database/firebase/videosManagement';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
@@ -97,7 +99,6 @@ class VideoPlayerPage extends Component {
           archives.length !== nextVideos.length &&
           nextVideos.length !== prevVideos.length
         ) {
-
           const videoToAdd = nextVideos.filter(
             (item) => prevVideos.indexOf(item) == -1,
           )[0];
@@ -117,10 +118,7 @@ class VideoPlayerPage extends Component {
         linkedPlayers: props.route.params.archives.map((x) => new Set()),
       };
     }
-    return {
-      archives: state.archives,
-      linkedPlayers: state.archives.map((x) => new Set()),
-    };
+    return {};
   }
 
   startRecording = async () => {
@@ -150,7 +148,7 @@ class VideoPlayerPage extends Component {
     return linkedPlayers[indexA].has(indexB);
   };
 
-  linkPlayers = (a, b) => {
+  linkPlayers = async (a, b) => {
     let {linkedPlayers} = this.state;
     // union op
     const all = new Set();
@@ -165,10 +163,10 @@ class VideoPlayerPage extends Component {
     for (const elem of all) {
       linkedPlayers[elem] = new Set([...all].filter((i) => i !== elem));
     }
-    this.setState({linkedPlayers});
+    await this.setState({linkedPlayers});
   };
 
-  unlinkPlayers = (a, b) => {
+  unlinkPlayers = async (a, b) => {
     // a < b always true
     let {linkedPlayers} = this.state;
     const all = new Set();
@@ -195,16 +193,16 @@ class VideoPlayerPage extends Component {
         linkedPlayers[elem] = new Set([...higher].filter((i) => i !== elem));
       }
     }
-    this.setState({linkedPlayers});
+    await this.setState({linkedPlayers});
   };
 
-  toggleLink = (indexA, indexB) => {
+  toggleLink = async (indexA, indexB) => {
     if (this.playersAreLinked(indexA, indexB)) {
-      this.unlinkPlayers(indexA, indexB);
+      await this.unlinkPlayers(indexA, indexB);
     } else {
       this.videoPlayerRefs[indexA].togglePlayPause(true);
       this.videoPlayerRefs[indexB].togglePlayPause(true);
-      this.linkPlayers(indexA, indexB);
+      await this.linkPlayers(indexA, indexB);
     }
   };
 
@@ -417,53 +415,52 @@ class VideoPlayerPage extends Component {
         addVideo={() => {
           navigate('SelectVideosFromLibrary', {
             selectableMode: true,
+            hideCloud: false,
+            hideLocal: videosBeingShared ? true : false,
             selectOnly: true,
             selectOne: true,
             confirmVideo: async (
               selectedLocalVideos,
               selectedFirebaseVideos,
             ) => {
-              let addedArchive = null;
-              let updates = {};
+              let localVideoInfo = null;
+              let cloudVideoInfo = null;
               if (selectedLocalVideos.length >= 1) {
                 const id = selectedLocalVideos[0];
-                addedArchive = getLocalVideoByID(id);
+                const duplicate = archives.reduce(
+                  (duplicate, archive) => duplicate || archive.id === id,
+                  false,
+                );
+                if (duplicate) {return;}
+                localVideoInfo = getLocalVideoByID(id);
+                //cloudVideoInfo = await uploadLocalVideo(localVideoInfo);
               } else if (selectedFirebaseVideos.length >= 1) {
                 const id = selectedFirebaseVideos[0];
-                addedArchive = getFirebaseVideoByID(id);
-
-                if (videosBeingShared) {
-                  updates[
-                    `coachSessions/${coachSessionID}/sharedVideos/${id}/currentTime`
-                  ] = 0;
-                  updates[
-                    `coachSessions/${coachSessionID}/sharedVideos/${id}/paused`
-                  ] = true;
-                  updates[
-                    `coachSessions/${coachSessionID}/sharedVideos/${id}/playRate`
-                  ] = 1;
-                  updates[
-                    `coachSessions/${coachSessionID}/sharedVideos/${id}/id`
-                  ] = id;
-                  updates[
-                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/shareScreen`
-                  ] = true;
-                  updates[
-                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/videoIDSharing`
-                  ] = id;
-                  updates[
-                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
-                  ] = true;
-                }
+                const duplicate = archives.reduce(
+                  (duplicate, archive) => duplicate || archive.id === id,
+                  false,
+                );
+                if (duplicate) {return;}
+                cloudVideoInfo = getFirebaseVideoByID(id);
               }
-              if (addedArchive) {
+              if (localVideoInfo) {
                 let {archives, linkedPlayers} = this.state;
-                archives.push(addedArchive);
+                archives.push(localVideoInfo);
                 linkedPlayers.push(new Set());
                 await this.setState({archives, linkedPlayers});
-                database()
-                  .ref()
-                  .update(updates);
+              }
+              if (cloudVideoInfo) {
+                if (videosBeingShared) {
+                  shareCloudVideoWithCoachSession(
+                    cloudVideoInfo.id,
+                    coachSessionID,
+                    personSharingScreen,
+                  );
+                }
+                let {archives, linkedPlayers} = this.state;
+                archives.push(cloudVideoInfo);
+                linkedPlayers.push(new Set());
+                await this.setState({archives, linkedPlayers});
               }
             },
           });
@@ -585,7 +582,6 @@ class VideoPlayerPage extends Component {
         index={i}
         key={archiveID}
         id={archiveID}
-
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
         numArchives={numArchives}
@@ -594,7 +590,6 @@ class VideoPlayerPage extends Component {
         coachSessionID={coachSessionID}
         videosBeingShared={videosBeingShared}
         personSharingScreen={personSharingScreen}
-        id={archiveID}
         local={local}
         landscape={landscape}
         propsWhenRecording={propsWhenRecording}
@@ -677,7 +672,7 @@ class VideoPlayerPage extends Component {
               size: 20,
               color: 'white',
             }}
-            click={() => this.toggleLink(a, b)}
+            click={async () => await this.toggleLink(a, b)}
           />
         </View>
       );
@@ -726,7 +721,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
-  console.log('map state to props', props.route.params.coachSessionID);
   return {
     userID: state.user.userID,
     session: state.coachSessions[props.route.params.coachSessionID],
