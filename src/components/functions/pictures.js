@@ -239,6 +239,12 @@ const getNewVideoSavePath = () => {
   return DocumentDirectoryPath + '/' + generateID() + '.mp4';
 };
 
+const updateVideoSavePath = (oldPath) => {
+  let filename = oldPath.split('/');
+  filename = filename[filename.length - 1];
+  return DocumentDirectoryPath + '/' + filename;
+};
+
 module.exports = {
   takePicture,
   pickLibrary,
@@ -255,4 +261,5 @@ module.exports = {
   ge10tLastVideo,
   getNativeVideoInfo,
   getNewVideoSavePath,
+  updateVideoSavePath,
 };

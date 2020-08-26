@@ -3,6 +3,8 @@ import {
   DELETE_VIDEO_LOCAL_LIBRARY,
   DELETE_SNIPPET_LOCAL_LIBRARY,
   HIDE_VIDEO_LOCAL_LIBRARY,
+  UPDATE_PATH_LOCAL_LIBRARY,
+  UPDATE_THUMBNAIL_LOCAL_LIBRARY,
 } from './types';
 
 export const addVideos = (value) => ({
@@ -26,6 +28,18 @@ export const deleteSnippet = (value) => ({
   parent: value.parent,
 });
 
+export const updateLocalPath = (value) => ({
+  type: UPDATE_PATH_LOCAL_LIBRARY,
+  videoID: value.id,
+  url: value.url,
+});
+
+export const updateLocalThumbnail = (value) => ({
+  type: UPDATE_THUMBNAIL_LOCAL_LIBRARY,
+  videoID: value.id,
+  thumbnail: value.thumbnail,
+});
+
 export const localVideoLibraryAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'addVideos') {
@@ -36,6 +50,10 @@ export const localVideoLibraryAction = (val, data) => {
       await dispatch(deleteVideo(data));
     } else if (val === 'hideVideo') {
       await dispatch(hideVideo(data));
+    } else if (val === 'updateLocalPath') {
+      await dispatch(updateLocalPath(data));
+    } else if (val === 'updateLocalThumbnail') {
+      await dispatch(updateLocalThumbnail(data));
     }
     return true;
   };

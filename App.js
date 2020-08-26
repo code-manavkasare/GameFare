@@ -19,8 +19,8 @@ import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
-
 import {refreshPhoneContactsStore} from './src/components/functions/phoneContacts';
+import {updateLocalVideoUrls} from './src/components/functions/videoManagement';
 
 Orientation.lockToPortrait();
 
@@ -44,6 +44,7 @@ class App extends Component {
       await this.autoSignIn();
       await refreshTokenOnDatabase(userID);
       refreshPhoneContactsStore();
+      updateLocalVideoUrls();
     }
   }
 

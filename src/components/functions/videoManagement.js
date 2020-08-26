@@ -3,11 +3,13 @@ import {ProcessingManager} from 'react-native-video-processing';
 import StatusBar from '@react-native-community/status-bar';
 import RNFS from 'react-native-fs';
 import {Image} from 'react-native';
+import {DocumentDirectoryPath} from 'react-native-fs';
+
 
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 
-import {getVideoInfo, getVideoUUID} from './pictures';
+import {getVideoInfo, getVideoUUID, updateVideoSavePath} from './pictures';
 
 import {navigate, goBack} from '../../../NavigationService';
 
@@ -16,6 +18,8 @@ import {
   addVideos,
   deleteVideo,
   hideVideo,
+  updateLocalPath,
+  updateLocalThumbnail,
 } from '../../actions/localVideoLibraryActions';
 import {sendNewMessage} from './message';
 import {enqueueFileUpload} from '../../actions/uploadQueueActions';
@@ -285,6 +289,38 @@ const getLocalVideoByID = (id) => {
   return store.getState().localVideoLibrary.videoLibrary[id];
 };
 
+
+const updateLocalVideoUrls = () => {
+  const videos = store.getState().localVideoLibrary.videoLibrary;
+  if (videos) {
+    Object.values(videos).forEach((video) => {
+      if (video.url) {
+        RNFS.exists(video.url).then(async (videoExists) => {
+          if (!videoExists) {
+            // video moved, fix path and make new thumbnail
+            const newUrl = updateVideoSavePath(video.url);
+            const {path: newThumbnail} = await createThumbnail({
+              url: newUrl,
+            });
+            store.dispatch(updateLocalPath({id: video.id, url: newUrl}));
+            store.dispatch(updateLocalThumbnail({id: video.id, thumbnail: newThumbnail}));
+          } else {
+            RNFS.exists(video.thumbnail).then(async (thumbnailExists) => {
+              if (!thumbnailExists) {
+                // video not moved but need to make new thumbnail
+                const {path: newThumbnail} = await createThumbnail({
+                  url: video.url,
+                });
+                store.dispatch(updateLocalThumbnail({id: video.id, thumbnail: newThumbnail}));
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+};
+
 export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
@@ -298,4 +334,5 @@ export {
   getFirebaseVideoByID,
   getLocalVideoByID,
   generateThumbnailSet,
+  updateLocalVideoUrls,
 };
