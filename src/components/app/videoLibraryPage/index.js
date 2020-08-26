@@ -52,6 +52,8 @@ class VideoLibraryPage extends Component {
     this.state = {
       videosArray: [],
       loader: false,
+      hideLocal: params ? params.hideLocal : false,
+      hideCloud: params ? params.hideCloud : false,
       selectableMode: params ? params.selectableMode : false,
       selectOnly: params ? params.selectOnly : false,
       selectOne: params ? params.selectOnly && params.selectOne : false,
@@ -66,13 +68,27 @@ class VideoLibraryPage extends Component {
       Orientation.lockToPortrait();
     });
   }
-  static getDerivedStateFromProps(props) {
-    const allVideos = {
-      ...props.archivedStreams,
-      ...props.videoLibrary,
-    };
+  static getDerivedStateFromProps(props, state) {
+    let allVideos = {};
+    if (state.hideLocal && state.hideCloud) {
+      return {};
+    } else if (state.hideLocal) {
+      allVideos = {
+        ...props.archivedStreams,
+      };
+    } else if (state.hideCloud) {
+      allVideos = {
+        ...props.videoLibrary,
+      };
+    } else {
+      allVideos = {
+        ...props.archivedStreams,
+        ...props.videoLibrary,
+      };
+    }
     const videosArray = sortVideos(allVideos).filter((video) => !video?.hidden);
     return {videosArray};
+
   }
   shareSelectedVideos() {
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
@@ -364,12 +380,10 @@ class VideoLibraryPage extends Component {
                 onPressColor={colors.greenLight}
                 click={async () => {
                   await this.setState({loader: true});
-
                   await route.params.confirmVideo(
                     selectedLocalVideos,
                     selectedFirebaseVideos,
                   );
-
                   return navigation.goBack();
                 }}
               />

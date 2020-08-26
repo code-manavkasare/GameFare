@@ -93,17 +93,18 @@ const updateUploadProgress = async (
 };
 
 const subscribeUploadProgress = async (memberID, videoID) => {
+  const {userID} = store.getState().user;
   await database()
     .ref()
     .update({
       [`users/${memberID}/archivedStreams/uploading/${videoID}`]: {
         filename: videoID,
         hostUser: userID,
-        thumbnail,
-        durationSeconds,
-        date: now,
+        thumbnail: '', // fix
+        durationSeconds: 4, // fix
+        date: Date.now(), // videoInfo date?
         progress: 0,
-        index,
+        index: 0, // fix
       },
     });
 };
@@ -116,6 +117,20 @@ const unsubscribeUploadProgress = async (memberID, videoID) => {
     });
 };
 
+const shareCloudVideoWithCoachSession = async (cloudVideoID, coachSessionID, sharingScreenID) => {
+  database()
+  .ref()
+  .update({
+    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/currentTime`]: 0,
+    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/paused`]: true,
+    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/playRate`]: 1,
+    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/id`]: cloudVideoID,
+    [`coachSessions/${coachSessionID}/members/${sharingScreenID}/shareScreen`]: true,
+    [`coachSessions/${coachSessionID}/members/${sharingScreenID}/videoIDSharing`]: cloudVideoID,
+    [`coachSessions/${coachSessionID}/members/${sharingScreenID}/sharedVideos/${cloudVideoID}`]: true,
+  });
+};
+
 export {
   shareCloudVideo,
   deleteCloudVideo,
@@ -124,4 +139,5 @@ export {
   subscribeUploadProgress,
   updateUploadProgress,
   unsubscribeUploadProgress,
+  shareCloudVideoWithCoachSession,
 };
