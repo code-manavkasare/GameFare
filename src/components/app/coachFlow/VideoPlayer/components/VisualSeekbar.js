@@ -70,8 +70,7 @@ class VisualSeekBar extends Component {
         }
         const {moveX, dx} = gestureState;
         const originX = moveX - dx;
-        // console.log(originX);
-        // console.log(this._lastPlayheadPos);
+
         if (
           originX > this._lastPlayheadPos - 20 &&
           originX < this._lastPlayheadPos + 20
@@ -109,11 +108,6 @@ class VisualSeekBar extends Component {
 
         const {onSlidingComplete} = this.props;
         if (this.playheadPosition._value !== this._lastPlayheadPos) {
-          console.log(
-            'sliding complete',
-            this.playheadPosition._value,
-            this._lastPlayheadPos,
-          );
           this._lastPlayheadPos = this.playheadPosition._value;
           console.log(this._lastPlayheadPos);
           onSlidingComplete(this.getCurrentTime());

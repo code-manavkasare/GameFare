@@ -29,7 +29,7 @@ export default class VideoPlayerHeader extends React.Component {
       isDrawingEnabled,
       setState,
     } = this.props;
-    const {connectToSession} = route.params;
+    const {coachSessionID} = route.params;
     const sharedProps = {
       inputRange: [5, 10],
       colorLoader: 'white',
@@ -47,7 +47,7 @@ export default class VideoPlayerHeader extends React.Component {
       backgroundColorIconOffset: colors.title + '70',
       colorIcon2: colors.white,
 
-      iconOffset: !isEditMode && !connectToSession && 'text',
+      iconOffset: !isEditMode && !coachSessionID && 'text',
       textOffset: 'Edit',
       clickButtonOffset: () => editModeOn(),
     };

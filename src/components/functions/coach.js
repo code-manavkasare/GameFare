@@ -268,13 +268,13 @@ const isEven = (n) => {
   return !(n & 1);
 };
 
-const getVideoSharing = (session, personSharingScreen) => {
+const getVideosSharing = (session, personSharingScreen) => {
   if (!session) return false;
   if (!personSharingScreen) return false;
 
-  const {videoIDSharing} = session.members[personSharingScreen];
-  if (!session.sharedVideos) return false;
-  return session.sharedVideos[videoIDSharing];
+  const {sharedVideos} = session.members[personSharingScreen];
+  if (!sharedVideos) return false;
+  return sharedVideos;
 };
 
 // const getVideoUUID = (path) => {
@@ -379,7 +379,6 @@ const closeSession = async ({noNavigation}) => {
   await store.dispatch(endCurrentSession());
   store.dispatch(unsetCurrentSession());
 
-  console.log('cest ucu closeSession');
   if (!noNavigation) {
     store.dispatch(setLayout({isFooterVisible: true}));
     StatusBar.setBarStyle('dark-content', true);
@@ -642,6 +641,26 @@ const selectVideosFromLibrary = (coachSessionID) => {
   });
 };
 
+const isVideosAreBeingShared = ({session, archives, userIDSharing}) => {
+  if (!userIDSharing) return false;
+  const videos = session.members[userIDSharing].sharedVideos;
+  if (!videos) return false;
+  const currentArchives = archives.map((archive) => archive.id).sort();
+  return isEqual(Object.keys(videos).sort(), currentArchives);
+};
+
+const updateInfoVideoCloud = async ({dataUpdate, id, coachSessionID}) => {
+  let updates = {};
+  for (var i in dataUpdate) {
+    updates[`coachSessions/${coachSessionID}/sharedVideos/${id}/${i}`] =
+      dataUpdate[i];
+  }
+  await database()
+    .ref()
+    .update(updates);
+  return true;
+};
+
 module.exports = {
   createCoachSession,
   timeout,
@@ -655,7 +674,7 @@ module.exports = {
   getMember,
   isUserAdmin,
   isEven,
-  getVideoSharing,
+  getVideosSharing,
   startRemoteRecording,
   stopRemoteRecording,
   toggleCloudRecording,
@@ -678,4 +697,6 @@ module.exports = {
   searchSessionsForString,
   selectVideosFromLibrary,
   closeSession,
+  isVideosAreBeingShared,
+  updateInfoVideoCloud,
 };

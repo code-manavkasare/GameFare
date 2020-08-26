@@ -24,7 +24,6 @@ class MessageTab extends React.Component {
     const {infoUser, userID, navigation, session, route, messages} = this.props;
     const {initialMessage, coachSessionID: objectID} = route.params;
     const {loader} = this.state;
-    console.log('render conversation', session);
     if (!session) return null;
     const user = userObject(infoUser, userID);
     return (
@@ -45,7 +44,6 @@ class MessageTab extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  console.log('stream tab', props.route);
   const {coachSessionID} = props.route.params;
   return {
     userID: state.user.userID,

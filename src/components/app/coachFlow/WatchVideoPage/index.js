@@ -218,13 +218,11 @@ class WatchVideoPage extends Component {
         /> */}
         <VideoPlayer
           source={videoSource ? videoSource : ''}
-          paused={video.paused}
-          playRate={video.playRate}
+          
           index={archiveID}
           resizeMode="contain"
           userID={userID}
-          currentTime={video.currentTime}
-          userIDLastUpdate={video.userIDLastUpdate}
+          
           setSizeVideo={(sizeVideo) => {
             this.setState({sizeVideo: sizeVideo});
           }}

@@ -8,6 +8,7 @@ import styleApp from '../../../style/style';
 import Loader from '../../../layout/loaders/Loader';
 import colors from '../../../style/colors';
 import {bindArchive} from '../../../functions/archive';
+import {updateInfoVideoCloud} from '../../../functions/coach';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -30,6 +31,7 @@ class SinglePlayer extends Component {
       bindArchive(id);
     }
   };
+
   playerStyleByIndex = (i, total) => {
     const {landscape} = this.props;
     const {height, width} = Dimensions.get('screen');
@@ -57,6 +59,9 @@ class SinglePlayer extends Component {
   seekDiff(time) {
     this.videoPlayerRef.seekDiff(time);
   }
+  getState() {
+    return this.videoPlayerRef.getState();
+  }
   getSeekBar() {
     return this.videoPlayerRef?.visualSeekBarRef;
   }
@@ -79,6 +84,10 @@ class SinglePlayer extends Component {
       disableControls,
       linkedPlayers,
       videoPlayerRefs,
+      coachSessionID,
+      videosBeingShared,
+      personSharingScreen,
+      videoFromCloud,
     } = this.props;
 
     const playerStyle = this.playerStyleByIndex(index, numArchives);
@@ -86,6 +95,7 @@ class SinglePlayer extends Component {
     if (!archive) {
       return this.viewLoader(playerStyle);
     }
+    const {paused, currentTime, userIDLastUpdate, playRate} = videoFromCloud;
     return (
       <View style={playerStyle}>
         <VideoPlayer
@@ -113,7 +123,16 @@ class SinglePlayer extends Component {
           //     video={video}
           //   />
           // }
-          noUpdateInCloud={true}
+
+          noUpdateInCloud={!videosBeingShared ? true : false}
+          updateOnProgress={userID === personSharingScreen}
+          updateVideoInfoCloud={(dataUpdate) =>
+            updateInfoVideoCloud({
+              dataUpdate: dataUpdate,
+              id: archive.id,
+              coachSessionID,
+            })
+          }
           hideFullScreenButton={true}
           archive={archive}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
@@ -125,6 +144,10 @@ class SinglePlayer extends Component {
           onRef={(ref) => {
             this.videoPlayerRef = ref;
           }}
+          paused={paused}
+          playRate={playRate}
+          currentTime={currentTime}
+          userIDLastUpdate={userIDLastUpdate}
         />
       </View>
     );

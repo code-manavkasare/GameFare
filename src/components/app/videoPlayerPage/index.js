@@ -3,8 +3,7 @@ import {View, StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 import convertToProxyURL from 'react-native-video-cache';
-
-import VideoPlayer from '../coachFlow/VideoPlayer/index';
+import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
@@ -13,7 +12,7 @@ import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
 import colors from '../../style/colors';
-import styleApp from '../../style/style';
+
 import {
   marginTopApp,
   heightHeaderHome,
@@ -24,6 +23,10 @@ import {
   getFirebaseVideoByID,
   getLocalVideoByID,
 } from '../../functions/videoManagement';
+import {
+  isVideosAreBeingShared,
+  isSomeoneSharingScreen,
+} from '../../functions/coach';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
@@ -70,6 +73,43 @@ class VideoPlayerPage extends Component {
     Orientation.removeOrientationListener(this._orientationListener.bind(this));
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const {session, userID} = prevProps;
+    const {session: nextSession} = this.props;
+    const {archives} = prevState;
+    let videosBeingShared = false;
+    let personSharingScreen = false;
+    if (session) {
+      personSharingScreen = isSomeoneSharingScreen(session);
+      videosBeingShared = isVideosAreBeingShared({
+        session,
+        archives,
+        userIDSharing: personSharingScreen,
+      });
+      if (personSharingScreen && videosBeingShared) {
+        const prevVideos = Object.keys(
+          session.members[personSharingScreen].sharedVideos,
+        );
+        const nextVideos = Object.keys(
+          nextSession.members[personSharingScreen].sharedVideos,
+        );
+        if (
+          archives.length !== nextVideos.length &&
+          nextVideos.length !== prevVideos.length
+        ) {
+
+          const videoToAdd = nextVideos.filter(
+            (item) => prevVideos.indexOf(item) == -1,
+          )[0];
+          let {archives} = this.state;
+
+          const newarchives = archives.concat([{id: videoToAdd}]);
+          this.setState({archives: newarchives});
+        }
+      }
+    }
+  }
+
   static getDerivedStateFromProps(props, state) {
     if (props.route?.params?.archives && state.archives.length === 0) {
       return {
@@ -77,7 +117,10 @@ class VideoPlayerPage extends Component {
         linkedPlayers: props.route.params.archives.map((x) => new Set()),
       };
     }
-    return {};
+    return {
+      archives: state.archives,
+      linkedPlayers: state.archives.map((x) => new Set()),
+    };
   }
 
   startRecording = async () => {
@@ -340,25 +383,30 @@ class VideoPlayerPage extends Component {
       isRecording,
       isPreviewing,
       isDrawingEnabled,
+      archives,
     } = this.state;
-    const {navigation, route} = this.props;
+    const {navigation, route, session, userID} = this.props;
+    const {coachSessionID} = route.params;
     const {navigate} = navigation;
+    let videosBeingShared = false;
+    let personSharingScreen = false;
+    if (session) {
+      personSharingScreen = isSomeoneSharingScreen(session);
+      videosBeingShared = isVideosAreBeingShared({
+        session,
+        archives,
+        userIDSharing: personSharingScreen,
+      });
+    }
     return (
       <VideoPlayerHeader
         isEditMode={isEditMode}
         isRecording={isRecording}
         isPreviewing={isPreviewing}
         isDrawingEnabled={isDrawingEnabled}
+        personSharingScreen={personSharingScreen}
         route={route}
-        close={() => {
-          // for (const videoPlayerRef of this.videoPlayerRefs) {
-          //   videoPlayerRef?.togglePlayPause(true);
-          //   videoPlayerRef?.PinchableBoxRef?.resetPosition();
-          // }
-          // this.resetPlayers();
-          // this.setState({recordedActions: []});
-          openVideoPlayer({open: false});
-        }}
+        close={() => openVideoPlayer({open: false})}
         editModeOn={() => {
           this.setState({isEditMode: true});
         }}
@@ -371,20 +419,51 @@ class VideoPlayerPage extends Component {
             selectableMode: true,
             selectOnly: true,
             selectOne: true,
-            confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) => {
+            confirmVideo: async (
+              selectedLocalVideos,
+              selectedFirebaseVideos,
+            ) => {
               let addedArchive = null;
+              let updates = {};
               if (selectedLocalVideos.length >= 1) {
                 const id = selectedLocalVideos[0];
                 addedArchive = getLocalVideoByID(id);
               } else if (selectedFirebaseVideos.length >= 1) {
                 const id = selectedFirebaseVideos[0];
                 addedArchive = getFirebaseVideoByID(id);
+
+                if (videosBeingShared) {
+                  updates[
+                    `coachSessions/${coachSessionID}/sharedVideos/${id}/currentTime`
+                  ] = 0;
+                  updates[
+                    `coachSessions/${coachSessionID}/sharedVideos/${id}/paused`
+                  ] = true;
+                  updates[
+                    `coachSessions/${coachSessionID}/sharedVideos/${id}/playRate`
+                  ] = 1;
+                  updates[
+                    `coachSessions/${coachSessionID}/sharedVideos/${id}/id`
+                  ] = id;
+                  updates[
+                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/shareScreen`
+                  ] = true;
+                  updates[
+                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/videoIDSharing`
+                  ] = id;
+                  updates[
+                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
+                  ] = true;
+                }
               }
               if (addedArchive) {
                 let {archives, linkedPlayers} = this.state;
                 archives.push(addedArchive);
                 linkedPlayers.push(new Set());
-                this.setState({archives, linkedPlayers});
+                await this.setState({archives, linkedPlayers});
+                database()
+                  .ref()
+                  .update(updates);
               }
             },
           });
@@ -458,8 +537,21 @@ class VideoPlayerPage extends Component {
   };
 
   singlePlayer = (archive, i) => {
+    const {session} = this.props;
+    const {archives} = this.state;
+    let videosBeingShared = false;
+    let personSharingScreen = false;
+    if (session) {
+      personSharingScreen = isSomeoneSharingScreen(session);
+      videosBeingShared = isVideosAreBeingShared({
+        session,
+        archives,
+        userIDSharing: personSharingScreen,
+      });
+    }
+    const {coachSessionID} = this.props.route.params;
     const {id: archiveID, local} = archive;
-    const numArchives = this.state.archives.length;
+    const numArchives = archives.length;
 
     const {
       isRecording,
@@ -499,28 +591,34 @@ class VideoPlayerPage extends Component {
         numArchives={numArchives}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
+        coachSessionID={coachSessionID}
+        videosBeingShared={videosBeingShared}
+        personSharingScreen={personSharingScreen}
+        id={archiveID}
         local={local}
         landscape={landscape}
         propsWhenRecording={propsWhenRecording}
+        videoFromCloud={
+          videosBeingShared ? session.sharedVideos[archiveID] : {}
+        }
         videoPlayerRefs={this.videoPlayerRefs}
       />
     );
   };
   buttonSharing = () => {
     const {route} = this.props;
-    const {connectToSession, archives} = route.params;
-    if (!connectToSession) {
+    const {archives} = this.state;
+    const {coachSessionID} = route.params;
+    if (!coachSessionID) {
       return null;
     }
 
     return (
       <ButtonShareVideo
-        onRef={(ref) => (this.buttonShareRef = ref)}
-        archiveID={archives[0].id}
-        coachSessionID={connectToSession}
+        archives={archives}
+        coachSessionID={coachSessionID}
         togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
-        open={(val) => console.log('open', val)}
-        getVideoState={() => this.videoPlayerRef.getState()}
+        getVideoState={(i) => this.videoPlayerRefs[i].getState()}
       />
     );
   };
@@ -627,10 +725,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+  console.log('map state to props', props.route.params.coachSessionID);
   return {
     userID: state.user.userID,
-    currentSessionID: state.coach.currentSessionID,
+    session: state.coachSessions[props.route.params.coachSessionID],
     portrait: state.layout.currentScreenSize.portrait,
   };
 };

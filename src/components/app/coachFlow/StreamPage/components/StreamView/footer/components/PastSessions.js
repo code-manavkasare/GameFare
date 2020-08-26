@@ -26,7 +26,7 @@ class PastSessions extends Component {
 
   render() {
     const sessions = this.arraySessions();
-    const {coachSessionID, videoBeingShared} = this.props;
+    const {coachSessionID, videosBeingShared} = this.props;
 
     return (
       <FlatListComponent
@@ -40,12 +40,12 @@ class PastSessions extends Component {
             id={item.id}
             style={{...styleApp.cardArchive3, height: 100}}
             key={item.id}
-            connectToSession={coachSessionID}
+            coachSessionID={coachSessionID}
             hidePlayIcon={true}
           />
         )}
         header={
-          videoBeingShared &&
+          videosBeingShared &&
           rowTitle({
             icon: {
               name: 'satellite-dish',
@@ -56,7 +56,10 @@ class PastSessions extends Component {
             hideDividerHeader: true,
             customButtom: (
               <CardArchive
-                id={videoBeingShared.id}
+                id={Object.keys(videosBeingShared)[0]}
+                videosToOpen={Object.keys(videosBeingShared).map((video) => {
+                  return {id: video};
+                })}
                 style={{
                   ...styleApp.cardArchive3,
                   height: 70,
@@ -64,7 +67,7 @@ class PastSessions extends Component {
                   borderRadius: 5,
                   borderWidth: 0,
                 }}
-                connectToSession={coachSessionID}
+                coachSessionID={coachSessionID}
                 hidePlayIcon={true}
               />
             ),

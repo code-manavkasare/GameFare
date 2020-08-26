@@ -66,10 +66,14 @@ class CardArchive extends PureComponent {
   }
 
   openVideo = async () => {
-    const {archive, connectToSession} = this.props;
-    const {url} = archive;
+    const {archive, coachSessionID, videosToOpen} = this.props;
+    const {url, id, local} = archive;
     if (url !== '') {
-      openVideoPlayer({video: archive, open: true, connectToSession});
+      openVideoPlayer({
+        archives: videosToOpen ? videosToOpen : [{id, local}],
+        open: true,
+        coachSessionID,
+      });
     }
   };
   cloudIndicator() {
