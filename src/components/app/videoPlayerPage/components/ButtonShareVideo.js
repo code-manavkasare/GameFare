@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
-import {} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import Button from '../../../layout/buttons/Button';
-
+import {openVideoPlayer} from '../../../functions/videoManagement';
+import {
+  isSomeoneSharingScreen,
+  isVideosAreBeingShared,
+} from '../../../functions/coach';
 import colors from '../../../style/colors';
 import {
   marginTopApp,
@@ -17,73 +21,70 @@ class ButtonShareVideo extends Component {
     super(props);
     this.state = {};
   }
-  componentDidMount() {
-    this.props.onRef(this);
-  }
   async startSharingVideo(value) {
     const {
       userID,
       coachSessionID,
-
-      archiveID,
+      archives,
       getVideoState,
-
       togglePlayPause,
-      open,
+      session,
     } = this.props;
-    return true;
-    const stateVideo = getVideoState();
 
-    if (value) {
-      let updates = {};
-      // updates[
-      //   `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/source`
-      // ] = source;
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/currentTime`
-      ] = stateVideo.currentTime;
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/paused`
-      ] = true;
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/playRate`
-      ] = 1;
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/archiveID`
-      ] = archiveID;
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/id`
-      ] = archiveID;
+    let updates = {};
 
-      updates[
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/thumbnail`
-      ] = stateVideo.placeHolderImg;
+    for (let i in archives) {
+      const {id, local} = archives[i];
+      const stateVideo = getVideoState(i);
 
-      updates[
-        `coachSessions/${coachSessionID}/members/${userID}/shareScreen`
-      ] = true;
-      updates[
-        `coachSessions/${coachSessionID}/members/${userID}/videoIDSharing`
-      ] = archiveID;
-      await togglePlayPause(true);
-      await database()
-        .ref()
-        .update(updates);
-    } else {
-      await database()
-        .ref()
-        .update({
-          [`coachSessions/${coachSessionID}/members/${userID}/shareScreen`]: false,
-          [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings`]: null,
-        });
-      open(false);
+      if (value) {
+        updates[
+          `coachSessions/${coachSessionID}/sharedVideos/${id}/currentTime`
+        ] = stateVideo.currentTime;
+        updates[
+          `coachSessions/${coachSessionID}/sharedVideos/${id}/paused`
+        ] = true;
+        updates[
+          `coachSessions/${coachSessionID}/sharedVideos/${id}/playRate`
+        ] = 1;
+
+        updates[`coachSessions/${coachSessionID}/sharedVideos/${id}/id`] = id;
+
+        updates[
+          `coachSessions/${coachSessionID}/members/${userID}/shareScreen`
+        ] = true;
+        updates[
+          `coachSessions/${coachSessionID}/members/${userID}/videoIDSharing`
+        ] = id;
+        // await togglePlayPause(true);
+      } else {
+        updates[
+          `coachSessions/${coachSessionID}/members/${userID}/shareScreen`
+        ] = false;
+        updates[
+          `coachSessions/${coachSessionID}/members/${userID}/sharedVideos`
+        ] = null;
+      }
     }
+
+    updates[
+      `coachSessions/${coachSessionID}/members/${userID}/sharedVideos`
+    ] = archives.reduce(function(result, item) {
+      result[item.id] = true;
+      return result;
+    }, {});
+
+    await database()
+      .ref()
+      .update(updates);
+
+    if (!value) openVideoPlayer({open: false});
   }
-  buttonStart() {
+  styleButton = () => {
     const {portrait} = this.props;
     let marginTop = marginTopApp + heightHeaderHome;
     if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
-    const style = {
+    return {
       position: 'absolute',
       zIndex: 20,
       height: 30,
@@ -92,7 +93,9 @@ class ButtonShareVideo extends Component {
       borderRadius: 15,
       top: marginTop,
     };
-    console.log('render button startnsharing');
+  };
+  buttonStart() {
+    const style = this.styleButton();
     return (
       <Button
         backgroundColor="green"
@@ -108,18 +111,7 @@ class ButtonShareVideo extends Component {
   }
 
   buttonStop() {
-    const {portrait} = this.props;
-    let marginTop = marginTopApp + heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
-    const style = {
-      position: 'absolute',
-      zIndex: 400,
-      height: 30,
-      width: 80,
-      left: '5%',
-      borderRadius: 15,
-      top: marginTop,
-    };
+    const style = this.styleButton();
     return (
       <Button
         backgroundColor="red"
@@ -134,12 +126,21 @@ class ButtonShareVideo extends Component {
     );
   }
   button() {
-    const {userID, archiveID} = this.props;
-    const personSharingScreen = userID;
-    const videoBeingShared = {id: 'sdfdsfsdfsdfds'};
+    const {userID, archives, session} = this.props;
+    const personSharingScreen = isSomeoneSharingScreen(session);
+
     if (!personSharingScreen) return this.buttonStart();
     if (personSharingScreen !== userID) return null;
-    if (videoBeingShared.id === archiveID) return this.buttonStop();
+
+    );
+    if (
+      isVideosAreBeingShared({
+        session,
+        archives,
+        userIDSharing: personSharingScreen,
+      })
+    )
+      return this.buttonStop();
 
     return this.buttonStart();
   }
@@ -149,10 +150,15 @@ class ButtonShareVideo extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const styles = StyleSheet.create({
+  button: {},
+});
+
+const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
     portrait: state.layout.currentScreenSize.portrait,
+    session: state.coachSessions[props.coachSessionID],
   };
 };
 

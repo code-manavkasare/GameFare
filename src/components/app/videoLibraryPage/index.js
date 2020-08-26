@@ -178,7 +178,10 @@ class VideoLibraryPage extends Component {
         addLocalVideo(newVideo);
         newVideos.push(newVideo);
         if (videos.length === 1 && !selectOnly)
-          openVideoPlayer({video: newVideo, open: true});
+          openVideoPlayer({
+            archives: [{id: newVideo.id, local: newVideo.local}],
+            open: true,
+          });
       }
       if (selectOnly) {
         let {selectedLocalVideos} = this.state;

@@ -33,7 +33,7 @@ class VideoViews extends Component {
     const {
       openVideo,
       personSharingScreen,
-      videoBeingShared,
+      videosBeingShared,
       coachSessionID,
     } = this.props;
 
@@ -49,7 +49,7 @@ class VideoViews extends Component {
         <PastSessions
           openVideo={(videoData) => openVideo(videoData)}
           personSharingScreen={personSharingScreen}
-          videoBeingShared={videoBeingShared}
+          videosBeingShared={videosBeingShared}
           coachSessionID={coachSessionID}
         />
       </Animated.View>

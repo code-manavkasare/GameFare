@@ -32,7 +32,7 @@ import {
   isUserAlone,
   isSomeoneSharingScreen,
   userPartOfSession,
-  getVideoSharing,
+  getVideosSharing,
   getMember,
 } from '../../../../../functions/coach';
 
@@ -46,7 +46,6 @@ import {
   marginTopAppLandscape,
   ratio,
 } from '../../../../../style/sizes';
-
 
 import MembersView from './components/MembersView';
 import UploadButton from '../../../../elementsUpload/UploadButton';
@@ -276,11 +275,17 @@ class StreamPage extends Component {
   }
   openVideoShared() {
     const {coachSession} = this.state;
-    const {userID} = this.props;
+    const {userID, currentSessionID: coachSessionID} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
-      const video = getVideoSharing(coachSession, personSharingScreen);
-      openVideoPlayer({connectToSession: true, video, open: true});
+      const videos = coachSession.members[personSharingScreen].sharedVideos;
+      openVideoPlayer({
+        coachSessionID,
+        archives: Object.keys(videos).map((video) => {
+          return {id: video};
+        }),
+        open: true,
+      });
     }
   }
   async endCoachSession() {
@@ -460,9 +465,12 @@ class StreamPage extends Component {
     if (!coachSession && !coachSession.tokbox) null;
     const {publishAudio, publishVideo} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
-    const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
+    const videosBeingShared = getVideosSharing(
+      coachSession,
+      personSharingScreen,
+    );
     if (!coachSession?.tokbox) null;
-    // return this.header();
+
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
 
@@ -517,7 +525,7 @@ class StreamPage extends Component {
             watchVideoRef={this.watchVideoRef}
             otPublisherRef={this.otPublisherRef}
             personSharingScreen={personSharingScreen}
-            videoBeingShared={videoBeingShared}
+            videosBeingShared={videosBeingShared}
             onRef={(ref) => (this.footerRef = ref)}
             members={coachSession.members}
             coachSessionID={currentSessionID}
@@ -550,10 +558,6 @@ class StreamPage extends Component {
     const {isConnected} = member;
     if (!userConnected || !currentSessionID) return this.loaderView(' ');
 
-    const personSharingScreen = isSomeoneSharingScreen(coachSession);
-    console.log('personSharingScreen', personSharingScreen);
-    const videoBeingShared = getVideoSharing(coachSession, personSharingScreen);
-    console.log('videoBeingShared', videoBeingShared);
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />

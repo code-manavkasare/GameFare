@@ -16,21 +16,13 @@ class Footer extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
-  shouldComponentUpdate = (nextProps) => {
-    return (
-      nextProps.videoBeingShared.id !== this.props.videoBeingShared.id ||
-      nextProps.personSharingScreen !== this.props.personSharingScreen ||
-      !isEqual(nextProps.members, this.props.members)
-    );
-  };
-
   footer() {
     const {
       setState,
       translateYFooter,
       coachSessionID,
       personSharingScreen,
-      videoBeingShared,
+      videosBeingShared,
       otPublisherRef,
       members,
       publishVideo,
@@ -41,13 +33,11 @@ class Footer extends Component {
       extrapolate: 'clamp',
       outputRange: [300, 0],
     });
-    console.log('members', members);
+
     return (
       <Animated.View style={[styles.footer, {transform: [{translateY}]}]}>
         <BottomButtons
           setState={setState}
-          personSharingScreen={personSharingScreen}
-          videoBeingShared={videoBeingShared}
           onRef={(ref) => (this.bottomButtonRef = ref)}
           openPastSessions={(val) =>
             Animated.parallel([
@@ -64,7 +54,7 @@ class Footer extends Component {
         <VideosView
           setState={setState}
           personSharingScreen={personSharingScreen}
-          videoBeingShared={videoBeingShared}
+          videosBeingShared={videosBeingShared}
           coachSessionID={coachSessionID}
           onRef={(ref) => (this.pastSessionsRef = ref)}
         />

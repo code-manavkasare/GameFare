@@ -136,11 +136,15 @@ const recordVideo = async () => {
   navigate('LocalSession');
 };
 
-const openVideoPlayer = async ({video, open, connectToSession}) => {
+const openVideoPlayer = async ({archives, open, coachSessionID}) => {
+  console.log('open video player,', coachSessionID);
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  if (open) {
-    return navigate('VideoPlayerPage', {archives: [video]});
-  }
+  console.log('openVideoPlayer', {archives, open, coachSessionID});
+  if (open)
+    return navigate('VideoPlayerPage', {
+      archives,
+      coachSessionID,
+    });
   return goBack();
 };
 

@@ -99,7 +99,10 @@ export default class Camera extends Component {
       this.setState({flags: []});
     }
     addLocalVideo(videoInfo);
-    openVideoPlayer({video: videoInfo, open: true});
+    openVideoPlayer({
+      archives: [{id: videoInfo.id, local: videoInfo.local}],
+      open: true,
+    });
   }
   render() {
     const {frontCamera, onCameraReady} = this.props;

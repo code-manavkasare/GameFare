@@ -105,8 +105,6 @@ export default class VideoPlayer extends Component {
   getProxySource = async (src) => {
     const proxySource = await convertToProxyURL(src);
     this.setState({proxySource});
-    console.log('proxySource');
-    console.log(proxySource);
   };
 
   static getDerivedStateFromProps(props, state) {
