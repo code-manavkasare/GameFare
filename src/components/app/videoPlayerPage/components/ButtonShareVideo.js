@@ -132,7 +132,6 @@ class ButtonShareVideo extends Component {
     if (!personSharingScreen) return this.buttonStart();
     if (personSharingScreen !== userID) return null;
 
-    );
     if (
       isVideosAreBeingShared({
         session,
