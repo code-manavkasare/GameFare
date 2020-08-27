@@ -73,7 +73,6 @@ export default class VideoPlayer extends Component {
   async componentDidMount() {
     this.props.onRef(this);
     const {currentTime} = this.state;
-
     if (currentTime !== 0) {
       this.seek(currentTime);
     }
@@ -297,6 +296,9 @@ export default class VideoPlayer extends Component {
       timing(this.opacityControlBar._value ? 0 : 1, 200),
     ).start();
     this.visualSeekBarRef?.toggleVisible();
+  }
+  setXOffset(x) {
+    this.visualSeekBarRef?.setXOffset(x);
   }
   render() {
     const {

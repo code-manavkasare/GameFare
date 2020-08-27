@@ -38,42 +38,65 @@ class PastSessions extends Component {
         cardList={({item}) => (
           <CardArchive
             id={item.id}
-            style={{...styleApp.cardArchive3, height: 100}}
+            style={{
+              ...styleApp.cardArchive3,
+              height: 100,
+              borderColor: 'transparent',
+            }}
             key={item.id}
             coachSessionID={coachSessionID}
             hidePlayIcon={true}
           />
         )}
         header={
-          videosBeingShared &&
-          rowTitle({
-            icon: {
-              name: 'satellite-dish',
-              type: 'font',
-              color: colors.white,
-              size: 20,
-            },
-            hideDividerHeader: true,
-            customButtom: (
-              <CardArchive
-                id={Object.keys(videosBeingShared)[0]}
-                videosToOpen={Object.keys(videosBeingShared).map((video) => {
-                  return {id: video};
-                })}
-                style={{
-                  ...styleApp.cardArchive3,
-                  height: 70,
-                  width: 120,
-                  borderRadius: 5,
-                  borderWidth: 0,
-                }}
-                coachSessionID={coachSessionID}
-                hidePlayIcon={true}
-              />
-            ),
-            title: 'Live now',
-            titleColor: colors.white,
-          })
+          videosBeingShared && (
+            <View>
+              {rowTitle({
+                icon: {
+                  name: 'satellite-dish',
+                  type: 'font',
+                  color: colors.black,
+                  size: 20,
+                },
+                hideDividerHeader: true,
+                customButtom: (
+                  <CardArchive
+                    id={Object.keys(videosBeingShared)[0]}
+                    videosToOpen={Object.keys(videosBeingShared).map(
+                      (video) => {
+                        return {id: video};
+                      },
+                    )}
+                    style={{
+                      ...styleApp.cardArchive3,
+                      ...styleApp.shadow,
+                      height: 70,
+                      width: 115,
+                      borderRadius: 5,
+                      borderWidth: 0,
+                      marginRight: 10,
+                    }}
+                    coachSessionID={coachSessionID}
+                    hidePlayIcon={true}
+                  />
+                ),
+                title: 'Live now',
+                titleColor: colors.black,
+                titleStyle: {
+                  fontWeight: '800',
+                  fontSize: 20,
+                },
+                containerStyle: {
+                  ...styleApp.shadowWeak,
+                  marginTop: 10,
+                  borderRadius: 10,
+                  backgroundColor: colors.white,
+                  height: 100,
+                  marginBottom: 15,
+                },
+              })}
+            </View>
+          )
         }
         numColumns={3}
         horizontal={false}

@@ -36,7 +36,6 @@ class VisualSeekBar extends Component {
       showSpeedSet: false,
       width,
       paused: this.props.paused ? this.props.paused : false,
-
       //Dynamic for zoom of seekbar
       seekbar: {
         xOffset: new Animated.Value(0.05 * width),
@@ -47,7 +46,7 @@ class VisualSeekBar extends Component {
     this.playheadPosBounds = [0.05 * width, 0.95 * width];
     const {seekbar} = this.state;
     const initialPlayhead = Number(
-      (currentTime / totalTime) * seekbar.width + seekbar.xOffset,
+      (currentTime / totalTime) * seekbar.width._value + seekbar.xOffset._value,
     );
     this.playheadPosition = new Animated.Value(
       initialPlayhead ? initialPlayhead : this.playheadPosBounds[0],
@@ -68,37 +67,28 @@ class VisualSeekBar extends Component {
         if (disableControls) {
           return;
         }
-        const {moveX, dx} = gestureState;
-        const originX = moveX - dx;
-
-        if (
-          originX > this._lastPlayheadPos - 20 &&
-          originX < this._lastPlayheadPos + 20
-        ) {
-          const playheadToValue =
-            this._lastPlayheadPos + dx < this.playheadPosBounds[0]
-              ? this.playheadPosBounds[0]
-              : this._lastPlayheadPos + dx > this.playheadPosBounds[1]
-              ? this.playheadPosBounds[1]
-              : this._lastPlayheadPos + dx;
-          this.movePlayhead(playheadToValue, true);
-        } else {
-          // this.zoomSeekbar(dx);
-        }
+        let {moveX, dx} = gestureState;
+        if (this.panResponderOffset) moveX = moveX - this.panResponderOffset;
+        const playheadToValue =
+          this._lastPlayheadPos + dx < this.playheadPosBounds[0]
+            ? this.playheadPosBounds[0]
+            : this._lastPlayheadPos + dx > this.playheadPosBounds[1]
+            ? this.playheadPosBounds[1]
+            : this._lastPlayheadPos + dx;
+        this.movePlayhead(playheadToValue, true);
       },
       onPanResponderStart: (evt, gestureState) => {
         const {disableControls, onSlidingStart} = this.props;
+        const {seekbar} = this.state;
         if (disableControls) {
           return;
         }
-        const {moveX, dx} = gestureState;
-        const originX = moveX - dx;
-        if (
-          originX > this._lastPlayheadPos - 20 &&
-          originX < this._lastPlayheadPos + 20
-        ) {
-          onSlidingStart(this.getCurrentTime());
-        }
+        let {x0} = gestureState;
+        if (this.panResponderOffset) x0 = x0 - this.panResponderOffset;
+        const playheadToValue = x0 - seekbar.xOffset._value / 2;
+        this.movePlayhead(playheadToValue, true);
+        this._lastPlayheadPos = playheadToValue;
+        onSlidingStart(this.getCurrentTime());
       },
       onPanResponderRelease: (evt, gestureState) => {
         const {disableControls} = this.props;
@@ -107,11 +97,8 @@ class VisualSeekBar extends Component {
         }
 
         const {onSlidingComplete} = this.props;
-        if (this.playheadPosition._value !== this._lastPlayheadPos) {
-          this._lastPlayheadPos = this.playheadPosition._value;
-          console.log(this._lastPlayheadPos);
-          onSlidingComplete(this.getCurrentTime());
-        }
+        this._lastPlayheadPos = this.playheadPosition._value;
+        onSlidingComplete(this.getCurrentTime());
       },
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
@@ -191,13 +178,6 @@ class VisualSeekBar extends Component {
     const {seek, totalTime, paused, onSlidingStart} = this.props;
     const {width} = this.state;
 
-    // if (toValue >= this.playheadPosBounds[1]) {
-    //   const seekbarOffset =
-    //     this._lastSeekbar.xOffset - (toValue - this._lastPlayheadPos);
-    //   this.state.seekbar.xOffset.setValue(seekbarOffset);
-    //   this._lastSeekbar.xOffset = seekbarOffset;
-    // }
-
     this.playheadPosition.setValue(toValue);
     if (!updateVideoOnSeek) {
       this._lastPlayheadPos = toValue;
@@ -228,6 +208,9 @@ class VisualSeekBar extends Component {
         textAlign: 'left',
       });
     }
+  }
+  setXOffset(x) {
+    this.panResponderOffset = x;
   }
   zoomSeekbar(dx) {
     const {width} = this.state;
