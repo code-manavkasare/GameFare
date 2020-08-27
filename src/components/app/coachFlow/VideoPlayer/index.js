@@ -136,12 +136,11 @@ export default class VideoPlayer extends Component {
     };
   }
   seek = (time) => {
-    const player = this.player;
-    player.seek(time, 0);
+    this.player?.seek(time, 0);
   };
   seekDiff = async (diffTime) => {
     const {currentTime} = this.state;
-    this.player.seek(currentTime + diffTime, 33);
+    this.player?.seek(currentTime + diffTime, 33);
   };
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
