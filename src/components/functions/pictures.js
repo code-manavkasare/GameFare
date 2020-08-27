@@ -11,6 +11,7 @@ import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
 import RNThumbnail from 'react-native-thumbnail';
 import RNFS from 'react-native-fs';
+import {fromHsv} from 'react-native-color-picker';
 
 import {store} from '../../../reduxStore';
 import {DocumentDirectoryPath} from 'react-native-fs';
@@ -239,6 +240,9 @@ const getNewVideoSavePath = () => {
   return DocumentDirectoryPath + '/' + generateID() + '.mp4';
 };
 
+const valueColor = (value) => {
+  return fromHsv({h: value, s: 0.8, v: 1});
+};
 const updateVideoSavePath = (oldPath) => {
   let filename = oldPath.split('/');
   filename = filename[filename.length - 1];
@@ -261,5 +265,6 @@ module.exports = {
   ge10tLastVideo,
   getNativeVideoInfo,
   getNewVideoSavePath,
+  valueColor,
   updateVideoSavePath,
 };

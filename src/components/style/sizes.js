@@ -88,6 +88,7 @@ if (Platform.OS === 'ios') {
 }
 
 const ratio = (w, h) => {
+  if (w === 0) return 0;
   return h / w;
 };
 

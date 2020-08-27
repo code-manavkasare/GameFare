@@ -580,7 +580,7 @@ class VideoPlayerPage extends Component {
     return (
       <SinglePlayer
         index={i}
-        key={archiveID}
+        key={i}
         id={archiveID}
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
