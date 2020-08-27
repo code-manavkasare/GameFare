@@ -26,7 +26,7 @@ const uploadVideo = async (uploadTask, uploadQueueAction, index) => {
     storageDestination,
     subscribedToProgress,
   } = uploadTask;
-  const {url, durationSeconds} = videoInfo;
+  const {url} = videoInfo;
   if (!url) return;
   const videoRef = storage()
     .ref(storageDestination)
@@ -38,8 +38,8 @@ const uploadVideo = async (uploadTask, uploadQueueAction, index) => {
     contentType: 'video',
     cacheControl: 'no-store',
   });
-  const progressDelta = 5 / durationSeconds;
-  let progressBuffer = progressDelta < 1 ? progressDelta : 0.7;
+  let progressBuffer = 0.2;
+  let progressDelta = 0.2;
   return new Promise((resolve, reject) =>
     uploading.on(
       'state_changed',
@@ -50,7 +50,7 @@ const uploadVideo = async (uploadTask, uploadQueueAction, index) => {
           let progress = (snapshot.bytesTransferred / snapshot.totalBytes);
           if (uploadQueueAction && progress !== 0) {
             uploadQueueAction('setJobProgress', {
-              index: index,
+              id: uploadTask.id,
               progress,
             });
           }
@@ -68,10 +68,10 @@ const uploadVideo = async (uploadTask, uploadQueueAction, index) => {
         reject(error);
       },
       async () => {
-        var url = await videoRef.getDownloadURL();
+        const cloudUrl = await videoRef.getDownloadURL();
         if (subscribedToProgress?.length > 0)
           updateCloudProgress(cloudID, subscribedToProgress, 1);
-        resolve(url);
+        resolve(cloudUrl);
       },
     ),
   );

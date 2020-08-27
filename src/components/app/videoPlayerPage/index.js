@@ -60,6 +60,7 @@ class VideoPlayerPage extends Component {
   }
 
   componentDidMount() {
+    console.log('videoPlayerPage componentDidMount');
     const {navigation} = this.props;
 
     this.focusListener = navigation.addListener('focus', () => {
@@ -119,6 +120,10 @@ class VideoPlayerPage extends Component {
       };
     }
     return {};
+  }
+
+  componentDidUpdate() {
+    console.log('videoPlayerPage componentDidUpdate');
   }
 
   startRecording = async () => {
@@ -404,7 +409,9 @@ class VideoPlayerPage extends Component {
         isDrawingEnabled={isDrawingEnabled}
         personSharingScreen={personSharingScreen}
         route={route}
-        close={() => openVideoPlayer({open: false})}
+        close={() => {
+          openVideoPlayer({open: false});
+        }}
         editModeOn={() => {
           this.setState({isEditMode: true});
         }}
@@ -700,6 +707,7 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
+    console.log('videoPlayerPage render');
     return this.watchVideosView();
   };
 }

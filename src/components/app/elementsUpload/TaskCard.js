@@ -19,39 +19,20 @@ import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 import {FormatDate, formatDuration} from '../../functions/date';
 import AllIcons from '../../layout/icons/AllIcons';
 
-/*
-Task Object: (required keys)
-  {
-    thumbnail: url,
-    durationSeconds: int,
-    date: int,
-    progress: int
-  }
-*/
-
 class TaskCard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      task: {},
-    };
   }
 
   componentDidMount() {
-    this.props.onRef(this);
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    const {task} = props;
-    let stateTask = {...task};
-    if (!task.progress) stateTask.progress = 0;
-    return {
-      task: stateTask,
-    };
+    const {onRef} = this.props;
+    if (onRef) {
+      onRef(this);
+    }
   }
 
   thumbnail() {
-    const {task} = this.state;
+    const {task} = this.props;
     return (
       <View style={styles.fullCenter}>
         <View style={{...styles.thumbnail}}>
@@ -69,56 +50,38 @@ class TaskCard extends Component {
   }
 
   taskInfo() {
-    const {task} = this.state;
-    const {currentScreenSize} = this.props;
-
-    const {type, taskName} = task;
-    const {currentWidth: width} = currentScreenSize;
+    const {task, currentScreenSize} = this.props;
+    const {type, progress, timeSubmitted} = task;
+    const {currentWidth} = currentScreenSize;
     return (
       <View style={{width: '100%'}}>
         <Text style={{...styleApp.title, fontSize: 15, marginBottom: 5}}>
-          {type === 'image'
-            ? taskName
-            : formatDuration(task?.videoInfo?.durationSeconds)}
+          {type === 'video'
+            ? formatDuration(task?.videoInfo?.durationSeconds)
+            : ''}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15, marginBottom: 15}}>
-          <FormatDate date={task.date} />
+          <FormatDate date={timeSubmitted} />
         </Text>
         <Progress.Bar
           color={colors.primaryLight}
-          width={width * 0.65}
-          progress={task.progress}
+          width={currentWidth * 0.65}
+          progress={progress}
           borderWidth={0}
           unfilledColor={colors.grey}
-          formatText={() => {
-            if (task.progress === 0) return '';
-            return `${Math.round(task.progress * 100)}%`;
-          }}
-        />
-      </View>
-    );
-  }
-
-  deleteButton() {
-    return (
-      <View style={{...styleApp.center, height: '100%'}}>
-        <Image
-          source={require('../../../img/icons/closeWhite.png')}
-          style={{height: 22, width: 22}}
+          formatText={() => progress === 0 ? '' : `${Math.round(progress * 100)}%`}
         />
       </View>
     );
   }
 
   render() {
-    const {index} = this.props;
-    const {task} = this.state;
-    if (task.type === 'image') return null;
+    const {task} = this.props;
     return (
       <View
         style={{
           ...styles.card,
-          opacity: task.progress !== 0 || index === 0 ? 1 : 0.7,
+          opacity: task.progress !== 0 ? 1 : 0.7,
         }}>
         <Row>
           <Col size={15}>{this.thumbnail()}</Col>
@@ -129,12 +92,6 @@ class TaskCard extends Component {
         </Row>
       </View>
     );
-  }
-
-  deleteJob(index) {
-    const {uploadQueueAction} = this.props;
-    const {task} = this.state;
-    if (task.progress === 0) uploadQueueAction('dequeueFileUpload', index);
   }
 }
 

@@ -24,38 +24,35 @@ class UploadHeader extends Component {
     this.state = {
       expanded: false,
       headerVisible: false,
-      totalProgress: 0,
-      taskLength: 0,
       cloudQueue: [],
     };
     this.uploadReveal = new Animated.Value(-1);
   }
 
-  display(val, taskLength) {
-    const {expanded, headerVisible, totalProgress} = this.state;
-
-    if (val === 0 && expanded) {
-      this.setState({totalProgress: 1});
-      setTimeout(() => {
-        this.close();
-        this.setState({headerVisible: false});
-      }, 1500);
-    } else if (!expanded) {
-      if (!headerVisible) this.setState({});
-      this.setState({
-        headerVisible: val === 0 ? false : true,
-        totalProgress: !headerVisible ? 0 : totalProgress,
-      });
+  display(val) {
+    const {expanded, headerVisible} = this.state;
+    if (val === 1) {
+      if (!headerVisible) {
+        this.setState({headerVisible: true});
+      }
+      if (!expanded) {
+        this.open();
+      }
     }
-    if (taskLength && taskLength > this.state.taskLength) {
-      this.setState({taskLength});
+    if (val === 0) {
+      if (headerVisible) {
+        this.setState({headerVisible: false});
+      }
+      if (expanded) {
+        this.close();
+      }
     }
   }
 
-  open(val) {
+  open() {
     this.setState({expanded: true});
     Animated.parallel([
-      Animated.timing(this.uploadReveal, native(val ? val : 0, 300)),
+      Animated.timing(this.uploadReveal, native(0, 300)),
     ]).start();
   }
 
@@ -99,9 +96,9 @@ class UploadHeader extends Component {
   }
 
   totalProgress(type) {
-    const {currentScreenSize} = this.props;
+    const {currentScreenSize, uploadQueue} = this.props;
+    const {totalProgress} = uploadQueue;
     const {currentWidth: width} = currentScreenSize;
-    const {totalProgress} = this.state;
     const maxWidth = width*0.5
     const style =
       type === 'header'
@@ -150,11 +147,9 @@ class UploadHeader extends Component {
             onClose={() => {
               this.display(0);
             }}
-            onOpen={(taskLength) => {
-              this.display(1, taskLength);
-            }}
-            totalProgress={(totalProgress) => {
-              this.setState({totalProgress});
+            onOpen={() => {
+              console.log('onOpen');
+              this.display(1);
             }}
           />
         </View>
@@ -198,11 +193,12 @@ class UploadHeader extends Component {
     const {currentScreenSize} = this.props;
     const {currentWidth: width} = currentScreenSize;
     const maxWidth = 0.5*width;
+
     return (
       <View style={{zIndex: 10, marginBottom: -10, position:'absolute', width, ...styleApp.center}}>
         {headerVisible && (
           <TouchableWithoutFeedback
-            onPress={() => this.open(0)}>
+            onPress={() => this.open()}>
             <View style={{...styles.container, maxWidth}}>
               {this.totalProgress('header')}
               <Text style={styles.headerText}>Uploading</Text>

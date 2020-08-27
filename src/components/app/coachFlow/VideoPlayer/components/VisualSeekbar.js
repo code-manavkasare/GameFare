@@ -343,7 +343,6 @@ class VisualSeekBar extends Component {
       marginTop: 5,
       transform: [{translateX: seekbar.xOffset}],
     };
-
     return (
       <View style={seekbarContainerStyle}>
         <View style={panHandlerStyle} {...this.panResponder.panHandlers}>

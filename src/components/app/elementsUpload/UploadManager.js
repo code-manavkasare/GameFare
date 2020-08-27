@@ -16,86 +16,90 @@ class UploadManager extends Component {
   }
 
   componentDidMount() {
-    this.processQueue(true);
+    const {status} = this.props.uploadQueue;
+    if (status === 'uploading') {
+      this.processQueue(true);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.processQueue(false);
+    const {status} = this.props.uploadQueue;
+    if (status === 'uploading') {
+      this.processQueue(false);
+    }
   }
 
-  processQueue = async (init) => {
+  async processQueue(init) {
     const {uploadQueueAction} = this.props;
-    const {queue, status, index} = this.props.uploadQueue;
-    if (index === undefined) {
-      uploadQueueAction('resetUploadQueue');
+    const {pool} = this.props.uploadQueue;
+    if (pool && Object.values(pool).length > 0) {
+      const sorted = Object.values(pool).sort((a, b) => a.timeSubmitted - b.timeSubmitted);
+      const next = sorted[0];
+      console.log('sorted', sorted.map(x => x.id));
+      if (!next.progress || init) {
+        await uploadQueueAction('setJobProgress', {
+          id: next.id,
+          progress: 0.01,
+        });
+        await this.processTask(next);
+      }
     } else {
-      const task = queue[index];
-      if (task) {
-        const startTask = (task.progress === 0 || task.progress === undefined) || init;
-        if (status === 'uploading' && startTask) {
-          await uploadQueueAction('setJobProgress', {
-            index: index,
-            progress: 0.01,
-          });
-          switch (task.type) {
-            case 'video':
-              await this.uploadVideoAtQueueIndex(index);
-              break;
-            case 'image':
-              await this.uploadImageAtQueueIndex(index);
-              break;
-            default:
-              console.log(`ERROR: UploadManager -- upload task of unknown type ${task.type}`);
-              break;
-          }
-        }
+      console.log('reset');
+      uploadQueueAction('resetUploadQueue');
+    }
+  }
+
+  async processTask(task) {
+    console.log('process task', task.id, task.type);
+    switch (task.type) {
+      case 'video': {
+        await this.processVideoTask(task);
+        break;
+      }
+      case 'image': {
+        await this.processImageTask(task);
+        break;
+      }
+      default: {
+        console.log(
+          'ERROR UploadManager upload task of unknown type: ',
+          task.type,
+        );
       }
     }
-  };
-
-  completeTask(index) {
-    const {uploadQueue, uploadQueueAction} = this.props;
-    if (typeof uploadQueue.queue[index + 1] == 'undefined')
-      uploadQueueAction('setIndex', 0);
-    uploadQueueAction('dequeueFileUpload', index);
   }
 
-  uploadImageAtQueueIndex = async (index) => {
-    const {uploadQueue, uploadQueueAction} = this.props;
-    const uploadTask = uploadQueue.queue[index];
-    if (uploadTask) {
-      const {storageDestination, url} = uploadTask;
-      const imageUrl = await uploadImage(url, storageDestination, 'image.jpg');
-      uploadQueueAction('setJobProgress', {index: index, progress: 1});
-      await this.completeTask(index);
-      database()
-        .ref()
-        .update({
-          [`${storageDestination}/thumbnail`]: imageUrl,
-        });
-    }
-  };
+  async processVideoTask(task) {
+    const {uploadQueueAction, localVideoLibraryAction} = this.props;
+    const {videoInfo, storageDestination} = task;
+    const videoUrl = await uploadVideo(task, uploadQueueAction);
+    uploadQueueAction('setJobProgress', {id: task.id, progress: 1});
+    localVideoLibraryAction('deleteVideo', videoInfo.id);
+    database()
+      .ref()
+      .update({
+        [`${storageDestination}/url`]: videoUrl,
+      });
+    this.completeTask(task);
+  }
 
-  uploadVideoAtQueueIndex = async (index) => {
-    const {
-      uploadQueue,
-      uploadQueueAction,
-      localVideoLibraryAction,
-    } = this.props;
-    const uploadTask = uploadQueue.queue[index];
-    if (uploadTask) {
-      const {videoInfo, storageDestination} = uploadTask;
-      const videoUrl = await uploadVideo(uploadTask, uploadQueueAction, index);
-      uploadQueueAction('setJobProgress', {index: index, progress: 1});
-      localVideoLibraryAction('deleteVideo', videoInfo.id);
-      await this.completeTask(index);
-      database()
-        .ref()
-        .update({
-          [`${storageDestination}/url`]: videoUrl,
-        });
-    }
-  };
+  async processImageTask(task) {
+    const {storageDestination, url} = task;
+    const imageUrl = await uploadImage(url, storageDestination, 'image.jpg');
+    uploadQueueAction('setJobProgress', {id: task.id, progress: 1});
+    database()
+      .ref()
+      .update({
+        [`${storageDestination}/thumbnail`]: imageUrl,
+      });
+    this.completeTask(task);
+  }
+
+  completeTask(task) {
+    console.log('complete task', task.id);
+    const {uploadQueueAction} = this.props;
+    uploadQueueAction('dequeueFileUpload', task.id);
+  }
 }
 
 const mapStateToProps = (state) => {

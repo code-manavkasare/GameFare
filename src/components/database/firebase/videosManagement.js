@@ -83,7 +83,7 @@ const updateUploadProgress = async (
     const updates = subscribedToProgress.reduce((result, memberID) => {
       return {
         ...result,
-        [`users/${memberID}/archivedStreams/uploading/${cloudVideoID}/progress`]: progress,
+        [`users/${memberID}/archivedStreams/uploading/${cloudVideoID}/videoInfo/progress`]: progress,
       };
     }, {});
     await database()
@@ -97,7 +97,7 @@ const subscribeUploadProgress = async (memberID, videoID) => {
   await database()
     .ref()
     .update({
-      [`users/${memberID}/archivedStreams/uploading/${videoID}`]: {
+      [`users/${memberID}/archivedStreams/uploading/${videoID}/videoInfo`]: {
         filename: videoID,
         hostUser: userID,
         thumbnail: '', // fix
@@ -113,7 +113,7 @@ const unsubscribeUploadProgress = async (memberID, videoID) => {
   await database()
     .ref()
     .update({
-      [`users/${memberID}/archivedStreams/uploading/${videoID}`]: null,
+      [`users/${memberID}/archivedStreams/uploading/${videoID}/videoInfo`]: null,
     });
 };
 

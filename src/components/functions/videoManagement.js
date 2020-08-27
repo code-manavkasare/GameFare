@@ -10,6 +10,7 @@ import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 
 import {getVideoInfo, getVideoUUID, updateVideoSavePath} from './pictures';
+import {generateID} from './utility';
 
 import {navigate, goBack} from '../../../NavigationService';
 
@@ -29,6 +30,8 @@ import {
   shareCloudVideo,
   createCloudVideo,
   setCloudThumbnail,
+  subscribeUploadProgress,
+
 } from '../database/firebase/videosManagement';
 import {getNativeVideoInfo} from '../functions/pictures';
 
@@ -68,7 +71,6 @@ const arrayUploadFromSnippets = async ({
   members,
   userID,
 }) => {
-  let snippets = [];
   let flags = Object.values(flagsSelected).filter((flag) => {
     return flag?.id !== `${userID}-fullVideo`;
   });
@@ -77,47 +79,27 @@ const arrayUploadFromSnippets = async ({
       recording.localSource,
       flags,
     );
-    for (const flag of flagsWithSnippets) {
+    flagsWithSnippets.forEach(async (flag, index) => {
       let {snippetLocalPath, thumbnail} = flag;
       const videoInfo = await getVideoInfo(snippetLocalPath, thumbnail);
       const cloudVideo = await uploadLocalVideo(videoInfo, members);
-      const destinationCloud = `archivedStreams/${cloudVideo.id}`;
       members.map((member) => {
         shareCloudVideo(member.id, cloudVideo.id);
+        //subscribeUploadProgress(member.id, cloudVideo.id, '', videoInfo.durationSeconds, index);
       });
-      snippets.push({
-        type: 'video',
-        videoInfo,
-        cloudID: cloudVideo.id,
-        storageDestination: destinationCloud,
-        shareProgressWith: members,
-        displayInList: true,
-        progress: 0,
-        date: Date.now(),
-      });
-    }
+    });
   }
   if (flagsSelected[`${userID}-fullVideo`]) {
     const {localSource, thumbnail} = recording;
     const videoInfo = await getVideoInfo(localSource, thumbnail);
     const cloudVideo = await uploadLocalVideo(videoInfo, members);
-    const destinationCloud = `archivedStreams/${cloudVideo.id}`;
     members.map((member) => {
       shareCloudVideo(member.id, cloudVideo.id);
-    });
-    snippets.push({
-      type: 'video',
-      videoInfo,
-      cloudID: cloudVideo.id,
-      storageDestination: destinationCloud,
-      shareProgressWith: members,
-      displayInList: true,
-      progress: 0,
-      date: Date.now(),
+      //subscribeUploadProgress(member.id, cloudVideo.id, '', videoInfo.durationSeconds, 0);
     });
   }
-  return snippets;
 };
+
 const addLocalVideo = async (video) => {
   if (!video.id) {
     video.id = getVideoUUID(video.url);
@@ -155,7 +137,7 @@ const openVideoPlayer = async ({archives, open, coachSessionID}) => {
 const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
   const cloudVideo = await createCloudVideo(videoInfo);
   store.dispatch(hideVideo(videoInfo.id));
-  let {thumbnail, url, fromNativeLibrary, id} = videoInfo;
+  let {thumbnail} = videoInfo;
   if (thumbnail) {
     if (thumbnail.substring(0, 4) === 'http') {
       setCloudThumbnail(cloudVideo.id, videoInfo.thumbnail);
@@ -163,6 +145,8 @@ const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
       store.dispatch(
         enqueueFileUpload({
           type: 'image',
+          id: generateID(),
+          timeSubmitted: Date.now(),
           url: thumbnail,
           storageDestination: `archivedStreams/${cloudVideo.id}`,
           displayInList: false,
@@ -173,6 +157,8 @@ const uploadLocalVideo = async (videoInfo, shareProgressWith) => {
   store.dispatch(
     enqueueFileUpload({
       type: 'video',
+      id: generateID(),
+      timeSubmitted: Date.now(),
       videoInfo,
       cloudID: cloudVideo.id,
       storageDestination: `archivedStreams/${cloudVideo.id}`,
@@ -193,30 +179,7 @@ const deleteLocalVideoFile = async (path) => {
   });
 };
 
-const shareVideosWithPeople = async (
-  localVideos,
-  firebaseVideos,
-  users,
-  contacts,
-) => {
-  const videosToUpload = localVideos.map(
-    (id) => store.getState().localVideoLibrary.videoLibrary[id],
-  );
-  const cloudVideos = await Promise.all(
-    videosToUpload.map((video) => uploadLocalVideo(video)),
-  );
-  let allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
-  Object.values(users).map((user) => {
-    allVideos.map((videoID) => {
-      shareCloudVideo(user.id, videoID);
-    });
-  });
-  Object.values(contacts).map((contact) => {
-    console.log('contact share is null operation', contact);
-  });
-};
-
-const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
+const shareVideosWithTeams = async (localVideos, firebaseVideos, objectIDs) => {
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
   const videosToUpload = localVideos?.map(
@@ -225,31 +188,33 @@ const shareVideosWithTeam = async (localVideos, firebaseVideos, objectID) => {
   const cloudVideos = await Promise.all(
     videosToUpload.map((video) => uploadLocalVideo(video)),
   );
-  let allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
-  for (let i in allVideos) {
-    const videoID = allVideos[i];
-    await sendNewMessage({
-      objectID,
-      user: {
-        id: userID,
-        info: infoUser,
-      },
-      text: '',
-      type: 'video',
-      content: videoID,
+  const allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
+  const addToContents = allVideos.reduce((newContents, videoID) => {
+    // added to firebase session contents
+    newContents[videoID] = {
+      id: videoID,
+      timeStamp: Date.now(),
+    };
+    return newContents;
+  }, {});
+  objectIDs.forEach((objectID) => {
+    allVideos.forEach((videoID) => {
+      sendNewMessage({
+        objectID,
+        user: {
+          id: userID,
+          info: infoUser,
+        },
+        text: '',
+        type: 'video',
+        content: videoID,
+      });
     });
-  }
-  await database()
-    .ref(`coachSessions/${objectID}/contents`)
-    .update(
-      Object.values(allVideos).reduce(function(result, item) {
-        result[item] = {
-          id: item,
-          timeStamp: Date.now(),
-        };
-        return result;
-      }, {}),
-    );
+    database()
+      .ref(`coachSessions/${objectID}/contents`)
+      .update(addToContents);
+  });
+
   return allVideos;
 };
 
@@ -257,11 +222,8 @@ const generateThumbnailSet = async (source, timeBounds, size, callback) => {
   if (!source) {
     return;
   }
-  // console.log(timeBounds, size);
   const dt = (timeBounds[1] - timeBounds[0]) / size;
-  // console.log('dt', dt);
   const m = timeBounds[0] + dt / 2;
-  // console.log('m', m);
   let thumbnails = [];
   for (var x = 0; x < size; x++) {
     let time = (dt * x + m) * 1000;
@@ -277,7 +239,6 @@ const generateThumbnailSet = async (source, timeBounds, size, callback) => {
       }),
     );
   }
-  // console.log(thumbnails.length);
   return thumbnails;
 };
 
@@ -329,8 +290,7 @@ export {
   uploadLocalVideo,
   recordVideo,
   openVideoPlayer,
-  shareVideosWithPeople,
-  shareVideosWithTeam,
+  shareVideosWithTeams,
   getFirebaseVideoByID,
   getLocalVideoByID,
   generateThumbnailSet,

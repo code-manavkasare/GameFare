@@ -15,7 +15,6 @@ import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 import {deleteCloudVideo} from '../../database/firebase/videosManagement.js';
-import {shareVideosWithTeam} from '../../functions/videoManagement';
 import {pickerlocalVideos} from './components/elements';
 import {rowTitle} from '../TeamPage/components/elements';
 import {FlatListComponent} from '../../layout/Views/FlatList';
@@ -87,6 +86,7 @@ class VideoLibraryPage extends Component {
       };
     }
     const videosArray = sortVideos(allVideos).filter((video) => !video?.hidden);
+    console.log('videosArray[1]', videosArray[1]);
     return {videosArray};
 
   }

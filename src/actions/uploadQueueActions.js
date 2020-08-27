@@ -8,35 +8,35 @@ import {
   RESET_UPLOAD_QUEUE,
 } from './types';
 
-export const enqueueFileUpload = (value) => ({
+export const enqueueFileUpload = (uploadTask) => ({
   type: ENQUEUE_FILE_UPLOAD,
-  value: value,
+  uploadTask,
 });
 
-const enqueueFilesUpload = (value) => ({
+const enqueueFilesUpload = (uploadTasks) => ({
   type: ENQUEUE_FILES_UPLOAD,
-  value: value,
+  uploadTasks,
 });
 
-const dequeueFileUpload = (value) => ({
+const dequeueFileUpload = (id) => ({
   type: DEQUEUE_FILE_UPLOAD,
-  index: value,
+  id,
 });
 
-const setUploadStatus = (value) => ({
+const setUploadStatus = (status) => ({
   type: SET_UPLOAD_STATUS,
-  status: value,
+  status,
 });
 
-const setUploadIndex = (value) => ({
+const setUploadIndex = (index) => ({
   type: SET_UPLOAD_INDEX,
-  index: value,
+  index,
 });
 
-const setJobProgress = (value) => ({
+const setJobProgress = (data) => ({
   type: SET_JOB_PROGRESS,
-  index: value.index,
-  progress: value.progress,
+  id: data.id,
+  progress: data.progress,
 });
 
 const resetUploadQueue = () => ({

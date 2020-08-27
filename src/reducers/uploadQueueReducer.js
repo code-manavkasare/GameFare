@@ -8,51 +8,74 @@ import {
   RESET_UPLOAD_QUEUE,
 } from '../actions/types';
 
+import {dissoc} from 'ramda';
+
 const initialState = {
   queue: [],
+  pool: {},
   status: 'empty', // STATES = ['empty', 'uploading', 'paused']
-  index: 0,
+  totalProgress: 0,
+  numberConcurrentUploads: 0,
 };
 
 const uploadQueueReducer = (state = initialState, action) => {
   switch (action.type) {
     case ENQUEUE_FILE_UPLOAD:
-      let increasedQueue = state.queue;
-      increasedQueue.push(action.value);
-      return {...state, queue: increasedQueue, status: 'uploading'};
-    case ENQUEUE_FILES_UPLOAD:
-      let appendedQueue = state.queue;
-      appendedQueue = appendedQueue.concat(action.value);
-      return {...state, queue: appendedQueue, status: 'uploading'};
-    case DEQUEUE_FILE_UPLOAD:
-      let decreasedQueue = state.queue;
-      decreasedQueue.splice(action.index, 1);
       return {
         ...state,
-        queue: decreasedQueue,
-        status: decreasedQueue.length < 1 ? 'empty' : state.status,
+        pool: {
+          ...state.pool,
+          [action.uploadTask.id]: action.uploadTask,
+        },
+        status: 'uploading',
+        numberConcurrentUploads: state.numberConcurrentUploads + 1,
+      };
+    case ENQUEUE_FILES_UPLOAD:
+      const newPoolData = action.uploadTasks.reduce((data, task) => {
+        return {...data, [task.id]: {...task, progress: 0}};
+      }, {});
+      return {
+        ...state,
+        pool: {
+          ...newPoolData,
+          ...state.pool,
+        },
+        status: 'uploading',
+        numberConcurrentUploads:
+          state.numberConcurrentUploads + action.uploadTasks.length,
+      };
+    case DEQUEUE_FILE_UPLOAD:
+      // do NOT decrease numberConcurrentUploads here
+      const {numberConcurrentUploads, pool} = state;
+      const smallerPool = dissoc(action.id, pool);
+      const numberRemainingUploads = Object.values(smallerPool).length;
+      return {
+        ...state,
+        pool: smallerPool,
+        totalProgress:
+          (1 / numberConcurrentUploads) *
+          (numberConcurrentUploads - numberRemainingUploads),
       };
     case SET_UPLOAD_STATUS:
       return {
         ...state,
         status: action.status,
       };
-    case SET_UPLOAD_INDEX:
-      return {
-        ...state,
-        index: action.index,
-      };
     case SET_JOB_PROGRESS:
-      let progressQueue = state.queue;
-      try {
-        progressQueue[action.index]['progress'] = action.progress;
-      } catch {
-        return state
+      if (state.pool[action.id]) {
+        return {
+          ...state,
+          pool: {
+            ...state.pool,
+            [action.id]: {
+              ...state.pool[action.id],
+              progress: action.progress,
+            },
+          },
+        };
+      } else {
+        return state;
       }
-      return {
-        ...state,
-        queue: progressQueue,
-      };
     case RESET_UPLOAD_QUEUE:
       return initialState;
     default:
