@@ -54,53 +54,26 @@ class BottomButton extends Component {
       color: new Animated.Value(0),
     };
   }
-  componentDidMount() {
-    this.props.onRef(this);
-    this.configureQueue();
-  }
-  componentDidUpdate(prevProps, prevState) {
-    const {endCurrentSession, currentSessionReconnecting} = this.props.coach;
-    if (!prevProps.coach.endCurrentSession && endCurrentSession) {
-      this.onEndCurrentSession();
-    }
-    if (currentSessionReconnecting && this.videoSourcePopupRef.state.visible) {
-      this.videoSourcePopupRef.close();
-    }
-    const {
-      finalizeRecordingMember,
-      shouldStartRecording,
-      shouldStopRecording,
-      discardFile,
-    } = this.state;
-    const {members} = this.props;
-
-    if (shouldStartRecording && !prevState.shouldStartRecording) {
-      queue.addJob('startRecording');
-    } else if (shouldStopRecording && !prevState.shouldStopRecording) {
-      queue.addJob('stopRecording', {discardFile: discardFile});
-    }
-  }
   static getDerivedStateFromProps(props, state) {
-    const {members, userID, archivedStreams, coach} = props;
-    const {recordingSelf, seenVideos, finalizeRecordingMember} = state;
-    const member = members ? members[userID] : undefined;
-
     var newState = {};
-
+    const {members, userID, archivedStreams, coach} = props;
+    const {seenVideos, finalizeRecordingMember} = state;
+    // unseen videos indicator
     const archivedVideosLength = archivedStreams
-      ? Object.values(archivedStreams).length
+      ? Object.keys(archivedStreams).length
       : 0;
     if (archivedVideosLength > seenVideos && seenVideos > 0) {
       newState = {...newState, unreadVideos: archivedVideosLength - seenVideos};
     } else {
       newState = {...newState, seenVideos: archivedVideosLength};
     }
-    // receive firebase start recording/stop recording function
+    // receive firebase startRemoteRecording/stopRemoteRecording instruction
     const firebaseSelf = members ? members[userID] : undefined;
     if (firebaseSelf && firebaseSelf.recording) {
-      if (firebaseSelf.recording.isRecording && !coach.recording) {
+      const {isRecording} = firebaseSelf.recording;
+      if (isRecording && !coach.recording) {
         newState = {...newState, shouldStartRecording: true};
-      } else if (!firebaseSelf.recording.isRecording && coach.recording) {
+      } else if (!isRecording && coach.recording) {
         newState = {...newState, shouldStopRecording: true};
       } else {
         newState = {
@@ -110,24 +83,46 @@ class BottomButton extends Component {
         };
       }
     }
-    // are any members of session recording?
-    newState = {...newState, anyMemberRecording: false};
-    for (var m in members) {
-      if (members[m].recording && members[m].recording.isRecording)
-        newState = {...newState, anyMemberRecording: true};
-    }
-
+    const anyMemberRecording = Object.values(members).reduce((m, val) => {
+      return val || m?.recording?.isRecording;
+    }, false);
+    newState = {
+      ...newState,
+      anyMemberRecording,
+    };
     if (
       finalizeRecordingMember &&
       !isEqual(members[finalizeRecordingMember.id], finalizeRecordingMember)
-    )
+    ) {
       newState = {
         ...newState,
         finalizeRecordingMember: members[finalizeRecordingMember.id],
       };
-
+    }
     return newState;
   }
+
+  componentDidMount() {
+    this.props.onRef(this);
+    this.configureQueue();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const {endCurrentSession, currentSessionReconnecting} = this.props.coach;
+    if (!prevProps.coach.endCurrentSession && endCurrentSession) {
+      this.onEndCurrentSession();
+    }
+    if (currentSessionReconnecting && this.recordingMenuRef.state.visible) {
+      this.recordingMenuRef.close();
+    }
+    const {shouldStartRecording, shouldStopRecording, discardFile} = this.state;
+
+    if (shouldStartRecording && !prevState.shouldStartRecording) {
+      queue.addJob('startRecording');
+    } else if (shouldStopRecording && !prevState.shouldStopRecording) {
+      queue.addJob('stopRecording', {discardFile});
+    }
+  }
+
   configureQueue() {
     queue.removeWorker('startRecording');
     queue.removeWorker('stopRecording');
@@ -188,43 +183,34 @@ class BottomButton extends Component {
       coachAction('setRecording', true);
     }
   };
-  stopRecording = async (payload) => {
-    const {members, userID, coachSessionID, uploadQueueAction} = this.props;
-    const {discardFile} = payload;
+  stopRecording = async ({discardFile}) => {
+    const {
+      members,
+      userID,
+      coachSessionID,
+      uploadQueueAction,
+      otPublisherRef,
+      coachAction,
+    } = this.props;
     const messageCallback = async (response) => {
-      if (response.error)
-        return Alert.alert(`Error storing recording: ${response.message}`);
-      let {videoUrl} = response;
-      if (videoUrl) {
-        const member = Object.values(members).filter(
-          (member) => member.id === userID,
-        )[0];
-        const {id: memberID, recording} = member;
-        if (!discardFile) {
-          const {userIDrequesting} = recording;
-          // create firebase object here
-          const thumbnails = await generateFlagsThumbnail({
-            flags: recording.flags,
-            source: videoUrl,
+      coachAction('setRecording', false);
+      if (!discardFile) {
+        if (response.error) {
+          return Alert.alert(`Error storing recording: ${response.message}`);
+        } else {
+          const {videoUrl} = response;
+          const member = members[userID];
+          const thumbnails = await generateFlagsThumbnail(
+            member?.recording?.flags,
+            videoUrl,
             coachSessionID,
-            memberID: memberID,
-          });
-
-          if (userIDrequesting === userID)
-            this.videoSourcePopupRef.openExportQueue(member, thumbnails);
+            userID,
+          );
           uploadQueueAction('enqueueFilesUpload', thumbnails);
         }
-      } else {
-        const member = members[userID];
-        const {recording} = member;
-        const {userIDrequesting} = recording;
-        if (userIDrequesting === userID)
-          this.videoSourcePopupRef.openExportQueue(member);
       }
     };
-    const {otPublisherRef, coachAction} = this.props;
     await otPublisherRef.current.stopRecording(messageCallback);
-    coachAction('setRecording', false);
   };
   publishVideo() {
     const {setState, coachSessionID, userID} = this.props;
@@ -330,9 +316,9 @@ class BottomButton extends Component {
           view={() => insideViewButton()}
           click={async () => {
             if (currentSessionReconnecting) return;
-            return this.videoSourcePopupRef.state.visible
-              ? this.videoSourcePopupRef.close()
-              : this.videoSourcePopupRef.open();
+            return this.recordingMenuRef.state.visible
+              ? this.recordingMenuRef.close()
+              : this.recordingMenuRef.open();
           }}
           style={styles.whiteButtonRecording}
           onPressColor={colors.redLight}
@@ -401,12 +387,11 @@ class BottomButton extends Component {
     const {members, userID, coach} = this.props;
     const self = members[userID];
     if (coach.recording) {
-      this.setState({shouldStopRecording: true, discardFile: true});
+      await this.setState({shouldStopRecording: true, discardFile: true});
       this.stopRemoteRecording(self);
     }
   }
   buttonEndCall() {
-    const {coachAction} = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -448,7 +433,7 @@ class BottomButton extends Component {
     };
     return (
       <RecordingMenu
-        onRef={(ref) => (this.videoSourcePopupRef = ref)}
+        onRef={(ref) => (this.recordingMenuRef = ref)}
         members={members ? Object.values(members) : []}
         coachSessionID={coachSessionID}
         close={() => {}}

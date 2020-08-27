@@ -29,7 +29,7 @@ class RecordingMenu extends Component {
     };
     this.menuAnimation = new Animated.Value(0);
     this.peekUploadMenu = new Animated.Value(0);
-    this.itemsRef = [];
+    this.memberSourceRefs = [];
   }
 
   componentDidMount() {
@@ -97,7 +97,7 @@ class RecordingMenu extends Component {
     Animated.parallel([
       Animated.timing(this.menuAnimation, native(1, 300)),
     ]).start();
-    this.exportQueueRef.open(member, thumbnails)
+    this.exportQueueRef.open(member, thumbnails);
   }
 
   openUploadQueue() {
@@ -203,26 +203,27 @@ class RecordingMenu extends Component {
               member={member}
               key={member.id}
               coachSessionID={coachSessionID}
-              onRef={(ref) => (this.itemsRef[member.id] = ref)}
+              onRef={(ref) => (this.memberSourceRefs[member.id] = ref)}
               getMembers={() => {
                 return propsMembers;
               }}
               selectMember={async (member) => {
-                var sourceRef = this.itemsRef[member.id]
-                const isStopingRecording =
-                  member.recording && member.recording.isRecording;
-                if (isStopingRecording) await sourceRef.setState({loader: true});
-                if (isStopingRecording && member.id !== userID) this.openExportQueue(member)
+                var sourceRef = this.memberSourceRefs[member.id];
+                sourceRef.setState({loader: true});
                 await selectMember(member);
-                sourceRef.setState({loader:false})
+                const stopping = member.recording && member.recording.isRecording;
+                if (stopping) {
+                  this.openExportQueue(member);
+                }
+                sourceRef.setState({loader: false});
               }}
             />
           ))}
           </View>
           
           <ExportQueue
-            onRef={(ref) => {this.exportQueueRef = ref}}
-            onClose={() => {this.open()}}
+            onRef={(ref) => {this.exportQueueRef = ref;}}
+            onClose={() => this.open()}
             coachSessionID = {coachSessionID}
             members = {members}
           />

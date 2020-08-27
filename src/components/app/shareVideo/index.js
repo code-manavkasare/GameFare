@@ -15,13 +15,12 @@ import StatusBar from '@react-native-community/status-bar';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import {
-  heightHeaderHome,
-  marginTopApp,
-} from '../../style/sizes';
+import {heightHeaderHome, marginTopApp} from '../../style/sizes';
 
 import {createShareVideosBranchUrl} from '../../database/branch';
-import {shareVideosWithPeople, shareVideosWithTeam} from '../../functions/videoManagement';
+import {
+  shareVideosWithTeams,
+} from '../../functions/videoManagement';
 import {openSession} from '../../functions/coach';
 import AllIcons from '../../layout/icons/AllIcons';
 import ButtonColor from '../../layout/Views/Button';
@@ -72,9 +71,9 @@ class ShareVideoPage extends React.Component {
       branchLink,
       onSelectMembers: async (members, sessions) => {
         const {objectID} = await openSession(user, members);
-        shareVideosWithTeam(localVideos, firebaseVideos, objectID);
+        shareVideosWithTeams(localVideos, firebaseVideos, [objectID]);
         navigate('Conversation', {coachSessionID: objectID});
-      }
+      },
     });
   }
   shareWithTeams() {
@@ -90,15 +89,19 @@ class ShareVideoPage extends React.Component {
       titleHeader: 'Select teams to share with',
       noNavigation: true,
       onSelectMembers: async (members, sessions) => {
-        for (const {objectID} of Object.values(sessions)) {
-          shareVideosWithTeam(localVideos, firebaseVideos, objectID);
-        }
+        shareVideosWithTeams(
+          localVideos,
+          firebaseVideos,
+          Object.values(sessions).map((session) => session.objectID),
+        );
         if (Object.keys(sessions).length === 1) {
-          navigate('Conversation', {coachSessionID: Object.values(sessions)[0].objectID});
+          navigate('Conversation', {
+            coachSessionID: Object.values(sessions)[0].objectID,
+          });
         } else {
-         pop(2);
+          pop(2);
         }
-      }
+      },
     });
   }
   button(words, icon, action) {
@@ -132,23 +135,35 @@ class ShareVideoPage extends React.Component {
         ]}
         onPressColor={colors.off}
       />
-    )
+    );
   }
 
   render() {
     const {route} = this.props;
     const {firebaseVideos, localVideos} = route.params;
     return (
-      <View style={styleApp.stylePage} >
-        <ShareVideoHeader close={() => this.close()}/>
-        <Row size={25} style={[styleApp.marginView, {marginTop: marginTopApp + heightHeaderHome}]}>
-          <ShareVideoPreview firebaseVideos={firebaseVideos} localVideos={localVideos} />
+      <View style={styleApp.stylePage}>
+        <ShareVideoHeader close={() => this.close()} />
+        <Row
+          size={25}
+          style={[
+            styleApp.marginView,
+            {marginTop: marginTopApp + heightHeaderHome},
+          ]}>
+          <ShareVideoPreview
+            firebaseVideos={firebaseVideos}
+            localVideos={localVideos}
+          />
         </Row>
         <Row size={8} style={styleApp.marginView}>
-          {this.button('Share with friends', 'arrow-right', () => this.shareWithFriends())}
+          {this.button('Share with friends', 'arrow-right', () =>
+            this.shareWithFriends(),
+          )}
         </Row>
-        <Row size={8}style={styleApp.marginView}>
-          {this.button('Share with teams', 'arrow-right', () => this.shareWithTeams())}
+        <Row size={8} style={styleApp.marginView}>
+          {this.button('Share with teams', 'arrow-right', () =>
+            this.shareWithTeams(),
+          )}
         </Row>
         <Row size={55} />
       </View>
@@ -162,7 +177,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
 
 const mapStateToProps = (state) => {
   return {

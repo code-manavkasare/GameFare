@@ -10,6 +10,9 @@ import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';
 import {getVideoUUID} from './pictures';
+import {minutes, seconds, milliSeconds} from './date';
+import {shareVideosWithTeam} from './videoManagement';
+
 import {store} from '../../../reduxStore';
 import {
   setCurrentSession,
@@ -17,9 +20,10 @@ import {
   endCurrentSession,
   unsetCurrentSession,
 } from '../../actions/coachActions';
-import {shareVideosWithTeam} from './videoManagement';
+import {shareVideosWithTeams} from './videoManagement';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
+
 import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
@@ -91,28 +95,6 @@ const userPartOfSession = (session, userID) => {
   return session.members[userID];
 };
 
-const minutes = (time) => {
-  return Math.floor(time / 60);
-};
-
-const seconds = (time, displayMilliseconds) => {
-  let sec = (time % 60).toFixed(0);
-  if (displayMilliseconds) sec = Math.floor(time % 60).toFixed(0);
-  // if (sec.length === 1 && Number(sec) !== 0) return '0 ' + sec;
-  return sec;
-};
-
-const milliSeconds = (time) => {
-  const min = minutes(time) * 60;
-  const sec = Math.floor(time % 60);
-  let ms = Number(((time - (min + sec)) * 100).toFixed(0));
-
-  if (ms.toString().length === 1) return '0' + ms;
-  if (ms === 100) return '00';
-  if (ms === 0) return '00';
-  return ms;
-};
-
 const displayTime = (time, displayMilliseconds) => {
   function pad(num, size) {
     var s = num + '';
@@ -160,7 +142,7 @@ const toggleCloudRecording = (sessionIDFirebase, memberID, enable) => {
     .update(updates);
 };
 
-toggleVideoPublish = (sessionIDFirebase, memberID, enable) => {
+const toggleVideoPublish = (sessionIDFirebase, memberID, enable) => {
   let updates = {};
   updates[
     `coachSessions/${sessionIDFirebase}/members/${memberID}/publishVideo`
@@ -296,12 +278,12 @@ const compressThumbnail = async (initialPath) => {
   return path;
 };
 
-const generateFlagsThumbnail = async ({
+const generateFlagsThumbnail = async (
   flags,
   source,
-  memberID,
   coachSessionID,
-}) => {
+  memberID,
+) => {
   // creates thumbnails for full video and flags, sets up clip selection for user who stopped recording
   let thumbnails =
     !flags || Object.keys(flags).length === 0
@@ -324,12 +306,15 @@ const generateFlagsThumbnail = async ({
             };
           }),
         );
-  x;
+  let {path: thumbnailFullVideo} = await createThumbnail({
+    url: source,
+    timeStamp: 0,
+  });
   thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
   thumbnails.push({
     type: 'image',
     url: thumbnailFullVideo,
-    storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording`,
+    storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`,
     displayInList: false,
     progress: 0,
     date: Date.now(),
@@ -633,10 +618,10 @@ const selectVideosFromLibrary = (coachSessionID) => {
     selectableMode: true,
     selectOnly: true,
     confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
-      shareVideosWithTeam(
+      shareVideosWithTeams(
         selectedLocalVideos,
         selectedFirebaseVideos,
-        coachSessionID,
+        [coachSessionID],
       ),
   });
 };
@@ -683,8 +668,6 @@ module.exports = {
   generateFlagsThumbnail,
   getVideoUUID,
   openSession,
-  minutes,
-  seconds,
   infoCoach,
   sessionOpening,
   openMemberAcceptCharge,

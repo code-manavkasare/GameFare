@@ -33,7 +33,6 @@ class Footer extends Component {
       extrapolate: 'clamp',
       outputRange: [300, 0],
     });
-
     return (
       <Animated.View style={[styles.footer, {transform: [{translateY}]}]}>
         <BottomButtons

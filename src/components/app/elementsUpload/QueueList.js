@@ -24,181 +24,129 @@ class QueueList extends Component {
     super(props);
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.state = {
-      queue: [],
+      orderedTasks: [],
       cloudQueue: [],
-      taskLength: 0,
-      tasksToRemove: [],
     };
-    this.taskRefs = [];
-  }
-
-  componentDidMount() {
-    this.fetchCloudUploadQueue();
-  }
-
-  fetchCloudUploadQueue() {
-    const {userID} = this.props;
-    database()
-      .ref(`users/${userID}/archivedStreams/uploading`)
-      .on('value', this.firebaseCallback.bind(this));
-  }
-
-  componentWillUnmount() {
-    const {userID} = this.props;
-    database()
-      .ref(`users/${userID}/archivedStreams/uploading`)
-      .off('value', this.firebaseCallback.bind(this));
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {userID, uploadQueue} = props;
-    const {queue} = uploadQueue;
-    let {taskLength, tasksToRemove} = state;
-    const {queue: prevQueue} = state;
-    const cloudQueue = state.cloudQueue ? Object.values(state.cloudQueue) : [];
-    const finalQueue = cloudQueue
-      .filter(
-        (task) =>
-          task?.hostUser !== userID &&
-          task?.thumbnail !== undefined &&
-          task?.durationSeconds !== undefined &&
-          task?.date !== undefined &&
-          task?.progress !== undefined,
-      )
-      .concat(queue.filter((task) => task?.displayInList))
-      .sort((a, b) => {
-        if (a?.index > b?.index) return 1;
-        if (a?.index < b?.index) return -1;
-        else return 0;
-      });
-    let newState = {
-      ...newState,
-      queue: finalQueue,
-    };
-    if (finalQueue?.length > taskLength) {
-      taskLength = finalQueue?.length;
-      newState = {
-        ...newState,
-        taskLength: finalQueue?.length,
-      };
+    const {uploadQueue} = props;
+    const {pool} = uploadQueue;
+    if (pool && Object.values(pool).length >= 0) {
+      const orderedTasks = Object.values(pool)
+        .filter((task) => task.displayInList)
+        .sort((a, b) => a.timeSubmitted - b.timeSubmitted);
+      return {orderedTasks};
     }
-    if (finalQueue?.length < prevQueue?.length) {
-      let removalIndex = 0;
-      for (let task in finalQueue) {
-        if (
-          finalQueue[task]?.filename &&
-          prevQueue[task]?.filename &&
-          finalQueue[task]?.filename === prevQueue[task]?.filename
-        )
-          removalIndex++;
-        else break;
-      }
-      let removedTask = {
-        task: {
-          ...prevQueue[removalIndex],
-          progress: 1,
-          remove: true,
-        },
-        index: removalIndex,
-      };
-      tasksToRemove.push(removedTask);
-      newState = {
-        ...newState,
-        tasksToRemove,
-      };
-    }
-    let progressSum = 0;
-    finalQueue.map((task) => {
-      progressSum += task?.progress;
-    });
-    const completedTasks = taskLength - finalQueue?.length;
-    progressSum += completedTasks > 0 ? completedTasks : 0;
-    const totalProgress = progressSum / taskLength;
-    return {
-      ...newState,
-      totalProgress,
-    };
+    // const cloudQueue = state.cloudQueue ? Object.values(state.cloudQueue) : [];
+    // const finalQueue = cloudQueue
+    //   .filter(
+    //     (task) =>
+    //       task?.hostUser !== userID &&
+    //       task?.thumbnail !== undefined &&
+    //       task?.durationSeconds !== undefined &&
+    //       task?.date !== undefined &&
+    //       task?.progress !== undefined,
+    //   )
+    //   .concat(Object.values(pool).filter((task) => task?.displayInList))
+    //   .sort((a, b) => {
+    //     if (a?.index > b?.index) return 1;
+    //     if (a?.index < b?.index) return -1;
+    //     else return 0;
+    //   });
+  }
+
+  componentDidMount() {
+    //this.fetchCloudUploadQueue();
+  }
+
+  componentWillUnmount() {
+    // const {userID} = this.props;
+    // database()
+    //   .ref(`users/${userID}/archivedStreams/uploading`)
+    //   .off('value', this.firebaseCallback.bind(this));
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {queue, taskLength, totalProgress} = this.state;
-    const {queue: prevQueue, totalProgress: prevTotalProgress} = prevState;
-    if (queue?.length > prevQueue?.length) {
-      this.props.onOpen(queue?.length);
-    } else if (queue?.length === 0 && prevQueue?.length > 0) {
+    const {orderedTasks} = this.state;
+    const {orderedTasks: prevOrderedTasks} = prevState;
+    if (orderedTasks?.length > prevOrderedTasks?.length) {
+      this.props.onOpen();
+    } else if (orderedTasks?.length === 0 && prevOrderedTasks?.length > 0) {
       this.props.onClose();
-      this.listY = new Animated.Value(0);
-      this.setState({taskLength: 0, tasksToRemove: [], listY: 0});
-    } else if (
-      prevTotalProgress &&
-      totalProgress > prevTotalProgress &&
-      this.props.totalProgress
-    ) {
-      this.props.totalProgress(totalProgress ? totalProgress : 0);
+      // this.listY = new Animated.Value(0);
+      // this.setState({listY: 0});
     }
   }
 
-  async firebaseCallback(snap) {
-    const {queue} = this.state;
-    const {userID} = this.props;
-    const snapshot = snap.val();
-    let cloudQueue = !snapshot
-      ? []
-      : Object.values(snapshot).filter((task) => task?.hostUser !== userID);
-    this.setState({
-      cloudQueue,
-    });
-    if (this.props.onFetch) {
-      this.props.onFetch(queue);
-    }
-  }
+  // fetchCloudUploadQueue() {
+  //   const {userID} = this.props;
+  //   database()
+  //     .ref(`users/${userID}/archivedStreams/uploading`)
+  //     .on('value', this.firebaseCallback.bind(this));
+  // }
+
+  // async firebaseCallback(snap) {
+  //   const {orderedTasks} = this.state;
+  //   const {userID} = this.props;
+  //   const snapshot = snap.val();
+  //   let cloudQueue = !snapshot
+  //     ? []
+  //     : Object.values(snapshot).filter((task) => task?.hostUser !== userID);
+  //   this.setState({
+  //     cloudQueue,
+  //   });
+  //   if (this.props.onFetch) {
+  //     this.props.onFetch(orderedTasks);
+  //   }
+  // }
 
   list() {
-    const {localList} = this.props;
-    const {queue} = this.state;
-    if (localList) {
-      if (queue.length === 0) return null;
-      return (
-        <View style={{minHeight: 120}}>
-          {queue.map((task, i) => (
-            <TaskCard
-              task={task}
-              index={i}
-              key={i}
-              onRef={(ref) => {
-                this.taskRefs[i] = ref;
-              }}
-            />
-          ))}
-        </View>
-      );
-    }
+    // const {localList} = this.props;
+    const {orderedTasks} = this.state;
+    // if (localList) {
+    //   if (orderedTasks.length === 0) {
+    //     return null;
+    //   } else {
+    //     return (
+    //       <View style={{minHeight: 120}}>
+    //         {orderedTasks.map((task, i) => (
+    //           <TaskCard
+    //             task={task}
+    //             index={i}
+    //             key={task.id}
+    //             onRef={(ref) => {
+    //               this.taskRefs[i] = ref;
+    //             }}
+    //           />
+    //         ))}
+    //       </View>
+    //     );
+    //   }
+    // } else {
     return (
       <ScrollView
         style={{marginBottom: 10}}
         showVerticalScrollbar={false}
         contentContainerStyle={{marginTop: 0, paddingBottom: 100}}>
-        {queue.map((task, i) => (
+        {orderedTasks.map((task, i) => (
           <TaskCard
             task={task}
             index={i}
-            key={i}
-            onRef={(ref) => {
-              this.taskRefs[i] = ref;
-            }}
+            key={task.id}
           />
         ))}
       </ScrollView>
     );
+    // }
   }
 
   emptyList() {
-    const {queue} = this.state;
     return (
       <View
         style={{
           ...styles.emptyList,
-          opacity: queue.length === 0 ? 1 : 0,
+          opacity: 1,
         }}>
         <Image
           source={require('../../../img/images/rocket.png')}
@@ -213,12 +161,11 @@ class QueueList extends Component {
   }
 
   render() {
-    const {localList} = this.props;
-    if (localList) return this.list();
+    const {orderedTasks} = this.state;
     return (
       <View>
-        {this.emptyList()}
-        {this.list()}
+        {!orderedTasks || (orderedTasks.length === 0 && this.emptyList())}
+        {orderedTasks && orderedTasks.length > 0 && this.list()}
         <LinearGradient
           style={{width: '100%', height: 100, bottom: 0, position: 'absolute'}}
           colors={[colors.white + '00', colors.white, colors.white]}

@@ -46,8 +46,7 @@ class AddFlagButton extends Component {
   };
 
   buttonAddFlag() {
-    const {member} = this.props;
-    const {recording} = member;
+    const {recording} = this.props.member;
     const numberFlags = this.numberFlags(this.props);
     if (!recording?.isRecording || !recording?.startTimestamp) return <Col size={10} />;
     return (

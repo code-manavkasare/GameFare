@@ -58,7 +58,7 @@ class MemberSource extends Component {
         }
         
         const membersSession = getMembers();
-        const videosToUpload = await arrayUploadFromSnippets({
+        await arrayUploadFromSnippets({
           flagsSelected,
           recording,
           coachSessionID,
@@ -71,7 +71,6 @@ class MemberSource extends Component {
           .update({
             [`coachSessions/${coachSessionID}/members/${memberID}/recording/uploadRequest/uploadLaunched`]: true,
           });
-        uploadQueueAction('enqueueFilesUpload', videosToUpload);
       }
     }
   }

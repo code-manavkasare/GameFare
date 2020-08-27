@@ -470,7 +470,6 @@ class StreamPage extends Component {
       personSharingScreen,
     );
     if (!coachSession?.tokbox) null;
-
     const {sessionID} = coachSession.tokbox;
     if (!sessionID) return this.loaderView('Room creation');
 
@@ -557,7 +556,6 @@ class StreamPage extends Component {
     const member = userPartOfSession(coachSession, userID);
     const {isConnected} = member;
     if (!userConnected || !currentSessionID) return this.loaderView(' ');
-
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
