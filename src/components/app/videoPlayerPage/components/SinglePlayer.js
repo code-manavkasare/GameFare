@@ -72,6 +72,10 @@ class SinglePlayer extends Component {
       </View>
     );
   }
+  onLayoutContainer = async (e) => {
+    const {x} = e?.nativeEvent?.layout;
+    this.videoPlayerRef?.setXOffset(x);
+  };
   singlePlayer = () => {
     const {
       archive,
@@ -97,7 +101,7 @@ class SinglePlayer extends Component {
     }
     const {paused, currentTime, userIDLastUpdate, playRate} = videoFromCloud;
     return (
-      <View style={playerStyle}>
+      <View style={playerStyle} onLayout={this.onLayoutContainer}>
         <VideoPlayer
           archiveId={id}
           disableControls={disableControls}

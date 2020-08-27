@@ -41,8 +41,6 @@ class VideoViews extends Component {
       transform: [{translateY}],
       height: 300,
       width: '100%',
-      borderTopWidth: 1,
-      borderColor: colors.off,
     };
     return (
       <Animated.View style={styleViewVideos}>

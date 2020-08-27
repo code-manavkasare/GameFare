@@ -52,9 +52,10 @@ class FlatListComponent extends Component {
       paddingBottom,
       inverted,
       styleContainer,
+      headerStyle,
       horizontal,
       showsHorizontalScrollIndicator,
-      showsVerticalScrollIndicator
+      showsVerticalScrollIndicator,
     } = this.props;
 
     const containerStyle = {
@@ -89,8 +90,11 @@ class FlatListComponent extends Component {
         inverted={inverted}
         contentContainerStyle={containerStyle}
         ListHeaderComponent={header}
-        ListHeaderComponentStyle={styleApp.marginView}
-         showsHorizontalScrollIndicator={
+        ListHeaderComponentStyle={{
+          ...styleApp.marginView,
+          ...headerStyle,
+        }}
+        showsHorizontalScrollIndicator={
           showsHorizontalScrollIndicator === undefined
             ? true
             : showsHorizontalScrollIndicator

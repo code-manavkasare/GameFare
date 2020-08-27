@@ -12,6 +12,11 @@ import {
   getFirebaseVideoByID,
 } from '../../../../functions/videoManagement';
 import {getVideoInfo} from '../../../../functions/pictures';
+import {
+  setArchive,
+  setArchiveBinded,
+} from '../../../../../actions/archivesActions';
+import {store} from '../../../../../../reduxStore';
 
 import {native} from '../../../../animations/animations';
 import AsyncImage from '../../../../layout/image/AsyncImage';
@@ -35,13 +40,26 @@ export default class Filmstrip extends Component {
   componentDidMount = async () => {
     this.props.onRef(this);
     const {archiveId} = this.props;
+    let local = true;
     let archive = await getLocalVideoByID(archiveId);
-    if (!archive) archive = await getFirebaseVideoByID(archiveId);
+    if (!archive) local = false;
+    if (!local) archive = await getFirebaseVideoByID(archiveId);
+    console.log(archive.url);
     this.setState({
       timeBounds: [0, archive.durationSeconds],
       thumbnailAspect: archive.size.height / archive.size.width,
+      thumbnails: archive.initialSeekbarThumbnails,
     });
-    this.fetchThumbnails();
+    if (archive.initialSeekbarThumbnails) return;
+    const thumbnails = await this.fetchThumbnails();
+    console.log(local);
+    if (!local)
+      store.dispatch(
+        setArchive({
+          ...archive,
+          initialSeekbarThumbnails: thumbnails,
+        }),
+      );
   };
 
   componentDidUpdate(prevState, prevProps) {
@@ -53,6 +71,7 @@ export default class Filmstrip extends Component {
       onFilmstripLoad &&
       loadedThumbs === count
     ) {
+      console.log('seekbar loaded');
       onFilmstripLoad();
     }
   }
@@ -74,6 +93,7 @@ export default class Filmstrip extends Component {
       thumbnails,
       loadedThumbs: 0,
     });
+    return thumbnails;
   };
 
   thumbnail(response) {
@@ -126,7 +146,6 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     ...styleApp.fullSize,
-    opacity: 0.9,
-    backgroundColor: colors.green,
+    opacity: 0.85,
   },
 });

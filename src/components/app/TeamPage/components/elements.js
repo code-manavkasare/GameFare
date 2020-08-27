@@ -422,6 +422,8 @@ const rowTitle = ({
   button,
   titleColor,
   customButtom,
+  containerStyle,
+  titleStyle,
 }) => {
   const {name, size, color, type} = icon;
   const styleBadge = {
@@ -446,7 +448,7 @@ const rowTitle = ({
       badge && !isNaN(badge) ? (badge > 999 ? 8 : badge > 99 ? 9 : 10) : 10,
   };
   return (
-    <View>
+    <View style={{...containerStyle}}>
       <Row style={[{marginBottom: 10, marginTop: 30}]}>
         <Col size={30} style={styleApp.center}>
           <AllIcons name={name} type={type} color={color} size={size} />
@@ -466,6 +468,7 @@ const rowTitle = ({
           <Text
             style={[
               styleApp.title,
+              titleStyle,
               {color: titleColor ? titleColor : colors.title},
             ]}>
             {title}

@@ -97,7 +97,6 @@ class VideoPlayerPage extends Component {
           archives.length !== nextVideos.length &&
           nextVideos.length !== prevVideos.length
         ) {
-
           const videoToAdd = nextVideos.filter(
             (item) => prevVideos.indexOf(item) == -1,
           )[0];
@@ -585,7 +584,6 @@ class VideoPlayerPage extends Component {
         index={i}
         key={archiveID}
         id={archiveID}
-
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
         numArchives={numArchives}
