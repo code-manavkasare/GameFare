@@ -79,7 +79,7 @@ class PickMembers extends React.Component {
   async searchSessions(search) {
     const {coachSessions} = this.props;
     const ids = searchSessionsForString(search);
-    const sessions = ids.map(id => coachSessions[id]).filter(s => s);
+    const sessions = ids.map((id) => coachSessions[id]).filter((s) => s);
     this.setState({sessions, loadingSessions: false});
   }
   async selectUser(selected, user, selectedUsers) {
@@ -233,9 +233,14 @@ class PickMembers extends React.Component {
         {this.searchInput()}
         <ScrollView
           keyboardShouldPersistTaps={'always'}
-        >
+          style={{
+            height: '100%',
+            position: 'relative',
+            width: '100%',
+          }}>
           {selectFromSessions && selectingSessions && this.sessionList()}
           {selectFromGamefare && selectingUsers && this.userList()}
+          <View style={{height: 80}} />
         </ScrollView>
       </View>
     );

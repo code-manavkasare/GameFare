@@ -469,7 +469,7 @@ const newSession = () => {
     noNavigation: true,
     titleHeader: 'Select members',
     text2: 'Skip',
-    icon2: 'text',
+    // icon2: 'text',
     clickButton2: () => createSession({}),
     onSelectMembers: (users, contacts) => createSession(users),
   });
@@ -618,11 +618,9 @@ const selectVideosFromLibrary = (coachSessionID) => {
     selectableMode: true,
     selectOnly: true,
     confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
-      shareVideosWithTeams(
-        selectedLocalVideos,
-        selectedFirebaseVideos,
-        [coachSessionID],
-      ),
+      shareVideosWithTeams(selectedLocalVideos, selectedFirebaseVideos, [
+        coachSessionID,
+      ]),
   });
 };
 
