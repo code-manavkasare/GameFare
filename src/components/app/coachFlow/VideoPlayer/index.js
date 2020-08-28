@@ -189,7 +189,15 @@ export default class VideoPlayer extends Component {
   };
 
   onBuffer = (event) => {
+    const {isDoneBuffering} = this.props;
+    const {videoLoading} = this.state;
     this.setState({videoLoading: event.isBuffering});
+    if (
+      isDoneBuffering &&
+      !event.isBuffering &&
+      event.isBuffering !== videoLoading
+    )
+      isDoneBuffering();
   };
   onProgress = async (info) => {
     const paused = this.visualSeekBarRef?.getPaused();

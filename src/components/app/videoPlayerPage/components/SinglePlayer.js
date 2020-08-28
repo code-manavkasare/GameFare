@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Dimensions, View} from 'react-native';
 import {connect} from 'react-redux';
 import DrawTools from './drawing/DrawTools';
-import Slider from '@react-native-community/slider';
+import database from '@react-native-firebase/database';
 
 import VideoPlayer from '../../coachFlow/VideoPlayer/index';
 import styleApp from '../../../style/style';
@@ -12,6 +12,7 @@ import colors from '../../../style/colors';
 import DrawView from './drawing/DrawView';
 import {bindArchive} from '../../../functions/archive';
 import {updateInfoVideoCloud} from '../../../functions/coach';
+import {isEqual} from 'lodash';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -33,6 +34,30 @@ class SinglePlayer extends Component {
     const {local, id} = this.props;
     if (!local) {
       bindArchive(id);
+    }
+  };
+  componentDidUpdate = (prevProps, prevState) => {
+    const {videoFromCloud: prevVideoFromCloud} = prevProps;
+    const {
+      userID,
+      videosBeingShared,
+      personSharingScreen,
+      coachSessionID,
+      id,
+      videoFromCloud,
+    } = this.props;
+    if (videosBeingShared && personSharingScreen === userID) {
+      if (
+        !isEqual(videoFromCloud.loadedUsers, prevVideoFromCloud.loadedUsers)
+      ) {
+        const currentTime = this.videoPlayerRef?.visualSeekBarRef?.getCurrentTime();
+        const updates = {
+          [`coachSessions/${coachSessionID}/sharedVideos/${id}/currentTime/`]: currentTime,
+        };
+        database()
+          .ref()
+          .update(updates);
+      }
     }
   };
 
@@ -80,6 +105,24 @@ class SinglePlayer extends Component {
     const {x} = e?.nativeEvent?.layout;
     this.videoPlayerRef?.setXOffset(x);
   };
+  isDoneBuffering = () => {
+    const {
+      userID,
+      videosBeingShared,
+      personSharingScreen,
+      coachSessionID,
+      id,
+    } = this.props;
+
+    if (videosBeingShared && personSharingScreen !== userID) {
+      const updates = {
+        [`coachSessions/${coachSessionID}/sharedVideos/${id}/loadedUsers/${userID}`]: Date.now(),
+      };
+      database()
+        .ref()
+        .update(updates);
+    }
+  };
   singlePlayer = () => {
     const {
       archive,
@@ -126,6 +169,7 @@ class SinglePlayer extends Component {
           userID={userID}
           setSizeVideo={(size) => this.setState({sizeVideo: size})}
           pinchEnable={!isDrawingEnabled}
+          isDoneBuffering={this.isDoneBuffering.bind(this)}
           componentOnTop={() => (
             <DrawView
               coachSessionID={coachSessionID}
