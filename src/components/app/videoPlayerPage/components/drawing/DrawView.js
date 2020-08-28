@@ -19,6 +19,7 @@ import {generateID} from '../../../../functions/createEvent';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import {ratio} from '../../../../style/sizes';
+import colors from '../../../../style/colors';
 
 class DrawView extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class DrawView extends Component {
       loader: true,
       scaleDrawing: 1,
       drawings: {},
-      colorDrawing: 0,
+      colorDrawing: colors.red,
     };
     this.onStrokeEnd = this.onStrokeEnd.bind(this);
     this.undo = this.undo.bind(this);
@@ -160,7 +161,7 @@ class DrawView extends Component {
             heightDrawView={h}
             widthDrawView={w}
             currentScreenSize={{currentWidth, currentHeight}}
-            drawings={Object.values(drawings)}
+            drawings={drawings ? Object.values(drawings) : []}
           />
         </View>
       </Animated.View>
