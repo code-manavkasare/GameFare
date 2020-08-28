@@ -60,7 +60,6 @@ class VideoPlayerPage extends Component {
   }
 
   componentDidMount() {
-    console.log('videoPlayerPage componentDidMount');
     const {navigation} = this.props;
 
     this.focusListener = navigation.addListener('focus', () => {
@@ -121,11 +120,6 @@ class VideoPlayerPage extends Component {
     }
     return {};
   }
-
-  componentDidUpdate() {
-    console.log('videoPlayerPage componentDidUpdate');
-  }
-
   startRecording = async () => {
     this.videoPlayerRefs.forEach((ref) => {
       ref?.PinchableBoxRef?.resetPosition();
@@ -438,7 +432,9 @@ class VideoPlayerPage extends Component {
                   (duplicate, archive) => duplicate || archive.id === id,
                   false,
                 );
-                if (duplicate) {return;}
+                if (duplicate) {
+                  return;
+                }
                 localVideoInfo = getLocalVideoByID(id);
                 //cloudVideoInfo = await uploadLocalVideo(localVideoInfo);
               } else if (selectedFirebaseVideos.length >= 1) {
@@ -447,7 +443,9 @@ class VideoPlayerPage extends Component {
                   (duplicate, archive) => duplicate || archive.id === id,
                   false,
                 );
-                if (duplicate) {return;}
+                if (duplicate) {
+                  return;
+                }
                 cloudVideoInfo = getFirebaseVideoByID(id);
               }
               if (localVideoInfo) {
@@ -707,7 +705,6 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
-    console.log('videoPlayerPage render');
     return this.watchVideosView();
   };
 }
