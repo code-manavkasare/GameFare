@@ -18,7 +18,7 @@ const bindArchive = (archiveID) => {
         let archive = snap.val();
         let {url} = archive;
         try {
-          // url = await convertToCache(url);
+          url = await convertToCache(url);
         } catch (e) {
           console.log(e);
         }
