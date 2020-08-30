@@ -316,8 +316,8 @@ class HeaderBackButton extends Component {
                 <AllIcons
                   name={iconOffset2}
                   color={colorIconOffset2 ? colorIconOffset2 : colors.title}
-                  size={sizeIconOffset2 ? sizeIconOffset : 15}
-                  type={typeIconOffset2 ? typeIconOffset : 'font'}
+                  size={sizeIconOffset2 ? sizeIconOffset2 : 15}
+                  type={typeIconOffset2 ? typeIconOffset2 : 'font'}
                 />
               );
             }}

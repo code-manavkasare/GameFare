@@ -436,12 +436,13 @@ class StreamPage extends Component {
       top: marginTop + heightHeaderHome,
     };
   }
-  header() {
+  header(isConnected) {
     const {userID, session, currentSessionID} = this.props;
     return (
       <Header
         coachSessionID={currentSessionID}
         organizerID={session && session?.info.organizer}
+        isConnected={isConnected}
         close={this.close.bind(this)}
         permissionOtherUserToRecord={
           session
@@ -479,7 +480,7 @@ class StreamPage extends Component {
     const cameraPosition = this.cameraPosition();
     return (
       <View style={styles.viewStream}>
-        {this.header()}
+        {this.header(isConnected)}
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
           : !isConnected
