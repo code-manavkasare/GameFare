@@ -30,9 +30,9 @@ class HeaderStreamView extends Component {
       close,
       chargeForSession,
       currentSessionReconnecting,
-      navigation,
+      isConnected,
     } = this.props;
-    const {isConnected} = state;
+
     return (
       <HeaderBackButton
         AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -64,6 +64,7 @@ class HeaderStreamView extends Component {
         iconOffset2={
           isConnected && isUserAdmin(organizerID, userID) && 'person-add'
         }
+    
         typeIconOffset2="mat"
         sizeIconOffset2={23}
         colorIconOffset2={

@@ -88,7 +88,6 @@ class VideoLibraryPage extends Component {
     const videosArray = sortVideos(allVideos).filter((video) => !video?.hidden);
     console.log('videosArray[1]', videosArray[1]);
     return {videosArray};
-
   }
   shareSelectedVideos() {
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
@@ -218,7 +217,7 @@ class VideoLibraryPage extends Component {
         {
           title: 'Select',
           forceNavigation: true,
-          operation: () => this.addFromCameraRoll(),
+          operation: () => this.addFromCameraRoll({}),
         },
         {
           title: 'Record',
