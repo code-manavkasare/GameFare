@@ -30,6 +30,12 @@ export default class PinchableBox extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
+  componentDidUpdate(prevProps, prevState) {
+    const {scale, position} = this.props;
+    if (prevProps.scale !== scale && scale) this.setNewScale(scale);
+    if (prevProps.position !== position && position)
+      this.setNewPosition(position);
+  }
   onPinchGestureEvent = Animated.event(
     [{nativeEvent: {scale: this._pinchScale}}],
     {
@@ -84,7 +90,10 @@ export default class PinchableBox extends Component {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastOffset.x = this._translateX._value;
       this._lastOffset.y = this._translateY._value;
-      this.props.onDrag(this._lastOffset);
+      this.props.onDrag({
+        x: this._translateX._value,
+        y: this._translateY._value,
+      });
     }
   };
   resetPosition() {

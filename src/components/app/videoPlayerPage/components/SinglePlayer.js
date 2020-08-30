@@ -123,6 +123,42 @@ class SinglePlayer extends Component {
         .update(updates);
     }
   };
+  onScaleChange = (index, scale) => {
+    const {
+      userID,
+      videosBeingShared,
+      personSharingScreen,
+      coachSessionID,
+      id,
+    } = this.props;
+    console.log('onScaleChange', scale);
+    if (videosBeingShared) {
+      const updates = {
+        [`coachSessions/${coachSessionID}/sharedVideos/${id}/scale/`]: scale,
+      };
+      database()
+        .ref()
+        .update(updates);
+    }
+  };
+  onPositionChange = (index, position) => {
+    const {
+      userID,
+      videosBeingShared,
+      personSharingScreen,
+      coachSessionID,
+      id,
+    } = this.props;
+    console.log('onPositionChange', position);
+    if (videosBeingShared) {
+      const updates = {
+        [`coachSessions/${coachSessionID}/sharedVideos/${id}/position/`]: position,
+      };
+      database()
+        .ref()
+        .update(updates);
+    }
+  };
   singlePlayer = () => {
     const {
       archive,
@@ -148,7 +184,14 @@ class SinglePlayer extends Component {
     if (!archive) {
       return this.viewLoader(playerStyle);
     }
-    const {paused, currentTime, userIDLastUpdate, playRate} = videoFromCloud;
+    const {
+      paused,
+      currentTime,
+      userIDLastUpdate,
+      playRate,
+      scale,
+      position,
+    } = videoFromCloud;
     return (
       <View style={playerStyle} onLayout={this.onLayoutContainer}>
         {isDrawingEnabled && sizeVideo.height !== 0 && (
@@ -170,6 +213,8 @@ class SinglePlayer extends Component {
           setSizeVideo={(size) => this.setState({sizeVideo: size})}
           pinchEnable={!isDrawingEnabled}
           isDoneBuffering={this.isDoneBuffering.bind(this)}
+          onScaleChange={this.onScaleChange.bind(this)}
+          onPositionChange={this.onPositionChange.bind(this)}
           componentOnTop={() => (
             <DrawView
               coachSessionID={coachSessionID}
@@ -206,6 +251,8 @@ class SinglePlayer extends Component {
           paused={paused}
           playRate={playRate}
           currentTime={currentTime}
+          scale={scale}
+          position={position}
           userIDLastUpdate={userIDLastUpdate}
         />
       </View>
