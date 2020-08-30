@@ -47,6 +47,10 @@ class ButtonShareVideo extends Component {
         updates[
           `coachSessions/${coachSessionID}/sharedVideos/${id}/playRate`
         ] = 1;
+        updates[
+          `coachSessions/${coachSessionID}/sharedVideos/${id}/position`
+        ] = {x: 0, y: 0};
+        updates[`coachSessions/${coachSessionID}/sharedVideos/${id}/scale`] = 1;
 
         updates[`coachSessions/${coachSessionID}/sharedVideos/${id}/id`] = id;
 

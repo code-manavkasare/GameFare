@@ -323,6 +323,8 @@ export default class VideoPlayer extends Component {
       disableControls,
       pinchEnable,
       archive,
+      scale,
+      position,
     } = this.props;
 
     const {thumbnail, url, durationSeconds} = archive;
@@ -361,6 +363,8 @@ export default class VideoPlayer extends Component {
             styleContainer={[styleApp.fullSize, styleApp.center]}
             onRef={(ref) => (this.PinchableBoxRef = ref)}
             pinchEnable={pinchEnable}
+            scale={scale}
+            position={position}
             scaleChange={(val) => setScale && setScale(val)}
             onPinch={(scale) => onScaleChange(index, scale)}
             onDrag={(pos) => onPositionChange(index, pos)}
