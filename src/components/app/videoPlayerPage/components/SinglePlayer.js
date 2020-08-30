@@ -197,7 +197,7 @@ class SinglePlayer extends Component {
         {isDrawingEnabled && sizeVideo.height !== 0 && (
           <DrawTools
             landscape={landscape}
-            setColor={(color) => this.drawViewRef.setState(color)}
+            setState={(state) => this.drawViewRef.setState(state)}
             clear={() => this.drawViewRef.clear()}
             undo={() => this.drawViewRef.undo()}
           />

@@ -92,7 +92,7 @@ class ButtonShareVideo extends Component {
       position: 'absolute',
       zIndex: 20,
       height: 30,
-      width: 110,
+      width: 80,
       left: '5%',
       borderRadius: 15,
       top: marginTop,
@@ -106,7 +106,7 @@ class ButtonShareVideo extends Component {
         onPressColor={colors.greenLight}
         styleButton={style}
         enabled={true}
-        text="Share video"
+        text="Share"
         loader={false}
         textButton={{fontSize: 13}}
         click={() => this.startSharingVideo(true)}

@@ -14,6 +14,7 @@ class DrawTools extends Component {
     super(props);
     this.state = {
       colorDrawing: 0,
+      drawSetting: 'custom',
     };
   }
   button(icon, text, active, click, colorActive) {
@@ -24,7 +25,9 @@ class DrawTools extends Component {
             <AllIcons
               type={icon.type}
               color={
-                active && colorActive
+                icon.color
+                  ? icon.color
+                  : active && colorActive
                   ? colorActive
                   : active
                   ? colors.primary
@@ -61,8 +64,8 @@ class DrawTools extends Component {
     );
   }
   toolsDraw() {
-    const {colorDrawing} = this.state;
-    const {clear, undo, setColor} = this.props;
+    const {colorDrawing, drawSetting} = this.state;
+    const {clear, undo, setState} = this.props;
 
     return (
       <View style={[styleApp.center, styles.toolBox]}>
@@ -78,15 +81,42 @@ class DrawTools extends Component {
           onValueChange={(value) => this.setState({colorDrawing: value})}
           onSlidingComplete={async (value) => {
             await this.setState({colorDrawing: value});
-            setColor({colorDrawing: valueColor(value)});
+            setState({colorDrawing: valueColor(value)});
           }}
         />
+        {this.button(
+          {
+            name: 'gesture',
+            type: 'mat',
+            color: drawSetting === 'custom' ? colors.secondary : colors.white,
+          },
+          '',
+          false,
+          () => {
+            this.setState({drawSetting: 'custom'});
+            setState({drawSetting: 'custom'});
+          },
+        )}
 
-        {this.button({name: 'backspace', type: 'font'}, 'Undo', false, () =>
+        {this.button(
+          {
+            name: 'timeline',
+            type: 'mat',
+            color: drawSetting === 'straight' ? colors.secondary : colors.white,
+          },
+          '',
+          false,
+          () => {
+            this.setState({drawSetting: 'straight'});
+            setState({drawSetting: 'straight'});
+          },
+        )}
+
+        {this.button({name: 'history', type: 'mat'}, 'Undo', false, () =>
           undo(),
         )}
 
-        {this.button({name: 'bin', type: 'moon'}, 'Clear', false, () =>
+        {this.button({name: 'delete', type: 'mat'}, 'Clear', false, () =>
           clear(),
         )}
       </View>
@@ -115,7 +145,7 @@ const styles = StyleSheet.create({
     top: 0,
     position: 'absolute',
     right: '5%',
-    width: 220,
+    width: 300,
     height: 50,
     zIndex: 20,
     backgroundColor: colors.title + '70',
