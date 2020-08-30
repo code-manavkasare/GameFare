@@ -14,6 +14,7 @@ import database from '@react-native-firebase/database';
 import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
 
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
+import DrawSraightLine from './DrawSraightLine';
 import {coachAction} from '../../../../../actions/coachActions';
 import {generateID} from '../../../../functions/createEvent';
 import {getLastDrawing} from '../../../../functions/coach';
@@ -29,8 +30,10 @@ class DrawView extends Component {
       microAccess: false,
       loader: true,
       scaleDrawing: 1,
+      strokeWidth: 3,
       drawings: {},
       colorDrawing: colors.red,
+      drawSetting: 'custom',
     };
     this.onStrokeEnd = this.onStrokeEnd.bind(this);
     this.undo = this.undo.bind(this);
@@ -58,69 +61,83 @@ class DrawView extends Component {
       this.setState({drawings: {}});
     } catch (err) {}
   };
-  undo = (idLastDrawing, onlyUndoSketch) => {
+  undo = (onlyDeleteSketch) => {
     const {drawings} = this.state;
+    const {videoBeingShared, archiveID, coachSessionID} = this.props;
 
-    if (!idLastDrawing) {
-      const lastDrawing = getLastDrawing(drawings);
-      if (lastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
-    }
+    let idLastDrawing = false;
+    const lastDrawing = getLastDrawing(drawings);
+    if (lastDrawing) idLastDrawing = getLastDrawing(drawings).id;
+    console.log('undo', idLastDrawing, videoBeingShared);
     if (idLastDrawing) {
-      try {
-        if (!onlyUndoSketch) {
-          const newDrawing = Object.values(drawings)
-            .filter((item) => item.idSketch !== idLastDrawing)
-            .reduce(function(result, item) {
-              result[item.id] = item;
-              return result;
-            }, {});
+      if (!videoBeingShared) {
+        const newDrawing = Object.values(drawings)
+          .filter((item) => item.id !== idLastDrawing)
+          .reduce(function(result, item) {
+            result[item.id] = item;
+            return result;
+          }, {});
 
-          this.setState({drawings: newDrawing});
-        }
-
-        this.canvasRef.deletePath(idLastDrawing);
-      } catch (err) {
-        Alert.alert('error!', err.toString());
+        this.setState({drawings: newDrawing});
+      } else {
+        database()
+          .ref(
+            `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
+          )
+          .remove();
       }
     }
   };
   async onStrokeEnd(event, widthDrawView, heightDrawView) {
-    const {userID} = this.props;
+    const {userID, archiveID, coachSessionID, videoBeingShared} = this.props;
+    const {drawSetting} = this.state;
     let {path} = event;
-    path.timeStamp = Number(new Date());
-    const idPath = generateID();
-    path.idSketch = path.id;
-    path.userID = userID;
-    path.id = idPath;
+    const id = generateID();
     let {data} = path;
 
-    data = data.map((dot) => {
-      let x = Number(dot.split(',')[0]);
-      x = x / widthDrawView;
-      let y = Number(dot.split(',')[1]);
-      y = y / heightDrawView;
-      return x + ',' + y;
-    });
+    if (drawSetting === 'custom')
+      data = data.map((dot) => {
+        let x = Number(dot.split(',')[0]);
+        x = x / widthDrawView;
+        let y = Number(dot.split(',')[1]);
+        y = y / heightDrawView;
+        return x + ',' + y;
+      });
 
-    path.data = data;
-    const {archiveID, coachSessionID, videoBeingShared} = this.props;
+    path = {
+      ...path,
+      timeStamp: Date.now(),
+      id,
+      idSketch: path.id ? path.id : id,
+      userID,
+      data,
+      type: drawSetting,
+    };
+
     if (videoBeingShared) {
-      await database()
+      database()
         .ref(
-          `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idPath}`,
+          `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
+            path.id
+          }`,
         )
         .update(path);
-      return this.undo(path.idSketch, true);
     } else {
       const {drawings} = this.state;
       const newDrawings = {...drawings, [path.idSketch]: path};
       await this.setState({drawings: newDrawings});
-      return this.undo(path.idSketch, true);
     }
+    if (drawSetting !== 'straight') this.canvasRef.deletePath(path.idSketch);
   }
   drawView() {
     const {drawingOpen, sizeVideo, playerStyle} = this.props;
-    const {scaleDrawing, drawings, colorDrawing} = this.state;
+    const {
+      scaleDrawing,
+      drawings,
+      colorDrawing,
+      drawSetting,
+      strokeWidth,
+    } = this.state;
 
     let h = 0;
     let w = 0;
@@ -147,15 +164,25 @@ class DrawView extends Component {
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}
         style={[styles.page, styleDrawView]}>
-        <ImageEditor
-          style={styles.drawingZone}
-          ref={(ref) => (this.canvasRef = ref)}
-          touchEnabled={drawingOpen}
-          strokeColor={colorDrawing}
-          strokeWidth={4}
-          scale={scaleDrawing}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-        />
+        {drawSetting === 'custom' ? (
+          <ImageEditor
+            style={styles.drawingZone}
+            ref={(ref) => (this.canvasRef = ref)}
+            touchEnabled={drawingOpen}
+            strokeColor={colorDrawing}
+            strokeWidth={strokeWidth}
+            scale={scaleDrawing}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+          />
+        ) : (
+          <DrawSraightLine
+            style={styles.drawingZone}
+            strokeWidth={strokeWidth}
+            strokeColor={colorDrawing}
+            onRef={(ref) => (this.drawStraighLinesRef = ref)}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+          />
+        )}
         <View style={styles.drawingZoneDisplay}>
           <DisplayDrawingToViewers
             heightDrawView={h}
