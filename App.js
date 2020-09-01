@@ -19,6 +19,7 @@ import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
+import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 import {refreshPhoneContactsStore} from './src/components/functions/phoneContacts';
 import {updateLocalVideoUrls} from './src/components/functions/videoManagement';
 
@@ -129,6 +130,7 @@ class App extends Component {
         <OrientationListener />
         <Notification />
         <UploadManager />
+        <ConnectionTypeProvider />
       </NavigationContainer>
     );
   }

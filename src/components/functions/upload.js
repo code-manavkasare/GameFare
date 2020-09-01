@@ -1,80 +1,115 @@
 import storage from '@react-native-firebase/storage';
-import database from '@react-native-firebase/database';
+import {store} from '../../../reduxStore';
+import {
+  setUploadTaskProgress,
+  setUploadTaskError,
+} from '../../actions/uploadQueueActions';
 
-import {updateCloudProgress} from '../database/firebase/videosManagement';
+//import database from '@react-native-firebase/database';
+//import {updateCloudProgress} from '../database/firebase/videosManagement';
 
-const uploadImage = async (path, destination, name) => {
-  if (!path) return;
-  const videoRef = storage()
-    .ref(destination)
-    .child(name);
-  await videoRef.putFile(path, {
-    contentType: 'image/jpeg',
-    cacheControl: 'no-store',
-  });
-  let url = await videoRef.getDownloadURL();
-  return new Promise((resolve, reject) => {
-    if (url) resolve(url);
-    else reject(url);
-  });
+const defaultVideoFilename = 'archive.mp4';
+const defaultImageFilename = 'image.jpg';
+
+const sortUploadTasks = (uploadTasks) => {
+  return uploadTasks.sort((a, b) => a.timeSubmitted - b.timeSubmitted);
 };
 
-const uploadVideo = async (uploadTask, uploadQueueAction, index) => {
-  const {
-    videoInfo,
-    cloudID,
-    storageDestination,
-    subscribedToProgress,
-  } = uploadTask;
-  const {url} = videoInfo;
-  if (!url) return;
-  const videoRef = storage()
-    .ref(storageDestination)
-    .child('archive.mp4');
-  if (subscribedToProgress?.length > 0) {
-    updateCloudProgress(cloudID, subscribedToProgress, 0.2);
+const uploadVideo = (uploadTask) => {
+  if (uploadTask && !uploadTask.filename) {
+    uploadTask.filename = defaultVideoFilename;
   }
-  const uploading = videoRef.putFile(url, {
-    contentType: 'video',
-    cacheControl: 'no-store',
-  });
-  let progressBuffer = 0.2;
-  let progressDelta = 0.2;
-  return new Promise((resolve, reject) =>
-    uploading.on(
-      'state_changed',
-      async function(snapshot) {
-        if (snapshot.error) {
-          console.log('UPLOAD ERROR', snapshot.error);
-        } else {
-          let progress = (snapshot.bytesTransferred / snapshot.totalBytes);
-          if (uploadQueueAction && progress !== 0) {
-            uploadQueueAction('setJobProgress', {
-              id: uploadTask.id,
-              progress,
-            });
-          }
-          if (
-            subscribedToProgress?.length > 0 &&
-            (progress > progressBuffer || progress === 1)
-          ) {
-            updateCloudProgress(cloudID, subscribedToProgress, progress);
-            progressBuffer += progressDelta;
-          }
-        }
-      },
-      function(error) {
-        console.log(error);
-        reject(error);
-      },
-      async () => {
-        const cloudUrl = await videoRef.getDownloadURL();
-        if (subscribedToProgress?.length > 0)
-          updateCloudProgress(cloudID, subscribedToProgress, 1);
-        resolve(cloudUrl);
-      },
-    ),
+  const {videoInfo, storageDestination, filename} = uploadTask;
+  const {url} = videoInfo;
+  if (url) {
+    const videoRef = storage()
+      .ref(storageDestination)
+      .child(filename);
+    const firebaseUploadTask = videoRef.putFile(url, {
+      contentType: 'video',
+      cacheControl: 'no-store',
+    });
+    return {
+      firebaseUploadTask,
+      uploadComplete: new Promise((resolve, reject) => {
+        firebaseUploadTask.on(storage.TaskEvent.STATE_CHANGED, {
+          next: (snapshot) => uploadNext(snapshot, uploadTask),
+          error: (error) => {
+            uploadError(error, uploadTask);
+            reject(error);
+          },
+          complete: async () => {
+            const cloudUrl = await uploadComplete(uploadTask);
+            resolve(cloudUrl);
+          },
+        });
+      }),
+    };
+  }
+};
+
+const uploadImage = (uploadTask) => {
+  if (uploadTask && !uploadTask.filename) {
+    uploadTask.filename = defaultImageFilename;
+  }
+  const {url, storageDestination, filename} = uploadTask;
+  if (url) {
+    const imageRef = storage()
+      .ref(storageDestination)
+      .child(filename);
+    const firebaseUploadTask = imageRef.putFile(url, {
+      contentType: 'image/jpeg',
+      cacheControl: 'no-store',
+    });
+    return {
+      firebaseUploadTask,
+      uploadComplete: new Promise((resolve, reject) => {
+        firebaseUploadTask.on(storage.TaskEvent.STATE_CHANGED, {
+          next: (snapshot) => uploadNext(snapshot, uploadTask),
+          error: (error) => {
+            uploadError(error, uploadTask);
+            reject(error);
+          },
+          complete: async () => {
+            const cloudUrl = await uploadComplete(uploadTask);
+            resolve(cloudUrl);
+          },
+        });
+      }),
+    };
+  }
+};
+
+const uploadNext = (uploadSnapshot, uploadTask) => {
+  const {id} = uploadTask;
+  const progress = uploadSnapshot.bytesTransferred / uploadSnapshot.totalBytes;
+  if (progress) {
+    store.dispatch(
+      setUploadTaskProgress({
+        id,
+        progress,
+      }),
+    );
+  }
+};
+
+const uploadError = (error, uploadTask) => {
+  const {id} = uploadTask;
+  store.dispatch(
+    setUploadTaskError({
+      id,
+      error,
+    }),
   );
 };
 
-module.exports = {uploadVideo, uploadImage};
+const uploadComplete = async (uploadTask) => {
+  const {storageDestination, filename} = uploadTask;
+  const cloudUrl = await storage()
+    .ref(storageDestination)
+    .child(filename)
+    .getDownloadURL();
+  return cloudUrl;
+};
+
+module.exports = {uploadVideo, uploadImage, sortUploadTasks};

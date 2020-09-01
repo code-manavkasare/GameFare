@@ -37,6 +37,7 @@ const persistConfig = {
     'bindedArchives',
     'bindedConversations',
     'bindedSessions',
+    'connectionType',
   ],
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };

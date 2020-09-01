@@ -15,16 +15,17 @@ import layoutReducer from './layoutReducer';
 import uploadQueueReducer from './uploadQueueReducer';
 import appSettingsReducer from './appSettingsReducer';
 import localVideoLibraryReducer from './localVideoLibraryReducer';
-import {archivesReducer, bindedArchivesReducer} from './archivesReducer.js';
+import {archivesReducer, bindedArchivesReducer} from './archivesReducer';
 import {
   coachSessionsReducer,
   bindedCoachSessionsReducer,
-} from './coachSessionsReducer.js';
+} from './coachSessionsReducer';
 import {
   conversationsReducer,
   bindedConversationsReducer,
 } from './conversationsReducer';
-import phoneContactsReducer from './phoneContactsReducer.js';
+import phoneContactsReducer from './phoneContactsReducer';
+import connectionTypeReducer from './connectionTypeReducer';
 
 export default combineReducers({
   globaleVariables: globaleVariablesReducer,
@@ -46,6 +47,7 @@ export default combineReducers({
   coachSessions: coachSessionsReducer,
   bindedSessions: bindedCoachSessionsReducer,
   network,
+  connectionType: connectionTypeReducer,
   conversations: conversationsReducer,
   bindedConversations: bindedConversationsReducer,
   phoneContacts: phoneContactsReducer,

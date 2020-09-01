@@ -50,7 +50,7 @@ class ShareVideoPage extends React.Component {
     const {navigation, route, user} = this.props;
     const {firebaseVideos, localVideos} = route.params;
     const {push, navigate} = navigation;
-    let branchLink = undefined;
+    let branchLink;
     if (firebaseVideos.length > 0) {
       const branchMetadata = firebaseVideos.reduce((result, video) => {
         return {

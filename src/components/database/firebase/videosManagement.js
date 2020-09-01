@@ -47,13 +47,16 @@ const deleteCloudVideos = async (videoIDs) => {
     .update(updates);
 };
 
-const createCloudVideo = async (videoInfo) => {
+const createCloudVideo = async (videoInfo, givenKey) => {
   // creates a firebase object for cloud video and adds to this user's library
   const {userID} = store.getState().user;
-  const archiveRef = await database()
-    .ref('archivedStreams')
-    .push();
-  const {key} = archiveRef;
+  let key = givenKey;
+  if (!key) {
+    let archiveRef = await database()
+      .ref('archivedStreams')
+      .push();
+    key = archiveRef.key;
+  }
   let firebaseVideoInfo = {
     ...videoInfo,
     id: key,
@@ -75,7 +78,6 @@ const createCloudVideo = async (videoInfo) => {
       },
     });
   store.dispatch(setArchive(firebaseVideoInfo));
-  // store.dispatch(setArchiveBinded({id: firebaseVideoInfo.id, isBinded: true}));
   return firebaseVideoInfo;
 };
 

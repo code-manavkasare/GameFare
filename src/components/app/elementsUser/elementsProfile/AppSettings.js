@@ -45,16 +45,16 @@ class AppSettings extends Component {
     );
   }
   settings() {
-    const {batterySaver} = this.props;
+    const {wifiAutoUpload} = this.props.appSettings;
     return (
       <View style={styleApp.marginView}>
-        {/* {this.settingsSwitch(
-          batterySaver,
+        {this.settingsSwitch(
+          wifiAutoUpload,
           async () => {
-            this.props.appSettingsAction('toggleBatterySaver');
+            this.props.appSettingsAction('toggleWifiAutoUpload');
           },
-          'Battery saver',
-        )} */}
+          'Auto upload local videos',
+        )}
       </View>
     );
   }
@@ -104,7 +104,7 @@ class AppSettings extends Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    batterySaver: state.appSettings.batterySaver,
+    appSettings: state.appSettings,
   };
 };
 
