@@ -215,16 +215,18 @@ class VideoPlayerPage extends Component {
       ref?.visualSeekBarRef?.setCurrentTime(0, true);
       ref?.player?.seek(0);
       ref?.PinchableBoxRef?.resetPosition();
+      ref.drawViewRef.setState({drawings: {}});
     });
   };
 
   initialiseRecordingWithPlayerCurrentState = () => {
     this.videoPlayerRefs.forEach((ref, i) => {
-      const currentTime = ref.visualSeekBarRef?.getCurrentTime();
-      const playRate = ref.state?.playRate;
+      const currentTime = ref.videoPlayerRef?.visualSeekBarRef?.getCurrentTime();
+      const playRate = ref.videoPlayerRef?.state?.playRate;
+      const drawings = ref.drawViewRef.state.drawings;
       this.onSlidingEnd(i, currentTime);
       this.onPlayRateChange(i, playRate, currentTime);
-      // this.onPlayPause(i, false, currentTime);
+      this.onDrawingChange(i, drawings);
     });
   };
 
@@ -257,7 +259,7 @@ class VideoPlayerPage extends Component {
         switch (type) {
           case 'play':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef.setState({
                 currentTime: action.timestamp,
                 paused: false,
               });
@@ -265,7 +267,7 @@ class VideoPlayerPage extends Component {
             break;
           case 'pause':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef.setState({
                 currentTime: action.timestamp,
                 paused: true,
               });
@@ -273,34 +275,43 @@ class VideoPlayerPage extends Component {
             break;
           case 'changePlayRate':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef.setState({
                 playRate: action.playRate,
               });
             });
             break;
           case 'seek':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef.setState({
                 currentTime: action.timestamp,
               });
             });
             break;
           case 'zoom':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].PinchableBoxRef.setNewScale(
-                action.scale,
-              );
+              this.videoPlayerRefs[
+                index
+              ].videoPlayerRef.PinchableBoxRef.setNewScale(action.scale);
             });
             break;
           case 'drag':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].PinchableBoxRef.setNewPosition(
-                action.position,
-              );
+              this.videoPlayerRefs[
+                index
+              ].videoPlayerRef.PinchableBoxRef.setNewPosition(action.position);
+            });
+            break;
+          case 'draw':
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].drawViewRef.setState({
+                drawings: action.drawings,
+              });
             });
             break;
           default:
-            console.log(`case ${action.type} not handled`);
+            console.log(
+              `case ${action.type} not handled, action received : ${action}`,
+            );
         }
       }
     }
@@ -370,6 +381,17 @@ class VideoPlayerPage extends Component {
       index: i,
       startRecordingOffset: Date.now() - recordingStartTime,
       timestamp: seekTime,
+    });
+    this.setState({recordedActions});
+  };
+  onDrawingChange = (i, drawings) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
+    recordedActions.push({
+      type: 'draw',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
+      drawings,
     });
     this.setState({recordedActions});
   };
@@ -563,21 +585,21 @@ class VideoPlayerPage extends Component {
     } = this.state;
 
     const {
+      onDrawingChange,
       onPlayPause,
       onPlayRateChange,
-      onScaleChange,
       onPositionChange,
+      onScaleChange,
       onSlidingEnd,
-      // onSlidingStart,
     } = this;
     const propsWhenRecording = isRecording
       ? {
+          onDrawingChange,
           onPlayPause,
           onPlayRateChange,
-          onScaleChange,
           onPositionChange,
+          onScaleChange,
           onSlidingEnd,
-          // onSlidingStart,
         }
       : {};
 

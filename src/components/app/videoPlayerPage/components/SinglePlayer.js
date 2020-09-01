@@ -2,17 +2,17 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Dimensions, View} from 'react-native';
 import {connect} from 'react-redux';
-import DrawTools from './drawing/DrawTools';
 import database from '@react-native-firebase/database';
+import {isEqual} from 'lodash';
 
 import VideoPlayer from '../../coachFlow/VideoPlayer/index';
 import styleApp from '../../../style/style';
 import Loader from '../../../layout/loaders/Loader';
 import colors from '../../../style/colors';
+import DrawTools from './drawing/DrawTools';
 import DrawView from './drawing/DrawView';
 import {bindArchive} from '../../../functions/archive';
 import {updateInfoVideoCloud} from '../../../functions/coach';
-import {isEqual} from 'lodash';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -124,14 +124,7 @@ class SinglePlayer extends Component {
     }
   };
   onScaleChange = (index, scale) => {
-    const {
-      userID,
-      videosBeingShared,
-      personSharingScreen,
-      coachSessionID,
-      id,
-    } = this.props;
-    console.log('onScaleChange', scale);
+    const {videosBeingShared, coachSessionID, id} = this.props;
     if (videosBeingShared) {
       const updates = {
         [`coachSessions/${coachSessionID}/sharedVideos/${id}/scale/`]: scale,
@@ -142,14 +135,7 @@ class SinglePlayer extends Component {
     }
   };
   onPositionChange = (index, position) => {
-    const {
-      userID,
-      videosBeingShared,
-      personSharingScreen,
-      coachSessionID,
-      id,
-    } = this.props;
-    console.log('onPositionChange', position);
+    const {videosBeingShared, coachSessionID, id} = this.props;
     if (videosBeingShared) {
       const updates = {
         [`coachSessions/${coachSessionID}/sharedVideos/${id}/position/`]: position,
@@ -162,20 +148,21 @@ class SinglePlayer extends Component {
   singlePlayer = () => {
     const {
       archive,
+      coachSessionID,
+      disableControls,
       id,
       index,
-      numArchives,
-      userID,
-      propsWhenRecording,
       isDrawingEnabled,
-      disableControls,
-      linkedPlayers,
-      videoPlayerRefs,
-      coachSessionID,
-      videosBeingShared,
-      personSharingScreen,
-      videoFromCloud,
       landscape,
+      linkedPlayers,
+      numArchives,
+      onDrawingChange,
+      personSharingScreen,
+      propsWhenRecording,
+      userID,
+      videoFromCloud,
+      videoPlayerRefs,
+      videosBeingShared,
     } = this.props;
     const {sizeVideo} = this.state;
 
@@ -217,6 +204,7 @@ class SinglePlayer extends Component {
           onPositionChange={this.onPositionChange.bind(this)}
           componentOnTop={() => (
             <DrawView
+              index={index}
               coachSessionID={coachSessionID}
               archiveID={id}
               playerStyle={playerStyle}
@@ -226,6 +214,7 @@ class SinglePlayer extends Component {
               personSharingScreen={personSharingScreen}
               landscape={landscape}
               onRef={(ref) => (this.drawViewRef = ref)}
+              onDrawingChange={propsWhenRecording.onDrawingChange}
             />
           )}
           noUpdateInCloud={!videosBeingShared ? true : false}
