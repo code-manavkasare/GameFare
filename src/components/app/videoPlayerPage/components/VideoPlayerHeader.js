@@ -1,5 +1,5 @@
 import React from 'react';
-import {Animated} from 'react-native';
+import {Animated, Image} from 'react-native';
 import PropTypes from 'prop-types';
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
@@ -44,29 +44,34 @@ export default class VideoPlayerHeader extends React.Component {
       colorIcon1: colors.white,
       typeIcon1: 'font',
 
-      backgroundColorIconOffset: colors.title + '70',
+      backgroundColorIcon2: colors.title + '70',
+      typeIcon2: !isEditMode && !coachSessionID ? 'file' : 'font',
+      sizeIcon2: !isEditMode && !coachSessionID ? 35 : 16,
+      icon2:
+        !isEditMode && !coachSessionID
+          ? require('../../../../img/icons/feedback.png')
+          : 'times',
+      text2: 'Edit',
       colorIcon2: colors.white,
-
-      iconOffset: !isEditMode && !coachSessionID && 'text',
-      textOffset: 'Edit',
-      clickButtonOffset: () => editModeOn(),
+      clickButton2: () => {
+        if (!isEditMode && !coachSessionID) {
+          editModeOn();
+        } else {
+          editModeOff();
+        }
+      },
     };
     return isEditMode ? (
-      <HeaderBackButton
-        textHeader={'Edit Mode'}
-        icon1="times"
-        clickButton1={() => editModeOff()}
-        {...sharedProps}
-      />
+      <HeaderBackButton {...sharedProps} />
     ) : (
       <HeaderBackButton
         icon1={'arrow-left'}
         clickButton1={() => close()}
         colorIconOffset={colors.white}
-        backgroundColorIcon2={colors.title + '70'}
-        icon2={isEditMode || isRecording || isPreviewing ? null : 'plus'}
-        colorIcon2={colors.white}
-        clickButton2={() => addVideo()}
+        backgroundColorIconOffset={colors.title + '70'}
+        iconOffset={isEditMode || isRecording || isPreviewing ? null : 'plus'}
+        clickButtonOffset={() => addVideo()}
+        typeIconOffset={'font'}
         {...sharedProps}
         icon11={'open-with'}
         colorIcon11={colors.white}

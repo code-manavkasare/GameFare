@@ -46,26 +46,22 @@ export default class Alert extends Component {
   }
   title() {
     const {title} = this.props.route.params;
-    if (title) return <Text style={styleApp.title}>{title}</Text>;
+    if (title) {
+      return <Text style={styleApp.title}>{title}</Text>;
+    }
     return null;
   }
   subtitle() {
     const {subtitle} = this.props.route.params;
-    if (subtitle)
+    if (subtitle) {
       return (
         <View>
           <Text style={[styleApp.text, {fontSize: 15, marginTop: 20}]}>
             {subtitle}
           </Text>
-
-          <View
-            style={[
-              styleApp.divider,
-              {width: '100%', marginTop: 20, marginBottom: -5},
-            ]}
-          />
         </View>
       );
+    }
     return null;
   }
   async click() {
@@ -75,7 +71,9 @@ export default class Alert extends Component {
       this.setState({loader: true});
       await onGoBack();
     }
-    if (nextNavigation) return nextNavigation();
+    if (nextNavigation) {
+      return nextNavigation();
+    }
     return this.close();
   }
   async optionClick(operation, forceNavigation) {
@@ -84,7 +82,9 @@ export default class Alert extends Component {
     if (operation) {
       await operation();
     }
-    if (forceNavigation) return;
+    if (forceNavigation) {
+      return;
+    }
     navigation.goBack();
   }
   async close() {

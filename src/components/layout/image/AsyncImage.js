@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {View, ActivityIndicator, Image, Animated, Easing} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import ls from 'react-native-local-storage';
+import {native} from '../../animations/animations';
 
 export default class AsyncImage extends Component {
   constructor(props) {
@@ -15,44 +16,10 @@ export default class AsyncImage extends Component {
       zIndexCached: 10,
       checkToken: '',
     };
-    this.AnimatedValue = new Animated.Value(0);
     this.opacityFastImageCached = new Animated.Value(0);
-    this.componentDidMount = this.componentDidMount.bind(this);
-  }
-
-  async componentDidMount() {
-    // TODO restructure component
-    // try {
-    //   if (this.props.mainImage) {
-    //     var tokenImg = this.props.mainImage.split('token=')[1];
-    //     if (tokenImg) {
-    //       var checkToken = await ls.get(tokenImg);
-    //       if (checkToken == null) checkToken = 'null';
-    //     }
-    //   } else {
-    //     var checkToken = 'null';
-    //   }
-    //   await this.setState({checkToken: checkToken});
-    //   this.setState({initialLoader: false});
-    // } catch (err) {
-    // }
-    this.setState({checkToken: true, initialLoader: false});
-  }
-  enterPictureInitial() {
-    Animated.timing(this.AnimatedValue, {
-      toValue: 1,
-      easing: Easing.linear,
-      useNativeDriver: true,
-      duration: 40,
-    }).start();
   }
   enterPictureCached() {
-    Animated.timing(this.opacityFastImageCached, {
-      toValue: 1,
-      easing: Easing.linear,
-      useNativeDriver: true,
-      duration: 250,
-    }).start();
+    Animated.timing(this.opacityFastImageCached, native(1)).start();
   }
   getMainImage() {
     const {mainImage, image} = this.props;
@@ -62,57 +29,30 @@ export default class AsyncImage extends Component {
     return mainImage;
   }
   imgDisplay() {
-    const {style, mainImage, resizeMode} = this.props;
-    if (this.state.checkToken == 'null') {
-      return (
-        <Animated.View
-          style={{
-            opacity: this.opacityFastImageCached,
-            height: style.height,
-            width: style.width,
-          }}>
-          <FastImage
-            resizeMode={resizeMode ? resizeMode : 'cover'}
-            onLoadEnd={() => {
-              this.enterPictureCached();
-              // if (mainImage) {
-              //   try {
-              //     var tokenImg = mainImage.split('token=')[1];
-              //     if (tokenImg) ls.save(tokenImg, tokenImg);
-              //   } catch (err) {
-              //     true;
-              //   }
-              // }
-            }}
-            style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
-            source={{
-              uri: this.getMainImage(),
-            }}
-          />
-        </Animated.View>
-      );
-    } else {
-      return (
+    const {style, resizeMode} = this.props;
+    return (
+      <Animated.View
+        style={{
+          opacity: this.opacityFastImageCached,
+          height: style.height,
+          width: style.width,
+        }}>
         <FastImage
           resizeMode={resizeMode ? resizeMode : 'cover'}
+          onLoadEnd={() => {
+            this.enterPictureCached();
+          }}
+          style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
           source={{
             cache: FastImage.cacheControl.web,
             uri: this.getMainImage(),
           }}
-          onLoadEnd={() => {
-            // this.enterPictureCached()
-          }}
-          style={[style, {zIndex: this.state.zIndexInitial}]}
         />
-      );
-    }
+      </Animated.View>
+    );
   }
   render() {
-    return (
-      <View style={[this.props.style]}>
-        {!this.state.initialLoader ? this.imgDisplay() : null}
-      </View>
-    );
+    return <View style={[this.props.style]}>{this.imgDisplay()}</View>;
   }
 }
 

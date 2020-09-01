@@ -14,7 +14,10 @@ import {includes} from 'ramda';
 import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
-import {deleteCloudVideo} from '../../database/firebase/videosManagement.js';
+import {
+  deleteCloudVideo,
+  deleteCloudVideos,
+} from '../../database/firebase/videosManagement.js';
 import {pickerlocalVideos} from './components/elements';
 import {rowTitle} from '../TeamPage/components/elements';
 import {FlatListComponent} from '../../layout/Views/FlatList';
@@ -89,47 +92,62 @@ class VideoLibraryPage extends Component {
     console.log('videosArray[1]', videosArray[1]);
     return {videosArray};
   }
+  toggleSelectable() {
+    const {selectableMode} = this.state;
+    if (selectableMode) {
+      this.setState({
+        selectedFirebaseVideos: [],
+        selectedLocalVideos: [],
+        selectableMode: false,
+      });
+    } else {
+      this.setState({selectableMode: true});
+    }
+  }
   shareSelectedVideos() {
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
     const {navigation} = this.props;
     const numberVideos =
       selectedFirebaseVideos.length + selectedLocalVideos.length;
     if (numberVideos > 0) {
+      navigation.push('ShareVideo', {
+        firebaseVideos: selectedFirebaseVideos,
+        localVideos: selectedLocalVideos,
+      });
       this.setState({
         selectedFirebaseVideos: [],
         selectedLocalVideos: [],
         selectableMode: false,
       });
-      navigation.push('ShareVideo', {
-        firebaseVideos: selectedFirebaseVideos,
-        localVideos: selectedLocalVideos,
-      });
     }
   }
   deleteSelectedVideos() {
-    const {userID} = this.props;
     const {selectedFirebaseVideos, selectedLocalVideos} = this.state;
     const numberVideos =
       selectedFirebaseVideos.length + selectedLocalVideos.length;
     if (numberVideos > 0) {
       navigate('Alert', {
-        title: `Are you sure you want to delete this video? This action cannot be undone.`,
+        title:
+          'Are you sure you want to delete ' +
+          (numberVideos === 1 ? 'this video' : 'these videos') +
+          '?',
+        subtitle: 'This action cannot be undone.',
         textButton: `Delete (${numberVideos})`,
         onGoBack: () => {
           if (selectedFirebaseVideos.length > 0) {
-            selectedFirebaseVideos.map((videoID) => deleteCloudVideo(videoID));
+            deleteCloudVideos(selectedFirebaseVideos);
           }
           if (selectedLocalVideos.length > 0) {
             selectedLocalVideos.map((videoID) => removeLocalVideo(videoID));
           }
+          this.setState({
+            selectedFirebaseVideos: [],
+            selectedLocalVideos: [],
+            selectableMode: false,
+          });
         },
       });
     }
-    this.setState({
-      selectedFirebaseVideos: [],
-      selectedLocalVideos: [],
-      selectableMode: false,
-    });
   }
   selectVideo(id, isSelected, local) {
     let {selectedFirebaseVideos, selectedLocalVideos, selectOne} = this.state;
@@ -165,7 +183,7 @@ class VideoLibraryPage extends Component {
     const {navigation} = this.props;
     const {navigate} = navigation;
     const permissionLibrary = await permission('library');
-    if (!permissionLibrary)
+    if (!permissionLibrary) {
       return navigate('Alert', {
         textButton: 'Open Settings',
         title:
@@ -180,6 +198,7 @@ class VideoLibraryPage extends Component {
           />
         ),
       });
+    }
     const videos = await MediaPicker.openPicker({
       multiple: true,
       mediaType: 'video',
@@ -192,11 +211,12 @@ class VideoLibraryPage extends Component {
         let newVideo = await getVideoInfo(video.path);
         addLocalVideo(newVideo);
         newVideos.push(newVideo);
-        if (videos.length === 1 && !selectOnly)
+        if (videos.length === 1 && !selectOnly) {
           openVideoPlayer({
             archives: [{id: newVideo.id, local: newVideo.local}],
             open: true,
           });
+        }
       }
       if (selectOnly) {
         let {selectedLocalVideos} = this.state;
@@ -211,7 +231,7 @@ class VideoLibraryPage extends Component {
   async addVideo() {
     const {navigate} = this.props.navigation;
     navigate('Alert', {
-      title: `New video`,
+      title: 'New video',
       displayList: true,
       listOptions: [
         {
@@ -343,13 +363,15 @@ class VideoLibraryPage extends Component {
       selectedLocalVideos,
       selectOnly,
     } = this.state;
-    if (!userConnected) return <LogoutView />;
+    if (!userConnected) {
+      return <LogoutView />;
+    }
     return (
       <View style={styleApp.stylePage}>
         <HeaderVideoLibrary
           // loader={loader}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          toggleSelect={() => this.setState({selectableMode: !selectableMode})}
+          toggleSelect={() => this.toggleSelectable()}
           selectableMode={selectableMode}
           navigation={navigation}
           selectOnly={selectOnly}
@@ -405,7 +427,7 @@ const styles = StyleSheet.create({
     height: 170,
     borderRadius: 0,
     overflow: 'hidden',
-    backgroundColor: colors.title,
+    // backgroundColor: colors.title,
     // margin: 5,
     borderWidth: 1,
     borderColor: colors.white,

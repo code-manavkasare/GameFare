@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Animated} from 'react-native';
+import {Animated, Image} from 'react-native';
 import PropTypes from 'prop-types';
 
 import Icons from './icons';
@@ -42,6 +42,8 @@ export default class AllIcon extends Component {
       );
     } else if (type === 'mat') {
       return <MatIcon name={icon} color={color} size={size} />;
+    } else if (type === 'file') {
+      return <Image source={icon} style={{height: size, width: size}} />;
     }
     return null;
   }

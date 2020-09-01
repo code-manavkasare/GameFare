@@ -8,7 +8,7 @@ import {
   Image,
   Animated,
 } from 'react-native';
-import Video from 'react-native-video';
+import Video from 'gamefare-rn-video';
 import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');

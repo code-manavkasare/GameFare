@@ -42,24 +42,31 @@ export default class Filmstrip extends Component {
     const {archiveId} = this.props;
     let local = true;
     let archive = await getLocalVideoByID(archiveId);
-    if (!archive) local = false;
-    if (!local) archive = await getFirebaseVideoByID(archiveId);
+    if (!archive) {
+      local = false;
+    }
+    if (!local) {
+      archive = await getFirebaseVideoByID(archiveId);
+    }
     console.log(archive.url);
     this.setState({
       timeBounds: [0, archive.durationSeconds],
       thumbnailAspect: archive.size.height / archive.size.width,
       thumbnails: archive.initialSeekbarThumbnails,
     });
-    if (archive.initialSeekbarThumbnails) return;
+    if (archive.initialSeekbarThumbnails) {
+      return;
+    }
     const thumbnails = await this.fetchThumbnails();
     console.log(local);
-    if (!local)
+    if (!local) {
       store.dispatch(
         setArchive({
           ...archive,
           initialSeekbarThumbnails: thumbnails,
         }),
       );
+    }
   };
 
   componentDidUpdate(prevState, prevProps) {

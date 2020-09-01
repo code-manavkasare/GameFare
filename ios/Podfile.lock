@@ -734,7 +734,7 @@ DEPENDENCIES:
   - react-native-sms (from `../node_modules/react-native-sms`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-statusbar (from `../node_modules/@react-native-community/status-bar`)"
-  - react-native-video (from `../node_modules/react-native-video`)
+  - react-native-video (from `../node_modules/gamefare-rn-video`)
   - react-native-video-cache (from `../node_modules/react-native-video-cache`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -961,7 +961,7 @@ EXTERNAL SOURCES:
   react-native-statusbar:
     :path: "../node_modules/@react-native-community/status-bar"
   react-native-video:
-    :path: "../node_modules/react-native-video"
+    :path: "../node_modules/gamefare-rn-video"
   react-native-video-cache:
     :path: "../node_modules/react-native-video-cache"
   React-RCTActionSheet:
@@ -1217,6 +1217,6 @@ SPEC CHECKSUMS:
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: d0b40d5f20cd922df3f11a72f8b2b6c31510dce6
+PODFILE CHECKSUM: 63a7f2ea3b02c726c34337ed1692ff7cb2f0836b
 
 COCOAPODS: 1.9.3

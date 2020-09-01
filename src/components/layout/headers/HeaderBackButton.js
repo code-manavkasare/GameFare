@@ -86,7 +86,7 @@ class HeaderBackButton extends Component {
       onPressColorIcon1,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
-    if (icon1)
+    if (icon1) {
       return (
         <Animated.View
           style={[
@@ -125,6 +125,7 @@ class HeaderBackButton extends Component {
           />
         </Animated.View>
       );
+    }
     return null;
   }
   button11() {
@@ -137,7 +138,7 @@ class HeaderBackButton extends Component {
       nobackgroundColorIcon1,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
-    if (icon11)
+    if (icon11) {
       return (
         <Animated.View
           style={[
@@ -167,6 +168,7 @@ class HeaderBackButton extends Component {
           />
         </Animated.View>
       );
+    }
     return null;
   }
   button12() {
@@ -178,7 +180,7 @@ class HeaderBackButton extends Component {
       typeIcon12,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
-    if (icon12)
+    if (icon12) {
       return (
         <Animated.View
           style={[
@@ -208,6 +210,7 @@ class HeaderBackButton extends Component {
           />
         </Animated.View>
       );
+    }
     return null;
   }
 
@@ -231,7 +234,7 @@ class HeaderBackButton extends Component {
       customOffset,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
-    if (iconOffset)
+    if (iconOffset) {
       return (
         <Animated.View
           style={[
@@ -275,6 +278,7 @@ class HeaderBackButton extends Component {
           )}
         </Animated.View>
       );
+    }
   }
   buttonOffset2() {
     const styleButton = {
@@ -295,7 +299,7 @@ class HeaderBackButton extends Component {
       nobackgroundColorIcon1,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
-    if (iconOffset2)
+    if (iconOffset2) {
       return (
         <Animated.View
           style={[
@@ -327,6 +331,7 @@ class HeaderBackButton extends Component {
           />
         </Animated.View>
       );
+    }
   }
   button2() {
     const {
@@ -344,14 +349,15 @@ class HeaderBackButton extends Component {
       badgeIcon2,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
-    if (loader)
+    if (loader) {
       return (
         <Loader
           color={colorLoader ? colorLoader : colors.green}
           size={sizeLoader ? sizeLoader : 35}
         />
       );
-    if (icon2)
+    }
+    if (icon2) {
       return (
         <Animated.View
           style={[
@@ -405,6 +411,7 @@ class HeaderBackButton extends Component {
           )}
         </Animated.View>
       );
+    }
   }
   render() {
     const {

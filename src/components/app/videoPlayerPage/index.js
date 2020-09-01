@@ -102,10 +102,10 @@ class VideoPlayerPage extends Component {
           const videoToAdd = nextVideos.filter(
             (item) => prevVideos.indexOf(item) == -1,
           )[0];
-          let {archives} = this.state;
+          let {archives: newArchives} = this.state;
 
-          const newarchives = archives.concat([{id: videoToAdd}]);
-          this.setState({archives: newarchives});
+          newArchives = newArchives.concat([{id: videoToAdd}]);
+          this.setState({archives: newArchives});
         }
       }
     }
@@ -122,19 +122,23 @@ class VideoPlayerPage extends Component {
   }
   startRecording = async () => {
     this.videoPlayerRefs.forEach((ref) => {
-      ref?.PinchableBoxRef?.resetPosition();
+      ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
+      ref?.videoPlayerRef?.setRecording(true);
     });
     await this.setState({
       isRecording: true,
       recordedActions: [],
       recordingStartTime: Date.now(),
     });
-    this.AudioRecorderPlayerRef.startRecording();
+    this.AudioRecorderPlayerRef?.startRecording();
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
   stopRecording = () => {
-    this.AudioRecorderPlayerRef.stopRecording();
+    this.AudioRecorderPlayerRef?.stopRecording();
+    this.videoPlayerRefs.forEach((ref) => {
+      ref?.videoPlayerRef?.setRecording(false);
+    });
     this.setState({
       isRecording: false,
       recordingStartTime: null,
@@ -207,24 +211,22 @@ class VideoPlayerPage extends Component {
 
   resetPlayers = () => {
     this.videoPlayerRefs.forEach((ref) => {
-      ref?.setState({
-        currentTime: 0,
+      ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
+      ref?.videoPlayerRef?.setState({
         paused: true,
         playRate: 1,
       });
-      ref?.visualSeekBarRef?.setCurrentTime(0, true);
-      ref?.player?.seek(0);
-      ref?.PinchableBoxRef?.resetPosition();
     });
   };
 
   initialiseRecordingWithPlayerCurrentState = () => {
     this.videoPlayerRefs.forEach((ref, i) => {
-      const currentTime = ref.visualSeekBarRef?.getCurrentTime();
-      const playRate = ref.state?.playRate;
+      const currentTime = ref?.videoPlayerRef?.visualSeekBarRef?.getCurrentTime();
+      const playRate = ref?.videoPlayerRef?.state.playRate;
+      const paused = ref?.videoPlayerRef?.state.paused;
       this.onSlidingEnd(i, currentTime);
       this.onPlayRateChange(i, playRate, currentTime);
-      // this.onPlayPause(i, false, currentTime);
+      this.onPlayPause(i, paused, currentTime);
     });
   };
 
@@ -248,8 +250,9 @@ class VideoPlayerPage extends Component {
       previewStartTime: Date.now(),
       disableControls: true,
     });
-    this.AudioRecorderPlayerRef.playRecord();
+    this.AudioRecorderPlayerRef?.playRecord();
     const {recordedActions} = this.state;
+    console.log('recorded actions', recordedActions);
     for (const action of recordedActions) {
       const {isPreviewing} = this.state;
       if (isPreviewing) {
@@ -257,7 +260,7 @@ class VideoPlayerPage extends Component {
         switch (type) {
           case 'play':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef?.setState({
                 currentTime: action.timestamp,
                 paused: false,
               });
@@ -265,7 +268,7 @@ class VideoPlayerPage extends Component {
             break;
           case 'pause':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef?.setState({
                 currentTime: action.timestamp,
                 paused: true,
               });
@@ -273,28 +276,33 @@ class VideoPlayerPage extends Component {
             break;
           case 'changePlayRate':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef?.setState({
                 playRate: action.playRate,
               });
             });
             break;
           case 'seek':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].setState({
+              this.videoPlayerRefs[index].videoPlayerRef?.player?.seek(
+                action.timestamp,
+              );
+              this.videoPlayerRefs[index].videoPlayerRef?.setState({
                 currentTime: action.timestamp,
               });
             });
             break;
           case 'zoom':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].PinchableBoxRef.setNewScale(
-                action.scale,
-              );
+              this.videoPlayerRefs[
+                index
+              ]?.videoPlayerRef?.PinchableBoxRef?.setNewScale(action.scale);
             });
             break;
           case 'drag':
             await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].PinchableBoxRef.setNewPosition(
+              this.videoPlayerRefs[
+                index
+              ]?.videoPlayerRef?.PinchableBoxRef?.setNewPosition(
                 action.position,
               );
             });
@@ -304,11 +312,18 @@ class VideoPlayerPage extends Component {
         }
       }
     }
-
+    const {isPreviewing} = this.state;
+    if (isPreviewing) {
+      this.videoPlayerRefs.map((ref) => {
+        ref?.videoPlayerRef?.setState({
+          paused: true,
+        });
+      });
+    }
     await this.setState({isPreviewing: false, disableControls: false});
   };
   cancelPreviewRecording = async () => {
-    this.AudioRecorderPlayerRef.stopPlayingRecord();
+    this.AudioRecorderPlayerRef?.stopPlayingRecord();
     this.setState({
       isPreviewing: false,
       previewStartTime: null,
@@ -489,8 +504,8 @@ class VideoPlayerPage extends Component {
     if (isEditMode && !isRecording && recordedActions.length > 0) {
       return isPreviewing ? (
         <Button
-          backgroundColor="red"
-          onPressColor={colors.green}
+          backgroundColor={colors.red}
+          onPressColor={colors.red2}
           styleButton={style}
           text="Cancel Preview"
           textButton={{fontSize: 13}}
