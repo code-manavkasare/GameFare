@@ -216,17 +216,20 @@ class VideoPlayerPage extends Component {
         paused: true,
         playRate: 1,
       });
+      ref?.visualSeekBarRef?.setCurrentTime(0, true);
+      ref?.player?.seek(0);
+      ref.drawViewRef.setState({drawings: {}});
     });
   };
 
   initialiseRecordingWithPlayerCurrentState = () => {
     this.videoPlayerRefs.forEach((ref, i) => {
-      const currentTime = ref?.videoPlayerRef?.visualSeekBarRef?.getCurrentTime();
-      const playRate = ref?.videoPlayerRef?.state.playRate;
-      const paused = ref?.videoPlayerRef?.state.paused;
+      const currentTime = ref.videoPlayerRef?.visualSeekBarRef?.getCurrentTime();
+      const playRate = ref.videoPlayerRef?.state?.playRate;
+      const drawings = ref.drawViewRef.state.drawings;
       this.onSlidingEnd(i, currentTime);
       this.onPlayRateChange(i, playRate, currentTime);
-      this.onPlayPause(i, paused, currentTime);
+      this.onDrawingChange(i, drawings);
     });
   };
 
@@ -302,13 +305,20 @@ class VideoPlayerPage extends Component {
             await this.waitForAction(action).then(() => {
               this.videoPlayerRefs[
                 index
-              ]?.videoPlayerRef?.PinchableBoxRef?.setNewPosition(
-                action.position,
-              );
+              ]?.videoPlayerRef.PinchableBoxRef.setNewPosition(action.position);
+            });
+            break;
+          case 'draw':
+            await this.waitForAction(action).then(() => {
+              this.videoPlayerRefs[index].drawViewRef.setState({
+                drawings: action.drawings,
+              });
             });
             break;
           default:
-            console.log(`case ${action.type} not handled`);
+            console.log(
+              `case ${action.type} not handled, action received : ${action}`,
+            );
         }
       }
     }
@@ -385,6 +395,17 @@ class VideoPlayerPage extends Component {
       index: i,
       startRecordingOffset: Date.now() - recordingStartTime,
       timestamp: seekTime,
+    });
+    this.setState({recordedActions});
+  };
+  onDrawingChange = (i, drawings) => {
+    let {recordedActions} = this.state;
+    const {recordingStartTime} = this.state;
+    recordedActions.push({
+      type: 'draw',
+      index: i,
+      startRecordingOffset: Date.now() - recordingStartTime,
+      drawings,
     });
     this.setState({recordedActions});
   };
@@ -578,21 +599,21 @@ class VideoPlayerPage extends Component {
     } = this.state;
 
     const {
+      onDrawingChange,
       onPlayPause,
       onPlayRateChange,
-      onScaleChange,
       onPositionChange,
+      onScaleChange,
       onSlidingEnd,
-      // onSlidingStart,
     } = this;
     const propsWhenRecording = isRecording
       ? {
+          onDrawingChange,
           onPlayPause,
           onPlayRateChange,
-          onScaleChange,
           onPositionChange,
+          onScaleChange,
           onSlidingEnd,
-          // onSlidingStart,
         }
       : {};
 
