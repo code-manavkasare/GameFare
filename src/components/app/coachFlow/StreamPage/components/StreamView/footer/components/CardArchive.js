@@ -47,11 +47,15 @@ class CardArchive extends PureComponent {
   }
   componentDidMount() {
     const {local, id} = this.props;
-    if (!local) bindArchive(id);
+    if (!local) {
+      bindArchive(id);
+    }
   }
   componentWillUnmount() {
     const {id, local} = this.props;
-    if (!local) unbindArchive(id);
+    if (!local) {
+      unbindArchive(id);
+    }
   }
   placeholder() {
     const {style} = this.props;
@@ -64,7 +68,10 @@ class CardArchive extends PureComponent {
       />
     );
   }
-
+  selectVideo = async (id, isSelected) => {
+    const {selectVideo} = this.props;
+    selectVideo(id, isSelected);
+  };
   openVideo = async () => {
     const {archive, coachSessionID, videosToOpen} = this.props;
     const {url, id, local} = archive;
@@ -78,25 +85,25 @@ class CardArchive extends PureComponent {
   };
   cloudIndicator() {
     const {local, url} = this.props.archive;
-    if (!local) {
+    if (local) {
       return (
         <View
           style={{
             position: 'absolute',
             height: 30,
             width: 30,
-            bottom: 0,
-            right: 5,
+            top: 10,
+            right: -10,
             zIndex: 20,
           }}>
           {url === '' ? (
             <Loader size={25} color={colors.white} />
           ) : (
             <AllIcons
-              name={url === '' ? 'upload' : 'cloud'}
+              name={url === '' ? 'upload' : 'mobile-alt'}
               type="font"
-              color={colors.white}
-              size={15}
+              color={colors.greyLight}
+              size={18}
             />
           )}
         </View>
@@ -105,14 +112,16 @@ class CardArchive extends PureComponent {
       return null;
     }
   }
+  linearGradient() {
+    return (
+      <LinearGradient
+        style={{width: '100%', height: 80, bottom: 0, position: 'absolute'}}
+        colors={[colors.black + '00', colors.black + '80']}
+      />
+    );
+  }
   cardArchive(archive) {
-    const {
-      isSelected,
-      style,
-      selectableMode,
-      selectVideo,
-      hidePlayIcon,
-    } = this.props;
+    const {isSelected, style, selectableMode, hidePlayIcon} = this.props;
     const {
       id,
       thumbnail,
@@ -133,11 +142,6 @@ class CardArchive extends PureComponent {
           />
         )}
         {this.cloudIndicator()}
-        {/* <View style={styles.resolution}>
-          <Text style={[styleApp.title, {color: colors.white, fontSize: 12}]}>
-            {resolutionP(size)}
-          </Text>
-        </View> */}
         <View
           pointerEvents="none"
           style={{
@@ -161,6 +165,8 @@ class CardArchive extends PureComponent {
             </Col>
           </Row>
         </View>
+
+        {this.linearGradient()}
 
         <View
           pointerEvents="none"
@@ -193,7 +199,7 @@ class CardArchive extends PureComponent {
           }}
           click={() =>
             selectableMode
-              ? selectVideo(id, !isSelected, local)
+              ? this.selectVideo(id, !isSelected)
               : this.openVideo()
           }
           color={'transparent'}
@@ -202,7 +208,7 @@ class CardArchive extends PureComponent {
             styleApp.fullSize,
             styleApp.center,
             styleApp.marginView,
-            {position: 'absolute'},
+            {position: 'absolute', opacity: 0.6},
           ]}
         />
       </View>
@@ -211,7 +217,9 @@ class CardArchive extends PureComponent {
   render() {
     const {archive} = this.props;
 
-    if (!archive) return this.placeholder();
+    if (!archive) {
+      return this.placeholder();
+    }
 
     return this.cardArchive(archive);
   }

@@ -34,6 +34,19 @@ const deleteCloudVideo = async (videoID) => {
     });
 };
 
+const deleteCloudVideos = async (videoIDs) => {
+  const {userID} = store.getState().user;
+  let updates = {};
+  videoIDs.map((videoID) => {
+    store.dispatch(deleteArchive(videoID));
+    updates[`users/${userID}/archivedStreams/${videoID}`] = null;
+    updates[`archivedStreams/${videoID}/members/${userID}`] = null;
+  });
+  database()
+    .ref()
+    .update(updates);
+};
+
 const createCloudVideo = async (videoInfo) => {
   // creates a firebase object for cloud video and adds to this user's library
   const {userID} = store.getState().user;
@@ -117,23 +130,28 @@ const unsubscribeUploadProgress = async (memberID, videoID) => {
     });
 };
 
-const shareCloudVideoWithCoachSession = async (cloudVideoID, coachSessionID, sharingScreenID) => {
+const shareCloudVideoWithCoachSession = async (
+  cloudVideoID,
+  coachSessionID,
+  sharingScreenID,
+) => {
   database()
-  .ref()
-  .update({
-    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/currentTime`]: 0,
-    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/paused`]: true,
-    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/playRate`]: 1,
-    [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/id`]: cloudVideoID,
-    [`coachSessions/${coachSessionID}/members/${sharingScreenID}/shareScreen`]: true,
-    [`coachSessions/${coachSessionID}/members/${sharingScreenID}/videoIDSharing`]: cloudVideoID,
-    [`coachSessions/${coachSessionID}/members/${sharingScreenID}/sharedVideos/${cloudVideoID}`]: true,
-  });
+    .ref()
+    .update({
+      [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/currentTime`]: 0,
+      [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/paused`]: true,
+      [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/playRate`]: 1,
+      [`coachSessions/${coachSessionID}/sharedVideos/${cloudVideoID}/id`]: cloudVideoID,
+      [`coachSessions/${coachSessionID}/members/${sharingScreenID}/shareScreen`]: true,
+      [`coachSessions/${coachSessionID}/members/${sharingScreenID}/videoIDSharing`]: cloudVideoID,
+      [`coachSessions/${coachSessionID}/members/${sharingScreenID}/sharedVideos/${cloudVideoID}`]: true,
+    });
 };
 
 export {
   shareCloudVideo,
   deleteCloudVideo,
+  deleteCloudVideos,
   createCloudVideo,
   setCloudThumbnail,
   subscribeUploadProgress,
