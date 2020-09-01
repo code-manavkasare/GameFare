@@ -68,7 +68,9 @@ class VisualSeekBar extends Component {
           return;
         }
         let {moveX, dx} = gestureState;
-        if (this.panResponderOffset) moveX = moveX - this.panResponderOffset;
+        if (this.panResponderOffset) {
+          moveX = moveX - this.panResponderOffset;
+        }
         const playheadToValue =
           this._lastPlayheadPos + dx < this.playheadPosBounds[0]
             ? this.playheadPosBounds[0]
@@ -84,8 +86,15 @@ class VisualSeekBar extends Component {
           return;
         }
         let {x0} = gestureState;
-        if (this.panResponderOffset) x0 = x0 - this.panResponderOffset;
-        const playheadToValue = x0 - seekbar.xOffset._value / 2;
+        if (this.panResponderOffset) {
+          x0 = x0 - this.panResponderOffset;
+        }
+        const playheadToValue =
+          x0 - seekbar.xOffset._value / 2 < this.playheadPosBounds[0]
+            ? this.playheadPosBounds[0]
+            : x0 - seekbar.xOffset._value / 2 > this.playheadPosBounds[1]
+            ? this.playheadPosBounds[1]
+            : x0 - seekbar.xOffset._value / 2;
         this.movePlayhead(playheadToValue, true);
         this._lastPlayheadPos = playheadToValue;
         onSlidingStart(this.getCurrentTime());
@@ -248,6 +257,7 @@ class VisualSeekBar extends Component {
     return this.state.paused;
   }
   getCurrentTime() {
+    console.log('get current time', this.currentTimeRef?.getCurrentTime());
     return this.currentTimeRef?.getCurrentTime();
   }
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Animated, Image} from 'react-native';
-import Video from 'react-native-video';
+import Video from 'gamefare-rn-video';
 import PropTypes from 'prop-types';
 
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -65,7 +65,7 @@ export default class VideoPlayer extends Component {
       fullscreen: false,
       playRate: 1,
       muted: __DEV__ ? true : false,
-
+      allowRecording: false,
       slidingStartTime: null,
     };
     this.opacityControlBar = new Animated.Value(1);
@@ -196,8 +196,9 @@ export default class VideoPlayer extends Component {
       isDoneBuffering &&
       !event.isBuffering &&
       event.isBuffering !== videoLoading
-    )
+    ) {
       isDoneBuffering();
+    }
   };
   onProgress = async (info) => {
     const paused = this.visualSeekBarRef?.getPaused();
@@ -266,7 +267,9 @@ export default class VideoPlayer extends Component {
       this.setState({prevPaused: undefined});
     }
     this.player.seek(time, 33);
-    if (onSeek) onSeek(currentTime, time);
+    if (onSeek) {
+      onSeek(currentTime, time);
+    }
   };
   linkedOnSeek = async (time, fineSeek) => {
     const {linkedPlayers} = this.props;
@@ -307,6 +310,9 @@ export default class VideoPlayer extends Component {
   setXOffset(x) {
     this.visualSeekBarRef?.setXOffset(x);
   }
+  setRecording(allowRecording) {
+    this.setState({allowRecording});
+  }
   render() {
     const {
       archiveId,
@@ -339,6 +345,7 @@ export default class VideoPlayer extends Component {
       muted,
       videoLoaded,
       seekbarLoaded,
+      allowRecording,
     } = this.state;
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
@@ -373,6 +380,9 @@ export default class VideoPlayer extends Component {
               <View style={[styleApp.fullSize, styleApp.center]}>
                 <Video
                   key={index}
+                  // mixWithOthers={'mix'}
+                  ignoreSilentSwitch={'ignore'}
+                  allowRecording={allowRecording}
                   source={{uri: url}}
                   style={styleApp.fullSize}
                   ref={(ref) => {

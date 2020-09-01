@@ -4412,6 +4412,14 @@ gamefare-camera-kit@^1.1.2:
     underscore "^1.9.1"
     uuid "^3.3.3"
 
+"gamefare-rn-video@git+https://gitlab.com/gamefare/gamefare-rn-video.git":
+  version "5.1.0-alpha8"
+  resolved "git+https://gitlab.com/gamefare/gamefare-rn-video.git#a5cfff5a430c20b934b4d038e4867ba43abf6a83"
+  dependencies:
+    keymirror "^0.1.1"
+    prop-types "^15.7.2"
+    shaka-player "^2.5.9"
+
 gensync@^1.0.0-beta.1:
   version "1.0.0-beta.1"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.1.tgz#58f4361ff987e5ff6e1e7a210827aa371eaac269"
@@ -7438,15 +7446,6 @@ react-native-video-processing@Bunhouth/react-native-video-processing:
     babel-preset-react-native-stage-0 "1.0.1"
     lodash "^4.16.6"
 
-react-native-video@^5.1.0-alpha8:
-  version "5.1.0-alpha8"
-  resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-5.1.0-alpha8.tgz#f0cb4cb2d74154b7916e68bef0f9b9cdcfe5f568"
-  integrity sha512-RRDSxqKe2F4OtiDWKCQlwVzvcsZ/TcWQdRxeAE3wsGBmFpAYFyhCz52QkFXgQQgYUuIK6Wd+j2lVxUoLp4+R2w==
-  dependencies:
-    keymirror "^0.1.1"
-    prop-types "^15.7.2"
-    shaka-player "^2.5.9"
-
 react-native-windows@^0.62.0-0:
   version "0.62.3"
   resolved "https://registry.yarnpkg.com/react-native-windows/-/react-native-windows-0.62.3.tgz#91623479c444439caa99ec3d6763ca480f6d1e11"
@@ -8126,9 +8125,9 @@ setprototypeof@1.1.1:
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
 shaka-player@^2.5.9:
-  version "2.5.15"
-  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.15.tgz#4ec70226072646f6cef5f24e6263efef3d6994fe"
-  integrity sha512-c8NS338zotjYMVJVy2aRvfPdpn/JDN8g76L25AvwQCn/QXbMg7wJEcqdiJSl2PEI7fsm8hFvI59C8liLKbF+Lw==
+  version "2.5.16"
+  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.16.tgz#a0dee6048308773b45931b2ce375cf1afdc9adda"
+  integrity sha512-VlR8SMD/PADmUMea8wJPWW3rOu7E608cZCpcymqNlpjOH55Djgzp/24oXJFmeu929vWBR2UuFsqN3fShjI3OAw==
   dependencies:
     eme-encryption-scheme-polyfill "^2.0.1"
 

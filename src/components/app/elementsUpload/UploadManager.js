@@ -33,9 +33,11 @@ class UploadManager extends Component {
     const {uploadQueueAction} = this.props;
     const {pool} = this.props.uploadQueue;
     if (pool && Object.values(pool).length > 0) {
-      const sorted = Object.values(pool).sort((a, b) => a.timeSubmitted - b.timeSubmitted);
+      const sorted = Object.values(pool).sort(
+        (a, b) => a.timeSubmitted - b.timeSubmitted,
+      );
       const next = sorted[0];
-      console.log('sorted', sorted.map(x => x.id));
+      console.log('sorted', sorted.map((x) => x.id));
       if (!next.progress || init) {
         await uploadQueueAction('setJobProgress', {
           id: next.id,

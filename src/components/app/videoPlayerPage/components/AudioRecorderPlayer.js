@@ -40,7 +40,10 @@ class AudioRecorderPlayer extends Component {
 
   preparePlayer = () => {
     this.setState({
-      audioPlayer: new Player('audio.mp4', {autoDestroy: false}).prepare(),
+      audioPlayer: new Player('audio.mp4', {
+        autoDestroy: false,
+        mixWithOthers: true,
+      }).prepare(),
     });
   };
 

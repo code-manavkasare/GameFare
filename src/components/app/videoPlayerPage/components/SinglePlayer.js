@@ -254,6 +254,7 @@ class SinglePlayer extends Component {
           scale={scale}
           position={position}
           userIDLastUpdate={userIDLastUpdate}
+          muted={false}
         />
       </View>
     );
