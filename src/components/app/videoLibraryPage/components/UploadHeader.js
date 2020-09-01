@@ -148,7 +148,6 @@ class UploadHeader extends Component {
               this.display(0);
             }}
             onOpen={() => {
-              console.log('onOpen');
               this.display(1);
             }}
           />

@@ -89,7 +89,6 @@ class VideoLibraryPage extends Component {
       };
     }
     const videosArray = sortVideos(allVideos).filter((video) => !video?.hidden);
-    console.log('videosArray[1]', videosArray[1]);
     return {videosArray};
   }
   toggleSelectable() {

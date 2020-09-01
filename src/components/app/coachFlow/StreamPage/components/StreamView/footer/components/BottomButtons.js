@@ -206,7 +206,7 @@ class BottomButton extends Component {
             coachSessionID,
             userID,
           );
-          uploadQueueAction('enqueueFilesUpload', thumbnails);
+          uploadQueueAction('enqueueUploadTasks', thumbnails);
         }
       }
     };

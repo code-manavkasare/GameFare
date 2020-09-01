@@ -81,7 +81,7 @@ class TaskCard extends Component {
       <View
         style={{
           ...styles.card,
-          opacity: task.progress !== 0 ? 1 : 0.7,
+          opacity: task.uploading ? 1 : 0.7,
         }}>
         <Row>
           <Col size={15}>{this.thumbnail()}</Col>

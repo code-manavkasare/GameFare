@@ -1,75 +1,141 @@
 import {
-  ENQUEUE_FILE_UPLOAD,
-  ENQUEUE_FILES_UPLOAD,
-  DEQUEUE_FILE_UPLOAD,
-  SET_UPLOAD_STATUS,
-  SET_UPLOAD_INDEX,
-  SET_JOB_PROGRESS,
+  ENQUEUE_UPLOAD_TASK,
+  ENQUEUE_UPLOAD_TASKS,
+  DEQUEUE_UPLOAD_TASK,
+  START_UPLOAD_TASK,
+  PAUSE_UPLOAD_TASK,
+  RESUME_UPLOAD_TASK,
+  FINISH_UPLOAD_TASK,
+  SET_UPLOAD_TASK_PROGRESS,
+  SET_UPLOAD_TASK_ERROR,
   RESET_UPLOAD_QUEUE,
 } from '../actions/types';
 
 import {dissoc} from 'ramda';
 
 const initialState = {
-  queue: [],
-  pool: {},
-  status: 'empty', // STATES = ['empty', 'uploading', 'paused']
+  queue: {},
   totalProgress: 0,
   numberConcurrentUploads: 0,
 };
 
+const prepTask = (task) => {
+  return {
+    ...task,
+    started: false,
+    paused: false,
+    finished: false,
+    error: false,
+  }
+};
+
 const uploadQueueReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ENQUEUE_FILE_UPLOAD:
+    case ENQUEUE_UPLOAD_TASK:
       return {
         ...state,
-        pool: {
-          ...state.pool,
-          [action.uploadTask.id]: action.uploadTask,
+        queue: {
+          ...state.queue,
+          [action.uploadTask.id]: prepTask(action.uploadTask),
         },
-        status: 'uploading',
         numberConcurrentUploads: state.numberConcurrentUploads + 1,
       };
-    case ENQUEUE_FILES_UPLOAD:
+    case ENQUEUE_UPLOAD_TASKS:
       const newPoolData = action.uploadTasks.reduce((data, task) => {
-        return {...data, [task.id]: {...task, progress: 0}};
+        return {
+          ...data,
+          [task.id]: prepTask(task),
+        };
       }, {});
       return {
         ...state,
-        pool: {
+        queue: {
           ...newPoolData,
-          ...state.pool,
+          ...state.queue,
         },
-        status: 'uploading',
         numberConcurrentUploads:
           state.numberConcurrentUploads + action.uploadTasks.length,
       };
-    case DEQUEUE_FILE_UPLOAD:
+    case DEQUEUE_UPLOAD_TASK:
       // do NOT decrease numberConcurrentUploads here
-      const {numberConcurrentUploads, pool} = state;
-      const smallerPool = dissoc(action.id, pool);
-      const numberRemainingUploads = Object.values(smallerPool).length;
+      const {numberConcurrentUploads, queue} = state;
+      const smallerQueue = dissoc(action.id, queue);
+      const numberRemainingUploads = Object.values(smallerQueue).length;
       return {
         ...state,
-        pool: smallerPool,
+        queue: smallerQueue,
         totalProgress:
           (1 / numberConcurrentUploads) *
           (numberConcurrentUploads - numberRemainingUploads),
       };
-    case SET_UPLOAD_STATUS:
+    case START_UPLOAD_TASK:
       return {
         ...state,
-        status: action.status,
+        queue: {
+          ...state.queue,
+          [action.id]: {
+            ...state.queue[action.id],
+            started: true,
+          },
+        },
       };
-    case SET_JOB_PROGRESS:
-      if (state.pool[action.id]) {
+    case PAUSE_UPLOAD_TASK:
+      return {
+        ...state,
+        queue: {
+          ...state.queue,
+          [action.id]: {
+            ...state.queue[action.id],
+            paused: true,
+          },
+        },
+      };
+    case RESUME_UPLOAD_TASK:
+      return {
+        ...state,
+        queue: {
+          ...state.queue,
+          [action.id]: {
+            ...state.queue[action.id],
+            paused: false,
+          },
+        },
+      };
+    case FINISH_UPLOAD_TASK:
+      return {
+        ...state,
+        queue: {
+          ...state.queue,
+          [action.id]: {
+            ...state.queue[action.id],
+            finished: true,
+          },
+        },
+      };
+    case SET_UPLOAD_TASK_PROGRESS:
+      if (state.queue[action.id]) {
         return {
           ...state,
-          pool: {
-            ...state.pool,
+          queue: {
+            ...state.queue,
             [action.id]: {
-              ...state.pool[action.id],
+              ...state.queue[action.id],
               progress: action.progress,
+            },
+          },
+        };
+      } else {
+        return state;
+      }
+    case SET_UPLOAD_TASK_ERROR:
+      if (state.queue[action.id]) {
+        return {
+          ...state,
+          queue: {
+            ...state.queue,
+            [action.id]: {
+              ...state.queue[action.id],
+              error: action.error,
             },
           },
         };

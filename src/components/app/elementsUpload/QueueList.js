@@ -31,9 +31,9 @@ class QueueList extends Component {
 
   static getDerivedStateFromProps(props, state) {
     const {uploadQueue} = props;
-    const {pool} = uploadQueue;
-    if (pool && Object.values(pool).length >= 0) {
-      const orderedTasks = Object.values(pool)
+    const {queue} = uploadQueue;
+    if (queue && Object.values(queue).length >= 0) {
+      const orderedTasks = Object.values(queue)
         .filter((task) => task.displayInList)
         .sort((a, b) => a.timeSubmitted - b.timeSubmitted);
       return {orderedTasks};
@@ -48,7 +48,7 @@ class QueueList extends Component {
     //       task?.date !== undefined &&
     //       task?.progress !== undefined,
     //   )
-    //   .concat(Object.values(pool).filter((task) => task?.displayInList))
+    //   .concat(Object.values(queue).filter((task) => task?.displayInList))
     //   .sort((a, b) => {
     //     if (a?.index > b?.index) return 1;
     //     if (a?.index < b?.index) return -1;
