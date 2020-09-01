@@ -1,14 +1,6 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Image,
-  Alert,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import PropTypes from 'prop-types';
+import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
@@ -23,6 +15,12 @@ import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
 
 class DrawView extends Component {
+  static propTypes = {
+    onDrawingChange: PropTypes.func,
+  };
+  static defaultProps = {
+    onDrawingChange: (index, drawings) => null,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -50,7 +48,13 @@ class DrawView extends Component {
   }
   clear = async () => {
     try {
-      const {archiveID, coachSessionID, videoBeingShared} = this.props;
+      const {
+        archiveID,
+        coachSessionID,
+        index,
+        onDrawingChange,
+        videoBeingShared,
+      } = this.props;
       if (videoBeingShared)
         await database()
           .ref(
@@ -59,11 +63,18 @@ class DrawView extends Component {
           .remove();
       this.canvasRef.clear();
       this.setState({drawings: {}});
+      onDrawingChange(index, {});
     } catch (err) {}
   };
-  undo = (onlyDeleteSketch) => {
+  undo = () => {
     const {drawings} = this.state;
-    const {videoBeingShared, archiveID, coachSessionID} = this.props;
+    const {
+      archiveID,
+      coachSessionID,
+      index,
+      onDrawingChange,
+      videoBeingShared,
+    } = this.props;
 
     let idLastDrawing = false;
     const lastDrawing = getLastDrawing(drawings);
@@ -79,6 +90,7 @@ class DrawView extends Component {
           }, {});
 
         this.setState({drawings: newDrawing});
+        onDrawingChange(index, newDrawing);
       } else {
         database()
           .ref(
@@ -89,7 +101,14 @@ class DrawView extends Component {
     }
   };
   async onStrokeEnd(event, widthDrawView, heightDrawView) {
-    const {userID, archiveID, coachSessionID, videoBeingShared} = this.props;
+    const {
+      archiveID,
+      coachSessionID,
+      index,
+      onDrawingChange,
+      userID,
+      videoBeingShared,
+    } = this.props;
     const {drawSetting} = this.state;
     let {path} = event;
     const id = generateID();
@@ -126,6 +145,7 @@ class DrawView extends Component {
       const {drawings} = this.state;
       const newDrawings = {...drawings, [path.idSketch]: path};
       await this.setState({drawings: newDrawings});
+      onDrawingChange(index, newDrawings);
     }
     if (drawSetting !== 'straight') this.canvasRef.deletePath(path.idSketch);
   }
