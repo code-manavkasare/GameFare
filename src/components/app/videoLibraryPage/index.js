@@ -32,7 +32,7 @@ import {
   sortVideos,
   permission,
   goToSettings,
-  getVideoInfo,
+  getNativeVideoInfo,
 } from '../../functions/pictures';
 import sizes from '../../style/sizes';
 import {
@@ -201,28 +201,23 @@ class VideoLibraryPage extends Component {
     const videos = await MediaPicker.openPicker({
       multiple: true,
       mediaType: 'video',
-      compressVideoPreset: 'HighestQuality',
+      writeTempFile: false,
     }).catch((err) => console.log('error', err));
     if (videos) {
-      let newVideos = [];
-      for (var i in videos) {
-        const video = videos[i];
-        let newVideo = await getVideoInfo(video.path);
-        addLocalVideo(newVideo);
-        newVideos.push(newVideo);
-        if (videos.length === 1 && !selectOnly) {
-          openVideoPlayer({
-            archives: [{id: newVideo.id, local: newVideo.local}],
-            open: true,
-          });
-        }
-      }
-      if (selectOnly) {
+      const videoInfos = await Promise.all(videos.map((video) => getNativeVideoInfo(video.localIdentifier)));
+      videoInfos.forEach((video) => {
+        addLocalVideo(video);
+      });
+      if (videoInfos.length === 1 && !selectOnly) {
+        openVideoPlayer({
+          archives: [{id: videoInfos[0].id, local: videoInfos[0].local}],
+          open: true,
+        });
+      } else if (selectOnly) {
         let {selectedLocalVideos} = this.state;
         selectedLocalVideos = selectedLocalVideos.concat(
-          newVideos.map((video) => video.id),
+          videoInfos.map((video) => video.id),
         );
-
         this.setState({selectedLocalVideos});
       }
     }
