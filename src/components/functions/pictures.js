@@ -164,8 +164,6 @@ const ge10tLastVideo = async () => {
     const video = edges[i];
     const {uri} = video.node.image;
     const appleId = uri.substring(5, 41);
-    // const videoInfo = await getNativeVideoInfo(appleId);
-
     const destPath = RNFS.DocumentDirectoryPath + '/' + appleId;
     const path = await RNFS.copyAssetsVideoIOS(
       `assets-library://asset/asset.${'mov'}?id=${appleId}&ext=${'mov'}`,
@@ -177,15 +175,13 @@ const ge10tLastVideo = async () => {
   return videos;
 };
 
-const getNativeVideoInfo = async (videoID) => {
-  const ext = 'MOV';
-  var videoUri = `assets-library://asset/asset.${ext}?id=${videoID}&ext=${ext}`;
-  let videoInfo = await getVideoInfo(videoUri);
-
-  videoInfo.id = videoID;
-  videoInfo.local = true;
-  videoInfo.thumbnail = videoUri;
-
+const getNativeVideoInfo = async (appleVideoID) => {
+  const savePath = getNewVideoSavePath();
+  const url = await RNFS.copyAssetsVideoIOS(
+    `assets-library://asset/asset.${'mov'}?id=${appleVideoID}&ext=${'mov'}`,
+    savePath,
+  );
+  let videoInfo = await getVideoInfo(url);
   videoInfo.fromNativeLibrary = true;
   return videoInfo;
 };

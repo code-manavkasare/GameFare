@@ -94,6 +94,7 @@ const uploadNext = (uploadSnapshot, uploadTask) => {
 };
 
 const uploadError = (error, uploadTask) => {
+  console.log('uploadError', error);
   const {id} = uploadTask;
   store.dispatch(
     setUploadTaskError({
