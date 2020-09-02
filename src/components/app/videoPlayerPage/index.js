@@ -230,6 +230,7 @@ class VideoPlayerPage extends Component {
       this.onSlidingEnd(i, currentTime);
       this.onPlayRateChange(i, playRate, currentTime);
       this.onDrawingChange(i, drawings);
+      this.onPlayPause(i, false, currentTime);
     });
   };
 
