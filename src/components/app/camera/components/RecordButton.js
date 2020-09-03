@@ -30,6 +30,12 @@ export default class RecordButton extends Component {
     };
     this.animatedTimerValue = new Animated.Value(0);
   }
+  componentDidMount() {
+    const {onRef} = this.props;
+    if (onRef) {
+      onRef(this);
+    }
+  }
   indicatorAnimation() {
     const {isRecording} = this.state;
     if (isRecording) {
@@ -143,10 +149,10 @@ const styles = StyleSheet.create({
   whiteButtonRecording: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 70,
-    borderWidth: 5,
-    borderColor: colors.off,
-    width: 70,
+    height: 55,
+    // borderWidth: 5,
+    // borderColor: colors.off,
+    width: 55,
     borderRadius: 42.5,
   },
   buttonStopRecording: {

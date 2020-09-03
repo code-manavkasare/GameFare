@@ -24,7 +24,7 @@ class VideoViews extends Component {
     const translateY = this.animateView.interpolate({
       inputRange: [0, 1],
       extrapolate: 'clamp',
-      outputRange: [300, 0],
+      outputRange: [400, 100],
     });
     return {translateY};
   }

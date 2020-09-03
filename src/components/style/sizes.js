@@ -32,7 +32,7 @@ if (Platform.OS === 'ios') {
   marginBottomApp = 10;
   heightHeaderFilter = 100;
   heightFooterBooking = 82;
-  heightFooter = 75;
+  heightFooter = 60;
   marginTopApp = 20;
   heightHeaderHomeSearch = 130;
   initialHeightControlBar = 80;
@@ -43,7 +43,7 @@ if (Platform.OS === 'ios') {
     heightPicture = 280;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 80;
+    heightFooter = 65;
     marginTopApp = 35;
     marginBottomApp = 30;
     marginBottomAppLandscade = 20;
@@ -55,7 +55,7 @@ if (Platform.OS === 'ios') {
     heightPicture = 280;
     heightHeaderFilter = 130;
     heightFooterBooking = 110;
-    heightFooter = 80;
+    heightFooter = 65;
     marginTopApp = 35;
     marginBottomApp = 35;
     marginBottomAppLandscade = 20;
@@ -88,7 +88,9 @@ if (Platform.OS === 'ios') {
 }
 
 const ratio = (w, h) => {
-  if (w === 0) return 0;
+  if (w === 0) {
+    return 0;
+  }
   return h / w;
 };
 

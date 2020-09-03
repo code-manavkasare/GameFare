@@ -84,7 +84,7 @@ class BottomButton extends Component {
       }
     }
     const anyMemberRecording = Object.values(members).reduce((m, val) => {
-      return val || m?.recording?.isRecording;
+      return val?.recording?.isRecording;
     }, false);
     newState = {
       ...newState,
@@ -315,7 +315,9 @@ class BottomButton extends Component {
         <ButtonColor
           view={() => insideViewButton()}
           click={async () => {
-            if (currentSessionReconnecting) return;
+            if (currentSessionReconnecting) {
+              return;
+            }
             return this.recordingMenuRef.state.visible
               ? this.recordingMenuRef.close()
               : this.recordingMenuRef.open();
@@ -368,7 +370,9 @@ class BottomButton extends Component {
         }}
         color={colors.title + '70'}
         click={async () => {
-          if (currentSessionReconnecting) return;
+          if (currentSessionReconnecting) {
+            return;
+          }
           this.setState({
             showPastSessionsPicker: !this.state.showPastSessionsPicker,
             unreadVideos: 0,
@@ -403,7 +407,7 @@ class BottomButton extends Component {
           );
         }}
         color={colors.title + '70'}
-        click={() => closeSession({})}
+        click={() => closeSession({noNavigation: true})}
         style={styles.buttonRound}
         onPressColor={colors.redLight}
       />
@@ -427,8 +431,9 @@ class BottomButton extends Component {
     const {finalizeRecordingMember} = this.state;
 
     const selectMember = (member) => {
-      if (member.recording && member.recording.isRecording)
+      if (member.recording && member.recording.isRecording) {
         return this.stopRemoteRecording(member);
+      }
       return this.startRemoteRecording(member);
     };
     return (

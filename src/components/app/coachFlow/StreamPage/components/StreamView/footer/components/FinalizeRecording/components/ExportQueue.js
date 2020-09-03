@@ -79,8 +79,9 @@ class ExportQueue extends Component {
     let {members} = this.state;
     for (var member in members) {
       let isConnected = members[member]?.isConnected;
-      if (prevState.members[member]?.isConnected && !isConnected)
+      if (prevState.members[member]?.isConnected && !isConnected) {
         delete members[member];
+      }
     }
     if (members?.length === 0 && prevState.members?.length > 0) {
       this.close();
@@ -144,7 +145,7 @@ class ExportQueue extends Component {
           ] = {};
         }
       }, {});
-      if (Object.values(updates).length > 0) {
+      if (updates && Object.values(updates).length > 0) {
         database()
           .ref()
           .update(updates);
@@ -170,13 +171,14 @@ class ExportQueue extends Component {
     this.close(true);
     const {flagsSelected, members} = this.state;
     const {coachSessionID, userID} = this.props;
-    const uploadRequests = Object.values(members).reduce((uploadRequests, member) => {
-      if (member && member.id) {
-        const {recording} = member;
-        const memberFlags = Object.values(flagsSelected).filter(
-          (flag) => flag.source === member.id,
-        );
-        const firebaseFlags = memberFlags.reduce((firebaseFlags, flag) => {
+    const uploadRequests = Object.values(members).reduce(
+      (uploadRequests, member) => {
+        if (member && member.id) {
+          const {recording} = member;
+          const memberFlags = Object.values(flagsSelected).filter(
+            (flag) => flag.source === member.id,
+          );
+          const firebaseFlags = memberFlags.reduce((firebaseFlags, flag) => {
             const snipetTime = this.cardFlagRefs[flag.id].getState(
               'snipetTime',
             );
@@ -192,23 +194,25 @@ class ExportQueue extends Component {
             };
             return firebaseFlags;
           }, {});
-        uploadRequests[
-          `coachSessions/${coachSessionID}/members/${
-            member.id
-          }/recording/enabled`
-        ] = true;
-        uploadRequests[
-          `coachSessions/${coachSessionID}/members/${
-            member.id
-          }/recording/uploadRequest`
-        ] = {
-          flagsSelected: firebaseFlags,
-          date: Date.now(),
-          userRequested: userID,
-        };
-        return uploadRequests;
-      }
-    }, {});
+          uploadRequests[
+            `coachSessions/${coachSessionID}/members/${
+              member.id
+            }/recording/enabled`
+          ] = true;
+          uploadRequests[
+            `coachSessions/${coachSessionID}/members/${
+              member.id
+            }/recording/uploadRequest`
+          ] = {
+            flagsSelected: firebaseFlags,
+            date: Date.now(),
+            userRequested: userID,
+          };
+          return uploadRequests;
+        }
+      },
+      {},
+    );
     this.resetState();
     if (Object.values(uploadRequests).length > 0) {
       await database()
@@ -219,7 +223,9 @@ class ExportQueue extends Component {
 
   fullVideos() {
     const {flagsSelected, members, flags, recordings} = this.state;
-    if (recordings.length < 1) return null;
+    if (recordings.length < 1) {
+      return null;
+    }
     const noFlags = flags && Object.values(flags).length === 0;
     return (
       <View>
@@ -248,8 +254,9 @@ class ExportQueue extends Component {
                     onRef={(ref) => (this.cardFlagRefs[flagId] = ref)}
                     click={() => {
                       let {flagsSelected} = this.state;
-                      if (flagsSelected[flagId]) delete flagsSelected[flagId];
-                      else
+                      if (flagsSelected[flagId]) {
+                        delete flagsSelected[flagId];
+                      } else {
                         flagsSelected = {
                           ...flagsSelected,
                           [flagId]: {
@@ -259,6 +266,7 @@ class ExportQueue extends Component {
                             source: member.id,
                           },
                         };
+                      }
                       this.setState({flagsSelected});
                     }}
                     disableSelectTime={true}
@@ -287,7 +295,9 @@ class ExportQueue extends Component {
 
   highlights() {
     const {flagsSelected, members, flags, recordings} = this.state;
-    if (flags && Object.values(flags).length < 1) return null;
+    if (flags && Object.values(flags).length < 1) {
+      return null;
+    }
     return (
       <View>
         <Text style={styles.subtitle}>Highlights</Text>
@@ -329,7 +339,7 @@ class ExportQueue extends Component {
                               source: member.id,
                             },
                           };
-                        this.setState({flagsSelected});
+                          this.setState({flagsSelected});
                         }
                       }}
                       memberPicture={member?.info?.picture}

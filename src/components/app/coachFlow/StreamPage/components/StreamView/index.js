@@ -34,6 +34,7 @@ import {
   userPartOfSession,
   getVideosSharing,
   getMember,
+  toggleVideoPublish,
 } from '../../../../../functions/coach';
 
 import {permission} from '../../../../../functions/pictures';
@@ -49,6 +50,7 @@ import {
 
 import MembersView from './components/MembersView';
 import UploadButton from '../../../../elementsUpload/UploadButton';
+import CameraPage from '../../../../../app/camera/index';
 import Footer from './footer/index';
 import axios from 'axios';
 import {openVideoPlayer} from '../../../../../functions/videoManagement';
@@ -62,7 +64,7 @@ class StreamPage extends Component {
       cameraFront: true,
       watchVideo: false,
       publishAudio: !__DEV__,
-      publishVideo: !__DEV__,
+      publishVideo: true,
       // videoSource: 'camera',
       open: false,
       portrait: true,
@@ -98,6 +100,7 @@ class StreamPage extends Component {
           'ERROR - StreamView: connecting to session, or session dropped due to an error after successful connection -- ',
           event,
         );
+        this.setState({error: true, isConnected: false});
         Mixpanel.trackWithProperties('ERROR: sessionEventHandlers error', {
           event,
           date: new Date(),
@@ -193,6 +196,7 @@ class StreamPage extends Component {
         currentSessionID,
         userConnected,
         currentScreenSize,
+        route,
       } = this.props;
       const {portrait} = currentScreenSize;
       if (
@@ -218,13 +222,22 @@ class StreamPage extends Component {
           this.openVideoShared();
         }
       }
+      console.log(route?.params?.params?.action);
+      if (
+        route?.params?.params?.action !==
+        prevProps.route?.params?.params?.action
+      ) {
+        this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
+      }
     }
   }
   popupPermissionRecording() {
     let {userID, currentSessionID: coachSessionID, session} = this.props;
 
     const member = getMember(session, userID);
-    if (!member) return;
+    if (!member) {
+      return;
+    }
     const {permissionOtherUserToRecord} = member;
     const setPermission = (nextVal) => {
       permission('library');
@@ -234,7 +247,7 @@ class StreamPage extends Component {
           permissionOtherUserToRecord: nextVal,
         });
     };
-    if (permissionOtherUserToRecord === undefined && coachSessionID)
+    if (permissionOtherUserToRecord === undefined && coachSessionID) {
       return navigate('Alert', {
         textButton: 'Allow',
         title:
@@ -250,13 +263,16 @@ class StreamPage extends Component {
           },
         ],
       });
+    }
   }
   async refreshTokenMember() {
     const {coachSession} = this.state;
     const {currentSessionID: coachSessionID, userID} = this.props;
     const member = getMember(coachSession, userID);
 
-    if (!member || !coachSession) return;
+    if (!member || !coachSession) {
+      return;
+    }
 
     if (
       coachSession.vonageSessionId &&
@@ -320,7 +336,9 @@ class StreamPage extends Component {
   }
   cameraPosition() {
     const {cameraFront} = this.state;
-    if (cameraFront) return 'front';
+    if (cameraFront) {
+      return 'front';
+    }
     return 'back';
   }
   renderSubscribers = (subscribers) => {
@@ -344,7 +362,9 @@ class StreamPage extends Component {
       let streamId = member?.streamIdTokBox;
 
       let ratioVideo = ratio(16, 9);
-      if (member?.portrait) ratioVideo = ratio(9, 16);
+      if (member?.portrait) {
+        ratioVideo = ratio(9, 16);
+      }
 
       let styleSubscriber = {
         ...styleApp.center,
@@ -354,7 +374,7 @@ class StreamPage extends Component {
         position: 'absolute',
         backgroundColor: colors.title,
       };
-      if (!portrait)
+      if (!portrait) {
         styleSubscriber = {
           ...styleApp.center,
           height: currentHeight,
@@ -363,6 +383,7 @@ class StreamPage extends Component {
           position: 'absolute',
           backgroundColor: colors.title,
         };
+      }
       const ratioScreen = ratio(styleSubscriber.width, styleSubscriber.height);
       let w = styleSubscriber.width;
       let h = styleSubscriber.width * ratioVideo;
@@ -406,11 +427,12 @@ class StreamPage extends Component {
     };
 
     let styleTextAlone = {};
-    if (!userIsAlone)
+    if (!userIsAlone) {
       styleTextAlone = {
         fontSize: 9,
         marginBottom: portrait ? 5 : 0,
       };
+    }
 
     return (
       <View style={style}>
@@ -422,11 +444,15 @@ class StreamPage extends Component {
     );
   }
   stylePublisher(userIsAlone) {
-    if (userIsAlone) return styles.OTPublisherAlone;
+    if (userIsAlone) {
+      return styles.OTPublisherAlone;
+    }
 
     const {portrait} = this.props.currentScreenSize;
     let marginTop = marginTopApp;
-    if (!portrait) marginTop = marginTopAppLandscape;
+    if (!portrait) {
+      marginTop = marginTopAppLandscape;
+    }
     let width = portrait ? 70 : 142;
     let height = portrait ? 123 : 80;
     return {
@@ -455,24 +481,40 @@ class StreamPage extends Component {
       />
     );
   }
+  cameraView() {
+    return (
+      <View style={styles.localCameraContainer}>
+        <CameraPage
+          onRef={(ref) => {
+            this.cameraRef = ref;
+          }}
+        />
+      </View>
+    );
+  }
   streamPage() {
     const {
       currentSessionID,
       session: coachSession,
       reconnecting,
       userID,
+      userConnected,
     } = this.props;
-
-    if (!coachSession && !coachSession.tokbox) null;
+    if (
+      !userConnected ||
+      !currentSessionID ||
+      !coachSession ||
+      !coachSession.tokbox
+    ) {
+      return this.cameraView();
+    }
     const {publishAudio, publishVideo} = this.state;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     const videosBeingShared = getVideosSharing(
       coachSession,
       personSharingScreen,
     );
-    if (!coachSession?.tokbox) null;
-    const {sessionID} = coachSession.tokbox;
-    if (!sessionID) return this.loaderView('Room creation');
+    const {sessionID} = coachSession?.tokbox;
 
     const member = userPartOfSession(coachSession, userID);
     const {isConnected} = member;
@@ -547,46 +589,15 @@ class StreamPage extends Component {
     );
   }
   session() {
-    const {
-      currentSessionID,
-      userID,
-      session: coachSession,
-      userConnected,
-      currentScreenSize,
-    } = this.props;
-    const member = userPartOfSession(coachSession, userID);
-    const {isConnected} = member;
-    if (!userConnected || !currentSessionID) return this.loaderView(' ');
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
-        {isConnected && (
-          <UploadButton
-            backdrop
-            style={{
-              ...styles.uploadButton,
-              top: currentScreenSize.portrait
-                ? marginTopApp + 55
-                : marginTopAppLandscape + 75,
-            }}
-            expandableView
-            expandableViewStyle={{
-              width: currentScreenSize.currentWidth * 0.7,
-              minHeight: 150,
-            }}
-          />
-        )}
-
         {this.streamPage()}
       </View>
     );
   }
   render() {
-    if (this.props.session) {
-      return this.session();
-    } else {
-      return this.loaderView('Room creation');
-    }
+    return this.session();
   }
 }
 
@@ -624,8 +635,14 @@ const styles = StyleSheet.create({
   },
   loaderSessionTokBox: {
     height: '100%',
-    backgroundColor: colors.primary2,
+    backgroundColor: colors.black,
     width: '100%',
+    zIndex: 9,
+    opacity: 1,
+  },
+  localCameraContainer: {
+    ...styleApp.fullSize,
+    position: 'absolute',
     zIndex: 9,
     opacity: 1,
   },

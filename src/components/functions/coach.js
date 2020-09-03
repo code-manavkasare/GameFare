@@ -66,8 +66,12 @@ const createCoachSession = async (user, members) => {
 };
 
 const isUserAlone = (session) => {
-  if (!session) return null;
-  if (!session.members) return true;
+  if (!session) {
+    return null;
+  }
+  if (!session.members) {
+    return true;
+  }
   return (
     Object.values(session.members).filter((member) => member.isConnected)
       .length <= 1
@@ -75,33 +79,46 @@ const isUserAlone = (session) => {
 };
 
 const isSomeoneSharingScreen = (session) => {
-  if (!session) return false;
-  if (!session.members) return false;
+  if (!session) {
+    return false;
+  }
+  if (!session.members) {
+    return false;
+  }
   if (
     Object.values(session.members).filter(
       (member) => member.isConnected && member.shareScreen,
     ).length > 0
-  )
+  ) {
     return Object.values(session.members).filter(
       (member) => member.isConnected && member.shareScreen,
     )[0].id;
+  }
   return false;
 };
 
 const userPartOfSession = (session, userID) => {
-  if (!session) return false;
-  if (!session.allMembers) return false;
-  if (!session.allMembers[userID]) return false;
+  if (!session) {
+    return false;
+  }
+  if (!session.allMembers) {
+    return false;
+  }
+  if (!session.allMembers[userID]) {
+    return false;
+  }
   return session.members[userID];
 };
 
 const displayTime = (time, displayMilliseconds) => {
   function pad(num, size) {
     var s = num + '';
-    while (s.length < size) s = '0' + s;
+    while (s.length < size) {
+      s = '0' + s;
+    }
     return s;
   }
-  if (displayMilliseconds)
+  if (displayMilliseconds) {
     return (
       pad(minutes(time), 2) +
       ':' +
@@ -109,6 +126,7 @@ const displayTime = (time, displayMilliseconds) => {
       ':' +
       pad(milliSeconds(time), 2)
     );
+  }
 
   return pad(minutes(time), 2) + ':' + pad(seconds(time), 2);
 };
@@ -230,13 +248,19 @@ const stopRemoteRecording = async (
 };
 
 const getMember = (session, userID) => {
-  if (!session) return {};
-  if (!session.members) return {};
+  if (!session) {
+    return {};
+  }
+  if (!session.members) {
+    return {};
+  }
   return session.members[userID];
 };
 
 const getLastDrawing = (drawings) => {
-  if (!drawings) return false;
+  if (!drawings) {
+    return false;
+  }
   return Object.values(drawings)
     .sort((a, b) => a.timeStamp - b.timeStamp)
     .reverse()[0];
@@ -251,11 +275,17 @@ const isEven = (n) => {
 };
 
 const getVideosSharing = (session, personSharingScreen) => {
-  if (!session) return false;
-  if (!personSharingScreen) return false;
+  if (!session) {
+    return false;
+  }
+  if (!personSharingScreen) {
+    return false;
+  }
 
   const {sharedVideos} = session.members[personSharingScreen];
-  if (!sharedVideos) return false;
+  if (!sharedVideos) {
+    return false;
+  }
   return sharedVideos;
 };
 
@@ -339,25 +369,33 @@ const openSession = async (user, members) => {
       isEqual(Object.keys(session.members).sort(), allMembers.sort()),
     );
 
-  if (session.length !== 0) return session[0];
+  if (session.length !== 0) {
+    return session[0];
+  }
   session = await createCoachSession(user, members);
   return session;
 };
 
 const isSessionFree = (session) => {
   const coach = infoCoach(session.members);
-  if (!coach) return true;
+  if (!coach) {
+    return true;
+  }
   return !coach.chargeForSession;
 };
 
 const infoCoach = (members) => {
-  if (!members) return false;
+  if (!members) {
+    return false;
+  }
   const userID = store.getState().user.userID;
   const coaches = Object.values(members).filter(
     (member) =>
       member.id !== userID && member?.info?.coach && member.isConnected,
   );
-  if (coaches.length !== 0) return coaches[0];
+  if (coaches.length !== 0) {
+    return coaches[0];
+  }
   return false;
 };
 const closeSession = async ({noNavigation}) => {
@@ -380,8 +418,11 @@ const openMemberAcceptCharge = async (
   const defaultCard = store.getState().user.infoUser.wallet.defaultCard;
   const {objectID} = session;
   let coach = {};
-  if (session.isCoach) coach = session;
-  else coach = infoCoach(session.members);
+  if (session.isCoach) {
+    coach = session;
+  } else {
+    coach = infoCoach(session.members);
+  }
 
   const {hourlyRate, currencyRate, firstname} = coach.info;
   const setAcceptCharge = async (val) => {
@@ -397,7 +438,9 @@ const openMemberAcceptCharge = async (
 
     finalizeOpening(session);
   };
-  if (forceCloseSession) await closeSession();
+  if (forceCloseSession) {
+    await closeSession();
+  }
   navigate('Alert', {
     textButton: 'Allow',
     title: 'This session requires a payment.',
@@ -496,8 +539,9 @@ const createSession = async (members) => {
 
 const sessionOpening = async (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
-  if (!isSessionFree(session) && currentSessionID !== session.objectID)
+  if (!isSessionFree(session) && currentSessionID !== session.objectID) {
     return openMemberAcceptCharge(session);
+  }
   finalizeOpening(session);
 };
 
@@ -525,8 +569,9 @@ const deleteSession = (objectID) => {
       await database()
         .ref()
         .update(updates);
-      if (objectID === currentSessionID)
+      if (objectID === currentSessionID) {
         await closeSession({noNavigation: true});
+      }
       return true;
     },
   });
@@ -534,7 +579,7 @@ const deleteSession = (objectID) => {
 
 const bindSession = (objectID) => {
   const isSessionBinded = store.getState().bindedSessions[objectID];
-  if (!isSessionBinded)
+  if (!isSessionBinded) {
     database()
       .ref(`coachSessions/${objectID}`)
       .on('value', function(snapshot) {
@@ -542,6 +587,7 @@ const bindSession = (objectID) => {
         store.dispatch(setSession(coachSessionFirebase));
         store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
       });
+  }
 };
 
 const unbindSession = async (objectID) => {
@@ -556,7 +602,9 @@ const unbindSession = async (objectID) => {
 
 const addMembersToSession = (objectID, navigateTo) => {
   let noUpdateStatusBar = true;
-  if (navigateTo === 'Session') noUpdateStatusBar = false;
+  if (navigateTo === 'Session') {
+    noUpdateStatusBar = false;
+  }
   navigate('PickMembers', {
     noNavigation: true,
     selectFromGamefare: true,
@@ -625,9 +673,13 @@ const selectVideosFromLibrary = (coachSessionID) => {
 };
 
 const isVideosAreBeingShared = ({session, archives, userIDSharing}) => {
-  if (!userIDSharing) return false;
+  if (!userIDSharing) {
+    return false;
+  }
   const videos = session.members[userIDSharing].sharedVideos;
-  if (!videos) return false;
+  if (!videos) {
+    return false;
+  }
   const currentArchives = archives.map((archive) => archive.id).sort();
   return isEqual(Object.keys(videos).sort(), currentArchives);
 };

@@ -67,21 +67,11 @@ class Footer extends Component {
 
 const styles = StyleSheet.create({
   footer: {
-    bottom: 0,
+    bottom: 90,
     width: '100%',
     position: 'absolute',
     flex: 1,
     zIndex: 11,
-  },
-  cameraView: {
-    height: 120,
-    width: 90,
-    borderRadius: 6,
-    backgroundColor: 'red',
-    position: 'absolute',
-    overflow: 'hidden',
-    top: -140,
-    left: 20,
   },
 });
 
