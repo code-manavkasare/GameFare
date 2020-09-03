@@ -1,9 +1,6 @@
-import React, {Component} from 'react';
 import {ProcessingManager} from 'react-native-video-processing';
 import StatusBar from '@react-native-community/status-bar';
 import RNFS from 'react-native-fs';
-import {Image} from 'react-native';
-import {DocumentDirectoryPath} from 'react-native-fs';
 
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
@@ -28,20 +25,12 @@ import {setLayout} from '../../actions/layoutActions';
 import {
   shareCloudVideo,
   createCloudVideo,
-  setCloudThumbnail,
-  subscribeUploadProgress,
 } from '../database/firebase/videosManagement';
-import {getNativeVideoInfo} from '../functions/pictures';
-
-import {FormatDate, formatDuration} from './date';
-import AsyncImage from '../layout/image/AsyncImage';
-import colors from '../style/colors';
-import styleApp from '../style/style';
 
 const generateSnippetsFromFlags = async (source, flags) => {
   for (var f in flags) {
     let flag = flags[f];
-    const {id, startTime, stopTime} = flag;
+    const {startTime, stopTime} = flag;
     const trimOptions = {
       startTime: startTime / 1000,
       endTime: stopTime / 1000,
@@ -164,7 +153,11 @@ const uploadLocalVideo = async (videoInfo, shareProgressWith, background) => {
   return cloudVideo;
 };
 
-const uploadLocalVideoLazy = async (videoInfo, shareProgressWith, background) => {
+const uploadLocalVideoLazy = async (
+  videoInfo,
+  shareProgressWith,
+  background,
+) => {
   const cloudID = generateID();
   let {thumbnail} = videoInfo;
   store.dispatch(

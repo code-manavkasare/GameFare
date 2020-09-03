@@ -26,7 +26,7 @@ class AudioRecorderPlayer extends Component {
         if (err) {
           console.log(err);
         }
-        console.log(fsPath);
+        console.log('fsPath', fsPath);
         this.setState({audioFilePath: fsPath});
         this.state.audioRecorder.record();
       }),
@@ -38,13 +38,14 @@ class AudioRecorderPlayer extends Component {
     this.preparePlayer();
   };
 
-  preparePlayer = () => {
-    this.setState({
-      audioPlayer: new Player('audio.mp4', {
+  preparePlayer = async (audioUrl) => {
+    await this.setState({
+      audioPlayer: new Player(audioUrl ? `file://${audioUrl}` : 'audio.mp4', {
         autoDestroy: false,
         mixWithOthers: true,
       }).prepare(),
     });
+    return true;
   };
 
   playRecord = () => {
