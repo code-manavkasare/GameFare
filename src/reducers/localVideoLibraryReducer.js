@@ -1,11 +1,13 @@
 import {
   ADD_VIDEOS_LOCAL_LIBRARY,
-  DELETE_VIDEO_LOCAL_LIBRARY,
-  DELETE_SNIPPET_LOCAL_LIBRARY,
+  REMOVE_VIDEO_LOCAL_LIBRARY,
   HIDE_VIDEO_LOCAL_LIBRARY,
   UPDATE_PATH_LOCAL_LIBRARY,
   UPDATE_THUMBNAIL_LOCAL_LIBRARY,
+  UPDATE_PROGRESS_LOCAL_VIDEO,
 } from '../actions/types';
+
+import {dissoc} from 'ramda';
 
 const initialState = {
   videoLibrary: {},
@@ -21,33 +23,10 @@ const localVideoLibraryReducer = (state = initialState, action) => {
           ...action.videos,
         },
       };
-    case DELETE_VIDEO_LOCAL_LIBRARY:
-      let currentLibrary = state.videoLibrary;
-      currentLibrary = Object.values(currentLibrary)
-        .filter((video) => video.id && video.id !== action.videoID)
-        .reduce(function(result, item) {
-          result[item.id] = item;
-          return result;
-        }, {});
-      return {...state, videoLibrary: currentLibrary};
-    case DELETE_SNIPPET_LOCAL_LIBRARY:
-      let currentSnippets = state.videoLibrary[action.parent].snippets;
-      currentSnippets = Object.values(currentSnippets)
-        .filter((snippet) => snippet.id !== action.id)
-        .reduce((result, item) => {
-          result[item.id] = item;
-          return result;
-        }, {});
+    case REMOVE_VIDEO_LOCAL_LIBRARY:
       return {
-        ...state,
-        videoLibrary: {
-          ...state.videoLibrary,
-          [action.parent]: {
-            ...state.videoLibrary[action.parent],
-            snippets: currentSnippets,
-          }
-        }
-      }
+        videoLibrary: dissoc(action.videoID, state.videoLibrary),
+      };
     case HIDE_VIDEO_LOCAL_LIBRARY: {
       const video = state.videoLibrary[action.videoID];
       return {
@@ -62,31 +41,51 @@ const localVideoLibraryReducer = (state = initialState, action) => {
       };
     }
     case UPDATE_PATH_LOCAL_LIBRARY: {
-      const video = state.videoLibrary[action.videoID];
-      return {
-        ...state,
-        videoLibrary: {
-          ...state.videoLibrary,
-          [action.videoID]: {
-            ...video,
-            url: action.url,
+      if (state.videoLibrary[action.videoID]) {
+        return {
+          ...state,
+          videoLibrary: {
+            ...state.videoLibrary,
+            [action.videoID]: {
+              ...state.videoLibrary[action.videoID],
+              url: action.url,
+            },
           },
-        },
-      };
+        };
+      } else {
+        return {};
+      }
     }
-    case UPDATE_THUMBNAIL_LOCAL_LIBRARY: {
-      const video = state.videoLibrary[action.videoID];
-      return {
-        ...state,
-        videoLibrary: {
-          ...state.videoLibrary,
-          [action.videoID]: {
-            ...video,
-            thumbnail: action.thumbnail,
+    case UPDATE_THUMBNAIL_LOCAL_LIBRARY:
+      if (state.videoLibrary[action.videoID]) {
+        return {
+          ...state,
+          videoLibrary: {
+            ...state.videoLibrary,
+            [action.videoID]: {
+              ...state.videoLibrary[action.videoID],
+              thumbnail: action.thumbnail,
+            },
           },
-        },
-      };
-    }
+        };
+      } else {
+        return {};
+      }
+    case UPDATE_PROGRESS_LOCAL_VIDEO:
+      if (state.videoLibrary[action.videoID]) {
+        return {
+          ...state,
+          videoLibrary: {
+            ...state.videoLibrary,
+            [action.videoID]: {
+              ...state.videoLibrary[action.videoID],
+              progress: action.progress,
+            },
+          },
+        };
+      } else {
+        return {};
+      }
     default:
       return state;
   }

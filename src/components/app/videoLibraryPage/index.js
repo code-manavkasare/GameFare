@@ -39,7 +39,7 @@ import {
   recordVideo,
   openVideoPlayer,
   addLocalVideo,
-  removeLocalVideo,
+  deleteLocalVideo,
 } from '../../functions/videoManagement';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
@@ -137,7 +137,7 @@ class VideoLibraryPage extends Component {
             deleteCloudVideos(selectedFirebaseVideos);
           }
           if (selectedLocalVideos.length > 0) {
-            selectedLocalVideos.map((videoID) => removeLocalVideo(videoID));
+            selectedLocalVideos.map((videoID) => deleteLocalVideo(videoID));
           }
           this.setState({
             selectedFirebaseVideos: [],
@@ -236,22 +236,26 @@ class VideoLibraryPage extends Component {
         {
           title: 'Record',
           forceNavigation: true,
-          operation: () => recordVideo(),
+          operation: () => navigate('Session'),
         },
       ],
     });
   }
 
   noVideos() {
+    const {navigate} = this.props.navigation;
     return (
       <View style={styleApp.marginView}>
         <View style={styleApp.center}>
           <Image
-            source={require('../../../img/images/video-library.png')}
+            source={require('../../../img/logos/logoTitle.png')}
             style={{
+              tintColor: colors.greyDark,
+              borderRadius: 25,
               height: 100,
-              width: 100,
+              width: 300,
               marginBottom: 30,
+              resizeMode: 'contain',
             }}
           />
         </View>
@@ -263,9 +267,9 @@ class VideoLibraryPage extends Component {
             type: 'font',
             color: colors.white,
           }}
-          backgroundColor={'green'}
-          onPressColor={colors.greenLight}
-          click={() => this.addFromCameraRoll()}
+          backgroundColor={'blue'}
+          onPressColor={colors.greyDark}
+          click={() => this.addFromCameraRoll({})}
         />
         <View style={{height: 20}} />
         <Button
@@ -277,8 +281,8 @@ class VideoLibraryPage extends Component {
             color: colors.white,
           }}
           backgroundColor={'blue'}
-          onPressColor={colors.blueLight}
-          click={() => recordVideo()}
+          onPressColor={colors.greyDark}
+          click={() => navigate('Session')}
         />
       </View>
     );
@@ -342,6 +346,7 @@ class VideoLibraryPage extends Component {
         id={id}
         key={id}
         noUpdateStatusBar={true}
+        showUploadProgress={true}
       />
     );
   }

@@ -13,10 +13,11 @@ import {navigate, goBack} from '../../../NavigationService';
 import {store} from '../../../reduxStore';
 import {
   addVideos,
-  deleteVideo,
+  removeVideo,
   hideVideo,
   updateLocalPath,
   updateLocalThumbnail,
+  updateProgressLocalVideo,
 } from '../../actions/localVideoLibraryActions';
 import {sendNewMessage} from './message';
 import {enqueueUploadTask} from '../../actions/uploadQueueActions';
@@ -25,6 +26,8 @@ import {setLayout} from '../../actions/layoutActions';
 import {
   shareCloudVideo,
   createCloudVideo,
+  claimCloudVideo,
+  setCloudVideoThumbnail,
 } from '../database/firebase/videosManagement';
 
 const generateSnippetsFromFlags = async (source, flags) => {
@@ -69,20 +72,18 @@ const arrayUploadFromSnippets = async ({
     flagsWithSnippets.forEach(async (flag, index) => {
       let {snippetLocalPath, thumbnail} = flag;
       const videoInfo = await getVideoInfo(snippetLocalPath, thumbnail);
-      const cloudVideo = await uploadLocalVideo(videoInfo, members);
+      const cloudVideo = await uploadLocalVideo(videoInfo);
       members.map((member) => {
         shareCloudVideo(member.id, cloudVideo.id);
-        //subscribeUploadProgress(member.id, cloudVideo.id, '', videoInfo.durationSeconds, index);
       });
     });
   }
   if (flagsSelected[`${userID}-fullVideo`]) {
     const {localSource, thumbnail} = recording;
     const videoInfo = await getVideoInfo(localSource, thumbnail);
-    const cloudVideo = await uploadLocalVideo(videoInfo, members);
+    const cloudVideo = await uploadLocalVideo(videoInfo);
     members.map((member) => {
       shareCloudVideo(member.id, cloudVideo.id);
-      //subscribeUploadProgress(member.id, cloudVideo.id, '', videoInfo.durationSeconds, 0);
     });
   }
 };
@@ -94,19 +95,14 @@ const addLocalVideo = async (video) => {
   await store.dispatch(addVideos({[video.id]: video}));
 };
 
-const removeLocalVideo = (id) => {
-  const videoInfo = store.getState().localVideoLibrary.videoLibrary[id];
+const deleteLocalVideo = (id) => {
+  const videoInfo = getLocalVideoByID(id);
   if (videoInfo) {
-    store.dispatch(deleteVideo(id));
+    store.dispatch(removeVideo(id));
     if (videoInfo.url) {
       deleteLocalVideoFile(videoInfo.url);
     }
   }
-};
-
-const recordVideo = async () => {
-  await store.dispatch(setLayout({isFooterVisible: false}));
-  navigate('LocalSession');
 };
 
 const openVideoPlayer = async ({archives, open, coachSessionID}) => {
@@ -119,77 +115,76 @@ const openVideoPlayer = async ({archives, open, coachSessionID}) => {
   return goBack();
 };
 
-const uploadLocalVideo = async (videoInfo, shareProgressWith, background) => {
+const uploadLocalVideo = async (videoInfo, background) => {
+  const videoUploadTaskID = generateID();
   const cloudVideo = await createCloudVideo(videoInfo);
-  store.dispatch(hideVideo(videoInfo.id));
-  let {thumbnail} = videoInfo;
-  if (thumbnail && thumbnail.substring(0, 4) !== 'http') {
-    store.dispatch(
-      enqueueUploadTask({
-        type: 'image',
-        id: generateID(),
-        timeSubmitted: Date.now(),
-        url: thumbnail,
-        storageDestination: `archivedStreams/${cloudVideo.id}`,
-        isBackground: background,
-        displayInList: false,
-      }),
-    );
-  }
+  store.dispatch(
+    enqueueUploadTask({
+      type: 'image',
+      id: generateID(),
+      timeSubmitted: Date.now(),
+      url: videoInfo.thumbnail,
+      storageDestination: `archivedStreams/${cloudVideo.id}`,
+      isBackground: background,
+      displayInList: false,
+      afterUpload: () => {
+        store.dispatch(hideVideo(videoInfo.id));
+        claimCloudVideo(cloudVideo.id);
+      },
+    })
+  );
   store.dispatch(
     enqueueUploadTask({
       type: 'video',
-      id: generateID(),
+      id: videoUploadTaskID,
       timeSubmitted: Date.now(),
       videoInfo,
       cloudID: cloudVideo.id,
       storageDestination: `archivedStreams/${cloudVideo.id}`,
-      shareProgressWith,
       isBackground: background,
       displayInList: !background,
       progress: 0,
-    }),
+      afterUpload: () => {
+        deleteLocalVideo(videoInfo.id);
+      },
+    })
   );
   return cloudVideo;
 };
 
 const uploadLocalVideoLazy = async (
   videoInfo,
-  shareProgressWith,
   background,
 ) => {
-  const cloudID = generateID();
-  let {thumbnail} = videoInfo;
+  const cloudVideo = await createCloudVideo(videoInfo);
+  const videoUploadTaskID = generateID();
   store.dispatch(
     enqueueUploadTask({
       type: 'video',
-      id: generateID(),
+      id: videoUploadTaskID,
       timeSubmitted: Date.now(),
       videoInfo,
-      cloudID: cloudID,
-      storageDestination: `archivedStreams/${cloudID}`,
-      shareProgressWith,
+      cloudID: cloudVideo.id,
+      storageDestination: `archivedStreams/${cloudVideo.id}`,
       isBackground: background,
       displayInList: !background,
-      progress: 0,
-      afterUpload: async () => {
-        await createCloudVideo(videoInfo, cloudID);
+    }),
+  );
+  store.dispatch(
+    enqueueUploadTask({
+      type: 'image',
+      id: generateID(),
+      timeSubmitted: Date.now(),
+      url: videoInfo.thumbnail,
+      storageDestination: `archivedStreams/${cloudVideo.id}`,
+      isBackground: background,
+      displayInList: false,
+      afterUpload: () => {
+        claimCloudVideo(cloudVideo.id);
+        deleteLocalVideo(videoInfo.id);
       },
     }),
   );
-  if (thumbnail && thumbnail.substring(0, 4) !== 'http') {
-    store.dispatch(
-      enqueueUploadTask({
-        type: 'image',
-        id: generateID(),
-        timeSubmitted: Date.now(),
-        url: thumbnail,
-        storageDestination: `archivedStreams/${cloudID}`,
-        isBackground: background,
-        displayInList: false,
-      }),
-    );
-  }
 };
 
 const deleteLocalVideoFile = async (path) => {
@@ -306,18 +301,25 @@ const updateLocalVideoUrls = () => {
   }
 };
 
+const updateLocalUploadProgress = (videoID, progress) => {
+  const videoInfo = store.getState().localVideoLibrary.videoLibrary[videoID];
+  if (videoInfo) {
+    store.dispatch(updateProgressLocalVideo({videoID: videoInfo.id, progress}));
+  }
+};
+
 export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
   addLocalVideo,
-  removeLocalVideo,
+  deleteLocalVideo,
   uploadLocalVideo,
   uploadLocalVideoLazy,
-  recordVideo,
   openVideoPlayer,
   shareVideosWithTeams,
   getFirebaseVideoByID,
   getLocalVideoByID,
   generateThumbnailSet,
   updateLocalVideoUrls,
+  updateLocalUploadProgress,
 };

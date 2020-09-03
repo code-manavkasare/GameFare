@@ -1,10 +1,11 @@
 import {
   ADD_VIDEOS_LOCAL_LIBRARY,
-  DELETE_VIDEO_LOCAL_LIBRARY,
+  REMOVE_VIDEO_LOCAL_LIBRARY,
   DELETE_SNIPPET_LOCAL_LIBRARY,
   HIDE_VIDEO_LOCAL_LIBRARY,
   UPDATE_PATH_LOCAL_LIBRARY,
   UPDATE_THUMBNAIL_LOCAL_LIBRARY,
+  UPDATE_PROGRESS_LOCAL_VIDEO,
 } from './types';
 
 export const addVideos = (value) => ({
@@ -12,8 +13,8 @@ export const addVideos = (value) => ({
   videos: value,
 });
 
-export const deleteVideo = (value) => ({
-  type: DELETE_VIDEO_LOCAL_LIBRARY,
+export const removeVideo = (value) => ({
+  type: REMOVE_VIDEO_LOCAL_LIBRARY,
   videoID: value,
 });
 
@@ -40,20 +41,26 @@ export const updateLocalThumbnail = (value) => ({
   thumbnail: value.thumbnail,
 });
 
+export const updateProgressLocalVideo = (value) => ({
+  type: UPDATE_PROGRESS_LOCAL_VIDEO,
+  videoID: value.videoID,
+  progress: value.progress,
+});
+
 export const localVideoLibraryAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'addVideos') {
       await dispatch(addVideos(data));
-    } else if (val === 'deleteVideo') {
-      await dispatch(deleteVideo(data));
-    } else if (val === 'deleteSnippet') {
-      await dispatch(deleteVideo(data));
+    } else if (val === 'removeVideo') {
+      await dispatch(removeVideo(data));
     } else if (val === 'hideVideo') {
       await dispatch(hideVideo(data));
     } else if (val === 'updateLocalPath') {
       await dispatch(updateLocalPath(data));
     } else if (val === 'updateLocalThumbnail') {
       await dispatch(updateLocalThumbnail(data));
+    } else if (val === 'updateProgressLocalVideo') {
+      await dispatch(updateProgressLocalVideo(data));
     }
     return true;
   };

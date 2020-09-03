@@ -10,27 +10,36 @@ import {navigate} from '../../../NavigationService';
 
 const bindArchive = (archiveID) => {
   const isArchiveBinded = store.getState().bindedArchives[archiveID];
-  const currentArchive = store.getState().archives[archiveID];
   if (!isArchiveBinded) {
     database()
       .ref('archivedStreams/' + archiveID)
       .on('value', async function(snap) {
-        let archive = snap.val();
-        let {url} = archive;
+        let firebaseArchive = snap.val();
         try {
-          url = await convertToCache(url);
+          if (!firebaseArchive.url) {
+            store.dispatch(
+              setArchive({
+                ...firebaseArchive,
+                id: archiveID,
+                localUrlCreated: false,
+              }),
+            );
+          } else {
+            let {url} = firebaseArchive;
+            url = await convertToCache(url);
+            store.dispatch(
+              setArchive({
+                ...firebaseArchive,
+                id: archiveID,
+                url,
+                localUrlCreated: true,
+              }),
+            );
+          }
+          store.dispatch(setArchiveBinded({id: archiveID, isBinded: true}));
         } catch (e) {
           console.log(e);
         }
-        store.dispatch(
-          setArchive({
-            ...archive,
-            id: archiveID,
-            url,
-            localUrlCreated: true,
-          }),
-        );
-        store.dispatch(setArchiveBinded({id: archiveID, isBinded: true}));
       });
   }
 };
