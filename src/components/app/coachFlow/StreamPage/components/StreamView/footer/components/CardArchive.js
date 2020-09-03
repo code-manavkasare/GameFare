@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import {Col, Row} from 'react-native-easy-grid';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
-import {navigate} from '../../../../../../../../../NavigationService';
 import {
   bindArchive,
   unbindArchive,
@@ -22,6 +21,7 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 class CardArchive extends PureComponent {
   static propTypes = {
@@ -83,19 +83,49 @@ class CardArchive extends PureComponent {
       });
     }
   };
-  cloudIndicator() {
+  playButton(archive) {
+    const {isSelected, selectableMode, hidePlayIcon} = this.props;
+    const {id} = archive;
+    const buttonStyle = [
+      {position: 'absolute', opacity: 0.9, bottom: 15, right: 15},
+    ];
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            !selectableMode &&
+            !hidePlayIcon && (
+              <AllIcons
+                name="play"
+                type="font"
+                color={colors.white}
+                size={12}
+              />
+            )
+          );
+        }}
+        click={() =>
+          selectableMode ? this.selectVideo(id, !isSelected) : this.openVideo()
+        }
+        color={'transparent'}
+        onPressColor={colors.grey + '20'}
+        style={buttonStyle}
+      />
+    );
+  }
+  localIndicator() {
     const {local, url} = this.props.archive;
     if (local) {
+      const indicatorStyle = {
+        position: 'absolute',
+        height: 30,
+        width: 30,
+        bottom: 0,
+        right: -10,
+        zIndex: 20,
+      };
       return (
-        <View
-          style={{
-            position: 'absolute',
-            height: 30,
-            width: 30,
-            top: 10,
-            right: -10,
-            zIndex: 20,
-          }}>
+        <View style={indicatorStyle}>
           {url === '' ? (
             <Loader size={25} color={colors.white} />
           ) : (
@@ -113,105 +143,86 @@ class CardArchive extends PureComponent {
     }
   }
   linearGradient() {
+    const lgStyle = {
+      width: '100%',
+      height: 80,
+      bottom: 0,
+      position: 'absolute',
+    };
     return (
       <LinearGradient
-        style={{width: '100%', height: 80, bottom: 0, position: 'absolute'}}
-        colors={[colors.black + '00', colors.black + '80']}
+        style={lgStyle}
+        colors={[colors.black + '00', colors.black + '70']}
       />
     );
   }
   cardArchive(archive) {
-    const {isSelected, style, selectableMode, hidePlayIcon} = this.props;
-    const {
-      id,
-      thumbnail,
-      startTimestamp,
-      size,
-      durationSeconds,
-      local,
-    } = archive;
+    const {isSelected, style, selectableMode} = this.props;
+    const {id, thumbnail, startTimestamp, durationSeconds, local} = archive;
     const {loader} = this.state;
     return (
-      <View style={[styles.cardArchive, style]}>
-        {local ? (
-          <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
-        ) : (
-          <AsyncImage
-            style={styleApp.fullSize}
-            mainImage={thumbnail ? thumbnail : ''}
-          />
-        )}
-        {this.cloudIndicator()}
-        <View
-          pointerEvents="none"
-          style={{
-            ...styles.viewText,
-            ...styleApp.fullSize,
-            ...styleApp.marginView,
-          }}>
-          <Row>
-            <Col style={styleApp.center}>
-              {loader ? (
-                <Loader size={25} color={colors.white} />
-              ) : selectableMode ? (
-                <AllIcons
-                  name={isSelected ? 'check-circle' : 'circle'}
-                  type="font"
-                  size={25}
-                  color={colors.white}
-                  solid={isSelected ? true : false}
-                />
-              ) : null}
+      <TouchableWithoutFeedback
+        onPress={() =>
+          selectableMode ? this.selectVideo(id, !isSelected) : this.openVideo()
+        }>
+        <View style={[styles.cardArchive, style]}>
+          {local ? (
+            <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
+          ) : (
+            <AsyncImage
+              style={styleApp.fullSize}
+              mainImage={thumbnail ? thumbnail : ''}
+            />
+          )}
+          <View
+            pointerEvents="none"
+            style={{
+              ...styles.viewText,
+              ...styleApp.fullSize,
+              ...styleApp.marginView,
+            }}>
+            <Row>
+              <Col style={styleApp.center}>
+                {loader ? (
+                  <Loader size={25} color={colors.white} />
+                ) : selectableMode ? (
+                  <AllIcons
+                    name={isSelected ? 'check-circle' : 'circle'}
+                    type="font"
+                    size={25}
+                    color={colors.white}
+                    solid={isSelected ? true : false}
+                  />
+                ) : null}
+              </Col>
+            </Row>
+          </View>
+
+          {this.linearGradient()}
+          {this.localIndicator()}
+
+          <View
+            pointerEvents="none"
+            style={{...styles.viewText, bottom: 5, left: 10}}>
+            <Col>
+              <Text
+                style={[
+                  styleApp.textBold,
+                  {color: colors.white, fontSize: 13},
+                ]}>
+                {formatDuration(durationSeconds * 1000, true)}
+              </Text>
+              <Text
+                style={[
+                  styleApp.textBold,
+                  {color: colors.white, fontSize: 11},
+                ]}>
+                <FormatDate date={startTimestamp} short />
+              </Text>
             </Col>
-          </Row>
+          </View>
         </View>
-
-        {this.linearGradient()}
-
-        <View
-          pointerEvents="none"
-          style={{...styles.viewText, bottom: 5, left: 10}}>
-          <Col>
-            <Text
-              style={[styleApp.textBold, {color: colors.white, fontSize: 13}]}>
-              {formatDuration(durationSeconds * 1000, true)}
-            </Text>
-            <Text
-              style={[styleApp.textBold, {color: colors.white, fontSize: 11}]}>
-              <FormatDate date={startTimestamp} short />
-            </Text>
-          </Col>
-        </View>
-
-        <ButtonColor
-          view={() => {
-            return (
-              !selectableMode &&
-              !hidePlayIcon && (
-                <AllIcons
-                  name="play"
-                  type="font"
-                  color={colors.white}
-                  size={18}
-                />
-              )
-            );
-          }}
-          click={() =>
-            selectableMode
-              ? this.selectVideo(id, !isSelected)
-              : this.openVideo()
-          }
-          color={'transparent'}
-          onPressColor={colors.grey + '20'}
-          style={[
-            styleApp.fullSize,
-            styleApp.center,
-            styleApp.marginView,
-            {position: 'absolute', opacity: 0.6},
-          ]}
-        />
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
   render() {

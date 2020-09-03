@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import StatusBar from '@react-native-community/status-bar';
 import {navigate} from '../../../../../../NavigationService';
 import Orientation from 'react-native-orientation-locker';
+import Animated from 'react-native-reanimated';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
@@ -26,14 +27,21 @@ class MainTabIcon extends React.Component {
       discussions,
       isFocused,
       userID,
+      scale,
     } = this.props;
     const conditionDisplayPastille =
       Object.values(discussions).filter((discussion) => {
         const lastMessage = discussion.lastMessage;
-        if (!lastMessage) return [];
+        if (!lastMessage) {
+          return [];
+        }
         let usersRead = lastMessage.usersRead;
-        if (!usersRead) usersRead = [];
-        if (!usersRead[userID]) return true;
+        if (!usersRead) {
+          usersRead = [];
+        }
+        if (!usersRead[userID]) {
+          return true;
+        }
         return false;
       }).length !== 0;
     let {routeName, pageStack} = this.props;
@@ -42,19 +50,33 @@ class MainTabIcon extends React.Component {
       routeName = 'SignIn';
       pageStack = 'Phone';
     }
+    const labelStyle = [
+      styleApp.textBold,
+      {
+        color: tintColor,
+        marginTop: 6,
+        fontSize: 13,
+      },
+    ];
+    const recordButtonYTranslate = Animated.interpolate(scale, {
+      inputRange: [0.7, 1],
+      outputRange: [0, -15],
+    });
     return (
       <Button
         view={() => {
           return (
-            <View
-              style={[
-                styleApp.fullSize,
-                styleApp.center4,
-                {height: heightFooter, paddingTop: label ? 5 : 0},
-              ]}>
+            <Animated.View
+              style={{
+                ...styles.buttonView,
+                transform: [
+                  {scale: scale ? scale : 1},
+                  {translateY: scale ? recordButtonYTranslate : 0},
+                ],
+              }}>
               {displayPastille && conditionDisplayPastille && (
-                <View
-                  style={[styles.roundMessage, {backgroundColor: tintColor}]}
+                <Animated.View
+                  style={{...styles.roundMessage, backgroundColor: tintColor}}
                 />
               )}
               {label ? (
@@ -63,44 +85,32 @@ class MainTabIcon extends React.Component {
                   size={icon.size}
                   color={tintColor}
                   type={icon.type}
+                  reanimated
                 />
               ) : (
-                <View
-                  style={{
-                    ...styleApp.center,
-                    height: 70,
-                    width: 70,
-                    borderRadius: 35,
-                    borderWidth: 5,
-                    marginTop: -5,
-                    borderColor: tintColor,
-                  }}>
-                  {/* <AllIcons
-                    name={icon.name}
-                    size={icon.size}
-                    color={tintColor}
-                    type={icon.type}
-                  /> */}
-                </View>
+                <Animated.View
+                  style={{...styles.recordButton, borderColor: tintColor}}
+                />
               )}
               {label && (
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    {color: tintColor, marginTop: 6, fontSize: 13},
-                  ]}>
-                  {label}
-                </Text>
+                <Animated.Text style={labelStyle}>{label}</Animated.Text>
               )}
-            </View>
+            </Animated.View>
           );
         }}
         click={() => {
-          navigate(routeName, {screen: pageStack, params: {}});
+          let params = {};
+          if (isFocused && label === undefined) {
+            params = {
+              //Communicate with session
+              action: Date.now(),
+            };
+          }
+          navigate(routeName, {screen: pageStack, params});
         }}
-        color={colors.white}
+        color={'transparent'}
         style={styles.button}
-        onPressColor={colors.off2}
+        onPressColor={'transparent'}
       />
     );
   }
@@ -111,9 +121,14 @@ class MainTabIcon extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
+    height: heightFooter,
+  },
+  buttonView: {
+    ...styleApp.shadowWeak,
+    ...styleApp.center,
+    marginTop: 50,
+    height: heightFooter,
     width: '100%',
-    height: '100%',
-    // borderRadius: 30,
   },
   textButton: {
     ...styleApp.footerText,
@@ -129,12 +144,17 @@ const styles = StyleSheet.create({
     width: 11,
     borderRadius: 5.5,
     top: 0,
-    right: '34%',
+    right: '25%',
     position: 'absolute',
     zIndex: 30,
-    borderWidth: 1,
-    borderColor: colors.white,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.white,
+  },
+  recordButton: {
+    ...styleApp.center,
+    height: 70,
+    width: 70,
+    borderRadius: 35,
+    borderWidth: 6.5,
   },
 });
 

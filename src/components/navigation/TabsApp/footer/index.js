@@ -1,40 +1,34 @@
 import React from 'react';
-import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
-import {BlurView, VibrancyView} from '@react-native-community/blur';
+import {View, StyleSheet} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
+import Animated from 'react-native-reanimated';
 
 import {layoutAction} from '../../../../actions/layoutActions';
 
 import ButtonFooter from './components/Button';
 import colors from '../../../style/colors';
-import {
-  heightFooter,
-  marginBottomApp,
-  marginBottomAppLandscade,
-} from '../../../style/sizes';
-import {native} from '../../../animations/animations';
+import sizes from '../../../style/sizes';
+import {heightFooter, marginBottomApp} from '../../../style/sizes';
 import {clickNotification} from '../../../../../NavigationService';
 import styleApp from '../../../style/style';
-
-const widthFooter = 290;
 
 class Footer extends React.Component {
   constructor(props) {
     super(props);
-    this.translateYFooter = new Animated.Value(0);
-    this.translateXMovingView = new Animated.Value(0);
   }
   componentDidMount() {
+    this.props.onRef(this);
     this.notificationHandler();
   }
   async notificationHandler() {
-    const {layoutAction, userID} = this.props;
+    const {layoutAction: propLayoutAction, userID} = this.props;
 
-    const unsubscribe = messaging().onMessage((remoteMessage) => {
-      if (!remoteMessage.from && remoteMessage.data.senderID !== userID)
-        return layoutAction('setLayout', {notification: remoteMessage});
+    messaging().onMessage((remoteMessage) => {
+      if (!remoteMessage.from && remoteMessage.data.senderID !== userID) {
+        return propLayoutAction('setLayout', {notification: remoteMessage});
+      }
     });
     this.appBackgroundNotificationListenner();
     this.appOpenFistNotification();
@@ -48,56 +42,25 @@ class Footer extends React.Component {
   }
   async appOpenFistNotification() {
     const notificationOpen = await messaging().getInitialNotification();
-    if (notificationOpen) return clickNotification(notificationOpen);
+    if (notificationOpen) {
+      return clickNotification(notificationOpen);
+    }
   }
-  translateFooter = (open) => {
-    return Animated.timing(
-      this.translateYFooter,
-      native(open ? 0 : 200, 200),
-    ).start();
-  };
-  setActiveRoute(nextTab) {
-    const {layoutAction} = this.props;
-    layoutAction('setLayout', {activeTab: nextTab});
-  }
-  translateBlueView = (index, numberRoutes) => {
-    const translateTo = (widthFooter / numberRoutes) * Number(index);
-    return Animated.spring(
-      this.translateXMovingView,
-      native(translateTo, 100),
-    ).start();
-  };
-
   footer = () => {
     const {
       state,
       descriptors,
       navigation,
-      colors,
-      isFooterVisible,
+      colors: propColors,
       userConnected,
+      position,
     } = this.props;
-    if (!isFooterVisible || !userConnected) return null;
-    // if (!userConnected) return null;
-    const {width} = Dimensions.get('screen');
+    if (!userConnected) {
+      return null;
+    }
     return (
-      <Animated.View
-        style={[
-          styles.footer,
-          // styleApp.center3,
-          {bottom: 0},
-          // {marginLeft: (width - widthFooter) / 2},
-          {transform: [{translateY: this.translateYFooter}]},
-        ]}>
+      <View style={styles.footer}>
         <Row style={styles.footerBody}>
-          {/* <Animated.View
-            style={[
-              {transform: [{translateX: this.translateXMovingView}]},
-              styles.absoluteButtonMoving,
-              {width: widthFooter / (state.routes.length - 2)},
-            ]}>
-            <View style={styles.roundBlueView} />
-          </Animated.View> */}
           {state.routes.map((route, index) => {
             const {options} = descriptors[route.key];
             const {
@@ -108,36 +71,122 @@ class Footer extends React.Component {
               displayPastille,
               pageStack,
             } = options;
-            if (hideInFooter) return null;
+            if (hideInFooter) {
+              return null;
+            }
             const isFocused = state.index === index;
+            let inputRange = state.routes.map((_, i) => i);
+            inputRange.unshift(-1);
+            inputRange.push(state.routes.length);
+            const buttonColor = Animated.interpolateColors(position, {
+              inputRange,
+              outputColorRange: inputRange.map((i) => {
+                if (i === 1) {
+                  return index === 1 ? colors.white : colors.grey;
+                } else {
+                  return propColors.inactive;
+                }
+              }),
+            });
+            const scale =
+              index === 1 &&
+              Animated.interpolate(position, {
+                inputRange,
+                outputRange: inputRange.map((i) => (i === 1 ? 1 : 0.7)),
+              });
             return (
               <Col key={index}>
                 <ButtonFooter
                   navigation={navigation}
                   isFocused={isFocused}
-                  tintColor={isFocused ? colors.active : colors.inactive}
+                  tintColor={buttonColor}
                   routeName={route.name}
                   pageStack={pageStack}
                   displayPastille={displayPastille}
                   signInToPass={signInToPass}
                   icon={icon}
+                  scale={scale}
                   index={index}
                   numberRoutes={state.routes.length - 2}
-                  translateBlueView={this.translateBlueView.bind(this)}
                   label={label}
                 />
               </Col>
             );
           })}
-          {/* {<BlurView
-            style={{position:'absolute', zIndex:-1, ...styleApp.fullSize, top:0}}
+        </Row>
+        {this.labelIndicator()}
+        {this.backdrop()}
+        {/* {
+          <BlurView
+            style={{
+              position: 'absolute',
+              zIndex: -1,
+              ...styleApp.fullSize,
+              top: 0,
+            }}
             blurType="light"
             blurAmount={20}
-          />} */}
-        </Row>
-      </Animated.View>
+          />
+        } */}
+      </View>
     );
   };
+  backdrop() {
+    const {state, position} = this.props;
+    let inputRange = state.routes.map((_, i) => i);
+    inputRange.unshift(-1);
+    inputRange.push(state.routes.length);
+    const translateYFooter = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) =>
+        i === 1 ? sizes.heightFooter + sizes.marginBottomApp : 0,
+      ),
+    });
+
+    return (
+      <Animated.View
+        style={{
+          ...styles.backdrop,
+          transform: [{translateY: translateYFooter}],
+        }}
+      />
+    );
+  }
+  labelIndicator() {
+    const {state, position} = this.props;
+    let inputRange = state.routes.map((_, i) => i);
+    inputRange.unshift(-1);
+    inputRange.push(3);
+    const translateXIndicator = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => i * 106),
+    });
+    const widthIndicator = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => {
+        return i === 1 ? 50 : 50;
+      }),
+    });
+    const opacityIndicator = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => {
+        return i === 1 ? 0 : 1;
+      }),
+    });
+
+    const indicatorStyle = {
+      ...styles.labelIndicator,
+      width: widthIndicator,
+      opacity: opacityIndicator,
+      transform: [{translateX: translateXIndicator}],
+    };
+
+    return (
+      <View style={styles.labelIndicatorContainer}>
+        <Animated.View style={indicatorStyle} />
+      </View>
+    );
+  }
   render() {
     return this.footer();
   }
@@ -146,23 +195,31 @@ class Footer extends React.Component {
 const styles = StyleSheet.create({
   footer: {
     ...styleApp.shadowWeak,
+    ...styleApp.center,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp,
+    height: heightFooter + marginBottomApp + 15,
     position: 'absolute',
     zIndex: 1,
     width: '100%',
-    borderRadius: 0,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: colors.off,
+    bottom: 0,
+    overflow: 'visible',
+  },
+  backdrop: {
+    ...styleApp.shadowWeak,
+    ...styleApp.center2,
+    flexDirection: 'row',
+    height: heightFooter + marginBottomApp,
+    position: 'absolute',
+    zIndex: -1,
+    width: '100%',
+    bottom: 0,
+    backgroundColor: colors.white,
   },
   footerBody: {
     ...styleApp.fullSize,
-    borderRadius: 0,
-    borderBottomLeftRadius: 1,
-    borderBottomRightRadius: 1,
-    borderColor: colors.off,
     overflow: 'hidden',
+    width: '85%',
+    marginTop: -15,
   },
   absoluteButtonMoving: {
     ...styleApp.center,
@@ -175,6 +232,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     width: 55,
     borderRadius: heightFooter / 2,
+  },
+  labelIndicatorContainer: {
+    position: 'absolute',
+    height: 5,
+    bottom: sizes.marginBottomApp - 10,
+    width: '70%',
+  },
+  labelIndicator: {
+    borderRadius: 10,
+    backgroundColor: colors.blueLight,
+    left: 0,
+    position: 'absolute',
+    height: '100%',
   },
 });
 

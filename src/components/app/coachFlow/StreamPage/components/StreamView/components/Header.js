@@ -40,7 +40,7 @@ class HeaderStreamView extends Component {
         colorLoader={'white'}
         sizeLoader={40}
         initialBorderColorIcon={'transparent'}
-        icon1={'arrow-left'}
+        // icon1={'arrow-left'}
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '50'}
         onPressColorIcon1={colors.title + '30'}
@@ -64,7 +64,6 @@ class HeaderStreamView extends Component {
         iconOffset2={
           isConnected && isUserAdmin(organizerID, userID) && 'person-add'
         }
-    
         typeIconOffset2="mat"
         sizeIconOffset2={23}
         colorIconOffset2={

@@ -16,24 +16,32 @@ export default class BottomButtons extends Component {
     addFlag: PropTypes.func.isRequired,
     startRecording: PropTypes.func.isRequired,
     stopRecording: PropTypes.func.isRequired,
-  }
+  };
 
   constructor(props) {
     super(props);
     this.state = {
-        isRecording: false,
-        renderFlagButton: false,
-    }
+      isRecording: false,
+      renderFlagButton: false,
+    };
     this.animatedFlagButtonValue = new Animated.Value(0);
+  }
+  componentDidMount() {
+    const {onRef} = this.props;
+    if (onRef) {
+      onRef(this);
+    }
   }
   flagButtonAnimation() {
     const {isRecording, renderFlagButton} = this.state;
     if (isRecording) {
       Animated.timing(this.animatedFlagButtonValue, native(1, 300)).start();
     } else if (renderFlagButton) {
-      Animated.timing(this.animatedFlagButtonValue, native(0, 300)).start(() => {
-        this.setState({renderFlagButton: false});
-      });
+      Animated.timing(this.animatedFlagButtonValue, native(0, 300)).start(
+        () => {
+          this.setState({renderFlagButton: false});
+        },
+      );
     }
   }
   flagButton() {
@@ -45,28 +53,30 @@ export default class BottomButtons extends Component {
         outputRange: [0, -90],
       });
       return (
-        <Animated.View height={55}style={[
-          styles.flagButton,
-          {
-            transform: [{translateX: translateX}],
-            opacity: this.animatedFlagButtonValue
-          }
-        ]}>
+        <Animated.View
+          height={55}
+          style={[
+            styles.flagButton,
+            {
+              transform: [{translateX: translateX}],
+              opacity: this.animatedFlagButtonValue,
+            },
+          ]}>
           <ButtonColor
-              view={() => {
-                return (
-                  <AllIcons
-                      type={'font'}
-                      color={colors.white}
-                      size={18}
-                      name={'flag'}
-                  />
-                );
-              }}
-              style={{width: 55}}
-              color={colors.title + '70'}
-              click={() => addFlag()}
-              onPressColor={colors.white + '70'}
+            view={() => {
+              return (
+                <AllIcons
+                  type={'font'}
+                  color={colors.white}
+                  size={18}
+                  name={'flag'}
+                />
+              );
+            }}
+            style={{width: 55}}
+            color={colors.title + '70'}
+            click={() => addFlag()}
+            onPressColor={colors.white + '70'}
           />
         </Animated.View>
       );
@@ -88,11 +98,14 @@ export default class BottomButtons extends Component {
     this.flagButtonAnimation();
     return (
       <View style={[styleApp.center, styleApp.fullSize]}>
-          {this.flagButton()}
-          <RecordButton
-            startRecording={() => this.startRecording()}
-            stopRecording={() => this.stopRecording()}
-          />
+        {this.flagButton()}
+        <RecordButton
+          onRef={(ref) => {
+            this.recordButtonRef = ref;
+          }}
+          startRecording={() => this.startRecording()}
+          stopRecording={() => this.stopRecording()}
+        />
       </View>
     );
   }
@@ -104,8 +117,8 @@ const styles = StyleSheet.create({
     bottom: 8,
     height: 55,
     width: 55,
-    zIndex:2,
+    zIndex: 2,
     borderRadius: 27.5,
-    overflow:'hidden'
-  }
+    overflow: 'hidden',
+  },
 });

@@ -24,18 +24,25 @@ class CameraPage extends Component {
     this.animatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const {navigation, layoutAction} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.unlockAllOrientations();
-      layoutAction('setLayout', {isFooterVisible: false});
-      StatusBar.setBarStyle('light-content', true);
-    });
-    this.focusListener = navigation.addListener('blur', () => {
-      StatusBar.setBarStyle('dark-content', true);
-    });
+    const {navigation, layoutAction, onRef} = this.props;
+    if (onRef) {
+      onRef(this);
+    }
+    if (navigation && layoutAction) {
+      this.focusListener = navigation.addListener('focus', () => {
+        Orientation.unlockAllOrientations();
+        layoutAction('setLayout', {isFooterVisible: false});
+        StatusBar.setBarStyle('light-content', true);
+      });
+      this.focusListener = navigation.addListener('blur', () => {
+        StatusBar.setBarStyle('dark-content', true);
+      });
+    }
   }
   componentWillUnmount() {
-    this.focusListener();
+    if (this.focusListener) {
+      this.focusListener();
+    }
   }
   flipCamera() {
     this.setState({frontCamera: !this.state.frontCamera});
@@ -68,7 +75,7 @@ class CameraPage extends Component {
           sizeLoader={40}
           initialBorderColorIcon={'transparent'}
           initialTitleOpacity={0}
-          icon1={'arrow-left'}
+          // icon1={'arrow-left'}
           typeIcon1="font"
           backgroundColorIcon1={colors.title + '70'}
           onPressColorIcon1={colors.title + '30'}
@@ -77,7 +84,7 @@ class CameraPage extends Component {
           sizeIcon1={18}
           colorIcon1={colors.white}
           icon2={'switchCam'}
-          backgroundColorIcon2={colors.title + '70'}
+          backgroundColorIcon2={'transparent'}
           clickButton2={() => this.flipCamera()}
           sizeIcon2={20}
           typeIcon2="moon"
@@ -86,6 +93,9 @@ class CameraPage extends Component {
         {cameraReady && (
           <Row style={styles.bottomButtonsContainer}>
             <BottomButtons
+              onRef={(ref) => {
+                this.bottomButtonsRef = ref;
+              }}
               addFlag={() => camera.addFlag()}
               startRecording={() => camera.startRecording()}
               stopRecording={() => camera.stopRecording(true, true)}
