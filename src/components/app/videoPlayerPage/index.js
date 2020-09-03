@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
-import convertToProxyURL from 'react-native-video-cache';
-import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
@@ -22,30 +20,32 @@ import {
   openVideoPlayer,
   getFirebaseVideoByID,
   getLocalVideoByID,
-  uploadLocalVideo,
 } from '../../functions/videoManagement';
 import {shareCloudVideoWithCoachSession} from '../../database/firebase/videosManagement';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
 } from '../../functions/coach';
+import {
+  checkIfAllArchivesAreLocal,
+  generatePreview,
+} from '../../functions/review';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isEditMode: false,
-      isRecording: false,
-      recordingStartTime: null,
-      recordedActions: [],
-      loader: false,
-      isPreviewing: false,
-      previewStartTime: null,
-      landscape: false,
       archives: [],
-      linkedPlayers: [], // each archive has a corresponding set of linkedPlayers
       disableControls: false,
       isDrawingEnabled: false,
+      isEditMode: false,
+      isPreviewing: false,
+      isRecording: false,
+      landscape: false,
+      linkedPlayers: [], // each archive has a corresponding set of linkedPlayers
+      previewStartTime: null,
+      recordedActions: [],
+      recordingStartTime: null,
     };
     this.videoPlayerRefs = [];
     this.focusListener = null;
@@ -61,12 +61,28 @@ class VideoPlayerPage extends Component {
 
   componentDidMount() {
     const {navigation} = this.props;
-
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
     });
     Orientation.addOrientationListener(this._orientationListener.bind(this));
+    this.launchIfPreview();
   }
+
+  launchIfPreview = () => {
+    const {archives} = this.state;
+    archives.forEach(async (archive) => {
+      const videoInfo = archive.local
+        ? getLocalVideoByID(archive.id)
+        : getFirebaseVideoByID(archive.id);
+
+      const {recordedActions} = videoInfo;
+      if (recordedActions) {
+        await this.AudioRecorderPlayerRef.preparePlayer(videoInfo.audioUrl);
+        await this.setState({recordedActions});
+        this.previewRecording();
+      }
+    });
+  };
 
   componentWillUnmount() {
     if (this.focusListener) {
@@ -76,7 +92,7 @@ class VideoPlayerPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {session, userID} = prevProps;
+    const {session} = prevProps;
     const {session: nextSession} = this.props;
     const {archives} = prevState;
     let videosBeingShared = false;
@@ -411,6 +427,20 @@ class VideoPlayerPage extends Component {
     this.setState({recordedActions});
   };
 
+  saveReview = async () => {
+    //To update for multiple video
+    const {archives, recordedActions} = this.state;
+    const localVideoInfo = getLocalVideoByID(archives[0].id);
+    const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
+    await generatePreview(localVideoInfo.url, recordedActions, audioFilePath);
+    this.props.navigation.navigate('Alert', {
+      close: true,
+      title: 'Video successfully created !',
+      subtitle: 'Please check your video library.',
+      textButton: 'Got it!',
+    });
+  };
+
   header = () => {
     const {
       isEditMode,
@@ -520,8 +550,7 @@ class VideoPlayerPage extends Component {
     const {isEditMode, isPreviewing, isRecording, recordedActions} = this.state;
     const style = {
       ...styles.buttonRecording,
-      top: this.getMarginTop(),
-      left: '5%',
+      top: this.getMarginTop() + 40,
     };
     if (isEditMode && !isRecording && recordedActions.length > 0) {
       return isPreviewing ? (
@@ -536,11 +565,30 @@ class VideoPlayerPage extends Component {
       ) : (
         <Button
           backgroundColor="green"
-          onPressColor={colors.green}
+          onPressColor={colors.red}
           styleButton={style}
           text="Preview"
           textButton={{fontSize: 13}}
           click={() => this.previewRecording()}
+        />
+      );
+    }
+  };
+
+  buttonSave = () => {
+    const {isEditMode, isRecording, recordedActions} = this.state;
+    const style = {
+      ...styles.buttonRecording,
+      top: this.getMarginTop() + 80,
+    };
+    if (isEditMode && !isRecording && recordedActions.length > 0) {
+      return (
+        <Button
+          backgroundColor="red"
+          styleButton={style}
+          text="Save"
+          textButton={{fontSize: 13}}
+          click={() => this.saveReview()}
         />
       );
     }
@@ -722,8 +770,9 @@ class VideoPlayerPage extends Component {
     return buttons;
   };
 
-  watchVideosView = () => {
+  render = () => {
     const {archives} = this.state;
+    const allArchivesLocal = checkIfAllArchivesAreLocal(archives);
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
         {this.header()}
@@ -735,14 +784,11 @@ class VideoPlayerPage extends Component {
         />
         {this.buttonRecording()}
         {this.buttonPreview()}
+        {allArchivesLocal && this.buttonSave()}
         {archives.map((archive, i) => this.singlePlayer(archive, i))}
         {this.linkButtons()}
       </View>
     );
-  };
-
-  render = () => {
-    return this.watchVideosView();
   };
 }
 
@@ -752,7 +798,7 @@ const styles = StyleSheet.create({
     zIndex: 600,
     height: 30,
     width: 110,
-    right: '5%',
+    left: '5%',
     borderRadius: 15,
   },
   buttonLink: {
