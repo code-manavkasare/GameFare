@@ -48,7 +48,6 @@ export default class Filmstrip extends Component {
     if (!local) {
       archive = await getFirebaseVideoByID(archiveId);
     }
-    console.log(archive.url);
     this.setState({
       timeBounds: [0, archive.durationSeconds],
       thumbnailAspect: archive.size.height / archive.size.width,

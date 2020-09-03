@@ -26,7 +26,7 @@ const prepTask = (task) => {
     paused: false,
     finished: false,
     error: false,
-  }
+  };
 };
 
 const uploadQueueReducer = (state = initialState, action) => {
@@ -69,49 +69,68 @@ const uploadQueueReducer = (state = initialState, action) => {
           (numberConcurrentUploads - numberRemainingUploads),
       };
     case START_UPLOAD_TASK:
-      return {
-        ...state,
-        queue: {
-          ...state.queue,
-          [action.id]: {
-            ...state.queue[action.id],
-            started: true,
+      if (state.queue[action.id]) {
+        return {
+          ...state,
+          queue: {
+            ...state.queue,
+            [action.id]: {
+              ...state.queue[action.id],
+              started: true,
+            },
           },
-        },
-      };
+        };
+      } else {
+        return state;
+      }
     case PAUSE_UPLOAD_TASK:
-      return {
-        ...state,
-        queue: {
-          ...state.queue,
-          [action.id]: {
-            ...state.queue[action.id],
-            paused: true,
+      if (state.queue[action.id]) {
+        return {
+          ...state,
+          queue: {
+            ...state.queue,
+            [action.id]: {
+              ...state.queue[action.id],
+              paused: true,
+            },
           },
-        },
-      };
+        };
+      } else {
+        return state;
+      }
+
     case RESUME_UPLOAD_TASK:
-      return {
-        ...state,
-        queue: {
-          ...state.queue,
-          [action.id]: {
-            ...state.queue[action.id],
-            paused: false,
+      if (state.queue[action.id]) {
+        return {
+          ...state,
+          queue: {
+            ...state.queue,
+            [action.id]: {
+              ...state.queue[action.id],
+              paused: false,
+            },
           },
-        },
-      };
+        };
+      } else {
+        return state;
+      }
+
     case FINISH_UPLOAD_TASK:
-      return {
-        ...state,
-        queue: {
-          ...state.queue,
-          [action.id]: {
-            ...state.queue[action.id],
-            finished: true,
+      if (state.queue[action.id]) {
+        return {
+          ...state,
+          queue: {
+            ...state.queue,
+            [action.id]: {
+              ...state.queue[action.id],
+              finished: true,
+            },
           },
-        },
-      };
+        };
+      } else {
+        return state;
+      }
+
     case SET_UPLOAD_TASK_PROGRESS:
       if (state.queue[action.id]) {
         return {

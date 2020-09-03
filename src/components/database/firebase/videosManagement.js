@@ -65,23 +65,34 @@ const createCloudVideo = async (videoInfo, givenKey) => {
     thumbnail: '',
     uploadedByUser: true,
     sourceUser: userID,
-    members: [userID],
+    members: {
+      [`${userID}`]: {
+        id: userID,
+      },
+    },
   };
   database()
-    .ref()
-    .update({
-      [`archivedStreams/${key}`]: firebaseVideoInfo,
-      [`users/${userID}/archivedStreams/${key}`]: {
-        id: key,
-        startTimestamp: firebaseVideoInfo.startTimestamp,
-        uploadedByUser: true,
-      },
-    });
-  store.dispatch(setArchive(firebaseVideoInfo));
+    .ref(`archivedStreams/${key}`)
+    .set({...firebaseVideoInfo});
   return firebaseVideoInfo;
 };
 
-const setCloudThumbnail = async (cloudVideoID, thumbnail) => {
+const claimCloudVideo = async (cloudVideoID) => {
+  // sets source user and adds video to this user's library
+  const {userID} = store.getState().user;
+  database()
+    .ref()
+    .update({
+      [`archivedStreams/${cloudVideoID}/sourceUser`]: userID,
+      [`archivedStreams/${cloudVideoID}/members/${userID}`]: {id: userID},
+      [`users/${userID}/archivedStreams/${cloudVideoID}`]: {
+        id: cloudVideoID,
+        startTimestamp: Date.now(),
+      },
+    });
+};
+
+const setCloudVideoThumbnail = async (cloudVideoID, thumbnail) => {
   database()
     .ref()
     .update({
@@ -89,47 +100,21 @@ const setCloudThumbnail = async (cloudVideoID, thumbnail) => {
     });
 };
 
-const updateUploadProgress = async (
+const updateCloudUploadProgress = async (
   cloudVideoID,
-  subscribedToProgress,
   progress,
 ) => {
-  if (subscribedToProgress?.length > 0) {
-    const updates = subscribedToProgress.reduce((result, memberID) => {
-      return {
-        ...result,
-        [`users/${memberID}/archivedStreams/uploading/${cloudVideoID}/videoInfo/progress`]: progress,
-      };
-    }, {});
-    await database()
-      .ref()
-      .update(updates);
+  const isBinded = store.getState().bindedArchives[cloudVideoID];
+  const archive = store.getState().archives[cloudVideoID];
+  if (isBinded) {
+    if (archive && archive.progress) {
+      if (progress === null || progress === 1 || progress > archive.progress + 0.2) {
+        database().ref(`archivedStreams/${cloudVideoID}/progress`).set(progress);
+      }
+    } else if (archive) {
+      database().ref(`archivedStreams/${cloudVideoID}/progress`).set(progress);
+    }
   }
-};
-
-const subscribeUploadProgress = async (memberID, videoID) => {
-  const {userID} = store.getState().user;
-  await database()
-    .ref()
-    .update({
-      [`users/${memberID}/archivedStreams/uploading/${videoID}/videoInfo`]: {
-        filename: videoID,
-        hostUser: userID,
-        thumbnail: '', // fix
-        durationSeconds: 4, // fix
-        date: Date.now(), // videoInfo date?
-        progress: 0,
-        index: 0, // fix
-      },
-    });
-};
-
-const unsubscribeUploadProgress = async (memberID, videoID) => {
-  await database()
-    .ref()
-    .update({
-      [`users/${memberID}/archivedStreams/uploading/${videoID}/videoInfo`]: null,
-    });
 };
 
 const shareCloudVideoWithCoachSession = async (
@@ -155,9 +140,8 @@ export {
   deleteCloudVideo,
   deleteCloudVideos,
   createCloudVideo,
-  setCloudThumbnail,
-  subscribeUploadProgress,
-  updateUploadProgress,
-  unsubscribeUploadProgress,
+  claimCloudVideo,
+  setCloudVideoThumbnail,
+  updateCloudUploadProgress,
   shareCloudVideoWithCoachSession,
 };

@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 import {uploadQueueAction} from '../../../actions';
-import {uploadLocalVideoLazy} from '../../functions/videoManagement';
+import {uploadLocalVideoLazy, getLocalVideoByID} from '../../functions/videoManagement';
 
 class BackgroundUploadHelper extends Component {
   constructor(props) {
     super(props);
-    this.state = {waitForQueueToPopulate: false};
+    this.state = {
+      waitForQueueToPopulate: false,
+      queued: {},
+    };
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -21,9 +24,17 @@ class BackgroundUploadHelper extends Component {
     return {};
   }
 
+  filterQueuedVideos(videoLibrary) {
+    const {queued} = this.state;
+    return Object.keys(videoLibrary).filter((x) => x !== 'undefined' && !queued[x]);
+  }
+
   componentDidMount() {
     const {queue, videoLibrary} = this.props;
-    if ((!queue || Object.keys(queue).length === 0) && (videoLibrary && Object.keys(videoLibrary).length > 0)) {
+    if (
+      (!queue || Object.keys(queue).length === 0) &&
+      (videoLibrary && this.filterQueuedVideos(videoLibrary).length > 0)
+    ) {
       this.uploadNextLocalVideo();
     }
   }
@@ -35,8 +46,11 @@ class BackgroundUploadHelper extends Component {
     if (waitForQueueToPopulate) {
       return false;
     }
-    const nextQueueEmpty = (!nextQueue || Object.keys(nextQueue).length === 0);
-    const nextVideoLibraryNonEmpty = (nextVideoLibrary && Object.values(nextVideoLibrary).length > 0);
+    //console.log('local unqueued', this.filterQueuedVideos(nextVideoLibrary));
+    const nextQueueEmpty = !nextQueue || Object.keys(nextQueue).length === 0;
+    const nextVideoLibraryNonEmpty =
+      nextVideoLibrary && this.filterQueuedVideos(nextVideoLibrary).length > 0;
+    //console.log('nextQueueEmpty, nextVideoLibraryNonEmpty', nextQueueEmpty, nextVideoLibraryNonEmpty);
     return nextQueueEmpty && nextVideoLibraryNonEmpty;
   }
 
@@ -46,11 +60,15 @@ class BackgroundUploadHelper extends Component {
 
   async uploadNextLocalVideo() {
     const {wifiAutoUpload, videoLibrary} = this.props;
+    const {queued} = this.state;
     if (wifiAutoUpload) {
       try {
-        const video = Object.values(videoLibrary)[0];
-        await this.setState({waitForQueueToPopulate: true});
-        uploadLocalVideoLazy(video, null, true);
+        const videoID = this.filterQueuedVideos(videoLibrary)[0];
+        await this.setState({
+          waitForQueueToPopulate: true,
+          queued: {...queued, [videoID]: true},
+        });
+        uploadLocalVideoLazy(getLocalVideoByID(videoID), true);
       } catch (error) {
         console.log('ERROR BackgroundUploadHelper', error);
       }

@@ -5,6 +5,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
 import {Col, Row} from 'react-native-easy-grid';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import * as Progress from 'react-native-progress';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import {
@@ -21,7 +23,7 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+
 
 class CardArchive extends PureComponent {
   static propTypes = {
@@ -33,6 +35,7 @@ class CardArchive extends PureComponent {
     isSelected: PropTypes.bool,
     selectVideo: PropTypes.func,
     allowPlay: PropTypes.bool,
+    showUploadProgress: PropTypes.bool,
   };
   static defaultProps = {
     selectableMode: false,
@@ -75,7 +78,7 @@ class CardArchive extends PureComponent {
   openVideo = async () => {
     const {archive, coachSessionID, videosToOpen} = this.props;
     const {url, id, local} = archive;
-    if (url !== '') {
+    if (url && url !== '') {
       openVideoPlayer({
         archives: videosToOpen ? videosToOpen : [{id, local}],
         open: true,
@@ -114,28 +117,37 @@ class CardArchive extends PureComponent {
     );
   }
   localIndicator() {
-    const {local, url} = this.props.archive;
-    if (local) {
-      const indicatorStyle = {
-        position: 'absolute',
-        height: 30,
-        width: 30,
-        bottom: 0,
-        right: -10,
-        zIndex: 20,
-      };
+    const {archive, showUploadProgress} = this.props;
+    const {local, progress} = archive;
+    const indicatorStyle = {
+      position: 'absolute',
+      height: 30,
+      width: 30,
+      bottom: 0,
+      right: -5,
+      zIndex: 20,
+    };
+    if (showUploadProgress && progress) {
       return (
         <View style={indicatorStyle}>
-          {url === '' ? (
-            <Loader size={25} color={colors.white} />
-          ) : (
-            <AllIcons
-              name={url === '' ? 'upload' : 'mobile-alt'}
-              type="font"
-              color={colors.greyLight}
-              size={18}
-            />
-          )}
+          <Progress.Circle
+            color={colors.white}
+            progress={progress}
+            borderWidth={0}
+            fill={colors.white}
+            size={18}
+          />
+        </View>
+      );
+    } else if (local) {
+      return (
+        <View style={indicatorStyle}>
+          <AllIcons
+            name={'mobile-alt'}
+            type="font"
+            color={colors.greyLight}
+            size={18}
+          />
         </View>
       );
     } else {
@@ -157,8 +169,8 @@ class CardArchive extends PureComponent {
     );
   }
   cardArchive(archive) {
-    const {isSelected, style, selectableMode} = this.props;
-    const {id, thumbnail, startTimestamp, durationSeconds, local} = archive;
+    const {isSelected, style, selectableMode, showUploadProgress} = this.props;
+    const {id, thumbnail, startTimestamp, durationSeconds, local, progress} = archive;
     const {loader} = this.state;
     return (
       <TouchableWithoutFeedback
@@ -217,7 +229,7 @@ class CardArchive extends PureComponent {
                   styleApp.textBold,
                   {color: colors.white, fontSize: 11},
                 ]}>
-                <FormatDate date={startTimestamp} short />
+                {showUploadProgress && progress ? 'Uploading...' : <FormatDate date={startTimestamp} short />}
               </Text>
             </Col>
           </View>
@@ -227,11 +239,9 @@ class CardArchive extends PureComponent {
   }
   render() {
     const {archive} = this.props;
-
     if (!archive) {
       return this.placeholder();
     }
-
     return this.cardArchive(archive);
   }
 }

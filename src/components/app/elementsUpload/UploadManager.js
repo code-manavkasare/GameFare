@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
-import {uploadQueueAction, localVideoLibraryAction} from '../../../actions';
+import {uploadQueueAction} from '../../../actions';
 import {
   uploadImage,
   uploadVideo,
@@ -34,7 +34,8 @@ class UploadManager extends Component {
     const lostConnection = prevIsConnected && !isConnected;
     const gainedConnection = !prevIsConnected && isConnected;
     const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
-    const gainedWifi = connectionType === 'wifi' && prevConnectionType !== 'wifi';
+    const gainedWifi =
+      connectionType === 'wifi' && prevConnectionType !== 'wifi';
     if (uploadInProgress) {
       const {isBackground} = uploadInProgress.uploadTask;
       if (lostConnection || (isBackground && lostWifi)) {
@@ -108,6 +109,12 @@ class UploadManager extends Component {
     if (nextUserUpload) {
       if (!uploadInProgress) {
         if (!nextUserUpload.started) {
+          await this.setState({
+            uploadInProgress: {
+              uploadTask: nextUserUpload,
+              firebaseUploadTask: null,
+            },
+          });
           this.startTask(nextUserUpload);
         }
       } else if (uploadInProgress.uploadTask.isBackground) {
@@ -132,10 +139,11 @@ class UploadManager extends Component {
     } else if (
       !uploadInProgress &&
       nextBackgroundUpload &&
+      !nextBackgroundUpload.started &&
       connectionType === 'wifi'
     ) {
       this.startTask(nextBackgroundUpload);
-    } else if (!uploadInProgress) {
+    } else if (!uploadInProgress && !nextBackgroundUpload) {
       uploadQueueAction('resetUploadQueue');
     }
   }
@@ -160,24 +168,23 @@ class UploadManager extends Component {
   }
 
   async startVideoTask(task) {
-    const {uploadQueueAction, localVideoLibraryAction} = this.props;
-    const {id, videoInfo, storageDestination, afterUpload} = task;
-    const {firebaseUploadTask, uploadComplete} = uploadVideo(task);
-    uploadQueueAction('startUploadTask', id);
-    await this.setState({
-      uploadInProgress: {uploadTask: task, firebaseUploadTask},
-    });
+    const {uploadQueueAction} = this.props;
+    const {id, storageDestination, afterUpload} = task;
     try {
+      const {firebaseUploadTask, uploadComplete} = uploadVideo(task);
+      uploadQueueAction('startUploadTask', id);
+      await this.setState({
+        uploadInProgress: {uploadTask: task, firebaseUploadTask},
+      });
       const cloudVideoUrl = await uploadComplete;
-      if (afterUpload) {
-        await afterUpload();
-      }
-      database()
+      await database()
         .ref()
         .update({
           [`${storageDestination}/url`]: cloudVideoUrl,
         });
-      localVideoLibraryAction('deleteVideo', videoInfo.id);
+      if (afterUpload) {
+        await afterUpload();
+      }
     } catch (error) {
       console.log('Could not complete video upload', id, error);
     }
@@ -186,7 +193,7 @@ class UploadManager extends Component {
 
   async startImageTask(task) {
     const {uploadQueueAction} = this.props;
-    const {id, storageDestination} = task;
+    const {id, storageDestination, afterUpload} = task;
     const {firebaseUploadTask, uploadComplete} = uploadImage(task);
     uploadQueueAction('startUploadTask', id);
     await this.setState({
@@ -199,6 +206,9 @@ class UploadManager extends Component {
         .update({
           [`${storageDestination}/thumbnail`]: cloudImageUrl,
         });
+      if (afterUpload) {
+        await afterUpload();
+      }
     } catch (error) {
       console.log('Could not complete image upload', id, error);
     }
@@ -222,5 +232,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {uploadQueueAction, localVideoLibraryAction},
+  {uploadQueueAction},
 )(UploadManager);

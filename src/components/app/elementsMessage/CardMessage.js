@@ -202,6 +202,7 @@ export default class CardMessage extends React.Component {
               {type === 'video' && (
                 <CardArchive
                   id={content}
+                  showUploadProgress={true}
                   style={{
                     ...styleApp.cardArchive,
                     marginTop: 15,
