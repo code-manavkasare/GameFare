@@ -243,10 +243,12 @@ class VideoPlayerPage extends Component {
       const currentTime = ref.videoPlayerRef?.visualSeekBarRef?.getCurrentTime();
       const playRate = ref.videoPlayerRef?.state?.playRate;
       const drawings = ref.drawViewRef.state.drawings;
-      this.onSlidingEnd(i, currentTime);
+      this.onCurrentTimeChange(i, currentTime);
       this.onPlayRateChange(i, playRate, currentTime);
       this.onDrawingChange(i, drawings);
-      this.onPlayPause(i, false, currentTime);
+      ref?.videoPlayerRef?.setState({
+        paused: true,
+      });
     });
   };
 
@@ -404,7 +406,7 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
-  onSlidingEnd = (i, seekTime) => {
+  onCurrentTimeChange = (i, seekTime) => {
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
     recordedActions.push({
@@ -653,7 +655,7 @@ class VideoPlayerPage extends Component {
       onPlayRateChange,
       onPositionChange,
       onScaleChange,
-      onSlidingEnd,
+      onCurrentTimeChange,
     } = this;
     const propsWhenRecording = isRecording
       ? {
@@ -662,7 +664,7 @@ class VideoPlayerPage extends Component {
           onPlayRateChange,
           onPositionChange,
           onScaleChange,
-          onSlidingEnd,
+          onCurrentTimeChange,
         }
       : {};
 

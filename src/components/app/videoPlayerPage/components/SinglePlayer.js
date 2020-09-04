@@ -229,7 +229,6 @@ class SinglePlayer extends Component {
           hideFullScreenButton={true}
           archive={archive}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
-          styleVideo={styleApp.fullSize}
           linkedPlayers={[...linkedPlayers[index]].map(
             (i) => videoPlayerRefs[i],
           )}

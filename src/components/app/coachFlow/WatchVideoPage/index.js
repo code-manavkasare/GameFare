@@ -218,11 +218,9 @@ class WatchVideoPage extends Component {
         /> */}
         <VideoPlayer
           source={videoSource ? videoSource : ''}
-          
           index={archiveID}
           resizeMode="contain"
           userID={userID}
-          
           setSizeVideo={(sizeVideo) => {
             this.setState({sizeVideo: sizeVideo});
           }}
@@ -246,7 +244,6 @@ class WatchVideoPage extends Component {
             />
           )}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
-          styleVideo={styleApp.fullSize}
           noUpdateInCloud={myVideo}
           updateOnProgress={userID === personSharingScreen}
           updateVideoInfoCloud={(paused, currentTime, playRate) =>
