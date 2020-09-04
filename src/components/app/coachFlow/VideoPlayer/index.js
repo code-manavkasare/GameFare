@@ -23,7 +23,6 @@ export default class VideoPlayer extends Component {
     updateVideoInfoCloud: PropTypes.func,
 
     styleContainerVideo: PropTypes.object.isRequired,
-    styleVideo: PropTypes.object.isRequired,
     heightControlBar: PropTypes.number,
     sizeControlButton: PropTypes.string,
     hideFullScreenButton: PropTypes.bool,
@@ -34,7 +33,7 @@ export default class VideoPlayer extends Component {
 
     onRef: PropTypes.func.isRequired,
     onPlayPause: PropTypes.func,
-    onSlidingEnd: PropTypes.func,
+    onCurrentTimeChange: PropTypes.func,
     onPlayRateChange: PropTypes.func,
     onScaleChange: PropTypes.func,
     onPositionChange: PropTypes.func,
@@ -44,7 +43,7 @@ export default class VideoPlayer extends Component {
   static defaultProps = {
     onPlayPause: (i, paused, currentTime) => null,
     onSlidingStart: (i, currentTime, paused) => null,
-    onSlidingEnd: (i, SliderTime, paused) => null,
+    onCurrentTimeChange: (i, SliderTime, paused) => null,
     onPlayRateChange: (i, playrate, currentTime, paused) => null,
     onPositionChange: (i, position) => null,
     onScaleChange: (i, scale) => null,
@@ -209,12 +208,7 @@ export default class VideoPlayer extends Component {
   };
   onSlidingComplete = async (sliderTime, forcePlay) => {
     const {prevPaused} = this.state;
-    const {
-      updateVideoInfoCloud,
-      noUpdateInCloud,
-      onSlidingEnd,
-      index,
-    } = this.props;
+    const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
     const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
     if (isCloudUpdating) {
       await updateVideoInfoCloud({
@@ -228,8 +222,6 @@ export default class VideoPlayer extends Component {
       paused,
       prevPaused: undefined,
     });
-
-    onSlidingEnd(index, sliderTime, paused);
     return true;
   };
   linkedOnSlidingComplete = async (sliderTime, forcePlay) => {
@@ -256,8 +248,10 @@ export default class VideoPlayer extends Component {
     return this.setState({paused: true, slidingStartTime: currentTime});
   };
   onSeek = async (time, fineSeek) => {
-    const {onSeek} = this.props;
+    const {index, onCurrentTimeChange, onSeek} = this.props;
     const {paused, prevPaused, currentTime} = this.state;
+
+    onCurrentTimeChange(index, time, paused);
     if (!paused) {
       await this.setState({paused: true, prevPaused: false});
     } else if (prevPaused === undefined) {
@@ -319,7 +313,6 @@ export default class VideoPlayer extends Component {
       onScaleChange,
       onPositionChange,
       styleContainerVideo,
-      styleVideo,
       componentOnTop,
       buttonTopRight,
       index,
