@@ -10,6 +10,8 @@ import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
 import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
+import {layoutAction} from '../../../../../../../../actions/layoutActions';
+import sizes from '../../../../../../../style/sizes';
 
 import {
   startRemoteRecording,
@@ -84,7 +86,7 @@ class BottomButton extends Component {
       }
     }
     const anyMemberRecording = Object.values(members).reduce((m, val) => {
-      return val?.recording?.isRecording;
+      return m || val?.recording?.isRecording;
     }, false);
     newState = {
       ...newState,
@@ -107,7 +109,9 @@ class BottomButton extends Component {
     this.configureQueue();
   }
   componentDidUpdate(prevProps, prevState) {
+    const {layoutAction} = this.props;
     const {endCurrentSession, currentSessionReconnecting} = this.props.coach;
+    const {anyMemberRecording} = this.state;
     if (!prevProps.coach.endCurrentSession && endCurrentSession) {
       this.onEndCurrentSession();
     }
@@ -121,6 +125,13 @@ class BottomButton extends Component {
     } else if (shouldStopRecording && !prevState.shouldStopRecording) {
       queue.addJob('stopRecording', {discardFile});
     }
+    if (
+      ((anyMemberRecording !== undefined) !== prevState.undefined) !==
+      undefined
+    ) {
+      layoutAction('setGeneralSessionRecording', anyMemberRecording);
+      console.log('anymember', anyMemberRecording);
+    }
   }
 
   configureQueue() {
@@ -131,6 +142,16 @@ class BottomButton extends Component {
     );
     queue.addWorker(new Worker('stopRecording', this.stopRecording.bind(this)));
   }
+  clickRecord = async () => {
+    console.log('cloclu');
+    const {currentSessionReconnecting} = this.props;
+    if (currentSessionReconnecting) {
+      return;
+    }
+    return this.recordingMenuRef.state.visible
+      ? this.recordingMenuRef.close()
+      : this.recordingMenuRef.open();
+  };
   startRemoteRecording = async (member) => {
     const {coachSessionID, userID} = this.props;
     const recordingUser = member.id;
@@ -222,21 +243,21 @@ class BottomButton extends Component {
             <Animated.View style={styleApp.center}>
               <AllIcons
                 type={'font'}
-                color={colors.white}
+                color={publishVideo ? colors.white : colors.grey}
                 size={18}
                 name={publishVideo ? 'video' : 'video-slash'}
               />
             </Animated.View>
           );
         }}
-        color={publishVideo ? colors.title + '70' : colors.red + '70'}
+        color={'transparent'}
+        onPressColor={'transparent'}
         click={async () => {
           await this.setState({publishVideo: !publishVideo});
           setState({publishVideo: !publishVideo});
           toggleVideoPublish(coachSessionID, userID, !publishVideo);
         }}
         style={styles.buttonRound}
-        onPressColor={publishVideo ? colors.red + '70' : colors.title + '70'}
       />
     );
   }
@@ -250,20 +271,20 @@ class BottomButton extends Component {
             <Animated.View style={styleApp.center}>
               <AllIcons
                 type={'font'}
-                color={colors.white}
+                color={publishAudio ? colors.white : colors.grey}
                 size={18}
                 name={publishAudio ? 'microphone' : 'microphone-slash'}
               />
             </Animated.View>
           );
         }}
-        color={publishAudio ? colors.title + '70' : colors.red + '70'}
+        color={'transparent'}
+        onPressColor={'transparent'}
         click={async () => {
           await this.setState({publishAudio: !publishAudio});
           setState({publishAudio: !publishAudio});
         }}
         style={styles.buttonRound}
-        onPressColor={publishAudio ? colors.red + '70' : colors.title + '70'}
       />
     );
   }
@@ -285,108 +306,6 @@ class BottomButton extends Component {
       this.recordingIndicator.color.setValue(0);
     }
   };
-  buttonRecord() {
-    const {anyMemberRecording} = this.state;
-    const {currentSessionReconnecting} = this.props;
-
-    this.indicatorAnimation();
-
-    const insideViewButton = () => {
-      return (
-        <Animated.View
-          style={[
-            currentSessionReconnecting
-              ? styles.buttonReconnecting
-              : !anyMemberRecording
-              ? styles.buttonStartStreaming
-              : styles.buttonStopStreaming,
-          ]}>
-          <Animated.View
-            style={[
-              styles.recordingOverlay,
-              {opacity: this.recordingIndicator.color},
-            ]}
-          />
-        </Animated.View>
-      );
-    };
-    return (
-      <View style={[styleApp.center, styleApp.fullSize]}>
-        <ButtonColor
-          view={() => insideViewButton()}
-          click={async () => {
-            if (currentSessionReconnecting) {
-              return;
-            }
-            return this.recordingMenuRef.state.visible
-              ? this.recordingMenuRef.close()
-              : this.recordingMenuRef.open();
-          }}
-          style={styles.whiteButtonRecording}
-          onPressColor={colors.redLight}
-        />
-      </View>
-    );
-  }
-  contentVideo() {
-    const {showPastSessionsPicker} = this.state;
-    const {
-      openPastSessions,
-      archivedStreams,
-      currentSessionReconnecting,
-    } = this.props;
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            <Animated.View style={styleApp.center}>
-              <AllIcons
-                type={'moon'}
-                color={
-                  currentSessionReconnecting ? colors.greyDark : colors.white
-                }
-                size={showPastSessionsPicker ? 19 : 22}
-                name={'galery'}
-              />
-              {this.state.unreadVideos === 0 ? null : (
-                <View style={styles.unreadIndicator}>
-                  {this.state.unreadVideos > 10 ? null : (
-                    <Text style={styles.unreadIndText}>
-                      {this.state.unreadVideos}
-                    </Text>
-                  )}
-                </View>
-              )}
-              {showPastSessionsPicker && (
-                <AllIcons
-                  type={'font'}
-                  color={colors.white}
-                  size={12}
-                  name={'chevron-down'}
-                />
-              )}
-            </Animated.View>
-          );
-        }}
-        color={colors.title + '70'}
-        click={async () => {
-          if (currentSessionReconnecting) {
-            return;
-          }
-          this.setState({
-            showPastSessionsPicker: !this.state.showPastSessionsPicker,
-            unreadVideos: 0,
-            seenVideos: archivedStreams
-              ? Object.values(archivedStreams).length
-              : 0,
-          });
-          openPastSessions(!showPastSessionsPicker);
-        }}
-        style={styles.buttonRound}
-        onPressColor={colors.grey + '40'}
-      />
-    );
-  }
   async onEndCurrentSession() {
     const {members, userID, coach} = this.props;
     const self = members[userID];
@@ -406,10 +325,10 @@ class BottomButton extends Component {
             />
           );
         }}
-        color={colors.title + '70'}
+        color={'transparent'}
+        onPressColor={'transparent'}
         click={() => closeSession({noNavigation: true})}
         style={styles.buttonRound}
-        onPressColor={colors.redLight}
       />
     );
   }
@@ -418,10 +337,6 @@ class BottomButton extends Component {
       <Row style={styles.rowButtons}>
         <Col style={styleApp.center}>{this.publishVideo()}</Col>
         <Col style={styleApp.center}>{this.publishAudio()}</Col>
-
-        <Col style={styleApp.center}>{this.buttonRecord()}</Col>
-
-        <Col style={styleApp.center}>{this.contentVideo()}</Col>
         <Col style={styleApp.center}>{this.buttonEndCall()}</Col>
       </Row>
     );
@@ -449,7 +364,7 @@ class BottomButton extends Component {
   }
   render() {
     return (
-      <View>
+      <View style={styleApp.center}>
         {this.rowButtons()}
         {this.recordingSelector()}
       </View>
@@ -460,7 +375,7 @@ const styles = StyleSheet.create({
   rowButtons: {
     height: 100 + offsetFooterStreaming,
     paddingTop: 10,
-    width: '100%',
+    width: 0.7 * sizes.width,
     paddingBottom: 20,
   },
   CardUploading: {
@@ -563,5 +478,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction, uploadQueueAction},
+  {coachAction, uploadQueueAction, layoutAction},
 )(BottomButton);

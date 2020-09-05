@@ -1,6 +1,6 @@
 import {ProcessingManager} from 'react-native-video-processing';
-import StatusBar from '@react-native-community/status-bar';
 import RNFS from 'react-native-fs';
+import {StatusBar} from 'react-native';
 
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
@@ -107,11 +107,12 @@ const deleteLocalVideo = (id) => {
 
 const openVideoPlayer = async ({archives, open, coachSessionID}) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
-  if (open)
+  if (open) {
     return navigate('VideoPlayerPage', {
       archives,
       coachSessionID,
     });
+  }
   return goBack();
 };
 

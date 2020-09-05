@@ -14,6 +14,8 @@ import TeamPage from '../../app/TeamPage/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import SelectVideosFromLibrary from '../../app/videoLibraryPage/index';
 
+import Alert from '../../layout/alerts/Alert';
+
 import SessionSettings from '../../app/TeamPage/components/SessionSettings';
 
 import initialPage from '../../app/initialPage';
@@ -50,6 +52,16 @@ const MainApp = () => {
       />
 
       <Stack.Screen name="SessionSettings" component={SessionSettings} />
+
+      <Stack.Screen
+        name="Alert"
+        component={Alert}
+        options={{
+          cardStyle: {backgroundColor: 'transparent'},
+          gestureEnabled: false,
+          animationEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

@@ -1,4 +1,4 @@
-import {SET_LAYOUT} from '../actions/types';
+import {SET_LAYOUT, SET_GENERAL_SESSION_RECORDING} from '../actions/types';
 import {Dimensions} from 'react-native';
 const {height, width} = Dimensions.get('screen');
 
@@ -16,6 +16,7 @@ const initialState = {
     currentHeight: height,
     portrait: true,
   },
+  generalSessionRecording: false,
 };
 
 const layoutReducer = (state = initialState, action) => {
@@ -24,6 +25,11 @@ const layoutReducer = (state = initialState, action) => {
       return {
         ...state,
         ...action.value,
+      };
+    case SET_GENERAL_SESSION_RECORDING:
+      return {
+        ...state,
+        generalSessionRecording: action.value,
       };
     default:
       return state;

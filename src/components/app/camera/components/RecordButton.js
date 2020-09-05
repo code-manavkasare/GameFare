@@ -92,16 +92,11 @@ export default class RecordButton extends Component {
       const optionsTimer = {
         text: [styleApp.textBold, {color: colors.white, fontSize: 15}],
       };
-      const translateY = this.animatedTimerValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [60, 0],
-      });
       return (
         <Animated.View
           style={[
             styles.timer,
             {
-              transform: [{translateY: translateY}],
               opacity: this.animatedTimerValue,
             },
           ]}>
@@ -132,15 +127,7 @@ export default class RecordButton extends Component {
     this.indicatorAnimation();
     this.timerAnimation();
     return (
-      <View style={[styleApp.center, styleApp.fullSize]}>
-        {this.timer()}
-        <ButtonColor
-          view={() => this.insideRecordButton()}
-          click={() => this.clickRecord()}
-          style={styles.whiteButtonRecording}
-          onPressColor={colors.redLight}
-        />
-      </View>
+      <View style={[styleApp.center, styleApp.fullSize]}>{this.timer()}</View>
     );
   }
 }
@@ -188,7 +175,7 @@ const styles = StyleSheet.create({
     ...styleApp.center,
     position: 'absolute',
     backgroundColor: colors.title + '70',
-    bottom: 100,
+    bottom: 111,
     width: 80,
     borderRadius: 4,
     height: 30,

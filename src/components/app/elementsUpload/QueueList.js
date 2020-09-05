@@ -130,11 +130,7 @@ class QueueList extends Component {
         showVerticalScrollbar={false}
         contentContainerStyle={{marginTop: 0, paddingBottom: 100}}>
         {orderedTasks.map((task, i) => (
-          <TaskCard
-            task={task}
-            index={i}
-            key={task.id}
-          />
+          <TaskCard task={task} index={i} key={task.id} />
         ))}
       </ScrollView>
     );
@@ -166,14 +162,6 @@ class QueueList extends Component {
       <View>
         {!orderedTasks || (orderedTasks.length === 0 && this.emptyList())}
         {orderedTasks && orderedTasks.length > 0 && this.list()}
-        <LinearGradient
-          style={{width: '100%', height: 100, bottom: 0, position: 'absolute'}}
-          colors={[colors.white + '00', colors.white, colors.white]}
-        />
-        <LinearGradient
-          style={{width: '100%', height: 20, top: 0, position: 'absolute'}}
-          colors={[colors.white, colors.white + '00']}
-        />
       </View>
     );
   }
@@ -186,7 +174,7 @@ const styles = StyleSheet.create({
   emptyList: {
     ...styleApp.center,
     position: 'absolute',
-    height: 200,
+    height: 160,
     width: '100%',
     zIndex: 2,
   },

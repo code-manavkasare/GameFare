@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Dimensions,
+  StatusBar,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {
   OTSession,
@@ -11,7 +18,6 @@ import Config from 'react-native-config';
 import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
-import StatusBar from '@react-native-community/status-bar';
 import Orientation from 'react-native-orientation-locker';
 
 const {width} = Dimensions.get('screen');
@@ -199,6 +205,11 @@ class StreamPage extends Component {
         route,
       } = this.props;
       const {portrait} = currentScreenSize;
+      console.log('prevsession', prevProps.currentSessionID);
+      if (currentSessionID === undefined && prevProps.currentSessionID) {
+        console.log('disconnected');
+        this.props.layoutAction('setGeneralSessionRecording', false);
+      }
       if (
         portrait !== prevProps.currentScreenSize.portrait &&
         currentSessionID
@@ -227,7 +238,10 @@ class StreamPage extends Component {
         route?.params?.params?.action !==
         prevProps.route?.params?.params?.action
       ) {
-        this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
+        try {
+          this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
+          this.footerRef?.bottomButtonsRef?.clickRecord();
+        } catch (e) {}
       }
     }
   }
@@ -372,7 +386,7 @@ class StreamPage extends Component {
         width: currentWidth,
         top: index * (currentHeight / length),
         position: 'absolute',
-        backgroundColor: colors.title,
+        backgroundColor: colors.black,
       };
       if (!portrait) {
         styleSubscriber = {
@@ -381,7 +395,7 @@ class StreamPage extends Component {
           width: currentWidth / length,
           left: index * (currentWidth / length),
           position: 'absolute',
-          backgroundColor: colors.title,
+          backgroundColor: colors.black,
         };
       }
       const ratioScreen = ratio(styleSubscriber.width, styleSubscriber.height);
@@ -393,7 +407,7 @@ class StreamPage extends Component {
       }
       return (
         <View key={streamId} style={styleSubscriber}>
-          {member?.publishVideo == true ? (
+          {member?.publishVideo === true ? (
             <OTSubscriberView
               streamId={streamId}
               style={{width: w, height: h}}

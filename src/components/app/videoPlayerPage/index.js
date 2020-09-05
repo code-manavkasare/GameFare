@@ -451,8 +451,13 @@ class VideoPlayerPage extends Component {
       isDrawingEnabled,
       archives,
     } = this.state;
-    const {navigation, route, session, userID} = this.props;
-    const {coachSessionID} = route.params;
+    const {
+      navigation,
+      route,
+      session,
+      userID,
+      currentSessionID: coachSessionID,
+    } = this.props;
     const {navigate} = navigation;
     let videosBeingShared = false;
     let personSharingScreen = false;
@@ -626,19 +631,21 @@ class VideoPlayerPage extends Component {
   };
 
   singlePlayer = (archive, i) => {
-    const {session} = this.props;
+    const {session, currentSessionID: coachSessionID} = this.props;
     const {archives} = this.state;
     let videosBeingShared = false;
     let personSharingScreen = false;
+    console.log('session', session);
     if (session) {
       personSharingScreen = isSomeoneSharingScreen(session);
+      console.log('sharing', personSharingScreen);
       videosBeingShared = isVideosAreBeingShared({
         session,
         archives,
         userIDSharing: personSharingScreen,
       });
+      console.log('videos', videosBeingShared);
     }
-    const {coachSessionID} = this.props.route.params;
     const {id: archiveID, local} = archive;
     const numArchives = archives.length;
 
@@ -693,17 +700,16 @@ class VideoPlayerPage extends Component {
     );
   };
   buttonSharing = () => {
-    const {route} = this.props;
+    const {currentSessionID} = this.props;
     const {archives} = this.state;
-    const {coachSessionID} = route.params;
-    if (!coachSessionID) {
+    if (!currentSessionID) {
       return null;
     }
 
     return (
       <ButtonShareVideo
         archives={archives}
-        coachSessionID={coachSessionID}
+        coachSessionID={currentSessionID}
         togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
         getVideoState={(i) => this.videoPlayerRefs[i].getState()}
       />
@@ -813,7 +819,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
-    session: state.coachSessions[props.route.params.coachSessionID],
+    session: state.coachSessions[state.coach.currentSessionID],
+    currentSessionID: state.coach.currentSessionID,
     portrait: state.layout.currentScreenSize.portrait,
   };
 };

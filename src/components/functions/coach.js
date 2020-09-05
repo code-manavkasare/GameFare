@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-
+import {StatusBar} from 'react-native';
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import ImageResizer from 'react-native-image-resizer';
 import axios from 'axios';
 import Config from 'react-native-config';
-import StatusBar from '@react-native-community/status-bar';
 import isEqual from 'lodash.isequal';
 
 import {generateID} from './createEvent';

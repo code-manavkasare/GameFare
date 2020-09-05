@@ -15,8 +15,6 @@ import Coaches from './MainApp/components/Coaches';
 import VideoPlayerPage from '../app/videoPlayerPage/index';
 import Session from './TabsApp/components/Session';
 
-import Alert from '../layout/alerts/Alert';
-
 import ShareVideo from '../app/shareVideo';
 
 const Stack = createStackNavigator();
@@ -55,15 +53,6 @@ function InitialStack() {
         name="NewConversation"
         component={NewConversation}
         options={{
-          gestureEnabled: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="Alert"
-        component={Alert}
-        options={{
-          cardStyle: {backgroundColor: 'transparent'},
           gestureEnabled: false,
         }}
       />

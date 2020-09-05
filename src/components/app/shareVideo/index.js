@@ -8,19 +8,17 @@ import {
   Image,
   ScrollView,
   Animated,
+  StatusBar,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
-import StatusBar from '@react-native-community/status-bar';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {heightHeaderHome, marginTopApp} from '../../style/sizes';
 
 import {createShareVideosBranchUrl} from '../../database/branch';
-import {
-  shareVideosWithTeams,
-} from '../../functions/videoManagement';
+import {shareVideosWithTeams} from '../../functions/videoManagement';
 import {openSession} from '../../functions/coach';
 import AllIcons from '../../layout/icons/AllIcons';
 import ButtonColor from '../../layout/Views/Button';

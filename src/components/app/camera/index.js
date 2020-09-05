@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Animated} from 'react-native';
+import {StyleSheet, View, Animated, StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import Orientation from 'react-native-orientation-locker';
-import StatusBar from '@react-native-community/status-bar';
 
 import {layoutAction} from '../../../actions/layoutActions';
 

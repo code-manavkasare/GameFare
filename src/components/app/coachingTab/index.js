@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
 
 import {coachAction} from '../../../actions/coachActions';
 import {layoutAction} from '../../../actions/layoutActions';

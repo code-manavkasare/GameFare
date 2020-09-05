@@ -19,7 +19,8 @@ import AlertAddImage from './AlertAddImage';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import {timing} from '../../animations/animations';
+import sizes from '../../style/sizes';
+import {native} from '../../animations/animations';
 import {timeout} from '../../functions/coach';
 
 import {marginBottomApp} from '../../style/sizes';
@@ -30,19 +31,15 @@ export default class Alert extends Component {
     this.state = {
       loader: false,
     };
-    this.opacityVoile = new Animated.Value(0);
+    this.alertAnimation = new Animated.Value(0);
   }
   async componentDidMount() {
-    await timeout(300);
-    this.openVoile(true);
     const {navigation, coachAction} = this.props;
+    this.openVoile(true);
   }
 
   openVoile(val) {
-    Animated.timing(
-      this.opacityVoile,
-      timing(val ? 1 : 0, val ? 200 : 30),
-    ).start();
+    Animated.timing(this.alertAnimation, native(val ? 1 : 0, 400)).start();
   }
   title() {
     const {title} = this.props.route.params;
@@ -56,7 +53,11 @@ export default class Alert extends Component {
     if (subtitle) {
       return (
         <View>
-          <Text style={[styleApp.text, {fontSize: 15, marginTop: 20}]}>
+          <Text
+            style={[
+              styleApp.text,
+              {fontSize: 15, marginTop: 15, marginBottom: -10},
+            ]}>
             {subtitle}
           </Text>
         </View>
@@ -89,7 +90,7 @@ export default class Alert extends Component {
   }
   async close() {
     this.openVoile(false);
-    await timeout(130);
+    await timeout(400);
     const {navigation} = this.props;
     navigation.goBack();
   }
@@ -109,12 +110,19 @@ export default class Alert extends Component {
       disableCloseButton,
     } = this.props.route.params;
     const closable = close !== undefined ? close : true;
+    const translateY = this.alertAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [sizes.height, 0],
+    });
     return (
       <View style={[styleApp.stylePage, {backgroundColor: 'transparent'}]}>
         <Animated.View
           style={[
             styleApp.stylePage,
-            {backgroundColor: colors.title + '80', opacity: this.opacityVoile},
+            {
+              backgroundColor: colors.title + '80',
+              opacity: this.alertAnimation,
+            },
           ]}>
           <TouchableOpacity
             onPress={() => !disableClickOnBackdrop && this.close()}
@@ -122,13 +130,24 @@ export default class Alert extends Component {
             style={styleApp.fullSize}
           />
         </Animated.View>
-        <View style={styles.viewModal}>
+        <Animated.View
+          style={{
+            ...styles.viewModal,
+            bottom: 0,
+            transform: [{translateY}],
+          }}>
           {closable && (
             <TouchableOpacity
               style={styles.buttonClose}
               activeOpacity={0.5}
               onPress={() => this.close()}>
-              <MatIcon name="close" color={'#4a4a4a'} size={24} />
+              <AllIcons
+                name="times"
+                size={13}
+                color={colors.title}
+                type="font"
+              />
+              {/* <MatIcon name="close" color={'#4a4a4a'} size={24} /> */}
             </TouchableOpacity>
           )}
 
@@ -259,7 +278,7 @@ export default class Alert extends Component {
             </View>
           )}
           <View style={{height: marginBottomApp}} />
-        </View>
+        </Animated.View>
       </View>
     );
   }
@@ -289,14 +308,14 @@ const styles = StyleSheet.create({
     paddingRight: '5%',
     width: '100%',
     marginBottom: 9,
-    marginTop: 17,
+    marginTop: 7,
   },
   buttonClose: {
     position: 'absolute',
     width: 26,
     height: 26,
     right: '5%',
-    top: 30,
+    top: 15,
     zIndex: 30,
     alignItems: 'center',
     justifyContent: 'center',

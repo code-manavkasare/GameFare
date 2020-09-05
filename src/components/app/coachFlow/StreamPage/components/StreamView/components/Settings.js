@@ -1,7 +1,14 @@
 import React, {Component} from 'react';
-import {View, Text, Image, StyleSheet, Animated, Switch} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Animated,
+  Switch,
+  StatusBar,
+} from 'react-native';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
 import {Col, Row} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
 
@@ -122,7 +129,9 @@ class Settings extends Component {
     const {currentScreenSize} = this.props;
     const {portrait} = currentScreenSize;
     let marginTop = heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLanscape + heightHeaderHome;
+    if (!portrait) {
+      marginTop = marginTopAppLanscape + heightHeaderHome;
+    }
 
     return (
       <View style={styleApp.stylePage}>

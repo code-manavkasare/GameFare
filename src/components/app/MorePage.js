@@ -164,7 +164,8 @@ class MorePage extends Component {
     } else if (type === 'logout') {
       NavigationService.navigate('Alert', {
         textButton: 'Logout',
-        title: 'Do you want to log out?',
+        title: 'Sign out',
+        subtitle: 'Are you sure you want to sign out?',
         colorButton: 'red',
         onPressColor: colors.red,
         onGoBack: (data) => this.confirmLogout(data),
@@ -207,7 +208,9 @@ class MorePage extends Component {
           },
           waitForRedirectDelay: 0,
         });
-      } else Linking.openURL(url);
+      } else {
+        Linking.openURL(url);
+      }
     } catch (error) {
       Alert.alert(error.message);
     }
@@ -219,7 +222,9 @@ class MorePage extends Component {
     const {userConnected, infoUser} = this.props;
     var email1 = 'contact@getgamefare.com';
     let subject = infoUser.firstname + ' ' + infoUser.lastname;
-    if (!userConnected) subject = '';
+    if (!userConnected) {
+      subject = '';
+    }
     Communications.email([email1], null, null, subject, '');
   }
 

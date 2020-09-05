@@ -7,6 +7,7 @@ import {
   StyleSheet,
   View,
   Text,
+  StatusBar,
 } from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
@@ -18,6 +19,15 @@ import {
   deleteCloudVideo,
   deleteCloudVideos,
 } from '../../database/firebase/videosManagement.js';
+import {
+  isUserAlone,
+  isSomeoneSharingScreen,
+  userPartOfSession,
+  getVideosSharing,
+  getMember,
+  toggleVideoPublish,
+} from '../../functions/coach';
+
 import {pickerlocalVideos} from './components/elements';
 import {rowTitle} from '../TeamPage/components/elements';
 import {FlatListComponent} from '../../layout/Views/FlatList';
@@ -204,7 +214,9 @@ class VideoLibraryPage extends Component {
       writeTempFile: false,
     }).catch((err) => console.log('error', err));
     if (videos) {
-      const videoInfos = await Promise.all(videos.map((video) => getNativeVideoInfo(video.localIdentifier)));
+      const videoInfos = await Promise.all(
+        videos.map((video) => getNativeVideoInfo(video.localIdentifier)),
+      );
       videoInfos.forEach((video) => {
         addLocalVideo(video);
       });
@@ -225,18 +237,19 @@ class VideoLibraryPage extends Component {
   async addVideo() {
     const {navigate} = this.props.navigation;
     navigate('Alert', {
-      title: 'New video',
+      title: 'Add a Video',
+      subtitle: 'Record a video or upload from your camera roll',
       displayList: true,
       listOptions: [
-        {
-          title: 'Select',
-          forceNavigation: true,
-          operation: () => this.addFromCameraRoll({}),
-        },
         {
           title: 'Record',
           forceNavigation: true,
           operation: () => navigate('Session'),
+        },
+        {
+          title: 'Upload',
+          forceNavigation: true,
+          operation: () => this.addFromCameraRoll({}),
         },
       ],
     });
@@ -290,6 +303,13 @@ class VideoLibraryPage extends Component {
 
   listVideos() {
     const {videosArray, selectOnly, selectedLocalVideos} = this.state;
+    const {session: coachSession, coachSessionID} = this.props;
+
+    const personSharingScreen = isSomeoneSharingScreen(coachSession);
+    const videosBeingShared = getVideosSharing(
+      coachSession,
+      personSharingScreen,
+    );
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -302,24 +322,72 @@ class VideoLibraryPage extends Component {
             selectOnly ? 0 : sizes.heightFooter + sizes.marginBottomApp + 20
           }
           header={
-            !selectOnly
-              ? rowTitle({
+            <View>
+              {!selectOnly
+                ? rowTitle({
+                    icon: {
+                      name: 'television',
+                      type: 'moon',
+                      color: colors.title,
+                      size: 23,
+                    },
+                    badge:
+                      videosArray.length === 0 ? false : videosArray.length,
+                    title: 'Library',
+                    hideDividerHeader: true,
+                  })
+                : pickerlocalVideos({
+                    lengthGameFareLibrary: videosArray.length,
+                    selectVideo: this.selectVideo.bind(this),
+                    addFromCameraRoll: this.addFromCameraRoll.bind(this),
+                    selectedLocalVideos,
+                  })}
+              {videosBeingShared &&
+                rowTitle({
                   icon: {
-                    name: 'television',
-                    type: 'moon',
-                    color: colors.title,
-                    size: 23,
+                    name: 'satellite-dish',
+                    type: 'font',
+                    color: colors.black,
+                    size: 20,
                   },
-                  badge: videosArray.length === 0 ? false : videosArray.length,
-                  title: 'Library',
                   hideDividerHeader: true,
-                })
-              : pickerlocalVideos({
-                  lengthGameFareLibrary: videosArray.length,
-                  selectVideo: this.selectVideo.bind(this),
-                  addFromCameraRoll: this.addFromCameraRoll.bind(this),
-                  selectedLocalVideos,
-                })
+                  customButtom: (
+                    <CardArchive
+                      id={Object.keys(videosBeingShared)[0]}
+                      videosToOpen={Object.keys(videosBeingShared).map(
+                        (video) => {
+                          return {id: video};
+                        },
+                      )}
+                      style={{
+                        ...styleApp.cardArchive3,
+                        ...styleApp.shadow,
+                        height: 70,
+                        width: 115,
+                        borderRadius: 5,
+                        borderWidth: 0,
+                        marginRight: 10,
+                      }}
+                      coachSessionID={coachSessionID}
+                      hidePlayIcon={true}
+                    />
+                  ),
+                  title: 'Live now',
+                  titleColor: colors.black,
+                  titleStyle: {
+                    fontWeight: '800',
+                    fontSize: 20,
+                  },
+                  containerStyle: {
+                    ...styleApp.shadow,
+                    marginTop: 10,
+                    borderRadius: 10,
+                    backgroundColor: colors.white,
+                    height: 100,
+                    marginBottom: 15,
+                  },
+                })}
+            </View>
           }
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
@@ -367,6 +435,7 @@ class VideoLibraryPage extends Component {
     }
     return (
       <View style={styleApp.stylePage}>
+        <StatusBar hidden={false} barStyle={'dark-content'} />
         <HeaderVideoLibrary
           // loader={loader}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -435,6 +504,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     archivedStreams: state.user.infoUser.archivedStreams,
+    session: state.coachSessions[state.coach.currentSessionID],
+    coachSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     videoLibrary: state.localVideoLibrary.videoLibrary,

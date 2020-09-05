@@ -48,17 +48,13 @@ export default class BottomButtons extends Component {
     const {renderFlagButton} = this.state;
     const {addFlag} = this.props;
     if (renderFlagButton) {
-      const translateX = this.animatedFlagButtonValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, -90],
-      });
       return (
         <Animated.View
-          height={55}
+          height={60}
           style={[
             styles.flagButton,
             {
-              transform: [{translateX: translateX}],
+              transform: [{translateX: 70}],
               opacity: this.animatedFlagButtonValue,
             },
           ]}>
@@ -68,20 +64,28 @@ export default class BottomButtons extends Component {
                 <AllIcons
                   type={'font'}
                   color={colors.white}
-                  size={18}
+                  size={24}
                   name={'flag'}
                 />
               );
             }}
-            style={{width: 55}}
-            color={colors.title + '70'}
+            style={{width: 60}}
+            color={'transparent'}
             click={() => addFlag()}
-            onPressColor={colors.white + '70'}
+            onPressColor={'transparent'}
           />
         </Animated.View>
       );
     } else {
       return null;
+    }
+  }
+  clickRecord() {
+    const {isRecording} = this.state;
+    if (isRecording) {
+      this.stopRecording();
+    } else {
+      this.startRecording();
     }
   }
   startRecording() {
@@ -114,7 +118,7 @@ const styles = StyleSheet.create({
   flagButton: {
     ...styleApp.center,
     position: 'absolute',
-    bottom: 8,
+    bottom: 100,
     height: 55,
     width: 55,
     zIndex: 2,

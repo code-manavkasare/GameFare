@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, Dimensions, Animated} from 'react-native';
+import {View, Dimensions, Animated, StatusBar} from 'react-native';
 import FadeInView from 'react-native-fade-in-view';
-import StatusBar from '@react-native-community/status-bar';
 
 import colors from '../style/colors';
 import styleApp from '../style/style';
@@ -26,7 +25,7 @@ function loader() {
 }
 export default function initialPage(props) {
   StatusBar.setBarStyle('dark-content', true);
-  StatusBar.setHidden(false, true);
+  StatusBar.setHidden(false, 'slide');
   props.navigation.navigate('TabsApp');
   return loader();
 }

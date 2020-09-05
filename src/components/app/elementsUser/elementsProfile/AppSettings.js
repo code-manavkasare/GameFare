@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, Animated, Switch} from 'react-native';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
 import {Col, Row} from 'react-native-easy-grid';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';

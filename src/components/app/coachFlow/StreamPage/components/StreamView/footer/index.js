@@ -7,6 +7,7 @@ import isEqual from 'lodash.isequal';
 import BottomButtons from './components/BottomButtons';
 import VideosView from './components/VideosView';
 import {native} from '../../../../../../animations/animations';
+import styleApp from '../../../../../../style/style';
 
 class Footer extends Component {
   constructor(props) {
@@ -19,43 +20,22 @@ class Footer extends Component {
   footer() {
     const {
       setState,
-      translateYFooter,
       coachSessionID,
-      personSharingScreen,
-      videosBeingShared,
       otPublisherRef,
       members,
       publishVideo,
       publishAudio,
     } = this.props;
-    const translateY = translateYFooter.interpolate({
-      inputRange: [0, 1],
-      extrapolate: 'clamp',
-      outputRange: [300, 0],
-    });
     return (
-      <Animated.View style={[styles.footer, {transform: [{translateY}]}]}>
+      <Animated.View style={[styles.footer]}>
         <BottomButtons
           setState={setState}
-          onRef={(ref) => (this.bottomButtonRef = ref)}
-          openPastSessions={(val) =>
-            Animated.parallel([
-              Animated.timing(translateYFooter, native(val ? 1 : 0, 300)),
-            ]).start()
-          }
+          onRef={(ref) => (this.bottomButtonsRef = ref)}
           otPublisherRef={otPublisherRef}
           members={members}
           publishVideo={publishVideo}
           publishAudio={publishAudio}
           coachSessionID={coachSessionID}
-        />
-
-        <VideosView
-          setState={setState}
-          personSharingScreen={personSharingScreen}
-          videosBeingShared={videosBeingShared}
-          coachSessionID={coachSessionID}
-          onRef={(ref) => (this.pastSessionsRef = ref)}
         />
       </Animated.View>
     );
@@ -67,6 +47,7 @@ class Footer extends Component {
 
 const styles = StyleSheet.create({
   footer: {
+    ...styleApp.center,
     bottom: 90,
     width: '100%',
     position: 'absolute',
