@@ -1,10 +1,10 @@
 import React from 'react';
-import {Text, View, styleAppheet, StyleSheet} from 'react-native';
+import {Text, View, styleAppheet, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
 import {navigate} from '../../../../../../NavigationService';
 import Orientation from 'react-native-orientation-locker';
-import Animated from 'react-native-reanimated';
+import Reanimated from 'react-native-reanimated';
+import {native} from '../../../../animations/animations';
 
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
@@ -12,9 +12,57 @@ import {heightFooter} from '../../../../style/sizes';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import Button from '../../../../layout/Views/Button';
 
-class MainTabIcon extends React.Component {
+class FooterButton extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      recording: false,
+    };
+    this.recordingIndicator = {
+      color: new Animated.Value(0),
+    };
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const {generalSessionRecording} = this.props;
+    if (
+      generalSessionRecording &&
+      generalSessionRecording !== prevProps.generalSessionRecording
+    ) {
+      this.indicatorAnimation();
+    }
+  }
+  indicatorAnimation() {
+    const {generalSessionRecording} = this.props;
+    if (generalSessionRecording) {
+      Animated.timing(this.recordingIndicator.color, native(1, 1500)).start(
+        () => {
+          Animated.timing(this.recordingIndicator.color, native(0, 1500)).start(
+            () => {
+              this.indicatorAnimation();
+            },
+          );
+        },
+      );
+    } else {
+      this.recordingIndicator.color.setValue(0);
+    }
+  }
+  recordButton() {
+    const {tintColor, generalSessionRecording} = this.props;
+    return (
+      <Reanimated.View style={{...styles.recordButton, borderColor: tintColor}}>
+        {generalSessionRecording && (
+          <View style={{...styles.recordButtonActive}}>
+            <Animated.View
+              style={{
+                ...styles.recordButtonOverlay,
+                opacity: this.recordingIndicator.color,
+              }}
+            />
+          </View>
+        )}
+      </Reanimated.View>
+    );
   }
   buttonFooter() {
     const {
@@ -28,6 +76,7 @@ class MainTabIcon extends React.Component {
       isFocused,
       userID,
       scale,
+      disableAnimation,
     } = this.props;
     const conditionDisplayPastille =
       Object.values(discussions).filter((discussion) => {
@@ -58,24 +107,24 @@ class MainTabIcon extends React.Component {
         fontSize: 13,
       },
     ];
-    const recordButtonYTranslate = Animated.interpolate(scale, {
+    const recordButtonYTranslate = Reanimated.interpolate(scale, {
       inputRange: [0.7, 1],
-      outputRange: [0, -15],
+      outputRange: [0, disableAnimation ? 0 : -15],
     });
     return (
       <Button
         view={() => {
           return (
-            <Animated.View
+            <Reanimated.View
               style={{
                 ...styles.buttonView,
                 transform: [
-                  {scale: scale ? scale : 1},
+                  {scale: scale ? (disableAnimation ? 0.7 : scale) : 1},
                   {translateY: scale ? recordButtonYTranslate : 0},
                 ],
               }}>
               {displayPastille && conditionDisplayPastille && (
-                <Animated.View
+                <Reanimated.View
                   style={{...styles.roundMessage, backgroundColor: tintColor}}
                 />
               )}
@@ -88,14 +137,12 @@ class MainTabIcon extends React.Component {
                   reanimated
                 />
               ) : (
-                <Animated.View
-                  style={{...styles.recordButton, borderColor: tintColor}}
-                />
+                this.recordButton()
               )}
               {label && (
-                <Animated.Text style={labelStyle}>{label}</Animated.Text>
+                <Reanimated.Text style={labelStyle}>{label}</Reanimated.Text>
               )}
-            </Animated.View>
+            </Reanimated.View>
           );
         }}
         click={() => {
@@ -156,6 +203,18 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     borderWidth: 6.5,
   },
+  recordButtonActive: {
+    height: 30,
+    width: 30,
+    borderRadius: 5,
+    backgroundColor: colors.grey,
+    opacity: 0.5,
+  },
+  recordButtonOverlay: {
+    ...styleApp.fullSize,
+    backgroundColor: colors.red,
+    borderRadius: 5,
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -163,10 +222,11 @@ const mapStateToProps = (state) => {
     userConnected: state.user.userConnected,
     discussions: state.message.conversations,
     userID: state.user.userID,
+    generalSessionRecording: state.layout.generalSessionRecording,
   };
 };
 
 export default connect(
   mapStateToProps,
   {},
-)(MainTabIcon);
+)(FooterButton);

@@ -1,9 +1,8 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions, Share} from 'react-native';
+import {View, StyleSheet, Dimensions, Share, StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
-import StatusBar from '@react-native-community/status-bar';
 import Orientation from 'react-native-orientation-locker';
 
 import styleApp from '../../style/style';
@@ -78,27 +77,31 @@ export default class PickMembersPage extends React.Component {
     const branchLinkOption = branchLink && branchLink !== '';
     return (
       <View style={{backgroundColor: colors.white, height: height}}>
-        {branchLinkOption && <PickMembersHeader
-          title={titleHeader}
-          icon1={'times'}
-          clickButton1={() => this.close(true)}
-          icon2={'external-link-alt'}
-          clickButton2={() => {
-            Share.share({
-              url: branchLink,
-            });
-          }}
-          loader={false}
-        />}
-        {!branchLinkOption && <PickMembersHeader
-          title={titleHeader}
-          icon1={'times'}
-          clickButton1={() => this.close(true)}
-          icon2={icon2}
-          text2={text2}
-          clickButton2={() => clickButton2()}
-          loader={false}
-        />}
+        {branchLinkOption && (
+          <PickMembersHeader
+            title={titleHeader}
+            icon1={'times'}
+            clickButton1={() => this.close(true)}
+            icon2={'external-link-alt'}
+            clickButton2={() => {
+              Share.share({
+                url: branchLink,
+              });
+            }}
+            loader={false}
+          />
+        )}
+        {!branchLinkOption && (
+          <PickMembersHeader
+            title={titleHeader}
+            icon1={'times'}
+            clickButton1={() => this.close(true)}
+            icon2={icon2}
+            text2={text2}
+            clickButton2={() => clickButton2()}
+            loader={false}
+          />
+        )}
         <PickMembers
           displayCurrentUser={displayCurrentUser}
           allowSelectMultiple={allowSelectMultiple}

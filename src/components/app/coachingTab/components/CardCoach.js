@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Text, StyleSheet, View, Image} from 'react-native';
-import StatusBar from '@react-native-community/status-bar';
 import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import {navigate} from '../../../../../NavigationService';

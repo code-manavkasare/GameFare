@@ -69,7 +69,8 @@ class ExportQueue extends Component {
         loader: false,
       },
     );
-    return {members, ...newState};
+    console.log(newState);
+    return {members: fullExportingMembers, ...newState};
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -111,6 +112,7 @@ class ExportQueue extends Component {
     if (!exportingMembers.includes(member.id)) {
       exportingMembers.push(member.id);
     }
+    console.log('exportingmembers', exportingMembers);
     this.setState({
       visible: true,
       flagsSelected,
@@ -131,20 +133,25 @@ class ExportQueue extends Component {
     if (!ignore) {
       const {members} = this.state;
       const {coachSessionID} = this.props;
-      const updates = Object.values(members).reduce((updates, member) => {
-        if (member && member.id) {
-          updates[
-            `coachSessions/${coachSessionID}/members/${
-              member.id
-            }/recording/enabled`
-          ] = true;
-          updates[
-            `coachSessions/${coachSessionID}/members/${
-              member.id
-            }/recording/uploadRequest`
-          ] = {};
-        }
-      }, {});
+      const updates =
+        members &&
+        Object.values(members).reduce((pass, member) => {
+          let updates = {...pass};
+          if (member && member.id) {
+            updates[
+              `coachSessions/${coachSessionID}/members/${
+                member.id
+              }/recording/enabled`
+            ] = true;
+            updates[
+              `coachSessions/${coachSessionID}/members/${
+                member.id
+              }/recording/uploadRequest`
+            ] = {};
+          }
+          return updates;
+        }, {});
+      console.log(updates);
       if (updates && Object.values(updates).length > 0) {
         database()
           .ref()
@@ -370,7 +377,7 @@ class ExportQueue extends Component {
         pointerEvents={visible ? 'auto' : 'none'}
         style={{
           ...styles.container,
-          width,
+          width: sizes.width * 0.93,
           transform: [{translateY: translateY}],
         }}>
         <ButtonColor
@@ -420,11 +427,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingBottom: 450 + sizes.offsetFooterStreaming,
+    paddingBottom: 35,
     backgroundColor: colors.white,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    top: 60,
+    borderRadius: 25,
+    top: 50,
     ...styleApp.shadow,
     zIndex: 2,
   },

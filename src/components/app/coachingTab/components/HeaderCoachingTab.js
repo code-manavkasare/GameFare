@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
+import {StatusBar} from 'react-native';
 import {connect} from 'react-redux';
-import StatusBar from '@react-native-community/status-bar';
 
 import {navigate} from '../../../../../NavigationService';
 

@@ -40,10 +40,11 @@ class DrawView extends Component {
     this.props.onRef(this);
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.videoBeingShared)
+    if (props.videoBeingShared) {
       return {
         drawings: props.drawings,
       };
+    }
     return {};
   }
   clear = async () => {
@@ -55,12 +56,13 @@ class DrawView extends Component {
         onDrawingChange,
         videoBeingShared,
       } = this.props;
-      if (videoBeingShared)
+      if (videoBeingShared) {
         await database()
           .ref(
             `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/`,
           )
           .remove();
+      }
       this.canvasRef.clear();
       this.setState({drawings: {}});
       onDrawingChange(index, {});
@@ -78,7 +80,9 @@ class DrawView extends Component {
 
     let idLastDrawing = false;
     const lastDrawing = getLastDrawing(drawings);
-    if (lastDrawing) idLastDrawing = getLastDrawing(drawings).id;
+    if (lastDrawing) {
+      idLastDrawing = getLastDrawing(drawings).id;
+    }
     console.log('undo', idLastDrawing, videoBeingShared);
     if (idLastDrawing) {
       if (!videoBeingShared) {
@@ -114,7 +118,7 @@ class DrawView extends Component {
     const id = generateID();
     let {data} = path;
 
-    if (drawSetting === 'custom')
+    if (drawSetting === 'custom') {
       data = data.map((dot) => {
         let x = Number(dot.split(',')[0]);
         x = x / widthDrawView;
@@ -122,6 +126,7 @@ class DrawView extends Component {
         y = y / heightDrawView;
         return x + ',' + y;
       });
+    }
 
     path = {
       ...path,
@@ -147,7 +152,9 @@ class DrawView extends Component {
       await this.setState({drawings: newDrawings});
       onDrawingChange(index, newDrawings);
     }
-    if (drawSetting !== 'straight') this.canvasRef.deletePath(path.idSketch);
+    if (drawSetting !== 'straight') {
+      this.canvasRef.deletePath(path.idSketch);
+    }
   }
   drawView() {
     const {drawingOpen, sizeVideo, playerStyle} = this.props;
@@ -179,7 +186,9 @@ class DrawView extends Component {
       height: h,
       width: w,
     };
-    if (styleDrawView.h === 0) return null;
+    if (styleDrawView.h === 0) {
+      return null;
+    }
     return (
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}
@@ -243,14 +252,15 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   const {coachSessionID, archiveID, videoBeingShared} = props;
   let drawings = {};
-  if (videoBeingShared)
+  if (videoBeingShared) {
     drawings =
-      state.coachSessions[coachSessionID].sharedVideos[archiveID].drawings;
+      state.coachSessions[coachSessionID]?.sharedVideos[archiveID]?.drawings;
+  }
 
   return {
     drawings: drawings,
     userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
+    infoUser: state?.user?.infoUser?.userInfo,
   };
 };
 

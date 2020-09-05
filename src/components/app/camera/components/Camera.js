@@ -6,6 +6,7 @@ import {Col, Row} from 'react-native-easy-grid';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
+import {layoutAction} from '../../../../actions/layoutActions';
 
 import {getVideoInfo, getNewVideoSavePath} from '../../../functions/pictures';
 import {
@@ -13,7 +14,7 @@ import {
   openVideoPlayer,
 } from '../../../functions/videoManagement';
 
-export default class Camera extends Component {
+class Camera extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,9 +61,11 @@ export default class Camera extends Component {
     }
   }
   startRecording() {
+    const {layoutAction} = this.props;
     const {camera, state} = this;
     const {isRecording} = state;
     if (camera && !isRecording) {
+      layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
         path: getNewVideoSavePath(),
@@ -77,10 +80,13 @@ export default class Camera extends Component {
     }
   }
   async stopRecording(saveVideo) {
+    const {layoutAction} = this.props;
     const {camera, state} = this;
     const {promiseRecording, isRecording} = state;
     if (camera && isRecording) {
+      layoutAction('setGeneralSessionRecording', false);
       await camera.stopRecording();
+      console.log('stopped recording');
       if (saveVideo) {
         this.saveRecording(await promiseRecording);
       }
@@ -94,6 +100,7 @@ export default class Camera extends Component {
   async saveRecording(recording) {
     const {flags} = this.state;
     let videoInfo = await getVideoInfo(recording.uri);
+    console.log('got video info');
     if (flags.length > 0) {
       videoInfo = {...videoInfo, flags};
       this.setState({flags: []});
@@ -148,3 +155,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+const mapStateToProps = (state) => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  {layoutAction},
+)(Camera);

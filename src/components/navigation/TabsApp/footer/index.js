@@ -17,10 +17,27 @@ import styleApp from '../../../style/style';
 class Footer extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      disableAnimation: false,
+    };
   }
   componentDidMount() {
     this.props.onRef(this);
     this.notificationHandler();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const {index: currentIndex} = this.props.state;
+    if (currentIndex !== prevProps.state.index) {
+      if (currentIndex !== 1 && prevProps.state.index !== 1) {
+        this.smoothJump();
+      }
+    }
+  }
+  smoothJump() {
+    this.setState({disableAnimation: true});
+    setTimeout(() => {
+      this.setState({disableAnimation: false});
+    }, 250);
   }
   async notificationHandler() {
     const {layoutAction: propLayoutAction, userID} = this.props;
@@ -55,6 +72,7 @@ class Footer extends React.Component {
       userConnected,
       position,
     } = this.props;
+    const {disableAnimation} = this.state;
     if (!userConnected) {
       return null;
     }
@@ -81,7 +99,7 @@ class Footer extends React.Component {
             const buttonColor = Animated.interpolateColors(position, {
               inputRange,
               outputColorRange: inputRange.map((i) => {
-                if (i === 1) {
+                if (i === 1 && !disableAnimation) {
                   return index === 1 ? colors.white : colors.grey;
                 } else {
                   return propColors.inactive;
@@ -97,6 +115,7 @@ class Footer extends React.Component {
             return (
               <Col key={index}>
                 <ButtonFooter
+                  disableAnimation={disableAnimation}
                   navigation={navigation}
                   isFocused={isFocused}
                   tintColor={buttonColor}
@@ -133,13 +152,16 @@ class Footer extends React.Component {
   };
   backdrop() {
     const {state, position} = this.props;
+    const {disableAnimation} = this.state;
     let inputRange = state.routes.map((_, i) => i);
     inputRange.unshift(-1);
     inputRange.push(state.routes.length);
     const translateYFooter = Animated.interpolate(position, {
       inputRange,
       outputRange: inputRange.map((i) =>
-        i === 1 ? sizes.heightFooter + sizes.marginBottomApp : 0,
+        i === 1 && !disableAnimation
+          ? sizes.heightFooter + sizes.marginBottomApp
+          : 0,
       ),
     });
 
@@ -153,24 +175,33 @@ class Footer extends React.Component {
     );
   }
   labelIndicator() {
-    const {state, position} = this.props;
+    const {state, position, currentScreenSize} = this.props;
+    const {disableAnimation} = this.state;
+    const {currentWidth} = currentScreenSize;
+    const indicatorWidth = 50;
     let inputRange = state.routes.map((_, i) => i);
     inputRange.unshift(-1);
     inputRange.push(3);
     const translateXIndicator = Animated.interpolate(position, {
       inputRange,
-      outputRange: inputRange.map((i) => i * 106),
+      outputRange: inputRange.map(
+        (i) =>
+          (i * (sizes.width * 0.85)) / state.routes.length -
+          indicatorWidth / 2 +
+          currentWidth * 0.2175 +
+          (0.85 * (currentWidth - sizes.width)) / state.routes.length,
+      ),
     });
     const widthIndicator = Animated.interpolate(position, {
       inputRange,
       outputRange: inputRange.map((i) => {
-        return i === 1 ? 50 : 50;
+        return i === 1 ? indicatorWidth : indicatorWidth;
       }),
     });
     const opacityIndicator = Animated.interpolate(position, {
       inputRange,
       outputRange: inputRange.map((i) => {
-        return i === 1 ? 0 : 1;
+        return i === 1 && !disableAnimation ? 0.6 : 1;
       }),
     });
 
@@ -218,7 +249,7 @@ const styles = StyleSheet.create({
   footerBody: {
     ...styleApp.fullSize,
     overflow: 'hidden',
-    width: '85%',
+    width: sizes.width * 0.85,
     marginTop: -15,
   },
   absoluteButtonMoving: {
@@ -237,12 +268,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 5,
     bottom: sizes.marginBottomApp - 10,
-    width: '70%',
+    width: '100%',
   },
   labelIndicator: {
     borderRadius: 10,
     backgroundColor: colors.blueLight,
-    left: 0,
+    // left: 0,
     position: 'absolute',
     height: '100%',
   },
@@ -254,6 +285,7 @@ const mapStateToProps = (state) => {
     activeTab: state.layout.activeTab,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

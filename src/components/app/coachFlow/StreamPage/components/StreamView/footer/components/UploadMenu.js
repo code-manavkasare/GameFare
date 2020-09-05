@@ -25,9 +25,9 @@ class UploadMenu extends Component {
       visible: false,
       totalProgress: 0,
       taskLength: 0,
-      cloudQueue: []
-    }
-    this.uploadReveal = new Animated.Value(-1);
+      cloudQueue: [],
+    };
+    this.uploadReveal = new Animated.Value(0);
   }
 
   componentDidMount() {
@@ -35,74 +35,76 @@ class UploadMenu extends Component {
   }
 
   display(val, taskLength) {
-    const {visible} = this.state
-    
+    const {visible} = this.state;
+
     if (val === 0) {
-      this.setState({totalProgress: 1})
+      this.setState({totalProgress: 1});
       setTimeout(() => {
         Animated.parallel([
-          Animated.timing(this.uploadReveal, native(-1, 300))
+          Animated.timing(this.uploadReveal, native(-1, 300)),
         ]).start();
-        this.setState({visible: false})
-        this.props.close(true)
-      }, 1500)
+        this.setState({visible: false});
+        this.props.close(true);
+      }, 1500);
     } else if (!visible) {
-      this.props.openUploadQueue()
+      this.props.openUploadQueue();
     }
     if (taskLength && taskLength > this.state.taskLength) {
-      this.setState({taskLength})
+      this.setState({taskLength});
     }
   }
 
   open(val) {
-    this.setState({visible: true})
+    this.setState({visible: true});
     Animated.parallel([
-      Animated.timing(this.uploadReveal, native(val ? val : 0, 300))
+      Animated.timing(this.uploadReveal, native(val ? val : 0, 300)),
     ]).start();
   }
 
   close() {
-    const {taskLength} = this.state
-    this.setState({visible: false})
+    const {taskLength} = this.state;
+    this.setState({visible: false});
     Animated.parallel([
-      Animated.timing(this.uploadReveal, native((taskLength > 0) ? 0 : -1, 300))
+      Animated.timing(this.uploadReveal, native(taskLength > 0 ? 0 : 0, 300)),
     ]).start();
   }
 
   closeButton() {
-    const {visible} = this.state
-    return ( visible &&
-      <Animated.View 
-        style={{
-          ...styles.buttonClose,
-          opacity: this.uploadReveal
-        }}>
-      <ButtonColor
-        view={() => {
-          return (
-            <AllIcons
-              name="times"
-              size={13}
-              color={colors.title}
-              type="font"
-            />
-          );
-        }}
-        click={() => {
-          this.props.close()
-        }}
-        color={colors.white}
-        onPressColor={colors.off}
-      />
-      </Animated.View>
-    )
+    const {visible} = this.state;
+    return (
+      visible && (
+        <Animated.View
+          style={{
+            ...styles.buttonClose,
+            opacity: this.uploadReveal,
+          }}>
+          <ButtonColor
+            view={() => {
+              return (
+                <AllIcons
+                  name="times"
+                  size={13}
+                  color={colors.title}
+                  type="font"
+                />
+              );
+            }}
+            click={() => {
+              this.props.close();
+            }}
+            color={colors.white}
+            onPressColor={colors.off}
+          />
+        </Animated.View>
+      )
+    );
   }
 
   totalProgress() {
     const {currentScreenSize} = this.props;
     const {currentWidth: width} = currentScreenSize;
-    const {totalProgress} = this.state
-    return(
+    const {totalProgress} = this.state;
+    return (
       <Animated.View style={{...styles.progressContainer, width}}>
         <Progress.Bar
           color={colors.blue}
@@ -113,41 +115,53 @@ class UploadMenu extends Component {
           unfilledColor={colors.white}
         />
       </Animated.View>
-    )
+    );
   }
 
   render() {
     const {currentScreenSize, members} = this.props;
-    const {currentWidth: width} = currentScreenSize;
-    const {length} = members
+    const {currentWidth: width, currentHeight: height} = currentScreenSize;
+    const {length} = members;
 
     const uploadTranslateY = this.uploadReveal.interpolate({
       inputRange: [-1, 0, 1],
-      outputRange: [400, 0, (length-1)*65-150]
-    })
+      outputRange: [height + 200, -200, (length - 1) * 65 - 350],
+    });
 
     return (
-      <Animated.View style={{
-        ...styles.menuContainer, 
-        width, 
-        bottom: (length-1)*65+120,
-        transform: [{translateY: uploadTranslateY}]
-      }}>
-      {this.totalProgress()}
-      {this.closeButton()}
-        <TouchableWithoutFeedback style={{height:80}} onPress={this.props.openUploadQueue}>
+      <Animated.View
+        style={{
+          ...styles.menuContainer,
+          // zIndex: 10,
+          width,
+          bottom: (length - 1) * 65 + 120,
+          transform: [{translateY: uploadTranslateY}],
+        }}>
+        {this.totalProgress()}
+        {this.closeButton()}
+        <TouchableWithoutFeedback
+          style={{height: 80}}
+          onPress={this.props.openUploadQueue}>
           <Text style={styles.text}>Uploading</Text>
         </TouchableWithoutFeedback>
-        <View style={{height:350, width:'100%'}}>
-          <QueueList 
-            onFetch={(cloudQueue) => {this.setState({cloudQueue})}}
-            onClose={() => {this.display(0)}}
-            onOpen={(taskLength) => {this.display(1, taskLength)}}
-            totalProgress={(totalProgress) => {this.setState({totalProgress})}}
+        <View style={{height: 150, width: '100%'}}>
+          <QueueList
+            onFetch={(cloudQueue) => {
+              this.setState({cloudQueue});
+            }}
+            onClose={() => {
+              this.display(0);
+            }}
+            onOpen={(taskLength) => {
+              this.display(1, taskLength);
+            }}
+            totalProgress={(totalProgress) => {
+              this.setState({totalProgress});
+            }}
           />
         </View>
       </Animated.View>
-    )
+    );
   }
 }
 
@@ -156,24 +170,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingBottom:100 + sizes.offsetFooterStreaming,
+    paddingBottom: 30 + sizes.marginBottomApp,
     backgroundColor: colors.white,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderRadius: 25,
     bottom: 0,
     zIndex: 1,
-    ...styleApp.shadow
+    ...styleApp.shadow,
   },
   text: {
     ...styleApp.text,
     marginTop: 20,
-    marginBottom:5,
+    marginBottom: 5,
     fontSize: 21,
     marginHorizontal: 'auto',
     textAlign: 'left',
-    marginLeft:'5%',
+    marginLeft: '5%',
     fontWeight: 'bold',
-    color:colors.black
+    color: colors.black,
   },
   buttonClose: {
     position: 'absolute',
@@ -181,23 +194,23 @@ const styles = StyleSheet.create({
     right: '5%',
     height: 35,
     width: 35,
-    zIndex:2,
+    zIndex: 2,
     borderRadius: 20,
-    overflow:'hidden'
+    overflow: 'hidden',
   },
   progressContainer: {
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     opacity: 0.6,
-    overflow:'hidden',
-    height:25,
-    position:'absolute',
-    width:'100%',
-    top:0,
-    left:0,
-    zIndex:1,
-  }
-})
+    overflow: 'hidden',
+    height: 25,
+    position: 'absolute',
+    width: '100%',
+    top: 0,
+    left: 0,
+    zIndex: 1,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {

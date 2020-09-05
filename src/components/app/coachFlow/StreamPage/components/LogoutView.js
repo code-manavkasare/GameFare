@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   Image,
   Animated,
+  StatusBar,
 } from 'react-native';
 import Video from 'gamefare-rn-video';
-import StatusBar from '@react-native-community/status-bar';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -32,7 +32,7 @@ export default class LogoutView extends Component {
     this.fadeInAnimation = new Animated.Value(1);
   }
   async componentDidMount() {
-    await StatusBar.setBarStyle('dark-content', true);
+    await StatusBar.setBarStyle('light-content', true);
     this.setState({displayVideo: true});
     await timeout(500);
     this.fadeIn();

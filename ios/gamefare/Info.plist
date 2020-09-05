@@ -163,7 +163,7 @@
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UIStatusBarHidden</key>
-	<true/>
+	<false/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
@@ -172,8 +172,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<key>UIUserInterfaceStyle</key>
+  <string>Light</string>
+  <key>UIViewControllerBasedStatusBarAppearance</key>
+  <true/>
 	<key>branch_app_domain</key>
 	<string>gamefare.app.link</string>
 	<key>branch_key</key>

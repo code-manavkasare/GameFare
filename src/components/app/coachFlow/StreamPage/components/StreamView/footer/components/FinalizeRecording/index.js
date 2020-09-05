@@ -1,10 +1,16 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 import isEqual from 'lodash.isequal';
-import StatusBar from '@react-native-community/status-bar';
 
 import HeaderBackButton from '../../../../../../../../layout/headers/HeaderBackButton';
 import ScrollView from '../../../../../../../../layout/scrollViews/ScrollView2';
@@ -33,8 +39,9 @@ class FinalizeRecording extends Component {
     StatusBar.setBarStyle('dark-content', true);
   }
   static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.route.params.member, state.member))
+    if (!isEqual(props.route.params.member, state.member)) {
       return {member: props.route.params.member};
+    }
     return {};
   }
   confirm = async () => {
@@ -100,7 +107,9 @@ class FinalizeRecording extends Component {
     goBack();
   }
   flagList(flags) {
-    if (!flags) return null;
+    if (!flags) {
+      return null;
+    }
     const {member, flagsSelected} = this.state;
     const {recording} = member;
     return (
@@ -121,9 +130,10 @@ class FinalizeRecording extends Component {
               onRef={(ref) => (this.itemsRef[flag.id] = ref)}
               click={() => {
                 let {flagsSelected} = this.state;
-                delete flagsSelected['fullVideo'];
-                if (flagsSelected[flag.id]) delete flagsSelected[flag.id];
-                else
+                delete flagsSelected.fullVideo;
+                if (flagsSelected[flag.id]) {
+                  delete flagsSelected[flag.id];
+                } else {
                   flagsSelected = {
                     ...flagsSelected,
                     [flag.id]: {
@@ -132,6 +142,7 @@ class FinalizeRecording extends Component {
                       thumbnail: flag.thumbnail,
                     },
                   };
+                }
                 this.setState({flagsSelected});
               }}
             />
@@ -152,10 +163,11 @@ class FinalizeRecording extends Component {
         </View>
         <CardFlag
           flagsSelected={flagsSelected}
-          onRef={(ref) => (this.itemsRef['fullVideo'] = ref)}
+          onRef={(ref) => (this.itemsRef.fullVideo = ref)}
           click={() => {
-            if (flagsSelected['fullVideo'])
+            if (flagsSelected.fullVideo) {
               return this.setState({flagsSelected: {}});
+            }
             return this.setState({
               flagsSelected: {
                 ['fullVideo']: {
