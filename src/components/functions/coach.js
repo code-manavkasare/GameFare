@@ -10,7 +10,6 @@ import isEqual from 'lodash.isequal';
 import {generateID} from './createEvent';
 import {getVideoUUID} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
-import {shareVideosWithTeam} from './videoManagement';
 
 import {store} from '../../../reduxStore';
 import {
@@ -327,11 +326,12 @@ const generateFlagsThumbnail = async (
             thumbnail = await compressThumbnail(thumbnail);
             return {
               type: 'image',
+              id: generateID(),
+              timeSubmitted: Date.now(),
               url: thumbnail,
               storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${id}`,
+              isBackground: false,
               displayInList: false,
-              progress: 0,
-              date: Date.now(),
             };
           }),
         );
@@ -342,11 +342,12 @@ const generateFlagsThumbnail = async (
   thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
   thumbnails.push({
     type: 'image',
+    id: generateID(),
+    timeSubmittted: Date.now(),
     url: thumbnailFullVideo,
     storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`,
+    background: false,
     displayInList: false,
-    progress: 0,
-    date: Date.now(),
   });
   database()
     .ref()
@@ -664,8 +665,8 @@ const selectVideosFromLibrary = (coachSessionID) => {
   navigate('SelectVideosFromLibrary', {
     selectableMode: true,
     selectOnly: true,
-    confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
-      shareVideosWithTeams(selectedLocalVideos, selectedFirebaseVideos, [
+    confirmVideo: (selectedVideos) =>
+      shareVideosWithTeams(selectedVideos, [
         coachSessionID,
       ]),
   });

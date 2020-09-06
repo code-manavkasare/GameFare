@@ -4,6 +4,9 @@ import {
   setUploadTaskProgress,
   setUploadTaskError,
 } from '../../actions/uploadQueueActions';
+import {
+  setArchive
+} from '../../actions/archivesActions';
 
 
 //import database from '@react-native-firebase/database';
@@ -84,22 +87,11 @@ const uploadImage = (uploadTask) => {
 };
 
 const uploadNext = (uploadSnapshot, uploadTask) => {
-  const {id, cloudID, videoInfo} = uploadTask;
+  const {videoInfo} = uploadTask;
   const progress = uploadSnapshot.bytesTransferred / uploadSnapshot.totalBytes;
-  if (progress) {
-    if (cloudID) {
-      updateCloudUploadProgress(cloudID, progress);
-    }
-    if (videoInfo) {
-      updateLocalUploadProgress(videoInfo.id, progress);
-    }
-    updateCloudUploadProgress(uploadTask.cloudID, progress);
-    store.dispatch(
-      setUploadTaskProgress({
-        id,
-        progress,
-      }),
-    );
+  if (progress && videoInfo && videoInfo.id) {
+    updateCloudUploadProgress(videoInfo.id, progress);
+    store.dispatch(setArchive({...videoInfo, progress}));
   }
 };
 
@@ -115,12 +107,10 @@ const uploadError = (error, uploadTask) => {
 };
 
 const uploadComplete = async (uploadTask) => {
-  const {storageDestination, filename, cloudID, videoInfo} = uploadTask;
-  if (cloudID) {
-    updateCloudUploadProgress(uploadTask.cloudID, null);
-  }
-  if (videoInfo) {
-    updateLocalUploadProgress(videoInfo.id, null);
+  const {storageDestination, filename, videoInfo} = uploadTask;
+  if (videoInfo && videoInfo.id) {
+    updateCloudUploadProgress(videoInfo.id, null);
+    store.dispatch(setArchive({...videoInfo, progress: null}));
   }
   const cloudUrl = await storage()
     .ref(storageDestination)

@@ -11,23 +11,25 @@ import {generateID} from './utility';
 import {navigate, goBack} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
-import {
-  addVideos,
-  removeVideo,
-  hideVideo,
-  updateLocalPath,
-  updateLocalThumbnail,
-  updateProgressLocalVideo,
-} from '../../actions/localVideoLibraryActions';
 import {sendNewMessage} from './message';
 import {enqueueUploadTask} from '../../actions/uploadQueueActions';
 import {setLayout} from '../../actions/layoutActions';
+import {
+  addUserLocalArchive,
+  removeUserLocalArchive,
+} from '../../actions/localVideoLibraryActions';
+import {
+  setArchive,
+  resetArchives,
+  deleteArchive,
+} from '../../actions/archivesActions';
 
 import {
   shareCloudVideo,
   createCloudVideo,
   claimCloudVideo,
   setCloudVideoThumbnail,
+  deleteCloudVideo,
 } from '../database/firebase/videosManagement';
 
 const generateSnippetsFromFlags = async (source, flags) => {
@@ -57,10 +59,12 @@ const generateSnippetsFromFlags = async (source, flags) => {
 const arrayUploadFromSnippets = async ({
   flagsSelected,
   recording,
+  coachSessionID,
   memberID,
   members,
   userID,
 }) => {
+  let videoInfos;
   let flags = Object.values(flagsSelected).filter((flag) => {
     return flag?.id !== `${userID}-fullVideo`;
   });
@@ -69,40 +73,48 @@ const arrayUploadFromSnippets = async ({
       recording.localSource,
       flags,
     );
-    flagsWithSnippets.forEach(async (flag, index) => {
-      let {snippetLocalPath, thumbnail} = flag;
-      const videoInfo = await getVideoInfo(snippetLocalPath, thumbnail);
-      const cloudVideo = await uploadLocalVideo(videoInfo);
-      members.map((member) => {
-        shareCloudVideo(member.id, cloudVideo.id);
-      });
-    });
+    videoInfos = await Promise.all(
+      flagsWithSnippets.map((flag, index) => {
+        let {snippetLocalPath, thumbnail} = flag;
+        return getVideoInfo(snippetLocalPath, thumbnail);
+      }),
+    );
   }
   if (flagsSelected[`${userID}-fullVideo`]) {
     const {localSource, thumbnail} = recording;
-    const videoInfo = await getVideoInfo(localSource, thumbnail);
-    const cloudVideo = await uploadLocalVideo(videoInfo);
-    members.map((member) => {
-      shareCloudVideo(member.id, cloudVideo.id);
-    });
+    videoInfos.push(await getVideoInfo(localSource, thumbnail));
   }
+  await Promise.all(videoInfos.map((video) => addLocalVideo(video)));
+  shareVideosWithTeams(videoInfos.map((v) => v.id), [coachSessionID]);
 };
 
 const addLocalVideo = async (video) => {
   if (!video.id) {
     video.id = getVideoUUID(video.url);
   }
-  await store.dispatch(addVideos({[video.id]: video}));
+  if (!video.startTimestamp) {
+    video.startTimestamp = Date.now();
+  }
+  await store.dispatch(setArchive({...video, local: true}));
+  await store.dispatch(
+    addUserLocalArchive({
+      archiveID: video.id,
+      startTimestamp: video.startTimestamp,
+    }),
+  );
 };
 
-const deleteLocalVideo = (id) => {
-  const videoInfo = getLocalVideoByID(id);
-  if (videoInfo) {
-    store.dispatch(removeVideo(id));
-    if (videoInfo.url) {
-      deleteLocalVideoFile(videoInfo.url);
+const deleteVideos = (ids) => {
+  const infos = ids.map((id) => getFirebaseVideoByID(id));
+  infos.forEach((info) => {
+    if (info.local) {
+      deleteLocalVideoFile(info.url);
+    } else {
+      deleteCloudVideo(info.id);
     }
-  }
+    store.dispatch(removeUserLocalArchive(info.id)); // offline entry in library
+    store.dispatch(deleteArchive(info.id));
+  });
 };
 
 const openVideoPlayer = async ({archives, open, coachSessionID}) => {
@@ -116,76 +128,47 @@ const openVideoPlayer = async ({archives, open, coachSessionID}) => {
   return goBack();
 };
 
-const uploadLocalVideo = async (videoInfo, background) => {
-  const videoUploadTaskID = generateID();
-  const cloudVideo = await createCloudVideo(videoInfo);
-  store.dispatch(
-    enqueueUploadTask({
-      type: 'image',
-      id: generateID(),
-      timeSubmitted: Date.now(),
-      url: videoInfo.thumbnail,
-      storageDestination: `archivedStreams/${cloudVideo.id}`,
-      isBackground: background,
-      displayInList: false,
-      afterUpload: () => {
-        store.dispatch(hideVideo(videoInfo.id));
-        claimCloudVideo(cloudVideo.id);
-      },
-    })
-  );
-  store.dispatch(
-    enqueueUploadTask({
-      type: 'video',
-      id: videoUploadTaskID,
-      timeSubmitted: Date.now(),
-      videoInfo,
-      cloudID: cloudVideo.id,
-      storageDestination: `archivedStreams/${cloudVideo.id}`,
-      isBackground: background,
-      displayInList: !background,
-      progress: 0,
-      afterUpload: () => {
-        deleteLocalVideo(videoInfo.id);
-      },
-    })
-  );
-  return cloudVideo;
-};
-
-const uploadLocalVideoLazy = async (
-  videoInfo,
-  background,
-) => {
-  const cloudVideo = await createCloudVideo(videoInfo);
-  const videoUploadTaskID = generateID();
-  store.dispatch(
-    enqueueUploadTask({
-      type: 'video',
-      id: videoUploadTaskID,
-      timeSubmitted: Date.now(),
-      videoInfo,
-      cloudID: cloudVideo.id,
-      storageDestination: `archivedStreams/${cloudVideo.id}`,
-      isBackground: background,
-      displayInList: !background,
-    }),
-  );
-  store.dispatch(
-    enqueueUploadTask({
-      type: 'image',
-      id: generateID(),
-      timeSubmitted: Date.now(),
-      url: videoInfo.thumbnail,
-      storageDestination: `archivedStreams/${cloudVideo.id}`,
-      isBackground: background,
-      displayInList: false,
-      afterUpload: () => {
-        claimCloudVideo(cloudVideo.id);
-        deleteLocalVideo(videoInfo.id);
-      },
-    }),
-  );
+const uploadLocalVideo = async (videoID, background) => {
+  const videoInfo = store.getState().archives[videoID];
+  if (videoInfo && videoInfo.local) {
+    const videoUploadTaskID = generateID();
+    const imageUploadTaskID = generateID();
+    const success = createCloudVideo(videoInfo);
+    if (success) {
+      store.dispatch(
+        enqueueUploadTask({
+          type: 'image',
+          id: imageUploadTaskID,
+          timeSubmitted: Date.now(),
+          url: videoInfo.thumbnail,
+          storageDestination: `archivedStreams/${videoID}`,
+          isBackground: background,
+          displayInList: false,
+        }),
+      );
+      store.dispatch(
+        enqueueUploadTask({
+          type: 'video',
+          id: videoUploadTaskID,
+          timeSubmitted: Date.now(),
+          videoInfo,
+          cloudID: videoID,
+          storageDestination: `archivedStreams/${videoID}`,
+          isBackground: background,
+          displayInList: !background,
+          progress: 0,
+          afterUpload: () => {
+            claimCloudVideo(videoID);
+            store.dispatch(setArchive({...videoInfo, local: false}));
+            store.dispatch(removeUserLocalArchive(videoID));
+            deleteLocalVideoFile(videoInfo.url);
+          },
+        }),
+      );
+    }
+    return success;
+  }
+  return false;
 };
 
 const deleteLocalVideoFile = async (path) => {
@@ -197,17 +180,12 @@ const deleteLocalVideoFile = async (path) => {
   });
 };
 
-const shareVideosWithTeams = async (localVideos, firebaseVideos, objectIDs) => {
+const shareVideosWithTeams = async (videos, objectIDs) => {
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
-  const videosToUpload = localVideos?.map(
-    (id) => store.getState().localVideoLibrary.videoLibrary[id],
-  );
-  const cloudVideos = await Promise.all(
-    videosToUpload.map((video) => uploadLocalVideo(video)),
-  );
-  const allVideos = firebaseVideos.concat(cloudVideos.map((vid) => vid.id));
-  const addToContents = allVideos.reduce((newContents, videoID) => {
+  const videoInfos = videos.map((id) => store.getState().archives[id]);
+  videoInfos.forEach((videoInfo) => uploadLocalVideo(videoInfo.id));
+  const addToContents = videos.reduce((newContents, videoID) => {
     newContents[videoID] = {
       id: videoID,
       timeStamp: Date.now(),
@@ -215,7 +193,7 @@ const shareVideosWithTeams = async (localVideos, firebaseVideos, objectIDs) => {
     return newContents;
   }, {});
   objectIDs.forEach((objectID) => {
-    allVideos.forEach((videoID) => {
+    videos.forEach((videoID) => {
       sendNewMessage({
         objectID,
         user: {
@@ -231,8 +209,6 @@ const shareVideosWithTeams = async (localVideos, firebaseVideos, objectIDs) => {
       .ref(`coachSessions/${objectID}/contents`)
       .update(addToContents);
   });
-
-  return allVideos;
 };
 
 const generateThumbnailSet = async (source, timeBounds, size, callback) => {
@@ -268,44 +244,48 @@ const getLocalVideoByID = (id) => {
 };
 
 const updateLocalVideoUrls = () => {
-  const videos = store.getState().localVideoLibrary.videoLibrary;
+  const videos = store.getState().archives;
   if (videos) {
-    Object.values(videos).forEach((video) => {
-      if (video.url) {
-        RNFS.exists(video.url).then(async (videoExists) => {
+    Object.values(videos)
+      .filter((v) => v.local)
+      .forEach(async (video) => {
+        if (video.url) {
+          const videoExists = await RNFS.exists(video.url);
           if (!videoExists) {
-            // video moved, fix path and make new thumbnail
             const newUrl = updateVideoSavePath(video.url);
-            const {path: newThumbnail} = await createThumbnail({
-              url: newUrl,
-            });
-            store.dispatch(updateLocalPath({id: video.id, url: newUrl}));
-            store.dispatch(
-              updateLocalThumbnail({id: video.id, thumbnail: newThumbnail}),
-            );
+            const fixWorked = await RNFS.exists(newUrl);
+            if (fixWorked) {
+              const {path: newThumbnail} = await createThumbnail({
+                url: newUrl,
+              });
+              store.dispatch(
+                setArchive({...video, url: newUrl, thumbnail: newThumbnail}),
+              );
+            } else {
+              store.dispatch(setArchive({...video, url: '', thumbnail: ''}));
+            }
           } else {
-            RNFS.exists(video.thumbnail).then(async (thumbnailExists) => {
-              if (!thumbnailExists) {
-                // video not moved but need to make new thumbnail
-                const {path: newThumbnail} = await createThumbnail({
-                  url: video.url,
-                });
-                store.dispatch(
-                  updateLocalThumbnail({id: video.id, thumbnail: newThumbnail}),
-                );
-              }
-            });
+            const thumbnailExists = RNFS.exists(video.thumbnail);
+            if (!thumbnailExists) {
+              const {path: newThumbnail} = await createThumbnail({
+                url: video.url,
+              });
+              store.dispatch(setArchive({...video, thumbnail: newThumbnail}));
+            }
           }
-        });
-      }
-    });
+        }
+      });
   }
 };
 
-const updateLocalUploadProgress = (videoID, progress) => {
-  const videoInfo = store.getState().localVideoLibrary.videoLibrary[videoID];
-  if (videoInfo) {
-    store.dispatch(updateProgressLocalVideo({videoID: videoInfo.id, progress}));
+const oneTimeFixStoreLocalVideoLibrary = () => {
+  const localVideos = store.getState().localVideoLibrary.videoLibrary;
+  if (localVideos) {
+    Object.values(localVideos)
+      .filter((v) => v && v.id && v.url && v.thumbnail)
+      .forEach((video) => {
+        addLocalVideo(video);
+      });
   }
 };
 
@@ -313,14 +293,13 @@ export {
   generateSnippetsFromFlags,
   arrayUploadFromSnippets,
   addLocalVideo,
-  deleteLocalVideo,
   uploadLocalVideo,
-  uploadLocalVideoLazy,
+  deleteVideos,
   openVideoPlayer,
   shareVideosWithTeams,
   getFirebaseVideoByID,
   getLocalVideoByID,
   generateThumbnailSet,
   updateLocalVideoUrls,
-  updateLocalUploadProgress,
+  oneTimeFixStoreLocalVideoLibrary,
 };

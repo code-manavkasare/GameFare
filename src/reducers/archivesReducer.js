@@ -16,8 +16,8 @@ const archivesReducer = (state = initialState, action) => {
       const {archive} = action;
       return {...state, [archive.id]: archive};
     case DELETE_ARCHIVE:
-      const {archiveId} = action;
-      return dissoc(archiveId, state);
+      const {archiveID} = action;
+      return dissoc(archiveID, state);
     case RESET_ARCHIVES:
       return initialState;
     default:
@@ -30,6 +30,9 @@ const bindedArchivesReducer = (state = initialStateBind, action) => {
     case SET_ARCHIVE_BINDED:
       const {archive} = action;
       return {...state, [archive.id]: archive.isBinded};
+    case DELETE_ARCHIVE:
+      const {archiveID} = action;
+      return dissoc(archiveID, state);
     default:
       return state;
   }

@@ -41,13 +41,7 @@ export default class Filmstrip extends Component {
     this.props.onRef(this);
     const {archiveId} = this.props;
     let local = true;
-    let archive = await getLocalVideoByID(archiveId);
-    if (!archive) {
-      local = false;
-    }
-    if (!local) {
-      archive = await getFirebaseVideoByID(archiveId);
-    }
+    let archive = await getFirebaseVideoByID(archiveId);
     this.setState({
       timeBounds: [0, archive.durationSeconds],
       thumbnailAspect: archive.size.height / archive.size.width,
@@ -77,7 +71,6 @@ export default class Filmstrip extends Component {
       onFilmstripLoad &&
       loadedThumbs === count
     ) {
-      console.log('seekbar loaded');
       onFilmstripLoad();
     }
   }

@@ -49,14 +49,14 @@ class CardArchive extends PureComponent {
     };
   }
   componentDidMount() {
-    const {local, id} = this.props;
-    if (!local) {
+    const {id} = this.props;
+    if (this.props.archive && !this.props.archive.local) {
       bindArchive(id);
     }
   }
   componentWillUnmount() {
-    const {id, local} = this.props;
-    if (!local) {
+    const {id} = this.props;
+    if (this.props.archive && !this.props.archive.local) {
       unbindArchive(id);
     }
   }
@@ -77,10 +77,10 @@ class CardArchive extends PureComponent {
   };
   openVideo = async () => {
     const {archive, coachSessionID, videosToOpen} = this.props;
-    const {url, id, local} = archive;
+    const {url, id} = archive;
     if (url && url !== '') {
       openVideoPlayer({
-        archives: videosToOpen ? videosToOpen : [{id, local}],
+        archives: videosToOpen ? videosToOpen.map(x => x.id) : [id],
         open: true,
         coachSessionID,
       });
@@ -267,8 +267,6 @@ const mapStateToProps = (state, props) => {
   return {
     archive: props.nativeArchive
       ? props.nativeArchive
-      : props.local
-      ? state.localVideoLibrary.videoLibrary[props.id]
       : state.archives[props.id],
   };
 };

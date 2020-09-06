@@ -33,7 +33,7 @@ class MemberSource extends Component {
   }
   async componentDidUpdate(prevProps, prevState) {
     const {member} = this.state;
-    const {coachSessionID, uploadQueueAction, getMembers, userID} = this.props;
+    const {coachSessionID, getMembers, userID} = this.props;
     const {recording, id: memberID} = member;
     const {recording: prevRecording} = prevState.member;
     if (recording?.uploadRequest && prevRecording) {

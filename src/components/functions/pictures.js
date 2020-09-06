@@ -203,15 +203,12 @@ const getVideoUUID = (path) => {
 
 const getVideoInfo = async (videoUrl, thumbnail, timestamp) => {
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  if (!thumbnail || thumbnail === '') {
-    thumbnail = await generateThumbnail(videoUrl, timestamp ? timestamp : 0);
-  }
+  const newtThumbnail = await generateThumbnail(videoUrl, timestamp ? timestamp : 0);
   const id = getVideoUUID(videoUrl);
   const videoInfo = {
     id,
-    thumbnail,
+    thumbnail: newtThumbnail,
     url: videoUrl,
-    local: true,
     durationSeconds: pmVideoInfo.duration,
     bitrate: pmVideoInfo.bitrate,
     frameRate: pmVideoInfo.frameRate,

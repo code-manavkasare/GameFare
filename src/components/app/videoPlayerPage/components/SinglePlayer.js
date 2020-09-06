@@ -165,7 +165,7 @@ class SinglePlayer extends Component {
       videosBeingShared,
     } = this.props;
     const {sizeVideo} = this.state;
-
+    console.log('numArchives', numArchives);
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
     if (!archive) {
@@ -256,8 +256,6 @@ const mapStateToProps = (state, props) => {
     userID: state.user.userID,
     archive: props.nativeArchive
       ? props.nativeArchive
-      : props.local
-      ? state.localVideoLibrary.videoLibrary[props.id]
       : state.archives[props.id],
   };
 };

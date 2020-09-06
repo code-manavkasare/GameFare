@@ -311,9 +311,7 @@ class StreamPage extends Component {
       const videos = coachSession.members[personSharingScreen].sharedVideos;
       openVideoPlayer({
         coachSessionID,
-        archives: Object.keys(videos).map((video) => {
-          return {id: video};
-        }),
+        archives: Object.keys(videos),
         open: true,
       });
     }
