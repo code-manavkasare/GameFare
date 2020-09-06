@@ -19,7 +19,6 @@ import {
 import {
   openVideoPlayer,
   getFirebaseVideoByID,
-  getLocalVideoByID,
 } from '../../functions/videoManagement';
 import {shareCloudVideoWithCoachSession} from '../../database/firebase/videosManagement';
 import {
@@ -34,21 +33,34 @@ import {
 class VideoPlayerPage extends Component {
   constructor(props) {
     super(props);
+    console.log('constructor', props.route.params.archives);
     this.state = {
-      archives: [],
+      archives: props.route.params.archives,
+      linkedPlayers: [],
       disableControls: false,
       isDrawingEnabled: false,
       isEditMode: false,
       isPreviewing: false,
       isRecording: false,
       landscape: false,
-      linkedPlayers: [], // each archive has a corresponding set of linkedPlayers
       previewStartTime: null,
       recordedActions: [],
       recordingStartTime: null,
     };
     this.videoPlayerRefs = [];
     this.focusListener = null;
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const {archives} = props.route.params;
+    const {linkedPlayers} = state;
+    if (archives.length > linkedPlayers.length) {
+      return {
+        archives,
+        linkedPlayers: archives.map(x => new Set()),
+      };
+    }
+    return {};
   }
 
   _orientationListener(o) {
@@ -60,6 +72,7 @@ class VideoPlayerPage extends Component {
   }
 
   componentDidMount() {
+    console.log('componentDidMount');
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
@@ -69,19 +82,17 @@ class VideoPlayerPage extends Component {
   }
 
   launchIfPreview = () => {
-    const {archives} = this.state;
-    archives.forEach(async (archive) => {
-      const videoInfo = archive.local
-        ? getLocalVideoByID(archive.id)
-        : getFirebaseVideoByID(archive.id);
-
-      const {recordedActions} = videoInfo;
-      if (recordedActions) {
-        await this.AudioRecorderPlayerRef.preparePlayer(videoInfo.audioUrl);
-        await this.setState({recordedActions});
-        this.previewRecording();
-      }
-    });
+    const {videoInfos} = this.props;
+    if (videoInfos && Object.values(videoInfos).length > 0) {
+      Object.values(videoInfos).forEach(async (videoInfo) => {
+        const {recordedActions} = videoInfo;
+        if (recordedActions) {
+          await this.AudioRecorderPlayerRef.preparePlayer(videoInfo.audioUrl);
+          await this.setState({recordedActions});
+          this.previewRecording();
+        }
+      });
+    }
   };
 
   componentWillUnmount() {
@@ -127,15 +138,6 @@ class VideoPlayerPage extends Component {
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.route?.params?.archives && state.archives.length === 0) {
-      return {
-        archives: props.route.params.archives,
-        linkedPlayers: props.route.params.archives.map((x) => new Set()),
-      };
-    }
-    return {};
-  }
   startRecording = async () => {
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
@@ -164,10 +166,12 @@ class VideoPlayerPage extends Component {
 
   playersAreLinked = (indexA, indexB) => {
     const {linkedPlayers} = this.state;
+    console.log('playersAreLinked', indexA, indexB, linkedPlayers);
     return linkedPlayers[indexA].has(indexB);
   };
 
   linkPlayers = async (a, b) => {
+    console.log('link players', a, b);
     let {linkedPlayers} = this.state;
     // union op
     const all = new Set();
@@ -179,9 +183,11 @@ class VideoPlayerPage extends Component {
     for (const elem of linkedPlayers[b]) {
       all.add(elem);
     }
+    console.log('all', all);
     for (const elem of all) {
       linkedPlayers[elem] = new Set([...all].filter((i) => i !== elem));
     }
+    console.log('linkedPlayers')
     await this.setState({linkedPlayers});
   };
 
@@ -351,6 +357,7 @@ class VideoPlayerPage extends Component {
     }
     await this.setState({isPreviewing: false, disableControls: false});
   };
+
   cancelPreviewRecording = async () => {
     this.AudioRecorderPlayerRef?.stopPlayingRecord();
     this.setState({
@@ -361,6 +368,7 @@ class VideoPlayerPage extends Component {
     });
     await this.resetPlayers();
   };
+
   onPlayPause = (i, paused, currentTime) => {
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
@@ -432,7 +440,7 @@ class VideoPlayerPage extends Component {
   saveReview = async () => {
     //To update for multiple video
     const {archives, recordedActions} = this.state;
-    const localVideoInfo = getLocalVideoByID(archives[0].id);
+    const localVideoInfo = getFirebaseVideoByID(archives[0].id);
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
     await generatePreview(localVideoInfo.url, recordedActions, audioFilePath);
     this.props.navigation.navigate('Alert', {
@@ -494,52 +502,22 @@ class VideoPlayerPage extends Component {
             hideLocal: videosBeingShared ? true : false,
             selectOnly: true,
             selectOne: true,
-            confirmVideo: async (
-              selectedLocalVideos,
-              selectedFirebaseVideos,
-            ) => {
-              let localVideoInfo = null;
-              let cloudVideoInfo = null;
-              if (selectedLocalVideos.length >= 1) {
-                const id = selectedLocalVideos[0];
+            navigateBackAfterConfirm: false,
+            confirmVideo: async (selectedVideos) => {
+              if (selectedVideos.length > 0) {
+                const selectedID = selectedVideos[0];
                 const duplicate = archives.reduce(
-                  (duplicate, archive) => duplicate || archive.id === id,
+                  (duplicate, archive) =>
+                    duplicate || archive.id === selectedID,
                   false,
                 );
-                if (duplicate) {
-                  return;
+                if (!duplicate) {
+                  const {navigate} = this.props.navigation;
+                  navigate('VideoPlayerPage', {
+                    ...this.props.route.params,
+                    archives: [...archives, selectedID],
+                  });
                 }
-                localVideoInfo = getLocalVideoByID(id);
-                //cloudVideoInfo = await uploadLocalVideo(localVideoInfo);
-              } else if (selectedFirebaseVideos.length >= 1) {
-                const id = selectedFirebaseVideos[0];
-                const duplicate = archives.reduce(
-                  (duplicate, archive) => duplicate || archive.id === id,
-                  false,
-                );
-                if (duplicate) {
-                  return;
-                }
-                cloudVideoInfo = getFirebaseVideoByID(id);
-              }
-              if (localVideoInfo) {
-                let {archives, linkedPlayers} = this.state;
-                archives.push(localVideoInfo);
-                linkedPlayers.push(new Set());
-                await this.setState({archives, linkedPlayers});
-              }
-              if (cloudVideoInfo) {
-                if (videosBeingShared) {
-                  shareCloudVideoWithCoachSession(
-                    cloudVideoInfo.id,
-                    coachSessionID,
-                    personSharingScreen,
-                  );
-                }
-                let {archives, linkedPlayers} = this.state;
-                archives.push(cloudVideoInfo);
-                linkedPlayers.push(new Set());
-                await this.setState({archives, linkedPlayers});
               }
             },
           });
@@ -630,25 +608,20 @@ class VideoPlayerPage extends Component {
     ) : null;
   };
 
-  singlePlayer = (archive, i) => {
-    const {session, currentSessionID: coachSessionID} = this.props;
-    const {archives} = this.state;
+  singlePlayer = (videoInfo, i) => {
+    const {session, videoInfos, currentSessionID: coachSessionID} = this.props;
     let videosBeingShared = false;
     let personSharingScreen = false;
-    console.log('session', session);
     if (session) {
       personSharingScreen = isSomeoneSharingScreen(session);
-      console.log('sharing', personSharingScreen);
       videosBeingShared = isVideosAreBeingShared({
         session,
-        archives,
+        videoInfos,
         userIDSharing: personSharingScreen,
       });
-      console.log('videos', videosBeingShared);
     }
-    const {id: archiveID, local} = archive;
-    const numArchives = archives.length;
-
+    const {id: archiveID, local} = videoInfo;
+    const numArchives = Object.values(videoInfos).length;
     const {
       isRecording,
       disableControls,
@@ -680,7 +653,7 @@ class VideoPlayerPage extends Component {
       <SinglePlayer
         index={i}
         key={i}
-        id={archiveID}
+        id={videoInfo.id}
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
         numArchives={numArchives}
@@ -699,22 +672,23 @@ class VideoPlayerPage extends Component {
       />
     );
   };
+
   buttonSharing = () => {
-    const {currentSessionID} = this.props;
-    const {archives} = this.state;
+    const {currentSessionID, videoInfos} = this.props;
     if (!currentSessionID) {
       return null;
     }
 
     return (
       <ButtonShareVideo
-        archives={archives}
+        archives={videoInfos}
         coachSessionID={currentSessionID}
         togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
         getVideoState={(i) => this.videoPlayerRefs[i].getState()}
       />
     );
   };
+
   linkButtonStyleByIndex = (i, total) => {
     const {landscape} = this.state;
     const {height, width} = Dimensions.get('screen');
@@ -742,45 +716,50 @@ class VideoPlayerPage extends Component {
   };
 
   linkButtons = () => {
-    const {archives} = this.state;
-    const adjPairs = archives
-      .map((archive, i) => {
-        return i === archives.length - 1
-          ? null
-          : {
-              a: i,
-              b: i + 1,
-            };
-      })
-      .filter((x) => x);
-    const buttons = adjPairs.map(({a, b}, i) => {
-      const linkButtonContainer = this.linkButtonStyleByIndex(
-        i,
-        adjPairs.length,
-      );
-      return (
-        <View style={linkButtonContainer}>
-          <Button
-            backgroundColor=""
-            onPressColor={colors.green}
-            styleButton={styles.buttonLink}
-            icon={{
-              name: this.playersAreLinked(a, b) ? 'link' : 'unlink',
-              type: 'font',
-              size: 20,
-              color: 'white',
-            }}
-            click={async () => await this.toggleLink(a, b)}
-          />
-        </View>
-      );
-    });
-    return buttons;
+    const {videoInfos} = this.props;
+    if (videoInfos && Object.values(videoInfos).length > 1) {
+      const adjPairs = Object.values(videoInfos)
+        .map((_, i, videoInfos) => {
+          return i === videoInfos.length - 1
+            ? null
+            : {
+                a: i,
+                b: i + 1,
+              };
+        })
+        .filter((x) => x);
+      console.log('adjacent pairs', adjPairs);
+      const buttons = adjPairs.map(({a, b}, i) => {
+        const linkButtonContainer = this.linkButtonStyleByIndex(
+          i,
+          adjPairs.length,
+        );
+        return (
+          <View style={linkButtonContainer}>
+            <Button
+              backgroundColor=""
+              onPressColor={colors.green}
+              styleButton={styles.buttonLink}
+              icon={{
+                name: this.playersAreLinked(a, b) ? 'link' : 'unlink',
+                type: 'font',
+                size: 20,
+                color: 'white',
+              }}
+              click={async () => await this.toggleLink(a, b)}
+            />
+          </View>
+        );
+      });
+      return buttons;
+    } else {
+      return null;
+    }
   };
 
   render = () => {
-    const {archives} = this.state;
-    const allArchivesLocal = checkIfAllArchivesAreLocal(archives);
+    const {videoInfos} = this.props;
+    console.log('render', videoInfos);
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
         {this.header()}
@@ -792,8 +771,11 @@ class VideoPlayerPage extends Component {
         />
         {this.buttonRecording()}
         {this.buttonPreview()}
-        {allArchivesLocal && this.buttonSave()}
-        {archives.map((archive, i) => this.singlePlayer(archive, i))}
+        {this.buttonSave()}
+        {videoInfos &&
+          Object.values(videoInfos)
+            .filter((x) => x)
+            .map((videoInfo, i) => this.singlePlayer(videoInfo, i))}
         {this.linkButtons()}
       </View>
     );
@@ -822,6 +804,12 @@ const mapStateToProps = (state, props) => {
     session: state.coachSessions[state.coach.currentSessionID],
     currentSessionID: state.coach.currentSessionID,
     portrait: state.layout.currentScreenSize.portrait,
+    videoInfos: props.route.params.archives.reduce((videoInfos, archiveID) => {
+      return {
+        ...videoInfos,
+        [archiveID]: state.archives[archiveID],
+      };
+    }, {}),
   };
 };
 

@@ -61,7 +61,7 @@ export default class HeaderVideoLibrary extends Component {
         colorIconOffset={colors.title}
         clickButtonOffset={() => share()}
       />
-      <UploadHeader />
+      {/* <UploadHeader /> */}
     </View>
     );
   }

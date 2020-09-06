@@ -438,7 +438,7 @@ PODS:
     - React
   - react-native-create-thumbnail (1.2.1):
     - React
-  - react-native-flipper (0.54.0):
+  - react-native-flipper (0.55.0):
     - React
   - react-native-geocoder (0.5.0):
     - React
@@ -1146,7 +1146,7 @@ SPEC CHECKSUMS:
   react-native-config: f2c2ae45625a068c35681a16b9bfb1ca58b0adc7
   react-native-contacts: 0ed0dc4d5154c9181657837913bdfac6bba3469b
   react-native-create-thumbnail: f5265b03ec18ccc86f754c7cb63f919147a78ce0
-  react-native-flipper: 2581111fb26a2485eb71d2b0caf4b4a21c3ba151
+  react-native-flipper: 098460f9ad5db006e7b834f722c285642018cb8d
   react-native-geocoder: 757427682892bb256f3b3745858cc90eba148a8e
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b

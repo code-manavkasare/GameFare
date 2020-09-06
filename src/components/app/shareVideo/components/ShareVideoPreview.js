@@ -21,21 +21,11 @@ export default class ShareVideoPreview extends React.Component {
     super(props);
   }
   rowThumbnails() {
-    const {localVideos, firebaseVideos} = this.props;
-    let localIntermediates = [];
-    let firebaseIntermediates = [];
-    if (localVideos && localVideos.length > 0) {
-      localIntermediates = localVideos.map((id) => {return {id, local: true}});
-    }
-    if (firebaseVideos && firebaseVideos.length > 0) {
-      firebaseIntermediates = firebaseVideos.map((id) => {return {id, local: false}});
-    }
-    const allVideos = localIntermediates.concat(firebaseIntermediates);
-    return allVideos.map((vid) => {
+    const {videos} = this.props;
+    return videos.map((video) => {
       return (
         <CardArchive
-          local={vid.local}
-          id={vid.id}
+          id={video}
           style={styles.cardArchive}
           allowPlay={false}
         />

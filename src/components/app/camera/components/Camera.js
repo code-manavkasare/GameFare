@@ -98,16 +98,10 @@ class Camera extends Component {
     }
   }
   async saveRecording(recording) {
-    const {flags} = this.state;
     let videoInfo = await getVideoInfo(recording.uri);
-    console.log('got video info');
-    if (flags.length > 0) {
-      videoInfo = {...videoInfo, flags};
-      this.setState({flags: []});
-    }
     addLocalVideo(videoInfo);
     openVideoPlayer({
-      archives: [{id: videoInfo.id, local: videoInfo.local}],
+      archives: [videoInfo.id],
       open: true,
     });
   }

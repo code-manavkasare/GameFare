@@ -5,12 +5,15 @@ import {
   UPDATE_PATH_LOCAL_LIBRARY,
   UPDATE_THUMBNAIL_LOCAL_LIBRARY,
   UPDATE_PROGRESS_LOCAL_VIDEO,
+  ADD_USER_LOCAL_ARCHIVE,
+  REMOVE_USER_LOCAL_ARCHIVE,
 } from '../actions/types';
 
 import {dissoc} from 'ramda';
 
 const initialState = {
-  videoLibrary: {},
+  videoLibrary: {}, // legacy, fixed by videoManagement.oneTimeFixStoreLocalVideoLibrary() called in App.js
+  userLocalArchives: {},
 };
 
 const localVideoLibraryReducer = (state = initialState, action) => {
@@ -25,6 +28,7 @@ const localVideoLibraryReducer = (state = initialState, action) => {
       };
     case REMOVE_VIDEO_LOCAL_LIBRARY:
       return {
+        ...state,
         videoLibrary: dissoc(action.videoID, state.videoLibrary),
       };
     case HIDE_VIDEO_LOCAL_LIBRARY: {
@@ -86,6 +90,22 @@ const localVideoLibraryReducer = (state = initialState, action) => {
       } else {
         return {};
       }
+    case ADD_USER_LOCAL_ARCHIVE:
+      return {
+        ...state,
+        userLocalArchives: {
+          ...state.userLocalArchives,
+          [action.archiveID]: {
+            id: action.archiveID,
+            startTimestamp: action.startTimestamp,
+          },
+        },
+      };
+    case REMOVE_USER_LOCAL_ARCHIVE:
+      return {
+        ...state,
+        userLocalArchives: dissoc(action.archiveID, state.userLocalArchives),
+      };
     default:
       return state;
   }

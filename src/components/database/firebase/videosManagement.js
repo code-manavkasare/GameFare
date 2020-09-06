@@ -25,7 +25,6 @@ const shareCloudVideo = async (shareWithID, videoID) => {
 const deleteCloudVideo = async (videoID) => {
   // removes cloud video from this user's library and removes the reference from the store
   const {userID} = store.getState().user;
-  store.dispatch(deleteArchive(videoID));
   database()
     .ref()
     .update({
@@ -38,7 +37,6 @@ const deleteCloudVideos = async (videoIDs) => {
   const {userID} = store.getState().user;
   let updates = {};
   videoIDs.map((videoID) => {
-    store.dispatch(deleteArchive(videoID));
     updates[`users/${userID}/archivedStreams/${videoID}`] = null;
     updates[`archivedStreams/${videoID}/members/${userID}`] = null;
   });
@@ -47,38 +45,28 @@ const deleteCloudVideos = async (videoIDs) => {
     .update(updates);
 };
 
-const createCloudVideo = async (videoInfo, givenKey) => {
-  // creates a firebase object for cloud video and adds to this user's library
-  const {userID} = store.getState().user;
-  let key = givenKey;
-  if (!key) {
-    let archiveRef = await database()
-      .ref('archivedStreams')
-      .push();
-    key = archiveRef.key;
+const createCloudVideo = async (videoInfo) => {
+  // creates a firebase object for cloud video
+  if (videoInfo.id) {
+    let firebaseVideoInfo = {
+      ...videoInfo,
+      local: false,
+      url: '',
+      thumbnail: '',
+      uploadedByUser: true,
+    };
+    await database()
+      .ref(`archivedStreams/${videoInfo.id}`)
+      .set(firebaseVideoInfo);
+    return true;
+  } else {
+    return false;
   }
-  let firebaseVideoInfo = {
-    ...videoInfo,
-    id: key,
-    local: false,
-    url: '',
-    thumbnail: '',
-    uploadedByUser: true,
-    sourceUser: userID,
-    members: {
-      [`${userID}`]: {
-        id: userID,
-      },
-    },
-  };
-  database()
-    .ref(`archivedStreams/${key}`)
-    .set({...firebaseVideoInfo});
-  return firebaseVideoInfo;
 };
 
 const claimCloudVideo = async (cloudVideoID) => {
   // sets source user and adds video to this user's library
+  console.log('claiming cloud video', cloudVideoID);
   const {userID} = store.getState().user;
   database()
     .ref()
