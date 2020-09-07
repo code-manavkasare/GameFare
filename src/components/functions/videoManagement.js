@@ -105,7 +105,7 @@ const addLocalVideo = async (video) => {
 };
 
 const deleteVideos = (ids) => {
-  const infos = ids.map((id) => getFirebaseVideoByID(id));
+  const infos = ids.map((id) => getVideoByID(id));
   infos.forEach((info) => {
     if (info.local) {
       deleteLocalVideoFile(info.url);
@@ -235,12 +235,8 @@ const generateThumbnailSet = async (source, timeBounds, size, callback) => {
   return thumbnails;
 };
 
-const getFirebaseVideoByID = (id) => {
+const getVideoByID = (id) => {
   return store.getState().archives[id];
-};
-
-const getLocalVideoByID = (id) => {
-  return store.getState().localVideoLibrary.videoLibrary[id];
 };
 
 const updateLocalVideoUrls = () => {
@@ -297,8 +293,7 @@ export {
   deleteVideos,
   openVideoPlayer,
   shareVideosWithTeams,
-  getFirebaseVideoByID,
-  getLocalVideoByID,
+  getVideoByID,
   generateThumbnailSet,
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,

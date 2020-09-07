@@ -16,10 +16,7 @@ import {
   heightHeaderHome,
   marginTopAppLandscape,
 } from '../../style/sizes';
-import {
-  openVideoPlayer,
-  getFirebaseVideoByID,
-} from '../../functions/videoManagement';
+import {openVideoPlayer, getVideoByID} from '../../functions/videoManagement';
 import {shareCloudVideoWithCoachSession} from '../../database/firebase/videosManagement';
 import {
   isVideosAreBeingShared,
@@ -57,7 +54,7 @@ class VideoPlayerPage extends Component {
     if (archives.length > linkedPlayers.length) {
       return {
         archives,
-        linkedPlayers: archives.map(x => new Set()),
+        linkedPlayers: archives.map((x) => new Set()),
       };
     }
     return {};
@@ -187,7 +184,6 @@ class VideoPlayerPage extends Component {
     for (const elem of all) {
       linkedPlayers[elem] = new Set([...all].filter((i) => i !== elem));
     }
-    console.log('linkedPlayers')
     await this.setState({linkedPlayers});
   };
 
@@ -440,7 +436,7 @@ class VideoPlayerPage extends Component {
   saveReview = async () => {
     //To update for multiple video
     const {archives, recordedActions} = this.state;
-    const localVideoInfo = getFirebaseVideoByID(archives[0].id);
+    const localVideoInfo = getVideoByID(archives[0]);
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
     await generatePreview(localVideoInfo.url, recordedActions, audioFilePath);
     this.props.navigation.navigate('Alert', {

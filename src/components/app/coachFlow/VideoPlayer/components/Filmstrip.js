@@ -1,25 +1,13 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Animated, FlatList, Image} from 'react-native';
-import {Col, Row} from 'react-native-easy-grid';
+import {View, StyleSheet, Animated, FlatList, Image} from 'react-native';
 import {isEqual} from 'lodash';
-import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import ButtonColor from '../../../../layout/Views/Button';
-import AllIcons from '../../../../layout/icons/AllIcons';
 import {
   generateThumbnailSet,
-  getLocalVideoByID,
-  getFirebaseVideoByID,
+  getVideoByID,
 } from '../../../../functions/videoManagement';
-import {getVideoInfo} from '../../../../functions/pictures';
-import {
-  setArchive,
-  setArchiveBinded,
-} from '../../../../../actions/archivesActions';
+import {setArchive} from '../../../../../actions/archivesActions';
 import {store} from '../../../../../../reduxStore';
-
-import {native} from '../../../../animations/animations';
-import AsyncImage from '../../../../layout/image/AsyncImage';
 
 export default class Filmstrip extends Component {
   constructor(props) {
@@ -41,7 +29,7 @@ export default class Filmstrip extends Component {
     this.props.onRef(this);
     const {archiveId} = this.props;
     let local = true;
-    let archive = await getFirebaseVideoByID(archiveId);
+    let archive = await getVideoByID(archiveId);
     this.setState({
       timeBounds: [0, archive.durationSeconds],
       thumbnailAspect: archive.size.height / archive.size.width,
