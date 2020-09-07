@@ -33,7 +33,6 @@ const cropVideo = async (source, startTime, endTime) => {
     startTime,
     endTime,
     saveWithCurrentDate: true,
-    saveToCameraRoll: true, //To delete at end
   };
   const newSource = await ProcessingManager.trim(source, trimOptions);
   return newSource;
