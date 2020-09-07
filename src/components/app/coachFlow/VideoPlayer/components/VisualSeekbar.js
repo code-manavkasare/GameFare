@@ -257,7 +257,6 @@ class VisualSeekBar extends Component {
     return this.state.paused;
   }
   getCurrentTime() {
-    console.log('get current time', this.currentTimeRef?.getCurrentTime());
     return this.currentTimeRef?.getCurrentTime();
   }
 

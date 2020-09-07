@@ -58,7 +58,7 @@ class ExportQueue extends Component {
       (newState, member) => {
         newState.flags = {...newState.flags, ...member?.recording?.flags};
         newState.recordings.push(member?.recording);
-        if (!member?.recording?.localSource) {
+        if (!member?.recording?.fullVideo?.id) {
           newState.loader = true;
         }
         return newState;
@@ -69,7 +69,6 @@ class ExportQueue extends Component {
         loader: false,
       },
     );
-    console.log(newState);
     return {members: fullExportingMembers, ...newState};
   }
   componentDidMount() {
@@ -112,7 +111,6 @@ class ExportQueue extends Component {
     if (!exportingMembers.includes(member.id)) {
       exportingMembers.push(member.id);
     }
-    console.log('exportingmembers', exportingMembers);
     this.setState({
       visible: true,
       flagsSelected,
@@ -151,7 +149,6 @@ class ExportQueue extends Component {
           }
           return updates;
         }, {});
-      console.log(updates);
       if (updates && Object.values(updates).length > 0) {
         database()
           .ref()

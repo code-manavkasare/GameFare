@@ -174,17 +174,6 @@ const ge10tLastVideo = async () => {
   return videos;
 };
 
-const getNativeVideoInfo = async (appleVideoID) => {
-  const savePath = getNewVideoSavePath();
-  const url = await RNFS.copyAssetsVideoIOS(
-    `assets-library://asset/asset.${'mov'}?id=${appleVideoID}&ext=${'mov'}`,
-    savePath,
-  );
-  let videoInfo = await getVideoInfo(url);
-  videoInfo.fromNativeLibrary = true;
-  return videoInfo;
-};
-
 const generateThumbnail = async (videoPath, timestamp) => {
   const thumbnail = await RNThumbnail.get(videoPath);
   return thumbnail.path;
@@ -200,9 +189,25 @@ const getVideoUUID = (path) => {
   return videoUUID;
 };
 
-const getVideoInfo = async (videoUrl, thumbnail, timestamp) => {
+const getNativeVideoInfo = async (appleVideoID) => {
+  const savePath = getNewVideoSavePath();
+  const url = await RNFS.copyAssetsVideoIOS(
+    `assets-library://asset/asset.${'mov'}?id=${appleVideoID}&ext=${'mov'}`,
+    savePath,
+  );
+  let videoInfo = await getVideoInfo(url);
+  return {...videoInfo, fromNativeLibrary: true};
+};
+
+const getOpentokVideoInfo = async (videoUrl) => {
+  const savePath = getNewVideoSavePath();
+  await RNFS.copyFile(videoUrl, savePath);
+  return await getVideoInfo(savePath);
+};
+
+const getVideoInfo = async (videoUrl) => {
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  const newtThumbnail = await generateThumbnail(videoUrl, timestamp ? timestamp : 0);
+  const newtThumbnail = await generateThumbnail(videoUrl, 0);
   const id = getVideoUUID(videoUrl);
   const videoInfo = {
     id,
@@ -235,6 +240,7 @@ const getNewVideoSavePath = () => {
 const valueColor = (value) => {
   return fromHsv({h: value, s: 0.8, v: 1});
 };
+
 const updateVideoSavePath = (oldPath) => {
   let filename = oldPath.split('/');
   filename = filename[filename.length - 1];
@@ -259,4 +265,5 @@ module.exports = {
   getNewVideoSavePath,
   valueColor,
   updateVideoSavePath,
+  getOpentokVideoInfo,
 };
