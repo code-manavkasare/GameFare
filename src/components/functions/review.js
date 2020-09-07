@@ -9,7 +9,7 @@ const checkIfAllArchivesAreLocal = (archives) => {
   let isLocal = true;
   archives.map((archiveId) => {
     const videoInfo = getVideoByID(archiveId);
-    if (!videoInfo.isLocal) {
+    if (!videoInfo.local) {
       isLocal = false;
     }
   });
