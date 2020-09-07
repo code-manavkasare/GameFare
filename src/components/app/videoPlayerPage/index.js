@@ -754,6 +754,8 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
+    const {archives} = this.state;
+    const allArchivesLocal = checkIfAllArchivesAreLocal(archives);
     const {videoInfos} = this.props;
     console.log('render', videoInfos);
     return (
@@ -767,7 +769,7 @@ class VideoPlayerPage extends Component {
         />
         {this.buttonRecording()}
         {this.buttonPreview()}
-        {this.buttonSave()}
+        {allArchivesLocal && this.buttonSave()}
         {videoInfos &&
           Object.values(videoInfos)
             .filter((x) => x)
