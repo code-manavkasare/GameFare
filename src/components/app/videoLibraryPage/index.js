@@ -141,7 +141,6 @@ class VideoLibraryPage extends Component {
     this.setState({selectedVideos});
   }
   async addFromCameraRoll({selectOnly}) {
-    console.log('selectOnly', selectOnly);
     const {navigation} = this.props;
     const {navigate} = navigation;
     const permissionLibrary = await permission('library');

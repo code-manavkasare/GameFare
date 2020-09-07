@@ -39,7 +39,6 @@ export default class Filmstrip extends Component {
       return;
     }
     const thumbnails = await this.fetchThumbnails();
-    console.log(local);
     if (!local) {
       store.dispatch(
         setArchive({

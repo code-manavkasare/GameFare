@@ -17,10 +17,11 @@ import {
   startRemoteRecording,
   stopRemoteRecording,
   updateTimestamp,
-  generateFlagsThumbnail,
+  setupOpentokStopRecordingFlow,
   toggleVideoPublish,
   closeSession,
 } from '../../../../../../../functions/coach';
+import {getOpentokVideoInfo} from '../../../../../../../functions/pictures';
 
 import {offsetFooterStreaming} from '../../../../../../../style/sizes';
 import colors from '../../../../../../../style/colors';
@@ -130,7 +131,6 @@ class BottomButton extends Component {
       undefined
     ) {
       layoutAction('setGeneralSessionRecording', anyMemberRecording);
-      console.log('anymember', anyMemberRecording);
     }
   }
 
@@ -143,7 +143,6 @@ class BottomButton extends Component {
     queue.addWorker(new Worker('stopRecording', this.stopRecording.bind(this)));
   }
   clickRecord = async () => {
-    console.log('cloclu');
     const {currentSessionReconnecting} = this.props;
     if (currentSessionReconnecting) {
       return;
@@ -171,12 +170,11 @@ class BottomButton extends Component {
     const messageCallback = async (response) => {
       if (response.error) {
         if (response.message === 'INIT_ERR' && !prevStartError) {
-          return this.startRecording(true);
+          this.startRecording(true);
         } else {
-          return console.log(
-            `Error initializing recording: ${response.message}`,
-          );
+          console.log(`Error initializing recording: ${response.message}`);
         }
+        return false;
       }
       updateTimestamp(coachSessionID, userID, Date.now());
     };
@@ -200,8 +198,15 @@ class BottomButton extends Component {
       });
     } else {
       const {otPublisherRef, coachAction} = this.props;
-      await otPublisherRef.current.startRecording(messageCallback);
-      coachAction('setRecording', true);
+      const succeeded = await otPublisherRef.current.startRecording(
+        messageCallback,
+      );
+      if (succeeded) {
+        coachAction('setRecording', true);
+      } else {
+        coachAction('setRecording', true);
+        coachAction('setRecording', false);
+      }
     }
   };
   stopRecording = async ({discardFile}) => {
@@ -220,14 +225,14 @@ class BottomButton extends Component {
           return Alert.alert(`Error storing recording: ${response.message}`);
         } else {
           const {videoUrl} = response;
+          const videoInfo = await getOpentokVideoInfo(videoUrl);
           const member = members[userID];
-          const thumbnails = await generateFlagsThumbnail(
+          setupOpentokStopRecordingFlow(
+            videoInfo,
             member?.recording?.flags,
-            videoUrl,
             coachSessionID,
             userID,
           );
-          uploadQueueAction('enqueueUploadTasks', thumbnails);
         }
       }
     };

@@ -86,7 +86,6 @@ class Camera extends Component {
     if (camera && isRecording) {
       layoutAction('setGeneralSessionRecording', false);
       await camera.stopRecording();
-      console.log('stopped recording');
       if (saveVideo) {
         this.saveRecording(await promiseRecording);
       }

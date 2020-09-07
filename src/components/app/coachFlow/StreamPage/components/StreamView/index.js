@@ -205,9 +205,7 @@ class StreamPage extends Component {
         route,
       } = this.props;
       const {portrait} = currentScreenSize;
-      console.log('prevsession', prevProps.currentSessionID);
       if (currentSessionID === undefined && prevProps.currentSessionID) {
-        console.log('disconnected');
         this.props.layoutAction('setGeneralSessionRecording', false);
       }
       if (
@@ -233,7 +231,6 @@ class StreamPage extends Component {
           this.openVideoShared();
         }
       }
-      console.log(route?.params?.params?.action);
       if (
         route?.params?.params?.action !==
         prevProps.route?.params?.params?.action
