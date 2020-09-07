@@ -51,6 +51,7 @@ const createCloudVideo = async (videoInfo) => {
     let firebaseVideoInfo = {
       ...videoInfo,
       local: false,
+      fromNativeLibrary: false,
       url: '',
       thumbnail: '',
       uploadedByUser: true,
@@ -64,18 +65,17 @@ const createCloudVideo = async (videoInfo) => {
   }
 };
 
-const claimCloudVideo = async (cloudVideoID) => {
+const claimCloudVideo = async (videoInfo) => {
   // sets source user and adds video to this user's library
-  console.log('claiming cloud video', cloudVideoID);
   const {userID} = store.getState().user;
-  database()
+  await database()
     .ref()
     .update({
-      [`archivedStreams/${cloudVideoID}/sourceUser`]: userID,
-      [`archivedStreams/${cloudVideoID}/members/${userID}`]: {id: userID},
-      [`users/${userID}/archivedStreams/${cloudVideoID}`]: {
-        id: cloudVideoID,
-        startTimestamp: Date.now(),
+      [`archivedStreams/${videoInfo.id}/sourceUser`]: userID,
+      [`archivedStreams/${videoInfo.id}/members/${userID}`]: {id: userID},
+      [`users/${userID}/archivedStreams/${videoInfo.id}`]: {
+        id: videoInfo.id,
+        startTimestamp: videoInfo.startTimestamp,
       },
     });
 };

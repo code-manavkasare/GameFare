@@ -24,7 +24,6 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
-
 class CardArchive extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
@@ -80,7 +79,7 @@ class CardArchive extends PureComponent {
     const {url, id} = archive;
     if (url && url !== '') {
       openVideoPlayer({
-        archives: videosToOpen ? videosToOpen.map(x => x.id) : [id],
+        archives: videosToOpen ? videosToOpen.map((x) => x.id) : [id],
         open: true,
         coachSessionID,
       });
@@ -170,7 +169,14 @@ class CardArchive extends PureComponent {
   }
   cardArchive(archive) {
     const {isSelected, style, selectableMode, showUploadProgress} = this.props;
-    const {id, thumbnail, startTimestamp, durationSeconds, local, progress} = archive;
+    const {
+      id,
+      thumbnail,
+      startTimestamp,
+      durationSeconds,
+      local,
+      progress,
+    } = archive;
     const {loader} = this.state;
     return (
       <TouchableWithoutFeedback
@@ -229,7 +235,11 @@ class CardArchive extends PureComponent {
                   styleApp.textBold,
                   {color: colors.white, fontSize: 11},
                 ]}>
-                {showUploadProgress && progress ? 'Uploading...' : <FormatDate date={startTimestamp} short />}
+                {showUploadProgress && progress ? (
+                  'Uploading...'
+                ) : (
+                  <FormatDate date={startTimestamp} short />
+                )}
               </Text>
             </Col>
           </View>

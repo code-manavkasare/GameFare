@@ -16,10 +16,6 @@ import Orientation from 'react-native-orientation-locker';
 
 import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
 import {
-  deleteCloudVideo,
-  deleteCloudVideos,
-} from '../../database/firebase/videosManagement.js';
-import {
   isUserAlone,
   isSomeoneSharingScreen,
   userPartOfSession,
@@ -80,7 +76,8 @@ class VideoLibraryPage extends Component {
 
   static getDerivedStateFromProps(props) {
     const allVideos = Object.values(props.archivedStreams).filter(v => v.id && v.startTimestamp);
-    return {videosArray: sortVideos(allVideos).map(v => v.id)};
+    const sortedVideos = sortVideos(allVideos).map(v => v.id);
+    return {videosArray: sortedVideos};
   }
   toggleSelectable() {
     const {selectableMode} = this.state;
@@ -144,6 +141,7 @@ class VideoLibraryPage extends Component {
     this.setState({selectedVideos});
   }
   async addFromCameraRoll({selectOnly}) {
+    console.log('selectOnly', selectOnly);
     const {navigation} = this.props;
     const {navigate} = navigation;
     const permissionLibrary = await permission('library');
@@ -185,26 +183,6 @@ class VideoLibraryPage extends Component {
       }
     }
   }
-  async addVideo() {
-    const {navigate} = this.props.navigation;
-    navigate('Alert', {
-      title: 'Add a Video',
-      subtitle: 'Record a video or upload from your camera roll',
-      displayList: true,
-      listOptions: [
-        {
-          title: 'Record',
-          forceNavigation: true,
-          operation: () => navigate('Session'),
-        },
-        {
-          title: 'Upload',
-          forceNavigation: true,
-          operation: () => this.addFromCameraRoll({}),
-        },
-      ],
-    });
-  }
 
   noVideos() {
     const {navigate} = this.props.navigation;
@@ -233,7 +211,7 @@ class VideoLibraryPage extends Component {
           }}
           backgroundColor={'blue'}
           onPressColor={colors.greyDark}
-          click={() => this.addFromCameraRoll({})}
+          click={() => this.addFromCameraRoll({selectOnly: false})}
         />
         <View style={{height: 20}} />
         <Button
@@ -386,7 +364,7 @@ class VideoLibraryPage extends Component {
           navigation={navigation}
           selectOnly={selectOnly}
           isListEmpty={videosArray.length === 0}
-          add={() => this.addVideo()}
+          add={() => this.addFromCameraRoll({selectOnly: false})}
           remove={() => this.deleteSelectedVideos()}
           share={() => this.shareSelectedVideos()}
         />

@@ -1,6 +1,7 @@
 import {
   ADD_USER_LOCAL_ARCHIVE,
   REMOVE_USER_LOCAL_ARCHIVE,
+  LEGACY_REMOVE_USER_LOCAL_ARCHIVE,
 } from './types';
 
 export const addUserLocalArchive = (value) => ({
@@ -15,12 +16,19 @@ export const removeUserLocalArchive = (archiveID) => ({
   archiveID,
 });
 
+export const legacyRemoveUserLocalArchive = (archiveID) => ({
+  type: LEGACY_REMOVE_USER_LOCAL_ARCHIVE,
+  archiveID,
+});
+
 export const localVideoLibraryAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'addUserLocalArchive') {
       await dispatch(addUserLocalArchive(data));
     } else if (val === 'removeUserLocalArchive') {
       await dispatch(removeUserLocalArchive(data));
+    } else if (val === 'legacyRemoveUserLocalArchive') {
+      await dispatch(legacyRemoveUserLocalArchive(data));
     }
     return true;
   };

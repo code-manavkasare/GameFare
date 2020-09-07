@@ -141,8 +141,7 @@ const sortVideos = (videos) => {
     videos = {};
   }
   return Object.values(videos)
-    .sort((a, b) => a.startTimestamp - b.startTimestamp)
-    .reverse();
+    .sort((a, b) => b.startTimestamp - a.startTimestamp);
 };
 
 const getLastVideo = async () => {
