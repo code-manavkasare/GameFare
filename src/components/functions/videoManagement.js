@@ -13,22 +13,15 @@ import {navigate, goBack} from '../../../NavigationService';
 import {store} from '../../../reduxStore';
 import {sendNewMessage} from './message';
 import {enqueueUploadTask} from '../../actions/uploadQueueActions';
-import {setLayout} from '../../actions/layoutActions';
 import {
   addUserLocalArchive,
   removeUserLocalArchive,
 } from '../../actions/localVideoLibraryActions';
-import {
-  setArchive,
-  resetArchives,
-  deleteArchive,
-} from '../../actions/archivesActions';
+import {setArchive, deleteArchive} from '../../actions/archivesActions';
 
 import {
-  shareCloudVideo,
   createCloudVideo,
   claimCloudVideo,
-  setCloudVideoThumbnail,
   deleteCloudVideo,
 } from '../database/firebase/videosManagement';
 
