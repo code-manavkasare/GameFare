@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
+import {includes} from 'ramda';
 
 import {Col, Row} from 'react-native-easy-grid';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
@@ -48,14 +49,14 @@ class CardArchive extends PureComponent {
     };
   }
   componentDidMount() {
-    const {id} = this.props;
-    if (this.props.archive && !this.props.archive.local) {
+    const {id, remoteArchives} = this.props;
+    if (includes(id, remoteArchives)) {
       bindArchive(id);
     }
   }
   componentWillUnmount() {
-    const {id} = this.props;
-    if (this.props.archive && !this.props.archive.local) {
+    const {id, remoteArchives} = this.props;
+    if (includes(id, remoteArchives)) {
       unbindArchive(id);
     }
   }
@@ -278,6 +279,7 @@ const mapStateToProps = (state, props) => {
     archive: props.nativeArchive
       ? props.nativeArchive
       : state.archives[props.id],
+    remoteArchives: Object.keys(state.user.infoUser.archivedStreams),
   };
 };
 
