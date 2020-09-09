@@ -24,20 +24,22 @@ class BackgroundUploadHelper extends Component {
     return {};
   }
 
-  videosAvailableToUpload(archives) {
+  videosAvailableToUpload(archivesToUpload, archives) {
     const {queued} = this.state;
-    if (archives) {
-      return Object.values(archives).filter((x) => !queued[x.id]);
+    if (archivesToUpload) {
+      const notQueued = Object.values(archivesToUpload).filter((x) => !queued[x.id]);
+      const notVolatile = notQueued.filter(v => archives[v.id] && !archives[v.id].volatile);
+      return notVolatile;
     } else {
       return [];
     }
   }
 
   componentDidMount() {
-    const {queue, archivesToUpload} = this.props;
+    const {queue, archivesToUpload, archives} = this.props;
     if (
       (!queue || Object.keys(queue).length === 0) &&
-      (this.videosAvailableToUpload(archivesToUpload).length > 0)
+      (this.videosAvailableToUpload(archivesToUpload, archives).length > 0)
     ) {
       this.uploadNextLocalVideo();
     }
@@ -45,14 +47,14 @@ class BackgroundUploadHelper extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // update if the queue is empty and local library non empty AND not currently in a live session
-    const {queue: nextQueue, archivesToUpload: nextArchivesToUpload} = nextProps;
+    const {queue: nextQueue, archivesToUpload: nextArchivesToUpload, archives: nextArchives} = nextProps;
     const {waitForQueueToPopulate} = nextState;
     if (waitForQueueToPopulate) {
       return false;
     }
     const nextQueueEmpty = !nextQueue || Object.keys(nextQueue).length === 0;
     const nextArchivesNonEmpty =
-      nextArchivesToUpload && this.videosAvailableToUpload(nextArchivesToUpload).length > 0;
+      nextArchivesToUpload && this.videosAvailableToUpload(nextArchivesToUpload, nextArchives).length > 0;
     return nextQueueEmpty && nextArchivesNonEmpty && !nextProps.session;
   }
 
@@ -61,11 +63,11 @@ class BackgroundUploadHelper extends Component {
   }
 
   async uploadNextLocalVideo() {
-    const {wifiAutoUpload, archivesToUpload} = this.props;
+    const {wifiAutoUpload, archivesToUpload, archives} = this.props;
     const {queued} = this.state;
     if (wifiAutoUpload) {
       try {
-        const {id} = this.videosAvailableToUpload(archivesToUpload)[0];
+        const {id} = this.videosAvailableToUpload(archivesToUpload, archives)[0];
         await this.setState({
           waitForQueueToPopulate: true,
           queued: {...queued, [id]: true},
@@ -85,6 +87,7 @@ class BackgroundUploadHelper extends Component {
 const mapStateToProps = (state) => {
   return {
     session: state.coachSessions[state.coach.currentSessionID],
+    archives: state.archives,
     queue: state.uploadQueue.queue,
     archivesToUpload: state.localVideoLibrary.userLocalArchives,
     wifiAutoUpload: state.appSettings.wifiAutoUpload,
