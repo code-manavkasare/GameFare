@@ -4,10 +4,12 @@ import {StatusBar} from 'react-native';
 
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
+import {DocumentDirectoryPath} from 'react-native-fs';
 import {assoc, dissoc} from 'ramda';
 
 import {
   getVideoInfo,
+  getNewVideoSavePath,
   getOpentokVideoInfo,
   getVideoUUID,
   updateVideoSavePath,
@@ -99,16 +101,30 @@ const addLocalVideo = async (video) => {
   if (!video.id) {
     video.id = getVideoUUID(video.url);
   }
-  if (!video.startTimestamp) {
-    video.startTimestamp = Date.now();
+  const {url} = video;
+  if (url) {
+    video.local = true;
+    video.startTimestamp = video.startTimestamp ? video.startTimestamp : Date.now();
+    if (url.indexOf(DocumentDirectoryPath) === -1) {
+      store.dispatch(setArchive({...video, volatile: true}));
+      const newPath = getNewVideoSavePath();
+      RNFS.copyFile(url, newPath).then(() => {
+        store.dispatch(setArchive({...video, url: newPath, volatile: false}));
+        //RNFS.unlink(url);
+      });
+    } else {
+      store.dispatch(setArchive({...video, local: true}));
+    }
+    store.dispatch(
+      addUserLocalArchive({
+        archiveID: video.id,
+        startTimestamp: video.startTimestamp,
+      }),
+    );
   }
-  await store.dispatch(setArchive({...video, local: true}));
-  await store.dispatch(
-    addUserLocalArchive({
-      archiveID: video.id,
-      startTimestamp: video.startTimestamp,
-    }),
-  );
+
+
+
 };
 
 const deleteVideos = (ids) => {
@@ -315,6 +331,7 @@ const updateLocalVideoUrls = () => {
 };
 
 const oneTimeFixStoreLocalVideoLibrary = () => {
+  // moves all videos from localVideoLibrary to archives
   const localVideos = store.getState().localVideoLibrary.videoLibrary;
   if (localVideos) {
     Object.values(localVideos)
@@ -325,6 +342,13 @@ const oneTimeFixStoreLocalVideoLibrary = () => {
       });
   }
 };
+
+const updateLocalUploadProgress = (videoID, progress) => {
+  const videoInfo = store.getState().archives[videoID];
+  if (videoInfo) {
+    store.dispatch(setArchive({...videoInfo, progress}));
+  }
+}
 
 export {
   arrayUploadFromSnippets,
@@ -337,4 +361,5 @@ export {
   generateThumbnailSet,
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
+  updateLocalUploadProgress,
 };

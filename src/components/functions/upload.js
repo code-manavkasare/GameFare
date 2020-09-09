@@ -1,17 +1,8 @@
 import storage from '@react-native-firebase/storage';
 import {store} from '../../../reduxStore';
-import {
-  setUploadTaskProgress,
-  setUploadTaskError,
-} from '../../actions/uploadQueueActions';
-import {
-  setArchive
-} from '../../actions/archivesActions';
-
-
-//import database from '@react-native-firebase/database';
+import {setUploadTaskError} from '../../actions/uploadQueueActions';
+import {setArchive} from '../../actions/archivesActions';
 import {updateCloudUploadProgress} from '../database/firebase/videosManagement';
-import {updateLocalUploadProgress} from '../functions/videoManagement';
 
 const defaultVideoFilename = 'archive.mp4';
 const defaultImageFilename = 'image.jpg';
@@ -25,7 +16,7 @@ const uploadVideo = (uploadTask) => {
     uploadTask.filename = defaultVideoFilename;
   }
 
-  const {videoInfo, storageDestination, filename} = uploadTask;
+  const {videoInfo, storageDestination, filename, onProgress} = uploadTask;
   const {url} = videoInfo;
   if (url) {
     const videoRef = storage()
@@ -39,7 +30,7 @@ const uploadVideo = (uploadTask) => {
       firebaseUploadTask,
       uploadComplete: new Promise((resolve, reject) => {
         firebaseUploadTask.on(storage.TaskEvent.STATE_CHANGED, {
-          next: (snapshot) => uploadNext(snapshot, uploadTask),
+          next: (snapshot) => uploadNext(snapshot, onProgress),
           error: (error) => {
             uploadError(error, uploadTask);
             reject(error);
@@ -58,7 +49,7 @@ const uploadImage = (uploadTask) => {
   if (uploadTask && !uploadTask.filename) {
     uploadTask.filename = defaultImageFilename;
   }
-  const {url, storageDestination, filename} = uploadTask;
+  const {url, storageDestination, filename, onProgress} = uploadTask;
   if (url) {
     const imageRef = storage()
       .ref(storageDestination)
@@ -71,7 +62,7 @@ const uploadImage = (uploadTask) => {
       firebaseUploadTask,
       uploadComplete: new Promise((resolve, reject) => {
         firebaseUploadTask.on(storage.TaskEvent.STATE_CHANGED, {
-          next: (snapshot) => uploadNext(snapshot, uploadTask),
+          next: (snapshot) => uploadNext(snapshot, onProgress),
           error: (error) => {
             uploadError(error, uploadTask);
             reject(error);
@@ -86,12 +77,10 @@ const uploadImage = (uploadTask) => {
   }
 };
 
-const uploadNext = (uploadSnapshot, uploadTask) => {
-  const {videoInfo} = uploadTask;
+const uploadNext = (uploadSnapshot, onProgress) => {
   const progress = uploadSnapshot.bytesTransferred / uploadSnapshot.totalBytes;
-  if (progress && videoInfo && videoInfo.id) {
-    updateCloudUploadProgress(videoInfo.id, progress);
-    store.dispatch(setArchive({...videoInfo, progress}));
+  if (progress && onProgress) {
+    onProgress(progress);
   }
 };
 

@@ -69,7 +69,7 @@ class VideoPlayerPage extends Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
+    console.log('videoPlayerPage componentDidMount');
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
@@ -757,7 +757,6 @@ class VideoPlayerPage extends Component {
     const {archives} = this.state;
     const allArchivesLocal = checkIfAllArchivesAreLocal(archives);
     const {videoInfos} = this.props;
-    console.log('render', videoInfos);
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
         {this.header()}
