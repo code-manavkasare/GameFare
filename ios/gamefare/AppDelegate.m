@@ -17,6 +17,8 @@
 #import "RNSplashScreen.h"
 #import <RNBranch/RNBranch.h>
 #import "Orientation.h"
+#import <UserNotifications/UserNotifications.h>
+#import <RNCPushNotificationIOS.h>
 
 #if DEBUG
 #ifdef FB_SONARKIT_ENABLED
@@ -29,6 +31,7 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #endif
 #endif
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -62,7 +65,16 @@
   [self.window makeKeyAndVisible];
   
   [RNSplashScreen show];
+  // Define UNUserNotificationCenter
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
   return YES;
+}
+
+//Called when a notification is delivered to a foreground app.
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+{
+  completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -73,19 +85,6 @@
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
-
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
-//  [RNFIRMessaging didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-//}
-
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
-//fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
-//  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-//}
-//
-//- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
-//  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
-//}
 
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {

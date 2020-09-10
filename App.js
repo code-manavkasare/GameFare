@@ -21,8 +21,10 @@ import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 import {refreshPhoneContactsStore} from './src/components/functions/phoneContacts';
-import {updateLocalVideoUrls, oneTimeFixStoreLocalVideoLibrary} from './src/components/functions/videoManagement';
-
+import {
+  updateLocalVideoUrls,
+  oneTimeFixStoreLocalVideoLibrary,
+} from './src/components/functions/videoManagement';
 
 Orientation.lockToPortrait();
 
