@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import React from 'react';
+import {Text, View} from 'react-native';
 import moment from 'moment';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Col, Row} from 'react-native-easy-grid';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -10,7 +10,6 @@ import {getSortedMembers} from '../../../functions/session';
 import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
-import {navigate} from '../../../../../NavigationService';
 import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
@@ -246,6 +245,7 @@ const sessionTitle = (session, styleText) => {
     </Text>
   );
 };
+
 const sessionDate = ({session, messages}) => {
   return (
     <Text
@@ -256,6 +256,18 @@ const sessionDate = ({session, messages}) => {
       {dateSession({session, messages})}
     </Text>
   );
+};
+
+const blueBadge = () => {
+  const blueBadge = {
+    ...styleApp.center,
+    width: 20,
+    borderRadius: 20,
+    height: 20,
+    backgroundColor: colors.primary,
+    marginView: 'auto',
+  };
+  return <View style={blueBadge} />;
 };
 
 const lastMessageObject = (messages) => {
@@ -414,6 +426,48 @@ const hangupButton = (session) => {
   );
 };
 
+const iconWithBadge = (icon, badgeNumber) => {
+  const {name, size, color, type} = icon;
+  const styleBadge = {
+    ...styleApp.center,
+    position: 'absolute',
+    width: 23,
+    paddingTop: 1,
+    paddingLeft: 1,
+    borderRadius: 20,
+    height: 23,
+    top: -14,
+    left: 15,
+    backgroundColor: colors.primary,
+  };
+  const styleBadgeText = {
+    fontSize:
+      badgeNumber && !isNaN(badgeNumber)
+        ? badgeNumber > 999
+          ? 8
+          : badgeNumber > 99
+          ? 9
+          : 10
+        : 10,
+  };
+  return (
+    <View>
+      <AllIcons name={name} type={type} color={color} size={size} />
+      {badgeNumber && (
+        <View style={styleBadge}>
+          <Text
+            style={[
+              styleApp.textBold,
+              {...styleBadgeText, color: colors.white},
+            ]}>
+            {badgeNumber}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
 const rowTitle = ({
   icon,
   badge,
@@ -425,44 +479,16 @@ const rowTitle = ({
   containerStyle,
   titleStyle,
 }) => {
-  const {name, size, color, type} = icon;
-  const styleBadge = {
-    ...styleApp.center,
-    position: 'absolute',
-    width: 23,
-    paddingTop: 1,
-    paddingLeft: 1,
-    borderRadius: 20,
-    height: 23,
-    top: -7,
-    left: 55,
-    backgroundColor: colors.primary,
-  };
   const styleButton = {
     height: 34,
     width: '100%',
     borderRadius: 5,
   };
-  const styleBadgeText = {
-    fontSize:
-      badge && !isNaN(badge) ? (badge > 999 ? 8 : badge > 99 ? 9 : 10) : 10,
-  };
   return (
     <View style={{...containerStyle}}>
       <Row style={[{marginBottom: 10, marginTop: 30}]}>
         <Col size={30} style={styleApp.center}>
-          <AllIcons name={name} type={type} color={color} size={size} />
-          {badge && (
-            <View style={styleBadge}>
-              <Text
-                style={[
-                  styleApp.textBold,
-                  {...styleBadgeText, color: colors.white},
-                ]}>
-                {badge}
-              </Text>
-            </View>
-          )}
+          {iconWithBadge(icon, badge)}
         </Col>
         <Col size={55} style={styleApp.center2}>
           <Text
@@ -661,17 +687,18 @@ const contentView = (session) => {
 };
 
 module.exports = {
-  imageCardTeam,
-  sessionTitle,
-  sessionDate,
-  viewLive,
-  hangupButton,
+  blueBadge,
   buttonPlay,
-  ListPlayers,
-  titleSession,
-  conversationView,
   contentView,
+  conversationView,
+  hangupButton,
+  imageCardTeam,
   lastMessage,
   ListContents,
+  ListPlayers,
   rowTitle,
+  sessionDate,
+  sessionTitle,
+  titleSession,
+  viewLive,
 };

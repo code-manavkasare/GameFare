@@ -16,3 +16,4 @@ export * from './archivesActions';
 export * from './coachSessionsActions';
 export * from './phoneContactsActions';
 export * from './connectionTypeActions';
+export * from './notificationsActions';

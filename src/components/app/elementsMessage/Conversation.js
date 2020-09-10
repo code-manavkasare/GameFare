@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 
-import {messageAction} from '../../../actions/messageActions';
+import {deleteNotification} from '../../../actions/notificationsActions.js';
 
 import {userObject} from '../../functions/users';
 
@@ -19,6 +19,11 @@ class MessageTab extends React.Component {
       loader: false,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+  }
+  componentDidMount() {
+    const {coachSessionID} = this.props.route.params;
+    const {deleteNotification} = this.props;
+    deleteNotification(coachSessionID);
   }
   render() {
     const {infoUser, userID, navigation, session, route, messages} = this.props;
@@ -54,7 +59,15 @@ const mapStateToProps = (state, props) => {
   };
 };
 
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    deleteNotification: (coachSessionID) => {
+      dispatch(deleteNotification(coachSessionID));
+    },
+  };
+};
+
 export default connect(
   mapStateToProps,
-  {},
+  mapDispatchToProps,
 )(MessageTab);
