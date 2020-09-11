@@ -23,7 +23,7 @@ import initialPage from '../../app/initialPage';
 const Stack = createStackNavigator();
 const MainApp = () => {
   return (
-    <Stack.Navigator initialRouteName="InitialPage" headerMode="none">
+    <Stack.Navigator initialRouteName="TabsApp" headerMode="none">
       <Stack.Screen name="InitialPage" component={initialPage} />
       <Stack.Screen
         name="TabsApp"
