@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,23 +11,24 @@ import {
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
-
 import Mixpanel from 'react-native-mixpanel';
+
 import {mixPanelToken} from '../../database/firebase/tokens';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
+import {addNotification} from '../../../actions/notificationsActions.js';
+import {updateNotificationBadge} from '../../functions/notifications.js';
 import {clickNotification} from '../../../../NavigationService';
 import AsyncImage from '../image/AsyncImage';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import {timing, native} from '../../animations/animations';
+import {timing} from '../../animations/animations';
 import {timeout} from '../../functions/coach';
 
 import {marginTopApp} from '../../style/sizes';
 
 const heightNotif = 130;
-
 const initialTranslateY = -marginTopApp - heightNotif - 20;
 
 class Notification extends Component {
@@ -54,21 +54,6 @@ class Notification extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.notification !== this.props.notification)
-      return this.openNotification();
-  }
-  openNotification() {
-    Animated.timing(this.translateYNotif, timing(0, 400)).start(async () => {
-      await timeout(4000);
-      this.close(initialTranslateY);
-    });
-  }
-  close(translateValue, click) {
-    Animated.timing(this.translateYNotif, timing(translateValue, 200)).start(
-      () => click && click(),
-    );
-  }
   static getDerivedStateFromProps(props, state) {
     if (props.notification.senderID !== props.userID)
       return {
@@ -76,11 +61,42 @@ class Notification extends Component {
       };
     return {};
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {notification} = this.props;
+    if (prevProps.notification !== notification) {
+      this.addNotificationToStore(notification);
+      return this.openNotification();
+    }
+  }
+
+  addNotificationToStore = async (notification) => {
+    const {addNotification, notifications} = this.props;
+    if (notification.data.action === 'Conversation') {
+      await addNotification(notification);
+      updateNotificationBadge(notifications.length);
+    }
+  };
+
+  openNotification() {
+    Animated.timing(this.translateYNotif, timing(0, 400)).start(async () => {
+      await timeout(4000);
+      this.close(initialTranslateY);
+    });
+  }
+
+  close(translateValue, click) {
+    Animated.timing(this.translateYNotif, timing(translateValue, 200)).start(
+      () => click && click(),
+    );
+  }
+
   render() {
     const {notification} = this.props;
     const {width} = Dimensions.get('screen');
     if (!notification) return null;
     const {picture} = notification.data;
+    console.log('notification: ', notification);
     let {body, title} = notification.notification;
     if (body.length > 80) body = body.slice(0, 80) + '...';
     const styleImg = {height: 50, width: 50, borderRadius: 5};
@@ -152,7 +168,6 @@ const styles = StyleSheet.create({
     bottom: -20,
     height: 20,
     paddingTop: 0,
-    //backgroundColor: 'red',
   },
   swipableRectangle: {
     height: 4,
@@ -172,11 +187,20 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     notification: state.layout.notification,
+    notifications: state.notifications,
     userID: state.user.userID,
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    addNotification: (notification) => {
+      dispatch(addNotification(notification));
+    },
   };
 };
 
 export default connect(
   mapStateToProps,
-  {},
+  mapDispatchToProps,
 )(Notification);

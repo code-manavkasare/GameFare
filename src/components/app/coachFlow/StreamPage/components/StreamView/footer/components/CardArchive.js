@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
+import {includes} from 'ramda';
 
 import {Col, Row} from 'react-native-easy-grid';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
@@ -23,7 +24,6 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
-
 
 class CardArchive extends PureComponent {
   static propTypes = {
@@ -49,14 +49,14 @@ class CardArchive extends PureComponent {
     };
   }
   componentDidMount() {
-    const {local, id} = this.props;
-    if (!local) {
+    const {id, remoteArchives} = this.props;
+    if (includes(id, remoteArchives)) {
       bindArchive(id);
     }
   }
   componentWillUnmount() {
-    const {id, local} = this.props;
-    if (!local) {
+    const {id, remoteArchives} = this.props;
+    if (includes(id, remoteArchives)) {
       unbindArchive(id);
     }
   }
@@ -77,10 +77,10 @@ class CardArchive extends PureComponent {
   };
   openVideo = async () => {
     const {archive, coachSessionID, videosToOpen} = this.props;
-    const {url, id, local} = archive;
+    const {url, id} = archive;
     if (url && url !== '') {
       openVideoPlayer({
-        archives: videosToOpen ? videosToOpen : [{id, local}],
+        archives: videosToOpen ? videosToOpen.map((x) => x.id) : [id],
         open: true,
         coachSessionID,
       });
@@ -170,7 +170,14 @@ class CardArchive extends PureComponent {
   }
   cardArchive(archive) {
     const {isSelected, style, selectableMode, showUploadProgress} = this.props;
-    const {id, thumbnail, startTimestamp, durationSeconds, local, progress} = archive;
+    const {
+      id,
+      thumbnail,
+      startTimestamp,
+      durationSeconds,
+      local,
+      progress,
+    } = archive;
     const {loader} = this.state;
     return (
       <TouchableWithoutFeedback
@@ -229,7 +236,11 @@ class CardArchive extends PureComponent {
                   styleApp.textBold,
                   {color: colors.white, fontSize: 11},
                 ]}>
-                {showUploadProgress && progress ? 'Uploading...' : <FormatDate date={startTimestamp} short />}
+                {showUploadProgress && progress ? (
+                  'Uploading...'
+                ) : (
+                  <FormatDate date={startTimestamp} short />
+                )}
               </Text>
             </Col>
           </View>
@@ -267,9 +278,8 @@ const mapStateToProps = (state, props) => {
   return {
     archive: props.nativeArchive
       ? props.nativeArchive
-      : props.local
-      ? state.localVideoLibrary.videoLibrary[props.id]
       : state.archives[props.id],
+    remoteArchives: Object.keys(state.user.infoUser.archivedStreams),
   };
 };
 

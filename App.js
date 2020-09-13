@@ -21,7 +21,10 @@ import OrientationListener from './src/components/hoc/orientationListener';
 import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 import {refreshPhoneContactsStore} from './src/components/functions/phoneContacts';
-import {updateLocalVideoUrls} from './src/components/functions/videoManagement';
+import {
+  updateLocalVideoUrls,
+  oneTimeFixStoreLocalVideoLibrary,
+} from './src/components/functions/videoManagement';
 
 Orientation.lockToPortrait();
 
@@ -42,9 +45,10 @@ class App extends Component {
     SplashScreen.hide();
 
     if (userID !== '') {
-      await this.autoSignIn();
-      await refreshTokenOnDatabase(userID);
+      this.autoSignIn();
+      refreshTokenOnDatabase(userID);
       refreshPhoneContactsStore();
+      oneTimeFixStoreLocalVideoLibrary();
       updateLocalVideoUrls();
     }
   }

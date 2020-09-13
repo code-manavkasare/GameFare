@@ -46,11 +46,11 @@ class ShareVideoPage extends React.Component {
   }
   async shareWithFriends() {
     const {navigation, route, user} = this.props;
-    const {firebaseVideos, localVideos} = route.params;
+    const {videos} = route.params;
     const {push, navigate} = navigation;
     let branchLink;
-    if (firebaseVideos.length > 0) {
-      const branchMetadata = firebaseVideos.reduce((result, video) => {
+    if (videos.filter(v => !v.local).length > 0) {
+      const branchMetadata = videos.filter(v => !v.local).reduce((result, video) => {
         return {
           ...result,
           [video]: video,
@@ -69,14 +69,14 @@ class ShareVideoPage extends React.Component {
       branchLink,
       onSelectMembers: async (members, sessions) => {
         const {objectID} = await openSession(user, members);
-        shareVideosWithTeams(localVideos, firebaseVideos, [objectID]);
+        shareVideosWithTeams(videos, [objectID]);
         navigate('Conversation', {coachSessionID: objectID});
       },
     });
   }
   shareWithTeams() {
     const {navigation, route} = this.props;
-    const {firebaseVideos, localVideos} = route.params;
+    const {videos} = route.params;
     const {push, pop, navigate} = navigation;
     push('PickMembers', {
       allowSelectMultiple: true,
@@ -88,8 +88,7 @@ class ShareVideoPage extends React.Component {
       noNavigation: true,
       onSelectMembers: async (members, sessions) => {
         shareVideosWithTeams(
-          localVideos,
-          firebaseVideos,
+          videos,
           Object.values(sessions).map((session) => session.objectID),
         );
         if (Object.keys(sessions).length === 1) {
@@ -138,7 +137,7 @@ class ShareVideoPage extends React.Component {
 
   render() {
     const {route} = this.props;
-    const {firebaseVideos, localVideos} = route.params;
+    const {videos} = route.params;
     return (
       <View style={styleApp.stylePage}>
         <ShareVideoHeader close={() => this.close()} />
@@ -149,8 +148,7 @@ class ShareVideoPage extends React.Component {
             {marginTop: marginTopApp + heightHeaderHome},
           ]}>
           <ShareVideoPreview
-            firebaseVideos={firebaseVideos}
-            localVideos={localVideos}
+            videos={videos}
           />
         </Row>
         <Row size={8} style={styleApp.marginView}>

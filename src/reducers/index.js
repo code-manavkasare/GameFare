@@ -15,6 +15,7 @@ import layoutReducer from './layoutReducer';
 import uploadQueueReducer from './uploadQueueReducer';
 import appSettingsReducer from './appSettingsReducer';
 import localVideoLibraryReducer from './localVideoLibraryReducer';
+import notificationsReducer from './notificationsReducer';
 import {archivesReducer, bindedArchivesReducer} from './archivesReducer';
 import {
   coachSessionsReducer,
@@ -28,27 +29,28 @@ import phoneContactsReducer from './phoneContactsReducer';
 import connectionTypeReducer from './connectionTypeReducer';
 
 export default combineReducers({
-  globaleVariables: globaleVariablesReducer,
   appSettings: appSettingsReducer,
-  user: userReducer,
-  coach: coachReducer,
-  historicSearch: historicSearchReducer,
-  createEventData: createEventReducer,
-  createChallengeData: createChallengeReducer,
-  events: eventsReducer,
-  groups: groupsReducer,
-  createGroup: createGroupReducer,
-  message: messageReducer,
-  layout: layoutReducer,
-  uploadQueue: uploadQueueReducer,
-  localVideoLibrary: localVideoLibraryReducer,
   archives: archivesReducer,
   bindedArchives: bindedArchivesReducer,
-  coachSessions: coachSessionsReducer,
+  bindedConversations: bindedConversationsReducer,
   bindedSessions: bindedCoachSessionsReducer,
-  network,
+  coach: coachReducer,
+  coachSessions: coachSessionsReducer,
   connectionType: connectionTypeReducer,
   conversations: conversationsReducer,
-  bindedConversations: bindedConversationsReducer,
+  createChallengeData: createChallengeReducer,
+  createEventData: createEventReducer,
+  createGroup: createGroupReducer,
+  events: eventsReducer,
+  globaleVariables: globaleVariablesReducer,
+  groups: groupsReducer,
+  historicSearch: historicSearchReducer,
+  layout: layoutReducer,
+  localVideoLibrary: localVideoLibraryReducer,
+  message: messageReducer,
+  network,
+  notifications: notificationsReducer,
   phoneContacts: phoneContactsReducer,
+  uploadQueue: uploadQueueReducer,
+  user: userReducer,
 });

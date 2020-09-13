@@ -8,6 +8,8 @@ import {
   sortUploadTasks,
 } from '../../functions/upload';
 import BackgroundUploadHelper from './BackgroundUploadHelper';
+import {updateLocalUploadProgress} from '../../functions/videoManagement';
+import {updateCloudUploadProgress} from '../../database/firebase/videosManagement';
 
 class UploadManager extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ class UploadManager extends Component {
     this.state = {
       uploadInProgress: null,
       savedBackgroundUpload: null,
+      lastProgressUpdateTime: Date.now(),
     };
   }
 
@@ -50,6 +53,23 @@ class UploadManager extends Component {
       this.manageUploads();
     }
   }
+
+  onProgress(progress) {
+    const {uploadInProgress, lastProgressUpdateTime} = this.state;
+    if (uploadInProgress) {
+      const {uploadTask} = uploadInProgress;
+      if (uploadTask && progress) {
+        const {videoInfo, progress: prevProgress} = uploadTask;
+        const now = Date.now();
+        if (now - lastProgressUpdateTime > 2000 || prevProgress === 0) {
+          uploadTask.progress = progress;
+          this.setState({lastProgressUpdateTime: now, uploadInProgress: {...uploadInProgress, uploadTask}});
+          updateCloudUploadProgress(videoInfo.id, progress);
+          updateLocalUploadProgress(videoInfo.id, progress);
+        }
+      }
+    }
+    }
 
   resumeUploadInProgress() {
     const {uploadInProgress} = this.state;
@@ -171,7 +191,7 @@ class UploadManager extends Component {
     const {uploadQueueAction} = this.props;
     const {id, storageDestination, afterUpload} = task;
     try {
-      const {firebaseUploadTask, uploadComplete} = uploadVideo(task);
+      const {firebaseUploadTask, uploadComplete} = uploadVideo({...task, onProgress: (progress) => this.onProgress(progress)});
       uploadQueueAction('startUploadTask', id);
       await this.setState({
         uploadInProgress: {uploadTask: task, firebaseUploadTask},
@@ -194,7 +214,7 @@ class UploadManager extends Component {
   async startImageTask(task) {
     const {uploadQueueAction} = this.props;
     const {id, storageDestination, afterUpload} = task;
-    const {firebaseUploadTask, uploadComplete} = uploadImage(task);
+    const {firebaseUploadTask, uploadComplete} = uploadImage({...task, onProgress: (progress) => null});
     uploadQueueAction('startUploadTask', id);
     await this.setState({
       uploadInProgress: {uploadTask: task, firebaseUploadTask},

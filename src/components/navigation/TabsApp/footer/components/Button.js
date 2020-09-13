@@ -66,7 +66,6 @@ class FooterButton extends React.Component {
   }
   buttonFooter() {
     const {
-      tintColor,
       icon,
       label,
       displayPastille,
@@ -102,7 +101,7 @@ class FooterButton extends React.Component {
     const labelStyle = [
       styleApp.textBold,
       {
-        color: tintColor,
+        color: colors.greyMidDark,
         marginTop: 6,
         fontSize: 13,
       },
@@ -125,14 +124,17 @@ class FooterButton extends React.Component {
               }}>
               {displayPastille && conditionDisplayPastille && (
                 <Reanimated.View
-                  style={{...styles.roundMessage, backgroundColor: tintColor}}
+                  style={{
+                    ...styles.roundMessage,
+                    backgroundColor: colors.greyMidDark,
+                  }}
                 />
               )}
               {label ? (
                 <AllIcons
                   name={icon.name}
                   size={icon.size}
-                  color={tintColor}
+                  color={colors.greyMidDark}
                   type={icon.type}
                   reanimated
                 />

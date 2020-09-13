@@ -68,7 +68,6 @@ class Camera extends Component {
       layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
-        path: getNewVideoSavePath(),
         quality: RNCamera.Constants.VideoQuality['720p'],
       };
       let promise = camera.recordAsync(options);
@@ -86,7 +85,6 @@ class Camera extends Component {
     if (camera && isRecording) {
       layoutAction('setGeneralSessionRecording', false);
       await camera.stopRecording();
-      console.log('stopped recording');
       if (saveVideo) {
         this.saveRecording(await promiseRecording);
       }
@@ -98,16 +96,10 @@ class Camera extends Component {
     }
   }
   async saveRecording(recording) {
-    const {flags} = this.state;
     let videoInfo = await getVideoInfo(recording.uri);
-    console.log('got video info');
-    if (flags.length > 0) {
-      videoInfo = {...videoInfo, flags};
-      this.setState({flags: []});
-    }
-    addLocalVideo(videoInfo);
+    await addLocalVideo(videoInfo);
     openVideoPlayer({
-      archives: [{id: videoInfo.id, local: videoInfo.local}],
+      archives: [videoInfo.id],
       open: true,
     });
   }

@@ -33,7 +33,7 @@ class MemberSource extends Component {
   }
   async componentDidUpdate(prevProps, prevState) {
     const {member} = this.state;
-    const {coachSessionID, uploadQueueAction, getMembers, userID} = this.props;
+    const {coachSessionID, getMembers, userID} = this.props;
     const {recording, id: memberID} = member;
     const {recording: prevRecording} = prevState.member;
     if (recording?.uploadRequest && prevRecording) {
@@ -45,18 +45,17 @@ class MemberSource extends Component {
         memberID === userID
       ) {
         const {uploadRequest} = recording;
-        let {flagsSelected} = uploadRequest
+        let {flagsSelected} = uploadRequest;
         if (prevRecording?.uploadRequest?.flagsSelected) {
           const newClipKeys = Object.keys(flagsSelected)
-            .filter((clip) => 
-              !prevRecording.uploadRequest.flagsSelected[clip])
-          let newFlags = {}
+            .filter((clip) =>
+              !prevRecording.uploadRequest.flagsSelected[clip]);
+          let newFlags = {};
           for (let id in newClipKeys) {
-            newFlags[id] = flagsSelected[id]
+            newFlags[id] = flagsSelected[id];
           }
-          flagsSelected = newFlags
+          flagsSelected = newFlags;
         }
-        
         const membersSession = getMembers();
         await arrayUploadFromSnippets({
           flagsSelected,

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 import {uploadQueueAction} from '../../../actions';
-import {uploadLocalVideoLazy, getLocalVideoByID} from '../../functions/videoManagement';
+import {uploadLocalVideo} from '../../functions/videoManagement';
 
 class BackgroundUploadHelper extends Component {
   constructor(props) {
@@ -24,34 +24,38 @@ class BackgroundUploadHelper extends Component {
     return {};
   }
 
-  filterQueuedVideos(videoLibrary) {
+  videosAvailableToUpload(archivesToUpload, archives) {
     const {queued} = this.state;
-    return Object.keys(videoLibrary).filter((x) => x !== 'undefined' && !queued[x]);
+    if (archivesToUpload) {
+      const notQueued = Object.values(archivesToUpload).filter((x) => !queued[x.id]);
+      const notVolatile = notQueued.filter(v => archives[v.id] && !archives[v.id].volatile);
+      return notVolatile;
+    } else {
+      return [];
+    }
   }
 
   componentDidMount() {
-    const {queue, videoLibrary} = this.props;
+    const {queue, archivesToUpload, archives} = this.props;
     if (
       (!queue || Object.keys(queue).length === 0) &&
-      (videoLibrary && this.filterQueuedVideos(videoLibrary).length > 0)
+      (this.videosAvailableToUpload(archivesToUpload, archives).length > 0)
     ) {
       this.uploadNextLocalVideo();
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // update if the queue is empty and local library non empty
-    const {queue: nextQueue, videoLibrary: nextVideoLibrary} = nextProps;
+    // update if the queue is empty and local library non empty AND not currently in a live session
+    const {queue: nextQueue, archivesToUpload: nextArchivesToUpload, archives: nextArchives} = nextProps;
     const {waitForQueueToPopulate} = nextState;
     if (waitForQueueToPopulate) {
       return false;
     }
-    //console.log('local unqueued', this.filterQueuedVideos(nextVideoLibrary));
     const nextQueueEmpty = !nextQueue || Object.keys(nextQueue).length === 0;
-    const nextVideoLibraryNonEmpty =
-      nextVideoLibrary && this.filterQueuedVideos(nextVideoLibrary).length > 0;
-    //console.log('nextQueueEmpty, nextVideoLibraryNonEmpty', nextQueueEmpty, nextVideoLibraryNonEmpty);
-    return nextQueueEmpty && nextVideoLibraryNonEmpty;
+    const nextArchivesNonEmpty =
+      nextArchivesToUpload && this.videosAvailableToUpload(nextArchivesToUpload, nextArchives).length > 0;
+    return nextQueueEmpty && nextArchivesNonEmpty && !nextProps.session;
   }
 
   componentDidUpdate() {
@@ -59,16 +63,16 @@ class BackgroundUploadHelper extends Component {
   }
 
   async uploadNextLocalVideo() {
-    const {wifiAutoUpload, videoLibrary} = this.props;
+    const {wifiAutoUpload, archivesToUpload, archives} = this.props;
     const {queued} = this.state;
     if (wifiAutoUpload) {
       try {
-        const videoID = this.filterQueuedVideos(videoLibrary)[0];
+        const {id} = this.videosAvailableToUpload(archivesToUpload, archives)[0];
         await this.setState({
           waitForQueueToPopulate: true,
-          queued: {...queued, [videoID]: true},
+          queued: {...queued, [id]: true},
         });
-        uploadLocalVideoLazy(getLocalVideoByID(videoID), true);
+        uploadLocalVideo(id, true);
       } catch (error) {
         console.log('ERROR BackgroundUploadHelper', error);
       }
@@ -82,8 +86,10 @@ class BackgroundUploadHelper extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    session: state.coachSessions[state.coach.currentSessionID],
+    archives: state.archives,
     queue: state.uploadQueue.queue,
-    videoLibrary: state.localVideoLibrary.videoLibrary,
+    archivesToUpload: state.localVideoLibrary.userLocalArchives,
     wifiAutoUpload: state.appSettings.wifiAutoUpload,
   };
 };

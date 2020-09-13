@@ -7,9 +7,9 @@ import {
   SET_ARCHIVE_BINDED,
 } from './types';
 
-const setArchive = (value) => ({
+const setArchive = (archive) => ({
   type: SET_ARCHIVE,
-  archive: value,
+  archive,
 });
 
 const resetArchives = () => ({
@@ -21,11 +21,11 @@ const setArchiveBinded = (value) => ({
   archive: value,
 });
 
-const deleteArchive = (archiveId) => {
+const deleteArchive = (archiveID) => {
   database()
-    .ref(`archivedStreams/${archiveId}`)
+    .ref(`archivedStreams/${archiveID}`)
     .off();
-  return {type: DELETE_ARCHIVE, archiveId};
+  return {type: DELETE_ARCHIVE, archiveID};
 };
 
 export {deleteArchive, resetArchives, setArchive, setArchiveBinded};

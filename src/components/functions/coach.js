@@ -10,7 +10,6 @@ import isEqual from 'lodash.isequal';
 import {generateID} from './createEvent';
 import {getVideoUUID} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
-import {shareVideosWithTeam} from './videoManagement';
 
 import {store} from '../../../reduxStore';
 import {
@@ -22,6 +21,8 @@ import {
 import {shareVideosWithTeams} from './videoManagement';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
+import {enqueueUploadTasks} from '../../actions/uploadQueueActions';
+import {setArchive} from '../../actions/archivesActions';
 
 import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
@@ -307,53 +308,56 @@ const compressThumbnail = async (initialPath) => {
   return path;
 };
 
-const generateFlagsThumbnail = async (
+const setupOpentokStopRecordingFlow = async (
+  sourceVideoInfo,
   flags,
-  source,
   coachSessionID,
   memberID,
 ) => {
-  // creates thumbnails for full video and flags, sets up clip selection for user who stopped recording
-  let thumbnails =
-    !flags || Object.keys(flags).length === 0
-      ? []
-      : await Promise.all(
-          Object.values(flags).map(async (flag) => {
-            const {id, time} = flag;
-            let {path: thumbnail} = await createThumbnail({
-              url: source,
-              timeStamp: time,
-            });
-            thumbnail = await compressThumbnail(thumbnail);
-            return {
-              type: 'image',
-              url: thumbnail,
-              storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${id}`,
-              displayInList: false,
-              progress: 0,
-              date: Date.now(),
-            };
-          }),
-        );
-  let {path: thumbnailFullVideo} = await createThumbnail({
-    url: source,
-    timeStamp: 0,
+  let {path: thumbnail} = await createThumbnail({
+    url: sourceVideoInfo.url,
   });
-  thumbnailFullVideo = await compressThumbnail(thumbnailFullVideo);
-  thumbnails.push({
-    type: 'image',
-    url: thumbnailFullVideo,
-    storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`,
-    displayInList: false,
-    progress: 0,
-    date: Date.now(),
-  });
+  thumbnail = await compressThumbnail(thumbnail);
+  let thumbnailUploadTasks = [
+    {
+      type: 'image',
+      id: generateID(),
+      timeSubmittted: Date.now(),
+      url: thumbnail,
+      storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`,
+      background: false,
+      displayInList: false,
+    },
+  ];
+  if (flags) {
+    await Promise.all(
+      Object.values(flags).map(async (flag) => {
+        const {id, time} = flag;
+        let {path: thumbnail} = await createThumbnail({
+          url: sourceVideoInfo.url,
+          timeStamp: time,
+        });
+        thumbnail = await compressThumbnail(thumbnail);
+        thumbnailUploadTasks.push({
+          type: 'image',
+          id: generateID(),
+          timeSubmitted: Date.now(),
+          url: thumbnail,
+          storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${id}`,
+          isBackground: false,
+          displayInList: false,
+        });
+      }),
+    );
+  }
+  store.dispatch(setArchive({...sourceVideoInfo, local: true}));
+  store.dispatch(enqueueUploadTasks(thumbnailUploadTasks));
   database()
     .ref()
     .update({
-      [`coachSessions/${coachSessionID}/members/${memberID}/recording/localSource`]: source,
+      [`coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo/id`]: sourceVideoInfo.id,
     });
-  return thumbnails;
+  return thumbnailUploadTasks;
 };
 
 const openSession = async (user, members) => {
@@ -583,8 +587,10 @@ const bindSession = (objectID) => {
       .ref(`coachSessions/${objectID}`)
       .on('value', function(snapshot) {
         const coachSessionFirebase = snapshot.val();
-        store.dispatch(setSession(coachSessionFirebase));
-        store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
+        if (coachSessionFirebase) {
+          store.dispatch(setSession(coachSessionFirebase));
+          store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
+        }
       });
   }
 };
@@ -664,10 +670,8 @@ const selectVideosFromLibrary = (coachSessionID) => {
   navigate('SelectVideosFromLibrary', {
     selectableMode: true,
     selectOnly: true,
-    confirmVideo: (selectedLocalVideos, selectedFirebaseVideos) =>
-      shareVideosWithTeams(selectedLocalVideos, selectedFirebaseVideos, [
-        coachSessionID,
-      ]),
+    confirmVideo: (selectedVideos) =>
+      shareVideosWithTeams(selectedVideos, [coachSessionID]),
   });
 };
 
@@ -714,7 +718,7 @@ module.exports = {
   toggleCloudRecording,
   toggleVideoPublish,
   updateTimestamp,
-  generateFlagsThumbnail,
+  setupOpentokStopRecordingFlow,
   getVideoUUID,
   openSession,
   infoCoach,

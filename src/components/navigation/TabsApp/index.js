@@ -1,15 +1,9 @@
 import React from 'react';
-
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import Footer from './footer/index';
-import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import Stream from './components/Stream';
-
 import Session from './components/Session';
-
-import LocalSession from './components/LocalSession';
 import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';

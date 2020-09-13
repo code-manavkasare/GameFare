@@ -14,7 +14,9 @@ import {
   bindSession,
   unbindSession,
 } from '../../../../functions/coach';
+import {conversationIsInNotification} from '../../../../functions/notifications.js';
 import {
+  blueBadge,
   imageCardTeam,
   sessionTitle,
   sessionDate,
@@ -34,13 +36,23 @@ import {
 
 class CardStream extends Component {
   static propTypes = {
-    coachSessionId: PropTypes.string,
+    coachSessionID: PropTypes.string,
   };
   constructor(props) {
     super(props);
     this.state = {
       session: false,
       loading: false,
+      hasNotification: false,
+    };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    return {
+      hasNotification: conversationIsInNotification(
+        props.coachSessionID,
+        props.notifications,
+      ),
     };
   }
 
@@ -50,6 +62,7 @@ class CardStream extends Component {
     bindSession(coachSessionID);
     bindConversation(coachSessionID);
   }
+  componentDidUpdate() {}
   componentWillUnmount() {
     const {coachSessionID} = this.props;
     unbindSession(coachSessionID);
@@ -78,7 +91,7 @@ class CardStream extends Component {
       session,
       messages,
     } = this.props;
-    const {loading} = this.state;
+    const {hasNotification, loading} = this.state;
     const activeSession = coachSessionID === currentSessionID;
 
     let member = getMember(session, userID);
@@ -106,7 +119,12 @@ class CardStream extends Component {
                   {sessionTitle(session, {}, false)}
                   {lastMessage(messages)}
                 </Col>
-                <Col size={20}>{sessionDate({session, messages})}</Col>
+                <Col size={20}>
+                  {sessionDate({session, messages})}
+                  <View style={[styleApp.center, {marginTop: 10}]}>
+                    {hasNotification && blueBadge()}
+                  </View>
+                </Col>
               </Row>
             );
           }}
@@ -154,6 +172,7 @@ const mapStateToProps = (state, props) => {
     messages: state.conversations[props.coachSessionID],
     currentSessionID: state.coach.currentSessionID,
     userConnected: state.user.userConnected,
+    notifications: state.notifications,
   };
 };
 

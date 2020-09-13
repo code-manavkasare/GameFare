@@ -3,12 +3,13 @@ import RNFS from 'react-native-fs';
 
 import {getVideoInfo} from '../functions/pictures.js';
 import {generateID} from '../functions/createEvent.js';
-import {addLocalVideo} from './videoManagement.js';
+import {addLocalVideo, getVideoByID} from './videoManagement.js';
 
 const checkIfAllArchivesAreLocal = (archives) => {
   let isLocal = true;
-  archives.map((archive) => {
-    if (!archive.local) {
+  archives.map((archiveId) => {
+    const videoInfo = getVideoByID(archiveId);
+    if (!videoInfo.local) {
       isLocal = false;
     }
   });
@@ -33,7 +34,6 @@ const cropVideo = async (source, startTime, endTime) => {
     startTime,
     endTime,
     saveWithCurrentDate: true,
-    saveToCameraRoll: true, //To delete at end
   };
   const newSource = await ProcessingManager.trim(source, trimOptions);
   return newSource;

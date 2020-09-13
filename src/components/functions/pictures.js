@@ -141,8 +141,7 @@ const sortVideos = (videos) => {
     videos = {};
   }
   return Object.values(videos)
-    .sort((a, b) => a.startTimestamp - b.startTimestamp)
-    .reverse();
+    .sort((a, b) => b.startTimestamp - a.startTimestamp);
 };
 
 const getLastVideo = async () => {
@@ -175,17 +174,6 @@ const ge10tLastVideo = async () => {
   return videos;
 };
 
-const getNativeVideoInfo = async (appleVideoID) => {
-  const savePath = getNewVideoSavePath();
-  const url = await RNFS.copyAssetsVideoIOS(
-    `assets-library://asset/asset.${'mov'}?id=${appleVideoID}&ext=${'mov'}`,
-    savePath,
-  );
-  let videoInfo = await getVideoInfo(url);
-  videoInfo.fromNativeLibrary = true;
-  return videoInfo;
-};
-
 const generateThumbnail = async (videoPath, timestamp) => {
   const thumbnail = await RNThumbnail.get(videoPath);
   return thumbnail.path;
@@ -201,17 +189,30 @@ const getVideoUUID = (path) => {
   return videoUUID;
 };
 
-const getVideoInfo = async (videoUrl, thumbnail, timestamp) => {
+const getNativeVideoInfo = async (appleVideoID) => {
+  const savePath = getNewVideoSavePath();
+  const url = await RNFS.copyAssetsVideoIOS(
+    `assets-library://asset/asset.${'mov'}?id=${appleVideoID}&ext=${'mov'}`,
+    savePath,
+  );
+  let videoInfo = await getVideoInfo(url);
+  return {...videoInfo, fromNativeLibrary: true};
+};
+
+const getOpentokVideoInfo = async (videoUrl) => {
+  const savePath = getNewVideoSavePath();
+  await RNFS.copyFile(videoUrl, savePath);
+  return await getVideoInfo(savePath);
+};
+
+const getVideoInfo = async (videoUrl) => {
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  if (!thumbnail || thumbnail === '') {
-    thumbnail = await generateThumbnail(videoUrl, timestamp ? timestamp : 0);
-  }
+  const newtThumbnail = await generateThumbnail(videoUrl, 0);
   const id = getVideoUUID(videoUrl);
   const videoInfo = {
     id,
-    thumbnail,
+    thumbnail: newtThumbnail,
     url: videoUrl,
-    local: true,
     durationSeconds: pmVideoInfo.duration,
     bitrate: pmVideoInfo.bitrate,
     frameRate: pmVideoInfo.frameRate,
@@ -239,6 +240,7 @@ const getNewVideoSavePath = () => {
 const valueColor = (value) => {
   return fromHsv({h: value, s: 0.8, v: 1});
 };
+
 const updateVideoSavePath = (oldPath) => {
   let filename = oldPath.split('/');
   filename = filename[filename.length - 1];
@@ -263,4 +265,5 @@ module.exports = {
   getNewVideoSavePath,
   valueColor,
   updateVideoSavePath,
+  getOpentokVideoInfo,
 };
