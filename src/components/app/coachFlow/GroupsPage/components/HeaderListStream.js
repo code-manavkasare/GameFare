@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {navigate} from '../../../../../../NavigationService';
+import {navigate, goBack} from '../../../../../../NavigationService';
 
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
@@ -42,7 +42,7 @@ class HeaderListStream extends Component {
         sizeIcon1={21}
         colorIcon1={colors.title}
         typeIcon1={'font'}
-        clickButton1={() => navigate('MorePage')}
+        clickButton1={() => goBack()}
       />
     );
   };
