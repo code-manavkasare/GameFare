@@ -17,7 +17,7 @@ import {FlatListComponent} from '../../../layout/Views/FlatList';
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {sessionOpening, addMembersToSession} from '../../../functions/coach';
-import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
 import {rowTitle} from '../../TeamPage/components/elements';
 import ListIOSLibrary from './ListIOSLibrary';

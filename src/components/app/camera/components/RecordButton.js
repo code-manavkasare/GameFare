@@ -9,7 +9,7 @@ import styleApp from '../../../style/style';
 import {native} from '../../../animations/animations';
 import Loader from '../../../layout/loaders/Loader';
 
-import Timer from '../../../app/coachFlow/StreamPage/components/StreamView/footer/components/Timer';
+import Timer from '../../coachFlow/GroupsPage/components/StreamView/footer/components/Timer';
 
 export default class RecordButton extends Component {
   static propTypes = {

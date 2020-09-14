@@ -13,7 +13,7 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
-import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 const {height, width} = Dimensions.get('screen');
 
 export default class ShareVideoPreview extends React.Component {
@@ -24,17 +24,16 @@ export default class ShareVideoPreview extends React.Component {
     const {videos} = this.props;
     return videos.map((video) => {
       return (
-        <CardArchive
-          id={video}
-          style={styles.cardArchive}
-          allowPlay={false}
-        />
+        <CardArchive id={video} style={styles.cardArchive} allowPlay={false} />
       );
     });
   }
   render() {
     return (
-      <ScrollView style={styles.scrollView} horizontal={true} contentContainerStyle={styles.scrollViewContainerStyle}>
+      <ScrollView
+        style={styles.scrollView}
+        horizontal={true}
+        contentContainerStyle={styles.scrollViewContainerStyle}>
         {this.rowThumbnails()}
       </ScrollView>
     );

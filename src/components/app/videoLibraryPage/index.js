@@ -14,7 +14,7 @@ import MediaPicker from 'react-native-image-crop-picker';
 import {includes} from 'ramda';
 import Orientation from 'react-native-orientation-locker';
 
-import CardArchive from '../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import {
   isUserAlone,
   isSomeoneSharingScreen,
@@ -31,7 +31,7 @@ import Button from '../../layout/buttons/Button';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 
-import LogoutView from '../coachFlow/StreamPage/components/LogoutView';
+import LogoutView from '../coachFlow/GroupsPage/components/LogoutView';
 
 import {
   sortVideos,
@@ -254,15 +254,20 @@ class VideoLibraryPage extends Component {
               {!selectOnly
                 ? rowTitle({
                     icon: {
-                      name: 'television',
-                      type: 'moon',
+                      name: 'tv',
+                      type: 'font',
+                      // name: 'television',
+                      // type: 'moon',
                       color: colors.title,
-                      size: 23,
+                      size: 20,
                     },
                     badge:
                       videosArray.length === 0 ? false : videosArray.length,
                     title: 'Library',
                     hideDividerHeader: true,
+                    containerStyle: {
+                      marginBottom: 15,
+                    },
                   })
                 : pickerlocalVideos({
                     lengthGameFareLibrary: videosArray.length,

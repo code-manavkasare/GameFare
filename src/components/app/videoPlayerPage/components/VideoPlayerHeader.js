@@ -65,7 +65,7 @@ export default class VideoPlayerHeader extends React.Component {
       <HeaderBackButton {...sharedProps} />
     ) : (
       <HeaderBackButton
-        icon1={'arrow-left'}
+        icon1={'chevron-left'}
         clickButton1={() => close()}
         colorIconOffset={colors.white}
         backgroundColorIconOffset={colors.title + '70'}

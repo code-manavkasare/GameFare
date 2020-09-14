@@ -114,10 +114,10 @@ class VideoPlayerPage extends Component {
       });
       if (personSharingScreen && videosBeingShared) {
         const prevVideos = Object.keys(
-          session.members[personSharingScreen].sharedVideos,
+          session?.members[personSharingScreen]?.sharedVideos,
         );
         const nextVideos = Object.keys(
-          nextSession.members[personSharingScreen].sharedVideos,
+          nextSession?.members[personSharingScreen]?.sharedVideos,
         );
         if (
           archives.length !== nextVideos.length &&

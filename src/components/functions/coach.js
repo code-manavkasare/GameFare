@@ -249,10 +249,10 @@ const stopRemoteRecording = async (
 
 const getMember = (session, userID) => {
   if (!session) {
-    return {};
+    return false;
   }
   if (!session.members) {
-    return {};
+    return false;
   }
   return session.members[userID];
 };
@@ -408,7 +408,7 @@ const closeSession = async ({noNavigation}) => {
   if (!noNavigation) {
     store.dispatch(setLayout({isFooterVisible: true}));
     StatusBar.setBarStyle('dark-content', true);
-    await navigate('Stream', {screen: 'StreamPage', params: {}});
+    await navigate('Stream', {screen: 'GroupsPage', params: {}});
   }
 };
 const openMemberAcceptCharge = async (
@@ -530,14 +530,13 @@ const createSession = async (members) => {
       };
     }, {});
   }
-  const {objectID} = await openSession(
+  return await openSession(
     {
       id: userID,
       info: infoUser.userInfo,
     },
     members,
   );
-  navigate('Conversation', {coachSessionID: objectID});
 };
 
 const sessionOpening = async (session) => {
@@ -561,7 +560,7 @@ const deleteSession = (objectID) => {
     colorButton: 'red',
     onPressColor: colors.redLight,
     nextNavigation: () => {
-      navigate('Stream');
+      navigate('People');
     },
     onGoBack: async () => {
       const currentSessionID = store.getState().coach.currentSessionID;
@@ -729,6 +728,7 @@ module.exports = {
   bindSession,
   unbindSession,
   newSession,
+  createSession,
   addMembersToSession,
   searchSessionsForString,
   selectVideosFromLibrary,

@@ -98,8 +98,9 @@ class ListEvent extends Component {
       },
     );
     responseCreateConnectAccount = responseCreateConnectAccount.data;
-    if (responseCreateConnectAccount.error)
+    if (responseCreateConnectAccount.error) {
       return this.wrongCB(responseCreateConnectAccount.error.message);
+    }
     /////////////////////////////////////////////////////////////////////
 
     await database()
@@ -359,8 +360,9 @@ class ListEvent extends Component {
       state.ssnNumber === '' ||
       state.email === '' ||
       !state.address.lat
-    )
+    ) {
       return false;
+    }
     return true;
   }
   render() {
@@ -378,7 +380,7 @@ class ListEvent extends Component {
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
-          icon1="arrow-left"
+          icon1="chevron-left"
           clickButton1={() => this.props.navigation.goBack()}
         />
         <ScrollView

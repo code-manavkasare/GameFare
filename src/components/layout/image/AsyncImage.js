@@ -29,7 +29,7 @@ export default class AsyncImage extends Component {
     return mainImage;
   }
   imgDisplay() {
-    const {style, resizeMode} = this.props;
+    const {style, resizeMode, onError} = this.props;
     return (
       <Animated.View
         style={{
@@ -46,6 +46,11 @@ export default class AsyncImage extends Component {
           source={{
             cache: FastImage.cacheControl.web,
             uri: this.getMainImage(),
+          }}
+          onError={(err) => {
+            if (onError) {
+              onError(err);
+            }
           }}
         />
       </Animated.View>

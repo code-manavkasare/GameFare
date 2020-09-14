@@ -106,7 +106,9 @@ class BottomButton extends Component {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     this.configureQueue();
   }
   componentDidUpdate(prevProps, prevState) {

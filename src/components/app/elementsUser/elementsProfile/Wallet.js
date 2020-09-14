@@ -33,7 +33,9 @@ class ListEvent extends Component {
       .ref('usersTransfers/' + this.props.userID)
       .once('value');
     listTransfers = listTransfers.val();
-    if (!listTransfers) listTransfers = [];
+    if (!listTransfers) {
+      listTransfers = [];
+    }
     listTransfers = Object.values(listTransfers).sort(function(a, b) {
       return new Date(b.date) - new Date(a.date);
     });
@@ -78,13 +80,16 @@ class ListEvent extends Component {
   }
   widthdraw(wallet) {
     const {navigate} = this.props.navigation;
-    if (Number(wallet.totalWallet) === 0)
+    if (Number(wallet.totalWallet) === 0) {
       return navigate('Alert', {
         close: true,
         title: 'You have insufficient funds in your wallet.',
         textButton: 'Got it!',
       });
-    if (!wallet.bankAccount) return navigate('Payments');
+    }
+    if (!wallet.bankAccount) {
+      return navigate('Payments');
+    }
     return navigate('Alert', {
       subtitle:
         'Please note that funds may take a few business days to be transferred to your bank account.',
@@ -118,13 +123,14 @@ class ListEvent extends Component {
       },
     });
     await this.props.navigation.navigate('Wallet');
-    if (data.error)
+    if (data.error) {
       return this.props.navigation.navigate('Alert', {
         close: true,
         title: 'An error has occured.',
         subtitle: data.error.message,
         textButton: 'Got it!',
       });
+    }
     await this.props.navigation.navigate('Alert', {
       close: true,
       title:
@@ -151,7 +157,7 @@ class ListEvent extends Component {
           initialBorderWidth={0.3}
           typeIcon2={'font'}
           sizeIcon2={17}
-          icon1={'arrow-left'}
+          icon1={'chevron-left'}
           icon2={'text'}
           text2={'Get'}
           clickButton1={() => goBack()}

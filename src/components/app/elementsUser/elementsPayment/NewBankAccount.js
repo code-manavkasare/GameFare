@@ -59,16 +59,17 @@ class ListEvent extends Component {
       Config.FIREBASE_CLOUD_FUNCTIONS_URL
     }createBankAccountToken`;
     let state = this.state;
-    delete state['loader'];
-    delete state['error'];
-    delete state['errorMessage'];
+    delete state.loader;
+    delete state.error;
+    delete state.errorMessage;
     // delete state['loader'];
     let dataCreateToken = await axios.get(urlCreateToken, {
       params: this.state,
     });
     dataCreateToken = dataCreateToken.data;
-    if (dataCreateToken.error)
+    if (dataCreateToken.error) {
       return this.wrongCB(dataCreateToken.error.message);
+    }
     const urlCreateUserConnectAccount = `${
       Config.FIREBASE_CLOUD_FUNCTIONS_URL
     }addBankAccountToUser`;
@@ -83,8 +84,9 @@ class ListEvent extends Component {
       },
     );
     responseCreateConnectAccount = responseCreateConnectAccount.data;
-    if (responseCreateConnectAccount.error)
+    if (responseCreateConnectAccount.error) {
       return this.wrongCB(responseCreateConnectAccount.error.message);
+    }
     await database()
       .ref('users/' + userID + '/wallet/bankAccount/')
       .update(dataCreateToken.bankAccount);
@@ -204,13 +206,16 @@ class ListEvent extends Component {
   }
   buttonActive(countryBankAccount) {
     const state = this.state;
-    if (state.account_holder_name === '') return false;
+    if (state.account_holder_name === '') {
+      return false;
+    }
     for (var i in countryBankAccount.fields) {
       if (
         state[countryBankAccount.fields[i].id] === '' ||
         !state[countryBankAccount.fields[i].id]
-      )
+      ) {
         return false;
+      }
     }
     return true;
   }
@@ -232,7 +237,7 @@ class ListEvent extends Component {
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
-          icon1="arrow-left"
+          icon1="chevron-left"
           clickButton1={() => this.props.navigation.navigate('Payments')}
         />
         <ScrollView

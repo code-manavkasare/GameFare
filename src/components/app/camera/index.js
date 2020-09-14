@@ -74,7 +74,7 @@ class CameraPage extends Component {
           sizeLoader={40}
           initialBorderColorIcon={'transparent'}
           initialTitleOpacity={0}
-          // icon1={'arrow-left'}
+          // icon1={'chevron-left'}
           typeIcon1="font"
           backgroundColorIcon1={colors.title + '70'}
           onPressColorIcon1={colors.title + '30'}

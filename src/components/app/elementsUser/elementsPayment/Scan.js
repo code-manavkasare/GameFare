@@ -43,7 +43,7 @@ class ScanCard extends Component {
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
-          icon1="arrow-left"
+          icon1="chevron-left"
           clickButton1={() => this.props.navigation.goBack()}
         />
         <ScrollView
@@ -79,4 +79,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {})(ScanCard);
+export default connect(
+  mapStateToProps,
+  {},
+)(ScanCard);

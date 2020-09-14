@@ -96,7 +96,7 @@ class EditProfilePage extends Component {
           inputRange={[5, 10]}
           initialBorderColorIcon={colors.white}
           initialBackgroundColor={'white'}
-          icon1={'arrow-left'}
+          icon1={'chevron-left'}
           initialBorderColorHeader={colors.off}
           initialTitleOpacity={1}
           initialBorderWidth={1}

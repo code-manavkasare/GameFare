@@ -1,15 +1,16 @@
 import React from 'react';
+
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import Footer from './footer/index';
-import Stream from './components/Stream';
+import People from './components/People';
+
 import Session from './components/Session';
 import VideoLibrary from './components/VideoLibrary';
 
 import colors from '../../style/colors';
 
 const Tab = createMaterialTopTabNavigator();
-// const Tab = createBottomTabNavigator();
 
 function TabsApp() {
   return (
@@ -33,9 +34,11 @@ function TabsApp() {
           label: 'Library',
           signInToPass: false,
           icon: {
-            name: 'television',
-            type: 'moon',
-            size: 26,
+            name: 'tv',
+            type: 'font',
+            // alt name: 'television',
+            // alt type: 'moon',
+            size: 21,
           },
         }}
       />
@@ -56,16 +59,18 @@ function TabsApp() {
       />
 
       <Tab.Screen
-        name="Stream"
-        component={Stream}
+        name="People"
+        component={People}
         options={{
-          pageStack: 'StreamPage',
-          label: 'Chat',
+          pageStack: 'GroupsPage',
+          label: 'People',
           signInToPass: false,
           icon: {
-            name: 'user',
-            type: 'moon',
-            size: 26,
+            name: 'user-friends',
+            type: 'font',
+            // alt name: 'user',
+            // alt type: 'moon',
+            size: 21,
           },
         }}
       />

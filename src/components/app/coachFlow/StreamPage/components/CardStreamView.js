@@ -57,7 +57,9 @@ class CardStream extends Component {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     const {coachSessionID} = this.props;
     bindSession(coachSessionID);
     bindConversation(coachSessionID);
@@ -95,7 +97,9 @@ class CardStream extends Component {
     const activeSession = coachSessionID === currentSessionID;
 
     let member = getMember(session, userID);
-    if (!member) member = {};
+    if (!member) {
+      member = {};
+    }
 
     return session ? (
       <Animated.View style={styles.card}>
