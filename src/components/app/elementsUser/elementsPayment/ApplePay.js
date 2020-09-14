@@ -127,7 +127,7 @@ class ApplePay extends Component {
           initialTitleOpacity={0}
           initialBackgroundColor={'white'}
           initialBorderColorIcon={'white'}
-          icon1="arrow-left"
+          icon1="chevron-left"
           icon2="text"
           text2="Close"
           clickButton1={() => navigation.goBack()}

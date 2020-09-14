@@ -364,14 +364,14 @@ class MorePage extends Component {
           click: () =>
             clickNotification({
               action: 'Stream',
-              screen: 'StreamPage',
+              screen: 'GroupsPage',
               objectID: '2v2aij5loe2kbxfv0n4',
               notUniqueStack: 'true',
               typeNavigation: 'navigate',
               date: Date.now(),
               data: {
                 action: 'Stream',
-                screen: 'StreamPage',
+                screen: 'GroupsPage',
                 objectID: '2v2aij5loe2kbxfv0n4',
                 notUniqueStack: 'true',
                 typeNavigation: 'navigate',
@@ -392,7 +392,7 @@ class MorePage extends Component {
               },
               click: () =>
                 NavigationService.navigate('Stream', {
-                  screen: 'StreamPage',
+                  screen: 'GroupsPage',
                   params: {
                     openSession: true,
                     objectID: 'yrhyg3a4nrik9v83hjx',
@@ -428,7 +428,7 @@ class MorePage extends Component {
                   notification: {
                     data: {
                       action: 'Stream',
-                      screen: 'StreamPage',
+                      screen: 'GroupsPage',
                       objectID: 'yrhyg3a4nrik9v83hjx',
                       typeNavigation: 'navigate',
                       notUniqueStack: 'true',
@@ -459,7 +459,7 @@ class MorePage extends Component {
               notification: {
                 data: {
                   action: 'Stream',
-                  screen: 'StreamPage',
+                  screen: 'GroupsPage',
                   objectID: 'yrhyg3a4nrik9v83hjx',
                   typeNavigation: 'navigate',
                   notUniqueStack: 'true',
@@ -505,7 +505,7 @@ class MorePage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={0}
           initialBorderWidth={1}
-          icon1={'arrow-left'}
+          icon1={'chevron-left'}
           typeIcon1="font"
           sizeIcon1={17}
           colorIcon1={colors.title}

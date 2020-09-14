@@ -61,7 +61,7 @@ class SessionSettings extends Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'arrow-left'}
+          icon1={'chevron-left'}
           sizeIcon1={17}
           clickButton1={() => goBack()}
           icon2={null}

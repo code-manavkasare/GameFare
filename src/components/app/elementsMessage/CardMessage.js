@@ -15,7 +15,7 @@ import {getParams, openUrl} from '../../database/branch';
 import {messageAvatar, messageName} from '../../functions/users';
 import NavigationService from '../../../../NavigationService';
 import AllIcon from '../../layout/icons/AllIcons';
-import CardArchive from '../../app/coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import CardArchive from '../../app/coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
 const {height, width} = Dimensions.get('screen');
 export default class CardMessage extends React.Component {
@@ -51,12 +51,20 @@ export default class CardMessage extends React.Component {
       return this.openPage(params.action, params.objectID);
     }
 
-    if (!viewUrl) return openUrl(url);
-    if (!viewUrl.id) return openUrl(url);
+    if (!viewUrl) {
+      return openUrl(url);
+    }
+    if (!viewUrl.id) {
+      return openUrl(url);
+    }
     const params = await getParams(url);
 
-    if (!params) return Linking.openURL(url);
-    if (params.action) return this.openPage(params.action, params.objectID);
+    if (!params) {
+      return Linking.openURL(url);
+    }
+    if (params.action) {
+      return this.openPage(params.action, params.objectID);
+    }
     return openUrl(url);
   }
   openImage() {
@@ -91,7 +99,7 @@ export default class CardMessage extends React.Component {
     return null;
   }
   renderImages = (images, message, discussionID) => {
-    if (images)
+    if (images) {
       return Object.values(images).map((image, i) => (
         <CardImg
           image={image}
@@ -104,6 +112,7 @@ export default class CardMessage extends React.Component {
           message={message}
         />
       ));
+    }
     return null;
   };
   goToProfilePage = () => {
@@ -113,11 +122,17 @@ export default class CardMessage extends React.Component {
   };
   displayPictureUser = (props) => {
     const {currentMessage, previousMessage} = props;
-    if (!previousMessage) return true;
+    if (!previousMessage) {
+      return true;
+    }
     const {timeStamp, user: currentUser} = currentMessage;
     const {timeStamp: previousTimeStamp, user: previousUser} = previousMessage;
-    if (currentUser.id !== previousUser.id) return true;
-    if (timeStamp - previousTimeStamp > 120000) return true;
+    if (currentUser.id !== previousUser.id) {
+      return true;
+    }
+    if (timeStamp - previousTimeStamp > 120000) {
+      return true;
+    }
     return false;
   };
   viewUserConnect(props) {

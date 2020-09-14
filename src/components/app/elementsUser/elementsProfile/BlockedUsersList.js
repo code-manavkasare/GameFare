@@ -104,7 +104,7 @@ class BlockedUsersList extends Component {
           initialBorderWidth={0.3}
           typeIcon2={'font'}
           sizeIcon2={17}
-          icon1={'arrow-left'}
+          icon1={'chevron-left'}
           clickButton1={() => goBack()}
         />
 

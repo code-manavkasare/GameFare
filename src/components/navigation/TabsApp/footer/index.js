@@ -100,7 +100,7 @@ class Footer extends React.Component {
               inputRange,
               outputColorRange: inputRange.map((i) => {
                 if (i === 1 && !disableAnimation) {
-                  return index === 1 ? colors.white : colors.grey;
+                  return index === 1 ? colors.white : colors.white;
                 } else {
                   return propColors.inactive;
                 }
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     ...styleApp.shadowWeak,
     ...styleApp.center,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp + 15,
+    height: heightFooter + marginBottomApp + 20,
     position: 'absolute',
     zIndex: 1,
     width: '100%',
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     ...styleApp.shadowWeak,
     ...styleApp.center2,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp,
+    height: heightFooter + marginBottomApp - 5,
     position: 'absolute',
     zIndex: -1,
     width: '100%',

@@ -108,7 +108,7 @@ class FooterButton extends React.Component {
     ];
     const recordButtonYTranslate = Reanimated.interpolate(scale, {
       inputRange: [0.7, 1],
-      outputRange: [0, disableAnimation ? 0 : -15],
+      outputRange: [-5, disableAnimation ? -5 : -20],
     });
     return (
       <Button
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   buttonView: {
     ...styleApp.shadowWeak,
     ...styleApp.center,
-    marginTop: 50,
+    marginTop: 70,
     height: heightFooter,
     width: '100%',
   },

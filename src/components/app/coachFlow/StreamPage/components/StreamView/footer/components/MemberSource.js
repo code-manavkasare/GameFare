@@ -16,7 +16,7 @@ import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import Loader from '../../../../../../../layout/loaders/Loader';
 import Timer from './Timer';
-import { request } from 'react-native-permissions';
+import {request} from 'react-native-permissions';
 
 class MemberSource extends Component {
   constructor(props) {
@@ -29,7 +29,9 @@ class MemberSource extends Component {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   async componentDidUpdate(prevProps, prevState) {
     const {member} = this.state;
@@ -38,18 +40,21 @@ class MemberSource extends Component {
     const {recording: prevRecording} = prevState.member;
     if (recording?.uploadRequest && prevRecording) {
       if (
-        !isEqual(prevRecording.uploadRequest ? 
-          Object.keys(prevRecording.uploadRequest) : {}, 
-          Object.keys(recording.uploadRequest)) &&
+        !isEqual(
+          prevRecording.uploadRequest
+            ? Object.keys(prevRecording.uploadRequest)
+            : {},
+          Object.keys(recording.uploadRequest),
+        ) &&
         !recording.uploadRequest?.uploadLaunched &&
         memberID === userID
       ) {
         const {uploadRequest} = recording;
         let {flagsSelected} = uploadRequest;
         if (prevRecording?.uploadRequest?.flagsSelected) {
-          const newClipKeys = Object.keys(flagsSelected)
-            .filter((clip) =>
-              !prevRecording.uploadRequest.flagsSelected[clip]);
+          const newClipKeys = Object.keys(flagsSelected).filter(
+            (clip) => !prevRecording.uploadRequest.flagsSelected[clip],
+          );
           let newFlags = {};
           for (let id in newClipKeys) {
             newFlags[id] = flagsSelected[id];
@@ -75,24 +80,32 @@ class MemberSource extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.member, state.member) && props.member)
+    if (!isEqual(props.member, state.member) && props.member) {
       return {member: props.member};
+    }
     return {};
   }
 
-  loading(val) { this.setState({loader: val}) }
+  loading(val) {
+    this.setState({loader: val});
+  }
 
   timer() {
     const {member} = this.state;
     const {recording} = member;
-    const dispatched = recording?.dispatched
+    const dispatched = recording?.dispatched;
     const isRecording = recording && recording.isRecording;
 
     const timer = (startTimestamp) => {
-      if (dispatched) return null
+      if (dispatched) {
+        return null;
+      }
       const optionsTimer = {
         container: styles.viewRecordingTime,
-        text: [styleApp.textBold, {color: colors.black, fontSize: 12, marginTop:1}],
+        text: [
+          styleApp.textBold,
+          {color: colors.black, fontSize: 12, marginTop: 1},
+        ],
       };
       // Timer the source of a 'react state update after unmount' warning
       return (
@@ -102,26 +115,28 @@ class MemberSource extends Component {
         />
       );
     };
-    if (isRecording) return timer(recording.startTimestamp);
+    if (isRecording) {
+      return timer(recording.startTimestamp);
+    }
   }
   buttonRecord() {
     let {member, loader} = this.state;
     const {recording} = member;
     const {selectMember, coachSessionID} = this.props;
     const isRecording = recording && recording.isRecording;
-    const isDisabled = recording?.enabled === false || member?.publishVideo === false;
-    if (loader || recording?.dispatched)
+    const isDisabled =
+      recording?.enabled === false || member?.publishVideo === false;
+    if (loader || recording?.dispatched) {
       return (
-        <Col 
-        size={10}
-        style={styleApp.center3}>
+        <Col size={10} style={styleApp.center3}>
           <View style={{...styles.containerRecording}}>
             <Loader size={35} color={colors.red} />
           </View>
         </Col>
       );
+    }
 
-    return (!isDisabled || isRecording) ? (
+    return !isDisabled || isRecording ? (
       <Col
         size={10}
         style={styleApp.center3}
@@ -136,13 +151,9 @@ class MemberSource extends Component {
         </View>
       </Col>
     ) : (
-      <Col 
-      size={10}
-      style={styleApp.center3}>
+      <Col size={10} style={styleApp.center3}>
         <View style={{...styles.containerRecording}}>
-          <View
-            style={styles.recordButtonDisabled}
-          />
+          <View style={styles.recordButtonDisabled} />
         </View>
       </Col>
     );
@@ -161,7 +172,7 @@ class MemberSource extends Component {
             <ImageUser user={member} />
           </Col>
 
-          <Col size={2}/>
+          <Col size={2} />
 
           <Col size={35} style={styleApp.center2}>
             <Text style={[styleApp.text, {fontSize: 14}]}>
@@ -172,17 +183,19 @@ class MemberSource extends Component {
             {this.timer()}
           </Col>
 
-          <Col size={15}/>
+          <Col size={15} />
           <Col size={15}>
-            {!recording?.dispatched && <AddFlagButton
-              coachSessionID={coachSessionID}
-              member={member}
-              disableSnapShot={true}
-              takeSnapShotCameraView={takeSnapShotCameraView}
-            />}
+            {!recording?.dispatched && (
+              <AddFlagButton
+                coachSessionID={coachSessionID}
+                member={member}
+                disableSnapShot={true}
+                takeSnapShotCameraView={takeSnapShotCameraView}
+              />
+            )}
           </Col>
 
-          <Col size={8}/>
+          <Col size={8} />
 
           {this.buttonRecord()}
         </Row>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,  Animated} from 'react-native';
+import {View, Animated} from 'react-native';
 
 import ScrollView from '../layout/scrollViews/ScrollView';
 import sizes from '../style/sizes';
@@ -25,7 +25,7 @@ export default class Complete extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1="arrow-left"
+          icon1="chevron-left"
           icon2={null}
           clickButton1={() => navigation.navigate('Phone')}
         />

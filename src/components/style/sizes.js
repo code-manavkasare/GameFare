@@ -15,6 +15,7 @@ let initialHeightControlBar = 110;
 let offsetFooterStreaming = 30;
 
 let marginBottomApp = 50;
+let keyboardOffset = 5;
 let marginBottomAppLandscade = 10;
 
 let heightHeaderStream = 60;
@@ -30,6 +31,7 @@ if (Platform.OS === 'ios') {
   marginTopHeader = 24;
   heightPicture = 240;
   marginBottomApp = 10;
+  keyboardOffset = 245;
   heightHeaderFilter = 100;
   heightFooterBooking = 82;
   heightFooter = 60;
@@ -46,6 +48,7 @@ if (Platform.OS === 'ios') {
     heightFooter = 65;
     marginTopApp = 35;
     marginBottomApp = 30;
+    keyboardOffset = 300;
     marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
@@ -58,6 +61,7 @@ if (Platform.OS === 'ios') {
     heightFooter = 65;
     marginTopApp = 35;
     marginBottomApp = 35;
+    keyboardOffset = 305;
     marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
@@ -107,6 +111,7 @@ module.exports = {
   height: height,
   width: width,
   marginBottomApp: marginBottomApp,
+  keyboardOffset: keyboardOffset,
   initialHeightControlBar: initialHeightControlBar,
   offsetFooterStreaming: offsetFooterStreaming,
   heightCardSession,

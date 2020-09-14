@@ -21,14 +21,17 @@ import {
   selectVideosFromLibrary,
 } from '../../../functions/coach';
 
-import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
 const imageCardTeam = (session, size, hideDots) => {
   let scale = 1;
   if (size) {
     scale = 0.7;
   }
-  const members = getSortedMembers(session.members);
+  if (!session?.members) {
+    return null;
+  }
+  const members = getSortedMembers(session?.members);
   const length = members.length;
   const styleByIndex = (i) => {
     if (length > 1) {
@@ -65,13 +68,14 @@ const imageCardTeam = (session, size, hideDots) => {
             scale,
             Object.values(session.members).length - 1,
             hideDots,
+            Object.values(session.members).length === 2,
           ),
         )}
     </View>
   );
 };
 
-const userCircle = (member, style, scale, length, hideDots) => {
+const userCircle = (member, style, scale, length, hideDots, single) => {
   const userID = store.getState().user.userID;
   let borderRadius = 100;
   let sizeImg = length > 1 ? 45 * scale : 63 * scale;
@@ -117,10 +121,15 @@ const userCircle = (member, style, scale, length, hideDots) => {
                 borderRadius,
               }}>
               <Text
-                style={[
-                  styleApp.textBold,
-                  {fontSize: 11, color: colors.white},
-                ]}>
+                style={{
+                  ...styleApp.textBold,
+                  color: colors.white,
+                  letterSpacing: 1,
+                  textAlign: 'center',
+                  marginLeft: 3,
+                  marginTop: 1,
+                  fontSize: single ? 23 : 16,
+                }}>
                 {firstAndLastName
                   ? member.info.firstname[0] + member.info.lastname[0]
                   : altNames
@@ -171,14 +180,17 @@ const titleSession = (session, size) => {
       if (nameString === '') {
         return firstname + ' ' + lastname;
       } else {
-        const numNames = nameString.split(',').length - 1;
+        const numNames = nameString.split(',').length;
         if (numNames < 2) {
+          if (members.length === 2) {
+            return nameString + ' and ' + firstname + ' ' + lastname;
+          }
           return nameString + ', ' + firstname + ' ' + lastname;
         } else if (numNames === 2) {
           if (i === members.length - 1) {
             return nameString + ', and ' + firstname + ' ' + lastname;
           } else {
-            return nameString + `, and ${members.length - numNames + 1} others`;
+            return nameString + `, and ${members.length - numNames} others`;
           }
         } else {
           return nameString;
@@ -484,9 +496,19 @@ const rowTitle = ({
     width: '100%',
     borderRadius: 5,
   };
+  const styleBadgeText = {
+    fontSize:
+      badge && !isNaN(badge) ? (badge > 999 ? 8 : badge > 99 ? 9 : 10) : 10,
+  };
+  const styleContainer = {
+    ...containerStyle,
+    ...styleApp.center,
+    minHeight: 50,
+    paddingTop: 10,
+  };
   return (
-    <View style={{...containerStyle}}>
-      <Row style={[{marginBottom: 10, marginTop: 30}]}>
+    <View style={styleContainer}>
+      <Row>
         <Col size={30} style={styleApp.center}>
           {iconWithBadge(icon, badge)}
         </Col>

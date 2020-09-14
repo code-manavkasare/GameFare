@@ -57,7 +57,7 @@ class HeaderGroupPage extends Component {
         initialTitleOpacity={1}
         loader={loaderMessage}
         initialBorderWidth={1}
-        icon1={'arrow-left'}
+        icon1={'chevron-left'}
         icon2={'speech'}
         typeIcon2={'moon'}
         sizeIcon2={21}

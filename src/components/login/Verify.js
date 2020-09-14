@@ -33,7 +33,7 @@ export default class Verify extends Component {
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
-          icon1="arrow-left"
+          icon1="chevron-left"
           clickButton1={() => navigation.navigate('Phone')}
         />
 
@@ -56,4 +56,3 @@ export default class Verify extends Component {
     );
   }
 }
-

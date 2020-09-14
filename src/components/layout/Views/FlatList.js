@@ -19,8 +19,12 @@ class FlatListComponent extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   shouldComponentUpdate(prevProps, prevState) {
-    if (!isEqual(prevState, this.state)) return true;
-    if (isEqual(this.props, prevProps)) return false;
+    if (!isEqual(prevState, this.state)) {
+      return true;
+    }
+    if (isEqual(this.props, prevProps)) {
+      return false;
+    }
     return true;
   }
   // static getDerivedStateFromProps(props, state) {
@@ -56,6 +60,10 @@ class FlatListComponent extends Component {
       horizontal,
       showsHorizontalScrollIndicator,
       showsVerticalScrollIndicator,
+      refreshControl,
+      onScrollEndDrag,
+      onScrollBeginDrag,
+      onScroll,
     } = this.props;
 
     const containerStyle = {
@@ -88,6 +96,10 @@ class FlatListComponent extends Component {
         scrollEnabled={true}
         horizontal={horizontal}
         inverted={inverted}
+        refreshControl={refreshControl}
+        onScrollEndDrag={onScrollEndDrag}
+        onScrollBeginDrag={onScrollBeginDrag}
+        onScroll={onScroll}
         contentContainerStyle={containerStyle}
         ListHeaderComponent={header}
         ListHeaderComponentStyle={{

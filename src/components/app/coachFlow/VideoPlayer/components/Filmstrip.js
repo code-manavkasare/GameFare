@@ -75,7 +75,7 @@ export default class Filmstrip extends Component {
     const timeBounds = !from || !to ? this.state.timeBounds : [from, to];
     const thumbnails = await generateThumbnailSet(source, timeBounds, count);
     this.failedThumbs = false;
-    this.setState({
+    this?.setState({
       thumbnails,
       loadedThumbs: 0,
     });

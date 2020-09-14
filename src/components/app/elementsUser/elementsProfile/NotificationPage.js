@@ -114,7 +114,7 @@ class NotificationPage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'arrow-left'}
+          icon1={'chevron-left'}
           clickButton1={() => this.props.navigation.goBack()}
         />
 

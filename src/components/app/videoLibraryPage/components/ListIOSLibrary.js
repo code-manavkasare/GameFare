@@ -11,7 +11,7 @@ import {ge10tLastVideo} from '../../../functions/pictures';
 import styleApp from '../../../style/style';
 
 import {FlatListComponent} from '../../../layout/Views/FlatList';
-import CardArchive from '../../coachFlow/StreamPage/components/StreamView/footer/components/CardArchive';
+import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
 class ListIOSLibrary extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ class ListIOSLibrary extends Component {
   render() {
     const {selectVideo, selectedLocalVideos} = this.props;
     const {videos} = this.state;
-    if (!videos)
+    if (!videos) {
       return (
         <View
           style={{
@@ -40,6 +40,7 @@ class ListIOSLibrary extends Component {
           <Loader size={40} color={colors.primary} />
         </View>
       );
+    }
     return (
       <FlatListComponent
         list={videos}

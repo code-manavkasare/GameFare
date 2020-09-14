@@ -14,7 +14,11 @@ const coachSessionsReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_SESSION:
       const {session} = action;
-      return {...state, [session.objectID]: session};
+      if (session?.objectID) {
+        return {...state, [session.objectID]: session};
+      } else {
+        return state;
+      }
     case DELETE_SESSION:
       const {sessionId} = action;
       return dissoc(sessionId, state);

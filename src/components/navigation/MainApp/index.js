@@ -15,6 +15,7 @@ import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import SelectVideosFromLibrary from '../../app/videoLibraryPage/index';
 
 import Alert from '../../layout/alerts/Alert';
+import Groups from '../../app/coachFlow/GroupsPage/index';
 
 import SessionSettings from '../../app/TeamPage/components/SessionSettings';
 
@@ -45,6 +46,7 @@ const MainApp = () => {
       <Stack.Screen name="MorePage" component={Profile} />
 
       <Stack.Screen name="VideoPlayerPage" component={VideoPlayerPage} />
+      <Stack.Screen name="Groups" component={Groups} />
 
       <Stack.Screen
         name="SelectVideosFromLibrary"

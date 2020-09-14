@@ -38,7 +38,7 @@ class HeaderListStream extends Component {
       clickButton2: async () => {
         const session = await this.createSession({});
         StatusBar.setBarStyle('light-content', true);
-        await navigate('StreamPage');
+        await navigate('GroupsPage');
         return this.openSession(session);
       },
       onGoBack: async (members) => {
@@ -52,7 +52,7 @@ class HeaderListStream extends Component {
 
         const session = await this.createSession(members);
         StatusBar.setBarStyle('light-content', true);
-        await navigate('StreamPage');
+        await navigate('GroupsPage');
         return this.openSession(session);
       },
     });
@@ -96,7 +96,7 @@ class HeaderListStream extends Component {
         initialBackgroundColor={'white'}
         loader={loader}
         icon1="times"
-        clickButton1={() => navigate('StreamPage')}
+        clickButton1={() => navigate('GroupsPage')}
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}

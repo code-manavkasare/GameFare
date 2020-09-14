@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Session from '../../../app/coachFlow/StreamPage/components/StreamView/index';
-import FinalizeRecording from '../../../app/coachFlow/StreamPage/components/StreamView/footer/components/FinalizeRecording/index';
-import Settings from '../../../app/coachFlow/StreamPage/components/StreamView/components/Settings';
+import Session from '../../../app/coachFlow/GroupsPage/components/StreamView/index';
+import FinalizeRecording from '../../../app/coachFlow/GroupsPage/components/StreamView/footer/components/FinalizeRecording/index';
+import Settings from '../../../app/coachFlow/GroupsPage/components/StreamView/components/Settings';
 
 const Stack = createStackNavigator();
 const Stream = () => {
@@ -13,13 +13,6 @@ const Stream = () => {
       <Stack.Screen
         name="Settings"
         component={Settings}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-      <Stack.Screen
-        name="FinalizeRecording"
-        component={FinalizeRecording}
         options={{
           gestureEnabled: false,
         }}

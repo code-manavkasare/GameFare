@@ -52,12 +52,12 @@ class HeaderConversation extends React.Component {
         sizeIcon2={26}
         sizeIcon1={17}
         initialTitleOpacity={1}
-        icon1={'arrow-left'}
+        icon1={'chevron-left'}
         icon2={'film'}
         clickButton1={() => {
           // const {route} = this.props
           // const {currentRouteName} = route.params;
-          navigation.navigate('Stream');
+          navigation.goBack();
         }}
         clickButton2={() => this.openSession()}
         badgeIcon2={viewLive(session, {height: 20, width: 20}, true)}
