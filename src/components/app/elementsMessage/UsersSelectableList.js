@@ -22,18 +22,22 @@ export default class UsersSelectableList extends React.Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   reset() {
     this.setState({selectedUsers: {}});
   }
   selectUser = async (select, user, selectedUsers) => {
-    if (!select)
+    if (!select) {
       selectedUsers = {
         ...selectedUsers,
         [user.objectID]: user,
       };
-    else delete selectedUsers[user.objectID];
+    } else {
+      delete selectedUsers[user.objectID];
+    }
     await this.setState({selectedUsers: selectedUsers});
     this.props.getSelectedUsers(this.state.selectedUsers);
   };

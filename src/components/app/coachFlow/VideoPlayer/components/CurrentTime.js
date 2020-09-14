@@ -11,11 +11,13 @@ export default class LogoutView extends Component {
     super(props);
     this.state = {
       currentTime: this.props.currentTime,
-      overrideStyle: {}
+      overrideStyle: {},
     };
   }
   async componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   setCurrentTime(currentTime) {
     this.setState({currentTime: currentTime});
@@ -25,14 +27,19 @@ export default class LogoutView extends Component {
   }
   overrideStyle(overrideStyle) {
     const {overrideStyle: prevStyle} = this.state;
-    if (!isEqual(overrideStyle, prevStyle))
-      this.setState({overrideStyle})
+    if (!isEqual(overrideStyle, prevStyle)) {
+      this.setState({overrideStyle});
+    }
   }
   currentTime() {
     const {currentTime, overrideStyle} = this.state;
     const {style} = this.props;
     return (
-      <Text style={[styleApp.textBold, {...style, ...overrideStyle, color: colors.white}]}>
+      <Text
+        style={[
+          styleApp.textBold,
+          {...style, ...overrideStyle, color: colors.white},
+        ]}>
         {currentTime > 0 ? displayTime(currentTime) : displayTime(0)}
       </Text>
     );

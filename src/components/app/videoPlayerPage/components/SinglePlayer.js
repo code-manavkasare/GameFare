@@ -30,7 +30,9 @@ class SinglePlayer extends Component {
   }
 
   componentDidMount = () => {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     const {local, id} = this.props;
     if (!local) {
       bindArchive(id);

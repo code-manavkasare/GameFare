@@ -20,7 +20,9 @@ class DrawSraightLine extends Component {
   _translateX = new Animated.Value(0);
   _translateY = new Animated.Value(0);
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   onPanGestureEvent = Animated.event(
     [
@@ -39,12 +41,13 @@ class DrawSraightLine extends Component {
           y: event.nativeEvent.y,
         };
         const {drawing} = this.state;
-        if (!drawing)
+        if (!drawing) {
           return this.setState({
             startPoint: newPosition,
             endPoint: newPosition,
             drawing: true,
           });
+        }
         return this.setState({
           endPoint: newPosition,
         });

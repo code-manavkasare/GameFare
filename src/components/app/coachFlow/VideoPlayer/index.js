@@ -70,7 +70,9 @@ export default class VideoPlayer extends Component {
     this.opacityControlBar = new Animated.Value(1);
   }
   async componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     const {currentTime} = this.state;
     if (currentTime !== 0) {
       this.seek(currentTime);

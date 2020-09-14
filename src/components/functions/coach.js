@@ -617,15 +617,20 @@ const addMembersToSession = (objectID, navigateTo) => {
     displayCurrentUser: false,
     titleHeader: 'Add someone to the session',
     onSelectMembers: async (members, sessions) => {
-      for (const member of Object.values(members)) {
-        member.invitationTimeStamp = Date.now();
-        await database()
-          .ref('coachSessions/' + objectID + '/members/' + member.id)
-          .update(member);
-      }
+      await updateMembersToSession(objectID, members);
       return goBack();
     },
   });
+};
+
+const updateMembersToSession = async (coachSessionID, members) => {
+  for (const member of Object.values(members)) {
+    member.invitationTimeStamp = Date.now();
+    await database()
+      .ref('coachSessions/' + coachSessionID + '/members/' + member.id)
+      .update(member);
+  }
+  return navigate('Session');
 };
 
 const searchSessionsForString = (search) => {
@@ -730,6 +735,7 @@ module.exports = {
   newSession,
   createSession,
   addMembersToSession,
+  updateMembersToSession,
   searchSessionsForString,
   selectVideosFromLibrary,
   closeSession,

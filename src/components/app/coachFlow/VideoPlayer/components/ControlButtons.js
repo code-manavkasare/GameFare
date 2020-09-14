@@ -27,7 +27,9 @@ export default class ControlButtons extends Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   setCurrentTime(currentTime, forceUpdate) {
     const {paused} = this.state;
@@ -37,10 +39,11 @@ export default class ControlButtons extends Component {
     }
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.paused !== state.paused)
+    if (props.paused !== state.paused) {
       return {
         paused: props.paused,
       };
+    }
     return {};
   }
   getPaused() {
@@ -177,7 +180,9 @@ export default class ControlButtons extends Component {
       onSlidingStart,
       totalTime,
     } = this.props;
-    if (!heightControlBar) heightControlBar = initialHeightControlBar;
+    if (!heightControlBar) {
+      heightControlBar = initialHeightControlBar;
+    }
     return (
       <Animated.View
         style={[

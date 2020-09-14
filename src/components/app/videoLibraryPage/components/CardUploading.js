@@ -40,7 +40,9 @@ class CardUploading extends Component {
   }
 
   componentDidMount = async () => {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     const {uploadOnMount} = this.props;
     const {videoInfo} = this.state;
     if (uploadOnMount) {
@@ -50,21 +52,26 @@ class CardUploading extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.videoInfo, state.videoInfo) && props.videoInfo)
+    if (!isEqual(props.videoInfo, state.videoInfo) && props.videoInfo) {
       return {
         videoInfo: props.videoInfo,
       };
+    }
     return {};
   }
 
   getVideoUploadStatus() {
     const {progress, videoInfo} = this.state;
-    if (progress !== 0 && progress !== 1) return videoInfo;
+    if (progress !== 0 && progress !== 1) {
+      return videoInfo;
+    }
     return false;
   }
 
   open = async (nextVal, videoInfo) => {
-    if (nextVal && videoInfo) await this.setState({videoInfo});
+    if (nextVal && videoInfo) {
+      await this.setState({videoInfo});
+    }
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(nextVal ? 1 : 0)),
     ]).start();
@@ -86,7 +93,9 @@ class CardUploading extends Component {
         async function(snapshot) {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (isNaN(progress)) progress = 0;
+          if (isNaN(progress)) {
+            progress = 0;
+          }
           await that.setState({
             progress: (progress.toFixed(0) / 100) * 0.2,
             status: 'uploading',
@@ -127,7 +136,9 @@ class CardUploading extends Component {
         async function(snapshot) {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (isNaN(progress)) progress = 0;
+          if (isNaN(progress)) {
+            progress = 0;
+          }
 
           await that.setState({
             progress: 0.2 + (Number(progress.toFixed(0)) / 100) * 0.8,
@@ -207,7 +218,9 @@ class CardUploading extends Component {
       .ref()
       .update(updates);
 
-    if (dismiss) dismiss(videoInfo);
+    if (dismiss) {
+      dismiss(videoInfo);
+    }
     this.open(false);
   };
 

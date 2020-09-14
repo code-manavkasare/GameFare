@@ -37,7 +37,9 @@ class DrawView extends Component {
     this.undo = this.undo.bind(this);
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   static getDerivedStateFromProps(props, state) {
     if (props.videoBeingShared) {

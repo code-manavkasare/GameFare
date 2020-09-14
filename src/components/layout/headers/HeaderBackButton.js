@@ -25,9 +25,9 @@ class HeaderBackButton extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   componentDidMount() {
-    const {loaderOn} = this.props;
-    if (loaderOn) {
-      this.props.onRef(this);
+    const {loaderOn, onRef} = this.props;
+    if (loaderOn && onRef) {
+      onRef(this);
     }
   }
   animatedValues() {

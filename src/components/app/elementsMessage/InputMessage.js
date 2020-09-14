@@ -46,9 +46,13 @@ class InputMessage extends React.Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     const {initialMessage} = this.props;
-    if (initialMessage !== '') this.textInputRef.focus();
+    if (initialMessage !== '') {
+      this.textInputRef.focus();
+    }
   }
 
   async sendNewMessage() {
@@ -86,19 +90,21 @@ class InputMessage extends React.Component {
   }
   async takePicture() {
     const picture = await takePicture();
-    if (picture)
+    if (picture) {
       return this.addImage(
         {uri: picture, type: 'image', id: generateID(), uploaded: false},
         true,
       );
+    }
     return true;
   }
   async selectPicture() {
     const permissionLibrary = await permission('library');
-    if (!permissionLibrary)
+    if (!permissionLibrary) {
       return this.setState({showImages: true, imagesUser: false});
+    }
     var picture = await pickLibrary();
-    if (picture)
+    if (picture) {
       return this.addImage(
         {
           uri: picture,
@@ -109,14 +115,16 @@ class InputMessage extends React.Component {
         },
         true,
       );
+    }
     return true;
   }
   conditionInputOn() {
     if (
       this.state.inputValue === '' &&
       Object.values(this.state.images).length === 0
-    )
+    ) {
       return false;
+    }
     return true;
   }
   placeholderInput = () => {

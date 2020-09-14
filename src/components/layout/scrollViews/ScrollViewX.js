@@ -28,7 +28,9 @@ export default class ScrollViewX extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   styleScrollView() {
     return {
@@ -36,7 +38,9 @@ export default class ScrollViewX extends PureComponent {
     };
   }
   styleInsideView() {
-    if (this.props.fullWidth) return {paddingTop: 0};
+    if (this.props.fullWidth) {
+      return {paddingTop: 0};
+    }
     return {marginLeft: 20, width: width - 40, paddingTop: 20};
   }
   async refresh() {

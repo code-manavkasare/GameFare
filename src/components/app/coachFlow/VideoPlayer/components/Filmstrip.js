@@ -26,7 +26,9 @@ export default class Filmstrip extends Component {
   }
 
   componentDidMount = async () => {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     const {archiveId} = this.props;
     let local = true;
     let archive = await getVideoByID(archiveId);
