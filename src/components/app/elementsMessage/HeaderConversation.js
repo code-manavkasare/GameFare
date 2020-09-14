@@ -50,7 +50,7 @@ class HeaderConversation extends React.Component {
         initialBorderWidth={1}
         initialBorderColorHeader={colors.white}
         sizeIcon2={26}
-        sizeIcon1={17}
+        sizeIcon1={21}
         initialTitleOpacity={1}
         icon1={'chevron-left'}
         icon2={'film'}

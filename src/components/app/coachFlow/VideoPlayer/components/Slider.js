@@ -13,7 +13,9 @@ export default class SliderVideo extends Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   setCurrentTime(currentTime) {
     this.setState({currentTime: currentTime});

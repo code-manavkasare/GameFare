@@ -22,7 +22,9 @@ class Footer extends React.Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
     this.notificationHandler();
   }
   componentDidUpdate(prevProps, prevState) {
@@ -100,7 +102,7 @@ class Footer extends React.Component {
               inputRange,
               outputColorRange: inputRange.map((i) => {
                 if (i === 1 && !disableAnimation) {
-                  return index === 1 ? colors.white : colors.white;
+                  return colors.white;
                 } else {
                   return propColors.inactive;
                 }

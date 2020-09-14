@@ -28,13 +28,18 @@ export default class PinchableBox extends Component {
   _lastScale = 1;
   doubleTapRef = React.createRef();
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     const {scale, position} = this.props;
-    if (prevProps.scale !== scale && scale) this.setNewScale(scale);
-    if (prevProps.position !== position && position)
+    if (prevProps.scale !== scale && scale) {
+      this.setNewScale(scale);
+    }
+    if (prevProps.position !== position && position) {
       this.setNewPosition(position);
+    }
   }
   onPinchGestureEvent = Animated.event(
     [{nativeEvent: {scale: this._pinchScale}}],
@@ -112,7 +117,9 @@ export default class PinchableBox extends Component {
   _onSingleTap = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
       const {singleTouch} = this.props;
-      if (singleTouch) singleTouch();
+      if (singleTouch) {
+        singleTouch();
+      }
     }
   };
   _onDoubleTap = (event) => {

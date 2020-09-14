@@ -17,7 +17,9 @@ class AudioRecorderPlayer extends Component {
   }
 
   componentDidMount = () => {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   };
 
   startRecording = () => {

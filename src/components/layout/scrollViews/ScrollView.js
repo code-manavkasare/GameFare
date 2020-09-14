@@ -25,7 +25,9 @@ class ScrollViewPage extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   styleScrollView() {
     let {marginTop} = this.props;
@@ -35,7 +37,9 @@ class ScrollViewPage extends PureComponent {
     };
   }
   styleInsideView() {
-    if (this.props.fullWidth) return {paddingTop: 0};
+    if (this.props.fullWidth) {
+      return {paddingTop: 0};
+    }
     return {marginLeft: '5%', width: '90%', paddingTop: '5%'};
   }
   async refresh() {

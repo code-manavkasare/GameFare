@@ -19,7 +19,9 @@ class ScrollViewPage2 extends Component {
     return this.AnimatedHeaderValue;
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   scrollToEnd(data) {
     this.scrollRef.props.scrollToEnd({animated: false});
@@ -27,14 +29,18 @@ class ScrollViewPage2 extends Component {
   styleScrollView() {
     let {marginTop, marginBottomScrollView} = this.props;
     const marginTopAdded = marginTopApp;
-    if (!marginTop) marginTop = 0;
+    if (!marginTop) {
+      marginTop = 0;
+    }
     return {
       marginTop: marginTop + marginTopAdded,
       marginBottom: marginBottomScrollView ? marginBottomScrollView : 0,
     };
   }
   styleInsideView() {
-    if (this.props.fullWidth) return {paddingTop: 0};
+    if (this.props.fullWidth) {
+      return {paddingTop: 0};
+    }
     return {marginLeft: '5%', width: '90%', paddingTop: 20};
   }
   async refresh() {

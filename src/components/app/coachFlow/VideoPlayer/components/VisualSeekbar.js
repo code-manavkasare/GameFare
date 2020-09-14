@@ -117,7 +117,9 @@ class VisualSeekBar extends Component {
     });
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     const {width} = this.state;

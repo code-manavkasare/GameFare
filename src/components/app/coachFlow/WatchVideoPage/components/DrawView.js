@@ -34,13 +34,16 @@ class Draw extends Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.drawings, state.drawings) && props.videoBeingShared)
+    if (!isEqual(props.drawings, state.drawings) && props.videoBeingShared) {
       return {
         drawings: props.drawings,
       };
+    }
     return {};
   }
   clear = () => {
@@ -54,7 +57,9 @@ class Draw extends Component {
 
     if (!idLastDrawing) {
       const lastDrawing = getLastDrawing(drawings);
-      if (lastDrawing) idLastDrawing = getLastDrawing(drawings).idSketch;
+      if (lastDrawing) {
+        idLastDrawing = getLastDrawing(drawings).idSketch;
+      }
     }
     if (idLastDrawing) {
       try {
@@ -139,7 +144,9 @@ class Draw extends Component {
       width: w,
     };
 
-    if (styleDrawView.h === 0) return null;
+    if (styleDrawView.h === 0) {
+      return null;
+    }
     return (
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}

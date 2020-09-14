@@ -27,7 +27,9 @@ class RightButtons extends Component {
     };
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   componentDidUpdate(prevProps) {
     const {userID} = this.props;
@@ -37,14 +39,18 @@ class RightButtons extends Component {
       if (lastDrawing.userID === userID) {
         const prevDrawingsLength = Object.values(prevDrawings).length;
         let nextDrawings = this.props.videoBeingShared.drawings;
-        if (!nextDrawings) nextDrawings = {};
+        if (!nextDrawings) {
+          nextDrawings = {};
+        }
         const nextDrawingsLength = Object.values(nextDrawings).length;
 
         if (
           prevDrawingsLength !== nextDrawingsLength &&
           prevDrawingsLength > nextDrawingsLength
         ) {
-          if (nextDrawingsLength === 0) return this.props.drawViewRef.clear();
+          if (nextDrawingsLength === 0) {
+            return this.props.drawViewRef.clear();
+          }
           this.props.drawViewRef.undo(lastDrawing.idSketch);
         }
       }
@@ -100,8 +106,9 @@ class RightButtons extends Component {
   undo = async (idLastDrawing) => {
     const {videoBeingShared, coachSessionID, archiveID} = this.props;
     if (videoBeingShared?.drawings) {
-      if (!idLastDrawing)
+      if (!idLastDrawing) {
         idLastDrawing = getLastDrawing(videoBeingShared.drawings).id;
+      }
       await database()
         .ref(
           `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
@@ -165,10 +172,14 @@ class RightButtons extends Component {
   }
   buttons() {
     const {portrait, drawingOpen} = this.props;
-    if (!drawingOpen) return null;
+    if (!drawingOpen) {
+      return null;
+    }
 
     let marginTop = marginTopApp;
-    if (!portrait) marginTop = marginTopAppLandscape;
+    if (!portrait) {
+      marginTop = marginTopAppLandscape;
+    }
     return (
       <View
         style={[styles.colButtonsRight, {top: marginTop + heightHeaderHome}]}>

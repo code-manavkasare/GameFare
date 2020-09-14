@@ -45,32 +45,42 @@ class WatchVideoPage extends Component {
     this.translateYPage = new Animated.Value(height);
   }
   componentDidMount() {
-    this.props.onRef(this);
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
   }
   shouldComponentUpdate(nextProps) {
-    if (nextProps.currentSessionID === nextProps.coachSessionID) return true;
+    if (nextProps.currentSessionID === nextProps.coachSessionID) {
+      return true;
+    }
     return false;
   }
   video(props, state) {
     const {sharedVideos} = props;
     const {archiveID, videoSource} = state;
     const myVideo = this.isMyVideo(props);
-    if (myVideo)
+    if (myVideo) {
       return {
         source: videoSource,
         paused: false,
         currentTime: 0,
         playRate: 1,
       };
+    }
 
-    if (!sharedVideos) return {};
+    if (!sharedVideos) {
+      return {};
+    }
     let video = sharedVideos[archiveID];
-    if (!video) return {};
+    if (!video) {
+      return {};
+    }
     return video;
   }
   componentDidUpdate(prevProps) {
-    if (!this.isMyVideo(prevProps) && this.isMyVideo(this.props))
+    if (!this.isMyVideo(prevProps) && this.isMyVideo(this.props)) {
       return this.open(false);
+    }
   }
   async open(videoData) {
     const {width} = Dimensions.get('screen');
@@ -80,7 +90,9 @@ class WatchVideoPage extends Component {
       await this.translateXPage.setValue(0);
       if (videoSource) {
         let closeDrawing = {};
-        if (videoSource !== source) closeDrawing = {drawingOpen: false};
+        if (videoSource !== source) {
+          closeDrawing = {drawingOpen: false};
+        }
         await this.setState({
           videoSource: source,
           watchVideo: true,
@@ -130,9 +142,15 @@ class WatchVideoPage extends Component {
   isMyVideo(props) {
     const {personSharingScreen, videoBeingShared} = props;
     const {archiveID} = this.state;
-    if (!archiveID) return true;
-    if (!videoBeingShared) return true;
-    if (personSharingScreen && videoBeingShared.id === archiveID) return false;
+    if (!archiveID) {
+      return true;
+    }
+    if (!videoBeingShared) {
+      return true;
+    }
+    if (personSharingScreen && videoBeingShared.id === archiveID) {
+      return false;
+    }
     return true;
   }
   watchVideoView() {
@@ -194,8 +212,9 @@ class WatchVideoPage extends Component {
             if (
               personSharingScreen === userID &&
               videoBeingShared.id === archiveID
-            )
+            ) {
               return this.buttonShareRef.startSharingVideo(false);
+            }
             this.open(false);
           }}
           iconOffset="open-with"
@@ -204,7 +223,7 @@ class WatchVideoPage extends Component {
           sizeIconOffset={25}
           clickButtonOffset={() => this.setState({drawingOpen: false})}
         />
-        {/* 
+        {/*
         <ButtonShareVideo
           onRef={(ref) => (this.buttonShareRef = ref)}
           archiveID={archiveID}
