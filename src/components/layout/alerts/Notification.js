@@ -16,7 +16,6 @@ import Mixpanel from 'react-native-mixpanel';
 import {mixPanelToken} from '../../database/firebase/tokens';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
-import {addNotification} from '../../../actions/notificationsActions.js';
 import {updateNotificationBadge} from '../../functions/notifications.js';
 import {clickNotification} from '../../../../NavigationService';
 import AsyncImage from '../image/AsyncImage';
@@ -63,20 +62,12 @@ class Notification extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {notification} = this.props;
+    const {notification, notifications} = this.props;
     if (prevProps.notification !== notification) {
-      this.addNotificationToStore(notification);
+      updateNotificationBadge(notifications.length);
       return this.openNotification();
     }
   }
-
-  addNotificationToStore = async (notification) => {
-    const {addNotification, notifications} = this.props;
-    if (notification.data.action === 'Conversation') {
-      await addNotification(notification);
-      updateNotificationBadge(notifications.length);
-    }
-  };
 
   openNotification() {
     Animated.timing(this.translateYNotif, timing(0, 400)).start(async () => {
@@ -185,22 +176,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
+  const {notifications} = state.user.infoUser;
   return {
     notification: state.layout.notification,
-    notifications: state.notifications,
     userID: state.user.userID,
-  };
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    addNotification: (notification) => {
-      dispatch(addNotification(notification));
-    },
+    notifications: notifications ? Object.values(notifications) : [],
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  {},
 )(Notification);

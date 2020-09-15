@@ -64,7 +64,7 @@ class CardStream extends Component {
     bindSession(coachSessionID);
     bindConversation(coachSessionID);
   }
-  componentDidUpdate() {}
+
   componentWillUnmount() {
     const {coachSessionID} = this.props;
     unbindSession(coachSessionID);
@@ -170,13 +170,14 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
+  const {notifications} = state.user.infoUser;
   return {
     userID: state.user.userID,
     session: state.coachSessions[props.coachSessionID],
     messages: state.conversations[props.coachSessionID],
     currentSessionID: state.coach.currentSessionID,
     userConnected: state.user.userConnected,
-    notifications: state.notifications,
+    notifications: notifications ? Object.values(notifications) : [],
   };
 };
 
