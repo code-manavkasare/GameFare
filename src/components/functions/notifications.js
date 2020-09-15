@@ -2,7 +2,7 @@ import messaging from '@react-native-firebase/messaging';
 import database from '@react-native-firebase/database';
 import PushNotificationIOS from '@react-native-community/push-notification-ios'; //DO NOT DELETE, USEFUL FOR PushNotification
 import PushNotification from 'react-native-push-notification';
-import {store} from '../../../reduxStore.js';
+import equal from 'fast-deep-equal';
 
 async function permissions() {
   try {
@@ -36,6 +36,22 @@ const updateNotificationBadge = (notificationNumber) => {
   PushNotification.setApplicationIconBadgeNumber(notificationNumber);
 };
 
+const deleteNotifications = async (userId, coachSessionId, notifications) => {
+  let updates = {};
+  for (const notification of notifications) {
+    const {action, coachSessionID, notificationId} = notification.data;
+    if (action === 'Conversation' && coachSessionID === coachSessionId) {
+      updates[`users/${userId}/notifications/${notificationId}`] = null;
+    }
+  }
+
+  if (!equal(updates, {})) {
+    await database()
+      .ref()
+      .update(updates);
+  }
+};
+
 const conversationIsInNotification = (coachSessionId, notifications) => {
   let isInNotification = false;
   for (const notification of notifications) {
@@ -49,6 +65,7 @@ const conversationIsInNotification = (coachSessionId, notifications) => {
 
 module.exports = {
   conversationIsInNotification,
+  deleteNotifications,
   refreshTokenOnDatabase,
   subscribeToTopics,
   updateNotificationBadge,

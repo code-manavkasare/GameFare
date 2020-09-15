@@ -2,9 +2,11 @@ import React from 'react';
 import {View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 
-import {deleteNotification} from '../../../actions/notificationsActions.js';
-
 import {userObject} from '../../functions/users';
+import {
+  deleteNotifications,
+  updateNotificationBadge,
+} from '../../functions/notifications.js';
 
 import MyTabs from '../../navigation/MainApp/components/TeamPage';
 
@@ -20,11 +22,12 @@ class MessageTab extends React.Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
+  componentDidMount = async () => {
     const {coachSessionID} = this.props.route.params;
-    const {deleteNotification} = this.props;
-    deleteNotification(coachSessionID);
-  }
+    const {notifications, userID} = this.props;
+    await deleteNotifications(userID, coachSessionID, notifications);
+    updateNotificationBadge(this.props.notifications.length);
+  };
   render() {
     const {infoUser, userID, navigation, session, route, messages} = this.props;
     const {initialMessage, coachSessionID: objectID} = route.params;
@@ -50,24 +53,18 @@ class MessageTab extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const {coachSessionID} = props.route.params;
+  const {notifications} = state.user.infoUser;
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[coachSessionID],
     messages: state.conversations[coachSessionID],
-  };
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    deleteNotification: (coachSessionID) => {
-      dispatch(deleteNotification(coachSessionID));
-    },
+    notifications: notifications ? Object.values(notifications) : [],
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  {},
 )(MessageTab);
