@@ -94,8 +94,12 @@ class VideoLibraryPage extends Component {
     const {selectedVideos} = this.state;
     const {navigation} = this.props;
     if (selectedVideos.length > 0) {
-      navigation.push('ShareVideo', {
-        videos: selectedVideos,
+      console.log('selectedVideos', selectedVideos);
+      navigation.navigate('People', {
+        screen: 'People',
+        params: {
+          sharingVideos: selectedVideos,
+        },
       });
       this.setState({
         selectedVideos: [],

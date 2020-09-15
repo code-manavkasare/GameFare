@@ -16,6 +16,7 @@ import CardStreamView from '../../GroupsPage/components/CardStreamView';
 import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
 import {newSession} from '../../../../functions/coach';
+import {shareVideosWithTeams} from '../../../../functions/videoManagement';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
@@ -112,6 +113,7 @@ class ListStreams extends Component {
       userConnected,
       permissionsCamera,
       mostRecent,
+      sharingVideos,
     } = this.props;
     if (mostRecent) {
       coachSessions = coachSessions.slice(0, 3);
@@ -172,6 +174,11 @@ class ListStreams extends Component {
           <CardStreamView
             coachSessionID={session.id}
             key={session.id}
+            clickSideEffect={
+              sharingVideos
+                ? () => shareVideosWithTeams(sharingVideos, [session.id])
+                : null
+            }
             scale={1}
             onRef={(ref) => this.itemsRef.push(ref)}
             minimal

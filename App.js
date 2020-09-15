@@ -18,9 +18,7 @@ import {globaleVariablesAction} from './src/actions/globaleVariablesActions.js';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
-import BatterySaveDimmer from './src/components/utility/BatterySaveDimmer';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
-import {refreshPhoneContactsStore} from './src/components/functions/phoneContacts';
 import {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
@@ -47,7 +45,6 @@ class App extends Component {
     if (userID !== '') {
       this.autoSignIn();
       refreshTokenOnDatabase(userID);
-      refreshPhoneContactsStore();
       oneTimeFixStoreLocalVideoLibrary();
       updateLocalVideoUrls();
     }
@@ -63,7 +60,6 @@ class App extends Component {
       if (networkIsConnected && userID !== '' && !isBindToFirebase) {
         this.autoSignIn();
         refreshTokenOnDatabase(userID);
-        refreshPhoneContactsStore();
       }
     }
   };
@@ -130,7 +126,6 @@ class App extends Component {
     return (
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         {InitialStack()}
-        {/* <BatterySaveDimmer /> */}
         <OrientationListener />
         <Notification />
         <UploadManager />

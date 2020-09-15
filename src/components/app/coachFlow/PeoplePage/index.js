@@ -33,9 +33,12 @@ class StreamTab extends Component {
     this.state = {
       permissionsCamera: false,
       initialLoader: true,
+      sharingVideos: null,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.openSession = this.openSession.bind(this);
+    this.focusUnsubscribe = null;
+    this.blurUnsubscribe = null;
   }
   componentDidMount = () => {
     const {navigation} = this.props;
@@ -43,13 +46,33 @@ class StreamTab extends Component {
     if (params?.objectID) {
       this.openSession(params.objectID);
     }
-    this.focusListener = navigation.addListener('focus', () => {
+    this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
+      const {params} = this.props.route;
+      if (params && params.sharingVideos) {
+        this.setState({sharingVideos: params.sharingVideos});
+      }
+    });
+    this.blurUnsubscribe = navigation.addListener('blur', () => {
+      const {sharingVideos} = this.state;
+      if (sharingVideos) {
+        this.setState({sharingVideos: null});
+        this.props.navigation.setParams({sharingVideos: null});
+      }
     });
   };
+  componentWillUnmount = () => {
+    if (this.focusUnsubscribe) {
+      this.focusUnsubscribe();
+    }
+    if (this.blurUnsubscribe) {
+      this.blurUnsubscribe();
+    }
+  }
   componentDidUpdate = (prevProps) => {
     const {params} = this.props.route;
-    if (prevProps.route.params?.date !== params?.date && params?.date) {
+    const {params: prevParams} = prevProps.route;
+    if (prevParams?.date !== params?.date && params?.date) {
       this.openSession(params.objectID);
     }
   };
@@ -68,7 +91,7 @@ class StreamTab extends Component {
     );
   };
   StreamTab = () => {
-    const {permissionsCamera, initialLoader} = this.state;
+    const {permissionsCamera, initialLoader, sharingVideos} = this.state;
 
     return (
       <View style={styleApp.fullSize}>
@@ -87,6 +110,7 @@ class StreamTab extends Component {
           permissionsCamera={permissionsCamera}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           mostRecent={true}
+          sharingVideos={sharingVideos}
           openSearch={(y) => {
             this.searchRef?.animate(1, y);
           }}
@@ -96,7 +120,7 @@ class StreamTab extends Component {
   };
 
   render() {
-    const {permissionsCamera} = this.state;
+    const {permissionsCamera, sharingVideos} = this.state;
     const {userConnected} = this.props;
 
     return (
@@ -105,6 +129,7 @@ class StreamTab extends Component {
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
+          headerTitle={sharingVideos ? 'Sharing videos' : ''}
           onRef={(ref) => (this.HeaderRef = ref)}
         />
 
@@ -135,6 +160,7 @@ class StreamTab extends Component {
           dismiss={() => {
             this.searchRef?.animate(0);
           }}
+          sharingVideos={sharingVideos}
         />
       </View>
     );

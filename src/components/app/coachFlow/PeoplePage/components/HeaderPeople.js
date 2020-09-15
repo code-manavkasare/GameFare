@@ -19,19 +19,18 @@ class HeaderListStream extends Component {
   }
 
   header = () => {
-    const {AnimatedHeaderValue, infoUser} = this.props;
-
+    const {AnimatedHeaderValue, infoUser, headerTitle} = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={'People'}
+        textHeader={headerTitle}
         inputRange={[40, 50]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         loader={loader}
         initialBorderColorHeader={colors.white}
-        initialTitleOpacity={0}
+        initialTitleOpacity={1}
         initialBorderWidth={1}
         icon2={'comment-alt'}
         typeIcon2="font"

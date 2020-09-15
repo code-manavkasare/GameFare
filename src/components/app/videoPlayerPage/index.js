@@ -30,7 +30,6 @@ import {
 class VideoPlayerPage extends Component {
   constructor(props) {
     super(props);
-    console.log('constructor', props.route.params.archives);
     this.state = {
       archives: props.route.params.archives,
       linkedPlayers: [],
@@ -69,7 +68,6 @@ class VideoPlayerPage extends Component {
   }
 
   componentDidMount() {
-    console.log('videoPlayerPage componentDidMount');
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
@@ -163,12 +161,10 @@ class VideoPlayerPage extends Component {
 
   playersAreLinked = (indexA, indexB) => {
     const {linkedPlayers} = this.state;
-    console.log('playersAreLinked', indexA, indexB, linkedPlayers);
     return linkedPlayers[indexA].has(indexB);
   };
 
   linkPlayers = async (a, b) => {
-    console.log('link players', a, b);
     let {linkedPlayers} = this.state;
     // union op
     const all = new Set();
@@ -180,7 +176,6 @@ class VideoPlayerPage extends Component {
     for (const elem of linkedPlayers[b]) {
       all.add(elem);
     }
-    console.log('all', all);
     for (const elem of all) {
       linkedPlayers[elem] = new Set([...all].filter((i) => i !== elem));
     }
@@ -276,7 +271,6 @@ class VideoPlayerPage extends Component {
     });
     this.AudioRecorderPlayerRef?.playRecord();
     const {recordedActions} = this.state;
-    console.log('recorded actions', recordedActions);
     for (const action of recordedActions) {
       const {isPreviewing} = this.state;
       if (isPreviewing) {
@@ -724,7 +718,6 @@ class VideoPlayerPage extends Component {
               };
         })
         .filter((x) => x);
-      console.log('adjacent pairs', adjPairs);
       const buttons = adjPairs.map(({a, b}, i) => {
         const linkButtonContainer = this.linkButtonStyleByIndex(
           i,
