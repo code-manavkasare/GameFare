@@ -92,6 +92,7 @@ class CardStream extends Component {
       userID,
       session,
       messages,
+      clickSideEffect,
     } = this.props;
     const {hasNotification, loading} = this.state;
     const activeSession = coachSessionID === currentSessionID;
@@ -107,6 +108,9 @@ class CardStream extends Component {
           color={colors.white}
           onPressColor={colors.off}
           click={() => {
+            if (clickSideEffect) {
+              clickSideEffect();
+            }
             navigate('Conversation', {coachSessionID: coachSessionID});
           }}
           style={[styleApp.fullSize, {paddingTop: 10, paddingBottom: 10}]}

@@ -28,7 +28,6 @@ class AudioRecorderPlayer extends Component {
         if (err) {
           console.log(err);
         }
-        console.log('fsPath', fsPath);
         this.setState({audioFilePath: fsPath});
         this.state.audioRecorder.record();
       }),

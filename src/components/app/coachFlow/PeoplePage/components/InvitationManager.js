@@ -3,6 +3,9 @@ import {View, Animated, Text, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import ButtonColor from '../../../../layout/Views/Button';
 import {Row, Col} from 'react-native-easy-grid';
+
+import {shareVideosWithTeams} from '../../../../functions/videoManagement';
+
 import sizes from '../../../../style/sizes';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
@@ -29,7 +32,6 @@ class InvitationManager extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    console.log('asdf', this.props.currentSessionID);
   }
 
   componentWillMount() {
@@ -66,7 +68,7 @@ class InvitationManager extends Component {
 
   invite = async (user, init) => {
     const {users, keyboardShown} = this.state;
-    const {currentSessionID} = this.props;
+    const {currentSessionID, sharingVideos} = this.props;
     if (this.reseting) {
       return false;
     }
@@ -83,12 +85,12 @@ class InvitationManager extends Component {
       users[`${user?.objectID}`] = {...user, id: user?.objectID};
       inserted = true;
     }
-    const callOrInvite = !currentSessionID ? 'Call ' : 'Invite ';
+    const prefix = sharingVideos ? 'Share with ' : !currentSessionID ? 'Call ' : 'Invite ';
     const text =
       Object.keys(users).length === 1
-        ? callOrInvite + Object.values(users)[0]?.info?.firstname
+        ? prefix + Object.values(users)[0]?.info?.firstname
         : Object.keys(users).length > 1
-        ? callOrInvite + Object.keys(users).length + ' people'
+        ? prefix + Object.keys(users).length + ' people'
         : this.state.text;
     await this.setState({users, text});
     Animated.timing(
@@ -114,9 +116,12 @@ class InvitationManager extends Component {
 
   confirmButton = async () => {
     const {users} = this.state;
-    const {dismiss, currentSessionID} = this.props;
+    const {dismiss, currentSessionID, sharingVideos} = this.props;
     this.resetInvitations();
-    if (!currentSessionID) {
+    if (sharingVideos) {
+      const {objectID} = await createSession(users);
+      shareVideosWithTeams(sharingVideos, [objectID]);
+    } else if (!currentSessionID) {
       const session = await createSession(users);
       sessionOpening(session);
     } else {
@@ -130,6 +135,7 @@ class InvitationManager extends Component {
 
   button = () => {
     const {text} = this.state;
+    const {sharingVideos} = this.props;
     const translateY = this.buttonReveal.interpolate({
       inputRange: [0, 1, 2],
       outputRange: [260, -65, -sizes.keyboardOffset - 5],
@@ -188,7 +194,7 @@ class InvitationManager extends Component {
                     type={'font'}
                     color={colors.white}
                     size={18}
-                    name={'video'}
+                    name={sharingVideos ? 'share' : 'video'}
                   />
                   <Text style={buttonTextStyle}>{text}</Text>
                 </Row>

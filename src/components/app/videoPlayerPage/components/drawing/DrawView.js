@@ -85,7 +85,6 @@ class DrawView extends Component {
     if (lastDrawing) {
       idLastDrawing = getLastDrawing(drawings).id;
     }
-    console.log('undo', idLastDrawing, videoBeingShared);
     if (idLastDrawing) {
       if (!videoBeingShared) {
         const newDrawing = Object.values(drawings)
