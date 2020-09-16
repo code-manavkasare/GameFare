@@ -70,10 +70,13 @@ class HeaderConversation extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const {objectID} = props.session;
+  const isSessionRequest =
+    state.user.infoUser.coachSessionsRequests &&
+    state.user.infoUser.coachSessionsRequests[objectID];
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    isSessionRequest: state.user.infoUser.coachSessionsRequests[objectID],
+    isSessionRequest: isSessionRequest ? isSessionRequest : null,
   };
 };
 
