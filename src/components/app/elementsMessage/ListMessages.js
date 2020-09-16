@@ -30,10 +30,11 @@ class ListMessages extends Component {
     };
   }
   shouldComponentUpdate(prevProps, prevState) {
-    const {messages, blockedUsers} = this.props;
+    const {messages, blockedUsers, isSessionRequest} = this.props;
     if (
       !isEqual(messages, prevProps.messages) ||
       !isEqual(blockedUsers, prevProps.blockedUsers) ||
+      !isEqual(isSessionRequest, prevProps.isSessionRequest) ||
       !isEqual(prevState, this.state)
     )
       return true;
@@ -58,7 +59,7 @@ class ListMessages extends Component {
     });
   }
   renderContent() {
-    const {initialMessage, session, user, objectID} = this.props;
+    const {initialMessage, session, user} = this.props;
     return (
       <InputMessage
         discussion={session}
@@ -93,9 +94,23 @@ class ListMessages extends Component {
   };
 
   messagesArray = () => {
-    let {messages} = this.props;
+    let {messages, isSessionRequest, session, userID} = this.props;
     if (!messages) messages = {};
-    return Object.values(messages);
+    messages = Object.values(messages);
+    if (isSessionRequest) {
+      const {organizer} = session.info;
+      messages.unshift({
+        id: 'request',
+        text:
+          organizer !== userID
+            ? 'Unlock the conversation by sending the first message.'
+            : 'The conversation is currently locked.',
+        type: 'request',
+        timeStamp: Date.now(),
+        user: {},
+      });
+    }
+    return messages;
   };
 
   render() {
@@ -145,6 +160,8 @@ const mapStateToProps = (state, props) => {
   return {
     blockedUsers: state.user.infoUser.blockedUsers,
     messages: state.conversations[props.objectID],
+    isSessionRequest: state.user.infoUser.coachSessionsRequests[props.objectID],
+    userID: state.user.userID,
   };
 };
 

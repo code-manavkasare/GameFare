@@ -111,7 +111,7 @@ class CardStream extends Component {
             if (clickSideEffect) {
               clickSideEffect();
             }
-            navigate('Conversation', {coachSessionID: coachSessionID});
+            navigate('Conversation', {coachSessionID});
           }}
           style={[styleApp.fullSize, {paddingTop: 10, paddingBottom: 10}]}
           view={() => {

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {View, Animated, Text} from 'react-native';
+import {connect} from 'react-redux';
+
 import ButtonColor from '../../../../layout/Views/Button';
 import {Row, Col} from 'react-native-easy-grid';
 import styleApp from '../../../../style/style';
@@ -7,10 +9,13 @@ import colors from '../../../../style/colors';
 import {native} from '../../../../animations/animations';
 import AsyncImage from '../../../../layout/image/AsyncImage';
 import AllIcon from '../../../../layout/icons/AllIcons';
+import {openSession} from '../../../../functions/coach';
+import {navigate} from '../../../../../../NavigationService';
 
-export default class UserSearchResult extends Component {
+class UserSearchResult extends Component {
   constructor(props) {
     super(props);
+    this.state = {loader: false};
     this.selectionIndication = new Animated.Value(0);
   }
 
@@ -43,44 +48,7 @@ export default class UserSearchResult extends Component {
       },
     );
   }
-
-  userCard = (user) => {
-    const {invite} = this.props;
-    const animatedReverse = this.selectionIndication.interpolate({
-      inputRange: [0, 1],
-      outputRange: [1, 0],
-    });
-    const userCardStyle = {
-      ...styleApp.center1,
-      height: 65,
-      width: '100%',
-      marginBottom: 15,
-    };
-    const imageStyle = {
-      ...styleApp.shadowWeak,
-      ...styleApp.center,
-      height: 45,
-      width: 45,
-      borderRadius: 25,
-      backgroundColor: colors.greyDark,
-    };
-    const userIconStyle = {
-      ...styleApp.textBold,
-      color: colors.white,
-      letterSpacing: 1,
-      textAlign: 'center',
-      marginLeft: 3,
-      marginTop: 1,
-      fontSize: 20,
-    };
-    const usernameStyle = {
-      ...styleApp.textBold,
-      fontSize: 17,
-    };
-    const imageContainer = {
-      ...styleApp.center,
-      ...styleApp.fullSize,
-    };
+  styleCard = () => {
     const buttonStyle = {
       ...styleApp.fullSize,
       borderRadius: 15,
@@ -99,23 +67,90 @@ export default class UserSearchResult extends Component {
       zIndex: -1,
       opacity: this.selectionIndication,
     };
-    const rowStyle = {
-      ...styleApp.center,
+    const usernameStyle = {
+      ...styleApp.textBold,
+      fontSize: 17,
     };
+    const userIconStyle = {
+      ...styleApp.textBold,
+      color: colors.white,
+      letterSpacing: 1,
+      textAlign: 'center',
+      marginLeft: 3,
+      marginTop: 1,
+      fontSize: 20,
+    };
+    const imageStyle = {
+      ...styleApp.shadowWeak,
+      ...styleApp.center,
+      height: 45,
+      width: 45,
+      borderRadius: 25,
+      backgroundColor: colors.greyDark,
+    };
+    const userCardStyle = {
+      ...styleApp.center1,
+      height: 65,
+      width: '100%',
+      marginBottom: 15,
+    };
+    return {
+      buttonStyle,
+      selectionIndicationOverlayStyle,
+      usernameStyle,
+      userIconStyle,
+      imageStyle,
+      userCardStyle,
+    };
+  };
+  isUserInvitable = () => {
+    const {silentFriends, user} = this.props;
+    const {isPrivate} = user.info;
+    if (!isPrivate) return true;
+    if (silentFriends[user.id]) return true;
+    return false;
+  };
+  userCard = (user) => {
+    const {invite, userID, infoUser} = this.props;
+    const animatedReverse = this.selectionIndication.interpolate({
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+    });
+    const isUserInvitable = this.isUserInvitable();
+
+    const {
+      buttonStyle,
+      selectionIndicationOverlayStyle,
+      usernameStyle,
+      userIconStyle,
+      imageStyle,
+      userCardStyle,
+    } = this.styleCard();
+
     return (
       <View style={userCardStyle}>
         <ButtonColor
           color={colors.white}
           onPressColor={colors.white}
           click={async () => {
+            if (!isUserInvitable) {
+              const session = await openSession(
+                {id: userID, info: infoUser},
+                {[user.objectID]: {...user, id: user.objectID}},
+              );
+              return navigate('Conversation', {
+                coachSessionID: session.objectID,
+              });
+            }
+
             const status = await invite(false);
             this.toggleSelected(status);
           }}
           style={buttonStyle}
           view={() => {
             return (
-              <Row style={rowStyle}>
-                <Col size={30} style={imageContainer}>
+              <Row style={styleApp.center}>
+                <Col size={30} style={[styleApp.center, styleApp.fullSize]}>
                   {user?.info?.picture !== undefined ? (
                     <AsyncImage
                       style={imageStyle}
@@ -144,9 +179,9 @@ export default class UserSearchResult extends Component {
                     }}>
                     <AllIcon
                       type={'font'}
-                      color={colors.grey}
+                      color={!isUserInvitable ? colors.grey : colors.grey}
                       size={18}
-                      name={user?.isPrivate ? 'lock' : 'video'}
+                      name={!isUserInvitable ? 'lock' : 'video'}
                     />
                   </Animated.View>
                   <Animated.View
@@ -176,3 +211,18 @@ export default class UserSearchResult extends Component {
     return this.userCard(user);
   }
 }
+
+const mapStateToProps = (state) => {
+  let {silentFriends} = state.user.infoUser;
+  if (silentFriends) silentFriends = {};
+  return {
+    userID: state.user.userID,
+    infoUser: state.user.infoUser.userInfo,
+    silentFriends,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(UserSearchResult);

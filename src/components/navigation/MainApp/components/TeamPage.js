@@ -49,7 +49,6 @@ const MyTabs = ({session, user, initialMessage, messages}) => {
             <View
               style={[
                 styleApp.center2,
-
                 {
                   position: 'absolute',
                   zIndex: -1,

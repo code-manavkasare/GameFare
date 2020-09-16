@@ -12,6 +12,7 @@ import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
+import {navigate} from '../../../../../NavigationService';
 
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
@@ -654,7 +655,7 @@ const ListPlayers = (props) => {
             paddingTop: 10,
             paddingBottom: 10,
           }}
-          click={() => true}
+          click={() => navigate('ProfilePage', {user: member})}
           onPressColor={colors.off2}
         />
       )}

@@ -59,6 +59,7 @@ class SearchResults extends Component {
     const {invite} = this.props;
     return (
       <UserSearchResult
+        key={user.objectID}
         onRef={(ref) => {
           this.userRefs.push(ref);
           return this.userRefs.length - 1;
