@@ -32,6 +32,7 @@ class HeaderConversation extends React.Component {
       navigation,
       AnimatedHeaderValue,
       loader: propsLoader,
+      isSessionRequest,
     } = this.props;
     const {loader} = this.state;
     return (
@@ -53,12 +54,8 @@ class HeaderConversation extends React.Component {
         sizeIcon1={21}
         initialTitleOpacity={1}
         icon1={'chevron-left'}
-        icon2={'film'}
-        clickButton1={() => {
-          // const {route} = this.props
-          // const {currentRouteName} = route.params;
-          navigation.goBack();
-        }}
+        icon2={!isSessionRequest && 'film'}
+        clickButton1={() => navigation.goBack()}
         clickButton2={() => this.openSession()}
         badgeIcon2={viewLive(session, {height: 20, width: 20}, true)}
         iconOffset="custom"
@@ -71,10 +68,12 @@ class HeaderConversation extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+  const {objectID} = props.session;
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
+    isSessionRequest: state.user.infoUser.coachSessionsRequests[objectID],
   };
 };
 

@@ -14,9 +14,7 @@ import {createDiscussion, searchDiscussion} from '../../../functions/message';
 class HeaderGroupPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      loaderMessage: false,
-    };
+    this.state = {};
   }
 
   pickMembersToShareVideosWith = () => {
@@ -44,7 +42,6 @@ class HeaderGroupPage extends Component {
   };
 
   render() {
-    const {loaderMessage} = this.state;
     const {loader, AnimatedHeaderValue, navigation, session} = this.props;
     return (
       <HeaderBackButton
@@ -55,7 +52,6 @@ class HeaderGroupPage extends Component {
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         initialTitleOpacity={1}
-        loader={loaderMessage}
         initialBorderWidth={1}
         icon1={'chevron-left'}
         icon2={'speech'}

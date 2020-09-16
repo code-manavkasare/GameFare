@@ -152,6 +152,23 @@ export default class CardMessage extends React.Component {
       </View>
     );
   }
+  viewRequest(props) {
+    const {currentMessage} = props;
+    const {text} = currentMessage;
+    return (
+      <View style={[styleApp.center, {height: 15, marginTop: 0}]}>
+        <Text style={[styleApp.subtitle, {fontSize: 12}]}>
+          <AllIcon
+            name="lock"
+            size={12}
+            color={styleApp.subtitle.color}
+            type="font"
+          />
+          {'  '} {text}
+        </Text>
+      </View>
+    );
+  }
   renderMessage(props) {
     const {currentMessage, previousMessage} = props;
     const {user, timeStamp, text, type, content} = currentMessage;
@@ -169,6 +186,8 @@ export default class CardMessage extends React.Component {
         {this.rowDay(props)}
         {type === 'connection' ? (
           this.viewUserConnect(props)
+        ) : type === 'request' ? (
+          this.viewRequest(props)
         ) : (
           <Row>
             <Col

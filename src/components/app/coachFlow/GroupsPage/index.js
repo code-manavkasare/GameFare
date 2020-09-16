@@ -1,131 +1,74 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
-import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
-import {Row, Col} from 'react-native-easy-grid';
+import isEqual from 'lodash.isequal';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes, {
-  heightFooter,
-  heightHeaderHome,
-  marginBottomApp,
-} from '../../../style/sizes';
-import ScrollView from '../../../layout/scrollViews/ScrollView2';
-import ButtonColor from '../../../layout/Views/Button';
+import sizes from '../../../style/sizes';
 
-import LogoutView from './components/LogoutView';
-import PermissionView from './components/PermissionView';
-
-import ListStreams from './components/ListStreams';
-import Loader from '../../../layout/loaders/Loader';
+import tabsGroups from '../../../navigation/MainApp/components/GroupsPage';
 import HeaderListStream from './components/HeaderListStream';
-import {sessionOpening} from '../../../functions/coach';
-
-const {height} = Dimensions.get('screen');
 
 class StreamTab extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      permissionsCamera: false,
-      initialLoader: true,
-    };
+    this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
-    this.openSession = this.openSession.bind(this);
   }
   componentDidMount = () => {
     const {navigation} = this.props;
-    const {params} = this.props.route;
-    if (params?.objectID) this.openSession(params.objectID);
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
     });
   };
-  componentDidUpdate = (prevProps) => {
-    const {params} = this.props.route;
-    if (prevProps.route.params?.date !== params?.date && params?.date)
-      this.openSession(params.objectID);
-  };
-  openSession = async (objectID) => {
-    let session = await database()
-      .ref(`coachSessions/${objectID}`)
-      .once('value');
-    session = session.val();
-    sessionOpening(session);
-  };
-  viewLoader = () => {
-    return (
-      <View style={[{height: 120}, styleApp.center]}>
-        <Loader size={55} color={colors.primary} />
-      </View>
-    );
-  };
-  StreamTab = () => {
-    const {permissionsCamera, initialLoader} = this.state;
-
-    return (
-      <View style={styleApp.fullSize}>
-        {initialLoader && this.viewLoader()}
-
-        {!permissionsCamera ? (
-          <PermissionView
-            initialLoader={initialLoader}
-            setState={this.setState.bind(this)}
-          />
-        ) : null}
-        <ListStreams
-          permissionsCamera={permissionsCamera}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-        />
-      </View>
-    );
-  };
-
+  shouldComponentUpdate(prevProps, prevState) {
+    const {coachSessionsRequests, userConnected} = this.props;
+    if (
+      !isEqual(coachSessionsRequests, prevProps.coachSessionsRequests) ||
+      !isEqual(userConnected, prevProps.userConnected) ||
+      !isEqual(prevState, this.state)
+    )
+      return true;
+    return false;
+  }
   render() {
-    const {permissionsCamera} = this.state;
-    const {userConnected} = this.props;
-    
+    const {userConnected, navigation, coachSessionsRequests} = this.props;
+    const tabBarVisible = coachSessionsRequests.length !== 0;
+    console.log('coachSessionsRequests', coachSessionsRequests);
     return (
       <View style={styleApp.stylePage}>
         <HeaderListStream
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          hideButtonNewSession={!userConnected || !permissionsCamera}
+          hideButtonNewSession={!userConnected}
           onRef={(ref) => (this.HeaderRef = ref)}
+          navigation={navigation}
         />
-
         <View
           style={{
-            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
-          }}>
-          {this.StreamTab()}
-        </View>
+            height: tabBarVisible ? sizes.heightHeaderHome : 0,
+          }}
+        />
+
+        {tabsGroups({
+          tabBarVisible,
+          numberSesionRequests: coachSessionsRequests.length,
+        })}
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  containerTabPage: {
-    ...styleApp.fullSize,
-    paddingTop: 10,
-  },
-  titlePage: {
-    ...styleApp.title,
-    color: colors.title,
-    marginBottom: 10,
-    marginLeft: 20,
-  },
-});
-
 const mapStateToProps = (state) => {
+  let coachSessionsRequests = state.user.infoUser.coachSessionsRequests;
+  if (!coachSessionsRequests) coachSessionsRequests = [];
+  coachSessionsRequests = Object.values(coachSessionsRequests);
   return {
     userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
+    coachSessionsRequests,
   };
 };
 

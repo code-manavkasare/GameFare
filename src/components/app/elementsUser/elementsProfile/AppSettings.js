@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
-import {View, Text, Animated, Switch} from 'react-native';
+import {View, Text, Animated, Switch, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import AllIcons from '../../../layout/icons/AllIcons';
 import {appSettingsAction} from '../../../../actions/appSettingsActions';
+import {toggleUserPublic} from '../../../functions/users';
 
-import {
-  heightFooter,
-  heightHeaderHome,
-  marginTopAppLanscape,
-} from '../../../style/sizes';
+import {heightFooter, heightHeaderHome} from '../../../style/sizes';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
@@ -25,11 +23,27 @@ class AppSettings extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  settingsSwitch(value, onValueChange, description) {
+  settingsSwitch(value, onValueChange, description, moreInfo) {
+    const {navigation} = this.props;
     return (
-      <Row style={{marginTop: 10}}>
-        <Col size={80} style={styleApp.center2}>
+      <Row style={{paddingTop: 10, paddingBottom: 10}}>
+        <Col size={70} style={styleApp.center2}>
           <Text style={styleApp.text}>{description}</Text>
+        </Col>
+        <Col size={10} style={styleApp.center}>
+          {moreInfo && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styleApp.fullSize, styleApp.center]}
+              onPress={() => navigation.navigate('Alert', moreInfo)}>
+              <AllIcons
+                name="info-circle"
+                type="font"
+                size={20}
+                color={colors.secondary}
+              />
+            </TouchableOpacity>
+          )}
         </Col>
         <Col size={20} style={styleApp.center3}>
           <Switch
@@ -44,15 +58,27 @@ class AppSettings extends Component {
     );
   }
   settings() {
-    const {wifiAutoUpload} = this.props.appSettings;
+    const {wifiAutoUpload, isPrivate, appSettingsAction} = this.props;
     return (
       <View style={styleApp.marginView}>
         {this.settingsSwitch(
           wifiAutoUpload,
-          async () => {
-            this.props.appSettingsAction('toggleWifiAutoUpload');
-          },
+          async () => appSettingsAction('toggleWifiAutoUpload'),
           'Auto upload local videos',
+        )}
+        {this.settingsSwitch(
+          !isPrivate,
+          async () => toggleUserPublic(),
+          'Public profile',
+          {
+            title: 'Public profile',
+            subtitle:
+              "Anyone will be able to look for your profile and contact you. If you set your profile as private, you'll have to accept the requests first.",
+            textButton: 'Got it!',
+            colorButton: 'secondary',
+            onPressColor: colors.secondary,
+            close: true,
+          },
         )}
       </View>
     );
@@ -74,7 +100,7 @@ class AppSettings extends Component {
           initialBorderColorIcon={colors.white}
           textHeader="Settings"
           sizeLoader={40}
-          sizeIcon1={16}
+          sizeIcon1={21}
           nobackgroundColorIcon1={true}
           initialBorderWidth={1}
           initialBorderColorHeader={colors.white}
@@ -103,7 +129,8 @@ class AppSettings extends Component {
 const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
-    appSettings: state.appSettings,
+    isPrivate: state.user.infoUser.userInfo.isPrivate,
+    wifiAutoUpload: state.appSettings.wifiAutoUpload,
   };
 };
 

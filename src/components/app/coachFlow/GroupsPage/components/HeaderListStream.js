@@ -19,7 +19,7 @@ class HeaderListStream extends Component {
   }
 
   header = () => {
-    const {AnimatedHeaderValue, infoUser} = this.props;
+    const {AnimatedHeaderValue, navigation} = this.props;
 
     const {loader} = this.state;
     return (
@@ -42,7 +42,7 @@ class HeaderListStream extends Component {
         sizeIcon1={21}
         colorIcon1={colors.title}
         typeIcon1={'font'}
-        clickButton1={() => goBack()}
+        clickButton1={() => navigation.goBack()}
       />
     );
   };

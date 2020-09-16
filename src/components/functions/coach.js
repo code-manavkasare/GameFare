@@ -360,6 +360,8 @@ const setupOpentokStopRecordingFlow = async (
   return thumbnailUploadTasks;
 };
 
+
+
 const openSession = async (user, members) => {
   const allSessions = store.getState().coachSessions;
 

@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import {View, Text, Image} from 'react-native';
 
 import {connect} from 'react-redux';
+import isEqual from 'lodash.isequal';
 
 import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
-import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
 import {newSession} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
@@ -19,7 +19,16 @@ class ListStreams extends Component {
     this.state = {};
     this.itemsRef = [];
   }
-
+  shouldComponentUpdate(prevProps, prevState) {
+    const {coachSessions, userConnected} = this.props;
+    if (
+      !isEqual(coachSessions, prevProps.coachSessions) ||
+      !isEqual(userConnected, prevProps.userConnected) ||
+      !isEqual(prevState, this.state)
+    )
+      return true;
+    return false;
+  }
   sessionsArray = () => {
     let {coachSessions} = this.props;
     if (!coachSessions) return [];
@@ -40,8 +49,9 @@ class ListStreams extends Component {
       marginLeft: 65,
     };
     const coachSessions = this.sessionsArray();
-    const {AnimatedHeaderValue, userConnected, permissionsCamera} = this.props;
-    if (!userConnected || !permissionsCamera || !coachSessions) return null;
+    const {userConnected} = this.props;
+    console.log('render list groups ');
+    if (!userConnected || !coachSessions) return null;
     if (Object.values(coachSessions).length === 0)
       return (
         <View style={[styleApp.marginView, styleApp.center]}>
@@ -104,21 +114,6 @@ class ListStreams extends Component {
         incrementRendering={6}
         initialNumberToRender={8}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
-        header={rowTitle({
-          icon: {
-            name: 'user',
-            type: 'moon',
-            color: colors.title,
-            size: 20,
-          },
-          button: {
-            text: 'New',
-            click: () => newSession(),
-          },
-          badge: coachSessions.length,
-          title: 'Chat',
-        })}
-        AnimatedHeaderValue={AnimatedHeaderValue}
       />
     );
   };
@@ -130,9 +125,8 @@ class ListStreams extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    coachSessions: state.user.infoUser.coachSessions,
+    coachSessions: state.user.infoUser.coachSessionsRequests,
     userConnected: state.user.userConnected,
-    sessionInfo: state.coach.sessionInfo,
   };
 };
 

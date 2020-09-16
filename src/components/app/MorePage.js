@@ -292,7 +292,7 @@ class MorePage extends Component {
             <Text style={styles.title}>Account parameters</Text>
             <View style={styles.divider} />
 
-            {this.button('cog', 'App Settings', 'AppSettings')}
+          {this.button('cog', 'App Settings', 'AppSettings')}
             <ButtonNotification displayBeforeLoader={true} />
 
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
