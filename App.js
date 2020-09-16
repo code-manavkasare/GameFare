@@ -8,11 +8,12 @@ import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
-
+import BackgroundTimer from 'react-native-background-timer';
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
 
+import {updateNotificationBadgeInBackground} from './src/components/functions/notifications.js';
 import {userAction} from './src/actions/userActions';
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions.js';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
@@ -39,6 +40,9 @@ class App extends Component {
     if (!__DEV__) {
       this.configureSentry();
     }
+    BackgroundTimer.runBackgroundTimer(() => {
+      userID && updateNotificationBadgeInBackground(userID); //Update badge every 15 min
+    }, 900000);
 
     SplashScreen.hide();
 

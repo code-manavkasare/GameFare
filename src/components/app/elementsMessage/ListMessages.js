@@ -157,10 +157,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
+  const isSessionRequest =
+    state.user.infoUser.coachSessionsRequests &&
+    state.user.infoUser.coachSessionsRequests[props.objectID];
   return {
     blockedUsers: state.user.infoUser.blockedUsers,
     messages: state.conversations[props.objectID],
-    isSessionRequest: state.user.infoUser.coachSessionsRequests[props.objectID],
+    isSessionRequest: isSessionRequest ? isSessionRequest : null,
     userID: state.user.userID,
   };
 };

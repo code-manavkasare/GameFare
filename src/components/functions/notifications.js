@@ -4,6 +4,8 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 import equal from 'fast-deep-equal';
 
+import {getValueOnce} from '../functions/firebase.js';
+
 async function permissions() {
   try {
     await messaging().requestPermission();
@@ -34,6 +36,13 @@ const refreshTokenOnDatabase = async (userID) => {
 
 const updateNotificationBadge = (notificationNumber) => {
   PushNotification.setApplicationIconBadgeNumber(notificationNumber);
+};
+
+const updateNotificationBadgeInBackground = async (userId) => {
+  const notifications = Object.values(
+    await getValueOnce(`users/${userId}/notifications`),
+  );
+  updateNotificationBadge(notifications.length);
 };
 
 const deleteNotifications = async (userId, coachSessionId, notifications) => {
@@ -69,4 +78,5 @@ module.exports = {
   refreshTokenOnDatabase,
   subscribeToTopics,
   updateNotificationBadge,
+  updateNotificationBadgeInBackground,
 };
