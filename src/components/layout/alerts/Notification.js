@@ -17,7 +17,10 @@ import {mixPanelToken} from '../../database/firebase/tokens';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 import {updateNotificationBadge} from '../../functions/notifications.js';
-import {clickNotification} from '../../../../NavigationService';
+import {
+  clickNotification,
+  getCurrentRoute,
+} from '../../../../NavigationService';
 import AsyncImage from '../image/AsyncImage';
 
 import colors from '../../style/colors';
@@ -70,10 +73,14 @@ class Notification extends Component {
   }
 
   openNotification() {
-    Animated.timing(this.translateYNotif, timing(0, 400)).start(async () => {
-      await timeout(4000);
-      this.close(initialTranslateY);
-    });
+    const {notification} = this.props;
+    const {action} = notification.data;
+    const currentRoute = getCurrentRoute();
+    if (action !== currentRoute)
+      Animated.timing(this.translateYNotif, timing(0, 400)).start(async () => {
+        await timeout(4000);
+        this.close(initialTranslateY);
+      });
   }
 
   close(translateValue, click) {
