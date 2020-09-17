@@ -33,11 +33,22 @@ class HeaderListStream extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={0}
         initialBorderWidth={1}
-        icon2={'bell'}
+        iconOffset={'bell'}
+        typeIconOffset="font"
+        sizeIconOffset={24}
+        colorIconOffset={colors.title}
+        clickButtonOffset={() => navigate('NotificationPage')}
+        icon2={'edit'}
         typeIcon2="font"
-        sizeIcon2={24}
+        sizeIcon2={21}
         colorIcon2={colors.title}
-        clickButton2={() => navigate('NotificationPage')}
+        clickButton2={() =>
+          navigate('ModalPeople', {
+            hideGroups: false,
+            textButton: 'Confirm',
+            navigationTarget: 'Conversation',
+          })
+        }
         icon1={'chevron-left'}
         sizeIcon1={21}
         colorIcon1={colors.title}
