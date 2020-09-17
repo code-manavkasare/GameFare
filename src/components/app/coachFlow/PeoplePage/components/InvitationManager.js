@@ -17,6 +17,7 @@ import {
   sessionOpening,
   updateMembersToSession,
 } from '../../../../functions/coach';
+import {titleSession} from '../../../TeamPage/components/elements';
 
 class InvitationManager extends Component {
   constructor(props) {
@@ -66,33 +67,74 @@ class InvitationManager extends Component {
     this.setState({keyboardShown: false});
   }
 
-  invite = async (user, init) => {
-    const {users, keyboardShown} = this.state;
+  invite = async (payload) => {
+    const {user, init, immediatelyOpen, session} = payload;
+    const {keyboardShown} = this.state;
     const {currentSessionID, sharingVideos} = this.props;
+    let {users, selectedSession} = this.state;
     if (this.reseting) {
       return false;
     }
-    let inserted = false;
-    if (Object.keys(users).includes(user?.objectID)) {
-      if (init) {
-        return true;
-      }
-      delete users[`${user?.objectID}`];
-    } else {
-      if (init) {
-        return false;
-      }
-      users[`${user?.objectID}`] = {...user, id: user?.objectID};
-      inserted = true;
+    if (init && session && session?.objectID === selectedSession?.objectID) {
+      return true;
+    } else if (init && Object.keys(users).includes(user?.objectID)) {
+      return true;
+    } else if (init) {
+      return false;
     }
-    const prefix = sharingVideos ? 'Share with ' : !currentSessionID ? 'Call ' : 'Invite ';
-    const text =
-      Object.keys(users).length === 1
-        ? prefix + Object.values(users)[0]?.info?.firstname
-        : Object.keys(users).length > 1
-        ? prefix + Object.keys(users).length + ' people'
-        : this.state.text;
-    await this.setState({users, text});
+
+    if (immediatelyOpen) {
+      users = {};
+      users[`${user?.objectID}`] = user ? {...user, id: user?.objectID} : {};
+      if (session) {
+        return sessionOpening(session);
+      }
+      console.log('\n\n\nUSERS', users);
+      await this.setState({users});
+      return this.confirmInvite();
+    }
+
+    let inserted = false;
+    if (session) {
+      users = {};
+      await this.resetInvitations({resetState: false});
+      if (selectedSession?.objectID !== session?.objectID && session?.members) {
+        users = {...session?.members};
+        selectedSession = session;
+        inserted = true;
+      } else if (selectedSession?.objectID === session?.objectID) {
+        selectedSession = undefined;
+        inserted = false;
+      }
+    } else {
+      if (selectedSession) {
+        await this.resetInvitations({resetState: false});
+        selectedSession = undefined;
+        users = {};
+      }
+      if (Object.keys(users).includes(user?.objectID)) {
+        delete users[`${user?.objectID}`];
+        inserted = false;
+      } else {
+        users[`${user?.objectID}`] = {...user, id: user?.objectID};
+        inserted = true;
+      }
+    }
+    const prefix = sharingVideos
+      ? 'Share with '
+      : !currentSessionID
+      ? 'Call '
+      : 'Invite ';
+    const text = selectedSession
+      ? sharingVideos
+        ? prefix
+        : 'Call ' + titleSession(session, false, true)
+      : Object.keys(users).length === 1
+      ? prefix + Object.values(users)[0]?.info?.firstname
+      : Object.keys(users).length > 1
+      ? prefix + Object.keys(users).length + ' people'
+      : this.state.text;
+    await this.setState({users, text, selectedSession});
     Animated.timing(
       this.buttonReveal,
       native(Object.keys(users).length < 1 ? 0 : keyboardShown ? 2 : 1),
@@ -100,13 +142,13 @@ class InvitationManager extends Component {
     return inserted;
   };
 
-  resetInvitations = async () => {
+  resetInvitations = async (options) => {
     const {resetInvites} = this.props;
+    const {resetState} = options;
     const users = {};
-    const text = '';
     this.reseting = true;
-    Animated.timing(this.buttonReveal, native(0)).start(() => {
-      this.setState({users, text});
+    await Animated.timing(this.buttonReveal, native(0)).start(() => {
+      resetState && this.setState({users});
       this.reseting = false;
     });
     if (resetInvites) {
@@ -114,23 +156,25 @@ class InvitationManager extends Component {
     }
   };
 
-  confirmButton = async () => {
-    const {users} = this.state;
+  confirmInvite = async () => {
+    const {users, selectedSession} = this.state;
     const {dismiss, currentSessionID, sharingVideos} = this.props;
-    this.resetInvitations();
+    Animated.timing(this.buttonReveal, native(0)).start();
+    this.resetInvitations({resetState: true});
+
     if (sharingVideos) {
       const {objectID} = await createSession(users);
       console.log('invitation manager sharing videos');
       shareVideosWithTeams(sharingVideos, [objectID]);
       navigate('Conversation', {coachSessionID: objectID});
-
     } else if (!currentSessionID) {
-      const session = await createSession(users);
+      const session = selectedSession
+        ? selectedSession
+        : await createSession(users);
       sessionOpening(session);
     } else {
       updateMembersToSession(currentSessionID, users);
     }
-    Animated.timing(this.buttonReveal, native(0)).start();
     if (dismiss) {
       dismiss();
     }
@@ -187,7 +231,7 @@ class InvitationManager extends Component {
           onPressColor={colors.greenLight}
           style={inviteButtonStyle}
           click={async () => {
-            this.confirmButton();
+            this.confirmInvite();
           }}
           view={() => {
             return (
@@ -210,7 +254,7 @@ class InvitationManager extends Component {
           onPressColor={colors.greyLight}
           style={cancelButtonStyle}
           click={() => {
-            this.resetInvitations();
+            this.resetInvitations({resetState: true});
           }}
           view={() => {
             return (

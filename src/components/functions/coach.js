@@ -626,12 +626,16 @@ const addMembersToSession = (objectID, navigateTo) => {
 };
 
 const updateMembersToSession = async (coachSessionID, members) => {
-  for (const member of Object.values(members)) {
+  let updates = {};
+  for (let member of Object.values(members)) {
     member.invitationTimeStamp = Date.now();
-    await database()
-      .ref('coachSessions/' + coachSessionID + '/members/' + member.id)
-      .update(member);
+    updates[
+      `${'coachSessions/' + coachSessionID + '/members/' + member.id}`
+    ] = member;
   }
+  await database()
+    .ref()
+    .update(updates);
   return navigate('Session');
 };
 
@@ -644,7 +648,10 @@ const searchSessionsForString = (search) => {
     const matches = Object.keys(userSessions)
       .map((id) => {
         const session = allSessions[id];
-        const names = Object.values(session.members).reduce(
+        if (!session?.members) {
+          return null;
+        }
+        const names = Object.values(session?.members).reduce(
           (result, member) => {
             let name = '';
             if (member?.info?.firstname) {

@@ -19,11 +19,7 @@ class HeaderListStream extends Component {
   }
 
   header = () => {
-    const {
-      AnimatedHeaderValue,
-      infoUser,
-      sharingVideos,
-    } = this.props;
+    const {AnimatedHeaderValue, infoUser, sharingVideos} = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton

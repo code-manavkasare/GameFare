@@ -23,8 +23,9 @@ import {
 } from '../../../functions/coach';
 
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
+import AllIcon from '../../../layout/icons/AllIcons';
 
-const imageCardTeam = (session, size, hideDots) => {
+const imageCardTeam = (session, size, hideDots, color) => {
   let scale = 1;
   if (size) {
     scale = 0.7;
@@ -39,9 +40,9 @@ const imageCardTeam = (session, size, hideDots) => {
       return {
         position: 'absolute',
         top:
-          (i == 0 ? -25 * scale : i == 1 ? -39 * scale : -6 * scale) +
-          (length == 2 ? 8 * scale : 0 * scale),
-        left: i == 0 ? -40 * scale : i == 1 ? -10 * scale : -10 * scale,
+          (i === 0 ? -25 * scale : i === 1 ? -39 * scale : -6 * scale) +
+          (length === 2 ? 8 * scale : 0 * scale),
+        left: i === 0 ? -40 * scale : i === 1 ? -10 * scale : -10 * scale,
       };
     }
   };
@@ -51,32 +52,35 @@ const imageCardTeam = (session, size, hideDots) => {
     <View style={{flex: 1, ...styleApp.center, ...styleContainer}}>
       {length > 2 && (
         <View>
-          {userCircle(
-            length - 1,
-            styleByIndex(-1),
+          {userCircle({
+            member: length - 2,
+            style: styleByIndex(-1),
             scale,
-            Object.values(session.members).length - 1,
-          )}
+            length: Object.values(session.members).length - 1,
+            color,
+          })}
         </View>
       )}
       {members
         .splice(0, 2)
         .reverse()
         .map((member, i) =>
-          userCircle(
+          userCircle({
             member,
-            styleByIndex(i),
+            style: styleByIndex(i),
             scale,
-            Object.values(session.members).length - 1,
             hideDots,
-            Object.values(session.members).length === 2,
-          ),
+            length: Object.values(session.members).length - 1,
+            single: Object.values(session.members).length === 2,
+            color,
+          }),
         )}
     </View>
   );
 };
 
-const userCircle = (member, style, scale, length, hideDots, single) => {
+const userCircle = (options) => {
+  const {member, style, scale, length, hideDots, single, color} = options;
   const userID = store.getState().user.userID;
   let borderRadius = 100;
   let sizeImg = length > 1 ? 45 * scale : 63 * scale;
@@ -85,7 +89,7 @@ const userCircle = (member, style, scale, length, hideDots, single) => {
     width: sizeImg,
     borderRadius: borderRadius + 3,
     borderWidth: 4 * scale,
-    borderColor: colors.white,
+    borderColor: color ? color : colors.white,
     overflow: 'hidden',
     backgroundColor: colors.grey,
   };
@@ -154,7 +158,7 @@ const userCircle = (member, style, scale, length, hideDots, single) => {
               width: 15,
               borderRadius: 100,
               borderWidth: 3,
-              borderColor: colors.white,
+              borderColor: color ? color : colors.white,
             }}
           />
         )}
@@ -163,7 +167,7 @@ const userCircle = (member, style, scale, length, hideDots, single) => {
   );
 };
 
-const titleSession = (session, size) => {
+const titleSession = (session, size, short) => {
   const userID = store.getState().user.userID;
   if (session.title) {
     return session.title;
@@ -175,23 +179,40 @@ const titleSession = (session, size) => {
   if (members[0].id === userID) {
     return 'You';
   }
+  if (short) {
+    const name = members[0]?.info?.firstname;
+    const string =
+      members.length === 1
+        ? name
+        : name +
+          ' & ' +
+          (members.length - 1) +
+          ' other' +
+          (members.length !== 2 ? 's' : '');
+    console.log(string);
+    return string;
+  }
+
   const names = members.reduce((nameString, member, i, members) => {
     if (member.info && member.info.firstname && member.info.lastname) {
       const {firstname, lastname} = member.info;
+      const and = short ? ' & ' : ' and ';
       if (nameString === '') {
         return firstname + ' ' + lastname;
       } else {
         const numNames = nameString.split(',').length;
         if (numNames < 2) {
           if (members.length === 2) {
-            return nameString + ' and ' + firstname + ' ' + lastname;
+            return nameString + and + firstname + ' ' + lastname;
           }
           return nameString + ', ' + firstname + ' ' + lastname;
         } else if (numNames === 2) {
           if (i === members.length - 1) {
-            return nameString + ', and ' + firstname + ' ' + lastname;
+            return nameString + ',' + and + firstname + ' ' + lastname;
           } else {
-            return nameString + `, and ${members.length - numNames} others`;
+            return (
+              nameString + ',' + and + `${members.length - numNames} others`
+            );
           }
         } else {
           return nameString;
@@ -293,7 +314,8 @@ const lastMessageObject = (messages) => {
   return Object.values(messages)[0];
 };
 
-const lastMessage = (messages) => {
+const lastMessage = (messages, notification) => {
+  const userID = store.getState().user.userID;
   const lastMessage = lastMessageObject(messages);
   if (!lastMessage) {
     return null;
@@ -301,29 +323,119 @@ const lastMessage = (messages) => {
 
   const {user, timeStamp, images, type} = lastMessage;
   let {text} = lastMessage;
-
+  text = text.replace(/(\r\n|\n|\r)/gm, ' ');
   if (images) {
     text = `${Object.values(images).length} file${
       Object.values(images).length === 1 ? '' : 's'
     }`;
   }
-  if (text.length > 50) {
-    text = text.slice(0, 50) + '...';
+  const maxLength = 20;
+  if (text.length > maxLength) {
+    text = '...' + text.slice(text.length - maxLength, text.length);
   }
   if (type === 'video') {
-    text = '1 video shared.';
+    text = 'Shared video';
+  } else if (type === 'connection') {
+    text = 'Video call';
   }
+  const containerStyle = {
+    marginTop: 5,
+    height: 35,
+    marginBottom: 10,
+    ...styleApp.center4,
+  };
+  const styleProfilePhotoContainer = {
+    ...styleApp.center,
+    position: 'absolute',
+    bottom: -7,
+    left: user.id === userID ? null : -13,
+    right: user.id === userID ? -13 : null,
+    zIndex: 2,
+    borderWidth: 3,
+    borderRadius: 30,
+    borderColor: colors.white,
+  };
+  const profilePhotoStyle = {
+    height: 20,
+    width: 20,
+    borderRadius: 30,
+    backgroundColor: colors.grey,
+  };
+  const nameTextStyle = {
+    ...styleApp.textBold,
+    color: colors.greyDark,
+    position: 'absolute',
+    bottom: user.id === userID ? -15 : -17,
+    left: user.id === userID ? undefined : 15,
+    right: user.id === userID ? 15 : undefined,
+    fontSize: 10,
+    zIndex: 2,
+  };
+  const messageContainerStyle = {
+    flexDirection: 'row',
+    maxHeight: 30,
+    paddingHorizontal: 10,
+    marginLeft: 5,
+    ...styleApp.center,
+    height: '100%',
+    borderRadius: 20,
+    backgroundColor: user.id === userID ? colors.blue : colors.greyDark,
+  };
+  const iconStyle = {
+    marginLeft: user.id === userID ? undefined : 5,
+    marginRight: 5,
+  };
+  const messageTextStyle = {
+    ...styleApp.textBold,
+    color: colors.white,
+    fontSize: 13,
+    textAlignVertical: 'center',
+    marginRight: user.id === userID ? 5 : undefined,
+  };
+  const notificationStyle = {
+    height: 17,
+    width: 17,
+    backgroundColor: colors.blue,
+    borderRadius: 15,
+    position: 'absolute',
+    right: -8,
+    top: -5,
+  };
   return (
-    <Text
-      style={[
-        styleApp.text,
-        {color: colors.subtitle, marginTop: 5, fontSize: 11},
-      ]}>
-      <Text style={{fontWeight: 'bold', color: colors.greyDark}}>
-        {user.info.firstname}:{' '}
-      </Text>
-      {text}
-    </Text>
+    <Row style={containerStyle}>
+      <View style={messageContainerStyle}>
+        <View style={styleProfilePhotoContainer}>
+          <AsyncImage
+            style={profilePhotoStyle}
+            mainImage={user.info.picture}
+            imgInitial={user.info.picture}
+          />
+        </View>
+        {/* {notification && <View style={notificationStyle} />} */}
+        <Text style={nameTextStyle}>
+          {user.id === userID
+            ? 'You'
+            : user.info.firstname + ' ' + user.info.lastname}
+        </Text>
+        <AllIcon
+          name={
+            type === 'connection'
+              ? 'video'
+              : type === 'video'
+              ? 'play'
+              : 'comment-alt'
+          }
+          solid
+          size={11}
+          color={colors.white}
+          type="font"
+          style={iconStyle}
+        />
+        <Text numberOfLines={1} ellipsizeMode="head" style={messageTextStyle}>
+          {text}
+        </Text>
+      </View>
+    </Row>
   );
 };
 
@@ -354,7 +466,7 @@ const viewLive = (session, style, hideText) => {
     width: 50,
     ...styleApp.center,
     borderRadius: 15,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: colors.white,
     ...style,
   };
@@ -440,7 +552,7 @@ const hangupButton = (session) => {
 };
 
 const iconWithBadge = (icon, badgeNumber) => {
-  const {name, size, color, type} = icon;
+  const {name, size, color, type, solid} = icon;
   const styleBadge = {
     ...styleApp.center,
     position: 'absolute',
@@ -465,7 +577,13 @@ const iconWithBadge = (icon, badgeNumber) => {
   };
   return (
     <View>
-      <AllIcons name={name} type={type} color={color} size={size} />
+      <AllIcons
+        name={name}
+        type={type}
+        color={color}
+        size={size}
+        solid={solid}
+      />
       {badgeNumber && (
         <View style={styleBadge}>
           <Text
