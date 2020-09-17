@@ -38,7 +38,7 @@ class UserSearchResult extends Component {
   }
 
   toggleSelected(override) {
-    let toValue = this.selected ? 0 : 0.8;
+    let toValue = 0;
     if (override !== undefined) {
       toValue = override;
     }
