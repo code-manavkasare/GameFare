@@ -33,12 +33,11 @@ class StreamTab extends Component {
     this.state = {
       permissionsCamera: false,
       initialLoader: true,
-      sharingVideos: null,
+      sharingVideos: props?.route?.params?.sharingVideos,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.openSession = this.openSession.bind(this);
     this.focusUnsubscribe = null;
-    this.blurUnsubscribe = null;
   }
   componentDidMount = () => {
     const {navigation} = this.props;
@@ -48,27 +47,13 @@ class StreamTab extends Component {
     }
     this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
-      const {params} = this.props.route;
-      if (params && params.sharingVideos) {
-        this.setState({sharingVideos: params.sharingVideos});
-      }
-    });
-    this.blurUnsubscribe = navigation.addListener('blur', () => {
-      const {sharingVideos} = this.state;
-      if (sharingVideos) {
-        this.setState({sharingVideos: null});
-        this.props.navigation.setParams({sharingVideos: null});
-      }
     });
   };
   componentWillUnmount = () => {
     if (this.focusUnsubscribe) {
       this.focusUnsubscribe();
     }
-    if (this.blurUnsubscribe) {
-      this.blurUnsubscribe();
-    }
-  }
+  };
   componentDidUpdate = (prevProps) => {
     const {params} = this.props.route;
     const {params: prevParams} = prevProps.route;
@@ -129,14 +114,11 @@ class StreamTab extends Component {
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
-          headerTitle={sharingVideos ? 'Sharing videos' : ''}
+          sharingVideos={sharingVideos}
           onRef={(ref) => (this.HeaderRef = ref)}
         />
 
-        <View
-          style={{
-            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
-          }}>
+        <View style={{marginTop: sizes.marginTopApp + sizes.heightHeaderHome}}>
           {this.StreamTab()}
         </View>
         <Search

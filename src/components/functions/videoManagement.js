@@ -8,7 +8,6 @@ import {DocumentDirectoryPath} from 'react-native-fs';
 import {assoc, dissoc} from 'ramda';
 
 import {
-  getVideoInfo,
   getNewVideoSavePath,
   getOpentokVideoInfo,
   getVideoUUID,
@@ -24,16 +23,18 @@ import {enqueueUploadTask} from '../../actions/uploadQueueActions';
 import {
   addUserLocalArchive,
   removeUserLocalArchive,
+  removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
 } from '../../actions/localVideoLibraryActions';
-import {setArchive, deleteArchive} from '../../actions/archivesActions';
-
+import {setArchive, deleteArchive, deleteArchives} from '../../actions/archivesActions';
+import {getArchiveByID, bindArchive} from './archive';
 import {
   createCloudVideo,
   setCloudVideoThumbnail,
   claimCloudVideo,
   shareCloudVideo,
   deleteCloudVideo,
+  deleteCloudVideos,
 } from '../database/firebase/videosManagement';
 
 const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
@@ -128,15 +129,14 @@ const addLocalVideo = async (video) => {
 };
 
 const deleteVideos = (ids) => {
-  const infos = ids.map((id) => getVideoByID(id));
+  const infos = ids.map((id) => getArchiveByID(id));
+  store.dispatch(removeUserLocalArchives(ids));
+  store.dispatch(deleteArchives(ids));
+  deleteCloudVideos(ids);
   infos.forEach((info) => {
     if (info.local) {
       deleteLocalVideoFile(info.url);
-    } else {
-      deleteCloudVideo(info.id);
     }
-    store.dispatch(removeUserLocalArchive(info.id)); // offline entry in library
-    store.dispatch(deleteArchive(info.id));
   });
 };
 
@@ -153,6 +153,7 @@ const openVideoPlayer = async ({archives, open, coachSessionID}) => {
 
 const uploadLocalVideo = async (videoID, background) => {
   const videoInfo = store.getState().archives[videoID];
+  console.log('uploading local video', videoInfo);
   if (videoInfo) {
     if (videoInfo.local) {
       const videoUploadTaskID = generateID();
@@ -160,6 +161,7 @@ const uploadLocalVideo = async (videoID, background) => {
       const success = await createCloudVideo(videoInfo);
       if (success) {
         if (videoInfo.thumbnail.substring(0, 4) !== 'http') {
+          console.log('uploading thumbnail', videoInfo.thumbnail);
           store.dispatch(
             enqueueUploadTask({
               type: 'image',
@@ -172,6 +174,7 @@ const uploadLocalVideo = async (videoID, background) => {
             }),
           );
         } else {
+          console.log('setting cloud thumbnail', videoInfo.thumbnail);
           setCloudVideoThumbnail(videoID, videoInfo.thumbnail);
         }
         store.dispatch(
@@ -213,6 +216,8 @@ const deleteLocalVideoFile = async (path) => {
 };
 
 const shareVideosWithTeams = async (videos, objectIDs) => {
+  console.log('shareVideosWithTeams', videos, objectIDs);
+  // only waits until cloud entries are created, upload continues after return
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
   const allSessions = store.getState().coachSessions;
@@ -235,6 +240,7 @@ const shareVideosWithTeams = async (videos, objectIDs) => {
         Object.keys(session.members)
           .filter((memberID) => memberID !== userID)
           .forEach((memberID) => {
+            console.log('sharing cloud video', memberID, videoID);
             shareCloudVideo(memberID, videoID);
           });
       }
@@ -277,10 +283,6 @@ const generateThumbnailSet = async (source, timeBounds, size, callback) => {
     );
   }
   return thumbnails;
-};
-
-const getVideoByID = (id) => {
-  return store.getState().archives[id];
 };
 
 const updateLocalVideoUrls = () => {
@@ -357,7 +359,6 @@ export {
   deleteVideos,
   openVideoPlayer,
   shareVideosWithTeams,
-  getVideoByID,
   generateThumbnailSet,
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,

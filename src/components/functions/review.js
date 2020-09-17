@@ -1,14 +1,16 @@
 import {ProcessingManager} from 'react-native-video-processing';
 import RNFS from 'react-native-fs';
 
-import {getVideoInfo} from '../functions/pictures.js';
-import {generateID} from '../functions/createEvent.js';
-import {addLocalVideo, getVideoByID} from './videoManagement.js';
+import {getVideoInfo} from '../functions/pictures';
+import {generateID} from '../functions/createEvent';
+import {addLocalVideo} from './videoManagement';
+import {getArchiveByID} from './archive';
+
 
 const checkIfAllArchivesAreLocal = (archives) => {
   let isLocal = true;
   archives.map((archiveId) => {
-    const videoInfo = getVideoByID(archiveId);
+    const videoInfo = getArchiveByID(archiveId);
     if (!videoInfo.local) {
       isLocal = false;
     }
