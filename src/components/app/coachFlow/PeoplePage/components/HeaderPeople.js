@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {navigate} from '../../../../../../NavigationService';
+import {navigate, goBack} from '../../../../../../NavigationService';
 
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
@@ -19,12 +19,12 @@ class HeaderListStream extends Component {
   }
 
   header = () => {
-    const {AnimatedHeaderValue, infoUser, headerTitle} = this.props;
+    const {AnimatedHeaderValue, infoUser, sharingVideos} = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={headerTitle}
+        textHeader={''}
         inputRange={[40, 50]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
@@ -32,16 +32,24 @@ class HeaderListStream extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
-        icon2={'comment-alt'}
-        typeIcon2="font"
+        icon2={sharingVideos ? undefined : 'comment-alt'}
+        typeIcon2={'font'}
         sizeIcon2={24}
         colorIcon2={colors.title}
         clickButton2={() => navigate('Groups')}
-        icon1={infoUser.picture ? infoUser.picture : 'profileFooter'}
-        sizeIcon1={infoUser.picture ? 31 : 23}
+        icon1={
+          sharingVideos
+            ? 'times'
+            : infoUser.picture
+            ? infoUser.picture
+            : 'profileFooter'
+        }
+        sizeIcon1={sharingVideos ? 20 : infoUser.picture ? 31 : 23}
         colorIcon1={colors.title}
-        typeIcon1={infoUser.picture ? 'image' : 'moon'}
-        clickButton1={() => navigate('MorePage')}
+        typeIcon1={sharingVideos ? 'font' : infoUser.picture ? 'image' : 'moon'}
+        clickButton1={
+          sharingVideos ? () => goBack() : () => navigate('MorePage')
+        }
       />
     );
   };

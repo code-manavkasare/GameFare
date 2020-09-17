@@ -29,6 +29,7 @@ class SearchResults extends Component {
       displayMore: '',
     };
     this.userRefs = [];
+    this.sessionsRef = [];
   }
 
   componentDidMount() {
@@ -68,11 +69,7 @@ class SearchResults extends Component {
           delete this.userRefs[index];
         }}
         user={user}
-        invite={async (init) => {
-          if (invite) {
-            return await invite(user, init);
-          }
-        }}
+        invite={invite}
       />
     );
   };
@@ -81,16 +78,26 @@ class SearchResults extends Component {
     for (var user in this.userRefs) {
       this.userRefs[user]?.toggleSelected(0);
     }
+    this.sessionsRef.map((s) => s?.toggleSelected(0));
+    for (var session in this.sessionsRef) {
+      this.sessionsRef[session]?.toggleSelected(0);
+    }
   };
 
   groupCard = (group) => {
+    const {invite} = this.props;
     return (
-      <CardStreamView
-        coachSessionID={group.objectID}
-        key={group.objectID}
-        scale={1}
-        minimal
-      />
+      <View style={{width: '90%', marginLeft: '5%'}}>
+        <CardStreamView
+          onRef={(ref) => this.sessionsRef.push(ref)}
+          coachSessionID={group.objectID}
+          key={group.objectID}
+          scale={1}
+          recentView
+          invite={invite}
+          style={{borderRadius: 15, paddingVertical: 5, marginVertical: 5}}
+        />
+      </View>
     );
   };
 

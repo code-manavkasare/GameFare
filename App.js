@@ -9,6 +9,7 @@ import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import BackgroundTimer from 'react-native-background-timer';
+import convertToCache from 'react-native-video-cache';
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
@@ -20,6 +21,7 @@ import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
+import ArchiveBindManager from './src/components/utility/ArchiveBindManager';
 import {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
@@ -51,6 +53,7 @@ class App extends Component {
       refreshTokenOnDatabase(userID);
       oneTimeFixStoreLocalVideoLibrary();
       updateLocalVideoUrls();
+      convertToCache(''); // starts video cache server so cached url's work on startup
     }
   }
 
@@ -134,6 +137,7 @@ class App extends Component {
         <Notification />
         <UploadManager />
         <ConnectionTypeProvider />
+        <ArchiveBindManager />
       </NavigationContainer>
     );
   }

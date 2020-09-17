@@ -24,6 +24,7 @@ export default class AllIcon extends Component {
     backgroundColor: PropTypes.string,
     solid: PropTypes.bool,
     reanimated: PropTypes.bool,
+    style: PropTypes.object,
   };
 
   static defaultProps = {
@@ -54,7 +55,7 @@ export default class AllIcon extends Component {
             name={icon}
             color={color}
             size={size}
-            style={{backgroundColor: backgroundColor}}
+            style={{...style, backgroundColor: backgroundColor}}
             solid={solid}
           />
         );
@@ -64,7 +65,7 @@ export default class AllIcon extends Component {
             name={icon}
             color={color}
             size={size}
-            style={{backgroundColor: backgroundColor}}
+            style={{...style, backgroundColor: backgroundColor}}
             solid={solid}
           />
         );

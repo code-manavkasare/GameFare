@@ -626,12 +626,16 @@ const addMembersToSession = (objectID, navigateTo) => {
 };
 
 const updateMembersToSession = async (coachSessionID, members) => {
-  for (const member of Object.values(members)) {
+  let updates = {};
+  for (let member of Object.values(members)) {
     member.invitationTimeStamp = Date.now();
-    await database()
-      .ref('coachSessions/' + coachSessionID + '/members/' + member.id)
-      .update(member);
+    updates[
+      `${'coachSessions/' + coachSessionID + '/members/' + member.id}`
+    ] = member;
   }
+  await database()
+    .ref()
+    .update(updates);
   return navigate('Session');
 };
 
@@ -640,11 +644,14 @@ const searchSessionsForString = (search) => {
   const userSessions = store.getState().user.infoUser.coachSessions;
   if (search === '') {
     return userSessions ? Object.keys(userSessions) : [];
-  } else {
+  } else if (userSessions) {
     const matches = Object.keys(userSessions)
       .map((id) => {
         const session = allSessions[id];
-        const names = Object.values(session.members).reduce(
+        if (!session?.members) {
+          return null;
+        }
+        const names = Object.values(session?.members).reduce(
           (result, member) => {
             let name = '';
             if (member?.info?.firstname) {
@@ -670,14 +677,18 @@ const searchSessionsForString = (search) => {
       .filter((x) => x);
     return matches;
   }
+  return [];
 };
 
 const selectVideosFromLibrary = (coachSessionID) => {
+  console.log('selectVideosFromLibrary', coachSessionID);
   navigate('SelectVideosFromLibrary', {
     selectableMode: true,
     selectOnly: true,
-    confirmVideo: (selectedVideos) =>
-      shareVideosWithTeams(selectedVideos, [coachSessionID]),
+    navigateBackAfterConfirm: true,
+    confirmVideo: async (selectedVideos) => {
+      await shareVideosWithTeams(selectedVideos, [coachSessionID]);
+    },
   });
 };
 

@@ -2,9 +2,11 @@ import {dissoc} from 'ramda';
 
 import {
   DELETE_ARCHIVE,
+  DELETE_ARCHIVES,
   RESET_ARCHIVES,
   SET_ARCHIVE,
-  SET_ARCHIVE_BINDED,
+  BIND_ARCHIVE,
+  UNBIND_ARCHIVE,
 } from '../actions/types';
 
 const initialState = {};
@@ -18,6 +20,9 @@ const archivesReducer = (state = initialState, action) => {
     case DELETE_ARCHIVE:
       const {archiveID} = action;
       return dissoc(archiveID, state);
+    case DELETE_ARCHIVES:
+      const {archiveIDs} = action;
+      return archiveIDs.reduce((newState, id) => dissoc(id, newState), state);
     case RESET_ARCHIVES:
       return initialState;
     default:
@@ -27,12 +32,32 @@ const archivesReducer = (state = initialState, action) => {
 
 const bindedArchivesReducer = (state = initialStateBind, action) => {
   switch (action.type) {
-    case SET_ARCHIVE_BINDED:
-      const {archive} = action;
-      return {...state, [archive.id]: archive.isBinded};
-    case DELETE_ARCHIVE:
+    case BIND_ARCHIVE: {
       const {archiveID} = action;
-      return dissoc(archiveID, state);
+      if (archiveID) {
+        const bindCount = state[archiveID];
+        if (bindCount) {
+          return {...state, [archiveID]: bindCount + 1};
+        }
+        return {...state, [archiveID]: 1};
+      }
+      return state;
+    }
+    case UNBIND_ARCHIVE: {
+      const {archiveID} = action;
+      if (archiveID) {
+        const bindCount = state[archiveID];
+        if (bindCount) {
+          return {...state, [archiveID]: bindCount - 1};
+        }
+        return {...state, [archiveID]: 0};
+      }
+      return state;
+    }
+    case DELETE_ARCHIVES: {
+      const {archiveIDs} = action;
+      return archiveIDs.reduce((newState, id) => dissoc(id, newState), state);
+    }
     default:
       return state;
   }

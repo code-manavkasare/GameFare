@@ -11,35 +11,11 @@ import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createDiscussion, searchDiscussion} from '../../../functions/message';
 
-class HeaderGroupPage extends Component {
+class HeaderTeamPage extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-
-  pickMembersToShareVideosWith = () => {
-    const {userID, selectedVideos, setState} = this.props;
-
-    navigate('PickMembers', {
-      usersSelected: {},
-      selectMultiple: true,
-      closeButton: true,
-      loaderOnSubmit: true,
-      contactsOnly: false,
-      displayCurrentUser: false,
-      noUpdateStatusBar: true,
-      titleHeader: 'Select members to share video with',
-      onGoBack: async (members) => {
-        for (const member of Object.values(members)) {
-          for (const videoId of selectedVideos) {
-            shareCloudVideo(member.id, videoId);
-          }
-        }
-        setState({selectableMode: false, selectedVideos: []});
-        return navigate('VideoLibraryPage');
-      },
-    });
-  };
 
   render() {
     const {loader, AnimatedHeaderValue, navigation, session} = this.props;
@@ -84,4 +60,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(HeaderGroupPage);
+export default connect(mapStateToProps)(HeaderTeamPage);

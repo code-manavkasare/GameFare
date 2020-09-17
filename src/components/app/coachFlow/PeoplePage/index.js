@@ -1,21 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
-import {Row, Col} from 'react-native-easy-grid';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes, {
-  heightFooter,
-  heightHeaderHome,
-  marginBottomApp,
-} from '../../../style/sizes';
-import ScrollView from '../../../layout/scrollViews/ScrollView2';
-import ButtonColor from '../../../layout/Views/Button';
-import InviteButton from './components/InvitationManager';
-import LogoutView from './components/LogoutView';
+import sizes from '../../../style/sizes';
 import PermissionView from './components/PermissionView';
 
 import PeopleBody from './components/PeopleBody';
@@ -25,20 +16,17 @@ import {sessionOpening} from '../../../functions/coach';
 import Search from './components/Search';
 import InvitationManager from './components/InvitationManager';
 
-const {height} = Dimensions.get('screen');
-
 class StreamTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
       permissionsCamera: false,
       initialLoader: true,
-      sharingVideos: null,
+      sharingVideos: props?.route?.params?.sharingVideos,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.openSession = this.openSession.bind(this);
     this.focusUnsubscribe = null;
-    this.blurUnsubscribe = null;
   }
   componentDidMount = () => {
     const {navigation} = this.props;
@@ -48,27 +36,13 @@ class StreamTab extends Component {
     }
     this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
-      const {params} = this.props.route;
-      if (params && params.sharingVideos) {
-        this.setState({sharingVideos: params.sharingVideos});
-      }
-    });
-    this.blurUnsubscribe = navigation.addListener('blur', () => {
-      const {sharingVideos} = this.state;
-      if (sharingVideos) {
-        this.setState({sharingVideos: null});
-        this.props.navigation.setParams({sharingVideos: null});
-      }
     });
   };
   componentWillUnmount = () => {
     if (this.focusUnsubscribe) {
       this.focusUnsubscribe();
     }
-    if (this.blurUnsubscribe) {
-      this.blurUnsubscribe();
-    }
-  }
+  };
   componentDidUpdate = (prevProps) => {
     const {params} = this.props.route;
     const {params: prevParams} = prevProps.route;
@@ -84,8 +58,9 @@ class StreamTab extends Component {
     sessionOpening(session);
   };
   viewLoader = () => {
+    const loaderStyle = [{height: 120}, styleApp.center];
     return (
-      <View style={[{height: 120}, styleApp.center]}>
+      <View style={loaderStyle}>
         <Loader size={55} color={colors.primary} />
       </View>
     );
@@ -114,6 +89,7 @@ class StreamTab extends Component {
           openSearch={(y) => {
             this.searchRef?.animate(1, y);
           }}
+          invite={this.invitationManagerRef?.invite}
         />
       </View>
     );
@@ -129,14 +105,11 @@ class StreamTab extends Component {
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
-          headerTitle={sharingVideos ? 'Sharing videos' : ''}
+          sharingVideos={sharingVideos}
           onRef={(ref) => (this.HeaderRef = ref)}
         />
 
-        <View
-          style={{
-            marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
-          }}>
+        <View style={{marginTop: sizes.marginTopApp + sizes.heightHeaderHome}}>
           {this.StreamTab()}
         </View>
         <Search
@@ -146,9 +119,7 @@ class StreamTab extends Component {
           onClose={() => {
             this.peopleBodyRef?.displaySearchBar(1);
           }}
-          invite={async (user, init) => {
-            return await this.invitationManagerRef?.invite(user, init);
-          }}
+          invite={this.invitationManagerRef?.invite}
         />
         <InvitationManager
           onRef={(ref) => {
@@ -156,6 +127,7 @@ class StreamTab extends Component {
           }}
           resetInvites={() => {
             this.searchRef?.resetInvites();
+            this.peopleBodyRef?.resetInvites();
           }}
           dismiss={() => {
             this.searchRef?.animate(0);
@@ -166,19 +138,6 @@ class StreamTab extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  containerTabPage: {
-    ...styleApp.fullSize,
-    paddingTop: 10,
-  },
-  titlePage: {
-    ...styleApp.title,
-    color: colors.title,
-    marginBottom: 10,
-    marginLeft: 20,
-  },
-});
 
 const mapStateToProps = (state) => {
   return {

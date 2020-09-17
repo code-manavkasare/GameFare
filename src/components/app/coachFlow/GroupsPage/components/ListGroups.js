@@ -22,10 +22,16 @@ class ListStreams extends Component {
   }
   sessionsArray = () => {
     let {coachSessions} = this.props;
-    if (!coachSessions) return [];
-    return Object.values(coachSessions).sort(function(a, b) {
-      return b.timestamp - a.timestamp;
-    });
+    if (!coachSessions) {
+      return [];
+    }
+    return Object.values(coachSessions)
+      .sort(function(a, b) {
+        return b.timestamp - a.timestamp;
+      })
+      .filter((s) => {
+        return s?.id !== undefined;
+      });
   };
   list = () => {
     const styleViewLiveLogo = {
@@ -41,8 +47,10 @@ class ListStreams extends Component {
     };
     const coachSessions = this.sessionsArray();
     const {userConnected} = this.props;
-    if (!userConnected || !coachSessions) return null;
-    if (Object.values(coachSessions).length === 0)
+    if (!userConnected || !coachSessions) {
+      return null;
+    }
+    if (Object.values(coachSessions).length === 0) {
       return (
         <View style={[styleApp.marginView, styleApp.center]}>
           <View style={[styleApp.center, {marginBottom: 80}]}>
@@ -88,21 +96,25 @@ class ListStreams extends Component {
           />
         </View>
       );
+    }
     return (
       <FlatListComponent
         list={coachSessions}
-        cardList={({item: session}) => (
-          <CardStreamView
-            coachSessionID={session.id}
-            key={session.id}
-            scale={1}
-            onRef={(ref) => this.itemsRef.push(ref)}
-          />
-        )}
+        cardList={({item: session}) =>
+          session.id && (
+            <CardStreamView
+              coachSessionID={session.id}
+              key={session.objectID}
+              scale={1}
+              onRef={(ref) => this.itemsRef.push(ref)}
+            />
+          )
+        }
         numColumns={1}
         inverted={false}
         incrementRendering={6}
         initialNumberToRender={8}
+        styleContainer={{marginTop: 10}}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />
     );

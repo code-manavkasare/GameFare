@@ -27,11 +27,13 @@ export default class Button extends Component {
     this.props.click();
   }
   widthButton() {
-    if (this.props.width) return this.props.width;
+    if (this.props.width) {
+      return this.props.width;
+    }
     return width - 40;
   }
   styleButton() {
-    if (this.props.disabled)
+    if (this.props.disabled) {
       return {
         ...styles.buttonSubmit,
         backgroundColor: 'white',
@@ -39,37 +41,44 @@ export default class Button extends Component {
         borderWidth: 1,
         ...this.props.styleButton,
       };
-    if (this.props.styleButton)
+    }
+    if (this.props.styleButton) {
       return {
         ...styles.buttonSubmit,
         ...this.props.styleButton,
         backgroundColor: colors[this.props.backgroundColor],
       };
+    }
     return {
       ...styles.buttonSubmit,
       backgroundColor: colors[this.props.backgroundColor],
     };
   }
   onPressColor() {
-    if (this.props.onPressColor) return this.props.onPressColor;
+    if (this.props.onPressColor) {
+      return this.props.onPressColor;
+    }
     return colors.primary2;
   }
   styleText() {
-    if (this.props.disabled)
+    if (this.props.disabled) {
       return {
         ...styles.textButtonOn,
         ...this.props.styleText,
         color: colors[this.props.backgroundColor],
       };
-    if (this.props.textButton)
+    }
+    if (this.props.textButton) {
       return {...styles.textButtonOn, ...this.props.textButton};
+    }
     return styles.textButtonOn;
   }
   onPress(val) {
-    if (val)
+    if (val) {
       return Animated.parallel([
         Animated.timing(this.state.backgroundColorAnimation, timing(300, 100)),
       ]).start();
+    }
     return Animated.parallel([
       Animated.timing(this.state.backgroundColorAnimation, timing(0, 100)),
     ]).start();
@@ -103,7 +112,7 @@ export default class Button extends Component {
       <Animated.View style={[this.styleButton(), {backgroundColor: color}]}>
         <TouchableOpacity
           activeOpacity={1}
-          style={[{width: '100%', height: '100%'}]}
+          style={styleApp.fullSize}
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
           disabled={disabled}
@@ -111,7 +120,10 @@ export default class Button extends Component {
           {icon && this.iconView()}
           <View style={[styleApp.center, styleApp.fullSize]}>
             {loader && !icon ? (
-              <Loader size={loaderSize ? loaderSize : 38} color={colors.white} />
+              <Loader
+                size={loaderSize ? loaderSize : 38}
+                color={colors.white}
+              />
             ) : (
               <Text style={this.styleText()}>{text}</Text>
             )}
@@ -124,9 +136,9 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
   buttonSubmit: {
-    height: 62,
+    height: 50,
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: 15,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
