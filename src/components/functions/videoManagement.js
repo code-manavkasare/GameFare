@@ -104,7 +104,9 @@ const addLocalVideo = async (video) => {
   const {url} = video;
   if (url) {
     video.local = true;
-    video.startTimestamp = video.startTimestamp ? video.startTimestamp : Date.now();
+    video.startTimestamp = video.startTimestamp
+      ? video.startTimestamp
+      : Date.now();
     if (url.indexOf(DocumentDirectoryPath) === -1) {
       store.dispatch(setArchive({...video, volatile: true}));
       const newPath = getNewVideoSavePath();
@@ -122,9 +124,6 @@ const addLocalVideo = async (video) => {
       }),
     );
   }
-
-
-
 };
 
 const deleteVideos = (ids) => {
@@ -348,7 +347,27 @@ const updateLocalUploadProgress = (videoID, progress) => {
   if (videoInfo) {
     store.dispatch(setArchive({...videoInfo, progress}));
   }
-}
+};
+
+const dimensionRectangle = ({startPoint, endPoint}) => {
+  const {x: x1, y: y1} = startPoint;
+  const {x: x2, y: y2} = endPoint;
+  let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+  if (!radius) radius = 0;
+  const slope =
+    (Math.max(y2, y1) - Math.min(y1, y2)) /
+    (Math.max(x2, x1) - Math.min(x1, x2));
+  console.log('slope', slope);
+  const beta = Math.atan(slope);
+
+  let width = Math.cos(beta) * radius;
+  if (x2 < x1 || y2 < y1) width = Math.sin(beta) * radius;
+  const height = Math.sqrt(Math.pow(radius, 2) - Math.pow(width, 2));
+  console.log('react', width, height);
+  console.log('radius', radius);
+
+  return {height: Math.abs(height), width: Math.abs(width)};
+};
 
 export {
   arrayUploadFromSnippets,
@@ -362,4 +381,5 @@ export {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
   updateLocalUploadProgress,
+  dimensionRectangle,
 };

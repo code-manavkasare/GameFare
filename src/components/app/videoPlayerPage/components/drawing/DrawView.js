@@ -7,12 +7,14 @@ import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
 
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
 import DrawSraightLine from './DrawSraightLine';
+import DrawCircles from './DrawCircles';
 import {coachAction} from '../../../../../actions/coachActions';
 import {generateID} from '../../../../functions/createEvent';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
+import DrawRectangles from './DrawRectangles';
 
 class DrawView extends Component {
   static propTypes = {
@@ -138,6 +140,7 @@ class DrawView extends Component {
       data,
       type: drawSetting,
     };
+    console.log('path!!!!!', path);
 
     if (videoBeingShared) {
       database()
@@ -153,7 +156,7 @@ class DrawView extends Component {
       await this.setState({drawings: newDrawings});
       onDrawingChange(index, newDrawings);
     }
-    if (drawSetting !== 'straight') {
+    if (drawSetting === 'custom') {
       this.canvasRef.deletePath(path.idSketch);
     }
   }
@@ -202,6 +205,22 @@ class DrawView extends Component {
             strokeColor={colorDrawing}
             strokeWidth={strokeWidth}
             scale={scaleDrawing}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+          />
+        ) : drawSetting === 'rectangle' ? (
+          <DrawRectangles
+            style={styles.drawingZone}
+            strokeWidth={strokeWidth}
+            strokeColor={colorDrawing}
+            onRef={(ref) => (this.drawStraighLinesRef = ref)}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+          />
+        ) : drawSetting === 'circle' ? (
+          <DrawCircles
+            style={styles.drawingZone}
+            strokeWidth={strokeWidth}
+            strokeColor={colorDrawing}
+            onRef={(ref) => (this.drawStraighLinesRef = ref)}
             onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
           />
         ) : (

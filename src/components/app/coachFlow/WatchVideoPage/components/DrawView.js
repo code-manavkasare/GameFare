@@ -144,9 +144,9 @@ class Draw extends Component {
       width: w,
     };
 
-    if (styleDrawView.h === 0) {
-      return null;
-    }
+    // if (styleDrawView.h === 0) {
+    //   return null;
+    // }
     return (
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}

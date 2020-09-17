@@ -100,7 +100,7 @@ class DrawTools extends Component {
 
         {this.button(
           {
-            name: 'timeline',
+            name: 'remove',
             type: 'mat',
             color: drawSetting === 'straight' ? colors.secondary : colors.white,
           },
@@ -109,6 +109,34 @@ class DrawTools extends Component {
           () => {
             this.setState({drawSetting: 'straight'});
             setState({drawSetting: 'straight'});
+          },
+        )}
+        {this.button(
+          {
+            name: 'circle',
+            type: 'font',
+            color: drawSetting === 'circle' ? colors.secondary : colors.white,
+          },
+          '',
+          false,
+          () => {
+            this.setState({drawSetting: 'circle'});
+            setState({drawSetting: 'circle'});
+          },
+        )}
+
+        {this.button(
+          {
+            name: 'square',
+            type: 'font',
+            color:
+              drawSetting === 'rectangle' ? colors.secondary : colors.white,
+          },
+          '',
+          false,
+          () => {
+            this.setState({drawSetting: 'rectangle'});
+            setState({drawSetting: 'rectangle'});
           },
         )}
 
@@ -145,7 +173,7 @@ const styles = StyleSheet.create({
     top: 0,
     position: 'absolute',
     right: '5%',
-    width: 300,
+    width: 380,
     height: 50,
     zIndex: 20,
     backgroundColor: colors.title + '70',
