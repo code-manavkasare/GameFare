@@ -25,6 +25,8 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 
+import {archivesAction} from '../../../../../../../../actions/archivesActions';
+
 class CardArchive extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
@@ -46,20 +48,33 @@ class CardArchive extends PureComponent {
     super(props);
     this.state = {
       loader: false,
+      bound: false,
     };
   }
+
   componentDidMount() {
-    const {id, remoteArchives} = this.props;
-    if (includes(id, remoteArchives)) {
-      bindArchive(id);
+    const {id, archive, archivesAction} = this.props;
+    if (archive && !archive.local) {
+      archivesAction('bindArchive', id);
+      this.setState({bound: true});
     }
   }
+
+  componentDidUpdate(prevProps) {
+    const {id, archive, archivesAction} = this.props;
+    const {bound} = this.state;
+    if (archive && !archive.local && !bound) {
+      this.setState({bound: true});
+      archivesAction('bindArchive', id);
+    }
+  }
+
   componentWillUnmount() {
-    const {id, remoteArchives} = this.props;
-    if (includes(id, remoteArchives)) {
-      unbindArchive(id);
-    }
+    const {id, archivesAction} = this.props;
+    archivesAction('unbindArchive', id);
+    this.setState({bound: false});
   }
+
   placeholder() {
     const {style} = this.props;
     return (
@@ -279,8 +294,13 @@ const mapStateToProps = (state, props) => {
     archive: props.nativeArchive
       ? props.nativeArchive
       : state.archives[props.id],
-    remoteArchives: Object.keys(state.user.infoUser.archivedStreams),
+    remoteArchives: state.user?.infoUser?.archivedStreams
+      ? Object.keys(state.user.infoUser.archivedStreams)
+      : [],
   };
 };
 
-export default connect(mapStateToProps)(CardArchive);
+export default connect(
+  mapStateToProps,
+  {archivesAction},
+)(CardArchive);

@@ -20,6 +20,7 @@ import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
+import ArchiveBindManager from './src/components/utility/ArchiveBindManager';
 import {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
@@ -134,6 +135,7 @@ class App extends Component {
         <Notification />
         <UploadManager />
         <ConnectionTypeProvider />
+        <ArchiveBindManager />
       </NavigationContainer>
     );
   }

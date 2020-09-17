@@ -16,7 +16,9 @@ import {
   heightHeaderHome,
   marginTopAppLandscape,
 } from '../../style/sizes';
-import {openVideoPlayer, getVideoByID} from '../../functions/videoManagement';
+import {openVideoPlayer} from '../../functions/videoManagement';
+import {getArchiveByID} from '../../functions/archive';
+
 import {shareCloudVideoWithCoachSession} from '../../database/firebase/videosManagement';
 import {
   isVideosAreBeingShared,
@@ -430,7 +432,7 @@ class VideoPlayerPage extends Component {
   saveReview = async () => {
     //To update for multiple video
     const {archives, recordedActions} = this.state;
-    const localVideoInfo = getVideoByID(archives[0]);
+    const localVideoInfo = getArchiveByID(archives[0]);
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
     await generatePreview(localVideoInfo.url, recordedActions, audioFilePath);
     this.props.navigation.navigate('Alert', {

@@ -5,7 +5,7 @@ import ButtonColor from '../../../../layout/Views/Button';
 import {Row, Col} from 'react-native-easy-grid';
 
 import {shareVideosWithTeams} from '../../../../functions/videoManagement';
-
+import {navigate} from '../../../../../../NavigationService';
 import sizes from '../../../../style/sizes';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
@@ -120,7 +120,10 @@ class InvitationManager extends Component {
     this.resetInvitations();
     if (sharingVideos) {
       const {objectID} = await createSession(users);
+      console.log('invitation manager sharing videos');
       shareVideosWithTeams(sharingVideos, [objectID]);
+      navigate('Conversation', {coachSessionID: objectID});
+
     } else if (!currentSessionID) {
       const session = await createSession(users);
       sessionOpening(session);

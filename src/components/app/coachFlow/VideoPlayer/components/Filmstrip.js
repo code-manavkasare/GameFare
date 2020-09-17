@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, FlatList, Image} from 'react-native';
 import {isEqual} from 'lodash';
 import styleApp from '../../../../style/style';
-import {
-  generateThumbnailSet,
-  getVideoByID,
-} from '../../../../functions/videoManagement';
+import {generateThumbnailSet} from '../../../../functions/videoManagement';
+import {getArchiveByID} from '../../../../functions/archive';
 import {setArchive} from '../../../../../actions/archivesActions';
 import {store} from '../../../../../../reduxStore';
 
@@ -31,7 +29,7 @@ export default class Filmstrip extends Component {
     }
     const {archiveId} = this.props;
     let local = true;
-    let archive = await getVideoByID(archiveId);
+    let archive = await getArchiveByID(archiveId);
     this.setState({
       timeBounds: [0, archive.durationSeconds],
       thumbnailAspect: archive.size.height / archive.size.width,

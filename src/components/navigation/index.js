@@ -6,16 +6,9 @@ import MainApp from './MainApp/index';
 import SignIn from './SignIn/index';
 import ListCountry from '../login/elementsFlags/ListCountry';
 import Payments from './MainApp/components/Payments';
-
 import NewConversation from '../app/elementsMessage/NewConversation';
-import PickMembersPage from '../app/pickMembers';
-
 import Coaches from './MainApp/components/Coaches';
-
-import VideoPlayerPage from '../app/videoPlayerPage/index';
-import Session from './TabsApp/components/Session';
-
-import ShareVideo from '../app/shareVideo';
+import People from '../app/coachFlow/PeoplePage';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -59,25 +52,11 @@ function InitialStack() {
 
       {/* <Stack.Screen name="ProfilePage" component={ProfilePage} /> */}
 
-      <Stack.Screen
-        name="PickMembers"
-        component={PickMembersPage}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
+      <Stack.Screen name="ModalPeople" component={People} />
 
       <Stack.Screen
         name="Coaches"
         component={Coaches}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="ShareVideo"
-        component={ShareVideo}
         options={{
           gestureEnabled: false,
         }}

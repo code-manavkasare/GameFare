@@ -75,8 +75,10 @@ class VideoLibraryPage extends Component {
   }
 
   static getDerivedStateFromProps(props) {
-    const allVideos = Object.values(props.archivedStreams).filter(v => v.id && v.startTimestamp);
-    const sortedVideos = sortVideos(allVideos).map(v => v.id);
+    const allVideos = Object.values(props.archivedStreams).filter(
+      (v) => v.id && v.startTimestamp,
+    );
+    const sortedVideos = sortVideos(allVideos).map((v) => v.id);
     return {videosArray: sortedVideos};
   }
   toggleSelectable() {
@@ -94,12 +96,8 @@ class VideoLibraryPage extends Component {
     const {selectedVideos} = this.state;
     const {navigation} = this.props;
     if (selectedVideos.length > 0) {
-      console.log('selectedVideos', selectedVideos);
-      navigation.navigate('People', {
-        screen: 'People',
-        params: {
-          sharingVideos: selectedVideos,
-        },
+      navigation.navigate('ModalPeople', {
+        sharingVideos: selectedVideos,
       });
       this.setState({
         selectedVideos: [],
@@ -427,7 +425,10 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
-    archivedStreams: {...state.localVideoLibrary.userLocalArchives, ...state.user.infoUser.archivedStreams},
+    archivedStreams: {
+      ...state.localVideoLibrary.userLocalArchives,
+      ...state.user.infoUser.archivedStreams,
+    },
     session: state.coachSessions[state.coach.currentSessionID],
     coachSessionID: state.coach.currentSessionID,
     userID: state.user.userID,

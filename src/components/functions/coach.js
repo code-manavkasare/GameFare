@@ -640,7 +640,7 @@ const searchSessionsForString = (search) => {
   const userSessions = store.getState().user.infoUser.coachSessions;
   if (search === '') {
     return userSessions ? Object.keys(userSessions) : [];
-  } else {
+  } else if (userSessions) {
     const matches = Object.keys(userSessions)
       .map((id) => {
         const session = allSessions[id];
@@ -670,14 +670,18 @@ const searchSessionsForString = (search) => {
       .filter((x) => x);
     return matches;
   }
+  return [];
 };
 
 const selectVideosFromLibrary = (coachSessionID) => {
+  console.log('selectVideosFromLibrary', coachSessionID);
   navigate('SelectVideosFromLibrary', {
     selectableMode: true,
     selectOnly: true,
-    confirmVideo: (selectedVideos) =>
-      shareVideosWithTeams(selectedVideos, [coachSessionID]),
+    navigateBackAfterConfirm: true,
+    confirmVideo: async (selectedVideos) => {
+      await shareVideosWithTeams(selectedVideos, [coachSessionID]);
+    },
   });
 };
 
