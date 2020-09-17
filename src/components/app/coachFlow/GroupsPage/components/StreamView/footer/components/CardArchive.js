@@ -54,7 +54,7 @@ class CardArchive extends PureComponent {
 
   componentDidMount() {
     const {id, archive, archivesAction} = this.props;
-    if (archive && !archive.local) {
+    if (!archive || !archive.local) {
       archivesAction('bindArchive', id);
       this.setState({bound: true});
     }
@@ -63,7 +63,7 @@ class CardArchive extends PureComponent {
   componentDidUpdate(prevProps) {
     const {id, archive, archivesAction} = this.props;
     const {bound} = this.state;
-    if (archive && !archive.local && !bound) {
+    if ((!archive || !archive.local) && !bound) {
       this.setState({bound: true});
       archivesAction('bindArchive', id);
     }
