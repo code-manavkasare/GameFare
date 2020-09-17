@@ -63,10 +63,10 @@ function TabsApp() {
         component={People}
         options={{
           pageStack: 'GroupsPage',
-          label: 'People',
+          label: 'Call',
           signInToPass: false,
           icon: {
-            name: 'user-friends',
+            name: 'video',
             type: 'font',
             // alt name: 'user',
             // alt type: 'moon',

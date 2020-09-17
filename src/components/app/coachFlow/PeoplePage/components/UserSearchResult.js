@@ -20,11 +20,11 @@ class UserSearchResult extends Component {
   }
 
   componentDidMount = async () => {
-    const {invite, onRef} = this.props;
+    const {invite, onRef, user} = this.props;
     if (onRef) {
       this.index = onRef(this);
     }
-    this.selected = await invite(true);
+    this.selected = await invite({user, init: true});
     if (this.selected) {
       Animated.timing(this.selectionIndication, native(1, 50)).start();
     }
@@ -49,6 +49,11 @@ class UserSearchResult extends Component {
     );
   }
   styleCard = () => {
+    const callButtonStyle = {
+      borderRadius: 25,
+      height: 40,
+      width: 40,
+    };
     const buttonStyle = {
       ...styleApp.fullSize,
       borderRadius: 15,
@@ -101,13 +106,18 @@ class UserSearchResult extends Component {
       userIconStyle,
       imageStyle,
       userCardStyle,
+      callButtonStyle,
     };
   };
   isUserInvitable = () => {
     const {silentFriends, user} = this.props;
     const {isPrivate} = user.info;
-    if (!isPrivate) return true;
-    if (silentFriends[user.id]) return true;
+    if (!isPrivate) {
+      return true;
+    }
+    if (silentFriends[user.id]) {
+      return true;
+    }
     return false;
   };
   userCard = (user) => {
@@ -125,10 +135,11 @@ class UserSearchResult extends Component {
       userIconStyle,
       imageStyle,
       userCardStyle,
+      callButtonStyle,
     } = this.styleCard();
 
     return (
-      <View style={userCardStyle}>
+      <View style={userCardStyle} key={user?.objectID}>
         <ButtonColor
           color={colors.white}
           onPressColor={colors.white}
@@ -143,7 +154,11 @@ class UserSearchResult extends Component {
               });
             }
 
-            const status = await invite(false);
+            const status = await invite({
+              user,
+              init: false,
+              insert: !this.selected,
+            });
             this.toggleSelected(status);
           }}
           style={buttonStyle}
@@ -172,22 +187,12 @@ class UserSearchResult extends Component {
                     {user?.info?.firstname} {user?.info?.lastname}
                   </Text>
                 </Col>
-                <Col size={15}>
-                  <Animated.View
-                    style={{
-                      opacity: animatedReverse,
-                    }}>
-                    <AllIcon
-                      type={'font'}
-                      color={!isUserInvitable ? colors.grey : colors.grey}
-                      size={18}
-                      name={!isUserInvitable ? 'lock' : 'video'}
-                    />
-                  </Animated.View>
+                <Col size={15} style={styleApp.center}>
                   <Animated.View
                     style={{
                       position: 'absolute',
                       opacity: this.selectionIndication,
+                      right: '40%',
                     }}>
                     <AllIcon
                       type={'font'}
@@ -202,6 +207,33 @@ class UserSearchResult extends Component {
             );
           }}
         />
+        <Animated.View
+          style={{
+            position: 'absolute',
+            right: '7%',
+            opacity: animatedReverse,
+            height: '100%',
+            ...styleApp.center,
+          }}>
+          <ButtonColor
+            color={!isUserInvitable ? colors.white : colors.greyLight}
+            onPressColor={!isUserInvitable ? colors.white : colors.grey}
+            click={() => {
+              invite({user, immediatelyOpen: true});
+            }}
+            style={callButtonStyle}
+            view={() => {
+              return (
+                <AllIcon
+                  type={'font'}
+                  color={!isUserInvitable ? colors.grey : colors.greyDarker}
+                  size={18}
+                  name={!isUserInvitable ? 'lock' : 'video'}
+                />
+              );
+            }}
+          />
+        </Animated.View>
       </View>
     );
   };
@@ -214,7 +246,9 @@ class UserSearchResult extends Component {
 
 const mapStateToProps = (state) => {
   let {silentFriends} = state.user.infoUser;
-  if (silentFriends) silentFriends = {};
+  if (silentFriends) {
+    silentFriends = {};
+  }
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,

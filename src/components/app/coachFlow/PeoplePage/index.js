@@ -1,21 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions, Animated} from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
-import {Row, Col} from 'react-native-easy-grid';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
-import sizes, {
-  heightFooter,
-  heightHeaderHome,
-  marginBottomApp,
-} from '../../../style/sizes';
-import ScrollView from '../../../layout/scrollViews/ScrollView2';
-import ButtonColor from '../../../layout/Views/Button';
-import InviteButton from './components/InvitationManager';
-import LogoutView from './components/LogoutView';
+import sizes from '../../../style/sizes';
 import PermissionView from './components/PermissionView';
 
 import PeopleBody from './components/PeopleBody';
@@ -24,8 +15,6 @@ import HeaderPeople from './components/HeaderPeople';
 import {sessionOpening} from '../../../functions/coach';
 import Search from './components/Search';
 import InvitationManager from './components/InvitationManager';
-
-const {height} = Dimensions.get('screen');
 
 class StreamTab extends Component {
   constructor(props) {
@@ -69,8 +58,9 @@ class StreamTab extends Component {
     sessionOpening(session);
   };
   viewLoader = () => {
+    const loaderStyle = [{height: 120}, styleApp.center];
     return (
-      <View style={[{height: 120}, styleApp.center]}>
+      <View style={loaderStyle}>
         <Loader size={55} color={colors.primary} />
       </View>
     );
@@ -99,6 +89,7 @@ class StreamTab extends Component {
           openSearch={(y) => {
             this.searchRef?.animate(1, y);
           }}
+          invite={this.invitationManagerRef?.invite}
         />
       </View>
     );
@@ -128,9 +119,7 @@ class StreamTab extends Component {
           onClose={() => {
             this.peopleBodyRef?.displaySearchBar(1);
           }}
-          invite={async (user, init) => {
-            return await this.invitationManagerRef?.invite(user, init);
-          }}
+          invite={this.invitationManagerRef?.invite}
         />
         <InvitationManager
           onRef={(ref) => {
@@ -138,6 +127,7 @@ class StreamTab extends Component {
           }}
           resetInvites={() => {
             this.searchRef?.resetInvites();
+            this.peopleBodyRef?.resetInvites();
           }}
           dismiss={() => {
             this.searchRef?.animate(0);
@@ -148,19 +138,6 @@ class StreamTab extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  containerTabPage: {
-    ...styleApp.fullSize,
-    paddingTop: 10,
-  },
-  titlePage: {
-    ...styleApp.title,
-    color: colors.title,
-    marginBottom: 10,
-    marginLeft: 20,
-  },
-});
 
 const mapStateToProps = (state) => {
   return {
