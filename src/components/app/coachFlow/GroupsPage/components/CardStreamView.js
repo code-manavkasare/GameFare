@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import {coachAction} from '../../.././../../actions/coachActions';
 import {navigate} from '../../../../../../NavigationService';
+import PlaceHolder from '../../../../placeHolders/CardStream';
 
 import {
   sessionOpening,
@@ -101,8 +102,8 @@ class CardStream extends Component {
     if (!member) {
       member = {};
     }
-
-    return session ? (
+    if (!session) return <PlaceHolder />;
+    return (
       <Animated.View style={styles.card}>
         <ButtonColor
           color={colors.white}
@@ -150,7 +151,7 @@ class CardStream extends Component {
           onRef={(ref) => (this.coachPopupsRef = ref)}
         />
       </Animated.View>
-    ) : null;
+    );
   }
   render() {
     return this.cardStream();
