@@ -9,6 +9,7 @@ import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import BackgroundTimer from 'react-native-background-timer';
+import convertToCache from 'react-native-video-cache';
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
@@ -52,6 +53,7 @@ class App extends Component {
       refreshTokenOnDatabase(userID);
       oneTimeFixStoreLocalVideoLibrary();
       updateLocalVideoUrls();
+      convertToCache(''); // starts video cache server so cached url's work on startup
     }
   }
 
