@@ -16,7 +16,7 @@ export default class AsyncImage extends Component {
       zIndexCached: 10,
       checkToken: '',
     };
-    this.opacityFastImageCached = new Animated.Value(0);
+    this.opacityFastImageCached = new Animated.Value(1);
   }
   enterPictureCached() {
     Animated.timing(this.opacityFastImageCached, native(1)).start();
@@ -40,7 +40,7 @@ export default class AsyncImage extends Component {
         <FastImage
           resizeMode={resizeMode ? resizeMode : 'cover'}
           onLoadEnd={() => {
-            this.enterPictureCached();
+            // this.enterPictureCached();
           }}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
           source={{

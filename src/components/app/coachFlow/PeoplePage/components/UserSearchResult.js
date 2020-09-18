@@ -120,8 +120,18 @@ class UserSearchResult extends Component {
     }
     return false;
   };
+  openConversation = async (user) => {
+    const {userID, infoUser} = this.props;
+    const session = await openSession(
+      {id: userID, info: infoUser},
+      {[user.objectID]: {...user, id: user.objectID}},
+    );
+    return navigate('Conversation', {
+      coachSessionID: session.objectID,
+    });
+  };
   userCard = (user) => {
-    const {invite, userID, infoUser} = this.props;
+    const {invite} = this.props;
     const animatedReverse = this.selectionIndication.interpolate({
       inputRange: [0, 1],
       outputRange: [1, 0],
@@ -144,15 +154,7 @@ class UserSearchResult extends Component {
           color={colors.white}
           onPressColor={colors.white}
           click={async () => {
-            if (!isUserInvitable) {
-              const session = await openSession(
-                {id: userID, info: infoUser},
-                {[user.objectID]: {...user, id: user.objectID}},
-              );
-              return navigate('Conversation', {
-                coachSessionID: session.objectID,
-              });
-            }
+            if (!isUserInvitable) return this.openConversation(user);
 
             const status = await invite({
               user,
@@ -219,6 +221,7 @@ class UserSearchResult extends Component {
             color={!isUserInvitable ? colors.white : colors.greyLight}
             onPressColor={!isUserInvitable ? colors.white : colors.grey}
             click={() => {
+              if (!isUserInvitable) return this.openConversation(user);
               invite({user, immediatelyOpen: true});
             }}
             style={callButtonStyle}

@@ -120,25 +120,23 @@ class FlatListComponent extends Component {
         onEndReachedThreshold={0.1}
         ListEmptyComponent={
           <View style={styleApp.marginView}>
-            <Text style={styleApp.text}>
-              Empty list view (work in progress)
-            </Text>
+            <Text style={styleApp.text} />
           </View>
         }
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: AnimatedHeaderValue
-                    ? AnimatedHeaderValue
-                    : this.AnimatedHeaderValue,
-                },
-              },
-            },
-          ],
-          {useNativeDriver: false},
-        )}
+        // onScroll={Animated.event(
+        //   [
+        //     {
+        //       nativeEvent: {
+        //         contentOffset: {
+        //           y: AnimatedHeaderValue
+        //             ? AnimatedHeaderValue
+        //             : this.AnimatedHeaderValue,
+        //         },
+        //       },
+        //     },
+        //   ],
+        //   {useNativeDriver: false},
+        // )}
       />
     );
   }

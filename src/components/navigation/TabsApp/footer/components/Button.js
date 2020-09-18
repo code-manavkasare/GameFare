@@ -76,6 +76,7 @@ class FooterButton extends React.Component {
       userID,
       scale,
       disableAnimation,
+      numberNotifications,
     } = this.props;
     const conditionDisplayPastille =
       Object.values(discussions).filter((discussion) => {
@@ -143,6 +144,17 @@ class FooterButton extends React.Component {
               )}
               {label && (
                 <Reanimated.Text style={labelStyle}>{label}</Reanimated.Text>
+              )}
+              {label === 'Call' && numberNotifications !== 0 && (
+                <View pointerEvents="none" style={[styleApp.absoluteViewBadge]}>
+                  <Text
+                    style={[
+                      styleApp.textBold,
+                      {color: colors.white, fontSize: 10},
+                    ]}>
+                    {numberNotifications}
+                  </Text>
+                </View>
               )}
             </Reanimated.View>
           );
@@ -220,11 +232,16 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
+  const notifications = state.user.infoUser.notifications;
+
   return {
     userConnected: state.user.userConnected,
     discussions: state.message.conversations,
     userID: state.user.userID,
     generalSessionRecording: state.layout.generalSessionRecording,
+    numberNotifications: notifications
+      ? Object.values(notifications).length
+      : 0,
   };
 };
 
