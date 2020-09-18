@@ -19,7 +19,6 @@ import {
 import {openVideoPlayer} from '../../functions/videoManagement';
 import {getArchiveByID} from '../../functions/archive';
 
-import {shareCloudVideoWithCoachSession} from '../../database/firebase/videosManagement';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
@@ -27,6 +26,7 @@ import {
 import {
   checkIfAllArchivesAreLocal,
   generatePreview,
+  generatePreviewCloud,
 } from '../../functions/review';
 
 class VideoPlayerPage extends Component {
@@ -432,15 +432,39 @@ class VideoPlayerPage extends Component {
   saveReview = async () => {
     //To update for multiple video
     const {archives, recordedActions} = this.state;
-    const localVideoInfo = getArchiveByID(archives[0]);
+    const {userID, videoInfos} = this.props;
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
-    await generatePreview(localVideoInfo.url, recordedActions, audioFilePath);
-    this.props.navigation.navigate('Alert', {
-      close: true,
-      title: 'Video successfully created !',
-      subtitle: 'Please check your video library.',
-      textButton: 'Got it!',
-    });
+
+    for (const videoInfo of Object.values(videoInfos)) {
+      console.log(videoInfo);
+      if (videoInfo.local) {
+        const localVideoInfo = getArchiveByID(archives[0]);
+        await generatePreview(
+          localVideoInfo.url,
+          recordedActions,
+          audioFilePath,
+        );
+        this.props.navigation.navigate('Alert', {
+          close: true,
+          title: 'Video successfully created !',
+          subtitle: 'Please check your video library.',
+          textButton: 'Got it!',
+        });
+      } else {
+        await generatePreviewCloud(
+          userID,
+          videoInfo,
+          recordedActions,
+          audioFilePath,
+        );
+        this.props.navigation.navigate('Alert', {
+          close: true,
+          title: 'Video is under process !',
+          subtitle: 'We will notify you when the video is ready.',
+          textButton: 'Got it!',
+        });
+      }
+    }
   };
 
   header = () => {
@@ -750,7 +774,6 @@ class VideoPlayerPage extends Component {
 
   render = () => {
     const {archives} = this.state;
-    const allArchivesLocal = checkIfAllArchivesAreLocal(archives);
     const {videoInfos} = this.props;
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
@@ -763,7 +786,7 @@ class VideoPlayerPage extends Component {
         />
         {this.buttonRecording()}
         {this.buttonPreview()}
-        {allArchivesLocal && this.buttonSave()}
+        {archives.length === 1 && this.buttonSave()}
         {videoInfos &&
           Object.values(videoInfos)
             .filter((x) => x)
