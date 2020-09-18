@@ -5,7 +5,7 @@ import {StatusBar} from 'react-native';
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import {DocumentDirectoryPath} from 'react-native-fs';
-import {assoc, dissoc} from 'ramda';
+import {assoc} from 'ramda';
 
 import {
   getNewVideoSavePath,
@@ -26,14 +26,13 @@ import {
   removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
 } from '../../actions/localVideoLibraryActions';
-import {setArchive, deleteArchive, deleteArchives} from '../../actions/archivesActions';
-import {getArchiveByID, bindArchive} from './archive';
+import {setArchive, deleteArchives} from '../../actions/archivesActions';
+import {getArchiveByID} from './archive';
 import {
   createCloudVideo,
   setCloudVideoThumbnail,
   claimCloudVideo,
   shareCloudVideo,
-  deleteCloudVideo,
   deleteCloudVideos,
 } from '../database/firebase/videosManagement';
 
@@ -105,7 +104,9 @@ const addLocalVideo = async (video) => {
   const {url} = video;
   if (url) {
     video.local = true;
-    video.startTimestamp = video.startTimestamp ? video.startTimestamp : Date.now();
+    video.startTimestamp = video.startTimestamp
+      ? video.startTimestamp
+      : Date.now();
     if (url.indexOf(DocumentDirectoryPath) === -1) {
       store.dispatch(setArchive({...video, volatile: true}));
       const newPath = getNewVideoSavePath();
@@ -123,9 +124,6 @@ const addLocalVideo = async (video) => {
       }),
     );
   }
-
-
-
 };
 
 const deleteVideos = (ids) => {
@@ -350,7 +348,7 @@ const updateLocalUploadProgress = (videoID, progress) => {
   if (videoInfo) {
     store.dispatch(setArchive({...videoInfo, progress}));
   }
-}
+};
 
 export {
   arrayUploadFromSnippets,
