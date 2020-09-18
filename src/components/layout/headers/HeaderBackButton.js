@@ -405,7 +405,13 @@ class HeaderBackButton extends Component {
             }
           />
           {badgeIcon2 && (
-            <View style={{position: 'absolute', top: -0, left: -5}}>
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: -0,
+                left: -5,
+              }}>
               {badgeIcon2}
             </View>
           )}

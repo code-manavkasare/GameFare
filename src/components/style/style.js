@@ -543,6 +543,25 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: 'white',
   },
+  viewBadge: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    backgroundColor: colors.blue,
+  },
+  absoluteViewBadge: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    backgroundColor: colors.blue,
+    position: 'absolute',
+    top: -0,
+    right: '25%',
+  },
 });
 
 export default styles;
