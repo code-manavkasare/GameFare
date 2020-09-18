@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import Svg, {Polyline, Line, Circle} from 'react-native-svg';
+import Svg, {Polyline, Line, Circle, Rect} from 'react-native-svg';
+import {dimensionRectangle} from '../../../../functions/videoManagement';
 
 export default class DisplayDraingToViewers extends Component {
   constructor(props) {
@@ -65,18 +66,17 @@ export default class DisplayDraingToViewers extends Component {
   };
   rectangle = (draw) => {
     const {startPoint, endPoint} = draw.data;
-    const {width, color} = draw;
+    const {width: strokeWidth, color} = draw;
     const {x: x1, y: y1} = startPoint;
-    const {x: x2, y: y2} = endPoint;
-    let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    if (!radius) radius = 0;
+    const {height, width} = dimensionRectangle({startPoint, endPoint});
     return (
-      <Circle
-        cx={x1}
-        cy={y1}
-        r={radius}
+      <Rect
+        x={x1}
+        y={y1}
+        height={height}
+        width={width}
         stroke={color}
-        strokeWidth={width}
+        strokeWidth={strokeWidth}
         fill="transparent"
       />
     );

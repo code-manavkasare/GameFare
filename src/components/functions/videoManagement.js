@@ -26,7 +26,11 @@ import {
   removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
 } from '../../actions/localVideoLibraryActions';
-import {setArchive, deleteArchive, deleteArchives} from '../../actions/archivesActions';
+import {
+  setArchive,
+  deleteArchive,
+  deleteArchives,
+} from '../../actions/archivesActions';
 import {getArchiveByID, bindArchive} from './archive';
 import {
   createCloudVideo,
@@ -359,16 +363,13 @@ const dimensionRectangle = ({startPoint, endPoint}) => {
   const slope =
     (Math.max(y2, y1) - Math.min(y1, y2)) /
     (Math.max(x2, x1) - Math.min(x1, x2));
-  console.log('slope', slope);
+  if (!slope) return {height: 0, width: 0};
   const beta = Math.atan(slope);
 
   let width = Math.cos(beta) * radius;
-  if (x2 < x1 || y2 < y1) width = Math.sin(beta) * radius;
   const height = Math.sqrt(Math.pow(radius, 2) - Math.pow(width, 2));
-  console.log('react', width, height);
-  console.log('radius', radius);
 
-  return {height: Math.abs(height), width: Math.abs(width)};
+  return {height: y2 < y1 ? -height : height, width: x2 < x1 ? -width : width};
 };
 
 export {
