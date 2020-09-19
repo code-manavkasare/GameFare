@@ -81,6 +81,7 @@ class VideoLibraryPage extends Component {
     const sortedVideos = sortVideos(allVideos).map((v) => v.id);
     return {videosArray: sortedVideos};
   }
+
   toggleSelectable() {
     const {selectableMode} = this.state;
     if (selectableMode) {
@@ -97,7 +98,14 @@ class VideoLibraryPage extends Component {
     const {navigation} = this.props;
     if (selectedVideos.length > 0) {
       navigation.navigate('ModalPeople', {
+        modal: true,
         sharingVideos: selectedVideos,
+        action: 'shareVideos',
+        actionIcon: 'share',
+        actionText: 'Share with',
+        titleText: selectedVideos.length > 1 ? 'Share videos' : 'Share video',
+        titleIcon: 'video',
+        navigationTarget: 'Conversation',
       });
       this.setState({
         selectedVideos: [],

@@ -52,7 +52,7 @@ function InitialStack() {
 
       {/* <Stack.Screen name="ProfilePage" component={ProfilePage} /> */}
 
-      <Stack.Screen name="ModalPeople" component={People} />
+      <Stack.Screen name="ModalPeople" component={People} initialParams={{modal: true}}/>
 
       <Stack.Screen
         name="Coaches"

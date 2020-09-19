@@ -36,7 +36,6 @@ class StreamTab extends Component {
   render() {
     const {userConnected, navigation, coachSessionsRequests} = this.props;
     const tabBarVisible = coachSessionsRequests.length !== 0;
-    console.log('coachSessionsRequests', coachSessionsRequests);
     return (
       <View style={styleApp.stylePage}>
         <HeaderListStream

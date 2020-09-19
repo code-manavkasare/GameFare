@@ -24,7 +24,7 @@ class HeaderListStream extends Component {
     const {
       AnimatedHeaderValue,
       infoUser,
-      sharingVideos,
+      modal,
       numberNotifications,
     } = this.props;
     const {loader} = this.state;
@@ -39,19 +39,19 @@ class HeaderListStream extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
-        icon2={sharingVideos ? undefined : 'comment-alt'}
+        icon2={modal ? undefined : 'comment-alt'}
         typeIcon2={'font'}
         sizeIcon2={24}
         colorIcon2={colors.title}
         clickButton2={() => navigate('Groups')}
         icon1={
-          sharingVideos
+          modal
             ? 'times'
             : infoUser.picture
             ? infoUser.picture
             : 'profileFooter'
         }
-        sizeIcon1={sharingVideos ? 20 : infoUser.picture ? 31 : 23}
+        sizeIcon1={modal ? 20 : infoUser.picture ? 31 : 23}
         colorIcon1={colors.title}
         badgeIcon2={
           numberNotifications !== 0 && (
@@ -66,9 +66,9 @@ class HeaderListStream extends Component {
             </View>
           )
         }
-        typeIcon1={sharingVideos ? 'font' : infoUser.picture ? 'image' : 'moon'}
+        typeIcon1={modal ? 'font' : infoUser.picture ? 'image' : 'moon'}
         clickButton1={
-          sharingVideos ? () => goBack() : () => navigate('MorePage')
+          modal ? () => goBack() : () => navigate('MorePage')
         }
       />
     );
