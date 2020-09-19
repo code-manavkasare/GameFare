@@ -606,7 +606,7 @@ const rowTitle = ({
   hideDividerHeader,
   button,
   titleColor,
-  customButtom,
+  customButton,
   containerStyle,
   titleStyle,
 }) => {
@@ -642,8 +642,8 @@ const rowTitle = ({
           </Text>
         </Col>
         <Col size={20} style={styleApp.center3}>
-          {customButtom ? (
-            customButtom
+          {customButton ? (
+            customButton
           ) : button ? (
             <ButtonColor
               view={() => {

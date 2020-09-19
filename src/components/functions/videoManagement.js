@@ -98,6 +98,7 @@ const arrayUploadFromSnippets = async ({
 };
 
 const addLocalVideo = async (video) => {
+  // 'video' param from getVideoInfo(someUrl) in pictures.js
   if (!video.id) {
     video.id = getVideoUUID(video.url);
   }
@@ -108,15 +109,17 @@ const addLocalVideo = async (video) => {
       ? video.startTimestamp
       : Date.now();
     if (url.indexOf(DocumentDirectoryPath) === -1) {
+      // need to copy video into permanent file
+      // 'volatile' property is so that background uploading will not try to upload this file while we copy it
       store.dispatch(setArchive({...video, volatile: true}));
       const newPath = getNewVideoSavePath();
       RNFS.copyFile(url, newPath).then(() => {
         store.dispatch(setArchive({...video, url: newPath, volatile: false}));
-        //RNFS.unlink(url);
       });
     } else {
-      store.dispatch(setArchive({...video, local: true}));
+      store.dispatch(setArchive(video));
     }
+    // create 'offline' entry
     store.dispatch(
       addUserLocalArchive({
         archiveID: video.id,

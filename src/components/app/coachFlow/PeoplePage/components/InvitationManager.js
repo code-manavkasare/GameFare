@@ -70,7 +70,7 @@ class InvitationManager extends Component {
   invite = async (payload) => {
     const {user, init, immediatelyOpen, session} = payload;
     const {keyboardShown} = this.state;
-    const {currentSessionID, sharingVideos} = this.props;
+    const {currentSessionID, sharingVideos, actionText} = this.props;
     let {users, selectedSession} = this.state;
     if (this.reseting) {
       return false;
@@ -120,15 +120,13 @@ class InvitationManager extends Component {
         inserted = true;
       }
     }
-    const prefix = sharingVideos
-      ? 'Share with '
-      : !currentSessionID
-      ? 'Call '
-      : 'Invite ';
+    const prefix = actionText + ' ';
+    // ? 'Share with '
+    // : !currentSessionID
+    // ? 'Call '
+    // : 'Invite ';
     const text = selectedSession
-      ? sharingVideos
-        ? prefix
-        : 'Call ' + titleSession(session, false, true)
+      ? prefix + titleSession(session, false, true)
       : Object.keys(users).length === 1
       ? prefix + Object.values(users)[0]?.info?.firstname
       : Object.keys(users).length > 1
@@ -158,22 +156,29 @@ class InvitationManager extends Component {
 
   confirmInvite = async () => {
     const {users, selectedSession} = this.state;
-    const {dismiss, currentSessionID, sharingVideos} = this.props;
+    const {dismiss, currentSessionID, sharingVideos, action} = this.props;
     Animated.timing(this.buttonReveal, native(0)).start();
     this.resetInvitations({resetState: true});
-
-    if (sharingVideos) {
-      const {objectID} = await createSession(users);
-      console.log('invitation manager sharing videos');
-      shareVideosWithTeams(sharingVideos, [objectID]);
-      navigate('Conversation', {coachSessionID: objectID});
-    } else if (!currentSessionID) {
+    if (action === 'shareVideos' && sharingVideos) {
       const session = selectedSession
         ? selectedSession
         : await createSession(users);
-      sessionOpening(session);
+      shareVideosWithTeams(sharingVideos, [session.objectID]);
+      navigate('Conversation', {coachSessionID: session.objectID});
+    } else if (action === 'message') {
+      const session = selectedSession
+        ? selectedSession
+        : await createSession(users);
+      navigate('Conversation', {coachSessionID: session.objectID});
     } else {
-      updateMembersToSession(currentSessionID, users);
+      if (!currentSessionID) {
+        const session = selectedSession
+          ? selectedSession
+          : await createSession(users);
+        sessionOpening(session);
+      } else {
+        updateMembersToSession(currentSessionID, users);
+      }
     }
     if (dismiss) {
       dismiss();

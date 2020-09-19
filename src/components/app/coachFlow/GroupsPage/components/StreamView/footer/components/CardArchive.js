@@ -3,17 +3,12 @@ import {connect} from 'react-redux';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
-import {includes} from 'ramda';
 
 import {Col, Row} from 'react-native-easy-grid';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
-import {
-  bindArchive,
-  unbindArchive,
-} from '../../../../../../../functions/archive';
 import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
@@ -53,23 +48,31 @@ class CardArchive extends PureComponent {
   }
 
   componentDidMount() {
-    const {id, archive, archivesAction} = this.props;
+    const {archive} = this.props;
     if (!archive || !archive.local) {
-      archivesAction('bindArchive', id);
-      this.setState({bound: true});
+      this.bindArchive();
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const {id, archive, archivesAction} = this.props;
+  componentDidUpdate() {
+    const {archive} = this.props;
     const {bound} = this.state;
     if ((!archive || !archive.local) && !bound) {
-      this.setState({bound: true});
-      archivesAction('bindArchive', id);
+      this.bindArchive();
     }
   }
 
   componentWillUnmount() {
+    this.unbindArchive();
+  }
+
+  bindArchive() {
+    const {id, archivesAction} = this.props;
+    this.setState({bound: true});
+    archivesAction('bindArchive', id);
+  }
+
+  unbindArchive() {
     const {id, archivesAction} = this.props;
     archivesAction('unbindArchive', id);
     this.setState({bound: false});

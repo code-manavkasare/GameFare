@@ -13,6 +13,7 @@ import PeopleBody from './components/PeopleBody';
 import Loader from '../../../layout/loaders/Loader';
 import HeaderPeople from './components/HeaderPeople';
 import {sessionOpening} from '../../../functions/coach';
+import {createInviteToAppBranchUrl} from '../../../database/branch';
 import Search from './components/Search';
 import InvitationManager from './components/InvitationManager';
 
@@ -22,7 +23,16 @@ class StreamTab extends Component {
     this.state = {
       permissionsCamera: false,
       initialLoader: true,
-      sharingVideos: props?.route?.params?.sharingVideos,
+      modal: props.route?.params?.modal ?? false,
+      sharingVideos: props.route?.params?.sharingVideos,
+      action: props.route?.params?.action ?? null,
+      actionText: props.route?.params?.actionText ?? 'Call',
+      actionIcon: props.route?.params?.actionIcon ?? 'video',
+      titleText: props.route?.params?.titleText ?? 'Video Call',
+      titleIcon: props.route?.params?.titleIcon ?? 'video',
+      navigationTarget: props.route?.params?.navigationTarget ?? 'Call',
+      hideGroups: props.route?.params?.hideGroups ?? false,
+      branchLink: null,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.openSession = this.openSession.bind(this);
@@ -34,6 +44,14 @@ class StreamTab extends Component {
     if (params?.objectID) {
       this.openSession(params.objectID);
     }
+    if (params?.branchLink) {
+      this.setState({branchLink: params.branchLink});
+    } else {
+      this.setDefaultBranchLink();
+    }
+    // if (params?.hideGroups) {
+    //   this.searchRef?.animate(1);
+    // }
     this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
     });
@@ -50,6 +68,12 @@ class StreamTab extends Component {
       this.openSession(params.objectID);
     }
   };
+
+  setDefaultBranchLink = async () => {
+    const url = await createInviteToAppBranchUrl();
+    this.setState({branchLink: url});
+  };
+
   openSession = async (objectID) => {
     let session = await database()
       .ref(`coachSessions/${objectID}`)
@@ -57,6 +81,7 @@ class StreamTab extends Component {
     session = session.val();
     sessionOpening(session);
   };
+
   viewLoader = () => {
     const loaderStyle = [{height: 120}, styleApp.center];
     return (
@@ -66,8 +91,17 @@ class StreamTab extends Component {
     );
   };
   StreamTab = () => {
-    const {permissionsCamera, initialLoader, sharingVideos} = this.state;
-
+    const {
+      permissionsCamera,
+      initialLoader,
+      sharingVideos,
+      titleText,
+      titleIcon,
+      actionIcon,
+      action,
+      branchLink,
+      hideGroups,
+    } = this.state;
     return (
       <View style={styleApp.fullSize}>
         {initialLoader && this.viewLoader()}
@@ -85,18 +119,31 @@ class StreamTab extends Component {
           permissionsCamera={permissionsCamera}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           mostRecent={true}
-          sharingVideos={sharingVideos}
           openSearch={(y) => {
             this.searchRef?.animate(1, y);
           }}
           invite={this.invitationManagerRef?.invite}
+          titleText={titleText}
+          titleIcon={titleIcon}
+          actionIcon={actionIcon}
+          sharingVideos={sharingVideos}
+          branchLink={branchLink}
+          hideCallButton={action ? true : false}
+          hideGroups={hideGroups}
         />
       </View>
     );
   };
 
   render() {
-    const {permissionsCamera, sharingVideos} = this.state;
+    const {
+      permissionsCamera,
+      sharingVideos,
+      actionText,
+      action,
+      modal,
+      hideGroups,
+    } = this.state;
     const {userConnected} = this.props;
 
     return (
@@ -105,7 +152,7 @@ class StreamTab extends Component {
           userConnected={userConnected}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           hideButtonNewSession={!userConnected || !permissionsCamera}
-          sharingVideos={sharingVideos}
+          modal={modal}
           onRef={(ref) => (this.HeaderRef = ref)}
         />
 
@@ -132,6 +179,8 @@ class StreamTab extends Component {
           dismiss={() => {
             this.searchRef?.animate(0);
           }}
+          action={action}
+          actionText={actionText}
           sharingVideos={sharingVideos}
         />
       </View>
