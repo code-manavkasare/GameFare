@@ -67,10 +67,12 @@ class DrawView extends Component {
           )
           .remove();
       }
-      this.canvasRef.clear();
+
       this.setState({drawings: {}});
       onDrawingChange(index, {});
-    } catch (err) {}
+    } catch (err) {
+      // console.log('errror clear', err);
+    }
   };
   undo = () => {
     const {drawings} = this.state;
@@ -120,7 +122,7 @@ class DrawView extends Component {
     let {path} = event;
     const id = generateID();
     let {data} = path;
-    console.log('data', data);
+    
     if (drawSetting === 'custom') {
       data = data.map((dot) => {
         let x = Number(dot.split(',')[0]);
@@ -152,7 +154,6 @@ class DrawView extends Component {
       data,
       type: drawSetting,
     };
-    console.log('path!!!!!', path);
 
     if (videoBeingShared) {
       database()

@@ -86,7 +86,7 @@ export default class DisplayDraingToViewers extends Component {
   };
   rectangle = (drawData) => {
     const draw = this.drawObject(drawData);
-    console.log('drawObject', draw);
+
     const {startPoint, endPoint} = draw.data;
     const {width: strokeWidth, color} = draw;
     const {x: x1, y: y1} = startPoint;
