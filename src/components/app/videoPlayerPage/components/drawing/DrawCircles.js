@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import Svg, {Line} from 'react-native-svg';
+import Svg, {Line, Circle} from 'react-native-svg';
 
 import colors from '../../../../style/colors';
 
@@ -48,6 +48,7 @@ class DrawSraightLine extends Component {
             drawing: true,
           });
         }
+        console.log('newPosition',newPosition)
         return this.setState({
           endPoint: newPosition,
         });
@@ -79,7 +80,9 @@ class DrawSraightLine extends Component {
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
     const {style} = this.props;
-
+    let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    if (!radius) radius = 0;
+    console.log('radiuds', radius);
     return (
       <PanGestureHandler
         style={style}
@@ -88,13 +91,13 @@ class DrawSraightLine extends Component {
         <Animated.View style={style}>
           <Svg height={style.height} width={style.width}>
             {drawing && (
-              <Line
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
+              <Circle
+                cx={x1}
+                cy={y1}
+                r={radius}
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
+                fill="transparent"
               />
             )}
           </Svg>

@@ -7,12 +7,14 @@ import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
 
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
 import DrawSraightLine from './DrawSraightLine';
+import DrawCircles from './DrawCircles';
 import {coachAction} from '../../../../../actions/coachActions';
 import {generateID} from '../../../../functions/createEvent';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
+import DrawRectangles from './DrawRectangles';
 
 class DrawView extends Component {
   static propTypes = {
@@ -65,10 +67,12 @@ class DrawView extends Component {
           )
           .remove();
       }
-      this.canvasRef.clear();
+
       this.setState({drawings: {}});
       onDrawingChange(index, {});
-    } catch (err) {}
+    } catch (err) {
+      // console.log('errror clear', err);
+    }
   };
   undo = () => {
     const {drawings} = this.state;
@@ -118,7 +122,7 @@ class DrawView extends Component {
     let {path} = event;
     const id = generateID();
     let {data} = path;
-
+    
     if (drawSetting === 'custom') {
       data = data.map((dot) => {
         let x = Number(dot.split(',')[0]);
@@ -127,6 +131,18 @@ class DrawView extends Component {
         y = y / heightDrawView;
         return x + ',' + y;
       });
+    } else {
+      data = {
+        ...path,
+        startPoint: {
+          x: data.startPoint.x / widthDrawView,
+          y: data.startPoint.y / heightDrawView,
+        },
+        endPoint: {
+          x: data.endPoint.x / widthDrawView,
+          y: data.endPoint.y / heightDrawView,
+        },
+      };
     }
 
     path = {
@@ -153,7 +169,7 @@ class DrawView extends Component {
       await this.setState({drawings: newDrawings});
       onDrawingChange(index, newDrawings);
     }
-    if (drawSetting !== 'straight') {
+    if (drawSetting === 'custom') {
       this.canvasRef.deletePath(path.idSketch);
     }
   }
@@ -202,6 +218,22 @@ class DrawView extends Component {
             strokeColor={colorDrawing}
             strokeWidth={strokeWidth}
             scale={scaleDrawing}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+          />
+        ) : drawSetting === 'rectangle' ? (
+          <DrawRectangles
+            style={styles.drawingZone}
+            strokeWidth={strokeWidth}
+            strokeColor={colorDrawing}
+            onRef={(ref) => (this.drawStraighLinesRef = ref)}
+            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+          />
+        ) : drawSetting === 'circle' ? (
+          <DrawCircles
+            style={styles.drawingZone}
+            strokeWidth={strokeWidth}
+            strokeColor={colorDrawing}
+            onRef={(ref) => (this.drawStraighLinesRef = ref)}
             onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
           />
         ) : (

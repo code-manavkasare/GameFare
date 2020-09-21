@@ -2,17 +2,18 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import Svg, {Line} from 'react-native-svg';
+import Svg, {Rect} from 'react-native-svg';
 
 import colors from '../../../../style/colors';
+import {dimensionRectangle} from '../../../../functions/videoManagement';
 
 class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
     this.state = {
       drawing: false,
-      startPoint: {},
-      endPoint: {},
+      startPoint: {x: 0, y: 0},
+      endPoint: {x: 0, y: 0},
     };
     this.animatedLine = new Animated.Value(0);
   }
@@ -74,12 +75,10 @@ class DrawSraightLine extends Component {
     }
   };
   drawView() {
-    const {strokeWidth, strokeColor} = this.props;
+    const {strokeWidth, strokeColor, style} = this.props;
     const {drawing, startPoint, endPoint} = this.state;
     const {x: x1, y: y1} = startPoint;
-    const {x: x2, y: y2} = endPoint;
-    const {style} = this.props;
-
+    const {height, width} = dimensionRectangle({startPoint, endPoint});
     return (
       <PanGestureHandler
         style={style}
@@ -88,13 +87,14 @@ class DrawSraightLine extends Component {
         <Animated.View style={style}>
           <Svg height={style.height} width={style.width}>
             {drawing && (
-              <Line
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
+              <Rect
+                x={x1}
+                y={y1}
+                height={height}
+                width={width}
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
+                fill="transparent"
               />
             )}
           </Svg>

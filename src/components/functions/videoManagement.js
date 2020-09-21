@@ -353,6 +353,23 @@ const updateLocalUploadProgress = (videoID, progress) => {
   }
 };
 
+const dimensionRectangle = ({startPoint, endPoint}) => {
+  const {x: x1, y: y1} = startPoint;
+  const {x: x2, y: y2} = endPoint;
+  let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+  if (!radius) radius = 0;
+  const slope =
+    (Math.max(y2, y1) - Math.min(y1, y2)) /
+    (Math.max(x2, x1) - Math.min(x1, x2));
+  if (!slope) return {height: 0, width: 0};
+  const beta = Math.atan(slope);
+
+  let width = Math.cos(beta) * radius;
+  const height = Math.sqrt(Math.pow(radius, 2) - Math.pow(width, 2));
+
+  return {height: y2 < y1 ? -height : height, width: x2 < x1 ? -width : width};
+};
+
 export {
   arrayUploadFromSnippets,
   addLocalVideo,
@@ -364,4 +381,5 @@ export {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
   updateLocalUploadProgress,
+  dimensionRectangle,
 };

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import Svg, {Polyline, Line} from 'react-native-svg';
+import Svg, {Polyline, Line, Circle, Rect} from 'react-native-svg';
+import {dimensionRectangle} from '../../../../functions/videoManagement';
 
 export default class DisplayDraingToViewers extends Component {
   constructor(props) {
@@ -29,7 +30,26 @@ export default class DisplayDraingToViewers extends Component {
       />
     );
   };
-  line = (draw) => {
+  drawObject = (draw) => {
+    const {widthDrawView, heightDrawView} = this.props;
+    return {
+      ...draw,
+      data: {
+        ...draw.data,
+        startPoint: {
+          x: draw.data.startPoint.x * widthDrawView,
+          y: draw.data.startPoint.y * heightDrawView,
+        },
+        endPoint: {
+          x: draw.data.endPoint.x * widthDrawView,
+          y: draw.data.endPoint.y * heightDrawView,
+        },
+      },
+    };
+  };
+  line = (drawData) => {
+    const draw = this.drawObject(drawData);
+
     const {startPoint, endPoint} = draw.data;
     const {width, color} = draw;
     const {x: x1, y: y1} = startPoint;
@@ -45,17 +65,61 @@ export default class DisplayDraingToViewers extends Component {
       />
     );
   };
+  circle = (drawData) => {
+    const draw = this.drawObject(drawData);
+    const {startPoint, endPoint} = draw.data;
+    const {width, color} = draw;
+    const {x: x1, y: y1} = startPoint;
+    const {x: x2, y: y2} = endPoint;
+    let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    if (!radius) radius = 0;
+    return (
+      <Circle
+        cx={x1}
+        cy={y1}
+        r={radius}
+        stroke={color}
+        strokeWidth={width}
+        fill="transparent"
+      />
+    );
+  };
+  rectangle = (drawData) => {
+    const draw = this.drawObject(drawData);
+
+    const {startPoint, endPoint} = draw.data;
+    const {width: strokeWidth, color} = draw;
+    const {x: x1, y: y1} = startPoint;
+    const {height, width} = dimensionRectangle({startPoint, endPoint});
+    return (
+      <Rect
+        x={x1}
+        y={y1}
+        height={height}
+        width={width}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        fill="transparent"
+      />
+    );
+  };
   draw(draw, i) {
     const {widthDrawView, heightDrawView} = this.props;
     const {type} = draw;
- 
+
     return (
       <Svg
         key={draw.idSketch}
         height={heightDrawView}
         width={widthDrawView}
         style={[{position: 'absolute', zIndex: -2}]}>
-        {type === 'straight' ? this.line(draw) : this.polyline(draw)}
+        {type === 'straight'
+          ? this.line(draw)
+          : type === 'circle'
+          ? this.circle(draw)
+          : type === 'rectangle'
+          ? this.rectangle(draw)
+          : this.polyline(draw)}
       </Svg>
     );
   }
