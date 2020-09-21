@@ -96,10 +96,7 @@ class CardStream extends Component {
   }
 
   toggleSelected(override) {
-    let toValue = 0;
-    if (override !== undefined) {
-      toValue = override;
-    }
+    const toValue = override ?? 0;
     Animated.timing(this.selectionIndication, native(toValue, 100)).start(
       () => {
         this.selected = this.selected ? false : true;
@@ -114,31 +111,19 @@ class CardStream extends Component {
       userID,
       session,
       messages,
-      clickSideEffect,
       recentView,
       invite,
+      hideCallButton,
       style,
       key,
     } = this.props;
     const {hasNotification, loading} = this.state;
     const activeSession = coachSessionID === currentSessionID;
-
     const animatedReverse = this.selectionIndication.interpolate({
       inputRange: [0, 1],
       outputRange: [1, 0],
     });
-
-    let member = getMember(session, userID);
-    if (!member) {
-      member = {};
-    }
-    const callButtonStyle = {
-      position: 'absolute',
-      right: 10,
-      borderRadius: 25,
-      height: 40,
-      width: 40,
-    };
+    const member = getMember(session, userID) ?? {};
     const selectionIndicationOverlayStyle = {
       ...styleApp.fullSize,
       ...styleApp.shadowWeak,
@@ -177,16 +162,11 @@ class CardStream extends Component {
           color={'transparent'}
           onPressColor={'transparent'}
           click={async () => {
-            if (!invite && !clickSideEffect) {
-              navigate('Conversation', {coachSessionID: coachSessionID});
-              return;
-            }
             if (invite) {
               const status = await invite({session, insert: true});
               this.toggleSelected(status);
-            }
-            if (clickSideEffect) {
-              clickSideEffect();
+            } else {
+              navigate('Conversation', {coachSessionID: coachSessionID});
             }
           }}
           style={[styleApp.fullSize, {paddingVertical: 10, ...style}]}
@@ -236,21 +216,13 @@ class CardStream extends Component {
           }}
         />
         <Animated.View style={selectionIndicationOverlayStyle} />
-        {recentView && (
+        {recentView  && !hideCallButton && (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
               color={colors.greyLight}
               onPressColor={colors.grey}
-              click={async () => {
-                if (invite) {
-                  const status = await invite({session, immediatelyOpen: true});
-                  this.toggleSelected(status);
-                }
-                if (clickSideEffect) {
-                  clickSideEffect();
-                }
-              }}
-              style={callButtonStyle}
+              click={async () => sessionOpening(session)}
+              style={styles.callButtonStyle}
               view={() => {
                 return (
                   <AllIcon
@@ -299,6 +271,13 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0,
     shadowRadius: 9,
+  },
+  callButtonStyle: {
+    position: 'absolute',
+    right: 10,
+    borderRadius: 25,
+    height: 40,
+    width: 40,
   },
 });
 

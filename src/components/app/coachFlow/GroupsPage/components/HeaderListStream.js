@@ -44,9 +44,13 @@ class HeaderListStream extends Component {
         colorIcon2={colors.title}
         clickButton2={() =>
           navigate('ModalPeople', {
-            hideGroups: false,
-            textButton: 'Confirm',
-            navigationTarget: 'Conversation',
+            modal: true,
+            hideGroups: true,
+            action: 'message',
+            actionText: 'Message',
+            actionIcon: 'edit',
+            titleText: 'Message',
+            titleIcon: 'comment-alt',
           })
         }
         icon1={'chevron-left'}

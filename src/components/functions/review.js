@@ -1,11 +1,11 @@
 import {ProcessingManager} from 'react-native-video-processing';
+import database from '@react-native-firebase/database';
 import RNFS from 'react-native-fs';
 
 import {getVideoInfo} from '../functions/pictures';
 import {generateID} from '../functions/createEvent';
 import {addLocalVideo} from './videoManagement';
 import {getArchiveByID} from './archive';
-
 
 const checkIfAllArchivesAreLocal = (archives) => {
   let isLocal = true;
@@ -31,7 +31,7 @@ const getActionLengthReview = (recordedActions) => {
   return {startTime, endTime};
 };
 
-const cropVideo = async (source, startTime, endTime) => {
+const cutVideo = async (source, startTime, endTime) => {
   const trimOptions = {
     startTime,
     endTime,
@@ -59,7 +59,7 @@ const saveAudioFileToAppData = async (audioFilePath) => {
 
 const generatePreview = async (source, recordedActions, audioFilePath) => {
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
-  const newSource = await cropVideo(source, startTime, endTime);
+  const newSource = await cutVideo(source, startTime, endTime);
   const audioUrl = await saveAudioFileToAppData(audioFilePath);
   const newRecordedActions = adaptAllTimestampToNewVideoLength(
     recordedActions,
@@ -73,4 +73,45 @@ const generatePreview = async (source, recordedActions, audioFilePath) => {
   addLocalVideo(newVideo);
 };
 
-export {checkIfAllArchivesAreLocal, generatePreview};
+const generatePreviewCloud = async (
+  userId,
+  videoInfo,
+  recordedActions,
+  audioFilePath,
+) => {
+  //TODO upload audioFilePath
+  const {startTime, endTime} = await getActionLengthReview(recordedActions);
+  const newArchiveId = generateID();
+  const dateNow = Date.now();
+  const newRecordedActions = adaptAllTimestampToNewVideoLength(
+    recordedActions,
+    startTime,
+  );
+
+  const newVideoInfo = {
+    cutRequest: {
+      archiveIdToCut: videoInfo.id,
+      startTime,
+      endTime,
+    },
+    durationSeconds: endTime - startTime,
+    id: newArchiveId,
+    members: {
+      [userId]: {
+        id: userId,
+        invitedBy: userId,
+        timestamp: dateNow,
+      },
+    },
+    recordedActions: newRecordedActions,
+    size: videoInfo.size,
+    sourceUser: userId,
+    startTimestamp: dateNow,
+  };
+
+  database()
+    .ref(`archivedStreams/${newArchiveId}`)
+    .set(newVideoInfo);
+};
+
+export {checkIfAllArchivesAreLocal, generatePreview, generatePreviewCloud};

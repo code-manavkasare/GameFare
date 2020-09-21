@@ -14,7 +14,6 @@ const Tab = createMaterialTopTabNavigator();
 const initialLayout = {width: Dimensions.get('window').width};
 
 const MyTabs = ({tabBarVisible, numberSesionRequests}) => {
-  console.log('tabBarVisible', tabBarVisible);
   return (
     <Tab.Navigator
       initialRouteName="Messages"

@@ -37,7 +37,7 @@ import AsyncImage from '../layout/image/AsyncImage';
 
 import {userAction} from '../../actions/userActions';
 import {sendSMSFunction} from '../functions/message';
-import {createBranchUrl} from '../database/branch';
+import {createInviteToAppBranchUrl} from '../database/branch';
 
 class MorePage extends Component {
   constructor(props) {
@@ -284,7 +284,7 @@ class MorePage extends Component {
                 color: colors.title,
               },
               click: async () => {
-                const {url} = await createBranchUrl({});
+                const url = await createInviteToAppBranchUrl();
                 Share.share({url});
               },
             })}

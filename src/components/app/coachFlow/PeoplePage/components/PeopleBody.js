@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {
+  Share,
   View,
   Text,
   Image,
+  StyleSheet,
   TouchableWithoutFeedback,
   Animated,
   RefreshControl,
@@ -36,11 +38,13 @@ class ListStreams extends Component {
     this.itemsRef = [];
     this.searchBarOpacity = new Animated.Value(1);
   }
+
   componentDidMount() {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
   }
+
   sessionsArray = () => {
     let {coachSessions} = this.props;
     if (!coachSessions) {
@@ -54,9 +58,11 @@ class ListStreams extends Component {
         return s?.id !== undefined;
       });
   };
+
   displaySearchBar = (val) => {
     Animated.timing(this.searchBarOpacity, native(val, 0, 0)).start();
   };
+
   sessionInvitation = () => {
     const {currentSessionID, currentSession} = this.props;
     const sessionMenuStyle = {
@@ -105,18 +111,7 @@ class ListStreams extends Component {
       position: 'absolute',
       left: currentSessionID ? 105 : 15,
     };
-    const inviteButtonStyle = {
-      ...styleApp.center,
-      position: 'absolute',
-      width: 40,
-      height: 40,
-      right: 15,
-      borderRadius: 20,
-    };
-    const searchButtonStyle = {
-      ...inviteButtonStyle,
-      right: 70,
-    };
+
     return (
       <View style={sessionMenuStyle}>
         <View style={mainContainer}>
@@ -149,7 +144,7 @@ class ListStreams extends Component {
             color={colors.greyLight}
             onPressColor={colors.grey}
             click={this.search}
-            style={searchButtonStyle}
+            style={styles.searchButtonStyle}
             view={() => {
               return (
                 <AllIcon
@@ -162,30 +157,38 @@ class ListStreams extends Component {
               );
             }}
           />
-          <ButtonColor
-            color={colors.blue}
-            onPressColor={colors.blueLight}
-            click={async () => {
-              // TODO
-              // BRANCH SHARE LINK
-            }}
-            style={inviteButtonStyle}
-            view={() => {
-              return (
-                <AllIcon
-                  solid
-                  name={'link'}
-                  size={17}
-                  color={colors.white}
-                  type="font"
-                />
-              );
-            }}
-          />
         </View>
       </View>
     );
   };
+
+  branchLinkButton = () => {
+    const {branchLink} = this.props;
+    if (branchLink) {
+      return (
+        <ButtonColor
+          color={colors.blue}
+          onPressColor={colors.blueLight}
+          click={() => Share.share({url: branchLink})}
+          style={styles.inviteButtonStyle}
+          view={() => {
+            return (
+              <AllIcon
+                solid
+                name={'link'}
+                size={17}
+                color={colors.white}
+                type="font"
+              />
+            );
+          }}
+        />
+      );
+    } else {
+      return null;
+    }
+  };
+
   search = () => {
     const {openSearch} = this.props;
     this.searchBarRef.measure((...callback) => {
@@ -194,73 +197,50 @@ class ListStreams extends Component {
       openSearch(yOffset);
     });
   };
+
   searchBar = () => {
-    const searchBarStyle = {
-      ...styleApp.center2,
-      paddingLeft: 25,
-      height: 50,
-      width: '100%',
-      borderRadius: 15,
-      backgroundColor: colors.greyLight,
-      marginVertical: 20,
-      opacity: this.searchBarOpacity,
-    };
-    const textStyle = {
-      ...styleApp.textBold,
-      color: colors.greyDark,
-      marginLeft: 20,
-    };
-    const rowStyle = {
-      height: '100%',
-      ...styleApp.center4,
-    };
     return (
       <Animated.View
         ref={(view) => {
           this.searchBarRef = view;
         }}
-        style={searchBarStyle}>
+        style={styles.searchBarStyle}>
         <TouchableWithoutFeedback
           style={styleApp.fullView}
           onPress={this.search}>
-          <Row style={rowStyle}>
+          <Row style={styles.searchRowStyle}>
             <AllIcon
               name={'search'}
               size={13}
               color={colors.greyDark}
               type="font"
             />
-            <Text style={textStyle}>Search</Text>
+            <Text style={styles.searchTextStyle}>Search</Text>
           </Row>
         </TouchableWithoutFeedback>
       </Animated.View>
     );
   };
+
   resetInvites = () => {
     this.itemsRef.map((ref) => {
       ref?.toggleSelected(0);
     });
   };
+
   list = () => {
-    const {invite} = this.props;
-    const styleViewLiveLogo = {
-      ...styleApp.center,
-      backgroundColor: colors.off,
-      height: 45,
-      width: 45,
-      borderRadius: 22.5,
-      borderWidth: 1,
-      borderColor: colors.grey,
-      marginTop: -100,
-      marginLeft: 65,
-    };
     let coachSessions = this.sessionsArray();
     const {
+      invite,
       AnimatedHeaderValue,
       userConnected,
       permissionsCamera,
       mostRecent,
       sharingVideos,
+      titleText,
+      titleIcon,
+      hideCallButton,
+      hideGroups,
     } = this.props;
     if (mostRecent) {
       coachSessions = coachSessions.slice(0, 3);
@@ -268,63 +248,11 @@ class ListStreams extends Component {
     if (!userConnected || !permissionsCamera || !coachSessions) {
       return null;
     }
-    const cardStreamContainerStyle = {
-      width: '90%',
-      marginLeft: '5%',
-      borderRadius: 15,
-      overflow: 'hidden',
-    };
-    // const racketStyle = {height: 80, width: 80, marginTop: 30};
-    // const liveStyle = {height: 27, width: 27};
-    // if (Object.values(coachSessions).length === 0) {
-    //   return (
-    //     <View style={[styleApp.marginView, styleApp.center]}>
-    //       <View style={[styleApp.center, {marginBottom: 80}]}>
-    //         <Image
-    //           source={require('../../../../../img/images/racket.png')}
-    //           style={racketStyle}
-    //         />
-    //         <View style={styleViewLiveLogo}>
-    //           <Image
-    //             source={require('../../../../../img/images/live-news.png')}
-    //             style={liveStyle}
-    //           />
-    //         </View>
-    //       </View>
-
-    //       <Button
-    //         text={'Start a video chat'}
-    //         icon={{
-    //           name: 'plus',
-    //           size: 18,
-    //           type: 'font',
-    //           color: colors.white,
-    //         }}
-    //         backgroundColor={'green'}
-    //         onPressColor={colors.greenLight}
-    //         click={async () => newSession()}
-    //       />
-    //       <View style={{height: 20}} />
-    //       <Button
-    //         text={'Find a coach'}
-    //         icon={{
-    //           name: 'whistle',
-    //           size: 27,
-    //           type: 'moon',
-    //           color: colors.white,
-    //         }}
-    //         backgroundColor={'blue'}
-    //         onPressColor={colors.blueLight}
-    //         click={() => navigate('Coaches')}
-    //       />
-    //     </View>
-    //   );
-    // }
     return (
       <FlatListComponent
-        list={coachSessions}
+        list={hideGroups ? [] : coachSessions}
         cardList={({item: session}) => (
-          <View style={cardStreamContainerStyle}>
+          <View style={styles.cardStreamContainerStyle}>
             <CardStreamView
               coachSessionID={session.id}
               key={session.id}
@@ -334,10 +262,11 @@ class ListStreams extends Component {
                   : null
               }
               invite={invite}
+              hideCallButton={hideCallButton}
               scale={1}
               onRef={(ref) => this.itemsRef.push(ref)}
               recentView
-              style={{borderRadius: 15, paddingVertical: 0, marginVertical: 5}}
+              style={styles.cardStreamStyle}
             />
           </View>
         )}
@@ -347,14 +276,8 @@ class ListStreams extends Component {
         initialNumberToRender={8}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
         header={() => {
-          const recentTextStyle = {
-            ...styleApp.textBold,
-            marginTop: 20,
-            marginLeft: 5,
-            fontSize: 23,
-          };
           const icon = {
-            name: 'video',
+            name: titleIcon,
             type: 'font',
             color: colors.title,
             size: 23,
@@ -363,12 +286,13 @@ class ListStreams extends Component {
             <View>
               {rowTitle({
                 icon,
-                title: 'Video Call',
+                title: titleText,
                 hideDividerHeader: true,
+                customButton: this.branchLinkButton(),
               })}
               {this.searchBar()}
-              {this.sessionInvitation()}
-              <Text style={recentTextStyle}>Recent</Text>
+              {/* {this.sessionInvitation()} */}
+              {!hideGroups && <Text style={styles.recentTextStyle}>Recent</Text>}
             </View>
           );
         }}
@@ -381,6 +305,68 @@ class ListStreams extends Component {
     return this.list();
   }
 }
+
+const styles = StyleSheet.create({
+  inviteButtonStyle: {
+    ...styleApp.center,
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    right: 15,
+    borderRadius: 20,
+  },
+  searchBarStyle: {
+    ...styleApp.center2,
+    paddingLeft: 25,
+    height: 50,
+    width: '100%',
+    borderRadius: 15,
+    backgroundColor: colors.greyLight,
+    marginVertical: 20,
+    opacity: this.searchBarOpacity,
+  },
+  searchButtonStyle: {
+    ...styleApp.center,
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    right: 70,
+    borderRadius: 20,
+  },
+  searchTextStyle: {
+    ...styleApp.textBold,
+    color: colors.greyDark,
+    marginLeft: 20,
+  },
+  searchRowStyle: {
+    height: '100%',
+    ...styleApp.center4,
+  },
+  styleViewLiveLogo: {
+    ...styleApp.center,
+    backgroundColor: colors.off,
+    height: 45,
+    width: 45,
+    borderRadius: 22.5,
+    borderWidth: 1,
+    borderColor: colors.grey,
+    marginTop: -100,
+    marginLeft: 65,
+  },
+  recentTextStyle: {
+    ...styleApp.textBold,
+    marginTop: 20,
+    marginLeft: 5,
+    fontSize: 23,
+  },
+  cardStreamContainerStyle: {
+    width: '90%',
+    marginLeft: '5%',
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  cardStreamStyle: {borderRadius: 15, paddingVertical: 0, marginVertical: 5},
+});
 
 const mapStateToProps = (state) => {
   return {
