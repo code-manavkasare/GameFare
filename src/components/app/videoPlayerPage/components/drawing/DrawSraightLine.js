@@ -68,6 +68,8 @@ class DrawSraightLine extends Component {
       });
       return this.setState({
         drawing: false,
+        startPoint: {x: 0, y: 0},
+        endPoint: {x: 0, y: 0},
       });
     }
   };

@@ -13,7 +13,6 @@ class DrawSraightLine extends Component {
       drawing: false,
       startPoint: {},
       endPoint: {},
-      radius: 0,
     };
     this.animatedLine = new Animated.Value(0);
   }
@@ -45,10 +44,11 @@ class DrawSraightLine extends Component {
         if (!drawing) {
           return this.setState({
             startPoint: newPosition,
-            radius: 0,
+            endPoint: newPosition,
             drawing: true,
           });
         }
+        console.log('newPosition',newPosition)
         return this.setState({
           endPoint: newPosition,
         });
@@ -69,6 +69,8 @@ class DrawSraightLine extends Component {
       });
       return this.setState({
         drawing: false,
+        startPoint: {x: 0, y: 0},
+        endPoint: {x: 0, y: 0},
       });
     }
   };
@@ -80,6 +82,7 @@ class DrawSraightLine extends Component {
     const {style} = this.props;
     let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     if (!radius) radius = 0;
+    console.log('radiuds', radius);
     return (
       <PanGestureHandler
         style={style}

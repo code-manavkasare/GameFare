@@ -14,7 +14,6 @@ class DrawSraightLine extends Component {
       drawing: false,
       startPoint: {x: 0, y: 0},
       endPoint: {x: 0, y: 0},
-      radius: 0,
     };
     this.animatedLine = new Animated.Value(0);
   }
@@ -46,7 +45,7 @@ class DrawSraightLine extends Component {
         if (!drawing) {
           return this.setState({
             startPoint: newPosition,
-            radius: 0,
+            endPoint: newPosition,
             drawing: true,
           });
         }
@@ -70,6 +69,8 @@ class DrawSraightLine extends Component {
       });
       return this.setState({
         drawing: false,
+        startPoint: {x: 0, y: 0},
+        endPoint: {x: 0, y: 0},
       });
     }
   };
