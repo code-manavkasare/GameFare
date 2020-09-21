@@ -30,7 +30,26 @@ export default class DisplayDraingToViewers extends Component {
       />
     );
   };
-  line = (draw) => {
+  drawObject = (draw) => {
+    const {widthDrawView, heightDrawView} = this.props;
+    return {
+      ...draw,
+      data: {
+        ...draw.data,
+        startPoint: {
+          x: draw.data.startPoint.x * widthDrawView,
+          y: draw.data.startPoint.y * heightDrawView,
+        },
+        endPoint: {
+          x: draw.data.endPoint.x * widthDrawView,
+          y: draw.data.endPoint.y * heightDrawView,
+        },
+      },
+    };
+  };
+  line = (drawData) => {
+    const draw = this.drawObject(drawData);
+
     const {startPoint, endPoint} = draw.data;
     const {width, color} = draw;
     const {x: x1, y: y1} = startPoint;
@@ -46,7 +65,8 @@ export default class DisplayDraingToViewers extends Component {
       />
     );
   };
-  circle = (draw) => {
+  circle = (drawData) => {
+    const draw = this.drawObject(drawData);
     const {startPoint, endPoint} = draw.data;
     const {width, color} = draw;
     const {x: x1, y: y1} = startPoint;
@@ -64,7 +84,9 @@ export default class DisplayDraingToViewers extends Component {
       />
     );
   };
-  rectangle = (draw) => {
+  rectangle = (drawData) => {
+    const draw = this.drawObject(drawData);
+    console.log('drawObject', draw);
     const {startPoint, endPoint} = draw.data;
     const {width: strokeWidth, color} = draw;
     const {x: x1, y: y1} = startPoint;

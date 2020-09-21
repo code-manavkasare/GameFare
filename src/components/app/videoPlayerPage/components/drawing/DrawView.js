@@ -120,7 +120,7 @@ class DrawView extends Component {
     let {path} = event;
     const id = generateID();
     let {data} = path;
-
+    console.log('data', data);
     if (drawSetting === 'custom') {
       data = data.map((dot) => {
         let x = Number(dot.split(',')[0]);
@@ -129,6 +129,18 @@ class DrawView extends Component {
         y = y / heightDrawView;
         return x + ',' + y;
       });
+    } else {
+      data = {
+        ...path,
+        startPoint: {
+          x: data.startPoint.x / widthDrawView,
+          y: data.startPoint.y / heightDrawView,
+        },
+        endPoint: {
+          x: data.endPoint.x / widthDrawView,
+          y: data.endPoint.y / heightDrawView,
+        },
+      };
     }
 
     path = {
