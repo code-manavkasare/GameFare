@@ -207,7 +207,7 @@ class ListStreams extends Component {
         ref={(view) => {
           this.searchBarRef = view;
         }}
-        style={styles.searchBarStyle}>
+        style={[styles.searchBarStyle, {opacity: this.searchBarOpacity}]}>
         <TouchableWithoutFeedback
           style={styleApp.fullView}
           onPress={this.search}>
@@ -287,15 +287,11 @@ class ListStreams extends Component {
           };
           return (
             <View>
-              {rowTitle({
-                icon,
-                title: titleText,
-                hideDividerHeader: true,
-                customButton: this.branchLinkButton(),
-              })}
               {this.searchBar()}
               {/* {this.sessionInvitation()} */}
-              {!hideGroups && <Text style={styles.recentTextStyle}>Recent</Text>}
+              {!hideGroups && (
+                <Text style={styles.recentTextStyle}>Recent</Text>
+              )}
             </View>
           );
         }}
@@ -326,7 +322,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: colors.greyLight,
     marginVertical: 20,
-    opacity: this.searchBarOpacity,
   },
   searchButtonStyle: {
     ...styleApp.center,
@@ -358,7 +353,7 @@ const styles = StyleSheet.create({
   },
   recentTextStyle: {
     ...styleApp.textBold,
-    marginTop: 20,
+    marginTop: 10,
     marginLeft: 5,
     fontSize: 23,
   },

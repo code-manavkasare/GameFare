@@ -215,18 +215,21 @@ class CardArchive extends PureComponent {
             pointerEvents="none"
             style={{
               ...styles.viewText,
+              // ...styleApp.marginView,
+
+              // padding: 13,
               ...styleApp.fullSize,
-              ...styleApp.marginView,
+              backgroundColor: isSelected ? colors.off + '80' : 'transparent',
             }}>
             <Row>
               <Col style={styleApp.center}>
                 {loader ? (
                   <Loader size={25} color={colors.white} />
-                ) : selectableMode ? (
+                ) : isSelected ? (
                   <AllIcons
-                    name={isSelected ? 'check-circle' : 'circle'}
+                    name={'check'}
                     type="font"
-                    size={25}
+                    size={23}
                     color={colors.white}
                     solid={isSelected ? true : false}
                   />

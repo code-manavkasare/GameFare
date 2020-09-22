@@ -436,7 +436,6 @@ class VideoPlayerPage extends Component {
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
 
     for (const videoInfo of Object.values(videoInfos)) {
-      console.log(videoInfo);
       if (videoInfo.local) {
         const localVideoInfo = getArchiveByID(archives[0]);
         await generatePreview(
@@ -475,13 +474,7 @@ class VideoPlayerPage extends Component {
       isDrawingEnabled,
       archives,
     } = this.state;
-    const {
-      navigation,
-      route,
-      session,
-      userID,
-      currentSessionID: coachSessionID,
-    } = this.props;
+    const {navigation, route, session, userID, currentSessionID} = this.props;
     const {navigate} = navigation;
     let videosBeingShared = false;
     let personSharingScreen = false;
@@ -814,10 +807,12 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
+  const {currentSessionID} = state.coach;
+ 
   return {
     userID: state.user.userID,
-    session: state.coachSessions[state.coach.currentSessionID],
-    currentSessionID: state.coach.currentSessionID,
+    session: state.coachSessions[currentSessionID],
+    currentSessionID,
     portrait: state.layout.currentScreenSize.portrait,
     videoInfos: props.route.params.archives.reduce((videoInfos, archiveID) => {
       return {

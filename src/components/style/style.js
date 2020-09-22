@@ -554,13 +554,15 @@ const styles = StyleSheet.create({
   absoluteViewBadge: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 20,
-    width: 20,
+    height: 11,
+    width: 11,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.white,
     backgroundColor: colors.blue,
     position: 'absolute',
-    top: -0,
-    right: '25%',
+    top: 2,
+    right: '34%',
   },
 });
 

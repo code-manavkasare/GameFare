@@ -33,7 +33,7 @@ export default class AsyncImage extends Component {
     return (
       <Animated.View
         style={{
-          opacity: this.opacityFastImageCached,
+          // opacity: this.opacityFastImageCached,
           height: style.height,
           width: style.width,
         }}>
@@ -62,5 +62,5 @@ export default class AsyncImage extends Component {
 }
 
 AsyncImage.propTypes = {
-  mainImage: PropTypes.string.isRequired,
+  // mainImage: PropTypes.string,
 };

@@ -27,16 +27,6 @@ class CameraPage extends Component {
     if (onRef) {
       onRef(this);
     }
-    if (navigation && layoutAction) {
-      this.focusListener = navigation.addListener('focus', () => {
-        Orientation.unlockAllOrientations();
-        layoutAction('setLayout', {isFooterVisible: false});
-        StatusBar.setBarStyle('light-content', true);
-      });
-      this.focusListener = navigation.addListener('blur', () => {
-        StatusBar.setBarStyle('dark-content', true);
-      });
-    }
   }
   componentWillUnmount() {
     if (this.focusListener) {
@@ -82,11 +72,11 @@ class CameraPage extends Component {
           nobackgroundColorIcon1={true}
           sizeIcon1={18}
           colorIcon1={colors.white}
-          icon2={'switchCam'}
+          icon2={'sync-alt'}
           backgroundColorIcon2={'transparent'}
           clickButton2={() => this.flipCamera()}
-          sizeIcon2={20}
-          typeIcon2="moon"
+          sizeIcon2={23}
+          typeIcon2="font"
           colorIcon2={colors.white}
         />
         {cameraReady && (

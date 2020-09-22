@@ -7137,10 +7137,10 @@ react-native-fade-in-view@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-native-fade-in-view/-/react-native-fade-in-view-1.1.0.tgz#9d7e39d09cbbd715c2e180151aa388d126d41cce"
   integrity sha512-1KOyRRgDdgN3X14bDjxXmZ4/La4DVZVBbr/aOpvzxDEDsQrq8uSCM+2hBcqC5mPGqTOcwKqVRtbzxRq145xxzA==
 
-react-native-fast-image@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-7.0.2.tgz#e06b21f42f4a9786eaa86f3db35d919070fb8403"
-  integrity sha512-MfuzJbC0RjYobR2gFCdqe1I7jvNOCfDkjQ7VGOHXniqjohhULMkcWNBE9Umovi9Dx93lJ6t5utcE2wf/09zvlg==
+react-native-fast-image@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.2.tgz#e9db271b70b9634b7be054760914d80954f9898c"
+  integrity sha512-AJ0b4BEswRwa0bh4SibYUtXszEiaO88Lf4CZ1ib+t5ZfkAgsMk9Liv3L0LYnDblMJmSeGTr1+2ViIM8F2vamjg==
 
 react-native-flags@^1.0.0:
   version "1.0.0"

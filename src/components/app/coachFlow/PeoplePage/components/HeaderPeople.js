@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Text, View} from 'react-native';
+import {Text, View, Share} from 'react-native';
 import {navigate, goBack} from '../../../../../../NavigationService';
 
 import colors from '../../../../style/colors';
@@ -26,6 +26,7 @@ class HeaderListStream extends Component {
       infoUser,
       modal,
       numberNotifications,
+      branchLink,
     } = this.props;
     const {loader} = this.state;
     return (
@@ -39,21 +40,15 @@ class HeaderListStream extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
-        icon2={modal ? undefined : 'comment-alt'}
-        typeIcon2={'font'}
+        icon2={branchLink && 'share'}
+        typeIcon2={'moon'}
         sizeIcon2={24}
         colorIcon2={colors.title}
-        clickButton2={() => navigate('Groups')}
-        icon1={
-          modal
-            ? 'times'
-            : infoUser.picture
-            ? infoUser.picture
-            : 'profileFooter'
-        }
-        sizeIcon1={modal ? 20 : infoUser.picture ? 31 : 23}
+        clickButton2={() => Share.share({url: branchLink})}
+        icon1={'comment-alt'}
+        sizeIcon1={23}
         colorIcon1={colors.title}
-        badgeIcon2={
+        badgeIcon1={
           numberNotifications !== 0 && (
             <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
               <Text
@@ -66,10 +61,8 @@ class HeaderListStream extends Component {
             </View>
           )
         }
-        typeIcon1={modal ? 'font' : infoUser.picture ? 'image' : 'moon'}
-        clickButton1={
-          modal ? () => goBack() : () => navigate('MorePage')
-        }
+        typeIcon1={'font'}
+        clickButton1={() => navigate('Groups')}
       />
     );
   };
