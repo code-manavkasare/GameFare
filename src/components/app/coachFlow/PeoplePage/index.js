@@ -9,11 +9,12 @@ import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
 import PermissionView from './components/PermissionView';
 
+import {generateID} from '../../../functions/createEvent';
 import PeopleBody from './components/PeopleBody';
 import Loader from '../../../layout/loaders/Loader';
 import HeaderPeople from './components/HeaderPeople';
 import {sessionOpening} from '../../../functions/coach';
-import {createInviteToAppBranchUrl} from '../../../database/branch';
+import {createInviteToSessionBranchUrl} from '../../../database/branch';
 import Search from './components/Search';
 import InvitationManager from './components/InvitationManager';
 
@@ -44,14 +45,7 @@ class StreamTab extends Component {
     if (params?.objectID) {
       this.openSession(params.objectID);
     }
-    if (params?.branchLink) {
-      this.setState({branchLink: params.branchLink});
-    } else {
-      this.setDefaultBranchLink();
-    }
-    // if (params?.hideGroups) {
-    //   this.searchRef?.animate(1);
-    // }
+    this.setBranchLink();
     this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
     });
@@ -69,9 +63,14 @@ class StreamTab extends Component {
     }
   };
 
-  setDefaultBranchLink = async () => {
-    const url = await createInviteToAppBranchUrl();
-    this.setState({branchLink: url});
+  setBranchLink = async () => {
+    const {params} = this.props.route;
+    if (params?.branchLink) {
+      this.setState({branchLink: params.branchLink});
+    } else {
+      const url = await createInviteToSessionBranchUrl(generateID());
+      this.setState({branchLink: url});
+    }
   };
 
   openSession = async (objectID) => {
@@ -128,6 +127,7 @@ class StreamTab extends Component {
           actionIcon={actionIcon}
           sharingVideos={sharingVideos}
           branchLink={branchLink}
+          makeNewBranchLink={() => this.setBranchLink()}
           hideCallButton={action ? true : false}
           hideGroups={hideGroups}
         />

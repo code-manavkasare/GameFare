@@ -163,13 +163,16 @@ class ListStreams extends Component {
   };
 
   branchLinkButton = () => {
-    const {branchLink} = this.props;
+    const {branchLink, makeNewBranchLink} = this.props;
     if (branchLink) {
       return (
         <ButtonColor
           color={colors.blue}
           onPressColor={colors.blueLight}
-          click={() => Share.share({url: branchLink})}
+          click={async () => {
+            await Share.share({url: branchLink});
+            makeNewBranchLink();
+          }}
           style={styles.inviteButtonStyle}
           view={() => {
             return (

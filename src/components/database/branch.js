@@ -5,8 +5,17 @@ import {Alert, Linking} from 'react-native';
 import branch from 'react-native-branch';
 import {date} from '../layout/date/date';
 import {store} from '../../../reduxStore';
+import {createPlaceholderCoachSession} from '../functions/coach';
 
-async function getParams(link) {
+const getArchivesFromBranchParams = (params) => {
+  return params.archives ? params.archives.split(',') : [];
+};
+
+const getSessionFromBranchParams = (params) => {
+  return params.sessionID ?? null;
+};
+
+const getParams = async (link) => {
   try {
     const isDeepLink = link.includes('gamefare.app.link');
     const url = isDeepLink
@@ -19,9 +28,9 @@ async function getParams(link) {
   } catch (e) {
     return false;
   }
-}
+};
 
-async function openUrl(url) {
+const openUrl = async (url) => {
   try {
     if (await InAppBrowser.isAvailable()) {
       const result = await InAppBrowser.open(url, {
@@ -124,7 +133,8 @@ async function openUrl(url) {
 // };
 
 const createInviteToAppBranchUrl = async () => {
-  const {userID} = store.getState().user;
+  const {user} = store.getState();
+  const {userID} = user;
   const branchUniversalObject = await branch.createBranchUniversalObject(
     'canonicalIdentifier',
     {
@@ -165,23 +175,21 @@ const createInviteToSessionBranchUrl = async (sessionID) => {
 const createShareVideosBranchUrl = async (archiveIDs) => {
   if (archiveIDs && archiveIDs.length > 0) {
     const description = 'See the video I shared with you!';
-    const {userID} = store.getState().user;
+    const {user} = store.getState();
+    const {userID} = user;
     const archives = archiveIDs
       .map((id) => store.getState().archives[id])
       .filter((a) => a);
     const thumbnail = archives.reduce((thumbnail, archive) => {
-      if (thumbnail === '' && archive.thumbnail) {
+      // need uploaded thumbnail
+      if (thumbnail === '' && archive.thumbnail && archive.thumbnail.substring(0, 4) === 'http') {
         return archive.thumbnail;
       }
       return thumbnail;
     }, '');
-    const archiveMetadata = archives.reduce((data, archive) => {
-      return {
-        ...data,
-        [archive.id]: archive.id,
-      };
-    }, {});
-    console.log('archive metadata', archiveMetadata);
+    const archiveMetadata = archives.reduce((data, archive, i) => {
+      return i === 0 ? archive.id : data + ',' + archive.id;
+    }, '');
     const branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {
@@ -219,4 +227,6 @@ module.exports = {
   createInviteToAppBranchUrl,
   createInviteToSessionBranchUrl,
   createShareVideosBranchUrl,
+  getArchivesFromBranchParams,
+  getSessionFromBranchParams,
 };

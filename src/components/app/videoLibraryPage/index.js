@@ -23,6 +23,7 @@ import {
   getMember,
   toggleVideoPublish,
 } from '../../functions/coach';
+import {createShareVideosBranchUrl} from '../../database/branch';
 
 import {pickerlocalVideos} from './components/elements';
 import {rowTitle} from '../TeamPage/components/elements';
@@ -93,7 +94,7 @@ class VideoLibraryPage extends Component {
       this.setState({selectableMode: true});
     }
   }
-  shareSelectedVideos() {
+  async shareSelectedVideos() {
     const {selectedVideos} = this.state;
     const {navigation} = this.props;
     if (selectedVideos.length > 0) {
@@ -106,6 +107,7 @@ class VideoLibraryPage extends Component {
         titleText: selectedVideos.length > 1 ? 'Share videos' : 'Share video',
         titleIcon: 'video',
         navigationTarget: 'Conversation',
+        branchLink: await createShareVideosBranchUrl(selectedVideos),
       });
       this.setState({
         selectedVideos: [],
