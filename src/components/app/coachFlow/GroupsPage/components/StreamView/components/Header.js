@@ -48,11 +48,11 @@ class HeaderStreamView extends Component {
         nobackgroundColorIcon1={true}
         sizeIcon1={16}
         colorIcon1={colors.white}
-        icon2={isConnected && 'switchCam'}
+        icon2={isConnected && 'sync-alt'}
         backgroundColorIcon2={colors.title + '70'}
         clickButton2={() => setState({cameraFront: !state.cameraFront})}
         sizeIcon2={17}
-        typeIcon2="moon"
+        typeIcon2="font"
         colorIcon2={colors.white}
         iconOffset={isConnected && 'cog'}
         typeIconOffset="font"

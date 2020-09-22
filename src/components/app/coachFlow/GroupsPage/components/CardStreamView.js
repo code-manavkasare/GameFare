@@ -75,11 +75,11 @@ class CardStream extends Component {
     }
   };
   componentDidUpdate() {}
-  componentWillUnmount() {
-    const {coachSessionID} = this.props;
-    unbindSession(coachSessionID);
-    unbindConversation(coachSessionID);
-  }
+  // componentWillUnmount() {
+  //   const {coachSessionID} = this.props;
+  //   unbindSession(coachSessionID);
+  //   unbindConversation(coachSessionID);
+  // }
 
   async openStream() {
     const {session} = this.props;
@@ -216,7 +216,7 @@ class CardStream extends Component {
           }}
         />
         <Animated.View style={selectionIndicationOverlayStyle} />
-        {recentView  && !hideCallButton && (
+        {recentView && !hideCallButton && (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
               color={colors.greyLight}

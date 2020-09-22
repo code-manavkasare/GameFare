@@ -175,6 +175,11 @@ class GroupsPage extends Component {
     this.refreshTokenMember();
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.unlockAllOrientations();
+      StatusBar.setBarStyle('light-content', true);
+    });
+
+    this.focusListener = navigation.addListener('blur', () => {
+      StatusBar.setBarStyle('dark-content', true);
     });
   }
 
@@ -491,9 +496,11 @@ class GroupsPage extends Component {
     );
   }
   cameraView() {
+    const {navigation} = this.props;
     return (
       <View style={styles.localCameraContainer}>
         <CameraPage
+          navigation={navigation}
           onRef={(ref) => {
             this.cameraRef = ref;
           }}

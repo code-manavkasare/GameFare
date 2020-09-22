@@ -103,7 +103,7 @@ class FooterButton extends React.Component {
       styleApp.textBold,
       {
         color: colors.greyMidDark,
-        marginTop: 6,
+        marginTop: 3,
         fontSize: 13,
       },
     ];
@@ -152,7 +152,7 @@ class FooterButton extends React.Component {
                       styleApp.textBold,
                       {color: colors.white, fontSize: 10},
                     ]}>
-                    {numberNotifications}
+                    {/* {numberNotifications} */}
                   </Text>
                 </View>
               )}
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   buttonView: {
     ...styleApp.shadowWeak,
     ...styleApp.center,
-    marginTop: 70,
+    marginTop: 50,
     height: heightFooter,
     width: '100%',
   },

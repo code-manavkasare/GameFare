@@ -65,6 +65,74 @@ class Footer extends React.Component {
       return clickNotification(notificationOpen);
     }
   }
+  backdrop() {
+    const {state, position} = this.props;
+    const {disableAnimation} = this.state;
+    let inputRange = state.routes.map((_, i) => i);
+    inputRange.unshift(-1);
+    inputRange.push(state.routes.length);
+    const translateYFooter = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) =>
+        i === 1 && !disableAnimation
+          ? sizes.heightFooter + sizes.marginBottomApp
+          : 0,
+      ),
+    });
+
+    return (
+      <Animated.View
+        style={{
+          ...styles.backdrop,
+          transform: [{translateY: translateYFooter}],
+        }}
+      />
+    );
+  }
+  labelIndicator() {
+    const {state, position, currentScreenSize} = this.props;
+    const {disableAnimation} = this.state;
+    const {currentWidth} = currentScreenSize;
+    const indicatorWidth = 50;
+    let inputRange = state.routes.map((_, i) => i);
+    inputRange.unshift(-1);
+    inputRange.push(3);
+    const translateXIndicator = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map(
+        (i) =>
+          (i * (sizes.width * 0.85)) / state.routes.length -
+          indicatorWidth / 2 +
+          currentWidth * 0.2175 +
+          (0.85 * (currentWidth - sizes.width)) / state.routes.length,
+      ),
+    });
+    const widthIndicator = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => {
+        return i === 1 ? indicatorWidth : indicatorWidth;
+      }),
+    });
+    const opacityIndicator = Animated.interpolate(position, {
+      inputRange,
+      outputRange: inputRange.map((i) => {
+        return i === 1 && !disableAnimation ? 0.6 : 1;
+      }),
+    });
+
+    const indicatorStyle = {
+      ...styles.labelIndicator,
+      width: widthIndicator,
+      opacity: opacityIndicator,
+      transform: [{translateX: translateXIndicator}],
+    };
+
+    return (
+      <View style={styles.labelIndicatorContainer}>
+        <Animated.View style={indicatorStyle} />
+      </View>
+    );
+  }
   footer = () => {
     const {
       state,
@@ -152,74 +220,7 @@ class Footer extends React.Component {
       </View>
     );
   };
-  backdrop() {
-    const {state, position} = this.props;
-    const {disableAnimation} = this.state;
-    let inputRange = state.routes.map((_, i) => i);
-    inputRange.unshift(-1);
-    inputRange.push(state.routes.length);
-    const translateYFooter = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map((i) =>
-        i === 1 && !disableAnimation
-          ? sizes.heightFooter + sizes.marginBottomApp
-          : 0,
-      ),
-    });
 
-    return (
-      <Animated.View
-        style={{
-          ...styles.backdrop,
-          transform: [{translateY: translateYFooter}],
-        }}
-      />
-    );
-  }
-  labelIndicator() {
-    const {state, position, currentScreenSize} = this.props;
-    const {disableAnimation} = this.state;
-    const {currentWidth} = currentScreenSize;
-    const indicatorWidth = 50;
-    let inputRange = state.routes.map((_, i) => i);
-    inputRange.unshift(-1);
-    inputRange.push(3);
-    const translateXIndicator = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map(
-        (i) =>
-          (i * (sizes.width * 0.85)) / state.routes.length -
-          indicatorWidth / 2 +
-          currentWidth * 0.2175 +
-          (0.85 * (currentWidth - sizes.width)) / state.routes.length,
-      ),
-    });
-    const widthIndicator = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map((i) => {
-        return i === 1 ? indicatorWidth : indicatorWidth;
-      }),
-    });
-    const opacityIndicator = Animated.interpolate(position, {
-      inputRange,
-      outputRange: inputRange.map((i) => {
-        return i === 1 && !disableAnimation ? 0.6 : 1;
-      }),
-    });
-
-    const indicatorStyle = {
-      ...styles.labelIndicator,
-      width: widthIndicator,
-      opacity: opacityIndicator,
-      transform: [{translateX: translateXIndicator}],
-    };
-
-    return (
-      <View style={styles.labelIndicatorContainer}>
-        <Animated.View style={indicatorStyle} />
-      </View>
-    );
-  }
   render() {
     return this.footer();
   }
@@ -227,21 +228,24 @@ class Footer extends React.Component {
 
 const styles = StyleSheet.create({
   footer: {
-    ...styleApp.shadowWeak,
-    ...styleApp.center,
+    // ...styleApp.shadowWeak,
+    ...styleApp.center2,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp + 20,
+    height: heightFooter + marginBottomApp,
     position: 'absolute',
     zIndex: 1,
     width: '100%',
+
     bottom: 0,
     overflow: 'visible',
   },
   backdrop: {
     ...styleApp.shadowWeak,
     ...styleApp.center2,
+    borderTopWidth: 1,
+    borderColor: colors.off,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp - 5,
+    height: heightFooter + marginBottomApp + 0,
     position: 'absolute',
     zIndex: -1,
     width: '100%',

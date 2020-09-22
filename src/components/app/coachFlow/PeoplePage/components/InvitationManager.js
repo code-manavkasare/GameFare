@@ -190,13 +190,17 @@ class InvitationManager extends Component {
     const {sharingVideos} = this.props;
     const translateY = this.buttonReveal.interpolate({
       inputRange: [0, 1, 2],
-      outputRange: [260, -65, -sizes.keyboardOffset - 5],
+      outputRange: [
+        sizes.heightFooter + sizes.marginBottomApp,
+        -65,
+        -sizes.keyboardOffset - 5,
+      ],
     });
     const userCardStyle = {
       flex: 1,
       flexDirection: 'row',
       position: 'absolute',
-      bottom: 10 + sizes.marginBottomApp,
+      bottom: 20 + sizes.marginBottomApp,
       height: 50,
       width: '100%',
       ...styleApp.center1,

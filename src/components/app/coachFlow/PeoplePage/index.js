@@ -3,6 +3,7 @@ import {View, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
+import isEqual from 'lodash.isequal';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -50,6 +51,15 @@ class StreamTab extends Component {
       Orientation.lockToPortrait();
     });
   };
+  shouldComponentUpdate(prevProps, prevState) {
+    if (!isEqual(prevState, this.state)) {
+      return true;
+    }
+    if (isEqual(this.props, prevProps)) {
+      return false;
+    }
+    return true;
+  }
   componentWillUnmount = () => {
     if (this.focusUnsubscribe) {
       this.focusUnsubscribe();
@@ -143,9 +153,10 @@ class StreamTab extends Component {
       action,
       modal,
       hideGroups,
+      branchLink,
     } = this.state;
     const {userConnected} = this.props;
-
+ 
     return (
       <View style={styleApp.stylePage}>
         <HeaderPeople
@@ -154,6 +165,7 @@ class StreamTab extends Component {
           hideButtonNewSession={!userConnected || !permissionsCamera}
           modal={modal}
           onRef={(ref) => (this.HeaderRef = ref)}
+          branchLink={branchLink}
         />
 
         <View style={{marginTop: sizes.marginTopApp + sizes.heightHeaderHome}}>

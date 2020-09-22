@@ -84,6 +84,7 @@ class HeaderBackButton extends Component {
       typeIcon1,
       nobackgroundColorIcon1,
       onPressColorIcon1,
+      badgeIcon1,
     } = this.props;
     const {borderColorIcon} = this.animatedValues();
     if (icon1) {
@@ -123,6 +124,17 @@ class HeaderBackButton extends Component {
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
           />
+          {badgeIcon1 && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: -0,
+                left: -5,
+              }}>
+              {badgeIcon1}
+            </View>
+          )}
         </Animated.View>
       );
     }
@@ -464,7 +476,7 @@ class HeaderBackButton extends Component {
                 size={70}
                 style={imgHeader ? styleApp.center2 : styleApp.center}>
                 <Animated.Text
-                  style={[styleApp.textHeader, {opacity: AnimateOpacityTitle}]}>
+                  style={[styleApp.textBold, {opacity: AnimateOpacityTitle}]}>
                   {textHeader}
                 </Animated.Text>
               </Col>

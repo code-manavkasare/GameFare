@@ -11,18 +11,12 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import MediaPicker from 'react-native-image-crop-picker';
-import {includes} from 'ramda';
+
 import Orientation from 'react-native-orientation-locker';
+import isEqual from 'lodash.isequal';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
-import {
-  isUserAlone,
-  isSomeoneSharingScreen,
-  userPartOfSession,
-  getVideosSharing,
-  getMember,
-  toggleVideoPublish,
-} from '../../functions/coach';
+
 import {createShareVideosBranchUrl} from '../../database/branch';
 
 import {pickerlocalVideos} from './components/elements';
@@ -50,6 +44,7 @@ import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
+import ToolRow from './components/ToolRow';
 const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {
@@ -67,12 +62,24 @@ class VideoLibraryPage extends Component {
       selectedVideos: [],
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
   componentDidMount() {
-    const {navigation} = this.props;
+    const {navigation, currentSessionID} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
+
+      if (currentSessionID) this.setState({selectableMode: true});
     });
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!isEqual(nextState, this.state)) {
+      return true;
+    }
+    if (isEqual(this.props, nextProps)) {
+      return false;
+    }
+    return true;
   }
 
   static getDerivedStateFromProps(props) {
@@ -94,6 +101,14 @@ class VideoLibraryPage extends Component {
       this.setState({selectableMode: true});
     }
   }
+  playSelectedVideos = () => {
+    const {selectedVideos} = this.state;
+ 
+    openVideoPlayer({
+      archives: selectedVideos,
+      open: true,
+    });
+  };
   async shareSelectedVideos() {
     const {selectedVideos} = this.state;
     const {navigation} = this.props;
@@ -109,10 +124,10 @@ class VideoLibraryPage extends Component {
         navigationTarget: 'Conversation',
         branchLink: await createShareVideosBranchUrl(selectedVideos),
       });
-      this.setState({
-        selectedVideos: [],
-        selectableMode: false,
-      });
+      // this.setState({
+      //   selectedVideos: [],
+      //   selectableMode: false,
+      // });
     }
   }
   deleteSelectedVideos() {
@@ -126,9 +141,9 @@ class VideoLibraryPage extends Component {
           '?',
         subtitle: 'This action cannot be undone.',
         textButton: `Delete (${numberVideos})`,
-        onGoBack: () => {
-          deleteVideos(selectedVideos);
-          this.setState({
+        onGoBack: async () => {
+          await deleteVideos(selectedVideos);
+          return this.setState({
             selectedVideos: [],
             selectableMode: false,
           });
@@ -136,21 +151,18 @@ class VideoLibraryPage extends Component {
       });
     }
   }
-  selectVideo(id, isSelected) {
-    let {selectedVideos, selectOne} = this.state;
-    if (isSelected) {
-      if (selectOne) {
-        selectedVideos = [id];
-      } else {
-        selectedVideos.push(id);
-      }
+  selectVideo(id) {
+    let nextSelectedVideos = this.state.selectedVideos.slice();
+
+    if (nextSelectedVideos.filter((idVideo) => idVideo === id).length === 0) {
+      nextSelectedVideos.push(id);
     } else {
-      const index = selectedVideos.indexOf(id);
-      if (index > -1) {
-        selectedVideos.splice(index, 1);
-      }
+      nextSelectedVideos = nextSelectedVideos.filter(
+        (idVideo) => idVideo !== id,
+      );
     }
-    this.setState({selectedVideos});
+
+    this.setState({selectedVideos: nextSelectedVideos});
   }
   async addFromCameraRoll({selectOnly}) {
     const {navigation} = this.props;
@@ -242,112 +254,54 @@ class VideoLibraryPage extends Component {
   }
 
   listVideos() {
-    const {session: coachSession, coachSessionID} = this.props;
     const {videosArray, selectOnly, selectedVideos} = this.state;
 
-    const personSharingScreen = isSomeoneSharingScreen(coachSession);
-    const videosBeingShared = getVideosSharing(
-      coachSession,
-      personSharingScreen,
-    );
+    // const personSharingScreen = isSomeoneSharingScreen(coachSession);
+    // const videosBeingShared = getVideosSharing(
+    //   coachSession,
+    //   personSharingScreen,
+    // );
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
           list={videosArray}
-          cardList={({item: videoID}) => this.renderCardArchive(videoID)}
+          cardList={({item: videoID, index}) =>
+            this.renderCardArchive(videoID, index)
+          }
           numColumns={3}
           incrementRendering={12}
           initialNumberToRender={12}
+          showsVerticalScrollIndicator={false}
           paddingBottom={
-            selectOnly ? 0 : sizes.heightFooter + sizes.marginBottomApp + 20
-          }
-          header={
-            <View>
-              {!selectOnly
-                ? rowTitle({
-                    icon: {
-                      name: 'tv',
-                      type: 'font',
-                      // name: 'television',
-                      // type: 'moon',
-                      color: colors.title,
-                      size: 20,
-                    },
-                    badge:
-                      videosArray.length === 0 ? false : videosArray.length,
-                    title: 'Library',
-                    hideDividerHeader: true,
-                    containerStyle: {
-                      marginBottom: 15,
-                    },
-                  })
-                : pickerlocalVideos({
-                    lengthGameFareLibrary: videosArray.length,
-                    selectVideo: this.selectVideo.bind(this),
-                    addFromCameraRoll: this.addFromCameraRoll.bind(this),
-                    selectedVideos,
-                  })}
-              {videosBeingShared &&
-                rowTitle({
-                  icon: {
-                    name: 'satellite-dish',
-                    type: 'font',
-                    color: colors.black,
-                    size: 20,
-                  },
-                  hideDividerHeader: true,
-                  customButtom: (
-                    <CardArchive
-                      id={Object.keys(videosBeingShared)[0]}
-                      videosToOpen={Object.keys(videosBeingShared).map(
-                        (video) => {
-                          return {id: video};
-                        },
-                      )}
-                      style={{
-                        ...styleApp.cardArchive3,
-                        ...styleApp.shadow,
-                        height: 70,
-                        width: 115,
-                        borderRadius: 5,
-                        borderWidth: 0,
-                        marginRight: 10,
-                      }}
-                      coachSessionID={coachSessionID}
-                      hidePlayIcon={true}
-                    />
-                  ),
-                  title: 'Live now',
-                  titleColor: colors.black,
-                  titleStyle: {
-                    fontWeight: '800',
-                    fontSize: 20,
-                  },
-                  containerStyle: {
-                    ...styleApp.shadow,
-                    marginTop: 10,
-                    borderRadius: 10,
-                    backgroundColor: colors.white,
-                    height: 100,
-                    marginBottom: 15,
-                  },
-                })}
-            </View>
+            selectOnly ? 0 : sizes.heightFooter + sizes.marginBottomApp + 110
           }
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>
     );
   }
-  renderCardArchive(videoID) {
+  renderCardArchive(videoID, index) {
     const {selectableMode, selectedVideos} = this.state;
-    const isSelected = includes(videoID, selectedVideos);
+    const isSelected =
+      selectedVideos.filter((idVideo) => idVideo === videoID).length !== 0;
+
+    let styleBorder = {};
+ 
+    if ((Number(index) + 1) % 3 === 0)
+      styleBorder = {
+        borderLeftWidth: 1.5,
+      };
+
+    if ((Number(index) + 3) % 3 === 0)
+      styleBorder = {
+        borderRightWidth: 1.5,
+      };
     return (
       <CardArchive
         selectableMode={selectableMode}
         isSelected={isSelected}
-        selectVideo={(id, selected) => this.selectVideo(id, selected)}
-        style={styles.cardArchive}
+        selectVideo={(id) => this.selectVideo(id)}
+        style={[styles.cardArchive, styleBorder]}
         id={videoID}
         key={videoID}
         noUpdateStatusBar={true}
@@ -366,6 +320,7 @@ class VideoLibraryPage extends Component {
       selectedVideos,
       selectOnly,
     } = this.state;
+
     if (!userConnected) {
       return <LogoutView />;
     }
@@ -373,16 +328,12 @@ class VideoLibraryPage extends Component {
       <View style={styleApp.stylePage}>
         <StatusBar hidden={false} barStyle={'dark-content'} />
         <HeaderVideoLibrary
-          // loader={loader}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          toggleSelect={() => this.toggleSelectable()}
-          selectableMode={selectableMode}
           navigation={navigation}
           selectOnly={selectOnly}
+          selectableMode={selectableMode}
+          addFromCameraRoll={this.addFromCameraRoll.bind(this)}
           isListEmpty={videosArray.length === 0}
-          add={() => this.addFromCameraRoll({selectOnly: false})}
-          remove={() => this.deleteSelectedVideos()}
-          share={() => this.shareSelectedVideos()}
         />
 
         <View
@@ -410,6 +361,19 @@ class VideoLibraryPage extends Component {
             />
           </View>
         )}
+
+        <ToolRow
+          onRef={(ref) => {
+            this.toolRowRef = ref;
+          }}
+          clickButton1={this.toggleSelectable.bind(this)}
+          isButton2Selected={selectableMode}
+          clickButton3={() => this.deleteSelectedVideos()}
+          clickButton4={() => this.shareSelectedVideos()}
+          clickButton2={() => this.playSelectedVideos()}
+          selectedVideos={selectedVideos}
+          addFromCameraRoll={this.addFromCameraRoll.bind(this)}
+        />
       </View>
     );
   }
@@ -429,7 +393,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     // backgroundColor: colors.title,
     // margin: 5,
-    borderWidth: 1,
+    borderBottomWidth: 1.5,
     borderColor: colors.white,
   },
 });
@@ -439,8 +403,8 @@ const mapStateToProps = (state) => {
       ...state.localVideoLibrary.userLocalArchives,
       ...state.user.infoUser.archivedStreams,
     },
-    session: state.coachSessions[state.coach.currentSessionID],
-    coachSessionID: state.coach.currentSessionID,
+
+    currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,

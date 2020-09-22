@@ -99,7 +99,7 @@ class FlatListComponent extends Component {
         refreshControl={refreshControl}
         onScrollEndDrag={onScrollEndDrag}
         onScrollBeginDrag={onScrollBeginDrag}
-        onScroll={onScroll}
+ 
         contentContainerStyle={containerStyle}
         ListHeaderComponent={header}
         ListHeaderComponentStyle={{
@@ -123,20 +123,24 @@ class FlatListComponent extends Component {
             <Text style={styleApp.text} />
           </View>
         }
-        // onScroll={Animated.event(
-        //   [
-        //     {
-        //       nativeEvent: {
-        //         contentOffset: {
-        //           y: AnimatedHeaderValue
-        //             ? AnimatedHeaderValue
-        //             : this.AnimatedHeaderValue,
-        //         },
-        //       },
-        //     },
-        //   ],
-        //   {useNativeDriver: false},
-        // )}
+        onScroll={
+          onScroll
+            ? onScroll
+            : Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: AnimatedHeaderValue
+                          ? AnimatedHeaderValue
+                          : this.AnimatedHeaderValue,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: false},
+              )
+        }
       />
     );
   }

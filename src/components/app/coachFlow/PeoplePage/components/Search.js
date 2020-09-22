@@ -75,7 +75,7 @@ class Search extends Component {
       borderRadius: 15,
       backgroundColor: colors.greyLight,
       marginVertical: 20,
-      marginTop: sizes.marginTopApp + 30,
+      // marginTop: sizes.marginTopApp + 0,
       marginHorizontal: '5%',
     };
     const textStyle = {
