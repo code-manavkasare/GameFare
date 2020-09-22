@@ -22,6 +22,7 @@ import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 import ArchiveBindManager from './src/components/utility/ArchiveBindManager';
+import BranchManager from './src/components/utility/BranchManager';
 import {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
@@ -138,6 +139,7 @@ class App extends Component {
         <UploadManager />
         <ConnectionTypeProvider />
         <ArchiveBindManager />
+        <BranchManager />
       </NavigationContainer>
     );
   }

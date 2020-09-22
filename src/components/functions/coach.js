@@ -7,6 +7,7 @@ import axios from 'axios';
 import Config from 'react-native-config';
 import isEqual from 'lodash.isequal';
 
+import {getOnceValue} from '../database/firebase/methods';
 import {generateID} from './createEvent';
 import {getVideoUUID} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
@@ -35,8 +36,36 @@ const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const createCoachSession = async (user, members) => {
-  const coachSessionID = generateID();
+const createCoachSessionFromUserIDs = async (organizerID, otherIDs, sessionID = null) => {
+  const otherInfos = await Promise.all(
+    otherIDs.map((id) => getOnceValue(`users/${id}/userInfo`)),
+  );
+  const membersParam = otherInfos.reduce((members, info, i) => {
+    if (info) {
+      return {
+        ...members,
+        [otherIDs[i]]: {
+          id: otherIDs[i],
+          info,
+          isConnected: false,
+        },
+      };
+    } else {
+      return members;
+    }
+  }, {});
+  const organizerInfo = await getOnceValue(`users/${organizerID}/userInfo`);
+  if (organizerInfo) {
+    return await createCoachSession(
+      {id: organizerID, info: organizerInfo},
+      membersParam,
+      sessionID,
+    );
+  }
+};
+
+const createCoachSession = async (user, members, sessionID = null) => {
+  const coachSessionID = sessionID ?? generateID();
   const allMembers = Object.values(members).reduce(function(result, item) {
     result[item.id] = true;
     return result;
@@ -141,6 +170,7 @@ const startRecording = (sessionIDFirebase, streamMemberId) => {
     .ref()
     .update(updates);
 };
+
 const stopRecording = (sessionIDFirebase) => {
   let updates = {};
   updates[`coachSessions/${sessionIDFirebase}/tokbox/archiving`] = null;
@@ -289,14 +319,6 @@ const getVideosSharing = (session, personSharingScreen) => {
   return sharedVideos;
 };
 
-// const getVideoUUID = (path) => {
-//   if (!path) return 'simulator';
-//   const videoUUID = path
-//     ? path.split('/')[path.split('/').length - 1].split('.')[0]
-//     : generateID();
-//   return videoUUID;
-// };
-
 const compressThumbnail = async (initialPath) => {
   const {path} = await ImageResizer.createResizedImage(
     initialPath,
@@ -360,14 +382,10 @@ const setupOpentokStopRecordingFlow = async (
   return thumbnailUploadTasks;
 };
 
-
-
 const openSession = async (user, members) => {
   const allSessions = store.getState().coachSessions;
-
   let allMembers = Object.values(members).map((member) => member.id);
   allMembers.push(user.id);
-
   let session = Object.values(allSessions)
     .filter((session) => session.members)
     .filter((session) =>
@@ -403,6 +421,7 @@ const infoCoach = (members) => {
   }
   return false;
 };
+
 const closeSession = async ({noNavigation}) => {
   await store.dispatch(endCurrentSession());
   store.dispatch(unsetCurrentSession());
@@ -413,6 +432,7 @@ const closeSession = async ({noNavigation}) => {
     await navigate('Stream', {screen: 'GroupsPage', params: {}});
   }
 };
+
 const openMemberAcceptCharge = async (
   session,
   forceCloseSession,
@@ -522,6 +542,7 @@ const newSession = () => {
     onSelectMembers: (users, contacts) => createSession(users),
   });
 };
+
 const createSession = async (members) => {
   const {userID, infoUser} = store.getState().user;
   if (members) {
@@ -623,6 +644,29 @@ const addMembersToSession = (objectID, navigateTo) => {
       return goBack();
     },
   });
+};
+
+const addMembersToSessionByIDs = async (coachSessionID, memberIDs) => {
+  const infos = await Promise.all(
+    memberIDs.map((id) => getOnceValue(`users/${id}/userInfo`)),
+  );
+  const membersParam = infos.reduce((members, info, i) => {
+    if (info) {
+      return {
+        ...members,
+        [memberIDs[i]]: {
+          id: memberIDs[i],
+          info,
+          isConnected: false,
+        },
+      };
+    } else {
+      return members;
+    }
+  }, {});
+  if (Object.keys(membersParam) > 0) {
+    updateMembersToSession(coachSessionID, membersParam);
+  }
 };
 
 const updateMembersToSession = async (coachSessionID, members) => {
@@ -754,4 +798,6 @@ module.exports = {
   closeSession,
   isVideosAreBeingShared,
   updateInfoVideoCloud,
+  createCoachSessionFromUserIDs,
+  addMembersToSessionByIDs,
 };

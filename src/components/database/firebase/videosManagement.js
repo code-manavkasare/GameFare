@@ -3,8 +3,8 @@ import database from '@react-native-firebase/database';
 import {store} from '../../../../reduxStore';
 import {deleteArchive, setArchive} from '../../../actions/archivesActions';
 
-const shareCloudVideo = async (shareWithID, videoID) => {
-  const {userID} = store.getState().user;
+const shareCloudVideo = async (shareWithID, videoID, forceInvitedByUser = null) => {
+  const userID = forceInvitedByUser ?? store.getState().user.userID;
   const date = Date.now();
   await database()
     .ref()
