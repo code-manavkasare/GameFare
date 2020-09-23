@@ -138,9 +138,14 @@ class SinglePlayer extends Component {
   };
   onPositionChange = (index, position) => {
     const {videosBeingShared, coachSessionID, id} = this.props;
+    console.log('onPositionChange', position, videosBeingShared);
     if (videosBeingShared) {
+      const {x, y} = position;
       const updates = {
-        [`coachSessions/${coachSessionID}/sharedVideos/${id}/position/`]: position,
+        [`coachSessions/${coachSessionID}/sharedVideos/${id}/position/`]: {
+          x,
+          y,
+        },
       };
       database()
         .ref()

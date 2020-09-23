@@ -12,12 +12,13 @@ import Loader from '../../../layout/loaders/Loader';
 import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
 import {native} from '../../../animations/animations';
+import VideoList from './VideoList';
 
 class ToolRow extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.translateXBox = new Animated.Value(240);
+    this.translateXBox = new Animated.Value(210);
   }
   async componentDidMount() {
     this.props.onRef(this);
@@ -27,7 +28,7 @@ class ToolRow extends Component {
       Animated.parallel([
         Animated.timing(
           this.translateXBox,
-          native(this.props.isButton2Selected ? 0 : 240),
+          native(this.props.isButton2Selected ? 0 : 210),
         ),
       ]).start();
     }
@@ -75,6 +76,7 @@ class ToolRow extends Component {
       />
     );
   };
+
   render() {
     const {
       clickButton2,
@@ -84,9 +86,16 @@ class ToolRow extends Component {
       isButton3Selected,
       isButton2Selected,
       selectedVideos,
+      selectVideo,
     } = this.props;
     return (
       <View style={styles.tool} pointerEvents="box-none">
+        {isButton2Selected && (
+          <VideoList
+            selectedVideos={selectedVideos}
+            selectVideo={selectVideo}
+          />
+        )}
         <Animated.View
           style={[
             styles.animatedToolBox,
@@ -98,13 +107,12 @@ class ToolRow extends Component {
             <Col size={25} style={styleApp.center3}>
               {this.button({
                 icon: {
-                  name: isButton2Selected ? 'close' : 'keyboard-arrow-left',
-                  type: isButton2Selected ? 'mat' : 'mat',
+                  name: isButton2Selected ? 'chevron-right' : 'chevron-left',
+                  type: isButton2Selected ? 'font' : 'font',
                   color: colors.greyDark,
-                  size: isButton2Selected ? 35 : 40,
+                  size: isButton2Selected ? 20 : 20,
                 },
-                // label: 'Select',
-                // backgroundColor: colors.white,
+
                 isSelected: isButton2Selected,
                 onPressColor: colors.off,
                 style: styles.button,
@@ -117,9 +125,9 @@ class ToolRow extends Component {
                   name: 'play',
                   type: 'moon',
                   color: colors.primary,
-                  size: 25,
+                  size: 20,
                 },
-                // label: 'Play',
+                label: 'Play',
                 backgroundColor: colors.white,
 
                 isSelected: selectedVideos.length > 0,
@@ -129,33 +137,34 @@ class ToolRow extends Component {
                 click: () => clickButton2({forceSelect: true}),
               })}
             </Col>
-            <Col size={25} style={styleApp.center}>
-              {this.button({
-                icon: {
-                  name: 'trash-alt',
-                  type: 'font',
-                  color: colors.primary,
-                  size: 25,
-                },
-                // label: 'Remove',
-                buttonDisabled: selectedVideos.length === 0,
-                backgroundColor: colors.white,
-                isSelected: selectedVideos.length > 0,
-                onPressColor: colors.off2,
-                style: styles.button,
-                click: () => clickButton3(),
-              })}
-            </Col>
+
             <Col size={25} style={styleApp.center}>
               {this.button({
                 icon: {
                   name: 'share',
                   type: 'moon',
                   color: colors.primary,
-                  size: 25,
+                  size: 20,
                 },
                 buttonDisabled: selectedVideos.length === 0,
-                // label: selectedVideos.length > 0 && 'Share',
+                label: 'Share',
+                backgroundColor: colors.white,
+                isSelected: selectedVideos.length > 0,
+                onPressColor: colors.off2,
+                style: styles.button,
+                click: () => clickButton3({}),
+              })}
+            </Col>
+            <Col size={25} style={styleApp.center}>
+              {this.button({
+                icon: {
+                  name: 'trash-alt',
+                  type: 'font',
+                  color: colors.primary,
+                  size: 20,
+                },
+                label: 'Remove',
+                buttonDisabled: selectedVideos.length === 0,
                 backgroundColor: colors.white,
                 isSelected: selectedVideos.length > 0,
                 onPressColor: colors.off2,
@@ -175,7 +184,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 75,
     width: '100%',
-    ...styleApp.shade,
+    ...styleApp.shadow,
     bottom: heightFooter + marginBottomApp + 10,
     right: 0,
     zIndex: 12,
@@ -185,7 +194,7 @@ const styles = StyleSheet.create({
     // borderTopWidth: 1,
     // borderBottomWidth: 1,
     borderWidth: 1,
-    width: 320,
+    width: 280,
     position: 'absolute',
     height: '100%',
     right: 0,

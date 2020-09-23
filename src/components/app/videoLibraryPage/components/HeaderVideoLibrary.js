@@ -26,12 +26,13 @@ class HeaderVideoLibrary extends Component {
       selectOnly,
       navigation,
       infoUser,
+      text,
     } = this.props;
     return (
       <View style={{zIndex: 11}}>
         <HeaderBackButton
           AnimatedHeaderValue={AnimatedHeaderValue}
-          textHeader={selectableMode?'Select videos':'Library'}
+          textHeader={text}
           inputRange={[20, 25]}
           loader={loader}
           initialBorderColorIcon={'white'}
@@ -39,10 +40,18 @@ class HeaderVideoLibrary extends Component {
           initialTitleOpacity={1}
           initialBorderWidth={1}
           initialBorderColorHeader={colors.off}
-          icon1={infoUser.picture ? infoUser.picture : 'profileFooter'}
-          sizeIcon1={infoUser.picture ? 40 : 23}
-          clickButton1={() => navigation.navigate('MorePage')}
-          typeIcon1={infoUser.picture ? 'image' : 'moon'}
+          icon1={
+            selectOnly
+              ? 'chevron-left'
+              : infoUser.picture
+              ? infoUser.picture
+              : 'profileFooter'
+          }
+          sizeIcon1={selectOnly ? 23 : infoUser.picture ? 40 : 23}
+          clickButton1={() =>
+            selectOnly ? navigation.goBack() : navigation.navigate('MorePage')
+          }
+          typeIcon1={selectOnly ? 'font' : infoUser.picture ? 'image' : 'moon'}
           // iconOffset={selectableMode && !selectOnly && 'user-plus'}
           //  typeIconOffset="font"
           //   sizeIconOffset={16}

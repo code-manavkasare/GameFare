@@ -45,6 +45,7 @@ import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
 import ToolRow from './components/ToolRow';
+import {store} from '../../../../reduxStore';
 const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {
@@ -65,10 +66,10 @@ class VideoLibraryPage extends Component {
     this.componentDidMount = this.componentDidMount.bind(this);
   }
   componentDidMount() {
-    const {navigation, currentSessionID} = this.props;
+    const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
-
+      const currentSessionID = store.getState().coach.currentSessionID;
       if (currentSessionID) this.setState({selectableMode: true});
     });
   }
@@ -92,18 +93,11 @@ class VideoLibraryPage extends Component {
 
   toggleSelectable() {
     const {selectableMode} = this.state;
-    if (selectableMode) {
-      this.setState({
-        selectedVideos: [],
-        selectableMode: false,
-      });
-    } else {
-      this.setState({selectableMode: true});
-    }
+    this.setState({selectableMode: !selectableMode});
   }
   playSelectedVideos = () => {
     const {selectedVideos} = this.state;
- 
+
     openVideoPlayer({
       archives: selectedVideos,
       open: true,
@@ -254,13 +248,19 @@ class VideoLibraryPage extends Component {
   }
 
   listVideos() {
-    const {videosArray, selectOnly, selectedVideos} = this.state;
+    const {
+      videosArray,
+      selectOnly,
+      selectedVideos,
+      selectableMode,
+    } = this.state;
 
     // const personSharingScreen = isSomeoneSharingScreen(coachSession);
     // const videosBeingShared = getVideosSharing(
     //   coachSession,
     //   personSharingScreen,
     // );
+    const selectMargin = selectableMode ? 80 : 0;
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -270,10 +270,12 @@ class VideoLibraryPage extends Component {
           }
           numColumns={3}
           incrementRendering={12}
-          initialNumberToRender={12}
+          initialNumberToRender={15}
           showsVerticalScrollIndicator={false}
           paddingBottom={
-            selectOnly ? 0 : sizes.heightFooter + sizes.marginBottomApp + 110
+            selectOnly
+              ? 0
+              : sizes.heightFooter + sizes.marginBottomApp + 110 + selectMargin
           }
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
@@ -286,7 +288,7 @@ class VideoLibraryPage extends Component {
       selectedVideos.filter((idVideo) => idVideo === videoID).length !== 0;
 
     let styleBorder = {};
- 
+
     if ((Number(index) + 1) % 3 === 0)
       styleBorder = {
         borderLeftWidth: 1.5,
@@ -331,6 +333,13 @@ class VideoLibraryPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
           selectOnly={selectOnly}
+          text={
+            !selectableMode
+              ? 'Library'
+              : selectedVideos.length > 0
+              ? `${selectedVideos.length} videos`
+              : 'Select video'
+          }
           selectableMode={selectableMode}
           addFromCameraRoll={this.addFromCameraRoll.bind(this)}
           isListEmpty={videosArray.length === 0}
@@ -362,18 +371,21 @@ class VideoLibraryPage extends Component {
           </View>
         )}
 
-        <ToolRow
-          onRef={(ref) => {
-            this.toolRowRef = ref;
-          }}
-          clickButton1={this.toggleSelectable.bind(this)}
-          isButton2Selected={selectableMode}
-          clickButton3={() => this.deleteSelectedVideos()}
-          clickButton4={() => this.shareSelectedVideos()}
-          clickButton2={() => this.playSelectedVideos()}
-          selectedVideos={selectedVideos}
-          addFromCameraRoll={this.addFromCameraRoll.bind(this)}
-        />
+        {!selectOnly && (
+          <ToolRow
+            onRef={(ref) => {
+              this.toolRowRef = ref;
+            }}
+            clickButton1={this.toggleSelectable.bind(this)}
+            isButton2Selected={selectableMode}
+            clickButton4={() => this.deleteSelectedVideos()}
+            clickButton3={() => this.shareSelectedVideos()}
+            clickButton2={() => this.playSelectedVideos()}
+            selectedVideos={selectedVideos}
+            addFromCameraRoll={this.addFromCameraRoll.bind(this)}
+            selectVideo={this.selectVideo.bind(this)}
+          />
+        )}
       </View>
     );
   }

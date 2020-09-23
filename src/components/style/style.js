@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
   },
+  shadowWhite: {
+    shadowColor: colors.off,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+  },
   shadowWeak: {
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 0},
@@ -56,10 +62,10 @@ const styles = StyleSheet.create({
   },
   divider2: {
     height: 1,
-    width: '90%',
+    width: '100%',
     marginTop: 10,
     marginBottom: 10,
-    marginLeft: '5%',
+    // marginLeft: '5%',
     backgroundColor: colors.off,
   },
   cardEventSM: {

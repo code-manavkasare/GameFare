@@ -32,10 +32,12 @@ class ButtonShareVideo extends Component {
     } = this.props;
 
     let updates = {};
-
+    console.log('archives', archives);
     for (let i in archives) {
       const {id, local} = archives[i];
+      console.log('{id, local}', {id, local});
       const stateVideo = getVideoState(i);
+      console.log('stateVideo', stateVideo);
 
       if (value) {
         updates[
@@ -70,14 +72,20 @@ class ButtonShareVideo extends Component {
         ] = null;
       }
     }
-
+    console.log(
+      'ou pa',
+      Object.values(archives).reduce(function(result, item) {
+        result[item.id] = true;
+        return result;
+      }, {}),
+    );
     updates[
       `coachSessions/${coachSessionID}/members/${userID}/sharedVideos`
-    ] = archives.reduce(function(result, item) {
+    ] = Object.values(archives).reduce(function(result, item) {
       result[item.id] = true;
       return result;
     }, {});
-
+    console.log('bim updates', updates);
     await database()
       .ref()
       .update(updates);
