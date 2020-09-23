@@ -64,6 +64,7 @@ class FlatListComponent extends Component {
       onScrollEndDrag,
       onScrollBeginDrag,
       onScroll,
+      noLazy,
     } = this.props;
 
     const containerStyle = {
@@ -75,6 +76,7 @@ class FlatListComponent extends Component {
     };
 
     const viewLoader = () => {
+      if (noLazy) return null;
       return (
         <View style={[styleApp.center, {height: 35, marginTop: 20}]}>
           <Loader size={40} color={colors.grey} />
@@ -83,7 +85,7 @@ class FlatListComponent extends Component {
     };
     return (
       <FlatList
-        data={list.slice(0, numberToRender)}
+        data={noLazy ? list : list.slice(0, numberToRender)}
         renderItem={({item, index}) => cardList({item, index})}
         ListFooterComponent={() =>
           list.length > numberToRender && list.length !== 0 && viewLoader()
@@ -99,7 +101,6 @@ class FlatListComponent extends Component {
         refreshControl={refreshControl}
         onScrollEndDrag={onScrollEndDrag}
         onScrollBeginDrag={onScrollBeginDrag}
- 
         contentContainerStyle={containerStyle}
         ListHeaderComponent={header}
         ListHeaderComponentStyle={{

@@ -36,7 +36,11 @@ const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const createCoachSessionFromUserIDs = async (organizerID, otherIDs, sessionID = null) => {
+const createCoachSessionFromUserIDs = async (
+  organizerID,
+  otherIDs,
+  sessionID = null,
+) => {
   const otherInfos = await Promise.all(
     otherIDs.map((id) => getOnceValue(`users/${id}/userInfo`)),
   );
@@ -725,7 +729,7 @@ const searchSessionsForString = (search) => {
 };
 
 const selectVideosFromLibrary = (coachSessionID) => {
-  console.log('selectVideosFromLibrary', coachSessionID);
+
   navigate('SelectVideosFromLibrary', {
     selectableMode: true,
     selectOnly: true,
@@ -744,7 +748,9 @@ const isVideosAreBeingShared = ({session, archives, userIDSharing}) => {
   if (!videos) {
     return false;
   }
-  const currentArchives = archives.map((archive) => archive.id).sort();
+  const currentArchives = Object.values(archives)
+    .map((archive) => (archive.id ? archive.id : archive))
+    .sort();
   return isEqual(Object.keys(videos).sort(), currentArchives);
 };
 

@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
@@ -104,36 +104,7 @@ class CardArchive extends PureComponent {
       });
     }
   };
-  playButton(archive) {
-    const {isSelected, selectableMode, hidePlayIcon} = this.props;
-    const {id} = archive;
-    const buttonStyle = [
-      {position: 'absolute', opacity: 0.9, bottom: 15, right: 15},
-    ];
-    return (
-      <ButtonColor
-        view={() => {
-          return (
-            !selectableMode &&
-            !hidePlayIcon && (
-              <AllIcons
-                name="play"
-                type="font"
-                color={colors.white}
-                size={12}
-              />
-            )
-          );
-        }}
-        click={() =>
-          selectableMode ? this.selectVideo(id, !isSelected) : this.openVideo()
-        }
-        color={'transparent'}
-        onPressColor={colors.grey + '20'}
-        style={buttonStyle}
-      />
-    );
-  }
+
   localIndicator() {
     const {archive, showUploadProgress} = this.props;
     const {local, progress} = archive;
@@ -186,8 +157,46 @@ class CardArchive extends PureComponent {
       />
     );
   }
+  buttonDismiss = () => {
+    const {clickButtonDismiss} = this.props;
+    if (!clickButtonDismiss) return null;
+    const styleButton = {
+      position: 'absolute',
+      top: -10,
+      right: 5,
+      zIndex: 40,
+      ...styleApp.shade,
+      // backgroundColor: colors.red + '0',
+      ...styleApp.center,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.grey,
+      height: 25,
+      width: 25,
+    };
+    return (
+      <ButtonColor
+        view={() => {
+          return (
+            <AllIcons name={'minus'} type="font" size={12} color={colors.red} />
+          );
+        }}
+        style={[styleButton, styleApp.shadowWhite]}
+        click={() => clickButtonDismiss()}
+        color={colors.white}
+        onPressColor={colors.off}
+      />
+    );
+  };
   cardArchive(archive) {
-    const {isSelected, style, selectableMode, showUploadProgress} = this.props;
+    const {
+      isSelected,
+      hideInformation,
+      style,
+      selectableMode,
+      showUploadProgress,
+      unclickable,
+    } = this.props;
     const {
       id,
       thumbnail,
@@ -198,75 +207,92 @@ class CardArchive extends PureComponent {
     } = archive;
     const {loader} = this.state;
     return (
-      <TouchableWithoutFeedback
+      <TouchableOpacity
+        activeOpacity={0.8}
         onPress={() =>
-          selectableMode ? this.selectVideo(id, !isSelected) : this.openVideo()
+          unclickable
+            ? true
+            : selectableMode
+            ? this.selectVideo(id, !isSelected)
+            : this.openVideo()
         }>
+        {this.buttonDismiss()}
         <View style={[styles.cardArchive, style]}>
           {local ? (
             <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
           ) : (
             <AsyncImage
-              style={styleApp.fullSize}
+              style={{...styleApp.fullSize}}
               mainImage={thumbnail ? thumbnail : ''}
             />
           )}
-          <View
-            pointerEvents="none"
-            style={{
-              ...styles.viewText,
-              // ...styleApp.marginView,
+          {selectableMode && (
+            <View
+              pointerEvents="none"
+              style={{
+                ...styles.viewText,
+                ...styleApp.fullSize,
+                backgroundColor: isSelected
+                  ? colors.grey + '30'
+                  : 'transparent',
+              }}>
+              <Row>
+                <Col style={styleApp.center}>
+                  {loader ? (
+                    <Loader size={25} color={colors.white} />
+                  ) : isSelected ? (
+                    <AllIcons
+                      name={'check'}
+                      type="font"
+                      size={23}
+                      color={colors.white}
+                      solid={isSelected ? true : false}
+                    />
+                  ) : selectableMode ? (
+                    <AllIcons
+                      name={'circle'}
+                      type="font"
+                      size={23}
+                      color={colors.white}
+                      solid={isSelected ? true : false}
+                    />
+                  ) : null}
+                </Col>
+              </Row>
+            </View>
+          )}
 
-              // padding: 13,
-              ...styleApp.fullSize,
-              backgroundColor: isSelected ? colors.off + '80' : 'transparent',
-            }}>
-            <Row>
-              <Col style={styleApp.center}>
-                {loader ? (
-                  <Loader size={25} color={colors.white} />
-                ) : isSelected ? (
-                  <AllIcons
-                    name={'check'}
-                    type="font"
-                    size={23}
-                    color={colors.white}
-                    solid={isSelected ? true : false}
-                  />
-                ) : null}
-              </Col>
-            </Row>
-          </View>
-
-          {this.linearGradient()}
+          {!hideInformation && this.linearGradient()}
           {this.localIndicator()}
 
-          <View
-            pointerEvents="none"
-            style={{...styles.viewText, bottom: 5, left: 10}}>
-            <Col>
-              <Text
-                style={[
-                  styleApp.textBold,
-                  {color: colors.white, fontSize: 13},
-                ]}>
-                {formatDuration(durationSeconds * 1000, true)}
-              </Text>
-              <Text
-                style={[
-                  styleApp.textBold,
-                  {color: colors.white, fontSize: 11},
-                ]}>
-                {showUploadProgress && progress ? (
-                  'Uploading...'
-                ) : (
-                  <FormatDate date={startTimestamp} short />
-                )}
-              </Text>
-            </Col>
-          </View>
+          {!hideInformation && (
+            <View
+              pointerEvents="none"
+              style={{...styles.viewText, bottom: 5, left: 10}}>
+              <Col>
+                <Text
+                  style={[
+                    styleApp.textBold,
+                    {color: colors.white, fontSize: 13},
+                  ]}>
+                  {formatDuration(durationSeconds * 1000, true)}
+                </Text>
+                <Text
+                  style={[
+                    styleApp.textBold,
+                    {color: colors.white, fontSize: 11},
+                  ]}>
+                  {showUploadProgress && progress ? (
+                    'Uploading...'
+                  ) : (
+                    <FormatDate date={startTimestamp} short />
+                  )}
+                </Text>
+              </Col>
+            </View>
+          )}
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     );
   }
   render() {

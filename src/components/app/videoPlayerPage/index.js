@@ -107,6 +107,7 @@ class VideoPlayerPage extends Component {
     let personSharingScreen = false;
     if (session) {
       personSharingScreen = isSomeoneSharingScreen(session);
+
       videosBeingShared = isVideosAreBeingShared({
         session,
         archives,
@@ -618,14 +619,16 @@ class VideoPlayerPage extends Component {
   };
 
   singlePlayer = (videoInfo, i) => {
+    const {archives} = this.state;
     const {session, videoInfos, currentSessionID: coachSessionID} = this.props;
     let videosBeingShared = false;
     let personSharingScreen = false;
     if (session) {
       personSharingScreen = isSomeoneSharingScreen(session);
+
       videosBeingShared = isVideosAreBeingShared({
         session,
-        videoInfos,
+        archives,
         userIDSharing: personSharingScreen,
       });
     }
@@ -662,7 +665,7 @@ class VideoPlayerPage extends Component {
       <SinglePlayer
         index={i}
         key={i}
-        id={videoInfo.id}
+        id={archiveID}
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
         numArchives={numArchives}
@@ -693,7 +696,12 @@ class VideoPlayerPage extends Component {
         archives={videoInfos}
         coachSessionID={currentSessionID}
         togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
-        getVideoState={(i) => this.videoPlayerRefs[i].getState()}
+        getVideoState={(id) => {
+          const index = Object.values(videoInfos).findIndex(
+            (item) => item.id === id,
+          );
+          return this.videoPlayerRefs[index].getState();
+        }}
       />
     );
   };
@@ -808,7 +816,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   const {currentSessionID} = state.coach;
- 
+
   return {
     userID: state.user.userID,
     session: state.coachSessions[currentSessionID],

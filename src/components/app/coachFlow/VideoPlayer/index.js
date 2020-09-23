@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Animated, Image} from 'react-native';
+import {View, Animated, Image, Dimensions} from 'react-native';
 import Video from 'gamefare-rn-video';
 import PropTypes from 'prop-types';
 
@@ -321,7 +321,7 @@ export default class VideoPlayer extends Component {
       buttonTopRight,
       index,
       setScale,
-      width,
+
       seekbarSize,
       disableControls,
       pinchEnable,
@@ -344,6 +344,7 @@ export default class VideoPlayer extends Component {
       seekbarLoaded,
       allowRecording,
     } = this.state;
+    const {height, width} = Dimensions.get('screen');
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight && buttonTopRight()}
@@ -354,15 +355,22 @@ export default class VideoPlayer extends Component {
             styleApp.center,
             {backgroundColor: colors.black},
           ]}>
-          {(videoLoading || !seekbarLoaded) && this.fullScreenLoader()}
-          {!videoLoaded ||
-            (!seekbarLoaded && (
-              <AsyncImage
-                resizeMode={'contain'}
-                style={[styleApp.fullSize, {position: 'absolute', zIndex: -2}]}
-                mainImage={thumbnail}
-              />
-            ))}
+          {videoLoading && this.fullScreenLoader()}
+          {!videoLoaded && (
+            <AsyncImage
+              resizeMode={'contain'}
+              style={[
+                {
+                  position: 'absolute',
+                  zIndex: 20,
+                  height,
+                  width,
+                },
+              ]}
+              mainImage={thumbnail}
+            />
+          )}
+
           <PinchableBox
             styleContainer={[styleApp.fullSize, styleApp.center]}
             onRef={(ref) => (this.PinchableBoxRef = ref)}
