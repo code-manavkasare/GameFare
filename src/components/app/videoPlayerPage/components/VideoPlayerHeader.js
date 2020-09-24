@@ -60,6 +60,22 @@ export default class VideoPlayerHeader extends React.Component {
           editModeOff();
         }
       },
+      icon11: 'open-with',
+      colorIcon11: colors.white,
+      typeIcon11: 'mat',
+      backgroundColorIcon11: !isDrawingEnabled
+        ? colors.secondary
+        : colors.title + '70',
+      sizeIcon11: 19,
+      clickButton11: () => setState({isDrawingEnabled: false}),
+      icon12: 'gesture',
+      colorIcon12: colors.white,
+      typeIcon12: 'mat',
+      sizeIcon12: 19,
+      backgroundColorIcon12: isDrawingEnabled
+        ? colors.secondary
+        : colors.title + '70',
+      clickButton12: () => setState({isDrawingEnabled: true}),
     };
     return isEditMode ? (
       <HeaderBackButton {...sharedProps} />
@@ -73,22 +89,6 @@ export default class VideoPlayerHeader extends React.Component {
         clickButtonOffset={() => addVideo()}
         typeIconOffset={'font'}
         {...sharedProps}
-        icon11={'open-with'}
-        colorIcon11={colors.white}
-        typeIcon11={'mat'}
-        backgroundColorIcon11={
-          !isDrawingEnabled ? colors.secondary : colors.title + '70'
-        }
-        sizeIcon11={19}
-        clickButton11={() => setState({isDrawingEnabled: false})}
-        icon12={'gesture'}
-        colorIcon12={colors.white}
-        typeIcon12={'mat'}
-        sizeIcon12={19}
-        backgroundColorIcon12={
-          isDrawingEnabled ? colors.secondary : colors.title + '70'
-        }
-        clickButton12={() => setState({isDrawingEnabled: true})}
       />
     );
   }
