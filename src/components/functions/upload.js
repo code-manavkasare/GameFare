@@ -1,61 +1,56 @@
 import storage from '@react-native-firebase/storage';
+
 import {store} from '../../../reduxStore';
 import {setUploadTaskError} from '../../actions/uploadQueueActions';
 import {setArchive} from '../../actions/archivesActions';
 import {updateCloudUploadProgress} from '../database/firebase/videosManagement';
 
 const defaultVideoFilename = 'archive.mp4';
+const videoContentType = 'video/mp4';
 const defaultImageFilename = 'image.jpg';
+const imageContentType = 'image/jpeg';
+const defaultRecordAudioFilename = 'audioRecord.mp4';
+const audioRecordContentType = 'audio/mp4';
 
 const sortUploadTasks = (uploadTasks) => {
   return uploadTasks.sort((a, b) => a.timeSubmitted - b.timeSubmitted);
 };
 
-const uploadVideo = (uploadTask) => {
+const uploadFile = (uploadTask) => {
+  const {url, videoInfo, storageDestination, onProgress, type} = uploadTask;
+  let contentType = '';
+  let localUrl = '';
   if (uploadTask && !uploadTask.filename) {
-    uploadTask.filename = defaultVideoFilename;
+    switch (type) {
+      case 'video':
+        uploadTask.filename = defaultVideoFilename;
+        contentType = videoContentType;
+        localUrl = videoInfo.url;
+        break;
+      case 'image':
+        uploadTask.filename = defaultImageFilename;
+        contentType = imageContentType;
+        localUrl = url;
+        break;
+      case 'audioRecord':
+        uploadTask.filename = defaultRecordAudioFilename;
+        contentType = audioRecordContentType;
+        localUrl = url;
+        break;
+      default:
+        console.log(
+          `${type} is not a valid type, check upload.js>uploadFile()`,
+        );
+    }
   }
 
-  const {videoInfo, storageDestination, filename, onProgress} = uploadTask;
-  const {url} = videoInfo;
-  if (url) {
-    const videoRef = storage()
+  if (localUrl) {
+    const fileRef = storage()
       .ref(storageDestination)
-      .child(filename);
-    const firebaseUploadTask = videoRef.putFile(url, {
-      contentType: 'video',
-      cacheControl: 'no-store',
-    });
-    return {
-      firebaseUploadTask,
-      uploadComplete: new Promise((resolve, reject) => {
-        firebaseUploadTask.on(storage.TaskEvent.STATE_CHANGED, {
-          next: (snapshot) => uploadNext(snapshot, onProgress),
-          error: (error) => {
-            uploadError(error, uploadTask);
-            reject(error);
-          },
-          complete: async () => {
-            const cloudUrl = await uploadComplete(uploadTask);
-            resolve(cloudUrl);
-          },
-        });
-      }),
-    };
-  }
-};
-
-const uploadImage = (uploadTask) => {
-  if (uploadTask && !uploadTask.filename) {
-    uploadTask.filename = defaultImageFilename;
-  }
-  const {url, storageDestination, filename, onProgress} = uploadTask;
-  if (url) {
-    const imageRef = storage()
-      .ref(storageDestination)
-      .child(filename);
-    const firebaseUploadTask = imageRef.putFile(url, {
-      contentType: 'image/jpeg',
+      .child(uploadTask.filename);
+    console.log(`uploading to ${storageDestination}/${uploadTask.filename}`);
+    const firebaseUploadTask = fileRef.putFile(localUrl, {
+      contentType,
       cacheControl: 'no-store',
     });
     return {
@@ -108,4 +103,7 @@ const uploadComplete = async (uploadTask) => {
   return cloudUrl;
 };
 
-module.exports = {uploadVideo, uploadImage, sortUploadTasks};
+module.exports = {
+  uploadFile,
+  sortUploadTasks,
+};
