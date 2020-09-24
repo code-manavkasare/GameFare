@@ -1,22 +1,27 @@
 import React, {Component} from 'react';
 import {View, Animated, Text} from 'react-native';
 import {connect} from 'react-redux';
-
-import ButtonColor from '../../../../layout/Views/Button';
 import {Row, Col} from 'react-native-easy-grid';
-import styleApp from '../../../../style/style';
-import colors from '../../../../style/colors';
-import {native} from '../../../../animations/animations';
-import AsyncImage from '../../../../layout/image/AsyncImage';
-import AllIcon from '../../../../layout/icons/AllIcons';
-import {openSession} from '../../../../functions/coach';
-import {navigate} from '../../../../../../NavigationService';
+
+import {navigate} from '../../../../../NavigationService';
+
+import styleApp from '../../../style/style';
+import colors from '../../../style/colors';
+
+import {native} from '../../../animations/animations';
+
+import {openSession} from '../../../functions/coach';
+
+import ButtonColor from '../../../layout/Views/Button';
+import AsyncImage from '../../../layout/image/AsyncImage';
+import AllIcon from '../../../layout/icons/AllIcons';
 
 class UserSearchResult extends Component {
   constructor(props) {
     super(props);
     this.state = {loader: false};
     this.selectionIndication = new Animated.Value(0);
+    this.index = null;
   }
 
   componentDidMount = async () => {
@@ -48,6 +53,7 @@ class UserSearchResult extends Component {
       },
     );
   }
+
   styleCard = () => {
     const callButtonStyle = {
       borderRadius: 25,
@@ -109,17 +115,13 @@ class UserSearchResult extends Component {
       callButtonStyle,
     };
   };
+
   isUserInvitable = () => {
     const {silentFriends, user} = this.props;
     const {isPrivate} = user.info;
-    if (!isPrivate) {
-      return true;
-    }
-    if (silentFriends[user.id]) {
-      return true;
-    }
-    return false;
+    return !isPrivate || silentFriends[user.id];
   };
+
   openConversation = async (user) => {
     const {userID, infoUser} = this.props;
     const session = await openSession(
@@ -130,6 +132,7 @@ class UserSearchResult extends Component {
       coachSessionID: session.objectID,
     });
   };
+
   userCard = (user) => {
     const {invite} = this.props;
     const animatedReverse = this.selectionIndication.interpolate({
@@ -137,7 +140,6 @@ class UserSearchResult extends Component {
       outputRange: [1, 0],
     });
     const isUserInvitable = this.isUserInvitable();
-
     const {
       buttonStyle,
       selectionIndicationOverlayStyle,
@@ -154,8 +156,9 @@ class UserSearchResult extends Component {
           color={colors.white}
           onPressColor={colors.white}
           click={async () => {
-            if (!isUserInvitable) return this.openConversation(user);
-
+            if (!isUserInvitable) {
+              return this.openConversation(user);
+            }
             const status = await invite({
               user,
               init: false,

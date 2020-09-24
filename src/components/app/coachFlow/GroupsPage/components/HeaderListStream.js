@@ -5,6 +5,8 @@ import {navigate, goBack} from '../../../../../../NavigationService';
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 
+import {createInviteToAppBranchUrl} from '../../../../database/branch';
+
 class HeaderListStream extends Component {
   constructor(props) {
     super(props);
@@ -42,16 +44,15 @@ class HeaderListStream extends Component {
         typeIcon2="font"
         sizeIcon2={21}
         colorIcon2={colors.title}
-        clickButton2={() =>
-          navigate('ModalPeople', {
-            modal: true,
-            hideGroups: true,
+        clickButton2={async () => {
+          const branchLink = await createInviteToAppBranchUrl();
+          navigate('UserDirectory', {
             action: 'message',
             actionText: 'Message',
-            actionIcon: 'edit',
-            titleText: 'Message',
-            titleIcon: 'comment-alt',
-          })
+            branchLink,
+          });
+        }
+
         }
         icon1={'chevron-left'}
         sizeIcon1={21}

@@ -392,10 +392,9 @@ const openSession = async (user, members) => {
   allMembers.push(user.id);
   let session = Object.values(allSessions)
     .filter((session) => session.members)
-    .filter((session) =>
-      isEqual(Object.keys(session.members).sort(), allMembers.sort()),
-    );
-
+    .filter((session) => {
+      return isEqual(Object.keys(session.members).sort(), allMembers.sort());
+    });
   if (session.length !== 0) {
     return session[0];
   }

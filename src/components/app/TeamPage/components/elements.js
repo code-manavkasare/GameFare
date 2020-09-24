@@ -189,7 +189,6 @@ const titleSession = (session, size, short) => {
           (members.length - 1) +
           ' other' +
           (members.length !== 2 ? 's' : '');
-    console.log(string);
     return string;
   }
 

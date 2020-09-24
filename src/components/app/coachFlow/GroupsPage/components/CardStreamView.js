@@ -39,8 +39,15 @@ import {
 
 class CardStream extends Component {
   static propTypes = {
-    coachSessionID: PropTypes.string,
+    coachSessionID: PropTypes.string.isRequired,
+    selected: PropTypes.bool,
+    onClick: PropTypes.func,
   };
+
+  static defaultProps = {
+    selected: false,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -49,6 +56,11 @@ class CardStream extends Component {
       hasNotification: false,
     };
     this.selectionIndication = new Animated.Value(0);
+  }
+
+  _defaultClick() {
+    const {coachSessionID} = this.props;
+    navigate('Conversation', {coachSessionID});
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -64,17 +76,23 @@ class CardStream extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    const {coachSessionID, invite, session} = this.props;
+    const {coachSessionID} = this.props;
     bindSession(coachSessionID);
     bindConversation(coachSessionID);
-    if (invite) {
-      this.selected = await invite({session, init: true});
-    }
     if (this.selected) {
-      Animated.timing(this.selectionIndication, native(1, 50)).start();
+      this.toggleSelected(1);
     }
   };
-  componentDidUpdate() {}
+
+  componentDidUpdate(prevProps, prevState) {
+    const {selected} = this.props;
+    const {selected: prevSelected} = prevProps;
+    if (selected && !prevSelected) {
+      this.toggleSelected(1);
+    } else if (!selected && prevSelected) {
+      this.toggleSelected(0);
+    }
+  }
   // componentWillUnmount() {
   //   const {coachSessionID} = this.props;
   //   unbindSession(coachSessionID);
@@ -112,7 +130,7 @@ class CardStream extends Component {
       session,
       messages,
       recentView,
-      invite,
+      onClick,
       hideCallButton,
       style,
       key,
@@ -161,10 +179,9 @@ class CardStream extends Component {
         <ButtonColor
           color={'transparent'}
           onPressColor={'transparent'}
-          click={async () => {
-            if (invite) {
-              const status = await invite({session, insert: true});
-              this.toggleSelected(status);
+          click={() => {
+            if (onClick) {
+              onClick(session);
             } else {
               navigate('Conversation', {coachSessionID: coachSessionID});
             }

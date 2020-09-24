@@ -8,7 +8,8 @@ import ListCountry from '../login/elementsFlags/ListCountry';
 import Payments from './MainApp/components/Payments';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import Coaches from './MainApp/components/Coaches';
-import People from '../app/coachFlow/PeoplePage';
+import CallTabPage from '../app/callTab';
+import UserDirectoryPage from '../app/userDirectory';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -52,7 +53,10 @@ function InitialStack() {
 
       {/* <Stack.Screen name="ProfilePage" component={ProfilePage} /> */}
 
-      <Stack.Screen name="ModalPeople" component={People} initialParams={{modal: true}}/>
+      <Stack.Screen name="ModalCallTab" component={CallTabPage} />
+
+      <Stack.Screen name="UserDirectory" component={UserDirectoryPage}/>
+
 
       <Stack.Screen
         name="Coaches"

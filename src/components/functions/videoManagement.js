@@ -154,7 +154,6 @@ const openVideoPlayer = async ({archives, open, coachSessionID}) => {
 
 const uploadLocalVideo = async (videoID, background) => {
   const videoInfo = store.getState().archives[videoID];
-  console.log('uploading local video', videoInfo);
   if (videoInfo) {
     if (videoInfo.local) {
       const videoUploadTaskID = generateID();
@@ -162,7 +161,6 @@ const uploadLocalVideo = async (videoID, background) => {
       const success = await createCloudVideo(videoInfo);
       if (success) {
         if (videoInfo.thumbnail.substring(0, 4) !== 'http') {
-          console.log('uploading thumbnail', videoInfo.thumbnail);
           store.dispatch(
             enqueueUploadTask({
               type: 'image',
@@ -175,7 +173,6 @@ const uploadLocalVideo = async (videoID, background) => {
             }),
           );
         } else {
-          console.log('setting cloud thumbnail', videoInfo.thumbnail);
           setCloudVideoThumbnail(videoID, videoInfo.thumbnail);
         }
         store.dispatch(
