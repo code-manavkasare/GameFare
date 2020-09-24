@@ -8,19 +8,17 @@ import {
   Image,
 } from 'react-native';
 import {connect} from 'react-redux';
-import FadeInView from 'react-native-fade-in-view';
-const {height, width} = Dimensions.get('screen');
+
+import colors from '../../../style/colors';
+import styleApp from '../../../style/style';
 
 import {
   goToSettings,
   microphonePermission,
   cameraPermission,
-} from '../../../../functions/streaming';
+} from '../../../functions/streaming';
 
-import colors from '../../../../style/colors';
-import styleApp from '../../../../style/style';
-
-class GroupsPage extends Component {
+class PermissionView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -119,4 +117,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)(GroupsPage);
+)(PermissionView);

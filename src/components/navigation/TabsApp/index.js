@@ -4,8 +4,7 @@ import isEqual from 'lodash.isequal';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import Footer from './footer/index';
-import People from './components/People';
-
+import CallTabPage from '../../app/callTab';
 import Session from './components/Session';
 import VideoLibrary from './components/VideoLibrary';
 
@@ -67,8 +66,8 @@ class TabsApp extends React.Component {
         />
 
         <Tab.Screen
-          name="People"
-          component={People}
+          name="CallTab"
+          component={CallTabPage}
           options={{
             pageStack: 'GroupsPage',
             label: 'Call',

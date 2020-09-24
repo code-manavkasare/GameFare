@@ -1,67 +1,35 @@
 import React, {Component} from 'react';
-import {View, Animated, Text, TextInput} from 'react-native';
+import {View, Animated, Text, TextInput, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import SearchResults from './SearchResults';
-import AllIcon from '../../../../layout/icons/AllIcons';
-import ButtonColor from '../../../../layout/Views/Button';
 import {Row} from 'react-native-easy-grid';
-import styleApp from '../../../../style/style';
-import colors from '../../../../style/colors';
-import sizes from '../../../../style/sizes';
-import {navigate} from '../../../../../../NavigationService';
-import {native} from '../../../../animations/animations';
+import PropTypes from 'prop-types';
 
-class Search extends Component {
+import styleApp from '../../../style/style';
+import colors from '../../../style/colors';
+import sizes from '../../../style/sizes';
+
+import AllIcon from '../../../layout/icons/AllIcons';
+import ButtonColor from '../../../layout/Views/Button';
+
+class SearchInput extends Component {
+  static propTypes = {
+    search: PropTypes.func.isRequired,
+  }
+  
   constructor(props) {
     super(props);
-    this.state = {
-      visible: false,
-      yOffset: 0,
-    };
-    this.revealSearchMenu = new Animated.Value(0);
-    this.popSearchBar = new Animated.Value(0);
+    this.state = {};
   }
 
   componentDidMount() {
-    if (this.props.onRef) {
-      this.props.onRef(this);
+    const {onRef} = this.props;
+    if (onRef) {
+      onRef(this);
     }
-  }
-
-  animate(val, y) {
-    const {onClose} = this.props;
-    const visible = !this.state.visible;
-    if (!visible) {
-      this.textInputRef?.clear();
-      this.textInputRef?.blur();
-    }
-    if (y) {
-      const yOffset = Math.floor(y - 30 - sizes.marginTopApp);
-      this.setState({yOffset});
-    }
-    Animated.timing(
-      this.popSearchBar,
-      native(val, 0, val === 1 ? 0 : 350),
-    ).start();
-    Animated.timing(this.revealSearchMenu, native(val)).start(() => {
-      this.setState({visible});
-      if (!visible) {
-        this.textInputRef?.clear();
-        this.resultsRef?.search('');
-        onClose();
-      } else {
-        this.textInputRef?.focus();
-        this.resultsRef?.search('');
-      }
-    });
   }
 
   search = (text) => {
-    this.resultsRef?.search(text);
-  };
-
-  resetInvites = () => {
-    this.resultsRef?.resetInvites();
+    this.props.search(text);
   };
 
   searchBar = () => {
@@ -70,7 +38,7 @@ class Search extends Component {
       ...styleApp.center2,
       paddingLeft: 25,
       height: 50,
-      opacity: this.popSearchBar,
+      opacity: 1,
       width: '90%',
       borderRadius: 15,
       backgroundColor: colors.greyLight,
@@ -99,7 +67,7 @@ class Search extends Component {
       width: 30,
     };
     return (
-      <Animated.View style={searchBarStyle}>
+      <View style={searchBarStyle}>
         <Row style={rowStyle}>
           <AllIcon
             name={'search'}
@@ -158,47 +126,18 @@ class Search extends Component {
             style={buttonStyle}
           />
         </Animated.View>
-      </Animated.View>
+      </View>
     );
   };
 
   render() {
-    const {visible, yOffset} = this.state;
-    const {invite} = this.props;
-    const translateY = this.revealSearchMenu.interpolate({
-      inputRange: [0, 1],
-      outputRange: [yOffset, 50],
-    });
-    const containerStyle = {
-      ...styleApp.fullSize,
-      position: 'absolute',
-      backgroundColor: 'transparent',
-      transform: [{translateY}],
-    };
-    const backdropStyle = {
-      ...styleApp.fullSize,
-      position: 'absolute',
-      backgroundColor: colors.white,
-      zIndex: -1,
-      opacity: this.revealSearchMenu,
-    };
-    return (
-      <Animated.View
-        pointerEvents={visible ? 'auto' : 'none'}
-        style={containerStyle}>
-        {this.searchBar()}
-        <Animated.View style={backdropStyle}>
-          <SearchResults
-            onRef={(ref) => {
-              this.resultsRef = ref;
-            }}
-            invite={invite}
-          />
-        </Animated.View>
-      </Animated.View>
-    );
+    return this.searchBar();
   }
 }
+
+const styles = StyleSheet.create({
+  
+});
 
 const mapStateToProps = (state) => {
   return {
@@ -211,4 +150,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)(Search);
+)(SearchInput);

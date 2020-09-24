@@ -107,15 +107,11 @@ class VideoLibraryPage extends Component {
     const {selectedVideos} = this.state;
     const {navigation} = this.props;
     if (selectedVideos.length > 0) {
-      navigation.navigate('ModalPeople', {
+      navigation.navigate('ModalCallTab', {
         modal: true,
-        sharingVideos: selectedVideos,
-        action: 'shareVideos',
-        actionIcon: 'share',
+        archivesToShare: selectedVideos,
+        action: 'shareArchives',
         actionText: 'Share with',
-        titleText: selectedVideos.length > 1 ? 'Share videos' : 'Share video',
-        titleIcon: 'video',
-        navigationTarget: 'Conversation',
         branchLink: await createShareVideosBranchUrl(selectedVideos),
       });
       // this.setState({
