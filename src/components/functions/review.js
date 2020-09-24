@@ -6,6 +6,8 @@ import {getVideoInfo} from '../functions/pictures';
 import {generateID} from '../functions/createEvent';
 import {addLocalVideo} from './videoManagement';
 import {getArchiveByID} from './archive';
+import {store} from '../../../reduxStore';
+import {enqueueUploadTask} from '../../actions/uploadQueueActions';
 
 const checkIfAllArchivesAreLocal = (archives) => {
   let isLocal = true;
@@ -79,7 +81,6 @@ const generatePreviewCloud = async (
   recordedActions,
   audioFilePath,
 ) => {
-  //TODO upload audioFilePath
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
   const newArchiveId = generateID();
   const dateNow = Date.now();
@@ -108,6 +109,18 @@ const generatePreviewCloud = async (
     sourceUser: userId,
     startTimestamp: dateNow,
   };
+
+  store.dispatch(
+    enqueueUploadTask({
+      type: 'audioRecord',
+      id: generateID(),
+      timeSubmitted: Date.now(),
+      url: audioFilePath,
+      storageDestination: `archivedStreams/${newArchiveId}`,
+      isBackground: true,
+      displayInList: false,
+    }),
+  );
 
   database()
     .ref(`archivedStreams/${newArchiveId}`)

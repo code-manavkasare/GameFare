@@ -39,14 +39,20 @@ class AudioRecorderPlayer extends Component {
     this.preparePlayer();
   };
 
-  preparePlayer = async (audioUrl) => {
-    await this.setState({
-      audioPlayer: new Player(audioUrl ? `file://${audioUrl}` : 'audio.mp4', {
-        autoDestroy: false,
-        mixWithOthers: true,
-      }).prepare(),
+  preparePlayer = async (audioUrl, isCloud) => {
+    await new Promise((resolve) => {
+      this.setState({
+        audioPlayer: new Player(
+          audioUrl ? (isCloud ? audioUrl : `file://${audioUrl}`) : 'audio.mp4',
+          {
+            autoDestroy: false,
+            mixWithOthers: true,
+          },
+        ).prepare(() => {
+          resolve();
+        }),
+      });
     });
-    return true;
   };
 
   playRecord = () => {

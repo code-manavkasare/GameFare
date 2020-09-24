@@ -84,7 +84,10 @@ class VideoPlayerPage extends Component {
       Object.values(videoInfos).forEach(async (videoInfo) => {
         const {recordedActions} = videoInfo;
         if (recordedActions) {
-          await this.AudioRecorderPlayerRef.preparePlayer(videoInfo.audioUrl);
+          await this.AudioRecorderPlayerRef.preparePlayer(
+            videoInfo.audioRecordUrl,
+            true,
+          );
           await this.setState({recordedActions});
           this.previewRecording();
         }
@@ -475,7 +478,7 @@ class VideoPlayerPage extends Component {
       isDrawingEnabled,
       archives,
     } = this.state;
-    const {navigation, route, session, userID, currentSessionID} = this.props;
+    const {navigation, route, session} = this.props;
     const {navigate} = navigation;
     let videosBeingShared = false;
     let personSharingScreen = false;

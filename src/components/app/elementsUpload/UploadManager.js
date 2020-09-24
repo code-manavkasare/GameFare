@@ -2,11 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {uploadQueueAction} from '../../../actions';
-import {
-  uploadImage,
-  uploadVideo,
-  sortUploadTasks,
-} from '../../functions/upload';
+import {uploadFile, sortUploadTasks} from '../../functions/upload';
 import BackgroundUploadHelper from './BackgroundUploadHelper';
 import {updateLocalUploadProgress} from '../../functions/videoManagement';
 import {updateCloudUploadProgress} from '../../database/firebase/videosManagement';
@@ -63,13 +59,16 @@ class UploadManager extends Component {
         const now = Date.now();
         if (now - lastProgressUpdateTime > 2000 || prevProgress === 0) {
           uploadTask.progress = progress;
-          this.setState({lastProgressUpdateTime: now, uploadInProgress: {...uploadInProgress, uploadTask}});
+          this.setState({
+            lastProgressUpdateTime: now,
+            uploadInProgress: {...uploadInProgress, uploadTask},
+          });
           updateCloudUploadProgress(videoInfo.id, progress);
           updateLocalUploadProgress(videoInfo.id, progress);
         }
       }
     }
-    }
+  }
 
   resumeUploadInProgress() {
     const {uploadInProgress} = this.state;
@@ -169,68 +168,51 @@ class UploadManager extends Component {
   }
 
   async startTask(task) {
-    switch (task.type) {
-      case 'video': {
-        await this.startVideoTask(task);
-        break;
-      }
-      case 'image': {
-        await this.startImageTask(task);
-        break;
-      }
-      default: {
-        console.log(
-          'ERROR UploadManager upload task of unknown type: ',
-          task.type,
-        );
-      }
-    }
+    await this.startFileTask(task);
   }
 
-  async startVideoTask(task) {
+  async startFileTask(task) {
     const {uploadQueueAction} = this.props;
-    const {id, storageDestination, afterUpload} = task;
-    try {
-      const {firebaseUploadTask, uploadComplete} = uploadVideo({...task, onProgress: (progress) => this.onProgress(progress)});
-      uploadQueueAction('startUploadTask', id);
-      await this.setState({
-        uploadInProgress: {uploadTask: task, firebaseUploadTask},
-      });
-      const cloudVideoUrl = await uploadComplete;
-      await database()
-        .ref()
-        .update({
-          [`${storageDestination}/url`]: cloudVideoUrl,
-        });
-      if (afterUpload) {
-        await afterUpload();
-      }
-    } catch (error) {
-      console.log('Could not complete video upload', id, error);
-    }
-    this.finishUploadInProgress();
-  }
-
-  async startImageTask(task) {
-    const {uploadQueueAction} = this.props;
-    const {id, storageDestination, afterUpload} = task;
-    const {firebaseUploadTask, uploadComplete} = uploadImage({...task, onProgress: (progress) => null});
+    const {id, storageDestination, afterUpload, type} = task;
+    const {firebaseUploadTask, uploadComplete} = uploadFile({
+      ...task,
+      onProgress: (progress) =>
+        type === 'video' ? this.onProgress(progress) : null,
+    });
     uploadQueueAction('startUploadTask', id);
     await this.setState({
       uploadInProgress: {uploadTask: task, firebaseUploadTask},
     });
     try {
-      const cloudImageUrl = await uploadComplete;
+      const cloudFileUrl = await uploadComplete;
+
+      let typeDestination = '';
+      switch (type) {
+        case 'video':
+          typeDestination = 'url';
+          break;
+        case 'image':
+          typeDestination = 'thumbnail';
+          break;
+        case 'audioRecord':
+          typeDestination = 'audioRecord';
+          break;
+        default:
+          console.log(
+            `${type} is not a valid type, check UploadManager.js>startFileTask()`,
+          );
+      }
+
       database()
         .ref()
         .update({
-          [`${storageDestination}/thumbnail`]: cloudImageUrl,
+          [`${storageDestination}/${typeDestination}`]: cloudFileUrl,
         });
       if (afterUpload) {
         await afterUpload();
       }
     } catch (error) {
-      console.log('Could not complete image upload', id, error);
+      console.log('Could not complete file upload', id, error);
     }
     this.finishUploadInProgress();
   }
