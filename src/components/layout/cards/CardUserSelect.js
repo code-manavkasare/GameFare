@@ -1,21 +1,29 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Animated} from 'react-native';
+import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
 import {native} from '../../animations/animations';
 import ButtonColor from '../Views/Button';
 import colors from '../../style/colors';
-import AllIcons from '../../layout/icons/AllIcons';
+import AllIcon from '../../layout/icons/AllIcons';
 import AsyncImage from '../image/AsyncImage';
 import styleApp from '../../style/style';
 
-export default class CardUserSelect extends Component {
+class CardUserSelect extends Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
-    selected: PropTypes.bool.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      info: PropTypes.object,
+    }).isRequired,
     onClick: PropTypes.func.isRequired,
+    selected: PropTypes.bool,
   };
+
+  static defaultProps = {
+    selected: false,
+  }
 
   constructor(props) {
     super(props);
@@ -37,8 +45,15 @@ export default class CardUserSelect extends Component {
     Animated.timing(this.selectionIndication, native(to, 250)).start();
   }
 
+  isUserInvitable = () => {
+    const {silentFriends, user} = this.props;
+    const {isPrivate} = user.info;
+    return !isPrivate || silentFriends[user.id];
+  };
+
   render() {
-    const {user, onClick} = this.props;
+    const {user, onClick, silentFriends} = this.props;
+    const {isPrivate} = user.info;
     const selectionOverlayStyle = {
       width: '100%',
       height: '100%',
@@ -50,6 +65,8 @@ export default class CardUserSelect extends Component {
       opacity: this.selectionIndication,
       overflow: 'hidden',
     };
+    const privateUser = isPrivate && !silentFriends[user.id];
+    
     return (
       <ButtonColor
         view={() => {
@@ -57,7 +74,7 @@ export default class CardUserSelect extends Component {
             <View style={styleApp.fullSize}>
               <Animated.View style={selectionOverlayStyle} />
               <Row style={{padding: '5%'}}>
-                <Col size={15} style={styleApp.center2}>
+                <Col size={20} style={styleApp.center2}>
                   {user.info.picture ? (
                     <AsyncImage
                       style={styles.imgUser}
@@ -67,16 +84,24 @@ export default class CardUserSelect extends Component {
                   ) : (
                     <View style={[styleApp.center, styles.imgUser]}>
                       <Text style={[styleApp.text, {fontSize: 12}]}>
-                        {user?.info?.firstname[0]}
+                        {user.info.firstname !== '' ? user.info.firstname[0] : ''}
                         {user.info.lastname !== '' ? user.info.lastname[0] : ''}
                       </Text>
                     </View>
                   )}
                 </Col>
-                <Col size={75} style={styleApp.center2}>
+                <Col size={70} style={styleApp.center2}>
                   <Text style={styleApp.text}>
                     {user?.info?.firstname} {user?.info?.lastname}
                   </Text>
+                </Col>
+                <Col size={10} style = {styleApp.center3}>
+                  {privateUser && <AllIcon
+                    type={'font'}
+                    color={colors.greyDarker}
+                    size={18}
+                    name={'lock'}
+                  />}
                 </Col>
               </Row>
             </View>
@@ -106,12 +131,14 @@ const styles = StyleSheet.create({
   },
 });
 
-CardUserSelect.propTypes = {
-  user: PropTypes.shape({
-    id: PropTypes.string,
-    info: PropTypes.object,
-  }).isRequired,
-  usersSelected: PropTypes.object,
-  selectUser: PropTypes.func,
-  hideIcon: PropTypes.bool,
+const mapStateToProps = (state) => {
+  return {
+    silentFriends: state.user.infoUser.silentFriends ?? {},
+  };
 };
+
+export default connect(
+  mapStateToProps,
+  {},
+)(CardUserSelect);
+

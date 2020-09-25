@@ -12,7 +12,7 @@ import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 
-import {autocompleteSearchUsers} from '../../../functions/users';
+import {autocompleteSearchUsers, userObject} from '../../../functions/users';
 
 import AllIcon from '../../../layout/icons/AllIcons';
 import ButtonColor from '../../../layout/Views/Button';
@@ -21,58 +21,61 @@ import CardUserSelect from '../../../layout/cards/CardUserSelect';
 class UserSearchResults extends Component {
   static propTypes = {
     onSelect: PropTypes.func.isRequired,
-    selectedUsers: PropTypes.object.isRequired,
+    selectedUsers: PropTypes.object,
+    searchText: PropTypes.string,
   };
 
   static defaultProps = {
     selectedUsers: {},
+    searchText: '',
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      searchString: '',
       users: [],
       displayMore: false,
+      noResults: false,
     };
   }
 
   componentDidMount() {
-    if (this.props.onRef) {
-      this.props.onRef(this);
-    }
-    this.searchUsers('');
+    this.searchUsers();
   }
 
-  searchUsers = async (searchString) => {
-    if (searchString === '') {
-      this.setState({users: [], searchString});
+  componentDidUpdate(prevProps) {
+    if (this.props.searchText !== prevProps.searchText) {
+      this.searchUsers();
+    }
+  }
+
+  searchUsers = async () => {
+    const {searchText} = this.props;
+    this.setState({noResults: false});
+    if (searchText === '') {
+      this.setState({users: []});
     } else {
       const {blockedByUsers, userID} = this.props;
-      const users = await autocompleteSearchUsers(
-        searchString,
+      const rawUsers = await autocompleteSearchUsers(
+        searchText,
         userID,
         false,
         blockedByUsers ? Object.keys(blockedByUsers) : false,
       );
-      const displayMore = false;
-      this.setState({users, searchString, displayMore});
+      const users = rawUsers.map((user) => userObject(user.info, user.objectID));
+      this.setState({users, displayMore: false, noResults: users.length === 0});
     }
   };
 
-  selectUser = (user) => {
-    this.props.onSelect(user);
-  };
-
   userCard = (user) => {
-    const {selectedUsers} = this.props;
+    const {selectedUsers, onSelect} = this.props;
     return (
       <View style={{marginBottom: 5}}>
         <CardUserSelect
-          key={user.objectID}
+          key={user.id}
           user={user}
-          selected={selectedUsers[user.objectID] ? true : false}
-          onClick={(user) => this.selectUser(user)}
+          selected={selectedUsers[user.id] ? true : false}
+          onClick={(user) => onSelect(user)}
         />
       </View>
     );
@@ -130,29 +133,34 @@ class UserSearchResults extends Component {
   }
 
   render() {
-    const {searchString, users, displayMore} = this.state;
-    if (searchString === '') {
+    const {users, displayMore, noResults} = this.state;
+    const {searchText} = this.props;
+    if (searchText === '') {
       return null;
-    } else if (users.length === 0) {
+    } else if (noResults) {
       return (
         <View>
           <Text style={styles.noResultsText}>
-            No results for "{searchString}"
+            No results for "{searchText}"
           </Text>
         </View>
       );
-    } else if (displayMore) {
+    } else if (users.length > 0) {
+      if (displayMore) {
       return this.moreResultsView();
+      } else {
+        return (
+          <KeyboardAwareScrollView
+            keyboardShouldPersistTaps="always"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.results}>
+            {users.slice(0, 3).map((user) => this.userCard(user))}
+            {users.length > 3 && this.displayMoreButton()}
+          </KeyboardAwareScrollView>
+        );
+      }
     } else {
-      return (
-        <KeyboardAwareScrollView
-          keyboardShouldPersistTaps="always"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.results}>
-          {users.slice(0, 3).map((user) => this.userCard(user))}
-          {users.length > 3 && this.displayMoreButton()}
-        </KeyboardAwareScrollView>
-      );
+      return null;
     }
   }
 }

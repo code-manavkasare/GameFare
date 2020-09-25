@@ -70,6 +70,20 @@ const toggleUserPublic = () => {
     .update({[`users/${userID}/userInfo/isPrivate/`]: !isPrivate});
 };
 
+const isUserPrivate = (user) => {
+  const {id, info} = user;
+  if (id && info) {
+    const {isPrivate} = user.info;
+    const {silentFriends} = store.getState().user.infoUser;
+    if (silentFriends) {
+      return isPrivate && !silentFriends[id];
+    } else {
+      return isPrivate;
+    }
+  }
+  return false;
+};
+
 module.exports = {
   autocompleteSearchUsers,
   userObject,
@@ -77,4 +91,5 @@ module.exports = {
   messageName,
   formatPhoneNumber,
   toggleUserPublic,
+  isUserPrivate,
 };

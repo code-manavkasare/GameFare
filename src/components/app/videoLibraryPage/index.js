@@ -109,16 +109,12 @@ class VideoLibraryPage extends Component {
     const {navigation} = this.props;
     if (selectedVideos.length > 0) {
       navigation.navigate('ModalCallTab', {
-        modal: true,
-        archivesToShare: selectedVideos,
         action: 'shareArchives',
-        actionText: 'Share with',
+        archivesToShare: selectedVideos,
+        modal: true,
         branchLink: await createShareVideosBranchUrl(selectedVideos),
+        inlineSearch: true,
       });
-      // this.setState({
-      //   selectedVideos: [],
-      //   selectableMode: false,
-      // });
     }
   }
   deleteSelectedVideos() {
@@ -337,7 +333,7 @@ class VideoLibraryPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
           selectOnly={selectOnly}
-          text={!selectableMode ? 'Library' : 'Select videos...'}
+          text={!selectableMode ? 'Library' : 'Select videos'}
           selectableMode={selectableMode}
           toggleSelectable={this.toggleSelectable.bind(this)}
           addFromCameraRoll={this.addFromCameraRoll.bind(this)}

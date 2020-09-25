@@ -4,21 +4,25 @@ import {connect} from 'react-redux';
 import {Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
-import styleApp from '../../../style/style';
-import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
+import styleApp from '../../style/style';
+import colors from '../../style/colors';
+import sizes from '../../style/sizes';
 
-import AllIcon from '../../../layout/icons/AllIcons';
-import ButtonColor from '../../../layout/Views/Button';
+import AllIcon from '../icons/AllIcons';
+import ButtonColor from '../Views/Button';
 
 class SearchInput extends Component {
   static propTypes = {
     search: PropTypes.func.isRequired,
-  };
-
+    autofocus: PropTypes.bool,
+  }
+  static defaultProps = {
+    autoFocus: false,
+  }
   constructor(props) {
     super(props);
     this.state = {};
+    this.textInputRef = null;
   }
 
   componentDidMount() {
@@ -33,42 +37,10 @@ class SearchInput extends Component {
   };
 
   searchBar = () => {
-    const {visible} = this.state;
-    const searchBarStyle = {
-      ...styleApp.center2,
-      paddingLeft: 25,
-      height: 50,
-      opacity: 1,
-      width: '90%',
-      borderRadius: 15,
-      backgroundColor: colors.greyLight,
-      marginVertical: 0,
-      // marginTop: sizes.marginTopApp + 0,
-      marginHorizontal: '5%',
-    };
-    const textStyle = {
-      ...styleApp.textBold,
-      color: colors.title,
-      marginLeft: 20,
-      width: '100%',
-      height: '100%',
-    };
-    const rowStyle = {
-      height: '100%',
-      ...styleApp.center4,
-    };
-    const buttonContainerStyle = {
-      opacity: this.revealSearchMenu,
-      position: 'absolute',
-      right: 10,
-    };
-    const buttonStyle = {
-      height: 30,
-      width: 30,
-    };
+    const {autoFocus, onFocus} = this.props;
     return (
-      <View style={searchBarStyle}>
-        <Row style={rowStyle}>
+      <View style={styles.searchBarStyle}>
+        <Row style={styles.rowStyle}>
           <AllIcon
             name={'search'}
             size={13}
@@ -76,15 +48,17 @@ class SearchInput extends Component {
             type="font"
           />
           <TextInput
-            editable={visible}
-            style={textStyle}
-            placeholder={'Search'}
+            style={styles.textStyle}
+            placeholder={'Search for users'}
             placeholderTextColor={colors.greyDark}
             returnKeyType={'done'}
             autoCompleteType={'name'}
             blurOnSubmit={true}
-            ref={(input) => {
-              this.textInputRef = input;
+            ref={(textInputRef) => {
+              this.textInputRef = textInputRef;
+              if (autoFocus && textInputRef) {
+                textInputRef.focus();
+              }
             }}
             clearButtonMode={'never'}
             underlineColorAndroid="rgba(0,0,0,0)"
@@ -92,15 +66,9 @@ class SearchInput extends Component {
             onChangeText={(text) => {
               this.search(text);
             }}
-            onSubmitEditing={(evt) => {
-              const {text} = evt.nativeEvent;
-              if (text === '') {
-                this.animate(0);
-              }
-            }}
           />
         </Row>
-        <Animated.View style={buttonContainerStyle}>
+        <Animated.View style={styles.buttonContainerStyle}>
           <ButtonColor
             view={() => {
               return (
@@ -114,16 +82,12 @@ class SearchInput extends Component {
             }}
             color={'transparent'}
             click={() => {
-              if (this.resultsRef?.state?.input !== '') {
-                this.search('');
-                this.textInputRef?.clear();
-                this.textInputRef?.focus();
-              } else {
-                this.animate(0);
-              }
+              this.search('');
+              this.textInputRef?.clear();
+              this.textInputRef?.focus();
             }}
             onPressColor={'transparent'}
-            style={buttonStyle}
+            style={styles.buttonStyle}
           />
         </Animated.View>
       </View>
@@ -135,7 +99,40 @@ class SearchInput extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  searchBarStyle: {
+    ...styleApp.center2,
+    paddingLeft: 25,
+    height: 50,
+    opacity: 1,
+    width: '90%',
+    borderRadius: 15,
+    backgroundColor: colors.greyLight,
+    marginVertical: 20,
+    // marginTop: sizes.marginTopApp + 0,
+    marginHorizontal: '5%',
+  },
+  textStyle: {
+    ...styleApp.textBold,
+    color: colors.title,
+    marginLeft: 20,
+    width: '100%',
+    height: '100%',
+  },
+  rowStyle: {
+    height: '100%',
+    ...styleApp.center4,
+  },
+  buttonContainerStyle: {
+    opacity: 1,
+    position: 'absolute',
+    right: 10,
+  },
+  buttonStyle: {
+    height: 30,
+    width: 30,
+  },
+});
 
 const mapStateToProps = (state) => {
   return {

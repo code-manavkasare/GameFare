@@ -586,7 +586,7 @@ const deleteSession = (objectID) => {
     colorButton: 'red',
     onPressColor: colors.redLight,
     nextNavigation: () => {
-      navigate('People');
+      navigate('CallTab');
     },
     onGoBack: async () => {
       const currentSessionID = store.getState().coach.currentSessionID;

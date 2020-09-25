@@ -58,15 +58,15 @@ class VideoList extends Component {
 
   render() {
     const {selectedVideos, selectVideo} = this.props;
-    if (selectedVideos.length === 0) return false;
-
+    if (selectedVideos.length === 0) {
+      return false;
+    }
     return (
       <View style={styles.tool}>
         <FlatListComponent
           list={selectedVideos}
           noLazy={true}
           cardList={({item}) => {
-            console.log('item', item);
             return (
               <View style={{height: 80, width: 80}}>
                 <CardArchive

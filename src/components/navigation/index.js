@@ -10,6 +10,7 @@ import NewConversation from '../app/elementsMessage/NewConversation';
 import Coaches from './MainApp/components/Coaches';
 import CallTabPage from '../app/callTab';
 import UserDirectoryPage from '../app/userDirectory';
+import Alert from '../layout/alerts/Alert';
 
 const Stack = createStackNavigator();
 function InitialStack() {
@@ -55,14 +56,23 @@ function InitialStack() {
 
       <Stack.Screen name="ModalCallTab" component={CallTabPage} />
 
-      <Stack.Screen name="UserDirectory" component={UserDirectoryPage}/>
-
+      <Stack.Screen name="UserDirectory" component={UserDirectoryPage} />
 
       <Stack.Screen
         name="Coaches"
         component={Coaches}
         options={{
           gestureEnabled: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="RootAlert"
+        component={Alert}
+        options={{
+          cardStyle: {backgroundColor: 'transparent'},
+          gestureEnabled: false,
+          animationEnabled: false,
         }}
       />
     </Stack.Navigator>
