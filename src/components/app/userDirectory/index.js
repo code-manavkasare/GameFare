@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Animated} from 'react-native';
 
 import styleApp from '../../style/style';
 
@@ -19,6 +19,7 @@ export default class userDirectoryPage extends Component {
       archivesToShare: props.route?.params?.archivesToShare ?? [],
       branchLink: props.route?.params?.branchLink ?? null,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   render() {
@@ -26,11 +27,16 @@ export default class userDirectoryPage extends Component {
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderUserDirectory branchLink={branchLink} goBack={() => goBack()} />
+        <HeaderUserDirectory
+          branchLink={branchLink}
+          goBack={() => goBack()}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+        />
         <BodyUserDirectory
           action={action}
           actionText={actionText}
           archivesToShare={archivesToShare}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>
     );

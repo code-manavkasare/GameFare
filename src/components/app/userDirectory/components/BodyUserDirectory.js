@@ -46,7 +46,7 @@ export default class userDirectoryPage extends Component {
 
   render() {
     const {selectedUsers, searchText} = this.state;
-    const {action, actionText, archivesToShare} = this.props;
+    const {action, actionText, archivesToShare, AnimatedHeaderValue} = this.props;
     return (
         <Col style={styles.body}>
           <Row size={10}>
@@ -60,6 +60,7 @@ export default class userDirectoryPage extends Component {
               onSelect={(user) => this.selectUser(user)}
               selectedUsers={selectedUsers}
               searchText={searchText}
+              AnimatedHeaderValue={AnimatedHeaderValue}
             />
           </Row>
           <InvitationManager

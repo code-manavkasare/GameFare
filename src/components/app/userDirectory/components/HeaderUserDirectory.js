@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Share, Animated} from 'react-native';
+import {View, Share} from 'react-native';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
@@ -11,14 +11,13 @@ export default class HeaderUserDirectory extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   render() {
-    const {branchLink, goBack} = this.props;
+    const {branchLink, goBack, AnimatedHeaderValue} = this.props;
     return (
       <HeaderBackButton
-        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={'Search for users'}
         inputRange={[40, 50]}
         initialBorderColorIcon={'white'}

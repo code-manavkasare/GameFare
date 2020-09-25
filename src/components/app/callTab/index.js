@@ -159,6 +159,7 @@ class CallTab extends Component {
           onSelect={(user) => this.selectUser(user)}
           selectedUsers={selectedUsers}
           searchText={searchText}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>
     );
@@ -174,6 +175,7 @@ class CallTab extends Component {
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
             hideCallButton={action !== 'call'}
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
           />
         )}
       </View>
