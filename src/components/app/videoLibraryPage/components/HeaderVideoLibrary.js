@@ -27,6 +27,7 @@ class HeaderVideoLibrary extends Component {
       navigation,
       infoUser,
       text,
+      toggleSelectable,
     } = this.props;
     return (
       <View style={{zIndex: 11}}>
@@ -39,7 +40,7 @@ class HeaderVideoLibrary extends Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          initialBorderColorHeader={colors.off}
+          initialBorderColorHeader={colors.white}
           icon1={
             selectOnly
               ? 'chevron-left'
@@ -52,16 +53,16 @@ class HeaderVideoLibrary extends Component {
             selectOnly ? navigation.goBack() : navigation.navigate('MorePage')
           }
           typeIcon1={selectOnly ? 'font' : infoUser.picture ? 'image' : 'moon'}
-          // iconOffset={selectableMode && !selectOnly && 'user-plus'}
-          //  typeIconOffset="font"
-          //   sizeIconOffset={16}
-          //   colorIconOffset={colors.title}
-          //  clickButtonOffset={() => share()}
-
-          clickButton2={() => addFromCameraRoll({})}
-          icon2={'plus'}
-          typeIcon2={'font'}
-          sizeIcon2={24}
+          icon2={selectOnly ? null : !selectableMode ? 'text' : 'text'}
+          text2={!selectableMode ? 'Select' : 'Cancel'}
+          typeIcon2="font"
+          sizeIcon2={22}
+          colorIcon2={colors.title}
+          clickButton2={() => toggleSelectable()}
+          clickButtonOffset={() => addFromCameraRoll({})}
+          iconOffset={selectOnly ? null : 'plus'}
+          typeIconOffset={'font'}
+          sizeIconOffset={22}
         />
 
         <UploadHeader />

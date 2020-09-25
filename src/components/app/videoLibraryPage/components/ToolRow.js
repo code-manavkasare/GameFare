@@ -13,25 +13,41 @@ import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
 import {native} from '../../../animations/animations';
 import VideoList from './VideoList';
+import sizes from '../../../style/sizes';
+
+const heightFooterFull = sizes.heightFooter + sizes.marginBottomApp;
 
 class ToolRow extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.translateXBox = new Animated.Value(210);
+    this.translateXBox = new Animated.Value(0);
+    this.translateYBox = new Animated.Value(75 + heightFooterFull);
   }
   async componentDidMount() {
     this.props.onRef(this);
   }
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.isButton2Selected !== this.props.isButton2Selected) {
-      Animated.parallel([
-        Animated.timing(
-          this.translateXBox,
-          native(this.props.isButton2Selected ? 0 : 210),
-        ),
-      ]).start();
+    if (
+      prevProps.selectedVideos.length !== this.props.selectedVideos.length ||
+      prevProps.isButton2Selected !== this.props.isButton2Selected
+    ) {
+      this.openToolBox(
+        this.props.selectedVideos.length !== 0 && this.props.isButton2Selected,
+      );
     }
+  };
+  openToolBox = (val) => {
+    Animated.parallel([
+      // Animated.timing(
+      //   this.translateXBox,
+      //   native(this.props.isButton2Selected ? 0 : 210),
+      // ),
+      Animated.timing(
+        this.translateYBox,
+        native(val ? 0 : 75 + heightFooterFull),
+      ),
+    ]).start();
   };
   button = ({
     icon,
@@ -87,7 +103,17 @@ class ToolRow extends Component {
       isButton2Selected,
       selectedVideos,
       selectVideo,
+      displayButton0,
+      clickButton0,
+      position,
     } = this.props;
+
+    // const translateYFooter = position.interpolate({
+    //   inputRange: [0, 1],
+    //   extrapolate: 'clamp',
+    //   outputRange: [0, 100],
+    // });
+
     return (
       <View style={styles.tool} pointerEvents="box-none">
         {isButton2Selected && (
@@ -100,15 +126,18 @@ class ToolRow extends Component {
           style={[
             styles.animatedToolBox,
             {
-              transform: [{translateX: this.translateXBox}],
+              transform: [
+                {translateX: this.translateXBox},
+                {translateY: this.translateYBox},
+              ],
             },
           ]}>
           <Row style={{overflow: 'hidden'}}>
             <Col size={25} style={styleApp.center3}>
               {this.button({
                 icon: {
-                  name: isButton2Selected ? 'chevron-right' : 'chevron-left',
-                  type: isButton2Selected ? 'font' : 'font',
+                  name: isButton2Selected ? 'close' : 'chevron-left',
+                  type: isButton2Selected ? 'mat' : 'font',
                   color: colors.greyDark,
                   size: isButton2Selected ? 20 : 20,
                 },
@@ -119,6 +148,27 @@ class ToolRow extends Component {
                 click: () => clickButton1({forceSelect: true}),
               })}
             </Col>
+            {displayButton0 && (
+              <Col size={25} style={styleApp.center3}>
+                {this.button({
+                  icon: {
+                    name: 'play',
+                    type: 'moon',
+                    color: colors.white,
+                    size: 20,
+                  },
+                  label: 'Share live',
+                  backgroundColor: colors.primary,
+
+                  isSelected: selectedVideos.length > 0,
+                  buttonDisabled: selectedVideos.length === 0,
+                  onPressColor: colors.primaryLight,
+                  style: styles.button,
+                  click: () => clickButton0({}),
+                })}
+              </Col>
+            )}
+
             <Col size={25} style={styleApp.center3}>
               {this.button({
                 icon: {
@@ -184,8 +234,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 75,
     width: '100%',
-    ...styleApp.shadow,
-    bottom: heightFooter + marginBottomApp + 10,
+    ...styleApp.shade,
+    bottom: heightFooter + marginBottomApp + 0,
     right: 0,
     zIndex: 12,
   },
@@ -193,13 +243,14 @@ const styles = StyleSheet.create({
     // borderLeftWidth: 1,
     // borderTopWidth: 1,
     // borderBottomWidth: 1,
-    borderWidth: 1,
-    width: 280,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    width: '100%',
     position: 'absolute',
     height: '100%',
     right: 0,
-    borderTopLeftRadius: 35,
-    borderBottomLeftRadius: 35,
+    // borderTopLeftRadius: 35,
+    // borderBottomLeftRadius: 35,
     borderColor: colors.off,
     backgroundColor: colors.white,
     overflow: 'hidden',

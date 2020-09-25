@@ -46,9 +46,9 @@ class TabsApp extends React.Component {
 
               size: 23,
             },
-          }}>
-          {() => <VideoLibrary />}
-        </Tab.Screen>
+          }}
+          component={VideoLibrary}
+        />
 
         <Tab.Screen
           name="Session"

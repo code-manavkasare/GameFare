@@ -12,7 +12,6 @@ class HeaderCallTab extends Component {
     this.state = {
       loader: false,
     };
-    this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   header = () => {
@@ -24,13 +23,14 @@ class HeaderCallTab extends Component {
       openUserDirectoryIcon,
       openMessageHistory,
       openMessageHistoryIcon,
+      AnimatedHeaderValue,
     } = this.props;
     const {loader} = this.state;
     return (
       <HeaderBackButton
-        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        AnimatedHeaderValue={AnimatedHeaderValue}
         textHeader={headerTitle}
-        inputRange={[40, 50]}
+        inputRange={[5, 20]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         loader={loader}
@@ -45,7 +45,8 @@ class HeaderCallTab extends Component {
         sizeIcon1={23}
         colorIcon1={colors.title}
         badgeIcon1={
-          numberNotifications !== 0 && showNotificationCount && (
+          numberNotifications !== 0 &&
+          showNotificationCount && (
             <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
               <Text
                 style={[

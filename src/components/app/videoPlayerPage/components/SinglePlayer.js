@@ -138,7 +138,7 @@ class SinglePlayer extends Component {
   };
   onPositionChange = (index, position) => {
     const {videosBeingShared, coachSessionID, id} = this.props;
-    console.log('onPositionChange', position, videosBeingShared);
+ 
     if (videosBeingShared) {
       const {x, y} = position;
       const updates = {
@@ -195,6 +195,7 @@ class SinglePlayer extends Component {
             undo={() => this.drawViewRef.undo()}
           />
         )}
+
         <VideoPlayer
           archiveId={id}
           disableControls={disableControls}

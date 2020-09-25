@@ -14,8 +14,8 @@ import ButtonColor from '../../../layout/Views/Button';
 class SearchInput extends Component {
   static propTypes = {
     search: PropTypes.func.isRequired,
-  }
-  
+  };
+
   constructor(props) {
     super(props);
     this.state = {};
@@ -42,7 +42,7 @@ class SearchInput extends Component {
       width: '90%',
       borderRadius: 15,
       backgroundColor: colors.greyLight,
-      marginVertical: 20,
+      marginVertical: 0,
       // marginTop: sizes.marginTopApp + 0,
       marginHorizontal: '5%',
     };
@@ -135,9 +135,7 @@ class SearchInput extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  
-});
+const styles = StyleSheet.create({});
 
 const mapStateToProps = (state) => {
   return {

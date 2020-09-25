@@ -48,7 +48,7 @@ class CardArchive extends PureComponent {
   }
 
   componentDidMount() {
-    const {archive} = this.props;
+    const {archive, index} = this.props;
     if (!archive || !archive.local) {
       this.bindArchive();
     }
@@ -162,7 +162,7 @@ class CardArchive extends PureComponent {
     if (!clickButtonDismiss) return null;
     const styleButton = {
       position: 'absolute',
-      top: -10,
+      top: -5,
       right: 5,
       zIndex: 40,
       ...styleApp.shade,
@@ -171,8 +171,8 @@ class CardArchive extends PureComponent {
       borderRadius: 20,
       borderWidth: 1,
       borderColor: colors.grey,
-      height: 25,
-      width: 25,
+      height: 30,
+      width: 30,
     };
     return (
       <ButtonColor
@@ -186,6 +186,47 @@ class CardArchive extends PureComponent {
         color={colors.white}
         onPressColor={colors.off}
       />
+    );
+  };
+  rowIcons = () => {
+    const styleRow = {
+      position: 'absolute',
+
+      padding: 15,
+      height: 40,
+      //backgroundColor: 'red',
+      zIndex: 200,
+      width: '100%',
+    };
+
+    const {archive} = this.props;
+
+    const {recordedActions} = archive;
+    return (
+      <View style={styleRow}>
+        <Row>
+          <Col size={15} style={styleApp.center}>
+            {recordedActions ? (
+              <AllIcons
+                name={require('../../../../../../../../img/icons/feedback.png')}
+                type="file"
+                size={27}
+                color={colors.white}
+                style={styleApp.shadowIcon}
+              />
+            ) : (
+              <AllIcons
+                name={'play'}
+                type="moon"
+                size={10}
+                color={colors.white}
+                style={styleApp.shadowIcon}
+              />
+            )}
+          </Col>
+          <Col size={85} />
+        </Row>
+      </View>
     );
   };
   cardArchive(archive) {
@@ -217,6 +258,7 @@ class CardArchive extends PureComponent {
             : this.openVideo()
         }>
         {this.buttonDismiss()}
+
         <View style={[styles.cardArchive, style]}>
           {local ? (
             <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
@@ -226,28 +268,40 @@ class CardArchive extends PureComponent {
               mainImage={thumbnail ? thumbnail : ''}
             />
           )}
+          {!hideInformation && this.rowIcons()}
           {selectableMode && (
             <View
               pointerEvents="none"
               style={{
                 ...styles.viewText,
                 ...styleApp.fullSize,
+                padding: 10,
                 backgroundColor: isSelected
                   ? colors.grey + '30'
                   : 'transparent',
               }}>
               <Row>
-                <Col style={styleApp.center}>
+                <Col style={styleApp.center6}>
                   {loader ? (
                     <Loader size={25} color={colors.white} />
                   ) : isSelected ? (
-                    <AllIcons
-                      name={'check'}
-                      type="font"
-                      size={23}
-                      color={colors.white}
-                      solid={isSelected ? true : false}
-                    />
+                    <View
+                      style={[
+                        styleApp.center,
+                        {
+                          height: 30,
+                          width: 30,
+                          backgroundColor: colors.primary,
+                          borderRadius: 15,
+                        },
+                      ]}>
+                      <AllIcons
+                        name={'check'}
+                        type="font"
+                        size={14}
+                        color={colors.white}
+                      />
+                    </View>
                   ) : selectableMode ? (
                     <AllIcons
                       name={'circle'}
