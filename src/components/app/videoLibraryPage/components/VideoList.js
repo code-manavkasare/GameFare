@@ -59,7 +59,7 @@ class VideoList extends Component {
   render() {
     const {selectedVideos, selectVideo} = this.props;
     if (selectedVideos.length === 0) return false;
-    console.log('selectedVideos', selectedVideos);
+
     return (
       <View style={styles.tool}>
         <FlatListComponent
@@ -100,7 +100,7 @@ class VideoList extends Component {
           numColumns={1}
           horizontal={true}
           incrementRendering={30}
-          inverted={true}
+          inverted={false}
           initialNumberToRender={30}
           hideDividerHeader={true}
           showsVerticalScrollIndicator={false}
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     width: '100%',
     // ...styleApp.shade,
     // backgroundColor: 'red',
-    bottom: 90,
+    bottom: 75,
     right: 0,
 
     zIndex: 30,

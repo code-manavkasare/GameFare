@@ -23,6 +23,19 @@ class StreamTab extends Component {
       Orientation.lockToPortrait();
     });
   };
+  componentDidUpdate = (prevProps, prevState) => {
+    const {coachSessionsRequests, navigation} = this.props;
+    console.log(
+      'prevProps.coachSessions.length',
+      prevProps.coachSessionsRequests.length,
+    );
+    if (
+      prevProps.coachSessionsRequests.length === 1 &&
+      coachSessionsRequests.length === 0
+    )
+      return navigation.navigate('Messages');
+    return false;
+  };
   shouldComponentUpdate(prevProps, prevState) {
     const {coachSessionsRequests, userConnected} = this.props;
     if (

@@ -29,6 +29,7 @@ class ListStreams extends Component {
       return true;
     return false;
   }
+
   sessionsArray = () => {
     let {coachSessions} = this.props;
     if (!coachSessions) return [];
@@ -50,54 +51,8 @@ class ListStreams extends Component {
     };
     const coachSessions = this.sessionsArray();
     const {userConnected} = this.props;
-    console.log('render list groups ');
-    if (!userConnected || !coachSessions) return null;
-    if (Object.values(coachSessions).length === 0)
-      return (
-        <View style={[styleApp.marginView, styleApp.center]}>
-          <View style={[styleApp.center, {marginBottom: 80}]}>
-            <Image
-              source={require('../../../../../img/images/racket.png')}
-              style={{height: 80, width: 80, marginTop: 30}}
-            />
-            <View style={styleViewLiveLogo}>
-              <Image
-                source={require('../../../../../img/images/live-news.png')}
-                style={{
-                  height: 27,
-                  width: 27,
-                }}
-              />
-            </View>
-          </View>
-
-          <Button
-            text={'Start a video chat'}
-            icon={{
-              name: 'plus',
-              size: 18,
-              type: 'font',
-              color: colors.white,
-            }}
-            backgroundColor={'green'}
-            onPressColor={colors.greenLight}
-            click={async () => newSession()}
-          />
-          <View style={{height: 20}} />
-          <Button
-            text={'Find a coach'}
-            icon={{
-              name: 'whistle',
-              size: 27,
-              type: 'moon',
-              color: colors.white,
-            }}
-            backgroundColor={'blue'}
-            onPressColor={colors.blueLight}
-            click={() => navigate('Coaches')}
-          />
-        </View>
-      );
+ 
+  
     return (
       <FlatListComponent
         list={coachSessions}
@@ -124,8 +79,10 @@ class ListStreams extends Component {
 }
 
 const mapStateToProps = (state) => {
+  let coachSessions = state.user.infoUser.coachSessionsRequests;
+  if (!coachSessions) coachSessions = [];
   return {
-    coachSessions: state.user.infoUser.coachSessionsRequests,
+    coachSessions,
     userConnected: state.user.userConnected,
   };
 };

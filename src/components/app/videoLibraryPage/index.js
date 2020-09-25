@@ -95,12 +95,13 @@ class VideoLibraryPage extends Component {
     const {selectableMode} = this.state;
     this.setState({selectableMode: !selectableMode});
   }
-  playSelectedVideos = () => {
+  playSelectedVideos = ({forceSharing}) => {
     const {selectedVideos} = this.state;
 
     openVideoPlayer({
       archives: selectedVideos,
       open: true,
+      forceSharing,
     });
   };
   async shareSelectedVideos() {
@@ -301,6 +302,7 @@ class VideoLibraryPage extends Component {
         selectVideo={(id) => this.selectVideo(id)}
         style={[styles.cardArchive, styleBorder]}
         id={videoID}
+        index={index}
         key={videoID}
         noUpdateStatusBar={true}
         showUploadProgress={true}
@@ -309,7 +311,13 @@ class VideoLibraryPage extends Component {
   }
 
   render() {
-    const {navigation, route, userConnected} = this.props;
+    const {
+      navigation,
+      route,
+      userConnected,
+      currentSessionID,
+      position,
+    } = this.props;
 
     const {
       videosArray,
@@ -329,14 +337,9 @@ class VideoLibraryPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
           selectOnly={selectOnly}
-          text={
-            !selectableMode
-              ? 'Library'
-              : selectedVideos.length > 0
-              ? `${selectedVideos.length} videos`
-              : 'Select video'
-          }
+          text={!selectableMode ? 'Library' : 'Select videos...'}
           selectableMode={selectableMode}
+          toggleSelectable={this.toggleSelectable.bind(this)}
           addFromCameraRoll={this.addFromCameraRoll.bind(this)}
           isListEmpty={videosArray.length === 0}
         />
@@ -372,11 +375,14 @@ class VideoLibraryPage extends Component {
             onRef={(ref) => {
               this.toolRowRef = ref;
             }}
+            positon={position}
+            displayButton0={currentSessionID}
             clickButton1={this.toggleSelectable.bind(this)}
             isButton2Selected={selectableMode}
+            clickButton0={() => this.playSelectedVideos({forceSharing: true})}
             clickButton4={() => this.deleteSelectedVideos()}
             clickButton3={() => this.shareSelectedVideos()}
-            clickButton2={() => this.playSelectedVideos()}
+            clickButton2={() => this.playSelectedVideos({})}
             selectedVideos={selectedVideos}
             addFromCameraRoll={this.addFromCameraRoll.bind(this)}
             selectVideo={this.selectVideo.bind(this)}

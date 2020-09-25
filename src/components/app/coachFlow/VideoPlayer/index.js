@@ -81,6 +81,7 @@ export default class VideoPlayer extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     const {currentTime, videoLoaded, seekbarLoaded} = this.state;
+    const {archive} = this.props;
 
     if (prevState.currentTime !== currentTime) {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
@@ -330,7 +331,7 @@ export default class VideoPlayer extends Component {
       position,
     } = this.props;
 
-    const {thumbnail, url, durationSeconds} = archive;
+    const {thumbnail, url, durationSeconds, recordedActions} = archive;
 
     const {
       currentTime,
@@ -355,7 +356,7 @@ export default class VideoPlayer extends Component {
             styleApp.center,
             {backgroundColor: colors.black},
           ]}>
-          {videoLoading && this.fullScreenLoader()}
+          {(videoLoading || !seekbarLoaded) && this.fullScreenLoader()}
           {!videoLoaded && (
             <AsyncImage
               resizeMode={'contain'}
@@ -447,6 +448,7 @@ export default class VideoPlayer extends Component {
             size={seekbarSize}
             togglePlayPause={this.linkedTogglePlayPause.bind(this)}
             currentTime={currentTime}
+            recordedActions={recordedActions}
             totalTime={durationSeconds}
             paused={paused}
             prevPaused={prevPaused}

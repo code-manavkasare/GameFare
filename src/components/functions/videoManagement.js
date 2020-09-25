@@ -141,12 +141,18 @@ const deleteVideos = (ids) => {
   });
 };
 
-const openVideoPlayer = async ({archives, open, coachSessionID}) => {
+const openVideoPlayer = async ({
+  archives,
+  open,
+  coachSessionID,
+  forceSharing,
+}) => {
   await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
   if (open) {
     return navigate('VideoPlayerPage', {
       archives,
       coachSessionID,
+      forceSharing,
     });
   }
   return goBack();

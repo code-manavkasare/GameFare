@@ -35,6 +35,7 @@ class CallTab extends Component {
       branchLink: props.route?.params?.branchLink ?? null,
     };
     this.focusUnsubscribe = null;
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   componentDidMount = () => {
@@ -142,6 +143,7 @@ class CallTab extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderCallTab
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           userConnected={userConnected}
           headerTitle={
             !modal
@@ -192,6 +194,7 @@ class CallTab extends Component {
             />
           ) : (
             <ListVideoCalls
+              AnimatedHeaderValue={this.AnimatedHeaderValue}
               selectedSessions={selectedSessions}
               onClick={(session) => this.selectSession(session)}
               hideCallButton={action !== 'call'}

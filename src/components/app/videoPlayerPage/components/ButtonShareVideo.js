@@ -21,6 +21,11 @@ class ButtonShareVideo extends Component {
     super(props);
     this.state = {};
   }
+  componentDidMount = () => {
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
+  };
   async startSharingVideo(value) {
     const {
       userID,

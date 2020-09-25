@@ -76,8 +76,12 @@ class VideoPlayerPage extends Component {
     });
     Orientation.addOrientationListener(this._orientationListener.bind(this));
     this.launchIfPreview();
+    this.autoShareOnOpen();
   }
-
+  autoShareOnOpen = () => {
+    const {params} = this.props.route;
+    if (params.forceSharing) this.buttonShareRef.startSharingVideo(true);
+  };
   launchIfPreview = () => {
     const {videoInfos} = this.props;
     if (videoInfos && Object.values(videoInfos).length > 0) {
@@ -477,6 +481,7 @@ class VideoPlayerPage extends Component {
       isPreviewing,
       isDrawingEnabled,
       archives,
+      recordedActions
     } = this.state;
     const {navigation, route, session} = this.props;
     const {navigate} = navigation;
@@ -490,12 +495,14 @@ class VideoPlayerPage extends Component {
         userIDSharing: personSharingScreen,
       });
     }
+    console.log('this state', this.state);
     return (
       <VideoPlayerHeader
         isEditMode={isEditMode}
         isRecording={isRecording}
         isPreviewing={isPreviewing}
         isDrawingEnabled={isDrawingEnabled}
+        recordedActions={recordedActions}
         personSharingScreen={personSharingScreen}
         route={route}
         close={() => {
@@ -698,6 +705,7 @@ class VideoPlayerPage extends Component {
       <ButtonShareVideo
         archives={videoInfos}
         coachSessionID={currentSessionID}
+        onRef={(ref) => (this.buttonShareRef = ref)}
         togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
         getVideoState={(id) => {
           const index = Object.values(videoInfos).findIndex(

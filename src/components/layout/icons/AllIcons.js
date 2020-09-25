@@ -77,7 +77,9 @@ export default class AllIcon extends Component {
         <AnimatedMatIcon name={icon} color={color} size={size} />
       );
     } else if (type === 'file') {
-      return <Image source={icon} style={{height: size, width: size}} />;
+      return (
+        <Image source={icon} style={{height: size, width: size, ...style}} />
+      );
     }
     return null;
   }

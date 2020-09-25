@@ -28,6 +28,7 @@ export default class VideoPlayerHeader extends React.Component {
       route,
       isDrawingEnabled,
       setState,
+      recordedActions
     } = this.props;
     const {coachSessionID} = route.params;
     const sharedProps = {
@@ -85,7 +86,7 @@ export default class VideoPlayerHeader extends React.Component {
         clickButton1={() => close()}
         colorIconOffset={colors.white}
         backgroundColorIconOffset={colors.title + '70'}
-        iconOffset={isEditMode || isRecording || isPreviewing ? null : 'plus'}
+        iconOffset={isEditMode || isRecording || isPreviewing || recordedActions.length >0 ? null : 'plus'}
         clickButtonOffset={() => addVideo()}
         typeIconOffset={'font'}
         {...sharedProps}

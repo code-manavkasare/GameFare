@@ -139,6 +139,7 @@ class ListVideoCalls extends Component {
       onClick,
       selectedSessions,
       hideCallButton,
+      AnimatedHeaderValue
     } = this.props;
     if (!userConnected || coachSessions.length === 0) {
       return null;
@@ -162,6 +163,7 @@ class ListVideoCalls extends Component {
         )}
         incrementRendering={6}
         initialNumberToRender={8}
+        AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />
     );  }

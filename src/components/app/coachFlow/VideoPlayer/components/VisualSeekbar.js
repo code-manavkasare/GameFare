@@ -161,15 +161,18 @@ class VisualSeekBar extends Component {
     };
   }
   toggleVisible(force) {
+    const {recordedActions} = this.props;
     const {visible: visibleState} = this.state;
     const visible = force !== undefined ? !force : visibleState;
-    Animated.parallel([
-      Animated.timing(this._revealSeekbar, native(visible ? 0 : 1, 200)),
-    ]).start();
-    const timeout = visible ? 200 : 0;
-    setTimeout(() => {
-      this.setState({visible: !visible});
-    }, timeout);
+    if (!recordedActions) {
+      Animated.parallel([
+        Animated.timing(this._revealSeekbar, native(visible ? 0 : 1, 200)),
+      ]).start();
+      const timeout = visible ? 200 : 0;
+      setTimeout(() => {
+        this.setState({visible: !visible});
+      }, timeout);
+    }
   }
   setCurrentTime(currentTime, forceUpdate) {
     const {paused} = this.state;
