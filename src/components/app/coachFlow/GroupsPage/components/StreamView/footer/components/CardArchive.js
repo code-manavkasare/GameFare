@@ -27,7 +27,7 @@ class CardArchive extends PureComponent {
     id: PropTypes.string.isRequired,
     local: PropTypes.bool,
     openVideo: PropTypes.func,
-    style: PropTypes.object,
+    style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     selectableMode: PropTypes.bool,
     isSelected: PropTypes.bool,
     selectVideo: PropTypes.func,
