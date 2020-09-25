@@ -48,7 +48,6 @@ class HeaderListStream extends Component {
           const branchLink = await createInviteToAppBranchUrl();
           navigate('UserDirectory', {
             action: 'message',
-            actionText: 'Message',
             branchLink,
           });
         }

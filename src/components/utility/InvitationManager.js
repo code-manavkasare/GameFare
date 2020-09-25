@@ -5,27 +5,29 @@ import {Row, Col} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import isEqual from 'lodash.isequal';
 
-import {navigate} from '../../../../../NavigationService';
+import {navigate} from '../../../NavigationService';
 
-import sizes from '../../../style/sizes';
-import styleApp from '../../../style/style';
-import colors from '../../../style/colors';
+import sizes from '../style/sizes';
+import styleApp from '../style/style';
+import colors from '../style/colors';
 
-import {native} from '../../../animations/animations';
+import {native} from '../animations/animations';
 
-import {sessionOpening} from '../../../functions/coach';
-import {shareVideosWithTeams} from '../../../functions/videoManagement';
+import {userObject} from '../functions/users';
+import {openSession, sessionOpening} from '../functions/coach';
+import {shareVideosWithTeams} from '../functions/videoManagement';
 
-import AllIcon from '../../../layout/icons/AllIcons';
-import ButtonColor from '../../../layout/Views/Button';
+import AllIcon from '../layout/icons/AllIcons';
+import ButtonColor from '../layout/Views/Button';
 
-import {titleSession} from '../../TeamPage/components/elements';
+import {titleSession} from '../app/TeamPage/components/elements';
 
-class SessionInvitationManager extends Component {
+class InvitationManager extends Component {
   static propTypes = {
     action: PropTypes.string.isRequired,
     actionText: PropTypes.string.isRequired,
     selectedSessions: PropTypes.object.isRequired,
+    selectedUsers: PropTypes.object.isRequired,
     archivesToShare: PropTypes.array,
     onClearInvites: PropTypes.func,
     onConfirmInvites: PropTypes.func,
@@ -35,6 +37,7 @@ class SessionInvitationManager extends Component {
     action: 'call',
     actionText: 'Call',
     selectedSessions: {},
+    selectedUsers: {},
   };
 
   constructor(props) {
@@ -42,6 +45,7 @@ class SessionInvitationManager extends Component {
     this.state = {
       buttonText: '',
       keyboardVisible: false,
+      animationState: 0,
     };
     this.buttonReveal = new Animated.Value(0);
     this.keyboardWillShowListener = null;
@@ -68,25 +72,27 @@ class SessionInvitationManager extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {selectedSessions} = this.props;
-    const {selectedSessions: prevSelectedSessions} = prevProps;
-    const {keyboardVisible} = this.state;
+    const {selectedSessions, selectedUsers} = this.props;
+    const {
+      selectedSessions: prevSelectedSessions,
+      selectedUsers: prevSelectedUsers,
+    } = prevProps;
+    const {keyboardVisible, animationState} = this.state;
     const {keyboardVisible: prevKeyboardVisible} = prevState;
-    const someSelectedSessions = Object.keys(selectedSessions).length > 0;
-    const needToShowButton =
-      Object.keys(prevSelectedSessions).length === 0 && someSelectedSessions;
+    const numSessions = Object.keys(selectedSessions).length;
+    const numUsers = Object.keys(selectedUsers).length;
+    const someSelected = numSessions > 0 || numUsers > 0;
+    const needToShowButton = animationState === 0 && someSelected;
     const needToHideButton =
-      Object.keys(prevSelectedSessions).length > 0 &&
-      Object.keys(selectedSessions).length === 0;
-    const invitesChanged = !isEqual(selectedSessions, prevSelectedSessions);
+      animationState > 0 && (numSessions === 0 && numUsers === 0);
+    const invitesChanged =
+      !isEqual(selectedSessions, prevSelectedSessions) ||
+      !isEqual(selectedUsers, prevSelectedUsers);
     if (needToShowButton) {
       this.showButton(keyboardVisible);
     } else if (needToHideButton) {
       this.hideButton();
-    } else if (
-      prevKeyboardVisible !== keyboardVisible &&
-      someSelectedSessions
-    ) {
+    } else if (prevKeyboardVisible !== keyboardVisible && someSelected) {
       this.showButton(keyboardVisible);
     }
     if (invitesChanged) {
@@ -104,30 +110,50 @@ class SessionInvitationManager extends Component {
   }
 
   hideButton() {
-    Animated.timing(this.buttonReveal, native(0)).start();
+    Animated.timing(this.buttonReveal, native(0)).start(() =>
+      this.setState({animationState: 0}),
+    );
   }
 
   showButton(keyboard) {
+    console.log('show button');
     const to = keyboard ? 2 : 1;
-    Animated.timing(this.buttonReveal, native(to)).start();
+    Animated.timing(this.buttonReveal, native(to)).start(() =>
+      this.setState({animationState: to}),
+    );
+  }
+
+  getSessionText(sessionArray) {
+    const {actionText} = this.props;
+    const firstSession = sessionArray[0];
+    if (sessionArray.length === 1) {
+      return `${actionText} ${titleSession(firstSession, 20, true)}`;
+    } else {
+      return `${actionText} ${sessionArray.length} groups`;
+    }
+  }
+
+  getUserText(userArray) {
+    const {actionText} = this.props;
+    const firstUser = userArray[0];
+    if (userArray.length === 1) {
+      return `${actionText} ${firstUser.info.firstname}`;
+    } else {
+      return `${actionText} ${firstUser.info.firstname} and ${userArray.length -
+        1} others`;
+    }
   }
 
   updateText() {
-    const {selectedSessions, actionText} = this.props;
+    const {selectedSessions, selectedUsers} = this.props;
     const sessionArray = Object.values(selectedSessions);
+    const userArray = Object.values(selectedUsers);
     if (sessionArray.length > 0) {
-      const firstSession = sessionArray[0];
-      if (sessionArray.length === 1) {
-        const buttonText = `${actionText} ${titleSession(
-          firstSession,
-          20,
-          true,
-        )}`;
-        this.setState({buttonText});
-      } else {
-        const buttonText = `${actionText} ${sessionArray.length} groups`;
-        this.setState({buttonText});
-      }
+      const buttonText = this.getSessionText(sessionArray);
+      this.setState({buttonText});
+    } else if (userArray.length > 0) {
+      const buttonText = this.getUserText(userArray);
+      this.setState({buttonText});
     }
   }
 
@@ -137,9 +163,36 @@ class SessionInvitationManager extends Component {
     this.hideButton();
   };
 
-  confirmInvites = async () => {
-    const {selectedSessions} = this.props;
-    const {archivesToShare, action, onConfirmInvites} = this.props;
+  confirmUserInvites = async () => {
+    const {
+      selectedUsers,
+      userID,
+      infoUser,
+      archivesToShare,
+      action,
+    } = this.props;
+    const session = await openSession(
+      userObject(infoUser, userID),
+      selectedUsers,
+    );
+    if (action === 'shareArchives') {
+      if (archivesToShare && archivesToShare.length > 0) {
+        shareVideosWithTeams(archivesToShare, [session.objectID]);
+        navigate('Conversation', {coachSessionID: session.objectID});
+      } else {
+        console.log(
+          'ERROR InvitationManager, action is "shareVideos" but empty/no prop "archivesToShare" provided',
+        );
+      }
+    } else if (action === 'message') {
+      navigate('Conversation', {coachSessionID: session.objectID});
+    } else if (action === 'call') {
+      sessionOpening(session);
+    }
+  };
+
+  confirmSessionInvites = async () => {
+    const {selectedSessions, archivesToShare, action} = this.props;
     const sessionIDs = Object.keys(selectedSessions);
     if (action === 'shareArchives') {
       if (archivesToShare && archivesToShare.length > 0) {
@@ -157,20 +210,29 @@ class SessionInvitationManager extends Component {
     } else if (action === 'call') {
       sessionOpening(Object.values(selectedSessions)[0]);
     }
-    onConfirmInvites && onConfirmInvites();
   };
 
+  confirmInvites() {
+    const {selectedSessions, selectedUsers, onConfirmInvites} = this.props;
+    const sessionArray = Object.values(selectedSessions);
+    const userArray = Object.values(selectedUsers);
+    if (sessionArray.length > 0) {
+      this.confirmSessionInvites();
+    } else if (userArray.length > 0) {
+      this.confirmUserInvites();
+    }
+    onConfirmInvites && onConfirmInvites();
+  }
+
   button = () => {
-    const {accountForAppFooter} = this.props;
+    const {bottomOffset} = this.props;
     const {buttonText} = this.state;
     const translateY = this.buttonReveal.interpolate({
       inputRange: [0, 1, 2],
       outputRange: [
         75,
-        -(
-          sizes.marginBottomApp + (accountForAppFooter ? sizes.heightFooter : 0)
-        ),
-        -(sizes.keyboardOffset + 15),
+        -(sizes.marginBottomApp + bottomOffset),
+        -(sizes.keyboardOffset + 25),
       ],
     });
     const buttonContainerStyle = {
@@ -276,4 +338,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)(SessionInvitationManager);
+)(InvitationManager);

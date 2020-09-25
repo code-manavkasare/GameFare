@@ -6,4 +6,29 @@ function generateID() {
   );
 }
 
-module.exports = {generateID};
+function getSelectionActionDecorations(action) {
+  switch (action) {
+    case 'call':
+      return {
+        actionText: 'Call',
+        actionHeader: 'Video calls',
+      };
+    case 'message':
+      return {
+        actionText: 'Message',
+        actionHeader: 'Recent',
+      };
+    case 'shareArchives':
+      return {
+        actionText: 'Share with',
+        actionHeader: 'Share',
+      };
+    default:
+      return {
+        actionText: 'Unknown action',
+        actionHeader: 'Unknown action',
+      };
+  }
+}
+
+module.exports = {generateID, getSelectionActionDecorations};

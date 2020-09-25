@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated, Share, Alert, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
@@ -11,27 +11,36 @@ import styleApp from '../../style/style';
 import sizes from '../../style/sizes';
 
 import {generateID} from '../../functions/createEvent';
-import {sessionOpening} from '../../functions/coach';
 import {createInviteToSessionBranchUrl} from '../../database/branch';
+import {getSelectionActionDecorations} from '../../functions/utility';
+import {isUserPrivate} from '../../functions/users';
 
 import Loader from '../../layout/loaders/Loader';
+import SearchInput from '../../layout/textField/SearchInput';
+import PermissionView from '../../layout/Views/PermissionView';
+import InvitationManager from '../../utility/InvitationManager';
 
 import HeaderCallTab from './components/HeaderCallTab';
 import ListVideoCalls from './components/ListVideoCalls';
-import PermissionView from './components/PermissionView';
-import SessionInvitationManager from './components/SessionInvitationManager';
+import UserSearchResults from '../userDirectory/components/UserSearchResults';
 
 class CallTab extends Component {
   constructor(props) {
     super(props);
+    const action = props.route?.params?.action ?? 'call';
+    const {actionText, actionHeader} = getSelectionActionDecorations(action);
     this.state = {
       selectedSessions: {},
+      selectedUsers: {},
+      searchText: '',
       permissionsCamera: false,
       initialLoader: true,
+      action,
+      actionText,
+      actionHeader,
       archivesToShare: props.route?.params?.archivesToShare,
-      action: props.route?.params?.action ?? 'call',
-      actionText: props.route?.params?.actionText ?? 'Call',
       modal: props.route?.params?.modal ?? false,
+      inlineSearch: props.route?.params?.inlineSearch ?? false,
       branchLink: props.route?.params?.branchLink ?? null,
     };
     this.focusUnsubscribe = null;
@@ -40,29 +49,10 @@ class CallTab extends Component {
 
   componentDidMount = () => {
     const {navigation} = this.props;
-    this.openSession();
     this.setBranchLink();
     this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
     });
-  };
-
-  shouldComponentUpdate(prevProps, prevState) {
-    if (!isEqual(prevState, this.state)) {
-      return true;
-    }
-    if (isEqual(this.props, prevProps)) {
-      return false;
-    }
-    return true;
-  }
-
-  componentDidUpdate = (prevProps) => {
-    const {params} = this.props.route;
-    const {params: prevParams} = prevProps.route;
-    if (params?.date && prevParams?.date !== params?.date) {
-      this.openSession();
-    }
   };
 
   componentWillUnmount = () => {
@@ -80,6 +70,38 @@ class CallTab extends Component {
     });
   };
 
+  selectUser(user) {
+    const {navigate} = this.props.navigation;
+    if (isUserPrivate(user)) {
+      Keyboard.dismiss();
+      return navigate('RootAlert', {
+        textButton: 'Allow',
+        title: `${
+          user.info.firstname
+        } is private. Would you like to send a message request?`,
+        displayList: true,
+        listOptions: [
+          {
+            operation: () => null,
+          },
+          {
+            operation: () => Alert.alert('How do I send a message request lol'),
+          },
+        ],
+      });
+    } else {
+      const {selectedUsers} = this.state;
+      if (selectedUsers[user.id]) {
+        this.setState({selectedUsers: dissoc(user.id, selectedUsers)});
+      } else {
+        this.setState({
+          selectedSessions: {},
+          selectedUsers: {...selectedUsers, [user.id]: user},
+        });
+      }
+    }
+  }
+
   selectSession = (session) => {
     const {action, selectedSessions} = this.state;
     if (action === 'call' || action === 'message') {
@@ -87,7 +109,10 @@ class CallTab extends Component {
       if (selectedSessions[session.objectID]) {
         this.setState({selectedSessions: {}});
       } else {
-        this.setState({selectedSessions: {[session.objectID]: session}});
+        this.setState({
+          selectedUsers: {},
+          selectedSessions: {[session.objectID]: session},
+        });
       }
     } else {
       // select multiple
@@ -95,48 +120,78 @@ class CallTab extends Component {
         this.setState({
           selectedSessions: dissoc(session.objectID, selectedSessions),
         });
-        return false;
       } else {
         this.setState({
+          selectedUsers: {},
           selectedSessions: {
             ...selectedSessions,
             [session.objectID]: session,
           },
         });
-        return true;
       }
     }
   };
 
-  openSession = async () => {
-    const {params} = this.props.route;
-    if (params?.objectID) {
-      let session = await database()
-        .ref(`coachSessions/${params.objectID}`)
-        .once('value');
-      session = session.val();
-      sessionOpening(session);
-    }
-  };
-
-  viewLoader = () => {
+  viewLoader() {
     return (
       <View style={styles.loaderStyle}>
         <Loader size={55} color={colors.primary} />
       </View>
     );
-  };
+  }
+
+  viewPermissions() {
+    const {initialLoader} = this.props;
+    return (
+      <PermissionView
+        initialLoader={initialLoader}
+        setState={this.setState.bind(this)}
+      />
+    );
+  }
+
+  viewUserSearch() {
+    const {selectedUsers, searchText} = this.state;
+    return (
+      <View style={styles.inlineSearchContainer}>
+        <SearchInput search={(text) => this.setState({searchText: text})} />
+        <UserSearchResults
+          onSelect={(user) => this.selectUser(user)}
+          selectedUsers={selectedUsers}
+          searchText={searchText}
+        />
+      </View>
+    );
+  }
+
+  viewCallTab() {
+    const {selectedSessions, action, inlineSearch, searchText} = this.state;
+    return (
+      <View>
+        {inlineSearch && this.viewUserSearch()}
+        {searchText === '' && (
+          <ListVideoCalls
+            selectedSessions={selectedSessions}
+            onClick={(session) => this.selectSession(session)}
+            hideCallButton={action !== 'call'}
+          />
+        )}
+      </View>
+    );
+  }
 
   render() {
     const {
-      selectedSessions,
       permissionsCamera,
-      initialLoader,
       action,
       actionText,
+      actionHeader,
       archivesToShare,
       modal,
       branchLink,
+      selectedSessions,
+      selectedUsers,
+      inlineSearch,
     } = this.state;
     const {userConnected, navigation} = this.props;
     const {navigate, goBack} = navigation;
@@ -145,35 +200,26 @@ class CallTab extends Component {
         <HeaderCallTab
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           userConnected={userConnected}
-          headerTitle={
-            !modal
-              ? 'Video calls'
-              : action === 'call'
-              ? 'Call'
-              : action === 'message'
-              ? 'Message'
-              : action === 'shareArchives'
-              ? 'Share videos'
-              : 'Video calls'
+          headerTitle={actionHeader}
+          openUserDirectoryIcon={inlineSearch ? 'link' : 'search'}
+          openUserDirectory={
+            inlineSearch
+              ? async () => {
+                  const result = await Share.share({url: branchLink});
+                  if (result.action === Share.sharedAction) {
+                    this.setBranchLink();
+                  }
+                }
+              : () => {
+                  this.setState({selectedUsers: {}, selectedSessions: {}});
+                  navigate('UserDirectory', {
+                    action,
+                    actionText,
+                    archivesToShare,
+                    branchLink,
+                  });
+                }
           }
-          openUserDirectoryIcon={
-            action === 'call'
-              ? 'phone'
-              : action === 'message'
-              ? 'edit'
-              : action === 'shareArchives'
-              ? 'share'
-              : 'call'
-          }
-          openUserDirectory={() => {
-            this.setState({selectedSessions: {}});
-            navigate('UserDirectory', {
-              action,
-              actionText,
-              archivesToShare,
-              branchLink,
-            });
-          }}
           openMessageHistoryIcon={modal ? 'times' : 'comment-alt'}
           openMessageHistory={
             modal
@@ -186,32 +232,22 @@ class CallTab extends Component {
           showNotificationCount={!modal}
         />
         <View style={styles.bodyContainer}>
-          {initialLoader && this.viewLoader()}
-          {!permissionsCamera ? (
-            <PermissionView
-              initialLoader={initialLoader}
-              setState={this.setState.bind(this)}
-            />
-          ) : (
-            <ListVideoCalls
-              AnimatedHeaderValue={this.AnimatedHeaderValue}
-              selectedSessions={selectedSessions}
-              onClick={(session) => this.selectSession(session)}
-              hideCallButton={action !== 'call'}
-            />
-          )}
-          {!initialLoader && (
-            <SessionInvitationManager
-              selectedSessions={selectedSessions}
-              onClearInvites={() => this.setState({selectedSessions: {}})}
-              onConfirmInvites={() => this.setState({selectedSessions: {}})}
-              action={action}
-              actionText={actionText}
-              archivesToShare={archivesToShare}
-              accountForAppFooter={!modal}
-            />
-          )}
+          {permissionsCamera ? this.viewPermissions() : this.viewCallTab()}
         </View>
+        <InvitationManager
+          selectedSessions={selectedSessions}
+          selectedUsers={selectedUsers}
+          onClearInvites={() =>
+            this.setState({selectedUsers: {}, selectedSessions: {}})
+          }
+          onConfirmInvites={() =>
+            this.setState({selectedUsers: {}, selectedSessions: {}})
+          }
+          action={action}
+          actionText={actionText}
+          archivesToShare={archivesToShare}
+          bottomOffset={modal ? 0 : sizes.heightFooter}
+        />
       </View>
     );
   }
@@ -220,6 +256,7 @@ class CallTab extends Component {
 const styles = StyleSheet.create({
   bodyContainer: {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
   loaderStyle: {...styleApp.center, height: 120},
+  inlineSearchContainer: {paddingBottom: 5},
 });
 
 const mapStateToProps = (state) => {
