@@ -3,6 +3,7 @@ import {Animated, Image} from 'react-native';
 import PropTypes from 'prop-types';
 import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
+import {createShareVideosBranchUrl} from '../../../database/branch';
 
 export default class VideoPlayerHeader extends React.Component {
   static propTypes = {
@@ -28,7 +29,9 @@ export default class VideoPlayerHeader extends React.Component {
       route,
       isDrawingEnabled,
       setState,
-      recordedActions
+      recordedActions,
+      navigation,
+      archives,
     } = this.props;
     const {coachSessionID} = route.params;
     const sharedProps = {
@@ -86,9 +89,31 @@ export default class VideoPlayerHeader extends React.Component {
         clickButton1={() => close()}
         colorIconOffset={colors.white}
         backgroundColorIconOffset={colors.title + '70'}
-        iconOffset={isEditMode || isRecording || isPreviewing || recordedActions.length >0 ? null : 'plus'}
+        iconOffset={
+          isEditMode ||
+          isRecording ||
+          isPreviewing ||
+          recordedActions.length > 0
+            ? null
+            : 'plus'
+        }
         clickButtonOffset={() => addVideo()}
         typeIconOffset={'font'}
+        iconOffset2={'user-plus'}
+        typeIconOffset2={'font'}
+        sizeOffset2={20}
+        backgroundColorIconOffset2={colors.title + '70'}
+        colorIconOffset2={colors.white}
+        clickButtonOffset2={async () => {
+          console.log('archives', archives);
+          navigation.navigate('ModalCallTab', {
+            action: 'shareArchives',
+            archivesToShare: archives,
+            modal: true,
+            branchLink: await createShareVideosBranchUrl(archives),
+            inlineSearch: true,
+          });
+        }}
         {...sharedProps}
       />
     );

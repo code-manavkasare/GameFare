@@ -60,7 +60,7 @@ class HeaderVideoLibrary extends Component {
           colorIcon2={colors.title}
           clickButton2={() => toggleSelectable()}
           clickButtonOffset={() => addFromCameraRoll({})}
-          iconOffset={selectOnly ? null : 'plus'}
+          iconOffset={!selectableMode && 'plus'}
           typeIconOffset={'font'}
           sizeIconOffset={22}
         />

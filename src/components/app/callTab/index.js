@@ -171,6 +171,7 @@ class CallTab extends Component {
         {inlineSearch && this.viewUserSearch()}
         {searchText === '' && (
           <ListVideoCalls
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
             hideCallButton={action !== 'call'}
@@ -256,7 +257,7 @@ class CallTab extends Component {
 const styles = StyleSheet.create({
   bodyContainer: {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
   loaderStyle: {...styleApp.center, height: 120},
-  inlineSearchContainer: {paddingBottom: 5},
+  inlineSearchContainer: {paddingBottom: 0},
 });
 
 const mapStateToProps = (state) => {

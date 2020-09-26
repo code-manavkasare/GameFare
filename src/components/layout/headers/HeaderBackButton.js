@@ -302,7 +302,7 @@ class HeaderBackButton extends Component {
     };
     const {
       clickButtonOffset2,
-      backgroundColorIcon1,
+      backgroundColorIconOffset,
       iconOffset2,
       textOffset2,
       colorIconOffset2,
@@ -318,13 +318,13 @@ class HeaderBackButton extends Component {
             styleButton,
             {
               borderColor: borderColorIcon,
-              backgroundColor: backgroundColorIcon1
-                ? backgroundColorIcon1
+              backgroundColor: backgroundColorIconOffset
+                ? backgroundColorIconOffset
                 : colors.white,
             },
           ]}>
           <ButtonColor
-            color={nobackgroundColorIcon1 ? null : 'white'}
+            // color={nobackgroundColorIcon1 ? null : 'white'}
             view={() => {
               return iconOffset2 === 'text' ? (
                 <Text style={styleApp.textBold}>{textOffset2}</Text>
@@ -488,16 +488,16 @@ class HeaderBackButton extends Component {
           <Col size={15} style={[styleApp.center2]}>
             {this.button11()}
           </Col>
-          <Col size={15} style={[styleApp.center]}>
+          <Col size={15} style={[styleApp.center2]}>
             {this.button12()}
           </Col>
           <Col size={15} style={[styleApp.center3]}>
             {this.buttonOffset2()}
           </Col>
-          <Col size={18} style={[styleApp.center3]}>
+          <Col size={15} style={[styleApp.center3]}>
             {this.buttonOffset()}
           </Col>
-          <Col size={18} style={[styleApp.center3]}>
+          <Col size={15} style={[styleApp.center3]}>
             {this.button2()}
           </Col>
         </Row>

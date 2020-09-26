@@ -32,9 +32,7 @@ class ToolRow extends Component {
       prevProps.selectedVideos.length !== this.props.selectedVideos.length ||
       prevProps.isButton2Selected !== this.props.isButton2Selected
     ) {
-      this.openToolBox(
-        this.props.selectedVideos.length !== 0 && this.props.isButton2Selected,
-      );
+      this.openToolBox(this.props.isButton2Selected);
     }
   };
   openToolBox = (val) => {
@@ -191,8 +189,8 @@ class ToolRow extends Component {
             <Col size={25} style={styleApp.center}>
               {this.button({
                 icon: {
-                  name: 'share',
-                  type: 'moon',
+                  name: 'user-plus',
+                  type: 'font',
                   color: colors.primary,
                   size: 20,
                 },

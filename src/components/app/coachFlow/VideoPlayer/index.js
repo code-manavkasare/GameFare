@@ -107,6 +107,9 @@ export default class VideoPlayer extends Component {
     const proxySource = await convertToProxyURL(src);
     this.setState({proxySource});
   };
+  setDrawings = (drawings) => {
+    this.drawViewRef.setState({drawings});
+  };
 
   static getDerivedStateFromProps(props, state) {
     let newState = {};
@@ -255,7 +258,7 @@ export default class VideoPlayer extends Component {
     const {paused, prevPaused, currentTime} = this.state;
     const currentTimeFromSeekBar = this.visualSeekBarRef?.getCurrentTime();
 
-    onCurrentTimeChange(index, time, paused);
+    // onCurrentTimeChange(index, time, paused);
     if (!paused) {
       await this.setState({paused: true, prevPaused: false});
     } else if (prevPaused === undefined) {
