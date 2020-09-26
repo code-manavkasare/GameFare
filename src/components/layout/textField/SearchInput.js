@@ -15,10 +15,10 @@ class SearchInput extends Component {
   static propTypes = {
     search: PropTypes.func.isRequired,
     autofocus: PropTypes.bool,
-  }
+  };
   static defaultProps = {
     autoFocus: false,
-  }
+  };
   constructor(props) {
     super(props);
     this.state = {};
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 15,
     backgroundColor: colors.greyLight,
-    marginVertical: 20,
+    marginVertical: 10,
     // marginTop: sizes.marginTopApp + 0,
     marginHorizontal: '5%',
   },

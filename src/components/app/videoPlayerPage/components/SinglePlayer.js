@@ -13,6 +13,7 @@ import DrawTools from './drawing/DrawTools';
 import DrawView from './drawing/DrawView';
 import {bindArchive} from '../../../functions/archive';
 import {updateInfoVideoCloud} from '../../../functions/coach';
+import RecordingComponent from './recording/index';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -26,6 +27,7 @@ class SinglePlayer extends Component {
       audioRecorder: null,
       audioFilePath: null,
       sizeVideo: {height: 0, width: 0},
+      isVideoPlayerReady: false,
     };
   }
 
@@ -138,7 +140,7 @@ class SinglePlayer extends Component {
   };
   onPositionChange = (index, position) => {
     const {videosBeingShared, coachSessionID, id} = this.props;
- 
+
     if (videosBeingShared) {
       const {x, y} = position;
       const updates = {
@@ -151,6 +153,9 @@ class SinglePlayer extends Component {
         .ref()
         .update(updates);
     }
+  };
+  previewRecording = (props) => {
+    this.recordingRef.previewRecording(props);
   };
   singlePlayer = () => {
     const {
@@ -170,8 +175,11 @@ class SinglePlayer extends Component {
       videoFromCloud,
       videoPlayerRefs,
       videosBeingShared,
+      preparePlayer,
+      isAudioPlayerReady,
+      playRecord,
     } = this.props;
-    const {sizeVideo} = this.state;
+    const {sizeVideo, isVideoPlayerReady} = this.state;
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
     if (!archive) {
@@ -195,6 +203,31 @@ class SinglePlayer extends Component {
             undo={() => this.drawViewRef.undo()}
           />
         )}
+
+        <RecordingComponent
+          videoPlayerRef={this.videoPlayerRef}
+          archive={archive}
+          onRef={(ref) => {
+            this.recordingRef = ref;
+          }}
+          preparePlayer={preparePlayer}
+          isAudioPlayerReady={isAudioPlayerReady}
+          isVideoPlayerReady={isVideoPlayerReady}
+          setVideoPlayerState={(state) => this.videoPlayerRef?.setState(state)}
+          seekVideoPlayer={(time) => this.videoPlayerRef?.seek(time)}
+          setDrawings={(drawings) => {
+            console.log('this.videoPlayerRef', this.videoPlayerRef);
+            console.log('drawings', drawings);
+            this.drawViewRef.setState(drawings);
+          }}
+          setNewPosition={(position) =>
+            this.videoPlayerRef.PinchableBoxRef.setNewPosition(position)
+          }
+          setNewScale={(scale) =>
+            this.videoPlayerRef?.PinchableBoxRef?.setNewScale(scale)
+          }
+          playRecord={playRecord}
+        />
 
         <VideoPlayer
           archiveId={id}
@@ -250,6 +283,7 @@ class SinglePlayer extends Component {
           position={position}
           userIDLastUpdate={userIDLastUpdate}
           muted={false}
+          onVideoPlayerReady={(val) => this.setState({isVideoPlayerReady: val})}
         />
       </View>
     );
