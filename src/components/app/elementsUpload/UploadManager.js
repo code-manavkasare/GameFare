@@ -28,7 +28,15 @@ class UploadManager extends Component {
     const {
       isConnected: prevIsConnected,
       connectionType: prevConnectionType,
+      lastDeletedArchiveIds,
     } = prevProps;
+
+    if (lastDeletedArchiveIds) {
+      for (const id of lastDeletedArchiveIds) {
+        this.cancelUploadWhenLocalArchiveDeleted(id);
+      }
+    }
+
     const {isConnected, uploadInProgress, connectionType} = this.props;
     const lostConnection = prevIsConnected && !isConnected;
     const gainedConnection = !prevIsConnected && isConnected;
@@ -49,6 +57,16 @@ class UploadManager extends Component {
       this.manageUploads();
     }
   }
+
+  cancelUploadWhenLocalArchiveDeleted = (id) => {
+    const {uploadInProgress} = this.state;
+    if (uploadInProgress) {
+      const {cloudID} = uploadInProgress.uploadTask;
+      if (cloudID === id) {
+        this.state.uploadInProgress.firebaseUploadTask.cancel();
+      }
+    }
+  };
 
   onProgress(progress) {
     const {uploadInProgress, lastProgressUpdateTime} = this.state;
@@ -229,6 +247,7 @@ const mapStateToProps = (state) => {
     connectionType: state.connectionType.type,
     isConnected: state.network.isConnected,
     videoLibrary: state.localVideoLibrary.videoLibrary,
+    lastDeletedArchiveIds: state.localVideoLibrary.lastDeletedArchiveIds,
   };
 };
 

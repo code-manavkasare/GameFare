@@ -40,6 +40,7 @@ const localVideoLibraryReducer = (state = initialState, action) => {
       return {
         ...state,
         userLocalArchives: newArchives,
+        lastDeletedArchiveIds: action.archiveIDs,
       };
     case LEGACY_REMOVE_USER_LOCAL_ARCHIVE:
       return {
