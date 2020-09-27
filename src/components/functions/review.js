@@ -40,6 +40,7 @@ const cutVideo = async (source, startTime, endTime) => {
     saveWithCurrentDate: true,
   };
   const newSource = await ProcessingManager.trim(source, trimOptions);
+  console.log('new source', newSource);
   return newSource;
 };
 

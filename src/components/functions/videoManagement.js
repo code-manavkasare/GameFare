@@ -295,10 +295,13 @@ const updateLocalVideoUrls = () => {
     Object.values(videos)
       .filter((v) => v.local)
       .forEach(async (video) => {
+        if (video.recordedActions) console.log('video', video.url);
         if (video.url) {
           const videoExists = await RNFS.exists(video.url);
           if (!videoExists) {
+            console.log('video does not exist');
             const newUrl = updateVideoSavePath(video.url);
+            console.log('new url', newUrl);
             const fixWorked = await RNFS.exists(newUrl);
             if (fixWorked) {
               const {path: newThumbnail} = await createThumbnail({
@@ -308,6 +311,7 @@ const updateLocalVideoUrls = () => {
                 setArchive({...video, url: newUrl, thumbnail: newThumbnail}),
               );
             } else {
+              console.log('fix did not work');
               store.dispatch(
                 setArchive({
                   ...video,
