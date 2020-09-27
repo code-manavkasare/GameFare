@@ -108,40 +108,28 @@ class CardArchive extends PureComponent {
   localIndicator() {
     const {archive, showUploadProgress} = this.props;
     const {local, progress} = archive;
-    const indicatorStyle = {
-      position: 'absolute',
-      height: 30,
-      width: 30,
-      bottom: 0,
-      right: -5,
-      zIndex: 20,
-    };
-    if (showUploadProgress && progress) {
+
+    if (showUploadProgress && progress)
       return (
-        <View style={indicatorStyle}>
-          <Progress.Circle
-            color={colors.white}
-            progress={progress}
-            borderWidth={0}
-            fill={colors.white}
-            size={18}
-          />
-        </View>
+        <Progress.Circle
+          color={colors.white}
+          progress={progress}
+          borderWidth={0}
+          fill={colors.white}
+          size={18}
+        />
       );
-    } else if (local) {
+    if (local)
       return (
-        <View style={indicatorStyle}>
-          <AllIcons
-            name={'mobile-alt'}
-            type="font"
-            color={colors.greyLight}
-            size={18}
-          />
-        </View>
+        <AllIcons
+          name={'mobile-alt'}
+          type="font"
+          color={colors.white}
+          size={18}
+          style={styleApp.shadowIcon}
+        />
       );
-    } else {
-      return null;
-    }
+    return null;
   }
   linearGradient() {
     const lgStyle = {
@@ -193,7 +181,7 @@ class CardArchive extends PureComponent {
       position: 'absolute',
 
       padding: 15,
-      height: 40,
+      height: 50,
       //backgroundColor: 'red',
       zIndex: 200,
       width: '100%',
@@ -224,7 +212,10 @@ class CardArchive extends PureComponent {
               />
             )}
           </Col>
-          <Col size={85} />
+          <Col size={70} />
+          <Col size={15} style={styleApp.center3}>
+            {this.localIndicator()}
+          </Col>
         </Row>
       </View>
     );
@@ -269,6 +260,7 @@ class CardArchive extends PureComponent {
             />
           )}
           {!hideInformation && this.rowIcons()}
+
           {selectableMode && (
             <View
               pointerEvents="none"
@@ -317,7 +309,6 @@ class CardArchive extends PureComponent {
           )}
 
           {!hideInformation && this.linearGradient()}
-          {this.localIndicator()}
 
           {!hideInformation && (
             <View

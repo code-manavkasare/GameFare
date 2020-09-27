@@ -53,9 +53,10 @@ const styles = StyleSheet.create({
     shadowRadius: 7,
   },
   shadowIcon: {
-    textShadowColor: colors.black,
+    //   textShadowColor: colors.white,
+    shadowColor: colors.greyDark,
     shadowOpacity: 1,
-    shadowRadius: 5,
+    shadowRadius: 10,
     textShadowOffset: {width: 2, height: 2},
   },
   divider: {

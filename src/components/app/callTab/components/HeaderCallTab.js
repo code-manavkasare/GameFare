@@ -24,6 +24,9 @@ class HeaderCallTab extends Component {
       openMessageHistory,
       openMessageHistoryIcon,
       AnimatedHeaderValue,
+      searchBar,
+      typeIcon1,
+      typeIcon2,
     } = this.props;
     const {loader} = this.state;
     return (
@@ -34,11 +37,14 @@ class HeaderCallTab extends Component {
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         loader={loader}
+        searchBar={searchBar}
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
         icon2={openUserDirectoryIcon}
+        typeIcon2={typeIcon2}
         sizeIcon2={24}
+        typeIcon1={typeIcon1}
         colorIcon2={colors.title}
         clickButton2={() => openUserDirectory()}
         icon1={openMessageHistoryIcon}

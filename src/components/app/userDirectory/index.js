@@ -7,6 +7,7 @@ import {getSelectionActionDecorations} from '../../functions/utility';
 
 import HeaderUserDirectory from './components/HeaderUserDirectory';
 import BodyUserDirectory from './components/BodyUserDirectory';
+import SearchInput from '../../layout/textField/SearchInput';
 
 export default class userDirectoryPage extends Component {
   constructor(props) {
@@ -28,12 +29,23 @@ export default class userDirectoryPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderUserDirectory
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
+          searchBar={
+            <SearchInput
+              autoFocus
+              search={(text) =>
+                this.bodyUserDirectoryRef.setState({searchText: text})
+              }
+            />
+          }
           branchLink={branchLink}
           goBack={() => goBack()}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
         <BodyUserDirectory
           action={action}
+          onRef={(ref) => {
+            this.bodyUserDirectoryRef = ref;
+          }}
           actionText={actionText}
           archivesToShare={archivesToShare}
           AnimatedHeaderValue={this.AnimatedHeaderValue}

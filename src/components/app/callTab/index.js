@@ -150,32 +150,22 @@ class CallTab extends Component {
     );
   }
 
-  viewUserSearch() {
-    const {selectedUsers, searchText} = this.state;
-    return (
-      <View style={styles.inlineSearchContainer}>
-        <SearchInput search={(text) => this.setState({searchText: text})} />
-        <UserSearchResults
-          onSelect={(user) => this.selectUser(user)}
-          selectedUsers={selectedUsers}
-          searchText={searchText}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-        />
-      </View>
-    );
-  }
-
   viewCallTab() {
-    const {selectedSessions, action, inlineSearch, searchText} = this.state;
+    const {selectedSessions, action, selectedUsers, searchText} = this.state;
     return (
       <View>
-        {inlineSearch && this.viewUserSearch()}
-        {searchText === '' && (
+        {searchText === '' ? (
           <ListVideoCalls
+            AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
             hideCallButton={action !== 'call'}
-            AnimatedHeaderValue={this.AnimatedHeaderValue}
+          />
+        ) : (
+          <UserSearchResults
+            onSelect={(user) => this.selectUser(user)}
+            selectedUsers={selectedUsers}
+            searchText={searchText}
           />
         )}
       </View>
@@ -203,7 +193,15 @@ class CallTab extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           userConnected={userConnected}
           headerTitle={actionHeader}
-          openUserDirectoryIcon={inlineSearch ? 'link' : 'search'}
+          openUserDirectoryIcon={inlineSearch ? 'share' : 'searchFooter'}
+          typeIcon2={'moon'}
+          searchBar={
+            inlineSearch && (
+              <SearchInput
+                search={(text) => this.setState({searchText: text})}
+              />
+            )
+          }
           openUserDirectory={
             inlineSearch
               ? async () => {
@@ -222,7 +220,8 @@ class CallTab extends Component {
                   });
                 }
           }
-          openMessageHistoryIcon={modal ? 'times' : 'comment-alt'}
+          openMessageHistoryIcon={modal ? 'close' : 'comment-alt'}
+          typeIcon1={modal ? 'mat' : 'font'}
           openMessageHistory={
             modal
               ? () => goBack()
@@ -258,7 +257,7 @@ class CallTab extends Component {
 const styles = StyleSheet.create({
   bodyContainer: {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
   loaderStyle: {...styleApp.center, height: 120},
-  inlineSearchContainer: {paddingBottom: 5},
+  inlineSearchContainer: {paddingBottom: 0},
 });
 
 const mapStateToProps = (state) => {

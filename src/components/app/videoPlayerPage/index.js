@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions, StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 
@@ -28,6 +28,7 @@ import {
   generatePreview,
   generatePreviewCloud,
 } from '../../functions/review';
+import RecordingMenu from './components/recording/components/RecordingMenu';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
@@ -41,13 +42,25 @@ class VideoPlayerPage extends Component {
       isPreviewing: false,
       isRecording: false,
       landscape: false,
-      previewStartTime: null,
       recordedActions: [],
-      recordingStartTime: null,
+      isAudioPlayerReady: false,
     };
     this.videoPlayerRefs = [];
     this.focusListener = null;
   }
+  componentDidMount = () => {
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      StatusBar.setBarStyle('light-content', true);
+      Orientation.unlockAllOrientations();
+    });
+
+    this.focusListener = navigation.addListener('blur', () => {
+      StatusBar.setBarStyle('dark-content', true);
+    });
+    Orientation.addOrientationListener(this._orientationListener.bind(this));
+    this.autoShareOnOpen();
+  };
 
   static getDerivedStateFromProps(props, state) {
     const {archives} = props.route.params;
@@ -69,34 +82,10 @@ class VideoPlayerPage extends Component {
     }
   }
 
-  componentDidMount() {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.unlockAllOrientations();
-    });
-    Orientation.addOrientationListener(this._orientationListener.bind(this));
-    this.launchIfPreview();
-    this.autoShareOnOpen();
-  }
   autoShareOnOpen = () => {
     const {params} = this.props.route;
+
     if (params.forceSharing) this.buttonShareRef.startSharingVideo(true);
-  };
-  launchIfPreview = () => {
-    const {videoInfos} = this.props;
-    if (videoInfos && Object.values(videoInfos).length > 0) {
-      Object.values(videoInfos).forEach(async (videoInfo) => {
-        const {recordedActions} = videoInfo;
-        if (recordedActions) {
-          await this.AudioRecorderPlayerRef.preparePlayer(
-            videoInfo.audioRecordUrl,
-            true,
-          );
-          await this.setState({recordedActions});
-          this.previewRecording();
-        }
-      });
-    }
   };
 
   componentWillUnmount() {
@@ -158,6 +147,7 @@ class VideoPlayerPage extends Component {
   };
 
   stopRecording = () => {
+    const {recordedActions} = this.state;
     this.AudioRecorderPlayerRef?.stopRecording();
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
@@ -166,7 +156,8 @@ class VideoPlayerPage extends Component {
       isRecording: false,
       recordingStartTime: null,
     });
-    this.resetPlayers();
+ 
+    this.videoPlayerRefs[0].previewRecording({recordedActions});
   };
 
   playersAreLinked = (indexA, indexB) => {
@@ -259,115 +250,16 @@ class VideoPlayerPage extends Component {
     });
   };
 
-  waitForAction = async (action) => {
-    while (true) {
-      const {isPreviewing, previewStartTime} = this.state;
-      const timeLeft =
-        action.startRecordingOffset - (Date.now() - previewStartTime);
-      if (timeLeft < 50 || !isPreviewing) {
-        return true;
-      }
-      await new Promise((resolve) => {
-        setTimeout(resolve, timeLeft > 1500 ? 1000 : 10);
-      });
-    }
-  };
-
-  previewRecording = async () => {
-    await this.setState({
-      isPreviewing: true,
-      previewStartTime: Date.now(),
-      disableControls: true,
-    });
-    this.AudioRecorderPlayerRef?.playRecord();
-    const {recordedActions} = this.state;
-    for (const action of recordedActions) {
-      const {isPreviewing} = this.state;
-      if (isPreviewing) {
-        const {type, index} = action;
-        switch (type) {
-          case 'play':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].videoPlayerRef?.setState({
-                currentTime: action.timestamp,
-                paused: false,
-              });
-            });
-            break;
-          case 'pause':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].videoPlayerRef?.setState({
-                currentTime: action.timestamp,
-                paused: true,
-              });
-            });
-            break;
-          case 'changePlayRate':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].videoPlayerRef?.setState({
-                playRate: action.playRate,
-              });
-            });
-            break;
-          case 'seek':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].videoPlayerRef?.player?.seek(
-                action.timestamp,
-              );
-              this.videoPlayerRefs[index].videoPlayerRef?.setState({
-                currentTime: action.timestamp,
-              });
-            });
-            break;
-          case 'zoom':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[
-                index
-              ]?.videoPlayerRef?.PinchableBoxRef?.setNewScale(action.scale);
-            });
-            break;
-          case 'drag':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[
-                index
-              ]?.videoPlayerRef.PinchableBoxRef.setNewPosition(action.position);
-            });
-            break;
-          case 'draw':
-            await this.waitForAction(action).then(() => {
-              this.videoPlayerRefs[index].drawViewRef.setState({
-                drawings: action.drawings,
-              });
-            });
-            break;
-          default:
-            console.log(
-              `case ${action.type} not handled, action received : ${action}`,
-            );
-        }
-      }
-    }
-    const {isPreviewing} = this.state;
-    if (isPreviewing) {
-      this.videoPlayerRefs.map((ref) => {
-        ref?.videoPlayerRef?.setState({
-          paused: true,
-        });
-      });
-    }
-    await this.setState({isPreviewing: false, disableControls: false});
-  };
-
-  cancelPreviewRecording = async () => {
-    this.AudioRecorderPlayerRef?.stopPlayingRecord();
-    this.setState({
-      isPreviewing: false,
-      previewStartTime: null,
-      audioPlayer: null,
-      disableControls: false,
-    });
-    await this.resetPlayers();
-  };
+  // cancelPreviewRecording = async () => {
+  //   this.AudioRecorderPlayerRef?.stopPlayingRecord();
+  //   this.setState({
+  //     isPreviewing: false,
+  //     previewStartTime: null,
+  //     audioPlayer: null,
+  //     disableControls: false,
+  //   });
+  //   await this.resetPlayers();
+  // };
 
   onPlayPause = (i, paused, currentTime) => {
     let {recordedActions} = this.state;
@@ -481,7 +373,7 @@ class VideoPlayerPage extends Component {
       isPreviewing,
       isDrawingEnabled,
       archives,
-      recordedActions
+      recordedActions,
     } = this.state;
     const {navigation, route, session} = this.props;
     const {navigate} = navigation;
@@ -495,7 +387,7 @@ class VideoPlayerPage extends Component {
         userIDSharing: personSharingScreen,
       });
     }
-    console.log('this state', this.state);
+
     return (
       <VideoPlayerHeader
         isEditMode={isEditMode}
@@ -503,8 +395,10 @@ class VideoPlayerPage extends Component {
         isPreviewing={isPreviewing}
         isDrawingEnabled={isDrawingEnabled}
         recordedActions={recordedActions}
+        archives={archives}
         personSharingScreen={personSharingScreen}
         route={route}
+        navigation={navigation}
         close={() => {
           openVideoPlayer({open: false});
         }}
@@ -551,83 +445,6 @@ class VideoPlayerPage extends Component {
     return heightHeaderHome + (portrait ? marginTopApp : marginTopAppLandscape);
   };
 
-  buttonPreview = () => {
-    const {isEditMode, isPreviewing, isRecording, recordedActions} = this.state;
-    const style = {
-      ...styles.buttonRecording,
-      top: this.getMarginTop() + 40,
-    };
-    if (isEditMode && !isRecording && recordedActions.length > 0) {
-      return isPreviewing ? (
-        <Button
-          backgroundColor={colors.red}
-          onPressColor={colors.red2}
-          styleButton={style}
-          text="Cancel Preview"
-          textButton={{fontSize: 13}}
-          click={() => this.cancelPreviewRecording()}
-        />
-      ) : (
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.red}
-          styleButton={style}
-          text="Preview"
-          textButton={{fontSize: 13}}
-          click={() => this.previewRecording()}
-        />
-      );
-    }
-  };
-
-  buttonSave = () => {
-    const {isEditMode, isRecording, recordedActions} = this.state;
-    const style = {
-      ...styles.buttonRecording,
-      top: this.getMarginTop() + 80,
-    };
-    if (isEditMode && !isRecording && recordedActions.length > 0) {
-      return (
-        <Button
-          backgroundColor="red"
-          styleButton={style}
-          text="Save"
-          textButton={{fontSize: 13}}
-          click={() => this.saveReview()}
-        />
-      );
-    }
-  };
-
-  buttonRecording = () => {
-    const {isEditMode, isRecording} = this.state;
-    const style = {
-      ...styles.buttonRecording,
-      top: this.getMarginTop(),
-    };
-    return isEditMode ? (
-      isRecording ? (
-        <Button
-          backgroundColor="red"
-          onPressColor={colors.green}
-          styleButton={style}
-          text="stop recording"
-          textButton={{fontSize: 13}}
-          click={() => this.stopRecording()}
-        />
-      ) : (
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.red}
-          styleButton={style}
-          text="start recording"
-          textButton={{fontSize: 13}}
-          click={() => this.startRecording()}
-        />
-      )
-    ) : null;
-  };
-
   singlePlayer = (videoInfo, i) => {
     const {archives} = this.state;
     const {session, videoInfos, currentSessionID: coachSessionID} = this.props;
@@ -649,6 +466,7 @@ class VideoPlayerPage extends Component {
       disableControls,
       isDrawingEnabled,
       linkedPlayers,
+      isAudioPlayerReady,
     } = this.state;
 
     const {
@@ -678,6 +496,10 @@ class VideoPlayerPage extends Component {
         id={archiveID}
         onRef={(ref) => (this.videoPlayerRefs[i] = ref)}
         disableControls={disableControls}
+        preparePlayer={({url, isCloud}) =>
+          this.AudioRecorderPlayerRef.preparePlayer({url, isCloud})
+        }
+        isAudioPlayerReady={isAudioPlayerReady}
         numArchives={numArchives}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
@@ -687,6 +509,7 @@ class VideoPlayerPage extends Component {
         local={local}
         landscape={landscape}
         propsWhenRecording={propsWhenRecording}
+        playRecord={() => this.AudioRecorderPlayerRef?.playRecord()}
         videoFromCloud={
           videosBeingShared ? session.sharedVideos[archiveID] : {}
         }
@@ -785,7 +608,7 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
-    const {archives} = this.state;
+    const {archives, isRecording, isEditMode, recordedActions} = this.state;
     const {videoInfos} = this.props;
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
@@ -796,9 +619,21 @@ class VideoPlayerPage extends Component {
             this.AudioRecorderPlayerRef = ref;
           }}
         />
-        {this.buttonRecording()}
-        {this.buttonPreview()}
-        {archives.length === 1 && this.buttonSave()}
+
+        <RecordingMenu
+          isRecording={isRecording}
+          isEditMode={isEditMode}
+          recordedActions={recordedActions}
+          previewRecording={() => {
+            const {recordedActions} = this.state;
+            this.videoPlayerRefs[0].previewRecording({recordedActions});
+          }}
+          stopRecording={this.stopRecording.bind(this)}
+          startRecording={this.startRecording.bind(this)}
+          saveReview={this.saveReview.bind(this)}
+        />
+
+        {/* {archives.length === 1 && this.buttonSave()} */}
         {videoInfos &&
           Object.values(videoInfos)
             .filter((x) => x)

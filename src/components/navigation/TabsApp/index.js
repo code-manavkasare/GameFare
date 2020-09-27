@@ -70,7 +70,7 @@ class TabsApp extends React.Component {
           component={CallTabPage}
           options={{
             pageStack: 'GroupsPage',
-            label: 'Call',
+            label: 'Calls',
             signInToPass: false,
             icon: {
               name: 'video',
