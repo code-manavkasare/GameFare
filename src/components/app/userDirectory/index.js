@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Animated} from 'react-native';
 
 import styleApp from '../../style/style';
 
@@ -20,6 +20,7 @@ export default class userDirectoryPage extends Component {
       archivesToShare: props.route?.params?.archivesToShare ?? [],
       branchLink: props.route?.params?.branchLink ?? null,
     };
+    this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   render() {
@@ -28,6 +29,7 @@ export default class userDirectoryPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderUserDirectory
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
           searchBar={
             <SearchInput
               autoFocus
@@ -46,6 +48,7 @@ export default class userDirectoryPage extends Component {
           }}
           actionText={actionText}
           archivesToShare={archivesToShare}
+          AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>
     );

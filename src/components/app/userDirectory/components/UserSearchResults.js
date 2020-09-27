@@ -115,6 +115,7 @@ class UserSearchResults extends Component {
 
   moreResultsView() {
     const {users} = this.state;
+    const {AnimatedHeaderValue} = this.props;
     return (
       <KeyboardAwareFlatList
         keyboardShouldPersistTaps="always"
@@ -128,13 +129,14 @@ class UserSearchResults extends Component {
         ListFooterComponent={() => {
           return this.displayMoreButton();
         }}
+        AnimatedHeaderValue={AnimatedHeaderValue}
       />
     );
   }
 
   render() {
     const {users, displayMore, noResults} = this.state;
-    const {searchText} = this.props;
+    const {searchText, AnimatedHeaderValue} = this.props;
     if (searchText === '') {
       return null;
     } else if (noResults) {
@@ -153,7 +155,8 @@ class UserSearchResults extends Component {
           <KeyboardAwareScrollView
             keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.results}>
+            contentContainerStyle={styles.results}
+            AnimatedHeaderValue={AnimatedHeaderValue}>
             {users.slice(0, 3).map((user) => this.userCard(user))}
             {users.length > 3 && this.displayMoreButton()}
           </KeyboardAwareScrollView>
