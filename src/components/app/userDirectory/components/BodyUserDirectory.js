@@ -34,6 +34,9 @@ export default class userDirectoryPage extends Component {
     this.searchResultsRef = null;
     this.invitationManagerRef = null;
   }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
 
   selectUser(user) {
     const {selectedUsers} = this.state;
@@ -49,12 +52,7 @@ export default class userDirectoryPage extends Component {
     const {action, actionText, archivesToShare} = this.props;
     return (
         <Col style={styles.body}>
-          <Row size={10}>
-            <SearchInput
-              autoFocus
-              search={(text) => this.setState({searchText: text})}
-            />
-          </Row>
+        
           <Row size={90} style={styles.smallTopPad}>
             <UserSearchResults
               onSelect={(user) => this.selectUser(user)}

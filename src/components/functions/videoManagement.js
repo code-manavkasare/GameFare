@@ -220,7 +220,6 @@ const deleteLocalVideoFile = async (path) => {
 };
 
 const shareVideosWithTeams = async (videos, objectIDs) => {
-  console.log('shareVideosWithTeams', videos, objectIDs);
   // only waits until cloud entries are created, upload continues after return
   const userID = store.getState().user.userID;
   const infoUser = store.getState().user.infoUser.userInfo;
@@ -243,10 +242,7 @@ const shareVideosWithTeams = async (videos, objectIDs) => {
       if (session.members) {
         Object.keys(session.members)
           .filter((memberID) => memberID !== userID)
-          .forEach((memberID) => {
-            console.log('sharing cloud video', memberID, videoID);
-            shareCloudVideo(memberID, videoID);
-          });
+          .forEach((memberID) => shareCloudVideo(memberID, videoID));
       }
       sendNewMessage({
         objectID: session.objectID,

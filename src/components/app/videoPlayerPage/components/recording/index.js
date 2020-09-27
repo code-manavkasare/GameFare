@@ -9,19 +9,15 @@ class Recording extends Component {
       previewStartTime: null,
       recordingStartTime: null,
       isPreviewing: false,
-      // videoPlayerReady:false,
-      // audioPlayerReady:true
     };
   }
   componentDidMount = () => {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    console.log('mount recording', this.props);
     this.launchIfPreview();
   };
   componentDidUpdate = (prevProps, prevState) => {
-    console.log('recording update', prevProps);
     const {isVideoPlayerReady, isAudioPlayerReady} = this.props;
     const {isPreviewing} = this.state;
     if (isVideoPlayerReady && !isPreviewing) this.launchIfPreview();
@@ -29,7 +25,6 @@ class Recording extends Component {
   launchIfPreview = async () => {
     const {archive, preparePlayer} = this.props;
     const {recordedActions} = archive;
-    console.log('launchIfPreview', recordedActions);
     if (recordedActions) {
       await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
       this.previewRecording({recordedActions});
@@ -64,14 +59,11 @@ class Recording extends Component {
     });
     playRecord();
 
-    console.log('previewRecording', recordedActions);
-
     for (const action of recordedActions) {
       const {isPreviewing} = this.state;
-      console.log('isPreviewing', isPreviewing);
       if (isPreviewing) {
         const {type} = action;
-        console.log('type', type);
+
         switch (type) {
           case 'play':
             await this.waitForAction(action).then(() => {
