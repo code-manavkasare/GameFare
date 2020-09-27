@@ -39,11 +39,9 @@ const cutVideo = async (source, startTime, endTime) => {
     endTime,
     saveWithCurrentDate: true,
   };
+  // newSource is in {appDir}/Documents/output/filename.mp4 per ProcessingManager implementation
   const newSource = await ProcessingManager.trim(source, trimOptions);
-  const docsSource = getNewVideoSavePath();
-  await RNFS.copyFile(newSource, docsSource);
-  console.log('new source', newSource);
-  return docsSource;
+  return newSource;
 };
 
 const adaptAllTimestampToNewVideoLength = (recordedActions, startTime) => {
