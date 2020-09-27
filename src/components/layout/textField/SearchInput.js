@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Animated, Text, TextInput, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import {Row} from 'react-native-easy-grid';
+import {Row, Col} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 
 import styleApp from '../../style/style';
@@ -41,55 +41,61 @@ class SearchInput extends Component {
     return (
       <View style={styles.searchBarStyle}>
         <Row style={styles.rowStyle}>
-          <AllIcon
-            name={'search'}
-            size={13}
-            color={colors.greyDark}
-            type="font"
-          />
-          <TextInput
-            style={styles.textStyle}
-            placeholder={'Search for users'}
-            placeholderTextColor={colors.greyDark}
-            returnKeyType={'done'}
-            autoCompleteType={'name'}
-            blurOnSubmit={true}
-            ref={(textInputRef) => {
-              this.textInputRef = textInputRef;
-              if (autoFocus && textInputRef) {
-                textInputRef.focus();
-              }
-            }}
-            clearButtonMode={'never'}
-            underlineColorAndroid="rgba(0,0,0,0)"
-            autoCorrect={true}
-            onChangeText={(text) => {
-              this.search(text);
-            }}
-          />
+          <Col size={10} style={styleApp.center}>
+            <AllIcon
+              name={'search'}
+              size={13}
+              color={colors.greyDark}
+              type="font"
+            />
+          </Col>
+          <Col size={70}>
+            <TextInput
+              style={styles.textStyle}
+              placeholder={'Search for users'}
+              placeholderTextColor={colors.greyDark}
+              returnKeyType={'done'}
+              autoCompleteType={'name'}
+              blurOnSubmit={true}
+              ref={(textInputRef) => {
+                this.textInputRef = textInputRef;
+                if (autoFocus && textInputRef) {
+                  textInputRef.focus();
+                }
+              }}
+              clearButtonMode={'never'}
+              underlineColorAndroid="rgba(0,0,0,0)"
+              autoCorrect={true}
+              onChangeText={(text) => {
+                this.search(text);
+              }}
+            />
+          </Col>
+          <Col size={10} style={styleApp.center}>
+            <Animated.View style={styles.buttonContainerStyle}>
+              <ButtonColor
+                view={() => {
+                  return (
+                    <AllIcon
+                      type={'font'}
+                      color={colors.title}
+                      size={13}
+                      name={'times'}
+                    />
+                  );
+                }}
+                color={'transparent'}
+                click={() => {
+                  this.search('');
+                  this.textInputRef?.clear();
+                  this.textInputRef?.focus();
+                }}
+                onPressColor={'transparent'}
+                style={styles.buttonStyle}
+              />
+            </Animated.View>
+          </Col>
         </Row>
-        <Animated.View style={styles.buttonContainerStyle}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcon
-                  type={'font'}
-                  color={colors.title}
-                  size={13}
-                  name={'times'}
-                />
-              );
-            }}
-            color={'transparent'}
-            click={() => {
-              this.search('');
-              this.textInputRef?.clear();
-              this.textInputRef?.focus();
-            }}
-            onPressColor={'transparent'}
-            style={styles.buttonStyle}
-          />
-        </Animated.View>
       </View>
     );
   };
@@ -102,30 +108,31 @@ class SearchInput extends Component {
 const styles = StyleSheet.create({
   searchBarStyle: {
     ...styleApp.center2,
-    paddingLeft: 25,
+    // paddingLeft: 25,
     height: 50,
     opacity: 1,
-    width: '90%',
+    width: '102%',
     borderRadius: 15,
     backgroundColor: colors.greyLight,
     marginVertical: 10,
     // marginTop: sizes.marginTopApp + 0,
+    marginLeft: '-2%',
     marginHorizontal: '5%',
   },
   textStyle: {
     ...styleApp.textBold,
     color: colors.title,
-    marginLeft: 20,
+    // paddingLeft: 20,
     width: '100%',
     height: '100%',
   },
   rowStyle: {
-    height: '100%',
-    ...styleApp.center4,
+    // height: '100%',
+    // ...styleApp.center4,
   },
   buttonContainerStyle: {
     opacity: 1,
-    position: 'absolute',
+    // position: 'absolute',
     right: 10,
   },
   buttonStyle: {

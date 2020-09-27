@@ -49,12 +49,9 @@ export default class VideoPlayerHeader extends React.Component {
       typeIcon1: 'font',
 
       backgroundColorIcon2: colors.title + '70',
-      typeIcon2: !isEditMode && !coachSessionID ? 'file' : 'font',
-      sizeIcon2: !isEditMode && !coachSessionID ? 35 : 16,
-      icon2:
-        !isEditMode && !coachSessionID
-          ? require('../../../../img/icons/feedback.png')
-          : 'times',
+      typeIcon2: !isEditMode && !coachSessionID ? 'font' : 'font',
+      sizeIcon2: !isEditMode && !coachSessionID ? 17 : 16,
+      icon2: !isEditMode && !coachSessionID ? 'microphone-alt' : 'times',
       text2: 'Edit',
       colorIcon2: colors.white,
       clickButton2: () => {
@@ -104,16 +101,15 @@ export default class VideoPlayerHeader extends React.Component {
         sizeOffset2={20}
         backgroundColorIconOffset2={colors.title + '70'}
         colorIconOffset2={colors.white}
-        clickButtonOffset2={async () => {
-          console.log('archives', archives);
+        clickButtonOffset2={async () =>
           navigation.navigate('ModalCallTab', {
             action: 'shareArchives',
             archivesToShare: archives,
             modal: true,
             branchLink: await createShareVideosBranchUrl(archives),
             inlineSearch: true,
-          });
-        }}
+          })
+        }
         {...sharedProps}
       />
     );

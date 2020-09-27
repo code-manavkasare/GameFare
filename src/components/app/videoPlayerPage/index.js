@@ -28,6 +28,7 @@ import {
   generatePreview,
   generatePreviewCloud,
 } from '../../functions/review';
+import RecordingMenu from './components/recording/components/RecordingMenu';
 
 class VideoPlayerPage extends Component {
   constructor(props) {
@@ -51,11 +52,14 @@ class VideoPlayerPage extends Component {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
       StatusBar.setBarStyle('light-content', true);
+      Orientation.unlockAllOrientations();
     });
 
     this.focusListener = navigation.addListener('blur', () => {
       StatusBar.setBarStyle('dark-content', true);
     });
+    Orientation.addOrientationListener(this._orientationListener.bind(this));
+    this.autoShareOnOpen();
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -78,17 +82,9 @@ class VideoPlayerPage extends Component {
     }
   }
 
-  componentDidMount() {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.unlockAllOrientations();
-    });
-    Orientation.addOrientationListener(this._orientationListener.bind(this));
-
-    this.autoShareOnOpen();
-  }
   autoShareOnOpen = () => {
     const {params} = this.props.route;
+
     if (params.forceSharing) this.buttonShareRef.startSharingVideo(true);
   };
 
@@ -151,6 +147,7 @@ class VideoPlayerPage extends Component {
   };
 
   stopRecording = () => {
+    const {recordedActions} = this.state;
     this.AudioRecorderPlayerRef?.stopRecording();
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
@@ -159,7 +156,8 @@ class VideoPlayerPage extends Component {
       isRecording: false,
       recordingStartTime: null,
     });
-    this.resetPlayers();
+ 
+    this.videoPlayerRefs[0].previewRecording({recordedActions});
   };
 
   playersAreLinked = (indexA, indexB) => {
@@ -252,16 +250,16 @@ class VideoPlayerPage extends Component {
     });
   };
 
-  cancelPreviewRecording = async () => {
-    this.AudioRecorderPlayerRef?.stopPlayingRecord();
-    this.setState({
-      isPreviewing: false,
-      previewStartTime: null,
-      audioPlayer: null,
-      disableControls: false,
-    });
-    await this.resetPlayers();
-  };
+  // cancelPreviewRecording = async () => {
+  //   this.AudioRecorderPlayerRef?.stopPlayingRecord();
+  //   this.setState({
+  //     isPreviewing: false,
+  //     previewStartTime: null,
+  //     audioPlayer: null,
+  //     disableControls: false,
+  //   });
+  //   await this.resetPlayers();
+  // };
 
   onPlayPause = (i, paused, currentTime) => {
     let {recordedActions} = this.state;
@@ -309,7 +307,6 @@ class VideoPlayerPage extends Component {
     this.setState({recordedActions});
   };
   onCurrentTimeChange = (i, seekTime) => {
-    console.log('onCurrentTimeChange', seekTime);
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
     recordedActions.push({
@@ -446,88 +443,6 @@ class VideoPlayerPage extends Component {
   getMarginTop = () => {
     const {portrait} = this.props;
     return heightHeaderHome + (portrait ? marginTopApp : marginTopAppLandscape);
-  };
-
-  buttonPreview = () => {
-    const {isEditMode, isPreviewing, isRecording, recordedActions} = this.state;
-    const style = {
-      ...styles.buttonRecording,
-      top: this.getMarginTop() + 40,
-    };
-    if (isEditMode && !isRecording && recordedActions.length > 0) {
-      return isPreviewing ? (
-        <Button
-          backgroundColor={colors.red}
-          onPressColor={colors.red2}
-          styleButton={style}
-          text="Cancel Preview"
-          textButton={{fontSize: 13}}
-          click={() => this.cancelPreviewRecording()}
-        />
-      ) : (
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.red}
-          styleButton={style}
-          text="Preview"
-          textButton={{fontSize: 13}}
-          click={() => {
-            const {recordedActions} = this.state;
-            console.log('recordedActions', recordedActions);
-            console.log('this.videoPlayerRefs', this.videoPlayerRefs[0]);
-            this.videoPlayerRefs[0].previewRecording({recordedActions});
-          }}
-        />
-      );
-    }
-  };
-
-  buttonSave = () => {
-    const {isEditMode, isRecording, recordedActions} = this.state;
-    const style = {
-      ...styles.buttonRecording,
-      top: this.getMarginTop() + 80,
-    };
-    if (isEditMode && !isRecording && recordedActions.length > 0) {
-      return (
-        <Button
-          backgroundColor="red"
-          styleButton={style}
-          text="Save"
-          textButton={{fontSize: 13}}
-          click={() => this.saveReview()}
-        />
-      );
-    }
-  };
-
-  buttonRecording = () => {
-    const {isEditMode, isRecording} = this.state;
-    const style = {
-      ...styles.buttonRecording,
-      top: this.getMarginTop(),
-    };
-    return isEditMode ? (
-      isRecording ? (
-        <Button
-          backgroundColor="red"
-          onPressColor={colors.green}
-          styleButton={style}
-          text="stop recording"
-          textButton={{fontSize: 13}}
-          click={() => this.stopRecording()}
-        />
-      ) : (
-        <Button
-          backgroundColor="green"
-          onPressColor={colors.red}
-          styleButton={style}
-          text="start recording"
-          textButton={{fontSize: 13}}
-          click={() => this.startRecording()}
-        />
-      )
-    ) : null;
   };
 
   singlePlayer = (videoInfo, i) => {
@@ -693,7 +608,7 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
-    const {archives} = this.state;
+    const {archives, isRecording, isEditMode, recordedActions} = this.state;
     const {videoInfos} = this.props;
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
@@ -704,9 +619,21 @@ class VideoPlayerPage extends Component {
             this.AudioRecorderPlayerRef = ref;
           }}
         />
-        {this.buttonRecording()}
-        {this.buttonPreview()}
-        {archives.length === 1 && this.buttonSave()}
+
+        <RecordingMenu
+          isRecording={isRecording}
+          isEditMode={isEditMode}
+          recordedActions={recordedActions}
+          previewRecording={() => {
+            const {recordedActions} = this.state;
+            this.videoPlayerRefs[0].previewRecording({recordedActions});
+          }}
+          stopRecording={this.stopRecording.bind(this)}
+          startRecording={this.startRecording.bind(this)}
+          saveReview={this.saveReview.bind(this)}
+        />
+
+        {/* {archives.length === 1 && this.buttonSave()} */}
         {videoInfos &&
           Object.values(videoInfos)
             .filter((x) => x)

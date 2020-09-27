@@ -438,6 +438,7 @@ class HeaderBackButton extends Component {
       opacityHeader,
       textHeader,
       clickImgHeader,
+      searchBar,
     } = this.props;
     const {portrait} = currentScreenSize;
     const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
@@ -462,26 +463,33 @@ class HeaderBackButton extends Component {
     return (
       <Animated.View style={styleHeader}>
         <Row>
-          <TouchableOpacity
-            onPress={() => clickImgHeader && clickImgHeader()}
-            activeOpacity={0.7}
-            style={imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader}>
-            <Row>
-              {imgHeader && (
-                <Col size={25} style={styleApp.center2}>
-                  {imgHeader}
+          {searchBar ? (
+            <View style={styles.rowTextImgHeader}>{searchBar}</View>
+          ) : (
+            <TouchableOpacity
+              onPress={() => clickImgHeader && clickImgHeader()}
+              activeOpacity={0.7}
+              style={
+                imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader
+              }>
+              <Row>
+                {imgHeader && (
+                  <Col size={25} style={styleApp.center2}>
+                    {imgHeader}
+                  </Col>
+                )}
+                <Col
+                  size={70}
+                  style={imgHeader ? styleApp.center2 : styleApp.center}>
+                  <Animated.Text
+                    style={[styleApp.textBold, {opacity: AnimateOpacityTitle}]}>
+                    {textHeader}
+                  </Animated.Text>
                 </Col>
-              )}
-              <Col
-                size={70}
-                style={imgHeader ? styleApp.center2 : styleApp.center}>
-                <Animated.Text
-                  style={[styleApp.textBold, {opacity: AnimateOpacityTitle}]}>
-                  {textHeader}
-                </Animated.Text>
-              </Col>
-            </Row>
-          </TouchableOpacity>
+              </Row>
+            </TouchableOpacity>
+          )}
+
           <Col size={15} style={styleApp.center2} activeOpacity={0.4}>
             {this.button1()}
           </Col>
@@ -491,6 +499,7 @@ class HeaderBackButton extends Component {
           <Col size={15} style={[styleApp.center2]}>
             {this.button12()}
           </Col>
+
           <Col size={15} style={[styleApp.center3]}>
             {this.buttonOffset2()}
           </Col>
@@ -543,7 +552,7 @@ const styles = StyleSheet.create({
   rowTextImgHeader: {
     height: '100%',
     position: 'absolute',
-    width: width * 0.9 - 170,
+    width: 0.7 * width * 0.9,
     marginLeft: 50,
     zIndex: 10,
   },
