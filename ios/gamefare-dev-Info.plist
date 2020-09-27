@@ -82,8 +82,6 @@
 	<string>This is so we can display your booked appointments on your calendar.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera if you would like to take a photo for your profile picture, or live stream a match.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>We need to access your contacts for you to invite your friends.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
 	<key>NSLocationAlwaysUsageDescription</key>

@@ -16,6 +16,8 @@ import {native} from '../animations/animations';
 import {userObject} from '../functions/users';
 import {openSession, sessionOpening} from '../functions/coach';
 import {shareVideosWithTeams} from '../functions/videoManagement';
+import {getSelectionActionDecorations} from '../functions/utility';
+
 
 import AllIcon from '../layout/icons/AllIcons';
 import ButtonColor from '../layout/Views/Button';
@@ -25,7 +27,6 @@ import {titleSession} from '../app/TeamPage/components/elements';
 class InvitationManager extends Component {
   static propTypes = {
     action: PropTypes.string.isRequired,
-    actionText: PropTypes.string.isRequired,
     selectedSessions: PropTypes.object.isRequired,
     selectedUsers: PropTypes.object.isRequired,
     archivesToShare: PropTypes.array,
@@ -35,7 +36,6 @@ class InvitationManager extends Component {
 
   static defaultProps = {
     action: 'call',
-    actionText: 'Call',
     selectedSessions: {},
     selectedUsers: {},
   };
@@ -84,7 +84,7 @@ class InvitationManager extends Component {
     const someSelected = numSessions > 0 || numUsers > 0;
     const needToShowButton = animationState === 0 && someSelected;
     const needToHideButton =
-      animationState > 0 && (numSessions === 0 && numUsers === 0);
+      animationState > 0 && numSessions === 0 && numUsers === 0;
     const invitesChanged =
       !isEqual(selectedSessions, prevSelectedSessions) ||
       !isEqual(selectedUsers, prevSelectedUsers);
@@ -124,7 +124,8 @@ class InvitationManager extends Component {
   }
 
   getSessionText(sessionArray) {
-    const {actionText} = this.props;
+    const {action} = this.props;
+    const {actionText} = getSelectionActionDecorations(action);
     const firstSession = sessionArray[0];
     if (sessionArray.length === 1) {
       return `${actionText} ${titleSession(firstSession, 20, true)}`;
@@ -134,7 +135,8 @@ class InvitationManager extends Component {
   }
 
   getUserText(userArray) {
-    const {actionText} = this.props;
+    const {action} = this.props;
+    const {actionText} = getSelectionActionDecorations(action);
     const firstUser = userArray[0];
     if (userArray.length === 1) {
       return `${actionText} ${firstUser.info.firstname}`;

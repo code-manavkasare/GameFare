@@ -19,11 +19,12 @@ class CameraPage extends Component {
     this.state = {
       frontCamera: true,
       cameraReady: false,
+      recording: false,
     };
     this.animatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount() {
-    const {navigation, layoutAction, onRef} = this.props;
+    const {onRef} = this.props;
     if (onRef) {
       onRef(this);
     }
@@ -47,7 +48,7 @@ class CameraPage extends Component {
   }
   render() {
     const {state, camera} = this;
-    const {frontCamera, cameraReady} = state;
+    const {frontCamera, cameraReady, recording} = state;
     return (
       <View style={styleApp.flexColumnBlack}>
         <Camera
@@ -55,6 +56,8 @@ class CameraPage extends Component {
             this.camera = ref;
           }}
           onCameraReady={(cameraReady) => this.setState({cameraReady})}
+          onRecord={() => this.setState({recording: true})}
+          onStopRecord={() => this.setState({recording: false})}
           frontCamera={frontCamera}
         />
         <HeaderBackButton
@@ -72,7 +75,7 @@ class CameraPage extends Component {
           nobackgroundColorIcon1={true}
           sizeIcon1={18}
           colorIcon1={colors.white}
-          icon2={'sync-alt'}
+          icon2={!recording ? 'sync-alt' : null}
           backgroundColorIcon2={'transparent'}
           clickButton2={() => this.flipCamera()}
           sizeIcon2={23}

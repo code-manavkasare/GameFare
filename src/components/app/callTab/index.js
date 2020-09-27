@@ -13,7 +13,8 @@ import sizes from '../../style/sizes';
 import {generateID} from '../../functions/createEvent';
 import {createInviteToSessionBranchUrl} from '../../database/branch';
 import {getSelectionActionDecorations} from '../../functions/utility';
-import {isUserPrivate} from '../../functions/users';
+import {isUserPrivate, userObject} from '../../functions/users';
+import {openSession} from '../../functions/coach';
 
 import Loader from '../../layout/loaders/Loader';
 import SearchInput from '../../layout/textField/SearchInput';
@@ -28,15 +29,15 @@ class CallTab extends Component {
   constructor(props) {
     super(props);
     const action = props.route?.params?.action ?? 'call';
-    const {actionText, actionHeader} = getSelectionActionDecorations(action);
+    const {actionHeader} = getSelectionActionDecorations(action);
     this.state = {
       selectedSessions: {},
       selectedUsers: {},
       searchText: '',
+      searchActive: false,
       permissionsCamera: false,
       initialLoader: true,
       action,
-      actionText,
       actionHeader,
       archivesToShare: props.route?.params?.archivesToShare,
       modal: props.route?.params?.modal ?? false,
@@ -72,6 +73,7 @@ class CallTab extends Component {
 
   selectUser(user) {
     const {navigate} = this.props.navigation;
+    const {userID, infoUser} = this.props;
     if (isUserPrivate(user)) {
       Keyboard.dismiss();
       return navigate('RootAlert', {
@@ -85,7 +87,13 @@ class CallTab extends Component {
             operation: () => null,
           },
           {
-            operation: () => Alert.alert('How do I send a message request lol'),
+            forceNavigation: true,
+            operation: async () => {
+              const session = await openSession(userObject(infoUser, userID), {[user.id]: user});
+              navigate('Conversation', {
+                coachSessionID: session.objectID,
+              });
+            },
           },
         ],
       });
@@ -151,21 +159,27 @@ class CallTab extends Component {
   }
 
   viewCallTab() {
-    const {selectedSessions, action, selectedUsers, searchText} = this.state;
+    const {
+      selectedSessions,
+      action,
+      selectedUsers,
+      searchText,
+      searchActive,
+    } = this.state;
     return (
       <View>
-        {searchText === '' ? (
+        {searchActive || searchText !== '' ? (
+          <UserSearchResults
+            onSelect={(user) => this.selectUser(user)}
+            selectedUsers={selectedUsers}
+            searchText={searchText}
+          />
+        ) : (
           <ListVideoCalls
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
             hideCallButton={action !== 'call'}
-          />
-        ) : (
-          <UserSearchResults
-            onSelect={(user) => this.selectUser(user)}
-            selectedUsers={selectedUsers}
-            searchText={searchText}
           />
         )}
       </View>
@@ -176,7 +190,6 @@ class CallTab extends Component {
     const {
       permissionsCamera,
       action,
-      actionText,
       actionHeader,
       archivesToShare,
       modal,
@@ -199,6 +212,12 @@ class CallTab extends Component {
             inlineSearch && (
               <SearchInput
                 search={(text) => this.setState({searchText: text})}
+                onFocus={() => {
+                  this.setState({searchActive: true});
+                }}
+                onBlur={() => {
+                  this.setState({searchActive: false});
+                }}
               />
             )
           }
@@ -214,7 +233,6 @@ class CallTab extends Component {
                   this.setState({selectedUsers: {}, selectedSessions: {}});
                   navigate('UserDirectory', {
                     action,
-                    actionText,
                     archivesToShare,
                     branchLink,
                   });
@@ -245,7 +263,6 @@ class CallTab extends Component {
             this.setState({selectedUsers: {}, selectedSessions: {}})
           }
           action={action}
-          actionText={actionText}
           archivesToShare={archivesToShare}
           bottomOffset={modal ? 0 : sizes.heightFooter}
         />
