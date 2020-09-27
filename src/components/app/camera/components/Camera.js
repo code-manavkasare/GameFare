@@ -3,9 +3,12 @@ import {StyleSheet, View, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {RNCamera} from 'react-native-camera';
 import {Col, Row} from 'react-native-easy-grid';
+import PropTypes from 'prop-types';
+
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
+
 import {layoutAction} from '../../../../actions/layoutActions';
 
 import {getVideoInfo, getNewVideoSavePath} from '../../../functions/pictures';
@@ -15,6 +18,13 @@ import {
 } from '../../../functions/videoManagement';
 
 class Camera extends Component {
+  static propTypes = {
+    onRef: PropTypes.func,
+    frontCamera: PropTypes.bool,
+    onCameraReady: PropTypes.func,
+    onRecord: PropTypes.func,
+    onStopRecord: PropTypes.func,
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -28,15 +38,11 @@ class Camera extends Component {
   }
   holdRef() {
     const {onRef} = this.props;
-    if (onRef) {
-      onRef(null);
-    }
+    onRef && onRef(null);
   }
   giveRef() {
     const {onRef} = this.props;
-    if (onRef) {
-      onRef(this);
-    }
+    onRef && onRef(this);
   }
   shouldComponentUpdate(prevProps, prevState) {
     return (
@@ -61,7 +67,7 @@ class Camera extends Component {
     }
   }
   startRecording() {
-    const {layoutAction} = this.props;
+    const {layoutAction, onRecord} = this.props;
     const {camera, state} = this;
     const {isRecording} = state;
     if (camera && !isRecording) {
@@ -70,7 +76,8 @@ class Camera extends Component {
       const options = {
         quality: RNCamera.Constants.VideoQuality['720p'],
       };
-      let promise = camera.recordAsync(options);
+      const promise = camera.recordAsync(options);
+      onRecord && onRecord();
       this.setState({
         promiseRecording: promise,
         startRecordingTime: Date.now(),
@@ -79,12 +86,13 @@ class Camera extends Component {
     }
   }
   async stopRecording(saveVideo) {
-    const {layoutAction} = this.props;
+    const {layoutAction, onStopRecord} = this.props;
     const {camera, state} = this;
     const {promiseRecording, isRecording} = state;
     if (camera && isRecording) {
       layoutAction('setGeneralSessionRecording', false);
       await camera.stopRecording();
+      onStopRecord && onStopRecord();
       if (saveVideo) {
         this.saveRecording(await promiseRecording);
       }

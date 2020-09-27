@@ -15,6 +15,8 @@ class SearchInput extends Component {
   static propTypes = {
     search: PropTypes.func.isRequired,
     autofocus: PropTypes.bool,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
   };
   static defaultProps = {
     autoFocus: false,
@@ -25,19 +27,12 @@ class SearchInput extends Component {
     this.textInputRef = null;
   }
 
-  componentDidMount() {
-    const {onRef} = this.props;
-    if (onRef) {
-      onRef(this);
-    }
-  }
-
   search = (text) => {
     this.props.search(text);
   };
 
   searchBar = () => {
-    const {autoFocus, onFocus} = this.props;
+    const {autoFocus, onFocus, onBlur} = this.props;
     return (
       <View style={styles.searchBarStyle}>
         <Row style={styles.rowStyle}>
@@ -69,6 +64,12 @@ class SearchInput extends Component {
               onChangeText={(text) => {
                 this.search(text);
               }}
+              onFocus={() => {
+                onFocus && onFocus();
+              }}
+              onBlur={() => {
+                onBlur && onBlur();
+              }}
             />
           </Col>
           <Col size={10} style={styleApp.center}>
@@ -88,7 +89,6 @@ class SearchInput extends Component {
                 click={() => {
                   this.search('');
                   this.textInputRef?.clear();
-                  this.textInputRef?.focus();
                 }}
                 onPressColor={'transparent'}
                 style={styles.buttonStyle}

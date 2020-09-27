@@ -436,8 +436,6 @@ PODS:
     - React
   - react-native-config (0.12.0):
     - React
-  - react-native-contacts (5.2.5):
-    - React
   - react-native-create-thumbnail (1.2.1):
     - React
   - react-native-flipper (0.55.0):
@@ -719,7 +717,6 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-config (from `../node_modules/react-native-config`)
-  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-create-thumbnail (from `../node_modules/react-native-create-thumbnail`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
@@ -928,8 +925,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-config:
     :path: "../node_modules/react-native-config"
-  react-native-contacts:
-    :path: "../node_modules/react-native-contacts"
   react-native-create-thumbnail:
     :path: "../node_modules/react-native-create-thumbnail"
   react-native-flipper:
@@ -1155,7 +1150,6 @@ SPEC CHECKSUMS:
   react-native-camera: d9e7b66e40420dcef111f3265a00f01eea54c52c
   react-native-cameraroll: e2917a5e62da9f10c3d525e157e25e694d2d6dfa
   react-native-config: f2c2ae45625a068c35681a16b9bfb1ca58b0adc7
-  react-native-contacts: 0ed0dc4d5154c9181657837913bdfac6bba3469b
   react-native-create-thumbnail: f5265b03ec18ccc86f754c7cb63f919147a78ce0
   react-native-flipper: 098460f9ad5db006e7b834f722c285642018cb8d
   react-native-geocoder: 757427682892bb256f3b3745858cc90eba148a8e

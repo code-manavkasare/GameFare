@@ -7098,11 +7098,6 @@ react-native-confirmation-code-field@^6.0.0:
   resolved "https://registry.yarnpkg.com/react-native-confirmation-code-field/-/react-native-confirmation-code-field-6.5.0.tgz#f5579ee66b3f902724f5596a7ea3c87308c4d6d9"
   integrity sha512-thOctQtpkx5bcXIj6+S+gIKw7Z/jMBFf9FtqkiRQaZI1+IoMoA+n5CK4aYoosPQW4oAPTivL1mxOyA8T1kqmtA==
 
-react-native-contacts@^5.0.4:
-  version "5.2.5"
-  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-5.2.5.tgz#e4acd8deb5e0ba987df54504a6d1822697c5cb65"
-  integrity sha512-KmPaYtCRxDvTIItktGc9PruZN/l1H+ATlR18ge7R/XUVXq4QNLHeFx7uTYqL9p0N48+Xaca7+Ga/FsItNa0hcg==
-
 react-native-country-list@^1.0.10:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/react-native-country-list/-/react-native-country-list-1.0.10.tgz#b8e387ff361d7dc2972e135d894ae1b3e20e1ff6"

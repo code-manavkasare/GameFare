@@ -1,20 +1,24 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated, Share} from 'react-native';
+import {View, StyleSheet, Animated, Share, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import {Row, Col} from 'react-native-easy-grid';
 import {dissoc} from 'ramda';
 import PropTypes from 'prop-types';
+import {navigate} from '../../../../../NavigationService';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';
 import sizes from '../../../style/sizes';
+
+import {isUserPrivate, userObject} from '../../../functions/users';
+import {openSession} from '../../../functions/coach';
 
 import SearchInput from '../../../layout/textField/SearchInput';
 import InvitationManager from '../../../utility/InvitationManager';
 
 import UserSearchResults from './UserSearchResults';
 
-export default class userDirectoryPage extends Component {
+ class BodyUserDirectory extends Component {
   static propTypes = {
     action: PropTypes.string,
     actionText: PropTypes.string,
@@ -39,11 +43,37 @@ export default class userDirectoryPage extends Component {
   }
 
   selectUser(user) {
-    const {selectedUsers} = this.state;
-    if (selectedUsers[user.id]) {
-      this.setState({selectedUsers: dissoc(user.id, selectedUsers)});
+    const {userID, infoUser} = this.props;
+    if (isUserPrivate(user)) {
+      Keyboard.dismiss();
+      return navigate('RootAlert', {
+        textButton: 'Allow',
+        title: `${
+          user?.info?.firstname
+        } is private. Would you like to send a message request?`,
+        displayList: true,
+        listOptions: [
+          {
+            operation: () => null,
+          },
+          {
+            forceNavigation: true,
+            operation: async () => {
+              const session = await openSession(userObject(infoUser, userID), {[user.id]: user});
+              navigate('Conversation', {
+                coachSessionID: session.objectID,
+              });
+            },
+          },
+        ],
+      });
     } else {
-      this.setState({selectedUsers: {...selectedUsers, [user.id]: user}});
+      const {selectedUsers} = this.state;
+      if (selectedUsers[user.id]) {
+        this.setState({selectedUsers: dissoc(user.id, selectedUsers)});
+      } else {
+        this.setState({selectedUsers: {...selectedUsers, [user.id]: user}});
+      }
     }
   }
 
@@ -87,3 +117,15 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+    userID: state.user.userID,
+    infoUser: state.user.infoUser.userInfo,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(BodyUserDirectory);
