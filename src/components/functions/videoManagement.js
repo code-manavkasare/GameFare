@@ -295,6 +295,7 @@ const updateLocalVideoUrls = () => {
           const videoExists = await RNFS.exists(video.url);
           if (!videoExists) {
             const newUrl = updateVideoSavePath(video.url);
+            console.log('new url', newUrl);
             const fixWorked = await RNFS.exists(newUrl);
             if (fixWorked) {
               const {path: newThumbnail} = await createThumbnail({

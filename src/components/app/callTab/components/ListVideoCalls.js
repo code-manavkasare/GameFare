@@ -139,7 +139,7 @@ class ListVideoCalls extends Component {
       onClick,
       selectedSessions,
       hideCallButton,
-      AnimatedHeaderValue
+      AnimatedHeaderValue,
     } = this.props;
     if (!userConnected || coachSessions.length === 0) {
       return null;
