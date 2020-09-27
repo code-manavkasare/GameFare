@@ -2,7 +2,7 @@ import {ProcessingManager} from 'react-native-video-processing';
 import database from '@react-native-firebase/database';
 import RNFS from 'react-native-fs';
 
-import {getVideoInfo} from '../functions/pictures';
+import {getVideoInfo, getNewVideoSavePath} from '../functions/pictures';
 import {generateID} from '../functions/createEvent';
 import {addLocalVideo} from './videoManagement';
 import {getArchiveByID} from './archive';
@@ -40,8 +40,10 @@ const cutVideo = async (source, startTime, endTime) => {
     saveWithCurrentDate: true,
   };
   const newSource = await ProcessingManager.trim(source, trimOptions);
+  const docsSource = getNewVideoSavePath();
+  await RNFS.copyFile(newSource, docsSource);
   console.log('new source', newSource);
-  return newSource;
+  return docsSource;
 };
 
 const adaptAllTimestampToNewVideoLength = (recordedActions, startTime) => {
@@ -55,7 +57,7 @@ const adaptAllTimestampToNewVideoLength = (recordedActions, startTime) => {
 };
 
 const saveAudioFileToAppData = async (audioFilePath) => {
-  var newAudioFilePath = `${RNFS.DocumentDirectoryPath}/${generateID()}.mp4`;
+  var newAudioFilePath = getNewVideoSavePath();
   await RNFS.copyFile(audioFilePath, newAudioFilePath);
   return newAudioFilePath;
 };

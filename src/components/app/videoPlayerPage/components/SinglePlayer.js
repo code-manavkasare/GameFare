@@ -216,8 +216,6 @@ class SinglePlayer extends Component {
           setVideoPlayerState={(state) => this.videoPlayerRef?.setState(state)}
           seekVideoPlayer={(time) => this.videoPlayerRef?.seek(time)}
           setDrawings={(drawings) => {
-            console.log('this.videoPlayerRef', this.videoPlayerRef);
-            console.log('drawings', drawings);
             this.drawViewRef.setState(drawings);
           }}
           setNewPosition={(position) =>

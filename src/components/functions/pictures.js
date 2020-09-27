@@ -242,9 +242,9 @@ const valueColor = (value) => {
 };
 
 const updateVideoSavePath = (oldPath) => {
-  let filename = oldPath.split('/');
-  filename = filename[filename.length - 1];
-  return DocumentDirectoryPath + '/' + filename;
+  const docsDirIndex = oldPath.indexOf('/Documents');
+  const docsSubDir = oldPath.slice(docsDirIndex + 10);
+  return DocumentDirectoryPath + '/' + docsSubDir;
 };
 
 module.exports = {
