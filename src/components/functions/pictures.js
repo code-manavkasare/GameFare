@@ -244,7 +244,7 @@ const valueColor = (value) => {
 const updateVideoSavePath = (oldPath) => {
   const docsDirIndex = oldPath.indexOf('/Documents');
   const docsSubDir = oldPath.slice(docsDirIndex + 10);
-  return DocumentDirectoryPath + '/' + docsSubDir;
+  return DocumentDirectoryPath + docsSubDir;
 };
 
 module.exports = {
