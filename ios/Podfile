@@ -81,8 +81,6 @@ end
 
 target 'gamefare' do
   shared_pods
-  pod 'react-native-audio-session', :path => '../node_modules/react-native-audio-session'
-
   target 'gamefareTests' do
     inherit! :complete
     # Pods for testing
