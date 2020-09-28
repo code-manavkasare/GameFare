@@ -301,7 +301,6 @@ class VideoLibraryPage extends Component {
         index={index}
         key={videoID}
         noUpdateStatusBar={true}
-        showUploadProgress={true}
       />
     );
   }

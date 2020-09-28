@@ -32,7 +32,6 @@ class CardArchive extends PureComponent {
     isSelected: PropTypes.bool,
     selectVideo: PropTypes.func,
     allowPlay: PropTypes.bool,
-    showUploadProgress: PropTypes.bool,
   };
   static defaultProps = {
     selectableMode: false,
@@ -106,10 +105,10 @@ class CardArchive extends PureComponent {
   };
 
   localIndicator() {
-    const {archive, showUploadProgress} = this.props;
+    const {archive} = this.props;
     const {local, progress} = archive;
 
-    if (showUploadProgress && progress)
+    if (progress)
       return (
         <Progress.Circle
           color={colors.white}
@@ -226,7 +225,6 @@ class CardArchive extends PureComponent {
       hideInformation,
       style,
       selectableMode,
-      showUploadProgress,
       unclickable,
     } = this.props;
     const {
@@ -327,7 +325,7 @@ class CardArchive extends PureComponent {
                     styleApp.textBold,
                     {color: colors.white, fontSize: 11},
                   ]}>
-                  {showUploadProgress && progress ? (
+                  {progress ? (
                     'Uploading...'
                   ) : (
                     <FormatDate date={startTimestamp} short />
