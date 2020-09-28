@@ -7068,6 +7068,11 @@ react-native-calendars@^1.212.0:
     react-native-swipe-gestures "^1.0.5"
     xdate "^0.8.0"
 
+react-native-call-detection@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-call-detection/-/react-native-call-detection-1.9.0.tgz#2477690158768e01842f0bd5c2544e4a3247e616"
+  integrity sha512-UaF/I1cp2UnIbdCh3UmrFIA4an8El1gIBM6uIbM+OYCrfe5btIj7DYtjqtNoeKOtF7fap32m37v6lafQ9SZHpg==
+
 "react-native-camera@git+https://github.com/pumposh/react-native-camera.git#mixWithOthers":
   version "3.40.0"
   resolved "git+https://github.com/pumposh/react-native-camera.git#98961267d8e502ab5985950890e3367d8a93048f"

@@ -23,6 +23,8 @@ import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 import ArchiveBindManager from './src/components/utility/ArchiveBindManager';
 import BranchManager from './src/components/utility/BranchManager';
+import CallListener from './src/components/utility/CallListener';
+
 import {
   updateLocalVideoUrls,
   oneTimeFixStoreLocalVideoLibrary,
@@ -140,6 +142,7 @@ class App extends Component {
         <ConnectionTypeProvider />
         <ArchiveBindManager />
         <BranchManager />
+        <CallListener />
       </NavigationContainer>
     );
   }
