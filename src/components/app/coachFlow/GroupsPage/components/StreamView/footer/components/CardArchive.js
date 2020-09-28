@@ -195,9 +195,9 @@ class CardArchive extends PureComponent {
           <Col size={15} style={styleApp.center}>
             {recordedActions ? (
               <AllIcons
-                name={require('../../../../../../../../img/icons/feedback.png')}
-                type="file"
-                size={27}
+                name={'microphone-alt'}
+                type="font"
+                size={17}
                 color={colors.white}
                 style={styleApp.shadowIcon}
               />

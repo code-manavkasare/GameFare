@@ -41,16 +41,16 @@ class HeaderCallTab extends Component {
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
-        icon2={openUserDirectoryIcon}
-        typeIcon2={typeIcon2}
-        sizeIcon2={24}
-        typeIcon1={typeIcon1}
-        colorIcon2={colors.title}
-        clickButton2={() => openUserDirectory()}
-        icon1={openMessageHistoryIcon}
-        sizeIcon1={23}
+        icon1={openUserDirectoryIcon}
+        typeIcon1={typeIcon2}
+        sizeIcon1={24}
         colorIcon1={colors.title}
-        badgeIcon1={
+        clickButton1={() => openUserDirectory()}
+        typeIcon2={typeIcon1}
+        icon2={openMessageHistoryIcon}
+        sizeIcon2={23}
+        colorIcon2={colors.title}
+        badgeIcon2={
           numberNotifications !== 0 &&
           showNotificationCount && (
             <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
@@ -64,7 +64,7 @@ class HeaderCallTab extends Component {
             </View>
           )
         }
-        clickButton1={() => openMessageHistory()}
+        clickButton2={() => openMessageHistory()}
       />
     );
   };

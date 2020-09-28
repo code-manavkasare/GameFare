@@ -162,10 +162,11 @@ class VisualSeekBar extends Component {
     };
   }
   toggleVisible(force) {
-    const {recordedActions} = this.props;
+    const {recordedActions, isRecording} = this.props;
     const {visible: visibleState} = this.state;
     const visible = force !== undefined ? !force : visibleState;
-    if (!recordedActions) {
+ 
+    if (!recordedActions || isRecording || force !== undefined) {
       Animated.parallel([
         Animated.timing(this._revealSeekbar, native(visible ? 0 : 1, 200)),
       ]).start();
@@ -200,7 +201,7 @@ class VisualSeekBar extends Component {
       const {seekbar} = this.state;
       const newTime =
         ((toValue - seekbar.xOffset._value) / seekbar.width._value) * totalTime;
-      // console.log(newTime);
+ 
       if (!paused) {
         onSlidingStart(newTime);
       }

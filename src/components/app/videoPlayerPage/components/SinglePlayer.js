@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Dimensions, View} from 'react-native';
+import {Dimensions, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {isEqual} from 'lodash';
@@ -14,6 +14,7 @@ import DrawView from './drawing/DrawView';
 import {bindArchive} from '../../../functions/archive';
 import {updateInfoVideoCloud} from '../../../functions/coach';
 import RecordingComponent from './recording/index';
+import AllIcon from '../../../layout/icons/AllIcons';
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -28,6 +29,7 @@ class SinglePlayer extends Component {
       audioFilePath: null,
       sizeVideo: {height: 0, width: 0},
       isVideoPlayerReady: false,
+      displayButtonReplay: false,
     };
   }
 
@@ -97,6 +99,12 @@ class SinglePlayer extends Component {
   }
   getSeekBar() {
     return this.videoPlayerRef?.visualSeekBarRef;
+  }
+  getCurrentTime() {
+    return this.videoPlayerRef?.visualSeekBarRef.getCurrentTime();
+  }
+  toggleVisibleSeekBar(force) {
+    return this.videoPlayerRef?.visualSeekBarRef.toggleVisible(force);
   }
   viewLoader(playerStyle) {
     return (
@@ -178,8 +186,13 @@ class SinglePlayer extends Component {
       preparePlayer,
       isAudioPlayerReady,
       playRecord,
+      isRecording,
     } = this.props;
-    const {sizeVideo, isVideoPlayerReady} = this.state;
+    const {sizeVideo, isVideoPlayerReady, displayButtonReplay} = this.state;
+    let {recordedActions} = this.props;
+ 
+    if (!recordedActions) recordedActions = archive.recordedActions;
+ 
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
     if (!archive) {
@@ -204,6 +217,23 @@ class SinglePlayer extends Component {
           />
         )}
 
+        {displayButtonReplay && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={async () => {
+              await this.setState({displayButtonReplay: false});
+              this.previewRecording({recordedActions});
+            }}
+            style={styles.buttonReplayView}>
+            <AllIcon
+              name="undo-alt"
+              type="font"
+              size={45}
+              color={colors.white}
+            />
+          </TouchableOpacity>
+        )}
+
         <RecordingComponent
           videoPlayerRef={this.videoPlayerRef}
           archive={archive}
@@ -218,11 +248,15 @@ class SinglePlayer extends Component {
           setDrawings={(drawings) => {
             this.drawViewRef.setState(drawings);
           }}
+          toggleVisibleSeekBar={this.toggleVisibleSeekBar.bind(this)}
           setNewPosition={(position) =>
             this.videoPlayerRef.PinchableBoxRef.setNewPosition(position)
           }
           setNewScale={(scale) =>
             this.videoPlayerRef?.PinchableBoxRef?.setNewScale(scale)
+          }
+          setDisplayButtonReplay={(val) =>
+            this.setState({displayButtonReplay: val})
           }
           playRecord={playRecord}
         />
@@ -235,6 +269,7 @@ class SinglePlayer extends Component {
           index={index}
           resizeMode="contain"
           userID={userID}
+          recordedActions={recordedActions}
           setSizeVideo={(size) => this.setState({sizeVideo: size})}
           pinchEnable={!isDrawingEnabled}
           isDoneBuffering={this.isDoneBuffering.bind(this)}
@@ -255,6 +290,7 @@ class SinglePlayer extends Component {
               onDrawingChange={propsWhenRecording.onDrawingChange}
             />
           )}
+          isRecording={isRecording}
           noUpdateInCloud={!videosBeingShared ? true : false}
           updateOnProgress={userID === personSharingScreen}
           updateVideoInfoCloud={(dataUpdate) =>
@@ -289,6 +325,17 @@ class SinglePlayer extends Component {
 
   render = () => this.singlePlayer();
 }
+
+const styles = StyleSheet.create({
+  buttonReplayView: {
+    position: 'absolute',
+    zIndex: 2,
+    height: '100%',
+    width: '100%',
+    backgroundColor: colors.title + '40',
+    ...styleApp.center,
+  },
+});
 
 const mapStateToProps = (state, props) => {
   return {

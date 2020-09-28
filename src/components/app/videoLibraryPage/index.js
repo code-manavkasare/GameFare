@@ -241,18 +241,8 @@ class VideoLibraryPage extends Component {
   }
 
   listVideos() {
-    const {
-      videosArray,
-      selectOnly,
-      selectedVideos,
-      selectableMode,
-    } = this.state;
+    const {videosArray, selectOnly, selectableMode} = this.state;
 
-    // const personSharingScreen = isSomeoneSharingScreen(coachSession);
-    // const videosBeingShared = getVideosSharing(
-    //   coachSession,
-    //   personSharingScreen,
-    // );
     const selectMargin = selectableMode ? 80 : 0;
     return (
       <View style={styleApp.fullSize}>
@@ -395,13 +385,10 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   cardArchive: {
-    // width: (width * 0.9) / 2 - 10,
     width: width / 3,
     height: 170,
     borderRadius: 0,
     overflow: 'hidden',
-    // backgroundColor: colors.title,
-    // margin: 5,
     borderBottomWidth: 1.5,
     borderColor: colors.white,
   },
