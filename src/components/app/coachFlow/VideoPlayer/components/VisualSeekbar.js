@@ -423,7 +423,6 @@ class VisualSeekBar extends Component {
     };
 
     return (
-      // visible && (
       <Animated.View
         pointerEvents={visible ? null : 'none'}
         style={containerStyle}>
@@ -446,7 +445,6 @@ class VisualSeekBar extends Component {
 
         <BlurView style={styles.blurView} blurType="dark" blurAmount={20} />
       </Animated.View>
-      // )
     );
   }
 

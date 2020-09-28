@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
@@ -27,50 +26,28 @@ class ButtonShareVideo extends Component {
     }
   };
   async startSharingVideo(value) {
-    const {
-      userID,
-      coachSessionID,
-      archives,
-      getVideoState,
-      togglePlayPause,
-      session,
-    } = this.props;
+    const {userID, coachSessionID, archives, getVideoState} = this.props;
 
     let updates = {};
     for (let i in archives) {
       const {id, local} = archives[i];
       const stateVideo = getVideoState(i);
 
+      const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos/${id}`;
+      const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${userID}`;
       if (value) {
-        updates[
-          `coachSessions/${coachSessionID}/sharedVideos/${id}/currentTime`
-        ] = stateVideo.currentTime;
-        updates[
-          `coachSessions/${coachSessionID}/sharedVideos/${id}/paused`
-        ] = true;
-        updates[
-          `coachSessions/${coachSessionID}/sharedVideos/${id}/playRate`
-        ] = 1;
-        updates[
-          `coachSessions/${coachSessionID}/sharedVideos/${id}/position`
-        ] = {x: 0, y: 0};
-        updates[`coachSessions/${coachSessionID}/sharedVideos/${id}/scale`] = 1;
+        updates[`${sharedVideosPath}/currentTime`] = stateVideo.currentTime;
+        updates[`${sharedVideosPath}/paused`] = true;
+        updates[`${sharedVideosPath}/playRate`] = 1;
+        updates[`${sharedVideosPath}/position`] = {x: 0, y: 0};
+        updates[`${sharedVideosPath}/scale`] = 1;
+        updates[`${sharedVideosPath}/id`] = id;
 
-        updates[`coachSessions/${coachSessionID}/sharedVideos/${id}/id`] = id;
-
-        updates[
-          `coachSessions/${coachSessionID}/members/${userID}/shareScreen`
-        ] = true;
-        updates[
-          `coachSessions/${coachSessionID}/members/${userID}/videoIDSharing`
-        ] = id;
+        updates[`${coachSessionMemberSharingPath}/shareScreen`] = true;
+        updates[`${coachSessionMemberSharingPath}/videoIDSharing`] = id;
       } else {
-        updates[
-          `coachSessions/${coachSessionID}/members/${userID}/shareScreen`
-        ] = false;
-        updates[
-          `coachSessions/${coachSessionID}/members/${userID}/sharedVideos`
-        ] = null;
+        updates[`${coachSessionMemberSharingPath}/shareScreen`] = false;
+        updates[`${coachSessionMemberSharingPath}/sharedVideos`] = null;
       }
     }
 
@@ -154,10 +131,6 @@ class ButtonShareVideo extends Component {
     return this.button();
   }
 }
-
-const styles = StyleSheet.create({
-  button: {},
-});
 
 const mapStateToProps = (state, props) => {
   return {

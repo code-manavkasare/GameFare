@@ -252,7 +252,13 @@ export default class VideoPlayer extends Component {
     return this.setState({paused: true, slidingStartTime: currentTime});
   };
   onSeek = async (time, fineSeek) => {
-    const {index, onPlayPause, onCurrentTimeChange, onSeek} = this.props;
+    const {
+      index,
+      onPlayPause,
+      updateVideoInfoCloud,
+      noUpdateInCloud,
+      onSeek,
+    } = this.props;
     const {paused, prevPaused, currentTime} = this.state;
     const currentTimeFromSeekBar = this.visualSeekBarRef?.getCurrentTime();
 
@@ -265,6 +271,13 @@ export default class VideoPlayer extends Component {
     if (fineSeek) {
       this.setState({prevPaused: undefined});
       onPlayPause(index, true, currentTimeFromSeekBar);
+
+      if (updateVideoInfoCloud && !noUpdateInCloud) {
+        await updateVideoInfoCloud({
+          currentTime: currentTimeFromSeekBar,
+          paused: true,
+        });
+      }
     }
     this.player.seek(time, 33);
     if (onSeek) {
