@@ -424,14 +424,14 @@ PODS:
     - React
   - react-native-calendar-events (1.7.3):
     - React
-  - react-native-camera (3.35.0):
-    - React
-    - react-native-camera/RCT (= 3.35.0)
-    - react-native-camera/RN (= 3.35.0)
-  - react-native-camera/RCT (3.35.0):
-    - React
-  - react-native-camera/RN (3.35.0):
-    - React
+  - react-native-camera (3.40.0):
+    - React-Core
+    - react-native-camera/RCT (= 3.40.0)
+    - react-native-camera/RN (= 3.40.0)
+  - react-native-camera/RCT (3.40.0):
+    - React-Core
+  - react-native-camera/RN (3.40.0):
+    - React-Core
   - react-native-cameraroll (1.8.1):
     - React
   - react-native-config (0.12.0):
@@ -1147,7 +1147,7 @@ SPEC CHECKSUMS:
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
-  react-native-camera: d9e7b66e40420dcef111f3265a00f01eea54c52c
+  react-native-camera: 35854c4f764a4a6cf61c1c3525888b92f0fe4b31
   react-native-cameraroll: e2917a5e62da9f10c3d525e157e25e694d2d6dfa
   react-native-config: f2c2ae45625a068c35681a16b9bfb1ca58b0adc7
   react-native-create-thumbnail: f5265b03ec18ccc86f754c7cb63f919147a78ce0

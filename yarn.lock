@@ -4419,9 +4419,9 @@ gamefare-camera-kit@^1.1.2:
     underscore "^1.9.1"
     uuid "^3.3.3"
 
-"gamefare-rn-video@git+https://gitlab.com/gamefare/gamefare-rn-video.git":
+"gamefare-rn-video@git+https://gitlab.com/gamefare/gamefare-rn-video.git#ios14fix":
   version "5.1.0-alpha8"
-  resolved "git+https://gitlab.com/gamefare/gamefare-rn-video.git#a5cfff5a430c20b934b4d038e4867ba43abf6a83"
+  resolved "git+https://gitlab.com/gamefare/gamefare-rn-video.git#cc253b1cbe107189562b861ae6617ef12fbc46c4"
   dependencies:
     keymirror "^0.1.1"
     prop-types "^15.7.2"
@@ -7068,10 +7068,9 @@ react-native-calendars@^1.212.0:
     react-native-swipe-gestures "^1.0.5"
     xdate "^0.8.0"
 
-react-native-camera@^3.21.0:
-  version "3.35.0"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-3.35.0.tgz#3c8b8392f9cdcac51d30fed45c1db70332fc6a1c"
-  integrity sha512-hs9ja6qc2JMB2oYDzYuzOF1GUMRZY0O7KX1e7K7WJBQzAwsXnlwm4d2r6P61kGMk1FUDUn186Yc3kb5vfEAyoA==
+"react-native-camera@git+https://github.com/pumposh/react-native-camera.git#mixWithOthers":
+  version "3.40.0"
+  resolved "git+https://github.com/pumposh/react-native-camera.git#98961267d8e502ab5985950890e3367d8a93048f"
   dependencies:
     prop-types "^15.6.2"
 

@@ -63,7 +63,7 @@ export default class VideoPlayer extends Component {
       seekbarLoaded: false,
       fullscreen: false,
       playRate: 1,
-      muted: __DEV__ ? true : false,
+      muted: false,
       allowRecording: false,
       slidingStartTime: null,
     };
@@ -90,15 +90,10 @@ export default class VideoPlayer extends Component {
       this.PinchableBoxRef?.resetPosition();
     }
 
-    if (
-      videoLoaded &&
-      seekbarLoaded &&
-      (!prevState.videoLoaded || !prevState.seekbarLoaded)
-    ) {
+    if (videoLoaded && !prevState.videoLoaded) {
       setTimeout(() => {
         this.visualSeekBarRef?.toggleVisible(true);
         this.seek(currentTime);
-        this.setState({paused: false});
       }, 200);
     }
   }
@@ -238,6 +233,9 @@ export default class VideoPlayer extends Component {
       playerRef.seekDiff(sliderTime - slidingStartTime),
     );
   };
+  linkedOnSlidingStart = async () => {
+    this.onSlidingStart();
+  };
   onSlidingStart = async () => {
     const {
       onSlidingStart,
@@ -325,7 +323,7 @@ export default class VideoPlayer extends Component {
       buttonTopRight,
       index,
       setScale,
-
+      width,
       seekbarSize,
       disableControls,
       pinchEnable,
@@ -348,7 +346,7 @@ export default class VideoPlayer extends Component {
       seekbarLoaded,
       allowRecording,
     } = this.state;
-    const {height, width} = Dimensions.get('screen');
+    const {height} = Dimensions.get('screen');
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight && buttonTopRight()}
@@ -359,7 +357,7 @@ export default class VideoPlayer extends Component {
             styleApp.center,
             {backgroundColor: colors.black},
           ]}>
-          {(videoLoading || !seekbarLoaded) && this.fullScreenLoader()}
+          {videoLoading && this.fullScreenLoader()}
           {!videoLoaded && (
             <AsyncImage
               resizeMode={'contain'}
@@ -416,7 +414,7 @@ export default class VideoPlayer extends Component {
 
                     await this.setState({
                       videoLoaded: true,
-                      paused: true,
+                      paused: false,
                     });
                   }}
                   muted={muted}
@@ -460,7 +458,7 @@ export default class VideoPlayer extends Component {
             onSlidingComplete={(sliderTime, forcePlay) =>
               this.linkedOnSlidingComplete(sliderTime, forcePlay)
             }
-            onSlidingStart={() => this.onSlidingStart()}
+            onSlidingStart={() => this.linkedOnSlidingStart()}
             width={width}
             onSeekbarLoad={() => {
               this.setState({seekbarLoaded: true});

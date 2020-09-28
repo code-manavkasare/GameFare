@@ -89,7 +89,7 @@ class CameraPage extends Component {
                 this.bottomButtonsRef = ref;
               }}
               addFlag={() => camera.addFlag()}
-              startRecording={() => camera.startRecording()}
+              startRecording={(cb) => camera.startRecording(cb)}
               stopRecording={() => camera.stopRecording(true, true)}
             />
           </Row>
