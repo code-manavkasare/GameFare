@@ -115,16 +115,21 @@ export default class RecordButton extends Component {
       await stopRecording();
       this.setState({loader: false});
     } else {
-      startRecording();
-      this.setState({
-        isRecording: true,
-        renderTimer: true,
-        startRecordingTime: Date.now(),
+      startRecording({
+        onSuccess: (startRecordingTime) => {
+          this.setState({
+            isRecording: true,
+            renderTimer: true,
+            startRecordingTime,
+          });
+        },
+        onError: () => {
+          this.setState({isRecording: false});
+        },
       });
     }
   }
   render() {
-    this.indicatorAnimation();
     this.timerAnimation();
     return (
       <View style={[styleApp.center, styleApp.fullSize]}>{this.timer()}</View>

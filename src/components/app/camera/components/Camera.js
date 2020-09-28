@@ -24,7 +24,7 @@ class Camera extends Component {
     onCameraReady: PropTypes.func,
     onRecord: PropTypes.func,
     onStopRecord: PropTypes.func,
-  }
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -47,7 +47,8 @@ class Camera extends Component {
   shouldComponentUpdate(prevProps, prevState) {
     return (
       prevState.cameraReady != this.state.cameraReady ||
-      prevProps.frontCamera != this.props.frontCamera
+      prevProps.frontCamera != this.props.frontCamera ||
+      prevState.isRecording != this.state.isRecording
     );
   }
   componentDidUpdate(prevProps, prevState) {
@@ -66,7 +67,7 @@ class Camera extends Component {
       this.setState({flags: newFlags});
     }
   }
-  startRecording() {
+  async startRecording(callback) {
     const {layoutAction, onRecord} = this.props;
     const {camera, state} = this;
     const {isRecording} = state;
@@ -74,15 +75,27 @@ class Camera extends Component {
       layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
-        quality: RNCamera.Constants.VideoQuality['720p'],
+        quality: RNCamera.Constants.VideoQuality['2160p'],
       };
-      const promise = camera.recordAsync(options);
+      let promise = camera.recordAsync(options);
       onRecord && onRecord();
-      this.setState({
-        promiseRecording: promise,
-        startRecordingTime: Date.now(),
-        flags: [],
+      promise.catch((e) => {
+        console.log(e);
+        layoutAction('setGeneralSessionRecording', false);
+        this.setState({
+          promiseRecording: null,
+          isRecording: false,
+          startRecordingTime: null,
+        });
+        if (callback?.onError) {
+          callback.onError();
+        }
+        this.startRecording(callback);
       });
+      this.setState({promiseRecording: promise});
+      if (callback?.onSuccess) {
+        callback.onSuccess(Date.now());
+      }
     }
   }
   async stopRecording(saveVideo) {
@@ -104,6 +117,7 @@ class Camera extends Component {
     }
   }
   async saveRecording(recording) {
+    console.log('RECORDING', recording);
     let videoInfo = await getVideoInfo(recording.uri);
     await addLocalVideo(videoInfo);
     openVideoPlayer({
@@ -113,6 +127,7 @@ class Camera extends Component {
   }
   render() {
     const {frontCamera, onCameraReady} = this.props;
+    const {isRecording} = this.state;
     return (
       <View style={styleApp.flexColumnBlack}>
         <RNCamera
@@ -122,7 +137,9 @@ class Camera extends Component {
               onCameraReady(true);
             }
           }}
-          onMountError={(error) => console.log('RNCamera mount error: ', error)}
+          onMountError={(error) =>
+            console.log('RNCamera mount error: ', error)
+          }
           onStatusChange={(status) => {
             if (status.cameraStatus !== 'READY') {
               this.setState({cameraReady: false});
@@ -134,6 +151,9 @@ class Camera extends Component {
           ref={(ref) => {
             this.camera = ref;
           }}
+          captureAudio={isRecording}
+          keepAudioSession
+          mixWithOthers
           style={styles.preview}
           type={
             frontCamera

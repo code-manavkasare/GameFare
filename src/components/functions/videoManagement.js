@@ -261,7 +261,13 @@ const shareVideosWithTeams = async (videos, objectIDs) => {
   });
 };
 
-const generateThumbnailSet = async (source, timeBounds, size, callback) => {
+const generateThumbnailSet = async ({
+  source,
+  timeBounds,
+  size,
+  callback,
+  index,
+}) => {
   if (!source) {
     return;
   }
@@ -270,17 +276,22 @@ const generateThumbnailSet = async (source, timeBounds, size, callback) => {
   let thumbnails = [];
   for (var x = 0; x < size; x++) {
     let time = (dt * x + m) * 1000;
-    thumbnails.push(
-      await createThumbnail({
-        url: source,
-        timeStamp: time,
-      }).then((r) => {
-        if (callback) {
-          callback(r);
-        }
-        return r;
-      }),
-    );
+    if (!index || index === x) {
+      thumbnails.push(
+        await createThumbnail({
+          url: source,
+          timeStamp: time,
+        }).then((r) => {
+          if (callback) {
+            callback(r);
+          }
+          return r;
+        }),
+      );
+      if (index === x) {
+        return thumbnails[0];
+      }
+    }
   }
   return thumbnails;
 };

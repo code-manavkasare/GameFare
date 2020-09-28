@@ -30,6 +30,7 @@ class VisualSeekBar extends Component {
     }
     width *= 0.96;
     this.state = {
+      filmstripLoaded: false,
       visible: alwaysVisible ? true : false,
       totalTime: 0,
       fullscreen: false,
@@ -314,8 +315,8 @@ class VisualSeekBar extends Component {
 
   playhead() {
     const {currentTime} = this.props;
-    const {size} = this.state;
-    const small = size === 'sm';
+    const {size, filmstripLoaded} = this.state;
+    const small = size === 'sm' || !filmstripLoaded;
 
     const playheadContainerStyle = {
       position: 'absolute',
@@ -335,14 +336,20 @@ class VisualSeekBar extends Component {
     );
   }
 
+  onSeekbarLoad() {
+    const {onSeekbarLoad} = this.props;
+    this.setState({filmstripLoaded: true});
+    onSeekbarLoad();
+  }
+
   seekbar() {
-    const {disableControls, source, onSeekbarLoad, archiveId} = this.props;
-    const {seekbar, size, width} = this.state;
-    const small = size === 'sm';
+    const {disableControls, source, archiveId} = this.props;
+    const {seekbar, size, width, filmstripLoaded} = this.state;
+    const small = size === 'sm' || !filmstripLoaded;
 
     const seekbarContainerStyle = {
       ...styles.seekbarContainer,
-      height: small ? 65 : 130,
+      height: small ? 65 : 105,
       opacity: disableControls ? 0.7 : 1,
     };
     const panHandlerStyle = {
@@ -361,7 +368,7 @@ class VisualSeekBar extends Component {
       <View style={seekbarContainerStyle}>
         <View style={panHandlerStyle} {...this.panResponder.panHandlers}>
           <Animated.View style={seekbarStyle}>
-            {!small && (
+            {!(size === 'sm') && (
               <Filmstrip
                 onRef={(ref) => (this.filmstripRef = ref)}
                 source={source}
@@ -369,7 +376,7 @@ class VisualSeekBar extends Component {
                 seekbar={seekbar}
                 width={width}
                 height={seekbarStyle.height}
-                onFilmstripLoad={() => onSeekbarLoad()}
+                onFilmstripLoad={() => this.onSeekbarLoad()}
               />
             )}
           </Animated.View>
@@ -391,11 +398,11 @@ class VisualSeekBar extends Component {
       updatePlayRate,
       disableControls,
     } = this.props;
-    const {paused, size, visible} = this.state;
+    const {paused, size, visible, filmstripLoaded} = this.state;
 
-    const small = size === 'sm';
+    const small = size === 'sm' || !filmstripLoaded;
 
-    const minHeight = small ? 120 : 180;
+    const minHeight = small ? 120 : 160;
     const height = style?.height ? style.height : minHeight;
 
     const translateY = this._revealSeekbar.interpolate({
@@ -424,6 +431,7 @@ class VisualSeekBar extends Component {
         <ControlBar
           disableControls={disableControls}
           size={size}
+          small={small}
           getCurrentTime={this.getCurrentTime.bind(this)}
           setCurrentTime={this.setCurrentTime.bind(this)}
           togglePlayPause={() => togglePlayPause()}
@@ -475,7 +483,7 @@ const styles = StyleSheet.create({
   },
   seekbarContainer: {
     width: '100%',
-    paddingTop: 35,
+    paddingTop: 40,
   },
   seekbarMarkersContainer: {
     paddingHorizontal: '5%',

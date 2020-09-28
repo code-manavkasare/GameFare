@@ -88,10 +88,10 @@ export default class BottomButtons extends Component {
       this.startRecording();
     }
   }
-  startRecording() {
+  startRecording(callback) {
     const {startRecording} = this.props;
-    startRecording();
     this.setState({renderFlagButton: true, isRecording: true});
+    return startRecording(callback);
   }
   stopRecording() {
     const {stopRecording} = this.props;
@@ -99,15 +99,13 @@ export default class BottomButtons extends Component {
     this.setState({isRecording: false});
   }
   render() {
-    this.flagButtonAnimation();
     return (
       <View style={[styleApp.center, styleApp.fullSize]}>
-        {this.flagButton()}
         <RecordButton
           onRef={(ref) => {
             this.recordButtonRef = ref;
           }}
-          startRecording={() => this.startRecording()}
+          startRecording={(cb) => this.startRecording(cb)}
           stopRecording={() => this.stopRecording()}
         />
       </View>

@@ -127,13 +127,26 @@ export default class ControlBar extends Component {
   };
 
   speedButton(inputSpeed) {
-    const {updatePlayRate} = this.props;
+    const {updatePlayRate, size, small} = this.props;
     const {currentPlaybackSpeed, speedSelectorVisible} = this.state;
 
-    const styleSpeedButton =
+    let styleSpeedButton =
       !inputSpeed || inputSpeed === currentPlaybackSpeed
         ? styles.focusedSpeedButton
         : styles.speedButton;
+
+    let styleSpeedText = styles.speedText;
+
+    if (small) {
+      styleSpeedButton = {
+        ...styleSpeedButton,
+        height: 20,
+      };
+      styleSpeedText = {
+        ...styleSpeedText,
+        fontSize: 13,
+      };
+    }
 
     const speed = inputSpeed ? inputSpeed : currentPlaybackSpeed;
 
@@ -142,7 +155,7 @@ export default class ControlBar extends Component {
     const buttonView = () => {
       return (
         <View style={styleSpeedButton}>
-          <Text style={styles.speedText}>{speedText}x</Text>
+          <Text style={styleSpeedText}>{speedText}x</Text>
         </View>
       );
     };
@@ -191,12 +204,15 @@ export default class ControlBar extends Component {
   }
 
   speedSelector() {
+    const {size, small} = this.props;
+
     const speedCol = (speed) => (
       <Col key={speed}>{this.speedButton(speed)}</Col>
     );
 
     const rowStyle = {
       maxWidth: this.speedConfig.length * 70,
+      top: 2.3,
     };
 
     return <Row style={rowStyle}>{this.speedConfig.map(speedCol)}</Row>;
@@ -204,6 +220,7 @@ export default class ControlBar extends Component {
 
   speedRow() {
     const {speedSelectorVisible} = this.state;
+    const {size, small} = this.props;
 
     const focusedSpeedStyle = {
       opacity: this.focusedSpeedRowOpacity,
@@ -212,9 +229,13 @@ export default class ControlBar extends Component {
       ...styles.speedSelectorRow,
       opacity: this.speedSelectorOpacity,
     };
+    const speedRowContainerStyle = {
+      ...styles.speedRowContainer,
+      top: small ? -55 : -93,
+    };
 
     return (
-      <View style={styles.speedRowContainer}>
+      <View style={speedRowContainerStyle}>
         <Animated.View style={focusedSpeedStyle}>
           {this.speedButton()}
         </Animated.View>
@@ -228,8 +249,7 @@ export default class ControlBar extends Component {
   }
 
   controlBar() {
-    const {size, disableControls} = this.props;
-    const small = size === 'sm';
+    const {disableControls} = this.props;
     const controlBarStyle = {
       ...styles.controlBar,
       opacity: disableControls ? 0.7 : 1,
@@ -243,7 +263,7 @@ export default class ControlBar extends Component {
           <Col>{this.fineSeekButton(this.fineSeekConfig[2])}</Col>
           <Col>{this.fineSeekButton(this.fineSeekConfig[3])}</Col>
         </Row>
-        {!small && this.speedRow()}
+        {this.speedRow()}
       </View>
     );
   }
@@ -279,19 +299,19 @@ const styles = StyleSheet.create({
     ...styleApp.shadowWeak,
     ...styleApp.center,
     width: 50,
-    height: 25,
+    height: 20,
     borderRadius: 15,
     backgroundColor: colors.greenStrong,
   },
   speedButton: {
     ...styleApp.center,
     width: 50,
-    height: 25,
+    height: 20,
     borderRadius: 15,
   },
   speedText: {
     ...styleApp.textBold,
-    fontSize: 15,
+    fontSize: 13,
     color: colors.white,
     textAlign: 'center',
   },
