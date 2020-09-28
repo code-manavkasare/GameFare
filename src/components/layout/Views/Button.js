@@ -28,7 +28,6 @@ export default class Button extends Component {
     const {onPressIn, onPressOut} = this.props;
     if (val) {
       if (onPressIn) {
-        console.log('asf');
         onPressIn();
       }
       return Animated.parallel([

@@ -32,6 +32,7 @@ export default class VideoPlayerHeader extends React.Component {
       recordedActions,
       navigation,
       archives,
+      videoInfos,
     } = this.props;
     const {coachSessionID} = route.params;
     const sharedProps = {
@@ -44,14 +45,20 @@ export default class VideoPlayerHeader extends React.Component {
       nobackgroundColorIcon1: false,
       backgroundColorIcon1: colors.title + '70',
       initialBorderColorIcon: 'transparent',
-      sizeIcon1: 16,
+      sizeIcon1: 18,
       colorIcon1: colors.white,
       typeIcon1: 'font',
 
       backgroundColorIcon2: colors.title + '70',
       typeIcon2: !isEditMode && !coachSessionID ? 'font' : 'font',
-      sizeIcon2: !isEditMode && !coachSessionID ? 17 : 16,
-      icon2: !isEditMode && !coachSessionID ? 'microphone-alt' : 'times',
+      sizeIcon2: !isEditMode && !coachSessionID ? 19 : 19,
+      icon2:
+        archives.length !== 1 ||
+        (archives.length === 1 && Object.values(videoInfos)[0].recordedActions)
+          ? null
+          : !isEditMode && !coachSessionID
+          ? 'microphone-alt'
+          : 'times',
       text2: 'Edit',
       colorIcon2: colors.white,
       clickButton2: () => {
@@ -61,17 +68,17 @@ export default class VideoPlayerHeader extends React.Component {
           editModeOff();
         }
       },
-      icon11: 'open-with',
+      icon11: 'arrows-alt',
       colorIcon11: colors.white,
-      typeIcon11: 'mat',
+      typeIcon11: 'font',
       backgroundColorIcon11: !isDrawingEnabled
         ? colors.secondary
         : colors.title + '70',
-      sizeIcon11: 19,
+      sizeIcon11: 21,
       clickButton11: () => setState({isDrawingEnabled: false}),
-      icon12: 'gesture',
+      icon12: 'paint-brush',
       colorIcon12: colors.white,
-      typeIcon12: 'mat',
+      typeIcon12: 'font',
       sizeIcon12: 19,
       backgroundColorIcon12: isDrawingEnabled
         ? colors.secondary
@@ -98,7 +105,8 @@ export default class VideoPlayerHeader extends React.Component {
         typeIconOffset={'font'}
         iconOffset2={'user-plus'}
         typeIconOffset2={'font'}
-        sizeOffset2={20}
+        sizeIconOffset2={17}
+        sizeIconOffset={20}
         backgroundColorIconOffset2={colors.title + '70'}
         colorIconOffset2={colors.white}
         clickButtonOffset2={async () =>

@@ -48,7 +48,6 @@ class DrawSraightLine extends Component {
             drawing: true,
           });
         }
-        console.log('newPosition',newPosition)
         return this.setState({
           endPoint: newPosition,
         });
@@ -82,7 +81,6 @@ class DrawSraightLine extends Component {
     const {style} = this.props;
     let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     if (!radius) radius = 0;
-    console.log('radiuds', radius);
     return (
       <PanGestureHandler
         style={style}

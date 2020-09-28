@@ -71,7 +71,6 @@ class DrawView extends Component {
       this.setState({drawings: {}});
       onDrawingChange(index, {});
     } catch (err) {
-      // console.log('errror clear', err);
     }
   };
   undo = () => {

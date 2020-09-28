@@ -116,7 +116,6 @@ class InvitationManager extends Component {
   }
 
   showButton(keyboard) {
-    console.log('show button');
     const to = keyboard ? 2 : 1;
     Animated.timing(this.buttonReveal, native(to)).start(() =>
       this.setState({animationState: to}),

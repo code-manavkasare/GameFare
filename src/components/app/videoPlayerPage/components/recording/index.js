@@ -45,6 +45,9 @@ class Recording extends Component {
     }
   };
   previewRecording = async ({recordedActions}) => {
+    const {toggleVisibleSeekBar} = this.props;
+ 
+    toggleVisibleSeekBar(false);
     const {
       setVideoPlayerState,
       seekVideoPlayer,
@@ -52,11 +55,13 @@ class Recording extends Component {
       setDrawings,
       setNewScale,
       playRecord,
+      setDisplayButtonReplay,
     } = this.props;
     await this.setState({
       isPreviewing: true,
       previewStartTime: Date.now(),
     });
+
     playRecord();
 
     for (const action of recordedActions) {
@@ -122,13 +127,10 @@ class Recording extends Component {
     }
 
     await this.setState({isPreviewing: false});
+    setDisplayButtonReplay(true);
   };
   render() {
-    const style = {
-      position: 'absolute',
-      zIndex: -10,
-    };
-    return <View style={style} />;
+    return null;
   }
 }
 

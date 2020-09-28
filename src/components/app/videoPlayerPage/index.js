@@ -42,7 +42,7 @@ class VideoPlayerPage extends Component {
       isPreviewing: false,
       isRecording: false,
       landscape: false,
-      recordedActions: [],
+      recordedActions: false,
       isAudioPlayerReady: false,
     };
     this.videoPlayerRefs = [];
@@ -137,6 +137,7 @@ class VideoPlayerPage extends Component {
       ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
       ref?.videoPlayerRef?.setRecording(true);
     });
+    await this.videoPlayerRefs[0].toggleVisibleSeekBar(true);
     await this.setState({
       isRecording: true,
       recordedActions: [],
@@ -146,17 +147,19 @@ class VideoPlayerPage extends Component {
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
-  stopRecording = () => {
+  stopRecording = async () => {
+    await this.onPlayPause(0, true);
     const {recordedActions} = this.state;
     this.AudioRecorderPlayerRef?.stopRecording();
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
     });
-    this.setState({
+    await this.videoPlayerRefs[0].toggleVisibleSeekBar(false);
+    await this.setState({
       isRecording: false,
       recordingStartTime: null,
     });
- 
+
     this.videoPlayerRefs[0].previewRecording({recordedActions});
   };
 
@@ -261,8 +264,10 @@ class VideoPlayerPage extends Component {
   //   await this.resetPlayers();
   // };
 
-  onPlayPause = (i, paused, currentTime) => {
+  onPlayPause = async (i, paused, currentTime) => {
     let {recordedActions} = this.state;
+
+    if (!currentTime) currentTime = this.videoPlayerRefs[i].getCurrentTime();
     const {recordingStartTime} = this.state;
     recordedActions.push({
       type: paused ? 'pause' : 'play',
@@ -270,7 +275,7 @@ class VideoPlayerPage extends Component {
       startRecordingOffset: Date.now() - recordingStartTime,
       timestamp: currentTime,
     });
-    this.setState({recordedActions});
+    return this.setState({recordedActions});
   };
   onScaleChange = (i, scale) => {
     let {recordedActions} = this.state;
@@ -375,7 +380,7 @@ class VideoPlayerPage extends Component {
       archives,
       recordedActions,
     } = this.state;
-    const {navigation, route, session} = this.props;
+    const {navigation, route, session, videoInfos} = this.props;
     const {navigate} = navigation;
     let videosBeingShared = false;
     let personSharingScreen = false;
@@ -394,6 +399,7 @@ class VideoPlayerPage extends Component {
         isRecording={isRecording}
         isPreviewing={isPreviewing}
         isDrawingEnabled={isDrawingEnabled}
+        videoInfos={videoInfos}
         recordedActions={recordedActions}
         archives={archives}
         personSharingScreen={personSharingScreen}
@@ -488,7 +494,7 @@ class VideoPlayerPage extends Component {
         }
       : {};
 
-    const {landscape} = this.state;
+    const {landscape, recordedActions} = this.state;
     return (
       <SinglePlayer
         index={i}
@@ -501,9 +507,11 @@ class VideoPlayerPage extends Component {
         }
         isAudioPlayerReady={isAudioPlayerReady}
         numArchives={numArchives}
+        recordedActions={recordedActions}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
         coachSessionID={coachSessionID}
+        isRecording={isRecording}
         videosBeingShared={videosBeingShared}
         personSharingScreen={personSharingScreen}
         local={local}

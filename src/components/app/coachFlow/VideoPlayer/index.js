@@ -86,13 +86,13 @@ export default class VideoPlayer extends Component {
     if (prevState.currentTime !== currentTime) {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
       this.seek(currentTime);
-      this.visualSeekBarRef.toggleVisible(true);
+      // this.visualSeekBarRef.toggleVisible(true);
       this.PinchableBoxRef?.resetPosition();
     }
 
     if (videoLoaded && !prevState.videoLoaded) {
       setTimeout(() => {
-        this.visualSeekBarRef?.toggleVisible(true);
+        // this.visualSeekBarRef?.toggleVisible(true);
         this.seek(currentTime);
       }, 200);
     }
@@ -330,9 +330,12 @@ export default class VideoPlayer extends Component {
       archive,
       scale,
       position,
+      isRecording,
     } = this.props;
+    let {recordedActions} = this.props;
 
-    const {thumbnail, url, durationSeconds, recordedActions} = archive;
+    const {thumbnail, url, durationSeconds} = archive;
+    if (!recordedActions) recordedActions = archive.recordedActions;
 
     const {
       currentTime,
@@ -446,6 +449,7 @@ export default class VideoPlayer extends Component {
             disableControls={disableControls}
             onRef={(ref) => (this.visualSeekBarRef = ref)}
             source={url}
+            isRecording={isRecording}
             size={seekbarSize}
             togglePlayPause={this.linkedTogglePlayPause.bind(this)}
             currentTime={currentTime}
