@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Animated, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 let {height, width} = Dimensions.get('screen');
 height = Math.max(height, width);
@@ -20,7 +12,6 @@ import {native} from '../../../animations/animations';
 import {coachAction} from '../../../../actions/coachActions';
 
 import RightButtons from './components/RightButtons';
-// import ButtonShareVideo from './components/ButtonShareVideo';
 import DrawView from './components/DrawView';
 
 import colors from '../../../style/colors';
@@ -169,8 +160,6 @@ class WatchVideoPage extends Component {
     } = this.state;
     const myVideo = this.isMyVideo(this.props);
     const video = this.video(this.props, this.state);
-    const drawingEnable =
-      personSharingScreen && archiveID === videoBeingShared.id;
     return (
       <Animated.View
         style={[
@@ -218,23 +207,10 @@ class WatchVideoPage extends Component {
             this.open(false);
           }}
           iconOffset="open-with"
-          // colorIconOffset={colors.title}
           typeIconOffset="mat"
           sizeIconOffset={25}
           clickButtonOffset={() => this.setState({drawingOpen: false})}
         />
-        {/*
-        <ButtonShareVideo
-          onRef={(ref) => (this.buttonShareRef = ref)}
-          archiveID={archiveID}
-          coachSessionID={coachSessionID}
-          videoBeingShared={videoBeingShared}
-          source={video.source}
-          personSharingScreen={personSharingScreen}
-          togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
-          open={this.open.bind(this)}
-          getVideoState={() => this.videoPlayerRef.getState()}
-        /> */}
         <VideoPlayer
           source={videoSource ? videoSource : ''}
           index={archiveID}
