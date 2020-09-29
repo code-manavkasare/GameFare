@@ -3,10 +3,8 @@ import {View, Animated, Image, Dimensions} from 'react-native';
 import Video from 'gamefare-rn-video';
 import PropTypes from 'prop-types';
 
-import AllIcons from '../../../layout/icons/AllIcons';
 import AsyncImage from '../../../layout/image/AsyncImage';
 import Loader from '../../../layout/loaders/Loader';
-import ButtonColor from '../../../layout/Views/Button';
 import PinchableBox from '../../../layout/Views/PinchableBox';
 
 import colors from '../../../style/colors';
@@ -81,7 +79,6 @@ export default class VideoPlayer extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     const {currentTime, videoLoaded, seekbarLoaded} = this.state;
-    const {archive} = this.props;
 
     if (prevState.currentTime !== currentTime) {
       this.visualSeekBarRef?.setCurrentTime(currentTime, true);
@@ -260,7 +257,6 @@ export default class VideoPlayer extends Component {
       onSeek,
     } = this.props;
     const {paused, prevPaused, currentTime} = this.state;
-    const currentTimeFromSeekBar = this.visualSeekBarRef?.getCurrentTime();
 
     // onCurrentTimeChange(index, time, paused);
     if (!paused) {
@@ -270,11 +266,11 @@ export default class VideoPlayer extends Component {
     }
     if (fineSeek) {
       this.setState({prevPaused: undefined});
-      onPlayPause(index, true, currentTimeFromSeekBar);
+      onPlayPause(index, true, time);
 
       if (updateVideoInfoCloud && !noUpdateInCloud) {
         await updateVideoInfoCloud({
-          currentTime: currentTimeFromSeekBar,
+          currentTime: time,
           paused: true,
         });
       }
