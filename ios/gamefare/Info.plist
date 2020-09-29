@@ -83,10 +83,6 @@
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>test</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>test</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>test</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>This is so we can display your booked appointments on your calendar.</string>
 	<key>NSCameraUsageDescription</key>
@@ -101,14 +97,8 @@
 	<string>We need to access your location to show events in your area.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to the microphone if you would like to live stream your matches</string>
-	<key>NSMotionUsageDescription</key>
-	<string>test</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photos to be able to store and upload files at your discretion.</string>
-	<key>NSSiriUsageDescription</key>
-	<string>test</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>test</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CircularStd-Bold.otf</string>
