@@ -13,7 +13,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const initialLayout = {width: Dimensions.get('window').width};
 
-const MyTabs = ({tabBarVisible, numberSesionRequests}) => {
+const MyTabs = ({tabBarVisible, numberSesionRequests, AnimatedHeaderValue}) => {
   return (
     <Tab.Navigator
       initialRouteName="Messages"
@@ -42,7 +42,7 @@ const MyTabs = ({tabBarVisible, numberSesionRequests}) => {
           tabBarLabel: 'Messages',
         }}
         name="Messages">
-        {() => <ListGroups />}
+        {() => <ListGroups AnimatedHeaderValue={AnimatedHeaderValue} />}
       </Tab.Screen>
 
       <Tab.Screen
@@ -50,7 +50,7 @@ const MyTabs = ({tabBarVisible, numberSesionRequests}) => {
           tabBarLabel: `Requests (${numberSesionRequests})`,
         }}
         name="Requests">
-        {() => <ListGroupsRequests />}
+        {() => <ListGroupsRequests AnimatedHeaderValue={AnimatedHeaderValue} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

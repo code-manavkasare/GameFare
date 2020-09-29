@@ -33,8 +33,10 @@ export default class VideoPlayerHeader extends React.Component {
       navigation,
       archives,
       videoInfos,
+      personSharingScreen,
     } = this.props;
     const {coachSessionID} = route.params;
+
     const sharedProps = {
       inputRange: [5, 10],
       colorLoader: 'white',
@@ -52,13 +54,18 @@ export default class VideoPlayerHeader extends React.Component {
       backgroundColorIcon2: colors.title + '70',
       typeIcon2: !isEditMode && !coachSessionID ? 'font' : 'font',
       sizeIcon2: !isEditMode && !coachSessionID ? 19 : 19,
-      icon2:
-        archives.length !== 1 ||
-        (archives.length === 1 && Object.values(videoInfos)[0].recordedActions)
-          ? null
-          : !isEditMode && !coachSessionID
-          ? 'microphone-alt'
-          : 'times',
+      icon2: !videoInfos
+        ? null
+        : !Object.values(videoInfos)[0]
+        ? null
+        : archives.length !== 1 ||
+          (archives.length === 1 &&
+            Object.values(videoInfos)[0].recordedActions) ||
+          personSharingScreen
+        ? null
+        : !isEditMode && !coachSessionID
+        ? 'microphone-alt'
+        : 'times',
       text2: 'Edit',
       colorIcon2: colors.white,
       clickButton2: () => {

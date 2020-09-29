@@ -59,6 +59,7 @@ class VideoPlayerPage extends Component {
       StatusBar.setBarStyle('dark-content', true);
     });
     Orientation.addOrientationListener(this._orientationListener.bind(this));
+
     this.autoShareOnOpen();
   };
 
@@ -134,10 +135,12 @@ class VideoPlayerPage extends Component {
 
   startRecording = async () => {
     this.videoPlayerRefs.forEach((ref) => {
+      console.log('ref', ref);
       ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
-      ref?.videoPlayerRef?.setRecording(true);
+      ref?.toggleVisibleSeekBar(true);
+      ref?.setState({displayButtonReplay: false});
     });
-    await this.videoPlayerRefs[0].toggleVisibleSeekBar(true);
+
     await this.setState({
       isRecording: true,
       recordedActions: [],
@@ -412,6 +415,9 @@ class VideoPlayerPage extends Component {
           this.setState({isEditMode: true});
         }}
         editModeOff={() => {
+          this.videoPlayerRefs.forEach((ref) => {
+            ref?.setState({displayButtonReplay: false});
+          });
           this.setState({isEditMode: false, isRecording: false});
         }}
         setState={this.setState.bind(this)}
@@ -466,7 +472,8 @@ class VideoPlayerPage extends Component {
       });
     }
     const {id: archiveID, local} = videoInfo;
-    const numArchives = Object.values(videoInfos).length;
+    let numArchives = 0;
+    if (videoInfos) numArchives = Object.values(videoInfos).length;
     const {
       isRecording,
       disableControls,
@@ -495,6 +502,7 @@ class VideoPlayerPage extends Component {
       : {};
 
     const {landscape, recordedActions} = this.state;
+
     return (
       <SinglePlayer
         index={i}
@@ -527,6 +535,7 @@ class VideoPlayerPage extends Component {
   };
 
   buttonSharing = () => {
+    const {isEditMode} = this.state;
     const {currentSessionID, videoInfos} = this.props;
     if (!currentSessionID) {
       return null;
@@ -535,6 +544,7 @@ class VideoPlayerPage extends Component {
     return (
       <ButtonShareVideo
         archives={videoInfos}
+        isEditMode={isEditMode}
         coachSessionID={currentSessionID}
         onRef={(ref) => (this.buttonShareRef = ref)}
         togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
@@ -641,7 +651,6 @@ class VideoPlayerPage extends Component {
           saveReview={this.saveReview.bind(this)}
         />
 
-        {/* {archives.length === 1 && this.buttonSave()} */}
         {videoInfos &&
           Object.values(videoInfos)
             .filter((x) => x)
@@ -679,7 +688,7 @@ const mapStateToProps = (state, props) => {
     videoInfos: props.route.params.archives.reduce((videoInfos, archiveID) => {
       return {
         ...videoInfos,
-        [archiveID]: state.archives[archiveID],
+        [archiveID]: {...state.archives[archiveID], id: archiveID},
       };
     }, {}),
   };

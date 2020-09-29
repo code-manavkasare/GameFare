@@ -58,7 +58,7 @@ class HeaderConversation extends React.Component {
         clickButton1={() => navigation.goBack()}
         clickButton2={() => this.openSession()}
         badgeIcon2={viewLive(session, {height: 20, width: 20}, true)}
-        iconOffset="custom"
+        // iconOffset="custom"
         customOffset={hangupButton(session)}
       />
     );

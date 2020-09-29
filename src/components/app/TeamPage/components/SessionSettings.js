@@ -10,6 +10,7 @@ import sizes from '../../../style/sizes';
 import {goBack} from '../../../../../NavigationService';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
+import {ListPlayers} from './elements';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {imageCardTeam, sessionTitle} from './elements';
 import RowIcon from '../../../layout/rows/RowIcon';
@@ -24,7 +25,7 @@ class SessionSettings extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   settings() {
-    const {session, navigation, route} = this.props;
+    const {session, messages, navigation, route} = this.props;
     const {objectID} = route.params;
     return (
       <View style={{minHeight: sizes.height}}>
@@ -38,7 +39,9 @@ class SessionSettings extends Component {
             </Col>
           </Row>
         </View>
-        <View style={styleApp.divider2} />
+        <View style={[styleApp.divider3]} />
+        <View>{ListPlayers({session, messages})}</View>
+        <View style={[styleApp.divider3]} />
         <RowIcon
           label="Leave this conversation"
           icon={{name: 'sign-out-alt', type: 'font', size: 20}}
@@ -62,7 +65,7 @@ class SessionSettings extends Component {
           initialTitleOpacity={1}
           initialBorderWidth={1}
           icon1={'chevron-left'}
-          sizeIcon1={17}
+          sizeIcon1={21}
           clickButton1={() => goBack()}
           icon2={null}
           text2={'Select'}
@@ -91,6 +94,7 @@ const mapStateToProps = (state, props) => {
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[objectID],
+    messages: state.conversations[objectID],
     // messages: state.conversations[objectID],
   };
 };

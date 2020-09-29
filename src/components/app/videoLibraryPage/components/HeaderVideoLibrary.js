@@ -48,7 +48,7 @@ class HeaderVideoLibrary extends Component {
               ? infoUser.picture
               : 'profileFooter'
           }
-          sizeIcon1={selectOnly ? 23 : infoUser.picture ? 40 : 23}
+          sizeIcon1={selectOnly ? 21 : infoUser.picture ? 40 : 23}
           clickButton1={() =>
             selectOnly ? navigation.goBack() : navigation.navigate('MorePage')
           }

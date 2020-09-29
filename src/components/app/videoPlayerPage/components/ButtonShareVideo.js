@@ -70,10 +70,10 @@ class ButtonShareVideo extends Component {
     return {
       position: 'absolute',
       zIndex: 20,
-      height: 30,
-      width: 80,
-      left: '5%',
-      borderRadius: 15,
+      height: 37,
+      width: 100,
+      right: '5%',
+      borderRadius: 20,
       top: marginTop,
     };
   };
@@ -85,7 +85,7 @@ class ButtonShareVideo extends Component {
         onPressColor={colors.greenLight}
         styleButton={style}
         enabled={true}
-        text="Share"
+        text="Share live"
         loader={false}
         textButton={{fontSize: 13}}
         click={() => this.startSharingVideo(true)}
@@ -109,9 +109,9 @@ class ButtonShareVideo extends Component {
     );
   }
   button() {
-    const {userID, archives, session} = this.props;
+    const {userID, archives, session, isEditMode} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(session);
-
+    if (isEditMode) return null;
     if (!personSharingScreen) return this.buttonStart();
     if (personSharingScreen !== userID) return null;
 

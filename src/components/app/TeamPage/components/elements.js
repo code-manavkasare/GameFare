@@ -133,7 +133,7 @@ const userCircle = (options) => {
                   textAlign: 'center',
                   marginLeft: 3,
                   marginTop: 1,
-                  fontSize: single ? 23 : 16,
+                  fontSize: single ? 21 : 16,
                 }}>
                 {firstAndLastName
                   ? member.info.firstname[0] + member.info.lastname[0]
@@ -222,7 +222,7 @@ const titleSession = (session, size, short) => {
     }
   }, '');
   if (size) {
-    return names.slice(0, 20) + '...';
+    return names.slice(0, 30) + '...';
   }
   return names;
 };
@@ -697,6 +697,7 @@ const ListContents = (props) => {
       cardList={({item}) => (
         <CardArchive id={item.id} style={styleApp.cardArchive} key={item.id} />
       )}
+      styleContainer={{paddingTop: 20}}
       numColumns={2}
       incrementRendering={4}
       initialNumberToRender={8}
@@ -739,6 +740,8 @@ const ListPlayers = (props) => {
       hideDividerHeader={true}
       initialNumberToRender={20}
       incrementRendering={6}
+      lazy={false}
+      styleContainer={{flex: 1, paddingTop: 10, paddingBottom: 10}}
       cardList={({item: member}) => (
         <ButtonColor
           key={member.id}
@@ -786,6 +789,7 @@ const ListPlayers = (props) => {
         },
         button: {
           text: 'Add',
+          // TODO add members to conversation
           click: () => addMembersToSession(objectID, 'Conversation'),
         },
         hideDividerHeader: true,
