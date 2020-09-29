@@ -215,13 +215,9 @@ PODS:
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
   - OpenTok (2.18.0)
-  - Permission-BluetoothPeripheral (2.1.5):
-    - RNPermissions
   - Permission-Calendars (2.1.5):
     - RNPermissions
   - Permission-Camera (2.1.5):
-    - RNPermissions
-  - Permission-FaceID (2.1.5):
     - RNPermissions
   - Permission-LocationAlways (2.1.5):
     - RNPermissions
@@ -231,17 +227,11 @@ PODS:
     - RNPermissions
   - Permission-Microphone (2.1.5):
     - RNPermissions
-  - Permission-Motion (2.1.5):
-    - RNPermissions
   - Permission-Notifications (2.1.5):
     - RNPermissions
   - Permission-PhotoLibrary (2.1.5):
     - RNPermissions
   - Permission-Reminders (2.1.5):
-    - RNPermissions
-  - Permission-Siri (2.1.5):
-    - RNPermissions
-  - Permission-SpeechRecognition (2.1.5):
     - RNPermissions
   - Permission-StoreKit (2.1.5):
     - RNPermissions
@@ -424,14 +414,14 @@ PODS:
     - React
   - react-native-calendar-events (1.7.3):
     - React
-  - react-native-camera (3.35.0):
-    - React
-    - react-native-camera/RCT (= 3.35.0)
-    - react-native-camera/RN (= 3.35.0)
-  - react-native-camera/RCT (3.35.0):
-    - React
-  - react-native-camera/RN (3.35.0):
-    - React
+  - react-native-camera (3.40.0):
+    - React-Core
+    - react-native-camera/RCT (= 3.40.0)
+    - react-native-camera/RN (= 3.40.0)
+  - react-native-camera/RCT (3.40.0):
+    - React-Core
+  - react-native-camera/RN (3.40.0):
+    - React-Core
   - react-native-cameraroll (1.8.1):
     - React
   - react-native-config (0.12.0):
@@ -682,20 +672,15 @@ DEPENDENCIES:
   - GPUImage (from `https://github.com/BunHouth/GPUImage.git`)
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - Permission-BluetoothPeripheral (from `../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec`)
   - Permission-Calendars (from `../node_modules/react-native-permissions/ios/Calendars.podspec`)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
-  - Permission-FaceID (from `../node_modules/react-native-permissions/ios/FaceID.podspec`)
   - Permission-LocationAlways (from `../node_modules/react-native-permissions/ios/LocationAlways.podspec`)
   - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse.podspec`)
   - Permission-MediaLibrary (from `../node_modules/react-native-permissions/ios/MediaLibrary.podspec`)
   - Permission-Microphone (from `../node_modules/react-native-permissions/ios/Microphone.podspec`)
-  - Permission-Motion (from `../node_modules/react-native-permissions/ios/Motion.podspec`)
   - Permission-Notifications (from `../node_modules/react-native-permissions/ios/Notifications.podspec`)
   - Permission-PhotoLibrary (from `../node_modules/react-native-permissions/ios/PhotoLibrary.podspec`)
   - Permission-Reminders (from `../node_modules/react-native-permissions/ios/Reminders.podspec`)
-  - Permission-Siri (from `../node_modules/react-native-permissions/ios/Siri.podspec`)
-  - Permission-SpeechRecognition (from `../node_modules/react-native-permissions/ios/SpeechRecognition.podspec`)
   - Permission-StoreKit (from `../node_modules/react-native-permissions/ios/StoreKit.podspec`)
   - RCTCallDetection (from `../node_modules/react-native-call-detection`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -859,14 +844,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/lottie-ios"
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
-  Permission-BluetoothPeripheral:
-    :path: "../node_modules/react-native-permissions/ios/BluetoothPeripheral.podspec"
   Permission-Calendars:
     :path: "../node_modules/react-native-permissions/ios/Calendars.podspec"
   Permission-Camera:
     :path: "../node_modules/react-native-permissions/ios/Camera.podspec"
-  Permission-FaceID:
-    :path: "../node_modules/react-native-permissions/ios/FaceID.podspec"
   Permission-LocationAlways:
     :path: "../node_modules/react-native-permissions/ios/LocationAlways.podspec"
   Permission-LocationWhenInUse:
@@ -875,18 +856,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-permissions/ios/MediaLibrary.podspec"
   Permission-Microphone:
     :path: "../node_modules/react-native-permissions/ios/Microphone.podspec"
-  Permission-Motion:
-    :path: "../node_modules/react-native-permissions/ios/Motion.podspec"
   Permission-Notifications:
     :path: "../node_modules/react-native-permissions/ios/Notifications.podspec"
   Permission-PhotoLibrary:
     :path: "../node_modules/react-native-permissions/ios/PhotoLibrary.podspec"
   Permission-Reminders:
     :path: "../node_modules/react-native-permissions/ios/Reminders.podspec"
-  Permission-Siri:
-    :path: "../node_modules/react-native-permissions/ios/Siri.podspec"
-  Permission-SpeechRecognition:
-    :path: "../node_modules/react-native-permissions/ios/SpeechRecognition.podspec"
   Permission-StoreKit:
     :path: "../node_modules/react-native-permissions/ios/StoreKit.podspec"
   RCTCallDetection:
@@ -1115,20 +1090,15 @@ SPEC CHECKSUMS:
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   OpenTok: bf4c81ff741e7976542c61b8f317882f8076eede
-  Permission-BluetoothPeripheral: 4663a8373072abfe3099c44cb06bf10b0c16c110
   Permission-Calendars: dc345e3388149514603309c621151ff3cfd5816a
   Permission-Camera: afad27bf90337684d4a86f3825112d648c8c4d3b
-  Permission-FaceID: fbdeb41087f35887f0cade55396007fadee3a234
   Permission-LocationAlways: 155e6251b757b380f6354737cae8e8d59c472495
   Permission-LocationWhenInUse: 3624cf08c12c6019926aba3054efee7f4f8ee91e
   Permission-MediaLibrary: dd1c48888cd95961fbfebdaebf8d4127c6e92e7d
   Permission-Microphone: 0ffabc3fe1c75cfb260525ee3f529383c9f4368c
-  Permission-Motion: 099bc32191080089d1cb839cbae96d621a589c8f
   Permission-Notifications: 231d0e1db2300b686548587d384ba414e6a93332
   Permission-PhotoLibrary: 4d2eff62c8f4b8a27bcf045c0e36f5047efbbf20
   Permission-Reminders: 330cfafecc259594cfd7845a035580b623f771ae
-  Permission-Siri: b43f74727749ce4b6acb25fe349d9e6dc4455665
-  Permission-SpeechRecognition: 069447d0304a16237a43e9221052da7581d7f48c
   Permission-StoreKit: 27c9c90c94ecdc144551623a3fc14ac7488f3000
   PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
@@ -1147,7 +1117,7 @@ SPEC CHECKSUMS:
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
-  react-native-camera: d9e7b66e40420dcef111f3265a00f01eea54c52c
+  react-native-camera: 35854c4f764a4a6cf61c1c3525888b92f0fe4b31
   react-native-cameraroll: e2917a5e62da9f10c3d525e157e25e694d2d6dfa
   react-native-config: f2c2ae45625a068c35681a16b9bfb1ca58b0adc7
   react-native-create-thumbnail: f5265b03ec18ccc86f754c7cb63f919147a78ce0
@@ -1223,6 +1193,6 @@ SPEC CHECKSUMS:
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: b7ff2fde6fed54638b1ac0890d721b7b79a2b061
+PODFILE CHECKSUM: 929b8296bc174c642ff3bd1079629878a23bb732
 
 COCOAPODS: 1.9.3
