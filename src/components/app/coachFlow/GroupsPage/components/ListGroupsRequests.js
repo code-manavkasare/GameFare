@@ -50,12 +50,12 @@ class ListStreams extends Component {
       marginLeft: 65,
     };
     const coachSessions = this.sessionsArray();
-    const {userConnected} = this.props;
- 
-  
+    const {AnimatedHeaderValue} = this.props;
+
     return (
       <FlatListComponent
         list={coachSessions}
+        AnimatedHeaderValue={AnimatedHeaderValue}
         cardList={({item: session}) => (
           <CardStreamView
             coachSessionID={session.id}

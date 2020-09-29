@@ -75,6 +75,14 @@ const styles = StyleSheet.create({
     // marginLeft: '5%',
     backgroundColor: colors.off,
   },
+  divider3: {
+    height: 1,
+    width: '90%',
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: '5%',
+    backgroundColor: colors.off,
+  },
   cardEventSM: {
     backgroundColor: 'white',
     height: 190,

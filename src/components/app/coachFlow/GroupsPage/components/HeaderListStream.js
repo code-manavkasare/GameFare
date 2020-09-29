@@ -27,7 +27,7 @@ class HeaderListStream extends Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
-        textHeader={'Chat'}
+        textHeader={''}
         inputRange={[0, 0]}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
@@ -50,9 +50,7 @@ class HeaderListStream extends Component {
             action: 'message',
             branchLink,
           });
-        }
-
-        }
+        }}
         icon1={'chevron-left'}
         sizeIcon1={21}
         colorIcon1={colors.title}

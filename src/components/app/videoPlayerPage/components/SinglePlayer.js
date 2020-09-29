@@ -38,6 +38,7 @@ class SinglePlayer extends Component {
       this.props.onRef(this);
     }
     const {local, id} = this.props;
+
     if (!local) {
       bindArchive(id);
     }
@@ -108,7 +109,7 @@ class SinglePlayer extends Component {
   }
   viewLoader(playerStyle) {
     return (
-      <View style={[playerStyle, styleApp.center]}>
+      <View style={[styleApp.fullView, styleApp.center]}>
         <Loader size={50} color={colors.white} />
       </View>
     );
@@ -189,15 +190,16 @@ class SinglePlayer extends Component {
       isRecording,
     } = this.props;
     const {sizeVideo, isVideoPlayerReady, displayButtonReplay} = this.state;
-    let {recordedActions} = this.props;
- 
-    if (!recordedActions) recordedActions = archive.recordedActions;
- 
-    const playerStyle = this.playerStyleByIndex(index, numArchives);
-    const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
     if (!archive) {
       return this.viewLoader(playerStyle);
     }
+    let {recordedActions} = this.props;
+
+    if (!recordedActions) recordedActions = archive.recordedActions;
+
+    const playerStyle = this.playerStyleByIndex(index, numArchives);
+    const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
+
     const {
       paused,
       currentTime,

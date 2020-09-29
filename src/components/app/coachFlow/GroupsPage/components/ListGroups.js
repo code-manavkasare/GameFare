@@ -46,10 +46,11 @@ class ListStreams extends Component {
       marginLeft: 65,
     };
     const coachSessions = this.sessionsArray();
-    const {userConnected} = this.props;
+    const {userConnected, AnimatedHeaderValue} = this.props;
     if (!userConnected || !coachSessions) {
       return null;
     }
+    console.log('AnimatedHeaderValue', AnimatedHeaderValue);
     if (Object.values(coachSessions).length === 0) {
       return (
         <View style={[styleApp.marginView, styleApp.center]}>
@@ -115,6 +116,7 @@ class ListStreams extends Component {
         incrementRendering={6}
         initialNumberToRender={8}
         styleContainer={{marginTop: 10}}
+        AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />
     );

@@ -25,7 +25,7 @@ class StreamTab extends Component {
   };
   componentDidUpdate = (prevProps, prevState) => {
     const {coachSessionsRequests, navigation} = this.props;
-  
+
     if (
       prevProps.coachSessionsRequests.length === 1 &&
       coachSessionsRequests.length === 0
@@ -63,6 +63,7 @@ class StreamTab extends Component {
 
         {tabsGroups({
           tabBarVisible,
+          AnimatedHeaderValue: this.AnimatedHeaderValue,
           numberSesionRequests: coachSessionsRequests.length,
         })}
       </View>

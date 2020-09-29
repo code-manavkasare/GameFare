@@ -78,15 +78,15 @@ const MyTabs = ({session, user, initialMessage, messages}) => {
 
       <Tab.Screen
         options={{
-          tabBarLabel: 'Content',
+          tabBarLabel: 'Videos',
         }}
-        name="Content">
+        name="Videos">
         {() => ListContents({session})}
       </Tab.Screen>
 
-      <Tab.Screen options={{tabBarLabel: 'Players'}} name="Players">
+      {/* <Tab.Screen options={{tabBarLabel: 'Players'}} name="Players">
         {() => ListPlayers({session, messages})}
-      </Tab.Screen>
+      </Tab.Screen> */}
     </Tab.Navigator>
   );
 };
