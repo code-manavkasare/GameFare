@@ -16,6 +16,8 @@ import {
   unbindSession,
 } from '../../../../functions/coach';
 import {conversationIsInNotification} from '../../../../functions/notifications.js';
+import {createInviteToSessionBranchUrl} from '../../../../database/branch';
+
 import {
   blueBadge,
   imageCardTeam,
@@ -46,7 +48,7 @@ class CardStream extends Component {
 
   static defaultProps = {
     selected: false,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -131,7 +133,8 @@ class CardStream extends Component {
       messages,
       recentView,
       onClick,
-      hideCallButton,
+      showCallButton,
+      showAddMemberButton,
       style,
       key,
     } = this.props;
@@ -233,7 +236,7 @@ class CardStream extends Component {
           }}
         />
         <Animated.View style={selectionIndicationOverlayStyle} />
-        {recentView && !hideCallButton && (
+        {recentView && showCallButton && (
           <Animated.View style={callButtonContainerStyle}>
             <ButtonColor
               color={colors.greyLight}
@@ -247,6 +250,35 @@ class CardStream extends Component {
                     color={colors.greyDarker}
                     size={16}
                     name={'video'}
+                  />
+                );
+              }}
+            />
+          </Animated.View>
+        )}
+        {recentView && showAddMemberButton && (
+          <Animated.View style={callButtonContainerStyle}>
+            <ButtonColor
+              color={colors.greyLight}
+              onPressColor={colors.grey}
+              click={async () =>
+                navigate('UserDirectory', {
+                  action: 'invite',
+                  sessionToInvite:
+                    currentSessionID === coachSessionID
+                      ? undefined
+                      : coachSessionID,
+                  branchLink: await createInviteToSessionBranchUrl(coachSessionID),
+                })
+              }
+              style={styles.callButtonStyle}
+              view={() => {
+                return (
+                  <AllIcon
+                    type={'font'}
+                    color={colors.greyDarker}
+                    size={16}
+                    name={'user-plus'}
                   />
                 );
               }}

@@ -26,6 +26,7 @@ class SessionSettings extends Component {
   }
   settings() {
     const {session, messages, navigation, route} = this.props;
+    const {navigate} = navigation;
     const {objectID} = route.params;
     return (
       <View style={{minHeight: sizes.height}}>
@@ -40,7 +41,7 @@ class SessionSettings extends Component {
           </Row>
         </View>
         <View style={[styleApp.divider3]} />
-        <View>{ListPlayers({session, messages})}</View>
+        <View>{ListPlayers({session, messages, navigate})}</View>
         <View style={[styleApp.divider3]} />
         <RowIcon
           label="Leave this conversation"

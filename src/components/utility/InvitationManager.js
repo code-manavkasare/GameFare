@@ -14,10 +14,13 @@ import colors from '../style/colors';
 import {native} from '../animations/animations';
 
 import {userObject} from '../functions/users';
-import {openSession, sessionOpening} from '../functions/coach';
+import {
+  openSession,
+  sessionOpening,
+  addMembersToSession,
+} from '../functions/coach';
 import {shareVideosWithTeams} from '../functions/videoManagement';
 import {getSelectionActionDecorations} from '../functions/utility';
-
 
 import AllIcon from '../layout/icons/AllIcons';
 import ButtonColor from '../layout/Views/Button';
@@ -30,6 +33,7 @@ class InvitationManager extends Component {
     selectedSessions: PropTypes.object.isRequired,
     selectedUsers: PropTypes.object.isRequired,
     archivesToShare: PropTypes.array,
+    sessionToInvite: PropTypes.string,
     onClearInvites: PropTypes.func,
     onConfirmInvites: PropTypes.func,
   };
@@ -170,30 +174,51 @@ class InvitationManager extends Component {
       userID,
       infoUser,
       archivesToShare,
+      sessionToInvite,
+      currentSessionID,
       action,
     } = this.props;
-    const session = await openSession(
-      userObject(infoUser, userID),
-      selectedUsers,
-    );
-    if (action === 'shareArchives') {
-      if (archivesToShare && archivesToShare.length > 0) {
-        shareVideosWithTeams(archivesToShare, [session.objectID]);
-        navigate('Conversation', {coachSessionID: session.objectID});
+    if (action === 'invite') {
+      if (sessionToInvite && sessionToInvite !== '') {
+        await addMembersToSession(sessionToInvite, selectedUsers);
+        navigate('Conversation', {coachSessionID: sessionToInvite});
+      } else if (currentSessionID && currentSessionID !== '') {
+        await addMembersToSession(currentSessionID, selectedUsers);
+        navigate('Session');
       } else {
         console.log(
-          'ERROR InvitationManager, action is "shareVideos" but empty/no prop "archivesToShare" provided',
+          'ERROR InvitationManager, action is "invite" but empty/no prop "sessionToInvite" provided and no currentSessionID',
         );
       }
-    } else if (action === 'message') {
-      navigate('Conversation', {coachSessionID: session.objectID});
-    } else if (action === 'call') {
-      sessionOpening(session);
+    } else {
+      const session = await openSession(
+        userObject(infoUser, userID),
+        selectedUsers,
+      );
+      if (action === 'shareArchives') {
+        if (archivesToShare && archivesToShare.length > 0) {
+          shareVideosWithTeams(archivesToShare, [session.objectID]);
+          navigate('Conversation', {coachSessionID: session.objectID});
+        } else {
+          console.log(
+            'ERROR InvitationManager, action is "shareVideos" but empty/no prop "archivesToShare" provided',
+          );
+        }
+      } else if (action === 'message') {
+        navigate('Conversation', {coachSessionID: session.objectID});
+      } else if (action === 'call') {
+        sessionOpening(session);
+      }
     }
   };
 
   confirmSessionInvites = async () => {
-    const {selectedSessions, archivesToShare, action} = this.props;
+    const {
+      selectedSessions,
+      archivesToShare,
+      sessionToInvite,
+      action,
+    } = this.props;
     const sessionIDs = Object.keys(selectedSessions);
     if (action === 'shareArchives') {
       if (archivesToShare && archivesToShare.length > 0) {
@@ -204,6 +229,16 @@ class InvitationManager extends Component {
       } else {
         console.log(
           'ERROR InvitationManager, action is "shareVideos" but empty/no prop "archivesToShare" provided',
+        );
+      }
+    } else if (action === 'invite') {
+      if (sessionToInvite && sessionToInvite !== '') {
+        console.log(
+          'ERROR InvitationManager, cannot add session to another session. (action "invite")',
+        );
+      } else {
+        console.log(
+          'ERROR InvitationManager, action is "invite" but empty/no prop "sessionToInvite" provided',
         );
       }
     } else if (action === 'message') {

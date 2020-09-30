@@ -6,7 +6,7 @@ import {store} from '../../../reduxStore';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
 import {
   createCoachSessionFromUserIDs,
-  addMembersToSessionByIDs,
+  addMembersToSessionByID,
   bindSession,
   sessionOpening,
 } from '../functions/coach';

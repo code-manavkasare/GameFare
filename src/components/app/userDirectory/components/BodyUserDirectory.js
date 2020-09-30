@@ -13,7 +13,6 @@ import sizes from '../../../style/sizes';
 import {isUserPrivate, userObject} from '../../../functions/users';
 import {openSession} from '../../../functions/coach';
 
-import SearchInput from '../../../layout/textField/SearchInput';
 import InvitationManager from '../../../utility/InvitationManager';
 
 import UserSearchResults from './UserSearchResults';
@@ -21,12 +20,11 @@ import UserSearchResults from './UserSearchResults';
  class BodyUserDirectory extends Component {
   static propTypes = {
     action: PropTypes.string,
-    actionText: PropTypes.string,
     archivesToShare: PropTypes.array,
+    sessionToInvite: PropTypes.string,
   }
   static defaultProps = {
     action: 'call',
-    actionText: 'Call',
   }
   constructor(props) {
     super(props);
@@ -79,10 +77,9 @@ import UserSearchResults from './UserSearchResults';
 
   render() {
     const {selectedUsers, searchText} = this.state;
-    const {action, actionText, archivesToShare, AnimatedHeaderValue} = this.props;
+    const {action, archivesToShare, sessionToInvite, AnimatedHeaderValue} = this.props;
     return (
         <Col style={styles.body}>
-        
           <Row size={90} style={styles.smallTopPad}>
             <UserSearchResults
               onSelect={(user) => this.selectUser(user)}
@@ -96,8 +93,9 @@ import UserSearchResults from './UserSearchResults';
             onClearInvites={() => this.setState({selectedUsers: {}})}
             onConfirmInvites={() => this.setState({selectedUsers: {}})}
             action={action}
-            actionText={actionText}
             archivesToShare={archivesToShare}
+            sessionToInvite={sessionToInvite}
+            session
             bottomOffset={0}
           />
         </Col>

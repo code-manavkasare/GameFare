@@ -7,10 +7,15 @@ import axios from 'axios';
 import Config from 'react-native-config';
 import isEqual from 'lodash.isequal';
 
+import colors from '../style/colors';
+
 import {getOnceValue} from '../database/firebase/methods';
 import {generateID} from './createEvent';
 import {getVideoUUID} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
+import {userObject} from './users';
+
+
 
 import {store} from '../../../reduxStore';
 import {
@@ -30,7 +35,6 @@ import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
 import ImageUser from '../layout/image/ImageUser';
 import ButtonAcceptPayment from '../layout/buttons/ButtonAcceptPayment';
-import colors from '../style/colors';
 
 const timeout = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -513,30 +517,11 @@ const finalizeOpening = async (session) => {
     await store.dispatch(setCurrentSessionID(session.objectID));
   }
   await store.dispatch(setLayout({isFooterVisible: false}));
-
   StatusBar.setBarStyle('light-content', true);
 
   navigate('Session', {
     screen: 'Session',
     params: {coachSessionID: session.objectID, date: Date.now()},
-  });
-};
-
-const newSession = () => {
-  navigate('PickMembers', {
-    usersSelected: {},
-    allowSelectMultiple: true,
-    selectFromGamefare: true,
-    closeButton: true,
-    loaderOnSubmit: true,
-    displayCurrentUser: false,
-    noUpdateStatusBar: true,
-    noNavigation: true,
-    titleHeader: 'Select members',
-    text2: 'Skip',
-    // icon2: 'text',
-    clickButton2: () => createSession({}),
-    onSelectMembers: (users, contacts) => createSession(users),
   });
 };
 
@@ -634,51 +619,51 @@ const unbindSession = async (objectID) => {
 };
 
 const loadAndOpenSession = async (sessionID) => {
-  console.log('loadAndOpenSession', sessionID);
   const coachSession = await database()
     .ref(`coachSessions/${sessionID}`)
     .once('value');
   const coachSessionFirebase = coachSession.val();
   if (coachSessionFirebase) {
-    console.log('coachSessionFirebase', coachSessionFirebase);
     await store.dispatch(setSession(coachSessionFirebase));
     await store.dispatch(setSessionBinded({id: sessionID, isBinded: false}));
     await bindSession({objectID: sessionID});
-
     sessionOpening(coachSessionFirebase);
   }
 };
 
-const addMembersToSession = (objectID, navigateTo) => {
-  let noUpdateStatusBar = true;
-  if (navigateTo === 'Session') {
-    noUpdateStatusBar = false;
+const addMembersToSession = async (coachSessionID, members) => {
+  // members are assumed to have 'id' and 'info' properties.
+  // only update to firebase coachSession object is done from here
+  // {member.id}/coachSessions/ updates are done via cloud function.
+  if (members && Object.keys(members).length > 0) {
+    const invitationTimeStamp = Date.now();
+    const firebaseUpdates = Object.values(members).reduce((updates, member) => {
+      return {
+        ...updates,
+        [`coachSessions/${coachSessionID}/members/${member.id}`]: {
+          ...member,
+          invitationTimeStamp,
+        },
+      };
+    }, {});
+    await database()
+      .ref()
+      .update(firebaseUpdates);
   }
-  navigate('PickMembers', {
-    noNavigation: true,
-    selectFromGamefare: true,
-    allowSelectMultiple: true,
-    noUpdateStatusBar: noUpdateStatusBar,
-    displayCurrentUser: false,
-    titleHeader: 'Add someone to the session',
-    onSelectMembers: async (members, sessions) => {
-      await updateMembersToSession(objectID, members);
-      return goBack();
-    },
-  });
 };
 
-const addMembersToSessionByIDs = async (coachSessionID, memberIDs) => {
+const addMembersToSessionByID = async (coachSessionID, memberIDs) => {
   const infos = await Promise.all(
     memberIDs.map((id) => getOnceValue(`users/${id}/userInfo`)),
   );
-  const membersParam = infos.reduce((members, info, i) => {
+  const members = infos.reduce((members, info, i) => {
     if (info) {
+      const id = memberIDs[i];
+      const member = userObject(info, memberIDs[i]);
       return {
         ...members,
-        [memberIDs[i]]: {
-          id: memberIDs[i],
-          info,
+        [id]: {
+          ...member,
           isConnected: false,
         },
       };
@@ -686,23 +671,7 @@ const addMembersToSessionByIDs = async (coachSessionID, memberIDs) => {
       return members;
     }
   }, {});
-  if (Object.keys(membersParam) > 0) {
-    updateMembersToSession(coachSessionID, membersParam);
-  }
-};
-
-const updateMembersToSession = async (coachSessionID, members) => {
-  let updates = {};
-  for (let member of Object.values(members)) {
-    member.invitationTimeStamp = Date.now();
-    updates[
-      `${'coachSessions/' + coachSessionID + '/members/' + member.id}`
-    ] = member;
-  }
-  await database()
-    .ref()
-    .update(updates);
-  return navigate('Session');
+  addMembersToSession(coachSessionID, members);
 };
 
 const searchSessionsForString = (search) => {
@@ -812,16 +781,14 @@ module.exports = {
   deleteSession,
   bindSession,
   unbindSession,
-  newSession,
   createSession,
+  createCoachSessionFromUserIDs,
   addMembersToSession,
-  updateMembersToSession,
+  addMembersToSessionByID,
   searchSessionsForString,
   selectVideosFromLibrary,
   closeSession,
   isVideosAreBeingShared,
   updateInfoVideoCloud,
-  createCoachSessionFromUserIDs,
-  addMembersToSessionByIDs,
   loadAndOpenSession,
 };

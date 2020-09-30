@@ -189,12 +189,10 @@ class GroupsPage extends Component {
       currentScreenSize,
       route,
     } = this.props;
-    console.log('componentDidUpdate', prevProps);
     const {portrait} = currentScreenSize;
     if (currentSessionID === undefined && prevProps.currentSessionID) {
       this.props.layoutAction('setGeneralSessionRecording', false);
     }
-    console.log('route?.params?.coachSessionID', route?.params);
     // if (route?.params?.coachSessionID !== currentSessionID)
     //   return bindSession(route?.params?.coachSessionID, true);
     if (portrait !== prevProps.currentScreenSize.portrait && currentSessionID) {
