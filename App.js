@@ -52,8 +52,8 @@ class App extends Component {
     SplashScreen.hide();
     if (!__DEV__) {
       await this.configureSentry();
-      throw new Error('Sentry test error!');
-      Sentry.nativeCrash();
+      // throw new Error('Sentry test error!');
+      // Sentry.nativeCrash();
     }
 
     if (userID !== '') {
