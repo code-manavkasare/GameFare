@@ -79,7 +79,7 @@ class CardStream extends Component {
       this.props.onRef(this);
     }
     const {coachSessionID} = this.props;
-    bindSession(coachSessionID);
+    bindSession({objectID: coachSessionID});
     bindConversation(coachSessionID);
     if (this.selected) {
       this.toggleSelected(1);
