@@ -50,6 +50,11 @@ class App extends Component {
     }, 900000);
 
     SplashScreen.hide();
+    if (!__DEV__) {
+      await this.configureSentry();
+      throw new Error('Sentry test error!');
+      Sentry.nativeCrash();
+    }
 
     if (userID !== '') {
       this.autoSignIn();
@@ -60,12 +65,8 @@ class App extends Component {
     }
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = async (prevProps) => {
     const {networkIsConnected, userID, isBindToFirebase} = this.props;
-
-    if (!__DEV__) {
-      this.configureSentry();
-    }
     if (prevProps.networkIsConnected !== networkIsConnected) {
       if (networkIsConnected && userID !== '' && !isBindToFirebase) {
         this.autoSignIn();

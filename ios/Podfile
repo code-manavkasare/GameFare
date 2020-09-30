@@ -32,16 +32,6 @@ def flipper_post_install(installer)
   installer.pods_project.save
 end
 
-# Post Install processing for Bitcode
-def bitcode_post_install(installer)
-  installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-        config.build_settings['BITCODE_GENERATION_MODE'] = 'bitcode'
-        config.build_settings['ENABLE_BITCODE'] = 'YES'
-    end
-  end
-end
-
 def shared_pods
   #RN Pods
   config = use_native_modules!
