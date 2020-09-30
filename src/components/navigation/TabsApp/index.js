@@ -24,7 +24,7 @@ class TabsApp extends React.Component {
       <Tab.Navigator
         initialRouteName="VideoLibrary"
         keyboardHidesTabBar={false}
-        // lazy={true}
+        lazy={true}
         tabBar={(props) => (
           <Footer
             {...props}

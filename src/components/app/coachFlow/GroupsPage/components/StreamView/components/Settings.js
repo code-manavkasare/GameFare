@@ -143,11 +143,11 @@ class Settings extends Component {
           //   colorIcon1={colors.greyDark}
           textHeader="Settings"
           sizeLoader={40}
-          sizeIcon1={16}
+          sizeIcon1={21}
           nobackgroundColorIcon1={true}
           initialBorderWidth={1}
           initialBorderColorHeader={colors.white}
-          icon1="arrow-left"
+          icon1="chevron-left"
           backgroundColorIcon2={colors.title + '70'}
           sizeIcon2={20}
           typeIcon2="font"

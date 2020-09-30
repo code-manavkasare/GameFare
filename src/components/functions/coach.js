@@ -94,7 +94,7 @@ const createCoachSession = async (user, members, sessionID = null) => {
     .ref(`coachSessions/${coachSessionID}`)
     .update(session);
   await store.dispatch(setSession(session));
-  bindSession(session.objectID);
+  bindSession({objectID: session.objectID});
   return session;
 };
 
@@ -506,25 +506,19 @@ const openMemberAcceptCharge = async (
 
 const finalizeOpening = async (session) => {
   const currentSessionID = store.getState().coach.currentSessionID;
-  const currentRouteName = getCurrentRoute();
-
   if (currentSessionID !== session.objectID) {
     if (currentSessionID) {
       await store.dispatch(unsetCurrentSession());
-      // await timeout(100);
     }
     await store.dispatch(setCurrentSessionID(session.objectID));
   }
   await store.dispatch(setLayout({isFooterVisible: false}));
 
   StatusBar.setBarStyle('light-content', true);
+
   navigate('Session', {
     screen: 'Session',
-    params: {
-      coachSessionID: session.objectID,
-      date: Date.now(),
-      currentRouteName,
-    },
+    params: {coachSessionID: session.objectID, date: Date.now()},
   });
 };
 
@@ -605,18 +599,27 @@ const deleteSession = (objectID) => {
   });
 };
 
-const bindSession = (objectID) => {
-  const isSessionBinded = store.getState().bindedSessions[objectID];
-  if (!isSessionBinded) {
-    database()
-      .ref(`coachSessions/${objectID}`)
-      .on('value', function(snapshot) {
-        const coachSessionFirebase = snapshot.val();
-        if (coachSessionFirebase) {
-          store.dispatch(setSession(coachSessionFirebase));
-          store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
-        }
-      });
+const bindSession = ({objectID, forceOpening}) => {
+  if (objectID) {
+    const isSessionBinded = store.getState().bindedSessions[objectID];
+    if (!isSessionBinded) {
+      database()
+        .ref(`coachSessions/${objectID}`)
+        .on('value', function(snapshot) {
+          const coachSessionFirebase = snapshot.val();
+          if (coachSessionFirebase) {
+            store.dispatch(setSession(coachSessionFirebase));
+            store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
+
+            if (forceOpening) return sessionOpening(coachSessionFirebase);
+          }
+        });
+    } else {
+      if (forceOpening) {
+        const coachSessionFirebase = store.getState().coachSessions[objectID];
+        return sessionOpening(coachSessionFirebase);
+      }
+    }
   }
 };
 
@@ -627,6 +630,22 @@ const unbindSession = async (objectID) => {
       .ref(`coachSessions/${objectID}`)
       .off();
     store.dispatch(setSessionBinded({id: objectID, isBinded: false}));
+  }
+};
+
+const loadAndOpenSession = async (sessionID) => {
+  console.log('loadAndOpenSession', sessionID);
+  const coachSession = await database()
+    .ref(`coachSessions/${sessionID}`)
+    .once('value');
+  const coachSessionFirebase = coachSession.val();
+  if (coachSessionFirebase) {
+    console.log('coachSessionFirebase', coachSessionFirebase);
+    await store.dispatch(setSession(coachSessionFirebase));
+    await store.dispatch(setSessionBinded({id: sessionID, isBinded: false}));
+    await bindSession({objectID: sessionID});
+
+    sessionOpening(coachSessionFirebase);
   }
 };
 
@@ -728,7 +747,6 @@ const searchSessionsForString = (search) => {
 };
 
 const selectVideosFromLibrary = (coachSessionID) => {
-
   navigate('SelectVideosFromLibrary', {
     selectableMode: true,
     selectOnly: true,
@@ -740,7 +758,7 @@ const selectVideosFromLibrary = (coachSessionID) => {
 };
 
 const isVideosAreBeingShared = ({session, archives, userIDSharing}) => {
-  if (!userIDSharing) {
+  if (!userIDSharing || !session) {
     return false;
   }
   const videos = session.members[userIDSharing].sharedVideos;
@@ -805,4 +823,5 @@ module.exports = {
   updateInfoVideoCloud,
   createCoachSessionFromUserIDs,
   addMembersToSessionByIDs,
+  loadAndOpenSession,
 };

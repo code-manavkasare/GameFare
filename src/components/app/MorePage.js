@@ -292,7 +292,7 @@ class MorePage extends Component {
             <Text style={styles.title}>Account parameters</Text>
             <View style={styles.divider} />
 
-          {this.button('cog', 'App Settings', 'AppSettings')}
+            {this.button('cog', 'App Settings', 'AppSettings')}
             <ButtonNotification displayBeforeLoader={true} />
 
             {this.button('user-alt-slash', 'Blocked users', 'BlockedUsersList')}
@@ -353,7 +353,7 @@ class MorePage extends Component {
           'https://www.getgamefare.com/terms',
         )}
 
-        {/* {this.button2({
+        {this.button2({
           text: 'Test notif open session',
           icon: {
             name: 'user',
@@ -363,22 +363,36 @@ class MorePage extends Component {
           },
           click: () =>
             clickNotification({
-              action: 'Stream',
-              screen: 'GroupsPage',
-              objectID: '2v2aij5loe2kbxfv0n4',
-              notUniqueStack: 'true',
-              typeNavigation: 'navigate',
               date: Date.now(),
+              typeNavigation: 'navigate',
+              action: 'Session',
               data: {
-                action: 'Stream',
-                screen: 'GroupsPage',
-                objectID: '2v2aij5loe2kbxfv0n4',
-                notUniqueStack: 'true',
-                typeNavigation: 'navigate',
+                screen: 'Session',
+                coachSessionID: '3tniy7ismz4kf3egg2z',
                 date: Date.now(),
               },
             }),
-        })} */}
+        })}
+
+        {this.button2({
+          text: 'Test notif open video',
+          icon: {
+            name: 'user',
+            type: 'font',
+            size: 20,
+            color: colors.title,
+          },
+          click: () =>
+            clickNotification({
+              date: Date.now(),
+              typeNavigation: 'navigate',
+              action: 'VideoPlayerPage',
+              data: {
+                objectID: '-MEjvxdF9hqpyOAoVStt',
+                date: Date.now(),
+              },
+            }),
+        })}
 
         {/* {__DEV__ && (
           <View>

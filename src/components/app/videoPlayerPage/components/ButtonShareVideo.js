@@ -25,6 +25,27 @@ class ButtonShareVideo extends Component {
       this.props.onRef(this);
     }
   };
+  componentDidUpdate = (prevProps, prevState) => {
+    const {session: prevSession} = prevProps;
+    const {session} = this.props;
+    const {archives} = this.props;
+    const prevPersonSharingScreen = isSomeoneSharingScreen(prevSession);
+    const personSharingScreen = isSomeoneSharingScreen(session);
+    console.log('prevSession', prevSession);
+    console.log('session,', session);
+    const isVideosWereBeingShared = isVideosAreBeingShared({
+      prevSession,
+      archives,
+      userIDSharing: prevPersonSharingScreen,
+    });
+    const isVideosBeingShared = isVideosAreBeingShared({
+      prevSession,
+      archives,
+      userIDSharing: personSharingScreen,
+    });
+    if (isVideosWereBeingShared && !isVideosBeingShared)
+      return openVideoPlayer({open: false});
+  };
   async startSharingVideo(value) {
     const {userID, coachSessionID, archives, getVideoState} = this.props;
 
@@ -102,7 +123,7 @@ class ButtonShareVideo extends Component {
         styleButton={style}
         enabled={true}
         textButton={{fontSize: 13}}
-        text="Sharing..."
+        text="Stop sharing"
         loader={false}
         click={() => this.startSharingVideo(false)}
       />

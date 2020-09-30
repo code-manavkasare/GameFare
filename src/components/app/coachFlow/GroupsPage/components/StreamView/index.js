@@ -40,7 +40,7 @@ import {
   userPartOfSession,
   getVideosSharing,
   getMember,
-  toggleVideoPublish,
+  bindSession,
 } from '../../../../../functions/coach';
 
 import {permission} from '../../../../../functions/pictures';
@@ -55,7 +55,6 @@ import {
 } from '../../../../../style/sizes';
 
 import MembersView from './components/MembersView';
-import UploadButton from '../../../../elementsUpload/UploadButton';
 import CameraPage from '../../../../../app/camera/index';
 import Footer from './footer/index';
 import axios from 'axios';
@@ -71,7 +70,6 @@ class GroupsPage extends Component {
       watchVideo: false,
       publishAudio: !__DEV__,
       publishVideo: true,
-      // videoSource: 'camera',
       open: false,
       portrait: true,
       date: 0,
@@ -183,68 +181,49 @@ class GroupsPage extends Component {
     });
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (!isEqual(props.currentSession, state.coachSession)) {
-      return {
-        coachSession: props.currentSession,
-        open: props.currentSession ? true : false,
-        date: Date.now(),
-      };
-    }
-    return {date: Date.now()};
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    const unrenderConditionPrev =
-      !prevProps.recording && prevProps.endCurrentSession;
-    const unrenderConditionThis =
-      !this.props.recording && this.props.endCurrentSession;
-    if (!unrenderConditionPrev && unrenderConditionThis) {
-      // this.endCoachSession();
-    } else {
-      const {
-        userID,
-        currentSessionID,
-        userConnected,
-        currentScreenSize,
-        route,
-      } = this.props;
-      const {portrait} = currentScreenSize;
-      if (currentSessionID === undefined && prevProps.currentSessionID) {
-        this.props.layoutAction('setGeneralSessionRecording', false);
+    const {
+      userID,
+      currentSessionID,
+      userConnected,
+      currentScreenSize,
+      route,
+    } = this.props;
+    console.log('componentDidUpdate', prevProps);
+    const {portrait} = currentScreenSize;
+    if (currentSessionID === undefined && prevProps.currentSessionID) {
+      this.props.layoutAction('setGeneralSessionRecording', false);
+    }
+    console.log('route?.params?.coachSessionID', route?.params);
+    // if (route?.params?.coachSessionID !== currentSessionID)
+    //   return bindSession(route?.params?.coachSessionID, true);
+    if (portrait !== prevProps.currentScreenSize.portrait && currentSessionID) {
+      database()
+        .ref(`coachSessions/${currentSessionID}/members/${userID}`)
+        .update({
+          portrait: portrait,
+        });
+    }
+    if (userConnected) {
+      if (prevState.date !== this.state.date && this.state.open) {
+        this.popupPermissionRecording();
+        this.refreshTokenMember();
       }
       if (
-        portrait !== prevProps.currentScreenSize.portrait &&
-        currentSessionID
+        !isEqual(prevProps.session, this.props.session) &&
+        this.props.session
       ) {
-        database()
-          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
-          .update({
-            portrait: portrait,
-          });
+        this.refreshTokenMember();
+        this.openVideoShared();
       }
-      if (userConnected) {
-        if (prevState.date !== this.state.date && this.state.open) {
-          this.popupPermissionRecording();
-          this.refreshTokenMember();
-        }
-        if (
-          !isEqual(prevState.coachSession, this.state.coachSession) &&
-          this.state.coachSession
-        ) {
-          this.refreshTokenMember();
-          this.openVideoShared();
-        }
-      }
-      if (
-        route?.params?.params?.action !==
-        prevProps.route?.params?.params?.action
-      ) {
-        try {
-          this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
-          this.footerRef?.bottomButtonsRef?.clickRecord();
-        } catch (e) {}
-      }
+    }
+    if (
+      route?.params?.params?.action !== prevProps.route?.params?.params?.action
+    ) {
+      try {
+        this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
+        this.footerRef?.bottomButtonsRef?.clickRecord();
+      } catch (e) {}
     }
   }
   popupPermissionRecording() {
@@ -306,8 +285,11 @@ class GroupsPage extends Component {
     }
   }
   openVideoShared() {
-    const {coachSession} = this.state;
-    const {userID, currentSessionID: coachSessionID} = this.props;
+    const {
+      userID,
+      currentSessionID: coachSessionID,
+      session: coachSession,
+    } = this.props;
     const personSharingScreen = isSomeoneSharingScreen(coachSession);
     if (personSharingScreen && userID !== personSharingScreen) {
       const videos = coachSession.members[personSharingScreen].sharedVideos;
@@ -317,22 +299,6 @@ class GroupsPage extends Component {
         open: true,
       });
     }
-  }
-  async endCoachSession() {
-    const {coachAction} = this.props;
-
-    // await this.close();
-    await coachAction('unsetCurrentSession');
-    return true;
-  }
-  close() {
-    const {layoutAction, navigation, route, currentSessionID} = this.props;
-    const {currentRouteName} = route.params;
-
-    layoutAction('setLayout', {isFooterVisible: true});
-    StatusBar.setBarStyle('dark-content', true);
-
-    navigation.navigate(currentRouteName, {coachSessionID: currentSessionID});
   }
   loaderView(text, hideLoader) {
     const styleText = {
@@ -356,13 +322,13 @@ class GroupsPage extends Component {
     return 'back';
   }
   renderSubscribers = (subscribers) => {
-    const {coachSession} = this.state;
+    const {session: coachSession} = this.props;
     const {
       currentHeight,
       currentWidth,
       portrait,
     } = this.props.currentScreenSize;
-
+    console.log('coachSession', coachSession);
     const members = subscribers
       .map((streamId) => {
         return Object.values(coachSession.members).filter((member) => {
@@ -483,7 +449,6 @@ class GroupsPage extends Component {
         coachSessionID={currentSessionID}
         organizerID={session && session?.info.organizer}
         isConnected={isConnected}
-        close={this.close.bind(this)}
         permissionOtherUserToRecord={
           session
             ? getMember(session, userID)?.permissionOtherUserToRecord
@@ -576,21 +541,19 @@ class GroupsPage extends Component {
           )}
         </View>
 
-        {member && isConnected && (
-          <Footer
-            translateYFooter={this.translateYFooter}
-            setState={this.setState.bind(this)}
-            watchVideoRef={this.watchVideoRef}
-            otPublisherRef={this.otPublisherRef}
-            personSharingScreen={personSharingScreen}
-            videosBeingShared={videosBeingShared}
-            onRef={(ref) => (this.footerRef = ref)}
-            members={coachSession.members}
-            coachSessionID={currentSessionID}
-            publishAudio={publishAudio}
-            publishVideo={publishVideo}
-          />
-        )}
+        <Footer
+          translateYFooter={this.translateYFooter}
+          setState={this.setState.bind(this)}
+          watchVideoRef={this.watchVideoRef}
+          otPublisherRef={this.otPublisherRef}
+          personSharingScreen={personSharingScreen}
+          videosBeingShared={videosBeingShared}
+          onRef={(ref) => (this.footerRef = ref)}
+          members={coachSession.members}
+          coachSessionID={currentSessionID}
+          publishAudio={publishAudio}
+          publishVideo={publishVideo}
+        />
         {reconnecting && (
           <View
             style={[
@@ -626,7 +589,6 @@ const styles = StyleSheet.create({
   pausedView: {
     height: '100%',
     width: '100%',
-    //  backgroundColor: colors.grey,
     ...styleApp.center,
   },
   OTSubscriber: {
@@ -669,14 +631,6 @@ const styles = StyleSheet.create({
     opacity: 0.4,
     zIndex: 5,
     position: 'absolute',
-  },
-  uploadButton: {
-    height: heightHeaderHome,
-    paddingLeft: '5%',
-    paddingRight: '5%',
-    position: 'absolute',
-    zIndex: 15,
-    width: '100%',
   },
 });
 
