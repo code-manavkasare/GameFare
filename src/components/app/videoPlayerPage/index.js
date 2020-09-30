@@ -36,7 +36,7 @@ class VideoPlayerPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      archives: props.route.params.archives,
+      archives: props.route?.params?.archives,
       linkedPlayers: [],
       disableControls: false,
       isDrawingEnabled: false,

@@ -3,6 +3,7 @@ import {View, StyleSheet, Animated, Share, Alert, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
+import {BlurView} from '@react-native-community/blur';
 import isEqual from 'lodash.isequal';
 import {dissoc} from 'ramda';
 
@@ -89,7 +90,9 @@ class CallTab extends Component {
           {
             forceNavigation: true,
             operation: async () => {
-              const session = await openSession(userObject(infoUser, userID), {[user.id]: user});
+              const session = await openSession(userObject(infoUser, userID), {
+                [user.id]: user,
+              });
               navigate('Conversation', {
                 coachSessionID: session.objectID,
               });
@@ -168,18 +171,26 @@ class CallTab extends Component {
     } = this.state;
     return (
       <View>
-        {searchActive || searchText !== '' ? (
-          <UserSearchResults
-            onSelect={(user) => this.selectUser(user)}
-            selectedUsers={selectedUsers}
-            searchText={searchText}
-          />
-        ) : (
+        {searchText === '' && (
           <ListVideoCalls
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
             hideCallButton={action !== 'call'}
+          />
+        )}
+        {searchActive && searchText === '' && (
+          <BlurView
+            style={styles.listVideoCallsBlur}
+            blurType={'regular'}
+            blurAmount={10}
+          />
+        )}
+        {searchText !== '' && (
+          <UserSearchResults
+            onSelect={(user) => this.selectUser(user)}
+            selectedUsers={selectedUsers}
+            searchText={searchText}
           />
         )}
       </View>
@@ -275,6 +286,11 @@ const styles = StyleSheet.create({
   bodyContainer: {marginTop: sizes.marginTopApp + sizes.heightHeaderHome},
   loaderStyle: {...styleApp.center, height: 120},
   inlineSearchContainer: {paddingBottom: 0},
+  listVideoCallsBlur: {
+    position: 'absolute',
+    ...styleApp.fullSize,
+    top: 0,
+  },
 });
 
 const mapStateToProps = (state) => {

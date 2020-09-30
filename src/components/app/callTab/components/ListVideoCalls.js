@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
-import {
-  View,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
+import {Row, Col} from 'react-native-easy-grid';
+
+import {navigate} from '../../../../../NavigationService';
 
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 
 import {FlatListComponent} from '../../../layout/Views/FlatList';
+import ButtonColor from '../../../layout/buttons/Button';
+import AllIcons from '../../../layout/icons/AllIcons';
 
+import {viewLive} from '../../TeamPage/components/elements';
 import CardStreamView from '../../coachFlow/GroupsPage/components/CardStreamView';
 
 class ListVideoCalls extends Component {
@@ -20,7 +23,7 @@ class ListVideoCalls extends Component {
   }
 
   sessionsArray = () => {
-    const {coachSessions} = this.props;
+    const {coachSessions, currentSessionID} = this.props;
     if (!coachSessions) {
       return [];
     }
@@ -29,108 +32,32 @@ class ListVideoCalls extends Component {
         return b.timestamp - a.timestamp;
       })
       .filter((s) => {
-        return s?.id;
+        return s && s.id && s.id !== currentSessionID;
       });
   };
 
-  // sessionInvitation = () => {
-  //   const {currentSessionID, currentSession} = this.props;
-  //   const sessionMenuStyle = {
-  //     ...styleApp.center2,
-  //     width: '100%',
-  //     borderRadius: 15,
-  //     marginVertical: 10,
-  //   };
-  //   const mainContainer = {
-  //     ...styleApp.center2,
-  //     borderWidth: 2,
-  //     ...styleApp.shadowWeak,
-  //     borderColor: colors.greyLight,
-  //     backgroundColor: colors.white,
-  //     width: '100%',
-  //     borderRadius: 15,
-  //     minHeight: 70,
-  //   };
-  //   const currentSessionView = {
-  //     // ...styleApp.shadowWeak,
-  //     ...styleApp.center4,
-  //     paddingTop: 15,
-  //     paddingVertical: 5,
-  //     marginTop: 0,
-  //     marginBottom: 10,
-  //     height:
-  //       currentSession?.members !== undefined &&
-  //       Object.values(currentSession.members).length > 2
-  //         ? 90
-  //         : 90,
-  //     width: 110,
-  //     // currentSession?.members !== undefined &&
-  //     // Object.values(currentSession.members).length > 2
-  //     //   ? '70%'
-  //     //   : '50%',
-  //     // borderRadius: 15,
-  //     // borderColor: colors.greyLight,
-  //     // borderWidth: 2,
-  //     // backgroundColor: colors.white,
-  //   };
-  //   const textStyle = {
-  //     ...styleApp.textBold,
-  //     color: colors.greyDarker,
-  //     fontSize: 16,
-  //     // width: 150,
-  //     position: 'absolute',
-  //     left: currentSessionID ? 105 : 15,
-  //   };
-
-  //   return (
-  //     <View style={sessionMenuStyle}>
-  //       <View style={mainContainer}>
-  //         <Text style={textStyle}>
-  //           Invite to {currentSessionID ? 'call' : 'a GameFare Call'}
-  //         </Text>
-  //         {currentSessionID &&
-  //           viewLive(currentSession, {
-  //             position: 'absolute',
-  //             left: -5,
-  //             top: -5,
-  //             zIndex: 2,
-  //           })}
-  //         {currentSessionID && (
-  //           <View style={currentSessionView}>
-  //             {imageCardTeam(currentSession, undefined, true)}
-  //             {/* {sessionTitle(
-  //               currentSession,
-  //               {
-  //                 marginTop: 10,
-  //                 fontSize: 14,
-  //                 textAlign: 'center',
-  //                 width: '70%',
-  //               },
-  //               false,
-  //             )} */}
-  //           </View>
-  //         )}
-  //         <ButtonColor
-  //           color={colors.greyLight}
-  //           onPressColor={colors.grey}
-  //           click={this.search}
-  //           style={styles.searchButtonStyle}
-  //           view={() => {
-  //             return (
-  //               <AllIcon
-  //                 solid
-  //                 name={'search'}
-  //                 size={17}
-  //                 color={colors.greyDarker}
-  //                 type="font"
-  //               />
-  //             );
-  //           }}
-  //         />
-  //       </View>
-  //     </View>
-  //   );
-  // };
+  currentSessionView = () => {
+    const {currentSessionID, currentSession} = this.props;
+    return currentSessionID ? (
+      <View style={styles.sessionMenuStyle}>
+        {viewLive(currentSession, {
+          position: 'absolute',
+          left: -5,
+          top: -5,
+          zIndex: 2,
+        })}
+        <CardStreamView
+          coachSessionID={currentSessionID}
+          onClick={() => navigate('Session')}
+          selected={false}
+          showAddMemberButton
+          scale={1}
+          recentView
+          style={styles.cardStreamStyle}
+        />
+      </View>
+    ) : null;
+  };
 
   render() {
     const coachSessions = this.sessionsArray();
@@ -139,6 +66,7 @@ class ListVideoCalls extends Component {
       onClick,
       selectedSessions,
       hideCallButton,
+      currentSessionID,
       AnimatedHeaderValue,
     } = this.props;
     if (!userConnected || coachSessions.length === 0) {
@@ -154,7 +82,7 @@ class ListVideoCalls extends Component {
               key={session.id}
               onClick={(session) => onClick(session)}
               selected={selectedSessions[session.id] ? true : false}
-              hideCallButton={hideCallButton}
+              showCallButton={!hideCallButton}
               scale={1}
               recentView
               style={styles.cardStreamStyle}
@@ -163,10 +91,12 @@ class ListVideoCalls extends Component {
         )}
         incrementRendering={6}
         initialNumberToRender={8}
+        header={currentSessionID ? this.currentSessionView() : undefined}
         AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />
-    );  }
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -228,6 +158,30 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   cardStreamStyle: {borderRadius: 15, paddingVertical: 0, marginVertical: 5},
+  sessionMenuStyle: {
+    ...styleApp.center2,
+    ...styleApp.shadowWeak,
+    width: '100%',
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: colors.greyLight,
+    backgroundColor: colors.white,
+  },
+  currentSessionView: {
+    ...styleApp.center4,
+    paddingTop: 15,
+    paddingVertical: 5,
+    marginTop: 0,
+    marginBottom: 10,
+    height: 90,
+    width: 110,
+  },
+  liveAddMemberButton: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    height: 70,
+  },
 });
 
 const mapStateToProps = (state) => {

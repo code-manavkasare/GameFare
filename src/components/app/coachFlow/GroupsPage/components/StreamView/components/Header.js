@@ -6,12 +6,10 @@ import database from '@react-native-firebase/database';
 import NavigationService from '../../../../../../../../NavigationService';
 import {layoutAction} from '../../../../../../../actions/layoutActions';
 
+import {createInviteToSessionBranchUrl} from '../../../../../../database/branch';
+
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
 import colors from '../../../../../../style/colors';
-import {
-  isUserAdmin,
-  addMembersToSession,
-} from '../../../../../../functions/coach';
 
 class HeaderStreamView extends Component {
   constructor(props) {
@@ -22,8 +20,6 @@ class HeaderStreamView extends Component {
   header() {
     const {
       coachSessionID,
-      organizerID,
-      userID,
       setState,
       state,
       permissionOtherUserToRecord,
@@ -61,17 +57,17 @@ class HeaderStreamView extends Component {
         }
         backgroundColorIconOffset={colors.title + '70'}
         iconOffset2={
-          isConnected && isUserAdmin(organizerID, userID) && 'person-add'
+          isConnected && 'person-add'
         }
         typeIconOffset2="mat"
         sizeIconOffset2={23}
         colorIconOffset2={
           currentSessionReconnecting ? colors.greyDark : colors.white
         }
-        clickButtonOffset2={() =>
+        clickButtonOffset2={async () =>
           currentSessionReconnecting
             ? null
-            : addMembersToSession(coachSessionID, 'Session')
+            : NavigationService.navigate('UserDirectory', {action: 'invite', branchLink: await createInviteToSessionBranchUrl(coachSessionID)})
         }
         backgroundColorIconOffset2={colors.title + '70'}
         initialTitleOpacity={1}

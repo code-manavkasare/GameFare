@@ -3,8 +3,6 @@ import {View, Animated} from 'react-native';
 
 import styleApp from '../../style/style';
 
-import {getSelectionActionDecorations} from '../../functions/utility';
-
 import HeaderUserDirectory from './components/HeaderUserDirectory';
 import BodyUserDirectory from './components/BodyUserDirectory';
 import SearchInput from '../../layout/textField/SearchInput';
@@ -12,19 +10,17 @@ import SearchInput from '../../layout/textField/SearchInput';
 export default class userDirectoryPage extends Component {
   constructor(props) {
     super(props);
-    const action = props.route?.params?.action ?? 'call';
-    const {actionText} = getSelectionActionDecorations(action);
     this.state = {
-      action,
-      actionText,
+      action: props.route?.params?.action ?? 'call',
       archivesToShare: props.route?.params?.archivesToShare ?? [],
+      sessionToInvite: props.route?.params?.sessionToInvite ?? '',
       branchLink: props.route?.params?.branchLink ?? null,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
 
   render() {
-    const {action, actionText, archivesToShare, branchLink} = this.state;
+    const {action, archivesToShare, sessionToInvite, branchLink} = this.state;
     const {goBack} = this.props.navigation;
     return (
       <View style={styleApp.stylePage}>
@@ -46,8 +42,8 @@ export default class userDirectoryPage extends Component {
           onRef={(ref) => {
             this.bodyUserDirectoryRef = ref;
           }}
-          actionText={actionText}
           archivesToShare={archivesToShare}
+          sessionToInvite={sessionToInvite}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
         />
       </View>

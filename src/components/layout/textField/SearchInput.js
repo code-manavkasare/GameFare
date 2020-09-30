@@ -36,10 +36,10 @@ class SearchInput extends Component {
     return (
       <View style={styles.searchBarStyle}>
         <Row style={styles.rowStyle}>
-          <Col size={10} style={styleApp.center}>
+          <Col size={15} style={styleApp.center}>
             <AllIcon
               name={'search'}
-              size={13}
+              size={15}
               color={colors.greyDark}
               type="font"
             />
@@ -58,7 +58,7 @@ class SearchInput extends Component {
                   textInputRef.focus();
                 }
               }}
-              clearButtonMode={'never'}
+              clearButtonMode={'always'}
               underlineColorAndroid="rgba(0,0,0,0)"
               autoCorrect={true}
               onChangeText={(text) => {
@@ -72,7 +72,8 @@ class SearchInput extends Component {
               }}
             />
           </Col>
-          <Col size={10} style={styleApp.center}>
+          <Col size={5} />
+          {/* <Col size={10} style={styleApp.center}>
             <Animated.View style={styles.buttonContainerStyle}>
               <ButtonColor
                 view={() => {
@@ -94,7 +95,7 @@ class SearchInput extends Component {
                 style={styles.buttonStyle}
               />
             </Animated.View>
-          </Col>
+          </Col> */}
         </Row>
       </View>
     );

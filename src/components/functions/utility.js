@@ -13,6 +13,11 @@ function getSelectionActionDecorations(action) {
         actionText: 'Call',
         actionHeader: 'Video calls',
       };
+    case 'invite':
+      return {
+        actionText: 'Add',
+        actionHeader: 'Add to group',
+      };
     case 'message':
       return {
         actionText: 'Message',

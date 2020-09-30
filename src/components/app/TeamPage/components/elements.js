@@ -21,6 +21,7 @@ import {
   addMembersToSession,
   selectVideosFromLibrary,
 } from '../../../functions/coach';
+import {createInviteToSessionBranchUrl} from '../../../database/branch';
 
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 import AllIcon from '../../../layout/icons/AllIcons';
@@ -720,7 +721,7 @@ const ListContents = (props) => {
 };
 
 const ListPlayers = (props) => {
-  const {session, messages} = props;
+  const {session, messages, navigate} = props;
   let {members, objectID} = session;
   if (!members) {
     members = {};
@@ -789,8 +790,7 @@ const ListPlayers = (props) => {
         },
         button: {
           text: 'Add',
-          // TODO add members to conversation
-          click: () => addMembersToSession(objectID, 'Conversation'),
+          click: async () => navigate('UserDirectory', {action: 'invite', sessionToInvite: objectID, branchLink: await createInviteToSessionBranchUrl(objectID)}),
         },
         hideDividerHeader: true,
         badge: Object.keys(members).length,
