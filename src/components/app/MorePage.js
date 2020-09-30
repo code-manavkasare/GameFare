@@ -24,7 +24,7 @@ import ScrollView from '../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 import sizes from '../style/sizes';
 import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
-import NavigationService, {
+import {
   navigate,
   clickNotification,
 } from '../../../NavigationService';
@@ -162,7 +162,7 @@ class MorePage extends Component {
     } else if (type === 'email') {
       this.sendEmail();
     } else if (type === 'logout') {
-      NavigationService.navigate('Alert', {
+      navigate('Alert', {
         textButton: 'Logout',
         title: 'Sign out',
         subtitle: 'Are you sure you want to sign out?',
