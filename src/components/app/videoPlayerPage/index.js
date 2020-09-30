@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Dimensions, StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
+import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
@@ -22,6 +23,7 @@ import {getArchiveByID} from '../../functions/archive';
 import {
   isVideosAreBeingShared,
   isSomeoneSharingScreen,
+  updateInfoVideoCloud,
 } from '../../functions/coach';
 import {
   checkIfAllArchivesAreLocal,
@@ -64,8 +66,14 @@ class VideoPlayerPage extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    const {archives} = props.route.params;
+    const {archives, objectID} = props.route.params;
     const {linkedPlayers} = state;
+    if (!archives) {
+      return {
+        archives: [objectID],
+        linkedPlayers: [objectID].map((x) => new Set()),
+      };
+    }
     if (archives.length > linkedPlayers.length) {
       return {
         archives,
@@ -110,6 +118,7 @@ class VideoPlayerPage extends Component {
         archives,
         userIDSharing: personSharingScreen,
       });
+
       if (personSharingScreen && videosBeingShared) {
         const prevVideos = Object.keys(
           session?.members[personSharingScreen]?.sharedVideos,
@@ -125,7 +134,6 @@ class VideoPlayerPage extends Component {
             (item) => prevVideos.indexOf(item) == -1,
           )[0];
           let {archives: newArchives} = this.state;
-
           newArchives = newArchives.concat([{id: videoToAdd}]);
           this.setState({archives: newArchives});
         }
@@ -135,7 +143,6 @@ class VideoPlayerPage extends Component {
 
   startRecording = async () => {
     this.videoPlayerRefs.forEach((ref) => {
-      console.log('ref', ref);
       ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
       ref?.toggleVisibleSeekBar(true);
       ref?.setState({displayButtonReplay: false});
@@ -256,17 +263,6 @@ class VideoPlayerPage extends Component {
     });
   };
 
-  // cancelPreviewRecording = async () => {
-  //   this.AudioRecorderPlayerRef?.stopPlayingRecord();
-  //   this.setState({
-  //     isPreviewing: false,
-  //     previewStartTime: null,
-  //     audioPlayer: null,
-  //     disableControls: false,
-  //   });
-  //   await this.resetPlayers();
-  // };
-
   onPlayPause = async (i, paused, currentTime) => {
     let {recordedActions} = this.state;
 
@@ -354,7 +350,7 @@ class VideoPlayerPage extends Component {
         this.props.navigation.navigate('Alert', {
           close: true,
           title: 'Video successfully created !',
-          subtitle: 'Please check your video library.',
+          subtitle: 'Your recording is now in your library!',
           textButton: 'Got it!',
         });
       } else {
@@ -366,7 +362,7 @@ class VideoPlayerPage extends Component {
         );
         this.props.navigation.navigate('Alert', {
           close: true,
-          title: 'Video is under process !',
+          title: 'Your recording is being processed!',
           subtitle: 'We will notify you when the video is ready.',
           textButton: 'Got it!',
         });
@@ -383,7 +379,13 @@ class VideoPlayerPage extends Component {
       archives,
       recordedActions,
     } = this.state;
-    const {navigation, route, session, videoInfos} = this.props;
+    const {
+      navigation,
+      route,
+      session,
+      videoInfos,
+      currentSessionID: coachSessionID,
+    } = this.props;
     const {navigate} = navigation;
     let videosBeingShared = false;
     let personSharingScreen = false;
@@ -430,21 +432,48 @@ class VideoPlayerPage extends Component {
             selectOne: true,
             navigateBackAfterConfirm: false,
             confirmVideo: async (selectedVideos) => {
-              if (selectedVideos.length > 0) {
-                const selectedID = selectedVideos[0];
-                const duplicate = archives.reduce(
-                  (duplicate, archive) =>
-                    duplicate || archive.id === selectedID,
-                  false,
-                );
-                if (!duplicate) {
-                  const {navigate} = this.props.navigation;
-                  navigate('VideoPlayerPage', {
-                    ...this.props.route.params,
-                    archives: [...archives, selectedID],
-                  });
+              if (videosBeingShared) {
+                let updates = {};
+                for (let i in selectedVideos) {
+                  const id = selectedVideos[i];
+
+                  const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos/${id}`;
+                  const coachSessionMemberSharingPath = `coachSessions/${coachSessionID}/members/${personSharingScreen}`;
+                  updates[`${sharedVideosPath}/currentTime`] = 0;
+                  updates[`${sharedVideosPath}/paused`] = true;
+                  updates[`${sharedVideosPath}/playRate`] = 1;
+                  updates[`${sharedVideosPath}/position`] = {x: 0, y: 0};
+                  updates[`${sharedVideosPath}/scale`] = 1;
+                  updates[`${sharedVideosPath}/id`] = id;
+
+                  updates[
+                    `${coachSessionMemberSharingPath}/shareScreen`
+                  ] = true;
+                  updates[
+                    `${coachSessionMemberSharingPath}/videoIDSharing`
+                  ] = id;
+
+                  updates[
+                    `coachSessions/${coachSessionID}/members/${personSharingScreen}/sharedVideos/${id}`
+                  ] = true;
                 }
+
+                await database()
+                  .ref()
+                  .update(updates);
               }
+
+              let newArchives = archives.concat(selectedVideos);
+
+              newArchives = newArchives.filter(function(x, i, a) {
+                return a.indexOf(x) === i;
+              });
+              console.log('testdfvfdgg', newArchives);
+              await this.setState({archives: newArchives});
+              navigation.navigate('VideoPlayerPage', {
+                ...this.props.route.params,
+                archives: newArchives,
+              });
             },
           });
         }}
@@ -679,13 +708,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   const {currentSessionID} = state.coach;
-
+  const {params} = props.route;
+  const archives = params.objectID ? [params.objectID] : params.archives;
   return {
     userID: state.user.userID,
     session: state.coachSessions[currentSessionID],
     currentSessionID,
     portrait: state.layout.currentScreenSize.portrait,
-    videoInfos: props.route.params.archives.reduce((videoInfos, archiveID) => {
+    videoInfos: archives.reduce((videoInfos, archiveID) => {
       return {
         ...videoInfos,
         [archiveID]: {...state.archives[archiveID], id: archiveID},

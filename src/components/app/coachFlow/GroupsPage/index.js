@@ -63,7 +63,8 @@ class StreamTab extends Component {
 
         {tabsGroups({
           tabBarVisible,
-          AnimatedHeaderValue: this.AnimatedHeaderValue,
+          AnimatedHeaderValue:
+            coachSessionsRequests.length === 0 && this.AnimatedHeaderValue,
           numberSesionRequests: coachSessionsRequests.length,
         })}
       </View>

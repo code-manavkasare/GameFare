@@ -147,7 +147,6 @@ const openVideoPlayer = async ({
   coachSessionID,
   forceSharing,
 }) => {
-  await StatusBar.setBarStyle(open ? 'light-content' : 'dark-content', true);
   if (open) {
     return navigate('VideoPlayerPage', {
       archives,

@@ -145,7 +145,7 @@ class FooterButton extends React.Component {
               {label && (
                 <Reanimated.Text style={labelStyle}>{label}</Reanimated.Text>
               )}
-              {label === 'Call' && numberNotifications !== 0 && (
+              {label === 'Calls' && numberNotifications !== 0 && (
                 <View pointerEvents="none" style={[styleApp.absoluteViewBadge]}>
                   <Text
                     style={[

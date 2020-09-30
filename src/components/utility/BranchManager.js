@@ -4,7 +4,12 @@ import branch from 'react-native-branch';
 import database from '@react-native-firebase/database';
 import {store} from '../../../reduxStore';
 import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
-import {createCoachSessionFromUserIDs, addMembersToSessionByIDs, bindSession, sessionOpening} from '../functions/coach';
+import {
+  createCoachSessionFromUserIDs,
+  addMembersToSessionByIDs,
+  bindSession,
+  sessionOpening,
+} from '../functions/coach';
 import {shareCloudVideo} from '../database/firebase/videosManagement';
 import {
   getArchivesFromBranchParams,
@@ -80,7 +85,8 @@ class BranchManager extends Component {
         }
         break;
       }
-      default: {}
+      default: {
+      }
     }
   }
 
@@ -91,16 +97,25 @@ class BranchManager extends Component {
         const coachSessionFirebase = snapshot.val();
         if (coachSessionFirebase) {
           await store.dispatch(setSession(coachSessionFirebase));
-          await store.dispatch(setSessionBinded({id: sessionID, isBinded: false}));
-          await bindSession(sessionID);
+          await store.dispatch(
+            setSessionBinded({id: sessionID, isBinded: false}),
+          );
+          await bindSession({objectID: sessionID});
           await addMembersToSessionByIDs(sessionID, [userID]);
-          if (coachSessionFirebase.members[sentBy] && coachSessionFirebase.members[sentBy].isConnected) {
+          if (
+            coachSessionFirebase.members[sentBy] &&
+            coachSessionFirebase.members[sentBy].isConnected
+          ) {
             sessionOpening(coachSessionFirebase);
           } else {
             navigate('Conversation', {coachSessionID: sessionID});
           }
         } else {
-          const session = await createCoachSessionFromUserIDs(sentBy, [userID], sessionID);
+          const session = await createCoachSessionFromUserIDs(
+            sentBy,
+            [userID],
+            sessionID,
+          );
           navigate('Conversation', {coachSessionID: session.objectID});
         }
       });

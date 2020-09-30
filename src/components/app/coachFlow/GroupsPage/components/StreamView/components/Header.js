@@ -27,7 +27,6 @@ class HeaderStreamView extends Component {
       setState,
       state,
       permissionOtherUserToRecord,
-      close,
       chargeForSession,
       currentSessionReconnecting,
       isConnected,
@@ -44,7 +43,7 @@ class HeaderStreamView extends Component {
         typeIcon1="font"
         backgroundColorIcon1={colors.title + '50'}
         onPressColorIcon1={colors.title + '30'}
-        clickButton1={() => close()}
+        clickButton1={() => true}
         nobackgroundColorIcon1={true}
         sizeIcon1={16}
         colorIcon1={colors.white}
