@@ -22,6 +22,7 @@ import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
 import ArchiveBindManager from './src/components/utility/ArchiveBindManager';
+import SessionBindManager from './src/components/utility/SessionBindManager';
 import BranchManager from './src/components/utility/BranchManager';
 import CallListener from './src/components/utility/CallListener';
 
@@ -142,6 +143,7 @@ class App extends Component {
         <UploadManager />
         <ConnectionTypeProvider />
         <ArchiveBindManager />
+        <SessionBindManager />
         <BranchManager />
         <CallListener />
       </NavigationContainer>

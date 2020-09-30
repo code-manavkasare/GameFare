@@ -23,7 +23,7 @@ import {
   unsetCurrentSession,
 } from '../../actions/coachActions';
 import {shareVideosWithTeams} from './videoManagement';
-import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
+import {setSession} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
 import {enqueueUploadTasks} from '../../actions/uploadQueueActions';
 import {setArchive} from '../../actions/archivesActions';
@@ -96,7 +96,6 @@ const createCoachSession = async (user, members, sessionID = null) => {
     .ref(`coachSessions/${coachSessionID}`)
     .update(session);
   await store.dispatch(setSession(session));
-  bindSession({objectID: session.objectID});
   return session;
 };
 
@@ -556,7 +555,6 @@ const capitalize = (str) => {
 
 const deleteSession = (objectID) => {
   const userID = store.getState().user.userID;
-
   navigate('Alert', {
     title: 'Do you want to leave this conversation?',
     textButton: 'Leave',
@@ -582,38 +580,21 @@ const deleteSession = (objectID) => {
   });
 };
 
-const bindSession = ({objectID, forceOpening}) => {
-  if (objectID) {
-    const currentBinds = store.getState().bindedSessions;
-    console.log('is session binded ? ', objectID, currentBinds[objectID]);
-    if (!currentBinds || !currentBinds[objectID]) {
-      database()
-        .ref(`coachSessions/${objectID}`)
-        .on('value', function(snapshot) {
-          const coachSessionFirebase = snapshot.val();
-          if (coachSessionFirebase) {
-            store.dispatch(setSession(coachSessionFirebase));
-            store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
-            if (forceOpening) return sessionOpening(coachSessionFirebase);
-          }
-        });
-    } else {
-      if (forceOpening) {
-        const coachSessionFirebase = store.getState().coachSessions[objectID];
-        return sessionOpening(coachSessionFirebase);
+const bindSession = (sessionID) => {
+  database()
+    .ref(`coachSessions/${sessionID}`)
+    .on('value', function(snapshot) {
+      const coachSessionFirebase = snapshot.val();
+      if (coachSessionFirebase) {
+        store.dispatch(setSession(coachSessionFirebase));
       }
-    }
-  }
+    });
 };
 
-const unbindSession = async (objectID) => {
-  const isSessionBinded = store.getState().bindedSessions[objectID];
-  if (isSessionBinded) {
-    await database()
-      .ref(`coachSessions/${objectID}`)
-      .off();
-    store.dispatch(setSessionBinded({id: objectID, isBinded: false}));
-  }
+const unbindSession = async (sessionID) => {
+  await database()
+    .ref(`coachSessions/${sessionID}`)
+    .off();
 };
 
 const loadAndOpenSession = async (sessionID) => {
@@ -623,8 +604,6 @@ const loadAndOpenSession = async (sessionID) => {
   const coachSessionFirebase = coachSession.val();
   if (coachSessionFirebase) {
     await store.dispatch(setSession(coachSessionFirebase));
-    await store.dispatch(setSessionBinded({id: sessionID, isBinded: false}));
-    await bindSession({objectID: sessionID});
     sessionOpening(coachSessionFirebase);
   }
 };

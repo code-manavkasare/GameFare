@@ -5,15 +5,14 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import PropTypes from 'prop-types';
 
-import {coachAction} from '../../.././../../actions/coachActions';
+import {coachAction} from '../../../../../actions/coachActions';
+import {coachSessionsAction} from '../../../../../actions/coachSessionsActions';
 import {navigate} from '../../../../../../NavigationService';
 import PlaceHolder from '../../../../placeHolders/CardStream';
 
 import {
   sessionOpening,
   getMember,
-  bindSession,
-  unbindSession,
 } from '../../../../functions/coach';
 import {conversationIsInNotification} from '../../../../functions/notifications.js';
 import {createInviteToSessionBranchUrl} from '../../../../database/branch';
@@ -53,7 +52,7 @@ class CardStream extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      session: false,
+      bound: false,
       loading: false,
       hasNotification: false,
     };
@@ -79,27 +78,31 @@ class CardStream extends Component {
       this.props.onRef(this);
     }
     const {coachSessionID} = this.props;
-    bindSession({objectID: coachSessionID});
+    this.bindSession();
     bindConversation(coachSessionID);
     if (this.selected) {
       this.toggleSelected(1);
     }
   };
-
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const {selected} = this.props;
-    const {selected: prevSelected} = prevProps;
-    if (selected && !prevSelected) {
-      this.toggleSelected(1);
-    } else if (!selected && prevSelected) {
-      this.toggleSelected(0);
+    if (selected !== prevProps.selected) {
+      this.toggleSelected(selected ? 1 : 0);
     }
   }
-  // componentWillUnmount() {
-  //   const {coachSessionID} = this.props;
-  //   unbindSession(coachSessionID);
-  //   unbindConversation(coachSessionID);
-  // }
+  componentWillUnmount() {
+    this.unbindSession();
+  }
+
+  bindSession() {
+    const {coachSessionID, coachSessionsAction} = this.props;
+    coachSessionsAction('bindSession', coachSessionID);
+  }
+
+  unbindSession() {
+    const {coachSessionID, coachSessionsAction} = this.props;
+    coachSessionsAction('unbindSession', coachSessionID);
+  }
 
   async openStream() {
     const {session} = this.props;
@@ -344,5 +347,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction},
+  {coachAction, coachSessionsAction},
 )(CardStream);
