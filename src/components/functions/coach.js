@@ -15,8 +15,6 @@ import {getVideoUUID} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
 import {userObject} from './users';
 
-
-
 import {store} from '../../../reduxStore';
 import {
   setCurrentSession,
@@ -586,8 +584,9 @@ const deleteSession = (objectID) => {
 
 const bindSession = ({objectID, forceOpening}) => {
   if (objectID) {
-    const isSessionBinded = store.getState().bindedSessions[objectID];
-    if (!isSessionBinded) {
+    const currentBinds = store.getState().bindedSessions;
+    console.log('is session binded ? ', objectID, currentBinds[objectID]);
+    if (!currentBinds || !currentBinds[objectID]) {
       database()
         .ref(`coachSessions/${objectID}`)
         .on('value', function(snapshot) {
@@ -595,7 +594,6 @@ const bindSession = ({objectID, forceOpening}) => {
           if (coachSessionFirebase) {
             store.dispatch(setSession(coachSessionFirebase));
             store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
-
             if (forceOpening) return sessionOpening(coachSessionFirebase);
           }
         });
