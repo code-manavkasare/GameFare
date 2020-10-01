@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {bindArchive, unbindArchive} from '../database/firebase/bindings';
+import {bindArchive, unbindArchive} from '../../database/firebase/bindings';
 
 class ArchiveBindManager extends Component {
   constructor(props) {

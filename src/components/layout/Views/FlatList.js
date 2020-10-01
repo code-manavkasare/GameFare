@@ -79,7 +79,6 @@ class FlatListComponent extends Component {
         </View>
       );
     };
-    console.log('listEmptyComponent', ListEmptyComponent);
     return (
       <FlatList
         data={noLazy ? list : list.slice(0, numberToRender)}
