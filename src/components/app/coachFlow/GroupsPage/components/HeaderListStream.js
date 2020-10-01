@@ -18,6 +18,8 @@ class HeaderListStream extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
+    console.log('test');
+    throw new Error('Sentry test error listStreams!');
   }
 
   header = () => {

@@ -38,13 +38,7 @@ class SinglePlayer extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    const {local, id, archivesAction} = this.props;
-    if (!local) {
-      archivesAction('bindArchive', id);
-    }
   };
-
-
 
   componentDidUpdate = (prevProps, prevState) => {
     const {videoFromCloud: prevVideoFromCloud} = prevProps;
@@ -76,7 +70,7 @@ class SinglePlayer extends Component {
     if (!local) {
       archivesAction('unbindArchive', id);
     }
-  }
+  };
 
   playerStyleByIndex = (i, total) => {
     const {landscape} = this.props;
