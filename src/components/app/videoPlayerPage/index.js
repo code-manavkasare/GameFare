@@ -144,6 +144,7 @@ class VideoPlayerPage extends Component {
   startRecording = async () => {
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.PinchableBoxRef?.resetPosition();
+      ref?.videoPlayerRef?.setRecording(true);
       ref?.toggleVisibleSeekBar(true);
       ref?.setState({displayButtonReplay: false});
     });
@@ -385,6 +386,7 @@ class VideoPlayerPage extends Component {
       session,
       videoInfos,
       currentSessionID: coachSessionID,
+      portrait,
     } = this.props;
     const {navigate} = navigation;
     let videosBeingShared = false;
@@ -400,6 +402,10 @@ class VideoPlayerPage extends Component {
 
     return (
       <VideoPlayerHeader
+        onRef={(ref) => {
+          this.headerRef = ref;
+        }}
+        portrait={portrait}
         isEditMode={isEditMode}
         isRecording={isRecording}
         isPreviewing={isPreviewing}
@@ -559,6 +565,7 @@ class VideoPlayerPage extends Component {
           videosBeingShared ? session.sharedVideos[archiveID] : {}
         }
         videoPlayerRefs={this.videoPlayerRefs}
+        clickVideo={(index) => this.headerRef?.handleClick(index)}
       />
     );
   };

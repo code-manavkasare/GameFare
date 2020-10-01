@@ -68,19 +68,19 @@ class VideoList extends Component {
           noLazy={true}
           cardList={({item}) => {
             return (
-              <View style={{height: 80, width: 80}}>
+              <View style={{height: 80, width: 80, overflow: 'visible'}}>
                 <CardArchive
                   style={{
                     height: 70,
-                    width: 70,
+                    width: 55,
 
-                    borderRadius: 35,
-                    borderWidth: 2,
+                    borderRadius: 5,
+                    borderWidth: 5,
                     borderColor: colors.off,
                     overflow: 'hidden',
                     marginRight: 3,
                     // backgroundColor: 'red',
-                    // ...styleApp.shade,
+                    ...styleApp.shadow,
                   }}
                   clickButtonDismiss={() => selectVideo(item)}
                   hideInformation={true}
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     width: '100%',
     // ...styleApp.shade,
     // backgroundColor: 'red',
-    bottom: 75,
+    bottom: 95,
     right: 0,
 
     zIndex: 30,

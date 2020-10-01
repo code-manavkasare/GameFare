@@ -43,7 +43,7 @@ class ToolRow extends Component {
       // ),
       Animated.timing(
         this.translateYBox,
-        native(val ? 0 : 75 + heightFooterFull),
+        native(val ? -10 : 75 + heightFooterFull),
       ),
     ]).start();
   };
@@ -57,6 +57,7 @@ class ToolRow extends Component {
     isSelected,
     badge,
     buttonDisabled,
+    overlayIcon,
   }) => {
     const {name, size, type, color} = icon;
     return (
@@ -67,15 +68,36 @@ class ToolRow extends Component {
               <AllIcon
                 name={name}
                 size={size}
-                color={isSelected ? color : colors.greyDark}
+                color={isSelected ? color : colors.greyMidDark}
                 type={type}
               />
+              {overlayIcon && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: overlayIcon.top,
+                    right: overlayIcon.right,
+                  }}>
+                  <AllIcon
+                    name={overlayIcon.name}
+                    size={overlayIcon.size}
+                    color={isSelected ? overlayIcon.color : colors.greyMidDark}
+                    type={overlayIcon.type}
+                  />
+                </View>
+              )}
               {label && (
                 <Text
                   style={[
                     styleApp.textBold,
                     styleApp.smallText,
-                    {color: isSelected ? color : colors.greyDark, marginTop: 3},
+                    {
+                      color: isSelected ? color : colors.greyMidDark,
+                      marginTop: 8,
+                      textAlign: 'center',
+                      maxWidth: '80%',
+                      fontSize: 12,
+                    },
                   ]}>
                   {label} {badge && badge !== 0 ? `(${badge})` : ''}
                 </Text>
@@ -85,8 +107,8 @@ class ToolRow extends Component {
         }}
         style={style}
         click={() => !buttonDisabled && click()}
-        color={backgroundColor}
-        onPressColor={onPressColor}
+        color={isSelected ? backgroundColor : colors.white}
+        onPressColor={isSelected ? onPressColor : colors.white}
       />
     );
   };
@@ -131,7 +153,7 @@ class ToolRow extends Component {
             },
           ]}>
           <Row style={{overflow: 'hidden'}}>
-            <Col size={25} style={styleApp.center3}>
+            {/* <Col size={25} style={styleApp.center3}>
               {this.button({
                 icon: {
                   name: isButton2Selected ? 'close' : 'chevron-left',
@@ -145,18 +167,26 @@ class ToolRow extends Component {
                 style: styles.button,
                 click: () => clickButton1({forceSelect: true}),
               })}
-            </Col>
+            </Col> */}
             {displayButton0 && (
               <Col size={25} style={styleApp.center3}>
                 {this.button({
                   icon: {
-                    name: 'play',
-                    type: 'moon',
+                    name: 'user-friends',
+                    type: 'font',
                     color: colors.white,
                     size: 20,
                   },
-                  label: 'Share live',
-                  backgroundColor: colors.primary,
+                  overlayIcon: {
+                    name: 'play',
+                    type: 'font',
+                    color: colors.white,
+                    size: 10,
+                    top: -2,
+                    right: 10,
+                  },
+                  label: 'Watch Live',
+                  backgroundColor: colors.blue,
 
                   isSelected: selectedVideos.length > 0,
                   buttonDisabled: selectedVideos.length === 0,
@@ -171,7 +201,7 @@ class ToolRow extends Component {
               {this.button({
                 icon: {
                   name: 'play',
-                  type: 'moon',
+                  type: 'font',
                   color: colors.primary,
                   size: 20,
                 },
@@ -206,7 +236,7 @@ class ToolRow extends Component {
             <Col size={25} style={styleApp.center}>
               {this.button({
                 icon: {
-                  name: 'trash-alt',
+                  name: 'trash',
                   type: 'font',
                   color: colors.primary,
                   size: 20,
@@ -241,14 +271,11 @@ const styles = StyleSheet.create({
     // borderLeftWidth: 1,
     // borderTopWidth: 1,
     // borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    width: '100%',
+    width: '95%',
+    left: '2.5%',
     position: 'absolute',
     height: '100%',
-    right: 0,
-    // borderTopLeftRadius: 35,
-    // borderBottomLeftRadius: 35,
+    borderRadius: 55,
     borderColor: colors.off,
     backgroundColor: colors.white,
     overflow: 'hidden',

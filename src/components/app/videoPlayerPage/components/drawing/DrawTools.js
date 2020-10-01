@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated, Image, Alert} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
+import {BlurView} from '@react-native-community/blur';
 
 import ButtonColor from '../../../../layout/Views/Button';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
 import {valueColor} from '../../../../functions/pictures';
-
 class DrawTools extends Component {
   constructor(props) {
     super(props);
@@ -219,14 +219,25 @@ class DrawTools extends Component {
     );
   }
   buttons() {
-    const {landscape} = this.props;
-
+    const {landscape, topVideo} = this.props;
     let marginTop = 100;
     if (landscape) marginTop = 70;
+    if (!topVideo) {
+      marginTop = 10;
+    }
+    const blurViewStyle = {
+      position: 'absolute',
+      zIndex: -1,
+      minHeight: '115%',
+      ...styleApp.fullSize,
+      top: 0,
+      borderRadius: 30,
+    };
 
     return (
       <View style={[styles.colButtonsRight, {marginTop}]}>
         {this.toolsDraw()}
+        <BlurView style={blurViewStyle} blurType="dark" blurAmount={10} />
       </View>
     );
   }
@@ -238,15 +249,14 @@ class DrawTools extends Component {
 
 const styles = StyleSheet.create({
   colButtonsRight: {
-    top: 0,
+    top: 15,
     position: 'absolute',
-    left: '5%',
+    left: '2.5%',
     width: 60,
     flex: 1,
-    zIndex: 20,
+    zIndex: 1,
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: colors.title + '70',
     borderRadius: 30,
     ...styleApp.center,
   },

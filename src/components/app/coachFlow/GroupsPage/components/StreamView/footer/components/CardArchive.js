@@ -204,7 +204,7 @@ class CardArchive extends PureComponent {
             ) : (
               <AllIcons
                 name={'play'}
-                type="moon"
+                type="font"
                 size={10}
                 color={colors.white}
                 style={styleApp.shadowIcon}
