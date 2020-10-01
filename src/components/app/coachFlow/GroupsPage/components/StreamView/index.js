@@ -32,6 +32,7 @@ import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
 
 import {coachAction} from '../../../../../../actions/coachActions';
+import {coachSessionsAction} from '../../../../../../actions/coachSessionsActions';
 import {userAction} from '../../../../../../actions/userActions';
 import {layoutAction} from '../../../../../../actions/layoutActions';
 import {
@@ -40,7 +41,6 @@ import {
   userPartOfSession,
   getVideosSharing,
   getMember,
-  bindSession,
 } from '../../../../../functions/coach';
 
 import {permission} from '../../../../../functions/pictures';
@@ -73,6 +73,7 @@ class GroupsPage extends Component {
       open: false,
       portrait: true,
       date: 0,
+      currentSessionBound: false,
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -168,6 +169,7 @@ class GroupsPage extends Component {
       },
     };
   }
+
   componentDidMount() {
     const {navigation} = this.props;
     this.refreshTokenMember();
@@ -189,12 +191,17 @@ class GroupsPage extends Component {
       currentScreenSize,
       route,
     } = this.props;
+    const {currentSessionBound} = this.state;
     const {portrait} = currentScreenSize;
     if (currentSessionID === undefined && prevProps.currentSessionID) {
       this.props.layoutAction('setGeneralSessionRecording', false);
     }
-    // if (route?.params?.coachSessionID !== currentSessionID)
-    //   return bindSession(route?.params?.coachSessionID, true);
+    if (currentSessionID && !currentSessionBound) {
+      this.bindSession();
+    }
+    if (!currentSessionID && currentSessionBound) {
+      this.unbindSession();
+    }
     if (portrait !== prevProps.currentScreenSize.portrait && currentSessionID) {
       database()
         .ref(`coachSessions/${currentSessionID}/members/${userID}`)
@@ -224,9 +231,28 @@ class GroupsPage extends Component {
       } catch (e) {}
     }
   }
+
+  componentWillUnmount() {
+    const {currentSessionID, currentSessionBound} = this.props;
+    if (currentSessionID && currentSessionBound) {
+      this.unbindSession();
+    }
+  }
+
+  bindSession() {
+    const {coachSessionsAction, currentSessionID} = this.props;
+    coachSessionsAction('bindSession', currentSessionID);
+    this.setState({currentSessionBound: true});
+  }
+
+  unbindSession() {
+    const {coachSessionsAction, currentSessionID} = this.props;
+    coachSessionsAction('unbindSession', currentSessionID);
+    this.setState({currentSessionBound: false});
+  }
+
   popupPermissionRecording() {
     let {userID, currentSessionID: coachSessionID, session} = this.props;
-
     const member = getMember(session, userID);
     if (!member) {
       return;
@@ -650,6 +676,7 @@ export default connect(
   mapStateToProps,
   {
     coachAction,
+    coachSessionsAction,
     userAction,
     layoutAction,
   },
