@@ -36,9 +36,9 @@ export default class HeaderUserDirectory extends Component {
             goBack();
           }
         }}
-        icon1={'close'}
-        typeIcon1="mat"
-        sizeIcon1={23}
+        icon1={'times'}
+        typeIcon1="font"
+        sizeIcon1={17}
         colorIcon1={colors.title}
         clickButton1={() => goBack()}
       />

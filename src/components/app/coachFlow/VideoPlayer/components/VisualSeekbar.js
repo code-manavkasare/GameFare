@@ -4,6 +4,7 @@ import {BlurView} from '@react-native-community/blur';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
+import {HomeIndicator} from 'react-native-home-indicator';
 
 import CurrentTime from './CurrentTime';
 
@@ -165,7 +166,7 @@ class VisualSeekBar extends Component {
     const {recordedActions, isRecording} = this.props;
     const {visible: visibleState} = this.state;
     const visible = force !== undefined ? !force : visibleState;
- 
+
     if (!recordedActions || isRecording || force !== undefined) {
       Animated.parallel([
         Animated.timing(this._revealSeekbar, native(visible ? 0 : 1, 200)),
@@ -201,7 +202,7 @@ class VisualSeekBar extends Component {
       const {seekbar} = this.state;
       const newTime =
         ((toValue - seekbar.xOffset._value) / seekbar.width._value) * totalTime;
- 
+
       if (!paused) {
         onSlidingStart(newTime);
       }
@@ -420,6 +421,7 @@ class VisualSeekBar extends Component {
       height,
       opacity,
       transform: [{translateY}],
+      zIndex: 4,
     };
 
     return (
@@ -427,7 +429,7 @@ class VisualSeekBar extends Component {
         pointerEvents={visible ? null : 'none'}
         style={containerStyle}>
         {this.seekbar()}
-
+        <HomeIndicator autoHidden />
         <ControlBar
           disableControls={disableControls}
           size={size}
@@ -458,7 +460,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     overflow: 'hidden',
     borderRadius: 25,
-    bottom: sizes.marginBottomApp + 5,
+    bottom: 10,
     width: '96%',
   },
   textTime: {

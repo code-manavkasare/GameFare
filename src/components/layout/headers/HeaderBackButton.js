@@ -439,10 +439,15 @@ class HeaderBackButton extends Component {
       textHeader,
       clickImgHeader,
       searchBar,
+      containerStyle,
+      marginTop: marginTopProp,
     } = this.props;
     const {portrait} = currentScreenSize;
-    const marginTop = portrait ? marginTopApp : marginTopAppLandscape;
-
+    const marginTop = marginTopProp
+      ? marginTopProp
+      : portrait
+      ? marginTopApp
+      : marginTopAppLandscape;
     const {
       AnimateOpacityTitle,
       AnimateBackgroundView,
@@ -458,6 +463,7 @@ class HeaderBackButton extends Component {
       borderBottomWidth: borderWidth,
       borderColor: borderColorView,
       width: '100%',
+      ...containerStyle,
     };
 
     return (

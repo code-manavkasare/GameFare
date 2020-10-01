@@ -23,24 +23,26 @@ class FooterButton extends React.Component {
     };
   }
   componentDidUpdate(prevProps, prevState) {
-    const {generalSessionRecording} = this.props;
+    const {generalSessionRecording, inSession} = this.props;
     if (
-      generalSessionRecording &&
-      generalSessionRecording !== prevProps.generalSessionRecording
+      (generalSessionRecording &&
+        generalSessionRecording !== prevProps.generalSessionRecording) ||
+      (inSession && inSession !== prevProps.inSession)
     ) {
       this.indicatorAnimation();
     }
   }
   indicatorAnimation() {
-    const {generalSessionRecording} = this.props;
-    if (generalSessionRecording) {
+    const {generalSessionRecording, inSession} = this.props;
+    if (generalSessionRecording || inSession) {
       Animated.timing(this.recordingIndicator.color, native(1, 1500)).start(
         () => {
-          Animated.timing(this.recordingIndicator.color, native(0, 1500)).start(
-            () => {
-              this.indicatorAnimation();
-            },
-          );
+          Animated.timing(
+            this.recordingIndicator.color,
+            native(generalSessionRecording ? 0 : 0.65, 1500),
+          ).start(() => {
+            this.indicatorAnimation();
+          });
         },
       );
     } else {
@@ -48,7 +50,21 @@ class FooterButton extends React.Component {
     }
   }
   recordButton() {
-    const {tintColor, generalSessionRecording} = this.props;
+    const {
+      tintColor,
+      generalSessionRecording,
+      inSession,
+      inSessionIndication,
+    } = this.props;
+    const inSessionContainerStyle = {
+      ...styleApp.fullSize,
+      opacity: this.recordingIndicator.color,
+      position: 'absolute',
+    };
+    const inSessionViewStyle = {
+      ...styles.inSessionView,
+      opacity: inSessionIndication,
+    };
     return (
       <Reanimated.View style={{...styles.recordButton, borderColor: tintColor}}>
         {generalSessionRecording && (
@@ -60,6 +76,13 @@ class FooterButton extends React.Component {
               }}
             />
           </View>
+        )}
+        {inSession && !generalSessionRecording && (
+          <Animated.View style={inSessionContainerStyle}>
+            <Reanimated.View style={inSessionViewStyle}>
+              <Text style={styles.inSessionText}>Live</Text>
+            </Reanimated.View>
+          </Animated.View>
         )}
       </Reanimated.View>
     );
@@ -77,6 +100,7 @@ class FooterButton extends React.Component {
       scale,
       disableAnimation,
       numberNotifications,
+      tintColor,
     } = this.props;
     const conditionDisplayPastille =
       Object.values(discussions).filter((discussion) => {
@@ -102,7 +126,7 @@ class FooterButton extends React.Component {
     const labelStyle = [
       styleApp.textBold,
       {
-        color: colors.greyMidDark,
+        color: tintColor,
         marginTop: 3,
         fontSize: 13,
       },
@@ -135,7 +159,7 @@ class FooterButton extends React.Component {
                 <AllIcons
                   name={icon.name}
                   size={icon.size}
-                  color={colors.greyMidDark}
+                  color={tintColor}
                   type={icon.type}
                   reanimated
                 />
@@ -187,7 +211,7 @@ const styles = StyleSheet.create({
   buttonView: {
     ...styleApp.shadowWeak,
     ...styleApp.center,
-    marginTop: 50,
+    marginTop: 35,
     height: heightFooter,
     width: '100%',
   },
@@ -196,6 +220,18 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 5,
     fontSize: 12.5,
+  },
+  inSessionView: {
+    ...styleApp.center,
+    ...styleApp.fullSize,
+    position: 'absolute',
+    backgroundColor: colors.red,
+    borderRadius: 100,
+  },
+  inSessionText: {
+    ...styleApp.textBold,
+    color: colors.white,
+    fontSize: 18,
   },
   rowInButton: {
     height: '100%',
@@ -215,7 +251,9 @@ const styles = StyleSheet.create({
     height: 70,
     width: 70,
     borderRadius: 35,
+    marginTop: 5,
     borderWidth: 6.5,
+    overflow: 'visible',
   },
   recordButtonActive: {
     height: 30,

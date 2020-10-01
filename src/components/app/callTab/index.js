@@ -217,8 +217,8 @@ class CallTab extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           userConnected={userConnected}
           headerTitle={actionHeader}
-          openUserDirectoryIcon={inlineSearch ? 'share' : 'searchFooter'}
-          typeIcon2={'moon'}
+          openUserDirectoryIcon={inlineSearch ? 'share' : 'search'}
+          typeIcon2={inlineSearch ? 'moon' : 'font'}
           searchBar={
             inlineSearch && (
               <SearchInput

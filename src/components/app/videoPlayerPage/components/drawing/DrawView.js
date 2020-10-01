@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated, PanResponder} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
@@ -70,8 +70,7 @@ class DrawView extends Component {
 
       this.setState({drawings: {}});
       onDrawingChange(index, {});
-    } catch (err) {
-    }
+    } catch (err) {}
   };
   undo = () => {
     const {drawings} = this.state;
@@ -116,12 +115,12 @@ class DrawView extends Component {
       onDrawingChange,
       userID,
       videoBeingShared,
+      clickVideo,
     } = this.props;
     const {drawSetting} = this.state;
     let {path} = event;
     const id = generateID();
     let {data} = path;
-    
     if (drawSetting === 'custom') {
       data = data.map((dot) => {
         let x = Number(dot.split(',')[0]);
@@ -130,6 +129,7 @@ class DrawView extends Component {
         y = y / heightDrawView;
         return x + ',' + y;
       });
+      if (data.length < 3) clickVideo(index);
     } else {
       data = {
         ...path,

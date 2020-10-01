@@ -434,6 +434,8 @@ PODS:
     - React
   - react-native-geolocation (2.0.2):
     - React
+  - react-native-home-indicator (0.2.6):
+    - React-Core
   - react-native-image-picker (1.1.0):
     - React
   - react-native-image-resizer (1.2.3):
@@ -706,6 +708,7 @@ DEPENDENCIES:
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-geocoder (from `../node_modules/react-native-geocoder`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
+  - react-native-home-indicator (from `../node_modules/react-native-home-indicator`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
   - react-native-job-queue (from `../node_modules/react-native-job-queue`)
@@ -908,6 +911,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-geocoder"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
+  react-native-home-indicator:
+    :path: "../node_modules/react-native-home-indicator"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-image-resizer:
@@ -1124,6 +1129,7 @@ SPEC CHECKSUMS:
   react-native-flipper: 098460f9ad5db006e7b834f722c285642018cb8d
   react-native-geocoder: 757427682892bb256f3b3745858cc90eba148a8e
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
+  react-native-home-indicator: 92b86b0fbe85a50c9cba286ad7bae4a2c319238a
   react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b
   react-native-image-resizer: 2f1577efa3bc762597681f530c8e8d05ce0ceeb3
   react-native-job-queue: f0d7bac7fc4d62fb376c5c862898791065b900a2

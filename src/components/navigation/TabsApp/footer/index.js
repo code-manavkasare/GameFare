@@ -141,6 +141,7 @@ class Footer extends React.Component {
       colors: propColors,
       userConnected,
       position,
+      currentSessionID,
     } = this.props;
     const {disableAnimation} = this.state;
     if (!userConnected) {
@@ -166,14 +167,21 @@ class Footer extends React.Component {
             let inputRange = state.routes.map((_, i) => i);
             inputRange.unshift(-1);
             inputRange.push(state.routes.length);
+            const inSession = currentSessionID && index === 1;
             const buttonColor = Animated.interpolateColors(position, {
               inputRange,
               outputColorRange: inputRange.map((i) => {
                 if (i === 1 && !disableAnimation) {
-                  return colors.white;
+                  return index === 1 ? colors.white : colors.greyLight;
                 } else {
-                  return propColors.inactive;
+                  return inSession ? colors.grey : propColors.inactive;
                 }
+              }),
+            });
+            const inSessionIndication = Animated.interpolate(position, {
+              inputRange,
+              outputRange: inputRange.map((i) => {
+                return i === 1 && !disableAnimation ? 0 : 1;
               }),
             });
             const scale =
@@ -198,6 +206,8 @@ class Footer extends React.Component {
                   index={index}
                   numberRoutes={state.routes.length - 2}
                   label={label}
+                  inSession={inSession}
+                  inSessionIndication={inSessionIndication}
                 />
               </Col>
             );
@@ -231,7 +241,7 @@ const styles = StyleSheet.create({
     // ...styleApp.shadowWeak,
     ...styleApp.center2,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp,
+    height: heightFooter + marginBottomApp + 30,
     position: 'absolute',
     zIndex: 1,
     width: '100%',
@@ -256,7 +266,9 @@ const styles = StyleSheet.create({
     ...styleApp.fullSize,
     overflow: 'hidden',
     width: sizes.width * 0.85,
-    marginTop: -15,
+    marginTop: 0,
+    paddingTop: 15,
+    zIndex: 2,
   },
   absoluteButtonMoving: {
     ...styleApp.center,
@@ -275,6 +287,7 @@ const styles = StyleSheet.create({
     height: 5,
     bottom: sizes.marginBottomApp - 10,
     width: '100%',
+    zIndex: 0,
   },
   labelIndicator: {
     borderRadius: 10,
@@ -288,6 +301,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     isFooterVisible: state.layout.isFooterVisible,
+    currentSessionID: state.coach.currentSessionID,
     activeTab: state.layout.activeTab,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
