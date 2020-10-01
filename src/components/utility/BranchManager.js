@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import branch from 'react-native-branch';
 import database from '@react-native-firebase/database';
 import {store} from '../../../reduxStore';
-import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
+import {setSession} from '../../actions/coachSessionsActions';
 import {
   createCoachSessionFromUserIDs,
   addMembersToSessionByID,
@@ -97,11 +97,7 @@ class BranchManager extends Component {
         const coachSessionFirebase = snapshot.val();
         if (coachSessionFirebase) {
           await store.dispatch(setSession(coachSessionFirebase));
-          await store.dispatch(
-            setSessionBinded({id: sessionID, isBinded: false}),
-          );
-          await bindSession({objectID: sessionID});
-          await addMembersToSessionByIDs(sessionID, [userID]);
+          await addMembersToSessionByID(sessionID, [userID]);
           if (
             coachSessionFirebase.members[sentBy] &&
             coachSessionFirebase.members[sentBy].isConnected

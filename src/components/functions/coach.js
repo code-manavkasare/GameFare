@@ -15,8 +15,6 @@ import {getVideoUUID} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
 import {userObject} from './users';
 
-
-
 import {store} from '../../../reduxStore';
 import {
   setCurrentSession,
@@ -25,7 +23,7 @@ import {
   unsetCurrentSession,
 } from '../../actions/coachActions';
 import {shareVideosWithTeams} from './videoManagement';
-import {setSession, setSessionBinded} from '../../actions/coachSessionsActions';
+import {setSession} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
 import {enqueueUploadTasks} from '../../actions/uploadQueueActions';
 import {setArchive} from '../../actions/archivesActions';
@@ -98,7 +96,6 @@ const createCoachSession = async (user, members, sessionID = null) => {
     .ref(`coachSessions/${coachSessionID}`)
     .update(session);
   await store.dispatch(setSession(session));
-  bindSession({objectID: session.objectID});
   return session;
 };
 
@@ -558,7 +555,6 @@ const capitalize = (str) => {
 
 const deleteSession = (objectID) => {
   const userID = store.getState().user.userID;
-
   navigate('Alert', {
     title: 'Do you want to leave this conversation?',
     textButton: 'Leave',
@@ -584,39 +580,7 @@ const deleteSession = (objectID) => {
   });
 };
 
-const bindSession = ({objectID, forceOpening}) => {
-  if (objectID) {
-    const isSessionBinded = store.getState().bindedSessions[objectID];
-    if (!isSessionBinded) {
-      database()
-        .ref(`coachSessions/${objectID}`)
-        .on('value', function(snapshot) {
-          const coachSessionFirebase = snapshot.val();
-          if (coachSessionFirebase) {
-            store.dispatch(setSession(coachSessionFirebase));
-            store.dispatch(setSessionBinded({id: objectID, isBinded: true}));
 
-            if (forceOpening) return sessionOpening(coachSessionFirebase);
-          }
-        });
-    } else {
-      if (forceOpening) {
-        const coachSessionFirebase = store.getState().coachSessions[objectID];
-        return sessionOpening(coachSessionFirebase);
-      }
-    }
-  }
-};
-
-const unbindSession = async (objectID) => {
-  const isSessionBinded = store.getState().bindedSessions[objectID];
-  if (isSessionBinded) {
-    await database()
-      .ref(`coachSessions/${objectID}`)
-      .off();
-    store.dispatch(setSessionBinded({id: objectID, isBinded: false}));
-  }
-};
 
 const loadAndOpenSession = async (sessionID) => {
   const coachSession = await database()
@@ -625,8 +589,6 @@ const loadAndOpenSession = async (sessionID) => {
   const coachSessionFirebase = coachSession.val();
   if (coachSessionFirebase) {
     await store.dispatch(setSession(coachSessionFirebase));
-    await store.dispatch(setSessionBinded({id: sessionID, isBinded: false}));
-    await bindSession({objectID: sessionID});
     sessionOpening(coachSessionFirebase);
   }
 };
@@ -779,8 +741,6 @@ module.exports = {
   openMemberAcceptCharge,
   capitalize,
   deleteSession,
-  bindSession,
-  unbindSession,
   createSession,
   createCoachSessionFromUserIDs,
   addMembersToSession,

@@ -4,7 +4,8 @@ import {
   DELETE_SESSION,
   RESET_SESSIONS,
   SET_SESSION,
-  SET_SESSION_BINDED,
+  BIND_SESSION,
+  UNBIND_SESSION,
 } from './types';
 
 const setSession = (value) => ({
@@ -16,9 +17,14 @@ const resetSessions = () => ({
   type: RESET_SESSIONS,
 });
 
-const setSessionBinded = (value) => ({
-  type: SET_SESSION_BINDED,
-  session: value,
+const bindSession = (sessionID) => ({
+  type: BIND_SESSION,
+  sessionID,
+});
+
+const unbindSession = (sessionID) => ({
+  type: UNBIND_SESSION,
+  sessionID,
 });
 
 const deleteSession = (sessionId) => {
@@ -28,4 +34,28 @@ const deleteSession = (sessionId) => {
   return {type: DELETE_SESSION, sessionId};
 };
 
-module.exports = {deleteSession, resetSessions, setSession, setSessionBinded};
+const coachSessionsAction = (val, data) => {
+  return async function(dispatch) {
+    if (val === 'setSession') {
+      await dispatch(setSession(data));
+    } else if (val === 'resetSessions') {
+      await dispatch(resetSessions(data));
+    } else if (val === 'bindSession') {
+      await dispatch(bindSession(data));
+    } else if (val === 'unbindSession') {
+      await dispatch(unbindSession(data));
+    } else if (val === 'deleteSession') {
+      await dispatch(deleteSession(data));
+    }
+    return true;
+  };
+};
+
+export {
+  coachSessionsAction,
+  deleteSession,
+  resetSessions,
+  setSession,
+  bindSession,
+  unbindSession,
+};
