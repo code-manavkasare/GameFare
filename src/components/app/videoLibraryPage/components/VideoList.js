@@ -11,7 +11,7 @@ import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
 import ButtonColor from '../../../layout/Views/Button';
-import Loader from '../../../layout/loaders/Loader';
+import VideoBeingShared from './VideoBeingShared';
 import styleApp from '../../../style/style';
 import AllIcon from '../../../layout/icons/AllIcons';
 import {native} from '../../../animations/animations';

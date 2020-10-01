@@ -68,13 +68,21 @@ class ListVideoCalls extends Component {
       hideCallButton,
       currentSessionID,
       AnimatedHeaderValue,
+      openUserDirectory,
     } = this.props;
-    if (!userConnected || coachSessions.length === 0) {
+    if (!userConnected) {
       return null;
     }
     return (
       <FlatListComponent
         list={coachSessions}
+        ListEmptyComponent={{
+          clickButton: () => openUserDirectory(),
+          textButton: 'Search',
+          text: 'Search for users to start a call',
+          iconButton: 'search',
+          image: require('../../../../img/images/search.png'),
+        }}
         cardList={({item: session}) => (
           <View style={styles.cardStreamContainerStyle}>
             <CardStreamView

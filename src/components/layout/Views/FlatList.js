@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated, FlatList} from 'react-native';
+import {Text, StyleSheet, View, Animated, FlatList, Image} from 'react-native';
 import isEqual from 'lodash.isequal';
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import {height} from '../../style/sizes';
 import {timeout} from '../../functions/coach';
+import Button from '../../layout/buttons/Button';
 
 import Loader from '../../layout/loaders/Loader';
 
@@ -27,13 +28,7 @@ class FlatListComponent extends Component {
     }
     return true;
   }
-  // static getDerivedStateFromProps(props, state) {
-  //   if (props.list.length > state.numberToRender)
-  //     return {
-  //       numberToRender: props.list.length,
-  //     };
-  //   return {};
-  // }
+
   async onEndReached() {
     const {list, incrementRendering} = this.props;
     const {numberToRender} = this.state;
@@ -65,6 +60,7 @@ class FlatListComponent extends Component {
       onScrollBeginDrag,
       onScroll,
       noLazy,
+      ListEmptyComponent,
     } = this.props;
 
     const containerStyle = {
@@ -83,6 +79,7 @@ class FlatListComponent extends Component {
         </View>
       );
     };
+    console.log('listEmptyComponent', ListEmptyComponent);
     return (
       <FlatList
         data={noLazy ? list : list.slice(0, numberToRender)}
@@ -119,11 +116,52 @@ class FlatListComponent extends Component {
         }
         onEndReached={() => this.onEndReached()}
         onEndReachedThreshold={0.1}
-        ListEmptyComponent={
-          <View style={styleApp.marginView}>
-            <Text style={styleApp.text} />
+        ListEmptyComponent={() => (
+          <View
+            style={[
+              styleApp.marginView,
+              styleApp.center,
+              {height: 250, marginTop: 20},
+            ]}>
+            <Image
+              source={ListEmptyComponent.image}
+              style={{height: 50, width: 50, marginBottom: 20}}
+            />
+            <Text style={styleApp.textBold}>{ListEmptyComponent.text}</Text>
+            <Button
+              backgroundColor="primary"
+              onPressColor={colors.primaryLight}
+              enabled={true}
+              text={ListEmptyComponent.textButton}
+              icon={{
+                name: ListEmptyComponent.iconButton,
+                size: 24,
+                type: 'font',
+                color: colors.white,
+              }}
+              styleButton={{height: 55, marginTop: 30}}
+              loader={false}
+              click={() => ListEmptyComponent.clickButton()}
+            />
+            {ListEmptyComponent.clickButton2 && (
+              <Button
+                backgroundColor="green"
+                onPressColor={colors.greenLight}
+                enabled={true}
+                text={ListEmptyComponent.textButton2}
+                icon={{
+                  name: ListEmptyComponent.iconButton2,
+                  size: 24,
+                  type: 'font',
+                  color: colors.white,
+                }}
+                styleButton={{height: 55, marginTop: 30}}
+                loader={false}
+                click={() => ListEmptyComponent.clickButton2()}
+              />
+            )}
           </View>
-        }
+        )}
         onScroll={
           onScroll
             ? onScroll

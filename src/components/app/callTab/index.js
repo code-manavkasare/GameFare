@@ -176,6 +176,7 @@ class CallTab extends Component {
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
+            openUserDirectory={this.openUserDirectory.bind(this)}
             hideCallButton={action !== 'call'}
           />
         )}
@@ -196,7 +197,24 @@ class CallTab extends Component {
       </View>
     );
   }
-
+  openUserDirectory = async () => {
+    const {navigation} = this.props;
+    const {inlineSearch, branchLink, archivesToShare, action} = this.state;
+    console.log('inlineSearch', inlineSearch);
+    if (inlineSearch) {
+      const result = await Share.share({url: branchLink});
+      if (result.action === Share.sharedAction) {
+        this.setBranchLink();
+      }
+    } else {
+      await this.setState({selectedUsers: {}, selectedSessions: {}});
+      navigation.navigate('UserDirectory', {
+        action,
+        archivesToShare,
+        branchLink,
+      });
+    }
+  };
   render() {
     const {
       permissionsCamera,
@@ -232,23 +250,7 @@ class CallTab extends Component {
               />
             )
           }
-          openUserDirectory={
-            inlineSearch
-              ? async () => {
-                  const result = await Share.share({url: branchLink});
-                  if (result.action === Share.sharedAction) {
-                    this.setBranchLink();
-                  }
-                }
-              : () => {
-                  this.setState({selectedUsers: {}, selectedSessions: {}});
-                  navigate('UserDirectory', {
-                    action,
-                    archivesToShare,
-                    branchLink,
-                  });
-                }
-          }
+          openUserDirectory={this.openUserDirectory.bind(this)}
           openMessageHistoryIcon={modal ? 'close' : 'comment-alt'}
           typeIcon1={modal ? 'mat' : 'font'}
           openMessageHistory={

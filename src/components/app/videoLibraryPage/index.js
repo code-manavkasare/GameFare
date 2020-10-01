@@ -19,8 +19,7 @@ import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/co
 
 import {createShareVideosBranchUrl} from '../../database/branch';
 
-import {pickerlocalVideos} from './components/elements';
-import {rowTitle} from '../TeamPage/components/elements';
+import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
@@ -194,53 +193,8 @@ class VideoLibraryPage extends Component {
     }
   }
 
-  noVideos() {
-    const {navigate} = this.props.navigation;
-    return (
-      <View style={styleApp.marginView}>
-        <View style={styleApp.center}>
-          <Image
-            source={require('../../../img/logos/logoTitle.png')}
-            style={{
-              tintColor: colors.greyDark,
-              borderRadius: 25,
-              height: 100,
-              width: 300,
-              marginBottom: 30,
-              resizeMode: 'contain',
-            }}
-          />
-        </View>
-        <Button
-          text={'Add from library'}
-          icon={{
-            name: 'film',
-            size: 22,
-            type: 'font',
-            color: colors.white,
-          }}
-          backgroundColor={'blue'}
-          onPressColor={colors.greyDark}
-          click={() => this.addFromCameraRoll({selectOnly: false})}
-        />
-        <View style={{height: 20}} />
-        <Button
-          text={'Record video'}
-          icon={{
-            name: 'video',
-            size: 22,
-            type: 'font',
-            color: colors.white,
-          }}
-          backgroundColor={'blue'}
-          onPressColor={colors.greyDark}
-          click={() => navigate('Session')}
-        />
-      </View>
-    );
-  }
-
   listVideos() {
+    const {navigation} = this.props;
     const {videosArray, selectOnly, selectableMode} = this.state;
 
     const selectMargin = selectableMode ? 80 : 0;
@@ -251,6 +205,18 @@ class VideoLibraryPage extends Component {
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
+          ListEmptyComponent={{
+            clickButton: () => navigation.navigate('Session'),
+            textButton: 'Record',
+            iconButton: 'video',
+            clickButton2: () => this.addFromCameraRoll({selectOnly: false}),
+            textButton2: 'Pick from library',
+            iconButton2: 'images',
+            text: `You don't have any videos yet.`,
+
+            image: require('../../../img/images/video-player.png'),
+          }}
+          header={<VideoBeingShared />}
           numColumns={3}
           incrementRendering={12}
           initialNumberToRender={15}
@@ -334,7 +300,7 @@ class VideoLibraryPage extends Component {
             marginTop: sizes.heightHeaderHome + sizes.marginTopApp,
             zIndex: 10,
           }}>
-          {videosArray.length === 0 ? this.noVideos() : this.listVideos()}
+          {this.listVideos()}
         </View>
 
         {selectOnly && selectedVideos.length > 0 && (

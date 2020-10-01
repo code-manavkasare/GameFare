@@ -93,9 +93,9 @@ class CardArchive extends PureComponent {
     selectVideo(id, isSelected);
   };
   openVideo = async () => {
-    const {archive, coachSessionID, videosToOpen} = this.props;
+    const {archive, coachSessionID, videosToOpen, disableClick} = this.props;
     const {url, id} = archive;
-    if (url && url !== '') {
+    if (url && url !== '' && !disableClick) {
       openVideoPlayer({
         archives: videosToOpen ? videosToOpen.map((x) => x.id) : [id],
         open: true,
@@ -226,6 +226,7 @@ class CardArchive extends PureComponent {
       style,
       selectableMode,
       unclickable,
+      disableClick,
     } = this.props;
     const {
       id,
@@ -239,6 +240,7 @@ class CardArchive extends PureComponent {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
+        pointerEvents={disableClick ? 'none' : 'auto'}
         onPress={() =>
           unclickable
             ? true

@@ -119,23 +119,19 @@ class VideoPlayerPage extends Component {
         userIDSharing: personSharingScreen,
       });
 
-      if (personSharingScreen && videosBeingShared) {
+      if (videosBeingShared) {
         const prevVideos = Object.keys(
           session?.members[personSharingScreen]?.sharedVideos,
         );
         const nextVideos = Object.keys(
           nextSession?.members[personSharingScreen]?.sharedVideos,
         );
+
         if (
           archives.length !== nextVideos.length &&
           nextVideos.length !== prevVideos.length
         ) {
-          const videoToAdd = nextVideos.filter(
-            (item) => prevVideos.indexOf(item) == -1,
-          )[0];
-          let {archives: newArchives} = this.state;
-          newArchives = newArchives.concat([{id: videoToAdd}]);
-          this.setState({archives: newArchives});
+          this.setState({archives: nextVideos});
         }
       }
     }
@@ -474,7 +470,7 @@ class VideoPlayerPage extends Component {
               newArchives = newArchives.filter(function(x, i, a) {
                 return a.indexOf(x) === i;
               });
-              console.log('testdfvfdgg', newArchives);
+
               await this.setState({archives: newArchives});
               navigation.navigate('VideoPlayerPage', {
                 ...this.props.route.params,
@@ -571,7 +567,7 @@ class VideoPlayerPage extends Component {
   };
 
   buttonSharing = () => {
-    const {isEditMode} = this.state;
+    const {isEditMode, archives} = this.state;
     const {currentSessionID, videoInfos} = this.props;
     if (!currentSessionID) {
       return null;

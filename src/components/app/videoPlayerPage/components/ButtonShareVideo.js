@@ -31,18 +31,18 @@ class ButtonShareVideo extends Component {
     const {archives} = this.props;
     const prevPersonSharingScreen = isSomeoneSharingScreen(prevSession);
     const personSharingScreen = isSomeoneSharingScreen(session);
-    console.log('prevSession', prevSession);
-    console.log('session,', session);
+
     const isVideosWereBeingShared = isVideosAreBeingShared({
-      prevSession,
-      archives,
+      session: prevSession,
+      archives: Object.keys(archives),
       userIDSharing: prevPersonSharingScreen,
     });
     const isVideosBeingShared = isVideosAreBeingShared({
-      prevSession,
-      archives,
+      session,
+      archives: Object.keys(archives),
       userIDSharing: personSharingScreen,
     });
+
     if (isVideosWereBeingShared && !isVideosBeingShared)
       return openVideoPlayer({open: false});
   };
@@ -51,7 +51,7 @@ class ButtonShareVideo extends Component {
 
     let updates = {};
     for (let i in archives) {
-      const {id, local} = archives[i];
+      const {id} = archives[i];
       const stateVideo = getVideoState(i);
 
       const sharedVideosPath = `coachSessions/${coachSessionID}/sharedVideos/${id}`;
