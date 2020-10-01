@@ -70,7 +70,7 @@ export default class VideoPlayerHeader extends React.Component {
       AnimatedHeaderValue: this.AnimatedHeaderValue,
       sizeLoader: 40,
       initialTitleOpacity: 1,
-      onPressColorIcon1: colors.greyDark + '70',
+      onPressColorIcon1: 'transparent',
       nobackgroundColorIcon1: false,
       backgroundColorIcon1: 'transparent',
       initialBorderColorIcon: 'transparent',

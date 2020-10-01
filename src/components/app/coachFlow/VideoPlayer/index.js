@@ -133,7 +133,7 @@ export default class VideoPlayer extends Component {
     };
   }
   seek = (time) => {
-    this.player?.seek(time, 0);
+    this.player?.seek(time ? time : 0, 0);
   };
   seekDiff = async (diffTime) => {
     const {currentTime} = this.state;
@@ -410,7 +410,10 @@ export default class VideoPlayer extends Component {
                   key={index}
                   mixWithOthers={'mix'}
                   ignoreSilentSwitch={'ignore'}
-                  allowRecording={allowRecording || coachSessionID}
+                  allowRecording={
+                    allowRecording ||
+                    (coachSessionID !== false && coachSessionID !== undefined)
+                  }
                   source={{uri: url}}
                   style={styleApp.fullSize}
                   ref={(ref) => {

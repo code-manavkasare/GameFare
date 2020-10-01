@@ -26,6 +26,7 @@ class Footer extends React.Component {
       this.props.onRef(this);
     }
     this.notificationHandler();
+    this.handleCameraAvailability();
   }
   componentDidUpdate(prevProps, prevState) {
     const {index: currentIndex} = this.props.state;
@@ -33,6 +34,23 @@ class Footer extends React.Component {
       if (currentIndex !== 1 && prevProps.state.index !== 1) {
         this.smoothJump();
       }
+      this.handleCameraAvailability();
+    }
+  }
+  handleCameraAvailability() {
+    const {layoutAction} = this.props;
+    const {index: currentIndex} = this.props.state;
+    if (currentIndex === 1) {
+      if (this.cameraAvailability) {
+        clearTimeout(this.cameraAvailability);
+      }
+      layoutAction('setCameraAvailability', true);
+      console.log('show camera');
+    } else {
+      this.cameraAvailability = setTimeout(() => {
+        console.log('hide camera');
+        layoutAction('setCameraAvailability', false);
+      }, 2000);
     }
   }
   smoothJump() {

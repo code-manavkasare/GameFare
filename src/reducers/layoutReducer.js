@@ -1,4 +1,8 @@
-import {SET_LAYOUT, SET_GENERAL_SESSION_RECORDING} from '../actions/types';
+import {
+  SET_LAYOUT,
+  SET_GENERAL_SESSION_RECORDING,
+  SET_CAMERA_AVAILABILITY,
+} from '../actions/types';
 import {Dimensions} from 'react-native';
 const {height, width} = Dimensions.get('screen');
 
@@ -17,6 +21,9 @@ const initialState = {
     portrait: true,
   },
   generalSessionRecording: false,
+
+  //Handles unnecessary camera usage
+  cameraAvailability: false,
 };
 
 const layoutReducer = (state = initialState, action) => {
@@ -30,6 +37,11 @@ const layoutReducer = (state = initialState, action) => {
       return {
         ...state,
         generalSessionRecording: action.value,
+      };
+    case SET_CAMERA_AVAILABILITY:
+      return {
+        ...state,
+        cameraAvailability: action.value,
       };
     default:
       return state;
