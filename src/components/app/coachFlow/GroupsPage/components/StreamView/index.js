@@ -352,7 +352,7 @@ class GroupsPage extends Component {
       currentWidth,
       portrait,
     } = this.props.currentScreenSize;
-    console.log('coachSession', coachSession);
+
     const members = subscribers
       .map((streamId) => {
         return Object.values(coachSession.members).filter((member) => {

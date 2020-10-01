@@ -204,7 +204,7 @@ class SinglePlayer extends Component {
 
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
-
+ 
     const {
       paused,
       currentTime,
