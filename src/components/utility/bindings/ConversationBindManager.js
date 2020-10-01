@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {bindSession, unbindSession} from '../database/firebase/bindings';
+import {bindConversation, unbindConversation} from '../../database/firebase/bindings';
 
-class SessionBindManager extends Component {
+class ConversationBindManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,8 +18,8 @@ class SessionBindManager extends Component {
     const {bindCounts} = this.props;
     if (bindCounts && prevBindCounts) {
       const matchedBindCounts = Object.keys(bindCounts).reduce(
-        (prevMatched, id) => {
-          return prevMatched && prevBindCounts[id] === bindCounts[id];
+        (matchedSoFar, id) => {
+          return matchedSoFar && prevBindCounts[id] === bindCounts[id];
         },
         true,
       );
@@ -36,10 +36,10 @@ class SessionBindManager extends Component {
         const count = newBindCounts[id];
         if ((!count || count === 0) && hasFirebaseBinding[id]) {
           hasFirebaseBinding[id] = false;
-          unbindSession(id);
+          unbindConversation(id);
         } else if (count && count > 0 && !hasFirebaseBinding[id]) {
           hasFirebaseBinding[id] = true;
-          bindSession(id);
+          bindConversation(id);
         }
       });
       this.setState({hasFirebaseBinding});
@@ -51,11 +51,11 @@ class SessionBindManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    bindCounts: state.bindedSessions,
+    bindCounts: state.bindedConversations,
   };
 };
 
 export default connect(
   mapStateToProps,
   {},
-)(SessionBindManager);
+)(ConversationBindManager);

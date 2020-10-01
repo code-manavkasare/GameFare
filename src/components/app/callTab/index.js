@@ -178,6 +178,7 @@ class CallTab extends Component {
             onClick={(session) => this.selectSession(session)}
             openUserDirectory={this.openUserDirectory.bind(this)}
             hideCallButton={action !== 'call'}
+            liveSessionHeader={action === 'call'}
           />
         )}
         {searchActive && searchText === '' && (

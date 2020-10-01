@@ -18,32 +18,12 @@ import Config from 'react-native-config';
 import database from '@react-native-firebase/database';
 import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
+import axios from 'axios';
 import Orientation from 'react-native-orientation-locker';
-
-const {width} = Dimensions.get('screen');
-
 import Mixpanel from 'react-native-mixpanel';
-import {mixPanelToken} from '../../../../../database/firebase/tokens';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 import {navigate} from '../../../../../../../NavigationService';
-
-import Header from './components/Header';
-import Loader from '../../../../../layout/loaders/Loader';
-
-import {coachAction} from '../../../../../../actions/coachActions';
-import {coachSessionsAction} from '../../../../../../actions/coachSessionsActions';
-import {userAction} from '../../../../../../actions/userActions';
-import {layoutAction} from '../../../../../../actions/layoutActions';
-import {
-  isUserAlone,
-  isSomeoneSharingScreen,
-  userPartOfSession,
-  getVideosSharing,
-  getMember,
-} from '../../../../../functions/coach';
-
-import {permission} from '../../../../../functions/pictures';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -54,11 +34,32 @@ import {
   ratio,
 } from '../../../../../style/sizes';
 
+import {coachAction} from '../../../../../../actions/coachActions';
+import {coachSessionsAction} from '../../../../../../actions/coachSessionsActions';
+import {userAction} from '../../../../../../actions/userActions';
+import {layoutAction} from '../../../../../../actions/layoutActions';
+
+import {
+  isUserAlone,
+  isSomeoneSharingScreen,
+  userPartOfSession,
+  getVideosSharing,
+  getMember,
+} from '../../../../../functions/coach';
+import {openVideoPlayer} from '../../../../../functions/videoManagement';
+import {permission} from '../../../../../functions/pictures';
+import {mixPanelToken} from '../../../../../database/firebase/tokens';
+
+
+import Header from './components/Header';
+import Loader from '../../../../../layout/loaders/Loader';
+
 import MembersView from './components/MembersView';
 import CameraPage from '../../../../../app/camera/index';
 import Footer from './footer/index';
-import axios from 'axios';
-import {openVideoPlayer} from '../../../../../functions/videoManagement';
+import CurrentSessionBinder from '../../../../../utility/bindings/CurrentSessionBinder';
+
+const {width} = Dimensions.get('screen');
 
 class GroupsPage extends Component {
   constructor(props) {
@@ -73,7 +74,6 @@ class GroupsPage extends Component {
       open: false,
       portrait: true,
       date: 0,
-      currentSessionBound: false,
     };
     this.translateYFooter = new Animated.Value(0);
     this.otSessionRef = React.createRef();
@@ -191,16 +191,9 @@ class GroupsPage extends Component {
       currentScreenSize,
       route,
     } = this.props;
-    const {currentSessionBound} = this.state;
     const {portrait} = currentScreenSize;
     if (currentSessionID === undefined && prevProps.currentSessionID) {
       this.props.layoutAction('setGeneralSessionRecording', false);
-    }
-    if (currentSessionID && !currentSessionBound) {
-      this.bindSession();
-    }
-    if (!currentSessionID && currentSessionBound) {
-      this.unbindSession();
     }
     if (portrait !== prevProps.currentScreenSize.portrait && currentSessionID) {
       database()
@@ -230,25 +223,6 @@ class GroupsPage extends Component {
         this.footerRef?.bottomButtonsRef?.clickRecord();
       } catch (e) {}
     }
-  }
-
-  componentWillUnmount() {
-    const {currentSessionID, currentSessionBound} = this.props;
-    if (currentSessionID && currentSessionBound) {
-      this.unbindSession();
-    }
-  }
-
-  bindSession() {
-    const {coachSessionsAction, currentSessionID} = this.props;
-    coachSessionsAction('bindSession', currentSessionID);
-    this.setState({currentSessionBound: true});
-  }
-
-  unbindSession() {
-    const {coachSessionsAction, currentSessionID} = this.props;
-    coachSessionsAction('unbindSession', currentSessionID);
-    this.setState({currentSessionBound: false});
   }
 
   popupPermissionRecording() {
@@ -595,6 +569,7 @@ class GroupsPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
+        <CurrentSessionBinder />
         {this.streamPage()}
       </View>
     );

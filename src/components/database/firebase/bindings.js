@@ -36,7 +36,6 @@ const unbindSession = async (sessionID) => {
     .off();
 };
 
-
 const bindArchive = (archiveID) => {
   database()
     .ref('archivedStreams/' + archiveID)

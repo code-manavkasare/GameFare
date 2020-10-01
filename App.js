@@ -21,9 +21,9 @@ import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
-import ArchiveBindManager from './src/components/utility/ArchiveBindManager';
-import SessionBindManager from './src/components/utility/SessionBindManager';
-import ConversationBindManager from './src/components/utility/ConversationBindManager';
+import ArchiveBindManager from './src/components/utility/bindings/ArchiveBindManager';
+import SessionBindManager from './src/components/utility/bindings/SessionBindManager';
+import ConversationBindManager from './src/components/utility/bindings/ConversationBindManager';
 import BranchManager from './src/components/utility/BranchManager';
 import CallListener from './src/components/utility/CallListener';
 
