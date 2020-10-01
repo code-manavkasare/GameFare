@@ -52,11 +52,6 @@ class App extends Component {
     }, 900000);
 
     SplashScreen.hide();
-    if (!__DEV__) {
-      await this.configureSentry();
-      // throw new Error('Sentry test error!');
-      // Sentry.nativeCrash();
-    }
 
     if (userID !== '') {
       this.autoSignIn();
@@ -68,6 +63,9 @@ class App extends Component {
   }
 
   componentDidUpdate = async (prevProps) => {
+    if (!__DEV__) {
+      this.configureSentry();
+    }
     const {networkIsConnected, userID, isBindToFirebase} = this.props;
     if (prevProps.networkIsConnected !== networkIsConnected) {
       if (networkIsConnected && userID !== '' && !isBindToFirebase) {
@@ -83,6 +81,7 @@ class App extends Component {
       enableAutoSessionTracking: true,
       attachStacktrace: true,
       environment: Config.ENV,
+      release: `${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`,
     });
     Sentry.configureScope((scope) => {
       if (this.props.userConnected) {
@@ -96,7 +95,6 @@ class App extends Component {
       }
     });
     Sentry.setDist(DeviceInfo.getBuildNumber());
-    Sentry.setRelease(`${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`);
   };
 
   async autoSignIn() {
