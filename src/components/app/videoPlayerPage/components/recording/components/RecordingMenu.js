@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     width: 150,
     right: '5%',
     // backgroundColor: 'red',
-    top: heightHeaderHome + marginTopApp,
+    top: heightHeaderHome + marginTopApp + 10,
   },
   button: {
     height: 37,

@@ -137,7 +137,7 @@ export default class VideoPlayer extends Component {
   };
   seekDiff = async (diffTime) => {
     const {currentTime} = this.state;
-    this.player?.seek(currentTime + diffTime, 33);
+    this.player?.seek(currentTime + diffTime, 0);
   };
   togglePlayPause = async (forcePause) => {
     let {paused, playRate} = this.state;
@@ -226,12 +226,16 @@ export default class VideoPlayer extends Component {
     const {linkedPlayers} = this.props;
     const {slidingStartTime} = this.state;
     this.onSlidingComplete(sliderTime, forcePlay);
-    linkedPlayers?.forEach((playerRef) =>
-      playerRef.seekDiff(sliderTime - slidingStartTime),
-    );
+    linkedPlayers?.forEach((playerRef) => {
+      playerRef.seekDiff(sliderTime - slidingStartTime);
+    });
   };
   linkedOnSlidingStart = async () => {
+    const {linkedPlayers} = this.props;
     this.onSlidingStart();
+    linkedPlayers?.forEach((playerRef) => {
+      playerRef.videoPlayerRef.onSlidingStart();
+    });
   };
   onSlidingStart = async () => {
     const {
@@ -242,7 +246,7 @@ export default class VideoPlayer extends Component {
     } = this.props;
     const {paused} = this.state;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
-    onSlidingStart(index, currentTime, paused);
+    if (onSlidingStart) onSlidingStart(index, currentTime, paused);
     if (updateVideoInfoCloud && !noUpdateInCloud) {
       await updateVideoInfoCloud({paused: true});
     }
@@ -309,12 +313,16 @@ export default class VideoPlayer extends Component {
       </View>
     );
   }
-  clickVideo() {
+  clickVideo(index) {
+    const {clickVideo} = this.props;
     Animated.timing(
       this.opacityControlBar,
       timing(this.opacityControlBar._value ? 0 : 1, 200),
     ).start();
     this.visualSeekBarRef?.toggleVisible();
+    if (clickVideo) {
+      clickVideo(index);
+    }
   }
   setXOffset(x) {
     this.visualSeekBarRef?.setXOffset(x);
@@ -340,6 +348,7 @@ export default class VideoPlayer extends Component {
       scale,
       position,
       isRecording,
+      coachSessionID,
     } = this.props;
     let {recordedActions} = this.props;
 
@@ -394,14 +403,14 @@ export default class VideoPlayer extends Component {
             scaleChange={(val) => setScale && setScale(val)}
             onPinch={(scale) => onScaleChange(index, scale)}
             onDrag={(pos) => onPositionChange(index, pos)}
-            singleTouch={() => this.clickVideo()}
+            singleTouch={() => this.clickVideo(index)}
             component={() => (
               <View style={[styleApp.fullSize, styleApp.center]}>
                 <Video
                   key={index}
-                  // mixWithOthers={'mix'}
+                  mixWithOthers={'mix'}
                   ignoreSilentSwitch={'ignore'}
-                  allowRecording={allowRecording}
+                  allowRecording={allowRecording || coachSessionID}
                   source={{uri: url}}
                   style={styleApp.fullSize}
                   ref={(ref) => {
@@ -410,6 +419,7 @@ export default class VideoPlayer extends Component {
                   rate={playRate}
                   onLoad={async (callback) => {
                     const {setSizeVideo} = this.props;
+                    this.clickVideo(index);
                     if (setSizeVideo) {
                       Image.getSize(
                         thumbnail,

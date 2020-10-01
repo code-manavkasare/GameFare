@@ -188,6 +188,7 @@ class SinglePlayer extends Component {
       isAudioPlayerReady,
       playRecord,
       isRecording,
+      clickVideo,
     } = this.props;
     const {sizeVideo, isVideoPlayerReady, displayButtonReplay} = this.state;
     if (!archive) {
@@ -212,6 +213,7 @@ class SinglePlayer extends Component {
       <View style={playerStyle} onLayout={this.onLayoutContainer}>
         {isDrawingEnabled && sizeVideo.height !== 0 && (
           <DrawTools
+            topVideo={index === numArchives - 1}
             landscape={landscape}
             setState={(state) => this.drawViewRef.setState(state)}
             clear={() => this.drawViewRef.clear()}
@@ -290,6 +292,10 @@ class SinglePlayer extends Component {
               landscape={landscape}
               onRef={(ref) => (this.drawViewRef = ref)}
               onDrawingChange={propsWhenRecording.onDrawingChange}
+              clickVideo={() => {
+                this.videoPlayerRef?.visualSeekBarRef.toggleVisible();
+                clickVideo(index);
+              }}
             />
           )}
           isRecording={isRecording}
@@ -319,7 +325,9 @@ class SinglePlayer extends Component {
           position={position}
           userIDLastUpdate={userIDLastUpdate}
           muted={false}
+          coachSessionID={coachSessionID}
           onVideoPlayerReady={(val) => this.setState({isVideoPlayerReady: val})}
+          clickVideo={clickVideo}
         />
       </View>
     );

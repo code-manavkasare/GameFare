@@ -44,7 +44,7 @@ class SearchInput extends Component {
               type="font"
             />
           </Col>
-          <Col size={70}>
+          <Col size={65}>
             <TextInput
               style={styles.textStyle}
               placeholder={'Search for users'}

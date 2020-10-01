@@ -7199,6 +7199,11 @@ react-native-gesture-handler@^1.6.1:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-home-indicator@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/react-native-home-indicator/-/react-native-home-indicator-0.2.6.tgz#5e249e4c9cdb965568ec50ab19ba7e349af263af"
+  integrity sha512-MmNKWg0bLC5sGyxcyOEpRij4ip2EFWdxZ6FeaFSlDGkC3CPsa4eY5gHG6qh0SULG2nkjGx/c2+Q9xTKWSeYErw==
+
 react-native-hyperlink@^0.0.19:
   version "0.0.19"
   resolved "https://registry.yarnpkg.com/react-native-hyperlink/-/react-native-hyperlink-0.0.19.tgz#ca375cde1d244bb94c551736852ee0d688c8bb1f"

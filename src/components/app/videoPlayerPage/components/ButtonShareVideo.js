@@ -86,8 +86,8 @@ class ButtonShareVideo extends Component {
   }
   styleButton = () => {
     const {portrait} = this.props;
-    let marginTop = marginTopApp + heightHeaderHome;
-    if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome;
+    let marginTop = marginTopApp + heightHeaderHome + 10;
+    if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome + 10;
     return {
       position: 'absolute',
       zIndex: 20,

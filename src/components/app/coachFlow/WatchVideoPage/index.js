@@ -12,6 +12,7 @@ import {native} from '../../../animations/animations';
 import {coachAction} from '../../../../actions/coachActions';
 
 import RightButtons from './components/RightButtons';
+import WatchVideoHeader from './components/WatchVideoHeader';
 import DrawView from './components/DrawView';
 
 import colors from '../../../style/colors';
@@ -173,7 +174,7 @@ class WatchVideoPage extends Component {
             ],
           },
         ]}>
-        <HeaderBackButton
+        <WatchVideoHeader
           inputRange={[5, 10]}
           colorLoader={'white'}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
@@ -210,8 +211,14 @@ class WatchVideoPage extends Component {
           typeIconOffset="mat"
           sizeIconOffset={25}
           clickButtonOffset={() => this.setState({drawingOpen: false})}
+          onRef={(ref) => (this.videoHeaderRef = ref)}
         />
         <VideoPlayer
+          onRef={(ref) => (this.videoPlayerRef = ref)}
+          clickVideo={(index) => {
+            console.log(index);
+            this.videoHeaderRef.handleClick(index);
+          }}
           source={videoSource ? videoSource : ''}
           index={archiveID}
           resizeMode="contain"
@@ -244,7 +251,6 @@ class WatchVideoPage extends Component {
           updateVideoInfoCloud={(paused, currentTime, playRate) =>
             this.updateVideoInfoCloud(paused, currentTime, playRate)
           }
-          onRef={(ref) => (this.videoPlayerRef = ref)}
         />
 
         <RightButtons
