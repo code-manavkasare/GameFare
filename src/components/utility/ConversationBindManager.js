@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {bindArchive, unbindArchive} from '../database/firebase/bindings';
+import {bindConversation, unbindConversation} from '../database/firebase/bindings';
 
-class ArchiveBindManager extends Component {
+class ConversationBindManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,8 +18,8 @@ class ArchiveBindManager extends Component {
     const {bindCounts} = this.props;
     if (bindCounts && prevBindCounts) {
       const matchedBindCounts = Object.keys(bindCounts).reduce(
-        (prevMatched, id) => {
-          return prevMatched && prevBindCounts[id] === bindCounts[id];
+        (matchedSoFar, id) => {
+          return matchedSoFar && prevBindCounts[id] === bindCounts[id];
         },
         true,
       );
@@ -36,10 +36,10 @@ class ArchiveBindManager extends Component {
         const count = newBindCounts[id];
         if ((!count || count === 0) && hasFirebaseBinding[id]) {
           hasFirebaseBinding[id] = false;
-          unbindArchive(id);
+          unbindConversation(id);
         } else if (count && count > 0 && !hasFirebaseBinding[id]) {
           hasFirebaseBinding[id] = true;
-          bindArchive(id);
+          bindConversation(id);
         }
       });
       this.setState({hasFirebaseBinding});
@@ -51,11 +51,11 @@ class ArchiveBindManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    bindCounts: state.bindedArchives,
+    bindCounts: state.bindedConversations,
   };
 };
 
 export default connect(
   mapStateToProps,
   {},
-)(ArchiveBindManager);
+)(ConversationBindManager);

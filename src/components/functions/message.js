@@ -5,10 +5,7 @@ import {indexDiscussions, client} from '../database/algolia';
 import SendSMS from 'react-native-sms';
 
 import {store} from '../../../reduxStore';
-import {
-  setConversation,
-  setConversationBinded,
-} from '../../actions/conversationsActions';
+import {setConversation} from '../../actions/conversationsActions';
 
 const generateID = () => {
   return (
@@ -194,59 +191,6 @@ const openDiscussion = async (arrayUsers, idDiscussion) => {
   return discussion;
 };
 
-const bindConversation = (conversationId) => {
-  const gamefareUser = store.getState().message.gamefareUser;
-  const isConversationBinded = store.getState().bindedConversations[
-    conversationId
-  ];
-  if (!isConversationBinded)
-    database()
-      .ref('messagesCoachSession/' + conversationId)
-      .on('value', async function(snap) {
-        let messages = snap.val();
-
-        if (!messages)
-          messages = {
-            ['noMessage']: {
-              user: gamefareUser,
-              text: 'Write the first message.',
-              createdAt: new Date(),
-              id: 'noMessage',
-              timeStamp: moment().valueOf(),
-            },
-          };
-        messages = Object.keys(messages)
-          .map((id) => ({
-            id,
-            ...messages[id],
-          }))
-          .sort((a, b) => a.timeStamp - b.timeStamp)
-          .reverse()
-          .reduce(function(result, item) {
-            result[item.id] = item;
-            return result;
-          }, {});
-
-        store.dispatch(setConversation({messages, objectID: conversationId}));
-        store.dispatch(
-          setConversationBinded({id: conversationId, isBinded: true}),
-        );
-      });
-};
-
-const unbindConversation = async (conversationId) => {
-  const isConversationBinded = store.getState().bindedConversations[
-    conversationId
-  ];
-  if (isConversationBinded) {
-    await database()
-      .ref('discussions/' + conversationId)
-      .off();
-    // store.dispatch(
-    //   setConversationBinded({id: conversationId, isBinded: false}),
-    // );
-  }
-};
 
 export {
   createDiscussion,
@@ -257,6 +201,4 @@ export {
   openDiscussion,
   sendSMSFunction,
   nameOtherMemberConversation,
-  bindConversation,
-  unbindConversation,
 };

@@ -48,7 +48,7 @@ const bindedArchivesReducer = (state = initialStateBind, action) => {
       if (archiveID) {
         const bindCount = state[archiveID];
         if (bindCount) {
-          return {...state, [archiveID]: bindCount - 1};
+          return {...state, [archiveID]: bindCount === 0 ? 0 : bindCount - 1};
         }
         return {...state, [archiveID]: 0};
       }

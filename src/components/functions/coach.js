@@ -580,22 +580,7 @@ const deleteSession = (objectID) => {
   });
 };
 
-const bindSession = (sessionID) => {
-  database()
-    .ref(`coachSessions/${sessionID}`)
-    .on('value', function(snapshot) {
-      const coachSessionFirebase = snapshot.val();
-      if (coachSessionFirebase) {
-        store.dispatch(setSession(coachSessionFirebase));
-      }
-    });
-};
 
-const unbindSession = async (sessionID) => {
-  await database()
-    .ref(`coachSessions/${sessionID}`)
-    .off();
-};
 
 const loadAndOpenSession = async (sessionID) => {
   const coachSession = await database()
@@ -756,8 +741,6 @@ module.exports = {
   openMemberAcceptCharge,
   capitalize,
   deleteSession,
-  bindSession,
-  unbindSession,
   createSession,
   createCoachSessionFromUserIDs,
   addMembersToSession,

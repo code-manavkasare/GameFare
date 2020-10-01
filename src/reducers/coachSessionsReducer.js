@@ -48,7 +48,7 @@ const bindedCoachSessionsReducer = (state = initialStateBind, action) => {
       if (sessionID) {
         const bindCount = state[sessionID];
         if (bindCount) {
-          return {...state, [sessionID]: bindCount - 1};
+          return {...state, [sessionID]: bindCount === 0 ? 0 : bindCount - 1};
         }
         return {...state, [sessionID]: 0};
       }

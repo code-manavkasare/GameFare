@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {bindSession, unbindSession} from '../functions/coach';
-import {coachSessionsAction} from '../../actions/coachSessionsActions';
+import {bindSession, unbindSession} from '../database/firebase/bindings';
 
 class SessionBindManager extends Component {
   constructor(props) {
@@ -58,5 +57,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  {coachSessionsAction},
+  {},
 )(SessionBindManager);

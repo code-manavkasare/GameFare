@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 
 import {coachAction} from '../../../../../actions/coachActions';
 import {coachSessionsAction} from '../../../../../actions/coachSessionsActions';
+import {conversationsAction} from '../../../../../actions/conversationsActions';
+
 import {navigate} from '../../../../../../NavigationService';
 import PlaceHolder from '../../../../placeHolders/CardStream';
 
@@ -33,10 +35,6 @@ import ButtonColor from '../../../../layout/Views/Button';
 import Loader from '../../../../layout/loaders/Loader';
 import colors from '../../../../style/colors';
 import styleApp from '../../../../style/style';
-import {
-  bindConversation,
-  unbindConversation,
-} from '../../../../functions/message';
 
 class CardStream extends Component {
   static propTypes = {
@@ -74,12 +72,9 @@ class CardStream extends Component {
   }
 
   componentDidMount = async () => {
-    if (this.props.onRef) {
-      this.props.onRef(this);
-    }
-    const {coachSessionID} = this.props;
+    const {onRef} = this.props;
+    onRef && onRef(this);
     this.bindSession();
-    bindConversation(coachSessionID);
     if (this.selected) {
       this.toggleSelected(1);
     }
@@ -95,13 +90,15 @@ class CardStream extends Component {
   }
 
   bindSession() {
-    const {coachSessionID, coachSessionsAction} = this.props;
+    const {coachSessionID, coachSessionsAction, conversationsAction} = this.props;
     coachSessionsAction('bindSession', coachSessionID);
+    conversationsAction('bindConversation', coachSessionID);
   }
 
   unbindSession() {
-    const {coachSessionID, coachSessionsAction} = this.props;
+    const {coachSessionID, coachSessionsAction, conversationsAction} = this.props;
     coachSessionsAction('unbindSession', coachSessionID);
+    conversationsAction('unbindConversation', coachSessionID);
   }
 
   async openStream() {
@@ -347,5 +344,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction, coachSessionsAction},
+  {coachAction, coachSessionsAction, conversationsAction},
 )(CardStream);
