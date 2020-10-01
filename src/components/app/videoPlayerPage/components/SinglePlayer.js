@@ -5,13 +5,14 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {isEqual} from 'lodash';
 
+import {archivesAction} from '../../../../actions/archivesActions';
+
 import VideoPlayer from '../../coachFlow/VideoPlayer/index';
 import styleApp from '../../../style/style';
 import Loader from '../../../layout/loaders/Loader';
 import colors from '../../../style/colors';
 import DrawTools from './drawing/DrawTools';
 import DrawView from './drawing/DrawView';
-import {bindArchive} from '../../../functions/archive';
 import {updateInfoVideoCloud} from '../../../functions/coach';
 import RecordingComponent from './recording/index';
 import AllIcon from '../../../layout/icons/AllIcons';
@@ -37,12 +38,14 @@ class SinglePlayer extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    const {local, id} = this.props;
-
+    const {local, id, archivesAction} = this.props;
     if (!local) {
-      bindArchive(id);
+      archivesAction('bindArchive', id);
     }
   };
+
+
+
   componentDidUpdate = (prevProps, prevState) => {
     const {videoFromCloud: prevVideoFromCloud} = prevProps;
     const {
@@ -67,6 +70,13 @@ class SinglePlayer extends Component {
       }
     }
   };
+
+  componentWillUnmount = () => {
+    const {id, local, archivesAction} = this.props;
+    if (!local) {
+      archivesAction('unbindArchive', id);
+    }
+  }
 
   playerStyleByIndex = (i, total) => {
     const {landscape} = this.props;
@@ -358,5 +368,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {},
+  {archivesAction},
 )(SinglePlayer);
