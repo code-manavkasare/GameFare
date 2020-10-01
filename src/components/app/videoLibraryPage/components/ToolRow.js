@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     ...styleApp.shade,
     bottom: heightFooter + marginBottomApp + 0,
     right: 0,
-    zIndex: 12,
+    zIndex: 10,
   },
   animatedToolBox: {
     // borderLeftWidth: 1,

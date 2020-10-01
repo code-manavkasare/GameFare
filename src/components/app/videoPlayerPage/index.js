@@ -10,6 +10,8 @@ import ButtonShareVideo from './components/ButtonShareVideo';
 import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
+import {layoutAction} from '../../../actions/layoutActions';
+
 import colors from '../../style/colors';
 
 import {
@@ -51,7 +53,8 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
-    const {navigation} = this.props;
+    const {navigation, layoutAction} = this.props;
+    layoutAction('setCameraAvailability', false);
     this.focusListener = navigation.addListener('focus', () => {
       StatusBar.setBarStyle('light-content', true);
       Orientation.unlockAllOrientations();
@@ -98,6 +101,8 @@ class VideoPlayerPage extends Component {
   };
 
   componentWillUnmount() {
+    const {layoutAction} = this.props;
+    layoutAction('setCameraAvailability', true);
     if (this.focusListener) {
       this.focusListener();
     }
@@ -729,5 +734,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {},
+  {layoutAction},
 )(VideoPlayerPage);

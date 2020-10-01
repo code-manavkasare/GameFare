@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Animated} from 'react-native';
+import {StyleSheet, View, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {RNCamera} from 'react-native-camera';
 import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
+import {BlurView} from '@react-native-community/blur';
 
+import {native} from '../../../animations/animations';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
@@ -32,9 +34,15 @@ class Camera extends Component {
       isRecording: false,
       promiseRecording: null,
       startRecordingTime: null,
+      placeholderImg: undefined,
+      displayPlaceholder: false,
       flags: [],
     };
     this.camera = null;
+    this.placeholderAnimation = {
+      mirror: new Animated.Value(0),
+      opacity: new Animated.Value(0),
+    };
   }
   holdRef() {
     const {onRef} = this.props;
@@ -46,9 +54,12 @@ class Camera extends Component {
   }
   shouldComponentUpdate(prevProps, prevState) {
     return (
-      prevState.cameraReady != this.state.cameraReady ||
-      prevProps.frontCamera != this.props.frontCamera ||
-      prevState.isRecording != this.state.isRecording
+      prevState.cameraReady !== this.state.cameraReady ||
+      prevProps.frontCamera !== this.props.frontCamera ||
+      prevState.isRecording !== this.state.isRecording ||
+      prevProps.cameraAvailability !== this.props.cameraAvailability ||
+      prevState.placeholderImg !== this.state.placeholderImg ||
+      prevState.displayPlaceholder !== this.state.displayPlaceholder
     );
   }
   componentDidUpdate(prevProps, prevState) {
@@ -57,6 +68,28 @@ class Camera extends Component {
     }
     if (!prevState.cameraReady && this.state.cameraReady) {
       this.giveRef();
+    }
+    if (prevProps.cameraAvailability !== this.props.cameraAvailability) {
+      this.processPlaceholder();
+    }
+  }
+  async processPlaceholder() {
+    const {cameraAvailability, frontCamera} = this.props;
+    if (cameraAvailability) {
+      this.setState({displayPlaceholder: false});
+    } else {
+      const options = {quality: 0.5, base64: true};
+      const data = await this.camera?.takePictureAsync(options);
+      this.setState({placeholderImg: data?.uri});
+      Animated.timing(
+        this.placeholderAnimation.mirror,
+        native(frontCamera ? 1 : 0, 1),
+      ).start();
+      Animated.timing(this.placeholderAnimation.opacity, native(1)).start(
+        () => {
+          this.setState({displayPlaceholder: true});
+        },
+      );
     }
   }
   addFlag() {
@@ -125,44 +158,77 @@ class Camera extends Component {
       open: true,
     });
   }
+  placeholder() {
+    const {placeholderImg} = this.state;
+    const mirror = this.placeholderAnimation.mirror.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['360deg', '180deg'],
+    });
+    return (
+      <Animated.View
+        style={{
+          ...styles.placeholderImg,
+          transform: [{rotateY: mirror}],
+          opacity: this.placeholderAnimation.opacity,
+        }}>
+        <BlurView
+          style={styles.placeholderImg}
+          blurType="light"
+          blurAmount={5}
+        />
+        {placeholderImg && (
+          <Image source={{uri: placeholderImg}} style={styleApp.fullSize} />
+        )}
+      </Animated.View>
+    );
+  }
   render() {
     const {frontCamera, onCameraReady} = this.props;
-    const {isRecording} = this.state;
+    const {isRecording, displayPlaceholder} = this.state;
     return (
       <View style={styleApp.flexColumnBlack}>
-        <RNCamera
-          onCameraReady={() => {
-            this.setState({cameraReady: true});
-            if (onCameraReady) {
-              onCameraReady(true);
-            }
-          }}
-          onMountError={(error) =>
-            console.log('RNCamera mount error: ', error)
-          }
-          onStatusChange={(status) => {
-            if (status.cameraStatus !== 'READY') {
-              this.setState({cameraReady: false});
+        {(isRecording || !displayPlaceholder) && (
+          <RNCamera
+            onCameraReady={() => {
+              this.setState({cameraReady: true});
               if (onCameraReady) {
-                onCameraReady(false);
+                onCameraReady(true);
               }
+              setTimeout(() => {
+                Animated.timing(
+                  this.placeholderAnimation.opacity,
+                  native(0, 200),
+                ).start();
+              }, 300);
+            }}
+            onMountError={(error) =>
+              console.log('RNCamera mount error: ', error)
             }
-          }}
-          ref={(ref) => {
-            this.camera = ref;
-          }}
-          captureAudio={isRecording}
-          keepAudioSession
-          mixWithOthers
-          style={styles.preview}
-          type={
-            frontCamera
-              ? RNCamera.Constants.Type.front
-              : RNCamera.Constants.Type.back
-          }
-          flashMode={RNCamera.Constants.FlashMode.off}
-          pictureSize={'1280x720'} // this prop stops flickering when stop and start recording
-        />
+            onStatusChange={(status) => {
+              if (status.cameraStatus !== 'READY') {
+                this.setState({cameraReady: false});
+                if (onCameraReady) {
+                  onCameraReady(false);
+                }
+              }
+            }}
+            ref={(ref) => {
+              this.camera = ref;
+            }}
+            captureAudio={isRecording}
+            keepAudioSession
+            mixWithOthers
+            style={styles.preview}
+            type={
+              frontCamera
+                ? RNCamera.Constants.Type.front
+                : RNCamera.Constants.Type.back
+            }
+            flashMode={RNCamera.Constants.FlashMode.off}
+            pictureSize={'1280x720'} // this prop stops flickering when stop and start recording
+          />
+        )}
+        {!isRecording && this.placeholder()}
       </View>
     );
   }
@@ -174,10 +240,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  placeholderImg: {
+    ...styleApp.fullSize,
+    position: 'absolute',
+    zIndex: 2,
+  },
 });
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    cameraAvailability: state.layout.cameraAvailability,
+  };
 };
 
 export default connect(
