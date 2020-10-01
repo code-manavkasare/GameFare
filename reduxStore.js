@@ -51,7 +51,6 @@ export const store = createStore(
 );
 
 const storeInitializationAfterRehydration = () => {
-  console.log('after init', store.getState().bindedSessions);
   // After rehydration completes, we detect initial connection
   checkInternetConnection().then((isConnected) => {
     const {connectionChange} = offlineActionCreators;
