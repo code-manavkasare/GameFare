@@ -27,7 +27,7 @@ export default class HeaderUserDirectory extends Component {
         initialTitleOpacity={1}
         initialBorderWidth={1}
         icon2={branchLink && 'share'}
-        sizeIcon2={23}
+        sizeIcon2={24}
         typeIcon2={'moon'}
         colorIcon2={colors.title}
         clickButton2={async () => {
@@ -38,7 +38,7 @@ export default class HeaderUserDirectory extends Component {
         }}
         icon1={'times'}
         typeIcon1="font"
-        sizeIcon1={17}
+        sizeIcon1={24}
         colorIcon1={colors.title}
         clickButton1={() => goBack()}
       />
