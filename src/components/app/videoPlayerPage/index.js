@@ -572,7 +572,7 @@ class VideoPlayerPage extends Component {
   };
 
   buttonSharing = () => {
-    const {isEditMode, archives} = this.state;
+    const {isEditMode} = this.state;
     const {currentSessionID, videoInfos} = this.props;
     if (!currentSessionID) {
       return null;
@@ -663,7 +663,7 @@ class VideoPlayerPage extends Component {
   };
 
   render = () => {
-    const {archives, isRecording, isEditMode, recordedActions} = this.state;
+    const {isRecording, isEditMode, recordedActions} = this.state;
     const {videoInfos} = this.props;
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>

@@ -35,9 +35,10 @@ class SinglePlayer extends Component {
   }
 
   componentDidMount = () => {
-    const {onRef, id, local, archivesAction} = this.props;
+    const {onRef, id, archive, archivesAction} = this.props;
     onRef && onRef(this);
-    if (!local) {
+    if (archive && !archive.local) {
+      // only bind to videos with a firebase entry (!local)
       archivesAction('bindArchive', id);
     }
   };
@@ -51,8 +52,12 @@ class SinglePlayer extends Component {
       coachSessionID,
       id,
       videoFromCloud,
+      archive,
     } = this.props;
+    const {archive: prevArchive} = prevProps;
     if (videosBeingShared && personSharingScreen === userID) {
+      // if we are sharing videos
+      // send the current time to any users joining the video watching
       if (
         !isEqual(videoFromCloud.loadedUsers, prevVideoFromCloud.loadedUsers)
       ) {
@@ -65,11 +70,16 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
+    if ((!prevArchive || prevArchive.local) && !archive?.local) {
+      // in this case the video has been uploaded while we are watching it
+      archivesAction('bindArchive');
+    }
   };
 
   componentWillUnmount = () => {
-    const {id, local, archivesAction} = this.props;
-    if (!local) {
+    const {id, archive, archivesAction} = this.props;
+    if (archive && !archive.local) {
+      // assume if !local that archive was bound by this component
       archivesAction('unbindArchive', id);
     }
   };
