@@ -55,7 +55,7 @@ class CardArchive extends PureComponent {
   componentDidUpdate(prevProps) {
     const {id, archive, archivesAction} = this.props;
     const {archive: prevArchive} = prevProps;
-    if ((!prevArchive || prevArchive.local) && !archive?.local) {
+    if ((!prevArchive || prevArchive.local) && archive && !archive.local) {
       // video was uploaded during the lifetime of this component
       archivesAction('bindArchive', id);
     }
