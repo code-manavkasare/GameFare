@@ -37,8 +37,8 @@ class SinglePlayer extends Component {
   componentDidMount = () => {
     const {onRef, id, archive, archivesAction} = this.props;
     onRef && onRef(this);
-    if (archive && !archive.local) {
-      // only bind to videos with a firebase entry (!local)
+    if (!archive || !archive.local) {
+      // bind if missing entry or have non-local entry
       archivesAction('bindArchive', id);
     }
   };
@@ -70,16 +70,15 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
-    if ((!prevArchive || prevArchive.local) && !archive?.local) {
-      // in this case the video has been uploaded while we are watching it
-      archivesAction('bindArchive');
+    if ((prevArchive && prevArchive.local) && (archive && !archive.local)) {
+      // video was uploaded during the lifetime of this component
+      archivesAction('bindArchive', id);
     }
   };
 
   componentWillUnmount = () => {
     const {id, archive, archivesAction} = this.props;
     if (archive && !archive.local) {
-      // assume if !local that archive was bound by this component
       archivesAction('unbindArchive', id);
     }
   };

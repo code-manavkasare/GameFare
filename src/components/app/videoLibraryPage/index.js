@@ -64,6 +64,15 @@ class VideoLibraryPage extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
+
+  static getDerivedStateFromProps(props) {
+    const allVideos = Object.values(props.archivedStreams).filter(
+      (v) => v.id && v.startTimestamp,
+    );
+    const sortedVideos = sortVideos(allVideos).map((v) => v.id);
+    return {videosArray: sortedVideos};
+  }
+
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('focus', () => {
@@ -72,6 +81,7 @@ class VideoLibraryPage extends Component {
       if (currentSessionID) this.setState({selectableMode: true});
     });
   }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (!isEqual(nextState, this.state)) {
       return true;
@@ -79,15 +89,6 @@ class VideoLibraryPage extends Component {
     if (isEqual(this.props, nextProps)) {
       return false;
     }
-    return true;
-  }
-
-  static getDerivedStateFromProps(props) {
-    const allVideos = Object.values(props.archivedStreams).filter(
-      (v) => v.id && v.startTimestamp,
-    );
-    const sortedVideos = sortVideos(allVideos).map((v) => v.id);
-    return {videosArray: sortedVideos};
   }
 
   toggleSelectable(force) {

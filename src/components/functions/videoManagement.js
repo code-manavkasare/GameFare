@@ -135,7 +135,7 @@ const deleteVideos = (ids) => {
   store.dispatch(deleteArchives(ids));
   deleteCloudVideos(ids);
   infos.forEach((info) => {
-    if (info.local) {
+    if (info && info.local && info.url) {
       deleteLocalVideoFile(info.url);
     }
   });

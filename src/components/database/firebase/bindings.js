@@ -18,6 +18,7 @@ import {setConversation} from '../../../actions/conversationsActions';
 import {setArchive, deleteArchive} from '../../../actions/archivesActions';
 
 import {getArchiveByID, cacheArchive} from '../../functions/archive';
+import {deleteVideos} from '../../functions/videoManagement';
 
 const bindSession = (sessionID) => {
   database()
@@ -59,7 +60,7 @@ const bindArchive = (archiveID) => {
           cacheArchive(archiveID);
         }
       } else {
-        store.dispatch(deleteArchive(archiveID));
+        deleteVideos([archiveID]);
       }
     });
 };
