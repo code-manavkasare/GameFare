@@ -28,12 +28,17 @@ class ToolRow extends Component {
     this.props.onRef(this);
   }
   componentDidUpdate = (prevProps, prevState) => {
+    const {clickButton1, isButton2Selected, selectedVideos} = this.props;
     if (
-      prevProps.selectedVideos.length !== this.props.selectedVideos.length ||
-      prevProps.isButton2Selected !== this.props.isButton2Selected
-    ) {
-      this.openToolBox(this.props.isButton2Selected);
-    }
+      prevProps.selectedVideos.length !== selectedVideos.length ||
+      prevProps.isButton2Selected !== isButton2Selected
+    )
+      return this.openToolBox(isButton2Selected);
+    if (
+      prevProps.currentSessionID !== this.props.currentSessionID &&
+      !this.props.currentSessionID
+    )
+      return clickButton1(true);
   };
   openToolBox = (val) => {
     Animated.parallel([
@@ -289,6 +294,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
+    currentSessionID: state.coach.currentSessionID,
   };
 };
 

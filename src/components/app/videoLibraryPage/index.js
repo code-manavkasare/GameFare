@@ -90,9 +90,9 @@ class VideoLibraryPage extends Component {
     return {videosArray: sortedVideos};
   }
 
-  toggleSelectable() {
+  toggleSelectable(force) {
     const {selectableMode} = this.state;
-    this.setState({selectableMode: !selectableMode});
+    this.setState({selectableMode: force ? false : !selectableMode});
   }
   playSelectedVideos = ({forceSharing}) => {
     const {selectedVideos} = this.state;
@@ -329,6 +329,7 @@ class VideoLibraryPage extends Component {
             positon={position}
             displayButton0={currentSessionID}
             clickButton1={this.toggleSelectable.bind(this)}
+            
             isButton2Selected={selectableMode}
             clickButton0={() => this.playSelectedVideos({forceSharing: true})}
             clickButton4={() => this.deleteSelectedVideos()}

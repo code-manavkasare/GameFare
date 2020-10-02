@@ -28,7 +28,7 @@ class UserSearchResults extends Component {
   static defaultProps = {
     selectedUsers: {},
     searchText: '',
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -62,7 +62,9 @@ class UserSearchResults extends Component {
         false,
         blockedByUsers ? Object.keys(blockedByUsers) : false,
       );
-      const users = rawUsers.map((user) => userObject(user.info, user.objectID));
+      const users = rawUsers.map((user) =>
+        userObject(user.info, user.objectID),
+      );
       this.setState({users, displayMore: false, noResults: users.length === 0});
     }
   };
@@ -80,7 +82,6 @@ class UserSearchResults extends Component {
       </View>
     );
   };
-
 
   displayMoreButton = () => {
     const {displayMore} = this.state;
@@ -149,7 +150,7 @@ class UserSearchResults extends Component {
       );
     } else if (users.length > 0) {
       if (displayMore) {
-      return this.moreResultsView();
+        return this.moreResultsView();
       } else {
         return (
           <KeyboardAwareScrollView

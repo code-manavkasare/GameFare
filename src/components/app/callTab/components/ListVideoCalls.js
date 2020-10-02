@@ -70,6 +70,7 @@ class ListVideoCalls extends Component {
       AnimatedHeaderValue,
       openUserDirectory,
       liveSessionHeader,
+      inlineSearch,
     } = this.props;
     if (!userConnected) {
       return null;
@@ -100,7 +101,12 @@ class ListVideoCalls extends Component {
         )}
         incrementRendering={6}
         initialNumberToRender={8}
-        header={currentSessionID && liveSessionHeader ? this.currentSessionView() : undefined}
+        header={
+          currentSessionID &&
+          liveSessionHeader &&
+          !inlineSearch &&
+          this.currentSessionView()
+        }
         AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />
