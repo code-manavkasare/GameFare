@@ -351,7 +351,7 @@ class VideoPlayerPage extends Component {
         );
         this.props.navigation.navigate('Alert', {
           close: true,
-          title: 'Video successfully created !',
+          title: 'Video successfully created!',
           subtitle: 'Your recording is now in your library!',
           textButton: 'Got it!',
         });
