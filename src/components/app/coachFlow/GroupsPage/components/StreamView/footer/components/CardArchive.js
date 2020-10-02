@@ -47,7 +47,7 @@ class CardArchive extends PureComponent {
 
   componentDidMount() {
     const {id, archive, archivesAction} = this.props;
-    if (archive && !archive.local) {
+    if (!archive || !archive.local) {
       archivesAction('bindArchive', id);
     }
   }
@@ -55,7 +55,7 @@ class CardArchive extends PureComponent {
   componentDidUpdate(prevProps) {
     const {id, archive, archivesAction} = this.props;
     const {archive: prevArchive} = prevProps;
-    if ((!prevArchive || prevArchive.local) && archive && !archive.local) {
+    if ((prevArchive && prevArchive.local) && (archive && !archive.local)) {
       // video was uploaded during the lifetime of this component
       archivesAction('bindArchive', id);
     }
@@ -63,7 +63,7 @@ class CardArchive extends PureComponent {
 
   componentWillUnmount() {
     const {id, archive, archivesAction} = this.props;
-    if (archive && archive.local) {
+    if (archive && !archive.local) {
       archivesAction('unbindArchive', id);
     }
   }
