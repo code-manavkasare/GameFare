@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated, Share, Alert, Keyboard} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Share,
+  Alert,
+  Keyboard,
+  Text,
+} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
@@ -21,8 +29,8 @@ import Loader from '../../layout/loaders/Loader';
 import SearchInput from '../../layout/textField/SearchInput';
 import PermissionView from '../../layout/Views/PermissionView';
 import InvitationManager from '../../utility/InvitationManager';
+import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
-import HeaderCallTab from './components/HeaderCallTab';
 import ListVideoCalls from './components/ListVideoCalls';
 import UserSearchResults from '../userDirectory/components/UserSearchResults';
 
@@ -176,7 +184,7 @@ class CallTab extends Component {
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
             onClick={(session) => this.selectSession(session)}
-            openUserDirectory={this.openUserDirectory.bind(this)}
+            openUserDirectory={() => this.openUserDirectory()}
             hideCallButton={action !== 'call'}
             liveSessionHeader={action === 'call'}
           />
@@ -216,54 +224,91 @@ class CallTab extends Component {
       });
     }
   };
+
+  header() {
+    const {
+      actionHeader,
+      modal,
+      branchLink,
+      inlineSearch,
+    } = this.state;
+    const {navigation, numberNotifications} = this.props;
+    const {navigate, goBack} = navigation;
+    return (
+      <HeaderBackButton
+        AnimatedHeaderValue={this.AnimatedHeaderValue}
+        textHeader={actionHeader}
+        inputRange={[5, 20]}
+        initialBorderColorIcon={'white'}
+        initialBackgroundColor={'white'}
+        initialBorderColorHeader={colors.white}
+        initialTitleOpacity={1}
+        initialBorderWidth={1}
+        loader={false}
+        icon1={inlineSearch ? 'times' : 'search'}
+        sizeIcon1={24}
+        colorIcon1={colors.title}
+        clickButton1={inlineSearch ? () => goBack() : () => this.openUserDirectory()}
+        icon2={modal ? 'share' : 'comment-alt'}
+        typeIcon2={modal ? 'moon' : 'font'}
+        sizeIcon2={24}
+        colorIcon2={colors.title}
+        clickButton2={
+          modal
+            ? async () => {
+              const result = await Share.share({url: branchLink});
+              if (result.action === Share.sharedAction) {
+                this.setBranchLink();
+              }
+            }
+            : () => {
+                this.setState({selectedSessions: {}});
+                navigate('Groups');
+              }
+        }
+        badgeIcon2={
+          numberNotifications !== 0 &&
+          !modal && (
+            <View style={[styleApp.viewBadge, {marginLeft: 30}]}>
+              <Text
+                style={[
+                  styleApp.textBold,
+                  {color: colors.white, fontSize: 10},
+                ]}>
+                {numberNotifications}
+              </Text>
+            </View>
+          )
+        }
+        searchBar={
+          inlineSearch && (
+            <SearchInput
+              search={(text) => this.setState({searchText: text})}
+              onFocus={() => {
+                this.setState({searchActive: true});
+              }}
+              onBlur={() => {
+                this.setState({searchActive: false});
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+
   render() {
     const {
       permissionsCamera,
       action,
-      actionHeader,
       archivesToShare,
       modal,
-      branchLink,
       selectedSessions,
       selectedUsers,
-      inlineSearch,
     } = this.state;
-    const {userConnected, navigation} = this.props;
-    const {navigate, goBack} = navigation;
     return (
       <View style={styleApp.stylePage}>
-        <HeaderCallTab
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          userConnected={userConnected}
-          headerTitle={actionHeader}
-          openUserDirectoryIcon={inlineSearch ? 'share' : 'search'}
-          typeIcon2={inlineSearch ? 'moon' : 'font'}
-          searchBar={
-            inlineSearch && (
-              <SearchInput
-                search={(text) => this.setState({searchText: text})}
-                onFocus={() => {
-                  this.setState({searchActive: true});
-                }}
-                onBlur={() => {
-                  this.setState({searchActive: false});
-                }}
-              />
-            )
-          }
-          openUserDirectory={this.openUserDirectory.bind(this)}
-          openMessageHistoryIcon={modal ? 'close' : 'comment-alt'}
-          typeIcon1={modal ? 'mat' : 'font'}
-          openMessageHistory={
-            modal
-              ? () => goBack()
-              : () => {
-                  this.setState({selectedSessions: {}});
-                  navigate('Groups');
-                }
-          }
-          showNotificationCount={!modal}
-        />
+        {this.header()}
         <View style={styles.bodyContainer}>
           {permissionsCamera ? this.viewPermissions() : this.viewCallTab()}
         </View>
@@ -297,11 +342,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
+  const notifications = state.user.infoUser.notifications;
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     userConnected: state.user.userConnected,
     currentSessionID: state.coach.currentSessionID,
+    numberNotifications: notifications
+      ? Object.values(notifications).length
+      : 0,
   };
 };
 
