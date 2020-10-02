@@ -33,7 +33,7 @@ class Camera extends Component {
       promiseRecording: null,
       startRecordingTime: null,
       placeholderImg: undefined,
-      displayPlaceholder: true,
+      displayPlaceholder: false,
       flags: [],
     };
     this.camera = null;
