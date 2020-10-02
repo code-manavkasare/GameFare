@@ -45,10 +45,8 @@ class Footer extends React.Component {
         clearTimeout(this.cameraAvailability);
       }
       layoutAction('setCameraAvailability', true);
-      console.log('show camera');
     } else {
       this.cameraAvailability = setTimeout(() => {
-        console.log('hide camera');
         layoutAction('setCameraAvailability', false);
       }, 2000);
     }

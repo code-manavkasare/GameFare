@@ -2,18 +2,16 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Animated, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {RNCamera} from 'react-native-camera';
-import {Col, Row} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import {BlurView} from '@react-native-community/blur';
+import queue, {Worker} from 'react-native-job-queue';
 
 import {native} from '../../../animations/animations';
 import styleApp from '../../../style/style';
-import colors from '../../../style/colors';
-import sizes from '../../../style/sizes';
 
 import {layoutAction} from '../../../../actions/layoutActions';
 
-import {getVideoInfo, getNewVideoSavePath} from '../../../functions/pictures';
+import {getVideoInfo} from '../../../functions/pictures';
 import {
   addLocalVideo,
   openVideoPlayer,
@@ -35,7 +33,7 @@ class Camera extends Component {
       promiseRecording: null,
       startRecordingTime: null,
       placeholderImg: undefined,
-      displayPlaceholder: false,
+      displayPlaceholder: true,
       flags: [],
     };
     this.camera = null;
@@ -51,6 +49,15 @@ class Camera extends Component {
   giveRef() {
     const {onRef} = this.props;
     onRef && onRef(this);
+  }
+  componentDidMount() {
+    this.configureQueue();
+  }
+  configureQueue() {
+    queue.removeWorker('hideCamera');
+    queue.removeWorker('showCamera');
+    queue.addWorker(new Worker('hideCamera', this.hideCamera.bind(this)));
+    queue.addWorker(new Worker('showCamera', this.showCamera.bind(this)));
   }
   shouldComponentUpdate(prevProps, prevState) {
     return (
@@ -70,27 +77,31 @@ class Camera extends Component {
       this.giveRef();
     }
     if (prevProps.cameraAvailability !== this.props.cameraAvailability) {
-      this.processPlaceholder();
+      const {cameraAvailability} = this.props;
+      if (cameraAvailability) {
+        queue.addJob('showCamera');
+      } else {
+        queue.addJob('hideCamera');
+      }
     }
   }
-  async processPlaceholder() {
-    const {cameraAvailability, frontCamera} = this.props;
-    if (cameraAvailability) {
-      this.setState({displayPlaceholder: false});
-    } else {
-      const options = {quality: 0.5, base64: true};
-      const data = await this.camera?.takePictureAsync(options);
-      this.setState({placeholderImg: data?.uri});
-      Animated.timing(
-        this.placeholderAnimation.mirror,
-        native(frontCamera ? 1 : 0, 1),
-      ).start();
-      Animated.timing(this.placeholderAnimation.opacity, native(1)).start(
-        () => {
-          this.setState({displayPlaceholder: true});
-        },
-      );
-    }
+  async hideCamera() {
+    const {frontCamera} = this.props;
+    const options = {quality: 0.5, base64: true};
+    const data = await this.camera?.takePictureAsync(options);
+    this.setState({placeholderImg: data?.uri});
+    Animated.timing(
+      this.placeholderAnimation.mirror,
+      native(frontCamera ? 1 : 0, 1),
+    ).start();
+    Animated.timing(this.placeholderAnimation.opacity, native(1, 100)).start(
+      () => {
+        this.setState({displayPlaceholder: true});
+      },
+    );
+  }
+  async showCamera() {
+    await this.setState({displayPlaceholder: false});
   }
   addFlag() {
     const {isRecording, startRecordingTime, flags} = this.state;
@@ -173,8 +184,8 @@ class Camera extends Component {
         }}>
         <BlurView
           style={styles.placeholderImg}
-          blurType="light"
-          blurAmount={5}
+          blurType="dark"
+          blurAmount={1}
         />
         {placeholderImg && (
           <Image source={{uri: placeholderImg}} style={styleApp.fullSize} />
