@@ -176,6 +176,7 @@ class CallTab extends Component {
       selectedUsers,
       searchText,
       searchActive,
+      inlineSearch,
     } = this.state;
     return (
       <View>
@@ -183,6 +184,7 @@ class CallTab extends Component {
           <ListVideoCalls
             AnimatedHeaderValue={this.AnimatedHeaderValue}
             selectedSessions={selectedSessions}
+            inlineSearch={inlineSearch}
             onClick={(session) => this.selectSession(session)}
             openUserDirectory={() => this.openUserDirectory()}
             hideCallButton={action !== 'call'}
@@ -208,16 +210,14 @@ class CallTab extends Component {
   }
   openUserDirectory = async () => {
     const {navigation} = this.props;
+    const {goBack, navigate} = navigation;
     const {inlineSearch, branchLink, archivesToShare, action} = this.state;
-    console.log('inlineSearch', inlineSearch);
+
     if (inlineSearch) {
-      const result = await Share.share({url: branchLink});
-      if (result.action === Share.sharedAction) {
-        this.setBranchLink();
-      }
+      goBack();
     } else {
       await this.setState({selectedUsers: {}, selectedSessions: {}});
-      navigation.navigate('UserDirectory', {
+      navigate('UserDirectory', {
         action,
         archivesToShare,
         branchLink,
@@ -226,12 +226,7 @@ class CallTab extends Component {
   };
 
   header() {
-    const {
-      actionHeader,
-      modal,
-      branchLink,
-      inlineSearch,
-    } = this.state;
+    const {actionHeader, modal, branchLink, inlineSearch} = this.state;
     const {navigation, numberNotifications} = this.props;
     const {navigate, goBack} = navigation;
     return (
@@ -248,7 +243,9 @@ class CallTab extends Component {
         icon1={inlineSearch ? 'times' : 'search'}
         sizeIcon1={24}
         colorIcon1={colors.title}
-        clickButton1={inlineSearch ? () => goBack() : () => this.openUserDirectory()}
+        clickButton1={
+          inlineSearch ? () => goBack() : () => this.openUserDirectory()
+        }
         icon2={modal ? 'share' : 'comment-alt'}
         typeIcon2={modal ? 'moon' : 'font'}
         sizeIcon2={24}
@@ -256,11 +253,11 @@ class CallTab extends Component {
         clickButton2={
           modal
             ? async () => {
-              const result = await Share.share({url: branchLink});
-              if (result.action === Share.sharedAction) {
-                this.setBranchLink();
+                const result = await Share.share({url: branchLink});
+                if (result.action === Share.sharedAction) {
+                  this.setBranchLink();
+                }
               }
-            }
             : () => {
                 this.setState({selectedSessions: {}});
                 navigate('Groups');

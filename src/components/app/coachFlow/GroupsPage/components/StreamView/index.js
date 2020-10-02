@@ -50,7 +50,6 @@ import {openVideoPlayer} from '../../../../../functions/videoManagement';
 import {permission} from '../../../../../functions/pictures';
 import {mixPanelToken} from '../../../../../database/firebase/tokens';
 
-
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
 
@@ -203,10 +202,9 @@ class GroupsPage extends Component {
         });
     }
     if (userConnected) {
-      if (prevState.date !== this.state.date && this.state.open) {
-        this.popupPermissionRecording();
-        this.refreshTokenMember();
-      }
+      this.popupPermissionRecording();
+      this.refreshTokenMember();
+
       if (
         !isEqual(prevProps.session, this.props.session) &&
         this.props.session
@@ -259,8 +257,11 @@ class GroupsPage extends Component {
     }
   }
   async refreshTokenMember() {
-    const {coachSession} = this.state;
-    const {currentSessionID: coachSessionID, userID} = this.props;
+    const {
+      currentSessionID: coachSessionID,
+      userID,
+      session: coachSession,
+    } = this.props;
     const member = getMember(coachSession, userID);
 
     if (!member || !coachSession) {
@@ -440,13 +441,15 @@ class GroupsPage extends Component {
       top: marginTop + heightHeaderHome,
     };
   }
+  
   header(isConnected) {
-    const {userID, session, currentSessionID} = this.props;
+    const {userID, session, currentSessionID,navigation} = this.props;
     return (
       <Header
         coachSessionID={currentSessionID}
         organizerID={session && session?.info.organizer}
         isConnected={isConnected}
+        navigation={navigation}
         permissionOtherUserToRecord={
           session
             ? getMember(session, userID)?.permissionOtherUserToRecord

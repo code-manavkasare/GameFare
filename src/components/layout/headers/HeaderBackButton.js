@@ -558,8 +558,8 @@ const styles = StyleSheet.create({
   rowTextImgHeader: {
     height: '100%',
     position: 'absolute',
-    width: 0.7 * width * 0.9,
-    marginLeft: 50,
+    width: 0.7 * width,
+    marginLeft: 80,
     zIndex: 10,
   },
 });

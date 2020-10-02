@@ -3,7 +3,6 @@ import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
-import NavigationService from '../../../../../../../../NavigationService';
 import {layoutAction} from '../../../../../../../actions/layoutActions';
 
 import {createInviteToSessionBranchUrl} from '../../../../../../database/branch';
@@ -26,6 +25,7 @@ class HeaderStreamView extends Component {
       chargeForSession,
       currentSessionReconnecting,
       isConnected,
+      navigation,
     } = this.props;
 
     return (
@@ -56,9 +56,7 @@ class HeaderStreamView extends Component {
           currentSessionReconnecting ? colors.greyDark : colors.white
         }
         backgroundColorIconOffset={colors.title + '70'}
-        iconOffset2={
-          isConnected && 'person-add'
-        }
+        iconOffset2={isConnected && 'person-add'}
         typeIconOffset2="mat"
         sizeIconOffset2={23}
         colorIconOffset2={
@@ -67,14 +65,19 @@ class HeaderStreamView extends Component {
         clickButtonOffset2={async () =>
           currentSessionReconnecting
             ? null
-            : NavigationService.navigate('UserDirectory', {action: 'invite', branchLink: await createInviteToSessionBranchUrl(coachSessionID)})
+            : navigation.navigate('UserDirectory', {
+                action: 'invite',
+                branchLink: await createInviteToSessionBranchUrl(
+                  coachSessionID,
+                ),
+              })
         }
         backgroundColorIconOffset2={colors.title + '70'}
         initialTitleOpacity={1}
         clickButtonOffset={() =>
           currentSessionReconnecting
             ? null
-            : NavigationService.navigate('Settings', {
+            : navigation.navigate('Settings', {
                 coachSessionID: coachSessionID,
                 permissionOtherUserToRecord: permissionOtherUserToRecord,
                 chargeForSession: chargeForSession,

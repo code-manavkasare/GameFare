@@ -23,7 +23,7 @@ class CardUserSelect extends Component {
 
   static defaultProps = {
     selected: false,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -66,15 +66,15 @@ class CardUserSelect extends Component {
       overflow: 'hidden',
     };
     const privateUser = isPrivate && !silentFriends[user.id];
-    
+
     return (
       <ButtonColor
         view={() => {
           return (
             <View style={styleApp.fullSize}>
               <Animated.View style={selectionOverlayStyle} />
-              <Row style={{padding: '5%'}}>
-                <Col size={20} style={styleApp.center2}>
+              <Row>
+                <Col size={20} style={styleApp.center}>
                   {user.info.picture ? (
                     <AsyncImage
                       style={styles.imgUser}
@@ -83,8 +83,10 @@ class CardUserSelect extends Component {
                     />
                   ) : (
                     <View style={[styleApp.center, styles.imgUser]}>
-                      <Text style={[styleApp.text, {fontSize: 12}]}>
-                        {user.info.firstname !== '' ? user.info.firstname[0] : ''}
+                      <Text style={[styleApp.textBold, {fontSize: 13}]}>
+                        {user.info.firstname !== ''
+                          ? user.info.firstname[0]
+                          : ''}
                         {user.info.lastname !== '' ? user.info.lastname[0] : ''}
                       </Text>
                     </View>
@@ -95,13 +97,15 @@ class CardUserSelect extends Component {
                     {user?.info?.firstname} {user?.info?.lastname}
                   </Text>
                 </Col>
-                <Col size={10} style = {styleApp.center3}>
-                  {privateUser && <AllIcon
-                    type={'font'}
-                    color={colors.greyDarker}
-                    size={18}
-                    name={'lock'}
-                  />}
+                <Col size={10} style={styleApp.center3}>
+                  {privateUser && (
+                    <AllIcon
+                      type={'font'}
+                      color={colors.greyDarker}
+                      size={18}
+                      name={'lock'}
+                    />
+                  )}
                 </Col>
               </Row>
             </View>
@@ -141,4 +145,3 @@ export default connect(
   mapStateToProps,
   {},
 )(CardUserSelect);
-
