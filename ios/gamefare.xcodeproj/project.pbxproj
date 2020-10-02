@@ -724,7 +724,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which sentry-cli >/dev/null; then\nexport SENTRY_ORG=gamefare\nexport SENTRY_PROJECT=gamefare\nexport SENTRY_AUTH_TOKEN=978a3bfe745f421397f1943c2bbf4e483e142b49fd84431f91829efd90f4676a\nERROR=$(sentry-cli upload-dif \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\nif [ ! $? -eq 0 ]; then\necho \"warning: sentry-cli - $ERROR\"\nfi\nelse\necho \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\nfi\n\n";
+			shellScript = "if which sentry-cli >/dev/null; then\n\nexport SENTRY_ORG=gamefare\nexport SENTRY_PROJECT=gamefare\nexport SENTRY_AUTH_TOKEN=978a3bfe745f421397f1943c2bbf4e483e142b49fd84431f91829efd90f4676a\nERROR=$(sentry-cli upload-dif \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\necho \"sentry-cli : upload dSYM done\"\nif [ ! $? -eq 0 ]; then\necho \"warning: sentry-cli - $ERROR\"\nfi\nelse\necho \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\nfi\n\n";
 		};
 		081C4A86A3EE3D269EF8A608 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
