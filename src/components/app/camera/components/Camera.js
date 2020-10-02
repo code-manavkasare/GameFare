@@ -11,7 +11,7 @@ import styleApp from '../../../style/style';
 
 import {layoutAction} from '../../../../actions/layoutActions';
 
-import {getVideoInfo} from '../../../functions/pictures';
+import {getVideoInfo, getNewVideoSavePath} from '../../../functions/pictures';
 import {
   addLocalVideo,
   openVideoPlayer,
