@@ -506,10 +506,6 @@ const openMemberAcceptCharge = async (
 };
 
 const finalizeOpening = async (session) => {
-  await navigate('Session', {
-    screen: 'Session',
-    params: {coachSessionID: session.objectID, date: Date.now()},
-  });
   const currentSessionID = store.getState().coach.currentSessionID;
   if (currentSessionID !== session.objectID) {
     if (currentSessionID) {
@@ -539,11 +535,22 @@ const createSession = async (members) => {
 };
 
 const sessionOpening = async (session) => {
-  // const currentSessionID = store.getState().coach.currentSessionID;
-  // if (!isSessionFree(session) && currentSessionID !== session.objectID) {
-  //   return openMemberAcceptCharge(session);
-  // }
-  finalizeOpening(session);
+  /* Re-enable for payment support
+  const currentSessionID = store.getState().coach.currentSessionID;
+  if (!isSessionFree(session) && currentSessionID !== session.objectID) {
+      return openMemberAcceptCharge(session);
+  }
+  */
+
+  await navigate('Session');
+  /*
+    Set timeout is a quick fix, unset/set current
+    session ID forces session component to update
+    before navigation blocking the UI thread.
+  */
+  setTimeout(async () => {
+    finalizeOpening(session);
+  }, 200);
 };
 
 const capitalize = (str) => {
