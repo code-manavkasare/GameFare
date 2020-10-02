@@ -123,15 +123,15 @@ class FlatListComponent extends Component {
               {height: 250, marginTop: 20},
             ]}>
             <Image
-              source={ListEmptyComponent.image}
+              source={ListEmptyComponent?.image}
               style={{height: 50, width: 50, marginBottom: 20}}
             />
-            <Text style={styleApp.textBold}>{ListEmptyComponent.text}</Text>
+            <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
             <Button
               backgroundColor="primary"
               onPressColor={colors.primaryLight}
               enabled={true}
-              text={ListEmptyComponent.textButton}
+              text={ListEmptyComponent?.textButton}
               icon={{
                 name: ListEmptyComponent.iconButton,
                 size: 24,
@@ -140,23 +140,23 @@ class FlatListComponent extends Component {
               }}
               styleButton={{height: 55, marginTop: 30}}
               loader={false}
-              click={() => ListEmptyComponent.clickButton()}
+              click={() => ListEmptyComponent?.clickButton()}
             />
-            {ListEmptyComponent.clickButton2 && (
+            {ListEmptyComponent?.clickButton2 && (
               <Button
                 backgroundColor="green"
                 onPressColor={colors.greenLight}
                 enabled={true}
-                text={ListEmptyComponent.textButton2}
+                text={ListEmptyComponent?.textButton2}
                 icon={{
-                  name: ListEmptyComponent.iconButton2,
+                  name: ListEmptyComponent?.iconButton2,
                   size: 24,
                   type: 'font',
                   color: colors.white,
                 }}
                 styleButton={{height: 55, marginTop: 30}}
                 loader={false}
-                click={() => ListEmptyComponent.clickButton2()}
+                click={() => ListEmptyComponent?.clickButton2()}
               />
             )}
           </View>
