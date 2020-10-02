@@ -109,6 +109,7 @@ class Camera extends Component {
       this.setState({isRecording: true});
       const options = {
         quality: RNCamera.Constants.VideoQuality['2160p'],
+        path: getNewVideoSavePath(),
       };
       let promise = camera.recordAsync(options);
       onRecord && onRecord();
