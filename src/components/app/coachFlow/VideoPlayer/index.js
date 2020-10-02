@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Animated, Image, Dimensions} from 'react-native';
 import Video from 'gamefare-rn-video';
 import PropTypes from 'prop-types';
+import AudioSession from 'react-native-audio-session';
 
 import AsyncImage from '../../../layout/image/AsyncImage';
 import Loader from '../../../layout/loaders/Loader';
@@ -72,8 +73,19 @@ export default class VideoPlayer extends Component {
       this.props.onRef(this);
     }
     const {currentTime} = this.state;
+    const {coachSessionID} = this.props;
     if (currentTime !== 0) {
       this.seek(currentTime);
+    }
+
+    const connectedToSession =
+      coachSessionID !== false && coachSessionID !== undefined;
+    if (connectedToSession) {
+      AudioSession.setCategoryAndMode(
+        'PlayAndRecord',
+        'VideoChat',
+        'AllowBluetooth',
+      );
     }
   }
 
@@ -87,12 +99,12 @@ export default class VideoPlayer extends Component {
       this.PinchableBoxRef?.resetPosition();
     }
 
-    if (videoLoaded && !prevState.videoLoaded) {
-      setTimeout(() => {
-        // this.visualSeekBarRef?.toggleVisible(true);
-        this.seek(currentTime);
-      }, 200);
-    }
+    // if (videoLoaded && !prevState.videoLoaded) {
+    //   setTimeout(() => {
+    //     // this.visualSeekBarRef?.toggleVisible(true);
+    //     this.seek(currentTime);
+    //   }, 200);
+    // }
   }
 
   getProxySource = async (src) => {
@@ -368,6 +380,8 @@ export default class VideoPlayer extends Component {
       allowRecording,
     } = this.state;
     const {height} = Dimensions.get('screen');
+    const connectedToSession =
+      coachSessionID !== false && coachSessionID !== undefined;
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight && buttonTopRight()}
@@ -408,11 +422,10 @@ export default class VideoPlayer extends Component {
               <View style={[styleApp.fullSize, styleApp.center]}>
                 <Video
                   key={index}
-                  mixWithOthers={'mix'}
-                  ignoreSilentSwitch={'ignore'}
+                  mixWithOthers={connectedToSession ? undefined : 'mix'}
+                  ignoreSilentSwitch={connectedToSession ? undefined : 'ignore'}
                   allowRecording={
-                    allowRecording ||
-                    (coachSessionID !== false && coachSessionID !== undefined)
+                    connectedToSession ? undefined : allowRecording
                   }
                   source={{uri: url}}
                   style={styleApp.fullSize}
@@ -420,6 +433,15 @@ export default class VideoPlayer extends Component {
                     this.player = ref;
                   }}
                   rate={playRate}
+                  onLoadStart={() => {
+                    if (connectedToSession) {
+                      AudioSession.setCategoryAndMode(
+                        'PlayAndRecord',
+                        'VideoChat',
+                        'AllowBluetooth',
+                      );
+                    }
+                  }}
                   onLoad={async (callback) => {
                     const {setSizeVideo} = this.props;
                     this.clickVideo(index);

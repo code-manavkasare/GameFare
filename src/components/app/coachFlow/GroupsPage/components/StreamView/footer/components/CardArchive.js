@@ -251,7 +251,7 @@ class CardArchive extends PureComponent {
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
-          {local ? (
+          {local && thumbnail ? (
             <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
           ) : (
             <AsyncImage

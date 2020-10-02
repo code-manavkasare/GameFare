@@ -86,10 +86,13 @@ class Camera extends Component {
     }
   }
   async hideCamera() {
+    const {isRecording} = this.state;
+    if (isRecording) return;
     const {frontCamera} = this.props;
-    const options = {quality: 0.5, base64: true};
-    const data = await this.camera?.takePictureAsync(options);
-    this.setState({placeholderImg: data?.uri});
+    // const options = {quality: 0.5, base64: true};
+    // const data = await this.camera?.takePictureAsync(options);
+    // this.setState({placeholderImg: data?.uri});
+
     Animated.timing(
       this.placeholderAnimation.mirror,
       native(frontCamera ? 1 : 0, 1),
@@ -187,9 +190,9 @@ class Camera extends Component {
           blurType="dark"
           blurAmount={1}
         />
-        {placeholderImg && (
+        {/* {placeholderImg && (
           <Image source={{uri: placeholderImg}} style={styleApp.fullSize} />
-        )}
+        )} */}
       </Animated.View>
     );
   }
@@ -228,6 +231,7 @@ class Camera extends Component {
             }}
             captureAudio={isRecording}
             keepAudioSession
+            playSoundOnCapture={false}
             mixWithOthers
             style={styles.preview}
             type={

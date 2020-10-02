@@ -26,6 +26,7 @@ import SessionBindManager from './src/components/utility/bindings/SessionBindMan
 import ConversationBindManager from './src/components/utility/bindings/ConversationBindManager';
 import BranchManager from './src/components/utility/BranchManager';
 import CallListener from './src/components/utility/CallListener';
+import {audioDebugger} from './src/components/utility/AudioSessionDebugger';
 
 import {
   updateLocalVideoUrls,
@@ -60,6 +61,9 @@ class App extends Component {
       updateLocalVideoUrls();
       convertToCache(''); // starts video cache server so cached url's work on startup
     }
+
+    //Console log the audio session
+    audioDebugger({interval: 5000, disabled: true});
   }
 
   componentDidUpdate = async (prevProps) => {

@@ -405,6 +405,8 @@ PODS:
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
   - React-jsinspector (0.63.2)
+  - react-native-audio-session (0.0.6):
+    - React-Core
   - react-native-background-timer (2.4.0):
     - React
   - react-native-blur (0.8.0):
@@ -697,6 +699,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-audio-session (from `../node_modules/react-native-audio-session`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-branch (from `../node_modules/react-native-branch`)
@@ -889,6 +892,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-audio-session:
+    :path: "../node_modules/react-native-audio-session"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
   react-native-blur:
@@ -1118,6 +1123,7 @@ SPEC CHECKSUMS:
   React-jsi: 54245e1d5f4b690dec614a73a3795964eeef13a8
   React-jsiexecutor: 8ca588cc921e70590820ce72b8789b02c67cce38
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
+  react-native-audio-session: a92396d8eeae3e66eb29572d814e357acafe76d6
   react-native-background-timer: 029c606b3fd6dd476b153e177c518b6ade4c169f
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
