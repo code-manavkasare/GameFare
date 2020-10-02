@@ -506,20 +506,17 @@ const openMemberAcceptCharge = async (
 };
 
 const finalizeOpening = async (session) => {
+  await navigate('Session', {
+    screen: 'Session',
+    params: {coachSessionID: session.objectID, date: Date.now()},
+  });
   const currentSessionID = store.getState().coach.currentSessionID;
   if (currentSessionID !== session.objectID) {
     if (currentSessionID) {
       await store.dispatch(unsetCurrentSession());
     }
-    await store.dispatch(setCurrentSessionID(session.objectID));
+    store.dispatch(setCurrentSessionID(session.objectID));
   }
-  await store.dispatch(setLayout({isFooterVisible: false}));
-  StatusBar.setBarStyle('light-content', true);
-
-  navigate('Session', {
-    screen: 'Session',
-    params: {coachSessionID: session.objectID, date: Date.now()},
-  });
 };
 
 const createSession = async (members) => {
@@ -542,10 +539,10 @@ const createSession = async (members) => {
 };
 
 const sessionOpening = async (session) => {
-  const currentSessionID = store.getState().coach.currentSessionID;
-  if (!isSessionFree(session) && currentSessionID !== session.objectID) {
-    return openMemberAcceptCharge(session);
-  }
+  // const currentSessionID = store.getState().coach.currentSessionID;
+  // if (!isSessionFree(session) && currentSessionID !== session.objectID) {
+  //   return openMemberAcceptCharge(session);
+  // }
   finalizeOpening(session);
 };
 
@@ -579,8 +576,6 @@ const deleteSession = (objectID) => {
     },
   });
 };
-
-
 
 const loadAndOpenSession = async (sessionID) => {
   const coachSession = await database()
