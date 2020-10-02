@@ -42,39 +42,30 @@ class CardArchive extends PureComponent {
     super(props);
     this.state = {
       loader: false,
-      bound: false,
     };
   }
 
   componentDidMount() {
-    const {archive, index} = this.props;
-    if (!archive || !archive.local) {
-      this.bindArchive();
+    const {id, archive, archivesAction} = this.props;
+    if (archive && !archive.local) {
+      archivesAction('bindArchive', id);
     }
   }
 
-  componentDidUpdate() {
-    const {archive} = this.props;
-    const {bound} = this.state;
-    if ((!archive || !archive.local) && !bound) {
-      this.bindArchive();
+  componentDidUpdate(prevProps) {
+    const {id, archive, archivesAction} = this.props;
+    const {archive: prevArchive} = prevProps;
+    if ((!prevArchive || prevArchive.local) && !archive?.local) {
+      // video was uploaded during the lifetime of this component
+      archivesAction('bindArchive', id);
     }
   }
 
   componentWillUnmount() {
-    this.unbindArchive();
-  }
-
-  bindArchive() {
-    const {id, archivesAction} = this.props;
-    this.setState({bound: true});
-    archivesAction('bindArchive', id);
-  }
-
-  unbindArchive() {
-    const {id, archivesAction} = this.props;
-    archivesAction('unbindArchive', id);
-    this.setState({bound: false});
+    const {id, archive, archivesAction} = this.props;
+    if (archive && archive.local) {
+      archivesAction('unbindArchive', id);
+    }
   }
 
   placeholder() {
