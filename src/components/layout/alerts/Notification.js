@@ -119,7 +119,7 @@ class Notification extends Component {
           }}>
           <Row style={styleApp.marginView}>
             <Col size={20} style={styleApp.center2}>
-              {!picture ? (
+              {!picture || picture === 'false' ? (
                 <Image
                   source={require('../../../img/logos/logoios.png')}
                   style={styleImg}
