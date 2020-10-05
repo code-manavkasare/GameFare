@@ -12,13 +12,11 @@ import AsyncImage from '../../../layout/image/AsyncImage';
 import ButtonColor from '../../../layout/Views/Button';
 import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
-import {navigate} from '../../../../../NavigationService';
 
 import {store} from '../../../../../reduxStore';
 import {unsetCurrentSession} from '../../../../actions/coachActions';
 import {
   sessionOpening,
-  addMembersToSession,
   selectVideosFromLibrary,
 } from '../../../functions/coach';
 import {createInviteToSessionBranchUrl} from '../../../database/branch';
@@ -703,6 +701,9 @@ const ListContents = (props) => {
       incrementRendering={4}
       initialNumberToRender={8}
       hideDividerHeader={true}
+      ListEmptyComponent={{
+        text: `You have no content shared yet.`,
+      }}
       header={rowTitle({
         icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},
         hideDividerHeader: true,
@@ -790,7 +791,12 @@ const ListPlayers = (props) => {
         },
         button: {
           text: 'Add',
-          click: async () => navigate('UserDirectory', {action: 'invite', sessionToInvite: objectID, branchLink: await createInviteToSessionBranchUrl(objectID)}),
+          click: async () =>
+            navigate('UserDirectory', {
+              action: 'invite',
+              sessionToInvite: objectID,
+              branchLink: await createInviteToSessionBranchUrl(objectID),
+            }),
         },
         hideDividerHeader: true,
         badge: Object.keys(members).length,
@@ -815,7 +821,7 @@ const conversationView = (session) => {
 };
 
 const contentView = (session) => {
-  const {objectID, contents} = session;
+  const {contents} = session;
 
   return viewWithTitle({
     view: <View style={{height: 20}}>{/* <Text>card content </Text> */}</View>,

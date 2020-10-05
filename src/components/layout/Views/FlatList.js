@@ -1,17 +1,53 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Animated, FlatList, Image} from 'react-native';
+import {
+  array,
+  bool,
+  elementType,
+  func,
+  number,
+  object,
+  shape,
+  string,
+} from 'prop-types';
+import {Text, View, Animated, FlatList, Image} from 'react-native';
 import isEqual from 'lodash.isequal';
+
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
-import {height} from '../../style/sizes';
-import {timeout} from '../../functions/coach';
 import Button from '../../layout/buttons/Button';
-
 import Loader from '../../layout/loaders/Loader';
 
-import {store} from '../../../../reduxStore';
-
 class FlatListComponent extends Component {
+  static propTypes = {
+    AnimatedHeaderValue: elementType,
+    cardList: func.isRequired,
+    header: elementType,
+    incrementRendering: number,
+    initialNumberToRender: number,
+    inverted: bool,
+    ListEmptyComponent: shape({
+      clickButton: func,
+      clickButton2: func,
+      iconButton: string,
+      iconButton2: string,
+      image: string, // require(pathToimage), example in videoLibraryPage
+      text: string,
+      textButton: string,
+      textButton2: string,
+    }),
+    list: array.isRequired,
+    noLazy: bool,
+    numColumns: number,
+    paddingBottom: number,
+    refreshControl: bool,
+    showsVerticalScrollIndicator: bool,
+    showsHorizontalScrollIndicator: bool,
+    styleContainer: object,
+  };
+  static defaultProps = {
+    incrementRendering: 12,
+    initialNumberToRender: 15,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -43,24 +79,24 @@ class FlatListComponent extends Component {
   render() {
     const {numberToRender} = this.state;
     let {
-      list,
-      cardList,
-      numColumns,
-      header,
       AnimatedHeaderValue,
-      paddingBottom,
-      inverted,
-      styleContainer,
+      cardList,
+      header,
       headerStyle,
       horizontal,
+      inverted,
+      list,
+      ListEmptyComponent,
+      noLazy,
+      numColumns,
+      onScroll,
+      onScrollBeginDrag,
+      onScrollEndDrag,
+      paddingBottom,
+      refreshControl,
       showsHorizontalScrollIndicator,
       showsVerticalScrollIndicator,
-      refreshControl,
-      onScrollEndDrag,
-      onScrollBeginDrag,
-      onScroll,
-      noLazy,
-      ListEmptyComponent,
+      styleContainer,
     } = this.props;
 
     const containerStyle = {
@@ -127,21 +163,23 @@ class FlatListComponent extends Component {
               style={{height: 50, width: 50, marginBottom: 20}}
             />
             <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
-            <Button
-              backgroundColor="primary"
-              onPressColor={colors.primaryLight}
-              enabled={true}
-              text={ListEmptyComponent?.textButton}
-              icon={{
-                name: ListEmptyComponent.iconButton,
-                size: 24,
-                type: 'font',
-                color: colors.white,
-              }}
-              styleButton={{height: 55, marginTop: 30}}
-              loader={false}
-              click={() => ListEmptyComponent?.clickButton()}
-            />
+            {ListEmptyComponent?.clickButton1 && (
+              <Button
+                backgroundColor="primary"
+                onPressColor={colors.primaryLight}
+                enabled={true}
+                text={ListEmptyComponent?.textButton}
+                icon={{
+                  name: ListEmptyComponent?.iconButton,
+                  size: 24,
+                  type: 'font',
+                  color: colors.white,
+                }}
+                styleButton={{height: 55, marginTop: 30}}
+                loader={false}
+                click={() => ListEmptyComponent?.clickButton()}
+              />
+            )}
             {ListEmptyComponent?.clickButton2 && (
               <Button
                 backgroundColor="green"
