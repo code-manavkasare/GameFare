@@ -275,7 +275,7 @@ class InvitationManager extends Component {
       flex: 1,
       flexDirection: 'row',
       position: 'absolute',
-      bottom: 0,
+      bottom: 10,
       height: 50,
       width: '100%',
       ...styleApp.center1,

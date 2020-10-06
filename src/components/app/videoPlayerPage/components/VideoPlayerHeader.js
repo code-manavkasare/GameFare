@@ -1,5 +1,5 @@
 import React from 'react';
-import {Animated, Image, StatusBar} from 'react-native';
+import {View, Animated, Image, StatusBar} from 'react-native';
 import PropTypes from 'prop-types';
 import styleApp from '../../../style/style';
 import colors from '../../../style/colors';
@@ -7,8 +7,11 @@ import sizes from '../../../style/sizes';
 import {native} from '../../../animations/animations';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createShareVideosBranchUrl} from '../../../database/branch';
+import ButtonShareVideo from './ButtonShareVideo';
+import Button from '../../../layout/buttons/Button';
 
 import {BlurView} from '@react-native-community/blur';
+import ButtonLink from './ButtonLink';
 export default class VideoPlayerHeader extends React.Component {
   static propTypes = {
     isEditMode: PropTypes.bool.isRequired,
@@ -19,7 +22,7 @@ export default class VideoPlayerHeader extends React.Component {
   };
   constructor(props) {
     super(props);
-    this.translateY = new Animated.Value(-150);
+    this.translateY = new Animated.Value(0);
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.videoClicks = [];
   }
@@ -30,14 +33,14 @@ export default class VideoPlayerHeader extends React.Component {
   }
   handleClick(index) {
     const videoIndex = this.videoClicks.indexOf(index);
-    let toValue = 0;
+    let toValue = 1;
     if (videoIndex === -1) {
       this.videoClicks.push(index);
     } else {
       this.videoClicks.splice(videoIndex, 1);
     }
     if (this.videoClicks.length === 0) {
-      toValue = -150;
+      toValue = 0;
       StatusBar.setHidden(true, 'fade');
     } else {
       StatusBar.setHidden(false, 'fade');
@@ -172,12 +175,62 @@ export default class VideoPlayerHeader extends React.Component {
     };
     return <HeaderBackButton {...sharedProps} />;
   }
+
+  buttonSharing = () => {
+    const {
+      isEditMode,
+      coachSessionID,
+      videoInfos,
+      togglePlayPause,
+      getVideoState,
+    } = this.props;
+    if (!coachSessionID) {
+      return null;
+    }
+
+    return (
+      <ButtonShareVideo
+        onRef={(ref) => (this.buttonShareRef = ref)}
+        archives={videoInfos}
+        isEditMode={isEditMode}
+        coachSessionID={coachSessionID}
+        togglePlayPause={togglePlayPause}
+        getVideoState={getVideoState}
+      />
+    );
+  };
+
+  buttonLink = () => {
+    const {coachSessionID, toggleLinkAllVideos, allowLinking} = this.props;
+    return (
+      allowLinking && (
+        <ButtonLink
+          coachSessionID={coachSessionID}
+          toggleLinkAllVideos={toggleLinkAllVideos}
+          allowLinking={allowLinking}
+        />
+      )
+    );
+  };
+
   render() {
     const {portrait} = this.props;
     const {translateY} = this;
     const marginTop = portrait
       ? sizes.marginTopApp
       : sizes.marginTopAppLandscape;
+    let marginTopFloatingButtons = sizes.marginTopApp + sizes.heightHeaderHome;
+    if (!portrait)
+      marginTopFloatingButtons =
+        sizes.marginTopAppLandscape + sizes.heightHeaderHome;
+    const headerTranslateY = translateY.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-250, 0],
+    });
+    const floatingButtonsTranslateY = translateY.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-220, 0],
+    });
     const blurViewStyle = {
       position: 'absolute',
       zIndex: -1,
@@ -185,22 +238,40 @@ export default class VideoPlayerHeader extends React.Component {
       top: 0,
     };
     const containerStyle = {
+      zIndex: 2,
       position: 'absolute',
       top: 10,
+      width: '100%',
+    };
+    const headerContainerStyle = {
+      position: 'absolute',
+      top: 0,
       marginTop,
       height: 65,
       borderRadius: 75,
       width: '95%',
       left: '2.5%',
-      zIndex: 2,
       overflow: 'hidden',
-      transform: [{translateY}],
+      transform: [{translateY: headerTranslateY}],
+    };
+    const floatingButtonsStyle = {
+      width: '95%',
+      left: '2.5%',
+      alignItems: 'flex-end',
+      marginTop: marginTopFloatingButtons,
+      transform: [{translateY: floatingButtonsTranslateY}],
     };
     return (
-      <Animated.View style={containerStyle}>
-        {this.header()}
-        <BlurView style={blurViewStyle} blurType="dark" blurAmount={10} />
-      </Animated.View>
+      <View style={containerStyle}>
+        <Animated.View style={headerContainerStyle}>
+          {this.header()}
+          <BlurView style={blurViewStyle} blurType="dark" blurAmount={10} />
+        </Animated.View>
+        <Animated.View style={floatingButtonsStyle}>
+          {this.buttonSharing()}
+          {this.buttonLink()}
+        </Animated.View>
+      </View>
     );
   }
 }

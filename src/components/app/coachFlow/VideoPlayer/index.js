@@ -158,10 +158,15 @@ export default class VideoPlayer extends Component {
       index,
       noUpdateInCloud,
       updateVideoInfoCloud,
+      archive,
     } = this.props;
+    const {durationSeconds} = archive;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
     if (forcePause) {
       paused = false;
+    }
+    if (durationSeconds - currentTime < 0.05 && paused) {
+      await this.seek(0);
     }
     if (!noUpdateInCloud) {
       if (!paused) {
@@ -283,7 +288,7 @@ export default class VideoPlayer extends Component {
     if (fineSeek) {
       this.setState({prevPaused: undefined});
       onPlayPause(index, true, time);
-
+      this.linkedTogglePlayPause(true);
       if (updateVideoInfoCloud && !noUpdateInCloud) {
         await updateVideoInfoCloud({
           currentTime: time,
@@ -474,7 +479,7 @@ export default class VideoPlayer extends Component {
                   paused={paused}
                   onProgress={(info) => !paused && this.onProgress(info)}
                   onEnd={(callback) => {
-                    this.togglePlayPause(true);
+                    this.linkedTogglePlayPause();
                     this.visualSeekBarRef?.setCurrentTime(
                       durationSeconds,
                       true,
@@ -502,11 +507,11 @@ export default class VideoPlayer extends Component {
             paused={paused}
             prevPaused={prevPaused}
             updatePlayRate={(rate) => this.updatePlayRate(rate)}
-            seek={this.linkedOnSeek.bind(this)}
+            seek={this.onSeek.bind(this)}
             onSlidingComplete={(sliderTime, forcePlay) =>
-              this.linkedOnSlidingComplete(sliderTime, forcePlay)
+              this.onSlidingComplete(sliderTime, forcePlay)
             }
-            onSlidingStart={() => this.linkedOnSlidingStart()}
+            onSlidingStart={() => this.onSlidingStart()}
             width={width}
             onSeekbarLoad={() => {
               this.setState({seekbarLoaded: true});

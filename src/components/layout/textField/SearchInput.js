@@ -58,7 +58,7 @@ class SearchInput extends Component {
                   textInputRef.focus();
                 }
               }}
-              clearButtonMode={'always'}
+              clearButtonMode={'never'}
               underlineColorAndroid="rgba(0,0,0,0)"
               autoCorrect={true}
               onChangeText={(text) => {
@@ -73,7 +73,7 @@ class SearchInput extends Component {
             />
           </Col>
           <Col size={5} />
-          {/* <Col size={10} style={styleApp.center}>
+          <Col size={10} style={styleApp.center}>
             <Animated.View style={styles.buttonContainerStyle}>
               <ButtonColor
                 view={() => {
@@ -95,7 +95,7 @@ class SearchInput extends Component {
                 style={styles.buttonStyle}
               />
             </Animated.View>
-          </Col> */}
+          </Col>
         </Row>
       </View>
     );

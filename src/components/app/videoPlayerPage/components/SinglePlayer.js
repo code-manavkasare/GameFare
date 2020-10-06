@@ -70,7 +70,7 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
-    if ((prevArchive && prevArchive.local) && (archive && !archive.local)) {
+    if (prevArchive && prevArchive.local && (archive && !archive.local)) {
       // video was uploaded during the lifetime of this component
       archivesAction('bindArchive', id);
     }
@@ -191,6 +191,7 @@ class SinglePlayer extends Component {
       isDrawingEnabled,
       landscape,
       linkedPlayers,
+      playbackLinked,
       numArchives,
       onDrawingChange,
       personSharingScreen,
@@ -215,7 +216,7 @@ class SinglePlayer extends Component {
 
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
- 
+
     const {
       paused,
       currentTime,
@@ -326,9 +327,10 @@ class SinglePlayer extends Component {
           hideFullScreenButton={true}
           archive={archive}
           styleContainerVideo={{...styleApp.center, ...styleApp.fullSize}}
-          linkedPlayers={[...linkedPlayers[index]].map(
-            (i) => videoPlayerRefs[i],
-          )}
+          // linkedPlayers={[...linkedPlayers[index]].map(
+          //   (i) => videoPlayerRefs[i],
+          // )}
+          linkedPlayers={playbackLinked ? videoPlayerRefs : []}
           {...propsWhenRecording}
           onRef={(ref) => {
             this.videoPlayerRef = ref;

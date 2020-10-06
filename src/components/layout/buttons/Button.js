@@ -8,6 +8,7 @@ import {
   View,
   Animated,
 } from 'react-native';
+import {BlurView} from '@react-native-community/blur';
 import colors from '../../style/colors';
 import Loader from '../loaders/Loader';
 import {timing} from '../../animations/animations';
@@ -108,6 +109,12 @@ export default class Button extends Component {
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()],
     });
     const {click, disabled, loader, text, icon, loaderSize} = this.props;
+    const blurViewStyle = {
+      ...styleApp.fullSize,
+      position: 'absolute',
+      zIndex: -1,
+      borderRadius: 15,
+    };
     return (
       <Animated.View style={[this.styleButton(), {backgroundColor: color}]}>
         <TouchableOpacity
@@ -129,6 +136,9 @@ export default class Button extends Component {
             )}
           </View>
         </TouchableOpacity>
+        {this.props.backgroundColor === 'blur' && (
+          <BlurView style={blurViewStyle} blurType="dark" blurAmount={5} />
+        )}
       </Animated.View>
     );
   }

@@ -6,7 +6,6 @@ import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
-import ButtonShareVideo from './components/ButtonShareVideo';
 import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
@@ -97,7 +96,8 @@ class VideoPlayerPage extends Component {
   autoShareOnOpen = () => {
     const {params} = this.props.route;
 
-    if (params.forceSharing) this.buttonShareRef.startSharingVideo(true);
+    if (params.forceSharing)
+      this.headerRef.buttonShareRef.startSharingVideo(true);
   };
 
   componentWillUnmount() {
@@ -415,6 +415,23 @@ class VideoPlayerPage extends Component {
         recordedActions={recordedActions}
         archives={archives}
         personSharingScreen={personSharingScreen}
+        coachSessionID={coachSessionID}
+        togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
+        getVideoState={(id) => {
+          const index = Object.values(videoInfos).findIndex(
+            (item) => item.id === id,
+          );
+          return this.videoPlayerRefs[index].getState();
+        }}
+        toggleLinkAllVideos={(link) => {
+          this.videoPlayerRefs.map((ref) => {
+            ref.togglePlayPause(true);
+          });
+          this.setState({playbackLinked: link});
+        }}
+        allowLinking={
+          this.videoPlayerRefs !== undefined && this.videoPlayerRefs.length > 1
+        }
         route={route}
         navigation={navigation}
         close={() => {
@@ -515,6 +532,7 @@ class VideoPlayerPage extends Component {
       disableControls,
       isDrawingEnabled,
       linkedPlayers,
+      playbackLinked,
       isAudioPlayerReady,
     } = this.state;
 
@@ -554,6 +572,7 @@ class VideoPlayerPage extends Component {
         recordedActions={recordedActions}
         isDrawingEnabled={isDrawingEnabled}
         linkedPlayers={linkedPlayers}
+        playbackLinked={playbackLinked}
         coachSessionID={coachSessionID}
         isRecording={isRecording}
         videosBeingShared={videosBeingShared}
@@ -567,30 +586,6 @@ class VideoPlayerPage extends Component {
         }
         videoPlayerRefs={this.videoPlayerRefs}
         clickVideo={(index) => this.headerRef?.handleClick(index)}
-      />
-    );
-  };
-
-  buttonSharing = () => {
-    const {isEditMode} = this.state;
-    const {currentSessionID, videoInfos} = this.props;
-    if (!currentSessionID) {
-      return null;
-    }
-
-    return (
-      <ButtonShareVideo
-        archives={videoInfos}
-        isEditMode={isEditMode}
-        coachSessionID={currentSessionID}
-        onRef={(ref) => (this.buttonShareRef = ref)}
-        togglePlayPause={() => this.videoPlayerRef.togglePlayPause(true)}
-        getVideoState={(id) => {
-          const index = Object.values(videoInfos).findIndex(
-            (item) => item.id === id,
-          );
-          return this.videoPlayerRefs[index].getState();
-        }}
       />
     );
   };
@@ -668,7 +663,6 @@ class VideoPlayerPage extends Component {
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
         {this.header()}
-        {this.buttonSharing()}
         <AudioRecorderPlayer
           onRef={(ref) => {
             this.AudioRecorderPlayerRef = ref;
@@ -692,7 +686,7 @@ class VideoPlayerPage extends Component {
           Object.values(videoInfos)
             .filter((x) => x)
             .map((videoInfo, i) => this.singlePlayer(videoInfo, i))}
-        {this.linkButtons()}
+        {/* {this.linkButtons()} */}
       </View>
     );
   };
