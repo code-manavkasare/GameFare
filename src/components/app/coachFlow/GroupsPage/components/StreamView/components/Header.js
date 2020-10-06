@@ -37,14 +37,14 @@ class HeaderStreamView extends Component {
         initialBorderColorIcon={'transparent'}
         // icon1={'arrow-left'}
         typeIcon1="font"
-        backgroundColorIcon1={colors.title + '50'}
+        backgroundColorIcon1={'blur'}
         onPressColorIcon1={colors.title + '30'}
         clickButton1={() => true}
         nobackgroundColorIcon1={true}
         sizeIcon1={16}
         colorIcon1={colors.white}
         icon2={isConnected && 'sync-alt'}
-        backgroundColorIcon2={colors.title + '70'}
+        backgroundColorIcon2={'blur'}
         clickButton2={() => setState({cameraFront: !state.cameraFront})}
         sizeIcon2={17}
         typeIcon2="font"
@@ -55,7 +55,7 @@ class HeaderStreamView extends Component {
         colorIconOffset={
           currentSessionReconnecting ? colors.greyDark : colors.white
         }
-        backgroundColorIconOffset={colors.title + '70'}
+        backgroundColorIconOffset={'blur'}
         iconOffset2={isConnected && 'person-add'}
         typeIconOffset2="mat"
         sizeIconOffset2={23}
@@ -72,7 +72,7 @@ class HeaderStreamView extends Component {
                 ),
               })
         }
-        backgroundColorIconOffset2={colors.title + '70'}
+        backgroundColorIconOffset2={'blur'}
         initialTitleOpacity={1}
         clickButtonOffset={() =>
           currentSessionReconnecting

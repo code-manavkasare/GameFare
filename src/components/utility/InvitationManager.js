@@ -288,7 +288,17 @@ class InvitationManager extends Component {
           color={colors.green}
           onPressColor={colors.greenLight}
           style={styles.inviteButtonStyle}
-          click={() => this.confirmInvites()}
+          loaderColor={colors.white}
+          onRef={(ref) => {
+            this.quickCallButtonRef = ref;
+          }}
+          click={async () => {
+            this.quickCallButtonRef?.setLoading(true);
+            setTimeout(async () => {
+              await this.confirmInvites();
+              this.quickCallButtonRef?.setLoading(false);
+            }, 50);
+          }}
           view={() => {
             return (
               <View style={styleApp.fullSize}>

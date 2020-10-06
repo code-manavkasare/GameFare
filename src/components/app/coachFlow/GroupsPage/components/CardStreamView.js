@@ -12,10 +12,7 @@ import {conversationsAction} from '../../../../../actions/conversationsActions';
 import {navigate} from '../../../../../../NavigationService';
 import PlaceHolder from '../../../../placeHolders/CardStream';
 
-import {
-  sessionOpening,
-  getMember,
-} from '../../../../functions/coach';
+import {sessionOpening, getMember} from '../../../../functions/coach';
 import {conversationIsInNotification} from '../../../../functions/notifications.js';
 import {createInviteToSessionBranchUrl} from '../../../../database/branch';
 
@@ -27,7 +24,7 @@ import {
   viewLive,
   lastMessage,
 } from '../../../TeamPage/components/elements';
-import CoachPopups from './StreamView/components/CoachPopups';
+// import CoachPopups from './StreamView/components/CoachPopups';
 import AllIcon from '../../../../layout/icons/AllIcons';
 import {native} from '../../../../animations/animations';
 
@@ -90,13 +87,21 @@ class CardStream extends Component {
   }
 
   bindSession() {
-    const {coachSessionID, coachSessionsAction, conversationsAction} = this.props;
+    const {
+      coachSessionID,
+      coachSessionsAction,
+      conversationsAction,
+    } = this.props;
     coachSessionsAction('bindSession', coachSessionID);
     conversationsAction('bindConversation', coachSessionID);
   }
 
   unbindSession() {
-    const {coachSessionID, coachSessionsAction, conversationsAction} = this.props;
+    const {
+      coachSessionID,
+      coachSessionsAction,
+      conversationsAction,
+    } = this.props;
     coachSessionsAction('unbindSession', coachSessionID);
     conversationsAction('unbindConversation', coachSessionID);
   }
@@ -241,7 +246,16 @@ class CardStream extends Component {
             <ButtonColor
               color={colors.greyLight}
               onPressColor={colors.grey}
-              click={async () => sessionOpening(session)}
+              onRef={(ref) => {
+                this.quickCallButtonRef = ref;
+              }}
+              click={async () => {
+                this.quickCallButtonRef?.setLoading(true);
+                setTimeout(async () => {
+                  await sessionOpening(session);
+                  this.quickCallButtonRef?.setLoading(false);
+                }, 50);
+              }}
               style={styles.callButtonStyle}
               view={() => {
                 return (
@@ -268,7 +282,9 @@ class CardStream extends Component {
                     currentSessionID === coachSessionID
                       ? undefined
                       : coachSessionID,
-                  branchLink: await createInviteToSessionBranchUrl(coachSessionID),
+                  branchLink: await createInviteToSessionBranchUrl(
+                    coachSessionID,
+                  ),
                 })
               }
               style={styles.callButtonStyle}
@@ -285,7 +301,7 @@ class CardStream extends Component {
             />
           </Animated.View>
         )}
-
+        {/* 
         <CoachPopups
           isConnected={member.isConnected && activeSession}
           session={session}
@@ -296,7 +312,7 @@ class CardStream extends Component {
           open={this.openStream.bind(this)}
           close={this.hangup.bind(this)}
           onRef={(ref) => (this.coachPopupsRef = ref)}
-        />
+        /> */}
       </Animated.View>
     ) : null;
   }
