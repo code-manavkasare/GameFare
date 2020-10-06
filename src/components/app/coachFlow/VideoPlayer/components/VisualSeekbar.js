@@ -167,7 +167,7 @@ class VisualSeekBar extends Component {
     const {visible: visibleState} = this.state;
     const visible = force !== undefined ? !force : visibleState;
 
-    if (!recordedActions || isRecording || force !== undefined) {
+    if (recordedActions.length === 0 || isRecording || force !== undefined) {
       Animated.parallel([
         Animated.timing(this._revealSeekbar, native(visible ? 0 : 1, 200)),
       ]).start();
