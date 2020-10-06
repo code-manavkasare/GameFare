@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
+
 import {uploadQueueAction} from '../../../actions';
 import {uploadFile, sortUploadTasks} from '../../functions/upload';
 import BackgroundUploadHelper from './BackgroundUploadHelper';
