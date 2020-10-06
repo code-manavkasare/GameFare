@@ -120,7 +120,7 @@ class HeaderBackButton extends Component {
               );
             }}
             click={() => this.props.clickButton1()}
-            color={backgroundColorIcon1 ? backgroundColorIcon1 : 'white'}
+            color={backgroundColorIcon1 ? backgroundColorIcon1 : colors.white}
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
           />
@@ -174,7 +174,7 @@ class HeaderBackButton extends Component {
               );
             }}
             click={() => this.props.clickButton11()}
-            color={backgroundColorIcon11 ? backgroundColorIcon11 : 'white'}
+            color={backgroundColorIcon11 ? backgroundColorIcon11 : colors.white}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
@@ -216,7 +216,7 @@ class HeaderBackButton extends Component {
               );
             }}
             click={() => this.props.clickButton12()}
-            color={backgroundColorIcon12 ? backgroundColorIcon12 : 'white'}
+            color={backgroundColorIcon12 ? backgroundColorIcon12 : colors.white}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
@@ -286,6 +286,11 @@ class HeaderBackButton extends Component {
               click={() => clickButtonOffset()}
               style={styles.buttonRight}
               onPressColor={colors.off}
+              color={
+                backgroundColorIconOffset
+                  ? backgroundColorIconOffset
+                  : colors.white
+              }
             />
           )}
         </Animated.View>
@@ -324,6 +329,11 @@ class HeaderBackButton extends Component {
             },
           ]}>
           <ButtonColor
+            color={
+              backgroundColorIconOffset
+                ? backgroundColorIconOffset
+                : colors.white
+            }
             // color={nobackgroundColorIcon1 ? null : 'white'}
             view={() => {
               return iconOffset2 === 'text' ? (
@@ -338,7 +348,7 @@ class HeaderBackButton extends Component {
               );
             }}
             click={() => clickButtonOffset2()}
-            style={[styleApp.center, styleApp.fullSize]}
+            style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
         </Animated.View>
@@ -547,7 +557,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1,
     backgroundColor: 'white',
-    // overFlow: 'hidden',
   },
   rowTextHeader: {
     height: '100%',

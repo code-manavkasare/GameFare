@@ -91,7 +91,7 @@ class Settings extends Component {
           'Allow call participants to remotely trigger a recording',
         )}
         <View style={{height: 20}} />
-        {infoUser.coach &&
+        {/* {infoUser.coach &&
           this.settingsSwitch(
             chargeForSession,
             async () => {
@@ -106,7 +106,7 @@ class Settings extends Component {
                 });
             },
             'Charge players for the session',
-          )}
+          )} */}
         {/* {this.settingsSwitch(
           batterySaver,
           async () => {

@@ -21,8 +21,18 @@ export default class Button extends Component {
     super(props);
     this.state = {
       backgroundColorAnimation: new Animated.Value(0),
+      loading: false,
     };
     this.AnimatedButton = new Animated.Value(1);
+  }
+  componentDidMount() {
+    const {loadRef} = this.props;
+    if (loadRef) {
+      loadRef(this.setLoading);
+    }
+  }
+  setLoading(loading) {
+    this.setState({loading});
   }
   click() {
     this.props.click();
@@ -86,6 +96,7 @@ export default class Button extends Component {
   }
   iconView() {
     const {icon, loader} = this.props;
+    const {loading} = this.state;
     const {name, size, type, color} = icon;
     const containerIcon = {
       ...styleApp.center,
@@ -95,7 +106,7 @@ export default class Button extends Component {
     };
     return (
       <View style={containerIcon}>
-        {loader ? (
+        {loader || loading ? (
           <Loader size={34} color={colors.white} />
         ) : (
           <AllIcon name={name} size={size} type={type} color={color} />
@@ -109,6 +120,7 @@ export default class Button extends Component {
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()],
     });
     const {click, disabled, loader, text, icon, loaderSize} = this.props;
+    const {loading} = this.state;
     const blurViewStyle = {
       ...styleApp.fullSize,
       position: 'absolute',
@@ -123,10 +135,10 @@ export default class Button extends Component {
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
           disabled={disabled}
-          onPress={() => !loader && click()}>
+          onPress={() => !(loader || loading) && click()}>
           {icon && this.iconView()}
           <View style={[styleApp.center, styleApp.fullSize]}>
-            {loader && !icon ? (
+            {(loader || loading) && !icon ? (
               <Loader
                 size={loaderSize ? loaderSize : 38}
                 color={colors.white}

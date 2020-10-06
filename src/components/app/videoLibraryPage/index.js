@@ -89,6 +89,7 @@ class VideoLibraryPage extends Component {
     if (isEqual(this.props, nextProps)) {
       return false;
     }
+    return false;
   }
 
   toggleSelectable(force) {

@@ -511,7 +511,7 @@ const finalizeOpening = async (session) => {
     if (currentSessionID) {
       await store.dispatch(unsetCurrentSession());
     }
-    store.dispatch(setCurrentSessionID(session.objectID));
+    return store.dispatch(setCurrentSessionID(session.objectID));
   }
 };
 
@@ -543,7 +543,7 @@ const sessionOpening = async (session) => {
   */
 
   await navigate('Session');
-  finalizeOpening(session);
+  return finalizeOpening(session);
   /*
     Set timeout is a quick fix, unset/set current
     session ID forces session component to update
