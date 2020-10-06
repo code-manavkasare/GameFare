@@ -609,15 +609,15 @@ PODS:
     - React
   - RNGestureHandler (1.7.0):
     - React
-  - RNImageCropPicker (0.28.0):
+  - RNImageCropPicker (0.35.0):
     - React-Core
     - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.28.0)
-    - RSKImageCropper
-  - RNImageCropPicker/QBImagePickerController (0.28.0):
+    - RNImageCropPicker/QBImagePickerController (= 0.35.0)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.35.0):
     - React-Core
     - React-RCTImage
-    - RSKImageCropper
+    - TOCropViewController
   - RNImageEditor (0.8.3):
     - React
   - RNInAppBrowser (3.4.0):
@@ -641,7 +641,6 @@ PODS:
     - React
   - RNVideoProcessing (1.7.4):
     - React
-  - RSKImageCropper (2.3.0)
   - SDWebImage (5.9.1):
     - SDWebImage/Core (= 5.9.1)
   - SDWebImage/Core (5.9.1)
@@ -655,6 +654,7 @@ PODS:
   - tipsi-stripe (7.5.3):
     - React
     - Stripe (~> 14.0.1)
+  - TOCropViewController (2.5.5)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -820,11 +820,11 @@ SPEC REPOS:
     - OpenTok
     - PromisesObjC
     - Protobuf
-    - RSKImageCropper
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
     - Stripe
+    - TOCropViewController
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -1184,7 +1184,7 @@ SPEC CHECKSUMS:
   RNFBStorage: 08c6831d19190f68f0985ff7bd773262f11a1c4a
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGestureHandler: b6b359bb800ae399a9c8b27032bdbf7c18f08a08
-  RNImageCropPicker: cf129d17e042ce3e96fb9ada967c28f21f977c82
+  RNImageCropPicker: 89352ad050ea8dd9bc1728802c477f5b38cd7b4c
   RNImageEditor: 43f5f80bbfcb66dd9fff2399a22f3500514617e2
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
   RNPermissions: ad71dd4f767ec254f2cd57592fbee02afee75467
@@ -1196,12 +1196,12 @@ SPEC CHECKSUMS:
   RNThumbnail: ac78ef4deb457fcb4f2dfe4b613e35d710d8ba2d
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: cda67217db87030a335137bfb0c637bce2532aeb
-  RSKImageCropper: c337eacdcbed50e695e5153ff0c2b861b6ebfa84
   SDWebImage: a990c053fff71e388a10f3357edb0be17929c9c5
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
+  TOCropViewController: da59f531f8ac8a94ef6d6c0fc34009350f9e8bfe
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

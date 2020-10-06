@@ -175,6 +175,7 @@ class VideoLibraryPage extends Component {
       multiple: true,
       mediaType: 'video',
       writeTempFile: false,
+      compressVideoPreset: 'Passthrough',
     }).catch((err) => console.log('error', err));
     if (videos) {
       const videoInfos = await Promise.all(
@@ -330,7 +331,6 @@ class VideoLibraryPage extends Component {
             positon={position}
             displayButton0={currentSessionID}
             clickButton1={this.toggleSelectable.bind(this)}
-            
             isButton2Selected={selectableMode}
             clickButton0={() => this.playSelectedVideos({forceSharing: true})}
             clickButton4={() => this.deleteSelectedVideos()}
