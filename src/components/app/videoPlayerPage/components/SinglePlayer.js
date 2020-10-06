@@ -15,6 +15,7 @@ import DrawTools from './drawing/DrawTools';
 import DrawView from './drawing/DrawView';
 import {updateInfoVideoCloud} from '../../../functions/coach';
 import RecordingComponent from './recording/index';
+import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
 
 class SinglePlayer extends Component {
@@ -30,7 +31,9 @@ class SinglePlayer extends Component {
       audioFilePath: null,
       sizeVideo: {height: 0, width: 0},
       isVideoPlayerReady: false,
+      isPlayingReview: true,
       displayButtonReplay: false,
+      previewStartTime: null,
     };
   }
 
@@ -205,14 +208,22 @@ class SinglePlayer extends Component {
       playRecord,
       isRecording,
       clickVideo,
+      pauseAudioPlayer,
     } = this.props;
-    const {sizeVideo, isVideoPlayerReady, displayButtonReplay} = this.state;
+    const {
+      sizeVideo,
+      isVideoPlayerReady,
+      displayButtonReplay,
+      isPlayingReview,
+      previewStartTime,
+    } = this.state;
     if (!archive) {
       return this.viewLoader(playerStyle);
     }
     let {recordedActions} = this.props;
 
     if (!recordedActions) recordedActions = archive.recordedActions;
+    if (!recordedActions) recordedActions = [];
 
     const playerStyle = this.playerStyleByIndex(index, numArchives);
     const seekbarSize = numArchives > 1 ? 'sm' : 'lg';
@@ -237,21 +248,21 @@ class SinglePlayer extends Component {
           />
         )}
 
-        {displayButtonReplay && (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={async () => {
+        {recordedActions.length > 0 && (
+          <ControlButtonRecording
+            displayButtonReplay={displayButtonReplay}
+            isPlayingReview={isPlayingReview}
+            replay={async () => {
               await this.setState({displayButtonReplay: false});
-              this.previewRecording({recordedActions});
+              this.recordingRef.launchIfPreview();
             }}
-            style={styles.buttonReplayView}>
-            <AllIcon
-              name="undo-alt"
-              type="font"
-              size={45}
-              color={colors.white}
-            />
-          </TouchableOpacity>
+            setState={this.setState.bind(this)}
+            pressPause={async () => {
+              this.videoPlayerRef?.togglePlayPause(isPlayingReview);
+              await this.recordingRef.togglePlayPause();
+              pauseAudioPlayer();
+            }}
+          />
         )}
 
         <RecordingComponent
@@ -263,11 +274,14 @@ class SinglePlayer extends Component {
           preparePlayer={preparePlayer}
           isAudioPlayerReady={isAudioPlayerReady}
           isVideoPlayerReady={isVideoPlayerReady}
+          isPlayingReview={isPlayingReview}
+          previewStartTime={previewStartTime}
           setVideoPlayerState={(state) => this.videoPlayerRef?.setState(state)}
           seekVideoPlayer={(time) => this.videoPlayerRef?.seek(time)}
           setDrawings={(drawings) => {
             this.drawViewRef.setState(drawings);
           }}
+          setState={this.setState.bind(this)}
           toggleVisibleSeekBar={this.toggleVisibleSeekBar.bind(this)}
           setNewPosition={(position) =>
             this.videoPlayerRef.PinchableBoxRef.setNewPosition(position)

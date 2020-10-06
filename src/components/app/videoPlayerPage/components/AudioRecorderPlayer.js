@@ -59,6 +59,9 @@ class AudioRecorderPlayer extends Component {
   playRecord = () => {
     this.state.audioPlayer.play();
   };
+  playPause = () => {
+    this.state.audioPlayer.playPause();
+  };
 
   stopPlayingRecord = () => {
     this.state.audioPlayer.stop();

@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 import {connect} from 'react-redux';
+import {timeout} from '../../../../functions/coach';
 
 class Recording extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      previewStartTime: null,
-      recordingStartTime: null,
-      isPreviewing: false,
+      currentIndex: 0,
     };
   }
   componentDidMount = () => {
@@ -18,35 +17,52 @@ class Recording extends Component {
     this.launchIfPreview();
   };
   componentDidUpdate = (prevProps, prevState) => {
-    const {isVideoPlayerReady, isAudioPlayerReady} = this.props;
-    const {isPreviewing} = this.state;
-    if (isVideoPlayerReady && !isPreviewing) this.launchIfPreview();
+    const {isVideoPlayerReady, isPlayingReview} = this.props;
+
+    if (isVideoPlayerReady && !isPlayingReview) this.launchIfPreview();
   };
+
+  togglePlayPause = async () => {
+    const {isPlayingReview, setState} = this.props;
+    const {currentIndex} = this.state;
+    if (isPlayingReview) return setState({isPlayingReview: false});
+
+    await setState({
+      isPlayingReview: true,
+      previewStartTime: Date.now(),
+    });
+    const {archive} = this.props;
+    const {recordedActions} = archive;
+    return this.previewRecording({recordedActions, initialIndex: currentIndex});
+  };
+
   launchIfPreview = async () => {
-    const {archive, preparePlayer} = this.props;
+    const {archive, preparePlayer, setState} = this.props;
     const {recordedActions} = archive;
     if (recordedActions) {
       await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
-      this.previewRecording({recordedActions});
+      await setState({
+        isPlayingReview: true,
+        previewStartTime: Date.now(),
+      });
+      this.previewRecording({recordedActions, initialIndex: 0});
     }
   };
 
-  waitForAction = async (action) => {
+  waitForAction = async (action, index) => {
     while (true) {
-      const {isPreviewing, previewStartTime} = this.state;
+      const {previewStartTime} = this.props;
+
       const timeLeft =
         action.startRecordingOffset - (Date.now() - previewStartTime);
-      if (timeLeft < 50 || !isPreviewing) {
-        return true;
-      }
-      await new Promise((resolve) => {
-        setTimeout(resolve, timeLeft > 1500 ? 1000 : 10);
-      });
+      if (timeLeft < 50) return true;
+      await timeout(timeLeft > 1500 ? 1000 : 10);
     }
   };
-  previewRecording = async ({recordedActions}) => {
+
+  previewRecording = async ({recordedActions, initialIndex}) => {
     const {toggleVisibleSeekBar} = this.props;
- 
+
     toggleVisibleSeekBar(false);
     const {
       setVideoPlayerState,
@@ -57,45 +73,51 @@ class Recording extends Component {
       playRecord,
       setDisplayButtonReplay,
     } = this.props;
-    await this.setState({
-      isPreviewing: true,
-      previewStartTime: Date.now(),
-    });
 
     playRecord();
 
-    for (const action of recordedActions) {
-      const {isPreviewing} = this.state;
-      if (isPreviewing) {
+    for (let i in recordedActions.slice(initialIndex)) {
+      const action = recordedActions.slice(initialIndex)[i];
+      var {isPlayingReview} = this.props;
+      if (isPlayingReview) {
         const {type} = action;
+
+        await this.setState({currentIndex: Number(i) + initialIndex});
 
         switch (type) {
           case 'play':
             await this.waitForAction(action).then(() => {
-              setVideoPlayerState({
-                currentTime: action.timestamp,
-                paused: false,
-              });
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview)
+                setVideoPlayerState({
+                  currentTime: action.timestamp,
+                  paused: false,
+                });
             });
             break;
           case 'pause':
             await this.waitForAction(action).then(() => {
-              setVideoPlayerState({
-                currentTime: action.timestamp,
-                paused: true,
-              });
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview)
+                setVideoPlayerState({
+                  currentTime: action.timestamp,
+                  paused: true,
+                });
             });
             break;
           case 'changePlayRate':
             await this.waitForAction(action).then(() => {
-              setVideoPlayerState({
-                playRate: action.playRate,
-              });
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview)
+                setVideoPlayerState({
+                  playRate: action.playRate,
+                });
             });
             break;
           case 'seek':
             await this.waitForAction(action).then(() => {
-              seekVideoPlayer(action.timestamp);
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview) seekVideoPlayer(action.timestamp);
               setVideoPlayerState({
                 currentTime: action.timestamp,
               });
@@ -103,19 +125,23 @@ class Recording extends Component {
             break;
           case 'zoom':
             await this.waitForAction(action).then(() => {
-              setNewScale(action.scale);
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview) setNewScale(action.scale);
             });
             break;
           case 'drag':
             await this.waitForAction(action).then(() => {
-              setNewPosition(action.position);
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview) setNewPosition(action.position);
             });
             break;
           case 'draw':
             await this.waitForAction(action).then(() => {
-              setDrawings({
-                drawings: action.drawings,
-              });
+              var {isPlayingReview} = this.props;
+              if (isPlayingReview)
+                setDrawings({
+                  drawings: action.drawings,
+                });
             });
             break;
           default:
@@ -125,9 +151,11 @@ class Recording extends Component {
         }
       }
     }
-
-    await this.setState({isPreviewing: false});
-    setDisplayButtonReplay(true);
+    var {isPlayingReview, setState} = this.props;
+    if (isPlayingReview) {
+      setDisplayButtonReplay(true);
+      setState({isPlayingReview: false});
+    }
   };
   render() {
     return null;

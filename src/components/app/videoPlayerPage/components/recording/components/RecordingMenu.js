@@ -83,7 +83,7 @@ export default class RecordingMenu extends React.Component {
           },
         })}
 
-        {!isRecording &&
+        {/* {!isRecording &&
           recordedActions.length > 0 &&
           this.button({
             index: 0,
@@ -97,7 +97,7 @@ export default class RecordingMenu extends React.Component {
               size: 18,
               color: colors.white,
             },
-          })}
+          })} */}
         {!isRecording &&
           recordedActions.length > 0 &&
           this.button({
