@@ -55,11 +55,6 @@ export default class ControlBar extends Component {
     );
 
     const onClick = async () => {
-      const currentTime = getCurrentTime();
-      if (totalTime - currentTime < 0.05 && paused) {
-        await seek(0);
-        await onSlidingComplete(0, true);
-      }
       togglePlayPause();
     };
 

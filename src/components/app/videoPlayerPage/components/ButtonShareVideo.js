@@ -9,12 +9,6 @@ import {
   isVideosAreBeingShared,
 } from '../../../functions/coach';
 import colors from '../../../style/colors';
-import {
-  marginTopApp,
-  heightHeaderHome,
-  marginTopAppLandscape,
-} from '../../../style/sizes';
-
 class ButtonShareVideo extends Component {
   constructor(props) {
     super(props);
@@ -85,17 +79,10 @@ class ButtonShareVideo extends Component {
     if (!value) openVideoPlayer({open: false});
   }
   styleButton = () => {
-    const {portrait} = this.props;
-    let marginTop = marginTopApp + heightHeaderHome + 10;
-    if (!portrait) marginTop = marginTopAppLandscape + heightHeaderHome + 10;
     return {
-      position: 'absolute',
-      zIndex: 20,
       height: 37,
-      width: 100,
-      right: '5%',
-      borderRadius: 20,
-      top: marginTop,
+      width: 160,
+      marginTop: 5,
     };
   };
   buttonStart() {
@@ -108,7 +95,13 @@ class ButtonShareVideo extends Component {
         enabled={true}
         text="Share live"
         loader={false}
-        textButton={{fontSize: 13}}
+        textButton={{fontSize: 12, marginLeft: 25}}
+        icon={{
+          name: 'play',
+          type: 'font',
+          size: 16,
+          color: 'white',
+        }}
         click={() => this.startSharingVideo(true)}
       />
     );
@@ -122,7 +115,13 @@ class ButtonShareVideo extends Component {
         onPressColor={colors.redLight}
         styleButton={style}
         enabled={true}
-        textButton={{fontSize: 13}}
+        textButton={{fontSize: 12, marginLeft: 25}}
+        icon={{
+          name: 'stop',
+          type: 'font',
+          size: 16,
+          color: 'white',
+        }}
         text="Stop sharing"
         loader={false}
         click={() => this.startSharingVideo(false)}

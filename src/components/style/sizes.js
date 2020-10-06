@@ -48,7 +48,7 @@ if (Platform.OS === 'ios') {
     heightFooter = 60;
     marginTopApp = 35;
     marginBottomApp = 30;
-    keyboardOffset = 300;
+    keyboardOffset = 310;
     marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;
@@ -61,7 +61,7 @@ if (Platform.OS === 'ios') {
     heightFooter = 60;
     marginTopApp = 35;
     marginBottomApp = 35;
-    keyboardOffset = 305;
+    keyboardOffset = 315;
     marginBottomAppLandscade = 20;
     heightHeaderHomeSearch = 100;
     initialHeightControlBar = 100;

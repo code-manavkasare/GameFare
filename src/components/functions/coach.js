@@ -543,14 +543,14 @@ const sessionOpening = async (session) => {
   */
 
   await navigate('Session');
+  finalizeOpening(session);
   /*
     Set timeout is a quick fix, unset/set current
     session ID forces session component to update
     before navigation blocking the UI thread.
   */
-  setTimeout(async () => {
-    finalizeOpening(session);
-  }, 200);
+  // setTimeout(async () => {
+  // }, 200);
 };
 
 const capitalize = (str) => {
