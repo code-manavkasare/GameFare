@@ -370,7 +370,7 @@ export default class VideoPlayer extends Component {
     let {recordedActions} = this.props;
 
     const {thumbnail, url, durationSeconds} = archive;
-    if (!recordedActions) recordedActions = archive.recordedActions;
+ 
 
     const {
       currentTime,
