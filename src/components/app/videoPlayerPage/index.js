@@ -584,6 +584,7 @@ class VideoPlayerPage extends Component {
         videoFromCloud={
           videosBeingShared ? session.sharedVideos[archiveID] : {}
         }
+        pauseAudioPlayer={() => this.AudioRecorderPlayerRef?.playPause()}
         videoPlayerRefs={this.videoPlayerRefs}
         clickVideo={(index) => this.headerRef?.handleClick(index)}
       />
