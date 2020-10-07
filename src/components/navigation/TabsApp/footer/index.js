@@ -132,7 +132,7 @@ class Footer extends React.Component {
     const opacityIndicator = Animated.interpolate(position, {
       inputRange,
       outputRange: inputRange.map((i) => {
-        return i === 1 && !disableAnimation ? 0.6 : 1;
+        return i === 1 && !disableAnimation ? 0 : 0;
       }),
     });
 
@@ -190,7 +190,11 @@ class Footer extends React.Component {
                 if (i === 1 && !disableAnimation) {
                   return index === 1 ? colors.white : colors.greyLight;
                 } else {
-                  return inSession ? colors.grey : propColors.inactive;
+                  return inSession
+                    ? colors.grey
+                    : index === i && index !== 1
+                    ? colors.blue
+                    : propColors.inactive;
                 }
               }),
             });
@@ -271,7 +275,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: colors.off,
     flexDirection: 'row',
-    height: heightFooter + marginBottomApp + 0,
+    height: heightFooter + marginBottomApp,
     position: 'absolute',
     zIndex: -1,
     width: '100%',

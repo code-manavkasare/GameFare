@@ -112,7 +112,7 @@ export default class Button extends Component {
         ]}>
         <TouchableOpacity
           activeOpacity={1}
-          style={[styleApp.center, {width: '100%', height: '100%'}]}
+          style={[styleApp.center, styleApp.fullSize]}
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
           onLongPress={enableLongPress ? () => this.onLongPress() : null}

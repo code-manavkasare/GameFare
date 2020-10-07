@@ -626,9 +626,13 @@ const rowTitle = ({
   return (
     <View style={styleContainer}>
       <Row>
-        <Col size={30} style={styleApp.center}>
-          {iconWithBadge(icon, badge)}
-        </Col>
+        {icon ? (
+          <Col size={30} style={styleApp.center}>
+            {iconWithBadge(icon, badge)}
+          </Col>
+        ) : (
+          <Col size={1} />
+        )}
         <Col size={55} style={styleApp.center2}>
           <Text
             style={[
