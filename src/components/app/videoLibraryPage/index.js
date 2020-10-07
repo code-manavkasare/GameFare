@@ -24,6 +24,7 @@ import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
+import {rowTitle} from '../TeamPage/components/elements';
 
 import LogoutView from '../coachFlow/GroupsPage/components/LogoutView';
 
@@ -219,7 +220,20 @@ class VideoLibraryPage extends Component {
 
             image: require('../../../img/images/video-player.png'),
           }}
-          header={<VideoBeingShared />}
+          header={
+            <View>
+              {rowTitle({
+                hideDividerHeader: true,
+                title: !selectableMode ? 'Library' : 'Select Videos',
+                titleColor: colors.black,
+                titleStyle: {
+                  fontWeight: '800',
+                  fontSize: 23,
+                },
+              })}
+              <VideoBeingShared />
+            </View>
+          }
           numColumns={3}
           incrementRendering={12}
           initialNumberToRender={15}
@@ -291,7 +305,7 @@ class VideoLibraryPage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           navigation={navigation}
           selectOnly={selectOnly}
-          text={!selectableMode ? 'Library' : 'Select videos'}
+          text={!selectableMode ? 'Library' : 'Select Videos'}
           selectableMode={selectableMode}
           toggleSelectable={this.toggleSelectable.bind(this)}
           addFromCameraRoll={this.addFromCameraRoll.bind(this)}

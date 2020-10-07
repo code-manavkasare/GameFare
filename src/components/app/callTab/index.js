@@ -237,7 +237,7 @@ class CallTab extends Component {
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         initialBorderColorHeader={colors.white}
-        initialTitleOpacity={1}
+        initialTitleOpacity={0}
         initialBorderWidth={1}
         loader={false}
         icon1={inlineSearch ? 'times' : 'search'}

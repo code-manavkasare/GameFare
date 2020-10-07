@@ -40,7 +40,7 @@ class HeaderBackButton extends Component {
       initialBorderColorIcon,
     } = this.props;
     const AnimateOpacityTitle = AnimatedHeaderValue.interpolate({
-      inputRange: [inputRange[1] + 20, inputRange[1] + 30],
+      inputRange: [inputRange[1] + 10, inputRange[1] + 20],
       outputRange: [this.props.initialTitleOpacity, 1],
       extrapolate: 'clamp',
     });

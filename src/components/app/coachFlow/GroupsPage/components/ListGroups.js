@@ -50,7 +50,6 @@ class ListStreams extends Component {
     if (!userConnected || !coachSessions) {
       return null;
     }
-    console.log('AnimatedHeaderValue', AnimatedHeaderValue);
     if (Object.values(coachSessions).length === 0) {
       return (
         <View style={[styleApp.marginView, styleApp.center]}>
@@ -110,6 +109,23 @@ class ListStreams extends Component {
               onRef={(ref) => this.itemsRef.push(ref)}
             />
           )
+        }
+        header={
+          <View>
+            {rowTitle({
+              hideDividerHeader: true,
+              title: 'Messages',
+              titleColor: colors.black,
+              titleStyle: {
+                fontWeight: '800',
+                fontSize: 23,
+              },
+              containerStyle: {
+                marginBottom: -10,
+                marginTop: 5,
+              },
+            })}
+          </View>
         }
         numColumns={1}
         inverted={false}

@@ -13,7 +13,7 @@ import {FlatListComponent} from '../../../layout/Views/FlatList';
 import ButtonColor from '../../../layout/buttons/Button';
 import AllIcons from '../../../layout/icons/AllIcons';
 
-import {viewLive} from '../../TeamPage/components/elements';
+import {viewLive, rowTitle} from '../../TeamPage/components/elements';
 import CardStreamView from '../../coachFlow/GroupsPage/components/CardStreamView';
 
 class ListVideoCalls extends Component {
@@ -37,26 +37,49 @@ class ListVideoCalls extends Component {
   };
 
   currentSessionView = () => {
-    const {currentSessionID, currentSession} = this.props;
-    return currentSessionID ? (
-      <View style={styles.sessionMenuStyle}>
-        {viewLive(currentSession, {
-          position: 'absolute',
-          left: -5,
-          top: -5,
-          zIndex: 2,
+    const {
+      currentSessionID,
+      currentSession,
+      liveSessionHeader,
+      inlineSearch,
+    } = this.props;
+    const currentlyInSession =
+      currentSessionID && liveSessionHeader && !inlineSearch;
+    return (
+      <View>
+        {rowTitle({
+          hideDividerHeader: true,
+          title: 'Video Calls',
+          titleColor: colors.black,
+          titleStyle: {
+            fontWeight: '800',
+            fontSize: 23,
+          },
+          containerStyle: {
+            marginBottom: currentlyInSession ? 0 : -10,
+          },
         })}
-        <CardStreamView
-          coachSessionID={currentSessionID}
-          onClick={() => navigate('Session')}
-          selected={false}
-          showAddMemberButton
-          scale={1}
-          recentView
-          style={styles.cardStreamStyle}
-        />
+        {currentlyInSession && (
+          <View style={styles.sessionMenuStyle}>
+            {viewLive(currentSession, {
+              position: 'absolute',
+              left: -5,
+              top: -5,
+              zIndex: 2,
+            })}
+            <CardStreamView
+              coachSessionID={currentSessionID}
+              onClick={() => navigate('Session')}
+              selected={false}
+              showAddMemberButton
+              scale={1}
+              recentView
+              style={styles.cardStreamStyle}
+            />
+          </View>
+        )}
       </View>
-    ) : null;
+    );
   };
 
   render() {
@@ -101,12 +124,7 @@ class ListVideoCalls extends Component {
         )}
         incrementRendering={6}
         initialNumberToRender={8}
-        header={
-          currentSessionID &&
-          liveSessionHeader &&
-          !inlineSearch &&
-          this.currentSessionView()
-        }
+        header={this.currentSessionView()}
         AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />
@@ -181,6 +199,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.greyLight,
     backgroundColor: colors.white,
+    marginBottom: 5,
   },
   currentSessionView: {
     ...styleApp.center4,

@@ -34,11 +34,11 @@ class HeaderVideoLibrary extends Component {
         <HeaderBackButton
           AnimatedHeaderValue={AnimatedHeaderValue}
           textHeader={text}
-          inputRange={[20, 25]}
+          inputRange={[15, 20]}
           loader={loader}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
-          initialTitleOpacity={1}
+          initialTitleOpacity={0}
           initialBorderWidth={1}
           initialBorderColorHeader={colors.white}
           icon1={

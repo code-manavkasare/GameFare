@@ -11,7 +11,7 @@ function getSelectionActionDecorations(action) {
     case 'call':
       return {
         actionText: 'Call',
-        actionHeader: 'Video calls',
+        actionHeader: 'Video Calls',
       };
     case 'invite':
       return {
