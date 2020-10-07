@@ -21,13 +21,14 @@ export default class HeaderUserDirectory extends Component {
         textHeader={'Search for users'}
         inputRange={[40, 50]}
         searchBar={searchBar}
+        searchBarStyle={{width: branchLink ? '62.5%' : '80%'}}
         initialBorderColorIcon={'white'}
         initialBackgroundColor={'white'}
         initialBorderColorHeader={colors.white}
         initialTitleOpacity={1}
         initialBorderWidth={1}
         icon2={branchLink && 'share'}
-        sizeIcon2={24}
+        sizeIcon2={20}
         typeIcon2={'moon'}
         colorIcon2={colors.title}
         clickButton2={async () => {
@@ -38,7 +39,7 @@ export default class HeaderUserDirectory extends Component {
         }}
         icon1={'times'}
         typeIcon1="font"
-        sizeIcon1={24}
+        sizeIcon1={20}
         colorIcon1={colors.title}
         clickButton1={() => goBack()}
       />

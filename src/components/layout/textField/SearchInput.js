@@ -23,15 +23,24 @@ class SearchInput extends Component {
   };
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      empty: true,
+    };
     this.textInputRef = null;
   }
 
   search = (text) => {
+    const {empty} = this.state;
+    if (empty && text !== '') {
+      this.setState({empty: false});
+    } else if (text === '') {
+      this.setState({empty: true});
+    }
     this.props.search(text);
   };
 
   searchBar = () => {
+    const {empty} = this.state;
     const {autoFocus, onFocus, onBlur} = this.props;
     return (
       <View style={styles.searchBarStyle}>
@@ -78,12 +87,14 @@ class SearchInput extends Component {
               <ButtonColor
                 view={() => {
                   return (
-                    <AllIcon
-                      type={'font'}
-                      color={colors.title}
-                      size={13}
-                      name={'times'}
-                    />
+                    !empty && (
+                      <AllIcon
+                        type={'font'}
+                        color={colors.title}
+                        size={13}
+                        name={'times'}
+                      />
+                    )
                   );
                 }}
                 color={'transparent'}

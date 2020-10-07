@@ -451,6 +451,7 @@ class HeaderBackButton extends Component {
       searchBar,
       containerStyle,
       marginTop: marginTopProp,
+      searchBarStyle,
     } = this.props;
     const {portrait} = currentScreenSize;
     const marginTop = marginTopProp
@@ -480,7 +481,9 @@ class HeaderBackButton extends Component {
       <Animated.View style={styleHeader}>
         <Row>
           {searchBar ? (
-            <View style={styles.rowTextImgHeader}>{searchBar}</View>
+            <View style={{...styles.rowTextImgHeader, ...searchBarStyle}}>
+              {searchBar}
+            </View>
           ) : (
             <TouchableOpacity
               onPress={() => clickImgHeader && clickImgHeader()}
@@ -567,8 +570,8 @@ const styles = StyleSheet.create({
   rowTextImgHeader: {
     height: '100%',
     position: 'absolute',
-    width: '69%',
-    marginLeft: '15%',
+    width: '65%',
+    marginLeft: '17.5%',
     zIndex: 10,
   },
 });
