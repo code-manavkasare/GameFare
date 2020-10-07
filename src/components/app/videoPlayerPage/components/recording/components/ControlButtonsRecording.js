@@ -1,8 +1,5 @@
 import React from 'react';
-import {Animated, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import PropTypes from 'prop-types';
-import ButtonColor from '../../../../../layout/Views/Button';
-import {Col, Row, Grid} from 'react-native-easy-grid';
+import {Animated, StyleSheet, TouchableOpacity} from 'react-native';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -32,19 +29,9 @@ export default class ControlButtonsRecording extends React.Component {
     if (this.opacityButton._value === 1) {
       const {replay, displayButtonReplay, pressPause, setState} = this.props;
 
-      // if (displayButtonReplay) {
-      //   await setState({isPlayingReview: true});
-      //   replay();
-      //   return Animated.timing(this.opacityButton, timing(0, 300)).start();
-      // }
-
       await setState({isPlayingReview: true});
       replay();
       return Animated.timing(this.opacityButton, timing(0, 300)).start();
-
-      pressPause();
-      await timeout(1000);
-      Animated.timing(this.opacityButton, timing(0, 300)).start();
     } else {
       Animated.timing(this.opacityButton, timing(1, 300)).start();
     }
