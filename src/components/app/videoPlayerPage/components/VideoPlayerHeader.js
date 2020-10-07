@@ -78,7 +78,7 @@ export default class VideoPlayerHeader extends React.Component {
       backgroundColorIcon1: 'transparent',
       initialBorderColorIcon: 'transparent',
       sizeIcon1: 18,
-      colorIcon1: isEditMode ? colors.greyDark : colors.white,
+      colorIcon1: colors.white,
       typeIcon1: 'font',
       marginTop: -3,
       backgroundColorIcon2: 'transparent',
@@ -168,10 +168,7 @@ export default class VideoPlayerHeader extends React.Component {
       },
       sizeIconOffset: 20,
       icon1: 'chevron-left',
-      clickButton1: () => {
-        !isEditMode && close();
-        !isEditMode && StatusBar.setHidden(false, 'fade');
-      },
+      clickButton1: () => close(),
     };
     return <HeaderBackButton {...sharedProps} />;
   }

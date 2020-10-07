@@ -21,6 +21,13 @@ export default class ControlButtonsRecording extends React.Component {
     await timeout(1000);
     Animated.timing(this.opacityButton, timing(0, 300)).start();
   };
+  componentDidUpdate = (prevProps, prevState) => {
+    if (
+      prevProps.displayButtonReplay !== this.props.displayButtonReplay &&
+      this.props.displayButtonReplay
+    )
+      return Animated.timing(this.opacityButton, timing(1, 300)).start();
+  };
   onPress = async () => {
     if (this.opacityButton._value === 1) {
       const {
