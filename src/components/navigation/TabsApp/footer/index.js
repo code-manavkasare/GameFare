@@ -160,9 +160,7 @@ class Footer extends React.Component {
       currentSessionID,
     } = this.props;
     const {disableAnimation} = this.state;
-    if (!userConnected) {
-      return null;
-    }
+ 
     return (
       <View style={styles.footer}>
         <Row style={styles.footerBody}>

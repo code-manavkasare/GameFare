@@ -227,7 +227,7 @@ class CallTab extends Component {
 
   header() {
     const {actionHeader, modal, branchLink, inlineSearch} = this.state;
-    const {navigation, numberNotifications} = this.props;
+    const {navigation, numberNotifications, userConnected} = this.props;
     const {navigate, goBack} = navigation;
     return (
       <HeaderBackButton
@@ -240,13 +240,13 @@ class CallTab extends Component {
         initialTitleOpacity={0}
         initialBorderWidth={1}
         loader={false}
-        icon1={inlineSearch ? 'times' : 'search'}
+        icon1={!userConnected ? null : inlineSearch ? 'times' : 'search'}
         sizeIcon1={24}
         colorIcon1={colors.title}
         clickButton1={
           inlineSearch ? () => goBack() : () => this.openUserDirectory()
         }
-        icon2={modal ? 'share' : 'comment-alt'}
+        icon2={!userConnected ? null : modal ? 'share' : 'comment-alt'}
         typeIcon2={modal ? 'moon' : 'font'}
         sizeIcon2={24}
         colorIcon2={colors.title}

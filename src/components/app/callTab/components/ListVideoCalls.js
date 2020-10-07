@@ -95,17 +95,16 @@ class ListVideoCalls extends Component {
       liveSessionHeader,
       inlineSearch,
     } = this.props;
-    if (!userConnected) {
-      return null;
-    }
+
     return (
       <FlatListComponent
         list={coachSessions}
         ListEmptyComponent={{
-          clickButton: () => openUserDirectory(),
-          textButton: 'Search',
-          text: 'Search for users to start a call',
-          iconButton: 'search',
+          clickButton: () =>
+            !userConnected ? navigate('SignIn') : openUserDirectory(),
+          textButton: !userConnected ? 'Sign in' : 'Search',
+          text: 'Sign in to start a call',
+          iconButton: 'user',
           image: require('../../../../img/images/search.png'),
         }}
         cardList={({item: session}) => (
@@ -124,7 +123,7 @@ class ListVideoCalls extends Component {
         )}
         incrementRendering={6}
         initialNumberToRender={8}
-        header={this.currentSessionView()}
+        header={this.currentSessionView.bind(this)}
         AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />

@@ -14,6 +14,12 @@ const initialState = {
     userInfo: {},
     wallet: {},
     defaultCard: {},
+    archivedStreams: {
+      ['demoVideo']: {
+        startTimestamp: Date.now(),
+        id: 'demoVideo',
+      },
+    },
   },
   userID: '',
   phoneNumber: '',

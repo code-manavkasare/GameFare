@@ -26,7 +26,7 @@ import Button from '../../layout/buttons/Button';
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 import {rowTitle} from '../TeamPage/components/elements';
 
-import LogoutView from '../coachFlow/GroupsPage/components/LogoutView';
+import database from '@react-native-firebase/database';
 
 import {
   sortVideos,
@@ -202,6 +202,7 @@ class VideoLibraryPage extends Component {
     const {videosArray, selectOnly, selectableMode} = this.state;
 
     const selectMargin = selectableMode ? 80 : 0;
+
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
@@ -211,6 +212,31 @@ class VideoLibraryPage extends Component {
           }
           ListEmptyComponent={{
             clickButton: () => navigation.navigate('Session'),
+            // clickButton: async () => {
+            //   console.log('bim');
+            //   database()
+            //     .ref(`archivedStreams/${'demoVideo'}/`)
+            //     .update({
+            //       bitrate: 2597953,
+            //       durationSeconds: 40,
+            //       frameRate: 30,
+            //       fromNativeLibrary: false,
+            //       id: 'demoVideo',
+            //       local: false,
+            //       size: {
+            //         height: 1280,
+            //         width: 720,
+            //       },
+            //       sourceUser: 'UTylyySkfEa4eOqDAQEKDiCggHp1',
+            //       startTimestamp: 1599673574851,
+            //       thumbnail:
+            //         'https://firebasestorage.googleapis.com/v0/b/gamefare-dev-cfc88.appspot.com/o/Demo%2FDemo%20thumbnail.jpg?alt=media&token=51b60f1e-612e-406a-b391-938d1c295146',
+            //       uploadedByUser: true,
+            //       url:
+            //         'https://firebasestorage.googleapis.com/v0/b/gamefare-dev-cfc88.appspot.com/o/Demo%2FDemo%20video.mov?alt=media&token=a5cf70e8-f079-4cc0-aad7-15ab400f20aa',
+            //       volatile: false,
+            //     });
+            // },
             textButton: 'Record',
             iconButton: 'video',
             clickButton2: () => this.addFromCameraRoll({selectOnly: false}),
@@ -279,13 +305,7 @@ class VideoLibraryPage extends Component {
   }
 
   render() {
-    const {
-      navigation,
-      route,
-      userConnected,
-      currentSessionID,
-      position,
-    } = this.props;
+    const {navigation, route, currentSessionID, position} = this.props;
 
     const {
       videosArray,
@@ -295,9 +315,6 @@ class VideoLibraryPage extends Component {
       selectOnly,
     } = this.state;
 
-    if (!userConnected) {
-      return <LogoutView />;
-    }
     return (
       <View style={styleApp.stylePage}>
         <StatusBar hidden={false} barStyle={'dark-content'} />

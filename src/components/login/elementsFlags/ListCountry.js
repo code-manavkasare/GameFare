@@ -146,6 +146,7 @@ export default class SelectCountry extends Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={0}
           icon1="times"
+          sizeIcon1={21}
           icon2={null}
           clickButton1={() => this.selectCountry(false)}
         />

@@ -20,6 +20,7 @@ class HeaderVideoLibrary extends Component {
       selectableMode,
       toggleSelect,
       add,
+      userConnected,
       addFromCameraRoll,
       numberNotifications,
       AnimatedHeaderValue,
