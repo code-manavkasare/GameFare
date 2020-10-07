@@ -22,6 +22,9 @@ class AudioRecorderPlayer extends Component {
     }
     this.preparePlayer({});
   };
+  componentWillUnmount = () => {
+    this.pause();
+  };
 
   startRecording = () => {
     this.setState({
@@ -61,6 +64,12 @@ class AudioRecorderPlayer extends Component {
   };
   playPause = () => {
     this.state.audioPlayer.playPause();
+  };
+  pause = () => {
+    this.state.audioPlayer.pause();
+  };
+  seek = (time) => {
+    this.state.audioPlayer.seek(time);
   };
 
   stopPlayingRecord = () => {

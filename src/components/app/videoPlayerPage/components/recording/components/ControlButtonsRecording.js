@@ -30,21 +30,19 @@ export default class ControlButtonsRecording extends React.Component {
   };
   onPress = async () => {
     if (this.opacityButton._value === 1) {
-      const {
-        replay,
-        displayButtonReplay,
-        pressPause,
-        isPlayingReview,
-        setState,
-      } = this.props;
+      const {replay, displayButtonReplay, pressPause, setState} = this.props;
 
-      if (displayButtonReplay) {
-        await setState({isPlayingReview: true});
-        replay();
-        Animated.timing(this.opacityButton, timing(0, 300)).start();
-      }
+      // if (displayButtonReplay) {
+      //   await setState({isPlayingReview: true});
+      //   replay();
+      //   return Animated.timing(this.opacityButton, timing(0, 300)).start();
+      // }
 
-      pressPause(isPlayingReview);
+      await setState({isPlayingReview: true});
+      replay();
+      return Animated.timing(this.opacityButton, timing(0, 300)).start();
+
+      pressPause();
       await timeout(1000);
       Animated.timing(this.opacityButton, timing(0, 300)).start();
     } else {
@@ -74,7 +72,7 @@ export default class ControlButtonsRecording extends React.Component {
             style={[styleApp.fullSize, styleApp.center]}
             activeOpacity={0.8}
             onPress={() => this.onPress()}>
-            {displayButtonReplay ? (
+            {/* {displayButtonReplay ? (
               <AllIcons
                 name="undo-alt"
                 type="font"
@@ -95,7 +93,13 @@ export default class ControlButtonsRecording extends React.Component {
                 size={30}
                 color={colors.white}
               />
-            )}
+            )} */}
+            <AllIcons
+              name="undo-alt"
+              type="font"
+              size={30}
+              color={colors.white}
+            />
           </TouchableOpacity>
         </Animated.View>
       </TouchableOpacity>

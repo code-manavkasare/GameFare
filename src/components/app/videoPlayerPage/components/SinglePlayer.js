@@ -185,7 +185,9 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
+    // const {seekAudioPlayer} = this.props;
     await this.setState({displayButtonReplay: false});
+    // await seekAudioPlayer(0);
     this.recordingRef.launchIfPreview();
   };
   singlePlayer = () => {
@@ -213,6 +215,7 @@ class SinglePlayer extends Component {
       isRecording,
       clickVideo,
       pauseAudioPlayer,
+      seekAudioPlayer,
     } = this.props;
     const {
       sizeVideo,
@@ -261,6 +264,14 @@ class SinglePlayer extends Component {
             pressPause={async () => {
               this.videoPlayerRef?.togglePlayPause(isPlayingReview);
               await this.recordingRef.togglePlayPause();
+              if (!isPlayingReview) {
+                const currentIndex = this.recordingRef.getCurrentIndex();
+                const {timestamp, startRecordingOffset} = recordedActions[
+                  currentIndex
+                ];
+                await this.videoPlayerRef?.seek(timestamp);
+                await seekAudioPlayer(startRecordingOffset);
+              }
               pauseAudioPlayer();
             }}
           />

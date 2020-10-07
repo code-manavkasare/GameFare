@@ -21,6 +21,9 @@ class Recording extends Component {
 
     if (isVideoPlayerReady && !isPlayingReview) this.launchIfPreview();
   };
+  getCurrentIndex = () => {
+    return this.state.currentIndex;
+  };
 
   togglePlayPause = async () => {
     const {isPlayingReview, setState} = this.props;
@@ -78,6 +81,7 @@ class Recording extends Component {
 
     for (let i in recordedActions.slice(initialIndex)) {
       const action = recordedActions.slice(initialIndex)[i];
+      console.log('action', action);
       var {isPlayingReview} = this.props;
       if (isPlayingReview) {
         const {type} = action;

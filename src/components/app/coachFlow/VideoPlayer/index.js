@@ -223,7 +223,7 @@ export default class VideoPlayer extends Component {
   };
   onSlidingComplete = async (sliderTime, forcePlay) => {
     const {prevPaused} = this.state;
-    const {updateVideoInfoCloud, noUpdateInCloud} = this.props;
+    const {updateVideoInfoCloud, noUpdateInCloud,index,onCurrentTimeChange} = this.props;
     const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
     if (isCloudUpdating) {
       await updateVideoInfoCloud({
@@ -237,6 +237,7 @@ export default class VideoPlayer extends Component {
       paused,
       prevPaused: undefined,
     });
+    onCurrentTimeChange(index, sliderTime, paused);
     return true;
   };
   linkedOnSlidingComplete = async (sliderTime, forcePlay) => {
@@ -275,11 +276,11 @@ export default class VideoPlayer extends Component {
       onPlayPause,
       updateVideoInfoCloud,
       noUpdateInCloud,
-      onSeek,
+      onSeek, 
     } = this.props;
     const {paused, prevPaused, currentTime} = this.state;
 
-    // onCurrentTimeChange(index, time, paused);
+    
     if (!paused) {
       await this.setState({paused: true, prevPaused: false});
     } else if (prevPaused === undefined) {
@@ -370,7 +371,6 @@ export default class VideoPlayer extends Component {
     let {recordedActions} = this.props;
 
     const {thumbnail, url, durationSeconds} = archive;
- 
 
     const {
       currentTime,
