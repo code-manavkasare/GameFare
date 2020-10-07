@@ -315,6 +315,7 @@ class VideoPlayerPage extends Component {
   onCurrentTimeChange = (i, seekTime) => {
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
+
     recordedActions.push({
       type: 'seek',
       index: i,
@@ -585,6 +586,7 @@ class VideoPlayerPage extends Component {
           videosBeingShared ? session.sharedVideos[archiveID] : {}
         }
         pauseAudioPlayer={() => this.AudioRecorderPlayerRef?.playPause()}
+        seekAudioPlayer={(time) => this.AudioRecorderPlayerRef?.seek(time)}
         videoPlayerRefs={this.videoPlayerRefs}
         clickVideo={(index) => this.headerRef?.handleClick(index)}
       />
