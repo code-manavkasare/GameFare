@@ -31,15 +31,15 @@ class Recording extends Component {
       isPlayingReview: true,
       previewStartTime: Date.now(),
     });
-    const {archive} = this.props;
-    const {recordedActions} = archive;
+    const {recordedActions} = this.props;
+
     return this.previewRecording({recordedActions, initialIndex: currentIndex});
   };
 
   launchIfPreview = async () => {
-    const {archive, preparePlayer, setState} = this.props;
-    const {recordedActions} = archive;
-    if (recordedActions) {
+    const {archive, preparePlayer, setState, recordedActions} = this.props;
+
+    if (recordedActions.length > 0) {
       await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
       await setState({
         isPlayingReview: true,

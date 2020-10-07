@@ -161,7 +161,7 @@ class VideoPlayerPage extends Component {
 
   stopRecording = async () => {
     await this.onPlayPause(0, true);
-    const {recordedActions} = this.state;
+
     this.AudioRecorderPlayerRef?.stopRecording();
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
@@ -172,7 +172,7 @@ class VideoPlayerPage extends Component {
       recordingStartTime: null,
     });
 
-    this.videoPlayerRefs[0].previewRecording({recordedActions});
+    this.videoPlayerRefs[0].replayRecording();
   };
 
   playersAreLinked = (indexA, indexB) => {

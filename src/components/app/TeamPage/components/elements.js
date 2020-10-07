@@ -702,7 +702,7 @@ const ListContents = (props) => {
       initialNumberToRender={8}
       hideDividerHeader={true}
       ListEmptyComponent={{
-        text: `You have no content shared yet.`,
+        text: `You have not shared any content yet.`,
       }}
       header={rowTitle({
         icon: {name: 'galery', type: 'moon', color: colors.title, size: 20},
