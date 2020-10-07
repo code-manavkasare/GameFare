@@ -55,6 +55,7 @@ export default class LoadingScreen extends React.Component {
           initialBackgroundColor={'white'}
           initialTitleOpacity={1}
           icon1="times"
+          sizeIcon1={21}
           icon2={null}
           clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />

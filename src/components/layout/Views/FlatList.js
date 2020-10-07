@@ -4,6 +4,7 @@ import {
   bool,
   elementType,
   func,
+  element,
   number,
   object,
   shape,
@@ -19,9 +20,9 @@ import Loader from '../../layout/loaders/Loader';
 
 class FlatListComponent extends Component {
   static propTypes = {
-    AnimatedHeaderValue: elementType,
+    AnimatedHeaderValue: object,
     cardList: func.isRequired,
-    header: elementType,
+    header: element,
     incrementRendering: number,
     initialNumberToRender: number,
     inverted: bool,
@@ -30,7 +31,7 @@ class FlatListComponent extends Component {
       clickButton2: func,
       iconButton: string,
       iconButton2: string,
-      image: string, // require(pathToimage), example in videoLibraryPage
+      image: number, // require(pathToimage), example in videoLibraryPage
       text: string,
       textButton: string,
       textButton2: string,
@@ -163,7 +164,7 @@ class FlatListComponent extends Component {
               style={{height: 50, width: 50, marginBottom: 20}}
             />
             <Text style={styleApp.textBold}>{ListEmptyComponent?.text}</Text>
-            {ListEmptyComponent?.clickButton1 && (
+            {ListEmptyComponent?.clickButton && (
               <Button
                 backgroundColor="primary"
                 onPressColor={colors.primaryLight}

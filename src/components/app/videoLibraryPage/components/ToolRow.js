@@ -131,6 +131,7 @@ class ToolRow extends Component {
       displayButton0,
       clickButton0,
       position,
+      userConnected,
     } = this.props;
 
     // const translateYFooter = position.interpolate({
@@ -229,7 +230,7 @@ class ToolRow extends Component {
                   color: colors.primary,
                   size: 20,
                 },
-                buttonDisabled: selectedVideos.length === 0,
+                buttonDisabled: selectedVideos.length === 0 || !userConnected,
                 label: 'Share',
                 backgroundColor: colors.white,
                 isSelected: selectedVideos.length > 0,
@@ -268,6 +269,7 @@ const styles = StyleSheet.create({
     height: 75,
     width: '100%',
     ...styleApp.shade,
+
     bottom: heightFooter + marginBottomApp + 0,
     right: 0,
     zIndex: 10,
@@ -280,6 +282,7 @@ const styles = StyleSheet.create({
     left: '2.5%',
     position: 'absolute',
     height: '100%',
+    borderWidth: 1,
     borderRadius: 55,
     borderColor: colors.off,
     backgroundColor: colors.white,
@@ -294,6 +297,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   return {
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
     currentSessionID: state.coach.currentSessionID,
   };
 };

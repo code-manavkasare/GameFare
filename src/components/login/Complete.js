@@ -27,6 +27,7 @@ export default class Complete extends Component {
           initialTitleOpacity={1}
           icon1="chevron-left"
           icon2={null}
+          sizeIcon1={21}
           clickButton1={() => navigation.navigate('Phone')}
         />
         <ScrollView

@@ -23,6 +23,7 @@ if (__DEV__) {
 
 const persistConfig = {
   key: 'root',
+  timeout: 10000,
   storage: AsyncStorage,
   blacklist: [
     'events',

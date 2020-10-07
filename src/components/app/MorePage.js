@@ -24,10 +24,7 @@ import ScrollView from '../layout/scrollViews/ScrollView2';
 import HeaderBackButton from '../layout/headers/HeaderBackButton';
 import sizes from '../style/sizes';
 import ButtonNotification from './elementsUser/elementsProfile/ButtonNotification';
-import {
-  navigate,
-  clickNotification,
-} from '../../../NavigationService';
+import {navigate, clickNotification} from '../../../NavigationService';
 import styleApp from '../style/style';
 import colors from '../style/colors';
 import AllIcons from '../layout/icons/AllIcons';
@@ -311,10 +308,16 @@ class MorePage extends Component {
             </Text> */}
 
             <Button
-              backgroundColor="green"
-              onPressColor={colors.greenLight}
+              backgroundColor="primary"
+              onPressColor={colors.primaryLight}
               enabled={true}
               text="Sign in"
+              icon={{
+                name: 'user',
+                size: 24,
+                type: 'font',
+                color: colors.white,
+              }}
               styleButton={styles.buttonLogin}
               loader={false}
               click={async () => navigate('SignIn')}
@@ -353,7 +356,7 @@ class MorePage extends Component {
           'https://www.getgamefare.com/terms',
         )}
 
-        {this.button2({
+        {/* {this.button2({
           text: 'Test notif open session',
           icon: {
             name: 'user',
@@ -392,7 +395,7 @@ class MorePage extends Component {
                 date: Date.now(),
               },
             }),
-        })}
+        })} */}
 
         {/* {__DEV__ && (
           <View>
@@ -506,13 +509,15 @@ class MorePage extends Component {
     return true;
   }
   render() {
-    const {infoUser} = this.props;
+    const {infoUser, userConnected} = this.props;
     const {goBack} = this.props.navigation;
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
           AnimatedHeaderValue={this.AnimatedHeaderValue}
-          textHeader={infoUser.firstname + ' ' + infoUser.lastname}
+          textHeader={
+            userConnected && infoUser.firstname + ' ' + infoUser.lastname
+          }
           inputRange={[2, 5]}
           initialBorderColorIcon={'white'}
           initialBackgroundColor={'white'}
@@ -559,6 +564,7 @@ const styles = StyleSheet.create({
     //  marginRight: '5%',
     //  marginLeft: '5%',
     width: '90%',
+    height: 55,
     marginTop: 20,
   },
   title: {
