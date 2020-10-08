@@ -3,6 +3,9 @@ import {Animated, StyleSheet, View, Text} from 'react-native';
 import PropTypes from 'prop-types';
 import ButtonColor from '../../../../../layout/Views/Button';
 import {Col, Row, Grid} from 'react-native-easy-grid';
+import {connect} from 'react-redux';
+
+import {navigate} from '../../../../../../../NavigationService';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -10,7 +13,7 @@ import AllIcons from '../../../../../layout/icons/AllIcons';
 
 import {heightHeaderHome, marginTopApp} from '../../../../../style/sizes';
 
-export default class RecordingMenu extends React.Component {
+class RecordingMenu extends React.Component {
   static propTypes = {};
   constructor(props) {
     super(props);
@@ -65,6 +68,7 @@ export default class RecordingMenu extends React.Component {
       startRecording,
       stopRecording,
       saveReview,
+      userConnected,
     } = this.props;
     if (!isEditMode) return null;
     return (
@@ -83,21 +87,6 @@ export default class RecordingMenu extends React.Component {
           },
         })}
 
-        {/* {!isRecording &&
-          recordedActions.length > 0 &&
-          this.button({
-            index: 0,
-            backgroundColor: colors.title + '70',
-            text: 'Replay',
-            onPressColor: colors.grey + '70',
-            click: previewRecording,
-            icon: {
-              name: 'undo-alt',
-              type: 'font',
-              size: 18,
-              color: colors.white,
-            },
-          })} */}
         {!isRecording &&
           recordedActions.length > 0 &&
           this.button({
@@ -105,7 +94,7 @@ export default class RecordingMenu extends React.Component {
             backgroundColor: colors.title + '70',
             text: 'Save',
             onPressColor: colors.greyDark + '70',
-            click: saveReview,
+            click: userConnected ? saveReview : () => navigate('SignIn'),
             icon: {
               name: 'sd-card',
               type: 'font',
@@ -135,3 +124,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+const mapStateToProps = (state, props) => {
+  return {
+    userID: state.user.userID,
+    userConnected: state.user.userConnected,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {},
+)(RecordingMenu);

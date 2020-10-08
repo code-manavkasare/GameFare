@@ -64,6 +64,7 @@ export default class VideoPlayerHeader extends React.Component {
       archives,
       videoInfos,
       personSharingScreen,
+      userConnected,
     } = this.props;
     const {coachSessionID} = route.params;
 
@@ -142,14 +143,17 @@ export default class VideoPlayerHeader extends React.Component {
       backgroundColorIconOffset: 'transparent',
       colorIconOffset2: !isEditMode ? colors.white : colors.greyDark,
       clickButtonOffset2: async () => {
-        !isEditMode &&
-          navigation.navigate('ModalCallTab', {
-            action: 'shareArchives',
-            archivesToShare: archives,
-            modal: true,
-            branchLink: await createShareVideosBranchUrl(archives),
-            inlineSearch: true,
-          });
+        !isEditMode && !userConnected
+          ? navigation.navigate('SignIn')
+          : !isEditMode
+          ? navigation.navigate('ModalCallTab', {
+              action: 'shareArchives',
+              archivesToShare: archives,
+              modal: true,
+              branchLink: await createShareVideosBranchUrl(archives),
+              inlineSearch: true,
+            })
+          : null;
       },
       sizeIconOffset2: 17,
       typeIconOffset: 'font',

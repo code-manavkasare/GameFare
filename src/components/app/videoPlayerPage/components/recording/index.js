@@ -27,28 +27,29 @@ class Recording extends Component {
 
   togglePlayPause = async () => {
     const {isPlayingReview, setState} = this.props;
-    const {currentIndex} = this.state;
+
     if (isPlayingReview) return setState({isPlayingReview: false});
 
     await setState({
       isPlayingReview: true,
       previewStartTime: Date.now(),
     });
-    const {recordedActions} = this.props;
 
-    return this.previewRecording({recordedActions, initialIndex: currentIndex});
+    return this.previewRecording();
   };
 
-  launchIfPreview = async () => {
+  launchIfPreview = async (skipPreparePlayer) => {
     const {archive, preparePlayer, setState, recordedActions} = this.props;
-
+    console.log('recordedActions', recordedActions);
     if (recordedActions.length > 0) {
-      await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
+      if (!skipPreparePlayer)
+        await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
+      console.log('preparePlayer done');
       await setState({
         isPlayingReview: true,
         previewStartTime: Date.now(),
       });
-      this.previewRecording({recordedActions, initialIndex: 0});
+      this.previewRecording();
     }
   };
 
@@ -63,9 +64,10 @@ class Recording extends Component {
     }
   };
 
-  previewRecording = async ({recordedActions, initialIndex}) => {
+  previewRecording = async () => {
+    const {recordedActions} = this.props;
     const {toggleVisibleSeekBar} = this.props;
-
+    console.log('previewRecording', recordedActions);
     toggleVisibleSeekBar(false);
     const {
       setVideoPlayerState,
@@ -79,14 +81,14 @@ class Recording extends Component {
 
     playRecord();
 
-    for (let i in recordedActions.slice(initialIndex)) {
-      const action = recordedActions.slice(initialIndex)[i];
-      console.log('action', action);
+    for (let i in recordedActions) {
+      const action = recordedActions[i];
+
       var {isPlayingReview} = this.props;
       if (isPlayingReview) {
         const {type} = action;
 
-        await this.setState({currentIndex: Number(i) + initialIndex});
+        // await this.setState({currentIndex: Number(i) + initialIndex});
 
         switch (type) {
           case 'play':
