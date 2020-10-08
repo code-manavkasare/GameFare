@@ -132,7 +132,7 @@ class ButtonShareVideo extends Component {
     const {userID, archives, session, isEditMode} = this.props;
     const personSharingScreen = isSomeoneSharingScreen(session);
     if (isEditMode) return null;
-    if (!personSharingScreen) return this.buttonStart();
+    if (!personSharingScreen) return null;
     if (personSharingScreen !== userID) return null;
 
     if (
@@ -143,8 +143,8 @@ class ButtonShareVideo extends Component {
       })
     )
       return this.buttonStop();
-
-    return this.buttonStart();
+    return null;
+    // return this.buttonStart();
   }
 
   render() {

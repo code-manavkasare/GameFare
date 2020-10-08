@@ -40,11 +40,9 @@ class Recording extends Component {
 
   launchIfPreview = async (skipPreparePlayer) => {
     const {archive, preparePlayer, setState, recordedActions} = this.props;
-    console.log('recordedActions', recordedActions);
     if (recordedActions.length > 0) {
       if (!skipPreparePlayer)
         await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
-      console.log('preparePlayer done');
       await setState({
         isPlayingReview: true,
         previewStartTime: Date.now(),
@@ -67,7 +65,6 @@ class Recording extends Component {
   previewRecording = async () => {
     const {recordedActions} = this.props;
     const {toggleVisibleSeekBar} = this.props;
-    console.log('previewRecording', recordedActions);
     toggleVisibleSeekBar(false);
     const {
       setVideoPlayerState,
@@ -83,7 +80,6 @@ class Recording extends Component {
 
     for (let i in recordedActions) {
       const action = recordedActions[i];
-
       var {isPlayingReview} = this.props;
       if (isPlayingReview) {
         const {type} = action;
