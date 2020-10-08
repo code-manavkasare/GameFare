@@ -41,6 +41,7 @@ const bindArchive = (archiveID) => {
     .ref('archivedStreams/' + archiveID)
     .on('value', async function(snap) {
       const firebaseArchive = snap.val();
+      console.log('firebaseArchive', firebaseArchive);
       if (firebaseArchive) {
         const storeArchive = getArchiveByID(archiveID);
         await store.dispatch(

@@ -162,7 +162,7 @@ export default class VideoPlayer extends Component {
       updateVideoInfoCloud,
       archive,
     } = this.props;
-    const {durationSeconds} = archive;
+    const {durationSeconds} = archive; 
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
     if (forcePause) {
       paused = false;
@@ -396,6 +396,7 @@ export default class VideoPlayer extends Component {
     const {height} = Dimensions.get('screen');
     const connectedToSession =
       coachSessionID !== false && coachSessionID !== undefined;
+ 
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight && buttonTopRight()}

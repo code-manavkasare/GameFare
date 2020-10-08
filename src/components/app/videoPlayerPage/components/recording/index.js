@@ -53,7 +53,8 @@ class Recording extends Component {
 
   waitForAction = async (action, index) => {
     while (true) {
-      const {previewStartTime} = this.props;
+      const {previewStartTime, isPlayingReview} = this.props;
+      if (!isPlayingReview) return true;
 
       const timeLeft =
         action.startRecordingOffset - (Date.now() - previewStartTime);
@@ -83,7 +84,7 @@ class Recording extends Component {
       var {isPlayingReview} = this.props;
       if (isPlayingReview) {
         const {type} = action;
-
+ 
         // await this.setState({currentIndex: Number(i) + initialIndex});
 
         switch (type) {
@@ -151,6 +152,8 @@ class Recording extends Component {
               `case ${action.type} not handled, action received : ${action}`,
             );
         }
+      } else {
+        return;
       }
     }
     var {isPlayingReview, setState} = this.props;

@@ -193,7 +193,9 @@ class ToolRow extends Component {
                   isSelected:
                     selectedVideos.length > 0 &&
                     selectedLocalVideos.length === 0,
-                  buttonDisabled: selectedVideos.length === 0,
+                  buttonDisabled:
+                    selectedVideos.length === 0 ||
+                    selectedLocalVideos.length > 0,
                   onPressColor: colors.primaryLight,
                   style: styles.button,
                   click: () => clickButton0({}),
