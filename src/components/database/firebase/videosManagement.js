@@ -33,6 +33,7 @@ const deleteCloudVideo = async (videoID) => {
     });
 };
 
+
 const deleteCloudVideos = async (videoIDs) => {
   const {userID} = store.getState().user;
   let updates = {};

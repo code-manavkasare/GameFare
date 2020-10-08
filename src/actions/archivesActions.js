@@ -5,11 +5,16 @@ import {
   SET_ARCHIVE,
   BIND_ARCHIVE,
   UNBIND_ARCHIVE,
+  RESET_CLOUD_ARCHIVES,
 } from './types';
 
 const setArchive = (archive) => ({
   type: SET_ARCHIVE,
   archive,
+});
+
+const resetCloudArchives = () => ({
+  type: RESET_CLOUD_ARCHIVES,
 });
 
 const resetArchives = () => ({
@@ -40,6 +45,8 @@ const archivesAction = (val, data) => {
       await dispatch(setArchive(data));
     } else if (val === 'resetArchives') {
       await dispatch(resetArchives(data));
+    } else if (val === 'resetCloudArchives') {
+      await dispatch(resetCloudArchives(data));
     } else if (val === 'bindArchive') {
       await dispatch(bindArchive(data));
     } else if (val === 'unbindArchive') {
@@ -61,4 +68,5 @@ export {
   setArchive,
   bindArchive,
   unbindArchive,
+  resetCloudArchives,
 };

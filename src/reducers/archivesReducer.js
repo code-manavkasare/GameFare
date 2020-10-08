@@ -7,6 +7,7 @@ import {
   SET_ARCHIVE,
   BIND_ARCHIVE,
   UNBIND_ARCHIVE,
+  RESET_CLOUD_ARCHIVES,
 } from '../actions/types';
 
 const initialState = {};
@@ -23,6 +24,14 @@ const archivesReducer = (state = initialState, action) => {
     case DELETE_ARCHIVES:
       const {archiveIDs} = action;
       return archiveIDs.reduce((newState, id) => dissoc(id, newState), state);
+    case RESET_CLOUD_ARCHIVES:
+      const newArchives = Object.values(state)
+        .filter((item) => item.local)
+        .reduce(function(result, item) {
+          result[item.id] = item;
+          return result;
+        }, {});
+      return newArchives;
     case RESET_ARCHIVES:
       return initialState;
     default:

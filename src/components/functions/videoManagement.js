@@ -129,7 +129,7 @@ const addLocalVideo = async (video) => {
   }
 };
 
-const deleteVideos = (ids) => {
+const deleteVideos = (ids) => { 
   const infos = ids.map((id) => getArchiveByID(id));
   store.dispatch(removeUserLocalArchives(ids));
   store.dispatch(deleteArchives(ids));

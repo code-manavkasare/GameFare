@@ -132,11 +132,11 @@ class VideoLibraryPage extends Component {
         subtitle: 'This action cannot be undone.',
         textButton: `Delete (${numberVideos})`,
         onGoBack: async () => {
-          await deleteVideos(selectedVideos);
-          return this.setState({
+          await this.setState({
             selectedVideos: [],
             selectableMode: false,
           });
+          return deleteVideos(selectedVideos);
         },
       });
     }
