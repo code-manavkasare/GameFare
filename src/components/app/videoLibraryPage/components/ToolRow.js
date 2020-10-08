@@ -132,13 +132,8 @@ class ToolRow extends Component {
       clickButton0,
       position,
       userConnected,
+      selectedLocalVideos,
     } = this.props;
-
-    // const translateYFooter = position.interpolate({
-    //   inputRange: [0, 1],
-    //   extrapolate: 'clamp',
-    //   outputRange: [0, 100],
-    // });
 
     return (
       <View style={styles.tool} pointerEvents="box-none">
@@ -174,6 +169,7 @@ class ToolRow extends Component {
                 click: () => clickButton1({forceSelect: true}),
               })}
             </Col> */}
+
             {displayButton0 && (
               <Col size={25} style={styleApp.center3}>
                 {this.button({
@@ -194,7 +190,9 @@ class ToolRow extends Component {
                   label: 'Watch Live',
                   backgroundColor: colors.blue,
 
-                  isSelected: selectedVideos.length > 0,
+                  isSelected:
+                    selectedVideos.length > 0 &&
+                    selectedLocalVideos.length === 0,
                   buttonDisabled: selectedVideos.length === 0,
                   onPressColor: colors.primaryLight,
                   style: styles.button,
@@ -275,9 +273,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   animatedToolBox: {
-    // borderLeftWidth: 1,
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
     width: '95%',
     left: '2.5%',
     position: 'absolute',
@@ -299,6 +294,9 @@ const mapStateToProps = (state, props) => {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     currentSessionID: state.coach.currentSessionID,
+    selectedLocalVideos: props.selectedVideos
+      .map((video) => state.archives[video])
+      .filter((video) => video.local),
   };
 };
 

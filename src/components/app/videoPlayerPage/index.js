@@ -155,6 +155,9 @@ class VideoPlayerPage extends Component {
       recordedActions: [],
       recordingStartTime: Date.now(),
     });
+    const currenTime = this.videoPlayerRefs[0].getCurrentTime();
+
+    await this.onCurrentTimeChange(0, currenTime);
     this.AudioRecorderPlayerRef?.startRecording();
     this.initialiseRecordingWithPlayerCurrentState();
   };
@@ -313,7 +316,7 @@ class VideoPlayerPage extends Component {
     });
     this.setState({recordedActions});
   };
-  onCurrentTimeChange = (i, seekTime) => {
+  onCurrentTimeChange = async (i, seekTime) => {
     let {recordedActions} = this.state;
     const {recordingStartTime} = this.state;
 
@@ -323,7 +326,7 @@ class VideoPlayerPage extends Component {
       startRecordingOffset: Date.now() - recordingStartTime,
       timestamp: seekTime,
     });
-    this.setState({recordedActions});
+    return this.setState({recordedActions});
   };
   onDrawingChange = (i, drawings) => {
     let {recordedActions} = this.state;
