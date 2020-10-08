@@ -7,7 +7,7 @@ import {updateCloudUploadProgress} from '../database/firebase/videosManagement';
 
 const defaultVideoFilename = 'archive.mp4';
 const videoContentType = 'video/mp4';
-const defaultImageFilename = 'image.jpg';
+const defaultImageFilename = 'thumbnail.png';
 const imageContentType = 'image/jpeg';
 const defaultRecordAudioFilename = 'audioRecord.mp4';
 const audioRecordContentType = 'audio/mp4';
