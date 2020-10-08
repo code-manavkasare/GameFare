@@ -268,7 +268,8 @@ class VideoPlayerPage extends Component {
   onPlayPause = async (i, paused, currentTime) => {
     let {recordedActions} = this.state;
 
-    if (!currentTime) currentTime = this.videoPlayerRefs[i].getCurrentTime();
+    if (currentTime === undefined || currentTime === false)
+      currentTime = this.videoPlayerRefs[i].getCurrentTime();
     const {recordingStartTime} = this.state;
     recordedActions.push({
       type: paused ? 'pause' : 'play',
@@ -586,6 +587,7 @@ class VideoPlayerPage extends Component {
           videosBeingShared ? session.sharedVideos[archiveID] : {}
         }
         pauseAudioPlayer={() => this.AudioRecorderPlayerRef?.playPause()}
+        stopAudioPlayer={() => this.AudioRecorderPlayerRef?.stopPlayingRecord()}
         seekAudioPlayer={(time) => this.AudioRecorderPlayerRef?.seek(time)}
         videoPlayerRefs={this.videoPlayerRefs}
         clickVideo={(index) => this.headerRef?.handleClick(index)}

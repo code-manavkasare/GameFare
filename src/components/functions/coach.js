@@ -27,6 +27,7 @@ import {setSession} from '../../actions/coachSessionsActions';
 import {setLayout} from '../../actions/layoutActions';
 import {enqueueUploadTasks} from '../../actions/uploadQueueActions';
 import {setArchive} from '../../actions/archivesActions';
+import {dateSession} from '../../components/app/TeamPage/components/elements';
 
 import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
@@ -387,6 +388,31 @@ const setupOpentokStopRecordingFlow = async (
   return thumbnailUploadTasks;
 };
 
+const getSortedSessions = (options) => {
+  let {coachSessions, sortBy, exclude} = options;
+  if (!coachSessions) {
+    return [];
+  }
+  return Object.values(coachSessions)
+    .filter((s) => {
+      return s?.id !== undefined;
+    })
+    .sort(function(a, b) {
+      const getTimestamp = ({id, timestamp}) => {
+        const session = store.getState().coachSessions[id];
+        const messages = store.getState().conversations[id];
+        if (!session?.members || sortBy === 'lastConnection') return timestamp;
+        return dateSession({session, messages, component: false});
+      };
+      const timestampA = getTimestamp(a) ?? a.timestamp;
+      const timestampB = getTimestamp(b) ?? b.timestamp;
+      return timestampB - timestampA;
+    })
+    .filter((s) => {
+      return exclude ? exclude.indexOf(s?.id) === -1 : true;
+    });
+};
+
 const openSession = async (user, members) => {
   const allSessions = store.getState().coachSessions;
   let allMembers = Object.values(members).map((member) => member.id);
@@ -745,6 +771,7 @@ module.exports = {
   openMemberAcceptCharge,
   capitalize,
   deleteSession,
+  getSortedSessions,
   createSession,
   createCoachSessionFromUserIDs,
   addMembersToSession,

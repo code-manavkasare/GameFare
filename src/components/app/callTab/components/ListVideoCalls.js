@@ -14,6 +14,7 @@ import ButtonColor from '../../../layout/buttons/Button';
 import AllIcons from '../../../layout/icons/AllIcons';
 
 import {viewLive, rowTitle} from '../../TeamPage/components/elements';
+import {getSortedSessions} from '../../../functions/coach';
 import CardStreamView from '../../coachFlow/GroupsPage/components/CardStreamView';
 
 class ListVideoCalls extends Component {
@@ -42,6 +43,7 @@ class ListVideoCalls extends Component {
       currentSession,
       liveSessionHeader,
       inlineSearch,
+      headerTitle,
     } = this.props;
     const currentlyInSession =
       currentSessionID && liveSessionHeader && !inlineSearch;
@@ -49,7 +51,7 @@ class ListVideoCalls extends Component {
       <View>
         {rowTitle({
           hideDividerHeader: true,
-          title: 'Video Calls',
+          title: headerTitle,
           titleColor: colors.black,
           titleStyle: {
             fontWeight: '800',
@@ -83,7 +85,6 @@ class ListVideoCalls extends Component {
   };
 
   render() {
-    const coachSessions = this.sessionsArray();
     const {
       userConnected,
       onClick,
@@ -92,10 +93,13 @@ class ListVideoCalls extends Component {
       currentSessionID,
       AnimatedHeaderValue,
       openUserDirectory,
-      liveSessionHeader,
-      inlineSearch,
+      coachSessions: propSessions,
     } = this.props;
-
+    const coachSessions = getSortedSessions({
+      coachSessions: propSessions,
+      sortBy: 'lastConnection',
+      exclude: [currentSessionID],
+    });
     return (
       <FlatListComponent
         list={coachSessions}
@@ -119,6 +123,7 @@ class ListVideoCalls extends Component {
               recentView
               style={styles.cardStreamStyle}
             />
+            <View style={styles.divider} />
           </View>
         )}
         incrementRendering={6}
@@ -187,7 +192,7 @@ const styles = StyleSheet.create({
     width: '90%',
     marginLeft: '5%',
     borderRadius: 15,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   cardStreamStyle: {borderRadius: 15, paddingVertical: 0, marginVertical: 5},
   sessionMenuStyle: {
@@ -214,6 +219,12 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     height: 70,
+  },
+  divider: {
+    width: '115%',
+    left: '-7.5%',
+    height: 1,
+    backgroundColor: colors.greyLighter,
   },
 });
 

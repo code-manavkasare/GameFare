@@ -170,6 +170,7 @@ class CallTab extends Component {
   }
 
   viewCallTab() {
+    const {userID} = this.props;
     const {
       selectedSessions,
       action,
@@ -177,6 +178,7 @@ class CallTab extends Component {
       searchText,
       searchActive,
       inlineSearch,
+      modal,
     } = this.state;
     return (
       <View>
@@ -189,6 +191,7 @@ class CallTab extends Component {
             openUserDirectory={() => this.openUserDirectory()}
             hideCallButton={action !== 'call'}
             liveSessionHeader={action === 'call'}
+            headerTitle={modal ? 'Recent' : userID ? 'Video Calls' : ''}
           />
         )}
         {searchActive && searchText === '' && (

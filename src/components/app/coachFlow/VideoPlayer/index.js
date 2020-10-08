@@ -65,6 +65,7 @@ export default class VideoPlayer extends Component {
       muted: false,
       allowRecording: false,
       slidingStartTime: null,
+      error: false,
     };
     this.opacityControlBar = new Animated.Value(1);
   }
@@ -155,6 +156,7 @@ export default class VideoPlayer extends Component {
     let {paused, playRate} = this.state;
     const {
       onPlayPause,
+      onCurrentTimeChange,
       index,
       noUpdateInCloud,
       updateVideoInfoCloud,
@@ -166,9 +168,11 @@ export default class VideoPlayer extends Component {
       paused = false;
     }
     if (durationSeconds - currentTime < 0.05 && paused) {
-      await this.seek(0);
-    }
-    if (!noUpdateInCloud) {
+      await this.onSeek(0);
+      this.setState({paused: false});
+      await onCurrentTimeChange(index, 0, false);
+      onPlayPause(index, !paused, 0);
+    } else if (!noUpdateInCloud) {
       if (!paused) {
         return updateVideoInfoCloud({paused: true, currentTime, playRate});
       }
@@ -223,7 +227,12 @@ export default class VideoPlayer extends Component {
   };
   onSlidingComplete = async (sliderTime, forcePlay) => {
     const {prevPaused} = this.state;
-    const {updateVideoInfoCloud, noUpdateInCloud,index,onCurrentTimeChange} = this.props;
+    const {
+      updateVideoInfoCloud,
+      noUpdateInCloud,
+      index,
+      onCurrentTimeChange,
+    } = this.props;
     const isCloudUpdating = updateVideoInfoCloud && !noUpdateInCloud;
     if (isCloudUpdating) {
       await updateVideoInfoCloud({
@@ -276,11 +285,10 @@ export default class VideoPlayer extends Component {
       onPlayPause,
       updateVideoInfoCloud,
       noUpdateInCloud,
-      onSeek, 
+      onSeek,
     } = this.props;
     const {paused, prevPaused, currentTime} = this.state;
 
-    
     if (!paused) {
       await this.setState({paused: true, prevPaused: false});
     } else if (prevPaused === undefined) {
@@ -370,7 +378,7 @@ export default class VideoPlayer extends Component {
     } = this.props;
     let {recordedActions} = this.props;
 
-    const {thumbnail, url, durationSeconds} = archive;
+    const {thumbnail, url, durationSeconds, originalUrl} = archive;
 
     const {
       currentTime,
@@ -383,6 +391,7 @@ export default class VideoPlayer extends Component {
       videoLoaded,
       seekbarLoaded,
       allowRecording,
+      error,
     } = this.state;
     const {height} = Dimensions.get('screen');
     const connectedToSession =
@@ -432,12 +441,16 @@ export default class VideoPlayer extends Component {
                   allowRecording={
                     connectedToSession ? undefined : allowRecording
                   }
-                  source={{uri: url}}
+                  source={{uri: error ? originalUrl : url}}
                   style={styleApp.fullSize}
                   ref={(ref) => {
                     this.player = ref;
                   }}
                   rate={playRate}
+                  onError={(error) => {
+                    this.setState({error: true});
+                    console.log(url, error);
+                  }}
                   onLoadStart={() => {
                     if (connectedToSession) {
                       AudioSession.setCategoryAndMode(
@@ -497,7 +510,7 @@ export default class VideoPlayer extends Component {
             archiveId={archiveId}
             disableControls={disableControls}
             onRef={(ref) => (this.visualSeekBarRef = ref)}
-            source={url}
+            source={error ? originalUrl : url}
             isRecording={isRecording}
             size={seekbarSize}
             togglePlayPause={this.linkedTogglePlayPause.bind(this)}

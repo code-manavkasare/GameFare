@@ -226,7 +226,7 @@ const titleSession = (session, size, short) => {
   return names;
 };
 
-const dateSession = ({session, messages}) => {
+const dateSession = ({session, messages, component}) => {
   let {members, createdAt} = session;
   if (!members) {
     return formatDate(Date.now());
@@ -261,14 +261,14 @@ const dateSession = ({session, messages}) => {
   }
 
   if (!lastActive && !dateLastMessage) {
-    return formatDate(createdAt);
+    return component ? formatDate(createdAt) : createdAt;
   }
 
   if ((!lastActive && dateLastMessage > 0) || dateLastMessage > lastActive) {
-    return formatDate(dateLastMessage);
+    return component ? formatDate(dateLastMessage) : dateLastMessage;
   }
 
-  return formatDate(lastActive);
+  return component ? formatDate(lastActive) : lastActive;
 };
 const sessionTitle = (session, styleText) => {
   return (
@@ -283,9 +283,9 @@ const sessionDate = ({session, messages}) => {
     <Text
       style={[
         styleApp.text,
-        {color: colors.title, marginTop: 5, fontSize: 11},
+        {color: colors.greyDark, marginTop: 0, fontSize: 10},
       ]}>
-      {dateSession({session, messages})}
+      {dateSession({session, messages, component: true})}
     </Text>
   );
 };
@@ -851,6 +851,7 @@ module.exports = {
   ListContents,
   ListPlayers,
   rowTitle,
+  dateSession,
   sessionDate,
   sessionTitle,
   titleSession,

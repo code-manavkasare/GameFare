@@ -185,9 +185,9 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
-    // const {seekAudioPlayer} = this.props;
+    const {stopAudioPlayer} = this.props;
     await this.setState({displayButtonReplay: false});
-    // await seekAudioPlayer(0);
+    await stopAudioPlayer();
     this.recordingRef.launchIfPreview();
   };
   singlePlayer = () => {

@@ -90,7 +90,7 @@ const generatePreviewCloud = async (
     startTime,
   );
 
-  const newVideoInfo = {
+  let newVideoInfo = {
     cutRequest: {
       archiveIdToCut: videoInfo.id,
       startTime,
@@ -98,18 +98,24 @@ const generatePreviewCloud = async (
     },
     durationSeconds: endTime - startTime,
     id: newArchiveId,
-    members: {
-      [userId]: {
-        id: userId,
-        invitedBy: userId,
-        timestamp: dateNow,
-      },
-    },
     recordedActions: newRecordedActions,
     size: videoInfo.size,
-    sourceUser: userId,
     startTimestamp: dateNow,
   };
+
+  if (userId) {
+    newVideoInfo = {
+      ...newVideoInfo,
+      members: {
+        [userId]: {
+          id: userId,
+          invitedBy: userId,
+          timestamp: dateNow,
+        },
+      },
+      sourceUser: userId,
+    };
+  }
 
   store.dispatch(
     enqueueUploadTask({
@@ -120,12 +126,17 @@ const generatePreviewCloud = async (
       storageDestination: `archivedStreams/${newArchiveId}`,
       isBackground: true,
       displayInList: false,
+      afterUpload: (audioRecordUrl) => {
+        let updates = {
+          ...newVideoInfo,
+          audioRecordUrl,
+        };
+        database()
+          .ref(`archivedStreams/${newArchiveId}`)
+          .set(updates);
+      },
     }),
   );
-
-  database()
-    .ref(`archivedStreams/${newArchiveId}`)
-    .set(newVideoInfo);
 };
 
 export {checkIfAllArchivesAreLocal, generatePreview, generatePreviewCloud};

@@ -18,6 +18,7 @@ import AllIcons from '../layout/icons/AllIcons';
 
 export default class CardConversation extends PureComponent {
   cardConversation() {
+    const {style} = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -72,6 +73,7 @@ export default class CardConversation extends PureComponent {
         style={[
           // styleApp.cardConversation,
           styleApp.marginView,
+          style,
           {flex: 1, paddingTop: 10, paddingBottom: 10},
         ]}
         onPressColor={colors.off}
