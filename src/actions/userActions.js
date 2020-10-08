@@ -13,7 +13,7 @@ import {
 
 import {store} from '../../reduxStore.js';
 import {resetDataCoachSession} from './coachActions';
-import {resetArchives} from './archivesActions.js';
+import {resetCloudArchives} from './archivesActions.js';
 import {resetSessions} from './coachSessionsActions.js';
 
 import {subscribeToTopics} from '../components/functions/notifications';
@@ -91,7 +91,7 @@ const userAction = (val, data) => {
         .off('value');
       await dispatch(resetUserInfo());
       await dispatch(resetDataCoachSession());
-      await dispatch(resetArchives());
+      await dispatch(resetCloudArchives());
       await dispatch(resetSessions());
       await dispatch(resetMessages());
 
