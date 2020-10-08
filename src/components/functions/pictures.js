@@ -1,5 +1,4 @@
-import {Platform, PermissionsAndroid} from 'react-native';
-import storage from '@react-native-firebase/storage';
+import {Platform} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Permissions, {
   request,
@@ -9,7 +8,7 @@ import Permissions, {
 import ImagePicker from 'react-native-image-picker';
 import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
-import RNThumbnail from 'react-native-thumbnail';
+import {createThumbnail} from 'react-native-create-thumbnail';
 import RNFS from 'react-native-fs';
 import {fromHsv} from 'react-native-color-picker';
 
@@ -140,8 +139,9 @@ const sortVideos = (videos) => {
   if (!videos) {
     videos = {};
   }
-  return Object.values(videos)
-    .sort((a, b) => b.startTimestamp - a.startTimestamp);
+  return Object.values(videos).sort(
+    (a, b) => b.startTimestamp - a.startTimestamp,
+  );
 };
 
 const getLastVideo = async () => {
@@ -174,9 +174,11 @@ const ge10tLastVideo = async () => {
   return videos;
 };
 
-const generateThumbnail = async (videoPath, timestamp) => {
-  const thumbnail = await RNThumbnail.get(videoPath);
-  return thumbnail.path;
+const generateThumbnail = async (videoPath) => {
+  const {path} = await createThumbnail({
+    url: videoPath,
+  });
+  return path;
 };
 
 const getVideoUUID = (path) => {

@@ -7176,10 +7176,10 @@ react-native-flipper@^0.49.0:
   resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.49.0.tgz#8fd19b7cd8af1e7772ece07e54366aa751a87016"
   integrity sha512-Y0fIwEyEsouYKbyve71Ps7cUryDcEGLY2EOyve6p9gNMDdpVIfo040JgwCOD/2s+AjWK3C7F0wl4IXIrnF+wiA==
 
-react-native-flipper@^0.55.0:
-  version "0.55.0"
-  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.55.0.tgz#1fb0e280eff2224f2ab5b3f429896e05112ced41"
-  integrity sha512-z2FARpeCfMWVn4zdYJtpGiYqcmo48dCuAjEI3CdkCewjQVNrT5DxUm33Yr/iM1HnTzVKRKsluPuPsKJXXHaQtw==
+react-native-flipper@^0.61.0:
+  version "0.61.0"
+  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.61.0.tgz#9613f1e8a7f90d1564f44ffc9fd7ced4f366debc"
+  integrity sha512-wRa2Y2pXBoW3m+p3QbtL4NesuRXQW4gJgRHnDe6nkm+ifgt/6+WHGNcWqngmKdNCsNtWTIoDiLOc3/CNdhyfHQ==
 
 react-native-fs@^2.16.2:
   version "2.16.6"
@@ -7465,10 +7465,6 @@ react-native-tab-view@^2.15.1:
   version "2.15.1"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.15.1.tgz#cf4df4ffdec504263a2e06a6becd8831b9a19ad9"
   integrity sha512-cDYl1pNWspbEHBjHrHVpIC40h4g8VhZe0CIG0CUKcouX98vHVfAojxhgWuRosq9qMhITHpLKM+7BmBLnhCJ0nw==
-
-react-native-thumbnail@phuochau/react-native-thumbnail:
-  version "1.1.3"
-  resolved "https://codeload.github.com/phuochau/react-native-thumbnail/tar.gz/dc9af06fcee553dce561158cfb05e915655634bb"
 
 react-native-vector-icons@6.6.0:
   version "6.6.0"
