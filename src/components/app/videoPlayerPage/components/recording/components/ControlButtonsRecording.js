@@ -29,9 +29,20 @@ export default class ControlButtonsRecording extends React.Component {
     if (this.opacityButton._value === 1) {
       const {replay, displayButtonReplay, pressPause, setState} = this.props;
 
+      // if (displayButtonReplay) {
+      //   await setState({isPlayingReview: true});
+      //   replay();
+      //   return Animated.timing(this.opacityButton, timing(0, 300)).start();
+      // }
+      console.log('onPress');
+
       await setState({isPlayingReview: true});
       replay();
       return Animated.timing(this.opacityButton, timing(0, 300)).start();
+
+      // pressPause();
+      // await timeout(1000);
+      // Animated.timing(this.opacityButton, timing(0, 300)).start();
     } else {
       Animated.timing(this.opacityButton, timing(1, 300)).start();
     }

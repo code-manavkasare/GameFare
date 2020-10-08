@@ -230,7 +230,7 @@ class ToolRow extends Component {
                   color: colors.primary,
                   size: 20,
                 },
-                buttonDisabled: selectedVideos.length === 0 || !userConnected,
+                buttonDisabled: selectedVideos.length === 0,
                 label: 'Share',
                 backgroundColor: colors.white,
                 isSelected: selectedVideos.length > 0,

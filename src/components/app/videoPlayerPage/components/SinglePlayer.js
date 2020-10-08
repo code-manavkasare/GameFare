@@ -185,10 +185,7 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
-    const {stopAudioPlayer} = this.props;
-    await this.setState({displayButtonReplay: false});
-    await stopAudioPlayer();
-    this.recordingRef.launchIfPreview();
+    this.recordingRef.launchIfPreview(true);
   };
   singlePlayer = () => {
     const {
@@ -259,7 +256,10 @@ class SinglePlayer extends Component {
           <ControlButtonRecording
             displayButtonReplay={displayButtonReplay}
             isPlayingReview={isPlayingReview}
-            replay={this.replayRecording.bind(this)}
+            replay={async () => {
+              await seekAudioPlayer(0);
+              this.recordingRef.launchIfPreview(true);
+            }}
             setState={this.setState.bind(this)}
             pressPause={async () => {
               this.videoPlayerRef?.togglePlayPause(isPlayingReview);

@@ -43,10 +43,10 @@ class PhoneFields extends Component {
     this.changePhone = this.changePhone.bind(this);
   }
   componentDidMount() {
-    var that = this;
-    setTimeout(function() {
-      that.firstTextInput.focus();
-    }, 550);
+    // var that = this;
+    // setTimeout(function() {
+    //   that.firstTextInput.focus();
+    // }, 550);
   }
   focusPhoneField() {
     this.firstTextInput.focus();
@@ -105,7 +105,7 @@ class PhoneFields extends Component {
         autoCapitalize="none"
         underlineColorAndroid="rgba(0,0,0,0)"
         autoCorrect={true}
-        autoFocus={false}
+        autoFocus={true}
         ref={(input) => {
           this.firstTextInput = input;
         }}

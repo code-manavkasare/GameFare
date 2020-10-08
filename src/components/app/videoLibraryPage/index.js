@@ -108,7 +108,8 @@ class VideoLibraryPage extends Component {
   };
   async shareSelectedVideos() {
     const {selectedVideos} = this.state;
-    const {navigation} = this.props;
+    const {navigation, userConnected} = this.props;
+    if (!userConnected) return navigation.navigate('SignIn');
     if (selectedVideos.length > 0) {
       navigation.navigate('ModalCallTab', {
         action: 'shareArchives',

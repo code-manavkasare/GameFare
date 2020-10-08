@@ -388,6 +388,7 @@ class VideoPlayerPage extends Component {
       route,
       session,
       videoInfos,
+      userConnected,
       currentSessionID: coachSessionID,
       portrait,
     } = this.props;
@@ -414,6 +415,7 @@ class VideoPlayerPage extends Component {
         isPreviewing={isPreviewing}
         isDrawingEnabled={isDrawingEnabled}
         videoInfos={videoInfos}
+        userConnected={userConnected}
         recordedActions={recordedActions}
         archives={archives}
         personSharingScreen={personSharingScreen}
@@ -719,6 +721,7 @@ const mapStateToProps = (state, props) => {
   const archives = params.objectID ? [params.objectID] : params.archives;
   return {
     userID: state.user.userID,
+    userConnected: state.user.userConnected,
     session: state.coachSessions[currentSessionID],
     currentSessionID,
     portrait: state.layout.currentScreenSize.portrait,

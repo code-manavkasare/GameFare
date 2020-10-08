@@ -23,7 +23,7 @@ class AudioRecorderPlayer extends Component {
     this.preparePlayer({});
   };
   componentWillUnmount = () => {
-    this.pause();
+    this.destroyPlayer();
   };
 
   startRecording = () => {
@@ -44,6 +44,9 @@ class AudioRecorderPlayer extends Component {
   };
 
   preparePlayer = async ({url, isCloud}) => {
+    const {audioPlayer} = this.state;
+    console.log('preparePlayer', audioPlayer);
+    // if (audioPlayer) await this.destroyPlayer();
     await new Promise((resolve) => {
       this.setState({
         audioPlayer: new Player(
@@ -57,6 +60,7 @@ class AudioRecorderPlayer extends Component {
         }),
       });
     });
+    return true;
   };
 
   playRecord = () => {
@@ -71,6 +75,9 @@ class AudioRecorderPlayer extends Component {
   };
   seek = (time) => {
     this.state.audioPlayer.seek(time);
+  };
+  destroyPlayer = async () => {
+    return this.state.audioPlayer.destroy();
   };
 
   stopPlayingRecord = () => {
