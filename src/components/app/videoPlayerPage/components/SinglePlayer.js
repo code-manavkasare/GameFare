@@ -13,7 +13,7 @@ import Loader from '../../../layout/loaders/Loader';
 import colors from '../../../style/colors';
 import DrawTools from './drawing/DrawTools';
 import DrawView from './drawing/DrawView';
-import {updateInfoVideoCloud} from '../../../functions/coach';
+import {updateInfoVideoCloud, timeout} from '../../../functions/coach';
 import RecordingComponent from './recording/index';
 import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
@@ -185,7 +185,8 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
-    this.recordingRef.launchIfPreview(true);
+    this.videoPlayerRef.togglePlayPause(true)
+    this.recordingRef.launchIfPreview();
   };
   singlePlayer = () => {
     const {
@@ -257,7 +258,10 @@ class SinglePlayer extends Component {
             displayButtonReplay={displayButtonReplay}
             isPlayingReview={isPlayingReview}
             replay={async () => {
+              await this.setState({isPlayingReview: false});
+              await timeout(200);
               await seekAudioPlayer(0);
+              this.videoPlayerRef.togglePlayPause(true);
               this.recordingRef.launchIfPreview(true);
             }}
             setState={this.setState.bind(this)}

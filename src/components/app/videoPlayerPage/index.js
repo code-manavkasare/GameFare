@@ -159,6 +159,7 @@ class VideoPlayerPage extends Component {
     const currenTime = this.videoPlayerRefs[0].getCurrentTime();
 
     await this.onCurrentTimeChange(0, currenTime);
+    await this.videoPlayerRefs[0].togglePlayPause(true);
     this.AudioRecorderPlayerRef?.startRecording();
     this.initialiseRecordingWithPlayerCurrentState();
   };
