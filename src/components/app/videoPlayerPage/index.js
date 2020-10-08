@@ -9,6 +9,7 @@ import VideoPlayerHeader from './components/VideoPlayerHeader';
 import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
+import {isArchiveUploading} from '../../functions/upload.js';
 import {layoutAction} from '../../../actions/layoutActions';
 
 import colors from '../../style/colors';
@@ -453,6 +454,7 @@ class VideoPlayerPage extends Component {
           });
           this.setState({isEditMode: false, isRecording: false});
         }}
+        disableRecord={isArchiveUploading(videoInfos)}
         setState={this.setState.bind(this)}
         addVideo={() => {
           navigate('SelectVideosFromLibrary', {
