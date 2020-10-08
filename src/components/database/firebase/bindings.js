@@ -8,7 +8,6 @@
 //   There are corresponding Manager components that call these functions in response to the redux store,
 //   rendered in App.js.
 
-
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 
@@ -51,6 +50,7 @@ const bindArchive = (archiveID) => {
             url: storeArchive?.localUrlCreated
               ? storeArchive.url
               : firebaseArchive.url,
+            originalUrl: firebaseArchive.url,
             localUrlCreated: storeArchive?.localUrlCreated
               ? storeArchive.localUrlCreated
               : false,
@@ -70,7 +70,6 @@ const unbindArchive = async (archiveID) => {
     .ref('archivedStreams/' + archiveID)
     .off();
 };
-
 
 const bindConversation = (conversationID) => {
   const gamefareUser = store.getState().message.gamefareUser;
@@ -110,7 +109,6 @@ const unbindConversation = async (conversationID) => {
     .off();
 };
 
-
 export {
   bindSession,
   unbindSession,
@@ -118,4 +116,4 @@ export {
   unbindArchive,
   bindConversation,
   unbindConversation,
-}
+};

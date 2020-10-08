@@ -77,10 +77,10 @@ class UploadManager extends Component {
         const {videoInfo, progress: prevProgress} = uploadTask;
         const now = Date.now();
         if (now - lastProgressUpdateTime > 2000 || prevProgress === 0) {
-          uploadTask.progress = progress;
+          let newUploadTask = {...uploadTask, progress};
           this.setState({
             lastProgressUpdateTime: now,
-            uploadInProgress: {...uploadInProgress, uploadTask},
+            uploadInProgress: {...uploadInProgress, uploadTask: newUploadTask},
           });
           updateCloudUploadProgress(videoInfo.id, progress);
           updateLocalUploadProgress(videoInfo.id, progress);
@@ -228,7 +228,7 @@ class UploadManager extends Component {
           [`${storageDestination}/${typeDestination}`]: cloudFileUrl,
         });
       if (afterUpload) {
-        await afterUpload();
+        await afterUpload(cloudFileUrl);
       }
     } catch (error) {
       console.log('Could not complete file upload', id, error);

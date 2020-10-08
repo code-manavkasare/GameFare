@@ -39,6 +39,7 @@ export default {
   borderColor: '#A7A7AA',
   grey: '#D8D8D8',
   greyLight: '#EDEDED',
+  greyLighter: '#F5F5F5',
   greyDark: '#AEAEAE',
   greyMidDark: '#C2C2C2',
   greyDarker: '#4B4B4B',

@@ -179,9 +179,6 @@ class CardStream extends Component {
       position: 'absolute',
       opacity: this.selectionIndication,
     };
-    if (!session) {
-      return <PlaceHolder />;
-    }
     return session ? (
       <Animated.View style={styles.card} key={key}>
         <ButtonColor
@@ -210,15 +207,16 @@ class CardStream extends Component {
                         top: -4,
                       })}
                   </Col>
-                  <Col size={55} style={[styleApp.center2, {paddingRight: 6}]}>
+                  <Col size={50} style={[styleApp.center2, {paddingRight: 6}]}>
                     {sessionTitle(session, {}, false)}
                     {!recentView && lastMessage(messages, hasNotification)}
                   </Col>
                   {!recentView ? (
-                    <Col size={15}>
-                      {sessionDate({session, messages})}
-                      <View style={[styleApp.center, {marginTop: 10}]}>
-                        {hasNotification && blueBadge()}
+                    <Col size={20} style={styleApp.center}>
+                      <View style={[styleApp.center, {marginTop: 0}]}>
+                        {hasNotification
+                          ? blueBadge()
+                          : sessionDate({session, messages})}
                       </View>
                     </Col>
                   ) : (

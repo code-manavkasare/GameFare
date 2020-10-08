@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, InteractionManager} from 'react-native';
 
 import {connect} from 'react-redux';
 import isEqual from 'lodash.isequal';
@@ -8,32 +8,72 @@ import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
-import {newSession} from '../../../../functions/coach';
+import {newSession, getSortedSessions} from '../../../../functions/coach';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
 import Button from '../../../../layout/buttons/Button';
+import Loader from '../../../../layout/loaders/Loader';
 
 class ListStreams extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      coachSessions: false,
+      loading: true,
+    };
     this.itemsRef = [];
   }
-  sessionsArray = () => {
-    let {coachSessions} = this.props;
-    if (!coachSessions) {
-      return [];
+  componentDidMount() {
+    setTimeout(this.fetchSessions, 0);
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (!isEqual(prevProps.messages, this.props.messages)) {
+      setTimeout(this.fetchSessions, 0);
     }
-    return Object.values(coachSessions)
-      .sort(function(a, b) {
-        return b.timestamp - a.timestamp;
-      })
-      .filter((s) => {
-        return s?.id !== undefined;
-      });
+  }
+  fetchSessions = async () => {
+    const coachSessions = await getSortedSessions({
+      coachSessions: this.props.coachSessions,
+      sortBy: 'lastMessage',
+    });
+    this.setState({coachSessions, loading: false});
   };
+  header() {
+    return (
+      <View>
+        {rowTitle({
+          hideDividerHeader: true,
+          title: 'Messages',
+          titleColor: colors.black,
+          titleStyle: {
+            fontWeight: '800',
+            fontSize: 23,
+          },
+          containerStyle: {
+            marginBottom: -10,
+            marginTop: 5,
+          },
+        })}
+      </View>
+    );
+  }
+  loader() {
+    return (
+      <View style={{...styleApp.center, height: '40%'}}>
+        {this.header()}
+        <Loader
+          color={colors.greyDark}
+          size={50}
+          speed={2.2}
+          style={{width: '100%'}}
+        />
+      </View>
+    );
+  }
   list = () => {
+    const {userConnected, AnimatedHeaderValue} = this.props;
+    const {coachSessions, loading} = this.state;
     const styleViewLiveLogo = {
       ...styleApp.center,
       backgroundColor: colors.off,
@@ -45,8 +85,9 @@ class ListStreams extends Component {
       marginTop: -100,
       marginLeft: 65,
     };
-    const coachSessions = this.sessionsArray();
-    const {userConnected, AnimatedHeaderValue} = this.props;
+    if (loading) {
+      return this.loader();
+    }
     if (!userConnected || !coachSessions) {
       return null;
     }
@@ -70,7 +111,7 @@ class ListStreams extends Component {
           </View>
 
           <Button
-            text={'Start a video chat'}
+            text={'Send a message'}
             icon={{
               name: 'plus',
               size: 18,
@@ -107,26 +148,14 @@ class ListStreams extends Component {
               key={session.objectID}
               scale={1}
               onRef={(ref) => this.itemsRef.push(ref)}
+              style={{
+                borderBottomWidth: 1,
+                borderColor: '#f5f5f5',
+              }}
             />
           )
         }
-        header={
-          <View>
-            {rowTitle({
-              hideDividerHeader: true,
-              title: 'Messages',
-              titleColor: colors.black,
-              titleStyle: {
-                fontWeight: '800',
-                fontSize: 23,
-              },
-              containerStyle: {
-                marginBottom: -10,
-                marginTop: 5,
-              },
-            })}
-          </View>
-        }
+        header={this.header()}
         numColumns={1}
         inverted={false}
         incrementRendering={6}
@@ -147,6 +176,7 @@ const mapStateToProps = (state) => {
   return {
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
+    messages: state.conversations,
   };
 };
 

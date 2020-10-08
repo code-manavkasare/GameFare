@@ -68,7 +68,7 @@ const openUrl = async (url) => {
   } catch (error) {
     Alert.alert(error.message);
   }
-}
+};
 
 // const dataBranchLink = (objData, action) => {
 //   let description = '';
@@ -149,7 +149,13 @@ const createInviteToAppBranchUrl = async () => {
       },
     },
   );
-  return await createBranchUrl(branchUniversalObject);
+  const branchPromise = createBranchUrl(branchUniversalObject);
+  branchPromise.catch((r) => {
+    console.log('createInviteToAppBranchUrl error', r);
+    return false;
+  });
+  const response = await branchPromise;
+  return await response;
 };
 
 const createInviteToSessionBranchUrl = async (sessionID) => {
@@ -169,12 +175,18 @@ const createInviteToSessionBranchUrl = async (sessionID) => {
       },
     },
   );
-  return await createBranchUrl(branchUniversalObject);
+  const branchPromise = createBranchUrl(branchUniversalObject);
+  branchPromise.catch((r) => {
+    console.log('createInviteToSessionBranchUrl error', r);
+    return false;
+  });
+  const response = await branchPromise;
+  return await response;
 };
 
 const createShareVideosBranchUrl = async (archiveIDs) => {
   if (archiveIDs && archiveIDs.length > 0) {
-    const description = 'See the video I shared with you!';
+    const description = 'Watch my video on GameFare!';
     const {user} = store.getState();
     const {userID} = user;
     const archives = archiveIDs
@@ -182,7 +194,11 @@ const createShareVideosBranchUrl = async (archiveIDs) => {
       .filter((a) => a);
     const thumbnail = archives.reduce((thumbnail, archive) => {
       // need uploaded thumbnail
-      if (thumbnail === '' && archive.thumbnail && archive.thumbnail.substring(0, 4) === 'http') {
+      if (
+        thumbnail === '' &&
+        archive.thumbnail &&
+        archive.thumbnail.substring(0, 4) === 'http'
+      ) {
         return archive.thumbnail;
       }
       return thumbnail;
@@ -206,7 +222,13 @@ const createShareVideosBranchUrl = async (archiveIDs) => {
         },
       },
     );
-    return await createBranchUrl(branchUniversalObject);
+    const branchPromise = createBranchUrl(branchUniversalObject);
+    branchPromise.catch((r) => {
+      console.log('createShareVideosBranchUrl error', r);
+      return false;
+    });
+    const response = await branchPromise;
+    return await response;
   }
   return null;
 };
