@@ -14,6 +14,7 @@ import {BlurView} from '@react-native-community/blur';
 import ButtonLink from './ButtonLink';
 export default class VideoPlayerHeader extends React.Component {
   static propTypes = {
+    disableRecord: PropTypes.bool,
     isEditMode: PropTypes.bool.isRequired,
     addVideo: PropTypes.func.isRequired,
     editModeOff: PropTypes.func.isRequired,
@@ -51,6 +52,7 @@ export default class VideoPlayerHeader extends React.Component {
     const {
       isEditMode,
       isRecording,
+      disableRecord,
       isPreviewing,
       addVideo,
       editModeOff,
@@ -85,18 +87,19 @@ export default class VideoPlayerHeader extends React.Component {
       backgroundColorIcon2: 'transparent',
       typeIcon2: !isEditMode && !coachSessionID ? 'font' : 'font',
       sizeIcon2: !isEditMode && !coachSessionID ? 19 : 19,
-      icon2: !videoInfos
-        ? null
-        : !Object.values(videoInfos)[0]
-        ? null
-        : archives.length !== 1 ||
-          (archives.length === 1 &&
-            Object.values(videoInfos)[0].recordedActions) ||
-          personSharingScreen
-        ? 'microphone-alt'
-        : !isEditMode && !coachSessionID
-        ? 'microphone-alt'
-        : 'times',
+      icon2:
+        !videoInfos || disableRecord
+          ? null
+          : !Object.values(videoInfos)[0]
+          ? null
+          : archives.length !== 1 ||
+            (archives.length === 1 &&
+              Object.values(videoInfos)[0].recordedActions) ||
+            personSharingScreen
+          ? 'microphone-alt'
+          : !isEditMode && !coachSessionID
+          ? 'microphone-alt'
+          : 'times',
       text2: 'Edit',
       colorIcon2: !videoInfos
         ? colors.greyDark
@@ -109,7 +112,7 @@ export default class VideoPlayerHeader extends React.Component {
         ? colors.greyDark
         : colors.white,
       clickButton2: () => {
-        !videoInfos
+        !videoInfos || disableRecord
           ? null
           : !Object.values(videoInfos)[0]
           ? null

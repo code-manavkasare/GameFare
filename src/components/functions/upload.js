@@ -12,6 +12,16 @@ const imageContentType = 'image/jpeg';
 const defaultRecordAudioFilename = 'audioRecord.mp4';
 const audioRecordContentType = 'audio/mp4';
 
+const isArchiveUploading = (videoInfos) => {
+  let isUploading = false;
+  for (const videoInfo of Object.values(videoInfos)) {
+    if (videoInfo.progress) {
+      isUploading = true;
+    }
+  }
+  return isUploading;
+};
+
 const sortUploadTasks = (uploadTasks) => {
   return uploadTasks.sort((a, b) => a.timeSubmitted - b.timeSubmitted);
 };
@@ -104,6 +114,7 @@ const uploadComplete = async (uploadTask) => {
 };
 
 module.exports = {
+  isArchiveUploading,
   uploadFile,
   sortUploadTasks,
 };
