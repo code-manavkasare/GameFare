@@ -1,7 +1,5 @@
 import {ProcessingManager} from 'react-native-video-processing';
 import RNFS from 'react-native-fs';
-import {StatusBar} from 'react-native';
-
 import database from '@react-native-firebase/database';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import {DocumentDirectoryPath} from 'react-native-fs';
@@ -35,6 +33,7 @@ import {
   shareCloudVideo,
   deleteCloudVideos,
 } from '../database/firebase/videosManagement';
+import {generateThumbnail} from './pictures.js';
 
 const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
   if (flags.length > 0) {
@@ -67,8 +66,6 @@ const arrayUploadFromSnippets = async ({
   flagsSelected,
   recording,
   coachSessionID,
-  memberID,
-  members,
   userID,
 }) => {
   const {id} = recording.fullVideo;
@@ -129,7 +126,7 @@ const addLocalVideo = async (video) => {
   }
 };
 
-const deleteVideos = (ids) => { 
+const deleteVideos = (ids) => {
   const infos = ids.map((id) => getArchiveByID(id));
   store.dispatch(removeUserLocalArchives(ids));
   store.dispatch(deleteArchives(ids));
@@ -362,6 +359,14 @@ const updateLocalUploadProgress = (videoID, progress) => {
   }
 };
 
+const regenerateThumbnail = async (archive) => {
+  const thumbnailPath = await generateThumbnail(archive.url);
+  const oldThumbnailPath = archive.thumbnail;
+  archive.thumbnail = thumbnailPath;
+  store.dispatch(setArchive(archive));
+  RNFS.unlink(oldThumbnailPath);
+};
+
 const dimensionRectangle = ({startPoint, endPoint}) => {
   const {x: x1, y: y1} = startPoint;
   const {x: x2, y: y2} = endPoint;
@@ -380,15 +385,16 @@ const dimensionRectangle = ({startPoint, endPoint}) => {
 };
 
 export {
-  arrayUploadFromSnippets,
   addLocalVideo,
-  uploadLocalVideo,
+  arrayUploadFromSnippets,
   deleteVideos,
-  openVideoPlayer,
-  shareVideosWithTeams,
-  generateThumbnailSet,
-  updateLocalVideoUrls,
-  oneTimeFixStoreLocalVideoLibrary,
-  updateLocalUploadProgress,
   dimensionRectangle,
+  generateThumbnailSet,
+  oneTimeFixStoreLocalVideoLibrary,
+  openVideoPlayer,
+  regenerateThumbnail,
+  shareVideosWithTeams,
+  updateLocalUploadProgress,
+  updateLocalVideoUrls,
+  uploadLocalVideo,
 };

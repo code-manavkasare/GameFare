@@ -268,4 +268,5 @@ module.exports = {
   valueColor,
   updateVideoSavePath,
   getOpentokVideoInfo,
+  generateThumbnail,
 };

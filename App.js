@@ -15,8 +15,10 @@ import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
 
 import {updateNotificationBadgeInBackground} from './src/components/functions/notifications.js';
+import {regenerateThumbnail} from './src/components/functions/videoManagement.js';
 import {userAction} from './src/actions/userActions';
 import {globaleVariablesAction} from './src/actions/globaleVariablesActions.js';
+import {appSettingsAction} from './src/actions/appSettingsActions.js';
 import {refreshTokenOnDatabase} from './src/components/functions/notifications';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
@@ -44,13 +46,23 @@ const MyTheme = {
 
 class App extends Component {
   async componentDidMount() {
-    const {userID} = this.props;
+    const {archives, appSettingsAction, buildId, userID} = this.props;
     if (!__DEV__) {
       this.configureSentry();
     }
     BackgroundTimer.runBackgroundTimer(() => {
       userID && updateNotificationBadgeInBackground(userID); //Update badge every 15 min
     }, 900000);
+
+    const actualBuildId = await DeviceInfo.getBuildId();
+    if (buildId !== actualBuildId) {
+      for (const archive of Object.values(archives)) {
+        if (archive.local) {
+          regenerateThumbnail(archive);
+        }
+      }
+      appSettingsAction('setCurrentBuildNumber', actualBuildId);
+    }
 
     SplashScreen.hide();
 
@@ -157,6 +169,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    archives: state.archives,
     isBindToFirebase: state.globaleVariables.isBindToFirebase,
     userConnected: state.user.userConnected,
     userInfo: state.user.infoUser.userInfo,
@@ -164,10 +177,11 @@ const mapStateToProps = (state) => {
     phoneNumber: state.user.phoneNumber,
     countryCode: state.user.countryCode,
     networkIsConnected: state.network.isConnected,
+    buildId: state.appSettings.buildId,
   };
 };
 
 export default connect(
   mapStateToProps,
-  {userAction, globaleVariablesAction},
+  {appSettingsAction, userAction, globaleVariablesAction},
 )(App);
