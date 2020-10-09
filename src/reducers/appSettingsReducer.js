@@ -1,4 +1,7 @@
-import { TOGGLE_BATTERY_SAVER, TOGGLE_WIFI_AUTO_UPLOAD } from '../actions/types';
+import {
+  TOGGLE_BATTERY_SAVER,
+  TOGGLE_WIFI_AUTO_UPLOAD,
+} from '../actions/types';
 
 const initialState = {
   batterySaver: false,

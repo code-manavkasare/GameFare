@@ -27,10 +27,6 @@ import Button from '../../../../../../layout/buttons/Button';
 
 import colors from '../../../../../../style/colors';
 import styleApp from '../../../../../../style/style';
-import AsyncImage from '../../../../../../layout/image/AsyncImage';
-import ButtonColor from '../../../../../../layout/Views/Button';
-import AllIcon from '../../../../../../layout/icons/AllIcons';
-import Loader from '../../../../../../layout/loaders/Loader';
 import database from '@react-native-firebase/database';
 
 class Settings extends Component {
@@ -43,9 +39,6 @@ class Settings extends Component {
       chargeForSession: this.props.route.params.chargeForSession,
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
-  }
-  componentDidMount() {
-    StatusBar.setBarStyle('dark-content', true);
   }
   settingsSwitch(value, onValueChange, description) {
     return (
@@ -66,7 +59,7 @@ class Settings extends Component {
     );
   }
   settings() {
-    let {settings, userID, infoUser} = this.props;
+    let {settings, userID, infoUser, recordingPermission} = this.props;
     if (!settings) {
       settings = {};
     }
@@ -91,6 +84,7 @@ class Settings extends Component {
           'Allow call participants to remotely trigger a recording',
         )}
         <View style={{height: 20}} />
+
         {/* {infoUser.coach &&
           this.settingsSwitch(
             chargeForSession,
@@ -117,16 +111,9 @@ class Settings extends Component {
       </View>
     );
   }
-  async save() {
-    this.back();
-  }
-  back() {
-    const {goBack} = this.props.navigation;
-    StatusBar.setBarStyle('light-content', true);
-    goBack();
-  }
+
   render() {
-    const {currentScreenSize} = this.props;
+    const {currentScreenSize, navigation} = this.props;
     const {portrait} = currentScreenSize;
     let marginTop = heightHeaderHome;
     if (!portrait) {
@@ -140,7 +127,6 @@ class Settings extends Component {
           colorLoader={'white'}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           initialBorderColorIcon={colors.white}
-          //   colorIcon1={colors.greyDark}
           textHeader="Settings"
           sizeLoader={40}
           sizeIcon1={21}
@@ -153,7 +139,7 @@ class Settings extends Component {
           typeIcon2="font"
           colorIcon2={colors.white}
           initialTitleOpacity={1}
-          clickButton1={() => this.back()}
+          clickButton1={() => navigation.goBack()}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
@@ -178,6 +164,7 @@ const mapStateToProps = (state) => {
     currentScreenSize: state.layout.currentScreenSize,
     settings: state.user.infoUser.settings,
     batterySaver: state.appSettings.batterySaver,
+    recordingPermission: state.appSettings.recordingPermission,
   };
 };
 
