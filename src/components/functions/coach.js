@@ -744,7 +744,7 @@ const updateInfoVideoCloud = async ({dataUpdate, id, coachSessionID}) => {
   return true;
 };
 
-module.exports = {
+export {
   createCoachSession,
   timeout,
   isUserAlone,
