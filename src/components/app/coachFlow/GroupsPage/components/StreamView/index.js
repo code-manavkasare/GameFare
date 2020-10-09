@@ -441,9 +441,9 @@ class GroupsPage extends Component {
       top: marginTop + heightHeaderHome,
     };
   }
-  
+
   header(isConnected) {
-    const {userID, session, currentSessionID,navigation} = this.props;
+    const {userID, session, currentSessionID, navigation} = this.props;
     return (
       <Header
         coachSessionID={currentSessionID}
@@ -481,6 +481,7 @@ class GroupsPage extends Component {
       reconnecting,
       userID,
       userConnected,
+      connectionType,
     } = this.props;
     if (
       !userConnected ||
@@ -507,6 +508,8 @@ class GroupsPage extends Component {
         {this.header(isConnected)}
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
+          : !connectionType
+          ? this.loaderView('Waiting for network...')
           : !isConnected
           ? this.loaderView('Connecting')
           : null}
@@ -517,7 +520,7 @@ class GroupsPage extends Component {
         />
         {!publishVideo && this.pausedView(userIsAlone)}
         <View style={styleApp.fullSize}>
-          {member.tokenTokbox && (
+          {member.tokenTokbox && connectionType && (
             <OTSession
               apiKey={Config.OPENTOK_API}
               ref={this.otSessionRef}
@@ -637,6 +640,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
+  let connectionType = state.connectionType.type;
+  if (connectionType === 'none' || connectionType === 'unknown')
+    connectionType = false;
+  else connectionType = true;
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
@@ -647,6 +654,7 @@ const mapStateToProps = (state, props) => {
     endCurrentSession: state.coach.endCurrentSession,
     recording: state.coach.recording,
     reconnecting: state.coach.reconnecting,
+    connectionType,
   };
 };
 
