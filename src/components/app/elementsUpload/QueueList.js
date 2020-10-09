@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {connect} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,6 +19,10 @@ import sizes from '../../style/sizes';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 import TaskCard from './TaskCard';
+import * as Progress from 'react-native-progress';
+import ButtonColor from '../../layout/Views/Button';
+import AllIcons from '../../layout/icons/AllIcons';
+import {navigate} from '../../../../NavigationService';
 
 class QueueList extends Component {
   constructor(props) {
@@ -68,12 +73,21 @@ class QueueList extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const {onOpen, onClose} = this.props;
     const {orderedTasks} = this.state;
     const {orderedTasks: prevOrderedTasks} = prevState;
-    if (orderedTasks?.length > prevOrderedTasks?.length) {
-      this.props.onOpen();
-    } else if (orderedTasks?.length === 0 && prevOrderedTasks?.length > 0) {
-      this.props.onClose();
+    if (orderedTasks?.length > prevOrderedTasks?.length && onOpen) {
+      onOpen();
+    } else if (
+      orderedTasks?.length === 0 &&
+      prevOrderedTasks?.length > 0 &&
+      onClose
+    ) {
+      onClose();
+      setTimeout(() => {
+        navigate('TabsApp');
+      }, 1200);
+
       // this.listY = new Animated.Value(0);
       // this.setState({listY: 0});
     }
@@ -137,6 +151,62 @@ class QueueList extends Component {
     // }
   }
 
+  close() {
+    const {navigation} = this.props;
+    navigation.navigate('TabsApp');
+  }
+
+  closeButton() {
+    return (
+      <Animated.View
+        style={{
+          ...styles.buttonClose,
+          opacity: 1,
+        }}>
+        <ButtonColor
+          view={() => {
+            return (
+              <AllIcons
+                name="times"
+                size={13}
+                color={colors.title}
+                type="font"
+              />
+            );
+          }}
+          click={() => {
+            this.close();
+          }}
+          color={colors.greyLighter}
+          onPressColor={colors.off}
+        />
+      </Animated.View>
+    );
+  }
+
+  totalProgress(type) {
+    const {currentScreenSize, uploadQueue} = this.props;
+    const {totalProgress} = uploadQueue;
+    const {currentWidth: width} = currentScreenSize;
+    const maxWidth = width * 0.45;
+    const style =
+      type === 'header'
+        ? {...styles.progressHeader, maxWidth}
+        : {...styles.progressContainer, maxWidth: width};
+    return (
+      <Animated.View style={style}>
+        <Progress.Bar
+          color={colors.blue}
+          width={type === 'header' ? (maxWidth > 200 ? 200 : maxWidth) : width}
+          progress={totalProgress ? totalProgress : 0}
+          borderWidth={0}
+          height={type === 'header' ? 4 : 6}
+          unfilledColor={colors.greyLighter}
+        />
+      </Animated.View>
+    );
+  }
+
   emptyList() {
     return (
       <View
@@ -159,7 +229,12 @@ class QueueList extends Component {
   render() {
     const {orderedTasks} = this.state;
     return (
-      <View>
+      <View style={{...styleApp.fullSize, backgroundColor: colors.greyLighter}}>
+        {this.totalProgress()}
+        {this.closeButton()}
+        <TouchableWithoutFeedback style={{height: 80}}>
+          <Text style={styles.text}>Uploading</Text>
+        </TouchableWithoutFeedback>
         {!orderedTasks || (orderedTasks.length === 0 && this.emptyList())}
         {orderedTasks && orderedTasks.length > 0 && this.list()}
       </View>
@@ -181,13 +256,71 @@ const styles = StyleSheet.create({
   rocket: {
     height: 60,
     width: '100%',
-    marginTop: 25,
+    marginTop: 105,
+  },
+  text: {
+    ...styleApp.text,
+    marginTop: 20,
+    marginBottom: 5,
+    fontSize: 21,
+    marginHorizontal: 'auto',
+    textAlign: 'left',
+    marginLeft: '5%',
+    fontWeight: 'bold',
+    color: colors.black,
+  },
+  headerText: {
+    ...styleApp.text,
+    marginTop: 10,
+    marginBottom: 5,
+    fontSize: 15,
+    marginHorizontal: 'auto',
+    textAlign: 'center',
+    width: '100%',
+    height: 40,
+    position: 'absolute',
+    fontWeight: '700',
+    color: colors.greyDarker,
+  },
+  buttonClose: {
+    position: 'absolute',
+    top: 15,
+    right: '5%',
+    height: 35,
+    width: 35,
+    zIndex: 5,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  progressContainer: {
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    opacity: 0.6,
+    overflow: 'hidden',
+    height: 25,
+    position: 'absolute',
+    width: '110%',
+    top: 0,
+    zIndex: 1,
+  },
+  progressHeader: {
+    opacity: 0.6,
+    overflow: 'hidden',
+    borderColor: colors.off,
+    paddingTop: 34,
+    height: '100%',
+    borderRadius: 25,
+    width: '100%',
+    left: 0,
+    bottom: 0,
+    zIndex: 1,
   },
 });
 
 const mapStateToProps = (state) => {
   return {
     uploadQueue: state.uploadQueue,
+    currentScreenSize: state.layout.currentScreenSize,
     userID: state.user.userID,
   };
 };

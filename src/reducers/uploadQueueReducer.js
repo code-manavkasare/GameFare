@@ -17,6 +17,7 @@ const initialState = {
   queue: {},
   totalProgress: 0,
   numberConcurrentUploads: 0,
+  completedTasks: 0,
 };
 
 const prepTask = (task) => {
@@ -38,7 +39,9 @@ const uploadQueueReducer = (state = initialState, action) => {
           ...state.queue,
           [action.uploadTask.id]: prepTask(action.uploadTask),
         },
-        numberConcurrentUploads: state.numberConcurrentUploads + 1,
+        numberConcurrentUploads: action.uploadTask?.displayInList
+          ? state.numberConcurrentUploads + 1
+          : state.numberConcurrentUploads,
       };
     case ENQUEUE_UPLOAD_TASKS:
       const newPoolData = action.uploadTasks.reduce((data, task) => {
@@ -47,6 +50,9 @@ const uploadQueueReducer = (state = initialState, action) => {
           [task.id]: prepTask(task),
         };
       }, {});
+      const listedTaskLength = action.uploadTasks.reduce((data = 0, task) => {
+        return task.displayInList ? data + 1 : data;
+      });
       return {
         ...state,
         queue: {
@@ -54,20 +60,41 @@ const uploadQueueReducer = (state = initialState, action) => {
           ...state.queue,
         },
         numberConcurrentUploads:
-          state.numberConcurrentUploads + action.uploadTasks.length,
+          state.numberConcurrentUploads + listedTaskLength,
       };
     case DEQUEUE_UPLOAD_TASK:
       // do NOT decrease numberConcurrentUploads here
-      const {numberConcurrentUploads, queue} = state;
+      const {numberConcurrentUploads, queue, completedTasks} = state;
       const smallerQueue = dissoc(action.id, queue);
       const numberRemainingUploads = Object.values(smallerQueue).length;
-      return {
+      const {displayInList} = queue[`${action.id}`];
+      let nextState = {
         ...state,
         queue: smallerQueue,
-        totalProgress:
-          (1 / numberConcurrentUploads) *
-          (numberConcurrentUploads - numberRemainingUploads),
       };
+      if (numberRemainingUploads === 0) {
+        nextState = {
+          ...nextState,
+          numberConcurrentUploads: 0,
+          completedTasks: 0,
+          totalProgress: 0,
+        };
+      } else if (displayInList) {
+        const totalProgress =
+          (1 / numberConcurrentUploads) *
+          (numberConcurrentUploads - numberRemainingUploads);
+        nextState = {
+          ...nextState,
+          completedTasks: completedTasks + 1,
+        };
+        if (totalProgress > 0) {
+          nextState = {
+            ...nextState,
+            totalProgress,
+          };
+        }
+      }
+      return nextState;
     case START_UPLOAD_TASK:
       if (state.queue[action.id]) {
         return {
@@ -133,6 +160,7 @@ const uploadQueueReducer = (state = initialState, action) => {
 
     case SET_UPLOAD_TASK_PROGRESS:
       if (state.queue[action.id]) {
+        const {numberConcurrentUploads, completedTasks} = state;
         return {
           ...state,
           queue: {
@@ -140,8 +168,11 @@ const uploadQueueReducer = (state = initialState, action) => {
             [action.id]: {
               ...state.queue[action.id],
               progress: action.progress,
+              uploading: true,
             },
           },
+          totalProgress:
+            (action.progress + completedTasks) * (1 / numberConcurrentUploads),
         };
       } else {
         return state;

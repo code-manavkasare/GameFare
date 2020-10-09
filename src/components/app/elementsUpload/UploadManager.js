@@ -71,19 +71,22 @@ class UploadManager extends Component {
 
   onProgress(progress) {
     const {uploadInProgress, lastProgressUpdateTime} = this.state;
+    const {uploadQueueAction} = this.props;
     if (uploadInProgress) {
       const {uploadTask} = uploadInProgress;
       if (uploadTask && progress) {
         const {videoInfo, progress: prevProgress} = uploadTask;
         const now = Date.now();
-        if (now - lastProgressUpdateTime > 2000 || prevProgress === 0) {
+        const id = videoInfo?.id;
+        if (id && (now - lastProgressUpdateTime > 400 || prevProgress === 0)) {
           let newUploadTask = {...uploadTask, progress};
           this.setState({
             lastProgressUpdateTime: now,
             uploadInProgress: {...uploadInProgress, uploadTask: newUploadTask},
           });
-          updateCloudUploadProgress(videoInfo.id, progress);
-          updateLocalUploadProgress(videoInfo.id, progress);
+          updateCloudUploadProgress(id, progress);
+          updateLocalUploadProgress(id, progress);
+          uploadQueueAction('setUploadTaskProgress', newUploadTask);
         }
       }
     }

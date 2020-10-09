@@ -60,15 +60,28 @@ class OrientationListener extends React.Component {
       currentHeight: height,
     };
   };
-  setScreenOrientation = (orientation) => {
+  setScreenOrientation = (orientationIn) => {
     var portrait = true;
-    if (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') {
+    var orientation =
+      orientationIn === 'LANDSCAPE-LEFT'
+        ? 'landscapeLeft'
+        : orientationIn === 'LANDSCAPE-RIGHT'
+        ? 'landscapeRight'
+        : orientationIn === 'PORTRAIT'
+        ? 'portrait'
+        : orientationIn === 'PORTRAIT-UPSIDE-DOWN'
+        ? 'portraitUpsideDown'
+        : undefined;
+    if (
+      orientationIn === 'LANDSCAPE-LEFT' ||
+      orientationIn === 'LANDSCAPE-RIGHT'
+    ) {
       portrait = false;
     }
     const {currentHeight, currentWidth} = this.currentScreenSize(portrait);
     const {layoutAction} = this.props;
     layoutAction('setLayout', {
-      currentScreenSize: {currentHeight, currentWidth, portrait},
+      currentScreenSize: {currentHeight, currentWidth, portrait, orientation},
     });
   };
   render() {

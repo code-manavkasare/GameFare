@@ -66,7 +66,9 @@ class Camera extends Component {
       prevState.isRecording !== this.state.isRecording ||
       prevProps.cameraAvailability !== this.props.cameraAvailability ||
       prevState.placeholderImg !== this.state.placeholderImg ||
-      prevState.displayPlaceholder !== this.state.displayPlaceholder
+      prevState.displayPlaceholder !== this.state.displayPlaceholder ||
+      prevProps.currentScreenSize.portrait !==
+        this.props.currentScreenSize.portrait
     );
   }
   componentDidUpdate(prevProps, prevState) {
@@ -198,7 +200,12 @@ class Camera extends Component {
     );
   }
   render() {
-    const {frontCamera, onCameraReady} = this.props;
+    const {frontCamera, onCameraReady, currentScreenSize} = this.props;
+    const {
+      orientation,
+      currentWidth: width,
+      currentHeight: height,
+    } = currentScreenSize;
     const {isRecording, displayPlaceholder} = this.state;
     return (
       <View style={styleApp.flexColumnBlack}>
@@ -234,7 +241,8 @@ class Camera extends Component {
             keepAudioSession
             playSoundOnCapture={false}
             mixWithOthers
-            style={styles.preview}
+            orientation={orientation}
+            style={{...styles.preview, maxWidth: width, maxHeight: height}}
             type={
               frontCamera
                 ? RNCamera.Constants.Type.front
@@ -266,6 +274,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     cameraAvailability: state.layout.cameraAvailability,
+    currentScreenSize: state.layout.currentScreenSize,
   };
 };
 

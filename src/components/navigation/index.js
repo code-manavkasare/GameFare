@@ -9,9 +9,10 @@ import Payments from './MainApp/components/Payments';
 import NewConversation from '../app/elementsMessage/NewConversation';
 import Coaches from './MainApp/components/Coaches';
 import CallTabPage from '../app/callTab';
+import QueueList from '../app/elementsUpload/QueueList';
 import UserDirectoryPage from '../app/userDirectory';
 import Alert from '../layout/alerts/Alert';
-
+import {DepthModal} from './transitions/DepthModal';
 const Stack = createStackNavigator();
 function InitialStack() {
   return (
@@ -53,6 +54,11 @@ function InitialStack() {
       />
 
       {/* <Stack.Screen name="ProfilePage" component={ProfilePage} /> */}
+      <Stack.Screen
+        name="UploadQueueList"
+        component={QueueList}
+        options={{...DepthModal}}
+      />
 
       <Stack.Screen name="ModalCallTab" component={CallTabPage} />
 

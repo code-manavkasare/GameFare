@@ -29,6 +29,19 @@ class UploadHeader extends Component {
     this.uploadReveal = new Animated.Value(-1);
   }
 
+  static getDerivedStateFromProps(props, state) {
+    const {uploadQueue} = props;
+    const {queue} = uploadQueue;
+    if (queue && Object.values(queue).length > 0) {
+      return {
+        headerVisible: true,
+      };
+    }
+    return {
+      headerVisible: false,
+    };
+  }
+
   display(val) {
     const {expanded, headerVisible} = this.state;
     if (val === 1) {
@@ -50,10 +63,12 @@ class UploadHeader extends Component {
   }
 
   open() {
-    this.setState({expanded: true});
-    Animated.parallel([
-      Animated.timing(this.uploadReveal, native(0, 300)),
-    ]).start();
+    // this.setState({expanded: true});
+    // Animated.parallel([
+    //   Animated.timing(this.uploadReveal, native(0, 300)),
+    // ]).start();
+    const {openQueue} = this.props;
+    openQueue && openQueue();
   }
 
   close() {
@@ -99,19 +114,19 @@ class UploadHeader extends Component {
     const {currentScreenSize, uploadQueue} = this.props;
     const {totalProgress} = uploadQueue;
     const {currentWidth: width} = currentScreenSize;
-    const maxWidth = width*0.5
+    const maxWidth = width * 0.45;
     const style =
       type === 'header'
         ? {...styles.progressHeader, maxWidth}
-        : {...styles.progressContainer, maxWidth};
+        : {...styles.progressContainer, maxWidth: width};
     return (
       <Animated.View style={style}>
         <Progress.Bar
           color={colors.blue}
-          width={200}
+          width={type === 'header' ? (maxWidth > 200 ? 200 : maxWidth) : width}
           progress={totalProgress}
           borderWidth={0}
-          height={6}
+          height={type === 'header' ? 4 : 6}
           unfilledColor={colors.white}
         />
       </Animated.View>
@@ -120,6 +135,7 @@ class UploadHeader extends Component {
 
   progressPopup() {
     const {currentScreenSize} = this.props;
+    const {headerVisible} = this.state;
     const {currentWidth: width, currentHeight: height} = currentScreenSize;
 
     const uploadTranslateY = this.uploadReveal.interpolate({
@@ -135,6 +151,7 @@ class UploadHeader extends Component {
           bottom: -height,
           transform: [{translateY: uploadTranslateY}],
         }}>
+        {this.totalProgress()}
         {this.closeButton()}
         <TouchableWithoutFeedback style={{height: 80}}>
           <Text style={styles.text}>Uploading</Text>
@@ -145,10 +162,9 @@ class UploadHeader extends Component {
               this.setState({cloudQueue});
             }}
             onClose={() => {
-              this.display(0);
-            }}
-            onOpen={() => {
-              this.display(1);
+              setTimeout(() => {
+                this.display(0);
+              }, 1000);
             }}
           />
         </View>
@@ -190,21 +206,27 @@ class UploadHeader extends Component {
   render() {
     const {headerVisible} = this.state;
     const {currentScreenSize} = this.props;
-    const {currentWidth: width} = currentScreenSize;
-    const maxWidth = 0.5*width;
+    const {currentWidth: width, portrait} = currentScreenSize;
+    const maxWidth = 0.45 * width;
 
     return (
-      <View style={{zIndex: 10, marginBottom: -10, position:'absolute', width, ...styleApp.center}}>
+      <View
+        style={{
+          zIndex: 10,
+          marginBottom: -10,
+          position: 'absolute',
+          width,
+          ...styleApp.center3,
+        }}>
         {headerVisible && (
-          <TouchableWithoutFeedback
-            onPress={() => this.open()}>
+          <TouchableWithoutFeedback onPress={() => this.open()}>
             <View style={{...styles.container, maxWidth}}>
               {this.totalProgress('header')}
               <Text style={styles.headerText}>Uploading</Text>
             </View>
           </TouchableWithoutFeedback>
         )}
-        {this.progressPopup()}
+        {portrait && this.progressPopup()}
         {this.backdrop()}
       </View>
     );
@@ -214,20 +236,21 @@ class UploadHeader extends Component {
 const styles = StyleSheet.create({
   container: {
     ...styleApp.shadowWeak,
-    backgroundColor:colors.white, 
-    borderWidth:1, 
-    borderColor: colors.off, 
-    width:200,
-    height:50,
-    top:sizes.marginTopApp+8,
-    zIndex:1,
-    borderRadius:25
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.off,
+    width: 200,
+    height: 40,
+    right: '5%',
+    top: sizes.marginTopApp + 75,
+    zIndex: 1,
+    borderRadius: 25,
   },
   menuContainer: {
     position: 'absolute',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingBottom:150 + sizes.offsetFooterStreaming,
+    paddingBottom: 150 + sizes.offsetFooterStreaming,
     backgroundColor: colors.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -247,16 +270,16 @@ const styles = StyleSheet.create({
   },
   headerText: {
     ...styleApp.text,
-    marginTop: 15,
+    marginTop: 10,
     marginBottom: 5,
-    fontSize: 16,
+    fontSize: 15,
     marginHorizontal: 'auto',
     textAlign: 'center',
-    width:'100%',
-    height:40,
-    position:'absolute',
+    width: '100%',
+    height: 40,
+    position: 'absolute',
     fontWeight: '700',
-    color: colors.black,
+    color: colors.greyDarker,
   },
   buttonClose: {
     position: 'absolute',
@@ -275,19 +298,18 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     height: 25,
     position: 'absolute',
-    width: '100%',
+    width: '110%',
     top: 0,
-    left: 0,
     zIndex: 1,
   },
   progressHeader: {
     opacity: 0.6,
     overflow: 'hidden',
-    borderColor: colors.off, 
-    paddingTop:42,
+    borderColor: colors.off,
+    paddingTop: 34,
     height: '100%',
-    borderRadius:25,
-    width:'100%',
+    borderRadius: 25,
+    width: '100%',
     left: 0,
     bottom: 0,
     zIndex: 1,
