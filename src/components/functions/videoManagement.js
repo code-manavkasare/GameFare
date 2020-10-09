@@ -189,7 +189,7 @@ const uploadLocalVideo = async (videoID, background) => {
             cloudID: videoID,
             storageDestination: `archivedStreams/${videoID}`,
             isBackground: background,
-            displayInList: !background,
+            displayInList: true,
             progress: 0,
             afterUpload: async () => {
               await claimCloudVideo(videoInfo);

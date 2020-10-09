@@ -8169,9 +8169,9 @@ setprototypeof@1.1.1:
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
 
 shaka-player@^2.5.9:
-  version "2.5.16"
-  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.16.tgz#a0dee6048308773b45931b2ce375cf1afdc9adda"
-  integrity sha512-VlR8SMD/PADmUMea8wJPWW3rOu7E608cZCpcymqNlpjOH55Djgzp/24oXJFmeu929vWBR2UuFsqN3fShjI3OAw==
+  version "2.5.17"
+  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.17.tgz#824740a0db06fd433397389650ec94ce3b57a26d"
+  integrity sha512-v8kzAXJOiEnI9B1z0CmlMSIbsIfmPseHuosriKqqnDWvDlYVwvdwUz4biPvxUiRIIw9v6His548kPQdO39+jow==
   dependencies:
     eme-encryption-scheme-polyfill "^2.0.1"
 

@@ -378,8 +378,8 @@ const setupOpentokStopRecordingFlow = async (
       }),
     );
   }
-  store.dispatch(setArchive({...sourceVideoInfo, local: true}));
   store.dispatch(enqueueUploadTasks(thumbnailUploadTasks));
+  store.dispatch(setArchive({...sourceVideoInfo, local: true}));
   database()
     .ref()
     .update({

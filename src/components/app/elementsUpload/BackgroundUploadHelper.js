@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {isEqual} from 'lodash';
 
 import {uploadQueueAction} from '../../../actions';
 import {uploadLocalVideo} from '../../functions/videoManagement';
@@ -49,27 +50,29 @@ class BackgroundUploadHelper extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    // update if the queue is empty and local library non empty AND not currently in a live session
-    const {
-      queue: nextQueue,
-      archivesToUpload: nextArchivesToUpload,
-      archives: nextArchives,
-    } = nextProps;
-    const {waitForQueueToPopulate} = nextState;
-    if (waitForQueueToPopulate) {
-      return false;
-    }
-    const nextQueueEmpty = !nextQueue || Object.keys(nextQueue).length === 0;
-    const nextArchivesNonEmpty =
-      nextArchivesToUpload &&
-      this.videosAvailableToUpload(nextArchivesToUpload, nextArchives).length >
-        0;
-    return nextQueueEmpty && nextArchivesNonEmpty && !nextProps.session;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // update if the queue is empty and local library non empty AND not currently in a live session
+  //   const {
+  //     // queue: nextQueue,
+  //     archivesToUpload: nextArchivesToUpload,
+  //     archives: nextArchives,
+  //   } = nextProps;
+  //   const {waitForQueueToPopulate} = nextState;
+  //   if (waitForQueueToPopulate) {
+  //     return false;
+  //   }
+  //   // const nextQueueEmpty = !nextQueue || Object.keys(nextQueue).length === 0;
+  //   const nextArchivesNonEmpty =
+  //     nextArchivesToUpload &&
+  //     this.videosAvailableToUpload(nextArchivesToUpload, nextArchives).length >
+  //       0;
+  //   return nextArchivesNonEmpty && !nextProps.session;
+  // }
 
-  componentDidUpdate() {
-    this.uploadNextLocalVideo();
+  componentDidUpdate(prevProps) {
+    if (!isEqual(this.props.archivesToUpload, prevProps.archivesToUpload)) {
+      this.uploadNextLocalVideo();
+    }
   }
 
   async uploadNextLocalVideo() {
@@ -82,15 +85,23 @@ class BackgroundUploadHelper extends Component {
     const {queued} = this.state;
     if (wifiAutoUpload && userConnected) {
       try {
-        const {id} = this.videosAvailableToUpload(
+        const videosToUpload = this.videosAvailableToUpload(
           archivesToUpload,
           archives,
-        )[0];
-        await this.setState({
-          waitForQueueToPopulate: true,
-          queued: {...queued, [id]: true},
+        );
+        // console.log('videos to upload', videosToUpload.length);
+        let newState = {};
+        videosToUpload.map((video) => {
+          const {id} = video;
+          console.log('adding', id);
+          newState = {
+            ...newState,
+            waitForQueueToPopulate: true,
+            queued: {...queued, [id]: true},
+          };
+          uploadLocalVideo(id, true);
         });
-        uploadLocalVideo(id, true);
+        await this.setState(newState);
       } catch (error) {
         console.log('ERROR BackgroundUploadHelper', error);
       }

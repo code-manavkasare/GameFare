@@ -69,7 +69,9 @@ class TaskCard extends Component {
           progress={progress}
           borderWidth={0}
           unfilledColor={colors.grey}
-          formatText={() => progress === 0 ? '' : `${Math.round(progress * 100)}%`}
+          formatText={() =>
+            progress === 0 ? '' : `${Math.round(progress * 100)}%`
+          }
         />
       </View>
     );

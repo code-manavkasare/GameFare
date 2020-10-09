@@ -66,7 +66,11 @@ class HeaderVideoLibrary extends Component {
           sizeIconOffset={22}
         />
 
-        <UploadHeader />
+        <UploadHeader
+          openQueue={() => {
+            navigation.navigate('UploadQueueList');
+          }}
+        />
       </View>
     );
   }

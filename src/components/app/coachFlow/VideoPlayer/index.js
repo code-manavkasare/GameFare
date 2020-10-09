@@ -378,8 +378,10 @@ export default class VideoPlayer extends Component {
     } = this.props;
     let {recordedActions} = this.props;
 
-    const {thumbnail, url, durationSeconds, originalUrl} = archive;
-
+    let {thumbnail, url, durationSeconds, originalUrl} = archive;
+    if (originalUrl?.substr(originalUrl.length - 4) !== '.mp4') {
+      originalUrl = originalUrl + '.mp4';
+    }
     const {
       currentTime,
       paused,
@@ -437,6 +439,7 @@ export default class VideoPlayer extends Component {
               <View style={[styleApp.fullSize, styleApp.center]}>
                 <Video
                   key={index}
+                  debug
                   mixWithOthers={connectedToSession ? undefined : 'mix'}
                   ignoreSilentSwitch={connectedToSession ? undefined : 'ignore'}
                   allowRecording={
@@ -452,7 +455,8 @@ export default class VideoPlayer extends Component {
                     this.setState({error: true});
                     console.log(url, error);
                   }}
-                  onLoadStart={() => {
+                  onLoadStart={(response) => {
+                    console.log('load start', response);
                     if (connectedToSession) {
                       AudioSession.setCategoryAndMode(
                         'PlayAndRecord',
