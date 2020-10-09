@@ -1,5 +1,5 @@
 import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
-import {persistStore, persistReducer} from 'redux-persist';
+import {persistStore, persistReducer, createMigrate} from 'redux-persist';
 import {
   reducer as network,
   createNetworkMiddleware,
@@ -21,10 +21,20 @@ if (__DEV__) {
   middlewares.push(createDebugger());
 }
 
+const migrations = {
+  // 0: (state) => {
+  //   return {
+  //     ...state,
+  //     appSettings: {...state.appSettings, recordingPermission: true},
+  //   };
+  // },
+};
+
 const persistConfig = {
   key: 'root',
   timeout: 10000,
   storage: AsyncStorage,
+  version: 0,
   blacklist: [
     'events',
     'message',
@@ -40,6 +50,7 @@ const persistConfig = {
     'bindedSessions',
     'connectionType',
   ],
+  migrate: createMigrate(migrations, {debug: true}),
   // stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
 };
 

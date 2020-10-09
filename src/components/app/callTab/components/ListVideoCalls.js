@@ -37,53 +37,6 @@ class ListVideoCalls extends Component {
       });
   };
 
-  currentSessionView = () => {
-    const {
-      currentSessionID,
-      currentSession,
-      liveSessionHeader,
-      inlineSearch,
-      headerTitle,
-    } = this.props;
-    const currentlyInSession =
-      currentSessionID && liveSessionHeader && !inlineSearch;
-    return (
-      <View>
-        {rowTitle({
-          hideDividerHeader: true,
-          title: headerTitle,
-          titleColor: colors.black,
-          titleStyle: {
-            fontWeight: '800',
-            fontSize: 23,
-          },
-          containerStyle: {
-            marginBottom: currentlyInSession ? 0 : -10,
-          },
-        })}
-        {currentlyInSession && (
-          <View style={styles.sessionMenuStyle}>
-            {viewLive(currentSession, {
-              position: 'absolute',
-              left: -5,
-              top: -5,
-              zIndex: 2,
-            })}
-            <CardStreamView
-              coachSessionID={currentSessionID}
-              onClick={() => navigate('Session')}
-              selected={false}
-              showAddMemberButton
-              scale={1}
-              recentView
-              style={styles.cardStreamStyle}
-            />
-          </View>
-        )}
-      </View>
-    );
-  };
-
   render() {
     const {
       userConnected,
@@ -94,7 +47,14 @@ class ListVideoCalls extends Component {
       AnimatedHeaderValue,
       openUserDirectory,
       coachSessions: propSessions,
+      headerTitle,
+      inlineSearch,
+      liveSessionHeader,
+      currentSession,
     } = this.props;
+
+    const currentlyInSession =
+      currentSessionID && liveSessionHeader && !inlineSearch;
     const coachSessions = getSortedSessions({
       coachSessions: propSessions,
       sortBy: 'lastConnection',
@@ -128,7 +88,41 @@ class ListVideoCalls extends Component {
         )}
         incrementRendering={6}
         initialNumberToRender={8}
-        header={this.currentSessionView.bind(this)}
+        header={
+          <View>
+            {rowTitle({
+              hideDividerHeader: true,
+              title: headerTitle,
+              titleColor: colors.black,
+              titleStyle: {
+                fontWeight: '800',
+                fontSize: 23,
+              },
+              containerStyle: {
+                marginBottom: currentlyInSession ? 0 : -10,
+              },
+            })}
+            {currentlyInSession && (
+              <View style={styles.sessionMenuStyle}>
+                {viewLive(currentSession, {
+                  position: 'absolute',
+                  left: -5,
+                  top: -5,
+                  zIndex: 2,
+                })}
+                <CardStreamView
+                  coachSessionID={currentSessionID}
+                  onClick={() => navigate('Session')}
+                  selected={false}
+                  showAddMemberButton
+                  scale={1}
+                  recentView
+                  style={styles.cardStreamStyle}
+                />
+              </View>
+            )}
+          </View>
+        }
         AnimatedHeaderValue={AnimatedHeaderValue}
         paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
       />

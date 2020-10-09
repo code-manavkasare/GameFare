@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, Animated, Switch, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
+import database from '@react-native-firebase/database';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import AllIcons from '../../../layout/icons/AllIcons';
@@ -57,14 +58,32 @@ class AppSettings extends Component {
       </Row>
     );
   }
+  setPermission = (nextVal) => {
+    const {userID} = this.props;
+    return database()
+      .ref(`users/${userID}/`)
+      .update({
+        permissionOtherUserToRecord: nextVal,
+      });
+  };
   settings() {
-    const {wifiAutoUpload, isPrivate, appSettingsAction} = this.props;
+    const {
+      wifiAutoUpload,
+      isPrivate,
+      appSettingsAction,
+      permissionOtherUserToRecord,
+    } = this.props;
     return (
       <View style={styleApp.marginView}>
         {this.settingsSwitch(
           wifiAutoUpload,
           async () => appSettingsAction('toggleWifiAutoUpload'),
           'Auto upload local videos',
+        )}
+        {this.settingsSwitch(
+          permissionOtherUserToRecord,
+          async () => this.setPermission(!permissionOtherUserToRecord),
+          'Allow participants to trigger a recording on your phone during this call?',
         )}
         {this.settingsSwitch(
           !isPrivate,
@@ -83,14 +102,9 @@ class AppSettings extends Component {
       </View>
     );
   }
-  async save() {
-    this.back();
-  }
-  back() {
-    const {goBack} = this.props.navigation;
-    goBack();
-  }
+
   render() {
+    const {navigation} = this.props;
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
@@ -110,7 +124,7 @@ class AppSettings extends Component {
           typeIcon2="font"
           colorIcon2={colors.white}
           initialTitleOpacity={1}
-          clickButton1={() => this.back()}
+          clickButton1={() => navigation.goBack()}
         />
         <ScrollView
           onRef={(ref) => (this.scrollViewRef = ref)}
@@ -130,6 +144,8 @@ const mapStateToProps = (state) => {
   return {
     userID: state.user.userID,
     isPrivate: state.user.infoUser.userInfo.isPrivate,
+    permissionOtherUserToRecord:
+      state.user.infoUser.permissionOtherUserToRecord,
     wifiAutoUpload: state.appSettings.wifiAutoUpload,
   };
 };

@@ -202,7 +202,7 @@ class GroupsPage extends Component {
         });
     }
     if (userConnected) {
-      this.popupPermissionRecording();
+      permission('library');
       this.refreshTokenMember();
 
       if (
@@ -223,39 +223,6 @@ class GroupsPage extends Component {
     }
   }
 
-  popupPermissionRecording() {
-    let {userID, currentSessionID: coachSessionID, session} = this.props;
-    const member = getMember(session, userID);
-    if (!member) {
-      return;
-    }
-    const {permissionOtherUserToRecord} = member;
-    const setPermission = (nextVal) => {
-      permission('library');
-      return database()
-        .ref(`coachSessions/${coachSessionID}/members/${userID}`)
-        .update({
-          permissionOtherUserToRecord: nextVal,
-        });
-    };
-    if (permissionOtherUserToRecord === undefined && coachSessionID) {
-      return navigate('Alert', {
-        textButton: 'Allow',
-        title:
-          'Allow participants to trigger a recording on your phone during this call?',
-        displayList: true,
-
-        listOptions: [
-          {
-            operation: () => setPermission(false),
-          },
-          {
-            operation: () => setPermission(true),
-          },
-        ],
-      });
-    }
-  }
   async refreshTokenMember() {
     const {
       currentSessionID: coachSessionID,
