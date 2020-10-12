@@ -47,8 +47,7 @@ class CardArchive extends PureComponent {
 
   componentDidMount() {
     const {id, archive, archivesAction} = this.props;
-    console.log('archive', archive);
-    if (!archive || !archive.local) {
+    if (!archive || !archive?.local) {
       archivesAction('bindArchive', id);
     }
   }

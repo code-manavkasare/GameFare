@@ -40,27 +40,21 @@ class BranchManager extends Component {
       // params will never be null if error is null
       this.setState({branchParams: params});
     });
-    //setTimeout(() => this.setState({branchParams: testParams}), 500);
   }
 
   componentDidUpdate(prevProps) {
     const {branchParams, executedBranchInstruction} = this.state;
-    const {user} = this.props;
-    const {userConnected, userID} = user;
-    if (
-      branchParams &&
-      !executedBranchInstruction &&
-      userConnected &&
-      userID !== ''
-    ) {
-      this.executeBranchInstruction();
+    const {userConnected} = this.props;
+    if (branchParams && !executedBranchInstruction) {
+      if (!userConnected) return navigate('SignIn');
+      return this.executeBranchInstruction();
     }
   }
 
   async executeBranchInstruction() {
     const {branchParams} = this.state;
-    const {user} = this.props;
-    const {userID} = user;
+    const {userID} = this.props;
+
     const {type, sentBy} = branchParams;
     this.setState({executedBranchInstruction: true});
     switch (type) {
@@ -122,7 +116,8 @@ class BranchManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user,
+    userID: state.user.userID,
+    userConnected: state.user.userConnected,
   };
 };
 

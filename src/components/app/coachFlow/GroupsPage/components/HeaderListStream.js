@@ -5,7 +5,8 @@ import {navigate, goBack} from '../../../../../../NavigationService';
 import colors from '../../../../style/colors';
 import HeaderBackButton from '../../../../layout/headers/HeaderBackButton';
 
-import {createInviteToAppBranchUrl} from '../../../../database/branch';
+
+import {newConversation} from '../../../../functions/message'
 
 class HeaderListStream extends Component {
   constructor(props) {
@@ -44,13 +45,7 @@ class HeaderListStream extends Component {
         typeIcon2="font"
         sizeIcon2={21}
         colorIcon2={colors.title}
-        clickButton2={async () => {
-          const branchLink = await createInviteToAppBranchUrl();
-          navigate('UserDirectory', {
-            action: 'message',
-            branchLink,
-          });
-        }}
+        clickButton2={async () => newConversation()}
         icon1={'chevron-left'}
         sizeIcon1={21}
         colorIcon1={colors.title}

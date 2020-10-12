@@ -8,7 +8,8 @@ import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
-import {newSession, getSortedSessions} from '../../../../functions/coach';
+import {getSortedSessions} from '../../../../functions/coach';
+import {newConversation} from '../../../../functions/message';
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
@@ -94,7 +95,7 @@ class ListStreams extends Component {
     if (Object.values(coachSessions).length === 0) {
       return (
         <View style={[styleApp.marginView, styleApp.center]}>
-          <View style={[styleApp.center, {marginBottom: 80}]}>
+          <View style={[styleApp.center, {marginBottom: 80, marginTop: 30}]}>
             <Image
               source={require('../../../../../img/images/racket.png')}
               style={{height: 80, width: 80, marginTop: 30}}
@@ -120,20 +121,7 @@ class ListStreams extends Component {
             }}
             backgroundColor={'green'}
             onPressColor={colors.greenLight}
-            click={async () => newSession()}
-          />
-          <View style={{height: 20}} />
-          <Button
-            text={'Find a coach'}
-            icon={{
-              name: 'whistle',
-              size: 27,
-              type: 'moon',
-              color: colors.white,
-            }}
-            backgroundColor={'blue'}
-            onPressColor={colors.blueLight}
-            click={() => navigate('Coaches')}
+            click={async () => newConversation()}
           />
         </View>
       );
