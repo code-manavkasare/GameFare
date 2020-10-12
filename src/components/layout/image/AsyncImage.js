@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-
-import {View, ActivityIndicator, Image, Animated, Easing} from 'react-native';
+import {object, string} from 'prop-types';
+import * as Sentry from '@sentry/react-native';
+import {View, Animated} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import ls from 'react-native-local-storage';
+
 import {native} from '../../animations/animations';
 
 export default class AsyncImage extends Component {
+  static propTypes = {
+    mainImage: string,
+    imgInitial: string,
+    style: object,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -22,14 +27,15 @@ export default class AsyncImage extends Component {
     Animated.timing(this.opacityFastImageCached, native(1)).start();
   }
   getMainImage() {
-    const {mainImage, image} = this.props;
+    const {mainImage, imgInitial} = this.props;
     if (!mainImage) {
-      return image;
+      return imgInitial;
     }
     return mainImage;
   }
   imgDisplay() {
-    const {style, resizeMode, onError} = this.props;
+    const {style, resizeMode} = this.props;
+    const mainImage = this.getMainImage();
     return (
       <Animated.View
         style={{
@@ -45,12 +51,14 @@ export default class AsyncImage extends Component {
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
           source={{
             cache: FastImage.cacheControl.web,
-            uri: this.getMainImage(),
+            uri: mainImage,
           }}
-          onError={(err) => {
-            if (onError) {
-              onError(err);
-            }
+          onError={() => {
+            Sentry.captureException({
+              event: 'FastImageError',
+              props: this.props,
+              state: this.state,
+            });
           }}
         />
       </Animated.View>
@@ -60,7 +68,3 @@ export default class AsyncImage extends Component {
     return <View style={[this.props.style]}>{this.imgDisplay()}</View>;
   }
 }
-
-AsyncImage.propTypes = {
-  // mainImage: PropTypes.string,
-};
