@@ -185,7 +185,7 @@ class VideoLibraryPage extends Component {
         videos.map((video) => getNativeVideoInfo(video.localIdentifier)),
       );
       videoInfos.forEach((video) => {
-        addLocalVideo(video);
+        addLocalVideo({video, backgroundUpload: true});
       });
       if (videoInfos.length === 1 && !selectOnly) {
         openVideoPlayer({
@@ -374,7 +374,6 @@ class VideoLibraryPage extends Component {
             selectVideo={this.selectVideo.bind(this)}
           />
         )}
-        
       </View>
     );
   }

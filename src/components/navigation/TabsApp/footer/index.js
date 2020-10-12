@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
-import Animated from 'react-native-reanimated';
+import Animated, {call, block} from 'react-native-reanimated';
 
 import {layoutAction} from '../../../../actions/layoutActions';
 
@@ -20,10 +20,12 @@ class Footer extends React.Component {
     this.state = {
       disableAnimation: false,
     };
+    this.cameraVisible = false;
   }
   componentDidMount() {
-    if (this.props.onRef) {
-      this.props.onRef(this);
+    const {onRef} = this.props;
+    if (onRef) {
+      onRef(this);
     }
     this.notificationHandler();
     this.handleCameraAvailability();
@@ -37,16 +39,39 @@ class Footer extends React.Component {
       this.handleCameraAvailability();
     }
   }
+  handleCameraAnimated(r) {
+    const {layoutAction} = this.props;
+    const {disableAnimation} = this.state;
+    const position = r[0];
+    if (
+      position > 0.05 &&
+      position < 1.95 &&
+      !this.cameraVisible &&
+      !disableAnimation
+    ) {
+      this.cameraVisible = true;
+      layoutAction('setCameraAvailability', true);
+    } else if (
+      (position < 0.05 || position > 1.95) &&
+      this.cameraVisible &&
+      !disableAnimation
+    ) {
+      this.cameraVisible = false;
+      layoutAction('setCameraAvailability', false);
+    }
+  }
   handleCameraAvailability() {
     const {layoutAction} = this.props;
     const {index: currentIndex} = this.props.state;
     if (currentIndex === 1) {
+      this.cameraVisible = true;
       if (this.cameraAvailability) {
         clearTimeout(this.cameraAvailability);
       }
       layoutAction('setCameraAvailability', true);
     } else {
       this.cameraAvailability = setTimeout(() => {
+        this.cameraVisible = false;
         layoutAction('setCameraAvailability', false);
       }, 2000);
     }
@@ -87,7 +112,11 @@ class Footer extends React.Component {
     let inputRange = state.routes.map((_, i) => i);
     inputRange.unshift(-1);
     inputRange.push(state.routes.length);
-    const translateYFooter = Animated.interpolate(position, {
+    const wrappedPosition = block([
+      call([position], (r) => this.handleCameraAnimated(r)),
+      position,
+    ]);
+    const translateYFooter = Animated.interpolate(wrappedPosition, {
       inputRange,
       outputRange: inputRange.map((i) =>
         i === 1 && !disableAnimation
@@ -95,7 +124,6 @@ class Footer extends React.Component {
           : 0,
       ),
     });
-
     return (
       <Animated.View
         style={{
@@ -160,7 +188,7 @@ class Footer extends React.Component {
       currentSessionID,
     } = this.props;
     const {disableAnimation} = this.state;
- 
+
     return (
       <View style={styles.footer}>
         <Row style={styles.footerBody}>
@@ -233,18 +261,6 @@ class Footer extends React.Component {
         </Row>
         {this.labelIndicator()}
         {this.backdrop()}
-        {/* {
-          <BlurView
-            style={{
-              position: 'absolute',
-              zIndex: -1,
-              ...styleApp.fullSize,
-              top: 0,
-            }}
-            blurType="light"
-            blurAmount={20}
-          />
-        } */}
       </View>
     );
   };

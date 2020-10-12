@@ -7,6 +7,7 @@ import {
   Dimensions,
   Animated,
   View,
+  StatusBar,
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 
@@ -31,15 +32,10 @@ export default class Alert extends Component {
     this.state = {
       loader: false,
     };
-    this.alertAnimation = new Animated.Value(0);
+    this.alertAnimation = new Animated.Value(1);
   }
   async componentDidMount() {
     const {navigation, coachAction} = this.props;
-    this.openVoile(true);
-  }
-
-  openVoile(val) {
-    Animated.timing(this.alertAnimation, native(val ? 1 : 0, 400)).start();
   }
   title() {
     const {title} = this.props.route.params;
@@ -78,7 +74,6 @@ export default class Alert extends Component {
     return this.close();
   }
   async optionClick(operation, forceNavigation) {
-    this.openVoile(false);
     const {navigation} = this.props;
     if (operation) {
       await operation();
@@ -89,8 +84,6 @@ export default class Alert extends Component {
     navigation.goBack();
   }
   async close() {
-    this.openVoile(false);
-    await timeout(400);
     const {navigation} = this.props;
     navigation.goBack();
   }
@@ -120,8 +113,8 @@ export default class Alert extends Component {
           style={[
             styleApp.stylePage,
             {
-              backgroundColor: colors.title + '80',
-              opacity: this.alertAnimation,
+              backgroundColor: 'transparent',
+              opacity: 0,
             },
           ]}>
           <TouchableOpacity
@@ -289,8 +282,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     position: 'absolute',
     flex: 1,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
+    borderTopRightRadius: 25,
+    borderTopLeftRadius: 25,
     backgroundColor: 'white',
     borderWidth: 1,
     paddingTop: 10,

@@ -298,7 +298,7 @@ class CardUploading extends Component {
                 <Progress.Circle
                   color={colors.primary}
                   size={40}
-                  progress={progress}
+                  progress={progress ? progress : 0}
                   borderWidth={1.5}
                   borderColor={colors.primary}
                   textStyle={styles.textProgress}
@@ -320,7 +320,7 @@ class CardUploading extends Component {
                   styles.textProgress,
                   {fontSize: 19, color: colors.white},
                 ]}
-                progress={progress}
+                progress={progress ? progress : 0}
                 showsText={true}
                 formatText={() => `${Math.round(progress * 100)}%`}
               />

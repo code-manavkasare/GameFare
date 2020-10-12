@@ -169,7 +169,7 @@ class Camera extends Component {
   async saveRecording(recording) {
     console.log('RECORDING', recording);
     let videoInfo = await getVideoInfo(recording.uri);
-    await addLocalVideo(videoInfo);
+    await addLocalVideo({video: videoInfo, backgroundUpload: true});
     openVideoPlayer({
       archives: [videoInfo.id],
       open: true,

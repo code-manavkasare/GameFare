@@ -334,7 +334,8 @@ export default class VideoPlayer extends Component {
             position: 'absolute',
             zIndex: 40,
           },
-        ]}>
+        ]}
+        pointerEvents="none">
         <Loader size={60} color={colors.white} />
       </View>
     );
@@ -417,12 +418,13 @@ export default class VideoPlayer extends Component {
               style={[
                 {
                   position: 'absolute',
-                  zIndex: 20,
+                  zIndex: -1,
                   height,
                   width,
                 },
               ]}
               mainImage={thumbnail}
+              pointerEvents={'none'}
             />
           )}
 
@@ -458,10 +460,11 @@ export default class VideoPlayer extends Component {
                   }}
                   onLoadStart={(response) => {
                     if (connectedToSession) {
+                      console.log('connected to session');
                       AudioSession.setCategoryAndMode(
                         'PlayAndRecord',
                         'VideoChat',
-                        'AllowBluetooth',
+                        'DefaultToSpeaker',
                       );
                     }
                   }}
@@ -509,12 +512,12 @@ export default class VideoPlayer extends Component {
             )}
           />
         </View>
-        {url !== '' && (
+        {
           <VisualSeekBar
             archiveId={archiveId}
             disableControls={disableControls}
             onRef={(ref) => (this.visualSeekBarRef = ref)}
-            source={error ? originalUrl : url}
+            source={error ? originalUrl : url ? url : undefined}
             isRecording={isRecording}
             size={seekbarSize}
             togglePlayPause={this.linkedTogglePlayPause.bind(this)}
@@ -534,7 +537,7 @@ export default class VideoPlayer extends Component {
               this.setState({seekbarLoaded: true});
             }}
           />
-        )}
+        }
       </Animated.View>
     );
   }

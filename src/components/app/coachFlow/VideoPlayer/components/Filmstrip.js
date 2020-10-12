@@ -21,7 +21,6 @@ export default class Filmstrip extends Component {
     };
 
     this.loadedThumbs = 0;
-    this.failedThumbs = false;
     this.opacity = new Animated.Value(0);
   }
 
@@ -47,23 +46,42 @@ export default class Filmstrip extends Component {
     }
   };
 
-  componentDidUpdate(prevState, prevProps) {
-    const {onFilmstripLoad} = this.props;
-    const {thumbnails, loadedThumbs, count} = this.state;
-    if (
-      !isEqual(thumbnails, prevState.thumbnails) &&
-      onFilmstripLoad &&
-      loadedThumbs === count
-    ) {
+  async componentDidUpdate(prevProps, prevState) {
+    const {onFilmstripLoad, source} = this.props;
+    const {loadedThumbs, count, thumbnails} = this.state;
+    const {source: prevSource} = prevProps;
+    if (onFilmstripLoad && loadedThumbs === count) {
       Animated.timing(this.opacity, timing(1, 150)).start();
       onFilmstripLoad();
+      const {archiveId} = this.props;
+      let archive = await getArchiveByID(archiveId);
+      store.dispatch(
+        setArchive({
+          ...archive,
+          initialSeekbarThumbnails: thumbnails,
+        }),
+      );
+    } else if (source !== prevSource) {
+      const {archiveId} = this.props;
+      let archive = await getArchiveByID(archiveId);
+      if (!archive.initialSeekbarThumbnails) {
+        const thumbnails = await this.fetchThumbnails({});
+        store.dispatch(
+          setArchive({
+            ...archive,
+            initialSeekbarThumbnails: thumbnails,
+          }),
+        );
+      }
     }
   }
 
   shouldComponentUpdate(prevProps, prevState) {
-    const {thumbnails} = this.state;
-    const {thumbnails: prevThumbnails} = prevState;
-    if (!isEqual(thumbnails, prevThumbnails)) {
+    const {loadedThumbs} = this.state;
+    const {source} = this.props;
+    const {loadedThumbs: prevLoadedThumbs} = prevState;
+    const {source: prevSource} = prevProps;
+    if (loadedThumbs !== prevLoadedThumbs || source !== prevSource) {
       return true;
     } else if (!isEqual(prevProps, this.props)) {
       return false;
@@ -72,34 +90,43 @@ export default class Filmstrip extends Component {
   }
 
   fetchThumbnails = async (options) => {
-    const {from, to, count, index} = options;
     const {source} = this.props;
-    const {count: stateCount} = this.state;
-    let {thumbnails} = this.state;
-    const timeBounds = !from || !to ? this.state.timeBounds : [from, to];
-    let thumbnailSet = await generateThumbnailSet({
-      source,
-      timeBounds,
-      size: count ? count : stateCount,
-      index,
-    });
-    if (index) {
-      thumbnails[index] = thumbnailSet;
-    } else {
-      thumbnails = thumbnailSet;
+    if (source !== undefined) {
+      const {from, to, count, index} = options;
+      const {count: stateCount} = this.state;
+
+      if (!source) return;
+      const timeBounds = !from || !to ? this.state.timeBounds : [from, to];
+      let thumbnailSet = await generateThumbnailSet({
+        source,
+        timeBounds,
+        size: count ? count : stateCount,
+        index,
+      });
+      let {thumbnails} = this.state;
+      if (index !== undefined) {
+        thumbnails[index] = thumbnailSet[0];
+      } else {
+        thumbnails = thumbnailSet;
+      }
+      let nextState = {
+        thumbnails,
+        timeBounds,
+      };
+      if (index === undefined) {
+        nextState = {
+          ...nextState,
+          loadedThumbs: 0,
+        };
+      }
+      this?.setState(nextState);
+      return thumbnails;
     }
-    this.failedThumbs = false;
-    this?.setState({
-      thumbnails,
-      loadedThumbs: 0,
-      timeBounds,
-    });
-    return thumbnails;
   };
 
   thumbnail(response) {
     const {count} = this.state;
-    const {seekbar, style} = this.props;
+    const {seekbar} = this.props;
     const {item, index} = response;
     const {path} = item;
     const width = seekbar.width.interpolate({
@@ -113,10 +140,7 @@ export default class Filmstrip extends Component {
           source={{uri: path}}
           style={styles.thumbnail}
           onError={(e) => {
-            if (!this.failedThumbs) {
-              this.failedThumbs = true;
-              this.fetchThumbnails({});
-            }
+            this.fetchThumbnails({index});
           }}
           onLoad={(res) => {
             const {loadedThumbs} = this.state;

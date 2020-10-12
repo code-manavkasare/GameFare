@@ -5,6 +5,7 @@ import Permissions, {
   PERMISSIONS,
   checkNotifications,
 } from 'react-native-permissions';
+import storage from '@react-native-firebase/storage';
 import ImagePicker from 'react-native-image-picker';
 import {ProcessingManager} from 'react-native-video-processing';
 import ImageResizer from 'react-native-image-resizer';
@@ -249,6 +250,34 @@ const updateVideoSavePath = (oldPath) => {
   return DocumentDirectoryPath + docsSubDir;
 };
 
+async function uploadPictureFirebase(localUri, destination) {
+  try {
+    let imageName = 'groupPicture';
+    const imageRef = storage().ref(destination + '/' + imageName);
+    await imageRef.putFile(localUri);
+    var url = imageRef.getDownloadURL();
+    return url;
+  } catch (error) {
+    console.log('error upload', error);
+    return false;
+  }
+}
+
+async function uploadVideoFirebase(image, destination) {
+  try {
+    let imageName = 'content.mp4';
+    const imageRef = storage()
+      .ref(destination)
+      .child(imageName);
+    await imageRef.put(image.uri, {contentType: 'video'});
+    var url = await imageRef.getDownloadURL();
+    return url;
+  } catch (err) {
+    console.log('error upload', err);
+    return false;
+  }
+}
+
 module.exports = {
   takePicture,
   pickLibrary,
@@ -269,4 +298,6 @@ module.exports = {
   updateVideoSavePath,
   getOpentokVideoInfo,
   generateThumbnail,
+  uploadPictureFirebase,
+  uploadVideoFirebase,
 };

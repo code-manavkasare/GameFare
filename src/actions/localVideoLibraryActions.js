@@ -9,7 +9,7 @@ export const addUserLocalArchive = (value) => ({
   type: ADD_USER_LOCAL_ARCHIVE,
   archiveID: value.archiveID,
   startTimestamp: value.startTimestamp,
-
+  backgroundUpload: value.backgroundUpload,
 });
 
 export const removeUserLocalArchive = (archiveID) => ({

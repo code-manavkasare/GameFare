@@ -31,9 +31,15 @@ class BackgroundUploadHelper extends Component {
       const notQueued = Object.values(archivesToUpload).filter(
         (x) => !queued[x.id],
       );
-      const notVolatile = notQueued.filter(
-        (v) => archives[v.id] && !archives[v.id].volatile,
-      );
+      const notVolatile = notQueued.filter((v) => {
+        console.log(archives[v.id]);
+        return (
+          archives[v.id] &&
+          !archives[v.id].volatile &&
+          (v.backgroundUpload === undefined || v.backgroundUpload === true)
+        );
+      });
+      console.log('need to upload', notVolatile);
       return notVolatile;
     } else {
       return [];

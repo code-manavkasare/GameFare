@@ -77,8 +77,8 @@ class NotificationPage extends Component {
   notificationView() {
     const {permission} = this.state;
     return (
-      <View style={styleApp.marginView}>
-        <Row>
+      <View style={{...styleApp.marginView, minHeight: 300, marginTop: 80}}>
+        <Row style={{height: 40}}>
           <Col size={65}>
             <Text style={[styleApp.title, {fontSize: 21, marginBottom: 5}]}>
               Notifications are {permission ? 'enabled' : 'disabled'}.
@@ -89,7 +89,7 @@ class NotificationPage extends Component {
             </Text>
           </Col>
         </Row>
-        <View style={{height: 20}} />
+        <View style={{height: 30, marginTop: 10}} />
         {this.rowIcon('comment-alt', 'New message')}
         {this.rowIcon('video', 'Invitation to a new session')}
         {this.rowIcon('plug', 'Someone connects to one of your sessions')}
@@ -105,6 +105,7 @@ class NotificationPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={''}
           inputRange={[5, 10]}
@@ -114,19 +115,10 @@ class NotificationPage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'chevron-left'}
+          icon1={'times'}
           clickButton1={() => this.props.navigation.goBack()}
         />
-
-        <ScrollView
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={() => this.notificationView()}
-          marginBottomScrollView={0}
-          marginTop={heightHeaderHome}
-          offsetBottom={90}
-          showsVerticalScrollIndicator={true}
-        />
+        {this.notificationView()}
       </View>
     );
   }

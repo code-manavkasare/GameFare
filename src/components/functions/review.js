@@ -73,7 +73,7 @@ const generatePreview = async (source, recordedActions, audioFilePath) => {
     audioUrl,
     recordedActions: newRecordedActions,
   };
-  addLocalVideo(newVideo);
+  addLocalVideo({video: newVideo, backgroundUpload: true});
 };
 
 const generatePreviewCloud = async (

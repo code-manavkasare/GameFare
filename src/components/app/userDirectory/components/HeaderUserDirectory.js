@@ -18,6 +18,7 @@ export default class HeaderUserDirectory extends Component {
     return (
       <HeaderBackButton
         AnimatedHeaderValue={AnimatedHeaderValue}
+        marginTop={10}
         textHeader={'Search for users'}
         inputRange={[40, 50]}
         searchBar={searchBar}
