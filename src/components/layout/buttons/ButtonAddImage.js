@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
-import NavigationService from '../../../../NavigationService';
+import {navigate} from '../../../../NavigationService';
 import colors from '../../style/colors';
 
 import AllIcons from '../../layout/icons/AllIcons';
@@ -75,7 +75,7 @@ export default class Button extends Component {
         }}
         click={() => {
           Keyboard.dismiss();
-          NavigationService.navigate('Alert', {
+          navigate('Alert', {
             title: 'Add picture',
             displayList: 'addImage',
             onGoBack: (val) => {

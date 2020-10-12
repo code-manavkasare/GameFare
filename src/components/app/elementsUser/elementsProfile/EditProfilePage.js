@@ -67,6 +67,7 @@ class EditProfilePage extends Component {
     this.props.navigation.goBack();
   }
   buttonPicture(pictureUrl, pictureUri) {
+    const {navigation} = this.props;
     return (
       <ButtonAddImage
         title={'Add profile'}
@@ -74,7 +75,7 @@ class EditProfilePage extends Component {
         img={pictureUri ? pictureUri : pictureUrl}
         setState={(uri) => this.setState({pictureUri: uri})}
         styleImg={{height: 70, width: 70, borderRadius: 35}}
-        closeAddImage={() => NavigationService.navigate('EditProfilePage')}
+        closeAddImage={() => navigation.navigate('EditProfilePage')}
       />
     );
   }

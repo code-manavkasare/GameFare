@@ -84,8 +84,6 @@ class Recording extends Component {
       var {isPlayingReview} = this.props;
       if (isPlayingReview) {
         const {type} = action;
- 
-        // await this.setState({currentIndex: Number(i) + initialIndex});
 
         switch (type) {
           case 'play':

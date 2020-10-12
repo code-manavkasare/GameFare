@@ -100,12 +100,12 @@ export default class VideoPlayer extends Component {
       this.PinchableBoxRef?.resetPosition();
     }
 
-    // if (videoLoaded && !prevState.videoLoaded) {
-    //   setTimeout(() => {
-    //     // this.visualSeekBarRef?.toggleVisible(true);
-    //     this.seek(currentTime);
-    //   }, 200);
-    // }
+    if (videoLoaded && !prevState.videoLoaded) {
+      setTimeout(() => {
+        // this.visualSeekBarRef?.toggleVisible(true);
+        this.seek(currentTime);
+      }, 200);
+    }
   }
 
   getProxySource = async (src) => {
@@ -162,7 +162,7 @@ export default class VideoPlayer extends Component {
       updateVideoInfoCloud,
       archive,
     } = this.props;
-    const {durationSeconds} = archive; 
+    const {durationSeconds} = archive;
     const currentTime = this.visualSeekBarRef?.getCurrentTime();
     if (forcePause) {
       paused = false;
@@ -395,10 +395,11 @@ export default class VideoPlayer extends Component {
       allowRecording,
       error,
     } = this.state;
+
     const {height} = Dimensions.get('screen');
     const connectedToSession =
       coachSessionID !== false && coachSessionID !== undefined;
- 
+
     return (
       <Animated.View style={[styleContainerVideo, {overflow: 'hidden'}]}>
         {buttonTopRight && buttonTopRight()}
@@ -456,7 +457,6 @@ export default class VideoPlayer extends Component {
                     console.log(url, error);
                   }}
                   onLoadStart={(response) => {
-                    console.log('load start', response);
                     if (connectedToSession) {
                       AudioSession.setCategoryAndMode(
                         'PlayAndRecord',
@@ -484,7 +484,6 @@ export default class VideoPlayer extends Component {
 
                     await this.setState({
                       videoLoaded: true,
-                      paused: false,
                     });
                   }}
                   muted={muted}
