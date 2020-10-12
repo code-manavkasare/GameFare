@@ -67,8 +67,10 @@ class ListVideoCalls extends Component {
           clickButton: () =>
             !userConnected ? navigate('SignIn') : openUserDirectory(),
           textButton: !userConnected ? 'Sign in' : 'Search',
-          text: 'Sign in to start a call',
-          iconButton: 'user',
+          text: !userConnected
+            ? 'Sign in to start a call'
+            : 'Search users or share invite to start a call.',
+          iconButton: !userConnected ? 'user' : 'search',
           image: require('../../../../img/images/search.png'),
         }}
         cardList={({item: session}) => (

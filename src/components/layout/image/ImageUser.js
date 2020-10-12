@@ -25,8 +25,11 @@ export default class ImageUser extends Component {
       );
     return (
       <View style={[styleApp.fullSize, styleApp.center]}>
-        <Text style={[styleApp.text, {fontSize: 11}]}>
-          {user.info && user.info.firstname && user.info.lastname && user?.info?.firstname[0] + user.info.lastname[0]}
+        <Text style={[styleApp.textBold, {fontSize: 10, color: colors.white}]}>
+          {user.info &&
+            user.info.firstname &&
+            user.info.lastname &&
+            user?.info?.firstname[0] + user.info.lastname[0]}
         </Text>
       </View>
     );

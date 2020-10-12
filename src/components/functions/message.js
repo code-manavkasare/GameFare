@@ -6,6 +6,8 @@ import SendSMS from 'react-native-sms';
 
 import {store} from '../../../reduxStore';
 import {setConversation} from '../../actions/conversationsActions';
+import {navigate} from '../../../NavigationService';
+import {createInviteToAppBranchUrl} from '../database/branch';
 
 const generateID = () => {
   return (
@@ -191,6 +193,13 @@ const openDiscussion = async (arrayUsers, idDiscussion) => {
   return discussion;
 };
 
+const newConversation = async () => {
+  const branchLink = await createInviteToAppBranchUrl();
+  navigate('UserDirectory', {
+    action: 'message',
+    branchLink,
+  });
+};
 
 export {
   createDiscussion,
@@ -201,4 +210,5 @@ export {
   openDiscussion,
   sendSMSFunction,
   nameOtherMemberConversation,
+  newConversation,
 };

@@ -22,6 +22,7 @@ import {
 import {createInviteToSessionBranchUrl} from '../../../database/branch';
 
 import CardArchive from '../../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
+import ImageUser from '../../../layout/image/ImageUser';
 import AllIcon from '../../../layout/icons/AllIcons';
 
 const imageCardTeam = (session, size, hideDots, color) => {
@@ -403,10 +404,10 @@ const lastMessage = (messages, notification) => {
     <Row style={containerStyle}>
       <View style={messageContainerStyle}>
         <View style={styleProfilePhotoContainer}>
-          <AsyncImage
-            style={profilePhotoStyle}
-            mainImage={user.info.picture}
-            imgInitial={user.info.picture}
+          <ImageUser
+            onClick={() => true}
+            user={user}
+            styleImgProps={profilePhotoStyle}
           />
         </View>
         {/* {notification && <View style={notificationStyle} />} */}

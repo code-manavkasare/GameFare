@@ -298,7 +298,7 @@ const mapStateToProps = (state, props) => {
     currentSessionID: state.coach.currentSessionID,
     selectedLocalVideos: props.selectedVideos
       .map((video) => state.archives[video])
-      .filter((video) => video.local),
+      .filter((video) => video?.local),
   };
 };
 

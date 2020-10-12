@@ -26,7 +26,7 @@ const archivesReducer = (state = initialState, action) => {
       return archiveIDs.reduce((newState, id) => dissoc(id, newState), state);
     case RESET_CLOUD_ARCHIVES:
       const newArchives = Object.values(state)
-        .filter((item) => item.local)
+        .filter((item) => item?.local)
         .reduce(function(result, item) {
           result[item.id] = item;
           return result;
