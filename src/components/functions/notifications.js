@@ -39,10 +39,10 @@ const updateNotificationBadge = (notificationNumber) => {
 };
 
 const updateNotificationBadgeInBackground = async (userId) => {
-  const notifications = Object.values(
-    await getValueOnce(`users/${userId}/notifications`),
-  );
-  updateNotificationBadge(notifications.length);
+  const notifications = await getValueOnce(`users/${userId}/notifications`);
+  if (notifications) {
+    updateNotificationBadge(Object.values(notifications).length);
+  }
 };
 
 const deleteNotifications = async (userId, coachSessionId, notifications) => {
