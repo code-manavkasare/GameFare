@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import * as Sentry from '@sentry/react-native';
 import {
   View,
   Text,
@@ -22,8 +23,6 @@ import axios from 'axios';
 import Orientation from 'react-native-orientation-locker';
 import Mixpanel from 'react-native-mixpanel';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
-
-import {navigate} from '../../../../../../../NavigationService';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -109,6 +108,7 @@ class GroupsPage extends Component {
           event,
           date: new Date(),
         });
+        Sentry.captureException(event);
       },
       otrnError: (event) => {
         // cannot use variables from closure as component may be unmounted when this is called
@@ -120,6 +120,7 @@ class GroupsPage extends Component {
           event,
           date: new Date(),
         });
+        Sentry.captureException(event);
       },
     };
 
