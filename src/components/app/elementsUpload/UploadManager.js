@@ -38,7 +38,8 @@ class UploadManager extends Component {
       }
     }
 
-    const {isConnected, uploadInProgress, connectionType} = this.props;
+    const {isConnected, connectionType} = this.props;
+    const {uploadInProgress} = this.state;
     const lostConnection = prevIsConnected && !isConnected;
     const gainedConnection = !prevIsConnected && isConnected;
     const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
