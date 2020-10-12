@@ -67,7 +67,8 @@ class Notification extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {notification, notifications} = this.props;
     if (prevProps.notification !== notification) {
-      updateNotificationBadge(notifications.length + 1);
+      notification.data.action === 'Conversation' &&
+        updateNotificationBadge(notifications.length + 1);
       return this.openNotification();
     }
   }
