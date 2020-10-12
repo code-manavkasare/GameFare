@@ -185,7 +185,7 @@ class SinglePlayer extends Component {
     this.recordingRef.previewRecording(props);
   };
   replayRecording = async () => {
-    this.videoPlayerRef.togglePlayPause(true)
+    this.videoPlayerRef.togglePlayPause(true);
     this.recordingRef.launchIfPreview();
   };
   singlePlayer = () => {
@@ -366,7 +366,7 @@ class SinglePlayer extends Component {
           onRef={(ref) => {
             this.videoPlayerRef = ref;
           }}
-          paused={paused}
+          paused={recordedActions.length > 0 ? true : paused}
           playRate={playRate}
           currentTime={currentTime}
           scale={scale}

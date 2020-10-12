@@ -222,7 +222,14 @@ class GroupsPage extends Component {
       } catch (e) {}
     }
   }
-
+  isTokenUpToDate = () => {
+    const {userID, session: coachSession} = this.props;
+    const member = getMember(coachSession, userID);
+    return !(
+      coachSession.vonageSessionId &&
+      (member.expireTimeToken < Date.now() || !member.expireTimeToken)
+    );
+  };
   async refreshTokenMember() {
     const {
       currentSessionID: coachSessionID,
@@ -235,12 +242,10 @@ class GroupsPage extends Component {
       return;
     }
 
-    if (
-      coachSession.vonageSessionId &&
-      (member.expireTimeToken < Date.now() || !member.expireTimeToken)
-    ) {
+    if (!this.isTokenUpToDate()) {
+      console.log('updateSessionTokenUser', coachSession);
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
-      await axios.get(url, {
+      return axios.get(url, {
         params: {
           coachSessionID,
           userID,
@@ -475,6 +480,8 @@ class GroupsPage extends Component {
         {this.header(isConnected)}
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
+          : !this.isTokenUpToDate()
+          ? this.loaderView('Granted access...')
           : !connectionType
           ? this.loaderView('Waiting for network...')
           : !isConnected
@@ -487,7 +494,7 @@ class GroupsPage extends Component {
         />
         {!publishVideo && this.pausedView(userIsAlone)}
         <View style={styleApp.fullSize}>
-          {member.tokenTokbox && connectionType && (
+          {member.tokenTokbox && connectionType && this.isTokenUpToDate() && (
             <OTSession
               apiKey={Config.OPENTOK_API}
               ref={this.otSessionRef}
