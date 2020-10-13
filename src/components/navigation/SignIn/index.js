@@ -2,18 +2,25 @@ import React from 'react';
 
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Phone from '../../login/Phone';
-import Verify from '../../login/Verify';
-import Complete from '../../login/Complete';
+import SignInStack from './SignIn';
+import Alert from '../../layout/alerts/Alert';
+import {DepthModal} from '../transitions/DepthModal';
 
-const StackSignin = createStackNavigator();
+const StackParent = createStackNavigator();
+
 function SignIn() {
+  const AlertSpec = DepthModal({heightScale: 0});
   return (
-    <StackSignin.Navigator initialRouteName="Phone" headerMode="none">
-      <StackSignin.Screen name="Phone" component={Phone} />
-      <StackSignin.Screen name="Verify" component={Verify} />
-      <StackSignin.Screen name="Complete" component={Complete} />
-    </StackSignin.Navigator>
+    <StackParent.Navigator initialRouteName="SignIn" headerMode="none">
+      <StackParent.Screen name="SignIn" component={SignInStack} />
+      <StackParent.Screen
+        name="Alert"
+        component={Alert}
+        options={{
+          ...AlertSpec,
+        }}
+      />
+    </StackParent.Navigator>
   );
 }
 

@@ -34,26 +34,27 @@ export default class AsyncImage extends Component {
     return mainImage;
   }
   imgDisplay() {
-    const {style, resizeMode} = this.props;
+    const {style, resizeMode, onError} = this.props;
     const mainImage = this.getMainImage();
     return (
       <Animated.View
         style={{
-          // opacity: this.opacityFastImageCached,
+          opacity: this.opacityFastImageCached,
           height: style.height,
           width: style.width,
         }}>
         <FastImage
           resizeMode={resizeMode ? resizeMode : 'cover'}
           onLoadEnd={() => {
-            // this.enterPictureCached();
+            this.enterPictureCached();
           }}
           style={[style, {zIndex: 10, position: 'absolute', top: 0}]}
           source={{
             cache: FastImage.cacheControl.web,
             uri: mainImage,
           }}
-          onError={() => {
+          onError={(response) => {
+            if (onError) onError();
             Sentry.captureException({
               event: 'FastImageError',
               props: this.props,

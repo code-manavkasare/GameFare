@@ -1,5 +1,6 @@
 import {TransitionSpecs} from '@react-navigation/stack';
 import sizes from '../../style/sizes';
+import colors from '../../style/colors';
 
 const DepthModal = ({heightScale, bottom, top}) => {
   return {

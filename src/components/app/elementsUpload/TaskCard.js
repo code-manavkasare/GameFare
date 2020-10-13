@@ -50,7 +50,7 @@ class TaskCard extends Component {
   }
 
   taskInfo() {
-    const {task, currentScreenSize} = this.props;
+    const {task, currentScreenSize, connectionType} = this.props;
     const {type, progress, timeSubmitted} = task;
     const {currentWidth} = currentScreenSize;
     return (
@@ -61,7 +61,11 @@ class TaskCard extends Component {
             : ''}
         </Text>
         <Text style={{...styleApp.text, fontSize: 15, marginBottom: 15}}>
-          <FormatDate date={timeSubmitted} />
+          {connectionType !== 'wifi' && task.isBackground === true ? (
+            'Waiting for Wi-Fi...'
+          ) : (
+            <FormatDate date={timeSubmitted} />
+          )}
         </Text>
         <Progress.Bar
           color={colors.primaryLight}
@@ -151,6 +155,7 @@ const mapStateToProps = (state) => {
   return {
     uploadQueue: state.uploadQueue,
     currentScreenSize: state.layout.currentScreenSize,
+    connectionType: state.connectionType.type,
   };
 };
 
