@@ -232,7 +232,7 @@ class MorePage extends Component {
   profile() {
     const {infoUser, userConnected} = this.props;
     return (
-      <View style={{marginTop: 0}}>
+      <View style={{marginTop: 20, marginBottom: 50}}>
         {userConnected ? (
           <View>
             <TouchableOpacity
@@ -514,6 +514,7 @@ class MorePage extends Component {
     return (
       <View style={[styleApp.stylePage]}>
         <HeaderBackButton
+          marginTop={10}
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           textHeader={
             userConnected && infoUser.firstname + ' ' + infoUser.lastname
@@ -524,7 +525,7 @@ class MorePage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={0}
           initialBorderWidth={1}
-          icon1={'chevron-left'}
+          icon1={'times'}
           typeIcon1="font"
           sizeIcon1={21}
           colorIcon1={colors.title}
@@ -535,7 +536,7 @@ class MorePage extends Component {
           AnimatedHeaderValue={this.AnimatedHeaderValue}
           contentScrollView={() => this.profile()}
           marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
+          marginTop={sizes.heightHeaderHome - 30}
           offsetBottom={70}
           showsVerticalScrollIndicator={true}
         />

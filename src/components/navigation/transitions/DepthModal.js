@@ -1,8 +1,9 @@
 import {TransitionSpecs} from '@react-navigation/stack';
 import sizes from '../../style/sizes';
 import colors from '../../style/colors';
+import styleApp from '../../style/style';
 
-const DepthModal = ({heightScale, bottom, top}) => {
+const DepthModal = ({heightScale, bottom, top, ignoreBackgroundScale}) => {
   return {
     gestureDirection: 'vertical',
     gestureResponseDistance: {
@@ -16,6 +17,12 @@ const DepthModal = ({heightScale, bottom, top}) => {
     cardStyle: {
       backgroundColor: 'transparent',
     },
+    cardOverlayEnabled: true,
+    // cardOverlay: () => {
+    //   return <View>
+
+    //   </View>
+    // },
     cardStyleInterpolator: ({current, next, layouts}) => {
       return {
         cardStyle: {
@@ -48,7 +55,7 @@ const DepthModal = ({heightScale, bottom, top}) => {
               scale: next
                 ? next.progress.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [1, 0.9],
+                    outputRange: [1, ignoreBackgroundScale ? 1 : 0.9],
                   })
                 : 1,
             },
@@ -56,15 +63,18 @@ const DepthModal = ({heightScale, bottom, top}) => {
           opacity: next
             ? next.progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [1, 0.7],
+                outputRange: [1, ignoreBackgroundScale ? 1 : 1],
               })
             : 1,
         },
         overlayStyle: {
           opacity: current.progress.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, 0.5],
+            outputRange: [0, 0.3],
           }),
+          backgroundColor: colors.black,
+          ...styleApp.fullSize,
+          position: 'absolute',
         },
       };
     },

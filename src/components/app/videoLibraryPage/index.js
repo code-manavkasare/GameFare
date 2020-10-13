@@ -215,9 +215,7 @@ class VideoLibraryPage extends Component {
           }
           ListEmptyComponent={{
             clickButton: () => {
-              const {layoutAction} = this.props;
-              // layoutAction('setCameraAvailability', false);
-              navigation.navigate('Session', {action: Date.now()});
+              navigation.navigate('Session');
             },
             // clickButton: async () => {
             //   console.log('bim');

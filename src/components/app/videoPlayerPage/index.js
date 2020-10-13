@@ -48,12 +48,14 @@ class VideoPlayerPage extends Component {
       landscape: false,
       recordedActions: false,
       isAudioPlayerReady: false,
+      prevCameraState: props.cameraAvailability,
     };
     this.videoPlayerRefs = [];
     this.focusListener = null;
   }
   componentDidMount = () => {
     const {navigation, layoutAction} = this.props;
+
     layoutAction('setCameraAvailability', false);
     this.focusListener = navigation.addListener('focus', () => {
       StatusBar.setBarStyle('light-content', true);
@@ -103,7 +105,8 @@ class VideoPlayerPage extends Component {
 
   componentWillUnmount() {
     const {layoutAction} = this.props;
-    layoutAction('setCameraAvailability', true);
+    const {prevCameraState} = this.state;
+    layoutAction('setCameraAvailability', prevCameraState);
     if (this.focusListener) {
       this.focusListener();
     }
@@ -729,6 +732,7 @@ const mapStateToProps = (state, props) => {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     session: state.coachSessions[currentSessionID],
+    cameraAvailability: state.layout.cameraAvailability,
     currentSessionID,
     portrait: state.layout.currentScreenSize.portrait,
     videoInfos: archives.reduce((videoInfos, archiveID) => {

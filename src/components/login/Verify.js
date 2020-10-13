@@ -35,7 +35,7 @@ export default class Verify extends Component {
           initialTitleOpacity={1}
           icon1="chevron-left"
           sizeIcon1={21}
-          clickButton1={() => navigation.navigate('Phone')}
+          clickButton1={() => navigation.goBack()}
         />
 
         <ScrollView

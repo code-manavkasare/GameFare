@@ -21,13 +21,14 @@ export default class LoadingScreen extends React.Component {
     let country = false;
     if (params) country = params.country;
     return (
-      <View style={styleApp.marginView}>
+      <View
+        style={{...styleApp.marginView, marginTop: sizes.marginTopApp + 80}}>
         <Text
           style={[
             styleApp.title,
             {marginBottom: 20, fontSize: 21, marginTop: 0},
           ]}>
-          What is your mobile number?
+          Enter your phone number
         </Text>
         <PhoneFields
           country={
@@ -59,16 +60,7 @@ export default class LoadingScreen extends React.Component {
           icon2={null}
           clickButton1={() => navigation.dangerouslyGetParent().pop()}
         />
-
-        <ScrollView
-          onRef={(ref) => (this.scrollViewRef = ref)}
-          AnimatedHeaderValue={this.AnimatedHeaderValue}
-          contentScrollView={this.phone.bind(this)}
-          marginBottomScrollView={0}
-          marginTop={sizes.heightHeaderHome}
-          offsetBottom={0}
-          showsVerticalScrollIndicator={true}
-        />
+        {this.phone()}
       </View>
     );
   }
