@@ -100,7 +100,7 @@ class Camera extends Component {
       this.placeholderAnimation.mirror,
       native(frontCamera ? 1 : 0, 1),
     ).start();
-    Animated.timing(this.placeholderAnimation.opacity, native(1, 100)).start(
+    Animated.timing(this.placeholderAnimation.opacity, native(1, 50)).start(
       () => {
         this.setState({displayPlaceholder: true});
       },

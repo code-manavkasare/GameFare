@@ -42,38 +42,60 @@ class Footer extends React.Component {
   handleCameraAnimated(r) {
     const {layoutAction} = this.props;
     const {disableAnimation} = this.state;
+    const {index: currentIndex} = this.props.state;
     const position = r[0];
+    if (currentIndex === 1) return;
     if (
       position > 0.05 &&
       position < 1.95 &&
       !this.cameraVisible &&
       !disableAnimation
     ) {
+      // console.log(currentIndex, 'SHOW CAMERA ON ANIMATED VALUE');
       this.cameraVisible = true;
+      if (this.cameraAvailability) {
+        // console.log('clear timeout');
+        clearTimeout(this.cameraAvailability);
+      }
       layoutAction('setCameraAvailability', true);
     } else if (
       (position < 0.05 || position > 1.95) &&
       this.cameraVisible &&
       !disableAnimation
     ) {
+      if (this.cameraAvailability) {
+        // console.log('clear timeout');
+        clearTimeout(this.cameraAvailability);
+      }
+      // console.log(currentIndex, 'HIDE CAMERA ON ANIMATED VALUE');
       this.cameraVisible = false;
-      layoutAction('setCameraAvailability', false);
+      this.cameraAvailability = setTimeout(() => {
+        this.cameraVisible = false;
+        // console.log('done hiding');
+        layoutAction('setCameraAvailability', false);
+      }, 1000);
     }
   }
   handleCameraAvailability() {
     const {layoutAction} = this.props;
     const {index: currentIndex} = this.props.state;
+    if (this.cameraAvailability) {
+      // console.log('clear timeout');
+      clearTimeout(this.cameraAvailability);
+    }
     if (currentIndex === 1) {
+      // console.log('SHOW CAMERA ON INDEX VALUE');
       this.cameraVisible = true;
-      if (this.cameraAvailability) {
-        clearTimeout(this.cameraAvailability);
-      }
       layoutAction('setCameraAvailability', true);
     } else {
+      // console.log('HIDE CAMERA ON INDEX VALUE');
+      // console.log('set timeout');
+      this.cameraVisible = false;
       this.cameraAvailability = setTimeout(() => {
         this.cameraVisible = false;
+        // console.log('done hiding');
         layoutAction('setCameraAvailability', false);
-      }, 2000);
+      }, 1000);
     }
   }
   smoothJump() {
