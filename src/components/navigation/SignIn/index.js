@@ -9,7 +9,7 @@ import Complete from '../../login/Complete';
 const StackSignin = createStackNavigator();
 function SignIn() {
   return (
-    <StackSignin.Navigator initialRouteName="InitialPage" headerMode="none">
+    <StackSignin.Navigator initialRouteName="Phone" headerMode="none">
       <StackSignin.Screen name="Phone" component={Phone} />
       <StackSignin.Screen name="Verify" component={Verify} />
       <StackSignin.Screen name="Complete" component={Complete} />

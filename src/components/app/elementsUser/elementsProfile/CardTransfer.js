@@ -43,8 +43,10 @@ class CardTransfer extends Component {
                 </Text>
               </Col>
               <Col size={70} style={styleApp.center2}>
-                <Text style={[styleApp.titleSmall,{fontSize:16}]}>{transfer.title}</Text>
-                <Text style={[styleApp.subtitle, {marginTop: 4,fontSize:14}]}>
+                <Text style={[styleApp.titleSmall, {fontSize: 16}]}>
+                  {transfer.title}
+                </Text>
+                <Text style={[styleApp.subtitle, {marginTop: 4, fontSize: 14}]}>
                   {moment(transfer.date).format('MMMM, Do')} at{' '}
                   {moment(transfer.date).format('h:mm a')}
                 </Text>
@@ -63,7 +65,8 @@ class CardTransfer extends Component {
         click={() => true}
         color="white"
         style={{
-          flex: 1,
+          //  flex: 1,
+          height: 80,
           paddingTop: 10,
           paddingBottom: 10,
         }}
@@ -81,4 +84,7 @@ const mapStateToProps = (state) => {
   return {};
 };
 
-export default connect(mapStateToProps, {})(CardTransfer);
+export default connect(
+  mapStateToProps,
+  {},
+)(CardTransfer);

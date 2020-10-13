@@ -11,16 +11,13 @@ import {
 } from 'react-native';
 import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
-import Mixpanel from 'react-native-mixpanel';
-
-import {mixPanelToken} from '../../database/firebase/tokens';
-Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 import {updateNotificationBadge} from '../../functions/notifications.js';
 import {
   clickNotification,
   getCurrentRoute,
 } from '../../../../NavigationService';
+import {logMixpanel} from '../../functions/logs';
 import AsyncImage from '../image/AsyncImage';
 
 import colors from '../../style/colors';
@@ -114,9 +111,7 @@ class Notification extends Component {
             this.close(initialTranslateY, () =>
               clickNotification(notification),
             );
-            Mixpanel.trackWithProperties('Click on notification' + title, {
-              userID,
-            });
+            logMixpanel({label: 'Click on notification' + title, params: {}});
           }}>
           <Row style={styleApp.marginView}>
             <Col size={20} style={styleApp.center2}>

@@ -83,7 +83,7 @@ class AppSettings extends Component {
         {this.settingsSwitch(
           permissionOtherUserToRecord,
           async () => this.setPermission(!permissionOtherUserToRecord),
-          'Allow participants to trigger a recording on your phone during this call?',
+          'Allow participants to trigger a recording on your phone during video calls?',
         )}
         {this.settingsSwitch(
           !isPrivate,

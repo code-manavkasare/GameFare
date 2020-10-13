@@ -11,6 +11,7 @@ import {conversationsAction} from '../../../../../actions/conversationsActions';
 
 import {navigate} from '../../../../../../NavigationService';
 import PlaceHolder from '../../../../placeHolders/CardStream';
+import {logMixpanel} from '../../../../functions/logs';
 
 import {sessionOpening, getMember} from '../../../../functions/coach';
 import {conversationIsInNotification} from '../../../../functions/notifications.js';
@@ -185,6 +186,10 @@ class CardStream extends Component {
           color={'transparent'}
           onPressColor={'transparent'}
           click={() => {
+            logMixpanel({
+              label: 'Click session ' + coachSessionID,
+              params: {coachSessionID},
+            });
             if (onClick) {
               onClick(session);
             } else {

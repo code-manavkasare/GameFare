@@ -10,13 +10,14 @@ import {
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import database from '@react-native-firebase/database';
 
-import NavigationService from '../../../../NavigationService';
+import {navigate} from '../../../../NavigationService';
 
 import {uploadPictureFirebase} from '../../functions/pictures';
 import {timeout} from '../../functions/coach';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
+import {logMixpanel} from '../../functions/logs';
 
 import ButtonFull from '../../layout/buttons/ButtonFull';
 import ButtonAddImage from '../../layout/buttons/ButtonAddImage';
@@ -36,6 +37,10 @@ export default class CompleteFields extends Component {
     this.setState({loader: true});
     const {userID} = this.props.params;
     const {firstname, lastname, pictureUri} = this.state;
+    logMixpanel({
+      label: 'Complete profile',
+      params: {firstname, lastname, pictureUri},
+    });
 
     let profilePictureUrl = null;
     if (pictureUri !== '') {
@@ -65,7 +70,7 @@ export default class CompleteFields extends Component {
     if (firstname !== '') this.lastnameInput.focus();
   };
   async closeAddImage() {
-    await NavigationService.navigate('Complete');
+    await navigate('Complete');
     return this.focusOnText();
   }
   render() {

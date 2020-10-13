@@ -13,7 +13,7 @@ import CardImg from './elementsChat/CardImg';
 
 import {getParams, openUrl} from '../../database/branch';
 import {messageAvatar, messageName} from '../../functions/users';
-import NavigationService from '../../../../NavigationService';
+import {push, navigate} from '../../../../NavigationService';
 import AllIcon from '../../layout/icons/AllIcons';
 import CardArchive from '../../app/coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
@@ -41,7 +41,7 @@ export default class CardMessage extends React.Component {
     this.setState({viewUrl: params, url: url});
   }
   openPage(type, id) {
-    NavigationService.push(type, {
+    push(type, {
       objectID: id,
     });
   }
@@ -116,7 +116,7 @@ export default class CardMessage extends React.Component {
     return null;
   };
   goToProfilePage = () => {
-    NavigationService.navigate('ProfilePage', {
+    navigate('ProfilePage', {
       user: this.props.message.currentMessage.user,
     });
   };

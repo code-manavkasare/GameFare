@@ -19,6 +19,7 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
+import {logMixpanel} from '../../../../../../../functions/logs';
 
 import {archivesAction} from '../../../../../../../../actions/archivesActions';
 
@@ -87,6 +88,10 @@ class CardArchive extends PureComponent {
     const {archive, coachSessionID, videosToOpen, disableClick} = this.props;
     const {url, id} = archive;
     if (url && url !== '' && !disableClick) {
+      logMixpanel({
+        label: 'Click session ' + coachSessionID,
+        params: {videos: videosToOpen ? videosToOpen.map((x) => x.id) : [id]},
+      });
       openVideoPlayer({
         archives: videosToOpen ? videosToOpen.map((x) => x.id) : [id],
         open: true,

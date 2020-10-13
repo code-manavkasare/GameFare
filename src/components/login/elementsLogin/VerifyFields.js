@@ -13,6 +13,7 @@ import colors from '../../style/colors';
 import {userAction} from '../../../actions/userActions';
 import {timeout} from '../../functions/coach';
 import {formatPhoneNumber} from '../../functions/users';
+import {logMixpanel} from '../../functions/logs';
 
 const CELL_COUNT = 4;
 
@@ -53,6 +54,10 @@ class VerifyFields extends Component {
   }
   async verifPhone(code) {
     this.setState({step: 'verifying', loader: true});
+    logMixpanel({
+      label: 'Verify phone',
+      params: {},
+    });
     const url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}verifyPhone`;
     const {
       phoneNumber,

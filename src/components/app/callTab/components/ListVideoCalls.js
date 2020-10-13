@@ -126,7 +126,7 @@ class ListVideoCalls extends Component {
           </View>
         }
         AnimatedHeaderValue={AnimatedHeaderValue}
-        paddingBottom={sizes.heightFooter + sizes.marginBottomApp}
+        paddingBottom={sizes.heightFooter + sizes.marginBottomApp + 90}
       />
     );
   }

@@ -28,6 +28,7 @@ import {
   placeholder,
 } from '../../functions/phoneNumber';
 import {timeout} from '../../functions/coach';
+import {logMixpanel} from '../../functions/logs';
 import {formatPhoneNumber} from '../../functions/users';
 
 const ListCountry = require('../elementsFlags/country.json');
@@ -59,6 +60,13 @@ class PhoneFields extends Component {
   }
   async next(phone) {
     this.setState({loader: true});
+    logMixpanel({
+      label: 'Click next',
+      params: {
+        phone: phoneNumber,
+        countryCode: '+' + this.props.country.callingCode,
+      },
+    });
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
     const phoneNumber = formatPhoneNumber(phone);
 
