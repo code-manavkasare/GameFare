@@ -24,6 +24,8 @@ import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
+import {layoutAction} from '../../../actions/layoutActions';
+
 import {rowTitle} from '../TeamPage/components/elements';
 
 import database from '@react-native-firebase/database';
@@ -207,13 +209,16 @@ class VideoLibraryPage extends Component {
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
-          list={[]}
+          list={videosArray}
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
           ListEmptyComponent={{
-            clickButton: () =>
-              navigation.navigate('Session', {action: Date.now()}),
+            clickButton: () => {
+              const {layoutAction} = this.props;
+              // layoutAction('setCameraAvailability', false);
+              navigation.navigate('Session', {action: Date.now()});
+            },
             // clickButton: async () => {
             //   console.log('bim');
             //   database()
@@ -410,5 +415,5 @@ const mapStateToProps = (state) => {
 };
 export default connect(
   mapStateToProps,
-  {uploadQueueAction},
+  {uploadQueueAction, layoutAction},
 )(VideoLibraryPage);

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import NetInfo from '@react-native-community/netinfo';
 import {connectionTypeAction} from '../../actions';
+import {logMixpanel} from '../functions/logs';
 
 class ConnectionTypeProvider extends Component {
   constructor(props) {
@@ -13,6 +14,10 @@ class ConnectionTypeProvider extends Component {
     const {connectionTypeAction} = this.props;
     this.unsubscribe = NetInfo.addEventListener((state) => {
       connectionTypeAction('setConnectionType', state.type);
+      logMixpanel({
+        label: 'Change network: ' + state.type,
+        params: {type: state.type},
+      });
     });
   }
   componentWillUnmount() {
@@ -20,7 +25,7 @@ class ConnectionTypeProvider extends Component {
       this.unsubscribe();
     }
   }
-  render = () => null
+  render = () => null;
 }
 
 const mapStateToProps = (state) => {
