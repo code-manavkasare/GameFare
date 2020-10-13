@@ -9,6 +9,8 @@ import {
   Animated,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
+
+import {logMixpanel} from '../../functions/logs';
 import colors from '../../style/colors';
 import Loader from '../loaders/Loader';
 import {timing} from '../../animations/animations';
@@ -35,7 +37,9 @@ export default class Button extends Component {
     this.setState({loading});
   }
   click() {
-    this.props.click();
+    const {click, text} = this.props;
+    logMixpanel({label: 'Click ' + text, params: {}});
+    click();
   }
   widthButton() {
     if (this.props.width) {
@@ -119,7 +123,7 @@ export default class Button extends Component {
       inputRange: [0, 300],
       outputRange: [this.styleButton().backgroundColor, this.onPressColor()],
     });
-    const {click, disabled, loader, text, icon, loaderSize} = this.props;
+    const {disabled, loader, text, icon, loaderSize} = this.props;
     const {loading} = this.state;
     const blurViewStyle = {
       ...styleApp.fullSize,
@@ -135,7 +139,7 @@ export default class Button extends Component {
           onPressIn={() => this.onPress(true)}
           onPressOut={() => this.onPress(false)}
           disabled={disabled}
-          onPress={() => !(loader || loading) && click()}>
+          onPress={() => !(loader || loading) && this.click()}>
           {icon && this.iconView()}
           <View style={[styleApp.center, styleApp.fullSize]}>
             {(loader || loading) && !icon ? (

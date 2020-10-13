@@ -16,6 +16,7 @@ import {
   addLocalVideo,
   openVideoPlayer,
 } from '../../../functions/videoManagement';
+import {logMixpanel} from '../../../functions/logs';
 
 class Camera extends Component {
   static propTypes = {
@@ -121,6 +122,9 @@ class Camera extends Component {
     const {camera, state} = this;
     const {isRecording} = state;
     if (camera && !isRecording) {
+      logMixpanel({
+        label: 'Start recording',
+      });
       layoutAction('setGeneralSessionRecording', true);
       this.setState({isRecording: true});
       const options = {
@@ -153,6 +157,9 @@ class Camera extends Component {
     const {camera, state} = this;
     const {promiseRecording, isRecording} = state;
     if (camera && isRecording) {
+      logMixpanel({
+        label: 'Stop recording',
+      });
       layoutAction('setGeneralSessionRecording', false);
       await camera.stopRecording();
       onStopRecord && onStopRecord();
@@ -170,6 +177,9 @@ class Camera extends Component {
     console.log('RECORDING', recording);
     let videoInfo = await getVideoInfo(recording.uri);
     await addLocalVideo({video: videoInfo, backgroundUpload: true});
+    logMixpanel({
+      label: 'Save recording',
+    });
     openVideoPlayer({
       archives: [videoInfo.id],
       open: true,

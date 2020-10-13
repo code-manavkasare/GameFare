@@ -25,7 +25,7 @@ function InitialStack() {
       initialRouteName="MainApp"
       headerMode="none"
       mode={'modal'}>
-      <Stack.Screen name="MainApp" component={MainApp} />
+    <Stack.Screen name="MainApp" component={MainApp} />
       <Stack.Screen
         name="SignIn"
         component={SignIn}

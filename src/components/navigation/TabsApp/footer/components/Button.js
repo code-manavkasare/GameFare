@@ -11,6 +11,7 @@ import styleApp from '../../../../style/style';
 import {heightFooter} from '../../../../style/sizes';
 import AllIcons from '../../../../layout/icons/AllIcons';
 import Button from '../../../../layout/Views/Button';
+import {logMixpanel} from '../../../../functions/logs';
 
 class FooterButton extends React.Component {
   constructor(props) {
@@ -187,10 +188,10 @@ class FooterButton extends React.Component {
           let params = {};
           if (isFocused && label === undefined) {
             params = {
-              //Communicate with session
               action: Date.now(),
             };
           }
+          logMixpanel({label: 'Click footer: ' + label, params});
           navigate(routeName, {screen: pageStack, params});
         }}
         color={'transparent'}

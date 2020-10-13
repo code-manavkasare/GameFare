@@ -28,7 +28,7 @@ import {setLayout} from '../../actions/layoutActions';
 import {enqueueUploadTasks} from '../../actions/uploadQueueActions';
 import {setArchive} from '../../actions/archivesActions';
 import {dateSession} from '../../components/app/TeamPage/components/elements';
-
+import {logMixpanel} from './logs';
 import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
@@ -455,7 +455,10 @@ const infoCoach = (members) => {
 const closeSession = async ({noNavigation}) => {
   await store.dispatch(endCurrentSession());
   store.dispatch(unsetCurrentSession());
-
+  logMixpanel({
+    label: 'Close session ',
+    params: {coachSessionID: store.getState().coach.currentSessionID},
+  });
   if (!noNavigation) {
     store.dispatch(setLayout({isFooterVisible: true}));
     StatusBar.setBarStyle('dark-content', true);
@@ -567,6 +570,10 @@ const sessionOpening = async (session) => {
       return openMemberAcceptCharge(session);
   }
   */
+  logMixpanel({
+    label: 'Open session ' + session.objectID,
+    params: {coachSessionID: session.objectID},
+  });
 
   await navigate('Session');
   return finalizeOpening(session);
@@ -595,6 +602,10 @@ const deleteSession = (objectID) => {
     },
     onGoBack: async () => {
       const currentSessionID = store.getState().coach.currentSessionID;
+      logMixpanel({
+        label: 'Leave session ' + currentSessionID,
+        params: {coachSessionID: currentSessionID},
+      });
       let updates = {};
       updates[`users/${userID}/coachSessions/${objectID}`] = null;
       updates[`coachSessions/${objectID}/members/${userID}`] = null;

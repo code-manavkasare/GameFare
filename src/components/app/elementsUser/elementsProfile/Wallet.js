@@ -157,6 +157,7 @@ class ListEvent extends Component {
           initialBorderWidth={0.3}
           typeIcon2={'font'}
           sizeIcon2={17}
+          sizeIcon1={21}
           icon1={'chevron-left'}
           icon2={'text'}
           text2={'Get'}

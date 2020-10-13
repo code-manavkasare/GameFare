@@ -21,8 +21,6 @@ import KeepAwake from 'react-native-keep-awake';
 import isEqual from 'lodash.isequal';
 import axios from 'axios';
 import Orientation from 'react-native-orientation-locker';
-import Mixpanel from 'react-native-mixpanel';
-Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -38,6 +36,7 @@ import {coachSessionsAction} from '../../../../../../actions/coachSessionsAction
 import {userAction} from '../../../../../../actions/userActions';
 import {layoutAction} from '../../../../../../actions/layoutActions';
 
+import {logMixpanel} from '../../../../../functions/logs';
 import {
   isUserAlone,
   isSomeoneSharingScreen,
@@ -47,7 +46,6 @@ import {
 } from '../../../../../functions/coach';
 import {openVideoPlayer} from '../../../../../functions/videoManagement';
 import {permission} from '../../../../../functions/pictures';
-import {mixPanelToken} from '../../../../../database/firebase/tokens';
 
 import Header from './components/Header';
 import Loader from '../../../../../layout/loaders/Loader';
@@ -104,9 +102,12 @@ class GroupsPage extends Component {
           event,
         );
         this.setState({error: true, isConnected: false});
-        Mixpanel.trackWithProperties('ERROR: sessionEventHandlers error', {
-          event,
-          date: new Date(),
+        logMixpanel({
+          label: 'ERROR: sessionEventHandlers error',
+          params: {
+            event,
+            date: new Date(),
+          },
         });
         Sentry.captureException(event);
       },
@@ -116,10 +117,11 @@ class GroupsPage extends Component {
           'OTRN ERROR - StreamView: error in communication between native OTSession instance and JS component -- ',
           event,
         );
-        Mixpanel.trackWithProperties('ERROR: sessionEventHandlers otrnError ', {
-          event,
-          date: new Date(),
+        logMixpanel({
+          label: 'ERROR: sessionEventHandlers otrnError ',
+          params: event,
         });
+
         Sentry.captureException(event);
       },
     };
@@ -130,16 +132,14 @@ class GroupsPage extends Component {
         const {userID, currentScreenSize, currentSessionID} = this.props;
         const {portrait} = currentScreenSize;
         const {streamId, connectionId} = event;
-        Mixpanel.trackWithProperties(
-          'publisherEventHandlers streamCreated ' + currentSessionID,
-          {
-            userID,
+        logMixpanel({
+          label: 'publisherEventHandlers streamCreated ' + currentSessionID,
+          params: {
             currentSessionID,
             streamId,
             connectionId,
-            date: new Date(),
           },
-        );
+        });
         await database()
           .ref(`coachSessions/${currentSessionID}/members/${userID}`)
           .update({
@@ -156,16 +156,14 @@ class GroupsPage extends Component {
       streamDestroyed: (event) => {
         const {userID, currentSessionID} = this.props;
         const {streamId, connectionId} = event;
-        Mixpanel.trackWithProperties(
-          'publisherEventHandlers streamDestroyed ' + currentSessionID,
-          {
-            userID,
+        logMixpanel({
+          label: 'publisherEventHandlers streamDestroyed ' + currentSessionID,
+          params: {
             currentSessionID,
             streamId,
             connectionId,
-            date: new Date(),
           },
-        );
+        });
       },
     };
   }

@@ -15,6 +15,7 @@ import ButtonColor from '../Views/Button';
 import AllIcons from '../icons/AllIcons';
 import styleApp from '../../style/style';
 import AsyncImage from '../image/AsyncImage';
+import {logMixpanel} from '../../functions/logs';
 
 class HeaderBackButton extends Component {
   constructor(props) {
@@ -119,7 +120,10 @@ class HeaderBackButton extends Component {
                 />
               );
             }}
-            click={() => this.props.clickButton1()}
+            click={() => {
+              logMixpanel({label: 'Click Header: ' + icon1});
+              this.props.clickButton1();
+            }}
             color={backgroundColorIcon1 ? backgroundColorIcon1 : colors.white}
             style={[styles.buttonRight]}
             onPressColor={onPressColorIcon1 ? onPressColorIcon1 : colors.off}
@@ -173,7 +177,10 @@ class HeaderBackButton extends Component {
                 />
               );
             }}
-            click={() => this.props.clickButton11()}
+            click={() => {
+              logMixpanel({label: 'Click Header: ' + icon11});
+              this.props.clickButton11();
+            }}
             color={backgroundColorIcon11 ? backgroundColorIcon11 : colors.white}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
@@ -215,7 +222,10 @@ class HeaderBackButton extends Component {
                 />
               );
             }}
-            click={() => this.props.clickButton12()}
+            click={() => {
+              logMixpanel({label: 'Click Header: ' + icon12});
+              this.props.clickButton12();
+            }}
             color={backgroundColorIcon12 ? backgroundColorIcon12 : colors.white}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
@@ -283,7 +293,10 @@ class HeaderBackButton extends Component {
                   />
                 );
               }}
-              click={() => clickButtonOffset()}
+              click={() => {
+                logMixpanel({label: 'Click Header: ' + iconOffset});
+                clickButtonOffset();
+              }}
               style={styles.buttonRight}
               onPressColor={colors.off}
               color={
@@ -347,7 +360,10 @@ class HeaderBackButton extends Component {
                 />
               );
             }}
-            click={() => clickButtonOffset2()}
+            click={() => {
+              logMixpanel({label: 'Click Header: ' + iconOffset2});
+              clickButtonOffset2();
+            }}
             style={[styles.buttonRight]}
             onPressColor={colors.off}
           />
@@ -419,7 +435,10 @@ class HeaderBackButton extends Component {
                 />
               );
             }}
-            click={() => clickButton2()}
+            click={() => {
+              logMixpanel({label: 'Click Header: ' + icon2});
+              clickButton2();
+            }}
             color={backgroundColorIcon2 ? backgroundColorIcon2 : colors.white}
             style={styles.buttonRight}
             onPressColor={
@@ -441,6 +460,11 @@ class HeaderBackButton extends Component {
       );
     }
   }
+  clickImgHeader = () => {
+    const {clickImgHeader} = this.props;
+    logMixpanel({label: 'Click Img header', params: {}});
+    clickImgHeader();
+  };
   render() {
     const {
       imgHeader,
@@ -486,7 +510,7 @@ class HeaderBackButton extends Component {
             </View>
           ) : (
             <TouchableOpacity
-              onPress={() => clickImgHeader && clickImgHeader()}
+              onPress={() => clickImgHeader && this.clickImgHeader()}
               activeOpacity={0.7}
               style={
                 imgHeader ? styles.rowTextImgHeader : styles.rowTextHeader
