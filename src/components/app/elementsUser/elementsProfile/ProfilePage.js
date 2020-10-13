@@ -240,7 +240,7 @@ class ProfilePage extends Component {
           initialBorderColorHeader={colors.white}
           initialTitleOpacity={1}
           initialBorderWidth={1}
-          icon1={'chevron-left'}
+          icon1={'times'}
           sizeIcon1={21}
           clickButton1={() => this.props.navigation.goBack()}
         />

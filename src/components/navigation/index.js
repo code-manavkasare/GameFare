@@ -20,20 +20,19 @@ function InitialStack() {
   const AlertSpec = DepthModal({heightScale: 0});
   const CallTabSpec = DepthModal({top: sizes.marginTopApp + 25});
   const NotificationPageSpec = DepthModal({top: sizes.marginTopApp + 25});
+  const SignInSpec = DepthModal({top: sizes.marginTopApp + 25});
   return (
     <Stack.Navigator
       initialRouteName="MainApp"
       headerMode="none"
       mode={'modal'}>
-      <Stack.Screen name="MainApp" component={MainApp} />
       <Stack.Screen
-        name="SignIn"
-        component={SignIn}
-        options={{
-          gestureEnabled: false,
-        }}
+        name="MainApp"
+        component={MainApp}
+        options={{cardStyle: {backgroundColor: 'black'}}}
       />
 
+      <Stack.Screen name="SignIn" component={SignIn} options={AlertSpec} />
       <Stack.Screen
         name="ListCountry"
         component={ListCountry}
@@ -58,7 +57,6 @@ function InitialStack() {
         }}
       />
 
-      {/* <Stack.Screen name="ProfilePage" component={ProfilePage} /> */}
       <Stack.Screen
         name="UploadQueueList"
         component={QueueList}
