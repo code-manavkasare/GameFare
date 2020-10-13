@@ -45,8 +45,10 @@ class BranchManager extends Component {
   componentDidUpdate(prevProps) {
     const {branchParams, executedBranchInstruction} = this.state;
     const {userConnected} = this.props;
+    console.log('branchParams', branchParams);
     if (branchParams && !executedBranchInstruction) {
-      if (!userConnected) return navigate('SignIn');
+      const {type} = branchParams;
+      if (!userConnected && type) return navigate('SignIn');
       return this.executeBranchInstruction();
     }
   }

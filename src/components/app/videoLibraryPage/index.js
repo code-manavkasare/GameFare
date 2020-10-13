@@ -207,12 +207,13 @@ class VideoLibraryPage extends Component {
     return (
       <View style={styleApp.fullSize}>
         <FlatListComponent
-          list={videosArray}
+          list={[]}
           cardList={({item: videoID, index}) =>
             this.renderCardArchive(videoID, index)
           }
           ListEmptyComponent={{
-            clickButton: () => navigation.navigate('Session'),
+            clickButton: () =>
+              navigation.navigate('Session', {action: Date.now()}),
             // clickButton: async () => {
             //   console.log('bim');
             //   database()
