@@ -675,7 +675,10 @@ class VideoPlayerPage extends Component {
 
   render = () => {
     const {isRecording, isEditMode, recordedActions} = this.state;
-    const {videoInfos} = this.props;
+    const {videoInfos, currentSessionID} = this.props;
+
+    const connectedToSession =
+      currentSessionID !== false && currentSessionID !== undefined;
     return (
       <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
         {this.header()}
@@ -683,6 +686,7 @@ class VideoPlayerPage extends Component {
           onRef={(ref) => {
             this.AudioRecorderPlayerRef = ref;
           }}
+          connectedToSession={connectedToSession}
         />
 
         <RecordingMenu

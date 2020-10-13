@@ -1,6 +1,7 @@
 import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Player, Recorder} from '@react-native-community/audio-toolkit';
+import AudioSession from 'react-native-audio-session';
 
 class AudioRecorderPlayer extends Component {
   static propTypes = {
@@ -48,6 +49,7 @@ class AudioRecorderPlayer extends Component {
     console.log('preparePlayer', audioPlayer);
     // if (audioPlayer) await this.destroyPlayer();
     await new Promise((resolve) => {
+      this.audioSession();
       this.setState({
         audioPlayer: new Player(
           url ? (isCloud ? url : `file://${url}`) : 'audio.mp4',
@@ -63,11 +65,25 @@ class AudioRecorderPlayer extends Component {
     return true;
   };
 
+  audioSession() {
+    const {connectedToSession} = this.props;
+    if (connectedToSession) {
+      console.log('connected to session');
+      AudioSession.setCategoryAndMode(
+        'PlayAndRecord',
+        'VideoChat',
+        'AllowBluetooth',
+      );
+    }
+  }
+
   playRecord = () => {
     this.state.audioPlayer.stop();
+    this.audioSession();
     this.state.audioPlayer.play();
   };
   playPause = () => {
+    this.audioSession();
     this.state.audioPlayer.playPause();
   };
   pause = () => {
