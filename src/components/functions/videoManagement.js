@@ -82,6 +82,7 @@ const arrayUploadFromSnippets = async ({
       addUserLocalArchive({
         archiveID: sourceVideoInfo.id,
         startTimestamp: sourceVideoInfo.startTimestamp,
+        backgroundUpload: false,
       }),
     );
     shareVideosWithTeams([sourceVideoInfo.id], [coachSessionID]);
@@ -89,12 +90,18 @@ const arrayUploadFromSnippets = async ({
     deleteVideos([sourceVideoInfo.id]);
   }
   if (flagVideoInfos.length > 0) {
-    await Promise.all(flagVideoInfos.map((video) => addLocalVideo(video)));
-    shareVideosWithTeams(flagVideoInfos.map((v) => v.id), [coachSessionID]);
+    await Promise.all(
+      flagVideoInfos.map((video) =>
+        addLocalVideo({video, backgroundUpload: false}),
+      ),
+    );
+    await shareVideosWithTeams(flagVideoInfos.map((v) => v.id), [
+      coachSessionID,
+    ]);
   }
 };
 
-const addLocalVideo = async (video) => {
+const addLocalVideo = async ({video, backgroundUpload}) => {
   // 'video' param from getVideoInfo(someUrl) in pictures.js
   if (!video.id) {
     video.id = getVideoUUID(video.url);
@@ -121,6 +128,7 @@ const addLocalVideo = async (video) => {
       addUserLocalArchive({
         archiveID: video.id,
         startTimestamp: video.startTimestamp,
+        backgroundUpload,
       }),
     );
   }
@@ -224,7 +232,7 @@ const shareVideosWithTeams = async (videos, objectIDs) => {
     return assoc(id, allSessions[id], selectedSessions);
   }, {});
   const cloudEntriesCreated = await Promise.all(
-    videos.map((videoID) => uploadLocalVideo(videoID)),
+    videos.map((videoID) => uploadLocalVideo(videoID, false)),
   );
   const newContents = videos.reduce((newContents, videoID) => {
     const content = {
@@ -285,7 +293,7 @@ const generateThumbnailSet = async ({
         }),
       );
       if (index === x) {
-        return thumbnails[0];
+        return thumbnails;
       }
     }
   }
@@ -346,7 +354,7 @@ const oneTimeFixStoreLocalVideoLibrary = () => {
     Object.values(localVideos)
       .filter((v) => v && v.id && v.url && v.thumbnail)
       .forEach((video) => {
-        addLocalVideo(video);
+        addLocalVideo({video, backgroundUpload: true});
         store.dispatch(legacyRemoveUserLocalArchive(video.id));
       });
   }

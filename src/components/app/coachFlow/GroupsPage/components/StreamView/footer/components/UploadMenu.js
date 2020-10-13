@@ -111,7 +111,7 @@ class UploadMenu extends Component {
         <Progress.Bar
           color={colors.blue}
           width={null}
-          progress={totalProgress}
+          progress={totalProgress ? totalProgress : 0}
           borderWidth={0}
           height={6}
           unfilledColor={colors.white}

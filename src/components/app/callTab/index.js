@@ -85,7 +85,7 @@ class CallTab extends Component {
     const {userID, infoUser} = this.props;
     if (isUserPrivate(user)) {
       Keyboard.dismiss();
-      return navigate('RootAlert', {
+      return navigate('Alert', {
         textButton: 'Allow',
         title: `${
           user.info.firstname
@@ -323,7 +323,7 @@ class CallTab extends Component {
           }
           action={action}
           archivesToShare={archivesToShare}
-          bottomOffset={modal ? 0 : sizes.heightFooter}
+          bottomOffset={modal ? 55 : sizes.heightFooter}
         />
       </View>
     );

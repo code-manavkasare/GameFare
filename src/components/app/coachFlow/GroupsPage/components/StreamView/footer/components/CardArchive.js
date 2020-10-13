@@ -103,7 +103,7 @@ class CardArchive extends PureComponent {
       return (
         <Progress.Circle
           color={colors.white}
-          progress={progress}
+          progress={progress ? progress : 0}
           borderWidth={0}
           fill={colors.white}
           size={18}

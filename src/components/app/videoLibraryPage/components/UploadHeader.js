@@ -124,7 +124,7 @@ class UploadHeader extends Component {
         <Progress.Bar
           color={colors.blue}
           width={type === 'header' ? (maxWidth > 200 ? 200 : maxWidth) : width}
-          progress={totalProgress}
+          progress={totalProgress ? totalProgress : 0}
           borderWidth={0}
           height={type === 'header' ? 4 : 6}
           unfilledColor={colors.white}

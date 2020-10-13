@@ -66,7 +66,7 @@ class TaskCard extends Component {
         <Progress.Bar
           color={colors.primaryLight}
           width={currentWidth * 0.65}
-          progress={progress}
+          progress={progress ? progress : 0}
           borderWidth={0}
           unfilledColor={colors.grey}
           formatText={() =>

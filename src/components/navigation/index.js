@@ -11,10 +11,15 @@ import Coaches from './MainApp/components/Coaches';
 import CallTabPage from '../app/callTab';
 import QueueList from '../app/elementsUpload/QueueList';
 import UserDirectoryPage from '../app/userDirectory';
+import NotificationPage from '../app/elementsUser/elementsProfile/NotificationPage';
 import Alert from '../layout/alerts/Alert';
 import {DepthModal} from './transitions/DepthModal';
+import sizes from '../style/sizes';
 const Stack = createStackNavigator();
 function InitialStack() {
+  const AlertSpec = DepthModal({heightScale: 0});
+  const CallTabSpec = DepthModal({top: sizes.marginTopApp + 25});
+  const NotificationPageSpec = DepthModal({top: sizes.marginTopApp + 25});
   return (
     <Stack.Navigator
       initialRouteName="MainApp"
@@ -57,12 +62,20 @@ function InitialStack() {
       <Stack.Screen
         name="UploadQueueList"
         component={QueueList}
-        options={{...DepthModal}}
+        options={{...AlertSpec}}
       />
 
-      <Stack.Screen name="ModalCallTab" component={CallTabPage} />
+      <Stack.Screen
+        name="ModalCallTab"
+        component={CallTabPage}
+        options={{...CallTabSpec}}
+      />
 
-      <Stack.Screen name="UserDirectory" component={UserDirectoryPage} />
+      <Stack.Screen
+        name="UserDirectory"
+        component={UserDirectoryPage}
+        options={{...CallTabSpec}}
+      />
 
       <Stack.Screen
         name="Coaches"
@@ -73,13 +86,17 @@ function InitialStack() {
       />
 
       <Stack.Screen
-        name="RootAlert"
+        name="Alert"
         component={Alert}
         options={{
-          cardStyle: {backgroundColor: 'transparent'},
-          gestureEnabled: false,
-          animationEnabled: false,
+          ...AlertSpec,
         }}
+      />
+
+      <Stack.Screen
+        name="NotificationPage"
+        component={NotificationPage}
+        options={NotificationPageSpec}
       />
     </Stack.Navigator>
   );

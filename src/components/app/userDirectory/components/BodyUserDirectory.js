@@ -17,15 +17,15 @@ import InvitationManager from '../../../utility/InvitationManager';
 
 import UserSearchResults from './UserSearchResults';
 
- class BodyUserDirectory extends Component {
+class BodyUserDirectory extends Component {
   static propTypes = {
     action: PropTypes.string,
     archivesToShare: PropTypes.array,
     sessionToInvite: PropTypes.string,
-  }
+  };
   static defaultProps = {
     action: 'call',
-  }
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -44,7 +44,7 @@ import UserSearchResults from './UserSearchResults';
     const {userID, infoUser} = this.props;
     if (isUserPrivate(user)) {
       Keyboard.dismiss();
-      return navigate('RootAlert', {
+      return navigate('Alert', {
         textButton: 'Allow',
         title: `${
           user?.info?.firstname
@@ -57,7 +57,9 @@ import UserSearchResults from './UserSearchResults';
           {
             forceNavigation: true,
             operation: async () => {
-              const session = await openSession(userObject(infoUser, userID), {[user.id]: user});
+              const session = await openSession(userObject(infoUser, userID), {
+                [user.id]: user,
+              });
               navigate('Conversation', {
                 coachSessionID: session.objectID,
               });
@@ -77,28 +79,33 @@ import UserSearchResults from './UserSearchResults';
 
   render() {
     const {selectedUsers, searchText} = this.state;
-    const {action, archivesToShare, sessionToInvite, AnimatedHeaderValue} = this.props;
+    const {
+      action,
+      archivesToShare,
+      sessionToInvite,
+      AnimatedHeaderValue,
+    } = this.props;
     return (
-        <Col style={styles.body}>
-          <Row size={90} style={styles.smallTopPad}>
-            <UserSearchResults
-              onSelect={(user) => this.selectUser(user)}
-              selectedUsers={selectedUsers}
-              searchText={searchText}
-              AnimatedHeaderValue={AnimatedHeaderValue}
-            />
-          </Row>
-          <InvitationManager
+      <Col style={styles.body}>
+        <Row size={90} style={styles.smallTopPad}>
+          <UserSearchResults
+            onSelect={(user) => this.selectUser(user)}
             selectedUsers={selectedUsers}
-            onClearInvites={() => this.setState({selectedUsers: {}})}
-            onConfirmInvites={() => this.setState({selectedUsers: {}})}
-            action={action}
-            archivesToShare={archivesToShare}
-            sessionToInvite={sessionToInvite}
-            session
-            bottomOffset={0}
+            searchText={searchText}
+            AnimatedHeaderValue={AnimatedHeaderValue}
           />
-        </Col>
+        </Row>
+        <InvitationManager
+          selectedUsers={selectedUsers}
+          onClearInvites={() => this.setState({selectedUsers: {}})}
+          onConfirmInvites={() => this.setState({selectedUsers: {}})}
+          action={action}
+          archivesToShare={archivesToShare}
+          sessionToInvite={sessionToInvite}
+          session
+          bottomOffset={55}
+        />
+      </Col>
     );
   }
 }

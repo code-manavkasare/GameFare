@@ -18,6 +18,7 @@ const localVideoLibraryReducer = (state = initialState, action) => {
       const newUserLocalArchive = {
         id: action.archiveID,
         startTimestamp: action.startTimestamp,
+        backgroundUpload: action.backgroundUpload,
       };
       return {
         ...state,

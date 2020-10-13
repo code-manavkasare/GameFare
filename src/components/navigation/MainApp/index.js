@@ -9,12 +9,10 @@ import Conversation from '../../app/elementsMessage/Conversation';
 import Profile from './components/Profile';
 
 import Webview from '../../layout/Views/Webview';
-import NotificationPage from '../../app/elementsUser/elementsProfile/NotificationPage';
 import TeamPage from '../../app/TeamPage/index';
 import VideoPlayerPage from '../../app/videoPlayerPage/index';
 import SelectVideosFromLibrary from '../../app/videoLibraryPage/index';
 
-import Alert from '../../layout/alerts/Alert';
 import Groups from '../../app/coachFlow/GroupsPage/index';
 
 import SessionSettings from '../../app/TeamPage/components/SessionSettings';
@@ -40,7 +38,6 @@ const MainApp = () => {
 
       <Stack.Screen name="Webview" component={Webview} />
 
-      <Stack.Screen name="NotificationPage" component={NotificationPage} />
       <Stack.Screen name="TeamPage" component={TeamPage} />
 
       <Stack.Screen name="MorePage" component={Profile} />
@@ -54,16 +51,6 @@ const MainApp = () => {
       />
 
       <Stack.Screen name="SessionSettings" component={SessionSettings} />
-
-      <Stack.Screen
-        name="Alert"
-        component={Alert}
-        options={{
-          cardStyle: {backgroundColor: 'transparent'},
-          gestureEnabled: false,
-          animationEnabled: false,
-        }}
-      />
     </Stack.Navigator>
   );
 };

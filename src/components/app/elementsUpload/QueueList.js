@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
@@ -226,17 +227,48 @@ class QueueList extends Component {
     );
   }
 
+  backdrop() {
+    const backdropStyle = {
+      ...styleApp.stylePage,
+      backgroundColor: 'transparent',
+      opacity: 0,
+      zIndex: 0,
+    };
+    return (
+      <View style={backdropStyle}>
+        <TouchableOpacity
+          onPress={() => this.close()}
+          activeOpacity={1}
+          style={styleApp.fullSize}
+        />
+      </View>
+    );
+  }
+
   render() {
     const {orderedTasks} = this.state;
     return (
-      <View style={{...styleApp.fullSize, backgroundColor: colors.greyLighter}}>
-        {this.totalProgress()}
-        {this.closeButton()}
-        <TouchableWithoutFeedback style={{height: 80}}>
-          <Text style={styles.text}>Uploading</Text>
-        </TouchableWithoutFeedback>
-        {!orderedTasks || (orderedTasks.length === 0 && this.emptyList())}
-        {orderedTasks && orderedTasks.length > 0 && this.list()}
+      <View style={styleApp.fullSize}>
+        <View
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: 500,
+            bottom: 0,
+            borderTopLeftRadius: 25,
+            borderTopRightRadius: 25,
+            backgroundColor: colors.greyLighter,
+            zIndex: 2,
+          }}>
+          {this.totalProgress()}
+          {this.closeButton()}
+          <TouchableWithoutFeedback style={{height: 80}}>
+            <Text style={styles.text}>Uploading</Text>
+          </TouchableWithoutFeedback>
+          {!orderedTasks || (orderedTasks.length === 0 && this.emptyList())}
+          {orderedTasks && orderedTasks.length > 0 && this.list()}
+        </View>
+        {this.backdrop()}
       </View>
     );
   }

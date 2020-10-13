@@ -268,7 +268,7 @@ class InvitationManager extends Component {
       outputRange: [
         75,
         -(sizes.marginBottomApp + bottomOffset),
-        -(sizes.keyboardOffset + 25),
+        -(sizes.keyboardOffset + bottomOffset + 25),
       ],
     });
     const buttonContainerStyle = {
