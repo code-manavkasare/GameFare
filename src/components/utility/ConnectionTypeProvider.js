@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import NetInfo from '@react-native-community/netinfo';
+
+import {sentryAddBreadcrumb} from '../functions/logs.js';
 import {connectionTypeAction} from '../../actions';
 import {logMixpanel} from '../functions/logs';
 
@@ -11,8 +13,10 @@ class ConnectionTypeProvider extends Component {
     this.unsubscribe = null;
   }
   componentDidMount() {
+    //TODO all all netinfo instead of only connection type
     const {connectionTypeAction} = this.props;
     this.unsubscribe = NetInfo.addEventListener((state) => {
+      sentryAddBreadcrumb('networkInfo', `connectionType : ${state.type}`);
       connectionTypeAction('setConnectionType', state.type);
       logMixpanel({
         label: 'Change network: ' + state.type,

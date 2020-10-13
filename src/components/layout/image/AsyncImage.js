@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {object, string} from 'prop-types';
-import * as Sentry from '@sentry/react-native';
 import {View, Animated} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import {native} from '../../animations/animations';
+import {sentryCaptureException} from '../../functions/logs.js';
 
 export default class AsyncImage extends Component {
   static propTypes = {
@@ -55,7 +55,7 @@ export default class AsyncImage extends Component {
           }}
           onError={(response) => {
             if (onError) onError();
-            Sentry.captureException({
+            sentryCaptureException({
               event: 'FastImageError',
               props: this.props,
               state: this.state,

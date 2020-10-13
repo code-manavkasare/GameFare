@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import * as Sentry from '@sentry/react-native';
 import {
   View,
   Text,
@@ -36,7 +35,10 @@ import {coachSessionsAction} from '../../../../../../actions/coachSessionsAction
 import {userAction} from '../../../../../../actions/userActions';
 import {layoutAction} from '../../../../../../actions/layoutActions';
 
-import {logMixpanel} from '../../../../../functions/logs';
+import {
+  logMixpanel,
+  sentryCaptureException,
+} from '../../../../../functions/logs';
 import {
   isUserAlone,
   isSomeoneSharingScreen,
@@ -109,7 +111,7 @@ class GroupsPage extends Component {
             date: new Date(),
           },
         });
-        Sentry.captureException(event);
+        sentryCaptureException(event);
       },
       otrnError: (event) => {
         // cannot use variables from closure as component may be unmounted when this is called
@@ -121,8 +123,7 @@ class GroupsPage extends Component {
           label: 'ERROR: sessionEventHandlers otrnError ',
           params: event,
         });
-
-        Sentry.captureException(event);
+        sentryCaptureException(event);
       },
     };
 

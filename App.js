@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import * as Sentry from '@sentry/react-native';
+import {Integrations as TracingIntegrations} from '@sentry/tracing';
 import React, {Component} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {connect} from 'react-redux';
@@ -10,10 +11,11 @@ import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import BackgroundTimer from 'react-native-background-timer';
 import convertToCache from 'react-native-video-cache';
+
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
-
+import AppState from './src/components/app/functional/AppState.js';
 import {updateNotificationBadgeInBackground} from './src/components/functions/notifications.js';
 import {regenerateThumbnail} from './src/components/functions/videoManagement.js';
 import {userAction} from './src/actions/userActions';
@@ -79,9 +81,6 @@ class App extends Component {
   }
 
   componentDidUpdate = async (prevProps) => {
-    if (!__DEV__) {
-      this.configureSentry();
-    }
     const {networkIsConnected, userID, isBindToFirebase} = this.props;
     if (prevProps.networkIsConnected !== networkIsConnected) {
       if (networkIsConnected && userID !== '' && !isBindToFirebase) {
@@ -98,6 +97,8 @@ class App extends Component {
       attachStacktrace: true,
       environment: Config.ENV,
       release: `${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`,
+      // integrations: [new TracingIntegrations.BrowserTracing()],
+      // tracesSampleRate: 0.2,
     });
     Sentry.configureScope((scope) => {
       if (this.props.userConnected) {
@@ -152,6 +153,7 @@ class App extends Component {
   render() {
     return (
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
+        <AppState />
         {InitialStack()}
         <OrientationListener />
         <Notification />
