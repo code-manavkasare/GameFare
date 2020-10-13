@@ -32,7 +32,9 @@ class QueueList extends Component {
     this.state = {
       orderedTasks: [],
       cloudQueue: [],
+      mounted: false,
     };
+    this.focusListener = null;
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -63,7 +65,17 @@ class QueueList extends Component {
   }
 
   componentDidMount() {
+    const {navigation} = this.props;
     //this.fetchCloudUploadQueue();
+    this.focusListener = navigation.addListener('focus', () => {
+      console.log('mount');
+      this.setState({mounted: true});
+    });
+
+    this.focusListener = navigation.addListener('blur', () => {
+      console.log('unmount');
+      this.setState({mounted: false});
+    });
   }
 
   componentWillUnmount() {
@@ -79,18 +91,14 @@ class QueueList extends Component {
     const {orderedTasks: prevOrderedTasks} = prevState;
     if (orderedTasks?.length > prevOrderedTasks?.length && onOpen) {
       onOpen();
-    } else if (
-      orderedTasks?.length === 0 &&
-      prevOrderedTasks?.length > 0 &&
-      onClose
-    ) {
-      onClose();
+    } else if (orderedTasks?.length === 0 && prevOrderedTasks?.length > 0) {
+      onClose && onClose();
       setTimeout(() => {
-        navigate('TabsApp');
+        const {mounted} = this.state;
+        if (mounted) {
+          navigate('TabsApp');
+        }
       }, 1200);
-
-      // this.listY = new Animated.Value(0);
-      // this.setState({listY: 0});
     }
   }
 

@@ -76,7 +76,7 @@ class UploadManager extends Component {
         const {videoInfo, progress: prevProgress} = uploadTask;
         const now = Date.now();
         const id = videoInfo?.id;
-        if (id && (now - lastProgressUpdateTime > 400 || prevProgress === 0)) {
+        if (id && (now - lastProgressUpdateTime > 1000 || prevProgress === 0)) {
           let newUploadTask = {...uploadTask, progress};
           this.setState({
             lastProgressUpdateTime: now,
@@ -223,7 +223,7 @@ class UploadManager extends Component {
           );
       }
 
-      database()
+      await database()
         .ref()
         .update({
           [`${storageDestination}/${typeDestination}`]: cloudFileUrl,
