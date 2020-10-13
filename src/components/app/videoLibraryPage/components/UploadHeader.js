@@ -41,32 +41,7 @@ class UploadHeader extends Component {
       headerVisible: false,
     };
   }
-
-  display(val) {
-    const {expanded, headerVisible} = this.state;
-    if (val === 1) {
-      if (!headerVisible) {
-        this.setState({headerVisible: true});
-      }
-      if (!expanded) {
-        this.open();
-      }
-    }
-    if (val === 0) {
-      if (headerVisible) {
-        this.setState({headerVisible: false});
-      }
-      if (expanded) {
-        this.close();
-      }
-    }
-  }
-
   open() {
-    // this.setState({expanded: true});
-    // Animated.parallel([
-    //   Animated.timing(this.uploadReveal, native(0, 300)),
-    // ]).start();
     const {openQueue} = this.props;
     openQueue && openQueue();
   }
@@ -81,13 +56,13 @@ class UploadHeader extends Component {
 
   closeButton() {
     const {expanded} = this.state;
+    const style = {
+      ...styles.buttonClose,
+      opacity: 1,
+    };
     return (
       expanded && (
-        <Animated.View
-          style={{
-            ...styles.buttonClose,
-            opacity: 1,
-          }}>
+        <Animated.View style={style}>
           <ButtonColor
             view={() => {
               return (
@@ -135,7 +110,6 @@ class UploadHeader extends Component {
 
   progressPopup() {
     const {currentScreenSize} = this.props;
-    const {headerVisible} = this.state;
     const {currentWidth: width, currentHeight: height} = currentScreenSize;
 
     const uploadTranslateY = this.uploadReveal.interpolate({
@@ -157,7 +131,7 @@ class UploadHeader extends Component {
           <Text style={styles.text}>Uploading</Text>
         </TouchableWithoutFeedback>
         <View style={{height: 350, width: '100%'}}>
-          <QueueList
+          {/* <QueueList
             onFetch={(cloudQueue) => {
               this.setState({cloudQueue});
             }}
@@ -166,40 +140,9 @@ class UploadHeader extends Component {
                 this.display(0);
               }, 1000);
             }}
-          />
+          /> */}
         </View>
       </Animated.View>
-    );
-  }
-
-  backdrop() {
-    const {currentScreenSize} = this.props;
-    const {currentWidth: width, currentHeight: height} = currentScreenSize;
-
-    const opacity = this.uploadReveal.interpolate({
-      inputRange: [-1, 0],
-      outputRange: [0, 0.6],
-    });
-
-    const {expanded} = this.state;
-    return (
-      expanded && (
-        <TouchableWithoutFeedback onPress={() => this.close()}>
-          <Animated.View
-            pointerEvents={expanded ? 'auto' : 'none'}
-            style={{
-              ...styles.fullPage,
-              position: 'absolute',
-              zIndex: 2,
-              height,
-              width,
-              backgroundColor: colors.black,
-              opacity,
-              top: -200,
-            }}
-          />
-        </TouchableWithoutFeedback>
-      )
     );
   }
 
@@ -227,7 +170,6 @@ class UploadHeader extends Component {
           </TouchableWithoutFeedback>
         )}
         {portrait && this.progressPopup()}
-        {this.backdrop()}
       </View>
     );
   }
