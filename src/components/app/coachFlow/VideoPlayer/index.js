@@ -464,7 +464,7 @@ export default class VideoPlayer extends Component {
                       AudioSession.setCategoryAndMode(
                         'PlayAndRecord',
                         'VideoChat',
-                        'DefaultToSpeaker',
+                        'AllowBluetooth',
                       );
                     }
                   }}
