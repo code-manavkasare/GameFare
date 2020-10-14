@@ -3,7 +3,11 @@ import database from '@react-native-firebase/database';
 import {store} from '../../../../reduxStore';
 import {deleteArchive, setArchive} from '../../../actions/archivesActions';
 
-const shareCloudVideo = async (shareWithID, videoID, forceInvitedByUser = null) => {
+const shareCloudVideo = async (
+  shareWithID,
+  videoID,
+  forceInvitedByUser = null,
+) => {
   const userID = forceInvitedByUser ?? store.getState().user.userID;
   const date = Date.now();
   await database()
@@ -33,7 +37,6 @@ const deleteCloudVideo = async (videoID) => {
     });
 };
 
-
 const deleteCloudVideos = async (videoIDs) => {
   const {userID} = store.getState().user;
   let updates = {};
@@ -53,8 +56,6 @@ const createCloudVideo = async (videoInfo) => {
       ...videoInfo,
       local: false,
       fromNativeLibrary: false,
-      url: '',
-      thumbnail: '',
       uploadedByUser: true,
     };
     await database()
@@ -89,19 +90,24 @@ const setCloudVideoThumbnail = async (cloudVideoID, thumbnail) => {
     });
 };
 
-const updateCloudUploadProgress = async (
-  cloudVideoID,
-  progress,
-) => {
+const updateCloudUploadProgress = async (cloudVideoID, progress) => {
   const isBinded = store.getState().bindedArchives[cloudVideoID];
   const archive = store.getState().archives[cloudVideoID];
   if (isBinded) {
     if (archive && archive.progress) {
-      if (progress === null || progress === 1 || progress > archive.progress + 0.2) {
-        database().ref(`archivedStreams/${cloudVideoID}/progress`).set(progress);
+      if (
+        progress === null ||
+        progress === 1 ||
+        progress > archive.progress + 0.2
+      ) {
+        database()
+          .ref(`archivedStreams/${cloudVideoID}/progress`)
+          .set(progress);
       }
     } else if (archive) {
-      database().ref(`archivedStreams/${cloudVideoID}/progress`).set(progress);
+      database()
+        .ref(`archivedStreams/${cloudVideoID}/progress`)
+        .set(progress);
     }
   }
 };
