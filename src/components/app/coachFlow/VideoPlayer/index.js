@@ -428,6 +428,7 @@ export default class VideoPlayer extends Component {
             />
           )}
 
+
           <PinchableBox
             styleContainer={[styleApp.fullSize, styleApp.center]}
             onRef={(ref) => (this.PinchableBoxRef = ref)}

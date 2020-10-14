@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Svg, {Polyline, Line, Circle, Rect} from 'react-native-svg';
 import {dimensionRectangle} from '../../../../functions/videoManagement';
+import PinchableBox from '../../../../layout/Views/PinchableBox';
 
 export default class DisplayDraingToViewers extends Component {
   constructor(props) {
@@ -106,21 +107,38 @@ export default class DisplayDraingToViewers extends Component {
   draw(draw, i) {
     const {widthDrawView, heightDrawView} = this.props;
     const {type} = draw;
-
     return (
-      <Svg
-        key={draw.idSketch}
-        height={heightDrawView}
-        width={widthDrawView}
-        style={[{position: 'absolute', zIndex: -2}]}>
-        {type === 'straight'
-          ? this.line(draw)
-          : type === 'circle'
-          ? this.circle(draw)
-          : type === 'rectangle'
-          ? this.rectangle(draw)
-          : this.polyline(draw)}
-      </Svg>
+      <PinchableBox
+        styleContainer={{
+          height: heightDrawView,
+          width: widthDrawView,
+          position: 'absolute',
+          // backgroundColor: 'red',
+          zIndex: 2,
+        }}
+        onRef={(ref) => (this.PinchableBoxRef = ref)}
+        pinchEnable={true}
+        scale={1}
+        position={{y: 0, x: 0}}
+        scaleChange={(val) => console.log('scale change', val)}
+        onPinch={(scale) => console.log('onPinch change', scale)}
+        onDrag={(pos) => console.log('onDrag change', pos)}
+        singleTouch={() => console.log('singleTouch')}
+        component={() => (
+          <Svg
+            key={draw.idSketch}
+            height={heightDrawView}
+            width={widthDrawView}>
+            {type === 'straight'
+              ? this.line(draw)
+              : type === 'circle'
+              ? this.circle(draw)
+              : type === 'rectangle'
+              ? this.rectangle(draw)
+              : this.polyline(draw)}
+          </Svg>
+        )}
+      />
     );
   }
   viewDrawings(drawings) {

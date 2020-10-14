@@ -34,6 +34,7 @@ class DrawView extends Component {
       drawings: {},
       colorDrawing: colors.red,
       drawSetting: 'custom',
+      displayDrawingZone: true,
     };
     this.onStrokeEnd = this.onStrokeEnd.bind(this);
     this.undo = this.undo.bind(this);
@@ -165,22 +166,62 @@ class DrawView extends Component {
     } else {
       const {drawings} = this.state;
       const newDrawings = {...drawings, [path.idSketch]: path};
-      await this.setState({drawings: newDrawings});
+      await this.setState({drawings: newDrawings, displayDrawingZone: false});
       onDrawingChange(index, newDrawings);
     }
     if (drawSetting === 'custom') {
       this.canvasRef.deletePath(path.idSketch);
     }
   }
+  drawingZone = ({w, h}) => {
+    const {drawingOpen} = this.props;
+    const {scaleDrawing, drawSetting, colorDrawing, strokeWidth} = this.state;
+    if (drawSetting === 'custom')
+      return (
+        <ImageEditor
+          style={styles.drawingZone}
+          ref={(ref) => (this.canvasRef = ref)}
+          touchEnabled={drawingOpen}
+          strokeColor={colorDrawing}
+          strokeWidth={strokeWidth}
+          scale={scaleDrawing}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+      );
+    if (drawSetting === 'rectangle')
+      return (
+        <DrawRectangles
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+      );
+    if (drawSetting === 'circle')
+      return (
+        <DrawCircles
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+      );
+    if (drawSetting === 'straight')
+      return (
+        <DrawSraightLine
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+      );
+  };
   drawView() {
     const {drawingOpen, sizeVideo, playerStyle} = this.props;
-    const {
-      scaleDrawing,
-      drawings,
-      colorDrawing,
-      drawSetting,
-      strokeWidth,
-    } = this.state;
+    const {drawings, displayDrawingZone} = this.state;
 
     let h = 0;
     let w = 0;
@@ -209,41 +250,10 @@ class DrawView extends Component {
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}
         style={[styles.page, styleDrawView]}>
-        {drawSetting === 'custom' ? (
-          <ImageEditor
-            style={styles.drawingZone}
-            ref={(ref) => (this.canvasRef = ref)}
-            touchEnabled={drawingOpen}
-            strokeColor={colorDrawing}
-            strokeWidth={strokeWidth}
-            scale={scaleDrawing}
-            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-          />
-        ) : drawSetting === 'rectangle' ? (
-          <DrawRectangles
-            style={styles.drawingZone}
-            strokeWidth={strokeWidth}
-            strokeColor={colorDrawing}
-            onRef={(ref) => (this.drawStraighLinesRef = ref)}
-            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-          />
-        ) : drawSetting === 'circle' ? (
-          <DrawCircles
-            style={styles.drawingZone}
-            strokeWidth={strokeWidth}
-            strokeColor={colorDrawing}
-            onRef={(ref) => (this.drawStraighLinesRef = ref)}
-            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-          />
-        ) : (
-          <DrawSraightLine
-            style={styles.drawingZone}
-            strokeWidth={strokeWidth}
-            strokeColor={colorDrawing}
-            onRef={(ref) => (this.drawStraighLinesRef = ref)}
-            onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-          />
+        {displayDrawingZone && (
+          <View style={styles.drawingZone}>{this.drawingZone({w, h})}</View>
         )}
+
         <View style={styles.drawingZoneDisplay}>
           <DisplayDrawingToViewers
             heightDrawView={h}
