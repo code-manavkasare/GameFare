@@ -41,7 +41,6 @@ class UploadManager extends Component {
     const {isConnected, connectionType} = this.props;
     const {uploadInProgress} = this.state;
     const lostConnection = prevIsConnected && !isConnected;
-    const gainedConnection = !prevIsConnected && isConnected;
     const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
     const gainedWifi =
       connectionType === 'wifi' && prevConnectionType !== 'wifi';
@@ -146,7 +145,7 @@ class UploadManager extends Component {
     const nextUserUpload = this.getNextUploadTask(false);
     const nextBackgroundUpload = this.getNextUploadTask(true);
     if (nextUserUpload) {
-      if (!uploadInProgress) {
+      if (!uploadInProgress || !uploadInProgress?.firebaseUploadTask) {
         if (!nextUserUpload.started) {
           await this.setState({
             uploadInProgress: {
@@ -222,7 +221,6 @@ class UploadManager extends Component {
             `${type} is not a valid type, check UploadManager.js>startFileTask()`,
           );
       }
-
       await database()
         .ref()
         .update({

@@ -145,6 +145,10 @@ const deleteVideos = (ids) => {
   deleteCloudVideos(ids);
   infos.forEach((info) => {
     if (info && info.local && info.url) {
+      const uploadTasks = uploadAlreadyInQueue(info.id);
+      uploadTasks?.map((item) => {
+        store.dispatch(dequeueUploadTask(item.id));
+      });
       deleteLocalVideoFile(info.url);
     }
   });
@@ -170,9 +174,10 @@ const uploadAlreadyInQueue = (videoID) => {
   const uploadQueue = store.getState().uploadQueue.queue;
 
   if (!uploadQueue) return false;
-  return Object.values(uploadQueue).filter(
+  const matchingTasks = Object.values(uploadQueue).filter(
     (item) => item.cloudID === videoID,
-  )[0];
+  );
+  return matchingTasks.length > 0 ? matchingTasks : null;
 };
 
 const launchUpload = async ({
@@ -189,6 +194,7 @@ const launchUpload = async ({
         id: imageUploadTaskID,
         timeSubmitted: Date.now(),
         url: videoInfo.thumbnail,
+        cloudID: videoID,
         storageDestination: `archivedStreams/${videoID}`,
         isBackground: background,
         displayInList: false,
@@ -226,11 +232,14 @@ const uploadLocalVideo = async (videoID, background) => {
       const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);
       if (isUploadAlreadyInQueue) {
         if (isUploadAlreadyInQueue.uploading) return true;
-
-        return modifyUploadTask({
-          id: isUploadAlreadyInQueue.id,
-          isBackground: true,
-        });
+        return isUploadAlreadyInQueue.map((item) =>
+          store.dispatch(
+            modifyUploadTask({
+              id: item.id,
+              isBackground: false,
+            }),
+          ),
+        );
       }
       const videoUploadTaskID = generateID();
       const imageUploadTaskID = generateID();
