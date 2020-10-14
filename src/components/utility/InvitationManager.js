@@ -5,7 +5,7 @@ import {Row, Col} from 'react-native-easy-grid';
 import PropTypes from 'prop-types';
 import isEqual from 'lodash.isequal';
 
-import {navigate} from '../../../NavigationService';
+import {navigate, goBack} from '../../../NavigationService';
 
 import sizes from '../style/sizes';
 import styleApp from '../style/style';
@@ -225,6 +225,8 @@ class InvitationManager extends Component {
         shareVideosWithTeams(archivesToShare, sessionIDs);
         if (sessionIDs.length === 1) {
           navigate('Conversation', {coachSessionID: sessionIDs[0]});
+        } else {
+          goBack();
         }
       } else {
         console.log(
