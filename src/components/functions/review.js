@@ -125,7 +125,7 @@ const generatePreviewCloud = async (
       url: audioFilePath,
       cloudID: newArchiveId,
       storageDestination: `archivedStreams/${newArchiveId}`,
-      isBackground: true,
+      isBackground: false,
       displayInList: false,
       afterUpload: (audioRecordUrl) => {
         let updates = {
