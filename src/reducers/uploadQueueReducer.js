@@ -184,7 +184,7 @@ const uploadQueueReducer = (state = initialState, action) => {
         queue: {
           ...state.queue,
           [action.data.id]: {
-            ...state.queue[action.id],
+            ...state.queue[action.data.id],
             ...action.data,
           },
         },
