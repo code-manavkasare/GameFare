@@ -10,13 +10,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import LinearGradient from 'react-native-linear-gradient';
-import database from '@react-native-firebase/database';
-import isEqual from 'lodash.isequal';
 
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
-import sizes from '../../style/sizes';
 
 import {uploadQueueAction} from '../../../actions/uploadQueueActions';
 import TaskCard from './TaskCard';

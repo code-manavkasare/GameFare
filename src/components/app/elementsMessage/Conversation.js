@@ -9,6 +9,8 @@ import {
 } from '../../functions/notifications.js';
 
 import MyTabs from '../../navigation/MainApp/components/TeamPage';
+import {coachSessionsAction} from '../../../actions/coachSessionsActions';
+import {conversationsAction} from '../../../actions/conversationsActions';
 
 import HeaderConversation from './HeaderConversation';
 import styleApp from '../../style/style';
@@ -27,7 +29,15 @@ class MessageTab extends React.Component {
     const {notifications, userID} = this.props;
     await deleteNotifications(userID, coachSessionID, notifications);
     updateNotificationBadge(this.props.notifications.length);
+    this.bindSession();
   };
+  bindSession() {
+    const {coachSessionID} = this.props.route.params;
+    const {coachSessionsAction, conversationsAction} = this.props;
+
+    coachSessionsAction('bindSession', coachSessionID);
+    conversationsAction('bindConversation', coachSessionID);
+  }
   render() {
     const {infoUser, userID, navigation, session, route, messages} = this.props;
     const {initialMessage, coachSessionID: objectID} = route.params;
@@ -66,5 +76,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {},
+  {coachSessionsAction, conversationsAction},
 )(MessageTab);
