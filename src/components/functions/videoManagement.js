@@ -17,7 +17,11 @@ import {navigate, goBack} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
 import {sendNewMessage} from './message';
-import {enqueueUploadTask} from '../../actions/uploadQueueActions';
+import {
+  enqueueUploadTask,
+  dequeueUploadTask,
+  modifyUploadTask,
+} from '../../actions/uploadQueueActions';
 import {
   addUserLocalArchive,
   removeUserLocalArchive,
@@ -141,6 +145,10 @@ const deleteVideos = (ids) => {
   deleteCloudVideos(ids);
   infos.forEach((info) => {
     if (info && info.local && info.url) {
+      const uploadTasks = uploadAlreadyInQueue(info.id);
+      uploadTasks?.map((item) => {
+        store.dispatch(dequeueUploadTask(item.id));
+      });
       deleteLocalVideoFile(info.url);
     }
   });
@@ -162,48 +170,88 @@ const openVideoPlayer = async ({
   return goBack();
 };
 
+const uploadAlreadyInQueue = (videoID) => {
+  const uploadQueue = store.getState().uploadQueue.queue;
+
+  if (!uploadQueue) return false;
+  const matchingTasks = Object.values(uploadQueue).filter(
+    (item) => item.cloudID === videoID,
+  );
+  return matchingTasks.length > 0 ? matchingTasks : null;
+};
+
+const launchUpload = async ({
+  videoID,
+  background,
+  videoInfo,
+  imageUploadTaskID,
+  videoUploadTaskID,
+}) => {
+  if (videoInfo.thumbnail.substring(0, 4) !== 'http') {
+    store.dispatch(
+      enqueueUploadTask({
+        type: 'image',
+        id: imageUploadTaskID,
+        timeSubmitted: Date.now(),
+        url: videoInfo.thumbnail,
+        cloudID: videoID,
+        storageDestination: `archivedStreams/${videoID}`,
+        isBackground: background,
+        displayInList: false,
+      }),
+    );
+  } else {
+    setCloudVideoThumbnail(videoID, videoInfo.thumbnail);
+  }
+  store.dispatch(
+    enqueueUploadTask({
+      type: 'video',
+      id: videoUploadTaskID,
+      timeSubmitted: Date.now(),
+      videoInfo,
+      cloudID: videoID,
+      storageDestination: `archivedStreams/${videoID}`,
+      isBackground: background,
+      displayInList: true,
+      progress: 0,
+      afterUpload: async () => {
+        await claimCloudVideo(videoInfo);
+        await store.dispatch(setArchive({...videoInfo, local: false}));
+        await store.dispatch(removeUserLocalArchive(videoID));
+        deleteLocalVideoFile(videoInfo.url);
+      },
+    }),
+  );
+};
+
 const uploadLocalVideo = async (videoID, background) => {
   const videoInfo = store.getState().archives[videoID];
+
   if (videoInfo) {
     if (videoInfo.local) {
+      const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);
+      if (isUploadAlreadyInQueue) {
+        if (isUploadAlreadyInQueue.uploading) return true;
+        return isUploadAlreadyInQueue.map((item) =>
+          store.dispatch(
+            modifyUploadTask({
+              id: item.id,
+              isBackground: false,
+            }),
+          ),
+        );
+      }
       const videoUploadTaskID = generateID();
       const imageUploadTaskID = generateID();
       const success = await createCloudVideo(videoInfo);
       if (success) {
-        if (videoInfo.thumbnail.substring(0, 4) !== 'http') {
-          store.dispatch(
-            enqueueUploadTask({
-              type: 'image',
-              id: imageUploadTaskID,
-              timeSubmitted: Date.now(),
-              url: videoInfo.thumbnail,
-              storageDestination: `archivedStreams/${videoID}`,
-              isBackground: background,
-              displayInList: false,
-            }),
-          );
-        } else {
-          setCloudVideoThumbnail(videoID, videoInfo.thumbnail);
-        }
-        store.dispatch(
-          enqueueUploadTask({
-            type: 'video',
-            id: videoUploadTaskID,
-            timeSubmitted: Date.now(),
-            videoInfo,
-            cloudID: videoID,
-            storageDestination: `archivedStreams/${videoID}`,
-            isBackground: background,
-            displayInList: true,
-            progress: 0,
-            afterUpload: async () => {
-              await claimCloudVideo(videoInfo);
-              await store.dispatch(setArchive({...videoInfo, local: false}));
-              await store.dispatch(removeUserLocalArchive(videoID));
-              deleteLocalVideoFile(videoInfo.url);
-            },
-          }),
-        );
+        launchUpload({
+          videoID,
+          background,
+          videoInfo,
+          imageUploadTaskID,
+          videoUploadTaskID,
+        });
       }
       return success;
     } else {

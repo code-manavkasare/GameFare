@@ -9,6 +9,7 @@ import {
   SET_UPLOAD_TASK_PROGRESS,
   SET_UPLOAD_TASK_ERROR,
   RESET_UPLOAD_QUEUE,
+  MODIFY_UPLOAD_TASK,
 } from './types';
 
 export const enqueueUploadTask = (uploadTask) => ({
@@ -52,6 +53,11 @@ export const setUploadTaskProgress = (data) => ({
   progress: data.progress,
 });
 
+export const modifyUploadTask = (data) => ({
+  type: MODIFY_UPLOAD_TASK,
+  data: data,
+});
+
 export const setUploadTaskError = (data) => ({
   type: SET_UPLOAD_TASK_ERROR,
   id: data.id,
@@ -82,6 +88,8 @@ export const uploadQueueAction = (val, data) => {
       await dispatch(setUploadTaskProgress(data));
     } else if (val === 'setUploadTaskError') {
       await dispatch(setUploadTaskError(data));
+    } else if (val === 'modifyUploadTask') {
+      await dispatch(modifyUploadTask(data));
     } else if (val === 'resetUploadQueue') {
       await dispatch(resetUploadQueue());
     }

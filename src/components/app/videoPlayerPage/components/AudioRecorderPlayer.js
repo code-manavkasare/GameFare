@@ -49,7 +49,7 @@ class AudioRecorderPlayer extends Component {
     console.log('preparePlayer', audioPlayer);
     // if (audioPlayer) await this.destroyPlayer();
     await new Promise((resolve) => {
-      this.audioSession();
+      this.adjustAudioSession();
       this.setState({
         audioPlayer: new Player(
           url ? (isCloud ? url : `file://${url}`) : 'audio.mp4',
@@ -65,7 +65,7 @@ class AudioRecorderPlayer extends Component {
     return true;
   };
 
-  audioSession() {
+  adjustAudioSession() {
     const {connectedToSession} = this.props;
     if (connectedToSession) {
       console.log('connected to session');
@@ -79,11 +79,11 @@ class AudioRecorderPlayer extends Component {
 
   playRecord = () => {
     this.state.audioPlayer.stop();
-    this.audioSession();
+    this.adjustAudioSession();
     this.state.audioPlayer.play();
   };
   playPause = () => {
-    this.audioSession();
+    this.adjustAudioSession();
     this.state.audioPlayer.playPause();
   };
   pause = () => {

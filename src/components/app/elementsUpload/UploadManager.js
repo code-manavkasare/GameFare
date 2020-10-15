@@ -30,6 +30,7 @@ class UploadManager extends Component {
       isConnected: prevIsConnected,
       connectionType: prevConnectionType,
       lastDeletedArchiveIds,
+      uploadQueue: prevUploadQueue,
     } = prevProps;
 
     if (lastDeletedArchiveIds) {
@@ -38,19 +39,28 @@ class UploadManager extends Component {
       }
     }
 
-    const {isConnected, connectionType} = this.props;
+    
+    const {isConnected, connectionType, uploadQueue} = this.props;
     const {uploadInProgress} = this.state;
+    const {queue} = uploadQueue;
+    const {queue: prevQueue} = prevUploadQueue;
     const lostConnection = prevIsConnected && !isConnected;
-    const gainedConnection = !prevIsConnected && isConnected;
     const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
     const gainedWifi =
       connectionType === 'wifi' && prevConnectionType !== 'wifi';
     if (uploadInProgress) {
-      const {isBackground} = uploadInProgress.uploadTask;
+      const isBackground =
+        queue[(uploadInProgress?.uploadTask?.id)]?.isBackground;
+      const prevIsBackground =
+        prevQueue[(uploadInProgress?.uploadTask?.id)]?.isBackground;
+      const forceStart =
+        !isBackground &&
+        (prevIsBackground === undefined || prevIsBackground === true);
       if (lostConnection || (isBackground && lostWifi)) {
         this.pauseUploadInProgress();
-      } else if (gainedWifi) {
-        this.resumeUploadInProgress();
+      } else if (gainedWifi || forceStart) {
+        this.manageUploads(forceStart);
+        // this.resumeUploadInProgress();
       }
     } else if (isConnected) {
       this.manageUploads();
@@ -96,9 +106,11 @@ class UploadManager extends Component {
     if (uploadInProgress) {
       const {uploadTask, firebaseUploadTask} = uploadInProgress;
       uploadQueueAction('resumeUploadTask', uploadTask.id);
-      const resumed = firebaseUploadTask.resume();
+      const resumed = firebaseUploadTask?.resume();
       if (!resumed) {
         console.log('upload task resume had no effect');
+      } else {
+        console.log('upload task resumed');
       }
     }
   }
@@ -140,13 +152,13 @@ class UploadManager extends Component {
     return null;
   }
 
-  async manageUploads() {
+  async manageUploads(forceStart) {
     const {uploadInProgress, savedBackgroundUpload} = this.state;
     const {uploadQueueAction, connectionType} = this.props;
     const nextUserUpload = this.getNextUploadTask(false);
     const nextBackgroundUpload = this.getNextUploadTask(true);
     if (nextUserUpload) {
-      if (!uploadInProgress) {
+      if (!uploadInProgress || !uploadInProgress?.firebaseUploadTask) {
         if (!nextUserUpload.started) {
           await this.setState({
             uploadInProgress: {
@@ -184,6 +196,8 @@ class UploadManager extends Component {
       this.startTask(nextBackgroundUpload);
     } else if (!uploadInProgress && !nextBackgroundUpload) {
       uploadQueueAction('resetUploadQueue');
+    } else if (forceStart && nextBackgroundUpload) {
+      this.startTask(nextBackgroundUpload);
     }
   }
 
@@ -222,7 +236,6 @@ class UploadManager extends Component {
             `${type} is not a valid type, check UploadManager.js>startFileTask()`,
           );
       }
-
       await database()
         .ref()
         .update({
@@ -247,6 +260,7 @@ const mapStateToProps = (state) => {
     uploadQueue: state.uploadQueue,
     userID: state.user.userID,
     connectionType: state.connectionType.type,
+    // connectionType: 'cellular',
     isConnected: state.network.isConnected,
     videoLibrary: state.localVideoLibrary.videoLibrary,
     lastDeletedArchiveIds: state.localVideoLibrary.lastDeletedArchiveIds,

@@ -9,6 +9,7 @@ import {
   SET_UPLOAD_TASK_PROGRESS,
   SET_UPLOAD_TASK_ERROR,
   RESET_UPLOAD_QUEUE,
+  MODIFY_UPLOAD_TASK,
 } from '../actions/types';
 
 import {dissoc} from 'ramda';
@@ -177,6 +178,17 @@ const uploadQueueReducer = (state = initialState, action) => {
       } else {
         return state;
       }
+    case MODIFY_UPLOAD_TASK:
+      return {
+        ...state,
+        queue: {
+          ...state.queue,
+          [action.data.id]: {
+            ...state.queue[action.data.id],
+            ...action.data,
+          },
+        },
+      };
     case SET_UPLOAD_TASK_ERROR:
       if (state.queue[action.id]) {
         return {

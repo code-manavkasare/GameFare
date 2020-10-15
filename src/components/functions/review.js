@@ -123,6 +123,7 @@ const generatePreviewCloud = async (
       id: generateID(),
       timeSubmitted: Date.now(),
       url: audioFilePath,
+      cloudID: newArchiveId,
       storageDestination: `archivedStreams/${newArchiveId}`,
       isBackground: true,
       displayInList: false,
