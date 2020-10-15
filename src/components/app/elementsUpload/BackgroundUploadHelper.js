@@ -32,11 +32,11 @@ class BackgroundUploadHelper extends Component {
         (x) => !queued[x.id],
       );
       const notVolatile = notQueued.filter((v) => {
-        console.log(archives[v.id]);
         return (
           archives[v.id] &&
           !archives[v.id].volatile &&
-          (v.backgroundUpload === undefined || v.backgroundUpload === true)
+          (v.backgroundUpload === undefined || v.backgroundUpload === true) &&
+          archives[v.id].thumbnail !== undefined
         );
       });
       console.log('need to upload', notVolatile);
@@ -76,7 +76,11 @@ class BackgroundUploadHelper extends Component {
   // }
 
   componentDidUpdate(prevProps) {
-    if (!isEqual(this.props.archivesToUpload, prevProps.archivesToUpload)) {
+    const {wifiAutoUpload} = this.props;
+    if (
+      !isEqual(this.props.archivesToUpload, prevProps.archivesToUpload) ||
+      (wifiAutoUpload && wifiAutoUpload !== prevProps.wifiAutoUpload)
+    ) {
       this.uploadNextLocalVideo();
     }
   }

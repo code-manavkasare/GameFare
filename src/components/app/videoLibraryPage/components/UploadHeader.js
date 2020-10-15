@@ -7,16 +7,11 @@ import {
   Animated,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {Col, Row} from 'react-native-easy-grid';
 import * as Progress from 'react-native-progress';
 
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
-import {native} from '../../../animations/animations';
-import ButtonColor from '../../../layout/Views/Button';
-import AllIcons from '../../../layout/icons/AllIcons';
-import QueueList from '../../elementsUpload/QueueList';
 
 class UploadHeader extends Component {
   constructor(props) {
@@ -30,11 +25,16 @@ class UploadHeader extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {uploadQueue} = props;
+    const {uploadQueue, connectionType} = props;
     const {queue} = uploadQueue;
+    console.log(queue);
     if (queue && Object.values(queue).length > 0) {
+      const waitingForWifi =
+        Object.values(queue).every((item) => item?.isBackground) &&
+        connectionType !== 'wifi';
       return {
         headerVisible: true,
+        waitingForWifi,
       };
     }
     return {
@@ -44,45 +44,6 @@ class UploadHeader extends Component {
   open() {
     const {openQueue} = this.props;
     openQueue && openQueue();
-  }
-
-  close() {
-    Animated.parallel([
-      Animated.timing(this.uploadReveal, native(-1, 300)),
-    ]).start(() => {
-      this.setState({expanded: false});
-    });
-  }
-
-  closeButton() {
-    const {expanded} = this.state;
-    const style = {
-      ...styles.buttonClose,
-      opacity: 1,
-    };
-    return (
-      expanded && (
-        <Animated.View style={style}>
-          <ButtonColor
-            view={() => {
-              return (
-                <AllIcons
-                  name="times"
-                  size={13}
-                  color={colors.title}
-                  type="font"
-                />
-              );
-            }}
-            click={() => {
-              this.close();
-            }}
-            color={colors.white}
-            onPressColor={colors.off}
-          />
-        </Animated.View>
-      )
-    );
   }
 
   totalProgress(type) {
@@ -108,68 +69,30 @@ class UploadHeader extends Component {
     );
   }
 
-  progressPopup() {
-    const {currentScreenSize} = this.props;
-    const {currentWidth: width, currentHeight: height} = currentScreenSize;
-
-    const uploadTranslateY = this.uploadReveal.interpolate({
-      inputRange: [-1, 0],
-      outputRange: [height, 0],
-    });
-
-    return (
-      <Animated.View
-        style={{
-          ...styles.menuContainer,
-          width,
-          bottom: -height,
-          transform: [{translateY: uploadTranslateY}],
-        }}>
-        {this.totalProgress()}
-        {this.closeButton()}
-        <TouchableWithoutFeedback style={{height: 80}}>
-          <Text style={styles.text}>Uploading</Text>
-        </TouchableWithoutFeedback>
-        <View style={{height: 350, width: '100%'}}>
-          {/* <QueueList
-            onFetch={(cloudQueue) => {
-              this.setState({cloudQueue});
-            }}
-            onClose={() => {
-              setTimeout(() => {
-                this.display(0);
-              }, 1000);
-            }}
-          /> */}
-        </View>
-      </Animated.View>
-    );
-  }
-
   render() {
-    const {headerVisible} = this.state;
+    const {headerVisible, waitingForWifi} = this.state;
     const {currentScreenSize} = this.props;
-    const {currentWidth: width, portrait} = currentScreenSize;
+    const {currentWidth: width} = currentScreenSize;
     const maxWidth = 0.45 * width;
-
+    const containerStyle = {
+      zIndex: 10,
+      marginBottom: -10,
+      position: 'absolute',
+      width,
+      ...styleApp.center3,
+    };
     return (
-      <View
-        style={{
-          zIndex: 10,
-          marginBottom: -10,
-          position: 'absolute',
-          width,
-          ...styleApp.center3,
-        }}>
+      <View style={containerStyle}>
         {headerVisible && (
           <TouchableWithoutFeedback onPress={() => this.open()}>
             <View style={{...styles.container, maxWidth}}>
               {this.totalProgress('header')}
-              <Text style={styles.headerText}>Uploading</Text>
+              <Text style={styles.headerText}>
+                {waitingForWifi ? 'Waiting for Wi-Fi' : 'Uploading'}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
         )}
-        {portrait && this.progressPopup()}
       </View>
     );
   }
@@ -263,6 +186,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     currentScreenSize: state.layout.currentScreenSize,
     uploadQueue: state.uploadQueue,
+    connectionType: state.connectionType.type,
   };
 };
 
