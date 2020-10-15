@@ -12,6 +12,7 @@ import * as Progress from 'react-native-progress';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 import styleApp from '../../../style/style';
+import {isQueueVisible} from '../../../functions/upload';
 
 class UploadHeader extends Component {
   constructor(props) {
@@ -28,12 +29,13 @@ class UploadHeader extends Component {
     const {uploadQueue, connectionType} = props;
     const {queue} = uploadQueue;
     console.log(queue);
-    if (queue && Object.values(queue).length > 0) {
+    const headerVisible = isQueueVisible(queue);
+    if (headerVisible) {
       const waitingForWifi =
         Object.values(queue).every((item) => item?.isBackground) &&
         connectionType !== 'wifi';
       return {
-        headerVisible: true,
+        headerVisible,
         waitingForWifi,
       };
     }
