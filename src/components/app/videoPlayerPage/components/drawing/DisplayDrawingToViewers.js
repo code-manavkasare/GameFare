@@ -114,10 +114,10 @@ export default class DisplayDraingToViewers extends Component {
           width: widthDrawView,
           position: 'absolute',
           // backgroundColor: 'red',
-          zIndex: 2,
+          zIndex: -2,
         }}
         onRef={(ref) => (this.PinchableBoxRef = ref)}
-        pinchEnable={true}
+        pinchEnable={false}
         scale={1}
         position={{y: 0, x: 0}}
         scaleChange={(val) => console.log('scale change', val)}

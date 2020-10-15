@@ -15,6 +15,7 @@ import {getLastDrawing} from '../../../../functions/coach';
 import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
 import DrawRectangles from './DrawRectangles';
+import DrawArrow from './DrawArrow';
 
 class DrawView extends Component {
   static propTypes = {
@@ -166,7 +167,7 @@ class DrawView extends Component {
     } else {
       const {drawings} = this.state;
       const newDrawings = {...drawings, [path.idSketch]: path};
-      await this.setState({drawings: newDrawings, displayDrawingZone: false});
+      await this.setState({drawings: newDrawings});
       onDrawingChange(index, newDrawings);
     }
     if (drawSetting === 'custom') {
@@ -215,6 +216,17 @@ class DrawView extends Component {
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+      );
+
+    if (drawSetting === 'arrow')
+      return (
+        <DrawArrow
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          onRef={(ref) => (this.drawArrowsRef = ref)}
           onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
         />
       );
