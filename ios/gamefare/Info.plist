@@ -161,9 +161,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIUserInterfaceStyle</key>
-  <string>Light</string>
-  <key>UIViewControllerBasedStatusBarAppearance</key>
-  <false/>
+	<string>Light</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>branch_app_domain</key>
 	<string>gamefare.app.link</string>
 	<key>branch_key</key>
