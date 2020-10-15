@@ -39,6 +39,7 @@ class UploadManager extends Component {
       }
     }
 
+    
     const {isConnected, connectionType, uploadQueue} = this.props;
     const {uploadInProgress} = this.state;
     const {queue} = uploadQueue;
@@ -57,10 +58,9 @@ class UploadManager extends Component {
         (prevIsBackground === undefined || prevIsBackground === true);
       if (lostConnection || (isBackground && lostWifi)) {
         this.pauseUploadInProgress();
-      } else if (forceStart) {
-        this.manageUploads(true);
-      } else if (gainedWifi) {
-        this.resumeUploadInProgress();
+      } else if (gainedWifi || forceStart) {
+        this.manageUploads(forceStart);
+        // this.resumeUploadInProgress();
       }
     } else if (isConnected) {
       this.manageUploads();
