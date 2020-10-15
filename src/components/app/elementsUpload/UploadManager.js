@@ -39,7 +39,6 @@ class UploadManager extends Component {
       }
     }
 
-    
     const {isConnected, connectionType, uploadQueue} = this.props;
     const {uploadInProgress} = this.state;
     const {queue} = uploadQueue;
