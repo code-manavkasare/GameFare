@@ -1155,7 +1155,7 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefare.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1587651739;
+				CURRENT_PROJECT_VERSION = 1602625359;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
@@ -1193,7 +1193,7 @@
 				CODE_SIGN_ENTITLEMENTS = gamefare/gamefareRelease.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1587651739;
+				CURRENT_PROJECT_VERSION = 1602625359;
 				DEVELOPMENT_TEAM = GDMG8R7UAQ;
 				INFOPLIST_FILE = gamefare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
