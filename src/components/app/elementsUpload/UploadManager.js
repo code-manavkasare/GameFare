@@ -57,9 +57,10 @@ class UploadManager extends Component {
         (prevIsBackground === undefined || prevIsBackground === true);
       if (lostConnection || (isBackground && lostWifi)) {
         this.pauseUploadInProgress();
-      } else if (gainedWifi || forceStart) {
-        this.manageUploads(forceStart);
-        // this.resumeUploadInProgress();
+      } else if (forceStart) {
+        this.manageUploads(true);
+      } else if (gainedWifi) {
+        this.resumeUploadInProgress();
       }
     } else if (isConnected) {
       this.manageUploads();
