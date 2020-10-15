@@ -113,8 +113,17 @@ const uploadComplete = async (uploadTask) => {
   return cloudUrl;
 };
 
+const isQueueVisible = (queue) => {
+  return (
+    queue &&
+    Object.values(queue).length > 0 &&
+    Object.values(queue).some((task) => task.displayInList)
+  );
+};
+
 module.exports = {
   isArchiveUploading,
   uploadFile,
   sortUploadTasks,
+  isQueueVisible,
 };
