@@ -99,7 +99,11 @@ class DrawTools extends Component {
     const {submenu, colorDrawing, drawSetting} = this.state;
     if (!submenu) return null;
     return (
-      <View style={[styles.colButtonsRight, {left: 70, top: -10}]}>
+      <View
+        style={[
+          styles.colButtonsRight,
+          {left: 70, top: -10, backgroundColor: colors.title + '90'},
+        ]}>
         {submenu === 'color' ? (
           <View style={[styles.toolBox, styleApp.center]}>
             {this.buttonColor({color: colors.green, setColor: true})}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Svg, {Polyline, Line, Circle, Rect} from 'react-native-svg';
+import Svg, {Polyline, Line, Circle, Rect, G, Path} from 'react-native-svg';
 import {dimensionRectangle} from '../../../../functions/videoManagement';
 import PinchableBox from '../../../../layout/Views/PinchableBox';
 
@@ -85,6 +85,27 @@ export default class DisplayDraingToViewers extends Component {
       />
     );
   };
+
+  angle = (drawData) => {
+    const draw = this.drawObject(drawData);
+    const {startPoint, endPoint} = draw.data;
+    const {width, color} = draw;
+    const {x: x1, y: y1} = startPoint;
+    const {x: x2, y: y2} = endPoint;
+    let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    if (!radius) radius = 0;
+    return (
+      <Circle
+        cx={x1}
+        cy={y1}
+        r={radius}
+        stroke={color}
+        strokeWidth={width}
+        fill="transparent"
+      />
+    );
+  };
+
   rectangle = (drawData) => {
     const draw = this.drawObject(drawData);
 
@@ -102,6 +123,26 @@ export default class DisplayDraingToViewers extends Component {
         strokeWidth={strokeWidth}
         fill="transparent"
       />
+    );
+  };
+  arrow = (drawData) => {
+    const draw = this.drawObject(drawData);
+
+    const {startPoint, endPoint} = draw.data;
+    const {width, color} = draw;
+    const {x: x1, y: y1} = startPoint;
+    const {x: x2, y: y2} = endPoint;
+    return (
+      <G
+        rotation={(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI - 135}
+        origin={`${x2}, ${y2}`}>
+        <Path
+          d={`M ${x2 + 4} ${y2 + 4} L ${x2 - 6} ${y2 + 6} L ${x2 - 6} ${y2 -
+            4} z`}
+          fill={color}
+          stroke={color}
+        />
+      </G>
     );
   };
   draw(draw, i) {
@@ -129,13 +170,19 @@ export default class DisplayDraingToViewers extends Component {
             key={draw.idSketch}
             height={heightDrawView}
             width={widthDrawView}>
-            {type === 'straight'
+            {type === 'straight' || type === 'arrow'
               ? this.line(draw)
               : type === 'circle'
               ? this.circle(draw)
+              : type === 'angle'
+              ? this.angle(draw)
               : type === 'rectangle'
               ? this.rectangle(draw)
-              : this.polyline(draw)}
+              : type === 'custom'
+              ? this.polyline(draw)
+              : null}
+
+            {type === 'arrow' && this.arrow(draw)}
           </Svg>
         )}
       />

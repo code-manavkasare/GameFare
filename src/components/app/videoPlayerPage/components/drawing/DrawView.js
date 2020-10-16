@@ -16,6 +16,7 @@ import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
 import DrawRectangles from './DrawRectangles';
 import DrawArrow from './DrawArrow';
+import DrawAngles from './DrawAngles';
 
 class DrawView extends Component {
   static propTypes = {
@@ -227,6 +228,16 @@ class DrawView extends Component {
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           onRef={(ref) => (this.drawArrowsRef = ref)}
+          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
+        />
+      );
+    if (drawSetting === 'angle')
+      return (
+        <DrawAngles
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          onRef={(ref) => (this.drawStraighLinesRef = ref)}
           onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
         />
       );

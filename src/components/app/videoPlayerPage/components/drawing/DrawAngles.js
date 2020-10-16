@@ -2,9 +2,10 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import Svg, {Line, Defs, Marker, Path, G} from 'react-native-svg';
+import Svg, {Line} from 'react-native-svg';
 
 import colors from '../../../../style/colors';
+import styleApp from '../../../../style/style';
 
 class DrawSraightLine extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class DrawSraightLine extends Component {
       drawing: false,
       startPoint: {},
       endPoint: {},
+      thirdPoint: {},
     };
     this.animatedLine = new Animated.Value(0);
   }
@@ -75,17 +77,74 @@ class DrawSraightLine extends Component {
   };
   drawView() {
     const {strokeWidth, strokeColor} = this.props;
-    const {drawing, startPoint, endPoint} = this.state;
+    const {drawing, startPoint, endPoint, thirdPoint} = this.state;
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
+    ///const {x: x3, y: y3} = thirdPoint;
     const {style} = this.props;
+    const lengthAB = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    const teta = 45;
+    //console.log('lengthAB', lengthAB);
+    const xc = x1 + (x2 - x1) * Math.cos(teta) - (y2 - y1) * Math.sin(teta);
+    const yc = y1 + (y2 - y1) * Math.cos(teta) + (x2 - x1) * Math.sin(teta);
+    console.log('xc', xc);
+    console.log('yc', yc);
+    console.log('x1y1', x1, y1);
+    console.log('x2y2', x2, y2);
+    const x12 = (x1 + x2) / 2;
+    const y12 = (y1 + y2) / 2;
 
+    const x1c = (x1 + xc) / 2;
+    const y1c = (y1 + yc) / 2;
+
+    const xAngle = x1 + (x12 - x1) * Math.cos(180) - (y12 - y1) * Math.sin(180);
+    const yAngle = y1 + (y12 - y1) * Math.cos(180) + (x12 - x1) * Math.sin(180);
+    console.log('x12', x12, y12);
     return (
       <PanGestureHandler
         style={style}
         onGestureEvent={this.onPanGestureEvent}
         onHandlerStateChange={this._onHandlerStateChange}>
         <Animated.View style={style}>
+          {drawing && (
+            <View
+              style={{
+                ...styleApp.center,
+                position: 'absolute',
+                zIndex: 30,
+                top: yAngle,
+                left: xAngle,
+                borderRadius: 5,
+                height: 30,
+                width: 30,
+                backgroundColor: colors.title,
+              }}>
+              <Text
+                style={[
+                  styleApp.textBold,
+                  {color: colors.white, fontSize: 11},
+                ]}>
+                {teta}º
+              </Text>
+            </View>
+          )}
+          {drawing && (
+            <Svg
+              height={style.height}
+              width={style.width}
+              style={{
+                position: 'absolute',
+              }}>
+              <Line
+                x1={x12}
+                y1={y12}
+                x2={x1c}
+                y2={y1c}
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+              />
+            </Svg>
+          )}
           <Svg height={style.height} width={style.width}>
             {drawing && (
               <Line
@@ -97,31 +156,16 @@ class DrawSraightLine extends Component {
                 strokeWidth={strokeWidth}
               />
             )}
-      
 
-            {/* {drawing && (
-              <G
-                rotation={(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI + 45}
-                origin={`${x1}, ${y1}`}>
-                <Path
-                  d={`M ${x1 + 8} ${y1 + 8} L ${x1 - 10} ${y1 + 10} L ${x1 -
-                    8} ${y1 - 8} z`}
-                  fill="#1abc9c"
-                  stroke="#1abc9c"
-                />
-              </G>
-            )} */}
             {drawing && (
-              <G
-                rotation={(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI - 135}
-                origin={`${x2}, ${y2}`}>
-                <Path
-                  d={`M ${x2 + 4} ${y2 + 4} L ${x2 - 6} ${y2 +6} L ${x2 -
-                    6} ${y2 - 4} z`}
-                  fill={strokeColor}
-                  stroke={strokeColor}
-                />
-              </G>
+              <Line
+                x1={x1}
+                y1={y1}
+                x2={xc}
+                y2={yc}
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+              />
             )}
           </Svg>
         </Animated.View>
