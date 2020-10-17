@@ -79,6 +79,7 @@ export default class DisplayDraingToViewers extends Component {
         cx={x1}
         cy={y1}
         r={radius}
+        onPress={() => console.log('on press circle')}
         stroke={color}
         strokeWidth={width}
         fill="transparent"

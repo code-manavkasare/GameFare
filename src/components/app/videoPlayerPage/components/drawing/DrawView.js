@@ -4,19 +4,22 @@ import {View, StyleSheet, Animated, PanResponder} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
+import {PanGestureHandler, State} from 'react-native-gesture-handler';
+import Svg, {Circle} from 'react-native-svg';
 
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
-import DrawSraightLine from './DrawSraightLine';
-import DrawCircles from './DrawCircles';
+
 import {coachAction} from '../../../../../actions/coachActions';
 import {generateID} from '../../../../functions/createEvent';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
-import DrawRectangles from './DrawRectangles';
-import DrawArrow from './DrawArrow';
-import DrawAngles from './DrawAngles';
+import DrawRectangles from './shapes/DrawRectangles';
+import DrawArrow from './shapes/DrawArrow';
+import DrawAngles from './shapes/DrawAngles';
+import DrawSraightLine from './shapes/DrawSraightLine';
+import DrawCircles from './shapes/DrawCircles';
 
 class DrawView extends Component {
   static propTypes = {
@@ -34,9 +37,11 @@ class DrawView extends Component {
       scaleDrawing: 1,
       strokeWidth: 3,
       drawings: {},
+      drawing: false,
+      startPoint: {x: 0, y: 0},
+      endPoint: {x: 0, y: 0},
       colorDrawing: colors.red,
       drawSetting: 'custom',
-      displayDrawingZone: true,
     };
     this.onStrokeEnd = this.onStrokeEnd.bind(this);
     this.undo = this.undo.bind(this);
@@ -175,49 +180,98 @@ class DrawView extends Component {
       this.canvasRef.deletePath(path.idSketch);
     }
   }
-  drawingZone = ({w, h}) => {
-    const {drawingOpen} = this.props;
-    const {scaleDrawing, drawSetting, colorDrawing, strokeWidth} = this.state;
-    if (drawSetting === 'custom')
-      return (
-        <ImageEditor
-          style={styles.drawingZone}
-          ref={(ref) => (this.canvasRef = ref)}
-          touchEnabled={drawingOpen}
-          strokeColor={colorDrawing}
-          strokeWidth={strokeWidth}
-          scale={scaleDrawing}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-        />
-      );
-    if (drawSetting === 'rectangle')
-      return (
-        <DrawRectangles
-          style={styles.drawingZone}
-          strokeWidth={strokeWidth}
-          strokeColor={colorDrawing}
-          onRef={(ref) => (this.drawStraighLinesRef = ref)}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
-        />
-      );
+  onPanGestureEvent = Animated.event(
+    [
+      {
+        nativeEvent: {
+          // translationX: this._translateX,
+          // translationY: this._translateY,
+        },
+      },
+    ],
+    {
+      useNativeDriver: true,
+      listener: (event) => {
+        const newPosition = {
+          x: event.nativeEvent.x,
+          y: event.nativeEvent.y,
+        };
+        const {drawing} = this.state;
+        if (!drawing) {
+          return this.setState({
+            startPoint: newPosition,
+            endPoint: newPosition,
+            drawing: true,
+          });
+        }
+        return this.setState({
+          endPoint: newPosition,
+        });
+      },
+    },
+  );
+  _onHandlerStateChange = (event) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      const {startPoint, endPoint} = this.state;
+      const {strokeWidth, strokeColor} = this.props;
+
+      this.onStrokeEnd({
+        path: {
+          data: {startPoint, endPoint},
+          color: strokeColor,
+          width: strokeWidth,
+        },
+      });
+      return this.setState({
+        drawing: false,
+        startPoint: {x: 0, y: 0},
+        endPoint: {x: 0, y: 0},
+      });
+    }
+  };
+  shape = ({
+    drawSetting,
+    colorDrawing,
+    strokeWidth,
+    startPoint,
+    endPoint,
+    scaleDrawing,
+    w,
+    h,
+  }) => {
     if (drawSetting === 'circle')
       return (
         <DrawCircles
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
+          startPoint={startPoint}
+          endPoint={endPoint}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
         />
       );
+
+    if (drawSetting === 'rectangle')
+      return (
+        <DrawRectangles
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          startPoint={startPoint}
+          endPoint={endPoint}
+          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+        />
+      );
+
     if (drawSetting === 'straight')
       return (
         <DrawSraightLine
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
+          startPoint={startPoint}
+          endPoint={endPoint}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
         />
       );
 
@@ -227,24 +281,60 @@ class DrawView extends Component {
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
+          startPoint={startPoint}
+          endPoint={endPoint}
           onRef={(ref) => (this.drawArrowsRef = ref)}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
         />
       );
+
     if (drawSetting === 'angle')
       return (
         <DrawAngles
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
+          startPoint={startPoint}
+          endPoint={endPoint}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
-          onStrokeEnd={(event) => this.onStrokeEnd(event, w, h)}
         />
       );
+    return null;
+  };
+  drawingZone = ({w, h}) => {
+    const {
+      scaleDrawing,
+      drawSetting,
+      colorDrawing,
+      strokeWidth,
+      startPoint,
+      endPoint,
+    } = this.state;
+    const style = styles.drawingZone;
+    return (
+      <PanGestureHandler
+        style={style}
+        onGestureEvent={this.onPanGestureEvent}
+        onHandlerStateChange={this._onHandlerStateChange}>
+        <Animated.View style={style}>
+          <Svg height={style.height} width={style.width}>
+            {this.shape({
+              drawSetting,
+              colorDrawing,
+              strokeWidth,
+              startPoint,
+              endPoint,
+              scaleDrawing,
+              w,
+              h,
+            })}
+          </Svg>
+        </Animated.View>
+      </PanGestureHandler>
+    );
   };
   drawView() {
     const {drawingOpen, sizeVideo, playerStyle} = this.props;
-    const {drawings, displayDrawingZone} = this.state;
+    const {drawing} = this.state;
 
     let h = 0;
     let w = 0;
@@ -273,18 +363,16 @@ class DrawView extends Component {
       <Animated.View
         pointerEvents={drawingOpen ? 'auto' : 'none'}
         style={[styles.page, styleDrawView]}>
-        {displayDrawingZone && (
-          <View style={styles.drawingZone}>{this.drawingZone({w, h})}</View>
-        )}
+        {<View style={styles.drawingZone}>{this.drawingZone({w, h})}</View>}
 
-        <View style={styles.drawingZoneDisplay}>
+        {/* <View style={styles.drawingZoneDisplay}>
           <DisplayDrawingToViewers
             heightDrawView={h}
             widthDrawView={w}
             currentScreenSize={{currentWidth, currentHeight}}
             drawings={drawings ? Object.values(drawings) : []}
           />
-        </View>
+        </View> */}
       </Animated.View>
     );
   }
