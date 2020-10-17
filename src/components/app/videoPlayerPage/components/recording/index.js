@@ -42,7 +42,10 @@ class Recording extends Component {
     const {archive, preparePlayer, setState, recordedActions} = this.props;
     if (recordedActions.length > 0) {
       if (!skipPreparePlayer)
-        await preparePlayer({url: archive.audioRecordUrl, isCloud: true});
+        await preparePlayer({
+          url: archive.audioRecordUrl,
+          isCloud: !archive.local,
+        });
       await setState({
         isPlayingReview: true,
         previewStartTime: Date.now(),
