@@ -63,17 +63,21 @@ const saveAudioFileToAppData = async (audioFilePath) => {
 const generatePreview = async (source, recordedActions, audioFilePath) => {
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
   const newSource = await cutVideo(source, startTime, endTime);
-  const audioUrl = await saveAudioFileToAppData(audioFilePath);
+  const audioRecordUrl = await saveAudioFileToAppData(audioFilePath);
   const newRecordedActions = adaptAllTimestampToNewVideoLength(
     recordedActions,
     startTime,
   );
   const newVideo = {
     ...(await getVideoInfo(newSource)),
-    audioUrl,
+    audioRecordUrl,
     recordedActions: newRecordedActions,
   };
-  addLocalVideo({video: newVideo, backgroundUpload: true});
+  const videoId = await addLocalVideo({
+    video: newVideo,
+    backgroundUpload: true,
+  });
+  await addAudioRecordToUploadQueue(audioRecordUrl, videoId);
 };
 
 const generatePreviewCloud = async (
@@ -136,6 +140,21 @@ const generatePreviewCloud = async (
           .ref(`archivedStreams/${newArchiveId}`)
           .set(updates);
       },
+    }),
+  );
+};
+
+const addAudioRecordToUploadQueue = (audioFilePath, archiveId) => {
+  store.dispatch(
+    enqueueUploadTask({
+      type: 'audioRecord',
+      id: generateID(),
+      timeSubmitted: Date.now(),
+      url: audioFilePath,
+      cloudID: archiveId,
+      storageDestination: `archivedStreams/${archiveId}`,
+      isBackground: false,
+      displayInList: false,
     }),
   );
 };

@@ -228,7 +228,7 @@ class UploadManager extends Component {
           typeDestination = 'thumbnail';
           break;
         case 'audioRecord':
-          typeDestination = 'audioRecord';
+          typeDestination = 'audioRecordUrl';
           break;
         default:
           console.log(
