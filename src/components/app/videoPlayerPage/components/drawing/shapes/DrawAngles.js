@@ -47,8 +47,8 @@ class DrawSraightLine extends Component {
       <G onPress={toggleSelect}>
         <Text
           fill={colors.white}
-          stroke={colors.title}
-          fontSize="20"
+          stroke={colors.white}
+          fontSize="15"
           fontWeight="bold"
           x={xAngle}
           y={yAngle}

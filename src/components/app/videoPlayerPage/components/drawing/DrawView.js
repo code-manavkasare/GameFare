@@ -3,11 +3,8 @@ import PropTypes from 'prop-types';
 import {View, StyleSheet, Animated, PanResponder} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
-import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
 import Svg, {Circle} from 'react-native-svg';
-
-import DisplayDrawingToViewers from './DisplayDrawingToViewers';
 
 import {coachAction} from '../../../../../actions/coachActions';
 import {generateID} from '../../../../functions/createEvent';
@@ -16,7 +13,6 @@ import {getLastDrawing} from '../../../../functions/coach';
 import {ratio} from '../../../../style/sizes';
 import colors from '../../../../style/colors';
 import DrawRectangles from './shapes/DrawRectangles';
-import DrawArrow from './shapes/DrawArrow';
 import DrawAngles from './shapes/DrawAngles';
 import DrawSraightLine from './shapes/DrawSraightLine';
 import DrawCircles from './shapes/DrawCircles';
@@ -322,16 +318,17 @@ class DrawView extends Component {
 
     if (drawSetting === 'arrow')
       return (
-        <DrawArrow
+        <DrawSraightLine
           isSelected={isSelected}
           style={styles.drawingZone}
+          arrow={true}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
           id={id}
           editShape={this.editShape.bind(this)}
-          onRef={(ref) => (this.drawArrowsRef = ref)}
+          onRef={(ref) => (this.drawStraighLinesRef = ref)}
           toggleSelect={(forceSelect) =>
             this.setState({
               selectedShape: isSelected && !forceSelect ? null : id,
@@ -428,7 +425,6 @@ class DrawView extends Component {
     return {w, h};
   };
   drawView() {
-  
     const {w, h} = this.sizeScreen();
 
     let styleDrawView = {

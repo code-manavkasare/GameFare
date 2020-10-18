@@ -39,7 +39,7 @@ class DrawSraightLine extends Component {
 
     let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     return (
-      <G onPress={toggleSelect}>
+      <G>
         <EditPoint
           startPoint={startPoint}
           endPoint={endPoint}
