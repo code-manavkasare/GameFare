@@ -428,6 +428,7 @@ class DrawView extends Component {
     return {w, h};
   };
   drawView() {
+  
     const {w, h} = this.sizeScreen();
 
     let styleDrawView = {

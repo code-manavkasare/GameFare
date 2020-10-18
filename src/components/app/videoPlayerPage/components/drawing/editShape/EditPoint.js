@@ -18,7 +18,6 @@ export default class DrawSraightLine extends Component {
       onMoveShouldSetPanResponder: (evt, gestureState) => true,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
       onPanResponderGrant: () => {
-        console.log('-------onPanResponderGrant------');
         const {toggleSelect} = this.props;
         toggleSelect && toggleSelect(true);
       },
@@ -26,7 +25,6 @@ export default class DrawSraightLine extends Component {
       onPanResponderMove: async (evt, gs) => {
         const {editShape, id, startPoint, endPoint} = this.props;
         const {x, y} = this.state;
-        console.log('gs.dy', gs.dy, gs.dx);
         await this.setState({x: gs.dx, y: gs.dy});
         editShape &&
           editShape({
@@ -64,9 +62,8 @@ export default class DrawSraightLine extends Component {
         cx={x}
         cy={y}
         r={15}
-        onPress={() => console.log('dfjghdfkjghdjkgfhkdjghdkf')}
         stroke={strokeColor}
-        strokeWidth={1}
+        strokeWidth={3}
         fill={backgroundColor}
         {...this._panResponder.panHandlers}
       />

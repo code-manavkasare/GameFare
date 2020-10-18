@@ -53,7 +53,7 @@ class DrawSraightLine extends Component {
               r={radius}
               stroke={strokeColor}
               strokeWidth={strokeWidth}
-              fill={isSelected ? colors.primary + '70' : 'transparent'}
+              fill={isSelected ? colors.primary + '40' : 'transparent'}
               {...panResponder}
             />
           )}

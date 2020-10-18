@@ -375,7 +375,10 @@ class SinglePlayer extends Component {
           muted={false}
           coachSessionID={coachSessionID}
           onVideoPlayerReady={(val) => this.setState({isVideoPlayerReady: val})}
-          clickVideo={clickVideo}
+          clickVideo={() => { 
+            this.drawViewRef.setState({selectedShape: null});
+            clickVideo();
+          }}
         />
       </View>
     );
