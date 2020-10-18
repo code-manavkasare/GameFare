@@ -35,6 +35,7 @@ class DrawView extends Component {
       drawing: false,
       startPoint: {x: 0, y: 0},
       endPoint: {x: 0, y: 0},
+      thirdPoint: {x: 0, y: 0},
       colorDrawing: colors.red,
       drawSetting: 'custom',
       selectedShape: null,
@@ -146,6 +147,12 @@ class DrawView extends Component {
           x: data.endPoint.x / w,
           y: data.endPoint.y / h,
         },
+        thirdPoint: data.thirdPoint
+          ? {
+              x: data.thirdPoint.x / w,
+              y: data.thirdPoint.y / h,
+            }
+          : null,
       };
     }
     console.log('end stroke start', this.state.startPoint);
@@ -186,27 +193,43 @@ class DrawView extends Component {
           x: event.nativeEvent.x,
           y: event.nativeEvent.y,
         };
-        const {drawing} = this.state;
+        const {drawing, drawSetting, startPoint, endPoint} = this.state;
+        let thirdPoint = {x: 0, y: 0};
+        const {x: x1, y: y1} = startPoint;
+        const {x: x2, y: y2} = endPoint;
+        if (drawSetting === 'angle')
+          thirdPoint = {
+            x: x1 + (x2 - x1) * Math.cos(45) - (y2 - y1) * Math.sin(45),
+            y: y1 + (y2 - y1) * Math.cos(45) + (x2 - x1) * Math.sin(45),
+          };
         if (!drawing) {
           return this.setState({
             startPoint: newPosition,
             endPoint: newPosition,
+            thirdPoint: newPosition,
             drawing: true,
           });
         }
         return this.setState({
           endPoint: newPosition,
+          thirdPoint,
         });
       },
     },
   );
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      const {startPoint, endPoint, colorDrawing, strokeWidth} = this.state;
+      const {
+        startPoint,
+        endPoint,
+        colorDrawing,
+        strokeWidth,
+        thirdPoint,
+      } = this.state;
 
       this.onStrokeEnd({
         path: {
-          data: {startPoint, endPoint},
+          data: {startPoint, endPoint, thirdPoint},
           color: colorDrawing,
           width: strokeWidth,
         },
@@ -215,10 +238,11 @@ class DrawView extends Component {
         drawing: false,
         startPoint: {x: 0, y: 0},
         endPoint: {x: 0, y: 0},
+        thirdPoint: {x: 0, y: 0},
       });
     }
   };
-  editShape = ({id, startPoint, endPoint}) => {
+  editShape = ({id, startPoint, endPoint, thirdPoint}) => {
     const {drawings} = this.state;
     const {w, h} = this.sizeScreen();
 
@@ -241,6 +265,12 @@ class DrawView extends Component {
                 y: endPoint.y / h,
               }
             : drawings[id].data.endPoint,
+          thirdPoint: thirdPoint
+            ? {
+                x: thirdPoint.x / w,
+                y: thirdPoint.y / h,
+              }
+            : drawings[id].data.thirdPoint,
         },
       },
     };
@@ -252,6 +282,7 @@ class DrawView extends Component {
     strokeWidth,
     startPoint,
     endPoint,
+    thirdPoint,
     id,
   }) => {
     const {selectedShape} = this.state;
@@ -346,6 +377,7 @@ class DrawView extends Component {
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
+          thirdPoint={thirdPoint}
           id={id}
           editShape={this.editShape.bind(this)}
           onRef={(ref) => (this.drawAnglesRef = ref)}
@@ -365,6 +397,7 @@ class DrawView extends Component {
       strokeWidth,
       startPoint,
       endPoint,
+      thirdPoint,
       drawings,
     } = this.state;
     const style = styles.drawingZone;
@@ -382,10 +415,12 @@ class DrawView extends Component {
               strokeWidth,
               startPoint,
               endPoint,
+              thirdPoint,
               id: 'currentDrawing',
             })}
-            {Object.values(drawings).map((drawing) =>
-              this.shape({
+            {Object.values(drawings).map((drawing) => {
+              console.log(' drawing.data', drawing.data);
+              return this.shape({
                 drawSetting: drawing.drawSetting,
                 colorDrawing: drawing.color,
                 strokeWidth: drawing.width,
@@ -398,8 +433,14 @@ class DrawView extends Component {
                   x: drawing.data.endPoint.x * w,
                   y: drawing.data.endPoint.y * h,
                 },
-              }),
-            )}
+                thirdPoint: drawing.data.thirdPoint
+                  ? {
+                      x: drawing.data.thirdPoint.x * w,
+                      y: drawing.data.thirdPoint.y * h,
+                    }
+                  : null,
+              });
+            })}
           </Svg>
         </Animated.View>
       </PanGestureHandler>

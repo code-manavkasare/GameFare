@@ -23,22 +23,21 @@ class DrawSraightLine extends Component {
       strokeColor,
       startPoint,
       endPoint,
+      thirdPoint,
       toggleSelect,
     } = this.props;
 
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
+    const {x: x3, y: y3} = thirdPoint;
 
     const teta = 45;
-
-    const xc = x1 + (x2 - x1) * Math.cos(teta) - (y2 - y1) * Math.sin(teta);
-    const yc = y1 + (y2 - y1) * Math.cos(teta) + (x2 - x1) * Math.sin(teta);
 
     const x12 = (3 * x1 + x2) / 4;
     const y12 = (3 * y1 + y2) / 4;
 
-    const x1c = (3 * x1 + xc) / 4;
-    const y1c = (3 * y1 + yc) / 4;
+    const x1c = (3 * x1 + x3) / 4;
+    const y1c = (3 * y1 + y3) / 4;
 
     const xAngle = x1 + (x12 - x1) * Math.cos(180) - (y12 - y1) * Math.sin(180);
     const yAngle = y1 + (y12 - y1) * Math.cos(180) + (x12 - x1) * Math.sin(180);
@@ -77,8 +76,8 @@ class DrawSraightLine extends Component {
         <Line
           x1={x1}
           y1={y1}
-          x2={xc}
-          y2={yc}
+          x2={x3}
+          y2={y3}
           stroke={strokeColor}
           strokeWidth={strokeWidth}
         />
