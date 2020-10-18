@@ -34,7 +34,6 @@ class DrawView extends Component {
       cameraAccess: false,
       microAccess: false,
       loader: true,
-      scaleDrawing: 1,
       strokeWidth: 3,
       drawings: {},
       drawing: false,
@@ -42,6 +41,7 @@ class DrawView extends Component {
       endPoint: {x: 0, y: 0},
       colorDrawing: colors.red,
       drawSetting: 'custom',
+      selectedShape: null,
     };
     this.onStrokeEnd = this.onStrokeEnd.bind(this);
     this.undo = this.undo.bind(this);
@@ -115,7 +115,7 @@ class DrawView extends Component {
       }
     }
   };
-  async onStrokeEnd(event, widthDrawView, heightDrawView) {
+  async onStrokeEnd(event) {
     const {
       archiveID,
       coachSessionID,
@@ -125,6 +125,7 @@ class DrawView extends Component {
       videoBeingShared,
       clickVideo,
     } = this.props;
+    const {w, h} = this.sizeScreen();
     const {drawSetting} = this.state;
     let {path} = event;
     const id = generateID();
@@ -132,9 +133,9 @@ class DrawView extends Component {
     if (drawSetting === 'custom') {
       data = data.map((dot) => {
         let x = Number(dot.split(',')[0]);
-        x = x / widthDrawView;
+        x = x / w;
         let y = Number(dot.split(',')[1]);
-        y = y / heightDrawView;
+        y = y / h;
         return x + ',' + y;
       });
       if (data.length < 3) clickVideo(index);
@@ -142,51 +143,44 @@ class DrawView extends Component {
       data = {
         ...path,
         startPoint: {
-          x: data.startPoint.x / widthDrawView,
-          y: data.startPoint.y / heightDrawView,
+          x: data.startPoint.x / w,
+          y: data.startPoint.y / h,
         },
         endPoint: {
-          x: data.endPoint.x / widthDrawView,
-          y: data.endPoint.y / heightDrawView,
+          x: data.endPoint.x / w,
+          y: data.endPoint.y / h,
         },
       };
     }
-
+    console.log('end stroke start', this.state.startPoint);
+    console.log('end stroke end', this.state.endPoint);
     path = {
       ...path,
       timeStamp: Date.now(),
       id,
-      idSketch: path.id ? path.id : id,
       userID,
       data,
-      type: drawSetting,
+      drawSetting,
     };
 
-    if (videoBeingShared) {
-      database()
-        .ref(
-          `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
-            path.id
-          }`,
-        )
-        .update(path);
-    } else {
-      const {drawings} = this.state;
-      const newDrawings = {...drawings, [path.idSketch]: path};
-      await this.setState({drawings: newDrawings});
-      onDrawingChange(index, newDrawings);
-    }
-    if (drawSetting === 'custom') {
-      this.canvasRef.deletePath(path.idSketch);
-    }
+    const {drawings} = this.state;
+    const newDrawings = {...drawings, [id]: path};
+    await this.setState({drawings: newDrawings, selectedShape: id});
+    onDrawingChange(index, newDrawings);
+
+    // if (videoBeingShared) {
+    //   database()
+    //     .ref(
+    //       `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
+    //         path.id
+    //       }`,
+    //     )
+    //     .update(path);
   }
   onPanGestureEvent = Animated.event(
     [
       {
-        nativeEvent: {
-          // translationX: this._translateX,
-          // translationY: this._translateY,
-        },
+        nativeEvent: {},
       },
     ],
     {
@@ -212,13 +206,12 @@ class DrawView extends Component {
   );
   _onHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      const {startPoint, endPoint} = this.state;
-      const {strokeWidth, strokeColor} = this.props;
+      const {startPoint, endPoint, colorDrawing, strokeWidth} = this.state;
 
       this.onStrokeEnd({
         path: {
           data: {startPoint, endPoint},
-          color: strokeColor,
+          color: colorDrawing,
           width: strokeWidth,
         },
       });
@@ -229,87 +222,156 @@ class DrawView extends Component {
       });
     }
   };
+  editShape = ({id, startPoint, endPoint}) => {
+    const {drawings} = this.state;
+    const {w, h} = this.sizeScreen();
+
+    const newDrawings = {
+      ...drawings,
+      [id]: {
+        ...drawings[id],
+        timeStamp: Date.now(),
+        data: {
+          ...drawings[id].data,
+          startPoint: startPoint
+            ? {
+                x: startPoint.x / w,
+                y: startPoint.y / h,
+              }
+            : drawings[id].data.startPoint,
+          endPoint: endPoint
+            ? {
+                x: endPoint.x / w,
+                y: endPoint.y / h,
+              }
+            : drawings[id].data.endPoint,
+        },
+      },
+    };
+    this.setState({drawings: newDrawings});
+  };
   shape = ({
     drawSetting,
     colorDrawing,
     strokeWidth,
     startPoint,
     endPoint,
-    scaleDrawing,
-    w,
-    h,
+    id,
   }) => {
+    const {selectedShape} = this.state;
+    const isSelected = selectedShape === id;
     if (drawSetting === 'circle')
       return (
         <DrawCircles
+          isSelected={isSelected}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
+          id={id}
+          editShape={this.editShape.bind(this)}
           startPoint={startPoint}
           endPoint={endPoint}
-          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          onRef={(ref) => (this.drawCirclesRef = ref)}
+          toggleSelect={(forceSelect) =>
+            this.setState({
+              selectedShape: isSelected && !forceSelect ? null : id,
+            })
+          }
         />
       );
 
     if (drawSetting === 'rectangle')
       return (
         <DrawRectangles
+          isSelected={isSelected}
+          id={id}
+          editShape={this.editShape.bind(this)}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
-          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          onRef={(ref) => (this.drawRectangleRef = ref)}
+          toggleSelect={(forceSelect) =>
+            this.setState({
+              selectedShape: isSelected && !forceSelect ? null : id,
+            })
+          }
         />
       );
 
     if (drawSetting === 'straight')
       return (
         <DrawSraightLine
+          isSelected={isSelected}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
+          id={id}
+          editShape={this.editShape.bind(this)}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          toggleSelect={(forceSelect) =>
+            this.setState({
+              selectedShape: isSelected && !forceSelect ? null : id,
+            })
+          }
         />
       );
 
     if (drawSetting === 'arrow')
       return (
         <DrawArrow
+          isSelected={isSelected}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
+          id={id}
+          editShape={this.editShape.bind(this)}
           onRef={(ref) => (this.drawArrowsRef = ref)}
+          toggleSelect={(forceSelect) =>
+            this.setState({
+              selectedShape: isSelected && !forceSelect ? null : id,
+            })
+          }
         />
       );
 
     if (drawSetting === 'angle')
       return (
         <DrawAngles
+          isSelected={isSelected}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
-          onRef={(ref) => (this.drawStraighLinesRef = ref)}
+          id={id}
+          editShape={this.editShape.bind(this)}
+          onRef={(ref) => (this.drawAnglesRef = ref)}
+          toggleSelect={(forceSelect) =>
+            this.setState({
+              selectedShape: isSelected && !forceSelect ? null : id,
+            })
+          }
         />
       );
     return null;
   };
-  drawingZone = ({w, h}) => {
+  drawingZone = () => {
     const {
-      scaleDrawing,
       drawSetting,
       colorDrawing,
       strokeWidth,
       startPoint,
       endPoint,
+      drawings,
     } = this.state;
     const style = styles.drawingZone;
+    const {w, h} = this.sizeScreen();
     return (
       <PanGestureHandler
         style={style}
@@ -323,19 +385,31 @@ class DrawView extends Component {
               strokeWidth,
               startPoint,
               endPoint,
-              scaleDrawing,
-              w,
-              h,
+              id: 'currentDrawing',
             })}
+            {Object.values(drawings).map((drawing) =>
+              this.shape({
+                drawSetting: drawing.drawSetting,
+                colorDrawing: drawing.color,
+                strokeWidth: drawing.width,
+                id: drawing.id,
+                startPoint: {
+                  x: drawing.data.startPoint.x * w,
+                  y: drawing.data.startPoint.y * h,
+                },
+                endPoint: {
+                  x: drawing.data.endPoint.x * w,
+                  y: drawing.data.endPoint.y * h,
+                },
+              }),
+            )}
           </Svg>
         </Animated.View>
       </PanGestureHandler>
     );
   };
-  drawView() {
-    const {drawingOpen, sizeVideo, playerStyle} = this.props;
-    const {drawing} = this.state;
-
+  sizeScreen = () => {
+    const {sizeVideo, playerStyle} = this.props;
     let h = 0;
     let w = 0;
     const {height: currentHeight, width: currentWidth} = playerStyle;
@@ -351,28 +425,22 @@ class DrawView extends Component {
         w = currentHeight / ratioVideo;
       }
     }
+    return {w, h};
+  };
+  drawView() {
+    const {w, h} = this.sizeScreen();
 
     let styleDrawView = {
       height: h,
       width: w,
     };
+
     if (styleDrawView.h === 0) {
       return null;
     }
     return (
-      <Animated.View
-        pointerEvents={drawingOpen ? 'auto' : 'none'}
-        style={[styles.page, styleDrawView]}>
-        {<View style={styles.drawingZone}>{this.drawingZone({w, h})}</View>}
-
-        {/* <View style={styles.drawingZoneDisplay}>
-          <DisplayDrawingToViewers
-            heightDrawView={h}
-            widthDrawView={w}
-            currentScreenSize={{currentWidth, currentHeight}}
-            drawings={drawings ? Object.values(drawings) : []}
-          />
-        </View> */}
+      <Animated.View style={[styles.page, styleDrawView]}>
+        {this.drawingZone({w, h})}
       </Animated.View>
     );
   }
@@ -390,13 +458,6 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     zIndex: -2,
-    position: 'absolute',
-    top: 0,
-  },
-  drawingZoneDisplay: {
-    height: '100%',
-    width: '100%',
-    zIndex: -3,
     position: 'absolute',
     top: 0,
   },

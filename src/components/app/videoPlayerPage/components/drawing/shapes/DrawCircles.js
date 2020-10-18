@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated, Alert} from 'react-native';
 import {connect} from 'react-redux';
 
-import Svg, {Circle} from 'react-native-svg';
-
+import Svg, {Circle, G} from 'react-native-svg';
+import EditPoint from '../editShape/EditPoint';
 import colors from '../../../../../style/colors';
 
 class DrawSraightLine extends Component {
@@ -14,11 +14,8 @@ class DrawSraightLine extends Component {
       startPoint: {},
       endPoint: {},
     };
-    this.animatedLine = new Animated.Value(0);
   }
-  _lastOffset = {x: 0, y: 0};
-  _translateX = new Animated.Value(0);
-  _translateY = new Animated.Value(0);
+
   componentDidMount() {
     if (this.props.onRef) {
       this.props.onRef(this);
@@ -26,22 +23,54 @@ class DrawSraightLine extends Component {
   }
 
   drawView() {
-    const {strokeWidth, strokeColor, startPoint, endPoint} = this.props;
+    const {
+      strokeWidth,
+      strokeColor,
+      startPoint,
+      endPoint,
+      toggleSelect,
+      isSelected,
+      id,
+      editShape,
+    } = this.props;
 
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
 
     let radius = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    if (!radius) radius = 0;
     return (
-      <Circle
-        cx={x1}
-        cy={y1}
-        r={radius}
-        stroke={strokeColor}
-        strokeWidth={strokeWidth}
-        fill="transparent"
-      />
+      <G onPress={toggleSelect}>
+        <EditPoint
+          startPoint={startPoint}
+          endPoint={endPoint}
+          positionZone={{x: endPoint.x, y: endPoint.y}}
+          id={id}
+          toggleSelect={toggleSelect}
+          element={(panResponder) => (
+            <Circle
+              cx={x1}
+              cy={y1}
+              r={radius}
+              stroke={strokeColor}
+              strokeWidth={strokeWidth}
+              fill={isSelected ? colors.primary + '70' : 'transparent'}
+              {...panResponder}
+            />
+          )}
+          editShape={isSelected && editShape}
+        />
+
+        {isSelected && (
+          <EditPoint
+            endPoint={endPoint}
+            positionZone={{x: endPoint.x, y: endPoint.y}}
+            id={id}
+            strokeColor={strokeColor}
+            editShape={editShape}
+            backgroundColor={colors.secondary}
+          />
+        )}
+      </G>
     );
   }
   render() {

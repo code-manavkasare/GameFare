@@ -1,21 +1,13 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated, Alert} from 'react-native';
 import {connect} from 'react-redux';
-import Svg, {Line, Defs, Marker, Path, G} from 'react-native-svg';
+import {Line, Path, G} from 'react-native-svg';
 
 class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      drawing: false,
-      startPoint: {},
-      endPoint: {},
-    };
-    this.animatedLine = new Animated.Value(0);
+    this.state = {};
   }
-  _lastOffset = {x: 0, y: 0};
-  _translateX = new Animated.Value(0);
-  _translateY = new Animated.Value(0);
   componentDidMount() {
     if (this.props.onRef) {
       this.props.onRef(this);
@@ -23,14 +15,20 @@ class DrawSraightLine extends Component {
   }
 
   drawView() {
-    const {strokeWidth, strokeColor, startPoint, endPoint} = this.props;
+    const {
+      strokeWidth,
+      strokeColor,
+      startPoint,
+      endPoint,
+      toggleSelect,
+    } = this.props;
 
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
     const {style} = this.props;
 
     return (
-      <Svg height={style.height} width={style.width}>
+      <G height={style.height} width={style.width} onPress={toggleSelect}>
         <Line
           x1={x1}
           y1={y1}
@@ -50,7 +48,7 @@ class DrawSraightLine extends Component {
             stroke={strokeColor}
           />
         </G>
-      </Svg>
+      </G>
     );
   }
   render() {

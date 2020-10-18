@@ -1,24 +1,17 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import Svg, {Rect} from 'react-native-svg';
+import {Rect, G} from 'react-native-svg';
 
 import colors from '../../../../../style/colors';
+import EditPoint from '../editShape/EditPoint';
 import {dimensionRectangle} from '../../../../../functions/videoManagement';
 
 class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      drawing: false,
-      startPoint: {x: 0, y: 0},
-      endPoint: {x: 0, y: 0},
-    };
-    this.animatedLine = new Animated.Value(0);
+    this.state = {};
   }
-  _lastOffset = {x: 0, y: 0};
-  _translateX = new Animated.Value(0);
-  _translateY = new Animated.Value(0);
   componentDidMount() {
     if (this.props.onRef) {
       this.props.onRef(this);
@@ -26,20 +19,52 @@ class DrawSraightLine extends Component {
   }
 
   drawView() {
-    const {strokeWidth, strokeColor, startPoint, endPoint} = this.props;
-
+    const {
+      strokeWidth,
+      strokeColor,
+      startPoint,
+      endPoint,
+      toggleSelect,
+      isSelected,
+      editShape,
+      id,
+    } = this.props;
     const {x: x1, y: y1} = startPoint;
     const {height, width} = dimensionRectangle({startPoint, endPoint});
     return (
-      <Rect
-        x={x1}
-        y={y1}
-        height={height}
-        width={width}
-        stroke={strokeColor}
-        strokeWidth={strokeWidth}
-        fill="transparent"
-      />
+      <G>
+        <EditPoint
+          startPoint={startPoint}
+          endPoint={endPoint}
+          positionZone={{x: endPoint.x, y: endPoint.y}}
+          id={id}
+          toggleSelect={toggleSelect}
+          element={(panResponder) => (
+            <Rect
+              x={x1}
+              y={y1}
+              height={height}
+              width={width}
+              stroke={strokeColor}
+              strokeWidth={strokeWidth}
+              fill={isSelected ? colors.primary + '70' : 'transparent'}
+              {...panResponder}
+            />
+          )}
+          editShape={isSelected && editShape}
+        />
+
+        {isSelected && (
+          <EditPoint
+            startPoint={startPoint}
+            positionZone={{x: startPoint.x, y: startPoint.y}}
+            id={id}
+            strokeColor={strokeColor}
+            editShape={editShape}
+            backgroundColor={colors.secondary}
+          />
+        )}
+      </G>
     );
   }
   render() {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated, Alert} from 'react-native';
 import {connect} from 'react-redux';
-import Svg, {Line, Path} from 'react-native-svg';
+import {Line, Path, Text, G} from 'react-native-svg';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -9,17 +9,8 @@ import styleApp from '../../../../../style/style';
 class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      drawing: false,
-      startPoint: {},
-      endPoint: {},
-      thirdPoint: {},
-    };
-    this.animatedLine = new Animated.Value(0);
+    this.state = {};
   }
-  _lastOffset = {x: 0, y: 0};
-  _translateX = new Animated.Value(0);
-  _translateY = new Animated.Value(0);
   componentDidMount() {
     if (this.props.onRef) {
       this.props.onRef(this);
@@ -27,7 +18,13 @@ class DrawSraightLine extends Component {
   }
 
   drawView() {
-    const {strokeWidth, strokeColor, startPoint, endPoint, style} = this.props;
+    const {
+      strokeWidth,
+      strokeColor,
+      startPoint,
+      endPoint,
+      toggleSelect,
+    } = this.props;
 
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
@@ -47,67 +44,45 @@ class DrawSraightLine extends Component {
     const yAngle = y1 + (y12 - y1) * Math.cos(180) + (x12 - x1) * Math.sin(180);
 
     return (
-      <Animated.View style={style}>
-        <View
-          style={{
-            ...styleApp.center,
-            position: 'absolute',
-            zIndex: 30,
-            top: yAngle,
-            left: xAngle,
-            borderRadius: 5,
-            height: 30,
-            width: 30,
-            backgroundColor: colors.title,
-          }}>
-          <Text
-            style={[styleApp.textBold, {color: colors.white, fontSize: 11}]}>
-            {teta}º
-          </Text>
-        </View>
+      <G onPress={toggleSelect}>
+        <Text
+          fill={colors.white}
+          stroke={colors.title}
+          fontSize="20"
+          fontWeight="bold"
+          x={xAngle}
+          y={yAngle}
+          textAnchor="middle">
+          {teta}º
+        </Text>
 
-        {/* <Path
-          d="M100 378.5" // put your path here
-          fill="blue"
-          stroke="blue"
-        /> */}
+        <Line
+          x1={x12}
+          y1={y12}
+          x2={x1c}
+          y2={y1c}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+        />
 
-        <Svg
-          height={style.height}
-          width={style.width}
-          style={{
-            position: 'absolute',
-          }}>
-          <Line
-            x1={x12}
-            y1={y12}
-            x2={x1c}
-            y2={y1c}
-            stroke={strokeColor}
-            strokeWidth={strokeWidth}
-          />
-        </Svg>
+        <Line
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+        />
 
-        <Svg height={style.height} width={style.width}>
-          <Line
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            stroke={strokeColor}
-            strokeWidth={strokeWidth}
-          />
-
-          <Line
-            x1={x1}
-            y1={y1}
-            x2={xc}
-            y2={yc}
-            stroke={strokeColor}
-            strokeWidth={strokeWidth}
-          />
-        </Svg>
-      </Animated.View>
+        <Line
+          x1={x1}
+          y1={y1}
+          x2={xc}
+          y2={yc}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+        />
+      </G>
     );
   }
   render() {
