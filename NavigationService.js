@@ -1,10 +1,13 @@
 import * as React from 'react';
 import {CommonActions, StackActions} from '@react-navigation/native';
+
 import {loadAndOpenSession} from './src/components/functions/coach';
+import {sentryAddBreadcrumb} from './src/components/functions/logs.js';
 
 const navigationRef = React.createRef();
 
 const navigate = (routeName, params) => {
+  sentryAddBreadcrumb('currentRoute', routeName);
   if (params?.notUniqueStack)
     return navigationRef.current?.navigate(routeName, {
       screen: params.screen,
