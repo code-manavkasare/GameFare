@@ -155,8 +155,6 @@ class DrawView extends Component {
           : null,
       };
     }
-    console.log('end stroke start', this.state.startPoint);
-    console.log('end stroke end', this.state.endPoint);
     path = {
       ...path,
       timeStamp: Date.now(),
@@ -418,9 +416,8 @@ class DrawView extends Component {
               thirdPoint,
               id: 'currentDrawing',
             })}
-            {Object.values(drawings).map((drawing) => {
-              console.log(' drawing.data', drawing.data);
-              return this.shape({
+            {Object.values(drawings).map((drawing) =>
+              this.shape({
                 drawSetting: drawing.drawSetting,
                 colorDrawing: drawing.color,
                 strokeWidth: drawing.width,
@@ -439,8 +436,8 @@ class DrawView extends Component {
                       y: drawing.data.thirdPoint.y * h,
                     }
                   : null,
-              });
-            })}
+              }),
+            )}
           </Svg>
         </Animated.View>
       </PanGestureHandler>

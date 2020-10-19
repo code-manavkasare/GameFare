@@ -70,7 +70,8 @@ export default class DrawSraightLine extends Component {
         r={15}
         stroke={strokeColor}
         strokeWidth={3}
-        fill={backgroundColor}
+        fill={'transparent'}
+        strokeDasharray="10, 6"
         {...this._panResponder.panHandlers}
       />
     );
