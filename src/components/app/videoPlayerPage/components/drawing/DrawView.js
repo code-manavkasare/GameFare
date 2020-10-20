@@ -170,13 +170,13 @@ class DrawView extends Component {
     )[0];
     console.log('copyLastDrawingInCloud', path);
 
-    // database()
-    //   .ref(
-    //     `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
-    //       path.id
-    //     }`,
-    //   )
-    //   .update(path);
+    database()
+      .ref(
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
+          path.id
+        }`,
+      )
+      .update(path);
   };
   onPanGestureEvent = Animated.event(
     [
