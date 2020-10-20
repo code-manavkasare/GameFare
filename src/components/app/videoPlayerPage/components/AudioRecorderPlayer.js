@@ -47,19 +47,18 @@ class AudioRecorderPlayer extends Component {
   preparePlayer = async ({url, isCloud}) => {
     const {audioPlayer} = this.state;
     console.log('preparePlayer', audioPlayer);
-    // if (audioPlayer) await this.destroyPlayer();
     await new Promise(async (resolve) => {
-      await this.adjustAudioSession();
-      this.setState({
+      await this.setState({
         audioPlayer: new Player(
           url ? (isCloud ? url : `file://${url}`) : 'audio.mp4',
           {
             autoDestroy: false,
             mixWithOthers: true,
           },
-        ).prepare(() => {
-          resolve();
-        }),
+        ),
+      });
+      this.adjustAudioSession().then(() => {
+        resolve();
       });
     });
     return true;
@@ -75,7 +74,6 @@ class AudioRecorderPlayer extends Component {
           'AllowBluetooth',
         )
           .then(() => {
-            console.log('AUDIO SESSION CHANGED');
             return resolve();
           })
           .catch(() => {
@@ -87,15 +85,11 @@ class AudioRecorderPlayer extends Component {
   };
 
   playRecord = async () => {
-    await this.adjustAudioSession();
     this.state.audioPlayer.stop();
     await this.state.audioPlayer.play();
-    console.log('PLAY RECORD');
   };
   playPause = async () => {
-    await this.adjustAudioSession();
     this.state.audioPlayer.playPause();
-    console.log('PLAY PAUSE');
   };
   pause = () => {
     this.state.audioPlayer.pause();

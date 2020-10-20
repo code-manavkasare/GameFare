@@ -616,73 +616,6 @@ class VideoPlayerPage extends Component {
     );
   };
 
-  linkButtonStyleByIndex = (i, total) => {
-    const {landscape} = this.state;
-    const {height, width} = Dimensions.get('screen');
-    let style = {position: 'absolute'};
-    if (landscape) {
-      const gap = width / (total + 1);
-      style = {
-        ...style,
-        right: gap * (i + 1) - 15,
-        top: height / 2 - 25,
-        height: 50,
-        width: 50,
-      };
-    } else {
-      const gap = height / (total + 1);
-      style = {
-        ...style,
-        bottom: gap * (i + 1) - 25,
-        left: width / 2 - 25,
-        width: 50,
-        height: 50,
-      };
-    }
-    return style;
-  };
-
-  linkButtons = () => {
-    const {videoInfos} = this.props;
-    if (videoInfos && Object.values(videoInfos).length > 1) {
-      const adjPairs = Object.values(videoInfos)
-        .map((_, i, videoInfos) => {
-          return i === videoInfos.length - 1
-            ? null
-            : {
-                a: i,
-                b: i + 1,
-              };
-        })
-        .filter((x) => x);
-      const buttons = adjPairs.map(({a, b}, i) => {
-        const linkButtonContainer = this.linkButtonStyleByIndex(
-          i,
-          adjPairs.length,
-        );
-        return (
-          <View style={linkButtonContainer}>
-            <Button
-              backgroundColor=""
-              onPressColor={colors.green}
-              styleButton={styles.buttonLink}
-              icon={{
-                name: this.playersAreLinked(a, b) ? 'link' : 'unlink',
-                type: 'font',
-                size: 20,
-                color: 'white',
-              }}
-              click={async () => await this.toggleLink(a, b)}
-            />
-          </View>
-        );
-      });
-      return buttons;
-    } else {
-      return null;
-    }
-  };
-
   render = () => {
     const {isRecording, isEditMode, recordedActions} = this.state;
     const {videoInfos, currentSessionID} = this.props;
@@ -716,7 +649,6 @@ class VideoPlayerPage extends Component {
           Object.values(videoInfos)
             .filter((x) => x)
             .map((videoInfo, i) => this.singlePlayer(videoInfo, i))}
-        {/* {this.linkButtons()} */}
       </View>
     );
   };
