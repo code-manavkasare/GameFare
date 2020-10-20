@@ -460,7 +460,6 @@ export default class VideoPlayer extends Component {
                   }}
                   onLoadStart={(response) => {
                     if (connectedToSession) {
-                      console.log('connected to session');
                       AudioSession.setCategoryAndMode(
                         'PlayAndRecord',
                         'VideoChat',
