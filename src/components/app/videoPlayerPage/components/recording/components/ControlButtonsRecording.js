@@ -50,7 +50,7 @@ export default class ControlButtonsRecording extends React.Component {
   toggleOpacity = () => {
     Animated.timing(
       this.opacityButton,
-      timing(this.opacityButton._value === 0 ? 1 : 0, 300),
+      timing(this.opacityButton._value === 0 ? 1 : 0, 100),
     ).start();
   };
   render() {

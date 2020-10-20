@@ -574,6 +574,7 @@ const iconWithBadge = (icon, badgeNumber) => {
           : 10
         : 10,
   };
+  if (!badgeNumber) return null;
   return (
     <View>
       <AllIcons
@@ -627,13 +628,7 @@ const rowTitle = ({
   return (
     <View style={styleContainer}>
       <Row>
-        {icon ? (
-          <Col size={30} style={styleApp.center}>
-            {iconWithBadge(icon, badge)}
-          </Col>
-        ) : (
-          <Col size={1} />
-        )}
+        <Col size={1} />
         <Col size={55} style={styleApp.center2}>
           <Text
             style={[

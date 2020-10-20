@@ -452,7 +452,7 @@ export default class VideoPlayer extends Component {
                     allowRecording={
                       connectedToSession ? undefined : allowRecording
                     }
-                    source={{uri: url}}
+                    source={{uri: error ? originalUrl : url}}
                     style={styleApp.fullSize}
                     ref={(ref) => {
                       this.player = ref;
@@ -464,7 +464,6 @@ export default class VideoPlayer extends Component {
                     }}
                     onLoadStart={(response) => {
                       if (connectedToSession) {
-                        console.log('connected to session');
                         AudioSession.setCategoryAndMode(
                           'PlayAndRecord',
                           'VideoChat',
