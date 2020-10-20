@@ -48,8 +48,8 @@ class AudioRecorderPlayer extends Component {
     const {audioPlayer} = this.state;
     console.log('preparePlayer', audioPlayer);
     // if (audioPlayer) await this.destroyPlayer();
-    await new Promise((resolve) => {
-      this.adjustAudioSession();
+    await new Promise(async (resolve) => {
+      await this.adjustAudioSession();
       this.setState({
         audioPlayer: new Player(
           url ? (isCloud ? url : `file://${url}`) : 'audio.mp4',
@@ -65,26 +65,37 @@ class AudioRecorderPlayer extends Component {
     return true;
   };
 
-  adjustAudioSession() {
+  adjustAudioSession = async () => {
     const {connectedToSession} = this.props;
     if (connectedToSession) {
-      console.log('connected to session');
-      AudioSession.setCategoryAndMode(
-        'PlayAndRecord',
-        'VideoChat',
-        'AllowBluetooth',
-      );
+      return new Promise((resolve, reject) => {
+        AudioSession.setCategoryAndMode(
+          'PlayAndRecord',
+          'VideoChat',
+          'AllowBluetooth',
+        )
+          .then(() => {
+            console.log('AUDIO SESSION CHANGED');
+            return resolve();
+          })
+          .catch(() => {
+            return reject();
+          });
+      });
     }
-  }
-
-  playRecord = () => {
-    this.state.audioPlayer.stop();
-    this.adjustAudioSession();
-    this.state.audioPlayer.play();
+    return null;
   };
-  playPause = () => {
-    this.adjustAudioSession();
+
+  playRecord = async () => {
+    await this.adjustAudioSession();
+    this.state.audioPlayer.stop();
+    await this.state.audioPlayer.play();
+    console.log('PLAY RECORD');
+  };
+  playPause = async () => {
+    await this.adjustAudioSession();
     this.state.audioPlayer.playPause();
+    console.log('PLAY PAUSE');
   };
   pause = () => {
     this.state.audioPlayer.pause();
