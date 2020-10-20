@@ -62,7 +62,7 @@ class DrawView extends Component {
   static getDerivedStateFromProps(props, state) {
     if (props.videoBeingShared && !isEqual(props.drawings, state.drawings)) {
       return {
-        drawings: props.drawings,
+        drawings: !props.drawings ? [] : props.drawings,
       };
     }
     return {};
@@ -460,6 +460,7 @@ class DrawView extends Component {
     } = this.state;
     const style = styles.drawingZone;
     const {w, h} = this.sizeScreen();
+    console.log('path', path);
     return (
       <PanGestureHandler
         style={style}
