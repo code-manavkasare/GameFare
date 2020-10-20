@@ -441,36 +441,18 @@ export default class VideoPlayer extends Component {
             singleTouch={() => this.clickVideo(index)}
             component={() => (
               <View style={[styleApp.fullSize, styleApp.center]}>
-                <Video
-                  key={index}
-                  debug
-                  mixWithOthers={connectedToSession ? undefined : 'mix'}
-                  ignoreSilentSwitch={connectedToSession ? undefined : 'ignore'}
-                  allowRecording={
-                    connectedToSession ? undefined : allowRecording
-                  }
-                  source={{uri: error ? originalUrl : url}}
-                  style={styleApp.fullSize}
-                  ref={(ref) => {
-                    this.player = ref;
-                  }}
-                  rate={playRate}
-                  onError={(error) => {
-                    this.setState({error: true});
-                    console.log(url, error);
-                  }}
-                  onLoadStart={(response) => {
-                    if (connectedToSession) {
-                      AudioSession.setCategoryAndMode(
-                        'PlayAndRecord',
-                        'VideoChat',
-                        'AllowBluetooth',
-                      );
+                {url && (
+                  <Video
+                    key={index}
+                    debug
+                    mixWithOthers={connectedToSession ? undefined : 'mix'}
+                    ignoreSilentSwitch={
+                      connectedToSession ? undefined : 'ignore'
                     }
                     allowRecording={
                       connectedToSession ? undefined : allowRecording
                     }
-                    source={{uri: url}}
+                    source={{uri: error ? originalUrl : url}}
                     style={styleApp.fullSize}
                     ref={(ref) => {
                       this.player = ref;
@@ -482,7 +464,6 @@ export default class VideoPlayer extends Component {
                     }}
                     onLoadStart={(response) => {
                       if (connectedToSession) {
-                        console.log('connected to session');
                         AudioSession.setCategoryAndMode(
                           'PlayAndRecord',
                           'VideoChat',
