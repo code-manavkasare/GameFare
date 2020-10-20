@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
 import Svg, {Circle} from 'react-native-svg';
+import isEqual from 'lodash.isequal';
 
 import {coachAction} from '../../../../../actions/coachActions';
 import {generateID} from '../../../../functions/createEvent';
@@ -16,6 +17,7 @@ import DrawRectangles from './shapes/DrawRectangles';
 import DrawAngles from './shapes/DrawAngles';
 import DrawSraightLine from './shapes/DrawSraightLine';
 import DrawCircles from './shapes/DrawCircles';
+import DrawCustomLine from './shapes/DrawCustomLine';
 
 class DrawView extends Component {
   static propTypes = {
@@ -33,6 +35,7 @@ class DrawView extends Component {
       strokeWidth: 3,
       drawings: {},
       drawing: false,
+      path: [],
       startPoint: {x: 0, y: 0},
       endPoint: {x: 0, y: 0},
       thirdPoint: {x: 0, y: 0},
@@ -48,6 +51,16 @@ class DrawView extends Component {
       this.props.onRef(this);
     }
   }
+  componentDidUpdate = (prevProps, prevState) => {
+    const {videoBeingShared, drawings} = this.props;
+    if (
+      !isEqual(prevState.drawings, drawings) &&
+      Object.values(drawings).length ===
+        Object.values(prevState.drawings).length &&
+      videoBeingShared
+    )
+      return this.copyLastDrawingInCloud();
+  };
   static getDerivedStateFromProps(props, state) {
     if (props.videoBeingShared) {
       return {
@@ -113,48 +126,31 @@ class DrawView extends Component {
     }
   };
   async onStrokeEnd(event) {
-    const {
-      archiveID,
-      coachSessionID,
-      index,
-      onDrawingChange,
-      userID,
-      videoBeingShared,
-      clickVideo,
-    } = this.props;
+    const {index, onDrawingChange, userID, clickVideo} = this.props;
     const {w, h} = this.sizeScreen();
     const {drawSetting} = this.state;
     let {path} = event;
     const id = generateID();
     let {data} = path;
-    if (drawSetting === 'custom') {
-      data = data.map((dot) => {
-        let x = Number(dot.split(',')[0]);
-        x = x / w;
-        let y = Number(dot.split(',')[1]);
-        y = y / h;
-        return x + ',' + y;
-      });
-      if (data.length < 3) clickVideo(index);
-    } else {
-      data = {
-        ...path,
-        startPoint: {
-          x: data.startPoint.x / w,
-          y: data.startPoint.y / h,
-        },
-        endPoint: {
-          x: data.endPoint.x / w,
-          y: data.endPoint.y / h,
-        },
-        thirdPoint: data.thirdPoint
-          ? {
-              x: data.thirdPoint.x / w,
-              y: data.thirdPoint.y / h,
-            }
-          : null,
-      };
-    }
+    console.log('datadatadata', data);
+    data = {
+      ...path,
+      ...data,
+      startPoint: {
+        x: data.startPoint.x / w,
+        y: data.startPoint.y / h,
+      },
+      endPoint: {
+        x: data.endPoint.x / w,
+        y: data.endPoint.y / h,
+      },
+      thirdPoint: data.thirdPoint
+        ? {
+            x: data.thirdPoint.x / w,
+            y: data.thirdPoint.y / h,
+          }
+        : null,
+    };
     path = {
       ...path,
       timeStamp: Date.now(),
@@ -163,21 +159,28 @@ class DrawView extends Component {
       data,
       drawSetting,
     };
-
+    console.log('sdfsfsdfsdf', path);
     const {drawings} = this.state;
     const newDrawings = {...drawings, [id]: path};
     await this.setState({drawings: newDrawings, selectedShape: id});
-    onDrawingChange(index, newDrawings);
-
-    // if (videoBeingShared) {
-    //   database()
-    //     .ref(
-    //       `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
-    //         path.id
-    //       }`,
-    //     )
-    //     .update(path);
+    // onDrawingChange(index, newDrawings);
   }
+  copyLastDrawingInCloud = () => {
+    const {archiveID, coachSessionID} = this.props;
+    const {drawings} = this.state;
+    const path = Object.values(drawings).sort(
+      (a, b) => a.timeStamp - b.timeStamp,
+    )[0];
+    console.log('path', path);
+    return;
+    database()
+      .ref(
+        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
+          path.id
+        }`,
+      )
+      .update(path);
+  };
   onPanGestureEvent = Animated.event(
     [
       {
@@ -187,6 +190,7 @@ class DrawView extends Component {
     {
       useNativeDriver: true,
       listener: (event) => {
+        const {w, h} = this.sizeScreen();
         const newPosition = {
           x: event.nativeEvent.x,
           y: event.nativeEvent.y,
@@ -195,6 +199,21 @@ class DrawView extends Component {
         let thirdPoint = {x: 0, y: 0};
         const {x: x1, y: y1} = startPoint;
         const {x: x2, y: y2} = endPoint;
+        if (drawSetting === 'custom') {
+          let {path} = this.state;
+          console.log('path', path);
+          path.push({
+            x: newPosition.x / w,
+            y: newPosition.y / h,
+          });
+
+          return this.setState({
+            path,
+            startPoint: drawing ? startPoint : newPosition,
+            endPoint: newPosition,
+            drawing: true,
+          });
+        }
         if (drawSetting === 'angle')
           thirdPoint = {
             x: x1 + (x2 - x1) * Math.cos(45) - (y2 - y1) * Math.sin(45),
@@ -223,11 +242,12 @@ class DrawView extends Component {
         colorDrawing,
         strokeWidth,
         thirdPoint,
+        path,
       } = this.state;
 
       this.onStrokeEnd({
         path: {
-          data: {startPoint, endPoint, thirdPoint},
+          data: {startPoint, endPoint, thirdPoint, path},
           color: colorDrawing,
           width: strokeWidth,
         },
@@ -237,10 +257,11 @@ class DrawView extends Component {
         startPoint: {x: 0, y: 0},
         endPoint: {x: 0, y: 0},
         thirdPoint: {x: 0, y: 0},
+        path: [],
       });
     }
   };
-  editShape = ({id, startPoint, endPoint, thirdPoint}) => {
+  editShape = ({id, startPoint, endPoint, thirdPoint, path}) => {
     const {drawings} = this.state;
     const {w, h} = this.sizeScreen();
 
@@ -269,6 +290,7 @@ class DrawView extends Component {
                 y: thirdPoint.y / h,
               }
             : drawings[id].data.thirdPoint,
+          path: path ? path : drawings[id].data.path,
         },
       },
     };
@@ -281,10 +303,13 @@ class DrawView extends Component {
     startPoint,
     endPoint,
     thirdPoint,
+    path,
     id,
   }) => {
+    const {w, h} = this.sizeScreen();
     const {selectedShape} = this.state;
     const isSelected = selectedShape === id;
+    console.log('shape,', path, startPoint);
     if (drawSetting === 'circle')
       return (
         <DrawCircles
@@ -293,6 +318,7 @@ class DrawView extends Component {
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
           id={id}
+          key={id}
           editShape={this.editShape.bind(this)}
           startPoint={startPoint}
           endPoint={endPoint}
@@ -304,12 +330,35 @@ class DrawView extends Component {
           }
         />
       );
-
+    if (drawSetting === 'custom' && Object.values(path).length > 0)
+      return (
+        <DrawCustomLine
+          isSelected={isSelected}
+          style={styles.drawingZone}
+          strokeWidth={strokeWidth}
+          strokeColor={colorDrawing}
+          id={id}
+          key={id}
+          path={path}
+          w={w}
+          h={h}
+          editShape={this.editShape.bind(this)}
+          startPoint={startPoint}
+          endPoint={endPoint}
+          onRef={(ref) => (this.drawCirclesRef = ref)}
+          toggleSelect={(forceSelect) =>
+            this.setState({
+              selectedShape: isSelected && !forceSelect ? null : id,
+            })
+          }
+        />
+      );
     if (drawSetting === 'rectangle')
       return (
         <DrawRectangles
           isSelected={isSelected}
           id={id}
+          key={id}
           editShape={this.editShape.bind(this)}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
@@ -334,6 +383,7 @@ class DrawView extends Component {
           strokeColor={colorDrawing}
           startPoint={startPoint}
           endPoint={endPoint}
+          key={id}
           id={id}
           editShape={this.editShape.bind(this)}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
@@ -356,6 +406,7 @@ class DrawView extends Component {
           startPoint={startPoint}
           endPoint={endPoint}
           id={id}
+          key={id}
           editShape={this.editShape.bind(this)}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
           toggleSelect={(forceSelect) =>
@@ -377,6 +428,7 @@ class DrawView extends Component {
           endPoint={endPoint}
           thirdPoint={thirdPoint}
           id={id}
+          key={id}
           editShape={this.editShape.bind(this)}
           onRef={(ref) => (this.drawAnglesRef = ref)}
           toggleSelect={(forceSelect) =>
@@ -397,9 +449,11 @@ class DrawView extends Component {
       endPoint,
       thirdPoint,
       drawings,
+      path,
     } = this.state;
     const style = styles.drawingZone;
     const {w, h} = this.sizeScreen();
+    console.log('render ', drawings);
     return (
       <PanGestureHandler
         style={style}
@@ -415,12 +469,14 @@ class DrawView extends Component {
               endPoint,
               thirdPoint,
               id: 'currentDrawing',
+              path,
             })}
             {Object.values(drawings).map((drawing) =>
               this.shape({
                 drawSetting: drawing.drawSetting,
                 colorDrawing: drawing.color,
                 strokeWidth: drawing.width,
+                path: drawing.data.path,
                 id: drawing.id,
                 startPoint: {
                   x: drawing.data.startPoint.x * w,

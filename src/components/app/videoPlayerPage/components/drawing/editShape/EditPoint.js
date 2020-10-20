@@ -23,9 +23,20 @@ export default class DrawSraightLine extends Component {
       },
 
       onPanResponderMove: async (evt, gs) => {
-        const {editShape, id, startPoint, endPoint, thirdPoint} = this.props;
+        const {
+          editShape,
+          id,
+          startPoint,
+          endPoint,
+          thirdPoint,
+          path,
+          w,
+          h,
+        } = this.props;
         const {x, y} = this.state;
+
         await this.setState({x: gs.dx, y: gs.dy});
+
         editShape &&
           editShape({
             id,
@@ -46,6 +57,14 @@ export default class DrawSraightLine extends Component {
                   x: thirdPoint.x + gs.dx - x,
                   y: thirdPoint.y + gs.dy - y,
                 }
+              : null,
+            path: path
+              ? path.map((point) => {
+                  return {
+                    x: (point.x + gs.dx - x) / w,
+                    y: (point.y + gs.dy - y) / h,
+                  };
+                })
               : null,
           });
       },
