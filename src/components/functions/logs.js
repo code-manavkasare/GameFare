@@ -9,6 +9,7 @@ Mixpanel.sharedInstanceWithToken(mixPanelToken);
 const logMixpanel = ({label, params}) => {
   const {userID} = store.getState().user;
   Mixpanel.trackWithProperties(label, {...params, userID, date: new Date()});
+  sentryAddBreadcrumb('action', label);
 };
 
 const isDevEnv = __DEV__;

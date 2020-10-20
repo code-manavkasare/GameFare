@@ -136,6 +136,7 @@ const addLocalVideo = async ({video, backgroundUpload}) => {
       }),
     );
   }
+  return video.id;
 };
 
 const deleteVideos = (ids) => {

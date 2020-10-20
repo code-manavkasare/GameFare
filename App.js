@@ -11,6 +11,7 @@ import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import BackgroundTimer from 'react-native-background-timer';
 import convertToCache from 'react-native-video-cache';
+import {Text} from 'react-native';
 
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
@@ -47,6 +48,11 @@ const MyTheme = {
 };
 
 class App extends Component {
+  constructor() {
+    super();
+    if (Text.defaultProps == null) Text.defaultProps = {};
+    Text.defaultProps.allowFontScaling = false;
+  }
   async componentDidMount() {
     const {archives, appSettingsAction, buildId, userID} = this.props;
     if (!__DEV__) {

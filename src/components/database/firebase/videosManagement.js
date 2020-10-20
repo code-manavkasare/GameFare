@@ -1,7 +1,7 @@
 import database from '@react-native-firebase/database';
 
 import {store} from '../../../../reduxStore';
-import {deleteArchive, setArchive} from '../../../actions/archivesActions';
+import {getOnceValue} from './methods';
 
 const shareCloudVideo = async (
   shareWithID,
@@ -49,6 +49,13 @@ const deleteCloudVideos = async (videoIDs) => {
     .update(updates);
 };
 
+const mergeInfoWithExistingCloudVideo = async (firebaseVideoInfo) => {
+  const cloudVideoInfo = await getOnceValue(
+    `archivedStreams/${firebaseVideoInfo.id}`,
+  );
+  return {...firebaseVideoInfo, ...cloudVideoInfo};
+};
+
 const createCloudVideo = async (videoInfo) => {
   // creates a firebase object for cloud video
   if (videoInfo.id) {
@@ -58,9 +65,12 @@ const createCloudVideo = async (videoInfo) => {
       fromNativeLibrary: false,
       uploadedByUser: true,
     };
+    const newFirebaseVideoInfo = await mergeInfoWithExistingCloudVideo(
+      firebaseVideoInfo,
+    );
     await database()
       .ref(`archivedStreams/${videoInfo.id}`)
-      .set(firebaseVideoInfo);
+      .set(newFirebaseVideoInfo);
     return true;
   } else {
     return false;

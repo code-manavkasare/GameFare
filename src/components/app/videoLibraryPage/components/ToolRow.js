@@ -133,6 +133,7 @@ class ToolRow extends Component {
       position,
       userConnected,
       selectedLocalVideos,
+      selectedRecordVideos,
     } = this.props;
 
     return (
@@ -192,10 +193,12 @@ class ToolRow extends Component {
 
                   isSelected:
                     selectedVideos.length > 0 &&
-                    selectedLocalVideos.length === 0,
+                    selectedLocalVideos.length === 0 &&
+                    selectedRecordVideos.length === 0,
                   buttonDisabled:
                     selectedVideos.length === 0 ||
-                    selectedLocalVideos.length > 0,
+                    selectedLocalVideos.length > 0 ||
+                    selectedRecordVideos.length > 0,
                   onPressColor: colors.primaryLight,
                   style: styles.button,
                   click: () => clickButton0({}),
@@ -299,6 +302,9 @@ const mapStateToProps = (state, props) => {
     selectedLocalVideos: props.selectedVideos
       .map((video) => state.archives[video])
       .filter((video) => video?.local),
+    selectedRecordVideos: props.selectedVideos
+      .map((video) => state.archives[video])
+      .filter((video) => video?.recordedActions),
   };
 };
 
