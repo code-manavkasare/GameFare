@@ -11,6 +11,7 @@ import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
 import {isArchiveUploading} from '../../functions/upload.js';
 import {layoutAction} from '../../../actions/layoutActions';
+import {logMixpanel} from '../../functions/logs';
 
 import colors from '../../style/colors';
 
@@ -153,7 +154,10 @@ class VideoPlayerPage extends Component {
       ref?.toggleVisibleSeekBar(true);
       ref?.setState({displayButtonReplay: false});
     });
-
+    logMixpanel({
+      label: 'startRecording',
+      params: {},
+    });
     await this.setState({
       isRecording: true,
       recordedActions: [],
@@ -169,7 +173,10 @@ class VideoPlayerPage extends Component {
 
   stopRecording = async () => {
     await this.onPlayPause(0, true);
-
+    logMixpanel({
+      label: 'stopRecording',
+      params: {recordedActions: this.state.recordedActions},
+    });
     this.AudioRecorderPlayerRef?.stopRecording();
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
@@ -350,7 +357,10 @@ class VideoPlayerPage extends Component {
     const {archives, recordedActions} = this.state;
     const {userID, videoInfos} = this.props;
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
-
+    logMixpanel({
+      label: 'Save review',
+      params: {userID, recordedActions},
+    });
     for (const videoInfo of Object.values(videoInfos)) {
       if (videoInfo.local) {
         const localVideoInfo = getArchiveByID(archives[0]);
