@@ -57,6 +57,7 @@ export default class AsyncImage extends Component {
             if (onError) onError();
             sentryCaptureException({
               event: 'FastImageError',
+              error: response,
               props: this.props,
               state: this.state,
             });

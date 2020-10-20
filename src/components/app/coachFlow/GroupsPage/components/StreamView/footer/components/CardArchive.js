@@ -89,7 +89,7 @@ class CardArchive extends PureComponent {
     const {url, id} = archive;
     if (url && url !== '' && !disableClick) {
       logMixpanel({
-        label: 'Click session ' + coachSessionID,
+        label: 'Click video ' + coachSessionID,
         params: {videos: videosToOpen ? videosToOpen.map((x) => x.id) : [id]},
       });
       openVideoPlayer({
