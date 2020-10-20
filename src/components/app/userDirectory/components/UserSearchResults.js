@@ -72,9 +72,8 @@ class UserSearchResults extends Component {
   userCard = (user) => {
     const {selectedUsers, onSelect} = this.props;
     return (
-      <View style={{marginBottom: 5}}>
+      <View key={user.id} style={{marginBottom: 5}}>
         <CardUserSelect
-          key={user.id}
           user={user}
           selected={selectedUsers[user.id] ? true : false}
           onClick={(user) => onSelect(user)}
