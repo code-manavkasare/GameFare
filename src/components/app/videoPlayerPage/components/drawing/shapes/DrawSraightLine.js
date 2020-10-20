@@ -16,6 +16,12 @@ class DrawSraightLine extends Component {
       this.props.onRef(this);
     }
   }
+  pointsNotNull = () => {
+    const {startPoint, endPoint} = this.props;
+    const {x: x1, y: y1} = startPoint;
+    const {x: x2, y: y2} = endPoint;
+    return x1 !== 0 && y1 !== 0 && x2 !== 0 && y2 !== 0;
+  };
   drawView() {
     const {
       strokeWidth,
@@ -27,6 +33,8 @@ class DrawSraightLine extends Component {
       id,
       editShape,
       arrow,
+      endEditShape,
+      drawing,
     } = this.props;
     const {x: x1, y: y1} = startPoint;
     const {x: x2, y: y2} = endPoint;
@@ -39,6 +47,7 @@ class DrawSraightLine extends Component {
           id={id}
           positionZone={startPoint}
           toggleSelect={toggleSelect}
+          endEditShape={endEditShape}
           element={(panResponder) => (
             <Line
               x1={x1}
@@ -52,7 +61,7 @@ class DrawSraightLine extends Component {
           )}
           editShape={isSelected && editShape}
         />
-        {arrow && (
+        {arrow && this.pointsNotNull() && (
           <G
             rotation={(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI - 135}
             origin={`${x2}, ${y2}`}>
@@ -67,6 +76,7 @@ class DrawSraightLine extends Component {
         {isSelected && (
           <EditPoint
             endPoint={endPoint}
+            endEditShape={endEditShape}
             positionZone={{
               x: arrow ? endPoint.x + 0 : endPoint.x,
               y: arrow ? endPoint.y + 0 : endPoint.y,
@@ -84,6 +94,7 @@ class DrawSraightLine extends Component {
             id={id}
             strokeColor={strokeColor}
             editShape={editShape}
+            endEditShape={endEditShape}
             backgroundColor={colors.secondary}
           />
         )}

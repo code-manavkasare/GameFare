@@ -41,6 +41,7 @@ class DrawView extends Component {
       thirdPoint: {x: 0, y: 0},
       colorDrawing: colors.red,
       drawSetting: 'custom',
+      lastUpdate: Date.now(),
       selectedShape: null,
     };
     this.onStrokeEnd = this.onStrokeEnd.bind(this);
@@ -52,17 +53,14 @@ class DrawView extends Component {
     }
   }
   componentDidUpdate = (prevProps, prevState) => {
+    const {lastUpdate} = this.state;
     const {videoBeingShared, drawings} = this.props;
-    if (
-      !isEqual(prevState.drawings, drawings) &&
-      Object.values(drawings).length ===
-        Object.values(prevState.drawings).length &&
-      videoBeingShared
-    )
+
+    if (lastUpdate > prevState.lastUpdate && videoBeingShared)
       return this.copyLastDrawingInCloud();
   };
   static getDerivedStateFromProps(props, state) {
-    if (props.videoBeingShared) {
+    if (props.videoBeingShared && !isEqual(props.drawings, state.drawings)) {
       return {
         drawings: props.drawings,
       };
@@ -132,7 +130,6 @@ class DrawView extends Component {
     let {path} = event;
     const id = generateID();
     let {data} = path;
-    console.log('datadatadata', data);
     data = {
       ...path,
       ...data,
@@ -159,11 +156,13 @@ class DrawView extends Component {
       data,
       drawSetting,
     };
-    console.log('sdfsfsdfsdf', path);
     const {drawings} = this.state;
     const newDrawings = {...drawings, [id]: path};
-    await this.setState({drawings: newDrawings, selectedShape: id});
-    // onDrawingChange(index, newDrawings);
+    await this.setState({
+      drawings: newDrawings,
+      selectedShape: id,
+      lastUpdate: Date.now(),
+    });
   }
   copyLastDrawingInCloud = () => {
     const {archiveID, coachSessionID} = this.props;
@@ -171,8 +170,8 @@ class DrawView extends Component {
     const path = Object.values(drawings).sort(
       (a, b) => a.timeStamp - b.timeStamp,
     )[0];
-    console.log('path', path);
-    return;
+    console.log('copyLastDrawingInCloud', path);
+
     database()
       .ref(
         `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
@@ -201,7 +200,6 @@ class DrawView extends Component {
         const {x: x2, y: y2} = endPoint;
         if (drawSetting === 'custom') {
           let {path} = this.state;
-          console.log('path', path);
           path.push({
             x: newPosition.x / w,
             y: newPosition.y / h,
@@ -296,6 +294,10 @@ class DrawView extends Component {
     };
     this.setState({drawings: newDrawings});
   };
+  endEditShape = () => {
+    console.log('endEditShape!!!!!!');
+    this.setState({lastUpdate: Date.now()});
+  };
   shape = ({
     drawSetting,
     colorDrawing,
@@ -309,7 +311,6 @@ class DrawView extends Component {
     const {w, h} = this.sizeScreen();
     const {selectedShape} = this.state;
     const isSelected = selectedShape === id;
-    console.log('shape,', path, startPoint);
     if (drawSetting === 'circle')
       return (
         <DrawCircles
@@ -320,6 +321,7 @@ class DrawView extends Component {
           id={id}
           key={id}
           editShape={this.editShape.bind(this)}
+          endEditShape={this.endEditShape.bind(this)}
           startPoint={startPoint}
           endPoint={endPoint}
           onRef={(ref) => (this.drawCirclesRef = ref)}
@@ -343,6 +345,7 @@ class DrawView extends Component {
           w={w}
           h={h}
           editShape={this.editShape.bind(this)}
+          endEditShape={this.endEditShape.bind(this)}
           startPoint={startPoint}
           endPoint={endPoint}
           onRef={(ref) => (this.drawCirclesRef = ref)}
@@ -360,6 +363,7 @@ class DrawView extends Component {
           id={id}
           key={id}
           editShape={this.editShape.bind(this)}
+          endEditShape={this.endEditShape.bind(this)}
           style={styles.drawingZone}
           strokeWidth={strokeWidth}
           strokeColor={colorDrawing}
@@ -386,6 +390,7 @@ class DrawView extends Component {
           key={id}
           id={id}
           editShape={this.editShape.bind(this)}
+          endEditShape={this.endEditShape.bind(this)}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
           toggleSelect={(forceSelect) =>
             this.setState({
@@ -408,6 +413,7 @@ class DrawView extends Component {
           id={id}
           key={id}
           editShape={this.editShape.bind(this)}
+          endEditShape={this.endEditShape.bind(this)}
           onRef={(ref) => (this.drawStraighLinesRef = ref)}
           toggleSelect={(forceSelect) =>
             this.setState({
@@ -430,6 +436,7 @@ class DrawView extends Component {
           id={id}
           key={id}
           editShape={this.editShape.bind(this)}
+          endEditShape={this.endEditShape.bind(this)}
           onRef={(ref) => (this.drawAnglesRef = ref)}
           toggleSelect={(forceSelect) =>
             this.setState({
@@ -453,7 +460,6 @@ class DrawView extends Component {
     } = this.state;
     const style = styles.drawingZone;
     const {w, h} = this.sizeScreen();
-    console.log('render ', drawings);
     return (
       <PanGestureHandler
         style={style}

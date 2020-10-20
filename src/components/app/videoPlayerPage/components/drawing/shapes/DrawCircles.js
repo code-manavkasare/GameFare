@@ -32,6 +32,7 @@ class DrawSraightLine extends Component {
       isSelected,
       id,
       editShape,
+      endEditShape,
     } = this.props;
 
     const {x: x1, y: y1} = startPoint;
@@ -45,6 +46,7 @@ class DrawSraightLine extends Component {
           endPoint={endPoint}
           positionZone={{x: endPoint.x, y: endPoint.y}}
           id={id}
+          endEditShape={endEditShape}
           toggleSelect={toggleSelect}
           element={(panResponder) => (
             <Circle
@@ -67,6 +69,7 @@ class DrawSraightLine extends Component {
             id={id}
             strokeColor={strokeColor}
             editShape={editShape}
+            endEditShape={endEditShape}
             backgroundColor={colors.secondary}
           />
         )}

@@ -48,14 +48,12 @@ class DrawSraightLine extends Component {
       path,
       h,
       w,
+      endEditShape,
     } = this.props;
     const pathToModify = path.map((point) => {
       return {x: point.x * w, y: point.y * h};
     });
-    const {x: x1, y: y1} = startPoint;
-    const {x: x2, y: y2} = endPoint;
-    console.log('endPoint', endPoint);
-    console.log('startPoint', startPoint);
+
     return (
       <G>
         <EditPoint
@@ -69,6 +67,7 @@ class DrawSraightLine extends Component {
           editShape={isSelected && editShape}
           w={w}
           h={h}
+          endEditShape={endEditShape}
         />
 
         {isSelected && (
@@ -83,6 +82,7 @@ class DrawSraightLine extends Component {
             backgroundColor={colors.secondary + '50'}
             w={w}
             h={h}
+            endEditShape={endEditShape}
           />
         )}
         {isSelected && (
@@ -97,6 +97,7 @@ class DrawSraightLine extends Component {
             backgroundColor={colors.secondary}
             w={w}
             h={h}
+            endEditShape={endEditShape}
           />
         )}
       </G>

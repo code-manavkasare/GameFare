@@ -70,6 +70,8 @@ export default class DrawSraightLine extends Component {
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gs) => {
+        const {endEditShape} = this.props;
+        endEditShape();
         this.setState({x: 0, y: 0});
       },
       onShouldBlockNativeResponder: (evt, gestureState) => {
