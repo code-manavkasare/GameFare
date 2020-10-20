@@ -383,6 +383,7 @@ export default class VideoPlayer extends Component {
     if (originalUrl?.substr(originalUrl.length - 4) !== '.mp4') {
       originalUrl = originalUrl + '.mp4';
     }
+
     const {
       currentTime,
       paused,
@@ -396,7 +397,7 @@ export default class VideoPlayer extends Component {
       allowRecording,
       error,
     } = this.state;
-
+    if (error) url = originalUrl;
     const {height} = Dimensions.get('screen');
     const connectedToSession =
       coachSessionID !== false && coachSessionID !== undefined;
@@ -440,72 +441,76 @@ export default class VideoPlayer extends Component {
             singleTouch={() => this.clickVideo(index)}
             component={() => (
               <View style={[styleApp.fullSize, styleApp.center]}>
-                <Video
-                  key={index}
-                  debug
-                  mixWithOthers={connectedToSession ? undefined : 'mix'}
-                  ignoreSilentSwitch={connectedToSession ? undefined : 'ignore'}
-                  allowRecording={
-                    connectedToSession ? undefined : allowRecording
-                  }
-                  source={{uri: error ? originalUrl : url}}
-                  style={styleApp.fullSize}
-                  ref={(ref) => {
-                    this.player = ref;
-                  }}
-                  rate={playRate}
-                  onError={(error) => {
-                    this.setState({error: true});
-                    console.log(url, error);
-                  }}
-                  onLoadStart={(response) => {
-                    if (connectedToSession) {
-                      console.log('connected to session');
-                      AudioSession.setCategoryAndMode(
-                        'PlayAndRecord',
-                        'VideoChat',
-                        'AllowBluetooth',
-                      );
+                {url && (
+                  <Video
+                    key={index}
+                    debug
+                    mixWithOthers={connectedToSession ? undefined : 'mix'}
+                    ignoreSilentSwitch={
+                      connectedToSession ? undefined : 'ignore'
                     }
-                  }}
-                  onLoad={async (callback) => {
-                    const {setSizeVideo} = this.props;
-                    this.clickVideo(index);
-                    if (setSizeVideo) {
-                      Image.getSize(
-                        thumbnail,
-                        (width, height) => {
-                          setSizeVideo({width, height});
-                        },
-                        (error) => {
-                          console.log(
-                            `Couldn't get the image size: ${error.message}`,
-                          );
-                        },
-                      );
+                    allowRecording={
+                      connectedToSession ? undefined : allowRecording
                     }
+                    source={{uri: url}}
+                    style={styleApp.fullSize}
+                    ref={(ref) => {
+                      this.player = ref;
+                    }}
+                    rate={playRate}
+                    onError={(error) => {
+                      this.setState({error: true});
+                      console.log(url, error);
+                    }}
+                    onLoadStart={(response) => {
+                      if (connectedToSession) {
+                        console.log('connected to session');
+                        AudioSession.setCategoryAndMode(
+                          'PlayAndRecord',
+                          'VideoChat',
+                          'AllowBluetooth',
+                        );
+                      }
+                    }}
+                    onLoad={async (callback) => {
+                      const {setSizeVideo} = this.props;
+                      this.clickVideo(index);
+                      if (setSizeVideo) {
+                        Image.getSize(
+                          thumbnail,
+                          (width, height) => {
+                            setSizeVideo({width, height});
+                          },
+                          (error) => {
+                            console.log(
+                              `Couldn't get the image size: ${error.message}`,
+                            );
+                          },
+                        );
+                      }
 
-                    await this.setState({
-                      videoLoaded: true,
-                    });
-                  }}
-                  muted={muted}
-                  fullscreen={fullscreen}
-                  onFullscreenPlayerDidDismiss={(event) => {
-                    this.setState({fullscreen: false});
-                  }}
-                  progressUpdateInterval={30}
-                  onBuffer={this.onBuffer}
-                  paused={paused}
-                  onProgress={(info) => !paused && this.onProgress(info)}
-                  onEnd={(callback) => {
-                    this.linkedTogglePlayPause();
-                    this.visualSeekBarRef?.setCurrentTime(
-                      durationSeconds,
-                      true,
-                    );
-                  }}
-                />
+                      await this.setState({
+                        videoLoaded: true,
+                      });
+                    }}
+                    muted={muted}
+                    fullscreen={fullscreen}
+                    onFullscreenPlayerDidDismiss={(event) => {
+                      this.setState({fullscreen: false});
+                    }}
+                    progressUpdateInterval={30}
+                    onBuffer={this.onBuffer}
+                    paused={paused}
+                    onProgress={(info) => !paused && this.onProgress(info)}
+                    onEnd={(callback) => {
+                      this.linkedTogglePlayPause();
+                      this.visualSeekBarRef?.setCurrentTime(
+                        durationSeconds,
+                        true,
+                      );
+                    }}
+                  />
+                )}
 
                 {componentOnTop && componentOnTop()}
               </View>
