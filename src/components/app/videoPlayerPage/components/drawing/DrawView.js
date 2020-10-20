@@ -60,12 +60,8 @@ class DrawView extends Component {
       return this.copyLastDrawingInCloud();
   };
   static getDerivedStateFromProps(props, state) {
-    if (props.videoBeingShared && !isEqual(props.drawings, state.drawings)) {
-      return {
-        drawings: !props.drawings ? [] : props.drawings,
-      };
-    }
-    return {};
+    const cloudDrawings = props.drawings ? props.drawings : {};
+    return {drawings: {...cloudDrawings, ...state.drawings}};
   }
   clear = async () => {
     try {
@@ -158,6 +154,7 @@ class DrawView extends Component {
     };
     const {drawings} = this.state;
     const newDrawings = {...drawings, [id]: path};
+    console.log('newDrawings', newDrawings);
     await this.setState({
       drawings: newDrawings,
       selectedShape: id,
@@ -167,18 +164,19 @@ class DrawView extends Component {
   copyLastDrawingInCloud = () => {
     const {archiveID, coachSessionID} = this.props;
     const {drawings} = this.state;
+    console.log('drawings', drawings);
     const path = Object.values(drawings).sort(
       (a, b) => a.timeStamp - b.timeStamp,
     )[0];
     console.log('copyLastDrawingInCloud', path);
 
-    database()
-      .ref(
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
-          path.id
-        }`,
-      )
-      .update(path);
+    // database()
+    //   .ref(
+    //     `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
+    //       path.id
+    //     }`,
+    //   )
+    //   .update(path);
   };
   onPanGestureEvent = Animated.event(
     [
