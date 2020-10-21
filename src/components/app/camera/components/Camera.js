@@ -18,6 +18,7 @@ import {
 } from '../../../functions/videoManagement';
 import {logMixpanel} from '../../../functions/logs';
 
+
 class Camera extends Component {
   static propTypes = {
     onRef: PropTypes.func,
