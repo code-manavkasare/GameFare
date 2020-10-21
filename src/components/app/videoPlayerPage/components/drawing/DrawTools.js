@@ -18,7 +18,7 @@ class DrawTools extends Component {
       submenu: false,
     };
   }
-  arrow = () => {
+  arrow = (arrow) => {
     const style = {
       position: 'absolute',
       top: 5,
@@ -29,16 +29,11 @@ class DrawTools extends Component {
     };
     return (
       <View style={style}>
-        <AllIcons
-          type={'font'}
-          color={colors.white}
-          size={14}
-          name={'chevron-right'}
-        />
+        <AllIcons type={'font'} color={colors.white} size={14} name={arrow} />
       </View>
     );
   };
-  button({icon, click, displayArrow}) {
+  button({icon, click, arrow}) {
     const {name, type, size, color} = icon;
     return (
       <ButtonColor
@@ -49,7 +44,7 @@ class DrawTools extends Component {
                 <Col style={styleApp.center}>
                   <AllIcons type={type} color={color} size={size} name={name} />
                 </Col>
-                {displayArrow && this.arrow()}
+                {arrow && this.arrow(arrow)}
               </Row>
             </View>
           );
@@ -60,7 +55,7 @@ class DrawTools extends Component {
       />
     );
   }
-  buttonColor({color, setColor, displayArrow}) {
+  buttonColor({color, setColor}) {
     const styleButton = [
       styles.roundColor,
       {
@@ -74,7 +69,7 @@ class DrawTools extends Component {
         view={() => {
           return (
             <View style={[styleApp.center, styleApp.fullSize]}>
-              {displayArrow && this.arrow()}
+              {this.arrow()}
               <View style={styleButton} />
             </View>
           );
@@ -104,7 +99,11 @@ class DrawTools extends Component {
     const {submenu, colorDrawing, drawSetting} = this.state;
     if (!submenu) return null;
     return (
-      <View style={[styles.colButtonsRight, {left: 70, top: -10}]}>
+      <View
+        style={[
+          styles.colButtonsRight,
+          {left: 70, top: -10, backgroundColor: colors.title + '90'},
+        ]}>
         {submenu === 'color' ? (
           <View style={[styles.toolBox, styleApp.center]}>
             {this.buttonColor({color: colors.green, setColor: true})}
@@ -152,6 +151,24 @@ class DrawTools extends Component {
               },
               click: () => this.setShape('rectangle'),
             })}
+            {this.button({
+              icon: {
+                name: 'call-received',
+                type: 'mat',
+                color: drawSetting === 'arrow' ? colorDrawing : colors.white,
+                size: 20,
+              },
+              click: () => this.setShape('arrow'),
+            })}
+            {this.button({
+              icon: {
+                name: 'angle',
+                type: 'moon',
+                color: drawSetting === 'angle' ? colorDrawing : colors.white,
+                size: 20,
+              },
+              click: () => this.setShape('angle'),
+            })}
           </View>
         ) : null}
       </View>
@@ -172,13 +189,13 @@ class DrawTools extends Component {
               color: colorDrawing,
               size: 23,
             },
-
+            arrow: submenu === 'color' ? 'chevron-left' : 'chevron-right',
             click: () =>
               this.setState({submenu: submenu === 'color' ? false : 'color'}),
           })}
           {this.button({
             displayArrow: submenu === 'shape',
-            arrow: submenu === 'shape' ? 'chevron-right' : 'chevron-left',
+            arrow: submenu === 'shape' ? 'chevron-left' : 'chevron-right',
             icon: {
               name:
                 drawSetting === 'custom'
@@ -187,14 +204,22 @@ class DrawTools extends Component {
                   ? 'circle'
                   : drawSetting === 'rectangle'
                   ? 'square'
+                  : drawSetting === 'arrow'
+                  ? 'call-received'
+                  : drawSetting === 'angle'
+                  ? 'angle'
                   : drawSetting === 'straight'
                   ? 'remove'
                   : null,
               type:
-                drawSetting === 'custom' || drawSetting === 'straight'
+                drawSetting === 'custom' ||
+                drawSetting === 'straight' ||
+                drawSetting === 'arrow'
                   ? 'mat'
                   : drawSetting === 'circle' || drawSetting === 'rectangle'
                   ? 'font'
+                  : drawSetting === 'angle'
+                  ? 'moon'
                   : 'font',
               color: colorDrawing,
               size: 23,

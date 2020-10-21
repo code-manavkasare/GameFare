@@ -57,9 +57,10 @@ class AudioRecorderPlayer extends Component {
             autoDestroy: false,
             mixWithOthers: true,
           },
-        ).prepare(() => {
-          resolve();
-        }),
+        ),
+      });
+      this.adjustAudioSession().then(() => {
+        resolve();
       });
     });
     return true;

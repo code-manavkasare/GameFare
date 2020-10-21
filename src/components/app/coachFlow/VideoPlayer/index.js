@@ -66,6 +66,7 @@ export default class VideoPlayer extends Component {
       allowRecording: false,
       slidingStartTime: null,
       error: false,
+      audioSession: false,
     };
     this.opacityControlBar = new Animated.Value(1);
   }
@@ -224,7 +225,32 @@ export default class VideoPlayer extends Component {
     if (!paused) {
       this.visualSeekBarRef?.setCurrentTime(currentTime);
     }
+    this.adjustAudioSession();
   };
+  adjustAudioSession() {
+    const {coachSessionID} = this.props;
+    const {audioSession} = this.state;
+    if (audioSession) return;
+    const connectedToSession =
+      coachSessionID !== false && coachSessionID !== undefined;
+    if (connectedToSession) {
+      this.setState({audioSession: 'opentokConfig'});
+      return new Promise((resolve, reject) => {
+        AudioSession.setCategoryAndMode(
+          'PlayAndRecord',
+          'VideoChat',
+          'AllowBluetooth',
+        )
+          .then(() => {
+            return resolve();
+          })
+          .catch(() => {
+            return reject();
+          });
+      });
+    }
+    return null;
+  }
   onSlidingComplete = async (sliderTime, forcePlay) => {
     const {prevPaused} = this.state;
     const {
@@ -428,6 +454,7 @@ export default class VideoPlayer extends Component {
               pointerEvents={'none'}
             />
           )}
+
 
           <PinchableBox
             styleContainer={[styleApp.fullSize, styleApp.center]}
