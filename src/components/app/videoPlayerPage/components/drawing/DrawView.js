@@ -154,7 +154,6 @@ class DrawView extends Component {
     };
     const {drawings} = this.state;
     const newDrawings = {...drawings, [id]: path};
-    console.log('newDrawings', newDrawings);
     await this.setState({
       drawings: newDrawings,
       selectedShape: id,
@@ -164,11 +163,10 @@ class DrawView extends Component {
   copyLastDrawingInCloud = () => {
     const {archiveID, coachSessionID} = this.props;
     const {drawings} = this.state;
-    console.log('drawings', drawings);
+
     const path = Object.values(drawings).sort(
-      (a, b) => a.timeStamp - b.timeStamp,
+      (a, b) => b.timeStamp - a.timeStamp,
     )[0];
-    console.log('copyLastDrawingInCloud', path);
 
     database()
       .ref(
@@ -293,7 +291,6 @@ class DrawView extends Component {
     this.setState({drawings: newDrawings});
   };
   endEditShape = () => {
-    console.log('endEditShape!!!!!!');
     this.setState({lastUpdate: Date.now()});
   };
   shape = ({
@@ -458,7 +455,6 @@ class DrawView extends Component {
     } = this.state;
     const style = styles.drawingZone;
     const {w, h} = this.sizeScreen();
-    console.log('path', path);
     return (
       <PanGestureHandler
         style={style}
