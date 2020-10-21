@@ -16,6 +16,7 @@ import {
   getSessionFromBranchParams,
 } from '../database/branch';
 import {navigate} from '../../../NavigationService';
+import {logMixpanel} from '../functions/logs';
 
 const testParams = {
   type: 'session',
@@ -27,8 +28,7 @@ class BranchManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      branchParams: null,
-      executedBranchInstruction: false,
+      branchParams: null, 
     };
   }
   componentDidMount() {
@@ -43,10 +43,10 @@ class BranchManager extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {branchParams, executedBranchInstruction} = this.state;
+    const {branchParams} = this.state;
     const {userConnected} = this.props;
-    console.log('branchParams', branchParams);
-    if (branchParams && !executedBranchInstruction) {
+
+    if (branchParams) {
       const {type} = branchParams;
       if (!userConnected && type) return navigate('SignIn');
       return this.executeBranchInstruction();
@@ -58,15 +58,22 @@ class BranchManager extends Component {
     const {userID} = this.props;
 
     const {type, sentBy} = branchParams;
-    this.setState({executedBranchInstruction: true});
+
+    console.log('executeBranchInstruction');
     switch (type) {
       case 'invite': {
         const session = await createCoachSessionFromUserIDs(sentBy, [userID]);
+        logMixpanel({
+          label: 'Open invite conversation link ' + session.objectID,
+        });
         navigate('Conversation', {coachSessionID: session.objectID});
         break;
       }
       case 'session': {
         const sessionID = getSessionFromBranchParams(branchParams);
+        logMixpanel({
+          label: 'Open invite session link ' + sessionID,
+        });
         if (sessionID) {
           this.handleSessionInvite(sessionID, userID, sentBy);
         }
@@ -74,6 +81,10 @@ class BranchManager extends Component {
       }
       case 'archives': {
         const archives = getArchivesFromBranchParams(branchParams);
+        logMixpanel({
+          label: 'Open invite videos link ',
+          params: {archives},
+        });
         if (archives) {
           archives.forEach((archiveID) =>
             shareCloudVideo(userID, archiveID, sentBy),
@@ -113,7 +124,10 @@ class BranchManager extends Component {
       });
   }
 
-  render = () => null;
+  render = () => {
+    console.log(' render  branch manager!!!!');
+    return null;
+  };
 }
 
 const mapStateToProps = (state) => {
