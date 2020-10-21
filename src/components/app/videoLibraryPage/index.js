@@ -214,34 +214,7 @@ class VideoLibraryPage extends Component {
             this.renderCardArchive(videoID, index)
           }
           ListEmptyComponent={{
-            clickButton: () => {
-              navigation.navigate('Session');
-            },
-            // clickButton: async () => {
-            //   console.log('bim');
-            //   database()
-            //     .ref(`archivedStreams/${'demoVideo'}/`)
-            //     .update({
-            //       bitrate: 2597953,
-            //       durationSeconds: 40,
-            //       frameRate: 30,
-            //       fromNativeLibrary: false,
-            //       id: 'demoVideo',
-            //       local: false,
-            //       size: {
-            //         height: 1280,
-            //         width: 720,
-            //       },
-            //       sourceUser: 'UTylyySkfEa4eOqDAQEKDiCggHp1',
-            //       startTimestamp: 1599673574851,
-            //       thumbnail:
-            //         'https://firebasestorage.googleapis.com/v0/b/gamefare-dev-cfc88.appspot.com/o/Demo%2FDemo%20thumbnail.jpg?alt=media&token=51b60f1e-612e-406a-b391-938d1c295146',
-            //       uploadedByUser: true,
-            //       url:
-            //         'https://firebasestorage.googleapis.com/v0/b/gamefare-dev-cfc88.appspot.com/o/Demo%2FDemo%20video.mov?alt=media&token=a5cf70e8-f079-4cc0-aad7-15ab400f20aa',
-            //       volatile: false,
-            //     });
-            // },
+            clickButton: () => navigation.navigate('Session'),
             textButton: 'Record',
             iconButton: 'video',
             clickButton2: () => this.addFromCameraRoll({selectOnly: false}),
