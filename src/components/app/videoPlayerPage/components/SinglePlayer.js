@@ -259,7 +259,10 @@ class SinglePlayer extends Component {
             replay={async () => {
               await this.setState({isPlayingReview: false});
               await seekAudioPlayer(0);
-              this.recordingRef.launchIfPreview();
+              this.recordingRef.launchIfPreview(true);
+            }}
+            clickVideo={() => {
+              clickVideo(index);
             }}
             setState={this.setState.bind(this)}
             pressPause={async () => {

@@ -16,7 +16,7 @@ export default class ControlButtonsRecording extends React.Component {
   }
   componentDidMount = async () => {
     await timeout(1000);
-    Animated.timing(this.opacityButton, timing(0, 300)).start();
+    this.toggleOpacity();
   };
   componentDidUpdate = (prevProps, prevState) => {
     if (
@@ -27,31 +27,19 @@ export default class ControlButtonsRecording extends React.Component {
   };
   onPress = async () => {
     if (this.opacityButton._value === 1) {
-      const {replay, displayButtonReplay, pressPause, setState} = this.props;
-
-      // if (displayButtonReplay) {
-      //   await setState({isPlayingReview: true});
-      //   replay();
-      //   return Animated.timing(this.opacityButton, timing(0, 300)).start();
-      // }
-      console.log('onPress');
-
+      const {replay, setState} = this.props;
       await setState({isPlayingReview: true});
       replay();
-      return Animated.timing(this.opacityButton, timing(0, 300)).start();
-
-      // pressPause();
-      // await timeout(1000);
-      // Animated.timing(this.opacityButton, timing(0, 300)).start();
-    } else {
-      Animated.timing(this.opacityButton, timing(1, 300)).start();
     }
+    this.toggleOpacity();
   };
   toggleOpacity = () => {
+    const {clickVideo} = this.props;
     Animated.timing(
       this.opacityButton,
       timing(this.opacityButton._value === 0 ? 1 : 0, 100),
     ).start();
+    if (clickVideo) clickVideo();
   };
   render() {
     const {displayButtonReplay, isPlayingReview} = this.props;
