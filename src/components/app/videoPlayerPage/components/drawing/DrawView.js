@@ -52,17 +52,16 @@ class DrawView extends Component {
       this.props.onRef(this);
     }
   }
-  componentDidUpdate = (prevProps, prevState) => {
-    const {lastUpdate} = this.state;
-    const {videoBeingShared, drawings} = this.props;
 
-    // if (lastUpdate > prevState.lastUpdate && videoBeingShared)
-    //   return this.copyLastDrawingInCloud();
-  };
   static getDerivedStateFromProps(props, state) {
     const {videoBeingShared, cloudVideo} = props;
-    const cloudDrawings = props.drawings ? props.drawings : {};
-    let newDrawings = Object.values(state.drawings)
+    let cloudDrawings = props.drawings;
+    if (!cloudDrawings) cloudDrawings = {};
+
+    let stateDrawings = state.drawings;
+    if (!stateDrawings) stateDrawings = {};
+
+    let newDrawings = Object.values(stateDrawings)
       .filter((drawing) => {
         if (!videoBeingShared) return true;
         if (cloudVideo.resetDrawings) return false;
@@ -83,7 +82,7 @@ class DrawView extends Component {
         return result;
       }, {});
     const drawingsInCloudButNoLocally = Object.values(cloudDrawings)
-      .filter((drawing) => !state.drawings[drawing.id])
+      .filter((drawing) => !stateDrawings[drawing.id])
       .reduce(function(result, item) {
         result[item.id] = item;
         return result;

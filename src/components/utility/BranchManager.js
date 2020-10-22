@@ -28,7 +28,7 @@ class BranchManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      branchParams: null, 
+      branchParams: null,
     };
   }
   componentDidMount() {
@@ -58,8 +58,6 @@ class BranchManager extends Component {
     const {userID} = this.props;
 
     const {type, sentBy} = branchParams;
-
-    console.log('executeBranchInstruction');
     switch (type) {
       case 'invite': {
         const session = await createCoachSessionFromUserIDs(sentBy, [userID]);
@@ -125,7 +123,6 @@ class BranchManager extends Component {
   }
 
   render = () => {
-    console.log(' render  branch manager!!!!');
     return null;
   };
 }
