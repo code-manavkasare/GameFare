@@ -56,35 +56,64 @@ class DrawView extends Component {
     const {lastUpdate} = this.state;
     const {videoBeingShared, drawings} = this.props;
 
-    if (lastUpdate > prevState.lastUpdate && videoBeingShared)
-      return this.copyLastDrawingInCloud();
+    // if (lastUpdate > prevState.lastUpdate && videoBeingShared)
+    //   return this.copyLastDrawingInCloud();
   };
   static getDerivedStateFromProps(props, state) {
+    const {videoBeingShared, cloudVideo} = props;
     const cloudDrawings = props.drawings ? props.drawings : {};
-    return {drawings: {...cloudDrawings, ...state.drawings}};
+    let newDrawings = Object.values(state.drawings)
+      .filter((drawing) => {
+        if (!videoBeingShared) return true;
+        if (cloudVideo.resetDrawings) return false;
+        if (
+          cloudVideo.undoLastDrawing === drawing.id &&
+          cloudVideo.undoLastDrawing
+        )
+          return false;
+        return true;
+      })
+      .reduce(function(result, item) {
+        let itemToReturn = item;
+        const cloudItem = cloudDrawings[item.id];
+        if (cloudItem?.timeStamp > item.timeStamp) {
+          itemToReturn = cloudItem;
+        }
+        result[item.id] = itemToReturn;
+        return result;
+      }, {});
+    const drawingsInCloudButNoLocally = Object.values(cloudDrawings)
+      .filter((drawing) => !state.drawings[drawing.id])
+      .reduce(function(result, item) {
+        result[item.id] = item;
+        return result;
+      }, {});
+
+    return {drawings: {...drawingsInCloudButNoLocally, ...newDrawings}};
   }
   clear = async () => {
-    try {
-      const {
-        archiveID,
-        coachSessionID,
-        index,
-        onDrawingChange,
-        videoBeingShared,
-      } = this.props;
-      if (videoBeingShared) {
-        await database()
-          .ref(
-            `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/`,
-          )
-          .remove();
-      }
+    const {
+      archiveID,
+      coachSessionID,
+      index,
+      onDrawingChange,
+      videoBeingShared,
+    } = this.props;
+    if (videoBeingShared) {
+      const updates = {
+        [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/`]: null,
+        [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/resetDrawings`]: true,
+        [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/undoLastDrawing`]: false,
+      };
+      await database()
+        .ref()
+        .update(updates);
+    }
 
-      this.setState({drawings: {}});
-      onDrawingChange(index, {});
-    } catch (err) {}
+    this.setState({drawings: {}});
+    onDrawingChange(index, {});
   };
-  undo = () => {
+  undo = async () => {
     const {drawings} = this.state;
     const {
       archiveID,
@@ -94,33 +123,38 @@ class DrawView extends Component {
       videoBeingShared,
     } = this.props;
 
-    let idLastDrawing = false;
-    const lastDrawing = getLastDrawing(drawings);
-    if (lastDrawing) {
-      idLastDrawing = getLastDrawing(drawings).id;
-    }
-    if (idLastDrawing) {
-      if (!videoBeingShared) {
-        const newDrawing = Object.values(drawings)
-          .filter((item) => item.id !== idLastDrawing)
-          .reduce(function(result, item) {
-            result[item.id] = item;
-            return result;
-          }, {});
-
-        this.setState({drawings: newDrawing});
-        onDrawingChange(index, newDrawing);
-      } else {
-        database()
-          .ref(
-            `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`,
-          )
-          .remove();
+    if (Object.values(drawings).length > 0) {
+      const idLastDrawing = Object.values(drawings).sort(
+        (a, b) => b.timeStamp - a.timeStamp,
+      )[0].id;
+      const newDrawings = Object.values(drawings)
+        .filter((item) => item.id !== idLastDrawing)
+        .reduce(function(result, item) {
+          result[item.id] = item;
+          return result;
+        }, {});
+      await this.setState({drawings: newDrawings});
+      if (videoBeingShared) {
+        const updates = {
+          [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${idLastDrawing}`]: null,
+          [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/undoLastDrawing`]: idLastDrawing,
+        };
+        await database()
+          .ref()
+          .update(updates);
       }
+
+      onDrawingChange(index, newDrawings);
     }
   };
   async onStrokeEnd(event) {
-    const {index, onDrawingChange, userID, clickVideo} = this.props;
+    const {
+      index,
+      onDrawingChange,
+      userID,
+      clickVideo,
+      videoBeingShared,
+    } = this.props;
     const {w, h} = this.sizeScreen();
     const {drawSetting} = this.state;
     let {path} = event;
@@ -154,27 +188,38 @@ class DrawView extends Component {
     };
     const {drawings} = this.state;
     const newDrawings = {...drawings, [id]: path};
+    onDrawingChange(index, {[id]: path});
+
     await this.setState({
       drawings: newDrawings,
       selectedShape: id,
       lastUpdate: Date.now(),
     });
+    if (videoBeingShared) await this.updateCloudDrawing(path);
   }
-  copyLastDrawingInCloud = () => {
+  updateCloudDrawing = async (drawing) => {
     const {archiveID, coachSessionID} = this.props;
+    const updates = {
+      [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/resetDrawings`]: false,
+      [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/undoLastDrawing`]: false,
+      [`coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
+        drawing.id
+      }`]: drawing,
+    };
+
+    await database()
+      .ref()
+      .update(updates);
+
+    return true;
+  };
+  copyLastDrawingInCloud = () => {
     const {drawings} = this.state;
 
     const path = Object.values(drawings).sort(
       (a, b) => b.timeStamp - a.timeStamp,
     )[0];
-
-    database()
-      .ref(
-        `coachSessions/${coachSessionID}/sharedVideos/${archiveID}/drawings/${
-          path.id
-        }`,
-      )
-      .update(path);
+    this.updateCloudDrawing(path);
   };
   onPanGestureEvent = Animated.event(
     [
@@ -259,39 +304,48 @@ class DrawView extends Component {
     const {drawings} = this.state;
     const {w, h} = this.sizeScreen();
 
-    const newDrawings = {
-      ...drawings,
-      [id]: {
-        ...drawings[id],
-        timeStamp: Date.now(),
-        data: {
-          ...drawings[id].data,
-          startPoint: startPoint
-            ? {
-                x: startPoint.x / w,
-                y: startPoint.y / h,
-              }
-            : drawings[id].data.startPoint,
-          endPoint: endPoint
-            ? {
-                x: endPoint.x / w,
-                y: endPoint.y / h,
-              }
-            : drawings[id].data.endPoint,
-          thirdPoint: thirdPoint
-            ? {
-                x: thirdPoint.x / w,
-                y: thirdPoint.y / h,
-              }
-            : drawings[id].data.thirdPoint,
-          path: path ? path : drawings[id].data.path,
-        },
+    const newDrawing = {
+      ...drawings[id],
+      timeStamp: Date.now(),
+      data: {
+        ...drawings[id].data,
+        startPoint: startPoint
+          ? {
+              x: startPoint.x / w,
+              y: startPoint.y / h,
+            }
+          : drawings[id].data.startPoint,
+        endPoint: endPoint
+          ? {
+              x: endPoint.x / w,
+              y: endPoint.y / h,
+            }
+          : drawings[id].data.endPoint,
+        thirdPoint: thirdPoint
+          ? {
+              x: thirdPoint.x / w,
+              y: thirdPoint.y / h,
+            }
+          : drawings[id].data.thirdPoint,
+        path: path ? path : drawings[id].data.path,
       },
     };
-    this.setState({drawings: newDrawings});
+
+    this.setState({
+      drawings: {
+        ...drawings,
+        [id]: newDrawing,
+      },
+    });
   };
   endEditShape = () => {
-    this.setState({lastUpdate: Date.now()});
+    const {index, onDrawingChange} = this.props;
+    const {drawings} = this.state;
+    const lastDrawing = Object.values(drawings).sort(
+      (a, b) => b.timeStamp - a.timeStamp,
+    )[0];
+    onDrawingChange(index, {[lastDrawing.id]: lastDrawing});
+    this.copyLastDrawingInCloud();
   };
   shape = ({
     drawSetting,
@@ -558,15 +612,18 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, props) => {
   const {coachSessionID, archiveID, videoBeingShared} = props;
   let drawings = {};
+  let cloudVideo = {};
   if (videoBeingShared) {
     drawings =
       state.coachSessions[coachSessionID]?.sharedVideos[archiveID]?.drawings;
+    cloudVideo = state.coachSessions[coachSessionID]?.sharedVideos[archiveID];
   }
 
   return {
     drawings: drawings,
     userID: state.user.userID,
     infoUser: state?.user?.infoUser?.userInfo,
+    cloudVideo,
   };
 };
 
