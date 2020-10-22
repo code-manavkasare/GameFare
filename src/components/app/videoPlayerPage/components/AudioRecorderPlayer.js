@@ -45,9 +45,6 @@ class AudioRecorderPlayer extends Component {
   };
 
   preparePlayer = async ({url, isCloud}) => {
-    const {audioPlayer} = this.state;
-    console.log('preparePlayer', audioPlayer);
-    // if (audioPlayer) await this.destroyPlayer();
     await new Promise(async (resolve) => {
       await this.adjustAudioSession();
       this.setState({
