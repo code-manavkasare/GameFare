@@ -41,7 +41,7 @@ class Recording extends Component {
   launchIfPreview = async (skipPreparePlayer) => {
     const {archive, preparePlayer, setState, recordedActions} = this.props;
     if (recordedActions.length > 0) {
-      if (!skipPreparePlayer)
+      if (!skipPreparePlayer && !archive.isMicrophoneMuted)
         await preparePlayer({
           url: archive.audioRecordUrl,
           isCloud: !archive.local,
@@ -67,7 +67,7 @@ class Recording extends Component {
   };
 
   previewRecording = async () => {
-    const {recordedActions} = this.props;
+    const {recordedActions, archive} = this.props;
     const {toggleVisibleSeekBar} = this.props;
     toggleVisibleSeekBar(false);
     const {
@@ -80,7 +80,7 @@ class Recording extends Component {
       setDisplayButtonReplay,
     } = this.props;
 
-    playRecord();
+    !archive.isMicrophoneMuted && playRecord();
 
     for (let i in recordedActions) {
       const action = recordedActions[i];

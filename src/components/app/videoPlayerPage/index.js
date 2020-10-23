@@ -167,7 +167,8 @@ class VideoPlayerPage extends Component {
 
     await this.onCurrentTimeChange(0, currenTime);
     await this.videoPlayerRefs[0].togglePlayPause(true);
-    this.AudioRecorderPlayerRef?.startRecording();
+    const {isMicrophoneMuted} = this.recordingMenuRef.getState();
+    this.AudioRecorderPlayerRef?.startRecording(isMicrophoneMuted);
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
@@ -177,7 +178,9 @@ class VideoPlayerPage extends Component {
       label: 'stopRecording',
       params: {recordedActions: this.state.recordedActions},
     });
-    this.AudioRecorderPlayerRef?.stopRecording();
+    const {isMicrophoneMuted} = this.recordingMenuRef.getState();
+    !isMicrophoneMuted && this.AudioRecorderPlayerRef?.stopRecording();
+
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
     });
@@ -185,6 +188,9 @@ class VideoPlayerPage extends Component {
     await this.setState({
       isRecording: false,
       recordingStartTime: null,
+    });
+    await this.recordingMenuRef.setState({
+      isMicrophoneMutedLastValue: isMicrophoneMuted,
     });
 
     this.videoPlayerRefs[0].replayRecording();
@@ -354,6 +360,7 @@ class VideoPlayerPage extends Component {
 
   saveReview = async () => {
     //To update for multiple video
+    const {isMicrophoneMutedLastValue} = this.recordingMenuRef.getState();
     const {archives, recordedActions} = this.state;
     const {userID, videoInfos} = this.props;
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
@@ -368,6 +375,7 @@ class VideoPlayerPage extends Component {
           localVideoInfo.url,
           recordedActions,
           audioFilePath,
+          isMicrophoneMutedLastValue,
         );
         this.props.navigation.navigate('Alert', {
           close: true,
@@ -381,6 +389,7 @@ class VideoPlayerPage extends Component {
           videoInfo,
           recordedActions,
           audioFilePath,
+          isMicrophoneMutedLastValue,
         );
         this.props.navigation.navigate('Alert', {
           close: true,
@@ -639,6 +648,9 @@ class VideoPlayerPage extends Component {
           previewRecording={() => {
             const {recordedActions} = this.state;
             this.videoPlayerRefs[0].previewRecording({recordedActions});
+          }}
+          onRef={(ref) => {
+            this.recordingMenuRef = ref;
           }}
           stopRecording={this.stopRecording.bind(this)}
           startRecording={this.startRecording.bind(this)}

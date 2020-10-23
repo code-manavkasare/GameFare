@@ -572,7 +572,9 @@ class DrawView extends Component {
     }
     return {w, h};
   };
+  
   drawView() {
+    const {drawingOpen} = this.props;
     const {w, h} = this.sizeScreen();
 
     let styleDrawView = {
@@ -583,8 +585,12 @@ class DrawView extends Component {
     if (styleDrawView.h === 0) {
       return null;
     }
+    let pointerEvents = 'none';
+    if (drawingOpen) pointerEvents = 'auto';
     return (
-      <Animated.View style={[styles.page, styleDrawView]}>
+      <Animated.View
+        pointerEvents={pointerEvents}
+        style={[styles.page, styleDrawView]}>
         {this.drawingZone({w, h})}
       </Animated.View>
     );
