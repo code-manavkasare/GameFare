@@ -9,6 +9,7 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
+import {navigate} from '../../../../../../../../../NavigationService';
 import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
@@ -57,7 +58,6 @@ class CardArchive extends PureComponent {
     const {id, archive, archivesAction} = this.props;
     const {archive: prevArchive} = prevProps;
     if (prevArchive && prevArchive.local && (archive && !archive.local)) {
-      // video was uploaded during the lifetime of this component
       archivesAction('bindArchive', id);
     }
   }
@@ -124,6 +124,16 @@ class CardArchive extends PureComponent {
           style={styleApp.shadowIcon}
         />
       );
+    return null;
+  }
+  isVideoGettingUploading = () => {
+    const {archive, userID} = this.props;
+    const {url, sourceUser} = archive;
+    return (!url || url === '') && sourceUser !== userID;
+  };
+  uploadingIndicator() {
+    if (this.isVideoGettingUploading())
+      return <Loader size={25} color={colors.white} />;
     return null;
   }
   linearGradient() {
@@ -207,7 +217,10 @@ class CardArchive extends PureComponent {
               />
             )}
           </Col>
-          <Col size={70} />
+          <Col size={55} />
+          <Col size={15} style={styleApp.center3}>
+            {this.uploadingIndicator()}
+          </Col>
           <Col size={15} style={styleApp.center3}>
             {this.localIndicator()}
           </Col>
@@ -240,6 +253,13 @@ class CardArchive extends PureComponent {
         onPress={() =>
           unclickable
             ? true
+            : this.isVideoGettingUploading()
+            ? navigate('Alert', {
+                textButton: 'Got it!',
+                title: 'The video is currently being uploaded.',
+                subtitle: 'We will notify you when complete.',
+                close: true,
+              })
             : selectableMode
             ? this.selectVideo(id, !isSelected)
             : this.openVideo()
@@ -364,6 +384,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
+    userID: state.user.userID,
     archive: props.nativeArchive
       ? props.nativeArchive
       : state.archives[props.id],

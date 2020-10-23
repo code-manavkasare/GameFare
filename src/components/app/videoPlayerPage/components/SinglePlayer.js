@@ -258,7 +258,7 @@ class SinglePlayer extends Component {
             isPlayingReview={isPlayingReview}
             replay={async () => {
               await this.setState({isPlayingReview: false});
-              await seekAudioPlayer(0);
+              if (!archive.isMicrophoneMuted) await seekAudioPlayer(0);
               this.recordingRef.launchIfPreview(true);
             }}
             clickVideo={() => {
@@ -375,7 +375,7 @@ class SinglePlayer extends Component {
           muted={false}
           coachSessionID={coachSessionID}
           onVideoPlayerReady={(val) => this.setState({isVideoPlayerReady: val})}
-          clickVideo={() => { 
+          clickVideo={() => {
             this.drawViewRef.setState({selectedShape: null});
             clickVideo();
           }}

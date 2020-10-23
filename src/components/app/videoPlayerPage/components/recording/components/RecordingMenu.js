@@ -17,33 +17,54 @@ class RecordingMenu extends React.Component {
   static propTypes = {};
   constructor(props) {
     super(props);
+    this.state = {
+      isMicrophoneMuted: false,
+      isMicrophoneMutedLastValue: false,
+    };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  button = ({index, backgroundColor, onPressColor, click, text, icon}) => {
+  componentDidMount = () => {
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
+  };
+  getState = () => {
+    return this.state;
+  };
+  button = ({
+    index,
+    backgroundColor,
+    onPressColor,
+    click,
+    text,
+    icon,
+    width,
+  }) => {
     const {name, type, color: colorIcon, size} = icon;
     const style = {
       ...styles.button,
-      top: index * 35,
     };
     return (
       <ButtonColor
         color={backgroundColor}
         onPressColor={onPressColor}
         click={click}
-        style={style}
+        style={[style, width]}
         view={() => {
           return (
             <Row style={styleApp.marginView}>
-              <Col size={80} style={[styleApp.center2, {paddingLeft: 10}]}>
-                <Text
-                  style={[
-                    styleApp.textBold,
-                    {color: colors.white, fontSize: 12},
-                  ]}>
-                  {text}
-                </Text>
-              </Col>
-              <Col size={20} style={styleApp.center}>
+              {text && (
+                <Col size={75} style={[styleApp.center3, {paddingLeft: 10}]}>
+                  <Text
+                    style={[
+                      styleApp.textBold,
+                      {color: colors.white, fontSize: 12},
+                    ]}>
+                    {text}
+                  </Text>
+                </Col>
+              )}
+              <Col size={25} style={styleApp.center}>
                 <AllIcons
                   solid
                   name={name}
@@ -69,10 +90,12 @@ class RecordingMenu extends React.Component {
       stopRecording,
       saveReview,
       userConnected,
+      toggleMuteMicrophone,
     } = this.props;
+    const {isMicrophoneMuted} = this.state;
     if (!isEditMode) return null;
     return (
-      <View style={styles.menu}>
+      <View style={[styles.menu, styleApp.center3]}>
         {this.button({
           index: 0,
           backgroundColor: isRecording ? colors.red : colors.green,
@@ -87,10 +110,27 @@ class RecordingMenu extends React.Component {
           },
         })}
 
+        {this.button({
+          index: 1,
+          backgroundColor: isMicrophoneMuted ? colors.red : colors.green,
+          width: {width: 40, position: 'absolute', right: 160, top: -0},
+          onPressColor: isMicrophoneMuted ? colors.redLight : colors.greenLight,
+          click: () => {
+            if (isRecording) return;
+            this.setState({isMicrophoneMuted: !isMicrophoneMuted});
+          },
+          icon: {
+            name: isMicrophoneMuted ? 'microphone-slash' : 'microphone',
+            type: 'font',
+            size: 18,
+            color: colors.white,
+          },
+        })}
+
         {!isRecording &&
           recordedActions.length > 0 &&
           this.button({
-            index: 0,
+            index: 2,
             backgroundColor: colors.title + '70',
             text: 'Save',
             onPressColor: colors.greyDark + '70',
@@ -114,11 +154,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: 150,
     right: '5%',
-    // backgroundColor: 'red',
     top: heightHeaderHome + marginTopApp + 10,
   },
   button: {
-    height: 37,
+    height: 40,
     width: '100%',
     borderRadius: 20,
     marginBottom: 10,

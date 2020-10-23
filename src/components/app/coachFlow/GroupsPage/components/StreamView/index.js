@@ -194,32 +194,35 @@ class GroupsPage extends Component {
     if (currentSessionID === undefined && prevProps.currentSessionID) {
       this.props.layoutAction('setGeneralSessionRecording', false);
     }
-    if (portrait !== prevProps.currentScreenSize.portrait && currentSessionID) {
-      database()
-        .ref(`coachSessions/${currentSessionID}/members/${userID}`)
-        .update({
-          portrait: portrait,
-        });
-    }
-    if (userConnected) {
-      permission('library');
-      this.refreshTokenMember();
-
-      if (
-        !isEqual(prevProps.session, this.props.session) &&
-        this.props.session
-      ) {
-        this.refreshTokenMember();
-        this.openVideoShared();
+    if (currentSessionID) {
+      if (portrait !== prevProps.currentScreenSize.portrait) {
+        database()
+          .ref(`coachSessions/${currentSessionID}/members/${userID}`)
+          .update({
+            portrait: portrait,
+          });
       }
-    }
-    if (
-      route?.params?.params?.action !== prevProps.route?.params?.params?.action
-    ) {
-      try {
-        this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
-        this.footerRef?.bottomButtonsRef?.clickRecord();
-      } catch (e) {}
+      if (userConnected) {
+        permission('library');
+        this.refreshTokenMember();
+
+        if (
+          !isEqual(prevProps.session, this.props.session) &&
+          this.props.session
+        ) {
+          this.refreshTokenMember();
+          this.openVideoShared();
+        }
+      }
+      if (
+        route?.params?.params?.action !==
+        prevProps.route?.params?.params?.action
+      ) {
+        try {
+          this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
+          this.footerRef?.bottomButtonsRef?.clickRecord();
+        } catch (e) {}
+      }
     }
   }
   isTokenUpToDate = () => {
