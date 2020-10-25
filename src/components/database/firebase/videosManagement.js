@@ -61,11 +61,14 @@ const mergeInfoWithExistingCloudVideo = async (firebaseVideoInfo) => {
 const createCloudVideo = async (videoInfo) => {
   // creates a firebase object for cloud video
   if (videoInfo.id) {
+    const {userID} = store.getState().user;
     let firebaseVideoInfo = {
       ...videoInfo,
       local: false,
       fromNativeLibrary: false,
       uploadedByUser: true,
+      url: false,
+      sourceUser: userID,
     };
     const newFirebaseVideoInfo = await mergeInfoWithExistingCloudVideo(
       firebaseVideoInfo,
