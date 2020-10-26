@@ -1,7 +1,6 @@
 import {ProcessingManager} from 'react-native-video-processing';
 import RNFS from 'react-native-fs';
 import database from '@react-native-firebase/database';
-import {createThumbnail} from 'react-native-create-thumbnail';
 import {DocumentDirectoryPath} from 'react-native-fs';
 import {assoc} from 'ramda';
 
@@ -10,6 +9,7 @@ import {
   getOpentokVideoInfo,
   getVideoUUID,
   updateVideoSavePath,
+  generateThumbnail,
 } from './pictures';
 import {generateID} from './utility';
 
@@ -37,7 +37,6 @@ import {
   shareCloudVideo,
   deleteCloudVideos,
 } from '../database/firebase/videosManagement';
-import {generateThumbnail} from './pictures.js';
 
 const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
   if (flags.length > 0) {
@@ -217,7 +216,9 @@ const launchUpload = async ({
       progress: 0,
       afterUpload: async () => {
         await claimCloudVideo(videoInfo);
-        await store.dispatch(setArchive({...videoInfo, local: false}));
+        await store.dispatch(
+          setArchive({...videoInfo, local: false, progress: false}),
+        );
         await store.dispatch(removeUserLocalArchive(videoID));
         deleteLocalVideoFile(videoInfo.url);
       },
@@ -331,10 +332,7 @@ const generateThumbnailSet = async ({
     let time = (dt * x + m) * 1000;
     if (!index || index === x) {
       thumbnails.push(
-        await createThumbnail({
-          url: source,
-          timeStamp: time,
-        }).then((r) => {
+        await generateThumbnail(source, time).then((r) => {
           if (callback) {
             callback(r);
           }
@@ -361,11 +359,21 @@ const updateLocalVideoUrls = () => {
             const newUrl = updateVideoSavePath(video.url);
             const fixWorked = await RNFS.exists(newUrl);
             if (fixWorked) {
-              const {path: newThumbnail} = await createThumbnail({
-                url: newUrl,
-              });
+              const {
+                path: newThumbnail,
+                height: heightThumbnail,
+                width: widthThumbnail,
+              } = await generateThumbnail(newUrl);
               store.dispatch(
-                setArchive({...video, url: newUrl, thumbnail: newThumbnail}),
+                setArchive({
+                  ...video,
+                  url: newUrl,
+                  thumbnail: newThumbnail,
+                  thumbnailSize: {
+                    height: heightThumbnail,
+                    width: widthThumbnail,
+                  },
+                }),
               );
             } else {
               store.dispatch(
@@ -378,17 +386,36 @@ const updateLocalVideoUrls = () => {
               );
             }
           } else if (!video.thumbnail || video.thumbnail === '') {
-            const {path: newThumbnail} = await createThumbnail({
-              url: video.url,
-            });
-            store.dispatch(setArchive({...video, thumbnail: newThumbnail}));
+            const {
+              path: newThumbnail,
+              height: heightThumbnail,
+              width: widthThumbnail,
+            } = await generateThumbnail(video.url);
+            store.dispatch(
+              setArchive({
+                ...video,
+                thumbnail: newThumbnail,
+                thumbnailSize: {height: heightThumbnail, width: widthThumbnail},
+              }),
+            );
           } else {
             const thumbnailExists = RNFS.exists(video.thumbnail);
             if (!thumbnailExists) {
-              const {path: newThumbnail} = await createThumbnail({
-                url: video.url,
-              });
-              store.dispatch(setArchive({...video, thumbnail: newThumbnail}));
+              const {
+                path: newThumbnail,
+                height: heightThumbnail,
+                width: widthThumbnail,
+              } = await generateThumbnail(video.url);
+              store.dispatch(
+                setArchive({
+                  ...video,
+                  thumbnail: newThumbnail,
+                  thumbnailSize: {
+                    height: heightThumbnail,
+                    width: widthThumbnail,
+                  },
+                }),
+              );
             }
           }
         }
@@ -417,10 +444,11 @@ const updateLocalUploadProgress = (videoID, progress) => {
 };
 
 const regenerateThumbnail = async (archive) => {
+  let newArchive = {...archive};
   const thumbnailPath = await generateThumbnail(archive.url);
   const oldThumbnailPath = archive.thumbnail;
-  archive.thumbnail = thumbnailPath;
-  store.dispatch(setArchive(archive));
+  newArchive.thumbnail = thumbnailPath;
+  store.dispatch(setArchive(newArchive));
   RNFS.unlink(oldThumbnailPath);
 };
 
@@ -454,4 +482,5 @@ export {
   updateLocalUploadProgress,
   updateLocalVideoUrls,
   uploadLocalVideo,
+  deleteLocalVideoFile,
 };

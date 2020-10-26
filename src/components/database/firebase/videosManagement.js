@@ -89,6 +89,7 @@ const claimCloudVideo = async (videoInfo) => {
     .ref()
     .update({
       [`archivedStreams/${videoInfo.id}/sourceUser`]: userID,
+      [`archivedStreams/${videoInfo.id}/progress`]: null,
       [`archivedStreams/${videoInfo.id}/members/${userID}`]: {id: userID},
       [`users/${userID}/archivedStreams/${videoInfo.id}`]: {
         id: videoInfo.id,

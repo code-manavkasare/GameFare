@@ -10,19 +10,19 @@ const getArchiveByID = (archiveID) => {
     : null;
 };
 
-
 const cacheArchive = async (archiveID) => {
   const archive = getArchiveByID(archiveID);
   const {local, url, localUrlCreated} = archive;
   if (!local && !localUrlCreated) {
     const cachedUrl = await convertToCache(url);
-    store.dispatch(
-      setArchive({
-        ...archive,
-        url: cachedUrl,
-        localUrlCreated: true,
-      }),
-    );
+    if (cachedUrl)
+      store.dispatch(
+        setArchive({
+          ...archive,
+          url: cachedUrl,
+          localUrlCreated: true,
+        }),
+      );
   }
 };
 
