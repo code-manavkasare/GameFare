@@ -66,7 +66,8 @@ class App extends Component {
     if (buildId !== actualBuildId) {
       for (const archive of Object.values(archives)) {
         if (archive.local) {
-          regenerateThumbnail(archive);
+          console.log('regenerateThumbnail');
+          // regenerateThumbnail(archive);
         }
       }
       appSettingsAction('setCurrentBuildNumber', actualBuildId);
