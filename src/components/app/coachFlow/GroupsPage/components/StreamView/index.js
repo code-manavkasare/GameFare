@@ -275,14 +275,20 @@ class GroupsPage extends Component {
     }
   }
   loaderView(text, hideLoader) {
+    const {portrait} = this.props.currentScreenSize;
     const styleText = {
       ...styleApp.textBold,
       color: colors.white,
       fontSize: 20,
       marginBottom: 25,
     };
+    const loaderViewStyle = {
+      ...styleApp.center,
+      ...styles.loaderSessionTokBox,
+      paddingBottom: portrait ? 0 : 155,
+    };
     return (
-      <View style={[styleApp.center, styles.loaderSessionTokBox]}>
+      <View style={loaderViewStyle}>
         {<Text style={styleText}>{text}</Text>}
         {!hideLoader && <Loader size={55} color={colors.white} />}
       </View>
@@ -452,12 +458,14 @@ class GroupsPage extends Component {
   streamPage() {
     const {
       currentSessionID,
+      currentScreenSize,
       session: coachSession,
       reconnecting,
       userID,
       userConnected,
       connectionType,
     } = this.props;
+    const {currentHeight: height, currentWidth: width} = currentScreenSize;
     if (
       !userConnected ||
       !currentSessionID ||
@@ -478,8 +486,13 @@ class GroupsPage extends Component {
     const {isConnected} = member;
     let userIsAlone = isUserAlone(coachSession);
     const cameraPosition = this.cameraPosition();
+    const viewStreamStyle = {
+      ...styles.viewStream,
+      height,
+      width,
+    };
     return (
-      <View style={styles.viewStream}>
+      <View style={viewStreamStyle}>
         {this.header(isConnected)}
         {!member
           ? this.loaderView('You are not a member of this conversation', true)
