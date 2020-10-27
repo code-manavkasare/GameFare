@@ -213,15 +213,14 @@ class GroupsPage extends Component {
           this.openVideoShared();
         }
       }
-      if (
-        route?.params?.params?.action !==
-        prevProps.route?.params?.params?.action
-      ) {
-        try {
-          this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
-          this.footerRef?.bottomButtonsRef?.clickRecord();
-        } catch (e) {}
-      }
+    }
+    if (
+      route?.params?.params?.action !== prevProps.route?.params?.params?.action
+    ) {
+      try {
+        this.cameraRef?.bottomButtonsRef?.recordButtonRef?.clickRecord();
+        this.footerRef?.bottomButtonsRef?.clickRecord();
+      } catch (e) {}
     }
   }
   isTokenUpToDate = () => {
