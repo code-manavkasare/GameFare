@@ -6,11 +6,9 @@ import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
-import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
 import {isArchiveUploading} from '../../functions/upload.js';
-import {layoutAction} from '../../../actions/layoutActions';
 import {logMixpanel} from '../../functions/logs';
 
 import colors from '../../style/colors';
@@ -55,9 +53,8 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
-    const {navigation, layoutAction} = this.props;
+    const {navigation} = this.props;
 
-    layoutAction('setCameraAvailability', false);
     this.focusListener = navigation.addListener('focus', () => {
       StatusBar.setBarStyle('light-content', true);
       Orientation.unlockAllOrientations();
@@ -105,9 +102,6 @@ class VideoPlayerPage extends Component {
   };
 
   componentWillUnmount() {
-    const {layoutAction} = this.props;
-    const {prevCameraState} = this.state;
-    layoutAction('setCameraAvailability', prevCameraState);
     if (this.focusListener) {
       this.focusListener();
     }
@@ -704,5 +698,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {layoutAction},
+  {},
 )(VideoPlayerPage);

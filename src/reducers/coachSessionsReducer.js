@@ -4,8 +4,7 @@ import {
   DELETE_SESSION,
   RESET_SESSIONS,
   SET_SESSION,
-  BIND_SESSION,
-  UNBIND_SESSION,
+  SET_SESSION_BINDED,
 } from '../actions/types';
 
 const initialState = {};
@@ -15,11 +14,7 @@ const coachSessionsReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_SESSION:
       const {session} = action;
-      if (session?.objectID) {
-        return {...state, [session.objectID]: session};
-      } else {
-        return state;
-      }
+      return {...state, [session.objectID]: session};
     case DELETE_SESSION:
       const {sessionId} = action;
       return dissoc(sessionId, state);
@@ -32,28 +27,9 @@ const coachSessionsReducer = (state = initialState, action) => {
 
 const bindedCoachSessionsReducer = (state = initialStateBind, action) => {
   switch (action.type) {
-    case BIND_SESSION: {
-      const {sessionID} = action;
-      if (sessionID) {
-        const bindCount = state[sessionID];
-        if (bindCount) {
-          return {...state, [sessionID]: bindCount + 1};
-        }
-        return {...state, [sessionID]: 1};
-      }
-      return state;
-    }
-    case UNBIND_SESSION: {
-      const {sessionID} = action;
-      if (sessionID) {
-        const bindCount = state[sessionID];
-        if (bindCount) {
-          return {...state, [sessionID]: bindCount === 0 ? 0 : bindCount - 1};
-        }
-        return {...state, [sessionID]: 0};
-      }
-      return state;
-    }
+    case SET_SESSION_BINDED:
+      const {sessionID, value} = action;
+      return {...state, [sessionID]: value};
     default:
       return state;
   }

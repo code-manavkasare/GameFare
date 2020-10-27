@@ -1,8 +1,7 @@
 import {
   RESET_CONVERSATIONS,
   SET_CONVERSATION,
-  BIND_CONVERSATION,
-  UNBIND_CONVERSATION,
+  SET_CONVERSATION_BINDED,
 } from '../actions/types';
 
 const initialState = {};
@@ -25,28 +24,9 @@ const conversationsReducer = (state = initialState, action) => {
 
 const bindedConversationsReducer = (state = initialStateBind, action) => {
   switch (action.type) {
-    case BIND_CONVERSATION: {
-      const {conversationID} = action;
-      if (conversationID) {
-        const bindCount = state[conversationID];
-        if (bindCount) {
-          return {...state, [conversationID]: bindCount + 1};
-        }
-        return {...state, [conversationID]: 1};
-      }
-      return state;
-    }
-    case UNBIND_CONVERSATION: {
-      const {conversationID} = action;
-      if (conversationID) {
-        const bindCount = state[conversationID];
-        if (bindCount) {
-          return {...state, [conversationID]: bindCount === 0 ? 0 : bindCount - 1};
-        }
-        return {...state, [conversationID]: 0};
-      }
-      return state;
-    }
+    case SET_CONVERSATION_BINDED:
+      const {objectID, value} = action;
+      return {...state, [objectID]: value};
     default:
       return state;
   }

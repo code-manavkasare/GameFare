@@ -1,8 +1,19 @@
-import {SET_CONVERSATION, BIND_CONVERSATION, UNBIND_CONVERSATION} from './types';
+import {
+  SET_CONVERSATION,
+  BIND_CONVERSATION,
+  UNBIND_CONVERSATION,
+  SET_CONVERSATION_BINDED
+} from './types';
 
 const setConversation = (value) => ({
   type: SET_CONVERSATION,
   conversation: value,
+});
+
+const setConversationBinded = (objectID, value) => ({
+  type: SET_CONVERSATION_BINDED,
+  objectID,
+  value,
 });
 
 const bindConversation = (conversationID) => ({
@@ -28,4 +39,10 @@ const conversationsAction = (val, data) => {
   };
 };
 
-export {conversationsAction, setConversation, bindConversation, unbindConversation};
+export {
+  conversationsAction,
+  setConversation,
+  bindConversation,
+  unbindConversation,
+  setConversationBinded,
+};

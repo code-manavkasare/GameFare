@@ -74,7 +74,7 @@ class CardUserSelect extends Component {
             <View style={styleApp.fullSize}>
               <Animated.View style={selectionOverlayStyle} />
               <Row>
-                <Col size={20} style={styleApp.center}>
+                <Col size={25} style={styleApp.center}>
                   {user.info.picture ? (
                     <AsyncImage
                       style={styles.imgUser}
@@ -92,7 +92,7 @@ class CardUserSelect extends Component {
                     </View>
                   )}
                 </Col>
-                <Col size={70} style={styleApp.center2}>
+                <Col size={65} style={styleApp.center2}>
                   <Text style={styleApp.text}>
                     {user?.info?.firstname} {user?.info?.lastname}
                   </Text>
@@ -122,15 +122,15 @@ class CardUserSelect extends Component {
 
 const styles = StyleSheet.create({
   cardUser: {
-    height: 55,
+    height: 60,
     borderRadius: 15,
     paddingLeft: '5%',
     paddingRight: '5%',
   },
   imgUser: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: colors.off,
   },
 });

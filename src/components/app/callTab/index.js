@@ -33,6 +33,7 @@ import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
 import ListVideoCalls from './components/ListVideoCalls';
 import UserSearchResults from '../userDirectory/components/UserSearchResults';
+import HeaderCallTab from './components/HeaderCallTab';
 
 class CallTab extends Component {
   constructor(props) {
@@ -59,7 +60,7 @@ class CallTab extends Component {
 
   componentDidMount = () => {
     const {navigation} = this.props;
-    this.setBranchLink();
+
     this.focusUnsubscribe = navigation.addListener('focus', () => {
       Orientation.lockToPortrait();
     });
@@ -69,15 +70,6 @@ class CallTab extends Component {
     if (this.focusUnsubscribe) {
       this.focusUnsubscribe();
     }
-  };
-
-  setBranchLink = async () => {
-    const {params} = this.props.route;
-    this.setState({
-      branchLink:
-        params?.branchLink ??
-        (await createInviteToSessionBranchUrl(generateID())),
-    });
   };
 
   selectUser(user) {
@@ -230,10 +222,11 @@ class CallTab extends Component {
 
   header() {
     const {actionHeader, modal, branchLink, inlineSearch} = this.state;
-    const {navigation, numberNotifications, userConnected} = this.props;
+    const {navigation, numberNotifications, userConnected, route} = this.props;
+    const {archivesToShare} = route.params;
     const {navigate, goBack} = navigation;
     return (
-      <HeaderBackButton
+      <HeaderCallTab
         AnimatedHeaderValue={this.AnimatedHeaderValue}
         textHeader={actionHeader}
         inputRange={[5, 20]}
@@ -249,23 +242,13 @@ class CallTab extends Component {
         clickButton1={
           inlineSearch ? () => goBack() : () => this.openUserDirectory()
         }
+        archivesToShare={archivesToShare}
+        modal={modal}
         icon2={!userConnected ? null : modal ? 'share' : 'comment-alt'}
         typeIcon2={modal ? 'moon' : 'font'}
         sizeIcon2={24}
         colorIcon2={colors.title}
-        clickButton2={
-          modal
-            ? async () => {
-                const result = await Share.share({url: branchLink});
-                if (result.action === Share.sharedAction) {
-                  this.setBranchLink();
-                }
-              }
-            : () => {
-                this.setState({selectedSessions: {}});
-                navigate('Groups');
-              }
-        }
+        clickButton2={() => navigate('Groups')}
         badgeIcon2={
           numberNotifications !== 0 &&
           !modal && (

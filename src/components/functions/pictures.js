@@ -1,4 +1,4 @@
-import {Platform} from 'react-native';
+import {Platform, Image} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Permissions, {
   request,
@@ -293,6 +293,30 @@ async function uploadVideoFirebase(image, destination) {
   }
 }
 
+const getImageSize = async (uri) => {
+  console.log('get image size', uri);
+  if (uri.includes('https'))
+    return new Promise((resolve) => {
+      try {
+        Image.getSize(
+          uri,
+          (width, height) => {
+            console.log('whooo ', {width, height});
+            resolve({width, height});
+          },
+          (error) => {
+            console.log(`Couldn't get the image size: ${error.message}`);
+            resolve({});
+          },
+        );
+      } catch (err) {
+        console.log('error get size', err);
+        resolve({});
+      }
+    });
+  return {};
+};
+
 export {
   takePicture,
   pickLibrary,
@@ -315,4 +339,5 @@ export {
   generateThumbnail,
   uploadPictureFirebase,
   uploadVideoFirebase,
+  getImageSize,
 };
