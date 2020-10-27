@@ -6,11 +6,18 @@ import {
   BIND_ARCHIVE,
   UNBIND_ARCHIVE,
   RESET_CLOUD_ARCHIVES,
+  SET_ARCHIVE_BINDED,
 } from './types';
 
 const setArchive = (archive) => ({
   type: SET_ARCHIVE,
   archive,
+});
+
+const setArchiveBinded = (objectID, value) => ({
+  type: SET_ARCHIVE_BINDED,
+  objectID,
+  value,
 });
 
 const resetCloudArchives = () => ({
@@ -69,4 +76,5 @@ export {
   bindArchive,
   unbindArchive,
   resetCloudArchives,
+  setArchiveBinded,
 };

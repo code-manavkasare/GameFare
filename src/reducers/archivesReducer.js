@@ -5,8 +5,7 @@ import {
   DELETE_ARCHIVES,
   RESET_ARCHIVES,
   SET_ARCHIVE,
-  BIND_ARCHIVE,
-  UNBIND_ARCHIVE,
+  SET_ARCHIVE_BINDED,
   RESET_CLOUD_ARCHIVES,
 } from '../actions/types';
 
@@ -41,32 +40,9 @@ const archivesReducer = (state = initialState, action) => {
 
 const bindedArchivesReducer = (state = initialStateBind, action) => {
   switch (action.type) {
-    case BIND_ARCHIVE: {
-      const {archiveID} = action;
-      if (archiveID) {
-        const bindCount = state[archiveID];
-        if (bindCount) {
-          return {...state, [archiveID]: bindCount + 1};
-        }
-        return {...state, [archiveID]: 1};
-      }
-      return state;
-    }
-    case UNBIND_ARCHIVE: {
-      const {archiveID} = action;
-      if (archiveID) {
-        const bindCount = state[archiveID];
-        if (bindCount) {
-          return {...state, [archiveID]: bindCount === 0 ? 0 : bindCount - 1};
-        }
-        return {...state, [archiveID]: 0};
-      }
-      return state;
-    }
-    case DELETE_ARCHIVES: {
-      const {archiveIDs} = action;
-      return archiveIDs.reduce((newState, id) => dissoc(id, newState), state);
-    }
+    case SET_ARCHIVE_BINDED:
+      const {objectID, value} = action;
+      return {...state, [objectID]: value};
     default:
       return state;
   }

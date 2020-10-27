@@ -55,7 +55,6 @@ import Loader from '../../../../../layout/loaders/Loader';
 import MembersView from './components/MembersView';
 import CameraPage from '../../../../../app/camera/index';
 import Footer from './footer/index';
-import CurrentSessionBinder from '../../../../../utility/bindings/CurrentSessionBinder';
 
 const {width} = Dimensions.get('screen');
 
@@ -552,7 +551,6 @@ class GroupsPage extends Component {
     return (
       <View style={styleApp.stylePage}>
         <KeepAwake />
-        <CurrentSessionBinder />
         {this.streamPage()}
       </View>
     );

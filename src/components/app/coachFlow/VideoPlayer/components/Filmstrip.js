@@ -36,44 +36,44 @@ export default class Filmstrip extends Component {
       thumbnails: archive.initialSeekbarThumbnails,
     });
     if (!archive.initialSeekbarThumbnails) {
-      const thumbnails = await this.fetchThumbnails({});
-      store.dispatch(
-        setArchive({
-          ...archive,
-          initialSeekbarThumbnails: thumbnails,
-        }),
-      );
+      // const thumbnails = await this.fetchThumbnails({});
+      // store.dispatch(
+      //   setArchive({
+      //     ...archive,
+      //     initialSeekbarThumbnails: thumbnails,
+      //   }),
+      // );
     }
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    const {onFilmstripLoad, source} = this.props;
-    const {loadedThumbs, count, thumbnails} = this.state;
-    const {source: prevSource} = prevProps;
-    if (onFilmstripLoad && loadedThumbs === count) {
-      Animated.timing(this.opacity, timing(1, 150)).start();
-      onFilmstripLoad();
-      const {archiveId} = this.props;
-      let archive = await getArchiveByID(archiveId);
-      store.dispatch(
-        setArchive({
-          ...archive,
-          initialSeekbarThumbnails: thumbnails,
-        }),
-      );
-    } else if (source !== prevSource) {
-      const {archiveId} = this.props;
-      let archive = await getArchiveByID(archiveId);
-      if (!archive.initialSeekbarThumbnails) {
-        const thumbnails = await this.fetchThumbnails({});
-        store.dispatch(
-          setArchive({
-            ...archive,
-            initialSeekbarThumbnails: thumbnails,
-          }),
-        );
-      }
-    }
+    // const {onFilmstripLoad, source} = this.props;
+    // const {loadedThumbs, count, thumbnails} = this.state;
+    // const {source: prevSource} = prevProps;
+    // if (onFilmstripLoad && loadedThumbs === count) {
+    //   Animated.timing(this.opacity, timing(1, 150)).start();
+    //   onFilmstripLoad();
+    //   const {archiveId} = this.props;
+    //   let archive = await getArchiveByID(archiveId);
+    //   store.dispatch(
+    //     setArchive({
+    //       ...archive,
+    //       initialSeekbarThumbnails: thumbnails,
+    //     }),
+    //   );
+    // } else if (source !== prevSource) {
+    //   const {archiveId} = this.props;
+    //   // let archive = await getArchiveByID(archiveId);
+    //   if (!archive.initialSeekbarThumbnails) {
+    //     // const thumbnails = await this.fetchThumbnails({});
+    //     // store.dispatch(
+    //     //   setArchive({
+    //     //     ...archive,
+    //     //     initialSeekbarThumbnails: thumbnails,
+    //     //   }),
+    //     // );
+    //   }
+    // }
   }
 
   shouldComponentUpdate(prevProps, prevState) {

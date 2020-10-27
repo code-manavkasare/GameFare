@@ -14,6 +14,7 @@ import colors from '../../../style/colors';
 import DrawTools from './drawing/DrawTools';
 import DrawView from './drawing/DrawView';
 import {updateInfoVideoCloud, timeout} from '../../../functions/coach';
+import {bindArchive} from '../../../database/firebase/bindings';
 import RecordingComponent from './recording/index';
 import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
@@ -42,7 +43,7 @@ class SinglePlayer extends Component {
     onRef && onRef(this);
     if (!archive || !archive.local) {
       // bind if missing entry or have non-local entry
-      archivesAction('bindArchive', id);
+      bindArchive(id);
     }
   };
 
@@ -73,16 +74,9 @@ class SinglePlayer extends Component {
           .update(updates);
       }
     }
-    if (prevArchive && prevArchive.local && (archive && !archive.local)) {
+    if (prevArchive?.local && !archive?.local) {
       // video was uploaded during the lifetime of this component
-      archivesAction('bindArchive', id);
-    }
-  };
-
-  componentWillUnmount = () => {
-    const {id, archive, archivesAction} = this.props;
-    if (archive && !archive.local) {
-      archivesAction('unbindArchive', id);
+      bindArchive(id);
     }
   };
 
