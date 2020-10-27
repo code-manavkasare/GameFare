@@ -20,7 +20,7 @@ class HeaderCallTab extends Component {
   clickShare = async () => {
     const {archivesToShare} = this.props;
     let {branchLink} = this.state;
-    if (!branchLink) {
+    if (!branchLink && archivesToShare) {
       await this.setState({loader: true});
       branchLink = await createShareVideosBranchUrl(archivesToShare);
       await this.setState({loader: false, branchLink});
@@ -58,12 +58,11 @@ class HeaderCallTab extends Component {
   header() {
     const {modal, clickButton2} = this.props;
     const {loader} = this.state;
-
     return (
       <HeaderBackButton
         {...this.props}
         loader={loader}
-        clickButton2={() => (modal ? this.bim() : clickShare())}
+        clickButton2={() => (!modal ? clickButton2() : this.clickShare())}
         colorLoader={colors.title}
         sizeLoader={45}
       />

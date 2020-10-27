@@ -223,7 +223,6 @@ class CallTab extends Component {
   header() {
     const {actionHeader, modal, branchLink, inlineSearch} = this.state;
     const {navigation, numberNotifications, userConnected, route} = this.props;
-    const {archivesToShare} = route.params;
     const {navigate, goBack} = navigation;
     return (
       <HeaderCallTab
@@ -242,7 +241,7 @@ class CallTab extends Component {
         clickButton1={
           inlineSearch ? () => goBack() : () => this.openUserDirectory()
         }
-        archivesToShare={archivesToShare}
+        archivesToShare={route?.params?.archivesToShare}
         modal={modal}
         icon2={!userConnected ? null : modal ? 'share' : 'comment-alt'}
         typeIcon2={modal ? 'moon' : 'font'}
