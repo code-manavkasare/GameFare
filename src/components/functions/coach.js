@@ -340,7 +340,6 @@ const setupOpentokStopRecordingFlow = async (
   memberID,
 ) => {
   let {path: thumbnail} = await generateThumbnail(sourceVideoInfo.url);
-  thumbnail = await compressThumbnail(thumbnail);
   let thumbnailUploadTasks = [
     {
       type: 'image',
@@ -357,11 +356,10 @@ const setupOpentokStopRecordingFlow = async (
     await Promise.all(
       Object.values(flags).map(async (flag) => {
         const {id, time} = flag;
-        let {path: thumbnail} = await sourceVideoInfo.url(
+        let {path: thumbnail} = await generateThumbnail(
           sourceVideoInfo.url,
           time,
         );
-        thumbnail = await compressThumbnail(thumbnail);
         thumbnailUploadTasks.push({
           type: 'image',
           id: generateID(),

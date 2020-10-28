@@ -293,8 +293,7 @@ async function uploadVideoFirebase(image, destination) {
   }
 }
 
-const getImageSize = async (uri) => {
-  console.log('get image size', uri);
+const getImageSize = async (uri) => { 
   if (uri.includes('https'))
     return new Promise((resolve) => {
       try {

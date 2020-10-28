@@ -360,7 +360,7 @@ class SinglePlayer extends Component {
           onRef={(ref) => {
             this.videoPlayerRef = ref;
           }}
-          paused={recordedActions.length > 0 ? true : paused}
+          paused={recordedActions.length > 0 || !archive ? true : paused}
           playRate={playRate}
           currentTime={currentTime}
           scale={scale}

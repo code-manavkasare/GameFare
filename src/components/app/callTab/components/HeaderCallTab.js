@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Share, Image} from 'react-native';
 import {connect} from 'react-redux';
+import {store} from '../../../../../reduxStore';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createShareVideosBranchUrl} from '../../../database/branch';
 import colors from '../../../style/colors';
@@ -8,6 +9,8 @@ import colors from '../../../style/colors';
 import {getOnceValue} from '../../../database/firebase/methods';
 import {getImageSize} from '../../../functions/pictures';
 import database from '@react-native-firebase/database';
+import {shareVideosWithTeams} from '../../../functions/videoManagement';
+import {timeout} from '../../../functions/coach';
 
 class HeaderCallTab extends Component {
   constructor(props) {
@@ -17,12 +20,38 @@ class HeaderCallTab extends Component {
       branchLink: null,
     };
   }
+  loopWaitUploadThumbnail = async (localVideos) => {
+    const loop = [0, 1, 2, 3, 4];
+    for (let i in loop) {
+      const thumbnailStillUploading = localVideos.map((archive) => {
+        const archiveInfo = store.getState().archives[archive];
+        return archiveInfo.thumbnail.includes('https');
+      });
+      if (thumbnailStillUploading.length > 0) await timeout(1500);
+      else break;
+    }
+    return true;
+  };
   clickShare = async () => {
-    const {archivesToShare} = this.props;
+    const {archivesToShare, archives} = this.props;
     let {branchLink} = this.state;
     if (!branchLink && archivesToShare) {
       await this.setState({loader: true});
-      branchLink = await createShareVideosBranchUrl(archivesToShare);
+      const infoArchives = archivesToShare.map((archive) => archives[archive]);
+
+      const localVideos = infoArchives
+        .filter((archive) => archive.local)
+        .map((archive) => archive.id);
+      if (localVideos.length > 0) {
+        await shareVideosWithTeams(localVideos, []);
+        await this.loopWaitUploadThumbnail(localVideos);
+      }
+
+      const cloudVideos = infoArchives
+        .filter((archive) => !archive.local)
+        .map((archive) => archive.id);
+      const combinedVideos = cloudVideos.concat(localVideos);
+      branchLink = await createShareVideosBranchUrl(combinedVideos);
       await this.setState({loader: false, branchLink});
     }
     Share.share({url: branchLink});
@@ -35,21 +64,7 @@ class HeaderCallTab extends Component {
     for (var i in archivedStreams) {
       let {local, id, thumbnail} = archivedStreams[i];
       if (!local) updates[`archivedStreams/${id}/progress`] = null;
-      // if (thumbnail) {
-      //   const {width, height} = await getImageSize(thumbnail);
-      //   console.log('[width, height]', {width, height});
-      //   if (width && height)
-      //     updates[`archivedStreams/${id}/thumbnailSize`] = {
-      //       height,
-      //       width,
-      //     };
-      //   else {
-      //     updates[`archivedStreams/${id}/thumbnail`] =
-      //       'https://firebasestorage.googleapis.com/v0/b/getplayd.appspot.com/o/logos%2FSlice%2053.png?alt=media&token=df86469a-3aa3-4a79-998d-4cabefa740bf';
-      //   }
-      // }
     }
-    console.log('updates', updates);
     await database()
       .ref()
       .update(updates);
@@ -62,7 +77,7 @@ class HeaderCallTab extends Component {
       <HeaderBackButton
         {...this.props}
         loader={loader}
-        clickButton2={() => (!modal ? clickButton2() : this.clickShare())}
+        clickButton2={() => (modal ? this.clickShare() : clickButton2())}
         colorLoader={colors.title}
         sizeLoader={45}
       />
@@ -78,6 +93,7 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     coach: state.coach,
+    archives: state.archives,
   };
 };
 

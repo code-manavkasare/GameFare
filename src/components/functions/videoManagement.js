@@ -36,6 +36,7 @@ import {
   claimCloudVideo,
   shareCloudVideo,
   deleteCloudVideos,
+  updateThumbnailCloud,
 } from '../database/firebase/videosManagement';
 
 const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
@@ -198,6 +199,21 @@ const launchUpload = async ({
         storageDestination: `archivedStreams/${videoID}`,
         isBackground: background,
         displayInList: false,
+        afterUpload: async (thumbnail) => {
+          await updateThumbnailCloud({
+            id: videoID,
+            thumbnail,
+            startTimestamp: videoInfo.startTimestamp,
+          });
+          await store.dispatch(
+            setArchive({
+              id: videoID,
+              thumbnail,
+              local: false,
+            }),
+          );
+          await store.dispatch(removeUserLocalArchive(videoID));
+        },
       }),
     );
   } else {
@@ -214,10 +230,15 @@ const launchUpload = async ({
       isBackground: background,
       displayInList: true,
       progress: 0,
-      afterUpload: async () => {
+      afterUpload: async (cloudUrl) => {
         await claimCloudVideo(videoInfo);
         await store.dispatch(
-          setArchive({...videoInfo, local: false, progress: false}),
+          setArchive({
+            url: cloudUrl,
+            id: videoID,
+            local: false,
+            progress: false,
+          }),
         );
         await store.dispatch(removeUserLocalArchive(videoID));
         deleteLocalVideoFile(videoInfo.url);
@@ -313,6 +334,7 @@ const shareVideosWithTeams = async (videos, objectIDs) => {
       .ref(`coachSessions/${session.objectID}/contents`)
       .update(newContents);
   });
+  return cloudEntriesCreated;
 };
 
 const generateThumbnailSet = async ({
