@@ -24,8 +24,12 @@ const bindSession = (sessionID) => {
       .on('value', function(snapshot) {
         const coachSessionFirebase = snapshot.val();
         if (coachSessionFirebase) {
-          store.dispatch(setSession(coachSessionFirebase));
-          store.dispatch(setSessionBinded(sessionID, true));
+          const prevSession = store.getState().coachSessions[sessionID];
+          if (!equal(prevSession, coachSessionFirebase))
+            store.dispatch(setSession(coachSessionFirebase));
+          const prevSessionBinded = store.getState().bindedSessions[sessionID];
+          if (!prevSessionBinded)
+            store.dispatch(setSessionBinded(sessionID, true));
         }
       });
 };
@@ -47,20 +51,24 @@ const bindArchive = (archiveID) => {
         const firebaseArchive = snap.val();
         if (firebaseArchive) {
           const storeArchive = getArchiveByID(archiveID);
-          await store.dispatch(
-            setArchive({
-              ...firebaseArchive,
-              id: archiveID,
-              url: storeArchive?.localUrlCreated
-                ? storeArchive.url
-                : firebaseArchive.url,
-              originalUrl: firebaseArchive.url,
-              localUrlCreated: storeArchive?.localUrlCreated
-                ? storeArchive.localUrlCreated
-                : false,
-            }),
-          );
-          store.dispatch(setArchiveBinded(archiveID, true));
+
+          const newArchive = {
+            ...firebaseArchive,
+            id: archiveID,
+            url: storeArchive?.localUrlCreated
+              ? storeArchive.url
+              : firebaseArchive.url,
+            originalUrl: firebaseArchive.url,
+            localUrlCreated: storeArchive?.localUrlCreated
+              ? storeArchive.localUrlCreated
+              : false,
+          };
+          if (!equal(storeArchive, newArchive))
+            await store.dispatch(setArchive(newArchive));
+          const prevArchiveBinded = store.getState().bindedArchives[archiveID];
+          if (!prevArchiveBinded)
+            store.dispatch(setArchiveBinded(archiveID, true));
+
           if (!storeArchive?.localUrlCreated) {
             cacheArchive(archiveID);
           }
@@ -110,8 +118,17 @@ const bindConversation = (conversationID) => {
             result[item.id] = item;
             return result;
           }, {});
-        store.dispatch(setConversation({messages, objectID: conversationID}));
-        store.dispatch(setConversationBinded(conversationID, true));
+
+        const storeConversation = store.getState().conversations[
+          conversationID
+        ];
+        if (!equal(storeConversation, {messages, objectID: conversationID}))
+          store.dispatch(setConversation({messages, objectID: conversationID}));
+        const prevConversationBinded = store.getState().bindedConversations[
+          conversationID
+        ];
+        if (!prevConversationBinded)
+          store.dispatch(setConversationBinded(conversationID, true));
       });
 };
 
