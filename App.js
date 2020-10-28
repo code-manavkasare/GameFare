@@ -101,7 +101,7 @@ class App extends Component {
       enableAutoSessionTracking: true,
       attachStacktrace: true,
       environment: Config.ENV,
-      release: `${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`,
+      release: `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${DeviceInfo.getBuildNumber()}`,
       // integrations: [new TracingIntegrations.BrowserTracing()],
       // tracesSampleRate: 0.2,
     });
