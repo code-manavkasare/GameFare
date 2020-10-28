@@ -16,7 +16,7 @@ const archivesReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_ARCHIVE:
       const {archive} = action;
-      return {...state, [archive.id]: archive};
+      return {...state, [archive.id]: {...state[archive.id], ...archive}};
     case DELETE_ARCHIVE:
       const {archiveID} = action;
       return dissoc(archiveID, state);

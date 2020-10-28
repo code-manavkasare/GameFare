@@ -13,7 +13,7 @@ const getArchiveByID = (archiveID) => {
 const cacheArchive = async (archiveID) => {
   const archive = getArchiveByID(archiveID);
   const {local, url, localUrlCreated} = archive;
-  if (!local && !localUrlCreated) {
+  if (!local && !localUrlCreated && url) {
     const cachedUrl = await convertToCache(url);
     if (cachedUrl)
       store.dispatch(
