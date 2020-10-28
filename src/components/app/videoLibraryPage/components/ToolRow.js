@@ -123,15 +123,11 @@ class ToolRow extends Component {
       clickButton2,
       clickButton3,
       clickButton4,
-      clickButton1,
-      isButton3Selected,
       isButton2Selected,
       selectedVideos,
       selectVideo,
-      displayButton0,
+      currentSessionID,
       clickButton0,
-      position,
-      userConnected,
       selectedLocalVideos,
       selectedRecordVideos,
     } = this.props;
@@ -155,76 +151,43 @@ class ToolRow extends Component {
             },
           ]}>
           <Row style={{overflow: 'hidden'}}>
-            {/* <Col size={25} style={styleApp.center3}>
-              {this.button({
-                icon: {
-                  name: isButton2Selected ? 'close' : 'chevron-left',
-                  type: isButton2Selected ? 'mat' : 'font',
-                  color: colors.greyDark,
-                  size: isButton2Selected ? 20 : 20,
-                },
-
-                isSelected: isButton2Selected,
-                onPressColor: colors.off,
-                style: styles.button,
-                click: () => clickButton1({forceSelect: true}),
-              })}
-            </Col> */}
-
-            {displayButton0 && (
+            {
               <Col size={25} style={styleApp.center3}>
                 {this.button({
                   icon: {
-                    name: 'user-friends',
-                    type: 'font',
-                    color: colors.white,
-                    size: 20,
-                  },
-                  overlayIcon: {
                     name: 'play',
                     type: 'font',
-                    color: colors.white,
-                    size: 10,
-                    top: -2,
-                    right: 10,
+                    color: colors.primary,
+                    size: 20,
                   },
-                  label: 'Watch Live',
-                  backgroundColor: colors.blue,
+                  label: 'play',
+                  backgroundColor: colors.white,
 
                   isSelected:
-                    selectedVideos.length > 0 &&
-                    selectedLocalVideos.length === 0 &&
-                    selectedRecordVideos.length === 0,
+                    !currentSessionID && selectedVideos.length > 0
+                      ? true
+                      : !currentSessionID
+                      ? false
+                      : selectedVideos.length > 0 &&
+                        selectedLocalVideos.length === 0 &&
+                        selectedRecordVideos.length === 0,
                   buttonDisabled:
-                    selectedVideos.length === 0 ||
-                    selectedLocalVideos.length > 0 ||
-                    selectedRecordVideos.length > 0,
-                  onPressColor: colors.primaryLight,
+                    !currentSessionID && selectedVideos.length === 0
+                      ? true
+                      : !currentSessionID
+                      ? false
+                      : selectedVideos.length === 0 ||
+                        selectedLocalVideos.length > 0 ||
+                        selectedRecordVideos.length > 0,
+                  onPressColor: colors.off,
                   style: styles.button,
-                  click: () => clickButton0({}),
+                  click: () =>
+                    !currentSessionID
+                      ? clickButton2({forceSelect: true})
+                      : clickButton0({}),
                 })}
               </Col>
-            )}
-
-            <Col size={25} style={styleApp.center3}>
-              {this.button({
-                icon: {
-                  name: 'play',
-                  type: 'font',
-                  color: colors.primary,
-                  size: 20,
-                },
-                label: 'Play',
-                backgroundColor: colors.white,
-
-                isSelected: selectedVideos.length > 0,
-                buttonDisabled: selectedVideos.length === 0,
-                onPressColor: colors.off,
-                style: styles.button,
-                click: () => clickButton2({forceSelect: true}),
-              })}
-            </Col>
-
+            }
             <Col size={25} style={styleApp.center}>
               {this.button({
                 icon: {
@@ -296,9 +259,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
+    currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
-    currentSessionID: state.coach.currentSessionID,
     selectedLocalVideos: props.selectedVideos
       .map((video) => state.archives[video])
       .filter((video) => video?.local),

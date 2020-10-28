@@ -1,4 +1,4 @@
-import {Platform} from 'react-native';
+import {Platform, Image} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import Permissions, {
   request,
@@ -16,6 +16,7 @@ import {fromHsv} from 'react-native-color-picker';
 import {store} from '../../../reduxStore';
 import {DocumentDirectoryPath} from 'react-native-fs';
 import {generateID} from '../functions/utility';
+import {deleteLocalVideoFile} from './videoManagement';
 
 const options = {
   quality: 1.0,
@@ -175,11 +176,21 @@ const ge10tLastVideo = async () => {
   return videos;
 };
 
-const generateThumbnail = async (videoPath) => {
-  const {path} = await createThumbnail({
+const generateThumbnail = async (videoPath, timeStamp) => {
+  let thumbnail = await createThumbnail({
     url: videoPath,
+    timeStamp: timeStamp ? timeStamp : 0,
   });
-  return path;
+  var {uri, size} = await ImageResizer.createResizedImage(
+    thumbnail.path,
+    thumbnail.width,
+    thumbnail.height,
+    'JPEG',
+    80,
+  );
+  await deleteLocalVideoFile(thumbnail.path);
+  thumbnail.path = uri;
+  return thumbnail;
 };
 
 const getVideoUUID = (path) => {
@@ -210,13 +221,17 @@ const getOpentokVideoInfo = async (videoUrl) => {
 
 const getVideoInfo = async (videoUrl) => {
   const pmVideoInfo = await ProcessingManager.getVideoInfo(videoUrl);
-  const newtThumbnail = await generateThumbnail(videoUrl, 0);
+  const {path: newtThumbnail, height, width} = await generateThumbnail(
+    videoUrl,
+    0,
+  );
   const id = getVideoUUID(videoUrl);
   const videoInfo = {
     id,
     thumbnail: newtThumbnail,
     url: videoUrl,
     durationSeconds: pmVideoInfo.duration,
+    thumbnailSize: {height, width},
     bitrate: pmVideoInfo.bitrate,
     frameRate: pmVideoInfo.frameRate,
     size: pmVideoInfo.size,
@@ -278,7 +293,30 @@ async function uploadVideoFirebase(image, destination) {
   }
 }
 
-module.exports = {
+const getImageSize = async (uri) => { 
+  if (uri.includes('https'))
+    return new Promise((resolve) => {
+      try {
+        Image.getSize(
+          uri,
+          (width, height) => {
+            console.log('whooo ', {width, height});
+            resolve({width, height});
+          },
+          (error) => {
+            console.log(`Couldn't get the image size: ${error.message}`);
+            resolve({});
+          },
+        );
+      } catch (err) {
+        console.log('error get size', err);
+        resolve({});
+      }
+    });
+  return {};
+};
+
+export {
   takePicture,
   pickLibrary,
   resize,
@@ -300,4 +338,5 @@ module.exports = {
   generateThumbnail,
   uploadPictureFirebase,
   uploadVideoFirebase,
+  getImageSize,
 };

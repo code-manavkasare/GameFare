@@ -191,7 +191,7 @@ const createShareVideosBranchUrl = async (archiveIDs) => {
     const {userID} = user;
     const archives = archiveIDs
       .map((id) => store.getState().archives[id])
-      .filter((a) => a);
+      .filter((a) => a); 
     const thumbnail = archives.reduce((thumbnail, archive) => {
       // need uploaded thumbnail
       if (
@@ -205,7 +205,7 @@ const createShareVideosBranchUrl = async (archiveIDs) => {
     }, '');
     const archiveMetadata = archives.reduce((data, archive, i) => {
       return i === 0 ? archive.id : data + ',' + archive.id;
-    }, '');
+    }, ''); 
     const branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {

@@ -22,7 +22,6 @@ const shareCloudVideo = async (
       timestamp: date,
     },
   };
-  console.log('shareCloudVideo', updates);
   await database()
     .ref()
     .update(updates);
@@ -61,11 +60,14 @@ const mergeInfoWithExistingCloudVideo = async (firebaseVideoInfo) => {
 const createCloudVideo = async (videoInfo) => {
   // creates a firebase object for cloud video
   if (videoInfo.id) {
+    const {userID} = store.getState().user;
     let firebaseVideoInfo = {
       ...videoInfo,
       local: false,
       fromNativeLibrary: false,
       uploadedByUser: true,
+      url: false,
+      sourceUser: userID,
     };
     const newFirebaseVideoInfo = await mergeInfoWithExistingCloudVideo(
       firebaseVideoInfo,
@@ -85,13 +87,23 @@ const claimCloudVideo = async (videoInfo) => {
   await database()
     .ref()
     .update({
-      [`archivedStreams/${videoInfo.id}/sourceUser`]: userID,
-      [`archivedStreams/${videoInfo.id}/members/${userID}`]: {id: userID},
-      [`users/${userID}/archivedStreams/${videoInfo.id}`]: {
-        id: videoInfo.id,
-        startTimestamp: videoInfo.startTimestamp,
-      },
+      [`archivedStreams/${videoInfo.id}/progress`]: null,
     });
+};
+
+const updateThumbnailCloud = async (videoInfo) => {
+  const {userID} = store.getState().user;
+  const updates = {
+    [`archivedStreams/${videoInfo.id}/thumbnail`]: videoInfo.thumbnail, 
+    [`archivedStreams/${videoInfo.id}/members/${userID}`]: {id: userID},
+    [`users/${userID}/archivedStreams/${videoInfo.id}`]: {
+      id: videoInfo.id,
+      startTimestamp: videoInfo.startTimestamp,
+    },
+  };
+  await database()
+    .ref()
+    .update(updates);
 };
 
 const setCloudVideoThumbnail = async (cloudVideoID, thumbnail) => {
@@ -151,4 +163,5 @@ export {
   setCloudVideoThumbnail,
   updateCloudUploadProgress,
   shareCloudVideoWithCoachSession,
+  updateThumbnailCloud,
 };

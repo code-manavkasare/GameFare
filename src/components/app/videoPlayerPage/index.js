@@ -6,11 +6,9 @@ import database from '@react-native-firebase/database';
 
 import SinglePlayer from './components/SinglePlayer';
 import VideoPlayerHeader from './components/VideoPlayerHeader';
-import Button from '../../layout/buttons/Button';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 
 import {isArchiveUploading} from '../../functions/upload.js';
-import {layoutAction} from '../../../actions/layoutActions';
 import {logMixpanel} from '../../functions/logs';
 
 import colors from '../../style/colors';
@@ -55,9 +53,8 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
-    const {navigation, layoutAction} = this.props;
+    const {navigation} = this.props;
 
-    layoutAction('setCameraAvailability', false);
     this.focusListener = navigation.addListener('focus', () => {
       StatusBar.setBarStyle('light-content', true);
       Orientation.unlockAllOrientations();
@@ -105,9 +102,6 @@ class VideoPlayerPage extends Component {
   };
 
   componentWillUnmount() {
-    const {layoutAction} = this.props;
-    const {prevCameraState} = this.state;
-    layoutAction('setCameraAvailability', prevCameraState);
     if (this.focusListener) {
       this.focusListener();
     }
@@ -167,7 +161,8 @@ class VideoPlayerPage extends Component {
 
     await this.onCurrentTimeChange(0, currenTime);
     await this.videoPlayerRefs[0].togglePlayPause(true);
-    this.AudioRecorderPlayerRef?.startRecording();
+    const {isMicrophoneMuted} = this.recordingMenuRef.getState();
+    this.AudioRecorderPlayerRef?.startRecording(isMicrophoneMuted);
     this.initialiseRecordingWithPlayerCurrentState();
   };
 
@@ -177,7 +172,9 @@ class VideoPlayerPage extends Component {
       label: 'stopRecording',
       params: {recordedActions: this.state.recordedActions},
     });
-    this.AudioRecorderPlayerRef?.stopRecording();
+    const {isMicrophoneMuted} = this.recordingMenuRef.getState();
+    !isMicrophoneMuted && this.AudioRecorderPlayerRef?.stopRecording();
+
     this.videoPlayerRefs.forEach((ref) => {
       ref?.videoPlayerRef?.setRecording(false);
     });
@@ -185,6 +182,9 @@ class VideoPlayerPage extends Component {
     await this.setState({
       isRecording: false,
       recordingStartTime: null,
+    });
+    await this.recordingMenuRef.setState({
+      isMicrophoneMutedLastValue: isMicrophoneMuted,
     });
 
     this.videoPlayerRefs[0].replayRecording();
@@ -354,6 +354,7 @@ class VideoPlayerPage extends Component {
 
   saveReview = async () => {
     //To update for multiple video
+    const {isMicrophoneMutedLastValue} = this.recordingMenuRef.getState();
     const {archives, recordedActions} = this.state;
     const {userID, videoInfos} = this.props;
     const audioFilePath = this.AudioRecorderPlayerRef.state.audioFilePath;
@@ -368,6 +369,7 @@ class VideoPlayerPage extends Component {
           localVideoInfo.url,
           recordedActions,
           audioFilePath,
+          isMicrophoneMutedLastValue,
         );
         this.props.navigation.navigate('Alert', {
           close: true,
@@ -381,6 +383,7 @@ class VideoPlayerPage extends Component {
           videoInfo,
           recordedActions,
           audioFilePath,
+          isMicrophoneMutedLastValue,
         );
         this.props.navigation.navigate('Alert', {
           close: true,
@@ -640,6 +643,9 @@ class VideoPlayerPage extends Component {
             const {recordedActions} = this.state;
             this.videoPlayerRefs[0].previewRecording({recordedActions});
           }}
+          onRef={(ref) => {
+            this.recordingMenuRef = ref;
+          }}
           stopRecording={this.stopRecording.bind(this)}
           startRecording={this.startRecording.bind(this)}
           saveReview={this.saveReview.bind(this)}
@@ -692,5 +698,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {layoutAction},
+  {},
 )(VideoPlayerPage);

@@ -17,8 +17,6 @@ import isEqual from 'lodash.isequal';
 
 import CardArchive from '../coachFlow/GroupsPage/components/StreamView/footer/components/CardArchive';
 
-import {createShareVideosBranchUrl} from '../../database/branch';
-
 import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
@@ -117,7 +115,6 @@ class VideoLibraryPage extends Component {
         action: 'shareArchives',
         archivesToShare: selectedVideos,
         modal: true,
-        branchLink: await createShareVideosBranchUrl(selectedVideos),
         inlineSearch: true,
       });
     }

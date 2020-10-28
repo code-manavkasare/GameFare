@@ -9,7 +9,11 @@ import AllIcons from '../../../layout/icons/AllIcons';
 import {appSettingsAction} from '../../../../actions/appSettingsActions';
 import {toggleUserPublic} from '../../../functions/users';
 
-import {heightFooter, heightHeaderHome} from '../../../style/sizes';
+import {
+  heightFooter,
+  heightHeaderHome,
+  marginTopApp,
+} from '../../../style/sizes';
 
 import ScrollView from '../../../layout/scrollViews/ScrollView2';
 
@@ -106,7 +110,7 @@ class AppSettings extends Component {
   render() {
     const {navigation} = this.props;
     return (
-      <View style={styleApp.stylePage}>
+      <View style={[styleApp.stylePage]}>
         <HeaderBackButton
           inputRange={[5, 10]}
           colorLoader={'white'}

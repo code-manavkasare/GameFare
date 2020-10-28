@@ -5,10 +5,6 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import PropTypes from 'prop-types';
 
-import {coachAction} from '../../../../../actions/coachActions';
-import {coachSessionsAction} from '../../../../../actions/coachSessionsActions';
-import {conversationsAction} from '../../../../../actions/conversationsActions';
-
 import {navigate} from '../../../../../../NavigationService';
 import PlaceHolder from '../../../../placeHolders/CardStream';
 import {logMixpanel} from '../../../../functions/logs';
@@ -25,7 +21,7 @@ import {
   viewLive,
   lastMessage,
 } from '../../../TeamPage/components/elements';
-// import CoachPopups from './StreamView/components/CoachPopups';
+import {bindSession,bindConversation} from '../../../../database/firebase/bindings';
 import AllIcon from '../../../../layout/icons/AllIcons';
 import {native} from '../../../../animations/animations';
 
@@ -60,15 +56,6 @@ class CardStream extends Component {
     navigate('Conversation', {coachSessionID});
   }
 
-  static getDerivedStateFromProps(props, state) {
-    return {
-      hasNotification: conversationIsInNotification(
-        props.coachSessionID,
-        props.notifications,
-      ),
-    };
-  }
-
   componentDidMount = async () => {
     const {onRef} = this.props;
     onRef && onRef(this);
@@ -77,36 +64,26 @@ class CardStream extends Component {
       this.toggleSelected(1);
     }
   };
+  static getDerivedStateFromProps(props, state) {
+    return {
+      hasNotification: conversationIsInNotification(
+        props.coachSessionID,
+        props.notifications,
+      ),
+    };
+  }
   componentDidUpdate(prevProps) {
     const {selected} = this.props;
     if (selected !== prevProps.selected) {
       this.toggleSelected(selected ? 1 : 0);
     }
   }
-  componentWillUnmount() {
-    this.unbindSession();
-  }
 
   bindSession() {
-    const {
-      coachSessionID,
-      coachSessionsAction,
-      conversationsAction,
-    } = this.props;
-    coachSessionsAction('bindSession', coachSessionID);
-    conversationsAction('bindConversation', coachSessionID);
+    const {coachSessionID} = this.props;
+    bindSession(coachSessionID);
+    bindConversation(coachSessionID);
   }
-
-  unbindSession() {
-    const {
-      coachSessionID,
-      coachSessionsAction,
-      conversationsAction,
-    } = this.props;
-    coachSessionsAction('unbindSession', coachSessionID);
-    conversationsAction('unbindConversation', coachSessionID);
-  }
-
   async openStream() {
     const {session} = this.props;
     sessionOpening(session);
@@ -114,11 +91,6 @@ class CardStream extends Component {
 
   loading() {
     return <View>{<Loader size={55} color={colors.greyDark} />}</View>;
-  }
-
-  async hangup() {
-    const {coachAction} = this.props;
-    await coachAction('endCurrentSession');
   }
 
   toggleSelected(override) {
@@ -171,7 +143,6 @@ class CardStream extends Component {
       position: 'absolute',
       right: 0,
       opacity: animatedReverse,
-      // backgroundColor: colors.green,
     };
     const checkButtonContainerStyle = {
       ...styleApp.center,
@@ -180,7 +151,8 @@ class CardStream extends Component {
       position: 'absolute',
       opacity: this.selectionIndication,
     };
-    return session ? (
+    if (!session) return <PlaceHolder />;
+    return (
       <Animated.View style={styles.card} key={key}>
         <ButtonColor
           color={'transparent'}
@@ -304,20 +276,8 @@ class CardStream extends Component {
             />
           </Animated.View>
         )}
-        {/* 
-        <CoachPopups
-          isConnected={member.isConnected && activeSession}
-          session={session}
-          members={session.members}
-          card={true}
-          coachSessionID={coachSessionID}
-          member={getMember(session, userID)}
-          open={this.openStream.bind(this)}
-          close={this.hangup.bind(this)}
-          onRef={(ref) => (this.coachPopupsRef = ref)}
-        /> */}
       </Animated.View>
-    ) : null;
+    );
   }
   render() {
     return this.cardStream();
@@ -363,5 +323,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {coachAction, coachSessionsAction, conversationsAction},
+  {},
 )(CardStream);
