@@ -508,6 +508,7 @@ class DrawView extends Component {
     } = this.state;
     const style = styles.drawingZone;
     const {w, h} = this.sizeScreen();
+
     return (
       <PanGestureHandler
         style={style}
@@ -558,7 +559,7 @@ class DrawView extends Component {
     let h = 0;
     let w = 0;
     const {height: currentHeight, width: currentWidth} = playerStyle;
-
+    if (sizeVideo.width === 0) return {h: 0, w: 0};
     if (sizeVideo) {
       const ratioScreen = ratio(currentWidth, currentHeight);
       const ratioVideo = ratio(sizeVideo.width, sizeVideo.height);
@@ -570,9 +571,12 @@ class DrawView extends Component {
         w = currentHeight / ratioVideo;
       }
     }
+
     return {w, h};
   };
+
   drawView() {
+    const {drawingOpen} = this.props;
     const {w, h} = this.sizeScreen();
 
     let styleDrawView = {
@@ -583,8 +587,13 @@ class DrawView extends Component {
     if (styleDrawView.h === 0) {
       return null;
     }
+    let pointerEvents = 'none';
+    if (drawingOpen) pointerEvents = 'auto';
+    if (w === 0) return null;
     return (
-      <Animated.View style={[styles.page, styleDrawView]}>
+      <Animated.View
+        pointerEvents={pointerEvents}
+        style={[styles.page, styleDrawView]}>
         {this.drawingZone({w, h})}
       </Animated.View>
     );

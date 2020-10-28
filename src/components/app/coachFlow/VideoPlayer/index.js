@@ -439,7 +439,7 @@ export default class VideoPlayer extends Component {
             {backgroundColor: colors.black},
           ]}>
           {videoLoading && this.fullScreenLoader()}
-          {!videoLoaded && (
+          {!videoLoaded && thumbnail && (
             <AsyncImage
               resizeMode={'contain'}
               style={[
@@ -454,7 +454,6 @@ export default class VideoPlayer extends Component {
               pointerEvents={'none'}
             />
           )}
-
 
           <PinchableBox
             styleContainer={[styleApp.fullSize, styleApp.center]}
@@ -501,7 +500,7 @@ export default class VideoPlayer extends Component {
                     onLoad={async (callback) => {
                       const {setSizeVideo} = this.props;
                       this.clickVideo(index);
-                      if (setSizeVideo) {
+                      if (setSizeVideo && thumbnail) {
                         Image.getSize(
                           thumbnail,
                           (width, height) => {

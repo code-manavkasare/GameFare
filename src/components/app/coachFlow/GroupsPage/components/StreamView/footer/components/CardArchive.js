@@ -5,10 +5,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
 import {Col, Row} from 'react-native-easy-grid';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import * as Progress from 'react-native-progress';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
+import {navigate} from '../../../../../../../../../NavigationService';
 import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
@@ -20,8 +20,7 @@ import Loader from '../../../../../../../layout/loaders/Loader';
 import colors from '../../../../../../../style/colors';
 import styleApp from '../../../../../../../style/style';
 import {logMixpanel} from '../../../../../../../functions/logs';
-
-import {archivesAction} from '../../../../../../../../actions/archivesActions';
+import {bindArchive} from '../../../../../../../database/firebase/bindings';
 
 class CardArchive extends PureComponent {
   static propTypes = {
@@ -47,25 +46,17 @@ class CardArchive extends PureComponent {
   }
 
   componentDidMount() {
-    const {id, archive, archivesAction} = this.props;
+    const {id, archive} = this.props;
     if (!archive || !archive?.local) {
-      archivesAction('bindArchive', id);
+      bindArchive(id);
     }
   }
 
   componentDidUpdate(prevProps) {
-    const {id, archive, archivesAction} = this.props;
+    const {id, archive} = this.props;
     const {archive: prevArchive} = prevProps;
-    if (prevArchive && prevArchive.local && (archive && !archive.local)) {
-      // video was uploaded during the lifetime of this component
-      archivesAction('bindArchive', id);
-    }
-  }
-
-  componentWillUnmount() {
-    const {id, archive, archivesAction} = this.props;
-    if (archive && !archive.local) {
-      archivesAction('unbindArchive', id);
+    if (prevArchive?.local && !archive?.local) {
+      bindArchive(id);
     }
   }
 
@@ -126,6 +117,16 @@ class CardArchive extends PureComponent {
       );
     return null;
   }
+  isVideoGettingUploading = () => {
+    const {archive, userID} = this.props;
+    const {url, sourceUser} = archive;
+    return (!url || url === '') && sourceUser !== userID;
+  };
+  uploadingIndicator() {
+    if (this.isVideoGettingUploading())
+      return <Loader size={25} color={colors.white} />;
+    return null;
+  }
   linearGradient() {
     const lgStyle = {
       width: '100%',
@@ -149,7 +150,6 @@ class CardArchive extends PureComponent {
       right: 5,
       zIndex: 40,
       ...styleApp.shade,
-      // backgroundColor: colors.red + '0',
       ...styleApp.center,
       borderRadius: 20,
       borderWidth: 1,
@@ -174,10 +174,8 @@ class CardArchive extends PureComponent {
   rowIcons = () => {
     const styleRow = {
       position: 'absolute',
-
       padding: 15,
       height: 50,
-      //backgroundColor: 'red',
       zIndex: 200,
       width: '100%',
     };
@@ -207,7 +205,10 @@ class CardArchive extends PureComponent {
               />
             )}
           </Col>
-          <Col size={70} />
+          <Col size={55} />
+          <Col size={15} style={styleApp.center3}>
+            {this.uploadingIndicator()}
+          </Col>
           <Col size={15} style={styleApp.center3}>
             {this.localIndicator()}
           </Col>
@@ -237,13 +238,20 @@ class CardArchive extends PureComponent {
       <TouchableOpacity
         activeOpacity={0.8}
         pointerEvents={disableClick ? 'none' : 'auto'}
-        onPress={() =>
+        onPress={() => {
           unclickable
             ? true
+            : this.isVideoGettingUploading()
+            ? navigate('Alert', {
+                textButton: 'Got it!',
+                title: 'The video is currently being uploaded.',
+                subtitle: 'We will notify you when complete.',
+                close: true,
+              })
             : selectableMode
             ? this.selectVideo(id, !isSelected)
-            : this.openVideo()
-        }>
+            : this.openVideo();
+        }}>
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
@@ -364,6 +372,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
   return {
+    userID: state.user.userID,
     archive: props.nativeArchive
       ? props.nativeArchive
       : state.archives[props.id],
@@ -375,5 +384,5 @@ const mapStateToProps = (state, props) => {
 
 export default connect(
   mapStateToProps,
-  {archivesAction},
+  {},
 )(CardArchive);

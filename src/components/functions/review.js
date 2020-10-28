@@ -46,10 +46,11 @@ const cutVideo = async (source, startTime, endTime) => {
 
 const adaptAllTimestampToNewVideoLength = (recordedActions, startTime) => {
   const newRecordedActions = recordedActions.map((action) => {
-    if (action.timestamp) {
-      action.timestamp = action.timestamp - startTime;
+    let newAction = {...action};
+    if (newAction.timestamp) {
+      newAction.timestamp = newAction.timestamp - startTime;
     }
-    return action;
+    return newAction;
   });
   return newRecordedActions;
 };
@@ -60,7 +61,12 @@ const saveAudioFileToAppData = async (audioFilePath) => {
   return newAudioFilePath;
 };
 
-const generatePreview = async (source, recordedActions, audioFilePath) => {
+const generatePreview = async (
+  source,
+  recordedActions,
+  audioFilePath,
+  isMicrophoneMuted,
+) => {
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
   const newSource = await cutVideo(source, startTime, endTime);
   const audioRecordUrl = await saveAudioFileToAppData(audioFilePath);
@@ -72,12 +78,14 @@ const generatePreview = async (source, recordedActions, audioFilePath) => {
     ...(await getVideoInfo(newSource)),
     audioRecordUrl,
     recordedActions: newRecordedActions,
+    isMicrophoneMuted,
   };
   const videoId = await addLocalVideo({
     video: newVideo,
     backgroundUpload: true,
   });
-  await addAudioRecordToUploadQueue(audioRecordUrl, videoId);
+  if (!isMicrophoneMuted)
+    await addAudioRecordToUploadQueue(audioRecordUrl, videoId);
 };
 
 const generatePreviewCloud = async (
@@ -85,15 +93,16 @@ const generatePreviewCloud = async (
   videoInfo,
   recordedActions,
   audioFilePath,
+  isMicrophoneMuted,
 ) => {
   const {startTime, endTime} = await getActionLengthReview(recordedActions);
+
   const newArchiveId = generateID();
   const dateNow = Date.now();
   const newRecordedActions = adaptAllTimestampToNewVideoLength(
     recordedActions,
     startTime,
   );
-
   let newVideoInfo = {
     cutRequest: {
       archiveIdToCut: videoInfo.id,
@@ -105,6 +114,7 @@ const generatePreviewCloud = async (
     recordedActions: newRecordedActions,
     size: videoInfo.size,
     startTimestamp: dateNow,
+    isMicrophoneMuted,
   };
 
   if (userId) {
@@ -119,29 +129,32 @@ const generatePreviewCloud = async (
       },
       sourceUser: userId,
     };
-  }
-
-  store.dispatch(
-    enqueueUploadTask({
-      type: 'audioRecord',
-      id: generateID(),
-      timeSubmitted: Date.now(),
-      url: audioFilePath,
-      cloudID: newArchiveId,
-      storageDestination: `archivedStreams/${newArchiveId}`,
-      isBackground: false,
-      displayInList: false,
-      afterUpload: (audioRecordUrl) => {
-        let updates = {
-          ...newVideoInfo,
-          audioRecordUrl,
-        };
-        database()
-          .ref(`archivedStreams/${newArchiveId}`)
-          .set(updates);
-      },
-    }),
-  );
+  } 
+  if (!isMicrophoneMuted)
+    return store.dispatch(
+      enqueueUploadTask({
+        type: 'audioRecord',
+        id: generateID(),
+        timeSubmitted: Date.now(),
+        url: audioFilePath,
+        cloudID: newArchiveId,
+        storageDestination: `archivedStreams/${newArchiveId}`,
+        isBackground: false,
+        displayInList: false,
+        afterUpload: (audioRecordUrl) => {
+          const updates = {
+            ...newVideoInfo,
+            audioRecordUrl,
+          };
+          database()
+            .ref(`archivedStreams/${newArchiveId}`)
+            .set(updates);
+        },
+      }),
+    );
+  return database()
+    .ref(`archivedStreams/${newArchiveId}`)
+    .set(newVideoInfo);
 };
 
 const addAudioRecordToUploadQueue = (audioFilePath, archiveId) => {

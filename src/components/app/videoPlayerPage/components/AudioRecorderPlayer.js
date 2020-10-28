@@ -27,14 +27,14 @@ class AudioRecorderPlayer extends Component {
     this.destroyPlayer();
   };
 
-  startRecording = () => {
+  startRecording = (isMicrophoneMuted) => {
     this.setState({
       audioRecorder: new Recorder('audio.mp4').prepare((err, fsPath) => {
         if (err) {
           console.log(err);
         }
         this.setState({audioFilePath: fsPath});
-        this.state.audioRecorder.record();
+        if (!isMicrophoneMuted) this.state.audioRecorder.record();
       }),
     });
   };

@@ -1,17 +1,14 @@
 import React, {Component} from 'react';
 import {StatusBar} from 'react-native';
 import database from '@react-native-firebase/database';
-import {createThumbnail} from 'react-native-create-thumbnail';
 import ImageResizer from 'react-native-image-resizer';
-import axios from 'axios';
-import Config from 'react-native-config';
 import isEqual from 'lodash.isequal';
 
 import colors from '../style/colors';
 
 import {getOnceValue} from '../database/firebase/methods';
 import {generateID} from './createEvent';
-import {getVideoUUID} from './pictures';
+import {getVideoUUID, generateThumbnail} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
 import {userObject} from './users';
 
@@ -342,10 +339,7 @@ const setupOpentokStopRecordingFlow = async (
   coachSessionID,
   memberID,
 ) => {
-  let {path: thumbnail} = await createThumbnail({
-    url: sourceVideoInfo.url,
-  });
-  thumbnail = await compressThumbnail(thumbnail);
+  let {path: thumbnail} = await generateThumbnail(sourceVideoInfo.url);
   let thumbnailUploadTasks = [
     {
       type: 'image',
@@ -362,11 +356,10 @@ const setupOpentokStopRecordingFlow = async (
     await Promise.all(
       Object.values(flags).map(async (flag) => {
         const {id, time} = flag;
-        let {path: thumbnail} = await createThumbnail({
-          url: sourceVideoInfo.url,
-          timeStamp: time,
-        });
-        thumbnail = await compressThumbnail(thumbnail);
+        let {path: thumbnail} = await generateThumbnail(
+          sourceVideoInfo.url,
+          time,
+        );
         thumbnailUploadTasks.push({
           type: 'image',
           id: generateID(),

@@ -26,7 +26,7 @@ class ListStreams extends Component {
     this.itemsRef = [];
   }
   componentDidMount() {
-    setTimeout(this.fetchSessions, 0);
+    setTimeout(this.fetchSessions, 500);
   }
   componentDidUpdate(prevProps, prevState) {
     if (!isEqual(prevProps.messages, this.props.messages)) {
