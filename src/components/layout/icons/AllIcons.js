@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Animated, Image} from 'react-native';
-import PropTypes from 'prop-types';
+import {bool, number, object, oneOfType, string} from 'prop-types';
 
 import Reanimated from 'react-native-reanimated';
 
@@ -17,14 +17,14 @@ const ReanimatedMatIcon = Reanimated.createAnimatedComponent(MatIcon);
 
 export default class AllIcon extends Component {
   static propTypes = {
-    name: PropTypes.string.isRequired,
-    color: PropTypes.string,
-    size: PropTypes.number,
-    font: PropTypes.string,
-    backgroundColor: PropTypes.string,
-    solid: PropTypes.bool,
-    reanimated: PropTypes.bool,
-    style: PropTypes.object,
+    name: string.isRequired,
+    color: oneOfType([string, object]),
+    size: number,
+    font: string,
+    backgroundColor: string,
+    solid: bool,
+    reanimated: bool,
+    style: object,
   };
 
   static defaultProps = {
