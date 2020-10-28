@@ -227,7 +227,6 @@ class ProfilePage extends Component {
 
   render() {
     const {loader} = this.state;
-    throw new Error('Test sentry profile error !');
 
     return (
       <View style={styleApp.stylePage}>
