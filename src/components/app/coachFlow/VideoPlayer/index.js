@@ -406,9 +406,6 @@ export default class VideoPlayer extends Component {
     let {recordedActions} = this.props;
 
     let {thumbnail, url, durationSeconds, originalUrl} = archive;
-    if (originalUrl?.substr(originalUrl.length - 4) !== '.mp4') {
-      originalUrl = originalUrl + '.mp4';
-    }
 
     const {
       currentTime,
@@ -438,7 +435,7 @@ export default class VideoPlayer extends Component {
             styleApp.center,
             {backgroundColor: colors.black},
           ]}>
-          {videoLoading && this.fullScreenLoader()}
+          {(videoLoading || !url) && this.fullScreenLoader()}
           {!videoLoaded && thumbnail && (
             <AsyncImage
               resizeMode={'contain'}
@@ -478,7 +475,7 @@ export default class VideoPlayer extends Component {
                     allowRecording={
                       connectedToSession ? undefined : allowRecording
                     }
-                    source={{uri: error ? originalUrl : url}}
+                    source={{uri: url}}
                     style={styleApp.fullSize}
                     ref={(ref) => {
                       this.player = ref;
@@ -496,8 +493,10 @@ export default class VideoPlayer extends Component {
                           'AllowBluetooth',
                         );
                       }
+                      this.setState({videoLoading: true});
                     }}
                     onLoad={async (callback) => {
+                      this.setState({videoLoading: false});
                       const {setSizeVideo} = this.props;
                       this.clickVideo(index);
                       if (setSizeVideo && thumbnail) {
