@@ -1,26 +1,14 @@
 import React, {Component} from 'react';
-import {
-  View,
-  StyleSheet,
-  Animated,
-  Share,
-  Alert,
-  Keyboard,
-  Text,
-} from 'react-native';
+import {View, StyleSheet, Animated, Keyboard, Text} from 'react-native';
 import {connect} from 'react-redux';
-import database from '@react-native-firebase/database';
 import Orientation from 'react-native-orientation-locker';
 import {BlurView} from '@react-native-community/blur';
-import isEqual from 'lodash.isequal';
 import {dissoc} from 'ramda';
 
 import colors from '../../style/colors';
 import styleApp from '../../style/style';
 import sizes from '../../style/sizes';
 
-import {generateID} from '../../functions/createEvent';
-import {createInviteToSessionBranchUrl} from '../../database/branch';
 import {getSelectionActionDecorations} from '../../functions/utility';
 import {isUserPrivate, userObject} from '../../functions/users';
 import {openSession} from '../../functions/coach';
@@ -29,7 +17,6 @@ import Loader from '../../layout/loaders/Loader';
 import SearchInput from '../../layout/textField/SearchInput';
 import PermissionView from '../../layout/Views/PermissionView';
 import InvitationManager from '../../utility/InvitationManager';
-import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 
 import ListVideoCalls from './components/ListVideoCalls';
 import UserSearchResults from '../userDirectory/components/UserSearchResults';

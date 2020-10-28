@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {object, string} from 'prop-types';
+import {object, oneOfType, string, array} from 'prop-types';
 import {View, Animated} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -10,7 +10,7 @@ export default class AsyncImage extends Component {
   static propTypes = {
     mainImage: string,
     imgInitial: string,
-    style: object,
+    style: oneOfType([string, array]),
   };
   constructor(props) {
     super(props);

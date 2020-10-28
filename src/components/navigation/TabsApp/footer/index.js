@@ -7,7 +7,7 @@ import Animated, {call, block} from 'react-native-reanimated';
 
 import {layoutAction} from '../../../../actions/layoutActions';
 
-import ButtonFooter from './components/Button';
+import FooterButton from './components/Button';
 import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 import {heightFooter, marginBottomApp} from '../../../style/sizes';
@@ -260,7 +260,7 @@ class Footer extends React.Component {
               });
             return (
               <Col key={index}>
-                <ButtonFooter
+                <FooterButton
                   disableAnimation={disableAnimation}
                   navigation={navigation}
                   isFocused={isFocused}
