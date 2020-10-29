@@ -209,7 +209,6 @@ const launchUpload = async ({
             setArchive({
               id: videoID,
               thumbnail,
-              local: false,
             }),
           );
           await store.dispatch(removeUserLocalArchive(videoID));
