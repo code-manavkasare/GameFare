@@ -87,14 +87,20 @@ const claimCloudVideo = async (videoInfo) => {
   await database()
     .ref()
     .update({
+      [`archivedStreams/${videoInfo.id}/sourceUser`]: userID,
       [`archivedStreams/${videoInfo.id}/progress`]: null,
+      [`archivedStreams/${videoInfo.id}/members/${userID}`]: {id: userID},
+      [`users/${userID}/archivedStreams/${videoInfo.id}`]: {
+        id: videoInfo.id,
+        startTimestamp: videoInfo.startTimestamp,
+      },
     });
 };
 
 const updateThumbnailCloud = async (videoInfo) => {
   const {userID} = store.getState().user;
   const updates = {
-    [`archivedStreams/${videoInfo.id}/thumbnail`]: videoInfo.thumbnail, 
+    [`archivedStreams/${videoInfo.id}/thumbnail`]: videoInfo.thumbnail,
     [`archivedStreams/${videoInfo.id}/members/${userID}`]: {id: userID},
     [`users/${userID}/archivedStreams/${videoInfo.id}`]: {
       id: videoInfo.id,
