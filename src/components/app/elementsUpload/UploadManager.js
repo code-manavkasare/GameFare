@@ -53,6 +53,8 @@ class UploadManager extends Component {
     const lostWifi = connectionType !== 'wifi' && prevConnectionType === 'wifi';
     const gainedWifi =
       connectionType === 'wifi' && prevConnectionType !== 'wifi';
+    const gainedCellular =
+      connectionType === 'cellular' && prevConnectionType !== 'cellular';
     if (uploadInProgress) {
       const isBackground =
         queue[(uploadInProgress?.uploadTask?.id)]?.isBackground;
@@ -61,10 +63,11 @@ class UploadManager extends Component {
       const forceStart =
         !isBackground &&
         (prevIsBackground === undefined || prevIsBackground === true);
+      if ((gainedCellular || gainedWifi) && !isBackground) {
+        this.resumeUploadInProgress();
+      }
       if (lostConnection || (isBackground && lostWifi)) {
         this.pauseUploadInProgress();
-      } else if (isConnected && !isBackground) {
-        this.resumeUploadInProgress();
       } else if (gainedWifi || forceStart) {
         this.manageUploads(true);
       }
@@ -78,7 +81,7 @@ class UploadManager extends Component {
     if (uploadInProgress) {
       const {cloudID} = uploadInProgress.uploadTask;
       if (cloudID === id) {
-        this.state.uploadInProgress.firebaseUploadTask.cancel();
+        this.state.uploadInProgress?.firebaseUploadTask?.cancel();
       }
     }
   };
