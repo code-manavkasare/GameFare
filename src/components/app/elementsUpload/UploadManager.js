@@ -3,10 +3,15 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import {uploadQueueAction} from '../../../actions';
-import {uploadFile, sortUploadTasks} from '../../functions/upload';
+import {
+  getCurrentUploadingTask,
+  uploadFile,
+  sortUploadTasks,
+} from '../../functions/upload';
 import BackgroundUploadHelper from './BackgroundUploadHelper';
 import {updateLocalUploadProgress} from '../../functions/videoManagement';
 import {updateCloudUploadProgress} from '../../database/firebase/videosManagement';
+import {afterUpload} from '../../functions/upload.js';
 
 class UploadManager extends Component {
   constructor(props) {
@@ -21,6 +26,7 @@ class UploadManager extends Component {
   componentDidMount() {
     const {isConnected} = this.props;
     if (isConnected) {
+      this.restartUploadInProgress();
       this.manageUploads();
     }
   }
@@ -112,6 +118,14 @@ class UploadManager extends Component {
       }
     }
   }
+
+  restartUploadInProgress = () => {
+    const {queue} = this.props.uploadQueue;
+    const currentUpload = getCurrentUploadingTask(queue);
+    if (currentUpload) {
+      this.startTask(currentUpload);
+    }
+  };
 
   pauseUploadInProgress() {
     const {uploadInProgress} = this.state;
@@ -205,7 +219,7 @@ class UploadManager extends Component {
 
   async startFileTask(task) {
     const {uploadQueueAction} = this.props;
-    const {id, storageDestination, afterUpload, type} = task;
+    const {id, storageDestination, type} = task;
     const {firebaseUploadTask, uploadComplete} = uploadFile({
       ...task,
       onProgress: (progress) =>
@@ -217,7 +231,6 @@ class UploadManager extends Component {
     });
     try {
       const cloudFileUrl = await uploadComplete;
-
       let typeDestination = '';
       switch (type) {
         case 'video':
@@ -239,9 +252,7 @@ class UploadManager extends Component {
         .update({
           [`${storageDestination}/${typeDestination}`]: cloudFileUrl,
         });
-      if (afterUpload) {
-        await afterUpload(cloudFileUrl);
-      }
+      await afterUpload(task, cloudFileUrl);
     } catch (error) {
       console.log('Could not complete file upload', id, error);
     }
@@ -258,7 +269,6 @@ const mapStateToProps = (state) => {
     uploadQueue: state.uploadQueue,
     userID: state.user.userID,
     connectionType: state.connectionType.type,
-    // connectionType: 'cellular',
     isConnected: state.network.isConnected,
     videoLibrary: state.localVideoLibrary.videoLibrary,
     lastDeletedArchiveIds: state.localVideoLibrary.lastDeletedArchiveIds,
