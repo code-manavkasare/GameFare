@@ -1,9 +1,16 @@
 import storage from '@react-native-firebase/storage';
+import database from '@react-native-firebase/database';
 
 import {store} from '../../../reduxStore';
 import {setUploadTaskError} from '../../actions/uploadQueueActions';
 import {setArchive} from '../../actions/archivesActions';
-import {updateCloudUploadProgress} from '../database/firebase/videosManagement';
+import {
+  claimCloudVideo,
+  updateCloudUploadProgress,
+  updateThumbnailCloud,
+} from '../database/firebase/videosManagement.js';
+import {removeUserLocalArchive} from '../../actions/localVideoLibraryActions';
+import {deleteLocalVideoFile} from './videoManagement.js';
 
 const defaultVideoFilename = 'archive.mp4';
 const videoContentType = 'video/mp4';
@@ -11,6 +18,51 @@ const defaultImageFilename = 'thumbnail.png';
 const imageContentType = 'image/jpeg';
 const defaultRecordAudioFilename = 'audioRecord.mp4';
 const audioRecordContentType = 'audio/mp4';
+
+const afterUpload = async (uploadTask, cloudUrl) => {
+  if (uploadTask.type === 'audioRecord') {
+    if (uploadTask.videoInfoForCloudCut) {
+      const {videoInfoForCloudCut} = uploadTask;
+      const updates = {
+        ...videoInfoForCloudCut,
+        audioRecordUrl: cloudUrl,
+      };
+      database()
+        .ref(`archivedStreams/${videoInfoForCloudCut.id}`)
+        .set(updates);
+    }
+  }
+  if (uploadTask.type === 'video') {
+    const {cloudID, videoInfo} = uploadTask;
+    await claimCloudVideo(videoInfo);
+    await store.dispatch(
+      setArchive({
+        url: cloudUrl,
+        id: cloudID,
+        local: false,
+        progress: false,
+        startTimestamp: videoInfo.startTimestamp,
+      }),
+    );
+    await store.dispatch(removeUserLocalArchive(cloudID));
+    deleteLocalVideoFile(videoInfo.url);
+  }
+  if (uploadTask.type === 'image') {
+    const {cloudID} = uploadTask;
+    await updateThumbnailCloud({
+      id: cloudID,
+      thumbnail: cloudUrl,
+      startTimestamp: Date.now(),
+    });
+    await store.dispatch(
+      setArchive({
+        id: cloudID,
+        thumbnail: cloudUrl,
+      }),
+    );
+    deleteLocalVideoFile(uploadTask.url);
+  }
+};
 
 const isArchiveUploading = (videoInfos) => {
   let isUploading = false;
@@ -121,7 +173,19 @@ const isQueueVisible = (queue) => {
   );
 };
 
-module.exports = {
+const getCurrentUploadingTask = (queue) => {
+  let currentUploadTask = false;
+  for (const uploadTask of Object.values(queue)) {
+    if (uploadTask.started) {
+      currentUploadTask = uploadTask;
+    }
+  }
+  return currentUploadTask;
+};
+
+export {
+  afterUpload,
+  getCurrentUploadingTask,
   isArchiveUploading,
   uploadFile,
   sortUploadTasks,

@@ -42,7 +42,6 @@ const persistConfig = {
     'coach',
     'layout',
     'globaleVariables',
-    'uploadQueue',
     'network',
     'phoneContacts',
     'bindedArchives',

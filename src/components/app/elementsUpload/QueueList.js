@@ -42,43 +42,18 @@ class QueueList extends Component {
         .sort((a, b) => a.timeSubmitted - b.timeSubmitted);
       return {orderedTasks};
     }
-    // const cloudQueue = state.cloudQueue ? Object.values(state.cloudQueue) : [];
-    // const finalQueue = cloudQueue
-    //   .filter(
-    //     (task) =>
-    //       task?.hostUser !== userID &&
-    //       task?.thumbnail !== undefined &&
-    //       task?.durationSeconds !== undefined &&
-    //       task?.date !== undefined &&
-    //       task?.progress !== undefined,
-    //   )
-    //   .concat(Object.values(queue).filter((task) => task?.displayInList))
-    //   .sort((a, b) => {
-    //     if (a?.index > b?.index) return 1;
-    //     if (a?.index < b?.index) return -1;
-    //     else return 0;
-    //   });
   }
 
   componentDidMount() {
     const {navigation} = this.props;
     //this.fetchCloudUploadQueue();
     this.focusListener = navigation.addListener('focus', () => {
-      console.log('mount');
       this.setState({mounted: true});
     });
 
     this.focusListener = navigation.addListener('blur', () => {
-      console.log('unmount');
       this.setState({mounted: false});
     });
-  }
-
-  componentWillUnmount() {
-    // const {userID} = this.props;
-    // database()
-    //   .ref(`users/${userID}/archivedStreams/uploading`)
-    //   .off('value', this.firebaseCallback.bind(this));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -98,51 +73,9 @@ class QueueList extends Component {
     }
   }
 
-  // fetchCloudUploadQueue() {
-  //   const {userID} = this.props;
-  //   database()
-  //     .ref(`users/${userID}/archivedStreams/uploading`)
-  //     .on('value', this.firebaseCallback.bind(this));
-  // }
-
-  // async firebaseCallback(snap) {
-  //   const {orderedTasks} = this.state;
-  //   const {userID} = this.props;
-  //   const snapshot = snap.val();
-  //   let cloudQueue = !snapshot
-  //     ? []
-  //     : Object.values(snapshot).filter((task) => task?.hostUser !== userID);
-  //   this.setState({
-  //     cloudQueue,
-  //   });
-  //   if (this.props.onFetch) {
-  //     this.props.onFetch(orderedTasks);
-  //   }
-  // }
-
   list() {
-    // const {localList} = this.props;
     const {orderedTasks} = this.state;
-    // if (localList) {
-    //   if (orderedTasks.length === 0) {
-    //     return null;
-    //   } else {
-    //     return (
-    //       <View style={{minHeight: 120}}>
-    //         {orderedTasks.map((task, i) => (
-    //           <TaskCard
-    //             task={task}
-    //             index={i}
-    //             key={task.id}
-    //             onRef={(ref) => {
-    //               this.taskRefs[i] = ref;
-    //             }}
-    //           />
-    //         ))}
-    //       </View>
-    //     );
-    //   }
-    // } else {
+
     return (
       <ScrollView
         style={{marginBottom: 10}}
@@ -153,7 +86,6 @@ class QueueList extends Component {
         ))}
       </ScrollView>
     );
-    // }
   }
 
   close() {
