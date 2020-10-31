@@ -63,10 +63,7 @@ class UploadManager extends Component {
       const forceStart =
         !isBackground &&
         (prevIsBackground === undefined || prevIsBackground === true);
-      if ((gainedCellular || gainedWifi) && !isBackground) {
-        this.resumeUploadInProgress();
-      }
-      if (lostConnection || (isBackground && lostWifi)) {
+      if (isBackground && lostWifi) {
         this.pauseUploadInProgress();
       } else if (gainedWifi || forceStart) {
         this.manageUploads(true);
