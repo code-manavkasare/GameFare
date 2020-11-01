@@ -190,9 +190,8 @@ class GroupsPage extends Component {
       route,
     } = this.props;
     const {portrait} = currentScreenSize;
-    if (currentSessionID === undefined && prevProps.currentSessionID) {
+    if (!currentSessionID && prevProps.currentSessionID)
       this.props.layoutAction('setGeneralSessionRecording', false);
-    }
     if (currentSessionID) {
       if (portrait !== prevProps.currentScreenSize.portrait) {
         database()
