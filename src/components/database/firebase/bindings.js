@@ -66,6 +66,7 @@ const bindArchive = (archiveID) => {
           if (!equal(storeArchive, newArchive))
             await store.dispatch(setArchive(newArchive));
           const prevArchiveBinded = store.getState().bindedArchives[archiveID];
+          console.log('prevArchiveBinded', prevArchiveBinded);
           if (!prevArchiveBinded)
             store.dispatch(setArchiveBinded(archiveID, true));
 

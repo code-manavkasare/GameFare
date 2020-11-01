@@ -257,6 +257,7 @@ class ExportQueue extends Component {
                 recording && (
                   <CardFlag
                     flagsSelected={flagsSelected}
+                    key={member.id}
                     onRef={(ref) => (this.cardFlagRefs[flagId] = ref)}
                     click={() => {
                       let {flagsSelected} = this.state;

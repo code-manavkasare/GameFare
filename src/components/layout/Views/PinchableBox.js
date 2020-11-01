@@ -139,7 +139,7 @@ export default class PinchableBox extends Component {
           <PinchGestureHandler
             onGestureEvent={pinchEnable ? this.onPinchGestureEvent : () => null}
             onHandlerStateChange={
-              pinchEnable && this.onPinchHandlerStateChange
+              pinchEnable ? this.onPinchHandlerStateChange : () => null
             }>
             <Animated.View style={styleContainer}>
               <TapGestureHandler

@@ -227,6 +227,7 @@ class UploadManager extends Component {
       onProgress: (progress) =>
         type === 'video' ? this.onProgress(progress) : null,
     });
+    console.log('startFileTask', task);
     uploadQueueAction('startUploadTask', id);
     await this.setState({
       uploadInProgress: {uploadTask: task, firebaseUploadTask},
