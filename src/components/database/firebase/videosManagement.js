@@ -50,6 +50,12 @@ const deleteCloudVideos = async (videoIDs) => {
     .update(updates);
 };
 
+const deleteCloudVideoInfo = (id) => {
+  database()
+    .ref(`archivedStreams/${id}`)
+    .remove();
+};
+
 const mergeInfoWithExistingCloudVideo = async (firebaseVideoInfo) => {
   const cloudVideoInfo = await getOnceValue(
     `archivedStreams/${firebaseVideoInfo.id}`,
@@ -164,6 +170,7 @@ export {
   shareCloudVideo,
   deleteCloudVideo,
   deleteCloudVideos,
+  deleteCloudVideoInfo,
   createCloudVideo,
   claimCloudVideo,
   setCloudVideoThumbnail,
