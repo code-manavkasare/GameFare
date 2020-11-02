@@ -34,7 +34,7 @@ import {
   setCloudVideoThumbnail,
   shareCloudVideo,
   deleteCloudVideos,
-  updateThumbnailCloud,
+  deleteCloudVideoInfo,
 } from '../database/firebase/videosManagement';
 
 const generateVideoInfosFromFlags = async (sourceVideoInfo, flags) => {
@@ -149,6 +149,10 @@ const deleteVideos = (ids) => {
         store.dispatch(dequeueUploadTask(item.id));
       });
       deleteLocalVideoFile(info.url);
+    }
+    //Solve edge case when delete upload not finished of a shared video
+    if (info.local && info.progress) {
+      deleteCloudVideoInfo(info.id);
     }
   });
 };
