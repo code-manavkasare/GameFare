@@ -24,7 +24,6 @@ import {
 } from '../../actions/uploadQueueActions';
 import {
   addUserLocalArchive,
-  removeUserLocalArchive,
   removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
 } from '../../actions/localVideoLibraryActions';
@@ -33,7 +32,6 @@ import {getArchiveByID} from './archive';
 import {
   createCloudVideo,
   setCloudVideoThumbnail,
-  claimCloudVideo,
   shareCloudVideo,
   deleteCloudVideos,
   updateThumbnailCloud,
@@ -230,19 +228,6 @@ const launchUpload = async ({
       isBackground: background,
       displayInList: true,
       progress: 0,
-      afterUpload: async (cloudUrl) => {
-        await claimCloudVideo(videoInfo);
-        await store.dispatch(
-          setArchive({
-            url: cloudUrl,
-            id: videoID,
-            local: false,
-            progress: false,
-          }),
-        );
-        await store.dispatch(removeUserLocalArchive(videoID));
-        deleteLocalVideoFile(videoInfo.url);
-      },
     }),
   );
 };

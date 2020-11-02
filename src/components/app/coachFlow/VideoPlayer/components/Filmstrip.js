@@ -136,7 +136,7 @@ export default class Filmstrip extends Component {
     const opacity = this.opacity;
     return (
       <Animated.View style={{opacity, width}}>
-        <Image
+        {/* <Image
           source={{uri: path}}
           style={styles.thumbnail}
           onError={(e) => {
@@ -148,7 +148,7 @@ export default class Filmstrip extends Component {
               loadedThumbs: loadedThumbs + 1,
             });
           }}
-        />
+        /> */}
       </Animated.View>
     );
   }

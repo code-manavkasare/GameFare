@@ -129,7 +129,7 @@ const generatePreviewCloud = async (
       },
       sourceUser: userId,
     };
-  } 
+  }
   if (!isMicrophoneMuted)
     return store.dispatch(
       enqueueUploadTask({
@@ -141,15 +141,7 @@ const generatePreviewCloud = async (
         storageDestination: `archivedStreams/${newArchiveId}`,
         isBackground: false,
         displayInList: false,
-        afterUpload: (audioRecordUrl) => {
-          const updates = {
-            ...newVideoInfo,
-            audioRecordUrl,
-          };
-          database()
-            .ref(`archivedStreams/${newArchiveId}`)
-            .set(updates);
-        },
+        videoInfoForCloudCut: {...newVideoInfo},
       }),
     );
   return database()

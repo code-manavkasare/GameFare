@@ -67,6 +67,7 @@ export default class AsyncImage extends Component {
     );
   }
   render() {
-    return <View style={[this.props.style]}>{this.imgDisplay()}</View>;
+    const {style} = this.props;
+    return <View style={style}>{this.imgDisplay()}</View>;
   }
 }

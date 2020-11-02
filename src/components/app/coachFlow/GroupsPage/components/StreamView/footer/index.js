@@ -28,6 +28,7 @@ class Footer extends Component {
       publishVideo,
       publishAudio,
     } = this.props;
+    console.log('render footer');
     return (
       <Animated.View style={[styles.footer]}>
         <BottomButtons

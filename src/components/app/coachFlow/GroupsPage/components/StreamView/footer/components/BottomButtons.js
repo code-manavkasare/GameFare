@@ -29,8 +29,6 @@ import styleApp from '../../../../../../../style/style';
 
 import {native} from '../../../../../../../animations/animations';
 
-
-
 import {
   permission,
   goToSettings,
@@ -58,6 +56,12 @@ class BottomButton extends Component {
     this.recordingIndicator = {
       color: new Animated.Value(0),
     };
+  }
+  componentDidMount() {
+    if (this.props.onRef) {
+      this.props.onRef(this);
+    }
+    this.configureQueue();
   }
   static getDerivedStateFromProps(props, state) {
     var newState = {};
@@ -107,12 +111,6 @@ class BottomButton extends Component {
     return newState;
   }
 
-  componentDidMount() {
-    if (this.props.onRef) {
-      this.props.onRef(this);
-    }
-    this.configureQueue();
-  }
   componentDidUpdate(prevProps, prevState) {
     const {layoutAction} = this.props;
     const {endCurrentSession, currentSessionReconnecting} = this.props.coach;
@@ -130,6 +128,23 @@ class BottomButton extends Component {
     } else if (shouldStopRecording && !prevState.shouldStopRecording) {
       queue.addJob('stopRecording', {discardFile});
     }
+    console.log('componentDidUpdate bottom buttons');
+    console.log('Rrow update diff:');
+
+    const now = Object.entries(this.props);
+    const added = now.filter(([key, val]) => {
+      if (prevProps[key] === undefined) return true;
+      if (prevProps[key] !== val) {
+        console.log(`${key}
+          - ${JSON.stringify(val)}
+          + ${JSON.stringify(prevProps[key])}`);
+      }
+      return false;
+    });
+    added.forEach(([key, val]) =>
+      console.log(`${key}
+          + ${JSON.stringify(val)}`),
+    );
     if (
       ((anyMemberRecording !== undefined) !== prevState.undefined) !==
       undefined
@@ -205,12 +220,14 @@ class BottomButton extends Component {
       const succeeded = await otPublisherRef.current.startRecording(
         messageCallback,
       );
-      if (succeeded) {
-        coachAction('setRecording', true);
-      } else {
-        coachAction('setRecording', true);
-        coachAction('setRecording', false);
-      }
+      console.log('otPublisherRef.current.startRecording', succeeded);
+      coachAction('setRecording', true);
+      // if (succeeded) {
+      //   coachAction('setRecording', true);
+      // } else {
+      //   coachAction('setRecording', true);
+      //   coachAction('setRecording', false);
+      // }
     }
   };
   stopRecording = async ({discardFile}) => {
@@ -372,6 +389,7 @@ class BottomButton extends Component {
     );
   }
   render() {
+    console.log('render botton buttons');
     return (
       <View style={styleApp.center}>
         {this.rowButtons()}

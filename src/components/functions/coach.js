@@ -348,7 +348,7 @@ const setupOpentokStopRecordingFlow = async (
       url: thumbnail,
       cloudID: coachSessionID,
       storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`,
-      background: false,
+      isBackground: false,
       displayInList: false,
     },
   ];
