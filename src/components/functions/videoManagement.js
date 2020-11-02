@@ -201,6 +201,21 @@ const launchUpload = async ({
         storageDestination: `archivedStreams/${videoID}`,
         isBackground: background,
         displayInList: false,
+        afterUpload: async (thumbnail) => {
+          await updateThumbnailCloud({
+            id: videoID,
+            thumbnail,
+            startTimestamp: videoInfo.startTimestamp,
+          });
+          await store.dispatch(
+            setArchive({
+              id: videoID,
+              thumbnail,
+              local: false,
+            }),
+          );
+          await store.dispatch(removeUserLocalArchive(videoID));
+        },
       }),
     );
   } else {
