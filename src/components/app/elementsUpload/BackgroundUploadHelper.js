@@ -39,7 +39,6 @@ class BackgroundUploadHelper extends Component {
           archives[v.id].thumbnail !== undefined
         );
       });
-      console.log('need to upload', notVolatile);
       return notVolatile;
     } else {
       return [];
@@ -99,11 +98,9 @@ class BackgroundUploadHelper extends Component {
           archivesToUpload,
           archives,
         );
-        // console.log('videos to upload', videosToUpload.length);
         let newState = {};
         videosToUpload.map((video) => {
           const {id} = video;
-          console.log('adding', id);
           newState = {
             ...newState,
             waitForQueueToPopulate: true,

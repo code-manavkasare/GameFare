@@ -238,7 +238,6 @@ const launchUpload = async ({
 
 const uploadLocalVideo = async (videoID, background) => {
   const videoInfo = store.getState().archives[videoID];
-
   if (videoInfo) {
     if (videoInfo.local) {
       const isUploadAlreadyInQueue = uploadAlreadyInQueue(videoID);

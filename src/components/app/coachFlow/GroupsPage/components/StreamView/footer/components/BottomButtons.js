@@ -128,23 +128,7 @@ class BottomButton extends Component {
     } else if (shouldStopRecording && !prevState.shouldStopRecording) {
       queue.addJob('stopRecording', {discardFile});
     }
-    console.log('componentDidUpdate bottom buttons');
-    console.log('Rrow update diff:');
 
-    const now = Object.entries(this.props);
-    const added = now.filter(([key, val]) => {
-      if (prevProps[key] === undefined) return true;
-      if (prevProps[key] !== val) {
-        console.log(`${key}
-          - ${JSON.stringify(val)}
-          + ${JSON.stringify(prevProps[key])}`);
-      }
-      return false;
-    });
-    added.forEach(([key, val]) =>
-      console.log(`${key}
-          + ${JSON.stringify(val)}`),
-    );
     if (
       ((anyMemberRecording !== undefined) !== prevState.undefined) !==
       undefined
@@ -220,7 +204,6 @@ class BottomButton extends Component {
       const succeeded = await otPublisherRef.current.startRecording(
         messageCallback,
       );
-      console.log('otPublisherRef.current.startRecording', succeeded);
       coachAction('setRecording', true);
       // if (succeeded) {
       //   coachAction('setRecording', true);
@@ -389,7 +372,6 @@ class BottomButton extends Component {
     );
   }
   render() {
-    console.log('render botton buttons');
     return (
       <View style={styleApp.center}>
         {this.rowButtons()}

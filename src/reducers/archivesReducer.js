@@ -13,7 +13,6 @@ const initialState = {};
 const initialStateBind = {};
 
 const archivesReducer = (state = initialState, action) => {
-  console.log('archive reducer', action);
   switch (action.type) {
     case SET_ARCHIVE:
       const {archive} = action;
