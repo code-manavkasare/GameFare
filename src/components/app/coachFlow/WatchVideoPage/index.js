@@ -216,7 +216,6 @@ class WatchVideoPage extends Component {
         <VideoPlayer
           onRef={(ref) => (this.videoPlayerRef = ref)}
           clickVideo={(index) => {
-            console.log(index);
             this.videoHeaderRef.handleClick(index);
           }}
           source={videoSource ? videoSource : ''}

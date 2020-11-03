@@ -64,7 +64,6 @@ class App extends Component {
     if (buildId !== actualBuildId) {
       for (const archive of Object.values(archives)) {
         if (archive.local) {
-          console.log('regenerateThumbnail');
           // regenerateThumbnail(archive);
         }
       }

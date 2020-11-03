@@ -18,7 +18,7 @@ import AllIcons from '../layout/icons/AllIcons';
 
 export default class CardConversation extends PureComponent {
   cardConversation() {
-    const {style} = this.props;
+    const {style, onPress} = this.props;
     return (
       <ButtonColor
         view={() => {
@@ -68,7 +68,7 @@ export default class CardConversation extends PureComponent {
             </Row>
           );
         }}
-        click={() => true}
+        click={() => (onPress ? onPress() : true)}
         color="white"
         style={[
           // styleApp.cardConversation,

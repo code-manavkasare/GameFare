@@ -74,6 +74,9 @@ class MemberSource extends Component {
           .ref()
           .update({
             [`coachSessions/${coachSessionID}/members/${memberID}/recording/uploadRequest/uploadLaunched`]: true,
+            [`coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`]: null,
+            [`coachSessions/${coachSessionID}/members/${memberID}/recording/flagsSelected`]: null,
+            [`coachSessions/${coachSessionID}/members/${memberID}/recording/flags`]: null,
           });
       }
     }
