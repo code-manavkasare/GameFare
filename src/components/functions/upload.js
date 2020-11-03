@@ -20,9 +20,17 @@ const defaultRecordAudioFilename = 'audioRecord.mp4';
 const audioRecordContentType = 'audio/mp4';
 
 const afterUpload = async (uploadTask, cloudUrl) => {
-  if (uploadTask.type === 'audioRecord') {
-    if (uploadTask.videoInfoForCloudCut) {
-      const {videoInfoForCloudCut} = uploadTask;
+  const {
+    skipAfterUpload,
+    videoInfoForCloudCut,
+    type,
+    cloudID,
+    videoInfo,
+    url,
+  } = uploadTask;
+  if (skipAfterUpload) return;
+  if (type === 'audioRecord') {
+    if (videoInfoForCloudCut) {
       const updates = {
         ...videoInfoForCloudCut,
         audioRecordUrl: cloudUrl,
@@ -32,8 +40,7 @@ const afterUpload = async (uploadTask, cloudUrl) => {
         .set(updates);
     }
   }
-  if (uploadTask.type === 'video') {
-    const {cloudID, videoInfo} = uploadTask;
+  if (type === 'video') {
     await claimCloudVideo(videoInfo);
     await store.dispatch(
       setArchive({
@@ -47,8 +54,7 @@ const afterUpload = async (uploadTask, cloudUrl) => {
     await store.dispatch(removeUserLocalArchive(cloudID));
     deleteLocalVideoFile(videoInfo.url);
   }
-  if (uploadTask.type === 'image') {
-    const {cloudID} = uploadTask;
+  if (type === 'image') {
     await updateThumbnailCloud({
       id: cloudID,
       thumbnail: cloudUrl,
@@ -60,7 +66,7 @@ const afterUpload = async (uploadTask, cloudUrl) => {
         thumbnail: cloudUrl,
       }),
     );
-    deleteLocalVideoFile(uploadTask.url);
+    deleteLocalVideoFile(url);
   }
 };
 

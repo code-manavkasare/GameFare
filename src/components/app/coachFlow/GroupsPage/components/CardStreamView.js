@@ -21,7 +21,10 @@ import {
   viewLive,
   lastMessage,
 } from '../../../TeamPage/components/elements';
-import {bindSession,bindConversation} from '../../../../database/firebase/bindings';
+import {
+  bindSession,
+  bindConversation,
+} from '../../../../database/firebase/bindings';
 import AllIcon from '../../../../layout/icons/AllIcons';
 import {native} from '../../../../animations/animations';
 

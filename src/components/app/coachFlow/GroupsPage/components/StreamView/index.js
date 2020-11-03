@@ -243,7 +243,6 @@ class GroupsPage extends Component {
     }
 
     if (!this.isTokenUpToDate()) {
-      console.log('updateSessionTokenUser', coachSession);
       var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}updateSessionTokenUser`;
       return axios.get(url, {
         params: {

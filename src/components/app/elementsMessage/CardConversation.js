@@ -20,7 +20,6 @@ class CardConversation extends React.Component {
   }
   async clickCard() {
     const {objectID} = this.props;
-    console.log('clickCard', objectID);
     navigate('Conversation', {
       coachSessionID: objectID,
     });
