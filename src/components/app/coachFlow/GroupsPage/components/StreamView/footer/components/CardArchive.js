@@ -91,10 +91,12 @@ class CardArchive extends PureComponent {
     }
   };
 
-  localIndicator() {
+  labelIndicator() {
     const {archive} = this.props;
     const {local, progress} = archive;
 
+    if (this.isVideoGettingUploading())
+      return <Loader size={25} color={colors.white} />;
     if (progress)
       return (
         <Progress.Circle
@@ -122,11 +124,6 @@ class CardArchive extends PureComponent {
     const {url, sourceUser} = archive;
     return (!url || url === '') && sourceUser !== userID;
   };
-  uploadingIndicator() {
-    if (this.isVideoGettingUploading())
-      return <Loader size={25} color={colors.white} />;
-    return null;
-  }
   linearGradient() {
     const lgStyle = {
       width: '100%',
@@ -205,12 +202,9 @@ class CardArchive extends PureComponent {
               />
             )}
           </Col>
-          <Col size={55} />
+          <Col size={70} />
           <Col size={15} style={styleApp.center3}>
-            {this.uploadingIndicator()}
-          </Col>
-          <Col size={15} style={styleApp.center3}>
-            {this.localIndicator()}
+            {this.labelIndicator()}
           </Col>
         </Row>
       </View>

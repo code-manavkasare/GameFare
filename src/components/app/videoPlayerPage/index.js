@@ -614,7 +614,7 @@ class VideoPlayerPage extends Component {
         stopAudioPlayer={() => this.AudioRecorderPlayerRef?.stopPlayingRecord()}
         seekAudioPlayer={(time) => this.AudioRecorderPlayerRef?.seek(time)}
         videoPlayerRefs={this.videoPlayerRefs}
-        clickVideo={(index) => this.headerRef?.handleClick(index)}
+        clickVideo={() => this.headerRef?.handleClick(i)}
       />
     );
   };

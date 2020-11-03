@@ -160,7 +160,7 @@ class ToolRow extends Component {
                     color: colors.primary,
                     size: 20,
                   },
-                  label: 'play',
+                  label: 'Play',
                   backgroundColor: colors.white,
 
                   isSelected:

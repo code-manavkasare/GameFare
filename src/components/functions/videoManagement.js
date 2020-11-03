@@ -13,7 +13,7 @@ import {
 } from './pictures';
 import {generateID} from './utility';
 
-import {navigate, goBack} from '../../../NavigationService';
+import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
 import {store} from '../../../reduxStore';
 import {sendNewMessage} from './message';
@@ -169,8 +169,10 @@ const openVideoPlayer = async ({
       coachSessionID,
       forceSharing,
     });
+  } else if (getCurrentRoute() === 'VideoPlayerPage') {
+    return goBack();
   }
-  return goBack();
+  return;
 };
 
 const uploadAlreadyInQueue = (videoID) => {

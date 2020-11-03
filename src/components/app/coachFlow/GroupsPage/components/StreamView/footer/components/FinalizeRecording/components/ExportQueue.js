@@ -22,6 +22,18 @@ import colors from '../../../../../../../../../style/colors';
 import styleApp from '../../../../../../../../../style/style';
 import CardFlag from './CardFlag';
 
+/**
+ * ExportQueue
+ * This component is referenced by the RecordingMenu
+ *
+ * When a user requests a member of the current call to stop recording,
+ * the id of the respective member is added to a local array called exportingMembers.
+ *
+ * getDerivedStateFromProps processes this change by referencing the memberID to the
+ * live state of the members of the call. This allows changes in
+ * {coachSessionID}/members/recording to occur and update this component based on the
+ * information of the recording object (i.e. uploading thumbnails of the video)
+ */
 class ExportQueue extends Component {
   constructor(props) {
     super(props);
@@ -33,27 +45,17 @@ class ExportQueue extends Component {
       visible: false,
       flagsSelected: {},
       loader: false,
-      selfThumbnails: undefined,
     };
     this.cardFlagRefs = [];
     this.scaleCard = new Animated.Value(0);
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {userID, members} = props;
-    const {exportingMembers, selfThumbnails} = state;
+    const {members} = props;
+    const {exportingMembers} = state;
     const fullExportingMembers = members.filter((m) =>
       exportingMembers.includes(m?.id),
     );
-    // if (selfThumbnails) {
-    //   let selfIndex = members.findIndex((m) => m?.id === userID)
-    //   for (var thumbnail in selfThumbnails) {
-    //     let {filename, url} = selfThumbnails[thumbnail]
-    //     if (filename == "Thumbnail full video") {
-    //       members[selfIndex].recording.thumbnail = url
-    //     }
-    //   }
-    // }
     const newState = fullExportingMembers.reduce(
       (newState, member) => {
         newState.flags = {...newState.flags, ...member?.recording?.flags};
@@ -99,17 +101,17 @@ class ExportQueue extends Component {
       visible: false,
       flagsSelected: {},
       loader: false,
-      selfThumbnails: undefined,
     });
   }
 
-  async open(member, selfThumbnails) {
+  async open(member) {
     let {flagsSelected, exportingMembers} = this.state;
     flagsSelected[`${member.id}-fullVideo`] = {
       time: 0,
       id: `${member.id}-fullVideo`,
       source: member.id,
     };
+    // Add member to list of members of which user stopped recording
     if (!exportingMembers.includes(member.id)) {
       exportingMembers.push(member.id);
     }
@@ -117,7 +119,6 @@ class ExportQueue extends Component {
       visible: true,
       flagsSelected,
       exportingMembers,
-      selfThumbnails,
     });
     return Animated.parallel([
       Animated.timing(this.scaleCard, native(1, 300)),

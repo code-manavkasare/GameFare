@@ -443,7 +443,7 @@ export default class VideoPlayer extends Component {
                 {
                   position: 'absolute',
                   zIndex: -1,
-                  height,
+                  height: '100%',
                   width,
                 },
               ]}
