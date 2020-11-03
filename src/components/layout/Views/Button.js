@@ -34,7 +34,6 @@ export default class Button extends Component {
     }
   }
   setLoading(loading) {
-    console.log('setLoading', loading);
     this.setState({loading});
     Animated.timing(this.loadingOpacity, native(loading ? 1 : 0)).start();
   }

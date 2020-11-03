@@ -348,6 +348,7 @@ const setupOpentokStopRecordingFlow = async (
       url: thumbnail,
       cloudID: coachSessionID,
       storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/fullVideo`,
+      skipAfterUpload: true,
       isBackground: false,
       displayInList: false,
     },
@@ -367,6 +368,7 @@ const setupOpentokStopRecordingFlow = async (
           url: thumbnail,
           cloudID: coachSessionID,
           storageDestination: `coachSessions/${coachSessionID}/members/${memberID}/recording/flags/${id}`,
+          skipAfterUpload: true,
           isBackground: false,
           displayInList: false,
         });

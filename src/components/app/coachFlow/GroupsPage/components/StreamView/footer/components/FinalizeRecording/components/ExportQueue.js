@@ -148,6 +148,26 @@ class ExportQueue extends Component {
                 member.id
               }/recording/uploadRequest`
             ] = {};
+            updates[
+              `coachSessions/${coachSessionID}/members/${
+                member.id
+              }/recording/flags`
+            ] = null;
+            updates[
+              `coachSessions/${coachSessionID}/members/${
+                member.id
+              }/recording/flagsSelected`
+            ] = null;
+            updates[
+              `coachSessions/${coachSessionID}/members/${
+                member.id
+              }/recording/fullVideo`
+            ] = null;
+            updates[
+              `coachSessions/${coachSessionID}/members/${
+                member.id
+              }/recording/thumbnail`
+            ] = null;
           }
           return updates;
         }, {});
