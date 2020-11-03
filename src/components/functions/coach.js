@@ -737,6 +737,12 @@ const isVideosAreBeingShared = ({session, archives, userIDSharing}) => {
   const currentArchives = Object.values(archives)
     .map((archive) => (archive.id ? archive.id : archive))
     .sort();
+  const newVideosAdded = currentArchives.every((videoID) =>
+    Object.keys(videos).includes(videoID),
+  );
+  if (newVideosAdded) {
+    return true;
+  }
   return isEqual(Object.keys(videos).sort(), currentArchives);
 };
 
