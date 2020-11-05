@@ -1,7 +1,7 @@
 import database from '@react-native-firebase/database';
 
-import {store} from '../../../../reduxStore';
-import {getOnceValue} from './methods';
+import {store} from '../../../store/reduxStore';
+import {getValueOnce} from './methods';
 
 const shareCloudVideo = async (
   shareWithID,
@@ -57,7 +57,7 @@ const deleteCloudVideoInfo = (id) => {
 };
 
 const mergeInfoWithExistingCloudVideo = async (firebaseVideoInfo) => {
-  const cloudVideoInfo = await getOnceValue(
+  const cloudVideoInfo = await getValueOnce(
     `archivedStreams/${firebaseVideoInfo.id}`,
   );
   return {...firebaseVideoInfo, ...cloudVideoInfo};

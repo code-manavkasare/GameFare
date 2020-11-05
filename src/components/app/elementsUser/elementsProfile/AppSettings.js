@@ -6,7 +6,7 @@ import database from '@react-native-firebase/database';
 
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import AllIcons from '../../../layout/icons/AllIcons';
-import {appSettingsAction} from '../../../../actions/appSettingsActions';
+import {appSettingsAction} from '../../../../store/actions/appSettingsActions';
 import {toggleUserPublic} from '../../../functions/users';
 
 import {

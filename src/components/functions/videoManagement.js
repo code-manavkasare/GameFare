@@ -15,19 +15,19 @@ import {generateID} from './utility';
 
 import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
 
-import {store} from '../../../reduxStore';
+import {store} from '../../store/reduxStore';
 import {sendNewMessage} from './message';
 import {
   enqueueUploadTask,
   dequeueUploadTask,
   modifyUploadTask,
-} from '../../actions/uploadQueueActions';
+} from '../../store/actions/uploadQueueActions';
 import {
   addUserLocalArchive,
   removeUserLocalArchives,
   legacyRemoveUserLocalArchive,
-} from '../../actions/localVideoLibraryActions';
-import {setArchive, deleteArchives} from '../../actions/archivesActions';
+} from '../../store/actions/localVideoLibraryActions';
+import {setArchive, deleteArchives} from '../../store/actions/archivesActions';
 import {getArchiveByID} from './archive';
 import {
   createCloudVideo,

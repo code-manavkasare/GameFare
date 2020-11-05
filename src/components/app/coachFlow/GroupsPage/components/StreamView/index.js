@@ -30,10 +30,10 @@ import {
   ratio,
 } from '../../../../../style/sizes';
 
-import {coachAction} from '../../../../../../actions/coachActions';
-import {coachSessionsAction} from '../../../../../../actions/coachSessionsActions';
-import {userAction} from '../../../../../../actions/userActions';
-import {layoutAction} from '../../../../../../actions/layoutActions';
+import {coachAction} from '../../../../../../store/actions/coachActions';
+import {coachSessionsAction} from '../../../../../../store/actions/coachSessionsActions';
+import {userAction} from '../../../../../../store/actions/userActions';
+import {layoutAction} from '../../../../../../store/actions/layoutActions';
 
 import {
   logMixpanel,

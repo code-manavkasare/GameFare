@@ -23,7 +23,7 @@ import {
   FocusView,
 } from '../../coachingTab/components/ComponentsCard';
 
-import {getOnceValue} from '../../../database/firebase/methods';
+import {getValueOnce} from '../../../database/firebase/methods';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -61,7 +61,7 @@ class ProfilePage extends Component {
     if (infoUser.blockedUsers && infoUser.blockedUsers[userProfile.id]) {
       isBlocked = true;
     }
-    const userInfo = await getOnceValue(`users/${userProfile.id}/userInfo`);
+    const userInfo = await getValueOnce(`users/${userProfile.id}/userInfo`);
     this.setState({
       userProfile: {
         id: userProfile.id,

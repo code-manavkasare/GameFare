@@ -7,8 +7,8 @@ import {PanGestureHandler, State} from 'react-native-gesture-handler';
 import Svg, {Circle} from 'react-native-svg';
 import isEqual from 'lodash.isequal';
 
-import {coachAction} from '../../../../../actions/coachActions';
-import {generateID} from '../../../../functions/createEvent';
+import {coachAction} from '../../../../../store/actions/coachActions';
+import {generateID} from '../../../../functions/utility.js';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import {ratio} from '../../../../style/sizes';

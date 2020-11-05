@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native';
 
-import {store} from '../../../reduxStore';
+import {store} from '../../store/reduxStore';
 import {mixPanelToken} from '../database/firebase/tokens';
 
 import Mixpanel from 'react-native-mixpanel';

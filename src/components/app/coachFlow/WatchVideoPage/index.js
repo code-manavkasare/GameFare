@@ -9,7 +9,7 @@ import VideoPlayer from '../VideoPlayer/index';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 
 import {native} from '../../../animations/animations';
-import {coachAction} from '../../../../actions/coachActions';
+import {coachAction} from '../../../../store/actions/coachActions';
 
 import RightButtons from './components/RightButtons';
 import WatchVideoHeader from './components/WatchVideoHeader';

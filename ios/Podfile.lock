@@ -414,8 +414,6 @@ PODS:
   - react-native-branch (4.4.0):
     - Branch (= 0.31.3)
     - React
-  - react-native-calendar-events (1.7.3):
-    - React
   - react-native-camera (3.40.0):
     - React-Core
     - react-native-camera/RCT (= 3.40.0)
@@ -459,8 +457,6 @@ PODS:
   - react-native-mapbox-gl/StaticLibraryFixer (8.1.0-rc.2):
     - "@react-native-mapbox-gl-mapbox-static (~> 5.8)"
     - Mapbox-iOS-SDK (~> 5.8)
-    - React
-  - react-native-maps (0.26.1):
     - React
   - react-native-mixpanel (1.2.0):
     - Mixpanel (~> 3.6.0)
@@ -559,8 +555,6 @@ PODS:
     - React
   - ReactNativeKeyboardTrackingView (5.7.0):
     - React
-  - rn-fetch-blob (0.12.0):
-    - React-Core
   - RNAwesomeCardIO (0.8.3):
     - React
   - RNCAsyncStorage (1.11.0):
@@ -631,8 +625,6 @@ PODS:
   - RNSentry (1.9.0):
     - React-Core
     - Sentry (~> 5.2.0)
-  - RNSketchCanvas (0.8.0):
-    - React
   - RNSVG (11.0.1):
     - React
   - RNVectorIcons (6.6.0):
@@ -701,7 +693,6 @@ DEPENDENCIES:
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-branch (from `../node_modules/react-native-branch`)
-  - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-config (from `../node_modules/react-native-config`)
@@ -715,7 +706,6 @@ DEPENDENCIES:
   - react-native-job-queue (from `../node_modules/react-native-job-queue`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-mapbox-gl (from `../node_modules/@react-native-mapbox-gl/maps`)"
-  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mixpanel (from `../node_modules/react-native-mixpanel`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
@@ -742,7 +732,6 @@ DEPENDENCIES:
   - ReactNativeAutogrowTextinput (from `../node_modules/react-native-autogrow-textinput`)
   - ReactNativeKeyboardInput (from `../node_modules/react-native-keyboard-input`)
   - ReactNativeKeyboardTrackingView (from `../node_modules/react-native-keyboard-tracking-view`)
-  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - RNAwesomeCardIO (from `../node_modules/react-native-awesome-card-io`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
@@ -765,7 +754,6 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
-  - "RNSketchCanvas (from `../node_modules/@terrylinla/react-native-sketch-canvas`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - RNVideoProcessing (from `../node_modules/react-native-video-processing`)
@@ -897,8 +885,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/blur"
   react-native-branch:
     :path: "../node_modules/react-native-branch"
-  react-native-calendar-events:
-    :path: "../node_modules/react-native-calendar-events"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-cameraroll:
@@ -925,8 +911,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keep-awake"
   react-native-mapbox-gl:
     :path: "../node_modules/@react-native-mapbox-gl/maps"
-  react-native-maps:
-    :path: "../node_modules/react-native-maps"
   react-native-mixpanel:
     :path: "../node_modules/react-native-mixpanel"
   react-native-netinfo:
@@ -979,8 +963,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keyboard-input"
   ReactNativeKeyboardTrackingView:
     :path: "../node_modules/react-native-keyboard-tracking-view"
-  rn-fetch-blob:
-    :path: "../node_modules/rn-fetch-blob"
   RNAwesomeCardIO:
     :path: "../node_modules/react-native-awesome-card-io"
   RNCAsyncStorage:
@@ -1025,8 +1007,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
-  RNSketchCanvas:
-    :path: "../node_modules/@terrylinla/react-native-sketch-canvas"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -1122,7 +1102,6 @@ SPEC CHECKSUMS:
   react-native-background-timer: 029c606b3fd6dd476b153e177c518b6ade4c169f
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
-  react-native-calendar-events: eaa63134881d97488feb21ea114158f712894018
   react-native-camera: 35854c4f764a4a6cf61c1c3525888b92f0fe4b31
   react-native-cameraroll: e2917a5e62da9f10c3d525e157e25e694d2d6dfa
   react-native-config: f2c2ae45625a068c35681a16b9bfb1ca58b0adc7
@@ -1136,7 +1115,6 @@ SPEC CHECKSUMS:
   react-native-job-queue: f0d7bac7fc4d62fb376c5c862898791065b900a2
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-mapbox-gl: 18785637738ca8b25c3633db431d6614ec7fc9bf
-  react-native-maps: 6e499eee4eabf422ba8b6f94e993cc768bf35153
   react-native-mixpanel: d644efe1ca33d2646d5cba29e24a13ebc9b37209
   react-native-netinfo: 38a1e0b3e89b48e4b5833ed475d8df5f049f6f90
   react-native-orientation-locker: f0ca1a8e5031dab6b74bfb4ab33a17ed2c2fcb0d
@@ -1163,7 +1141,6 @@ SPEC CHECKSUMS:
   ReactNativeAutogrowTextinput: 571f3260e200d91ea22fab160452f26d2fd5d55b
   ReactNativeKeyboardInput: 39fd96d68b71562a722e627a6c58741c8094e103
   ReactNativeKeyboardTrackingView: 02137fac3b2ebd330d74fa54ead48b14750a2306
-  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNAwesomeCardIO: 14d78f3e76abaf503068c9f4513ff6c4a516d958
   RNCAsyncStorage: d059c3ee71738c39834a627476322a5a8cd5bf36
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
@@ -1186,7 +1163,6 @@ SPEC CHECKSUMS:
   RNReanimated: c2bb7438b57a3d987bb2e4e6e4bca94787e30b02
   RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
   RNSentry: 1adaa43b01c6a3ab5091d4d1add66b7c58558898
-  RNSketchCanvas: 9c28adb5381543ed55cc98ce6de46479cb3cb12c
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RNVideoProcessing: cda67217db87030a335137bfb0c637bce2532aeb

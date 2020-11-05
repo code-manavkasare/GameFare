@@ -1,12 +1,12 @@
-function generateID() {
+const generateID = () => {
   return (
     Math.random()
       .toString(36)
       .substring(2) + Date.now().toString(36)
   );
-}
+};
 
-function getSelectionActionDecorations(action) {
+const getSelectionActionDecorations = (action) => {
   switch (action) {
     case 'call':
       return {
@@ -34,6 +34,6 @@ function getSelectionActionDecorations(action) {
         actionHeader: 'Unknown action',
       };
   }
-}
+};
 
-module.exports = {generateID, getSelectionActionDecorations};
+export {generateID, getSelectionActionDecorations};

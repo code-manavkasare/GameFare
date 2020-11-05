@@ -7,7 +7,7 @@ import moment from 'moment';
 import {ReduxNetworkProvider} from 'react-native-offline';
 import {PersistGate} from 'redux-persist/lib/integration/react';
 
-import {persistor, store} from './reduxStore';
+import {persistor, store} from './src/store/reduxStore';
 
 // Need to import globally in react native
 // for axios authenticated POST to work properly

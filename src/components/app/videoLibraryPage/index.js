@@ -21,8 +21,8 @@ import VideoBeingShared from './components/VideoBeingShared';
 import {FlatListComponent} from '../../layout/Views/FlatList';
 import Button from '../../layout/buttons/Button';
 
-import {uploadQueueAction} from '../../../actions/uploadQueueActions';
-import {layoutAction} from '../../../actions/layoutActions';
+import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
+import {layoutAction} from '../../../store/actions/layoutActions';
 
 import {rowTitle} from '../TeamPage/components/elements';
 
@@ -45,7 +45,7 @@ import colors from '../../style/colors';
 import {navigate} from '../../../../NavigationService';
 import HeaderVideoLibrary from './components/HeaderVideoLibrary';
 import ToolRow from './components/ToolRow';
-import {store} from '../../../../reduxStore';
+import {store} from '../../../store/reduxStore';
 const {height, width} = Dimensions.get('screen');
 
 class VideoLibraryPage extends Component {

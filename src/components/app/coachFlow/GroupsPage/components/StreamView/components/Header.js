@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
-import {layoutAction} from '../../../../../../../actions/layoutActions';
+import {layoutAction} from '../../../../../../../store/actions/layoutActions';
 
 import {createInviteToSessionBranchUrl} from '../../../../../../database/branch';
 

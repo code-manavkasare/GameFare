@@ -1,7 +1,5 @@
-import React, {Component} from 'react';
-
-import {store} from '../../../reduxStore';
-import {setArchive} from '../../actions/archivesActions';
+import {store} from '../../store/reduxStore';
+import {setArchive} from '../../store/actions/archivesActions';
 import convertToCache from 'react-native-video-cache';
 
 const getArchiveByID = (archiveID) => {
@@ -26,7 +24,4 @@ const cacheArchive = async (archiveID) => {
   }
 };
 
-module.exports = {
-  getArchiveByID,
-  cacheArchive,
-};
+export {getArchiveByID, cacheArchive};

@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 import {isEqual} from 'lodash';
 
-import {archivesAction} from '../../../../actions/archivesActions';
+import {archivesAction} from '../../../../store/actions/archivesActions';
 
 import VideoPlayer from '../../coachFlow/VideoPlayer/index';
 import styleApp from '../../../style/style';

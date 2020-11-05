@@ -9,8 +9,8 @@ import {
 } from '../../functions/notifications.js';
 
 import MyTabs from '../../navigation/MainApp/components/TeamPage';
-import {coachSessionsAction} from '../../../actions/coachSessionsActions';
-import {conversationsAction} from '../../../actions/conversationsActions';
+import {coachSessionsAction} from '../../../store/actions/coachSessionsActions';
+import {conversationsAction} from '../../../store/actions/conversationsActions';
 
 import HeaderConversation from './HeaderConversation';
 import styleApp from '../../style/style';
