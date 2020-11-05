@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
 import {native} from '../../../../../../../../../animations/animations';
-import {uploadQueueAction} from '../../../../../../../../../../actions/uploadQueueActions';
+import {uploadQueueAction} from '../../../../../../../../../../store/actions/uploadQueueActions';
 import ButtonColor from '../../../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../../../layout/icons/AllIcons';
 import sizes from '../../../../../../../../../style/sizes';

@@ -13,8 +13,8 @@ import {
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 
-import {coachAction} from '../../actions/coachActions';
-import {layoutAction} from '../../actions/layoutActions';
+import {coachAction} from '../../store/actions/coachActions';
+import {layoutAction} from '../../store/actions/layoutActions';
 
 import {Col, Row, Grid} from 'react-native-easy-grid';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
@@ -32,7 +32,7 @@ import ButtonColor from '../layout/Views/Button';
 import Button from '../layout/buttons/Button';
 import AsyncImage from '../layout/image/AsyncImage';
 
-import {userAction} from '../../actions/userActions';
+import {userAction} from '../../store/actions/userActions';
 import {sendSMSFunction} from '../functions/message';
 import {createInviteToAppBranchUrl} from '../database/branch';
 

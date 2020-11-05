@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import isEqual from 'lodash.isequal';
 
 import ButtonColor from '../../../../../../../layout/Views/Button';
-import {generateID} from '../../../../../../../functions/createEvent';
+import {generateID} from '../../../../../../../functions/utility.js';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
 import colors from '../../../../../../../style/colors';
@@ -48,7 +48,8 @@ class AddFlagButton extends Component {
   buttonAddFlag() {
     const {recording} = this.props.member;
     const numberFlags = this.numberFlags(this.props);
-    if (!recording?.isRecording || !recording?.startTimestamp) return <Col size={10} />;
+    if (!recording?.isRecording || !recording?.startTimestamp)
+      return <Col size={10} />;
     return (
       <ButtonColor
         view={() => {

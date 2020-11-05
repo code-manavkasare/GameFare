@@ -21,7 +21,7 @@ import Loader from '../../layout/loaders/Loader';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import CardUserSelect from '../../layout/cards/CardUserSelect';
 
-import {historicSearchAction} from '../../../actions/historicSearchActions';
+import {historicSearchAction} from '../../../store/actions/historicSearchActions';
 import {autocompleteSearchUsers} from '../../functions/users';
 import {createDiscussion, searchDiscussion} from '../../functions/message';
 

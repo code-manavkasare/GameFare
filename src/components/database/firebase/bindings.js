@@ -1,16 +1,19 @@
 import database from '@react-native-firebase/database';
 import moment from 'moment';
 
-import {store} from '../../../../reduxStore';
+import {store} from '../../../store/reduxStore';
 import {
   setSession,
   setSessionBinded,
-} from '../../../actions/coachSessionsActions';
+} from '../../../store/actions/coachSessionsActions';
 import {
   setConversation,
   setConversationBinded,
-} from '../../../actions/conversationsActions';
-import {setArchive, setArchiveBinded} from '../../../actions/archivesActions';
+} from '../../../store/actions/conversationsActions';
+import {
+  setArchive,
+  setArchiveBinded,
+} from '../../../store/actions/archivesActions';
 
 import {getArchiveByID, cacheArchive} from '../../functions/archive';
 import {deleteVideos} from '../../functions/videoManagement';

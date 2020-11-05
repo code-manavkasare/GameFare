@@ -13,8 +13,8 @@ import {Col, Row} from 'react-native-easy-grid';
 import FadeInView from 'react-native-fade-in-view';
 
 import HeaderBackButton from '../../../../../../layout/headers/HeaderBackButton';
-import {coachAction} from '../../../../../../../actions/coachActions';
-import {appSettingsAction} from '../../../../../../../actions/appSettingsActions';
+import {coachAction} from '../../../../../../../store/actions/coachActions';
+import {appSettingsAction} from '../../../../../../../store/actions/appSettingsActions';
 
 import {
   heightFooter,

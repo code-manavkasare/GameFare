@@ -5,8 +5,8 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 
 import {navigate} from '../../../../../NavigationService';
 
-import {coachAction} from '../../../../actions/coachActions';
-import {layoutAction} from '../../../../actions/layoutActions';
+import {coachAction} from '../../../../store/actions/coachActions';
+import {layoutAction} from '../../../../store/actions/layoutActions';
 
 import colors from '../../../style/colors';
 import styleApp from '../../../style/style';

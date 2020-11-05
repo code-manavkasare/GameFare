@@ -5,7 +5,7 @@ import {Col, Row} from 'react-native-easy-grid';
 
 import ImageUser from '../../../../../../layout/image/ImageUser';
 import styleApp from '../../../../../../style/style';
-import {coachAction} from '../../../../../../../actions/coachActions';
+import {coachAction} from '../../../../../../../store/actions/coachActions';
 
 import {
   marginTopApp,

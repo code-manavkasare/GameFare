@@ -13,8 +13,8 @@ import ButtonColor from '../../../layout/Views/Button';
 import CardConversation from '../../elementsMessage/CardConversation';
 import {FlatListComponent} from '../../../layout/Views/FlatList';
 
-import {store} from '../../../../../reduxStore';
-import {unsetCurrentSession} from '../../../../actions/coachActions';
+import {store} from '../../../../store/reduxStore';
+import {unsetCurrentSession} from '../../../../store/actions/coachActions';
 import {
   sessionOpening,
   selectVideosFromLibrary,

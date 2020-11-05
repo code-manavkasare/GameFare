@@ -9,7 +9,7 @@ import queue, {Worker} from 'react-native-job-queue';
 import {native} from '../../../animations/animations';
 import styleApp from '../../../style/style';
 
-import {layoutAction} from '../../../../actions/layoutActions';
+import {layoutAction} from '../../../../store/actions/layoutActions';
 
 import {getVideoInfo, getNewVideoSavePath} from '../../../functions/pictures';
 import {
@@ -17,7 +17,6 @@ import {
   openVideoPlayer,
 } from '../../../functions/videoManagement';
 import {logMixpanel} from '../../../functions/logs';
-
 
 class Camera extends Component {
   static propTypes = {

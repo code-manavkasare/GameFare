@@ -15,7 +15,7 @@ import Swipeout from 'react-native-swipeout';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-import {uploadQueueAction} from '../../../actions/uploadQueueActions';
+import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import {FormatDate, formatDuration} from '../../functions/date';
 import AllIcons from '../../layout/icons/AllIcons';
 

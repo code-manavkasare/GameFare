@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import {Share, Image} from 'react-native';
+import {Share} from 'react-native';
 import {connect} from 'react-redux';
-import {store} from '../../../../../reduxStore';
+import database from '@react-native-firebase/database';
+
+import {store} from '../../../../store/reduxStore';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createShareVideosBranchUrl} from '../../../database/branch';
 import colors from '../../../style/colors';
-
-import {getOnceValue} from '../../../database/firebase/methods';
-import {getImageSize} from '../../../functions/pictures';
-import database from '@react-native-firebase/database';
+import {getValueOnce} from '../../../database/firebase/methods';
 import {shareVideosWithTeams} from '../../../functions/videoManagement';
 import {timeout} from '../../../functions/coach';
 
@@ -59,7 +58,7 @@ class HeaderCallTab extends Component {
 
   loopUploadingStatus = async () => {
     await this.setState({loader: true});
-    const archivedStreams = await getOnceValue(`archivedStreams`);
+    const archivedStreams = await getValueOnce(`archivedStreams`);
     let updates = {};
     for (var i in archivedStreams) {
       let {local, id, thumbnail} = archivedStreams[i];

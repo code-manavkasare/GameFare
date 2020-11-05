@@ -7,7 +7,7 @@ import colors from '../../style/colors';
 import sizes from '../../style/sizes';
 import Orientation from 'react-native-orientation-locker';
 
-import {layoutAction} from '../../../actions/layoutActions';
+import {layoutAction} from '../../../store/actions/layoutActions';
 
 import BottomButtons from './components/BottomButtons';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';

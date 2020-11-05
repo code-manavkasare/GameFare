@@ -4,9 +4,6 @@ import {isEqual} from 'lodash';
 import styleApp from '../../../../style/style';
 import {generateThumbnailSet} from '../../../../functions/videoManagement';
 import {getArchiveByID} from '../../../../functions/archive';
-import {setArchive} from '../../../../../actions/archivesActions';
-import {store} from '../../../../../../reduxStore';
-import {timing} from '../../../../animations/animations';
 
 export default class Filmstrip extends Component {
   constructor(props) {

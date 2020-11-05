@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import database from '@react-native-firebase/database';
 
-import {uploadQueueAction} from '../../../actions';
+import {uploadQueueAction} from '../../../store/actions';
 import {
   getCurrentUploadingTask,
   uploadFile,

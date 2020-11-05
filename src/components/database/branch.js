@@ -1,11 +1,10 @@
 import axios from 'axios';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
-import colors from '../style/colors';
 import {Alert, Linking} from 'react-native';
 import branch from 'react-native-branch';
-import {date} from '../layout/date/date';
-import {store} from '../../../reduxStore';
-import {createPlaceholderCoachSession} from '../functions/coach';
+
+import colors from '../style/colors';
+import {store} from '../../store/reduxStore';
 
 const getArchivesFromBranchParams = (params) => {
   return params.archives ? params.archives.split(',') : [];
@@ -70,68 +69,6 @@ const openUrl = async (url) => {
   }
 };
 
-// const dataBranchLink = (objData, action) => {
-//   let description = '';
-//   let title = '';
-//   if (action === 'Challenge') {
-//     title = objData.info.name;
-//     description =
-//       'Join my challenge ' +
-//       objData.info.name +
-//       ' on ' +
-//       date(objData.date.start, 'ddd, MMM D') +
-//       ' at ' +
-//       date(objData.date.start, 'h:mm a') +
-//       ' by following the link!';
-//   } else if (action === 'Event') {
-//     title = objData.info.name;
-//     description =
-//       'Join my event ' +
-//       objData.info.name +
-//       ' on ' +
-//       date(objData.date.start, 'ddd, MMM D') +
-//       ' at ' +
-//       date(objData.date.start, 'h:mm a') +
-//       ' by following the link!';
-//   } else if (action === 'Group') {
-//     title = objData.info.name;
-//     description =
-//       'Join my group ' + objData.info.name + ' by following the link!';
-//   } else {
-//     title = 'Join the GameFare community.';
-//     description = 'Subtitle';
-//   }
-//   return {description, title};
-// };
-
-// const createBranchUrl = async (dataObj, action, image) => {
-//   const {description, title} = dataBranchLink(dataObj, action);
-//   let branchUniversalObject = await branch.createBranchUniversalObject(
-//     'canonicalIdentifier',
-//     {
-//       contentDescription: description,
-//       title: title,
-//       contentMetadata: {
-//         customMetadata: {
-//           objectID: dataObj.objectID,
-//           action: action,
-//           $uri_redirect_mode: '1',
-//           $og_image_url: image,
-//         },
-//       },
-//     },
-//   );
-
-//   let linkProperties = {feature: 'share', channel: 'GameFare'};
-//   let controlParams = {$desktop_url: 'http://getgamefare.com'};
-
-//   let {url} = await branchUniversalObject.generateShortUrl(
-//     linkProperties,
-//     controlParams,
-//   );
-//   return {url, description, title, image, action, objectID: dataObj.objectID};
-// };
-
 const createInviteToAppBranchUrl = async () => {
   const {user} = store.getState();
   const {userID} = user;
@@ -191,7 +128,7 @@ const createShareVideosBranchUrl = async (archiveIDs) => {
     const {userID} = user;
     const archives = archiveIDs
       .map((id) => store.getState().archives[id])
-      .filter((a) => a); 
+      .filter((a) => a);
     const thumbnail = archives.reduce((thumbnail, archive) => {
       // need uploaded thumbnail
       if (
@@ -205,7 +142,7 @@ const createShareVideosBranchUrl = async (archiveIDs) => {
     }, '');
     const archiveMetadata = archives.reduce((data, archive, i) => {
       return i === 0 ? archive.id : data + ',' + archive.id;
-    }, ''); 
+    }, '');
     const branchUniversalObject = await branch.createBranchUniversalObject(
       'canonicalIdentifier',
       {

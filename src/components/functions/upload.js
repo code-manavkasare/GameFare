@@ -1,15 +1,15 @@
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 
-import {store} from '../../../reduxStore';
-import {setUploadTaskError} from '../../actions/uploadQueueActions';
-import {setArchive} from '../../actions/archivesActions';
+import {store} from '../../store/reduxStore';
+import {setUploadTaskError} from '../../store/actions/uploadQueueActions';
+import {setArchive} from '../../store/actions/archivesActions';
 import {
   claimCloudVideo,
   updateCloudUploadProgress,
   updateThumbnailCloud,
 } from '../database/firebase/videosManagement.js';
-import {removeUserLocalArchive} from '../../actions/localVideoLibraryActions';
+import {removeUserLocalArchive} from '../../store/actions/localVideoLibraryActions';
 import {deleteLocalVideoFile} from './videoManagement.js';
 
 const defaultVideoFilename = 'archive.mp4';

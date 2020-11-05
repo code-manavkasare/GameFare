@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 import Animated, {call, block} from 'react-native-reanimated';
 
-import {layoutAction} from '../../../../actions/layoutActions';
+import {layoutAction} from '../../../../store/actions/layoutActions';
 
 import FooterButton from './components/Button';
 import colors from '../../../style/colors';
