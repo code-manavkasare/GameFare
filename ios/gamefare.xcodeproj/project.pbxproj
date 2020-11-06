@@ -1212,7 +1212,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = gamefareInc;
 				PRODUCT_NAME = gamefare;
-				PROVISIONING_PROFILE_SPECIFIER = "Gamefare Prod";
+				PROVISIONING_PROFILE_SPECIFIER = "gamefare-prod1";
 				SWIFT_OBJC_BRIDGING_HEADER = "gamefare-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
