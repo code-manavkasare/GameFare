@@ -10,7 +10,7 @@ export default class AsyncImage extends Component {
   static propTypes = {
     mainImage: string,
     imgInitial: string,
-    style: oneOfType([string, array]),
+    style: oneOfType([string, array, object]),
   };
   constructor(props) {
     super(props);

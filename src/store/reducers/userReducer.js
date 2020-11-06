@@ -23,7 +23,6 @@ const initialState = {
   },
   userID: '',
   phoneNumber: '',
-  userIDSaved: '',
   country: {
     name: 'United States',
     dial_code: '+1',

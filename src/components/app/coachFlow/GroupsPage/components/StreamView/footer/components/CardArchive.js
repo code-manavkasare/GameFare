@@ -1,6 +1,13 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  InteractionManager,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
@@ -46,10 +53,12 @@ class CardArchive extends PureComponent {
   }
 
   componentDidMount() {
-    const {id, archive} = this.props;
-    if (!archive || !archive?.local) {
-      bindArchive(id);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      const {id, archive} = this.props;
+      if (!archive || !archive?.local) {
+        bindArchive(id);
+      }
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -210,6 +219,37 @@ class CardArchive extends PureComponent {
       </View>
     );
   };
+  viewNoVideo = () => {
+    const styleRow = {
+      position: 'absolute',
+      padding: 15,
+      height: '100%',
+      zIndex: 230,
+      width: '100%',
+    };
+
+    return (
+      <View style={styleRow}>
+        <Row>
+          <Col size={15} style={styleApp.center}>
+            <AllIcons
+              name={'campground'}
+              type="font"
+              size={16}
+              color={colors.white}
+            />
+            <Text
+              style={[
+                styleApp.textBold,
+                {marginTop: 10, color: colors.white, fontSize: 14},
+              ]}>
+              Unavailable
+            </Text>
+          </Col>
+        </Row>
+      </View>
+    );
+  };
   cardArchive(archive) {
     const {
       isSelected,
@@ -226,7 +266,10 @@ class CardArchive extends PureComponent {
       durationSeconds,
       local,
       progress,
+      isBinded,
+      url,
     } = archive;
+
     const {loader} = this.state;
     return (
       <TouchableOpacity
@@ -249,7 +292,9 @@ class CardArchive extends PureComponent {
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
-          {local && thumbnail ? (
+          {isBinded && !url ? (
+            this.viewNoVideo()
+          ) : local && thumbnail ? (
             <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
           ) : (
             <AsyncImage
@@ -257,7 +302,7 @@ class CardArchive extends PureComponent {
               mainImage={thumbnail ? thumbnail : ''}
             />
           )}
-          {!hideInformation && this.rowIcons()}
+          {!hideInformation && url && this.rowIcons()}
 
           {selectableMode && (
             <View
@@ -308,7 +353,7 @@ class CardArchive extends PureComponent {
 
           {!hideInformation && this.linearGradient()}
 
-          {!hideInformation && (
+          {!hideInformation && url && (
             <View
               pointerEvents="none"
               style={{...styles.viewText, bottom: 5, left: 10}}>

@@ -8,20 +8,17 @@ const getArchiveByID = (archiveID) => {
     : null;
 };
 
-const cacheArchive = async (archiveID) => {
-  const archive = getArchiveByID(archiveID);
+const cacheArchive = async (archive) => {
   const {local, url, localUrlCreated} = archive;
   if (!local && !localUrlCreated && url) {
-    const cachedUrl = await convertToCache(url);
-    if (cachedUrl)
-      store.dispatch(
-        setArchive({
-          ...archive,
-          url: cachedUrl,
-          localUrlCreated: true,
-        }),
-      );
+    // const cachedUrl = await convertToCache(url);
+    // if (cachedUrl)
+    //   return {
+    //     url: cachedUrl,
+    //     localUrlCreated: true,
+    //   };
   }
+  return {};
 };
 
 export {getArchiveByID, cacheArchive};

@@ -3,6 +3,7 @@ import {
   BIND_CONVERSATION,
   UNBIND_CONVERSATION,
   SET_CONVERSATION_BINDED,
+  RESET_BINDS_CONVERSATIONS,
 } from '../types';
 
 const setConversation = (value) => ({
@@ -14,6 +15,10 @@ const setConversationBinded = (objectID, value) => ({
   type: SET_CONVERSATION_BINDED,
   objectID,
   value,
+});
+
+const resetBindsConversations = () => ({
+  type: RESET_BINDS_CONVERSATIONS,
 });
 
 const bindConversation = (conversationID) => ({
@@ -44,5 +49,6 @@ export {
   setConversation,
   bindConversation,
   unbindConversation,
+  resetBindsConversations,
   setConversationBinded,
 };

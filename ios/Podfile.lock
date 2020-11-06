@@ -409,6 +409,8 @@ PODS:
     - React-Core
   - react-native-background-timer (2.4.0):
     - React
+  - react-native-bg-thread (1.1.9):
+    - React
   - react-native-blur (0.8.0):
     - React
   - react-native-branch (4.4.0):
@@ -691,6 +693,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-audio-session (from `../node_modules/react-native-audio-session`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
+  - react-native-bg-thread (from `../node_modules/react-native-bg-thread`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-camera (from `../node_modules/react-native-camera`)
@@ -881,6 +884,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-audio-session"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
+  react-native-bg-thread:
+    :path: "../node_modules/react-native-bg-thread"
   react-native-blur:
     :path: "../node_modules/@react-native-community/blur"
   react-native-branch:
@@ -1100,6 +1105,7 @@ SPEC CHECKSUMS:
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
   react-native-audio-session: a92396d8eeae3e66eb29572d814e357acafe76d6
   react-native-background-timer: 029c606b3fd6dd476b153e177c518b6ade4c169f
+  react-native-bg-thread: b5daa49e9084baa6de4503b815953bdf4c1d6c4a
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-camera: 35854c4f764a4a6cf61c1c3525888b92f0fe4b31

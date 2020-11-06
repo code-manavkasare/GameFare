@@ -2,6 +2,7 @@ import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
+import equal from 'fast-deep-equal';
 
 import {
   HIDE_FOOTER_APP,
@@ -10,6 +11,7 @@ import {
   SET_LAYOUT_SETTINGS,
   SET_USER_INFO,
 } from '../types';
+import {store} from '../reduxStore'
 
 import {resetDataCoachSession} from './coachActions';
 import {resetCloudArchives} from './archivesActions.js';
@@ -41,8 +43,6 @@ const hideFooterApp = () => ({
   type: HIDE_FOOTER_APP,
 });
 
-var infoUserToPushSaved = '';
-
 const userAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'signIn') {
@@ -52,34 +52,24 @@ const userAction = (val, data) => {
 
       Mixpanel.identify(userID);
       Mixpanel.set({userID: userID});
-
       return database()
         .ref('users/' + userID)
         .on('value', async function(snap) {
-          var infoUser = snap.val();
+          const infoUser = snap.val();
+          let userConnected = false;
+          if (infoUser.profileCompleted) userConnected = true;
 
-          var userConnected = false;
-          var userIDSaved = '';
-          if (infoUser.profileCompleted) {
-            userConnected = true;
-            userIDSaved = userID;
-          }
-          var wallet = infoUser.wallet;
-          wallet.transfers = [];
-          infoUser.wallet = wallet;
           const infoUserToPush = {
             userID: userID,
-            infoUser: infoUser,
-            userConnected: userConnected,
+            infoUser,
+            userConnected,
             phoneNumber: data.phoneNumber,
             countryCode: data.countryCode,
-            userIDSaved: userIDSaved,
           };
 
-          if (infoUserToPushSaved !== infoUserToPush) {
-            infoUserToPushSaved = infoUserToPush;
-            dispatch(setUserInfo(infoUserToPush));
-          }
+          const currentInfoUser = store.getState().user.infoUser.userInfo;
+          if (!equal(currentInfoUser, infoUser))
+            await dispatch(setUserInfo(infoUserToPush));
 
           return userConnected;
         });

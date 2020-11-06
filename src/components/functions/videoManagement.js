@@ -140,7 +140,7 @@ const addLocalVideo = async ({video, backgroundUpload}) => {
 const deleteVideos = (ids) => {
   const infos = ids.map((id) => getArchiveByID(id));
   store.dispatch(removeUserLocalArchives(ids));
-  store.dispatch(deleteArchives(ids));
+
   deleteCloudVideos(ids);
   infos.forEach((info) => {
     if (info && info.local && info.url) {
@@ -155,6 +155,7 @@ const deleteVideos = (ids) => {
       deleteCloudVideoInfo(info.id);
     }
   });
+  store.dispatch(deleteArchives(ids));
 };
 
 const openVideoPlayer = async ({
@@ -359,10 +360,10 @@ const generateThumbnailSet = async ({
   return thumbnails;
 };
 
-const updateLocalVideoUrls = () => {
+const updateLocalVideoUrls = async () => {
   const videos = store.getState().archives;
   if (videos) {
-    Object.values(videos)
+    await Object.values(videos)
       .filter((v) => v.local)
       .forEach(async (video) => {
         if (video.url) {
@@ -435,11 +436,11 @@ const updateLocalVideoUrls = () => {
   }
 };
 
-const oneTimeFixStoreLocalVideoLibrary = () => {
+const oneTimeFixStoreLocalVideoLibrary = async () => {
   // moves all videos from localVideoLibrary to archives
   const localVideos = store.getState().localVideoLibrary.videoLibrary;
   if (localVideos) {
-    Object.values(localVideos)
+    await Object.values(localVideos)
       .filter((v) => v && v.id && v.url && v.thumbnail)
       .forEach((video) => {
         addLocalVideo({video, backgroundUpload: true});

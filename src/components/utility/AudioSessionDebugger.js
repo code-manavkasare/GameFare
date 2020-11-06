@@ -42,6 +42,4 @@ const audioDebugger = async (options) => {
     }, interval);
 };
 
-module.exports = {
-  audioDebugger,
-};
+export {audioDebugger};

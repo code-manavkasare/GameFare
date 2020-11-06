@@ -394,6 +394,7 @@ export default class VideoPlayer extends Component {
       index,
       setScale,
       width,
+      height,
       seekbarSize,
       disableControls,
       pinchEnable,
@@ -421,7 +422,6 @@ export default class VideoPlayer extends Component {
       error,
     } = this.state;
     if (error) url = originalUrl;
-    const {height} = Dimensions.get('screen');
     const connectedToSession =
       coachSessionID !== false && coachSessionID !== undefined;
 
@@ -436,14 +436,14 @@ export default class VideoPlayer extends Component {
             {backgroundColor: colors.black},
           ]}>
           {(videoLoading || !url) && this.fullScreenLoader()}
-          {!videoLoaded && thumbnail && (
+          {thumbnail && !videoLoaded && (
             <AsyncImage
               resizeMode={'contain'}
               style={[
                 {
                   position: 'absolute',
                   zIndex: -1,
-                  height: '100%',
+                  height,
                   width,
                 },
               ]}
@@ -475,7 +475,9 @@ export default class VideoPlayer extends Component {
                     allowRecording={
                       connectedToSession ? undefined : allowRecording
                     }
-                    source={{uri: url}}
+                    source={{
+                      uri: url,
+                    }}
                     style={styleApp.fullSize}
                     ref={(ref) => {
                       this.player = ref;

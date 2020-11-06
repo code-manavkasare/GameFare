@@ -56,11 +56,11 @@ class FlatListComponent extends Component {
     };
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  shouldComponentUpdate(prevProps, prevState) {
-    if (!isEqual(prevState, this.state)) {
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!isEqual(nextState, this.state)) {
       return true;
     }
-    if (isEqual(this.props, prevProps)) {
+    if (isEqual(this.props, nextProps)) {
       return false;
     }
     return true;
