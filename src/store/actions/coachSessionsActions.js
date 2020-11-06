@@ -7,6 +7,7 @@ import {
   BIND_SESSION,
   UNBIND_SESSION,
   SET_SESSION_BINDED,
+  RESET_BINDS_SESSIONS,
 } from '../types';
 
 const setSession = (value) => ({
@@ -18,6 +19,9 @@ const setSessionBinded = (sessionID, value) => ({
   type: SET_SESSION_BINDED,
   sessionID,
   value,
+});
+const resetBindsSessions = () => ({
+  type: RESET_BINDS_SESSIONS,
 });
 
 const resetSessions = () => ({
@@ -65,5 +69,6 @@ export {
   setSession,
   bindSession,
   unbindSession,
+  resetBindsSessions,
   setSessionBinded,
 };

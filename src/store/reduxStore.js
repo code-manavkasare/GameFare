@@ -10,6 +10,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import thunk from 'redux-thunk';
 
 import rootReducer from './reducers';
+import {resetBindsArchives} from './actions/archivesActions';
+import {resetBindsSessions} from './actions/coachSessionsActions';
+import {resetBindsConversations} from './actions/conversationsActions';
 
 const networkMiddleware = createNetworkMiddleware();
 const middlewares = [networkMiddleware, thunk];
@@ -40,9 +43,6 @@ const persistConfig = {
     'globaleVariables',
     'network',
     'phoneContacts',
-    'bindedArchives',
-    'bindedConversations',
-    'bindedSessions',
     'connectionType',
   ],
   migrate: createMigrate(migrations, {debug: true}),
@@ -56,12 +56,16 @@ export const store = createStore(
   composeEnhancers(applyMiddleware(...middlewares)),
 );
 
-const storeInitializationAfterRehydration = () => {
+const storeInitializationAfterRehydration = async () => {
+  // reset binds
+  store.dispatch(resetBindsArchives());
+  store.dispatch(resetBindsConversations());
+  store.dispatch(resetBindsSessions());
+
   // After rehydration completes, we detect initial connection
-  checkInternetConnection().then((isConnected) => {
-    const {connectionChange} = offlineActionCreators;
-    store.dispatch(connectionChange(isConnected));
-  });
+  const isConnected = await checkInternetConnection();
+  const {connectionChange} = offlineActionCreators;
+  store.dispatch(connectionChange(isConnected));
 };
 
 export const persistor = persistStore(store, null, () => {

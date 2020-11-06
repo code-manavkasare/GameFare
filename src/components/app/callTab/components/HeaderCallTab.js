@@ -32,14 +32,16 @@ class HeaderCallTab extends Component {
     return true;
   };
   clickShare = async () => {
-    const {archivesToShare, archives} = this.props;
+    const {archivesToShare} = this.props;
     let {branchLink} = this.state;
     if (!branchLink && archivesToShare) {
       await this.setState({loader: true});
-      const infoArchives = archivesToShare.map((archive) => archives[archive]);
+      const infoArchives = archivesToShare.map(
+        (archive) => store.getState().archives[archive],
+      );
 
       const localVideos = infoArchives
-        .filter((archive) => archive.local)
+        .filter((archive) => archive?.local)
         .map((archive) => archive.id);
       if (localVideos.length > 0) {
         await shareVideosWithTeams(localVideos, []);
@@ -47,7 +49,7 @@ class HeaderCallTab extends Component {
       }
 
       const cloudVideos = infoArchives
-        .filter((archive) => !archive.local)
+        .filter((archive) => !archive?.local)
         .map((archive) => archive.id);
       const combinedVideos = cloudVideos.concat(localVideos);
       branchLink = await createShareVideosBranchUrl(combinedVideos);
@@ -92,7 +94,6 @@ const mapStateToProps = (state) => {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     coach: state.coach,
-    archives: state.archives,
   };
 };
 

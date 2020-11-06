@@ -127,7 +127,7 @@ const setCloudVideoThumbnail = async (cloudVideoID, thumbnail) => {
 };
 
 const updateCloudUploadProgress = async (cloudVideoID, progress) => {
-  const isBinded = store.getState().bindedArchives[cloudVideoID];
+  const isBinded = store.getState().archives[cloudVideoID]?.isBinded;
   const archive = store.getState().archives[cloudVideoID];
   if (isBinded) {
     if (archive && archive.progress) {
@@ -153,11 +153,6 @@ const shareCloudVideoWithCoachSession = async (
   coachSessionID,
   sharingScreenID,
 ) => {
-  console.log('shareCloudVideoWithCoachSession', {
-    cloudVideoID,
-    coachSessionID,
-    sharingScreenID,
-  });
   database()
     .ref()
     .update({

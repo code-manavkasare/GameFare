@@ -158,8 +158,6 @@ class CardStream extends Component {
     return (
       <Animated.View style={styles.card} key={key}>
         <ButtonColor
-          color={'transparent'}
-          onPressColor={'transparent'}
           click={() => {
             logMixpanel({
               label: 'Click session ' + coachSessionID,

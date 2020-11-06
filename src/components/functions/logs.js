@@ -6,6 +6,10 @@ import {mixPanelToken} from '../database/firebase/tokens';
 import Mixpanel from 'react-native-mixpanel';
 Mixpanel.sharedInstanceWithToken(mixPanelToken);
 
+import Snoopy from 'rn-snoopy';
+import EventEmitter from 'react-native/Libraries/vendor/emitter/EventEmitter';
+import filter from 'rn-snoopy/stream/filter';
+
 const logMixpanel = ({label, params}) => {
   const {userID} = store.getState().user;
   Mixpanel.trackWithProperties(label, {...params, userID, date: new Date()});
@@ -47,6 +51,13 @@ const sentrySeverity = (string) => {
   }
 };
 
+const logsBridgeRN = () => {
+  const emitter = new EventEmitter();
+  const events = Snoopy.stream(emitter);
+  filter({type: Snoopy.TO_NATIVE}, true)(events).subscribe();
+  filter({type: Snoopy.TO_JS}, true)(events).subscribe();
+};
+
 const sentryAddBreadcrumb = (category, message, level = 'info') => {
   if (!isDevEnv) {
     Sentry.addBreadcrumb({
@@ -61,4 +72,5 @@ export {
   sentryAddBreadcrumb,
   sentryCaptureException,
   sentryCaptureMessage,
+  logsBridgeRN,
 };

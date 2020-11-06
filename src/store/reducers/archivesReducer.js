@@ -5,18 +5,26 @@ import {
   DELETE_ARCHIVES,
   RESET_ARCHIVES,
   SET_ARCHIVE,
-  SET_ARCHIVE_BINDED,
   RESET_CLOUD_ARCHIVES,
+  SET_ARCHIVES,
+  RESET_BINDS_ARCHIVES,
 } from '../types';
 
 const initialState = {};
-const initialStateBind = {};
 
 const archivesReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_ARCHIVE:
       const {archive} = action;
       return {...state, [archive.id]: {...state[archive.id], ...archive}};
+    case SET_ARCHIVES:
+      const {archives} = action;
+      return {...state, ...archives};
+    case RESET_BINDS_ARCHIVES:
+      return Object.values(state).reduce(function(result, item) {
+        result[item.id] = {...item, isBinded: false};
+        return result;
+      }, {});
     case DELETE_ARCHIVE:
       const {archiveID} = action;
       return dissoc(archiveID, state);
@@ -38,14 +46,4 @@ const archivesReducer = (state = initialState, action) => {
   }
 };
 
-const bindedArchivesReducer = (state = initialStateBind, action) => {
-  switch (action.type) {
-    case SET_ARCHIVE_BINDED:
-      const {objectID, value} = action;
-      return {...state, [objectID]: value};
-    default:
-      return state;
-  }
-};
-
-export {archivesReducer, bindedArchivesReducer};
+export {archivesReducer};

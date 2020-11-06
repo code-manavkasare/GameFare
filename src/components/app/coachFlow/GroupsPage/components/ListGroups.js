@@ -26,19 +26,17 @@ class ListStreams extends Component {
     this.itemsRef = [];
   }
   componentDidMount() {
-    setTimeout(this.fetchSessions, 500);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (!isEqual(prevProps.messages, this.props.messages)) {
-      setTimeout(this.fetchSessions, 0);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      this.fetchSessions();
+    });
   }
   fetchSessions = async () => {
-    const coachSessions = await getSortedSessions({
-      coachSessions: this.props.coachSessions,
+    const {coachSessions} = this.props;
+    const sessions = await getSortedSessions({
+      coachSessions,
       sortBy: 'lastMessage',
     });
-    this.setState({coachSessions, loading: false});
+    this.setState({coachSessions: sessions, loading: false});
   };
   header() {
     return (
@@ -164,7 +162,6 @@ const mapStateToProps = (state) => {
   return {
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
-    messages: state.conversations,
   };
 };
 

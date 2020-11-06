@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Dimensions, StatusBar} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  StatusBar,
+  InteractionManager,
+} from 'react-native';
 import {connect} from 'react-redux';
 import Orientation from 'react-native-orientation-locker';
 import database from '@react-native-firebase/database';
@@ -53,19 +59,23 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
+    const that = this;
     const {navigation} = this.props;
 
-    this.focusListener = navigation.addListener('focus', () => {
+    that.focusListener = navigation.addListener('focus', () => {
       StatusBar.setBarStyle('light-content', true);
       Orientation.unlockAllOrientations();
     });
 
-    this.focusListener = navigation.addListener('blur', () => {
+    that.focusListener = navigation.addListener('blur', () => {
       StatusBar.setBarStyle('dark-content', true);
     });
-    Orientation.addOrientationListener(this._orientationListener.bind(this));
 
-    this.autoShareOnOpen();
+    Orientation.addOrientationListener(that._orientationListener.bind(that));
+
+    InteractionManager.runAfterInteractions(() => {
+      that.autoShareOnOpen();
+    });
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -626,7 +636,7 @@ class VideoPlayerPage extends Component {
     const connectedToSession =
       currentSessionID !== false && currentSessionID !== undefined;
     return (
-      <View style={[{flex: 1}, {backgroundColor: colors.title}]}>
+      <View style={[{flex: 1}, {backgroundColor: colors.black}]}>
         {this.header()}
         <AudioRecorderPlayer
           onRef={(ref) => {

@@ -258,16 +258,19 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
+  let selectedLocalVideos = props.selectedVideos
+    .map((video) => state.archives[video])
+    .filter((video) => video?.local);
+  let selectedRecordVideos = props.selectedVideos
+    .map((video) => state.archives[video])
+    .filter((video) => video?.recordedActions);
+
   return {
     currentSessionID: state.coach.currentSessionID,
     userID: state.user.userID,
     userConnected: state.user.userConnected,
-    selectedLocalVideos: props.selectedVideos
-      .map((video) => state.archives[video])
-      .filter((video) => video?.local),
-    selectedRecordVideos: props.selectedVideos
-      .map((video) => state.archives[video])
-      .filter((video) => video?.recordedActions),
+    selectedLocalVideos,
+    selectedRecordVideos,
   };
 };
 

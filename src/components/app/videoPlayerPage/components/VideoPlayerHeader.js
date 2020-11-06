@@ -23,7 +23,7 @@ export default class VideoPlayerHeader extends React.Component {
   };
   constructor(props) {
     super(props);
-    this.translateY = new Animated.Value(0);
+    this.translateY = new Animated.Value(1);
     this.AnimatedHeaderValue = new Animated.Value(0);
     this.videoClicks = [];
   }

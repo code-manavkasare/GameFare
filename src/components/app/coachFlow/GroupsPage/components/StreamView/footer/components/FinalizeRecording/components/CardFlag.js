@@ -245,13 +245,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   img: {
-    ...styleApp.shadowWeak,
     height: '100%',
     width: '100%',
     borderRadius: 6,
   },
   imgLg: {
-    ...styleApp.shadowWeak,
     ...styleApp.fullSize,
     borderRadius: 6,
   },
