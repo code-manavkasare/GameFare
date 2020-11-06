@@ -11,7 +11,7 @@ import {generateID} from './utility.js';
 import {getVideoUUID, generateThumbnail} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
 import {userObject} from './users';
-
+ 
 import {store} from '../../store/reduxStore';
 import {
   setCurrentSessionID,
