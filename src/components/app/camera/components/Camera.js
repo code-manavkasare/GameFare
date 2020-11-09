@@ -17,6 +17,7 @@ import {
   openVideoPlayer,
 } from '../../../functions/videoManagement';
 import {logMixpanel} from '../../../functions/logs';
+import {boolShouldComponentUpdate} from '../../../functions/redux'
 
 class Camera extends Component {
   static propTypes = {
@@ -53,6 +54,9 @@ class Camera extends Component {
   }
   componentDidMount() {
     this.configureQueue();
+  }
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
   configureQueue() {
     queue.removeWorker('hideCamera');
@@ -92,10 +96,6 @@ class Camera extends Component {
     const {isRecording} = this.state;
     if (isRecording) return;
     const {frontCamera} = this.props;
-    // const options = {quality: 0.5, base64: true};
-    // const data = await this.camera?.takePictureAsync(options);
-    // this.setState({placeholderImg: data?.uri});
-
     Animated.timing(
       this.placeholderAnimation.mirror,
       native(frontCamera ? 1 : 0, 1),

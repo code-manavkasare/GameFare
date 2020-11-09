@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
-import equal from 'fast-deep-equal';
 
 import {Col, Row} from 'react-native-easy-grid';
 import * as Progress from 'react-native-progress';
@@ -21,6 +20,7 @@ import {openVideoPlayer} from '../../../../../../../functions/videoManagement';
 
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 import AsyncImage from '../../../../../../../layout/image/AsyncImage';
+import {boolShouldComponentUpdate} from '../../../../../../../functions/redux'
 
 import {FormatDate, formatDuration} from '../../../../../../../functions/date';
 import Loader from '../../../../../../../layout/loaders/Loader';
@@ -61,14 +61,8 @@ class CardArchive extends Component {
       }
     });
   }
-  shouldComponentUpdate(prevProps, prevState) { 
-    const {userID, archive, remoteArchives} = this.props;
-    if (
-      !equal(this.props, prevProps) ||
-      !equal(prevState, this.state)
-    )
-      return true;
-    return false;
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
 
   componentDidUpdate(prevProps) {
@@ -394,11 +388,8 @@ class CardArchive extends Component {
       </TouchableOpacity>
     );
   }
-  render() {
-    const {archive} = this.props;
-    // if (!archive) {
-    //   return this.placeholder();
-    // }
+  render() { 
+    const {archive} = this.props
     return this.cardArchive(archive);
   }
 }
@@ -426,9 +417,6 @@ const mapStateToProps = (state, props) => {
     archive: props.nativeArchive
       ? props.nativeArchive
       : state.archives[props.id],
-    remoteArchives: state.user?.infoUser?.archivedStreams
-      ? Object.keys(state.user.infoUser.archivedStreams)
-      : [],
   };
 };
 

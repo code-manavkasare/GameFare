@@ -1,12 +1,13 @@
 import React from 'react';
 import {Dimensions} from 'react-native';
-import {connect} from 'react-redux';
+
+import {store} from '../../store/reduxStore'
 import {layoutAction} from '../../store/actions/layoutActions';
 const {height, width} = Dimensions.get('screen');
 
 import Orientation from 'react-native-orientation-locker';
 
-class OrientationListener extends React.Component {
+export default class OrientationListener extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -79,21 +80,12 @@ class OrientationListener extends React.Component {
       portrait = false;
     }
     const {currentHeight, currentWidth} = this.currentScreenSize(portrait);
-    const {layoutAction} = this.props;
-    layoutAction('setLayout', {
+    store.dispatch(layoutAction('setLayout', {
       currentScreenSize: {currentHeight, currentWidth, portrait, orientation},
-    });
+    }));
   };
   render() {
     return null;
   }
 }
 
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {layoutAction},
-)(OrientationListener);

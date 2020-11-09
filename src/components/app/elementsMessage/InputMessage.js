@@ -277,7 +277,6 @@ const styles = StyleSheet.create({
     marginLeft: '5%',
     marginTop: 10,
     marginBottom: 10,
-    //   paddingLeft: '2.5%',
     paddingRight: '2.5%',
     paddingTop: 2,
     paddingBottom: 5,
@@ -287,8 +286,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   buttonSend: {
-    // paddingRight: 15,
-    // paddingLeft: 15,
     borderWidth: 0,
     height: 40,
     width: '100%',

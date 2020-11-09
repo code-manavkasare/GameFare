@@ -7,22 +7,21 @@ import colors from '../../../style/colors';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import UploadHeader from './UploadHeader';
 import styleApp from '../../../style/style';
+import {boolShouldComponentUpdate} from '../../../functions/redux'
 
 class HeaderVideoLibrary extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  }
   render() {
     const {
       loader,
-      isListEmpty,
       selectableMode,
-      toggleSelect,
-      add,
-      userConnected,
       addFromCameraRoll,
-      numberNotifications,
       AnimatedHeaderValue,
       selectOnly,
       navigation,
@@ -77,14 +76,9 @@ class HeaderVideoLibrary extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const notifications = state.user.infoUser.notifications;
   return {
     userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
-    userConnected: state.user.userConnected,
-    numberNotifications: notifications
-      ? Object.values(notifications).length
-      : 0,
   };
 };
 
