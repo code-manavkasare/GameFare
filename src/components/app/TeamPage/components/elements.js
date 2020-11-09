@@ -313,7 +313,8 @@ const lastMessageObject = (messages) => {
   return Object.values(messages)[0];
 };
 
-const lastMessage = (messages, notification) => {
+const lastMessage = (messages) => {
+  if (!messages) return null;
   const userID = store.getState().user.userID;
   const lastMessage = lastMessageObject(messages);
   if (!lastMessage) {

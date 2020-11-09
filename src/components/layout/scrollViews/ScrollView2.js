@@ -1,12 +1,11 @@
 import React, {Component, PureComponent} from 'react';
 import {Platform, View, Animated, RefreshControl} from 'react-native';
-import {connect} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import colors from '../../style/colors';
-import sizes, {marginTopApp, marginTopAppLandscape} from '../../style/sizes';
+import sizes, {marginTopApp} from '../../style/sizes';
 
-class ScrollViewPage2 extends Component {
+export default class ScrollViewPage2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -110,11 +109,3 @@ class ScrollViewPage2 extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(ScrollViewPage2);

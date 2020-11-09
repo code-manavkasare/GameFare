@@ -63,6 +63,13 @@ class CardStream extends Component {
   componentDidMount = async () => {
     this.bindSession();
   };
+  bindSession() {
+    InteractionManager.runAfterInteractions(async () => {
+      const {coachSessionID} = this.props;
+      bindSession(coachSessionID);
+      bindConversation(coachSessionID);
+    });
+  }
   shouldComponentUpdate(nextProps, nextState) {
     const {session,messages,notifications,showCallButton,selected} = this.props
     if (
@@ -76,13 +83,7 @@ class CardStream extends Component {
       return true;
     return false;
   }
-  bindSession() {
-    InteractionManager.runAfterInteractions(async () => {
-      const {coachSessionID} = this.props;
-      bindSession(coachSessionID);
-      bindConversation(coachSessionID);
-    });
-  }
+  
   loading() {
     return <View>{<Loader size={55} color={colors.greyDark} />}</View>;
   }
@@ -90,7 +91,7 @@ class CardStream extends Component {
     const {
       coachSessionID, 
       session,
-      messages,
+      conversation,
       recentView,
       onClick,
       key,
@@ -98,6 +99,7 @@ class CardStream extends Component {
       notifications,
       unselectable
     } = this.props;
+  
     const checkButtonContainerStyle = {
       ...styleApp.center,
       ...styleApp.fullSize,
@@ -140,14 +142,14 @@ class CardStream extends Component {
                   </Col>
                   <Col size={50} style={[styleApp.center2, {paddingRight: 6}]}>
                     {sessionTitle(session, {}, false)}
-                    {!recentView && lastMessage(messages, hasNotification)}
+                    {!recentView && lastMessage(conversation?.messages, hasNotification)}
                   </Col>
                   {!recentView ? (
                     <Col size={20} style={styleApp.center}>
                       <View style={[styleApp.center, {marginTop: 0}]}>
                         {hasNotification
                           ? blueBadge()
-                          : sessionDate({session, messages})}
+                          : sessionDate({session, messages:conversation?.messages})}
                       </View>
                     </Col>
                   ) : (
@@ -295,16 +297,12 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, props) => {
-  const {notifications} = state.user.infoUser;
-  const conversation = state.conversations[props.coachSessionID] 
-  let messages = {}
-  if (conversation) messages = conversation.messages
   return {
     userID: state.user.userID,
     session: {...state.coachSessions[props.coachSessionID],isBinded:null},
-    messages,
+    conversation:{...state.conversations[props.coachSessionID],isBinded:null},
     currentSessionID: state.coach.currentSessionID,
-    notifications: notifications ? Object.values(notifications) : [],
+    notifications:state.user.infoUser.notifications,
   };
 };
 
