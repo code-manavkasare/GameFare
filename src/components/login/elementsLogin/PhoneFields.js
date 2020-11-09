@@ -33,7 +33,7 @@ import {formatPhoneNumber} from '../../functions/users';
 
 const ListCountry = require('../elementsFlags/country.json');
 
-class PhoneFields extends Component {
+export default class PhoneFields extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,16 +43,9 @@ class PhoneFields extends Component {
     };
     this.changePhone = this.changePhone.bind(this);
   }
-  componentDidMount() {
-    // var that = this;
-    // setTimeout(function() {
-    //   that.firstTextInput.focus();
-    // }, 550);
-  }
   focusPhoneField() {
     this.firstTextInput.focus();
-  }
-  s;
+  } 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.state !== nextState) return true;
     else if (this.props.country !== nextProps.country) return true;
@@ -155,8 +148,7 @@ class PhoneFields extends Component {
     );
   }
   async selectCountry(countrySelected) {
-    const {navigate, country} = this.props;
-    // if (country)
+    const {navigate, country} = this.props; 
     await navigate('Phone', {
       country: countrySelected ? countrySelected : country,
     });
@@ -238,8 +230,7 @@ const styles = StyleSheet.create({
     borderColor: colors.green,
   },
   rowNext: {
-    flex: 1,
-    // backgroundColor: 'red',
+    flex: 1, 
     width: '100%',
     paddingLeft: 20,
     paddingRight: 20,
@@ -253,14 +244,3 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
 });
-
-const mapStateToProps = (state) => {
-  return {
-    // country:state.user.country,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(PhoneFields);

@@ -3,6 +3,7 @@ import database from '@react-native-firebase/database';
 import messaging from '@react-native-firebase/messaging';
 import Mixpanel from 'react-native-mixpanel';
 import equal from 'fast-deep-equal';
+import RnBgTask from 'react-native-bg-thread';
 
 import {
   HIDE_FOOTER_APP,
@@ -43,36 +44,36 @@ const hideFooterApp = () => ({
   type: HIDE_FOOTER_APP,
 });
 
+export const signIn = async ({firebaseSignInToken,countryCode,phoneNumber}) => {
+  const user = await auth().signInWithCustomToken(firebaseSignInToken);
+  const userID = user.user.uid;
+  await subscribeToTopics([userID]);
+
+  Mixpanel.identify(userID);
+  Mixpanel.set({userID});
+  RnBgTask.runInBackground(() => {
+    database()
+    .ref('users/' + userID)
+    .on('value', async function(snap) {
+      const infoUser = snap.val();
+      const currentInfoUser = store.getState().user.infoUser.userInfo;
+
+      if (!equal(currentInfoUser, infoUser))
+        await store.dispatch(setUserInfo({
+          userID,
+          infoUser,
+          userConnected:infoUser.profileCompleted?true:false,
+          phoneNumber,
+          countryCode,
+        }));
+    })
+  });
+}
+
 const userAction = (val, data) => {
   return async function(dispatch) {
     if (val === 'signIn') {
-      const user = await auth().signInWithCustomToken(data.firebaseSignInToken);
-      const userID = user.user.uid;
-      await subscribeToTopics([userID]);
-
-      Mixpanel.identify(userID);
-      Mixpanel.set({userID: userID});
-      return database()
-        .ref('users/' + userID)
-        .on('value', async function(snap) {
-          const infoUser = snap.val();
-          let userConnected = false;
-          if (infoUser.profileCompleted) userConnected = true;
-
-          const infoUserToPush = {
-            userID: userID,
-            infoUser,
-            userConnected,
-            phoneNumber: data.phoneNumber,
-            countryCode: data.countryCode,
-          };
-
-          const currentInfoUser = store.getState().user.infoUser.userInfo;
-          if (!equal(currentInfoUser, infoUser))
-            await dispatch(setUserInfo(infoUserToPush));
-
-          return userConnected;
-        });
+      signIn(data)
     } else if (val === 'logout') {
       await messaging().unsubscribeFromTopic(data.userID);
       await database()

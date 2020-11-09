@@ -18,7 +18,7 @@ const coachSessionsReducer = (state = initialState, action) => {
       return {...state, [session.objectID]: session};
     case RESET_BINDS_SESSIONS:
       return Object.values(state).reduce(function(result, item) {
-        result[item.id] = {...item, isBinded: false};
+        result[item.objectID] = {...item, isBinded: false};
         return result;
       }, {});
     case DELETE_SESSION:

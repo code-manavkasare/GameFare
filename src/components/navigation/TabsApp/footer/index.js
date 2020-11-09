@@ -51,10 +51,8 @@ class Footer extends React.Component {
       !this.cameraVisible &&
       !disableAnimation
     ) {
-      // console.log(currentIndex, 'SHOW CAMERA ON ANIMATED VALUE');
       this.cameraVisible = true;
       if (this.cameraAvailability) {
-        // console.log('clear timeout');
         clearTimeout(this.cameraAvailability);
       }
       layoutAction('setCameraAvailability', true);
@@ -64,14 +62,11 @@ class Footer extends React.Component {
       !disableAnimation
     ) {
       if (this.cameraAvailability) {
-        // console.log('clear timeout');
         clearTimeout(this.cameraAvailability);
       }
-      // console.log(currentIndex, 'HIDE CAMERA ON ANIMATED VALUE');
       this.cameraVisible = false;
       this.cameraAvailability = setTimeout(() => {
         this.cameraVisible = false;
-        // console.log('done hiding');
         layoutAction('setCameraAvailability', false);
       }, 1000);
     }
@@ -80,20 +75,15 @@ class Footer extends React.Component {
     const {layoutAction} = this.props;
     const {index: currentIndex} = this.props.state;
     if (this.cameraAvailability) {
-      // console.log('clear timeout');
       clearTimeout(this.cameraAvailability);
     }
-    if (currentIndex === 1) {
-      // console.log('SHOW CAMERA ON INDEX VALUE');
+    if (currentIndex === 1) { 
       this.cameraVisible = true;
       layoutAction('setCameraAvailability', true);
-    } else {
-      // console.log('HIDE CAMERA ON INDEX VALUE');
-      // console.log('set timeout');
+    } else { 
       this.cameraVisible = false;
       this.cameraAvailability = setTimeout(() => {
-        this.cameraVisible = false;
-        // console.log('done hiding');
+        this.cameraVisible = false; 
         layoutAction('setCameraAvailability', false);
       }, 1000);
     }
@@ -223,7 +213,7 @@ class Footer extends React.Component {
               signInToPass,
               displayPastille,
               pageStack,
-            } = options;
+            } = options; 
             if (hideInFooter) {
               return null;
             }

@@ -17,10 +17,6 @@ class StreamTab extends Component {
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
   componentDidMount = () => {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      Orientation.lockToPortrait();
-    });
   };
   shouldComponentUpdate(prevProps, prevState) {
     const {coachSessionsRequests} = this.props;

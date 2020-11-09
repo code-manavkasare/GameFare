@@ -65,12 +65,15 @@ class MessageTab extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const {coachSessionID} = props.route.params;
+  const conversation = state.conversations[coachSessionID]
+  let messages = {}
+  if (conversation) messages = conversation.messages
   return {
     userID: state.user.userID,
     userConnected: state.user.userConnected,
     infoUser: state.user.infoUser.userInfo,
     session: state.coachSessions[coachSessionID],
-    messages: state.conversations[coachSessionID],
+    messages,
   };
 };
 

@@ -138,3 +138,34 @@ rm -rf ~/Library/Application\ Support/React\ Native\ Debugger/
 ## Launch app on other simulator
 yarn  ios-dev --simulator "iPhone 5s"
 
+
+## Generate provisioning profile & certificate for AppStore releases
+0. Generate signing certificate 
+- follow instruction here: https://www.ssl.com/how-to/csr-generation-in-macos-keychain-access/
+
+1. Generate distribution certificate 
+- go to:https://developer.apple.com/account/resources/certificates/list
+- click + , create Apple Distribution certificate
+- select the signing certificate generated in `step 0`.
+- next, dowload the .cer file, then double click on it. 
+- The certificate will end up in your `keychain app`. 
+
+2. Generate .p12 certificate
+- Expand the certificate by click the arrow, select the certificate and the private key, click right and export 2 elements.
+- Save it anywhere on your computer, don't forget the password set. 
+- You now have the `.p12 certificate`.
+
+3. Provisioning profile
+- go to: https://developer.apple.com/account/resources/profiles/list
+- click + and create App Store distribution profile. Continue.
+- select the correct App ID (dev or prod). Continue.
+- select the right certificate, the one you created in `step 1`. Continue.
+- download the .mobileprovision file. Double click on it to install it.
+
+4. Upload .p12 and .mobileprovision to App center
+- Select the app, the branch and click on the branch settings. 
+
+
+
+
+

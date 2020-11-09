@@ -59,25 +59,17 @@ class VideoPlayerPage extends Component {
     this.focusListener = null;
   }
   componentDidMount = () => {
-    const that = this;
-    const {navigation} = this.props;
+    Orientation.unlockAllOrientations();
+    StatusBar.setBarStyle('light-content', true);
 
-    that.focusListener = navigation.addListener('focus', () => {
-      StatusBar.setBarStyle('light-content', true);
-      Orientation.unlockAllOrientations();
-    });
-
-    that.focusListener = navigation.addListener('blur', () => {
-      StatusBar.setBarStyle('dark-content', true);
-    });
-
-    Orientation.addOrientationListener(that._orientationListener.bind(that));
+    Orientation.addOrientationListener(this._orientationListener.bind(this));
 
     InteractionManager.runAfterInteractions(() => {
-      that.autoShareOnOpen();
+      this.autoShareOnOpen();
     });
   };
 
+  
   static getDerivedStateFromProps(props, state) {
     const {archives, objectID} = props.route.params;
     const {linkedPlayers} = state;
@@ -112,9 +104,6 @@ class VideoPlayerPage extends Component {
   };
 
   componentWillUnmount() {
-    if (this.focusListener) {
-      this.focusListener();
-    }
     Orientation.removeOrientationListener(this._orientationListener.bind(this));
   }
 

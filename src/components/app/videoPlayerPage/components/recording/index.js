@@ -3,7 +3,7 @@ import {View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {timeout} from '../../../../functions/coach';
 
-class Recording extends Component {
+export default class Recording extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,7 +18,6 @@ class Recording extends Component {
   };
   componentDidUpdate = (prevProps, prevState) => {
     const {isVideoPlayerReady, isPlayingReview} = this.props;
-
     if (isVideoPlayerReady && !isPlayingReview) this.launchIfPreview();
   };
   getCurrentIndex = () => {
@@ -168,13 +167,3 @@ class Recording extends Component {
   }
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-    userID: state.user.userID,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(Recording);

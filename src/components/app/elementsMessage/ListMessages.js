@@ -160,9 +160,12 @@ const mapStateToProps = (state, props) => {
   const isSessionRequest =
     state.user.infoUser.coachSessionsRequests &&
     state.user.infoUser.coachSessionsRequests[props.objectID];
+  const conversation = state.conversations[props.objectID]
+  let messages = {}
+  if (conversation) messages = conversation.messages
   return {
     blockedUsers: state.user.infoUser.blockedUsers,
-    messages: state.conversations[props.objectID],
+    messages,
     isSessionRequest: isSessionRequest ? isSessionRequest : null,
     userID: state.user.userID,
   };

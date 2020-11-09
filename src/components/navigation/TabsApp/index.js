@@ -13,13 +13,14 @@ import colors from '../../style/colors';
 const Tab = createMaterialTopTabNavigator();
 
 class TabsApp extends React.Component {
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     if (isEqual(this.props, nextProps)) {
       return false;
     }
     return true;
   }
   render = () => {
+    console.log('render footer app')
     return (
       <Tab.Navigator
         initialRouteName="VideoLibrary"
@@ -68,15 +69,15 @@ class TabsApp extends React.Component {
         <Tab.Screen
           name="CallTab"
           component={CallTabPage}
+   
           options={{
             pageStack: 'GroupsPage',
             label: 'Calls',
+            displayPastille:true,
             signInToPass: false,
             icon: {
               name: 'video',
               type: 'font',
-              // alt name: 'user',
-              // alt type: 'moon',
               size: 23,
             },
           }}

@@ -1,19 +1,15 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Animated, StatusBar} from 'react-native';
-import {connect} from 'react-redux';
 import {Col, Row} from 'react-native-easy-grid';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 import sizes from '../../style/sizes';
-import Orientation from 'react-native-orientation-locker';
-
-import {layoutAction} from '../../../store/actions/layoutActions';
 
 import BottomButtons from './components/BottomButtons';
 import HeaderBackButton from '../../layout/headers/HeaderBackButton';
 import Camera from './components/Camera';
 
-class CameraPage extends Component {
+export default class CameraPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,22 +25,8 @@ class CameraPage extends Component {
       onRef(this);
     }
   }
-  componentWillUnmount() {
-    if (this.focusListener) {
-      this.focusListener();
-    }
-  }
   flipCamera() {
     this.setState({frontCamera: !this.state.frontCamera});
-  }
-  close() {
-    const {props, camera} = this;
-    const {layoutAction, navigation} = props;
-    if (camera) {
-      camera.stopRecording(false);
-    }
-    layoutAction('setLayout', {isFooterVisible: true});
-    navigation.goBack();
   }
   render() {
     const {state, camera} = this;
@@ -67,11 +49,9 @@ class CameraPage extends Component {
           sizeLoader={40}
           initialBorderColorIcon={'transparent'}
           initialTitleOpacity={0}
-          // icon1={'chevron-left'}
           typeIcon1="font"
           backgroundColorIcon1={colors.title + '70'}
           onPressColorIcon1={colors.title + '30'}
-          clickButton1={() => this.close()}
           nobackgroundColorIcon1={true}
           sizeIcon1={18}
           colorIcon1={colors.white}
@@ -117,11 +97,3 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {layoutAction},
-)(CameraPage);

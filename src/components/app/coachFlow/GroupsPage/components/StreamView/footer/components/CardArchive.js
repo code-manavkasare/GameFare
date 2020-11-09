@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {
   View,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
+import equal from 'fast-deep-equal';
 
 import {Col, Row} from 'react-native-easy-grid';
 import * as Progress from 'react-native-progress';
@@ -29,7 +30,7 @@ import styleApp from '../../../../../../../style/style';
 import {logMixpanel} from '../../../../../../../functions/logs';
 import {bindArchive} from '../../../../../../../database/firebase/bindings';
 
-class CardArchive extends PureComponent {
+class CardArchive extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     local: PropTypes.bool,
@@ -59,6 +60,15 @@ class CardArchive extends PureComponent {
         bindArchive(id);
       }
     });
+  }
+  shouldComponentUpdate(prevProps, prevState) { 
+    const {userID, archive, remoteArchives} = this.props;
+    if (
+      !equal(this.props, prevProps) ||
+      !equal(prevState, this.state)
+    )
+      return true;
+    return false;
   }
 
   componentDidUpdate(prevProps) {
@@ -259,6 +269,7 @@ class CardArchive extends PureComponent {
       unclickable,
       disableClick,
     } = this.props;
+    if (!archive) return this.placeholder()
     const {
       id,
       thumbnail,
@@ -268,8 +279,7 @@ class CardArchive extends PureComponent {
       progress,
       isBinded,
       url,
-    } = archive;
-
+    } = archive; 
     const {loader} = this.state;
     return (
       <TouchableOpacity
@@ -385,9 +395,9 @@ class CardArchive extends PureComponent {
   }
   render() {
     const {archive} = this.props;
-    if (!archive) {
-      return this.placeholder();
-    }
+    // if (!archive) {
+    //   return this.placeholder();
+    // }
     return this.cardArchive(archive);
   }
 }
