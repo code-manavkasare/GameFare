@@ -17,7 +17,7 @@ import {
   openVideoPlayer,
 } from '../../../functions/videoManagement';
 import {logMixpanel} from '../../../functions/logs';
-import {boolShouldComponentUpdate} from '../../../functions/redux'
+import {boolShouldComponentUpdate} from '../../../functions/redux';
 
 class Camera extends Component {
   static propTypes = {
@@ -55,8 +55,13 @@ class Camera extends Component {
   componentDidMount() {
     this.configureQueue();
   }
-  shouldComponentUpdate(nextProps,nextState) {
-    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  shouldComponentUpdate(nextProps, nextState) {
+    return boolShouldComponentUpdate({
+      props: this.props,
+      nextProps,
+      state: this.state,
+      nextState,
+    });
   }
   configureQueue() {
     queue.removeWorker('hideCamera');
@@ -221,6 +226,7 @@ class Camera extends Component {
       <View style={styleApp.flexColumnBlack}>
         {(isRecording || !displayPlaceholder) && (
           <RNCamera
+            videoStabilizationMode={'standard'}
             onCameraReady={() => {
               this.setState({cameraReady: true});
               if (onCameraReady) {
