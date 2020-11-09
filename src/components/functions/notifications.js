@@ -62,6 +62,8 @@ const deleteNotifications = async (userId, coachSessionId, notifications) => {
 };
 
 const conversationIsInNotification = (coachSessionId, notifications) => {
+  console.log('coachSessionId, notifications',coachSessionId, notifications)
+  if (!notifications) return false
   let isInNotification = false;
   for (const notification of notifications) {
     const {action, coachSessionID} = notification.data;

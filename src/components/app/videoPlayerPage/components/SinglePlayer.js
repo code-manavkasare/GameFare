@@ -18,6 +18,7 @@ import {bindArchive} from '../../../database/firebase/bindings';
 import RecordingComponent from './recording/index';
 import ControlButtonRecording from './recording/components/ControlButtonsRecording';
 import AllIcon from '../../../layout/icons/AllIcons';
+import {boolShouldComponentUpdate} from '../../../functions/redux'
 
 class SinglePlayer extends Component {
   static propTypes = {
@@ -48,6 +49,10 @@ class SinglePlayer extends Component {
       }
     });
   };
+
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  }
 
   componentDidUpdate = (prevProps, prevState) => {
     const {videoFromCloud: prevVideoFromCloud} = prevProps;

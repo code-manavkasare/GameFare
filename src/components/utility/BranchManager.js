@@ -16,6 +16,8 @@ import {
 } from '../database/branch';
 import {navigate} from '../../../NavigationService';
 import {logMixpanel} from '../functions/logs';
+import {boolShouldComponentUpdate} from '../functions/redux'
+
 
 const testParams = {
   type: 'session',
@@ -39,6 +41,9 @@ class BranchManager extends Component {
       // params will never be null if error is null
       this.setState({branchParams: params});
     });
+  }
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
 
   componentDidUpdate(prevProps) {

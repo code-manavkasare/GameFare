@@ -26,6 +26,7 @@ import {
 } from '../../style/sizes';
 import {openVideoPlayer} from '../../functions/videoManagement';
 import {getArchiveByID} from '../../functions/archive';
+import {boolShouldComponentUpdate} from '../../functions/redux'
 
 import {
   isVideosAreBeingShared,
@@ -68,7 +69,10 @@ class VideoPlayerPage extends Component {
       this.autoShareOnOpen();
     });
   };
-
+  
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  }
   
   static getDerivedStateFromProps(props, state) {
     const {archives, objectID} = props.route.params;

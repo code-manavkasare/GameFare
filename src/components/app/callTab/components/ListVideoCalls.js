@@ -1,7 +1,6 @@
 import React, {Component,memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import equal from 'fast-deep-equal';
 
 import {navigate} from '../../../../../NavigationService';
 
@@ -10,8 +9,8 @@ import colors from '../../../style/colors';
 import sizes from '../../../style/sizes';
 
 import {FlatListComponent} from '../../../layout/Views/FlatList';
-import ButtonColor from '../../../layout/buttons/Button';
-import AllIcons from '../../../layout/icons/AllIcons';
+import {boolShouldComponentUpdate} from '../../../functions/redux'
+
 
 import {viewLive, rowTitle} from '../../TeamPage/components/elements';
 import {getSortedSessions} from '../../../functions/coach';
@@ -22,14 +21,9 @@ class ListVideoCalls extends Component {
     super(props);
     this.state = {};
   }
-  shouldComponentUpdate(prevProps, prevState) {
-    if (
-      !equal(this.props, prevProps) ||
-      !equal(prevState, this.state)
-    )
-      return true;
-    return false;
-  }
+  // shouldComponentUpdate(nextProps,nextState) {
+  //   return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  // }
   sessionsArray = () => {
     const {coachSessions, currentSessionID} = this.props;
     if (!coachSessions) {

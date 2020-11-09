@@ -7,6 +7,7 @@ import {navigate} from '../../../../../../NavigationService';
 import CardStreamView from './CardStreamView';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
 import sizes from '../../../../style/sizes';
+import {boolShouldComponentUpdate} from '../../../../functions/redux'
 
 class ListStreams extends Component {
   constructor(props) {
@@ -18,15 +19,8 @@ class ListStreams extends Component {
     if (prevProps.coachSessions.length === 1 && coachSessions.length === 0)
       return navigate('Messages');
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    const {coachSessions, userConnected} = this.props;
-    if (
-      !isEqual(coachSessions, nextProps.coachSessions) ||
-      !isEqual(userConnected, nextProps.userConnected) ||
-      !isEqual(nextState, this.state)
-    )
-      return true;
-    return false;
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
 
   sessionsArray = () => {

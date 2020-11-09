@@ -16,6 +16,7 @@ import AllIcons from '../icons/AllIcons';
 import styleApp from '../../style/style';
 import AsyncImage from '../image/AsyncImage';
 import {logMixpanel} from '../../functions/logs';
+import {boolShouldComponentUpdate} from '../../functions/redux' 
 
 class HeaderBackButton extends Component {
   constructor(props) {
@@ -30,6 +31,9 @@ class HeaderBackButton extends Component {
     if (loaderOn && onRef) {
       onRef(this);
     }
+  }
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
   animatedValues() {
     const {
