@@ -6,7 +6,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../../../NavigationService';
-import {boolShouldComponentUpdate} from '../../../../../functions/logs'
+import {boolShouldComponentUpdate} from '../../../../../functions/redux'
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
