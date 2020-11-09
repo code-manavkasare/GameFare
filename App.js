@@ -3,26 +3,23 @@ import * as Sentry from '@sentry/react-native';
 import {Integrations as TracingIntegrations} from '@sentry/tracing';
 import React, {Component} from 'react';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {connect} from 'react-redux';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Config from 'react-native-config';
 import DeviceInfo from 'react-native-device-info';
 import Orientation from 'react-native-orientation-locker';
 import BackgroundTimer from 'react-native-background-timer';
-import convertToCache from 'react-native-video-cache';
 import {Text} from 'react-native';
+
+import {store} from './src/store/reduxStore';
 
 import InitialStack from './src/components/navigation/index';
 import Notification from './src/components/layout/alerts/Notification';
 import UploadManager from './src/components/app/elementsUpload/UploadManager';
 import AppState from './src/components/app/functional/AppState.js';
 import {updateNotificationBadgeInBackground} from './src/components/functions/notifications.js';
-import {regenerateThumbnail} from './src/components/functions/videoManagement.js';
-import {userAction} from './src/actions/userActions';
-import {globaleVariablesAction} from './src/actions/globaleVariablesActions.js';
-import {appSettingsAction} from './src/actions/appSettingsActions.js';
-import {refreshTokenOnDatabase} from './src/components/functions/notifications';
+import {signIn} from './src/store/actions/userActions'; 
+import {setCurrentBuildNumber} from './src/store/actions/appSettingsActions.js';
 import {navigationRef} from './NavigationService';
 import OrientationListener from './src/components/hoc/orientationListener';
 import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvider';
@@ -30,6 +27,7 @@ import ConnectionTypeProvider from './src/components/utility/ConnectionTypeProvi
 import BranchManager from './src/components/utility/BranchManager';
 import CallListener from './src/components/utility/CallListener';
 import {audioDebugger} from './src/components/utility/AudioSessionDebugger';
+import {logsBridgeRN} from './src/components/functions/logs';
 
 import {
   updateLocalVideoUrls,
@@ -45,14 +43,17 @@ const MyTheme = {
   },
 };
 
-class App extends Component {
+// if (__DEV__) logsBridgeRN();
+
+export default class App extends Component {
   constructor() {
     super();
     if (Text.defaultProps == null) Text.defaultProps = {};
     Text.defaultProps.allowFontScaling = false;
   }
   async componentDidMount() {
-    const {archives, appSettingsAction, buildId, userID} = this.props;
+    const {userID} = store.getState().user;
+    const {buildId} = store.getState().appSettings;
     if (!__DEV__) {
       this.configureSentry();
     }
@@ -62,37 +63,19 @@ class App extends Component {
 
     const actualBuildId = await DeviceInfo.getBuildId();
     if (buildId !== actualBuildId) {
-      for (const archive of Object.values(archives)) {
-        if (archive.local) {
-          // regenerateThumbnail(archive);
-        }
-      }
-      appSettingsAction('setCurrentBuildNumber', actualBuildId);
+      store.dispatch(setCurrentBuildNumber(actualBuildId));
     }
-
-    SplashScreen.hide();
 
     if (userID !== '') {
       this.autoSignIn();
-      refreshTokenOnDatabase(userID);
-      oneTimeFixStoreLocalVideoLibrary();
-      updateLocalVideoUrls();
-      convertToCache(''); // starts video cache server so cached url's work on startup
+      await oneTimeFixStoreLocalVideoLibrary();
+      await updateLocalVideoUrls();
     }
 
     //Console log the audio session
     audioDebugger({interval: 5000, disabled: true});
+    SplashScreen.hide();
   }
-
-  componentDidUpdate = async (prevProps) => {
-    const {networkIsConnected, userID, isBindToFirebase} = this.props;
-    if (prevProps.networkIsConnected !== networkIsConnected) {
-      if (networkIsConnected && userID !== '' && !isBindToFirebase) {
-        this.autoSignIn();
-        refreshTokenOnDatabase(userID);
-      }
-    }
-  };
 
   configureSentry = () => {
     Sentry.init({
@@ -104,9 +87,10 @@ class App extends Component {
       // integrations: [new TracingIntegrations.BrowserTracing()],
       // tracesSampleRate: 0.2,
     });
+    const {userConnected, infoUser, userID} = store.getState().user;
     Sentry.configureScope((scope) => {
-      if (this.props.userConnected) {
-        const {userInfo, userID} = this.props;
+      if (userConnected) {
+        const {userInfo} = infoUser;
         scope.setUser({
           username: `${userInfo.firstname} ${userInfo.lastname}`,
           id: userID,
@@ -119,16 +103,10 @@ class App extends Component {
   };
 
   async autoSignIn() {
-    const {
-      countryCode,
-      isBindToFirebase,
-      networkIsConnected,
-      phoneNumber,
-      userID,
-    } = this.props;
+    const {userID, phoneNumber, countryCode} = store.getState().user;
     var url = `${Config.FIREBASE_CLOUD_FUNCTIONS_URL}signUpUser`;
 
-    const promiseAxios = await axios.get(url, {
+    const {data} = await axios.get(url, {
       params: {
         phone: phoneNumber,
         countryCode: '+' + countryCode,
@@ -136,18 +114,12 @@ class App extends Component {
       },
     });
 
-    if (promiseAxios.data.response !== false) {
-      await this.props.userAction('signIn', {
+    if (data.response !== false) {
+      await signIn({
         userID: userID,
-        firebaseSignInToken: promiseAxios.data.firebaseSignInToken,
+        firebaseSignInToken: data.firebaseSignInToken,
         phoneNumber: phoneNumber,
         countryCode: countryCode,
-      });
-    }
-
-    if (!isBindToFirebase && networkIsConnected) {
-      await this.props.globaleVariablesAction('setFirebaseBindingsState', {
-        isBindToFirebase: true,
       });
     }
 
@@ -158,7 +130,9 @@ class App extends Component {
     return (
       <NavigationContainer ref={navigationRef} theme={MyTheme}>
         <AppState />
+
         {InitialStack()}
+
         <OrientationListener />
         <Notification />
         <UploadManager />
@@ -171,21 +145,3 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    archives: state.archives,
-    isBindToFirebase: state.globaleVariables.isBindToFirebase,
-    userConnected: state.user.userConnected,
-    userInfo: state.user.infoUser.userInfo,
-    userID: state.user.userIDSaved,
-    phoneNumber: state.user.phoneNumber,
-    countryCode: state.user.countryCode,
-    networkIsConnected: state.network.isConnected,
-    buildId: state.appSettings.buildId,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {appSettingsAction, userAction, globaleVariablesAction},
-)(App);

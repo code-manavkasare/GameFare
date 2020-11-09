@@ -9,8 +9,8 @@ import {navigate} from '../../../../../../../../../NavigationService';
 import ButtonColor from '../../../../../../../layout/Views/Button';
 import AllIcons from '../../../../../../../layout/icons/AllIcons';
 
-import {uploadQueueAction} from '../../../../../../../../actions/uploadQueueActions';
-import {layoutAction} from '../../../../../../../../actions/layoutActions';
+import {uploadQueueAction} from '../../../../../../../../store/actions/uploadQueueActions';
+import {layoutAction} from '../../../../../../../../store/actions/layoutActions';
 import sizes from '../../../../../../../style/sizes';
 
 import {
@@ -34,7 +34,7 @@ import {
   goToSettings,
 } from '../../../../../../../functions/pictures';
 import isEqual from 'lodash.isequal';
-import {coachAction} from '../../../../../../../../actions/coachActions';
+import {coachAction} from '../../../../../../../../store/actions/coachActions';
 
 class BottomButton extends Component {
   constructor(props) {

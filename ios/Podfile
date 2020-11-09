@@ -56,9 +56,7 @@ def shared_pods
 
   #RN VideoProcessing
   pod 'GPUImage', git: 'https://github.com/BunHouth/GPUImage.git'
-
-  # Mapbox
-  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
+ 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
   flipper_pods()
 end

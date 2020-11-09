@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import NetInfo from '@react-native-community/netinfo';
 
 import {sentryAddBreadcrumb} from '../functions/logs.js';
-import {connectionTypeAction} from '../../actions';
+import {connectionTypeAction} from '../../store/actions';
 import {logMixpanel} from '../functions/logs';
 
 class ConnectionTypeProvider extends Component {

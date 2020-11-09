@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, {Component,memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
-import {Row, Col} from 'react-native-easy-grid';
+import equal from 'fast-deep-equal';
 
 import {navigate} from '../../../../../NavigationService';
 
@@ -22,7 +22,14 @@ class ListVideoCalls extends Component {
     super(props);
     this.state = {};
   }
-
+  shouldComponentUpdate(prevProps, prevState) {
+    if (
+      !equal(this.props, prevProps) ||
+      !equal(prevState, this.state)
+    )
+      return true;
+    return false;
+  }
   sessionsArray = () => {
     const {coachSessions, currentSessionID} = this.props;
     if (!coachSessions) {
@@ -55,7 +62,7 @@ class ListVideoCalls extends Component {
 
     const currentlyInSession =
       currentSessionID && liveSessionHeader && !inlineSearch;
-    const coachSessions = getSortedSessions({
+    let coachSessions = getSortedSessions({
       coachSessions: propSessions,
       sortBy: 'lastConnection',
       exclude: [currentSessionID],
@@ -73,13 +80,13 @@ class ListVideoCalls extends Component {
           iconButton: !userConnected ? 'user' : 'search',
           image: require('../../../../img/images/search.png'),
         }}
-        cardList={({item: session}) => (
-          <View style={styles.cardStreamContainerStyle}>
+        cardList={({item: session}) => {
+          return <View style={styles.cardStreamContainerStyle}>
             <CardStreamView
               coachSessionID={session.id}
               key={session.id}
               onClick={(session) => onClick(session)}
-              selected={selectedSessions[session.id] ? true : false}
+              selected={selectedSessions[session.id]?true:false}
               showCallButton={!hideCallButton}
               scale={1}
               recentView
@@ -87,7 +94,7 @@ class ListVideoCalls extends Component {
             />
             <View style={styles.divider} />
           </View>
-        )}
+        }}
         incrementRendering={6}
         initialNumberToRender={8}
         header={
@@ -228,7 +235,6 @@ const mapStateToProps = (state) => {
   return {
     coachSessions: state.user.infoUser.coachSessions,
     userConnected: state.user.userConnected,
-    sessionInfo: state.coach.sessionInfo,
     currentSessionID: state.coach.currentSessionID,
     currentSession: state.coachSessions[state.coach.currentSessionID],
   };
@@ -237,4 +243,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   {},
-)(ListVideoCalls);
+)((ListVideoCalls));

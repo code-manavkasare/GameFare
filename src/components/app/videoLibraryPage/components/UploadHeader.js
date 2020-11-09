@@ -28,7 +28,6 @@ class UploadHeader extends Component {
   static getDerivedStateFromProps(props, state) {
     const {uploadQueue, connectionType} = props;
     const {queue} = uploadQueue;
-    console.log(queue);
     const headerVisible = isQueueVisible(queue);
     if (headerVisible) {
       const waitingForWifi =

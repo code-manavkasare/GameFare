@@ -20,7 +20,7 @@ import {
   pickLibrary,
   permission,
 } from '../../functions/pictures';
-import {generateID} from '../../functions/createEvent';
+import {generateID} from '../../functions/utility.js';
 import {
   sendNewMessage,
   nameOtherMemberConversation,
@@ -155,7 +155,6 @@ class InputMessage extends React.Component {
           placeholderTextColor={colors.greyDark}
           enableScrollToCaret
           value={this.state.inputValue}
-          // autofocus={initialMessage === '' ? false : true}
           placeholder={this.placeholderInput()}
           onChangeText={(text) => this.setState({inputValue: text})}
           underlineColorAndroid="transparent"
@@ -319,9 +318,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    input: state.message.input,
     userID: state.user.userID,
-    userConnected: state.user.userConnected,
   };
 };
 

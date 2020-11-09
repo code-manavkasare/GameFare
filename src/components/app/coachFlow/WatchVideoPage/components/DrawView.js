@@ -13,8 +13,8 @@ import database from '@react-native-firebase/database';
 import {ImageEditor} from '@wwimmo/react-native-sketch-canvas';
 
 import DisplayDrawingToViewers from './DisplayDrawingToViewers';
-import {coachAction} from '../../../../../actions/coachActions';
-import {generateID} from '../../../../functions/createEvent';
+import {coachAction} from '../../../../../store/actions/coachActions';
+import {generateID} from '../../../../functions/utility.js';
 import {getLastDrawing} from '../../../../functions/coach';
 
 import styleApp from '../../../../style/style';

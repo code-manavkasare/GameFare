@@ -111,7 +111,9 @@ class CardUserSelect extends Component {
             </View>
           );
         }}
-        click={() => onClick(user)}
+        click={() => {
+          onClick && onClick(user);
+        }}
         color="white"
         style={[styles.cardUser]}
         onPressColor={colors.off2}

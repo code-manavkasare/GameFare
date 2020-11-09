@@ -1,5 +1,4 @@
-import React, {Component} from 'react';
-import {store} from '../../../reduxStore';
+import {store} from '../../store/reduxStore';
 
 const getSortedMembers = (members) => {
   const userID = store.getState().user.userID;
@@ -37,6 +36,4 @@ const getSortedMembers = (members) => {
   return members;
 };
 
-module.exports = {
-  getSortedMembers,
-};
+export {getSortedMembers};

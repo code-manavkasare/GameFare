@@ -1,6 +1,6 @@
 import {indexUsers, client} from '../database/algolia';
 import database from '@react-native-firebase/database';
-import {store} from '../../../reduxStore';
+import {store} from '../../store/reduxStore';
 
 const autocompleteSearchUsers = async (
   search,

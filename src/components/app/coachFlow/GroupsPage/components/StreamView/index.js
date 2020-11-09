@@ -30,10 +30,10 @@ import {
   ratio,
 } from '../../../../../style/sizes';
 
-import {coachAction} from '../../../../../../actions/coachActions';
-import {coachSessionsAction} from '../../../../../../actions/coachSessionsActions';
-import {userAction} from '../../../../../../actions/userActions';
-import {layoutAction} from '../../../../../../actions/layoutActions';
+import {coachAction} from '../../../../../../store/actions/coachActions';
+import {coachSessionsAction} from '../../../../../../store/actions/coachSessionsActions';
+import {userAction} from '../../../../../../store/actions/userActions';
+import {layoutAction} from '../../../../../../store/actions/layoutActions';
 
 import {
   logMixpanel,
@@ -176,9 +176,14 @@ class GroupsPage extends Component {
       StatusBar.setBarStyle('light-content', true);
     });
 
-    this.focusListener = navigation.addListener('blur', () => {
+    this.blurListener = navigation.addListener('blur', () => {
       StatusBar.setBarStyle('dark-content', true);
     });
+  }
+  componentWillUnmount=() =>{
+    this.blurListener()
+    this.focusListener()
+    Orientation.removeOrientationListener()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -221,6 +226,7 @@ class GroupsPage extends Component {
         this.footerRef?.bottomButtonsRef?.clickRecord();
       } catch (e) {}
     }
+    prevProps = null
   }
   isTokenUpToDate = () => {
     const {userID, session: coachSession} = this.props;

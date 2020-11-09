@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import database from '@react-native-firebase/database';
 
-import {coachAction} from '../../../../../../../actions/coachActions';
+import {coachAction} from '../../../../../../../store/actions/coachActions';
 import {navigate} from '../../../../../../../../NavigationService';
 import {
   timeout,

@@ -74,7 +74,6 @@ const mapStateToProps = (state, props) => {
     state.user.infoUser.coachSessionsRequests &&
     state.user.infoUser.coachSessionsRequests[objectID];
   return {
-    userID: state.user.userID,
     infoUser: state.user.infoUser.userInfo,
     isSessionRequest: isSessionRequest ? isSessionRequest : null,
   };

@@ -1,8 +1,16 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  InteractionManager,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
+import equal from 'fast-deep-equal';
 
 import {Col, Row} from 'react-native-easy-grid';
 import * as Progress from 'react-native-progress';
@@ -22,7 +30,7 @@ import styleApp from '../../../../../../../style/style';
 import {logMixpanel} from '../../../../../../../functions/logs';
 import {bindArchive} from '../../../../../../../database/firebase/bindings';
 
-class CardArchive extends PureComponent {
+class CardArchive extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     local: PropTypes.bool,
@@ -46,16 +54,27 @@ class CardArchive extends PureComponent {
   }
 
   componentDidMount() {
-    const {id, archive} = this.props;
-    if (!archive || !archive?.local) {
-      bindArchive(id);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      const {id, archive} = this.props;
+      if (!archive || !archive?.local) {
+        bindArchive(id);
+      }
+    });
+  }
+  shouldComponentUpdate(prevProps, prevState) { 
+    const {userID, archive, remoteArchives} = this.props;
+    if (
+      !equal(this.props, prevProps) ||
+      !equal(prevState, this.state)
+    )
+      return true;
+    return false;
   }
 
   componentDidUpdate(prevProps) {
     const {id, archive} = this.props;
     const {archive: prevArchive} = prevProps;
-    if (prevArchive?.local && !archive?.local) {
+    if ((prevArchive?.local && !archive?.local) || (prevArchive && !archive)) {
       bindArchive(id);
     }
   }
@@ -91,10 +110,12 @@ class CardArchive extends PureComponent {
     }
   };
 
-  localIndicator() {
+  labelIndicator() {
     const {archive} = this.props;
     const {local, progress} = archive;
 
+    if (this.isVideoGettingUploading())
+      return <Loader size={25} color={colors.white} />;
     if (progress)
       return (
         <Progress.Circle
@@ -122,11 +143,6 @@ class CardArchive extends PureComponent {
     const {url, sourceUser} = archive;
     return (!url || url === '') && sourceUser !== userID;
   };
-  uploadingIndicator() {
-    if (this.isVideoGettingUploading())
-      return <Loader size={25} color={colors.white} />;
-    return null;
-  }
   linearGradient() {
     const lgStyle = {
       width: '100%',
@@ -205,12 +221,40 @@ class CardArchive extends PureComponent {
               />
             )}
           </Col>
-          <Col size={55} />
+          <Col size={70} />
           <Col size={15} style={styleApp.center3}>
-            {this.uploadingIndicator()}
+            {this.labelIndicator()}
           </Col>
-          <Col size={15} style={styleApp.center3}>
-            {this.localIndicator()}
+        </Row>
+      </View>
+    );
+  };
+  viewNoVideo = () => {
+    const styleRow = {
+      position: 'absolute',
+      padding: 15,
+      height: '100%',
+      zIndex: 230,
+      width: '100%',
+    };
+
+    return (
+      <View style={styleRow}>
+        <Row>
+          <Col size={15} style={styleApp.center}>
+            <AllIcons
+              name={'campground'}
+              type="font"
+              size={16}
+              color={colors.white}
+            />
+            <Text
+              style={[
+                styleApp.textBold,
+                {marginTop: 10, color: colors.white, fontSize: 14},
+              ]}>
+              Unavailable
+            </Text>
           </Col>
         </Row>
       </View>
@@ -225,6 +269,7 @@ class CardArchive extends PureComponent {
       unclickable,
       disableClick,
     } = this.props;
+    if (!archive) return this.placeholder()
     const {
       id,
       thumbnail,
@@ -232,8 +277,11 @@ class CardArchive extends PureComponent {
       durationSeconds,
       local,
       progress,
-    } = archive;
+      isBinded,
+      url,
+    } = archive; 
     const {loader} = this.state;
+    
     return (
       <TouchableOpacity
         activeOpacity={0.8}
@@ -255,7 +303,9 @@ class CardArchive extends PureComponent {
         {this.buttonDismiss()}
 
         <View style={[styles.cardArchive, style]}>
-          {local && thumbnail ? (
+          {isBinded && !url ? (
+            this.viewNoVideo()
+          ) : local && thumbnail ? (
             <Image style={styleApp.fullSize} source={{uri: thumbnail}} />
           ) : (
             <AsyncImage
@@ -263,7 +313,7 @@ class CardArchive extends PureComponent {
               mainImage={thumbnail ? thumbnail : ''}
             />
           )}
-          {!hideInformation && this.rowIcons()}
+          {!hideInformation && url && this.rowIcons()}
 
           {selectableMode && (
             <View
@@ -314,7 +364,7 @@ class CardArchive extends PureComponent {
 
           {!hideInformation && this.linearGradient()}
 
-          {!hideInformation && (
+          {!hideInformation && url && (
             <View
               pointerEvents="none"
               style={{...styles.viewText, bottom: 5, left: 10}}>
@@ -346,9 +396,9 @@ class CardArchive extends PureComponent {
   }
   render() {
     const {archive} = this.props;
-    if (!archive) {
-      return this.placeholder();
-    }
+    // if (!archive) {
+    //   return this.placeholder();
+    // }
     return this.cardArchive(archive);
   }
 }

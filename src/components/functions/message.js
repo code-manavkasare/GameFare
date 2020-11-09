@@ -1,21 +1,11 @@
 import database from '@react-native-firebase/database';
-import moment from 'moment';
+
 import {includes} from 'ramda';
-import {indexDiscussions, client} from '../database/algolia';
 import SendSMS from 'react-native-sms';
 
-import {store} from '../../../reduxStore';
-import {setConversation} from '../../actions/conversationsActions';
+import {indexDiscussions, client} from '../database/algolia';
 import {navigate} from '../../../NavigationService';
 import {createInviteToAppBranchUrl} from '../database/branch';
-
-const generateID = () => {
-  return (
-    Math.random()
-      .toString(36)
-      .substring(2) + Date.now().toString(36)
-  );
-};
 
 function discussionObj(members, nameDiscussion, firstMessageExists) {
   return {

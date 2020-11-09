@@ -14,7 +14,7 @@ import {connect} from 'react-redux';
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
-import {uploadQueueAction} from '../../../actions/uploadQueueActions';
+import {uploadQueueAction} from '../../../store/actions/uploadQueueActions';
 import TaskCard from './TaskCard';
 import * as Progress from 'react-native-progress';
 import ButtonColor from '../../layout/Views/Button';

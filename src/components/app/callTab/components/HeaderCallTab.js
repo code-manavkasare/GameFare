@@ -1,18 +1,16 @@
 import React, {Component} from 'react';
-import {Share, Image} from 'react-native';
-import {connect} from 'react-redux';
-import {store} from '../../../../../reduxStore';
+import {Share} from 'react-native';
+import database from '@react-native-firebase/database';
+
+import {store} from '../../../../store/reduxStore';
 import HeaderBackButton from '../../../layout/headers/HeaderBackButton';
 import {createShareVideosBranchUrl} from '../../../database/branch';
 import colors from '../../../style/colors';
-
-import {getOnceValue} from '../../../database/firebase/methods';
-import {getImageSize} from '../../../functions/pictures';
-import database from '@react-native-firebase/database';
+import {getValueOnce} from '../../../database/firebase/methods';
 import {shareVideosWithTeams} from '../../../functions/videoManagement';
 import {timeout} from '../../../functions/coach';
 
-class HeaderCallTab extends Component {
+export default class HeaderCallTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,14 +31,16 @@ class HeaderCallTab extends Component {
     return true;
   };
   clickShare = async () => {
-    const {archivesToShare, archives} = this.props;
+    const {archivesToShare} = this.props;
     let {branchLink} = this.state;
     if (!branchLink && archivesToShare) {
       await this.setState({loader: true});
-      const infoArchives = archivesToShare.map((archive) => archives[archive]);
+      const infoArchives = archivesToShare.map(
+        (archive) => store.getState().archives[archive],
+      );
 
       const localVideos = infoArchives
-        .filter((archive) => archive.local)
+        .filter((archive) => archive?.local)
         .map((archive) => archive.id);
       if (localVideos.length > 0) {
         await shareVideosWithTeams(localVideos, []);
@@ -48,7 +48,7 @@ class HeaderCallTab extends Component {
       }
 
       const cloudVideos = infoArchives
-        .filter((archive) => !archive.local)
+        .filter((archive) => !archive?.local)
         .map((archive) => archive.id);
       const combinedVideos = cloudVideos.concat(localVideos);
       branchLink = await createShareVideosBranchUrl(combinedVideos);
@@ -59,7 +59,7 @@ class HeaderCallTab extends Component {
 
   loopUploadingStatus = async () => {
     await this.setState({loader: true});
-    const archivedStreams = await getOnceValue(`archivedStreams`);
+    const archivedStreams = await getValueOnce(`archivedStreams`);
     let updates = {};
     for (var i in archivedStreams) {
       let {local, id, thumbnail} = archivedStreams[i];
@@ -88,16 +88,3 @@ class HeaderCallTab extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userID: state.user.userID,
-    infoUser: state.user.infoUser.userInfo,
-    coach: state.coach,
-    archives: state.archives,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(HeaderCallTab);

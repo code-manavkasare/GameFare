@@ -3,11 +3,11 @@ import database from '@react-native-firebase/database';
 import RNFS from 'react-native-fs';
 
 import {getVideoInfo, getNewVideoSavePath} from '../functions/pictures';
-import {generateID} from '../functions/createEvent';
+import {generateID} from '../functions/utility.js';
 import {addLocalVideo} from './videoManagement';
 import {getArchiveByID} from './archive';
-import {store} from '../../../reduxStore';
-import {enqueueUploadTask} from '../../actions/uploadQueueActions';
+import {store} from '../../store/reduxStore';
+import {enqueueUploadTask} from '../../store/actions/uploadQueueActions';
 
 const checkIfAllArchivesAreLocal = (archives) => {
   let isLocal = true;

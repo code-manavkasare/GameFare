@@ -100,11 +100,11 @@ class RecordingMenu extends Component {
     }
   }
 
-  openExportQueue(member, thumbnails) {
+  openExportQueue(member) {
     Animated.parallel([
       Animated.timing(this.menuAnimation, native(1, 300)),
     ]).start();
-    this.exportQueueRef?.open(member, thumbnails);
+    this.exportQueueRef?.open(member);
   }
 
   openUploadQueue() {

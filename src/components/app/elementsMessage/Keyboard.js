@@ -12,7 +12,7 @@ import {
 import {KeyboardRegistry} from 'react-native-keyboard-input';
 import CameraRoll from '@react-native-community/cameraroll';
 import {pickLibrary} from '../../functions/pictures';
-import {generateID} from '../../functions/createEvent';
+import {generateID} from '../../functions/utility.js';
 
 import AllIcons from '../../layout/icons/AllIcons';
 import ButtonColor from '../../layout/Views/Button';

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {StatusBar} from 'react-native';
 import database from '@react-native-firebase/database';
 import ImageResizer from 'react-native-image-resizer';
@@ -6,27 +6,26 @@ import isEqual from 'lodash.isequal';
 
 import colors from '../style/colors';
 
-import {getOnceValue} from '../database/firebase/methods';
-import {generateID} from './createEvent';
+import {getValueOnce} from '../database/firebase/methods';
+import {generateID} from './utility.js';
 import {getVideoUUID, generateThumbnail} from './pictures';
 import {minutes, seconds, milliSeconds} from './date';
 import {userObject} from './users';
-
-import {store} from '../../../reduxStore';
+ 
+import {store} from '../../store/reduxStore';
 import {
-  setCurrentSession,
   setCurrentSessionID,
   endCurrentSession,
   unsetCurrentSession,
-} from '../../actions/coachActions';
+} from '../../store/actions/coachActions';
 import {shareVideosWithTeams} from './videoManagement';
-import {setSession} from '../../actions/coachSessionsActions';
-import {setLayout} from '../../actions/layoutActions';
-import {enqueueUploadTasks} from '../../actions/uploadQueueActions';
-import {setArchive} from '../../actions/archivesActions';
+import {setSession} from '../../store/actions/coachSessionsActions';
+import {setLayout} from '../../store/actions/layoutActions';
+import {enqueueUploadTasks} from '../../store/actions/uploadQueueActions';
+import {setArchive} from '../../store/actions/archivesActions';
 import {dateSession} from '../../components/app/TeamPage/components/elements';
 import {logMixpanel} from './logs';
-import {navigate, goBack, getCurrentRoute} from '../../../NavigationService';
+import {navigate} from '../../../NavigationService';
 
 import CardCreditCard from '../app/elementsUser/elementsPayment/CardCreditCard';
 import ImageUser from '../layout/image/ImageUser';
@@ -42,7 +41,7 @@ const createCoachSessionFromUserIDs = async (
   sessionID = null,
 ) => {
   const otherInfos = await Promise.all(
-    otherIDs.map((id) => getOnceValue(`users/${id}/userInfo`)),
+    otherIDs.map((id) => getValueOnce(`users/${id}/userInfo`)),
   );
   const membersParam = otherInfos.reduce((members, info, i) => {
     if (info) {
@@ -58,7 +57,7 @@ const createCoachSessionFromUserIDs = async (
       return members;
     }
   }, {});
-  const organizerInfo = await getOnceValue(`users/${organizerID}/userInfo`);
+  const organizerInfo = await getValueOnce(`users/${organizerID}/userInfo`);
   if (organizerInfo) {
     return await createCoachSession(
       {id: organizerID, info: organizerInfo},
@@ -654,7 +653,7 @@ const addMembersToSession = async (coachSessionID, members) => {
 
 const addMembersToSessionByID = async (coachSessionID, memberIDs) => {
   const infos = await Promise.all(
-    memberIDs.map((id) => getOnceValue(`users/${id}/userInfo`)),
+    memberIDs.map((id) => getValueOnce(`users/${id}/userInfo`)),
   );
   const members = infos.reduce((members, info, i) => {
     if (info) {
@@ -737,6 +736,12 @@ const isVideosAreBeingShared = ({session, archives, userIDSharing}) => {
   const currentArchives = Object.values(archives)
     .map((archive) => (archive.id ? archive.id : archive))
     .sort();
+  const newVideosAdded = currentArchives.every((videoID) =>
+    Object.keys(videos).includes(videoID),
+  );
+  if (newVideosAdded) {
+    return true;
+  }
   return isEqual(Object.keys(videos).sort(), currentArchives);
 };
 
