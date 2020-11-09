@@ -10,6 +10,7 @@ import {rowTitle} from '../../../TeamPage/components/elements';
 import {FlatListComponent} from '../../../../layout/Views/FlatList';
 import {getSortedSessions} from '../../../../functions/coach';
 import {newConversation} from '../../../../functions/message';
+import {boolShouldComponentUpdate} from '../../../../functions/redux'
 import styleApp from '../../../../style/style';
 import colors from '../../../../style/colors';
 import sizes from '../../../../style/sizes';
@@ -27,7 +28,9 @@ class ListStreams extends Component {
       loading: false,
     };
   }
- 
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  }
   header() {
     return (
       <View>

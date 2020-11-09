@@ -13,6 +13,7 @@ import {Col, Row} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
 import {updateNotificationBadge} from '../../functions/notifications.js';
+import {boolShouldComponentUpdate} from '../../functions/redux'
 import {
   clickNotification,
   getCurrentRoute,
@@ -51,6 +52,9 @@ class Notification extends Component {
         return this.close(0);
       },
     });
+  }
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
 
   static getDerivedStateFromProps(props, state) {

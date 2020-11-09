@@ -34,8 +34,8 @@ import Button from '../layout/buttons/Button';
 import AsyncImage from '../layout/image/AsyncImage';
 
 import {userAction} from '../../store/actions/userActions';
-import {sendSMSFunction} from '../functions/message';
 import {createInviteToAppBranchUrl} from '../database/branch';
+import {boolShouldComponentUpdate} from '../functions/redux'
 
 Vitals.getMemory().then(memory => {
   var {
@@ -53,8 +53,8 @@ class MorePage extends Component {
     this.state = {};
     this.AnimatedHeaderValue = new Animated.Value(0);
   }
-  componentDidMount() {
-    const {navigation} = this.props    
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
   button2(dataButton) {
     const {text, icon, click, text2} = dataButton;

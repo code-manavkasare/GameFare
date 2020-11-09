@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Alert} from 'react-native';
-import {connect} from 'react-redux';
 import {Line, Path, Text, G} from 'react-native-svg';
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
 import EditPoint from '../editShape/EditPoint';
 
-class DrawSraightLine extends Component {
+export default class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -161,14 +160,3 @@ class DrawSraightLine extends Component {
     return this.drawView();
   }
 }
-
-const styles = StyleSheet.create({});
-
-const mapStateToProps = (state, props) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(DrawSraightLine);

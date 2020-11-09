@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {connect} from 'react-redux';
 import {Rect, G} from 'react-native-svg';
 
 import colors from '../../../../../style/colors';
 import EditPoint from '../editShape/EditPoint';
 import {dimensionRectangle} from '../../../../../functions/videoManagement';
 
-class DrawSraightLine extends Component {
+export default class DrawSraightLine extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -75,13 +74,3 @@ class DrawSraightLine extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
-
-const mapStateToProps = (state, props) => {
-  return {};
-};
-
-export default connect(
-  mapStateToProps,
-  {},
-)(DrawSraightLine);
