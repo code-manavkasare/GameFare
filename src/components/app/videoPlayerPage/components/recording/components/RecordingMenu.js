@@ -6,6 +6,7 @@ import {Col, Row, Grid} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 
 import {navigate} from '../../../../../../../NavigationService';
+import {boolShouldComponentUpdate} from '../../../../../functions/logs'
 
 import colors from '../../../../../style/colors';
 import styleApp from '../../../../../style/style';
@@ -28,6 +29,9 @@ class RecordingMenu extends React.Component {
       this.props.onRef(this);
     }
   };
+  shouldComponentUpdate (nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
+  }
   getState = () => {
     return this.state;
   };

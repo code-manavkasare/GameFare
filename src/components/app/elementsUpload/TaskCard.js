@@ -10,8 +10,8 @@ import {
 import {Row, Col} from 'react-native-easy-grid';
 import {connect} from 'react-redux';
 import * as Progress from 'react-native-progress';
-import Swipeout from 'react-native-swipeout';
 
+import {boolShouldComponentUpdate} from '../../functions/redux'
 import styleApp from '../../style/style';
 import colors from '../../style/colors';
 
@@ -29,6 +29,9 @@ class TaskCard extends Component {
     if (onRef) {
       onRef(this);
     }
+  }
+  shouldComponentUpdate(nextProps,nextState) {
+    return boolShouldComponentUpdate({props:this.props,nextProps,state:this.state,nextState})
   }
 
   thumbnail() {
